@@ -1309,8 +1309,13 @@ RefPtr<CSSVariableData> SubstitutionResolver::trySimpleSubstitution(const CSSSub
         return nullptr;
 
     // Shortcut for simple -internal-auto-base(val1, val2): return cached data if appearance hasn't changed.
-    if (value.m_simpleReference->functionId == CSSValueInternalAutoBase)
-        return value.m_cache.isBaseAppearance == isBaseAppearance() ? value.m_cache.dependencyData : nullptr;
+    if (value.m_simpleReference->functionId == CSSValueInternalAutoBase) {
+        if (value.m_cache.isBaseAppearance != isBaseAppearance())
+            return nullptr;
+        if (value.m_cache.dependencyData && value.m_cache.dependencyData->isAttrTainted() == IsAttrTainted::Yes)
+            return nullptr;
+        return value.m_cache.dependencyData;
+    }
 
     // Shortcut for the simple common case of property:var(--foo)
     RefPtr property = propertyValueForVariableName(value.m_simpleReference->name, value.m_simpleReference->functionId);

@@ -1,0 +1,164 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ */
+
+/*
+ * The box types html.css does not cover, loaded only when
+ * HTMLEnhancedSelectMultipleAndListBoxEnabled is set. Every declaration reverts outside base
+ * appearance, where the preferred size does not decide the box type.
+ * https://html.spec.whatwg.org/#the-select-element-2
+ */
+
+@namespace "http://www.w3.org/1999/xhtml";
+
+select[multiple]:-internal-select-preferred-size-one:not([popover]) {
+    display: -internal-auto-base(revert-rule, inline-flex);
+}
+
+select[multiple]:-internal-select-preferred-size-one {
+    padding-inline: -internal-auto-base(revert-rule, 1em 0.7em);
+    padding-block: -internal-auto-base(revert-rule, 0.4lh);
+    color: -internal-auto-base(revert-rule, inherit);
+    font: -internal-auto-base(revert-rule, inherit);
+    background-color: -internal-auto-base(revert-rule, light-dark(transparent, color-mix(currentColor 4%)));
+    border-style: -internal-auto-base(revert-rule, solid);
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
+    border-radius: -internal-auto-base(revert-rule, 4px);
+    align-items: -internal-auto-base(revert-rule, unsafe center);
+    align-content: -internal-auto-base(revert-rule, unsafe center);
+    gap: -internal-auto-base(revert-rule, 0.65em);
+    min-block-size: -internal-auto-base(revert-rule, 24px);
+    min-inline-size: -internal-auto-base(revert-rule, 4em);
+    overflow: -internal-auto-base(revert-rule, clip);
+    text-overflow: -internal-auto-base(revert-rule, ellipsis);
+    white-space: -internal-auto-base(revert-rule, nowrap);
+    cursor: -internal-auto-base(revert-rule, default);
+    text-shadow: -internal-auto-base(revert-rule, inherit);
+    letter-spacing: -internal-auto-base(revert-rule, inherit);
+    word-spacing: -internal-auto-base(revert-rule, inherit);
+    -webkit-rtl-ordering: -internal-auto-base(revert-rule, inherit);
+}
+
+select[multiple]:-internal-select-preferred-size-one:enabled {
+    color: -internal-auto-base(revert-rule, inherit);
+}
+
+select[multiple]:-internal-select-preferred-size-one:hover {
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 70%));
+}
+
+select[multiple]:-internal-select-preferred-size-one:active {
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 8%));
+}
+
+select[multiple]:-internal-select-preferred-size-one:user-invalid {
+    border-color: -internal-auto-base(revert-rule, light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h)));
+}
+
+select[multiple]:-internal-select-preferred-size-one > button:first-child {
+    all: unset;
+    display: contents;
+    text-overflow: inherit;
+}
+
+/* List box. */
+
+/* :not([popover]) only to match the menulist display rule in html.css, which otherwise wins. */
+
+select:not(:-internal-select-preferred-size-one):not([popover]) {
+    display: -internal-auto-base(revert-rule, inline-block);
+}
+
+select:not(:-internal-select-preferred-size-one) {
+    /* FIXME: attr() falls back only for an absent or unparseable attribute, so size=0 gives no
+       rows here where the preferred size gives four. */
+    block-size: -internal-auto-base(revert-rule, calc(max(24px, 1lh) * attr(size type(<number>), 4)));
+    box-sizing: -internal-auto-base(revert-rule, content-box);
+    overflow: -internal-auto-base(revert-rule, auto);
+    padding: -internal-auto-base(revert-rule, 0);
+    min-inline-size: -internal-auto-base(revert-rule, auto);
+    min-block-size: -internal-auto-base(revert-rule, auto);
+    align-content: -internal-auto-base(revert-rule, normal);
+    color: -internal-auto-base(revert-rule, inherit);
+    font: -internal-auto-base(revert-rule, inherit);
+    background-color: -internal-auto-base(revert-rule, transparent);
+    border-style: -internal-auto-base(revert-rule, solid);
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
+    border-radius: -internal-auto-base(revert-rule, 4px);
+    cursor: -internal-auto-base(revert-rule, default);
+    text-shadow: -internal-auto-base(revert-rule, inherit);
+    letter-spacing: -internal-auto-base(revert-rule, inherit);
+    word-spacing: -internal-auto-base(revert-rule, inherit);
+    -webkit-rtl-ordering: -internal-auto-base(revert-rule, inherit);
+}
+
+select:not(:-internal-select-preferred-size-one):enabled {
+    color: -internal-auto-base(revert-rule, inherit);
+}
+
+select:not(:-internal-select-preferred-size-one):is(:hover, :active) {
+    background-color: -internal-auto-base(revert-rule, transparent);
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
+}
+
+select:not(:-internal-select-preferred-size-one):user-invalid {
+    border-color: -internal-auto-base(revert-rule, light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h)));
+}
+
+select:not(:-internal-select-preferred-size-one):disabled {
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 6%));
+    color: -internal-auto-base(revert-rule, color-mix(currentColor 55%));
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 25%));
+    cursor: -internal-auto-base(revert-rule, not-allowed);
+}
+
+/* FIXME: Unlike the rules above these cannot revert, because -internal-auto-base() reads the
+   appearance of the option rather than of its select, which is never base-select. A native list
+   box's options therefore report these in their computed style. */
+
+select[multiple]:-internal-select-preferred-size-one option {
+    min-inline-size: 24px;
+    min-block-size: max(24px, 1lh);
+    padding-block: 0.4lh;
+    padding-inline: 0.75em 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* No block padding: the block size is an exact multiple of the row size. */
+select:not(:-internal-select-preferred-size-one) option {
+    min-inline-size: 24px;
+    min-block-size: max(24px, 1lh);
+    padding-block: 0;
+    padding-inline: 0.75em 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+select[multiple]:-internal-select-preferred-size-one optgroup:not(:first-child),
+select:not(:-internal-select-preferred-size-one) optgroup:not(:first-child) {
+    border-block-start: 1px solid color-mix(currentColor 12%);
+}

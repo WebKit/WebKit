@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+<select id="fourRows" size="4"><option id="option">1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+<select id="eightRows" size="8"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+<select id="multipleWithoutSize" multiple><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+<script>
+description("Tests that a base appearance list box is as many rows tall as its preferred size, and that its options are laid out rather than painted by the list box.");
+
+function blockSize(select)
+{
+    return getComputedStyle(select).blockSize;
+}
+
+// These two match exactly the same declarations and differ only in the size attribute, so sharing
+// a computed style between them would give both the same height.
+shouldBeEqualToString("blockSize(fourRows)", "96px");
+shouldBeEqualToString("blockSize(eightRows)", "192px");
+// An absent size attribute falls back to four rows.
+shouldBeEqualToString("blockSize(multipleWithoutSize)", "96px");
+
+// A RenderListBox paints its options itself, so they would have no box of their own.
+shouldBeTrue("option.offsetHeight > 0");
+</script>
+</body>
+</html>

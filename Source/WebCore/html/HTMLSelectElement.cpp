@@ -304,17 +304,17 @@ void HTMLSelectElement::pickOrToggleOption(HTMLOptionElement& option)
 
 bool HTMLSelectElement::hasPlaceholderLabelOption() const
 {
-    // The select element has no placeholder label option if it has an attribute "multiple" specified or a display size of non-1.
+    // The select element has no placeholder label option if it has an attribute "multiple" specified or a preferred size of non-1.
     // 
     // The condition "size() > 1" is not compliant with the HTML5 spec as of Dec 3, 2010. "size() != 1" is correct.
     // Using "size() > 1" here because size() may be 0 in WebKit.
     // See the discussion at https://bugs.webkit.org/show_bug.cgi?id=43887
     //
     // "0 size()" happens when an attribute "size" is absent or an invalid size attribute is specified.
-    // In this case, the display size should be assumed as the default.
-    // The default display size is 1 for non-multiple select elements, and 4 for multiple select elements.
+    // In this case, the preferred size should be assumed as the default.
+    // The default preferred size is 1 for non-multiple select elements, and 4 for multiple select elements.
     //
-    // Finally, if size() == 0 and non-multiple, the display size can be assumed as 1.
+    // Finally, if size() == 0 and non-multiple, the preferred size can be assumed as 1.
     if (multiple() || size() > 1)
         return false;
 
@@ -380,6 +380,13 @@ auto HTMLSelectElement::boxType(const Style::ComputedStyle* style) const -> BoxT
 bool HTMLSelectElement::isDropdownBox(const Style::ComputedStyle* style) const
 {
     return boxType(style) == BoxType::DropdownBox;
+}
+
+bool HTMLSelectElement::isBaseListBox(const Style::ComputedStyle* style) const
+{
+    return document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled()
+        && hasBaseAppearance(style ? style : existingComputedStyle())
+        && preferredSize() > 1;
 }
 
 bool HTMLSelectElement::supportsPickerPseudoElement() const
@@ -670,6 +677,8 @@ bool HTMLSelectElement::isMouseFocusable() const
 
 RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
+    if (isBaseListBox(&style))
+        return HTMLElement::createElementRenderer(WTF::move(style), position);
     if (boxType(&style) == BoxType::DropdownBox) {
         if (hasBaseAppearance(&style))
             return HTMLElement::createElementRenderer(WTF::move(style), position);
@@ -682,6 +691,8 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
 {
     if (!HTMLFormControlElement::childShouldCreateRenderer(child))
         return false;
+    if (isBaseListBox())
+        return &child != m_buttonSlot.get();
     if (boxType() == BoxType::ListBox)
         return isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(child) || validationMessageShadowTreeContains(child);
     if (child.isInShadowTree() && child.containingShadowRoot() == userAgentShadowRoot())

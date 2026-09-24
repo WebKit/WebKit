@@ -87,6 +87,7 @@ public:
     enum class BoxType : bool { DropdownBox, ListBox };
     BoxType NODELETE boxType(const Style::ComputedStyle* = nullptr) const;
     bool NODELETE isDropdownBox(const Style::ComputedStyle* = nullptr) const;
+    bool NODELETE isBaseListBox(const Style::ComputedStyle* = nullptr) const;
 
     bool NODELETE usesMenuList() const;
     bool NODELETE isSingleSelectDropdownBox() const;

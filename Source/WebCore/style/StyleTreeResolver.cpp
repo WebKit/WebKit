@@ -470,23 +470,27 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         return { };
 
     if (pseudoElementIdentifier.type == PseudoElementType::Checkmark) {
-        if (auto* option = dynamicDowncast<HTMLOptionElement>(element)) {
-            // Option elements need to check against the picker for their appearance value.
+        auto hasCheckmark = [&] {
+            auto* option = dynamicDowncast<HTMLOptionElement>(element);
+            if (!option) {
+                if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
+                    return false;
+                auto* input = dynamicDowncast<HTMLInputElement>(element);
+                return input && input->isCheckable();
+            }
             auto* select = option->ownerSelectElement();
             if (!select)
-                return { };
-            auto* pickerElement = select->pickerPopoverElement();
-            if (!pickerElement)
-                return { };
-            auto* pickerStyle = m_update->elementStyle(*pickerElement);
-            if (!pickerStyle || pickerStyle->usedAppearance() != StyleAppearance::Base)
-                return { };
-        } else {
-            if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
-                return { };
-            if (auto* input = dynamicDowncast<HTMLInputElement>(element); !input || !input->isCheckable())
-                return { };
-        }
+                return false;
+            if (select->isBaseListBox(m_update->elementStyle(*select)))
+                return true;
+            auto* picker = select->pickerPopoverElement();
+            if (!picker)
+                return false;
+            auto* pickerStyle = m_update->elementStyle(*picker);
+            return pickerStyle && pickerStyle->usedAppearance() == StyleAppearance::Base;
+        };
+        if (!hasCheckmark())
+            return { };
     }
 
     if (pseudoElementIdentifier.type == PseudoElementType::PickerIcon) {
