@@ -90,6 +90,9 @@ bool parseBlendMode(const String& s, BlendMode& blendMode)
 bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, BlendMode& blendOp)
 {
     for (int i = 0; i < numCompositeOperatorNames; i++) {
+        // "darker" is a legacy, non-standard name for PlusDarker and is not a valid <composite-mode>, so don't accept it.
+        if (static_cast<CompositeOperator>(i) == CompositeOperator::PlusDarker)
+            continue;
         if (s == compositeOperatorNames[i]) {
             op = static_cast<CompositeOperator>(i);
             blendOp = BlendMode::Normal;
