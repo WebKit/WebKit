@@ -62,7 +62,6 @@ public:
 
     id<MTLTexture> NODELETE texture() const;
     id<MTLTexture> NODELETE parentTexture() const;
-    const WGPUTextureViewDescriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
     const std::optional<WGPUExtent3D>& renderExtent() const LIFETIME_BOUND { return m_renderExtent; }
 
     Device& device() const { return m_device; }
@@ -100,7 +99,14 @@ private:
 
     id<MTLTexture> m_texture { nil };
 
-    const WGPUTextureViewDescriptor m_descriptor;
+    const WGPUTextureFormat m_format { WGPUTextureFormat_Undefined };
+    const WGPUTextureViewDimension m_dimension { WGPUTextureViewDimension_Undefined };
+    const uint32_t m_baseMipLevel { 0 };
+    const uint32_t m_mipLevelCount { 0 };
+    const uint32_t m_baseArrayLayer { 0 };
+    const uint32_t m_arrayLayerCount { 0 };
+    const WGPUTextureAspect m_aspect { WGPUTextureAspect_All };
+    const WGPUTextureUsage m_usage { WGPUTextureUsage_None };
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
