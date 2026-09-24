@@ -17,6 +17,7 @@ PASS PerformanceEventTiming interface: attribute processingStart
 PASS PerformanceEventTiming interface: attribute processingEnd
 PASS PerformanceEventTiming interface: attribute cancelable
 PASS PerformanceEventTiming interface: attribute target
+FAIL PerformanceEventTiming interface: attribute targetSelector assert_true: The prototype object must have a property "targetSelector" expected true got false
 PASS PerformanceEventTiming interface: attribute interactionId
 PASS PerformanceEventTiming interface: operation toJSON()
 PASS EventCounts interface: existence and properties of interface object
