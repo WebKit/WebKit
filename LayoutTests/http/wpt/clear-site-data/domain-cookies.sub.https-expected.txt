@@ -1,0 +1,31 @@
+
+PASS Open helper windows
+PASS [clear from web-platform.test] Reset and set cookies, then fetch a resource with 'Clear-Site-Data: "cookies"'
+PASS [clear from web-platform.test] csd-site-host-only (host-only on web-platform.test) is cleared
+PASS [clear from web-platform.test] csd-site-domain-site (Domain=web-platform.test set from web-platform.test) is cleared
+PASS [clear from web-platform.test] csd-sibling-host-only (host-only on www1.web-platform.test) is cleared
+PASS [clear from web-platform.test] csd-sibling-domain-site (Domain=web-platform.test set from www1.web-platform.test) is cleared
+PASS [clear from web-platform.test] csd-deep-host-only (host-only on www2.www.web-platform.test) is cleared
+PASS [clear from web-platform.test] csd-deep-domain-parent (Domain=www.web-platform.test set from www2.www.web-platform.test) is cleared
+PASS [clear from web-platform.test] csd-other-domain-other (Domain=not-web-platform.test set from not-web-platform.test) is kept
+PASS [clear from web-platform.test] csd-other-deep-host-only (host-only on www2.www.not-web-platform.test) is kept
+PASS [clear from www2.www.web-platform.test] Reset and set cookies, then fetch a resource with 'Clear-Site-Data: "cookies"'
+PASS [clear from www2.www.web-platform.test] csd-site-host-only (host-only on web-platform.test) is cleared
+PASS [clear from www2.www.web-platform.test] csd-site-domain-site (Domain=web-platform.test set from web-platform.test) is cleared
+PASS [clear from www2.www.web-platform.test] csd-sibling-host-only (host-only on www1.web-platform.test) is cleared
+PASS [clear from www2.www.web-platform.test] csd-sibling-domain-site (Domain=web-platform.test set from www1.web-platform.test) is cleared
+PASS [clear from www2.www.web-platform.test] csd-deep-host-only (host-only on www2.www.web-platform.test) is cleared
+PASS [clear from www2.www.web-platform.test] csd-deep-domain-parent (Domain=www.web-platform.test set from www2.www.web-platform.test) is cleared
+PASS [clear from www2.www.web-platform.test] csd-other-domain-other (Domain=not-web-platform.test set from not-web-platform.test) is kept
+PASS [clear from www2.www.web-platform.test] csd-other-deep-host-only (host-only on www2.www.not-web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] Reset and set cookies, then fetch a resource with 'Clear-Site-Data: "cookies"'
+PASS [clear from www2.www.not-web-platform.test] csd-site-host-only (host-only on web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] csd-site-domain-site (Domain=web-platform.test set from web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] csd-sibling-host-only (host-only on www1.web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] csd-sibling-domain-site (Domain=web-platform.test set from www1.web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] csd-deep-host-only (host-only on www2.www.web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] csd-deep-domain-parent (Domain=www.web-platform.test set from www2.www.web-platform.test) is kept
+PASS [clear from www2.www.not-web-platform.test] csd-other-domain-other (Domain=not-web-platform.test set from not-web-platform.test) is cleared
+PASS [clear from www2.www.not-web-platform.test] csd-other-deep-host-only (host-only on www2.www.not-web-platform.test) is cleared
+PASS Clean up
+

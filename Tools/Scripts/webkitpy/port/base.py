@@ -1141,11 +1141,17 @@ class Port(object):
             return []
 
         # Documented here: https://github.com/web-platform-tests/wpt/blob/master/docs/writing-tests/server-features.md#tests-involving-multiple-origins
+        # wptserve exposes every subdomain label and every two-label combination of them
+        # (e.g. www2.www.web-platform.test), see _make_subdomains_product in wpt/tools/serve/serve.py.
+        subdomains = ("www", "www1", "www2", "xn--n8j6ds53lwwkrqhv28a", "xn--lve-6lad")
         domains = []
         for domain in ("web-platform.test", "not-web-platform.test"):
             domains.append(domain)
-            for subdomain in ("www", "www1", "www2", "xn--n8j6ds53lwwkrqhv28a", "xn--lve-6lad"):
+            for subdomain in subdomains:
                 domains.append(subdomain + "." + domain)
+            for subdomain in subdomains:
+                for inner in subdomains:
+                    domains.append(subdomain + "." + inner + "." + domain)
 
         return domains
 
