@@ -173,12 +173,14 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
-        auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-rawDelta, ScrollEventAxis::Horizontal);
-        if (horizontalSide && m_client.isPinnedOnSide(*horizontalSide) && !shouldRubberBandOnSide(*horizontalSide, rawDelta))
-            return false;
+        auto sideCanScrollOrStretch = [&](std::optional<BoxSide> side) {
+            return side && (!m_client.isPinnedOnSide(*side) || shouldRubberBandOnSide(*side, rawDelta));
+        };
 
+        auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-rawDelta, ScrollEventAxis::Horizontal);
         auto verticalSide = ScrollableArea::targetSideForScrollDelta(-rawDelta, ScrollEventAxis::Vertical);
-        if (verticalSide && m_client.isPinnedOnSide(*verticalSide) && !shouldRubberBandOnSide(*verticalSide, rawDelta))
+
+        if ((horizontalSide || verticalSide) && !sideCanScrollOrStretch(horizontalSide) && !sideCanScrollOrStretch(verticalSide))
             return false;
 
         m_momentumScrollInProgress = false;

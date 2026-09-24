@@ -864,6 +864,19 @@ void PageClientImpl::didEndViewGesture()
     protect(m_impl)->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::Restore);
 }
 
+bool PageClientImpl::everMagnifiedDuringCurrentGesture() const
+{
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    CheckedPtr impl = m_impl.get();
+    if (!impl)
+        return false;
+
+    return [impl->appKitGestureController() everMagnifiedDuringCurrentGesture];
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(FULLSCREEN_API)
 
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()

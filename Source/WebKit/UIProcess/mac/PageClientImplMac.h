@@ -248,6 +248,8 @@ private:
     void willBeginViewGesture() final;
     void didEndViewGesture() final;
 
+    bool everMagnifiedDuringCurrentGesture() const final;
+
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     void makeViewBlank(bool) final;

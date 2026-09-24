@@ -686,6 +686,10 @@ public:
     virtual void willBeginViewGesture() { }
     virtual void didEndViewGesture() { }
 
+#if PLATFORM(MAC)
+    virtual bool everMagnifiedDuringCurrentGesture() const { return false; }
+#endif
+
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
     virtual void didFinishNavigation(API::Navigation*) = 0;
     virtual void didFailNavigation(API::Navigation*) = 0;

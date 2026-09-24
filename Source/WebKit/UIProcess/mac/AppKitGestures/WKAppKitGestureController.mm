@@ -71,6 +71,7 @@
 #import <wtf/CheckedPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/Markable.h>
+#import <wtf/MathExtras.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
@@ -292,6 +293,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     // These variables track the last reported value so that we can forward deltas.
     double _lastCumulativeMagnification;
     double _lastCumulativeRotation;
+
+    BOOL _everMagnifiedDuringCurrentGesture;
 }
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
@@ -1659,6 +1662,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     };
 
     CheckedPtr impl = [webView _impl];
+
+    if (phase == WebKit::WebWheelEvent::Phase::Began)
+        _everMagnifiedDuringCurrentGesture = NO;
+    if (!WTF::areEssentiallyEqual(impl->magnification(), 1.0))
+        _everMagnifiedDuringCurrentGesture = YES;
+
     bool forwardToGestureController = impl->allowsBackForwardNavigationGestures() && [self prefersForwardingToGestureController:gesture];
     if (forwardToGestureController && protect(impl->ensureGestureController())->handleScrollWheelEvent(makeWheelEvent(gestureDelta))) {
         WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "View gesture controller handled gesture");
@@ -1666,6 +1675,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 
     [webView _protectedPage]->handleNativeWheelEvent(makeWheelEvent(gestureDelta));
+}
+
+- (BOOL)everMagnifiedDuringCurrentGesture
+{
+    return _everMagnifiedDuringCurrentGesture;
 }
 
 #pragma mark - Momentum Handling
