@@ -966,7 +966,7 @@ static bool formatIsUnsignedInt(WGPUTextureFormat format, WGPUTextureAspect aspe
     return formatType(format, aspect, device) & FormatType_UnsignedInt;
 }
 
-static bool validateTextureSampleType(const WGPUTextureBindingLayout* textureEntry, const auto& apiTextureView, const Device& device)
+static bool validateTextureSampleType(const BindGroupLayout::TextureBindingLayout* textureEntry, const auto& apiTextureView, const Device& device)
 {
     if (!textureEntry)
         return true;
@@ -990,7 +990,7 @@ static bool validateTextureSampleType(const WGPUTextureBindingLayout* textureEnt
     }
 }
 
-static const NSString* sampleType(const WGPUTextureBindingLayout* textureEntry)
+static const NSString* sampleType(const BindGroupLayout::TextureBindingLayout* textureEntry)
 {
     switch (textureEntry->sampleType) {
     case WGPUTextureSampleType_Float:
@@ -1058,7 +1058,7 @@ static bool validateTextureViewDimension(const auto* textureEntry, const auto& a
     }
 }
 
-static bool NODELETE validateStorageTextureViewFormat(const WGPUStorageTextureBindingLayout* storageTexture, const auto& apiTextureView)
+static bool NODELETE validateStorageTextureViewFormat(const BindGroupLayout::StorageTextureBindingLayout* storageTexture, const auto& apiTextureView)
 {
     return !storageTexture || storageTexture->format == apiTextureView->format();
 }
@@ -1079,12 +1079,12 @@ static bool NODELETE validateSamplerType(WGPUSamplerBindingType type, const Samp
     }
 }
 
-static BindGroupEntryUsage NODELETE usageForTexture(const WGPUTextureBindingLayout&)
+static BindGroupEntryUsage NODELETE usageForTexture(const BindGroupLayout::TextureBindingLayout&)
 {
     return BindGroupEntryUsage::ConstantTexture;
 }
 
-static BindGroupEntryUsage NODELETE usageForStorageTexture(const WGPUStorageTextureBindingLayout& textureLayout)
+static BindGroupEntryUsage NODELETE usageForStorageTexture(const BindGroupLayout::StorageTextureBindingLayout& textureLayout)
 {
     switch (textureLayout.access) {
     case WGPUStorageTextureAccess_Undefined:
@@ -1140,7 +1140,7 @@ static bool NODELETE allowedExternalTextureFormat(WGPUTextureFormat format)
 }
 
 template <typename T>
-static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Device &object, const Ref<T> &apiTextureView, BindGroup::ShaderStageArray<id<MTLBuffer>> &argumentBuffer, BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> &argumentEncoder, BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> &argumentIndices, const Ref<BindGroupLayout> &bindGroupLayout, const WGPUBindGroupEntry &entry, const WGPUExternalTextureBindingLayout *externalTextureEntry, NSUInteger index, MTLResourceUsage resourceUsage, ShaderStage stage, std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResourceUsages, std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResources, const WGPUStorageTextureBindingLayout *storageTextureEntry, const WGPUTextureBindingLayout *textureEntry)
+static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Device &object, const Ref<T> &apiTextureView, BindGroup::ShaderStageArray<id<MTLBuffer>> &argumentBuffer, BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> &argumentEncoder, BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> &argumentIndices, const Ref<BindGroupLayout> &bindGroupLayout, const WGPUBindGroupEntry &entry, const BindGroupLayout::ExternalTextureBindingLayout *externalTextureEntry, NSUInteger index, MTLResourceUsage resourceUsage, ShaderStage stage, std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResourceUsages, std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResources, const BindGroupLayout::StorageTextureBindingLayout *storageTextureEntry, const BindGroupLayout::TextureBindingLayout *textureEntry)
 {
 #define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
 #define VALIDATION_ERROR(...) object.generateAValidationError(INTERNAL_ERROR_STRING((__VA_ARGS__)))
@@ -1337,7 +1337,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
 
             if (bufferIsPresent) {
-                auto* layoutBinding = hasBinding<WGPUBufferBindingLayout>(bindGroupLayoutEntries, bindingIndex);
+                auto* layoutBinding = hasBinding<BindGroupLayout::BufferBindingLayout>(bindGroupLayoutEntries, bindingIndex);
                 if (!layoutBinding) {
                     VALIDATION_ERROR(@"Expected buffer but it was not present in the bind group layout");
                     return BindGroup::createInvalid(*this);
@@ -1413,7 +1413,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(usageForBuffer(layoutBinding->type), entry.binding, apiBuffer, entryOffset, entrySize));
                 }
             } else if (samplerIsPresent) {
-                auto* layoutBinding = hasBinding<WGPUSamplerBindingLayout>(bindGroupLayoutEntries, bindingIndex);
+                auto* layoutBinding = hasBinding<BindGroupLayout::SamplerBindingLayout>(bindGroupLayoutEntries, bindingIndex);
                 if (!layoutBinding) {
                     VALIDATION_ERROR(@"Expected sampler but it was not present in the bind group layout");
                     return BindGroup::createInvalid(*this);
@@ -1438,9 +1438,9 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             } else if (textureViewIsPresent || textureIsPresent) {
                 auto it = bindGroupLayoutEntries.find(bindingIndex);
                 RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
-                auto* textureEntry = std::get_if<WGPUTextureBindingLayout>(&it->value.bindingLayout);
-                auto* storageTextureEntry = std::get_if<WGPUStorageTextureBindingLayout>(&it->value.bindingLayout);
-                auto* externalTextureEntry = std::get_if<WGPUExternalTextureBindingLayout>(&it->value.bindingLayout);
+                auto* textureEntry = std::get_if<BindGroupLayout::TextureBindingLayout>(&it->value.bindingLayout);
+                auto* storageTextureEntry = std::get_if<BindGroupLayout::StorageTextureBindingLayout>(&it->value.bindingLayout);
+                auto* externalTextureEntry = std::get_if<BindGroupLayout::ExternalTextureBindingLayout>(&it->value.bindingLayout);
                 if (!textureEntry && !storageTextureEntry && !externalTextureEntry) {
                     VALIDATION_ERROR(@"Expected texture or storage texture but it was not present in the bind group layout");
                     return BindGroup::createInvalid(*this);
@@ -1457,7 +1457,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
 
             } else if (externalTextureIsPresent) {
-                if (!hasBinding<WGPUExternalTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                if (!hasBinding<BindGroupLayout::ExternalTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
                     VALIDATION_ERROR(@"Expected external texture but it was not present in the bind group layout");
                     return BindGroup::createInvalid(*this);
                 }

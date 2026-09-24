@@ -1045,29 +1045,29 @@ static WGSL::TexelFormat NODELETE wgslFormat(WGPUTextureFormat format)
 
 static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const BindGroupLayout::Entry::BindingLayout& bindingLayout)
 {
-    return WTF::switchOn(bindingLayout, [](const WGPUBufferBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
+    return WTF::switchOn(bindingLayout, [](const BindGroupLayout::BufferBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::BufferBindingLayout {
             .type = wgslBindingType(bindingLayout.type),
             .hasDynamicOffset = !!bindingLayout.hasDynamicOffset,
             .minBindingSize = bindingLayout.minBindingSize
         };
-    }, [](const WGPUSamplerBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
+    }, [](const BindGroupLayout::SamplerBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::SamplerBindingLayout {
             .type = wgslSamplerType(bindingLayout.type)
         };
-    }, [](const WGPUTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
+    }, [](const BindGroupLayout::TextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::TextureBindingLayout {
             .sampleType = wgslSampleType(bindingLayout.sampleType),
             .viewDimension = wgslViewDimension(bindingLayout.viewDimension),
             .multisampled = !!bindingLayout.multisampled
         };
-    }, [](const WGPUStorageTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
+    }, [](const BindGroupLayout::StorageTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::StorageTextureBindingLayout {
             .access = wgslAccess(bindingLayout.access),
             .format = wgslFormat(bindingLayout.format),
             .viewDimension = wgslViewDimension(bindingLayout.viewDimension)
         };
-    }, [](const WGPUExternalTextureBindingLayout&) -> WGSL::BindGroupLayoutEntry::BindingMember {
+    }, [](const BindGroupLayout::ExternalTextureBindingLayout&) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::ExternalTextureBindingLayout {
         };
     });

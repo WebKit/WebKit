@@ -124,6 +124,39 @@ bool BindGroupLayout::isPresent(const WGPUStorageTextureBindingLayout& storageTe
         && storageTexture.viewDimension != WGPUTextureViewDimension_Undefined;
 }
 
+auto BindGroupLayout::bindingLayoutFromAPI(const WGPUBufferBindingLayout& buffer) -> BufferBindingLayout
+{
+    return {
+        .type = buffer.type,
+        .hasDynamicOffset = !!buffer.hasDynamicOffset,
+        .minBindingSize = buffer.minBindingSize,
+        .bufferSizeForBinding = buffer.bufferSizeForBinding,
+    };
+}
+
+auto BindGroupLayout::bindingLayoutFromAPI(const WGPUSamplerBindingLayout& sampler) -> SamplerBindingLayout
+{
+    return { .type = sampler.type };
+}
+
+auto BindGroupLayout::bindingLayoutFromAPI(const WGPUTextureBindingLayout& texture) -> TextureBindingLayout
+{
+    return {
+        .sampleType = texture.sampleType,
+        .viewDimension = texture.viewDimension,
+        .multisampled = !!texture.multisampled,
+    };
+}
+
+auto BindGroupLayout::bindingLayoutFromAPI(const WGPUStorageTextureBindingLayout& storageTexture) -> StorageTextureBindingLayout
+{
+    return {
+        .access = storageTexture.access,
+        .format = storageTexture.format,
+        .viewDimension = storageTexture.viewDimension,
+    };
+}
+
 static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureBindingLayout& storageTexture, const Device& device, const WGPUBindGroupLayoutEntry& entry)
 {
     auto visibility = entry.visibility;
@@ -241,7 +274,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             descriptors[0] = createArgumentDescriptor(type, protectedThis.get(), entry);
             if (!descriptors[0])
                 return false;
-            bindingLayout = type;
+            bindingLayout = BindGroupLayout::bindingLayoutFromAPI(type);
             return true;
         };
 
@@ -262,7 +295,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             descriptors[4] = createArgumentDescriptor(bufferLayout, *this, entry);
             bufferLayout.type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_UInt2);
             descriptors[5] = createArgumentDescriptor(bufferLayout, *this, entry);
-            bindingLayout = WGPUExternalTextureBindingLayout();
+            bindingLayout = BindGroupLayout::ExternalTextureBindingLayout { };
         } else if (isArrayLength(entry)) {
             for (uint32_t stage = 0; stage < stageCount; ++stage) {
                 if (containsStage(entry.visibility, stage))
@@ -492,22 +525,22 @@ NSString* BindGroupLayout::errorValidatingDynamicOffsets(std::span<const uint32_
     return nil;
 }
 
-static bool NODELETE isEqual(const WGPUBufferBindingLayout& entry, const WGPUBufferBindingLayout& otherEntry)
+static bool NODELETE isEqual(const BindGroupLayout::BufferBindingLayout& entry, const BindGroupLayout::BufferBindingLayout& otherEntry)
 {
     if (entry.type > WGPUBufferBindingType_ReadOnlyStorage || otherEntry.type > WGPUBufferBindingType_ReadOnlyStorage)
         return true;
 
     return entry.type == otherEntry.type && entry.hasDynamicOffset == otherEntry.hasDynamicOffset && entry.minBindingSize == otherEntry.minBindingSize && entry.bufferSizeForBinding == otherEntry.bufferSizeForBinding;
 }
-static bool NODELETE isEqual(const WGPUSamplerBindingLayout& entry, const WGPUSamplerBindingLayout& otherEntry)
+static bool NODELETE isEqual(const BindGroupLayout::SamplerBindingLayout& entry, const BindGroupLayout::SamplerBindingLayout& otherEntry)
 {
     return entry.type == otherEntry.type;
 }
-static bool NODELETE isEqual(const WGPUTextureBindingLayout& entry, const WGPUTextureBindingLayout& otherEntry)
+static bool NODELETE isEqual(const BindGroupLayout::TextureBindingLayout& entry, const BindGroupLayout::TextureBindingLayout& otherEntry)
 {
     return entry.multisampled == otherEntry.multisampled && entry.sampleType == otherEntry.sampleType && entry.viewDimension == otherEntry.viewDimension;
 }
-static bool NODELETE isEqual(const WGPUStorageTextureBindingLayout& entry, const WGPUStorageTextureBindingLayout& otherEntry)
+static bool NODELETE isEqual(const BindGroupLayout::StorageTextureBindingLayout& entry, const BindGroupLayout::StorageTextureBindingLayout& otherEntry)
 {
     return entry.format == otherEntry.format && entry.access == otherEntry.access && entry.viewDimension == otherEntry.viewDimension;
 }
@@ -523,16 +556,16 @@ static bool NODELETE isEqual(const T* bindingLayoutPtr, const T& bindingLayout)
 
 bool BindGroupLayout::equalBindingEntries(const BindGroupLayout::Entry::BindingLayout& entry, const BindGroupLayout::Entry::BindingLayout& otherEntry)
 {
-    return WTF::switchOn(entry, [&](const WGPUBufferBindingLayout& bufferEntry) {
-        return isEqual(get_if<WGPUBufferBindingLayout>(&otherEntry), bufferEntry);
-    }, [&](const WGPUSamplerBindingLayout& samplerEntry) {
-        return isEqual(std::get_if<WGPUSamplerBindingLayout>(&otherEntry), samplerEntry);
-    }, [&](const WGPUTextureBindingLayout& textureEntry) {
-        return isEqual(std::get_if<WGPUTextureBindingLayout>(&otherEntry), textureEntry);
-    }, [&](const WGPUStorageTextureBindingLayout& storageEntry) {
-        return isEqual(std::get_if<WGPUStorageTextureBindingLayout>(&otherEntry), storageEntry);
-    }, [&](const WGPUExternalTextureBindingLayout&) {
-        return !!std::get_if<WGPUExternalTextureBindingLayout>(&otherEntry);
+    return WTF::switchOn(entry, [&](const BindGroupLayout::BufferBindingLayout& bufferEntry) {
+        return isEqual(get_if<BindGroupLayout::BufferBindingLayout>(&otherEntry), bufferEntry);
+    }, [&](const BindGroupLayout::SamplerBindingLayout& samplerEntry) {
+        return isEqual(std::get_if<BindGroupLayout::SamplerBindingLayout>(&otherEntry), samplerEntry);
+    }, [&](const BindGroupLayout::TextureBindingLayout& textureEntry) {
+        return isEqual(std::get_if<BindGroupLayout::TextureBindingLayout>(&otherEntry), textureEntry);
+    }, [&](const BindGroupLayout::StorageTextureBindingLayout& storageEntry) {
+        return isEqual(std::get_if<BindGroupLayout::StorageTextureBindingLayout>(&otherEntry), storageEntry);
+    }, [&](const BindGroupLayout::ExternalTextureBindingLayout&) {
+        return !!std::get_if<BindGroupLayout::ExternalTextureBindingLayout>(&otherEntry);
     });
 }
 

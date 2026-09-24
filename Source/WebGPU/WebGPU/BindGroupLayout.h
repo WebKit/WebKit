@@ -53,10 +53,30 @@ public:
     template <typename T>
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
     using ArgumentBufferIndices = ShaderStageArray<std::optional<uint32_t>>;
+    struct BufferBindingLayout {
+        WGPUBufferBindingType type { WGPUBufferBindingType_Undefined };
+        bool hasDynamicOffset { false };
+        uint64_t minBindingSize { 0 };
+        uint64_t bufferSizeForBinding { 0 };
+    };
+    struct SamplerBindingLayout {
+        WGPUSamplerBindingType type { WGPUSamplerBindingType_Undefined };
+    };
+    struct TextureBindingLayout {
+        WGPUTextureSampleType sampleType { WGPUTextureSampleType_Undefined };
+        WGPUTextureViewDimension viewDimension { WGPUTextureViewDimension_Undefined };
+        bool multisampled { false };
+    };
+    struct StorageTextureBindingLayout {
+        WGPUStorageTextureAccess access { WGPUStorageTextureAccess_Undefined };
+        WGPUTextureFormat format { WGPUTextureFormat_Undefined };
+        WGPUTextureViewDimension viewDimension { WGPUTextureViewDimension_Undefined };
+    };
+    struct ExternalTextureBindingLayout { };
     struct Entry {
         uint32_t binding;
         WGPUShaderStage visibility;
-        using BindingLayout = Variant<WGPUBufferBindingLayout, WGPUSamplerBindingLayout, WGPUTextureBindingLayout, WGPUStorageTextureBindingLayout, WGPUExternalTextureBindingLayout>;
+        using BindingLayout = Variant<BufferBindingLayout, SamplerBindingLayout, TextureBindingLayout, StorageTextureBindingLayout, ExternalTextureBindingLayout>;
         BindingLayout bindingLayout;
         ArgumentBufferIndices argumentBufferIndices;
         ArgumentBufferIndices bufferSizeArgumentBufferIndices;
@@ -104,6 +124,10 @@ public:
     static bool isPresent(const WGPUSamplerBindingLayout&);
     static bool isPresent(const WGPUTextureBindingLayout&);
     static bool isPresent(const WGPUStorageTextureBindingLayout&);
+    static BufferBindingLayout NODELETE bindingLayoutFromAPI(const WGPUBufferBindingLayout&);
+    static SamplerBindingLayout NODELETE bindingLayoutFromAPI(const WGPUSamplerBindingLayout&);
+    static TextureBindingLayout NODELETE bindingLayoutFromAPI(const WGPUTextureBindingLayout&);
+    static StorageTextureBindingLayout NODELETE bindingLayoutFromAPI(const WGPUStorageTextureBindingLayout&);
 
     const EntriesContainer& entries() const LIFETIME_BOUND { return m_bindGroupLayoutEntries; }
     const Vector<const Entry*> sortedEntries() const;

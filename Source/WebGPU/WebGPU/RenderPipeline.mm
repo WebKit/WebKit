@@ -923,34 +923,39 @@ static auto makeBindingLayout(WGPUBindGroupLayoutEntry& newEntry, auto& bindingM
 {
     using Result = BindGroupLayout::Entry::BindingLayout;
     return WTF::switchOn(bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) -> Result {
-        return newEntry.buffer = WGPUBufferBindingLayout {
+        newEntry.buffer = WGPUBufferBindingLayout {
             .type = (bufferTypeOverride != WGPUBufferBindingType_Undefined) ? bufferTypeOverride : convertBindingType(bufferBinding.type),
             .hasDynamicOffset = bufferBinding.hasDynamicOffset,
             .minBindingSize = bufferBinding.minBindingSize,
             .bufferSizeForBinding = bufferSizeForBinding,
         };
+        return BindGroupLayout::bindingLayoutFromAPI(newEntry.buffer);
     }, [&](const WGSL::SamplerBindingLayout& sampler) -> Result {
-        return newEntry.sampler = WGPUSamplerBindingLayout {
+        newEntry.sampler = WGPUSamplerBindingLayout {
             .type = convertSamplerBindingType(sampler.type)
         };
+        return BindGroupLayout::bindingLayoutFromAPI(newEntry.sampler);
     }, [&](const WGSL::TextureBindingLayout& texture) -> Result {
-        return newEntry.texture = WGPUTextureBindingLayout {
+        newEntry.texture = WGPUTextureBindingLayout {
             .sampleType = convertSampleType(texture.sampleType),
             .viewDimension = convertViewDimension(texture.viewDimension),
             .multisampled = texture.multisampled
         };
+        return BindGroupLayout::bindingLayoutFromAPI(newEntry.texture);
     }, [&](const WGSL::StorageTextureBindingLayout& storageTexture) -> Result {
-        return newEntry.storageTexture = WGPUStorageTextureBindingLayout {
+        newEntry.storageTexture = WGPUStorageTextureBindingLayout {
             .access = convertAccess(storageTexture.access),
             .format = convertFormat(storageTexture.format),
             .viewDimension = convertViewDimension(storageTexture.viewDimension)
         };
+        return BindGroupLayout::bindingLayoutFromAPI(newEntry.storageTexture);
     }, [&](const WGSL::ExternalTextureBindingLayout&) -> Result {
-        return newEntry.texture = WGPUTextureBindingLayout {
+        newEntry.texture = WGPUTextureBindingLayout {
             .sampleType = static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture),
             .viewDimension = WGPUTextureViewDimension_2D,
             .multisampled = false
         };
+        return BindGroupLayout::bindingLayoutFromAPI(newEntry.texture);
     });
 }
 
@@ -958,13 +963,13 @@ static BindGroupLayout::Entry::BindingLayout toBindingLayout(const WGPUBindGroup
 {
     BindGroupLayout::Entry::BindingLayout result;
     if (BindGroupLayout::isPresent(entry.buffer))
-        result = entry.buffer;
+        result = BindGroupLayout::bindingLayoutFromAPI(entry.buffer);
     else if (BindGroupLayout::isPresent(entry.sampler))
-        result = entry.sampler;
+        result = BindGroupLayout::bindingLayoutFromAPI(entry.sampler);
     else if (BindGroupLayout::isPresent(entry.texture))
-        result = entry.texture;
+        result = BindGroupLayout::bindingLayoutFromAPI(entry.texture);
     else if (BindGroupLayout::isPresent(entry.storageTexture))
-        result = entry.storageTexture;
+        result = BindGroupLayout::bindingLayoutFromAPI(entry.storageTexture);
 
     return result;
 }

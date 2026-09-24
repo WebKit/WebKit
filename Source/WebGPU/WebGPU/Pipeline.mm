@@ -344,7 +344,7 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
                 return [NSString stringWithFormat:@"Buffer size is missing for binding at index %u bind group", bindingIndex];
 
             uint64_t bufferSize = 0;
-            if (auto* bufferBinding = get_if<WGPUBufferBindingLayout>(&it->value.bindingLayout))
+            if (auto* bufferBinding = get_if<BindGroupLayout::BufferBindingLayout>(&it->value.bindingLayout))
                 bufferSize = bufferBinding->minBindingSize;
             if (mininumBufferSizes) {
                 if (auto bufferSizeIt = mininumBufferSizes->find(it->value.binding); bufferSizeIt != mininumBufferSizes->end()) {
