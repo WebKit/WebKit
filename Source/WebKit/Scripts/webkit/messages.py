@@ -2369,7 +2369,8 @@ def generate_swift_message_handler(receiver):
         if not generates_swift_trampoline(receiver, message):
             continue
 
-        parameters = ['connection: IPC.Connection']
+        connection_type = 'IPC.StreamServerConnection' if receiver.has_attribute(STREAM_ATTRIBUTE) else 'IPC.Connection'
+        parameters = ['connection: %s' % connection_type]
         arguments = ['connection: connection']
         for parameter in message.parameters:
             parameters.append('%s: %s' % (parameter.name, swift_type_name(parameter.type)))

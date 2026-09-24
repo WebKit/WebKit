@@ -37,7 +37,7 @@ final class TestWithStreamSwiftWeakRef {
 
     @used
     func dispatchSendString(
-        connection: IPC.Connection,
+        connection: IPC.StreamServerConnection,
         url: WTF.String
     ) {
         guard let target else {
@@ -57,7 +57,7 @@ final class TestWithStreamSwiftWeakRef {
 
     @used
     func dispatchSendStringSync(
-        connection: IPC.Connection,
+        connection: IPC.StreamServerConnection,
         url: WTF.String,
         completionHandler: CompletionHandlers.TestWithStreamSwift.SendStringSyncCompletionHandler
     ) {

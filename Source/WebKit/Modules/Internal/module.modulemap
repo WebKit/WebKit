@@ -321,6 +321,12 @@ module WebKit_Internal [system] {
         requires objc
     }
 
+    module StreamServerConnection {
+        requires cplusplus20
+        header "../../Platform/IPC/StreamServerConnection.h"
+        export *
+    }
+
     module TransferString {
         requires cplusplus23
         header "../../Platform/IPC/TransferString.h"

@@ -50,6 +50,7 @@
 // relevant headers must be included here. rdar://165068038
 #include "APIArray.h"
 #include "IPCTesterReceiverMessages.h"
+#include "StreamServerConnection.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListMessages.h"
 #include "WebBackForwardListSwiftUtilities.h"

@@ -92,6 +92,10 @@ func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.Connection) 
     connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
 }
 
+func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.StreamServerConnection) {
+    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
+}
+
 private func logFailedMessageCheck(
     _ reason: StaticString,
     function: StaticString,

@@ -174,8 +174,8 @@ void callMemberFunction(T* object, MF U::* function, Connection& connection, Arg
         }, std::forward<ArgsTuple>(tuple));
 }
 
-template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
-void callMemberFunction(T* object, MF U::* function, Connection* connection, ArgsTuple&& tuple, WTF::RefCountable<WTF::CompletionHandler<CH>>* completionHandler)
+template<typename T, typename U, typename MF, typename ArgsTuple, typename CT, typename CH>
+void callMemberFunction(T* object, MF U::* function, CT connection, ArgsTuple&& tuple, WTF::RefCountable<WTF::CompletionHandler<CH>>* completionHandler)
 {
     std::apply(
         [&](auto&&... args) {
@@ -365,6 +365,16 @@ struct MethodSignatureValidationImpl<std::tuple<Connection*, MessageArgumentType
 };
 
 template<typename... MessageArgumentTypes>
+struct MethodSignatureValidationImpl<std::tuple<StreamServerConnection*, MessageArgumentTypes...>, std::tuple<>>
+: MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsConnectionArgument = true;
+    static StreamServerConnection* makeConnectionArgument(StreamServerConnection& connection)
+    {
+        return &connection;
+    }
+};
+
+template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     static constexpr bool expectsConnectionArgument = false;
     using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
@@ -520,8 +530,13 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
         connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
     }));
 
-    callMemberFunction(object, function, WTF::move(*arguments),
-        ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+    if constexpr (ValidationType::expectsConnectionArgument) {
+        SUPPRESS_UNCOUNTED_ARG callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments),
+            ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+    } else {
+        callMemberFunction(object, function, WTF::move(*arguments),
+            ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+    }
 }
 
 template<typename MessageType, typename C, typename T, typename U, typename MF>
