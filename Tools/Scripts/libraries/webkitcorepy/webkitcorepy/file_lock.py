@@ -65,10 +65,13 @@ class FileLock(object):
             raise RuntimeError('Cannot re-enter acquired FileLock')
 
         if not self.USE_EXLOCK and not self.USE_WINDOWS and os.path.exists(self.path):
-            with open(self.path) as file:
-                pid = file.readline().strip()
-            if self.INTEGER_RE.match(pid) and not self.is_process_running(int(pid)):
-                os.unlink(self.path)
+            try:
+                with open(self.path) as file:
+                    pid = file.readline().strip()
+                if self.INTEGER_RE.match(pid) and not self.is_process_running(int(pid)):
+                    os.unlink(self.path)
+            except FileNotFoundError:  # Protect from another racing Lock already cleaning up the stale lock
+                pass
 
         if self.USE_EXLOCK and self.timeout:
             with Timeout(
