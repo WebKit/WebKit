@@ -6020,6 +6020,13 @@ public:
         m_assembler.movq_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
+    void load64(ExtendedAddress address, RegisterID dest)
+    {
+        TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
+        move(addr, scratchRegister());
+        load64(BaseIndex(scratchRegister(), address.base, TimesEight), dest);
+    }
+
     void load64(const void* address, RegisterID dest)
     {
         if (dest == X86Registers::eax)

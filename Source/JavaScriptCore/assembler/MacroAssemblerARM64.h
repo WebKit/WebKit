@@ -1851,6 +1851,14 @@ public:
         m_assembler.ldr<64>(dest, address.base, memoryTempRegister);
     }
 
+    void load64(ExtendedAddress address, RegisterID dest)
+    {
+        moveToCachedReg(TrustedImmPtr(reinterpret_cast<void*>(address.offset)), cachedMemoryTempRegister());
+        m_assembler.ldr<64>(dest, memoryTempRegister, address.base, Assembler::UXTX, 3);
+        if (dest == memoryTempRegister)
+            cachedMemoryTempRegister().invalidate();
+    }
+
     void load64(const void* address, RegisterID dest)
     {
         load<64>(address, dest);

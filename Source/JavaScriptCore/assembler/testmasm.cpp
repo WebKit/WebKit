@@ -975,6 +975,21 @@ void testStore64Imm64AddressPointer()
     doTest(0xAAAA432198765555);
 }
 
+void testLoad64ExtendedAddress()
+{
+    static constexpr std::array<uint64_t, 5> table { 0x0123456789abcdefULL, 0xfedcba9876543210ULL, 0xffffffffffffffffULL, 0, 0x8000000000000001ULL };
+
+    auto test = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.load64(CCallHelpers::ExtendedAddress(GPRInfo::argumentGPR0, std::bit_cast<intptr_t>(table.data())), GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (size_t i = 0; i < table.size(); ++i)
+        CHECK_EQ(invoke<uint64_t>(test, i), table[i]);
+}
+
 void testAdd32Imm()
 {
     for (auto immediate : int32Operands()) {
@@ -8530,6 +8545,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testCountTrailingZeros64WithoutNullCheck());
     RUN(testShiftAndAdd());
     RUN(testStore64Imm64AddressPointer());
+    RUN(testLoad64ExtendedAddress());
 
     RUN(testAdd32Imm());
     RUN(testAdd32ArgImm());

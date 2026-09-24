@@ -1205,6 +1205,84 @@ class YarrGenerator final : public YarrJITInfo {
         matchCharacterClassMatchesAndRanges(character, scratch, matchTargets, charClass);
     }
 
+    void matchCharacterClassRangeOrSet(MacroAssembler::RegisterID character, MacroAssembler::RegisterID scratch, MacroAssembler::JumpList& matchDest, std::span<const CharacterRange> ranges, std::span<const char32_t> matches)
+    {
+        if (ranges.empty()) {
+            matchCharacterClassSet(character, scratch, matchDest, matches);
+            return;
+        }
+
+        MacroAssembler::JumpList failures;
+        bool shouldGenerateFailureJump = false;
+        matchCharacterClassRange(character, scratch, failures, matchDest, ranges, matches, shouldGenerateFailureJump, /* isTopLevel */ true);
+        failures.link(&m_jit);
+    }
+
+    static constexpr unsigned minimumCharacterClassSizeForBitTable = 128;
+
+    const CharacterClassBitTable* bitTableFor(const CharacterClass* charClass)
+    {
+        if (m_charSize == CharSize::Char8 || !m_codeBlock)
+            return nullptr;
+
+        size_t coveredEntries = charClass->m_matches8.size() + charClass->m_ranges8.size();
+        coveredEntries += std::ranges::lower_bound(charClass->m_matches32, CharacterClassBitTable::maxLimit) - charClass->m_matches32.begin();
+        coveredEntries += std::ranges::lower_bound(charClass->m_ranges32, CharacterClassBitTable::maxLimit, { }, &CharacterRange::begin) - charClass->m_ranges32.begin();
+        if (coveredEntries < minimumCharacterClassSizeForBitTable)
+            return nullptr;
+
+        // FIXME: Share the tables of Unicode properties between RegExps.
+        return &m_codeBlock->addCharacterClassBitTable(*charClass);
+    }
+
+    MacroAssembler::Jump branchTestBitOfWord(MacroAssembler::ResultCondition condition, MacroAssembler::RegisterID word, MacroAssembler::RegisterID bitIndex)
+    {
+#if CPU(X86_64)
+        return m_jit.branchTestBit64(condition, word, bitIndex);
+#else
+        m_jit.urshift64(word, bitIndex, word);
+        return m_jit.branchTest64(condition, word, MacroAssembler::TrustedImm32(1));
+#endif
+    }
+
+    void matchCharacterClassBitTable(MacroAssembler::RegisterID character, MacroAssembler::RegisterID scratch, MatchTargets matchTargets, const CharacterClass* charClass, const CharacterClassBitTable& bitTable)
+    {
+        char32_t limit = bitTable.limit();
+        std::span<const char32_t> matchesAboveTable = charClass->m_matches32.span();
+        matchesAboveTable = matchesAboveTable.subspan(std::ranges::lower_bound(matchesAboveTable, limit) - matchesAboveTable.begin());
+        std::span<const CharacterRange> rangesAboveTable = charClass->m_ranges32.span();
+        rangesAboveTable = rangesAboveTable.subspan(std::ranges::lower_bound(rangesAboveTable, limit, { }, &CharacterRange::end) - rangesAboveTable.begin());
+        bool hasEntriesAboveTable = m_decodeSurrogatePairs && (!matchesAboveTable.empty() || !rangesAboveTable.empty());
+
+        m_jit.urshift32(character, MacroAssembler::TrustedImm32(CharacterClassBitTable::wordShift), scratch);
+        MacroAssembler::Jump aboveTable;
+        if (m_decodeSurrogatePairs || limit <= 0xffff)
+            aboveTable = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch, MacroAssembler::TrustedImm32(limit >> CharacterClassBitTable::wordShift));
+        m_jit.load16(MacroAssembler::ExtendedAddress(scratch, std::bit_cast<intptr_t>(bitTable.wordIndices().data())), scratch);
+        m_jit.load64(MacroAssembler::ExtendedAddress(scratch, std::bit_cast<intptr_t>(bitTable.words().data())), scratch);
+
+        if (!hasEntriesAboveTable && matchTargets.hasFailedTarget()) {
+            matchTargets.appendFailed(aboveTable);
+            matchTargets.appendFailed(branchTestBitOfWord(MacroAssembler::Zero, scratch, character));
+            return;
+        }
+
+        matchTargets.appendSucceeded(branchTestBitOfWord(MacroAssembler::NonZero, scratch, character));
+        if (!hasEntriesAboveTable) {
+            if (aboveTable.isSet())
+                aboveTable.link(&m_jit);
+            return;
+        }
+
+        MacroAssembler::Jump notInTable = m_jit.jump();
+        aboveTable.link(&m_jit);
+        matchCharacterClassRangeOrSet(character, scratch, matchTargets.matchSucceeded(), rangesAboveTable, matchesAboveTable);
+        if (matchTargets.hasFailedTarget())
+            matchTargets.appendFailed(notInTable);
+        else
+            notInTable.link(&m_jit);
+    }
+
     void matchCharacterClassMatchesAndRanges(MacroAssembler::RegisterID character, MacroAssembler::RegisterID scratch, MatchTargets matchTargets, const CharacterClass* charClass)
     {
         if (charClass->m_latin1Table) {
@@ -1229,6 +1307,11 @@ class YarrGenerator final : public YarrJITInfo {
                     isHigh.link(&m_jit);
                 return;
             }
+        }
+
+        if (const CharacterClassBitTable* bitTable = bitTableFor(charClass)) {
+            matchCharacterClassBitTable(character, scratch, matchTargets, charClass, *bitTable);
+            return;
         }
 
         Vector<char32_t, 32> unifiedMatches;
@@ -1262,13 +1345,7 @@ class YarrGenerator final : public YarrJITInfo {
             return;
         }
 
-        if (unifiedRanges.size()) {
-            MacroAssembler::JumpList failures;
-            bool shouldGenerateFailureJump = false;
-            matchCharacterClassRange(character, scratch, failures, matchTargets.matchSucceeded(), unifiedRanges.span(), unifiedMatches.span(), shouldGenerateFailureJump, true);
-            failures.link(&m_jit);
-        } else if (unifiedMatches.size())
-            matchCharacterClassSet(character, scratch, matchTargets.matchSucceeded(), unifiedMatches.span());
+        matchCharacterClassRangeOrSet(character, scratch, matchTargets.matchSucceeded(), unifiedRanges.span(), unifiedMatches.span());
     }
 
     void matchCharacterClassTermInner(PatternTerm* term, MacroAssembler::JumpList& failures, const MacroAssembler::RegisterID character, const MacroAssembler::RegisterID scratch)
