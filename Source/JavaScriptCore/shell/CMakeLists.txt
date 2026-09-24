@@ -116,6 +116,7 @@ if (DEVELOPER_MODE)
             ../corpse/tests/CorpseSnapshotTest.cpp
             ../corpse/tests/CorpseSymbolTest.cpp
             ../corpse/tests/CorpseThreadTest.cpp
+            ../corpse/tests/CorpseVMTest.cpp
             ../corpse/tests/LibJSCToolsTestUtilities.cpp
             ../corpse/tests/testLibJSCTools.cpp
         )

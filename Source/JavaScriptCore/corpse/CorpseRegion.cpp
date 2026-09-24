@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +29,14 @@
 
 #if ENABLE(MYA)
 
+#if OS(DARWIN)
 #include <mach/mach_vm.h>
+#endif
 
 namespace JSC {
 namespace Corpse {
+
+#if OS(DARWIN)
 
 uint64_t Region::pageCount() const
 {
@@ -46,7 +51,7 @@ std::optional<Region> Region::findContaining(mach_port_t task, Address address)
     mach_vm_size_t regionSize = 0;
     vm_region_submap_info_data_64_t info;
     for (natural_t depth = 0; ; ++depth) {
-        regionAddress = address.toMachVMAddress();
+        regionAddress = address.toTargetVMAddress();
         regionSize = 0;
         natural_t depthLimit = depth; // We tell the kernel how deep we want to go. Kernel tells us how deep it can go.
         mach_msg_type_number_t infoCount = VM_REGION_SUBMAP_INFO_COUNT_64;
@@ -68,6 +73,14 @@ std::optional<Region> Region::findContaining(mach_port_t task, Address address)
     region.m_dirtyPageCount = info.pages_dirtied;
     return region;
 }
+
+#else
+
+uint64_t Region::pageCount() const { return 0; }
+
+std::optional<Region> Region::findContaining(TaskHandle, Address) { return std::nullopt; }
+
+#endif // OS(DARWIN)
 
 } // namespace Corpse
 } // namespace JSC
