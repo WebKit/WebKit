@@ -73,12 +73,8 @@ void Serialize<RelativeAlphaColor>::operator()(StringBuilder& builder, const Ser
 {
     builder.append("alpha(from "_s);
     serializationForCSS(builder, context, value.origin);
-
-    if (value.alpha) {
-        builder.append(" / "_s);
-        serializationForCSS(builder, context, *value.alpha);
-    }
-
+    builder.append(" / "_s);
+    serializationForCSS(builder, context, value.alpha);
     builder.append(')');
 }
 

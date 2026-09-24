@@ -59,10 +59,6 @@ WebCore::Color resolve(const RelativeAlphaColorResolver& resolver, const CSSToLe
     using Descriptor = RelativeAlphaColor::Descriptor;
 
     auto origin = convertToRelativeAlphaResultRepresentation(resolver.origin);
-
-    if (!resolver.alpha)
-        return convertToRelativeAlphaResultRepresentation(origin);
-
     auto originAlphaUnresolved = origin.unresolvedAlphaAsFloat();
 
     const CSSCalcSymbolTable constantSymbolTable {
@@ -70,7 +66,7 @@ WebCore::Color resolve(const RelativeAlphaColorResolver& resolver, const CSSToLe
     };
 
     // Replace symbol value (e.g. CSSValueAlpha) to its corresponding value.
-    auto componentWithUnevaluatedCalc = replaceSymbol(*resolver.alpha, constantSymbolTable);
+    auto componentWithUnevaluatedCalc = replaceSymbol(resolver.alpha, constantSymbolTable);
 
     auto originAlphaResolved = origin.alphaAsFloat();
 
@@ -95,10 +91,6 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeAlphaColorResolver&
     using Descriptor = RelativeAlphaColor::Descriptor;
 
     auto origin = convertToRelativeAlphaResultRepresentation(resolver.origin);
-
-    if (!resolver.alpha)
-        return origin;
-
     auto originAlphaUnresolved = origin.unresolvedAlphaAsFloat();
 
     const CSSCalcSymbolTable constantSymbolTable {
@@ -106,7 +98,7 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeAlphaColorResolver&
     };
 
     // Replace any symbol value (e.g. CSSValueAlpha) with its corresponding value.
-    auto componentWithUnevaluatedCalc = replaceSymbol(*resolver.alpha, constantSymbolTable);
+    auto componentWithUnevaluatedCalc = replaceSymbol(resolver.alpha, constantSymbolTable);
 
     auto originAlphaResolved = origin.alphaAsFloat();
 

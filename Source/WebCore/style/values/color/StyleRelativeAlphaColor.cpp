@@ -96,12 +96,8 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
 {
     builder.append("alpha(from "_s);
     serializationForCSSTokenization(builder, context, value.origin);
-
-    if (value.alpha) {
-        builder.append(" / "_s);
-        CSS::serializationForCSS(builder, context, *value.alpha);
-    }
-
+    builder.append(" / "_s);
+    CSS::serializationForCSS(builder, context, value.alpha);
     builder.append(')');
 }
 
@@ -116,11 +112,7 @@ WTF::String serializationForCSSTokenization(const CSS::SerializationContext& con
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const RelativeAlphaColor& value)
 {
-    return ts << "alpha(from "_s << value.origin;
-    if (value.alpha)
-        ts << " / "_s << *value.alpha;
-    ts << ")"_s;
-    return ts;
+    return ts << "alpha(from "_s << value.origin << " / "_s << value.alpha << ")"_s;
 }
 
 } // namespace Style

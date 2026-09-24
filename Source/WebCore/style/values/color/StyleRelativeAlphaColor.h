@@ -48,7 +48,7 @@ struct RelativeAlphaColor {
     using Alpha = GetCSSColorParseTypeWithCalcAndSymbolsComponentResult<Descriptor, 0>;
 
     Color origin;
-    std::optional<Alpha> alpha;
+    Alpha alpha;
 
     bool operator==(const RelativeAlphaColor&) const = default;
 };

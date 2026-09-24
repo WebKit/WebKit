@@ -35,7 +35,7 @@ namespace CSS {
 
 struct RelativeAlphaColorResolver {
     WebCore::Color origin;
-    std::optional<RelativeAlphaColor::Alpha> alpha;
+    RelativeAlphaColor::Alpha alpha;
 };
 
 WebCore::Color resolve(const RelativeAlphaColorResolver&, const CSSToLengthConversionData&);

@@ -668,7 +668,7 @@ static std::optional<CSS::Color> consumeLightDarkFunction(CSSParserTokenRange& r
 
 static std::optional<CSS::Color> consumeRelativeAlphaColorFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
-    // alpha() = alpha([from <color>] [ / [<alpha-value> | none] ]? )
+    // alpha() = alpha([from <color>] / [<alpha-value> | none] )
     // https://drafts.csswg.org/css-color-5/#relative-alpha
 
     ASSERT(range.peek().functionId() == CSSValueAlpha);
@@ -683,15 +683,6 @@ static std::optional<CSS::Color> consumeRelativeAlphaColorFunction(CSSParserToke
     auto originColor = consumeColor(args, state);
     if (!originColor)
         return { };
-
-    if (args.atEnd()) {
-        return CSS::Color {
-            CSS::RelativeAlphaColor {
-                .origin = WTF::move(*originColor),
-                .alpha = std::nullopt,
-            }
-        };
-    }
 
     if (!consumeSlashIncludingWhitespace(args))
         return std::nullopt;
