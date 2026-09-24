@@ -257,6 +257,60 @@ void testCheckTrue()
     CHECK_EQ(invoke<int>(*code), 42);
 }
 
+void testCheckTrueBeforeTerminalWithResult()
+{
+    Procedure proc;
+    if (proc.optLevel() < 1)
+        return;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* success = proc.addBlock();
+    BasicBlock* slowPath = proc.addBlock();
+
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(), root->appendNew<Const32Value>(proc, Origin(), 1));
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+    bool terminalWasGenerated = false;
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->effects.terminal = true;
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            terminalWasGenerated = true;
+            jit.move(CCallHelpers::TrustedImm32(1), params[0].gpr());
+            CCallHelpers::Jump jumpToSuccess;
+            if (!params.fallsThroughToSuccessor(0))
+                jumpToSuccess = jit.jump();
+            Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
+            params.addLatePath(
+                [=] (CCallHelpers& jit) {
+                    if (jumpToSuccess.isSet())
+                        jumpToSuccess.linkTo(*labels[0], &jit);
+                });
+        });
+    root->appendSuccessor(success);
+    root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
+
+    success->appendNewControlValue(
+        proc, Return, Origin(),
+        success->appendNew<Value>(
+            proc, Add, Origin(), patchpoint, success->appendNew<Const32Value>(proc, Origin(), 0)));
+
+    slowPath->appendNewControlValue(
+        proc, Return, Origin(), slowPath->appendNew<Const32Value>(proc, Origin(), 666));
+
+    auto code = compileProc(proc);
+
+    CHECK(!terminalWasGenerated);
+    CHECK_EQ(invoke<int>(*code), 42);
+}
+
 void testCheckLessThan()
 {
     Procedure proc;
@@ -2908,6 +2962,47 @@ void testSwitchTargettingSameBlockFoldPathConstant()
         int32_t expected = (i == 3 || i == 13) ? i : 42;
         CHECK_EQ(invoke<int32_t>(*code, i), expected);
     }
+}
+
+void testSwitchOnConstant(int64_t key, bool is64Bit)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    BasicBlock* fallThrough = proc.addBlock();
+    fallThrough->appendNewControlValue(
+        proc, Return, Origin(),
+        fallThrough->appendNew<Const32Value>(proc, Origin(), 5));
+
+    Value* condition;
+    if (is64Bit)
+        condition = root->appendNew<Const64Value>(proc, Origin(), key);
+    else
+        condition = root->appendNew<Const32Value>(proc, Origin(), static_cast<int32_t>(key));
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), condition);
+    switchValue->setFallThrough(FrequentedBlock(fallThrough));
+
+    BasicBlock* shared = proc.addBlock();
+    shared->appendNewControlValue(
+        proc, Return, Origin(),
+        shared->appendNew<Const32Value>(proc, Origin(), 42));
+    switchValue->appendCase(SwitchCase(3, FrequentedBlock(shared)));
+    switchValue->appendCase(SwitchCase(13, FrequentedBlock(shared)));
+
+    BasicBlock* negative = proc.addBlock();
+    negative->appendNewControlValue(
+        proc, Return, Origin(),
+        negative->appendNew<Const32Value>(proc, Origin(), 7));
+    switchValue->appendCase(SwitchCase(-1, FrequentedBlock(negative)));
+
+    auto code = compileProc(proc);
+
+    int32_t expected = 5;
+    if (key == 3 || key == 13)
+        expected = 42;
+    else if (key == -1)
+        expected = 7;
+    CHECK_EQ(invoke<int32_t>(*code), expected);
 }
 
 void testSwitchSparseI64RangeOverflow()

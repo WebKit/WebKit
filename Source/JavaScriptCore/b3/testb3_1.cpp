@@ -784,6 +784,7 @@ void run(const TestConfig* config)
     RUN(testSimpleCheck());
     RUN(testCheckFalse());
     RUN(testCheckTrue());
+    RUN(testCheckTrueBeforeTerminalWithResult());
     RUN(testCheckLessThan());
     RUN(testCheckMegaCombo());
     RUN(testCheckTrickyMegaCombo());
@@ -917,6 +918,13 @@ void run(const TestConfig* config)
 
     RUN(testSwitchTargettingSameBlock());
     RUN(testSwitchTargettingSameBlockFoldPathConstant());
+    for (bool is64Bit : { false, true }) {
+        RUN(testSwitchOnConstant(3, is64Bit));
+        RUN(testSwitchOnConstant(13, is64Bit));
+        RUN(testSwitchOnConstant(-1, is64Bit));
+        RUN(testSwitchOnConstant(0, is64Bit));
+    }
+    RUN(testSwitchOnConstant(1ll << 40, true));
     RUN(testSwitchSparseI64RangeOverflow());
 
     RUN(testTrunc(0));

@@ -40,6 +40,7 @@
 #include "B3PhiChildren.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
+#include "B3SwitchValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
 #include "B3WasmArrayLengthValue.h"
@@ -3223,11 +3224,15 @@ private:
 
                 patchpoint->setGenerator(checkValue->generator());
 
-                // Replace the rest of the block with an Oops.
-                for (unsigned i = m_index + 1; i < m_block->size() - 1; ++i)
+                // Replace the rest of the block with an Oops. The terminal becomes a Bottom rather
+                // than the Oops itself because it may produce a value (e.g. a Patchpoint with a
+                // slow path successor) that successors, not yet pruned, still use.
+                for (unsigned i = m_index + 1; i < m_block->size(); ++i)
                     m_block->at(i)->replaceWithBottom(m_insertionSet, m_index);
-                m_block->last()->replaceWithOops(m_block);
-                m_block->last()->setOrigin(checkValue->origin());
+                m_insertionSet.insert<Value>(m_block->size(), Oops, checkValue->origin());
+                for (BasicBlock* successor : m_block->successorBlocks())
+                    successor->removePredecessor(m_block);
+                m_block->clearSuccessors();
 
                 // Replace ourselves last.
                 checkValue->replaceWithNop();
@@ -3313,6 +3318,29 @@ private:
                     m_changedCFG = true;
                 }
             }
+            break;
+        }
+
+        case Switch: {
+            // Turn this: Switch(constant, ...)
+            // Into this: Jump(the matching case, or the fall-through)
+            if (!m_value->child(0)->hasInt())
+                break;
+            SwitchValue* switchValue = m_value->as<SwitchValue>();
+            int64_t key = m_value->child(0)->asInt();
+            FrequentedBlock target = m_block->fallThrough();
+            for (unsigned i = 0; i < switchValue->numCaseValues(); ++i) {
+                if (switchValue->caseValue(i) == key) {
+                    target = m_block->successor(i);
+                    break;
+                }
+            }
+            for (BasicBlock* successor : m_block->successorBlocks()) {
+                if (successor != target.block())
+                    successor->removePredecessor(m_block);
+            }
+            m_value->replaceWithJump(m_block, target);
+            m_changedCFG = true;
             break;
         }
 

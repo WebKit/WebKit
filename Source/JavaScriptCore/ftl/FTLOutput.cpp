@@ -784,6 +784,11 @@ void Output::jump(LBasicBlock destination)
 
 void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight)
 {
+    if (condition->hasInt()) {
+        jump(condition->asInt() ? taken : notTaken);
+        return;
+    }
+
     m_block->appendNewControlValue(
         m_proc, B3::Branch, origin(), condition,
         FrequentedBlock(taken, takenWeight.frequencyClass()),

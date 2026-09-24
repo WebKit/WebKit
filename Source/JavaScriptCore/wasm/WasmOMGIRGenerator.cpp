@@ -1144,6 +1144,9 @@ private:
     Vector<Value*> m_inlinedResultPhis;
 
     Vector<Variable*> m_locals;
+    // A local keeps its initial constant until the first write to it or the first loop, since a
+    // write can only reach an earlier read through a loop back edge.
+    Vector<Value*> m_localConstants;
 
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     FixedBitVector& m_directCallees; // Note this includes call targets from functions we inline.
@@ -1604,12 +1607,13 @@ auto OMGIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
 
     m_locals.appendUsingFunctor(count, [&](size_t) {
         Variable* local = m_proc.addVariable(toB3Type(type));
+        Value* initialValue;
         if (type.isV128())
-            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), v128_t { }, Origin()));
-        else {
-            auto val = isRefType(type) ? JSValue::encode(jsNull()) : 0;
-            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
-        }
+            initialValue = constant(toB3Type(type), v128_t { }, Origin());
+        else
+            initialValue = constant(toB3Type(type), isRefType(type) ? JSValue::encode(jsNull()) : 0, Origin());
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, initialValue);
+        m_localConstants.append(initialValue);
         return local;
     });
     return { };
@@ -1632,6 +1636,7 @@ auto OMGIRGenerator::addInlinedArguments(const RTT& functionSignature) -> Partia
 
         Variable* argumentVariable = m_proc.addVariable(type);
         m_locals[i] = argumentVariable;
+        m_localConstants[i] = value->isConstant() ? value : nullptr;
         m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), argumentVariable, value);
     }
 
@@ -1645,6 +1650,7 @@ auto OMGIRGenerator::addArguments(const RTT& signature) -> PartialResult
     WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(functionSignature->argumentCount()), "can't allocate memory for "_s, functionSignature->argumentCount(), " arguments"_s);
 
     m_locals.grow(functionSignature->argumentCount());
+    m_localConstants.fill(nullptr, functionSignature->argumentCount());
 
     if (m_inlineParent)
         return addInlinedArguments(signature);
@@ -1948,6 +1954,10 @@ auto OMGIRGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex
 auto OMGIRGenerator::getLocal(uint32_t index, ExpressionType& result) -> PartialResult
 {
     ASSERT(m_locals[index]);
+    if (Value* knownConstant = m_localConstants[index]) {
+        result = push(knownConstant);
+        return { };
+    }
     result = push(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), m_locals[index]));
     TRACE_VALUE(m_parser->typeOfLocal(index), get(result), "get_local ", index);
     return { };
@@ -2419,6 +2429,7 @@ void OMGIRGenerator::traceCF(Args&&... info)
 auto OMGIRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialResult
 {
     ASSERT(m_locals[index]);
+    m_localConstants[index] = nullptr;
     m_currentBlock->appendNew<VariableValue>(m_proc, B3::Set, origin(), m_locals[index], get(value));
     TRACE_VALUE(m_parser->typeOfLocal(index), get(value), "set_local ", index);
     return { };
@@ -2427,6 +2438,7 @@ auto OMGIRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialRe
 auto OMGIRGenerator::teeLocal(uint32_t index, ExpressionType value, ExpressionType& result) -> PartialResult
 {
     ASSERT(m_locals[index]);
+    m_localConstants[index] = nullptr;
     Value* input = get(value);
     m_currentBlock->appendNew<VariableValue>(m_proc, B3::Set, origin(), m_locals[index], input);
     result = push(input);
@@ -4463,7 +4475,12 @@ auto OMGIRGenerator::addExternConvertAny(ExpressionType reference, ExpressionTyp
 
 auto OMGIRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> PartialResult
 {
-    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), get(condition), get(nonZero), get(zero)));
+    Value* conditionValue = get(condition);
+    if (conditionValue->hasInt()) {
+        result = push(get(conditionValue->asInt() ? nonZero : zero));
+        return { };
+    }
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), conditionValue, get(nonZero), get(zero)));
     return { };
 }
 
@@ -4907,6 +4924,7 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpressi
 {
     auto enclosingStack = m_parser->expressionStack();
     TRACE_CF("LOOP: entering loop index: ", loopIndex, " signature: ", signature);
+    m_localConstants.fill(nullptr);
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
 
@@ -5022,10 +5040,17 @@ auto OMGIRGenerator::addIf(ExpressionType condition, BlockSignature&& signature,
         break;
     }
 
-    m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
-    m_currentBlock->setSuccessors(FrequentedBlock(taken, takenFrequency), FrequentedBlock(notTaken, notTakenFrequency));
-    taken->addPredecessor(m_currentBlock);
-    notTaken->addPredecessor(m_currentBlock);
+    Value* conditionValue = get(condition);
+    if (conditionValue->hasInt()) {
+        BasicBlock* target = conditionValue->asInt() ? taken : notTaken;
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target));
+        target->addPredecessor(m_currentBlock);
+    } else {
+        m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), conditionValue);
+        m_currentBlock->setSuccessors(FrequentedBlock(taken, takenFrequency), FrequentedBlock(notTaken, notTakenFrequency));
+        taken->addPredecessor(m_currentBlock);
+        notTaken->addPredecessor(m_currentBlock);
+    }
 
     m_currentBlock = taken;
     TRACE_CF("IF");
@@ -5528,6 +5553,10 @@ auto OMGIRGenerator::addReturn(const ControlData&, std::span<const TypedExpressi
 
 auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, std::span<const TypedExpression> returnValues) -> PartialResult
 {
+    Value* conditionValue = condition.isEmpty() ? nullptr : get(condition);
+    if (conditionValue && conditionValue->hasInt() && !conditionValue->asInt())
+        return { };
+
     unifyValuesWithBlock(returnValues, data);
 
     BasicBlock* target = data.targetBlockForBranch();
@@ -5548,16 +5577,21 @@ auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, std:
 
     TRACE_CF("BRANCH to ", *target);
 
-    if (!condition.isEmpty()) {
+    if (!conditionValue) {
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target, targetFrequency));
+        target->addPredecessor(m_currentBlock);
+    } else if (conditionValue->hasInt()) {
+        // The parser still treats the fall-through as reachable, so keep lowering it into a block with no predecessors.
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target));
+        target->addPredecessor(m_currentBlock);
+        m_currentBlock = m_proc.addBlock();
+    } else {
         BasicBlock* continuation = m_proc.addBlock();
-        m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
+        m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), conditionValue);
         m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency), FrequentedBlock(continuation, continuationFrequency));
         target->addPredecessor(m_currentBlock);
         continuation->addPredecessor(m_currentBlock);
         m_currentBlock = continuation;
-    } else {
-        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target, targetFrequency));
-        target->addPredecessor(m_currentBlock);
     }
 
     return { };
@@ -5589,11 +5623,21 @@ auto OMGIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlDat
 {
     TRACE_CF("SWITCH");
     UNUSED_PARAM(expressionStack);
+    Value* conditionValue = get(condition);
+    if (conditionValue->hasInt()) {
+        uint32_t index = static_cast<uint32_t>(conditionValue->asInt());
+        ControlData& target = index < targets.size() ? *targets[index] : defaultTarget;
+        unifyValuesWithBlock(expressionStack, target);
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target.targetBlockForBranch()));
+        target.targetBlockForBranch()->addPredecessor(m_currentBlock);
+        return { };
+    }
+
     for (size_t i = 0; i < targets.size(); ++i)
         unifyValuesWithBlock(expressionStack, *targets[i]);
     unifyValuesWithBlock(expressionStack, defaultTarget);
 
-    SwitchValue* switchValue = m_currentBlock->appendNew<SwitchValue>(m_proc, origin(), get(condition));
+    SwitchValue* switchValue = m_currentBlock->appendNew<SwitchValue>(m_proc, origin(), conditionValue);
     switchValue->setFallThrough(FrequentedBlock(defaultTarget.targetBlockForBranch()));
     for (size_t i = 0; i < targets.size(); ++i)
         switchValue->appendCase(SwitchCase(i, FrequentedBlock(targets[i]->targetBlockForBranch())));

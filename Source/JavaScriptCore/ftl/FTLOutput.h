@@ -433,6 +433,18 @@ public:
     template<typename VectorType>
     void switchInstruction(LValue value, const VectorType& cases, LBasicBlock fallThrough, Weight fallThroughWeight)
     {
+        if (value->hasInt()) {
+            LBasicBlock target = fallThrough;
+            for (const SwitchCase& switchCase : cases) {
+                if (switchCase.value()->asInt() == value->asInt()) {
+                    target = switchCase.target();
+                    break;
+                }
+            }
+            jump(target);
+            return;
+        }
+
         B3::SwitchValue* switchValue = m_block->appendNew<B3::SwitchValue>(m_proc, origin(), value);
         switchValue->setFallThrough(B3::FrequentedBlock(fallThrough));
         for (const SwitchCase& switchCase : cases) {
