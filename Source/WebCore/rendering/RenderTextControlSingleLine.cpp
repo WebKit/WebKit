@@ -233,7 +233,7 @@ void RenderTextControlSingleLine::layout()
             innerTextWidth = innerTextRenderer->logicalWidth();
         placeholderBox->mutableStyle().setWidth(Style::PreferredSize::Fixed { (innerTextWidth - placeholderBox->horizontalBorderAndPaddingExtent()) / usedZoomForLength });
         bool neededLayout = placeholderBox->needsLayout();
-        bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
+        bool placeholderBoxEverHadLayout = placeholderBox->everHadLayout();
         if (innerTextSizeChanged) {
             // The caps lock indicator was hidden. Layout the placeholder. Its layout does not affect its parent.
             placeholderBox->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
@@ -245,6 +245,7 @@ void RenderTextControlSingleLine::layout()
             placeholderTopLeft += toLayoutSize(innerBlockRenderer->location());
         if (innerTextRenderer)
             placeholderTopLeft += toLayoutSize(innerTextRenderer->location());
+        auto oldPlaceholderLocation = placeholderBox->location();
         placeholderBox->setLogicalLeft(placeholderTopLeft.x());
         // Here the container box indicates the renderer that the placeholder content is aligned with (no parent and/or containing block relationship).
         auto* containerBox = innerTextRenderer ? innerTextRenderer.get() : innerBlockRenderer ? innerBlockRenderer : containerRenderer;
@@ -260,9 +261,8 @@ void RenderTextControlSingleLine::layout()
             auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderHeight() / 2);
             placeholderBox->setLogicalTop(logicalTop);
         }
-        if (!placeholderBoxHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
-            // This assumes a shadow tree without floats. If floats are added, the
-            // logic should be shared with RenderBlock::layoutBlockChild.
+        if (!placeholderBoxEverHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
+            // This assumes a shadow tree without floats. If floats are added, the logic should be shared with RenderBlock::layoutBlockChild.
             placeholderBox->repaint();
         }
         // The placeholder gets layout last, after the parent text control and its other children,
@@ -270,7 +270,8 @@ void RenderTextControlSingleLine::layout()
         if (neededLayout) {
             computeInFlowOverflow(flippedContentBoxRect());
             addOverflowFromOutOfFlowBoxes();
-        }
+        } else if (CheckedPtr placeholderLayer = placeholderBox->layer(); placeholderLayer && placeholderBox->location() != oldPlaceholderLocation)
+            placeholderLayer->setNeedsPositionUpdate();
     }
 
 #if PLATFORM(IOS_FAMILY)
