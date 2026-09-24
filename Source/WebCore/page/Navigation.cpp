@@ -888,14 +888,6 @@ bool Navigation::documentCanHaveURLRewritten(const Document& document, const URL
     if (documentURL.user() != targetURL.user() || documentURL.password() != targetURL.password())
         return false;
 
-    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#can-have-its-url-rewritten
-    if (documentURL.protocol() != targetURL.protocol()
-        || documentURL.user() != targetURL.user()
-        || documentURL.password() != targetURL.password()
-        || documentURL.host() != targetURL.host()
-        || documentURL.port() != targetURL.port())
-        return false;
-
     if (targetURL.protocolIsInHTTPFamily())
         return true;
 
