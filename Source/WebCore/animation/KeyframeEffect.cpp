@@ -2007,7 +2007,7 @@ bool KeyframeEffect::canBeAccelerated(AccountForTimelineAccelerationAbility acco
     if (m_isAssociatedWithProgressBasedTimeline)
         return false;
 
-#if USE(CA)
+#if USE(CA) || USE(GRAPHICS_LAYER_WC)
     if (m_someKeyframesUseStepsTimingFunction || is<StepsTimingFunction>(timingFunction()))
         return false;
 
