@@ -582,27 +582,23 @@ WI.DOMNode = class DOMNode extends WI.Object
         target.DOMAgent.removeAttribute(this.backendNodeId, name, mycallback.bind(this));
     }
 
-    toggleClass(className, flag)
+    async toggleClass(className, flag)
     {
         if (!className || !className.length)
             return;
 
-        if (this.isPseudoElement()) {
-            this.parentNode.toggleClass(className, flag);
-            return;
-        }
+        if (this.isPseudoElement())
+            return this.parentNode.toggleClass(className, flag);
 
         if (this.nodeType() !== Node.ELEMENT_NODE)
             return;
 
-        WI.RemoteObject.resolveNode(this).then((object) => {
-            function inspectedPage_node_toggleClass(className, flag) {
-                this.classList.toggle(className, flag);
-            }
+        using object = await WI.RemoteObject.resolveNode(this);
 
-            object.callFunction(inspectedPage_node_toggleClass, [className, flag]);
-            object.release();
-        });
+        function inspectedPage_node_toggleClass(className, flag) {
+            this.classList.toggle(className, flag);
+        }
+        await object.callFunction(inspectedPage_node_toggleClass, [className, flag]);
     }
 
     querySelector(selector, callback)
@@ -807,16 +803,14 @@ WI.DOMNode = class DOMNode extends WI.Object
             this.showLayoutOverlay({color});
     }
 
-    scrollIntoView()
+    async scrollIntoView()
     {
-        WI.RemoteObject.resolveNode(this).then((object) => {
-            function inspectedPage_node_scrollIntoView() {
-                this.scrollIntoViewIfNeeded(true);
-            }
+        using object = await WI.RemoteObject.resolveNode(this);
 
-            object.callFunction(inspectedPage_node_scrollIntoView);
-            object.release();
-        });
+        function inspectedPage_node_scrollIntoView() {
+            this.scrollIntoViewIfNeeded(true);
+        }
+        await object.callFunction(inspectedPage_node_scrollIntoView);
     }
 
     getChildNodes(callback)

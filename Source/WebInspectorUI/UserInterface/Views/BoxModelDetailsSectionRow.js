@@ -463,7 +463,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
         this._refresh();
     }
 
-    _applyUserInput(element, userInput, previousContent, context, commitEditor)
+    async _applyUserInput(element, userInput, previousContent, context, commitEditor)
     {
         if (commitEditor && userInput === previousContent) {
             // Nothing changed, so cancel.
@@ -510,20 +510,16 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
                 setBorderStyleProperty = borderStyleProperty;
         }
 
-        WI.RemoteObject.resolveNode(this._nodeStyles.node).then((object) => {
-            function inspectedPage_node_toggleInlineStyleProperty(styleProperty, userInput, setBorderStyleProperty) {
-                if (setBorderStyleProperty)
-                    this.style.setProperty(setBorderStyleProperty, "solid", "important");
-                this.style.setProperty(styleProperty, userInput, "important");
-            }
+        using object = await WI.RemoteObject.resolveNode(this._nodeStyles.node);
 
-            let didToggle = () => {
-                this._nodeStyles.refresh();
-            };
+        function inspectedPage_node_toggleInlineStyleProperty(styleProperty, userInput, setBorderStyleProperty) {
+            if (setBorderStyleProperty)
+                this.style.setProperty(setBorderStyleProperty, "solid", "important");
+            this.style.setProperty(styleProperty, userInput, "important");
+        }
+        await object.callFunction(inspectedPage_node_toggleInlineStyleProperty, [styleProperty, userInput, setBorderStyleProperty]);
 
-            object.callFunction(inspectedPage_node_toggleInlineStyleProperty, [styleProperty, userInput, setBorderStyleProperty], false, didToggle);
-            object.release();
-        });
+        this._nodeStyles.refresh();
     }
 
     _editingCommitted(element, userInput, previousContent, context)

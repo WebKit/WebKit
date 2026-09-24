@@ -1055,28 +1055,24 @@ WI.DOMManager = class DOMManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
     }
 
-    inspectNodeObject(remoteObject)
+    async inspectNodeObject(remoteObject)
     {
         this._restoreSelectedNodeIsAllowed = false;
 
-        function nodeAvailable(nodeId)
-        {
-            remoteObject.release();
+        let nodeId = await new Promise((resolve) => {
+            remoteObject.pushNodeToFrontend(resolve);
+        });
+        console.assert(nodeId);
+        if (!nodeId)
+            return;
 
-            console.assert(nodeId);
-            if (!nodeId)
-                return;
+        this.inspectElement(nodeId);
 
-            this.inspectElement(nodeId);
-
-            // Re-resolve the node in the console's object group when adding to the console.
-            let domNode = this.nodeForId(nodeId);
-            WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(WI.UIString("Selected Element"), remoteObject, {addSpecialUserLogClass: true});
-            });
-        }
-
-        remoteObject.pushNodeToFrontend(nodeAvailable.bind(this));
+        // Re-resolve the node in the console's object group when adding to the console.
+        let domNode = this.nodeForId(nodeId);
+        WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
+            WI.consoleLogViewController.appendImmediateExecutionWithResult(WI.UIString("Selected Element"), remoteObject, {addSpecialUserLogClass: true});
+        });
     }
 
     highlightDOMNodeList(nodes, mode)
