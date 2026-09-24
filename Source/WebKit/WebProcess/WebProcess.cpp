@@ -967,8 +967,7 @@ void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) con
 
 void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme)
 {
-    if (LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme) == LegacySchemeRegistry::SchemeRegisteredForTheFirstTime::No)
-        return;
+    LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
     protect(ensureNetworkProcessConnection())->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled({ urlScheme }), 0);
 }
 
