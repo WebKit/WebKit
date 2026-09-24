@@ -72,6 +72,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformPasteboard.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/PowerSourceNotifier.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
@@ -984,6 +985,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(PAL::currentUserInterfaceIdiom()));
         }];
     }
+
+    // FIXME: <https://webkit.org/b/324999> Remove use of deprecated UIScreen API.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    m_screenDidConnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidConnectNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        screenPropertiesChanged();
+    }];
+
+    m_screenDidDisconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidDisconnectNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        if (RetainPtr screen = dynamic_objc_cast<UIScreen>([notification object])) {
+#if HAVE(SUPPORT_HDR_DISPLAY)
+            m_currentEDRHeadrooms.remove(WebCore::displayID(screen.get()));
+#endif
+            WebCore::invalidateDisplayID(screen.get());
+        }
+        screenPropertiesChanged();
+    }];
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     m_finishedMobileAssetFontDownloadObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"FontActivateNotification" object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
@@ -1079,6 +1097,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_applicationLaunchObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_screenDidConnectObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_screenDidDisconnectObserver];
     auto notificationName = adoptNS([[NSString alloc] initWithCString:kGSEventHardwareKeyboardAvailabilityChangedNotification encoding:NSUTF8StringEncoding]);
     removeCFNotificationObserver((__bridge CFStringRef)notificationName.get());
 #endif
@@ -1490,12 +1510,23 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
 void WebProcessPool::didRefreshDisplay()
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    Ref screen = PlatformScreen::singleton();
-    float headroom = currentEDRHeadroomForDisplay(screen->primaryScreenDisplayID());
-    if (m_currentEDRHeadroom != headroom) {
-        m_currentEDRHeadroom = headroom;
-        screenPropertiesChanged();
+    bool headroomChanged = false;
+
+    // FIXME: <https://webkit.org/b/324999> Remove use of deprecated UIScreen API.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    for (UIScreen *screen in [UIScreen screens]) {
+    ALLOW_DEPRECATED_DECLARATIONS_END
+        float currentEDRHeadroom = [screen currentEDRHeadroom];
+        auto addResult = m_currentEDRHeadrooms.add(WebCore::displayID(screen), currentEDRHeadroom);
+        if (!addResult.isNewEntry && addResult.iterator->value == currentEDRHeadroom)
+            continue;
+
+        addResult.iterator->value = currentEDRHeadroom;
+        headroomChanged = true;
     }
+
+    if (headroomChanged)
+        screenPropertiesChanged();
 #endif
 }
 #endif

@@ -275,6 +275,7 @@
 #include <WebCore/PermissionDescriptor.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/PlatformEvent.h>
+#include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessSwapDisposition.h>
 #include <WebCore/PublicSuffixStore.h>
@@ -1710,8 +1711,8 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     finishAttachingToWebProcess(unusedSite, ProcessLaunchReason::ProcessSwap);
 
 #if PLATFORM(IOS_FAMILY)
-    // On iOS, the displayID is derived from the webPageID.
-    m_displayID = generateDisplayIDFromPageID();
+    RefPtr pageClient = this->pageClient();
+    SUPPRESS_FORWARD_DECL_ARG m_displayID = WebCore::displayID(pageClient ? pageClient->screen() : nullptr);
 
     std::optional<FramesPerSecond> nominalFramesPerSecond;
     if (m_drawingArea)

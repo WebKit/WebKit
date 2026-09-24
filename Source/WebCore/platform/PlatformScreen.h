@@ -162,6 +162,9 @@ WEBCORE_EXPORT FloatRect safeScreenFrame(NSScreen *);
 
 #if PLATFORM(IOS_FAMILY)
 
+WEBCORE_EXPORT PlatformDisplayID displayID(UIScreen *);
+WEBCORE_EXPORT void invalidateDisplayID(UIScreen *);
+
 float screenPPIFactor();
 WEBCORE_EXPORT FloatSize screenSize();
 WEBCORE_EXPORT FloatSize availableScreenSize();

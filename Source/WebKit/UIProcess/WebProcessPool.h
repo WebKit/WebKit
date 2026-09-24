@@ -867,7 +867,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && HAVE(SUPPORT_HDR_DISPLAY)
-    float m_currentEDRHeadroom { 1 };
+    HashMap<WebCore::PlatformDisplayID, float> m_currentEDRHeadrooms;
 #endif
 
 #if PLATFORM(COCOA)
@@ -1007,6 +1007,8 @@ private:
 #if !USE(EXTENSIONKIT)
     String m_cachedWebContentTempDirectory;
 #endif
+    RetainPtr<NSObject> m_screenDidConnectObserver;
+    RetainPtr<NSObject> m_screenDidDisconnectObserver;
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

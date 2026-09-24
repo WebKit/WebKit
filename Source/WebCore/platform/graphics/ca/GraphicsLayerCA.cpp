@@ -781,10 +781,14 @@ void GraphicsLayerCA::setTonemappingEnabled(bool tonemappingEnabled)
 
 void GraphicsLayerCA::setNeedsDisplayIfEDRHeadroomExceeds(float headroom)
 {
-    if (protect(m_layer)->setNeedsDisplayIfEDRHeadroomExceeds(headroom)) {
-        if (!!m_uncommittedChanges)
-            client().notifyFlushRequired(this);
-    }
+    if (beingDestroyed())
+        return;
+
+    if (!protect(m_layer)->setNeedsDisplayIfEDRHeadroomExceeds(headroom))
+        return;
+
+    if (!m_uncommittedChanges)
+        client().notifyFlushRequired(this);
 }
 #endif
 

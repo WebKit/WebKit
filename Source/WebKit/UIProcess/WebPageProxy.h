@@ -1634,10 +1634,6 @@ public:
     void windowScreenDidChange(WebCore::PlatformDisplayID);
     std::optional<WebCore::PlatformDisplayID> displayID() const { return m_displayID; }
 
-#if PLATFORM(IOS_FAMILY)
-    WebCore::PlatformDisplayID generateDisplayIDFromPageID() const;
-#endif
-
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
     bool useFixedLayout() const { return m_useFixedLayout; };

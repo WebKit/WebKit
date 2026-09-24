@@ -269,7 +269,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     page->setUseFixedLayout(true);
     page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 
-    page->windowScreenDidChange(page->generateDisplayIDFromPageID());
+    page->windowScreenDidChange(WebCore::displayID(self.window.screen));
 
 #if ENABLE(FULLSCREEN_API)
     page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(self.webView));
@@ -787,7 +787,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     _screen = screen;
 
     if (RefPtr page = _page)
-        page->windowScreenDidChange(page->generateDisplayIDFromPageID());
+        page->windowScreenDidChange(WebCore::displayID(screen));
 
     [self _accessibilityRegisterUIProcessTokens];
 }

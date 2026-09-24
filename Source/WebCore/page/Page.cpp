@@ -1882,6 +1882,10 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
         document.windowScreenDidChange(displayID);
     });
 
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    updateDisplayEDRHeadroom();
+#endif
+
     updateScreenSupportedContentsFormats();
 
 #if ENABLE(VIDEO)

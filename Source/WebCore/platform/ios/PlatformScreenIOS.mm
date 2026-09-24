@@ -42,11 +42,69 @@
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <pal/system/ios/Device.h>
+#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 
 namespace WebCore {
+
+static NSMapTable *screenToDisplayIDMap()
+{
+    static NeverDestroyed<RetainPtr<NSMapTable>> map { [NSMapTable mapTableWithKeyOptions:(NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality) valueOptions:NSPointerFunctionsStrongMemory] };
+    return map->get();
+}
+
+PlatformDisplayID displayID(UIScreen *screen)
+{
+    ASSERT(isMainThread());
+
+    if (!screen) {
+        screen = [PAL::getUIScreenClassSingleton() mainScreen];
+        if (!screen)
+            return 0;
+    }
+
+    RetainPtr protectedScreenToDisplayIDMap = screenToDisplayIDMap();
+
+    if (RetainPtr existing = dynamic_objc_cast<NSNumber>([protectedScreenToDisplayIDMap objectForKey:screen]))
+        return [existing unsignedIntValue];
+
+    static PlatformDisplayID nextDisplayID = 0;
+    auto result = ++nextDisplayID;
+
+    [protectedScreenToDisplayIDMap setObject:@(result) forKey:screen];
+    return result;
+}
+
+void invalidateDisplayID(UIScreen *screen)
+{
+    ASSERT(isMainThread());
+
+    if (!screen)
+        return;
+
+    [protect(screenToDisplayIDMap()) removeObjectForKey:screen];
+}
+
+static PlatformDisplayID displayID(Widget* widget)
+{
+    if (!widget)
+        return 0;
+
+    RefPtr view = widget->root();
+    if (!view)
+        return 0;
+
+    auto* hostWindow = view->hostWindow();
+    if (!hostWindow)
+        return 0;
+
+    return hostWindow->displayID();
+}
 
 int screenDepth(Widget*)
 {
@@ -91,7 +149,7 @@ OptionSet<ContentsFormat> screenContentsFormats(Widget* widget)
     return contentsFormats;
 }
 
-bool screenSupportsExtendedColor(Widget*)
+bool screenSupportsExtendedColor(Widget* widget)
 {
     Ref screen = PlatformScreen::singleton();
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGB10)
@@ -99,13 +157,18 @@ bool screenSupportsExtendedColor(Widget*)
         return true;
 #endif
 
-    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
+    if (auto data = screen->screenData(displayID(widget)))
         return data->screenSupportsExtendedColor;
 
     return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
 }
 
-bool screenSupportsHighDynamicRange(Widget*)
+bool screenSupportsHighDynamicRange(Widget* widget)
+{
+    return screenSupportsHighDynamicRange(displayID(widget));
+}
+
+bool screenSupportsHighDynamicRange(PlatformDisplayID displayID)
 {
     Ref screen = PlatformScreen::singleton();
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -113,7 +176,7 @@ bool screenSupportsHighDynamicRange(Widget*)
         return true;
 #endif
 
-    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
+    if (auto data = screen->screenData(displayID))
         return data->screenSupportsHighDynamicRange;
 
 #if USE(MEDIATOOLBOX) && HAVE(SUPPORT_HDR_DISPLAY)
@@ -123,34 +186,29 @@ bool screenSupportsHighDynamicRange(Widget*)
     return false;
 }
 
-bool screenSupportsHighDynamicRange(PlatformDisplayID)
-{
-    return screenSupportsHighDynamicRange(nullptr);
-}
-
 #if HAVE(SUPPORT_HDR_DISPLAY)
-float currentEDRHeadroomForDisplay(PlatformDisplayID)
+float currentEDRHeadroomForDisplay(PlatformDisplayID displayID)
 {
     Ref screen = PlatformScreen::singleton();
-    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
+    if (auto data = screen->screenData(displayID))
         return data->currentEDRHeadroom;
 
     return [[PAL::getUIScreenClassSingleton() mainScreen] currentEDRHeadroom];
 }
 
-float maxEDRHeadroomForDisplay(PlatformDisplayID)
+float maxEDRHeadroomForDisplay(PlatformDisplayID displayID)
 {
     Ref screen = PlatformScreen::singleton();
-    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
+    if (auto data = screen->screenData(displayID))
         return data->maxEDRHeadroom;
 
     return [[PAL::getUIScreenClassSingleton() mainScreen] potentialEDRHeadroom];
 }
 
-bool suppressEDRForDisplay(PlatformDisplayID)
+bool suppressEDRForDisplay(PlatformDisplayID displayID)
 {
     Ref screen = PlatformScreen::singleton();
-    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
+    if (auto data = screen->screenData(displayID))
         return data->suppressEDR;
 
     return false;
@@ -276,9 +334,7 @@ ScreenProperties collectScreenProperties()
 {
     ScreenProperties screenProperties;
 
-    // FIXME: This displayID doesn't match the synthetic displayIDs we use in iOS WebKit (see WebPageProxy::generateDisplayIDFromPageID()).
-    PlatformDisplayID displayID = 0;
-
+    // FIXME: <https://webkit.org/b/324999> Remove use of deprecated UIScreen API.
     for (UIScreen *screen in [PAL::getUIScreenClassSingleton() screens]) {
         ScreenData screenData;
 
@@ -299,10 +355,11 @@ ScreenProperties collectScreenProperties()
         screenData.currentEDRHeadroom = [screen currentEDRHeadroom];
 #endif
 
-        screenProperties.screenDataMap.set(++displayID, WTF::move(screenData));
+        auto currentDisplayID = displayID(screen);
+        screenProperties.screenDataMap.set(currentDisplayID, WTF::move(screenData));
 
         if (screen == [PAL::getUIScreenClassSingleton() mainScreen])
-            screenProperties.primaryDisplayID = displayID;
+            screenProperties.primaryDisplayID = currentDisplayID;
     }
 
     return screenProperties;
