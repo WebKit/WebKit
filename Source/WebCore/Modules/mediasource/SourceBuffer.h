@@ -177,7 +177,7 @@ private:
 
     // TextTrackClient
     void textTrackKindChanged(TextTrack&) final;
-    void textTrackModeChanged(TextTrack&) final;
+    void textTrackModeChanged(TextTrack&, TextTrack::ModeChangeType) final;
     void textTrackLanguageChanged(TextTrack&) final;
 
     // VideoTrackClient

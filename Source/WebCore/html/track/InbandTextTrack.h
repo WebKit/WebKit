@@ -49,7 +49,7 @@ public:
     bool isMainProgramContent() const override;
     bool isEasyToRead() const override;
     bool isMachineGenerated() const override;
-    void setMode(Mode) override;
+    void setMode(Mode, ModeChangeType) override;
     bool isDefault() const override;
     size_t inbandTrackIndex();
 

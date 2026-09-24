@@ -1210,7 +1210,7 @@ void SourceBuffer::audioTrackLanguageChanged(AudioTrack& track)
         audioTracks->scheduleChangeEvent();
 }
 
-void SourceBuffer::textTrackModeChanged(TextTrack& track)
+void SourceBuffer::textTrackModeChanged(TextTrack& track, TextTrack::ModeChangeType)
 {
     // 2.4.5 Changes to selected/enabled track state
     // If a text track mode becomes "disabled" and the SourceBuffer associated with this track is not

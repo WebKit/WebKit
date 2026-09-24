@@ -270,7 +270,7 @@ void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
     }
 }
 
-void TextTrack::setMode(Mode mode)
+void TextTrack::setMode(Mode mode, ModeChangeType changeType)
 {
     // On setting, if the new value isn't equal to what the attribute would currently
     // return, the new value must be processed as follows ...
@@ -294,8 +294,8 @@ void TextTrack::setMode(Mode mode)
 
     m_mode = mode;
 
-    m_clients.forEach([this](auto& client) {
-        client.textTrackModeChanged(*this);
+    m_clients.forEach([this, changeType](auto& client) {
+        client.textTrackModeChanged(*this, changeType);
     });
 }
 

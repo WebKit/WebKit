@@ -27,11 +27,11 @@
 
 #if ENABLE(VIDEO)
 
+#include <WebCore/TextTrack.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
-class TextTrack;
 class TextTrackCue;
 class TextTrackCueList;
 
@@ -40,7 +40,7 @@ public:
     virtual ~TextTrackClient() = default;
     virtual void textTrackIdChanged(TextTrack&) { }
     virtual void textTrackKindChanged(TextTrack&) { }
-    virtual void textTrackModeChanged(TextTrack&) { }
+    virtual void textTrackModeChanged(TextTrack&, TextTrack::ModeChangeType) { }
     virtual void textTrackLabelChanged(TextTrack&) { }
     virtual void textTrackLanguageChanged(TextTrack&) { }
     virtual void textTrackAddCues(TextTrack&, const TextTrackCueList&) { }

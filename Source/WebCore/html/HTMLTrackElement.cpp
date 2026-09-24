@@ -290,7 +290,7 @@ const AtomString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
     return nullAtom();
 }
 
-void HTMLTrackElement::textTrackModeChanged(TextTrack&)
+void HTMLTrackElement::textTrackModeChanged(TextTrack&, TextTrack::ModeChangeType)
 {
     // Since we've moved to a new parent, we may now be able to load.
     if (readyState() == HTMLTrackElement::NONE)

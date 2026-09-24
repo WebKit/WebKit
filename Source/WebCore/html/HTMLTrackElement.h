@@ -89,7 +89,7 @@ private:
     void eventListenersDidChange() final;
 
     // TextTrackClient
-    void textTrackModeChanged(TextTrack&) final;
+    void textTrackModeChanged(TextTrack&, TextTrack::ModeChangeType) final;
 
     bool canLoadURL(const URL&);
 

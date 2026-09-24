@@ -2706,7 +2706,7 @@ void HTMLMediaElement::willRemoveAudioTrack(AudioTrack& track)
     removeAudioTrack(track);
 }
 
-void HTMLMediaElement::textTrackModeChanged(TextTrack& track)
+void HTMLMediaElement::textTrackModeChanged(TextTrack& track, TextTrack::ModeChangeType changeType)
 {
     bool trackIsLoaded = true;
     if (track.trackType() == TextTrack::TrackElement) {
@@ -2724,7 +2724,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack& track)
     ensureTextTracks();
 
     // Mark this track as "configured" so configureTextTracks won't change the mode again.
-    track.setHasBeenConfigured(true);
+    track.setConfigurationState(changeType == TextTrack::ModeChangeType::AutomaticSelection ? TextTrack::ConfigurationState::ConfiguredAutomatically : TextTrack::ConfigurationState::ConfiguredByJavascript);
 
     // If the track's mode changed from disabled to showing / hidden, and the ready state
     // hasn't already advanced past HAVE_CURRENT_DATA, add it to the pending text tracks
@@ -5603,7 +5603,7 @@ void HTMLMediaElement::didRemoveTextTrack(HTMLTrackElement& trackElement)
 
     Ref textTrack = trackElement.track();
 
-    textTrack->setHasBeenConfigured(false);
+    textTrack->setConfigurationState(TextTrack::ConfigurationState::Unconfigured);
 
     if (!m_textTracks)
         return;
@@ -5732,13 +5732,18 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     if (currentlyEnabledTracks.size()) {
         for (size_t i = 0; i < currentlyEnabledTracks.size(); ++i) {
             Ref textTrack = currentlyEnabledTracks[i];
-            if (textTrack.ptr() != trackToEnable)
-                textTrack->setMode(TextTrack::Mode::Disabled);
+            if (textTrack.ptr() != trackToEnable) {
+                bool modeWillChange = textTrack->mode() != TextTrack::Mode::Disabled;
+                // If we change the mode, then we pass along that the track mode was configured automatically.
+                textTrack->setMode(TextTrack::Mode::Disabled, modeWillChange ? TextTrack::ModeChangeType::AutomaticSelection : TextTrack::ModeChangeType::JavascriptAPI);
+            }
         }
     }
 
     if (trackToEnable) {
-        trackToEnable->setMode(TextTrack::Mode::Showing);
+        bool modeWillChange = trackToEnable->mode() != TextTrack::Mode::Showing;
+        // If we change the mode, then we pass along that the track mode was configured automatically.
+        trackToEnable->setMode(TextTrack::Mode::Showing, modeWillChange ? TextTrack::ModeChangeType::AutomaticSelection : TextTrack::ModeChangeType::JavascriptAPI);
     }
 }
 
@@ -5891,7 +5896,7 @@ void HTMLMediaElement::configureTextTracks()
         // that should be changed by the new addition. For example all metadata tracks are
         // disabled by default, and we don't want a track that has been enabled by script
         // to be disabled automatically when a new metadata track is added later.
-        if (textTrack->hasBeenConfigured())
+        if (textTrack->configurationState() != TextTrack::ConfigurationState::Unconfigured)
             continue;
 
         if (textTrack->language().length())
@@ -8531,12 +8536,14 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
     // will reconsider which tracks to display in light of new user preferences
     // (e.g. default tracks should not be displayed if the user has turned off
     // captions and non-default tracks should be displayed based on language
-    // preferences if the user has turned captions on).
+    // preferences if the user has turned captions on). Only reconsider tracks that our own
+    // automatic selection configured so we don't override a track's mode that was set explicitly
+    // through the javascript API.
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
         auto& track = *m_textTracks->item(i);
         auto kind = track.kind();
-        if (kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions)
-            track.setHasBeenConfigured(false);
+        if ((kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions) && track.configurationState() == TextTrack::ConfigurationState::ConfiguredAutomatically)
+            track.setConfigurationState(TextTrack::ConfigurationState::Unconfigured);
     }
 
     m_processingPreferenceChange = true;
