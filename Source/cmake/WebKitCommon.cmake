@@ -247,7 +247,12 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     set(WebKit_LIBRARY_TYPE SHARED)
     set(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
-    set(CMAKE_POSITION_INDEPENDENT_CODE True)
+    if (NOT APPLE)
+        # ld on Apple platforms creates position-independent code by default
+        # where it's needed (e.g. main executables), and rejects the linker
+        # flag on other operations such as merging object files.
+        set(CMAKE_POSITION_INDEPENDENT_CODE True)
+    endif ()
 
     # -----------------------------------------------------------------------------
     # Install JavaScript shell
