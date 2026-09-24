@@ -3016,8 +3016,22 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             Ref inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
 
-            auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
-            if (!!pressedCharKeyString) {
+            // 'pressedCharKey' is the deprecated singular form of 'pressedCharKeys'; prefer the plural
+            // form when a client sends both.
+            if (auto pressedCharKeysArray = stateObject->getArray("pressedCharKeys"_s)) {
+                for (auto& value : *pressedCharKeysArray) {
+                    auto pressedCharKeyString = value->asString();
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!pressedCharKeyString, InvalidParameter, "Encountered a non-string character key value."_s);
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(WTF::numGraphemeClusters(pressedCharKeyString) != 1, InvalidParameter, "Invalid 'pressedCharKeys'."_s);
+                    sourceState.pressedCharKeys.add(pressedCharKeyString);
+#else
+                    auto charKey = pressedCharKey(pressedCharKeyString);
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!charKey, InvalidParameter, "Invalid 'pressedCharKeys'."_s);
+                    sourceState.pressedCharKeys.add(*charKey);
+#endif
+                }
+            } else if (auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s); !!pressedCharKeyString) {
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(WTF::numGraphemeClusters(pressedCharKeyString) != 1, InvalidParameter, "Invalid 'pressedCharKey'."_s);
                 sourceState.pressedCharKeys.add(pressedCharKeyString);
@@ -3111,7 +3125,17 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     auto page = webPageProxyForHandle(handle);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    if (!page) {
+        // Input state is per session and outlives the page, so reset it even though there is nowhere
+        // to dispatch release events to. Otherwise every later interaction in the session sees keys
+        // that are still held down. Modifier state has to be reset along with it: it only changes
+        // when a release is dispatched, so it would otherwise stay set with nothing left to clear it.
+        m_inputSources.clear();
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+        m_currentModifiers = 0;
+#endif
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+    }
 
     bool frameNotFound = false;
     auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
