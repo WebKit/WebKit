@@ -43,6 +43,7 @@ my $configuration = $ENV{'CONFIGURATION'};
 my $target = $ENV{'TARGET_NAME'};
 my $coverageBuild = $ENV{'WEBKIT_COVERAGE_BUILD'};
 my $debugRoot = $ENV{'WEBKIT_DEBUG_ROOT'};
+my $myaHeap = ($ENV{'WK_MYA_HEAP'} // '') eq 'YES';
 
 my $executablePath = "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";
 
@@ -101,7 +102,10 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
         $sawError = 1;
     }
 
-    if (@weakExternalSymbols) {
+    # mya heap builds need these extra symbols
+    if (@weakExternalSymbols && $myaHeap) {
+        print "NOTE: $shortName has " . scalar(@weakExternalSymbols) . " weak external symbols, expected with WK_MYA_HEAP\n";
+    } elsif (@weakExternalSymbols) {
         print "ERROR: $shortName has a weak external symbol in it ($executablePath)\n";
         print "ERROR: A weak external symbol is generated when a symbol is defined in multiple compilation units and is also marked as being exported from the library.\n";
         print "ERROR: A common cause of weak external symbols is when an inline function is listed in the linker export file.\n";

@@ -570,9 +570,10 @@ $runTestLibJSCTools = enableTestOrNot($runTestLibJSCTools);
 $runJSCStress = enableTestOrNot($runJSCStress);
 $runMozillaTests = enableTestOrNot($runMozillaTests);
 
-# libJavaScriptCoreTools and its test is built on Mach APIs and only available on Apple platforms.
-if ($runTestLibJSCTools && $^O ne "darwin") {
-    print "Not running testLibJSCTools: it is only available on Apple platforms.\n";
+# Keep this in sync with Tools/Scripts/webkitperl/BuildSubproject.pm
+my $testLibJSCToolsIsBuilt = ((isGtk() || isWPE() || isJSCOnly()) && isLinux()) || $^O eq "darwin";
+if ($runTestLibJSCTools && !$testLibJSCToolsIsBuilt) {
+    print "Not running testLibJSCTools: it is not built on this platform.\n";
     $runTestLibJSCTools = DONT_RUN;
 }
 

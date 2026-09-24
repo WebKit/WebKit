@@ -25,18 +25,11 @@
 
 #include "config.h"
 
+#include <JavaScriptCore/CorpsePlatform.h>
 #include <wtf/DataLog.h>
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
-#include "CorpseAddressTest.h"
-#include "CorpseByteParserTest.h"
-#include "CorpseExportsTrieTest.h"
-#include "CorpseProcessTest.h"
-#include "CorpseRegionTest.h"
-#include "CorpseSnapshotTest.h"
-#include "CorpseSymbolTest.h"
-#include "CorpseThreadTest.h"
 #include "LibJSCToolsTestUtilities.h"
 
 #include <stdlib.h>
@@ -58,6 +51,7 @@ void printUsage()
 {
     dataLogLn("Usage: testLibJSCTools [--verbose] [<suite filter>]");
     dataLogLn("       testLibJSCTools --fuzz-trie [<seed> [<iterations>]]");
+    dataLogLn("       testLibJSCTools --typeinfo-target");
     dataLogLn("");
     dataLogLn("  Runs the tests for libJavaScriptCoreTools. With a filter, only the");
     dataLogLn("  suites whose name contains it run.");
@@ -73,6 +67,18 @@ bool parseUint64(std::string_view text, uint64_t& out)
         return false;
     out = *parsed;
     return true;
+}
+
+void runCorpseSuite()
+{
+    JSCToolsTest::testByteParser();
+    JSCToolsTest::testExportsTrie();
+    JSCToolsTest::testAddress();
+    JSCToolsTest::testProcess();
+    JSCToolsTest::testSnapshot();
+    JSCToolsTest::testRegion();
+    JSCToolsTest::testThreads();
+    JSCToolsTest::testSymbol();
 }
 
 } // anonymous namespace
@@ -95,6 +101,8 @@ int main(int argc, char** argv)
             JSCToolsTest::verbose = true;
             continue;
         }
+        if (argument == "--typeinfo-target")
+            return JSCToolsTest::runTypeinfoTarget();
         if (argument == "--fuzz-trie") {
             fuzzOnly = true;
             if (index + 1 < arguments.size() && parseUint64(arguments[index + 1], fuzzSeed)) {
@@ -117,15 +125,9 @@ int main(int argc, char** argv)
     if (fuzzOnly)
         JSCToolsTest::fuzzExportsTrie(fuzzSeed, static_cast<unsigned>(fuzzIterations));
     else {
-        JSCToolsTest::testByteParser();
-        JSCToolsTest::testExportsTrie();
         JSCToolsTest::fuzzExportsTrie(fuzzSeed, static_cast<unsigned>(fuzzIterations));
-        JSCToolsTest::testAddress();
-        JSCToolsTest::testProcess();
-        JSCToolsTest::testSnapshot();
-        JSCToolsTest::testRegion();
-        JSCToolsTest::testThreads();
-        JSCToolsTest::testSymbol();
+        runCorpseSuite();
+        JSCToolsTest::testTypeinfo();
     }
 
     dataLogLn("Ran ", JSCToolsTest::assertionsRun, " assertions, ",
@@ -146,15 +148,13 @@ int main(int argc, char** argv)
     return 0;
 }
 
-#else // libJavaScriptCoreTools support unavailable
+#else // ENABLE(MYA)
 
 int main(int, char**)
 {
-    // The corpse support is built on Mach task APIs, so there is nothing to test
-    // on other platforms. Simulators and MacCatalyst are also not supported.
     // Report success so that a run here is not a failure.
     printf("Not supported platform for testLibJSCTools\n");
     return 0;
 }
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

@@ -26,12 +26,17 @@
 #include "config.h"
 #include "CorpseSnapshot.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseError.h"
 
+#if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_error.h>
+#include <mach/mach_vm.h>
+#else
+#include <sys/uio.h>
+#endif
 #include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -42,6 +47,27 @@ namespace Corpse {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Snapshot);
 
 unsigned Snapshot::s_nextId = 1;
+
+const Vector<Thread>& Snapshot::threads()
+{
+    if (!m_threads)
+        m_threads = Thread::collect(*this);
+    return *m_threads;
+}
+
+Address Snapshot::symbol(const char* name)
+{
+    if (!name || !*name)
+        return { };
+
+    auto entry = m_symbols.ensure<StringViewHashTranslator>(StringView::fromLatin1(name), [&] {
+        return WTF::makeUnique<Symbol>(*this, name);
+    });
+
+    return entry.iterator->value->address();
+}
+
+#if OS(DARWIN)
 
 Snapshot::Snapshot(RefPtr<Process> process)
     : m_process(WTF::move(process))
@@ -71,28 +97,48 @@ Snapshot::~Snapshot()
         mach_port_deallocate(mach_task_self(), m_corpsePort);
 }
 
-const Vector<Thread>& Snapshot::threads()
+std::span<uint8_t> Snapshot::read(Address address, std::span<uint8_t> into) const
 {
-    if (!m_threads)
-        m_threads = Thread::collect(*this);
-    return *m_threads;
-}
-
-Address Snapshot::symbol(const char* name)
-{
-    if (!name || !*name)
+    if (!isValid())
         return { };
-
-    auto entry = m_symbols.ensure<StringViewHashTranslator>(StringView::fromLatin1(name), [&] {
-        return WTF::makeUnique<Symbol>(*this, name);
-    });
-
-    return entry.iterator->value->address();
+    mach_vm_size_t got = 0;
+    kern_return_t kr = mach_vm_read_overwrite(m_corpsePort, address.toTargetVMAddress(), into.size(),
+        reinterpret_cast<mach_vm_address_t>(into.data()), &got);
+    if (kr != KERN_SUCCESS || got != into.size())
+        return { };
+    return into;
 }
+
+#else
+
+Snapshot::Snapshot(RefPtr<Process> process)
+    : m_process(WTF::move(process))
+    , m_id(s_nextId++)
+{
+    if (!m_process || !m_process->isAttached())
+        return;
+    m_corpsePort = m_process->taskPort();
+}
+
+Snapshot::~Snapshot() = default;
+
+std::span<uint8_t> Snapshot::read(Address address, std::span<uint8_t> into) const
+{
+    if (!isValid())
+        return { };
+    struct iovec local { into.data(), into.size() };
+    struct iovec remote { reinterpret_cast<void*>(address.toTargetVMAddress()), into.size() };
+    ssize_t got = process_vm_readv(m_corpsePort, &local, 1, &remote, 1, 0);
+    if (got < 0 || static_cast<size_t>(got) != into.size())
+        return { };
+    return into;
+}
+
+#endif // OS(DARWIN)
 
 } // namespace Corpse
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +26,28 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <wtf/Platform.h>
 
-namespace JSCToolsTest {
+#if ENABLE(MYA)
 
-void testByteParser();
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
 
-} // namespace JSCToolsTest
+namespace JSC {
+namespace Corpse {
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if OS(DARWIN)
+using TaskHandle = mach_port_t;
+constexpr TaskHandle invalidTaskHandle = MACH_PORT_NULL;
+inline bool isValidTaskHandle(TaskHandle handle) { return MACH_PORT_VALID(handle); }
+#else
+using TaskHandle = int;
+constexpr TaskHandle invalidTaskHandle = -1;
+inline bool isValidTaskHandle(TaskHandle handle) { return handle >= 0; }
+#endif
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA)

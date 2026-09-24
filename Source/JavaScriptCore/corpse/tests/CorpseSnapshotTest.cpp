@@ -24,26 +24,30 @@
  */
 
 #include "config.h"
-#include "CorpseSnapshotTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#if OS(DARWIN)
 #include <mach/mach.h>
+#endif
 #include <unistd.h>
 
 namespace JSCToolsTest {
 
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+using JSC::Corpse::TaskHandle;
 
 void testSnapshot()
 {
     SuiteTracer tracer("Snapshot");
     if (!tracer.shouldRun())
+        return;
+    if (linuxSkip("Snapshot", "corpses are not implemented on Linux yet"))
         return;
 
     RefPtr<Process> process = Process::create(getpid());
@@ -53,12 +57,12 @@ void testSnapshot()
     }
 
     unsigned firstId = 0;
-    mach_port_t firstCorpsePort = MACH_PORT_NULL;
-    mach_port_t secondCorpsePort = MACH_PORT_NULL;
+    TaskHandle firstCorpsePort = JSC::Corpse::invalidTaskHandle;
+    TaskHandle secondCorpsePort = JSC::Corpse::invalidTaskHandle;
     {
         Snapshot snapshot(process);
         TEST_ASSERT(snapshot.isValid(), "a snapshot of this process is valid");
-        TEST_ASSERT(MACH_PORT_VALID(snapshot.corpsePort()), "a valid snapshot holds a corpse port");
+        TEST_ASSERT(JSC::Corpse::isValidTaskHandle(snapshot.corpsePort()), "a valid snapshot holds a corpse port");
         TEST_ASSERT(snapshot.process() == process.get(), "a snapshot keeps the process it came from");
         firstId = snapshot.id();
         TEST_ASSERT(firstId, "a snapshot has an identifier");
@@ -71,10 +75,15 @@ void testSnapshot()
             "two snapshots hold two different corpses");
         secondCorpsePort = second.corpsePort();
     }
+#if OS(DARWIN)
     TEST_ASSERT_EQ(machPortSendRightCount(firstCorpsePort), 0u,
         "destroying a snapshot gives its corpse port back");
     TEST_ASSERT_EQ(machPortSendRightCount(secondCorpsePort), 0u,
         "and so does destroying the second");
+#else
+    UNUSED_VARIABLE(firstCorpsePort);
+    UNUSED_VARIABLE(secondCorpsePort);
+#endif
     {
         // The two above are gone; their identifiers must not come back.
         Snapshot later(process);
@@ -98,6 +107,7 @@ void testSnapshot()
         TEST_ASSERT(!snapshot.symbol(""), "an empty symbol name resolves to nothing");
     }
 
+#if OS(DARWIN)
     {
         // A corpse and the thread rights read out of it are Mach ports. Taking a snapshot
         // must not leave any of them behind.
@@ -123,8 +133,9 @@ void testSnapshot()
         TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
             "and leaves no port name behind");
     }
+#endif // OS(DARWIN)
 }
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

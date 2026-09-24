@@ -22,6 +22,10 @@ set(JavaScriptCoreTools_FRAMEWORKS
     bmalloc
 )
 
+if (ENABLE_MYA_HEAP)
+    list(APPEND JavaScriptCoreTools_LIBRARIES LLDB::LLDB)
+endif ()
+
 WEBKIT_LIBRARY_DECLARE(JavaScriptCoreTools)
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

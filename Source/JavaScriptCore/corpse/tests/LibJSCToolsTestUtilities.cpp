@@ -26,17 +26,20 @@
 #include "config.h"
 #include "LibJSCToolsTestUtilities.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <wtf/MonotonicTime.h>
+#include <wtf/StdLibExtras.h>
 
+#if ENABLE(MYA)
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_vm.h>
+#endif
 #include <pthread.h>
 #include <string>
 #include <unistd.h>
-#include <wtf/MonotonicTime.h>
-#include <wtf/StdLibExtras.h>
+#endif
 
 namespace JSCToolsTest {
 
@@ -85,6 +88,21 @@ void skipSuite(const char* name, const char* why)
     dataLogLn("SKIP: ", name, ": ", why);
 }
 
+bool linuxSkip(const char* name, const char* why)
+{
+#if OS(LINUX)
+    // FIXME: Implement the corpse functionality these suites need on Linux.
+    skipSuite(name, why);
+    return true;
+#else
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(why);
+    return false;
+#endif
+}
+
+#if ENABLE(MYA) && OS(DARWIN)
+
 unsigned machPortNameCount()
 {
     mach_port_name_array_t names = nullptr;
@@ -111,6 +129,10 @@ unsigned machPortSendRightCount(mach_port_t port)
     RELEASE_ASSERT(result == KERN_SUCCESS);
     return refs; // Can still be 0 (which still means no send right).
 }
+
+#endif // ENABLE(MYA) && OS(DARWIN)
+
+#if ENABLE(MYA)
 
 SelfSnapshot::SelfSnapshot()
 {
@@ -155,7 +177,11 @@ struct ParkedThreads::Thread {
 static void* parkThread(void* argument)
 {
     auto* thread = static_cast<ParkedThreads::Thread*>(argument);
+#if OS(DARWIN)
     pthread_setname_np(thread->name.c_str());
+#else
+    pthread_setname_np(pthread_self(), thread->name.c_str());
+#endif
 
     pthread_mutex_lock(&parkMutex);
     ++parkedCount;
@@ -227,6 +253,6 @@ void ParkedThreads::stopAndJoin()
     pthread_mutex_unlock(&parkMutex);
 }
 
-} // namespace JSCToolsTest
+#endif // ENABLE(MYA)
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+} // namespace JSCToolsTest

@@ -355,6 +355,15 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(OptionsCommon)
     include(Options${PORT})
 
+    # This has to come after Options${PORT} to see ENABLE_MYA_HEAP
+    if (ENABLE_MYA_HEAP)
+        set(CMAKE_C_VISIBILITY_PRESET default)
+        set(CMAKE_CXX_VISIBILITY_PRESET default)
+        set(CMAKE_VISIBILITY_INLINES_HIDDEN OFF)
+        WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-frtti)
+        WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fstandalone-debug)
+    endif ()
+
     # This has to come after Options${PORT} to see any ENABLE_THREAD_SAFETY_WARNING.
     if (ENABLE_THREAD_SAFETY_WARNING)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wthread-safety)

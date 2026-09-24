@@ -302,10 +302,13 @@ add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-Wno-null-conversion>")
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fobjc-weak>")
 
 # Per-target ObjC visibility; global -fvisibility=hidden hides _OBJC_CLASS_$_ symbols.
-add_compile_options(
-    "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=hidden>"
-    "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
-)
+# RTTI makes a class derived outside its library reference the base's type_info, so in that case we skip this.
+if (NOT ENABLE_MYA_HEAP)
+    add_compile_options(
+        "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=hidden>"
+        "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
+    )
+endif ()
 
 if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
     webkit_add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)
@@ -527,4 +530,3 @@ if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/W
 endif ()
 
 set(MiniBrowser_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/MiniBrowser")
-

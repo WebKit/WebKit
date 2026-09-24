@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +26,11 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <string>
 #include <string_view>
@@ -65,8 +67,10 @@ public:
 
 private:
     Address lookUpName(const Snapshot&);
-    Address resolveInImage(mach_port_t, Address loadAddress, std::string_view name);
+    Address resolveInImage(TaskHandle, Address loadAddress, std::string_view name);
+#if OS(DARWIN)
     bool hasReadBudget(size_t length);
+#endif
 
 #if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
     // How far a search got, so a failure can name the stage that fell short.
@@ -103,11 +107,13 @@ private:
     std::string m_name;
     Address m_address;
 
+#if OS(DARWIN)
     // What this lookup may still copy out of the corpse. Set when the search starts.
     size_t m_readBudget { 0 };
+#endif
 };
 
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

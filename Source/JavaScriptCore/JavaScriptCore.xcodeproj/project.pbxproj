@@ -1860,12 +1860,14 @@
 		7E83C40D17D785F3003DC41B /* CorpseSnapshotTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40617D785F3003DC41B /* CorpseSnapshotTest.cpp */; };
 		7E83C40E17D785F3003DC41B /* CorpseSymbolTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40817D785F3003DC41B /* CorpseSymbolTest.cpp */; };
 		7E83C40A17D785F3003DC41B /* testLibJSCTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */; };
+		1AB0DEAD00000004000D0001 /* TypeinfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */; };
 		7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		56C6C2B7EBDCC63B6ECEA9AD /* CorpseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 211E3D6CA97F31CEB385A75A /* CorpseThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EF648B9EEAF54C44048B416A /* CorpseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960BD2B783EAEBE3233F91BF /* CorpseThread.cpp */; };
 		CA47D093D003440A28D15924 /* CorpseSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 94711688984F16F71D615DE5 /* CorpseSnapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5601486802533982ACC870BE /* CorpseSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1FA0900D09DF06EE63F7D2 /* CorpseSymbol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377C8C2416AE3DF90650C0E9 /* CorpseSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8D1735B28066A3B1D756ECC /* CorpseSymbol.cpp */; };
+		1AB0DEAD00000018000D0001 /* CorpsePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB0DEAD00000019000D0001 /* CorpsePlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952070E15E8A800A898AB /* ArrayConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* ArrayPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 704FD35305697E6D003DBED9 /* BooleanObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4090,6 +4092,7 @@
 		94711688984F16F71D615DE5 /* CorpseSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseSnapshot.h; sourceTree = "<group>"; };
 		8F1FA0900D09DF06EE63F7D2 /* CorpseSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseSymbol.h; sourceTree = "<group>"; };
 		E8D1735B28066A3B1D756ECC /* CorpseSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSymbol.cpp; sourceTree = "<group>"; };
+		1AB0DEAD00000019000D0001 /* CorpsePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpsePlatform.h; sourceTree = "<group>"; };
 		68BBF9CBD85C8635B2B8385F /* CorpseProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseProcess.cpp; sourceTree = "<group>"; };
 		C8503B7E641A29DF5B0E3742 /* CorpseRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseRegion.cpp; sourceTree = "<group>"; };
 		5E906BE4CC29012A83A8F299 /* CorpseSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSnapshot.cpp; sourceTree = "<group>"; };
@@ -4508,24 +4511,17 @@
 		7E83C42217D785F3003DC41B /* CorpseByteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseByteParser.h; sourceTree = "<group>"; };
 		7E83C42617D785F3003DC41B /* CorpseByteParserTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseByteParserTest.cpp; sourceTree = "<group>"; };
 		7E83C42917D785F3003DC41B /* CorpseAddressTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseAddressTest.cpp; sourceTree = "<group>"; };
-		7E83C42A17D785F3003DC41B /* CorpseAddressTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseAddressTest.h; sourceTree = "<group>"; };
 		7E83C42C17D785F3003DC41B /* CorpseProcessTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseProcessTest.cpp; sourceTree = "<group>"; };
-		7E83C42D17D785F3003DC41B /* CorpseProcessTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseProcessTest.h; sourceTree = "<group>"; };
 		7E83C42F17D785F3003DC41B /* CorpseRegionTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseRegionTest.cpp; sourceTree = "<group>"; };
-		7E83C43017D785F3003DC41B /* CorpseRegionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseRegionTest.h; sourceTree = "<group>"; };
 		7E83C43217D785F3003DC41B /* CorpseThreadTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseThreadTest.cpp; sourceTree = "<group>"; };
-		7E83C43317D785F3003DC41B /* CorpseThreadTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseThreadTest.h; sourceTree = "<group>"; };
-		7E83C42517D785F3003DC41B /* CorpseByteParserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseByteParserTest.h; sourceTree = "<group>"; };
 		7E83C40217D785F3003DC41B /* CorpseExportsTrieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseExportsTrieTest.cpp; sourceTree = "<group>"; };
-		7E83C40117D785F3003DC41B /* CorpseExportsTrieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseExportsTrieTest.h; sourceTree = "<group>"; };
 		7E83C40417D785F3003DC41B /* LibJSCToolsTestUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LibJSCToolsTestUtilities.cpp; sourceTree = "<group>"; };
 		7E83C40317D785F3003DC41B /* LibJSCToolsTestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibJSCToolsTestUtilities.h; sourceTree = "<group>"; };
 		7E83C40617D785F3003DC41B /* CorpseSnapshotTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSnapshotTest.cpp; sourceTree = "<group>"; };
-		7E83C40517D785F3003DC41B /* CorpseSnapshotTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseSnapshotTest.h; sourceTree = "<group>"; };
 		7E83C40817D785F3003DC41B /* CorpseSymbolTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSymbolTest.cpp; sourceTree = "<group>"; };
-		7E83C40717D785F3003DC41B /* CorpseSymbolTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseSymbolTest.h; sourceTree = "<group>"; };
 		7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testLibJSCTools.cpp; sourceTree = "<group>"; };
 		7E83C40917D785F3003DC41B /* testLibJSCTools */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testLibJSCTools; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeinfoTest.cpp; sourceTree = "<group>"; };
 		44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCoreFramework.cpp; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
@@ -6951,24 +6947,17 @@
 			isa = PBXGroup;
 			children = (
 				7E83C42917D785F3003DC41B /* CorpseAddressTest.cpp */,
-				7E83C42A17D785F3003DC41B /* CorpseAddressTest.h */,
 				7E83C42617D785F3003DC41B /* CorpseByteParserTest.cpp */,
-				7E83C42517D785F3003DC41B /* CorpseByteParserTest.h */,
 				7E83C40217D785F3003DC41B /* CorpseExportsTrieTest.cpp */,
-				7E83C40117D785F3003DC41B /* CorpseExportsTrieTest.h */,
 				7E83C42C17D785F3003DC41B /* CorpseProcessTest.cpp */,
-				7E83C42D17D785F3003DC41B /* CorpseProcessTest.h */,
 				7E83C42F17D785F3003DC41B /* CorpseRegionTest.cpp */,
-				7E83C43017D785F3003DC41B /* CorpseRegionTest.h */,
 				7E83C40617D785F3003DC41B /* CorpseSnapshotTest.cpp */,
-				7E83C40517D785F3003DC41B /* CorpseSnapshotTest.h */,
 				7E83C40817D785F3003DC41B /* CorpseSymbolTest.cpp */,
-				7E83C40717D785F3003DC41B /* CorpseSymbolTest.h */,
 				7E83C43217D785F3003DC41B /* CorpseThreadTest.cpp */,
-				7E83C43317D785F3003DC41B /* CorpseThreadTest.h */,
 				7E83C40417D785F3003DC41B /* LibJSCToolsTestUtilities.cpp */,
 				7E83C40317D785F3003DC41B /* LibJSCToolsTestUtilities.h */,
 				7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */,
+				1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -6986,6 +6975,7 @@
 				8DDA7A78AD90B64B97AE329C /* CorpseError.h */,
 				7E83C43617D785F3003DC41B /* CorpseExportsTrie.cpp */,
 				7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */,
+				1AB0DEAD00000019000D0001 /* CorpsePlatform.h */,
 				68BBF9CBD85C8635B2B8385F /* CorpseProcess.cpp */,
 				55D0F2DD9CA70132D5104B34 /* CorpseProcess.h */,
 				C8503B7E641A29DF5B0E3742 /* CorpseRegion.cpp */,
@@ -11715,6 +11705,7 @@
 				80B96670131FB9EBB9AD49CC /* CorpseClient.h in Headers */,
 				85428E7BE0B3557DD2988043 /* CorpseError.h in Headers */,
 				7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */,
+				1AB0DEAD00000018000D0001 /* CorpsePlatform.h in Headers */,
 				0D9C2E68ACFF010D91916993 /* CorpseProcess.h in Headers */,
 				3A7C1E5D9B0F4A2681C34D07 /* CorpseRegion.h in Headers */,
 				CA47D093D003440A28D15924 /* CorpseSnapshot.h in Headers */,
@@ -14780,6 +14771,7 @@
 				7E83C43417D785F3003DC41B /* CorpseThreadTest.cpp in Sources */,
 				7E83C40C17D785F3003DC41B /* LibJSCToolsTestUtilities.cpp in Sources */,
 				7E83C40A17D785F3003DC41B /* testLibJSCTools.cpp in Sources */,
+				1AB0DEAD00000004000D0001 /* TypeinfoTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

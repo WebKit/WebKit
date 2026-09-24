@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +27,19 @@
 #include "config.h"
 #include "CorpseSymbol.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseError.h"
 #include "CorpseExportsTrie.h"
 #include "CorpseSnapshot.h"
 
+#if OS(DARWIN)
 #include <mach-o/dyld_images.h>
 #include <mach-o/loader.h>
 #include <mach/mach.h>
 #include <mach/mach_vm.h>
 #include <mach/task_info.h>
+#endif
 #include <optional>
 #include <span>
 #include <string.h>
@@ -57,6 +60,8 @@ namespace JSC {
 namespace Corpse {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Symbol);
+
+#if OS(DARWIN)
 
 // It is assumed that this corpse analysis library is built with the same SDK targeting
 // the same OS that the corpse binary is built for. While the corpse gives us the data
@@ -124,7 +129,7 @@ private:
     bool readRaw(Address address, void* destination, size_t length) const
     {
         mach_vm_size_t got = 0;
-        kern_return_t kr = mach_vm_read_overwrite(m_task, address.toMachVMAddress(), length,
+        kern_return_t kr = mach_vm_read_overwrite(m_task, address.toTargetVMAddress(), length,
             reinterpret_cast<mach_vm_address_t>(destination), &got);
         return kr == KERN_SUCCESS && got == length;
     }
@@ -402,18 +407,18 @@ void Symbol::reportFailure(const Snapshot& snapshot) const
     }
     if (!d.readAllImageInfos) {
         Error::report("  could not read dyld_all_image_infos at 0x%llx",
-            d.allImageInfosAddress.toMachVMAddress());
+            d.allImageInfosAddress.toTargetVMAddress());
         return;
     }
 
     // A sane version says the struct read probably landed on real data, which is what
     // makes the image count and array address below worth printing.
     Error::report("  dyld_all_image_infos v%u at 0x%llx lists %u images at 0x%llx",
-        d.version, d.allImageInfosAddress.toMachVMAddress(),
-        d.images, d.imageArrayAddress.toMachVMAddress());
+        d.version, d.allImageInfosAddress.toTargetVMAddress(),
+        d.images, d.imageArrayAddress.toTargetVMAddress());
     if (d.rawImageArrayAddress != d.imageArrayAddress) {
         Error::report("  that address was ptrauth-signed as 0x%llx; the signature was stripped",
-            d.rawImageArrayAddress.toMachVMAddress());
+            d.rawImageArrayAddress.toTargetVMAddress());
     }
     if (!d.imageArrayAddress || !d.images) {
         Error::report("  that list is empty, so there was nothing to search");
@@ -466,6 +471,13 @@ void Symbol::reportFailure(const Snapshot& snapshot) const
 
 #endif // CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
 
+#else
+
+Address Symbol::resolveInImage(TaskHandle, Address, std::string_view) { return { }; }
+Address Symbol::lookUpName(const Snapshot&) { return { }; }
+
+#endif // OS(DARWIN)
+
 Symbol::Symbol(const Snapshot& snapshot, const char* name)
     : m_name(name ? name : "")
 {
@@ -478,4 +490,4 @@ Symbol::Symbol(const Snapshot& snapshot, const char* name)
 
 #undef CORPSE_DIAGNOSTIC_DO
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
