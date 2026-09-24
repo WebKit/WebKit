@@ -6397,6 +6397,14 @@ InliningNode* OMGIRGenerator::canInline(FunctionSpaceIndex functionIndexSpace, u
     if (result->depth() > 1 && !StackCheck(Thread::currentSingleton().stack(), StackBounds::DefaultReservedZone * 2).isSafeToRecurse())
         return nullptr;
 
+    // A lazily validated callee has no metadata until its body is parsed, and in particular
+    // hasExceptionHandlers() reports false even for an inlinee with try/catch, which would
+    // emit call patchpoints with no stackmap collection and corrupt unwinding on a throw.
+    // Parse it here so the decision does not depend on whether it happens to have been
+    // parsed yet; a body that fails to parse is simply not inlined.
+    if (!ensureNotLazy(m_module, m_calleeGroup.ipintCalleeFromFunctionIndexSpace(functionIndexSpace).get()))
+        return nullptr;
+
     return result;
 }
 

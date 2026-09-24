@@ -47,8 +47,5 @@ for (let i = 0; i < bytes.length - 2; i++) {
 assert.truthy(patched, "should have found br_on_cast opcode in binary");
 
 // The module should be REJECTED because reserved bits are set.
-assert.throws(
-    () => new WebAssembly.Module(binary),
-    WebAssembly.CompileError,
-    "reserved bits"
-);
+assert.compileError(binary,
+    "reserved bits");

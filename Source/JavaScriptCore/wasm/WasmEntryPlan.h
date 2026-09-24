@@ -65,8 +65,10 @@ public:
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
         if (Options::enableWasmDebugger()) [[unlikely]] {
             // Skip if already populated by the streaming path (StreamingCompiler::addBytes).
+            // Copy rather than take: the module keeps the binary, and its function bodies and
+            // constant expressions are spans of it.
             if (m_moduleInformation->debugInfo->source.isEmpty())
-                m_moduleInformation->debugInfo->takeSource(WTF::move(m_source));
+                m_moduleInformation->debugInfo->takeSource(Vector<uint8_t>(m_moduleInformation->source()));
         }
 #endif
         return WTF::move(m_moduleInformation);
@@ -143,7 +145,6 @@ protected:
 
     void generateStubsIfNecessary() WTF_REQUIRES_LOCK(m_lock);
 
-    Vector<uint8_t> m_source;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     UncheckedKeyHashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_exportedFunctionIndices;

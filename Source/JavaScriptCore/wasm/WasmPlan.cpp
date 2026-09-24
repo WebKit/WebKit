@@ -74,6 +74,13 @@ bool Plan::addCompletionTaskIfNecessary(VM& vm, CompletionTask&& task)
     return false;
 }
 
+void Plan::runSynchronously()
+{
+    while (hasWork())
+        work();
+    waitForCompletion();
+}
+
 void Plan::waitForCompletion()
 {
     Locker locker { m_lock };

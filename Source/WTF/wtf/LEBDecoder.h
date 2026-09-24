@@ -53,39 +53,55 @@ constexpr unsigned lastByteMask()
 }
 
 template<typename T>
-[[nodiscard]] inline bool decodeUInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
+[[nodiscard]] inline bool decodeUIntSlow(std::span<const uint8_t> bytes, size_t& offset, T& result)
 {
     static_assert(std::is_unsigned_v<T>);
-    if (bytes.size() <= offset)
-        return false;
-    result = 0;
-    unsigned shift = 0;
-    size_t last = std::min(maxByteLength<T>(), bytes.size() - offset) - 1;
-    for (unsigned i = 0; true; ++i) {
+    // result already contains the first byte.
+    ASSERT(result <= 0xff);
+    ASSERT(result & 0x80);
+    result &= 0x7f;
+    unsigned shift = 7;
+    size_t last = std::min(maxByteLength<T>() - 1, bytes.size() - offset);
+    for (unsigned i = 1; true; ++i) {
+        if (i > last)
+            return false;
         uint8_t byte = bytes[offset++];
         result |= static_cast<T>(byte & 0x7f) << shift;
         shift += 7;
         if (!(byte & 0x80))
             return !(((maxByteLength<T>() - 1) == i && (byte & lastByteMask<T>())));
-        if (i == last)
-            return false;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return true;
 }
 
 template<typename T>
-[[nodiscard]] inline bool decodeInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
+[[nodiscard]] ALWAYS_INLINE bool decodeUInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
+{
+    static_assert(std::is_unsigned_v<T>);
+    if (offset >= bytes.size()) [[unlikely]]
+        return false;
+    result = bytes[offset++];
+    if (result < 0x80) [[likely]]
+        return true;
+    return decodeUIntSlow<T>(bytes, offset, result);
+}
+
+template<typename T>
+[[nodiscard]] inline bool decodeIntSlow(std::span<const uint8_t> bytes, size_t& offset, T& result)
 {
     static_assert(std::is_signed_v<T>);
-    if (bytes.size() <= offset)
-        return false;
     using UnsignedT = std::make_unsigned_t<T>;
-    result = 0;
-    unsigned shift = 0;
-    size_t last = std::min(maxByteLength<T>(), bytes.size() - offset) - 1;
+    // result already contains the first byte.
+    ASSERT(result <= 0xff);
+    ASSERT(result & 0x80);
+    result &= 0x7f;
+    unsigned shift = 7;
+    size_t last = std::min(maxByteLength<T>() - 1, bytes.size() - offset);
     uint8_t byte;
-    for (unsigned i = 0; true; ++i) {
+    for (unsigned i = 1; true; ++i) {
+        if (i > last)
+            return false;
         byte = bytes[offset++];
         result |= static_cast<T>(static_cast<UnsignedT>(byte & 0x7f) << shift);
         shift += 7;
@@ -115,6 +131,23 @@ template<typename T>
     if (shift < numBits && (byte & 0x40))
         result = static_cast<T>(static_cast<UnsignedT>(result) | (static_cast<UnsignedT>(-1) << shift));
     return true;
+}
+
+template<typename T>
+[[nodiscard]] ALWAYS_INLINE bool decodeInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
+{
+    using UnsignedT = std::make_unsigned_t<T>;
+    static_assert(std::is_signed_v<T>);
+    if (offset >= bytes.size()) [[unlikely]]
+        return false;
+    result = static_cast<T>(bytes[offset++]);
+    if (static_cast<UnsignedT>(result) < 0x80) [[likely]] {
+        // Single-byte signed LEB: 7-bit two's complement. Bit 6 is the sign bit.
+        // Branchless sign extend: subtract 128 when bit 6 is set, else 0.
+        result = result - ((result & 0x40) << 1);
+        return true;
+    }
+    return decodeIntSlow<T>(bytes, offset, result);
 }
 
 [[nodiscard]] inline bool decodeUInt32(std::span<const uint8_t> bytes, size_t& offset, uint32_t& result)

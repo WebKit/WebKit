@@ -47,10 +47,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
 
-IPIntPlan::IPIntPlan(VM& vm, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
+IPIntPlan::IPIntPlan(VM& vm, Vector<uint8_t>&& source, CompilerMode compilerMode, ValidationMode validationMode, CompletionTask&& task)
     : Base(vm, WTF::move(source), compilerMode, WTF::move(task))
+    , m_lazyParsing(validationMode == ValidationMode::Lazy && Options::useWasmIPIntLazyParsing())
 {
-    if (parseAndValidateModule(m_source.span()))
+    if (parseAndValidateModule(m_moduleInformation->source()))
         prepare();
 }
 
@@ -64,8 +65,9 @@ IPIntPlan::IPIntPlan(VM& vm, Ref<ModuleInformation> info, Ref<IPIntCallees> call
     m_currentIndex = m_moduleInformation->functions.size();
 }
 
-IPIntPlan::IPIntPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerMode, CompletionTask&& task)
+IPIntPlan::IPIntPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerMode, ValidationMode validationMode, CompletionTask&& task)
     : Base(vm, WTF::move(info), compilerMode, WTF::move(task))
+    , m_lazyParsing(validationMode == ValidationMode::Lazy && Options::useWasmIPIntLazyParsing())
 {
     prepare();
     m_currentIndex = m_moduleInformation->functions.size();
@@ -74,10 +76,6 @@ IPIntPlan::IPIntPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerM
 bool IPIntPlan::prepareImpl()
 {
     const auto& functions = m_moduleInformation->functions;
-    if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), "WebAssembly functions"_s))
-        return false;
-    m_wasmInternalFunctions.resize(functions.size());
-
     if (!m_ipintCallees)
         m_ipintCallees = IPIntCallees::create(functions.size());
     return true;
@@ -85,56 +83,50 @@ bool IPIntPlan::prepareImpl()
 
 void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
 {
-    const auto& function = m_moduleInformation->functions[functionIndex];
-    TypeSignatureIndex typeSignatureIndex = m_moduleInformation->internalFunctionTypeSignatureIndices[functionIndex];
-    const RTT& signature = m_moduleInformation->rtt(typeSignatureIndex);
     auto functionIndexSpace = m_moduleInformation->toSpaceIndex(functionIndex);
-    ASSERT_UNUSED(functionIndexSpace, &m_moduleInformation->rtt(functionIndexSpace) == &m_moduleInformation->rtt(typeSignatureIndex));
+    const auto& function = m_moduleInformation->functions[functionIndex];
+    const uint8_t* bytecode = function.data.data();
+    const uint8_t* bytecodeEnd = bytecode + function.data.size() - 1;
+    ASSERT_UNUSED(functionIndexSpace, &m_moduleInformation->rtt(functionIndexSpace) == &m_moduleInformation->rtt(m_moduleInformation->internalFunctionTypeSignatureIndices[functionIndex]));
 
-    beginCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
-    auto parseAndCompileResult = parseAndCompileMetadata(function.data, signature, m_moduleInformation.get(), functionIndex);
-    endCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
+    auto callee = IPIntCallee::create(functionIndex, functionIndexSpace, m_moduleInformation->rtt(functionIndexSpace), m_moduleInformation->nameSection().get(functionIndexSpace), bytecode, bytecodeEnd);
 
-    if (!parseAndCompileResult) [[unlikely]] {
-        Locker locker { m_lock };
-        failFunctionCompilation(functionIndex, makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex.rawIndex()));
+    // Install the normal IPInt entrypoint regardless of lazy vs. eager. The
+    // entrypoint itself checks m_data and calls a slow path on first entry
+    // when lazy parsing is enabled.
+    CodePtr<WasmEntryPtrTag> entrypoint;
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        entrypoint = LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>();
+#endif
+    if (!entrypoint)
+        entrypoint = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(ipint_trampoline);
+    callee->setEntrypointWithoutRegistration(entrypoint);
+
+    if (m_lazyParsing) {
+        m_ipintCallees->at(functionIndex) = WTF::move(callee);
         return;
     }
 
-    m_wasmInternalFunctions[functionIndex] = WTF::move(*parseAndCompileResult);
+    // Eager path: parse and initialize metadata now.
+    beginCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
+    auto entrypointResult = parseAndInitializeIPIntCallee(callee.get(), m_moduleInformation.get());
+    endCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
 
-    {
-        auto callee = IPIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, signature, { });
-        ASSERT(!callee->entrypoint());
-        bool usesSIMD = m_moduleInformation->usesSIMD(functionIndex);
-        // Immediately tier up to BBQ for SIMD, if necesary.
-        if (usesSIMD && !Options::useWasmIPIntSIMD())
-            callee->tierUpCounter().setNewThreshold(0);
-
-        if (usesSIMD && !Options::useBBQJIT() && !Options::useWasmIPIntSIMD()) {
-            Locker locker { m_lock };
-            failFunctionCompilation(functionIndex, makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
-            return;
-        }
-
-        CodePtr<WasmEntryPtrTag> entrypoint { };
-#if ENABLE(JIT)
-        if (Options::useJIT())
-            entrypoint = LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>();
-#endif
-        if (!entrypoint)
-            entrypoint = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(ipint_trampoline);
-
-        callee->setEntrypointWithoutRegistration(entrypoint);
-        m_ipintCallees->at(functionIndex) = WTF::move(callee);
+    if (!entrypointResult) [[unlikely]] {
+        Locker locker { m_lock };
+        failFunctionCompilation(functionIndex, makeString(entrypointResult.error(), ", in function at index "_s, functionIndex.rawIndex()));
+        return;
     }
+
+    m_ipintCallees->at(functionIndex) = WTF::move(callee);
 }
 
 void IPIntPlan::didCompleteCompilation()
 {
     generateStubsIfNecessary();
 
-    unsigned functionCount = m_wasmInternalFunctions.size();
+    unsigned functionCount = m_ipintCallees->size();
     if (!m_calleesAlreadyRegistered && functionCount) {
         // Set names here rather than at IPIntCallee creation: during streaming the name section
         // (which follows the code section) has not been parsed yet when a function is compiled.

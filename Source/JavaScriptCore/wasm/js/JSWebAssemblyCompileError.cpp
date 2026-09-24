@@ -36,7 +36,12 @@ namespace JSC {
 JSObject* createJSWebAssemblyCompileError(JSGlobalObject* globalObject, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(vm, globalObject->webAssemblyCompileErrorStructure(), message, JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
+    ErrorInstance* error = ErrorInstance::create(vm, globalObject->webAssemblyCompileErrorStructure(), message, JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
+    // A module that does not validate is not a wasm-level throw, so no catch in wasm may
+    // observe it. This matters once bodies are validated on first call, which puts the error
+    // on a frame that a caller's catch_all would otherwise be handed.
+    error->setCatchableFromWasm(false);
+    return error;
 }
 
 } // namespace JSC

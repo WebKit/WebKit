@@ -52,9 +52,7 @@ function testSimpleThrowDelegateIllegal() {
 
 
     const bin = b.WebAssembly().get();
-    assert.throws(() => {
-        const module = new WebAssembly.Module(bin);
-    }, WebAssembly.CompileError, `WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.compileError(bin, `WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 0`);
 }
 
 function testThrowDelegateSkip() {
@@ -116,9 +114,7 @@ function testThrowDelegateSkipIllegal() {
 
 
     const bin = b.WebAssembly().get();
-    assert.throws(() => {
-        const module = new WebAssembly.Module(bin);
-    }, WebAssembly.CompileError, `WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.compileError(bin, `WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 0`);
 }
 
 function testDelegateCaller() {
@@ -188,9 +184,7 @@ function testDelegateCallerIllegal() {
 
 
     const bin = b.WebAssembly().get();
-    assert.throws(() => {
-        const module = new WebAssembly.Module(bin);
-    }, WebAssembly.CompileError, `WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 1 (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.compileError(bin, `WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 1`);
 }
 
 function testSimpleDelegateMerge(){

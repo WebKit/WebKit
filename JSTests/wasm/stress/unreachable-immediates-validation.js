@@ -46,7 +46,9 @@ function moduleBytes({ withMemory = false, withTable = false, withExternrefTable
 function assertInvalid(description, options) {
     const bytes = moduleBytes(options);
     try {
-        new WebAssembly.Module(bytes);
+        // Function bodies are validated on first call unless asked for eagerly, and these
+        // modules are never instantiated.
+        new WebAssembly.Module(bytes, { eagerValidate: true });
     } catch (error) {
         assert.truthy(error instanceof WebAssembly.CompileError, `${description}: expected CompileError, got ${error}`);
         return;
@@ -55,7 +57,9 @@ function assertInvalid(description, options) {
 }
 
 function assertValid(description, options) {
-    new WebAssembly.Module(moduleBytes(options));
+    // Function bodies are validated on first call unless asked for eagerly, and these modules
+    // are never instantiated.
+    new WebAssembly.Module(moduleBytes(options), { eagerValidate: true });
 }
 
 // A memarg alignment above the access's natural alignment is invalid.

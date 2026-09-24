@@ -13,7 +13,9 @@ export async function compile(wat, options = {}) {
         print("binary:");
         print(binaryResult.buffer);
     }
-    return new WebAssembly.Module(binaryResult.buffer);
+    // Function bodies are validated on the first call into them. A test that asserts a
+    // CompileError without ever running the function has to ask for eager validation.
+    return new WebAssembly.Module(binaryResult.buffer, { eagerValidate: !!options.eagerValidate });
 }
 
 export async function watToWasm(wat, options = {}) {

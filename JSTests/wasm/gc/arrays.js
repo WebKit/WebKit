@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -29,11 +29,8 @@ function testArrayDeclaration() {
    *   (type (array <invalid>))
    * )
    */
-  assert.throws(
-    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x84\x80\x80\x80\x00\x01\x5e\xff\x02")),
-    WebAssembly.CompileError,
-    "Module doesn't parse at byte 16: can't get array's element Type"
-  )
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x84\x80\x80\x80\x00\x01\x5e\xff\x02"),
+    "Module doesn't parse at byte 16: can't get array's element Type")
 
   /*
    * invalid mut value 0x02
@@ -41,11 +38,8 @@ function testArrayDeclaration() {
    *   (type (array (<invalid> i32)))
    * )
    */
-  assert.throws(
-    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x84\x80\x80\x80\x00\x01\x5e\x7f\x02")),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 18: invalid array mutability: 0x02"
-  )
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x84\x80\x80\x80\x00\x01\x5e\x7f\x02"),
+    "WebAssembly.Module doesn't parse at byte 18: invalid array mutability: 0x02")
 
   instantiate(`
     (module
@@ -61,27 +55,21 @@ function testArrayDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (array i32))
         (func (result (ref null 0)) (ref.null array))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null array) is not a (ref null <array:0>), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null array) is not a (ref null <array:0>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (array i32))
         (func (result funcref) (ref.null 0))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <array:0>) is not a (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <array:0>) is not a (ref null func), in function at index 0");
 }
 
 function testArrayJS() {
@@ -404,8 +392,7 @@ function testArraySet() {
 
   // Should fail because the array type in the global (index 0) isn't a subtype of the
   // type of the array.set index (index 1).
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (array (mut i32))))
         (type (sub 0 (array (mut i32))))
@@ -415,9 +402,7 @@ function testArraySet() {
           (array.set 1 (global.get 0) (i32.const 3) (i32.const 84)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.set arrayref to type (ref null <array:0>) expected (ref null <array:1>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.set arrayref to type (ref null <array:0>) expected (ref null <array:1>), in function at index 0");
 
   {
     let m = instantiate(`
@@ -490,17 +475,14 @@ function testArraySet() {
   }
 
   {
-    assert.throws(
-      () => compile(`
+    assert.compileError(watToWasm(`
         (module
           (type (array i32))
           (func (export "f") (result i32)
             (array.set 0 (ref.null 0) (i32.const 3) (i32.const 42)))
         )
       `),
-      WebAssembly.CompileError,
-      "array.set index 0 does not reference a mutable array definition"
-    );
+      "array.set index 0 does not reference a mutable array definition");
   }
 
   // Should trap on null array.
@@ -654,8 +636,7 @@ function testArrayTable() {
   }
 
   // Invalid array.get, needs a downcast.
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (array i32))
         (table 10 (ref null array))
@@ -663,20 +644,15 @@ function testArrayTable() {
           (array.get 0 (table.get (local.get 0)) (local.get 1)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.get arrayref to type (ref null array) expected (ref null <array:0>), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: array.get arrayref to type (ref null array) expected (ref null <array:0>), in function at index 0");
 
   // Invalid non-defaultable table type.
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (array i32))
         (table 0 (ref 0)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 27: Table's type must be defaultable (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't parse at byte 27: Table's type must be defaultable");
 
   // Test JS API.
   {

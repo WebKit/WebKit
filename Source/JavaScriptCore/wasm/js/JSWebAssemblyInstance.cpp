@@ -47,6 +47,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmTag.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyFunction.h"
 #include "WebAssemblyFunctionBase.h"
 #include "WebAssemblyModuleRecord.h"
 #include "WebAssemblyWrapperFunction.h"

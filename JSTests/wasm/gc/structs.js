@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -55,14 +55,8 @@ function testStructDeclaration() {
    *   (type (struct (field i32)))
    * )
    */
-  assert.throws(
-    () =>
-      module(
-        "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x5f\xff\xff\xff\x7f\x00"
-      ),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 16: number of fields for struct type at position 0 is too big 268435455 maximum 10000 (evaluating 'new WebAssembly.Module(buffer)')"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x5f\xff\xff\xff\x7f\x00"),
+    "WebAssembly.Module doesn't parse at byte 16: number of fields for struct type at position 0 is too big 268435455 maximum 10000");
 
   /*
    * invalid mutability
@@ -70,14 +64,8 @@ function testStructDeclaration() {
    *   (type (struct (field (mut i32))))
    * )
    */
-  assert.throws(
-    () =>
-      module(
-        "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x05\x01\x5f\x01\x7f\x02"
-      ),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 15: invalid Field's mutability: 0x02 (evaluating 'new WebAssembly.Module(buffer)')"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x05\x01\x5f\x01\x7f\x02"),
+    "WebAssembly.Module doesn't parse at byte 15: invalid Field's mutability: 0x02");
 
   /*
    * struct payload size overflows unsigned type
@@ -85,41 +73,27 @@ function testStructDeclaration() {
    *   (type (struct (field (mut i64)) (field (mut i64)) ... (field (mut i64))))
    * )
    */
-  assert.throws(
-    () =>
-      module(
-        "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x5f\x80\x80\x2c\x7e\x01"
-      ),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 15: number of fields for struct type at position 0 is too big 720896 maximum 10000 (evaluating 'new WebAssembly.Module(buffer)')"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x5f\x80\x80\x2c\x7e\x01"),
+    "WebAssembly.Module doesn't parse at byte 15: number of fields for struct type at position 0 is too big 720896 maximum 10000");
 
   // Invalid subtyping for structref.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (type (array i32))
           (func (result structref) (ref.null 0))
         )
       `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <array:0>) is not a (ref null struct), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <array:0>) is not a (ref null struct), in function at index 0");
 
   // Invalid subtyping for structref.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (type (struct))
           (func (result structref) (ref.null 0))
           (func (result (ref null 0)) (call 0))
         )
       `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null struct) is not a (ref null <struct:0>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null struct) is not a (ref null <struct:0>), in function at index 1");
 }
 
 function testStructJS() {
@@ -226,14 +200,8 @@ function testStructNew() {
      *   )
      * )
     */
-    assert.throws(
-      () =>
-        module(
-          "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0a\x02\x60\x00\x00\x5f\x02\x7f\x00\x7f\x00\x03\x02\x01\x00\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x0c\x01\x0a\x00\x41\x13\x41\x25\xfb\x00\x03\x1a\x0b"
-        ),
-      WebAssembly.CompileError,
-      "WebAssembly.Module doesn't validate: struct.new index 3 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0a\x02\x60\x00\x00\x5f\x02\x7f\x00\x7f\x00\x03\x02\x01\x00\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x0c\x01\x0a\x00\x41\x13\x41\x25\xfb\x00\x03\x1a\x0b"),
+      "WebAssembly.Module doesn't validate: struct.new index 3 is out of bound, in function at index 0");
   }
 
   {
@@ -258,14 +226,8 @@ function testStructNew() {
      *   )
      * )
     */
-    assert.throws(
-      () =>
-        module(
-          "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0a\x02\x60\x00\x00\x5f\x02\x7f\x00\x7f\x00\x03\x02\x01\x00\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x0c\x01\x0a\x00\x00\x41\x13\x41\x25\xfb\x00\x02\x0b"
-        ),
-      WebAssembly.CompileError,
-      "WebAssembly.Module doesn't validate: struct.new index 2 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0a\x02\x60\x00\x00\x5f\x02\x7f\x00\x7f\x00\x03\x02\x01\x00\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x0c\x01\x0a\x00\x00\x41\x13\x41\x25\xfb\x00\x02\x0b"),
+      "WebAssembly.Module doesn't validate: struct.new index 2 is out of bound, in function at index 0");
   }
 
   instantiate(`
@@ -325,8 +287,7 @@ function testStructNewDefault() {
      )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
             (module
               (type $Point (struct (field $x (ref func))))
               (func (export "main")
@@ -336,12 +297,9 @@ function testStructNewDefault() {
               )
             )
          `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 4: struct.new_default 0 requires all fields to be defaultable, but field 0 has type Ref, in function at index 0"
-  )
+    "WebAssembly.Module doesn't parse at byte 4: struct.new_default 0 requires all fields to be defaultable, but field 0 has type Ref, in function at index 0")
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
             (module
               (type $Point (struct (field $x i32) (field $y i32)))
               (func (export "main")
@@ -351,12 +309,9 @@ function testStructNewDefault() {
               )
             )
          `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.new_default index 3 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't validate: struct.new_default index 3 is out of bound, in function at index 0")
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
             (module
               (type $Point (struct (field $x i32) (field $y i32)))
               (func (export "main")
@@ -365,9 +320,7 @@ function testStructNewDefault() {
               )
             )
          `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.new_default index 2 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't validate: struct.new_default index 2 is out of bound, in function at index 0")
 }
 
 function testStructGet() {
@@ -688,68 +641,46 @@ function testStructGet() {
      *   )
      * )
     */
-    assert.throws(
-      () =>
-        module(
-          "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0b\x02\x5f\x02\x7f\x00\x7f\x00\x60\x00\x01\x7f\x03\x02\x01\x01\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x10\x01\x0e\x00\x00\x41\x13\x41\x25\xfb\x00\x00\xfb\x02\x03\x00\x0b"
-        ),
-      WebAssembly.CompileError,
-      "WebAssembly.Module doesn't validate: struct.get index 3 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0b\x02\x5f\x02\x7f\x00\x7f\x00\x60\x00\x01\x7f\x03\x02\x01\x01\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x10\x01\x0e\x00\x00\x41\x13\x41\x25\xfb\x00\x00\xfb\x02\x03\x00\x0b"),
+      "WebAssembly.Module doesn't validate: struct.get index 3 is out of bound, in function at index 0");
   }
 
   // Test error message for invalid struct.get index.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (func (result i32) (struct.get 5 0 (ref.null 0)))
         )
       `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.get index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: struct.get index 5 is out of bound, in function at index 0");
 
   // Test error message for invalid struct.get index.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (type (func))
           (func (result i32) (struct.get 0 0 (ref.null 0)))
         )
       `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.get: invalid type index 0, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: struct.get: invalid type index 0, in function at index 0");
 
   // Cannot struct.get from a structref.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (type $s (struct (field i32)))
           (func (result structref) (ref.null 0))
           (func (result i32) (struct.get 0 0 (call 0)))
         )
       `),
-    WebAssembly.CompileError,
-    "struct.get structref to type (ref null struct) expected (ref null <struct:0>), in function at index 1"
-  );
+    "struct.get structref to type (ref null struct) expected (ref null <struct:0>), in function at index 1");
 
   // Cannot struct.get from an anyref.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (type $s (struct (field i32)))
           (func (result anyref) (ref.null 0))
           (func (result i32) (struct.get 0 0 (call 0)))
         )
       `),
-    WebAssembly.CompileError,
-    "struct.get structref to type (ref null any) expected (ref null <struct:0>), in function at index 1"
-  );
+    "struct.get structref to type (ref null any) expected (ref null <struct:0>), in function at index 1");
 
   // Test null checks.
   assert.throws(
@@ -1106,14 +1037,8 @@ function testStructSet() {
      *   )
      * )
     */
-    assert.throws(
-      () =>
-        module(
-          "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0f\x03\x5f\x01\x7f\x00\x60\x01\x64\x00\x01\x7f\x60\x00\x01\x7f\x03\x03\x02\x01\x02\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x01\x0a\x1c\x02\x10\x00\x20\x00\x41\x25\xfb\x05\x00\x00\x20\x00\xfb\x02\x00\x00\x0b\x09\x00\x41\x00\xfb\x00\x00\x10\x00\x0b"
-        ),
-      WebAssembly.CompileError,
-      "WebAssembly.Module doesn't parse at byte 9: the field 0 can't be set because it is immutable, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0f\x03\x5f\x01\x7f\x00\x60\x01\x64\x00\x01\x7f\x60\x00\x01\x7f\x03\x03\x02\x01\x02\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x01\x0a\x1c\x02\x10\x00\x20\x00\x41\x25\xfb\x05\x00\x00\x20\x00\xfb\x02\x00\x00\x0b\x09\x00\x41\x00\xfb\x00\x00\x10\x00\x0b"),
+      "WebAssembly.Module doesn't parse at byte 9: the field 0 can't be set because it is immutable, in function at index 0");
   }
 
   {
@@ -1154,27 +1079,17 @@ function testStructSet() {
      *   )
      * )
     */
-    assert.throws(
-      () =>
-        module(
-          "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0b\x02\x5f\x01\x7f\x01\x60\x01\x64\x00\x01\x7f\x03\x02\x01\x01\x0a\x13\x01\x11\x00\x00\x20\x00\x41\x25\xfb\x05\x00\x00\x20\x00\xfb\x02\x05\x00\x0b"
-        ),
-      WebAssembly.CompileError,
-      "WebAssembly.Module doesn't validate: struct.get index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0b\x02\x5f\x01\x7f\x01\x60\x01\x64\x00\x01\x7f\x03\x02\x01\x01\x0a\x13\x01\x11\x00\x00\x20\x00\x41\x25\xfb\x05\x00\x00\x20\x00\xfb\x02\x05\x00\x0b"),
+      "WebAssembly.Module doesn't validate: struct.get index 5 is out of bound, in function at index 0");
   }
 
   // Test error message for invalid struct.set index.
-  assert.throws(
-    () =>
-      compile(`
+  assert.compileError(watToWasm(`
         (module
           (func (result i32) (struct.set 5 0 (ref.null 0) (i32.const 42)))
         )
       `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.set index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: struct.set index 5 is out of bound, in function at index 0");
 
   // Test null checks.
   assert.throws(
@@ -1222,8 +1137,7 @@ function testStructTable() {
   }
 
   // Invalid struct.get, needs a downcast.
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct (field i32)))
         (table 10 (ref null struct))
@@ -1231,20 +1145,15 @@ function testStructTable() {
           (struct.get 0 0 (table.get (local.get 0))))
       )
     `),
-    WebAssembly.CompileError,
-    "struct.get structref to type (ref null struct) expected (ref null <struct:0>), in function at index 0"
-  );
+    "struct.get structref to type (ref null struct) expected (ref null <struct:0>), in function at index 0");
 
   // Invalid non-defaultable table type.
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct))
         (table 0 (ref 0)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 26: Table's type must be defaultable (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't parse at byte 26: Table's type must be defaultable")
 
   // Test JS API.
   {
@@ -1321,16 +1230,13 @@ function testStructPacked() {
     assert.eq(m.exports.f2(), 255);
   }
 
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module (type (struct (field i8)))
         (global (ref 0) (struct.new 0 (i32.const 257)))
         (func (export "f") (result i32)
           (struct.get 0 0 (global.get 0))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 7: struct.get applied to packed array of I8 -- use struct.get_s or struct.get_u, in function at index 0"
-  );
+    "WebAssembly.Module doesn't parse at byte 7: struct.get applied to packed array of I8 -- use struct.get_s or struct.get_u, in function at index 0");
 
   {
     const m = instantiate(`

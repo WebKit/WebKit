@@ -868,6 +868,10 @@ void Options::notifyOptionsChanged()
     if (Options::enableWasmDebugger()) [[unlikely]] {
         Options::useBBQJIT() = false;
         Options::useOMGJIT() = false;
+        // Breakpoints are armed by overwriting opcodes in the module binary, which is the same
+        // buffer a lazily parsed body is read from. A body first reached with a breakpoint
+        // already set in it would be described by metadata for the patched program.
+        Options::useWasmIPIntLazyParsing() = false;
     }
 #else
     Options::enableWasmDebugger() = false;

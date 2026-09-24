@@ -106,7 +106,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
 
 CalleeGroup::~CalleeGroup() = default;
 
-JSToWasmCallee& CalleeGroup::ensureJSToWasmCallee(const ModuleInformation& moduleInformation, FunctionSpaceIndex functionIndexSpace)
+JSToWasmCallee& CalleeGroup::ensureJSToWasmCallee(const ModuleInformation&, FunctionSpaceIndex functionIndexSpace)
 {
     ASSERT(runnable());
     ASSERT(functionIndexSpace >= functionImportCount());
@@ -115,8 +115,7 @@ JSToWasmCallee& CalleeGroup::ensureJSToWasmCallee(const ModuleInformation& modul
     Locker locker { m_jsToWasmCalleesLock };
     auto addResult = m_jsToWasmCallees.ensure(calleeIndex, [&] {
         auto& ipintCallee = m_ipintCallees->at(calleeIndex).get();
-        bool usesSIMD = moduleInformation.usesSIMD(FunctionCodeIndex(calleeIndex));
-        auto callee = JSToWasmCallee::create(Ref<const RTT> { ipintCallee.signatureRTT() }, usesSIMD);
+        auto callee = JSToWasmCallee::create(Ref<const RTT> { ipintCallee.signatureRTT() });
         callee->setWasmCallee(CalleeBits::encodeNativeCallee(&ipintCallee));
         return callee;
     });

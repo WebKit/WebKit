@@ -1,7 +1,7 @@
 //@ slow!
 // https://bugs.webkit.org/show_bug.cgi?id=247454
 import * as assert from "../assert.js";
-import { compile, instantiate } from "../gc/wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "../gc/wast-wrapper.js";
 
 function testSubtypeValidation() {
     compile(`
@@ -13,25 +13,19 @@ function testSubtypeValidation() {
           (call 0 (ref.cast (ref null $S) (local.get 0)))))
     `);
 
-    assert.throws(
-        () => compile(`
+    assert.compileError(watToWasm(`
           (module
             (func (param funcref) (result)
               (drop (ref.cast externref (local.get 0)))))
         `),
-        WebAssembly.CompileError,
-        "ref.cast"
-    );
+        "ref.cast");
 
-    assert.throws(
-        () => compile(`
+    assert.compileError(watToWasm(`
           (module
             (func (param externref) (result anyref)
               (ref.cast anyref (local.get 0))))
         `),
-        WebAssembly.CompileError,
-        "ref.cast"
-    );
+        "ref.cast");
 
     compile(`
       (module

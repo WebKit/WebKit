@@ -29,10 +29,17 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "IteratorOperations.h"
+#include "JSCJSValueInlines.h"
+#include "Options.h"
 #include "WasmModuleInformation.h"
 #include "WebAssemblyBuiltin.h"
 
 namespace JSC {
+
+bool WebAssemblyCompileOptions::isAnyOptionEnabled()
+{
+    return Options::useWasmJSStringBuiltins() || Options::acceptEagerWasmValidationOption();
+}
 
 std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JSGlobalObject* globalObject, JSObject *optionsObject)
 {
@@ -43,36 +50,52 @@ std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JS
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Check for the 'importedStringConstants' entry
-    JSValue importedStringConstantsValue = optionsObject->get(globalObject, PropertyName(Identifier::fromString(vm, "importedStringConstants"_s)));
-    RETURN_IF_EXCEPTION(scope, std::nullopt);
-    if (importedStringConstantsValue.isString()) {
-        auto importedStringConstants = asString(importedStringConstantsValue)->value(globalObject);
+    if (Options::useWasmJSStringBuiltins()) {
+        // Check for the 'importedStringConstants' entry
+        JSValue importedStringConstantsValue = optionsObject->get(globalObject, PropertyName(Identifier::fromString(vm, "importedStringConstants"_s)));
         RETURN_IF_EXCEPTION(scope, std::nullopt);
-        options.m_importedStringConstants = makeString(StringView(importedStringConstants));
-    } else if (!importedStringConstantsValue.isUndefined()) {
-        auto error = createTypeError(globalObject, "importedStringConstants option value must be a string"_s);
-        throwException(globalObject, scope, error);
-        return std::nullopt;
+        if (importedStringConstantsValue.isString()) {
+            auto importedStringConstants = asString(importedStringConstantsValue)->value(globalObject);
+            RETURN_IF_EXCEPTION(scope, std::nullopt);
+            options.m_importedStringConstants = makeString(StringView(importedStringConstants));
+        } else if (!importedStringConstantsValue.isUndefined()) {
+            auto error = createTypeError(globalObject, "importedStringConstants option value must be a string"_s);
+            throwException(globalObject, scope, error);
+            return std::nullopt;
+        }
+
+        // Check for the 'builtins' entry, qualifying builtin set names in the process.
+        JSValue builtinsValue = optionsObject->get(globalObject, PropertyName(Identifier::fromString(vm, "builtins"_s)));
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
+        if (builtinsValue.isObject()) {
+            bool sawBadEntries = false;
+            forEachInIterable(globalObject, builtinsValue, [&] (VM&, JSGlobalObject* globalObject, JSValue nextValue) {
+                if (nextValue.isString()) {
+                    auto contents = asString(nextValue)->value(globalObject);
+                    RETURN_IF_EXCEPTION(scope, void());
+                    String qualifiedName = makeString("wasm:"_s, StringView(contents));
+                    options.m_qualifiedBuiltinSetNames.append(qualifiedName);
+                } else
+                    sawBadEntries = true;
+            });
+            RETURN_IF_EXCEPTION(scope, std::nullopt);
+            if (sawBadEntries) {
+                auto error = createTypeError(globalObject, "builtins list option values must be strings"_s);
+                throwException(globalObject, scope, error);
+                return std::nullopt;
+            }
+        }
     }
 
-    // Check for the 'builtins' entry, qualifying builtin set names in the process.
-    JSValue builtinsValue = optionsObject->get(globalObject, PropertyName(Identifier::fromString(vm, "builtins"_s)));
-    RETURN_IF_EXCEPTION(scope, std::nullopt);
-    if (builtinsValue.isObject()) {
-        bool sawBadEntries = false;
-        forEachInIterable(globalObject, builtinsValue, [&] (VM&, JSGlobalObject* globalObject, JSValue nextValue) {
-            if (nextValue.isString()) {
-                auto contents = asString(nextValue)->value(globalObject);
-                RETURN_IF_EXCEPTION(scope, void());
-                String qualifiedName = makeString("wasm:"_s, StringView(contents));
-                options.m_qualifiedBuiltinSetNames.append(qualifiedName);
-            } else
-                sawBadEntries = true;
-        });
+    // Check for the non-standard 'eagerValidate' entry, gated by a JSC option so that
+    // it is silently ignored in web embeddings.
+    if (Options::acceptEagerWasmValidationOption()) {
+        JSValue eagerValidateValue = optionsObject->get(globalObject, PropertyName(Identifier::fromString(vm, "eagerValidate"_s)));
         RETURN_IF_EXCEPTION(scope, std::nullopt);
-        if (sawBadEntries) {
-            auto error = createTypeError(globalObject, "builtins list option values must be strings"_s);
+        if (eagerValidateValue.isBoolean())
+            options.m_eagerValidate = eagerValidateValue.asBoolean();
+        else if (!eagerValidateValue.isUndefined()) {
+            auto error = createTypeError(globalObject, "eagerValidate option value must be a boolean"_s);
             throwException(globalObject, scope, error);
             return std::nullopt;
         }

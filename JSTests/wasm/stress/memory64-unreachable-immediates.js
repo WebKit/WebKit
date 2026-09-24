@@ -5,7 +5,9 @@ import { compile } from "../wabt-wrapper.js";
 // memory64 offset is a u64, and an atomic's align byte can carry a memory index. Getting this wrong
 // rejects valid modules.
 
-const options = { memory64: true, multi_memory: true, threads: true };
+// Bodies are validated on the first call into the function unless asked for eagerly, and none of
+// these modules is ever instantiated, so without this the positive cases below assert nothing.
+const options = { memory64: true, multi_memory: true, threads: true, eagerValidate: true };
 
 // A memory64 atomic offset above 2^32, in unreachable code.
 await compile(`

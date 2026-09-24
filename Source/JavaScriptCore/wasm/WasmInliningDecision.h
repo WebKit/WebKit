@@ -40,6 +40,11 @@ class MergedProfile;
 class Module;
 class InliningDecision;
 
+// Parses a lazily validated callee's body so its metadata can be consulted, returning false if
+// the body turns out to be invalid. Inlining decisions must not depend on whether a callee
+// happens to have been parsed yet.
+bool ensureNotLazy(Module&, const IPIntCallee&);
+
 class InliningNode {
     WTF_MAKE_TZONE_ALLOCATED(InliningNode);
     WTF_MAKE_NONMOVABLE(InliningNode);

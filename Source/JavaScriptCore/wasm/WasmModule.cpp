@@ -73,22 +73,26 @@ static Plan::CompletionTask makeValidationCallback(Name&& sourceURL, Module::Asy
     });
 }
 
-Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
+Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source, ValidationMode validationMode)
 {
-    Ref<IPIntPlan> plan = adoptRef(*new IPIntPlan(vm, WTF::move(source), CompilerMode::Validation, Plan::dontFinalize()));
-    Wasm::ensureWorklist().enqueue(plan.get());
-    plan->waitForCompletion();
+    Ref<IPIntPlan> plan = adoptRef(*new IPIntPlan(vm, WTF::move(source), CompilerMode::Validation, validationMode, Plan::dontFinalize()));
+    if (plan->prefersSynchronousExecution())
+        plan->runSynchronously();
+    else {
+        Wasm::ensureWorklist().enqueue(plan.get());
+        plan->waitForCompletion();
+    }
     return makeValidationResult(plan.get());
 }
 
-void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
+void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, ValidationMode validationMode, Module::AsyncValidationCallback&& callback)
 {
-    validateAsync(vm, WTF::move(source), { }, WTF::move(callback));
+    validateAsync(vm, WTF::move(source), validationMode, { }, WTF::move(callback));
 }
 
-void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, Name&& sourceURL, Module::AsyncValidationCallback&& callback)
+void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, ValidationMode validationMode, Name&& sourceURL, Module::AsyncValidationCallback&& callback)
 {
-    Ref<Plan> plan = adoptRef(*new IPIntPlan(vm, WTF::move(source), CompilerMode::Validation, makeValidationCallback(WTF::move(sourceURL), WTF::move(callback))));
+    Ref<Plan> plan = adoptRef(*new IPIntPlan(vm, WTF::move(source), CompilerMode::Validation, validationMode, makeValidationCallback(WTF::move(sourceURL), WTF::move(callback))));
     Wasm::ensureWorklist().enqueue(WTF::move(plan));
 }
 

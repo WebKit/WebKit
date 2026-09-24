@@ -619,7 +619,7 @@ void ExecutionHandler::setStepIntoBreakpointForThrow(VM& throwVM)
 template<DebugStopReason reason>
 void ExecutionHandler::setOneTimeBreakpointAtEntry(IPIntCallee* callee, const ModuleInformation& owner)
 {
-    m_breakpointManager->setOneTimeBreakpoint<reason>(owner, const_cast<uint8_t*>(callee->bytecode()));
+    m_breakpointManager->setOneTimeBreakpoint<reason>(owner, const_cast<uint8_t*>(callee->bytecodeStart()));
 }
 
 bool ExecutionHandler::requireModuleAddress(VirtualAddress address)

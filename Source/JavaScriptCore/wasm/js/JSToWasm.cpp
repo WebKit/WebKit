@@ -588,10 +588,10 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
                 isWasmFunction.link(&jit);
                 if (Wasm::isRefWithTypeIndex(type)) {
-                    auto targetRTT = TypeInformation::getCanonicalRTT(type.index());
+                    const auto& targetRTT = TypeInformation::canonicalRTT(type.index());
                     jit.loadPtr(jsParam, scratchGPR);
                     jit.loadPtr(CCallHelpers::Address(scratchGPR, WebAssemblyFunctionBase::offsetOfRTT()), scratchGPR);
-                    slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(targetRTT.ptr())));
+                    slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(&targetRTT)));
                 }
 
                 if (type.isNullable())

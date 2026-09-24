@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -221,8 +221,7 @@ function testArrayGetSWithNewCanonPacked() {
 
 // Should be an error to initialize a packed array with an i64 value
 function testTypeMismatch64() {
-    let check = (type) => assert.throws(
-        () => compile(`
+    let check = (type) => assert.compileError(watToWasm(`
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
@@ -230,9 +229,7 @@ function testTypeMismatch64() {
           (i32.const 2)
           (array.get_u 0)))
     `),
-        WebAssembly.CompileError,
-        "array.new value to type I64 expected I32"
-    );
+        "array.new value to type I64 expected I32");
     check("i8");
     check("i16");
 }
@@ -240,7 +237,7 @@ function testTypeMismatch64() {
 
 // Should be an error to use array.get on a packed array -- need get_s or get_u
 function testTypeMismatchArrayGet() {
-    let f = (type) => () => compile(`
+    let f = (type) => watToWasm(`
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
@@ -248,11 +245,9 @@ function testTypeMismatchArrayGet() {
           (i32.const 2)
           (array.get 0)))
     `);
-    assert.throws(f("i8"),
-                  WebAssembly.CompileError,
+    assert.compileError(f("i8"),
                   "array.get applied to packed array of I8 -- use array.get_s or array.get_u");
-    assert.throws(f("i16"),
-                  WebAssembly.CompileError,
+    assert.compileError(f("i16"),
                   "array.get applied to packed array of I16 -- use array.get_s or array.get_u");
 }
 
@@ -265,51 +260,45 @@ function testPackedTypeOutOfContext() {
   (func (export "f") (result i8)
     (i32.const 2)))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7A\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x8A\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\x41\x02\x0B")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7A\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x8A\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\x41\x02\x0B"),
                   "WebAssembly.Module doesn't parse at byte 19: can't get 0th Type's return value");
 /*
 (module
   (func (export "f") (param i16) (result i32)
     (i32.const 2)))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x79\x01\x7F\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x8A\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\x41\x02\x0B")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x79\x01\x7F\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x8A\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\x41\x02\x0B"),
                   "WebAssembly.Module doesn't parse at byte 18: can't get 0th argument Type");
 /*
 (module
   (type (func (param i8) (result i32))))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x7A\x01\x7F")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x7A\x01\x7F"),
                   "WebAssembly.Module doesn't parse at byte 18: can't get 0th argument Type");
 /*
 (module
   (type (func (param i32) (result i16))))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x7F\x01\x79")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x7F\x01\x79"),
                   "WebAssembly.Module doesn't parse at byte 20: can't get 0th Type's return value");
 /*
 (module
   (global (mut i8) (i32.const 0)))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x06\x86\x80\x80\x80\x00\x01\x7A\x01\x41\x00\x0B")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x06\x86\x80\x80\x80\x00\x01\x7A\x01\x41\x00\x0B"),
                   "WebAssembly.Module doesn't parse at byte 16: can't get Global's value type");
 /*
 (module
   (global (mut i16) (i32.const 0)))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x06\x86\x80\x80\x80\x00\x01\x79\x01\x41\x00\x0B")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x06\x86\x80\x80\x80\x00\x01\x79\x01\x41\x00\x0B"),
                   "WebAssembly.Module doesn't parse at byte 16: can't get Global's value type");
 }
 
 // Tests that setting `element` in an array of `type` is a type error; also takes `elementType`
 // so the right error message can be tested for
 function testTypeError(type, element, elementType) {
-    assert.throws(() => compile(`
+    assert.compileError(watToWasm(`
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
@@ -318,7 +307,6 @@ function testTypeError(type, element, elementType) {
         + element +
         `\n(array.set 0)
         (array.get_u 0)))`),
-                  WebAssembly.CompileError,
                   "array.set value to type " + elementType + " expected I32");
 }
 
@@ -445,8 +433,7 @@ function testArrayGetUnreachable() {
       (i32.const 2)
       (array.get_s -1)))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x88\x80\x80\x80\x00\x02\x5E\x78\x01\x60\x00\x01\x7F\x03\x82\x80\x80\x80\x00\x01\x01\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x95\x80\x80\x80\x00\x01\x8F\x80\x80\x80\x00\x00\x41\x2A\x0F\x41\x05\xFB\x07\x00\x41\x02\xFB\x0C\xFF\xFF")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x88\x80\x80\x80\x00\x02\x5E\x78\x01\x60\x00\x01\x7F\x03\x82\x80\x80\x80\x00\x01\x01\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x95\x80\x80\x80\x00\x01\x8F\x80\x80\x80\x00\x00\x41\x2A\x0F\x41\x05\xFB\x07\x00\x41\x02\xFB\x0C\xFF\xFF"),
                   "WebAssembly.Module doesn't parse at byte 15: can't get type index immediate for array.get_s in unreachable context");
 /*
 (module
@@ -457,8 +444,7 @@ function testArrayGetUnreachable() {
       (i32.const 2)
       (array.get_u -1)))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x88\x80\x80\x80\x00\x02\x5E\x78\x01\x60\x00\x01\x7F\x03\x82\x80\x80\x80\x00\x01\x01\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x95\x80\x80\x80\x00\x01\x8F\x80\x80\x80\x00\x00\x41\x2A\x0F\x41\x05\xFB\x07\x00\x41\x02\xFB\x0D\xFF\xFF")),
-                  WebAssembly.CompileError,
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x88\x80\x80\x80\x00\x02\x5E\x78\x01\x60\x00\x01\x7F\x03\x82\x80\x80\x80\x00\x01\x01\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0A\x95\x80\x80\x80\x00\x01\x8F\x80\x80\x80\x00\x00\x41\x2A\x0F\x41\x05\xFB\x07\x00\x41\x02\xFB\x0D\xFF\xFF"),
                   "WebAssembly.Module doesn't parse at byte 15: can't get type index immediate for array.get_u in unreachable context");
 }
 

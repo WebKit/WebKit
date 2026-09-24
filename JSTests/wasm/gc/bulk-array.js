@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function testArrayFill() {
   compile(`
@@ -9,72 +9,54 @@ function testArrayFill() {
          (array.fill 0 (array.new_default 0 (i32.const 10)) (i32.const 0) (i32.const 42) (i32.const 10))))
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array i32))
          (func
            (array.fill 0 (array.new_default 0 (i32.const 10)) (i32.const 0) (i32.const 42) (i32.const 10))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.fill index 0 does not reference a mutable array definition, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.fill index 0 does not reference a mutable array definition, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (func
            (array.fill 0 (i32.const 3) (i32.const 0) (i32.const 42) (i32.const 10))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.fill arrayref to type I32 expected (ref null <array:0>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.fill arrayref to type I32 expected (ref null <array:0>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array (mut i64)))
          (func
            (array.fill 0 (array.new_default 1 (i32.const 10)) (i32.const 0) (i32.const 42) (i32.const 10))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.fill arrayref to type (ref <array:1>) expected (ref null <array:0>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.fill arrayref to type (ref <array:1>) expected (ref null <array:0>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (func
            (array.fill 0 (array.new_default 0 (i32.const 10)) (i64.const 0) (i32.const 42) (i32.const 10))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.fill offset to type I64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.fill offset to type I64 expected I32, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (func
            (array.fill 0 (array.new_default 0 (i32.const 10)) (i32.const 0) (i64.const 42) (i32.const 10))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.fill value to type I64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.fill value to type I64 expected I32, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (func
            (array.fill 0 (array.new_default 0 (i32.const 10)) (i32.const 0) (i32.const 42) (i64.const 10))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.fill size to type I64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.fill size to type I64 expected I32, in function at index 0");
 
   assert.throws(
     () => instantiate(`
@@ -197,8 +179,7 @@ function testArrayCopy() {
          (array.copy 0 0 (global.get 0) (i32.const 0) (global.get 1) (i32.const 2) (i32.const 5))))
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array i32))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -206,12 +187,9 @@ function testArrayCopy() {
          (func
            (array.copy 0 0 (global.get 0) (i32.const 0) (global.get 1) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy index 0 does not reference a mutable array definition, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy index 0 does not reference a mutable array definition, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array f32))
@@ -220,12 +198,9 @@ function testArrayCopy() {
          (func
            (array.copy 0 1 (global.get 0) (i32.const 0) (global.get 1) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy src index 1 does not reference a subtype of dst index 0, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy src index 1 does not reference a subtype of dst index 0, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array i32))
@@ -234,12 +209,9 @@ function testArrayCopy() {
          (func
            (array.copy 0 1 (i32.const 4) (i32.const 0) (global.get 1) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy dst to type I32 expected (ref null <array:0>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy dst to type I32 expected (ref null <array:0>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array i32))
@@ -248,12 +220,9 @@ function testArrayCopy() {
          (func
            (array.copy 0 1 (global.get 0) (i64.const 0) (global.get 1) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy dstOffset to type I64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy dstOffset to type I64 expected I32, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array i32))
@@ -262,12 +231,9 @@ function testArrayCopy() {
          (func
            (array.copy 0 1 (global.get 0) (i32.const 0) (i32.const 4) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy src to type I32 expected (ref null <array:1>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy src to type I32 expected (ref null <array:1>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array i32))
@@ -276,12 +242,9 @@ function testArrayCopy() {
          (func
            (array.copy 0 1 (global.get 0) (i32.const 0) (global.get 1) (f32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy srcOffset to type F32 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy srcOffset to type F32 expected I32, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i32)))
          (type (array i32))
@@ -290,9 +253,7 @@ function testArrayCopy() {
          (func
            (array.copy 0 1 (global.get 0) (i32.const 0) (global.get 1) (i32.const 2) (f64.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.copy size to type F64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.copy size to type F64 expected I32, in function at index 0");
 
   assert.throws(
     () => instantiate(`
@@ -530,8 +491,7 @@ function testArrayInitElem() {
          (array.init_elem 0 0 (global.get 0) (i32.const 0) (i32.const 2) (i32.const 5))))
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array funcref))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -540,12 +500,9 @@ function testArrayInitElem() {
          (func
            (array.init_elem 0 0 (global.get 0) (i32.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_elem index 0 does not reference a mutable array definition, in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: array.init_elem index 0 does not reference a mutable array definition, in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut funcref)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -554,12 +511,9 @@ function testArrayInitElem() {
          (func
            (array.init_elem 0 1 (global.get 0) (i32.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: element index 1 is invalid, limit is 1, in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: element index 1 is invalid, limit is 1, in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut funcref)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -568,12 +522,9 @@ function testArrayInitElem() {
          (func
            (array.init_elem 0 0 (i32.const 42) (i32.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_elem dst to type I32 expected (ref null <array:0>), in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: array.init_elem dst to type I32 expected (ref null <array:0>), in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut funcref)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -582,12 +533,9 @@ function testArrayInitElem() {
          (func
            (array.init_elem 0 0 (global.get 0) (i64.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_elem dstOffset to type I64 expected I32, in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: array.init_elem dstOffset to type I64 expected I32, in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut funcref)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -596,12 +544,9 @@ function testArrayInitElem() {
          (func
            (array.init_elem 0 0 (global.get 0) (i32.const 0) (f32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_elem srcOffset to type F32 expected I32, in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: array.init_elem srcOffset to type F32 expected I32, in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut funcref)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -610,9 +555,7 @@ function testArrayInitElem() {
          (func
            (array.init_elem 0 0 (global.get 0) (i32.const 0) (i32.const 2) (f64.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_elem size to type F64 expected I32, in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: array.init_elem size to type F64 expected I32, in function at index 1");
 
   assert.throws(
     () => instantiate(`
@@ -740,8 +683,7 @@ function testArrayInitData() {
          (array.init_data 0 0 (global.get 0) (i32.const 0) (i32.const 2) (i32.const 5))))
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array i8))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -749,12 +691,9 @@ function testArrayInitData() {
          (func
            (array.init_data 0 0 (global.get 0) (i32.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_data index 0 does not reference a mutable array definition, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.init_data index 0 does not reference a mutable array definition, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i8)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -762,12 +701,9 @@ function testArrayInitData() {
          (func
            (array.init_data 0 1 (global.get 0) (i32.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: data segment index 1 is invalid, limit is 1, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: data segment index 1 is invalid, limit is 1, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i8)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -775,12 +711,9 @@ function testArrayInitData() {
          (func
            (array.init_data 0 0 (i32.const 42) (i32.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_data dst to type I32 expected (ref null <array:0>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.init_data dst to type I32 expected (ref null <array:0>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i8)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -788,12 +721,9 @@ function testArrayInitData() {
          (func
            (array.init_data 0 0 (global.get 0) (i64.const 0) (i32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_data dstOffset to type I64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.init_data dstOffset to type I64 expected I32, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i8)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -801,12 +731,9 @@ function testArrayInitData() {
          (func
            (array.init_data 0 0 (global.get 0) (i32.const 0) (f32.const 2) (i32.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_data srcOffset to type F32 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.init_data srcOffset to type F32 expected I32, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
          (type (array (mut i8)))
          (global (ref 0) (array.new_default 0 (i32.const 10)))
@@ -814,9 +741,7 @@ function testArrayInitData() {
          (func
            (array.init_data 0 0 (global.get 0) (i32.const 0) (i32.const 2) (f64.const 5))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.init_data size to type F64 expected I32, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: array.init_data size to type F64 expected I32, in function at index 0");
 
   assert.throws(
     () => instantiate(`

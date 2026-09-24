@@ -45,15 +45,16 @@ bool WasmCallableFunction::isJS() const
     return boxedCallee == CalleeBits { &WasmToJSCallee::singleton() };
 }
 
-std::unique_ptr<Segment> Segment::tryCreate(std::optional<I32InitExpr> offset, uint32_t sizeInBytes, Kind kind, uint32_t memoryIndex)
+std::unique_ptr<Segment> Segment::tryCreate(std::optional<I32InitExpr> offset, std::span<const uint8_t> data, bool sourceIsRetained, Kind kind, uint32_t memoryIndex)
 {
-    auto result = tryFastZeroedMalloc(allocationSize(sizeInBytes));
-    void* memory;
-    if (!result.getValue(memory))
-        return nullptr;
+    Vector<uint8_t> ownedBytes;
+    if (!sourceIsRetained) {
+        if (!ownedBytes.tryAppend(data))
+            return nullptr;
+    }
 
     ASSERT(kind == Kind::Passive || !!offset);
-    return std::unique_ptr<Segment>(new (memory) Segment(sizeInBytes, kind, WTF::move(offset), memoryIndex));
+    return makeUnique<Segment>(data, WTF::move(ownedBytes), sourceIsRetained, kind, WTF::move(offset), memoryIndex);
 }
 
 String makeString(const Name& characters)
@@ -87,14 +88,14 @@ void validateWasmValue(uint64_t wasmValue, Type expectedType)
             ASSERT(is<JSWebAssemblyArray>(value));
 
         if (isRefWithTypeIndex(expectedType)) {
-            auto expectedRTT = Wasm::TypeInformation::getCanonicalRTT(expectedType.index());
-            if (expectedRTT->kind() == RTTKind::Function) {
+            const auto& expectedRTT = Wasm::TypeInformation::canonicalRTT(expectedType.index());
+            if (expectedRTT.kind() == RTTKind::Function) {
                 ASSERT(is<JSFunction>(value));
                 return;
             }
             auto objectPtr = uncheckedDowncast<WebAssemblyGCObjectBase>(value);
             auto& objectRTT = objectPtr->rtt();
-            ASSERT(objectRTT.isSubRTT(expectedRTT.get()));
+            ASSERT(objectRTT.isSubRTT(expectedRTT));
         }
     }
 }

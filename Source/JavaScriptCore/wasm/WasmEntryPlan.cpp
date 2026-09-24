@@ -54,11 +54,11 @@ EntryPlan::EntryPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerM
 
 EntryPlan::EntryPlan(VM& vm, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
     : Base(vm, WTF::move(task))
-    , m_source(WTF::move(source))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Initial)
     , m_compilerMode(compilerMode)
 {
+    m_moduleInformation->setSource(WTF::move(source));
 }
 
 const char* EntryPlan::stateString(State state)
@@ -138,8 +138,15 @@ void EntryPlan::prepare()
     if (m_moduleInformation->startFunctionIndexSpace && m_moduleInformation->startFunctionIndexSpace >= importFunctionCount)
         m_exportedFunctionIndices.add(*m_moduleInformation->startFunctionIndexSpace - importFunctionCount);
 
-    if (!prepareImpl())
+    if (!prepareImpl()) {
+        // The plan has to end up either advanced or failed. One that is neither still reports
+        // work outstanding, and nothing would ever pick it up again: Plan::runSynchronously()
+        // would spin on it with the JS lock held.
+        Locker locker { m_lock };
+        if (!failed())
+            fail("Failed preparing WebAssembly module"_s);
         return;
+    }
 
     moveToState(State::Prepared);
 }

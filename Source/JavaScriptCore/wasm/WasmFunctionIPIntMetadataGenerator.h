@@ -39,7 +39,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <JavaScriptCore/SIMDInfo.h>
 #include <JavaScriptCore/WasmHandlerInfo.h>
-#include <JavaScriptCore/WasmIPIntGenerator.h>
 #include <JavaScriptCore/WasmIPIntTierUpCounter.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedFixedVector.h>
@@ -77,9 +76,20 @@ public:
         : m_functionIndex(functionIndex)
         , m_bytecode(bytecode)
     {
+        // Metadata comes to a bit under one byte per byte of function body, so sizing the
+        // buffer from the body up front usually avoids growing it at all. Growing means
+        // copying everything emitted so far, and the buffer is discarded once the metadata
+        // has been copied into the callee, so over-estimating costs only transient memory.
+        // A body may be up to Options::maxFunctionSize() bytes, which is large enough that
+        // reserving it is worth failing softly over: the emitter grows the buffer as it goes
+        // if the reservation could not be met.
+        m_metadata.tryReserveInitialCapacity(std::max<size_t>(minimumMetadataCapacity, bytecode.size()));
     }
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
+    bool usesSIMD() const { return m_usesSIMD; }
+    bool usesLegacyExceptions() const { return m_usesLegacyExceptions; }
+    bool usesModernExceptions() const { return m_usesModernExceptions; }
 
     const uint8_t* getBytecode() const LIFETIME_BOUND { return m_bytecode.data(); }
     const uint8_t* getMetadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
@@ -89,11 +99,13 @@ public:
     void addCallTarget(unsigned callProfileIndex, FunctionSpaceIndex target)
     {
         if (callProfileIndex >= m_callTargets.size())
-            m_callTargets.insertFill(m_callTargets.size(), FunctionSpaceIndex { }, callProfileIndex - m_callTargets.size() + 1);
+            m_callTargets.grow(callProfileIndex + 1);
         m_callTargets[callProfileIndex] = target;
     }
 
 private:
+    static constexpr size_t minimumMetadataCapacity = 32;
+
     struct MetadataBufferMalloc final : public FastMalloc {
         static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
     };
@@ -134,6 +146,12 @@ private:
     unsigned m_numArguments { 0 };
     unsigned m_numArgumentsOnStack { 0 };
     unsigned m_nonArgLocalOffset { 0 };
+    // IPIntCallee arms its tier-up counter from this while initializing. It holds the same
+    // answer ModuleInformation::usesSIMD() gives, which includes the testing option that
+    // forces every function to count as using SIMD.
+    bool m_usesSIMD { false };
+    bool m_usesLegacyExceptions { false };
+    bool m_usesModernExceptions { false };
     Vector<FunctionSpaceIndex> m_callTargets { };
     Vector<uint8_t, 8> m_localInitBytecode { };
 
