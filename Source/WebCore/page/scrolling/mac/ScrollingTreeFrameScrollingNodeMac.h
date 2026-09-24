@@ -52,8 +52,6 @@ public:
     void startRubberBandSnapBack();
     void rubberBandTargetOffsetDidChange();
 
-    bool isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const;
-
 protected:
     ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 

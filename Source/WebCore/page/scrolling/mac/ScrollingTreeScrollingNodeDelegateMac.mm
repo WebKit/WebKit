@@ -427,26 +427,37 @@ String ScrollingTreeScrollingNodeDelegateMac::scrollbarStateForOrientation(Scrol
     return m_scrollerPair->scrollbarStateForOrientation(orientation);
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const
+Vector<RetainPtr<CALayer>, 2> ScrollingTreeScrollingNodeDelegateMac::hitTestableScrollbarLayers() const
 {
-    if (!referenceLayer)
-        return false;
+    Ref node = scrollingNode();
+    bool usesOverlayScrollbars = m_scrollerPair->scrollbarStyle() == ScrollbarStyle::Overlay;
 
-    const auto scrollbarStyle = m_scrollerPair->scrollbarStyle();
-
-    const auto isPointOverScroller = [&](ScrollerMac& scroller) {
+    Vector<RetainPtr<CALayer>, 2> layers;
+    auto appendIfHitTestable = [&](ScrollerMac& scroller, NativeScrollbarVisibility visibility) {
         RetainPtr hostLayer = scroller.hostLayer();
         if (!hostLayer)
-            return false;
+            return;
 
-        if (scrollbarStyle == ScrollbarStyle::Overlay && scroller.knobAlpha() <= 0)
-            return false;
+        switch (visibility) {
+        case NativeScrollbarVisibility::HiddenByStyle:
+            return;
+        case NativeScrollbarVisibility::ReplacedByCustomScrollbar:
+            // The web process paints custom scrollbars into the host layer, and they are never overlay scrollbars.
+            break;
+        case NativeScrollbarVisibility::Visible:
+            // The web process only hit-tests an overlay scrollbar while it is shown, which it learns about
+            // through ScrollerMac::visibilityChanged(), so consult the same state here.
+            if (usesOverlayScrollbars && !scroller.isVisible())
+                return;
+            break;
+        }
 
-        const auto pointInHostLayer = [hostLayer convertPoint:pointInReferenceLayer fromLayer:referenceLayer];
-        return static_cast<bool>([hostLayer containsPoint:pointInHostLayer]);
+        layers.append(WTF::move(hostLayer));
     };
 
-    return isPointOverScroller(m_scrollerPair->verticalScroller()) || isPointOverScroller(m_scrollerPair->horizontalScroller());
+    appendIfHitTestable(m_scrollerPair->verticalScroller(), node->verticalNativeScrollbarVisibility());
+    appendIfHitTestable(m_scrollerPair->horizontalScroller(), node->horizontalNativeScrollbarVisibility());
+    return layers;
 }
 
 } // namespace WebCore

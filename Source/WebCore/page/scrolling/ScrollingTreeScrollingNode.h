@@ -32,6 +32,7 @@
 #include <WebCore/RubberbandingState.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollableArea.h>
+#include <WebCore/ScrollingPlatformLayer.h>
 #include <WebCore/ScrollingTree.h>
 #include <WebCore/ScrollingTreeNode.h>
 #include <wtf/TZoneMalloc.h>
@@ -150,7 +151,9 @@ public:
     std::optional<ScrollbarColor> scrollbarColorStyle() const { return m_scrollableAreaParameters.scrollbarColorStyle; }
 
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
-    
+
+    Vector<PlatformLayerContainer, 2> hitTestableScrollbarLayers() const;
+
     void scrollbarVisibilityDidChange(ScrollbarOrientation, bool);
     void scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation, int);
 

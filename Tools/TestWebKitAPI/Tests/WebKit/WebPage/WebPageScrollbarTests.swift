@@ -91,6 +91,111 @@ struct ScrollbarTests {
 
         #expect(page.isPointInScrollbar(locationInView: point) == expectHit)
     }
+
+    private static let subscrollerMaxEdge: CGFloat = 400
+    private static let subscrollerCenter: CGFloat = 250
+
+    private func loadSubscroller(style: String = "", contents: String = "height: 2000px;", extraMarkup: String = "") async throws {
+        let html = """
+            <style>\(style)</style>
+            <body style="margin: 0;">
+                <div id="scroller" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; overflow: scroll;">
+                    <div style="\(contents)"></div>
+                </div>
+                \(extraMarkup)
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    @Test(arguments: Self.arguments)
+    func detectsVerticalScrollbarInSubscroller(inset: Int, expectHit: Bool) async throws {
+        try await loadSubscroller()
+
+        let point = NSPoint(x: Self.subscrollerMaxEdge - CGFloat(inset), y: Self.subscrollerCenter)
+
+        #expect(page.isPointInScrollbar(locationInView: point) == expectHit)
+    }
+
+    @Test(arguments: Self.arguments)
+    func detectsHorizontalScrollbarInSubscroller(inset: Int, expectHit: Bool) async throws {
+        try await loadSubscroller(contents: "width: 2000px; height: 10px;")
+
+        let point = NSPoint(x: Self.subscrollerCenter, y: Self.subscrollerMaxEdge - CGFloat(inset))
+
+        #expect(page.isPointInScrollbar(locationInView: point) == expectHit)
+    }
+
+    @Test(arguments: Self.arguments)
+    func detectsVerticalScrollbarInSubframe(inset: Int, expectHit: Bool) async throws {
+        let html = """
+            <body style="margin: 0;">
+                <iframe style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; border: none;" srcdoc="<body style='margin: 0; height: 2000px;'></body>"></iframe>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let point = NSPoint(x: Self.subscrollerMaxEdge - CGFloat(inset), y: Self.subscrollerCenter)
+
+        #expect(page.isPointInScrollbar(locationInView: point) == expectHit)
+    }
+
+    @Test
+    func detectsCustomScrollbarInSubscroller() async throws {
+        try await loadSubscroller(
+            style: "#scroller::-webkit-scrollbar { width: 20px; height: 20px; } #scroller::-webkit-scrollbar-thumb { background: gray; }"
+        )
+
+        let point = NSPoint(x: Self.subscrollerMaxEdge - 10, y: Self.subscrollerCenter)
+
+        #expect(page.isPointInScrollbar(locationInView: point))
+    }
+
+    @Test
+    func ignoresScrollbarHiddenByStyleInSubscroller() async throws {
+        try await loadSubscroller(style: "#scroller { scrollbar-width: none; }")
+
+        let point = NSPoint(x: Self.subscrollerMaxEdge - 5, y: Self.subscrollerCenter)
+
+        #expect(!page.isPointInScrollbar(locationInView: point))
+    }
+
+    @Test
+    func ignoresSubscrollerScrollbarCoveredByOtherContent() async throws {
+        try await loadSubscroller(
+            extraMarkup: """
+                <div style="position: absolute; left: 350px; top: 100px; width: 100px; height: 300px; background: white;"></div>
+                """
+        )
+
+        let point = NSPoint(x: Self.subscrollerMaxEdge - 5, y: Self.subscrollerCenter)
+
+        #expect(!page.isPointInScrollbar(locationInView: point))
+    }
+
+    @Test
+    func ignoresSubscrollerScrollbarClippedByAncestor() async throws {
+        let html = """
+            <body style="margin: 0;">
+                <div style="position: absolute; left: 100px; top: 100px; width: 250px; height: 300px; overflow: hidden;">
+                    <div style="width: 300px; height: 300px; overflow: scroll;">
+                        <div style="height: 2000px;"></div>
+                    </div>
+                </div>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let point = NSPoint(x: Self.subscrollerMaxEdge - 5, y: Self.subscrollerCenter)
+
+        #expect(!page.isPointInScrollbar(locationInView: point))
+    }
 }
 
 #endif // WTF_PLATFORM_MAC && ENABLE_SWIFTUI

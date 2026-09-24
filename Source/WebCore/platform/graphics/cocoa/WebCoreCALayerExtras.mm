@@ -185,7 +185,7 @@ void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CA
         }();
 
         if (handlesEvent)
-            layersAtPoint.append(std::make_pair(layer, subviewPoint));
+            layersAtPoint.append({ layer, subviewPoint });
 
         if ([layer sublayers])
             collectDescendantLayersAtPoint(layersAtPoint, layer, subviewPoint, pointInLayerFunction);

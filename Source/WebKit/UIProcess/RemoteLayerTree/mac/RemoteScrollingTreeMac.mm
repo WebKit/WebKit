@@ -531,17 +531,24 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     return rootScrollingNode;
 }
 
+static void collectHitTestableScrollbarLayers(const ScrollingTreeNode& node, HashSet<RetainPtr<CALayer>>& scrollbarLayers)
+{
+    if (RefPtr scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(node)) {
+        for (RetainPtr layer : scrollingNode->hitTestableScrollbarLayers())
+            scrollbarLayers.add(WTF::move(layer));
+    }
+
+    for (const Ref<ScrollingTreeNode>& child : node.children())
+        collectHitTestableScrollbarLayers(child, scrollbarLayers);
+}
+
 bool RemoteScrollingTreeMac::isPointInScrollbar(FloatPoint locationInViewCoordinates)
 {
-    RefPtr frameNode = dynamicDowncast<ScrollingTreeFrameScrollingNodeMac>(rootNode());
-    if (!frameNode)
+    RefPtr rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
         return false;
 
     HitTestLocker hitTestLocker { *this };
-
-    RetainPtr scrolledContentsLayer { static_cast<CALayer *>(frameNode->scrolledContentsLayer()) };
-    if (!scrolledContentsLayer)
-        return false;
 
     CheckedPtr scrollingCoordinatorProxy = this->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
@@ -555,9 +562,20 @@ bool RemoteScrollingTreeMac::isPointInScrollbar(FloatPoint locationInViewCoordin
     if (!viewCoordinateLayer)
         return false;
 
-    const auto pointInContentsLayer = FloatPoint { [scrolledContentsLayer convertPoint:locationInViewCoordinates fromLayer:viewCoordinateLayer] };
+    HashSet<RetainPtr<CALayer>> scrollbarLayers;
+    collectHitTestableScrollbarLayers(*rootScrollingNode, scrollbarLayers);
+    if (scrollbarLayers.isEmpty())
+        return false;
 
-    return frameNode->isPointInScrollbar(pointInContentsLayer, scrolledContentsLayer);
+    Vector<LayerAndPoint, 16> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, viewCoordinateLayer, locationInViewCoordinates, [&scrollbarLayers](CALayer *layer, CGPoint localPoint) {
+        return scrollbarLayers.contains(layer) || layerEventRegionContainsPoint(layer, localPoint);
+    });
+
+    if (layersAtPoint.isEmpty())
+        return false;
+
+    return scrollbarLayers.contains(layersAtPoint.last().layer);
 }
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
