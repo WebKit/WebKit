@@ -24,22 +24,26 @@
  */
 
 #include "config.h"
-#include "CorpseExportsTrieTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
 #include <JavaScriptCore/CorpseExportsTrie.h>
 #include <array>
 #include <limits>
-#include <mach-o/loader.h>
 #include <pthread.h>
 #include <string>
 #include <unistd.h>
 #include <wtf/Atomics.h>
 
+#if OS(DARWIN)
+#include <mach-o/loader.h>
+#endif
+
 namespace JSCToolsTest {
+
+#if OS(DARWIN)
 
 using JSC::Corpse::ExportsTrie;
 
@@ -808,6 +812,28 @@ void fuzzExportsTrie(uint64_t seed, unsigned iterations)
         pthread_join(watchdog, nullptr);
 }
 
+#else
+
+void testExportsTrie()
+{
+    SuiteTracer tracer("ExportsTrie");
+    if (!tracer.shouldRun())
+        return;
+
+    skipSuite("ExportsTrie", "Mach-O only");
+}
+
+void fuzzExportsTrie(uint64_t, unsigned)
+{
+    SuiteTracer tracer("ExportsTrieFuzz");
+    if (!tracer.shouldRun())
+        return;
+
+    skipSuite("ExportsTrie", "Mach-O only");
+}
+
+#endif // OS(DARWIN)
+
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

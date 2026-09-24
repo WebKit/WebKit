@@ -26,12 +26,14 @@
 #include "config.h"
 #include "CorpseSnapshot.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseError.h"
 
+#if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_error.h>
+#endif
 #include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -42,6 +44,27 @@ namespace Corpse {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Snapshot);
 
 unsigned Snapshot::s_nextId = 1;
+
+const Vector<Thread>& Snapshot::threads()
+{
+    if (!m_threads)
+        m_threads = Thread::collect(*this);
+    return *m_threads;
+}
+
+Address Snapshot::symbol(const char* name)
+{
+    if (!name || !*name)
+        return { };
+
+    auto entry = m_symbols.ensure<StringViewHashTranslator>(StringView::fromLatin1(name), [&] {
+        return WTF::makeUnique<Symbol>(*this, name);
+    });
+
+    return entry.iterator->value->address();
+}
+
+#if OS(DARWIN)
 
 // Returns MACH_PORT_NULL if the snapshot could not be taken, having reported why.
 static mach_port_t takeSnapshot(Process* process)
@@ -64,6 +87,26 @@ static mach_port_t takeSnapshot(Process* process)
     return MACH_PORT_NULL;
 }
 
+Snapshot::~Snapshot()
+{
+    if (isValid())
+        mach_port_deallocate(mach_task_self(), m_corpsePort);
+}
+
+#else
+
+// There is no corpse on Linux yet: the snapshot reads the live process.
+static TaskHandle takeSnapshot(Process* process)
+{
+    if (!process || !process->isAttached())
+        return invalidTaskHandle;
+    return process->taskPort();
+}
+
+Snapshot::~Snapshot() = default;
+
+#endif // OS(DARWIN)
+
 Snapshot::Snapshot(RefPtr<Process> process)
     : m_process(WTF::move(process))
     , m_corpsePort(takeSnapshot(m_process.get()))
@@ -72,34 +115,9 @@ Snapshot::Snapshot(RefPtr<Process> process)
 {
 }
 
-Snapshot::~Snapshot()
-{
-    if (isValid())
-        mach_port_deallocate(mach_task_self(), m_corpsePort);
-}
-
-const Vector<Thread>& Snapshot::threads()
-{
-    if (!m_threads)
-        m_threads = Thread::collect(*this);
-    return *m_threads;
-}
-
-Address Snapshot::symbol(const char* name)
-{
-    if (!name || !*name)
-        return { };
-
-    auto entry = m_symbols.ensure<StringViewHashTranslator>(StringView::fromLatin1(name), [&] {
-        return WTF::makeUnique<Symbol>(*this, name);
-    });
-
-    return entry.iterator->value->address();
-}
-
 } // namespace Corpse
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

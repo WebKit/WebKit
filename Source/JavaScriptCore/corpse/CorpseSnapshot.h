@@ -25,14 +25,15 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseMemory.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <JavaScriptCore/CorpseThread.h>
-#include <mach/mach.h>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -65,14 +66,14 @@ public:
     Snapshot& operator=(const Snapshot&) = delete;
     Snapshot(Snapshot&& other) = delete;
 
-    bool isValid() const { return MACH_PORT_VALID(m_corpsePort); }
+    bool isValid() const { return isValidTaskHandle(m_corpsePort); }
 
     // A monotonically increasing identifier assigned at construction. IDs are
     // never reused, so they stay stable as snapshots are added and removed.
     unsigned id() const { return m_id; }
 
     Process* process() const { return m_process.get(); }
-    mach_port_t corpsePort() const { return m_corpsePort; }
+    TaskHandle corpsePort() const { return m_corpsePort; }
 
     Memory& memory() LIFETIME_BOUND
     {
@@ -90,7 +91,7 @@ private:
     static unsigned s_nextId;
 
     RefPtr<Process> m_process;
-    mach_port_t m_corpsePort { MACH_PORT_NULL };
+    TaskHandle m_corpsePort { invalidTaskHandle };
     unsigned m_id;
 
     std::optional<Vector<Thread>> m_threads;
@@ -106,4 +107,4 @@ private:
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

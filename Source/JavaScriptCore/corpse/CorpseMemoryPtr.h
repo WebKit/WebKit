@@ -25,10 +25,11 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseMemory.h>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <type_traits>
 #include <wtf/Assertions.h>
@@ -64,7 +65,7 @@ public:
     explicit operator bool() const { return isValid(); }
 
     Error error() const { return m_error; }
-    kern_return_t kernResult() const { return m_kernResult; }
+    KernelResult kernResult() const { return m_kernResult; }
 
     Address address() const { return m_address; }
     size_t sizeInBytes() const { return isValid() ? sizeof(T) : 0; }
@@ -101,7 +102,7 @@ private:
     Region* m_region { nullptr };
 
     Error m_error { Error::None };
-    kern_return_t m_kernResult { KERN_SUCCESS };
+    KernelResult m_kernResult { kernelSuccess };
 };
 
 template<typename T>
@@ -142,4 +143,4 @@ Memory::Ptr<T> Memory::ptr(Address address)
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

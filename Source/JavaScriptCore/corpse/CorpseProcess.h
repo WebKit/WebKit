@@ -25,13 +25,15 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
-#include <mach/mach.h>
+#if ENABLE(MYA)
+
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 namespace Corpse {
@@ -49,9 +51,11 @@ public:
     void detach();
 
     pid_t pid() const { return m_pid; }
-    mach_port_t taskPort() const { return m_taskPort; }
 
-    bool isAttached() const { return MACH_PORT_VALID(m_taskPort); }
+    CString executablePath() const;
+    TaskHandle taskPort() const { return m_taskPort; }
+
+    bool isAttached() const { return isValidTaskHandle(m_taskPort); }
 
     // The target process may have terminated while we still hold the port.
     bool holdsLiveTask() const;
@@ -69,10 +73,10 @@ private:
     }
 
     pid_t m_pid;
-    mach_port_t m_taskPort { MACH_PORT_NULL };
+    TaskHandle m_taskPort { invalidTaskHandle };
 };
 
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
