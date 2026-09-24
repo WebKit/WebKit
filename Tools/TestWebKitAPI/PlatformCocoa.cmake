@@ -1043,7 +1043,7 @@ set_target_properties(TestWebKit PROPERTIES
 
 set(_twkapi_bundle_id "org.webkit.TestWebKitAPI")
 
-if (WEBKIT_SDK_TARGET_OS STREQUAL "ios")
+if (USE_EXTENSIONKIT)
     add_dependencies(TestWebKit WebContentExtension NetworkingExtension)
     if (ENABLE_GPU_PROCESS)
         add_dependencies(TestWebKit GPUExtension)

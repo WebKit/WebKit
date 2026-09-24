@@ -836,17 +836,21 @@ if (NOT USE_HEADER_MAPS AND NOT USE_FRAMEWORK_BUNDLES)
     )
     set(WebKit_INTERFACE_DEPENDENCIES "")
 endif ()
-set(WebKit_INTERFACE_LINK_DEPENDS
-    $<TARGET_FILE:NetworkProcess>
-    $<TARGET_FILE:WebProcess>
-)
+if (NOT USE_EXTENSIONKIT)
+    # ExtensionKit processes (on iOS) are separate targets, and not part of the
+    # WebKit.framework bundle.
+    set(WebKit_INTERFACE_LINK_DEPENDS
+        $<TARGET_FILE:NetworkProcess>
+        $<TARGET_FILE:WebProcess>
+    )
 
-WEBKIT_EXECUTABLE_DECLARE(WebProcess)
-WEBKIT_EXECUTABLE_DECLARE(NetworkProcess)
+    WEBKIT_EXECUTABLE_DECLARE(WebProcess)
+    WEBKIT_EXECUTABLE_DECLARE(NetworkProcess)
 
-if (ENABLE_GPU_PROCESS)
-    WEBKIT_EXECUTABLE_DECLARE(GPUProcess)
-    list(APPEND WebKit_INTERFACE_LINK_DEPENDS $<TARGET_FILE:GPUProcess>)
+    if (ENABLE_GPU_PROCESS)
+        WEBKIT_EXECUTABLE_DECLARE(GPUProcess)
+        list(APPEND WebKit_INTERFACE_LINK_DEPENDS $<TARGET_FILE:GPUProcess>)
+    endif ()
 endif ()
 
 set(WebKit_GENERATED_SERIALIZERS_SUFFIX cpp)
@@ -1545,26 +1549,36 @@ if (WebKit_ARC_SOURCES)
     target_sources(WebKit PRIVATE $<TARGET_OBJECTS:WebKitARC>)
 endif ()
 
-list(APPEND WebProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
-WEBKIT_EXECUTABLE(WebProcess)
-WEBKIT_REUSE_PREFIX_HEADER(WebProcess WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
+if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_IOS_FAMILY)
+    # Must run before the WEBKIT_EXECUTABLE() calls below, which read the code
+    # signing properties it sets on each service.
+    WEBKIT_DEFINE_AUXILIARY_PROCESSES()
+endif ()
 
-list(APPEND NetworkProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
-WEBKIT_EXECUTABLE(NetworkProcess)
-WEBKIT_REUSE_PREFIX_HEADER(NetworkProcess WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
+if (NOT USE_EXTENSIONKIT)
+    list(APPEND WebProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
+    WEBKIT_EXECUTABLE(WebProcess)
+    WEBKIT_REUSE_PREFIX_HEADER(WebProcess WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
 
-if (ENABLE_GPU_PROCESS)
-    list(APPEND GPUProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
-    WEBKIT_EXECUTABLE(GPUProcess)
-    WEBKIT_REUSE_PREFIX_HEADER(GPUProcess WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
+    list(APPEND NetworkProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
+    WEBKIT_EXECUTABLE(NetworkProcess)
+    WEBKIT_REUSE_PREFIX_HEADER(NetworkProcess WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
+
+    if (ENABLE_GPU_PROCESS)
+        list(APPEND GPUProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
+        WEBKIT_EXECUTABLE(GPUProcess)
+        WEBKIT_REUSE_PREFIX_HEADER(GPUProcess WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
+    endif ()
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -Wno-unused-parameter)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(NetworkProcess -Wno-unused-parameter)
-    if (ENABLE_GPU_PROCESS)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(GPUProcess -Wno-unused-parameter)
+    if (NOT USE_EXTENSIONKIT)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(NetworkProcess -Wno-unused-parameter)
+        if (ENABLE_GPU_PROCESS)
+            WEBKIT_ADD_TARGET_CXX_FLAGS(GPUProcess -Wno-unused-parameter)
+        endif ()
     endif ()
 endif ()
 
@@ -1574,24 +1588,7 @@ if (APPLE)
         PROPERTY LINK_LIBRARY_OVERRIDE_WebKitLegacy REEXPORT_FRAMEWORK)
 endif ()
 
-if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_IOS_FAMILY)
-    WEBKIT_DEFINE_XPC_SERVICES()
-    # XPC services have a link dependency on WebKit, but for codesigning we
-    # need the reverse. The service bundles all sign, and then WebKit.framework
-    # can sign.
-    if (WEBKIT_SDK_IS_MACOS)
-        # FIXME: iOS build does not use the shared codesigning macros for
-        # extension processes.
-        add_dependencies(WebKit_CodeSign
-            WebProcess_CodeSign
-            WebProcessEnhancedSecurity_CodeSign
-            WebProcessCaptivePortal_CodeSign
-            WebProcessDevelopment_CodeSign
-            NetworkProcess_CodeSign
-            GPUProcess_CodeSign
-        )
-    endif ()
-else ()
+if (NOT APPLE)
     if (NOT ANDROID)
         WEBKIT_POPULATE_LIBRARY_VERSION(WEBKIT)
         set_target_properties(WebKit PROPERTIES VERSION ${WEBKIT_VERSION} SOVERSION ${WEBKIT_VERSION_MAJOR})

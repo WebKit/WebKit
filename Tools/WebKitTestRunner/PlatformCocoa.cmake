@@ -313,7 +313,7 @@ set_target_properties(WebKitTestRunner PROPERTIES
 
 set(_wktr_bundle_id "org.webkit.WebKitTestRunner")
 
-if (WEBKIT_SDK_TARGET_OS STREQUAL "ios")
+if (USE_EXTENSIONKIT)
     add_dependencies(WebKitTestRunner WebContentExtension WebContentCaptivePortalExtension NetworkingExtension)
     if (ENABLE_GPU_PROCESS)
         add_dependencies(WebKitTestRunner GPUExtension)
