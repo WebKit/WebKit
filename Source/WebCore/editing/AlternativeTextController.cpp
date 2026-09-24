@@ -177,7 +177,7 @@ bool AlternativeTextController::isSpellingMarkerAllowed(const SimpleRange& missp
 
 void AlternativeTextController::show(const SimpleRange& rangeToReplace, const String& replacement)
 {
-    auto boundingBox = rootViewRectForRange(rangeToReplace);
+    auto boundingBox = mainFrameViewRectForRange(rangeToReplace);
     if (boundingBox.isEmpty())
         return;
     m_originalText = plainText(rangeToReplace);
@@ -185,12 +185,8 @@ void AlternativeTextController::show(const SimpleRange& rangeToReplace, const St
     m_details = replacement;
     m_isActive = true;
 
-    if (!m_document->frame())
-        return;
-    FrameIdentifier rootFrameID = m_document->frame()->rootFrame().frameID();
-
     if (CheckedPtr client = alternativeTextClient(); client)
-        client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacement, { }, rootFrameID);
+        client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacement, { });
 }
 
 void AlternativeTextController::handleCancelOperation()
@@ -283,14 +279,11 @@ void AlternativeTextController::timerFired()
             break;
         m_isActive = true;
         m_originalText = plainText(*m_rangeWithAlternative);
-        auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
+        auto boundingBox = mainFrameViewRectForRange(*m_rangeWithAlternative);
         if (!boundingBox.isEmpty()) {
-            if (!m_document->frame())
-                return;
-            FrameIdentifier rootFrameID = m_document->frame()->rootFrame().frameID();
             if (CheckedPtr client = alternativeTextClient()) {
                 removeMarkers(*m_rangeWithAlternative, { DocumentMarkerType::CorrectionIndicator });
-                client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacementString, { }, rootFrameID);
+                client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacementString, { });
             }
         }
     }
@@ -318,13 +311,10 @@ void AlternativeTextController::timerFired()
         String topSuggestion = suggestions.first();
         suggestions.removeAt(0);
         m_isActive = true;
-        auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
+        auto boundingBox = mainFrameViewRectForRange(*m_rangeWithAlternative);
         if (!boundingBox.isEmpty()) {
-            if (!m_document->frame())
-                return;
-            FrameIdentifier rootFrameID = m_document->frame()->rootFrame().frameID();
             if (CheckedPtr client = alternativeTextClient())
-                client->showCorrectionAlternative(m_type, boundingBox, m_originalText, topSuggestion, suggestions, rootFrameID);
+                client->showCorrectionAlternative(m_type, boundingBox, m_originalText, topSuggestion, suggestions);
         }
     }
         break;
@@ -414,7 +404,15 @@ FloatRect AlternativeTextController::rootViewRectForRange(const SimpleRange& ran
     if (!view)
         return { };
     return view->contentsToRootView(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range)));
-}        
+}
+
+FloatRect AlternativeTextController::mainFrameViewRectForRange(const SimpleRange& range) const
+{
+    RefPtr view = m_document->view();
+    if (!view)
+        return { };
+    return view->contentsToMainFrameView(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range))));
+}
 
 void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection)
 {

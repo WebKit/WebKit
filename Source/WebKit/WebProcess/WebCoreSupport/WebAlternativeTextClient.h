@@ -41,7 +41,7 @@ public:
 
 private:
 #if USE(AUTOCORRECTION_PANEL)
-    void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::FrameIdentifier) override;
+    void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
     void dismissAlternative(WebCore::ReasonForDismissingAlternativeText) override;
     String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
     void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString) override;

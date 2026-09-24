@@ -121,6 +121,7 @@ private:
     
     TextCheckerClient* textChecker();
     FloatRect rootViewRectForRange(const SimpleRange&) const;
+    FloatRect mainFrameViewRectForRange(const SimpleRange&) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
     EventLoopTimerHandle m_timer;
