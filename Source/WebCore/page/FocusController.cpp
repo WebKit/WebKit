@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
@@ -82,12 +83,52 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FocusController);
 
 using namespace HTMLNames;
 
+static HTMLElement* NODELETE invokerForOpenPopoverIgnoringCycles(const HTMLElement& popover)
+{
+    if (!popover.isPopoverShowing())
+        return nullptr;
+    auto* parent = popover.parentNode();
+    if (!parent || is<ShadowRoot>(*parent) || parent == popover.document().documentElement())
+        return nullptr;
+    if (auto* parentElement = dynamicDowncast<Element>(*parent); parentElement && parentElement->shadowRoot())
+        return nullptr;
+    auto* invoker = popover.popoverData()->invoker();
+    if (!invoker || &invoker->document() != &popover.document())
+        return nullptr;
+    return invoker;
+}
+
+static bool NODELETE invokerChainReachesPopover(const HTMLElement& popover, const HTMLElement& invoker)
+{
+    auto remainingSteps = popover.document().topLayerElements().size();
+    for (const HTMLElement* current = &invoker; current && remainingSteps; --remainingSteps) {
+        const HTMLElement* enclosingPopover = nullptr;
+        const HTMLElement* enclosingInvoker = nullptr;
+        using Ancestors = ComposedTreeAncestorIterator<const Element>;
+        for (Ancestors ancestor { *current }; ancestor != Ancestors { }; ++ancestor) {
+            if (auto* ancestorPopover = dynamicDowncast<HTMLElement>(*ancestor)) {
+                if ((enclosingInvoker = invokerForOpenPopoverIgnoringCycles(*ancestorPopover))) {
+                    enclosingPopover = ancestorPopover;
+                    break;
+                }
+            }
+        }
+        if (enclosingPopover == &popover)
+            return true;
+        current = enclosingInvoker;
+    }
+    return false;
+}
+
 static HTMLElement* NODELETE invokerForOpenPopover(const Node* candidatePopover)
 {
     auto* popover = dynamicDowncast<HTMLElement>(candidatePopover);
-    if (popover && popover->isPopoverShowing())
-        return popover->popoverData()->invoker();
-    return nullptr;
+    if (!popover)
+        return nullptr;
+    auto* invoker = invokerForOpenPopoverIgnoringCycles(*popover);
+    if (!invoker || invokerChainReachesPopover(*popover, *invoker))
+        return nullptr;
+    return invoker;
 }
 
 static RefPtr<Element> NODELETE openPopoverForInvoker(const Node* candidateInvoker)
@@ -96,7 +137,7 @@ static RefPtr<Element> NODELETE openPopoverForInvoker(const Node* candidateInvok
     if (!invoker)
         return nullptr;
     auto* popover = invoker->invokedPopover();
-    if (popover && popover->isPopoverShowing() && popover->popoverData()->invoker() == invoker)
+    if (popover && invokerForOpenPopover(popover) == invoker)
         return popover;
     return nullptr;
 }
@@ -107,7 +148,7 @@ static inline bool NODELETE hasCustomFocusLogic(const Element& element)
     return htmlElement && htmlElement->hasCustomFocusLogic();
 }
 
-static inline bool NODELETE isFocusScopeOwner(const Element& element)
+static inline bool NODELETE isShadowOrSlotFocusScopeOwner(const Element& element)
 {
     if (element.shadowRoot() && !hasCustomFocusLogic(element))
         return true;
@@ -116,9 +157,12 @@ static inline bool NODELETE isFocusScopeOwner(const Element& element)
         if (!root || !root->host() || !hasCustomFocusLogic(*root->host()))
             return true;
     }
-    if (invokerForOpenPopover(&element))
-        return true;
     return false;
+}
+
+static inline bool NODELETE isFocusScopeOwner(const Element& element)
+{
+    return isShadowOrSlotFocusScopeOwner(element) || invokerForOpenPopover(&element);
 }
 
 static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newFocusedFrame, Node* newFocusedNode)
@@ -166,7 +210,10 @@ public:
     Variant<RefPtr<Element>, RefPtr<Frame>> owner() const;
     WEBCORE_EXPORT static FocusNavigationScope scopeOf(Node&);
     static FocusNavigationScope scopeOwnedByScopeOwner(Element&);
+    static FocusNavigationScope scopeForPopover(Element&);
     static FocusNavigationScope NODELETE scopeOwnedByIFrame(HTMLFrameOwnerElement&);
+
+    bool isNonShadowPopoverRoot(const Element&) const;
 
     Node* firstNodeInScope() const;
     Node* lastNodeInScope() const;
@@ -193,10 +240,15 @@ private:
     SlotKind m_slotKind { SlotKind::Assigned };
 };
 
+bool FocusNavigationScope::isNonShadowPopoverRoot(const Element& element) const
+{
+    return m_treeScopeRootNode == &element && invokerForOpenPopover(&element) && !isShadowOrSlotFocusScopeOwner(element);
+}
+
 // FIXME: Focus navigation should work with shadow trees that have slots.
 Node* FocusNavigationScope::firstChildInScope(const Node& node) const
 {
-    if (auto* element = dynamicDowncast<Element>(node); element && isFocusScopeOwner(*element))
+    if (auto* element = dynamicDowncast<Element>(node); element && isFocusScopeOwner(*element) && !isNonShadowPopoverRoot(*element))
         return nullptr;
     auto* first = node.firstChild();
     while (invokerForOpenPopover(first))
@@ -206,7 +258,7 @@ Node* FocusNavigationScope::firstChildInScope(const Node& node) const
 
 Node* FocusNavigationScope::lastChildInScope(const Node& node) const
 {
-    if (auto* element = dynamicDowncast<Element>(node); element && isFocusScopeOwner(*element))
+    if (auto* element = dynamicDowncast<Element>(node); element && isFocusScopeOwner(*element) && !isNonShadowPopoverRoot(*element))
         return nullptr;
     auto* last = node.lastChild();
     while (invokerForOpenPopover(last))
@@ -279,9 +331,6 @@ Node* FocusNavigationScope::firstNodeInScope() const
         ASSERT(m_slotKind == SlotKind::Fallback);
         return m_slotElement->firstChild();
     }
-    // Popovers with invokers delegate focus.
-    if (invokerForOpenPopover(m_treeScopeRootNode.get()))
-        return m_treeScopeRootNode->firstChild();
     ASSERT(m_treeScopeRootNode);
     return m_treeScopeRootNode.get();
 }
@@ -297,9 +346,6 @@ Node* FocusNavigationScope::lastNodeInScope() const
         ASSERT(m_slotKind == SlotKind::Fallback);
         return m_slotElement->lastChild();
     }
-    // Popovers with invokers delegate focus.
-    if (invokerForOpenPopover(m_treeScopeRootNode.get()))
-        return m_treeScopeRootNode->lastChild();
     ASSERT(m_treeScopeRootNode);
     return m_treeScopeRootNode.get();
 }
@@ -391,11 +437,19 @@ FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
 
 FocusNavigationScope FocusNavigationScope::scopeOwnedByScopeOwner(Element& element)
 {
-    ASSERT(element.shadowRoot() || is<HTMLSlotElement>(element) || invokerForOpenPopover(&element));
+    ASSERT(element.shadowRoot() || is<HTMLSlotElement>(element) || invokerForOpenPopover(&element) || openPopoverForInvoker(&element));
     if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(element))
         return FocusNavigationScope(*slot, slot->assignedNodes() ? SlotKind::Assigned : SlotKind::Fallback);
     if (element.shadowRoot())
         return FocusNavigationScope(*element.shadowRoot());
+    if (RefPtr popover = openPopoverForInvoker(&element))
+        return scopeForPopover(*popover);
+    return FocusNavigationScope(element);
+}
+
+FocusNavigationScope FocusNavigationScope::scopeForPopover(Element& element)
+{
+    ASSERT(invokerForOpenPopover(&element));
     return FocusNavigationScope(element);
 }
 
@@ -440,14 +494,16 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
         focusedElement->dispatchFocusEvent(nullptr, { });
 }
 
-static inline bool isFocusableElementOrScopeOwner(Element& element, const FocusEventData& focusEventData)
+static inline bool isFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Element& element, const FocusEventData& focusEventData)
 {
-    return element.isKeyboardFocusable(focusEventData) || isFocusScopeOwner(element);
+    return element.isKeyboardFocusable(focusEventData)
+        || (!scope.isNonShadowPopoverRoot(element) && isFocusScopeOwner(element))
+        || openPopoverForInvoker(&element);
 }
 
 static inline bool isNonFocusableScopeOwner(Element& element, const FocusEventData& focusEventData)
 {
-    return !element.isKeyboardFocusable(focusEventData) && isFocusScopeOwner(element);
+    return !element.isKeyboardFocusable(focusEventData) && (isFocusScopeOwner(element) || openPopoverForInvoker(&element));
 }
 
 static inline bool isFocusableScopeOwner(Element& element, const FocusEventData& focusEventData)
@@ -819,15 +875,15 @@ FocusableElementSearchResult FocusController::findFocusableElementInDocumentOrde
 
 FocusableElementSearchResult FocusController::findFocusableElementAcrossFocusScope(FocusDirection direction, const FocusNavigationScope& scope, Node* currentNode, const FocusEventData& focusEventData, ShouldFocusElement shouldFocusElement)
 {
-    ASSERT(!is<Element>(currentNode) || !isNonFocusableScopeOwner(downcast<Element>(*currentNode), focusEventData));
+    ASSERT(!is<Element>(currentNode) || !isNonFocusableScopeOwner(downcast<Element>(*currentNode), focusEventData) || openPopoverForInvoker(currentNode));
 
     if (RefPtr currentElement = dynamicDowncast<Element>(currentNode); currentElement && direction == FocusDirection::Forward) {
-        if (isFocusableScopeOwner(*currentElement, focusEventData)) {
+        if (isFocusableScopeOwner(*currentElement, focusEventData) && !scope.isNonShadowPopoverRoot(*currentElement)) {
             auto candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByScopeOwner(*currentElement), nullptr, focusEventData, shouldFocusElement);
             if (candidateInInnerScope.element)
                 return candidateInInnerScope;
         } else if (RefPtr popover = openPopoverForInvoker(currentNode)) {
-            auto candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByScopeOwner(*popover), nullptr, focusEventData, shouldFocusElement);
+            auto candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeForPopover(*popover), nullptr, focusEventData, shouldFocusElement);
             if (candidateInInnerScope.element)
                 return candidateInInnerScope;
         }
@@ -840,7 +896,7 @@ FocusableElementSearchResult FocusController::findFocusableElementAcrossFocusSco
         if (direction == FocusDirection::Backward) {
             // Skip through invokers if they have popovers with focusable contents, and navigate through those contents instead.
             while (RefPtr popover = openPopoverForInvoker(candidateInCurrentScope.element.get())) {
-                auto candidate = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByScopeOwner(*popover), nullptr, focusEventData, shouldFocusElement);
+                auto candidate = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeForPopover(*popover), nullptr, focusEventData, shouldFocusElement);
                 if (candidate.element)
                     candidateInCurrentScope = candidate;
                 else
@@ -861,7 +917,7 @@ FocusableElementSearchResult FocusController::findFocusableElementAcrossFocusSco
     auto owner = scope.owner();
 
     auto handleElementOwner = [&](Element& element) -> FocusableElementSearchResult {
-        if (direction == FocusDirection::Backward && isFocusableScopeOwner(element, focusEventData))
+        if (direction == FocusDirection::Backward && &element != currentNode && isShadowOrSlotFocusScopeOwner(element) && element.isKeyboardFocusable(focusEventData))
             return findFocusableElementDescendingIntoSubframes(direction, &element, focusEventData, shouldFocusElement);
 
         // If we're getting out of a popover backwards, focus the invoker itself instead of the node preceding it, if possible.
@@ -947,7 +1003,7 @@ FocusableElementSearchResult FocusController::previousFocusableElementWithinScop
         RefPtr found = previousFocusableElementOrScopeOwner(scope, current.get(), focusEventData);
         if (!found)
             return { nullptr };
-        if (isFocusableScopeOwner(*found, focusEventData)) {
+        if (isFocusableScopeOwner(*found, focusEventData) && !scope.isNonShadowPopoverRoot(*found)) {
             // Search an inner focusable element in the shadow tree from the end.
             auto foundInInnerFocusScope = previousFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByScopeOwner(*found), 0, focusEventData);
             if (foundInInnerFocusScope.element)
@@ -979,7 +1035,7 @@ Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScop
         RefPtr element = dynamicDowncast<Element>(*node);
         if (!element)
             continue;
-        if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) == tabIndex)
+        if (isFocusableElementOrScopeOwner(scope, *element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) == tabIndex)
             return element.unsafeGet();
     }
     return nullptr;
@@ -995,7 +1051,7 @@ static Element* nextElementWithGreaterTabIndex(const FocusNavigationScope& scope
         if (!candidate)
             continue;
         int candidateTabIndex = shadowAdjustedTabIndex(*candidate, focusEventData);
-        if (isFocusableElementOrScopeOwner(*candidate, focusEventData) && candidateTabIndex > tabIndex && (!winner || candidateTabIndex < winningTabIndex)) {
+        if (isFocusableElementOrScopeOwner(scope, *candidate, focusEventData) && candidateTabIndex > tabIndex && (!winner || candidateTabIndex < winningTabIndex)) {
             winner = candidate.get();
             winningTabIndex = candidateTabIndex;
         }
@@ -1014,7 +1070,7 @@ static Element* previousElementWithLowerTabIndex(const FocusNavigationScope& sco
         if (!element)
             continue;
         int currentTabIndex = shadowAdjustedTabIndex(*element, focusEventData);
-        if (isFocusableElementOrScopeOwner(*element, focusEventData) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
+        if (isFocusableElementOrScopeOwner(scope, *element, focusEventData) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
             winner = element.get();
             winningTabIndex = currentTabIndex;
         }
@@ -1049,7 +1105,7 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
                 RefPtr element = dynamicDowncast<Element>(*node);
                 if (!element)
                     continue;
-                if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
+                if (isFocusableElementOrScopeOwner(scope, *element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
                     return element.unsafeGet();
             }
         } else {
@@ -1097,7 +1153,7 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
             RefPtr element = dynamicDowncast<Element>(*node);
             if (!element)
                 continue;
-            if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
+            if (isFocusableElementOrScopeOwner(scope, *element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
                 return element.unsafeGet();
         }
     } else {
