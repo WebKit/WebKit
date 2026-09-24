@@ -386,6 +386,7 @@ private:
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, std::optional<MessageBatchIdentifier>)>&&);
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier&, Vector<URL>&& blobURLs);
     void didDeliverMessagePortMessages(MessageBatchIdentifier);
+    void flushNetworkProcessIPC(CompletionHandler<void()>&&);
 
     void closeAllEntangledMessagePorts();
 

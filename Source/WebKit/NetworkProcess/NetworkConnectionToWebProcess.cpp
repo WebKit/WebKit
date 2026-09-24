@@ -1959,6 +1959,11 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
     }
 }
 
+void NetworkConnectionToWebProcess::flushNetworkProcessIPC(CompletionHandler<void()>&& callback)
+{
+    callback();
+}
+
 void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message)
 {
     m_connection->send(Messages::NetworkProcessConnection::BroadcastConsoleMessage(source, level, message), 0);

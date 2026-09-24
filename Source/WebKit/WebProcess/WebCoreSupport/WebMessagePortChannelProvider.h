@@ -49,6 +49,8 @@ public:
     void ref() const { }
     void deref() const { }
 
+    void ensureMessagePortCreatedWithRoundtrip(CompletionHandler<void()>&&);
+
 private:
     WebMessagePortChannelProvider();
     ~WebMessagePortChannelProvider() final;

@@ -1722,6 +1722,46 @@ TEST(SiteIsolation, PostMessageWithMessagePorts)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "port received message ping");
 }
 
+TEST(SiteIsolation, PostMessageWithMessagePortsFromIFrameToMainFrame)
+{
+    auto exampleHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('main frame received ' + event.data + ' with ' + event.ports.length + ' ports');"
+    "        if (event.ports.length)"
+    "            event.ports[0].postMessage('pong');"
+    "    }, false)"
+    "</script>"
+    "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s;
+
+    auto webkitHTML = "<script>"
+    "    onload = () => {"
+    "        const channel = new MessageChannel();"
+    "        channel.port1.onmessage = (event) => {"
+    "            parent.postMessage('port message ' + event.data, '*');"
+    "        };"
+    "        parent.postMessage('ping', '*', [channel.port2]);"
+    "    }"
+    "</script>"_s;
+
+    HTTPServer server({
+        { "/example"_s, { exampleHTML } },
+        { "/webkit"_s, { webkitHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received ping with 1 ports");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received port message pong with 0 ports");
+
+    auto mainFrame = [webView mainFrame];
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+}
+
 TEST(SiteIsolation, PostMessageWithNotAllowedTargetOrigin)
 {
     auto exampleHTML = "<script>"

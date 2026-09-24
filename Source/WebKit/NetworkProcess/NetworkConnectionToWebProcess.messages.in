@@ -122,6 +122,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     QueryLocalNetworkAccessPermission(struct WebCore::ClientOrigin origin, enum:uint8_t WebCore::IPAddressSpace addressSpace) -> (enum:uint8_t std::optional<WebCore::PermissionState> state)
     PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote, Vector<URL> blobURLs)
     DidDeliverMessagePortMessages(WebKit::MessageBatchIdentifier messageBatchIdentifier)
+    FlushNetworkProcessIPC() -> ()
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
 #if PLATFORM(MAC)
     GetProcessDisplayName(struct WebKit::CoreIPCAuditToken auditToken) -> (String displayName)

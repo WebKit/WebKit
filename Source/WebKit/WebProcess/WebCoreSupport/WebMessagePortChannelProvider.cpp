@@ -181,4 +181,9 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget, blobURLs }, 0);
 }
 
+void WebMessagePortChannelProvider::ensureMessagePortCreatedWithRoundtrip(CompletionHandler<void()>&& callback)
+{
+    protect(networkProcessConnection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::FlushNetworkProcessIPC(), WTF::move(callback));
+}
+
 } // namespace WebKit

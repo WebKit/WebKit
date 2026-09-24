@@ -31,6 +31,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RemoteFrameClient.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
@@ -76,6 +77,32 @@ private:
 
     void didNotifyUserActivation(MonotonicTime) final;
     void didConsumeUserActivation() final;
+
+    struct PendingPostMessage {
+        WebCore::FrameIdentifier source;
+        WebCore::SecurityOriginData sourceOrigin;
+        WebCore::FrameIdentifier target;
+        std::optional<WebCore::SecurityOriginData> targetOrigin;
+        WebCore::MessageWithMessagePorts message;
+        std::optional<WebCore::UserGestureTokenData> userGestureToken;
+    };
+
+    class PendingPostMessages : public RefCounted<PendingPostMessages> {
+    public:
+        static Ref<PendingPostMessages> create() { return adoptRef(*new PendingPostMessages()); }
+
+        bool isEmpty() const { return m_pendingPostMessages.isEmpty(); }
+        void append(PendingPostMessage&& message) { m_pendingPostMessages.append(WTF::move(message)); }
+
+        Vector<PendingPostMessage> takeMessagesThroughNextPortTransfer();
+
+    private:
+        PendingPostMessages() = default;
+
+        Vector<PendingPostMessage> m_pendingPostMessages;
+    };
+
+    RefPtr<PendingPostMessages> m_pendingPostMessages;
 };
 
 }
