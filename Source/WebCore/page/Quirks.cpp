@@ -184,6 +184,25 @@ bool Quirks::elementMatchesSelectorCondition(ASCIILiteral selector, const Node* 
     return query->matches(const_cast<Element&>(*element));
 }
 
+bool Quirks::behaviorAppliesToNode(QuirkBehaviorID id, const Node* node) const
+{
+    if (!m_quirksData.isBehaviorEnabled(id))
+        return false;
+
+    for (const auto& behavior : m_quirksData.behaviors()) {
+        if (behavior.id != id)
+            continue;
+
+        if (!behavior.elementSelectorCondition)
+            return true;
+
+        if (elementMatchesSelectorCondition(*behavior.elementSelectorCondition, node))
+            return true;
+    }
+
+    return false;
+}
+
 Quirks::Quirks(Document& document)
     : m_document(document)
 {
@@ -450,29 +469,16 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
-    constexpr auto id = QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk;
     if (m_document->settings().mouseEventsSimulationEnabled())
         return true;
 
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(id))
-        return false;
-
     RefPtr loader = m_document->loader();
     if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
         return false;
 
-    const auto matchingBehaviors = m_quirksData.behaviorsMatching(id);
-    for (const auto& behavior : matchingBehaviors) {
-        if (!behavior.elementSelectorCondition)
-            return true;
-
-        if (elementMatchesSelectorCondition(behavior.elementSelectorCondition.value(), dynamicDowncast<Node>(target)))
-            return true;
-    }
-
-    return false;
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk, dynamicDowncast<Node>(target));
 }
 
 bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
@@ -520,30 +526,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     if (!shouldDispatchSimulatedMouseEvents(target))
         return false;
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk))
-        return false;
-
-    RefPtr element = dynamicDowncast<Element>(target);
-    if (!element)
-        return false;
-
-    if (m_quirksData.isSite(QuirkSite::Amazon)) {
-        // When panning on an Amazon product image, we're either touching on the #magnifierLens element
-        // or its previous sibling.
-        if (element->getIdAttribute() == "magnifierLens"_s)
-            return true;
-        if (auto* sibling = element->nextElementSibling())
-            return sibling->getIdAttribute() == "magnifierLens"_s;
-    }
-
-    if (m_quirksData.isSite(QuirkSite::SoundCloud))
-        return element->hasClassName("sceneLayer"_s);
-
-    // facebook.com rdar://174179871 tiktok.com rdar://174179805
-    if (m_quirksData.isSite(QuirkSite::Facebook) || m_quirksData.isSite(QuirkSite::TikTok))
-        return element->attributeWithoutSynchronization(HTMLNames::roleAttr) == "slider"_s;
-
-    return false;
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk, dynamicDowncast<Node>(target));
 }
 
 // facebook.com rdar://174179871 tiktok.com rdar://174179805
@@ -559,10 +542,7 @@ bool Quirks::shouldAllowNativeTapsOnMediaElements(const Node* node) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isSite(QuirkSite::LinkedIn))
-        return false;
-
-    return is<HTMLMediaElement>(node) && downcast<HTMLMediaElement>(*node).hasClassName("vjs-tech"_s);
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldAllowNativeTapsOnMediaElementsQuirk, node);
 }
 #endif
 
@@ -1169,53 +1149,10 @@ bool Quirks::shouldNotAutoUpgradeToHTTPSNavigation(const URL& url)
     return shouldNotAutoUpgradeToHTTPSNavigationInternal(url);
 }
 
-// kinja.com and related sites rdar://60601895
-static bool isKinjaLoginAvatarElement(const Element& element)
-{
-    // The click event handler has been found to trigger on a div or
-    // span with these class names, or the svg, or the svg's path.
-    if (element.hasClass() && (element.hasClassName("js_switch-to-burner-login"_s)
-        || element.hasClassName("js_header-userbutton"_s)
-        || element.hasClassName("sc-1il3uru-3"_s) || element.hasClassName("cIhKfd"_s)
-        || element.hasClassName("iyvn34-0"_s) || element.hasClassName("bYIjtl"_s))) {
-        return true;
-    }
-
-    RefPtr<const Element> svgElement;
-    if (is<SVGSVGElement>(element))
-        svgElement = element;
-    else if (is<SVGPathElement>(element) && is<SVGSVGElement>(element.parentElement()))
-        svgElement = element.parentElement();
-
-    return svgElement && svgElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr) == "UserFilled icon"_s;
-}
-
 // teams.microsoft.com https://bugs.webkit.org/show_bug.cgi?id=219505
 bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
 {
     return urlHasQuirk(url, QuirkBehaviors::isMicrosoftTeamsRedirectURLQuirk);
-}
-
-static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& element)
-{
-    // Microsoft Teams login case.
-    // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
-    if (url.host() == "www.microsoft.com"_s) {
-        return element.hasClass()
-        && (element.hasClassName("glyph_signIn_circle"_s)
-        || element.hasClassName("mectrl_headertext"_s)
-        || element.hasClassName("mectrl_header"_s));
-    }
-    // Sony Network Entertainment login case.
-    // FIXME(218760): Remove this quirk once playstation.com completes their login flow redesign.
-    if (url.host() == "www.playstation.com"_s || url.host() == "my.playstation.com"_s) {
-        return element.hasClass()
-        && (element.hasClassName("web-toolbar__signin-button"_s)
-        || element.hasClassName("web-toolbar__signin-button-label"_s)
-        || element.hasClassName("sb-signin-button"_s));
-    }
-
-    return false;
 }
 
 // playstation.com - rdar://72062985
@@ -1303,14 +1240,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
     RegistrableDomain domain { protect(m_document)->url() };
 
-    static NeverDestroyed<HashSet<RegistrableDomain>> kinjaQuirks = [] {
-        HashSet<RegistrableDomain> set;
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jalopnik.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kotaku.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theroot.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theinventory.com"_s));
-        return set;
-    }();
     static NeverDestroyed kinjaURL = URL { "https://kinja.com"_str };
     static NeverDestroyed<RegistrableDomain> kinjaDomain { kinjaURL };
 
@@ -1325,15 +1254,15 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         if (!document)
             return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
-        // Embedded YouTube case.
-        if (element.hasClass() && domain == youTubeDomain && !document->isTopDocument() && ResourceLoadObserver::singleton().hasHadUserInteraction(youTubeDomain)) {
-            if (element.hasClassName("ytp-watch-later-icon"_s))
+        constexpr auto watchLaterID = QuirkBehaviorID::NeedsStorageAccessForYouTubeWatchLaterQuirk;
+        if (m_quirksData.isBehaviorEnabled(watchLaterID) && ResourceLoadObserver::singleton().hasHadUserInteraction(youTubeDomain)) {
+            if (behaviorAppliesToNode(watchLaterID, &element))
                 DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*document, [](StorageAccessWasGranted) { });
             return Quirks::StorageAccessResult::ShouldNotCancelEvent;
         }
 
         // Kinja login case.
-        if (kinjaQuirks.get().contains(domain) && isKinjaLoginAvatarElement(element)) {
+        if (behaviorAppliesToNode(QuirkBehaviorID::NeedsKinjaLoginStorageAccessQuirk, &element)) {
             if (ResourceLoadObserver::singleton().hasHadUserInteraction(kinjaDomain)) {
                 DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, kinjaDomain.get().isolatedCopy(), [](StorageAccessWasGranted) { });
                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
@@ -1357,7 +1286,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         }
 
         // If the click is synthetic, the user has already gone through the storage access flow and we should not request again.
-        if (isStorageAccessQuirkDomainAndElement(document->url(), element) && isSyntheticClick == IsSyntheticClick::No) {
+        if (behaviorAppliesToNode(QuirkBehaviorID::NeedsStorageAccessOnLoginButtonClickQuirk, &element) && isSyntheticClick == IsSyntheticClick::No) {
             return requestStorageAccessAndHandleClick([element = WeakPtr { element }, platformEvent, eventType, detail, relatedTarget = WeakPtr { relatedTarget }] (ShouldDispatchClick shouldDispatchClick) mutable {
                 RefPtr protectedElement = element.get();
                 if (!protectedElement)
@@ -1939,80 +1868,28 @@ bool Quirks::needsChromeMediaControlsPseudoElement() const
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsChromeMediaControlsPseudoElementQuirk);
 }
 
-static AccessibilityRole accessibilityRole(const Element& element)
-{
-    return AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr));
-}
-
 // walmart.com: rdar://123734840
 // live.outlook.com: rdar://152277211
 bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::MayNeedToIgnoreContentObservation))
-        return false;
-
-    if (m_quirksData.isSite(QuirkSite::GoogleMaps)) {
-        for (Ref ancestor : lineageOfType<HTMLElement>(targetNode)) {
-            if (ancestor->attributeWithoutSynchronization(HTMLNames::aria_labelAttr) == "Suggestions"_s)
-                return true;
-        }
-        return false;
-    }
-
-    RefPtr target = dynamicDowncast<Element>(targetNode);
-    if (m_quirksData.isSite(QuirkSite::Outlook)) {
-        if (target && target->getIdAttribute().startsWith("swatchColorPicker"_s))
-            return true;
-    }
-
-    if (m_quirksData.isSite(QuirkSite::Walmart)) {
-        if (!target || accessibilityRole(*target) != AccessibilityRole::Button)
-            return false;
-
-        RefPtr parent = target->parentElementInComposedTree();
-        if (!parent || accessibilityRole(*parent) != AccessibilityRole::ListItem)
-            return false;
-    }
-
-    return true;
+    return behaviorAppliesToNode(QuirkBehaviorID::MayNeedToIgnoreContentObservation, &targetNode);
 }
 
 bool Quirks::shouldHideSoftTopScrollEdgeEffectDuringFocus(const Element& focusedElement) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk))
-        return false;
-
-    return focusedElement.getIdAttribute().contains("crossword"_s);
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk, &focusedElement);
 }
 
 // cbssports.com <rdar://139478801>.
-// docs.google.com <rdar://59402637>.
 bool Quirks::shouldSynthesizeTouchEventsAfterNonSyntheticClick(const Element& target) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk))
-        return false;
-
-    if (m_quirksData.isSite(QuirkSite::CBSSports))
-        return target.nodeName() == "AVIA-BUTTON"_s;
-
-    if (m_quirksData.isSite(QuirkSite::GoogleDocs)) {
-        unsigned numberOfAncestorsToCheck = 3;
-        for (Ref ancestor : lineageOfType<HTMLElement>(target)) {
-            if (ancestor->hasClassName("docs-ml-promotion-action-container"_s))
-                return true;
-
-            if (!--numberOfAncestorsToCheck)
-                break;
-        }
-    }
-
-    return false;
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk, &target);
 }
 
 bool Quirks::needsChromeOSNavigatorUserAgentQuirk(const Document& document) const
@@ -2175,7 +2052,7 @@ bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const
     if (computedStyle.display() != Style::DisplayType::None)
         return false;
 
-    if (accessibilityRole(element) != AccessibilityRole::LandmarkNavigation)
+    if (AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr)) != AccessibilityRole::LandmarkNavigation)
         return false;
 
     if (!descendantsOfType<HTMLTextAreaElement>(element).first())
@@ -2198,14 +2075,7 @@ bool Quirks::needsExpediaGroupAnimationQuirk(Element& element) const
     if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk))
         return false;
 
-    // Quick pre-filter to avoid running the full selector match on ~99% of elements.
-    // We also check for uitk-menu-open to only apply the opening animation fix
-    // when the menu is actively being opened, not in its closed state.
-    if (!element.hasClassName("uitk-menu-container"_s) || !element.hasClassName("uitk-menu-open"_s))
-        return false;
-
-    auto matches = Ref { element }->matches(".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el"_s);
-    return !matches.hasException() && matches.returnValue();
+    return behaviorAppliesToNode(QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk, &element);
 }
 
 // claude.ai rdar://162616694
@@ -2451,11 +2321,15 @@ bool Quirks::shouldRewriteMediaRangeRequestForURL(const URL& url) const
 // rdar://106770785
 bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effect) const
 {
-    if (!needsQuirks() || !m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk))
+    if (!needsQuirks())
         return false;
 
     auto target = effect.targetStyleable();
-    return target && target->element.localName() == "ea-network-nav"_s;
+    if (!target)
+        return false;
+
+    Ref element = target->element;
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk, element.ptr());
 }
 
 bool Quirks::shouldDisableThreadedAnimationsQuirk() const

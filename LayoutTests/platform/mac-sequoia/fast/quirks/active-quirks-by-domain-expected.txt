@@ -189,8 +189,16 @@ https://mailchimp.com/
     (none)
 https://www.marcus.com/
     ShouldExposeShowModalDialog
+https://jalopnik.com/
+    NeedsKinjaLoginStorageAccessQuirk
+https://kotaku.com/
+    NeedsKinjaLoginStorageAccessQuirk
 https://medium.com/
     ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk
+https://www.microsoft.com/
+    NeedsStorageAccessOnLoginButtonClickQuirk
+https://microsoft.com/
+    (none)
 https://m365.cloud.microsoft/
     (none)
 https://cloud.microsoft/
@@ -218,6 +226,10 @@ https://www.pandora.com/
     ShouldExposeShowModalDialog
 https://www.pinterest.com/
     ShouldAllowNotificationPermissionWithoutUserGesture
+https://www.playstation.com/
+    NeedsStorageAccessOnLoginButtonClickQuirk
+https://my.playstation.com/
+    NeedsStorageAccessOnLoginButtonClickQuirk
 https://www.premierleague.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDispatchPlayPauseEventsOnResume

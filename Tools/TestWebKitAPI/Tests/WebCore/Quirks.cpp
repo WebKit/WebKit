@@ -311,7 +311,7 @@ TEST_F(QuirksTest, MergeUnionsFlagsAndSitesAndConcatenatesBehaviors)
 
     WebCore::QuirksData quirks;
     quirks.addBehavior(onFirst);
-    quirks.addSite(WebCore::QuirkSite::Amazon);
+    quirks.addSite(WebCore::QuirkSite::Vimeo);
 
     WebCore::QuirksData other;
     other.addBehavior(onSecond);
@@ -322,7 +322,7 @@ TEST_F(QuirksTest, MergeUnionsFlagsAndSitesAndConcatenatesBehaviors)
 
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk));
-    EXPECT_TRUE(quirks.isSite(WebCore::QuirkSite::Amazon));
+    EXPECT_TRUE(quirks.isSite(WebCore::QuirkSite::Vimeo));
     EXPECT_TRUE(quirks.isSite(WebCore::QuirkSite::BankOfAmerica));
     EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<String> { ".first"_str, ".second"_str }));
 }
@@ -462,6 +462,221 @@ TEST_F(QuirksTest, TheSameSelectorIsEvaluatedPerDocument)
 
     EXPECT_TRUE(matchesSelector(onDockPanelTabBar, quirksModePage.getElementById("tabBar"_s).get()));
     EXPECT_FALSE(matchesSelector(onDockPanelTabBar, standardsModePage.getElementById("tabBar"_s).get()));
+}
+
+static constexpr auto onAmazonMagnifierLens = "#magnifierLens, :has(+ #magnifierLens)"_s;
+static constexpr auto onCrosswordID = "[id*=crossword]"_s;
+static constexpr auto onEANetworkNav = "ea-network-nav"_s;
+static constexpr auto onExpediaOpeningMenu = ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"_s;
+static constexpr auto onSwatchColorPicker = "[id^=swatchColorPicker]"_s;
+static constexpr auto onButtonInListItem = "[role=listitem i] > [role=button i]"_s;
+static constexpr auto onVideoJSTech = "video.vjs-tech, audio.vjs-tech"_s;
+static constexpr auto onKinjaLoginAvatar = ".js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label=\"UserFilled icon\"], svg[aria-label=\"UserFilled icon\"] > path"_s;
+static constexpr auto onMicrosoftSignInButton = ".glyph_signIn_circle, .mectrl_headertext, .mectrl_header"_s;
+static constexpr auto onPlayStationSignInButton = ".web-toolbar__signin-button, .web-toolbar__signin-button-label, .sb-signin-button"_s;
+
+static Vector<String> selectorsFor(ASCIILiteral urlString, WebCore::QuirkBehaviorID id)
+{
+    return elementSelectorsFor(resolveQuirksForTopURL(urlString), id);
+}
+
+#if ENABLE(TOUCH_EVENTS)
+static constexpr auto onSliderRoleItself = "[role=slider]"_s;
+static constexpr auto onSoundCloudSceneLayer = ".sceneLayer"_s;
+
+TEST_F(QuirksTest, SitesThatAssumeDefaultPreventedScopeItToTheTargetElement)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk;
+
+    EXPECT_EQ(selectorsFor("https://www.amazon.com/"_s, id), Vector<String> { String { onAmazonMagnifierLens } });
+    EXPECT_EQ(selectorsFor("https://soundcloud.com/"_s, id), Vector<String> { String { onSoundCloudSceneLayer } });
+
+    for (auto urlString : { "https://www.facebook.com/"_s, "https://www.tiktok.com/"_s })
+        EXPECT_EQ(selectorsFor(urlString, id), Vector<String> { String { onSliderRoleItself } });
+}
+#endif
+
+#if ENABLE(TWO_PHASE_CLICKS)
+static constexpr auto onSuggestionsLabel = "[aria-label=Suggestions], [aria-label=Suggestions] *"_s;
+
+TEST_F(QuirksTest, ContentObservationSelectorsAreScopedPerSite)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::MayNeedToIgnoreContentObservation;
+
+    EXPECT_EQ(selectorsFor("https://www.google.com/maps/"_s, id), Vector<String> { String { onSuggestionsLabel } });
+    EXPECT_EQ(selectorsFor("https://www.walmart.com/"_s, id), Vector<String> { String { onButtonInListItem } });
+    EXPECT_EQ(selectorsFor("https://outlook.live.com/"_s, id), Vector<String> { String { onSwatchColorPicker } });
+}
+#endif
+
+TEST_F(QuirksTest, OutlookSwatchPickerSelectorMatchesTheIDPrefix)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html>"
+        "<div id='swatchColorPicker'></div>"
+        "<div id='swatchColorPicker-42'></div>"
+        "<div id='SWATCHCOLORPICKER'></div>"
+        "<div id='outerSwatchColorPicker'></div>"
+        "<div id='plain'></div>"_s);
+
+    EXPECT_TRUE(matchesSelector(onSwatchColorPicker, page.getElementById("swatchColorPicker"_s).get()));
+    EXPECT_TRUE(matchesSelector(onSwatchColorPicker, page.getElementById("swatchColorPicker-42"_s).get()));
+
+    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("SWATCHCOLORPICKER"_s).get()));
+    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("outerSwatchColorPicker"_s).get()));
+    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("plain"_s).get()));
+}
+
+TEST_F(QuirksTest, SingleSiteSelectorConditions)
+{
+    EXPECT_EQ(selectorsFor("https://www.ea.com/"_s, WebCore::QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk), Vector<String> { String { onEANetworkNav } });
+
+    for (auto urlString : { "https://www.hotels.com/"_s, "https://www.expedia.fr/"_s, "https://www.ebookers.de/"_s })
+        EXPECT_EQ(selectorsFor(urlString, WebCore::QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk), Vector<String> { String { onExpediaOpeningMenu } });
+}
+
+#if PLATFORM(IOS_FAMILY)
+static constexpr auto onAviaButton = "avia-button"_s;
+static constexpr auto onGoogleDocsMLPromotion = ".docs-ml-promotion-action-container, .docs-ml-promotion-action-container > *, .docs-ml-promotion-action-container > * > *"_s;
+
+TEST_F(QuirksTest, SingleSiteSelectorConditionsOnIOS)
+{
+    EXPECT_EQ(selectorsFor("https://www.theguardian.com/"_s, WebCore::QuirkBehaviorID::ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk), Vector<String> { String { onCrosswordID } });
+    EXPECT_EQ(selectorsFor("https://www.cbssports.com/"_s, WebCore::QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk), Vector<String> { String { onAviaButton } });
+    EXPECT_EQ(selectorsFor("https://docs.google.com/"_s, WebCore::QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk), Vector<String> { String { onGoogleDocsMLPromotion } });
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    EXPECT_EQ(selectorsFor("https://www.linkedin.com/"_s, WebCore::QuirkBehaviorID::ShouldAllowNativeTapsOnMediaElementsQuirk), Vector<String> { String { onVideoJSTech } });
+#endif
+}
+#endif
+
+TEST_F(QuirksTest, StorageAccessQuirksCarrySignInSelectors)
+{
+    constexpr auto signInID = WebCore::QuirkBehaviorID::NeedsStorageAccessOnLoginButtonClickQuirk;
+
+    EXPECT_EQ(selectorsFor("https://www.microsoft.com/"_s, signInID), Vector<String> { String { onMicrosoftSignInButton } });
+    for (auto urlString : { "https://www.playstation.com/"_s, "https://my.playstation.com/"_s })
+        EXPECT_EQ(selectorsFor(urlString, signInID), Vector<String> { String { onPlayStationSignInButton } });
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://microsoft.com/"_s).isBehaviorEnabled(signInID));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://playstation.com/"_s).isBehaviorEnabled(signInID));
+
+    constexpr auto kinjaID = WebCore::QuirkBehaviorID::NeedsKinjaLoginStorageAccessQuirk;
+    for (auto urlString : { "https://jalopnik.com/"_s, "https://kotaku.com/"_s, "https://theroot.com/"_s, "https://www.theinventory.com/"_s })
+        EXPECT_EQ(selectorsFor(urlString, kinjaID), Vector<String> { String { onKinjaLoginAvatar } });
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).isBehaviorEnabled(kinjaID));
+}
+
+#if PLATFORM(COCOA)
+static constexpr auto onYouTubeWatchLaterIcon = ".ytp-watch-later-icon"_s;
+TEST_F(QuirksTest, YouTubeWatchLaterStorageAccessIsEmbeddedOnly)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsStorageAccessForYouTubeWatchLaterQuirk;
+
+    auto embedded = resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s);
+    EXPECT_TRUE(embedded.isBehaviorEnabled(id));
+    EXPECT_EQ(elementSelectorsFor(embedded, id), Vector<String> { String { onYouTubeWatchLaterIcon } });
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.youtube.com/"_s).isBehaviorEnabled(id));
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s).isBehaviorEnabled(id));
+}
+#endif
+
+TEST_F(QuirksTest, MigratedSelectorsMatchWhatTheHandWrittenChecksDid)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html>"
+        "<div id='before'></div><div id='magnifierLens'></div><div id='after'></div>"
+        "<div id='farBefore'></div><span></span><div id='lens2'></div>"
+        "<div id='quick-crossword-3'></div><div id='CROSSWORD'></div><div id='cross'></div>"
+        "<div role='listitem'><span id='gridButton' role='button'></span></div>"
+        "<div role='LISTITEM'><span id='shoutyButton' role='BUTTON'></span></div>"
+        "<div role='listitem'><i><span id='deepButton' role='button'></span></i></div>"
+        "<video id='media' class='vjs-tech'>fallback</video><div id='notMedia' class='vjs-tech'></div>"_s);
+
+    EXPECT_TRUE(matchesSelector(onAmazonMagnifierLens, page.getElementById("magnifierLens"_s).get()));
+    EXPECT_TRUE(matchesSelector(onAmazonMagnifierLens, page.getElementById("before"_s).get()));
+    EXPECT_FALSE(matchesSelector(onAmazonMagnifierLens, page.getElementById("after"_s).get()));
+    EXPECT_FALSE(matchesSelector(onAmazonMagnifierLens, page.getElementById("farBefore"_s).get()));
+
+    EXPECT_TRUE(matchesSelector(onCrosswordID, page.getElementById("quick-crossword-3"_s).get()));
+    EXPECT_FALSE(matchesSelector(onCrosswordID, page.getElementById("CROSSWORD"_s).get()));
+    EXPECT_FALSE(matchesSelector(onCrosswordID, page.getElementById("cross"_s).get()));
+
+    EXPECT_TRUE(matchesSelector(onButtonInListItem, page.getElementById("gridButton"_s).get()));
+    EXPECT_TRUE(matchesSelector(onButtonInListItem, page.getElementById("shoutyButton"_s).get()));
+    EXPECT_FALSE(matchesSelector(onButtonInListItem, page.getElementById("deepButton"_s).get()));
+
+    EXPECT_TRUE(matchesSelector(onVideoJSTech, page.getElementById("media"_s).get()));
+    EXPECT_FALSE(matchesSelector(onVideoJSTech, page.getElementById("notMedia"_s).get()));
+
+    RefPtr fallback = page.getElementById("media"_s)->firstChild();
+    ASSERT_TRUE(fallback && fallback->isTextNode());
+    EXPECT_TRUE(matchesSelector(onVideoJSTech, fallback.get()));
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST_F(QuirksTest, GoogleDocsPromotionSelectorStopsAtTheGrandparent)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html>"
+        "<div id='self' class='docs-ml-promotion-action-container'>"
+        "<span id='child'><i id='grandchild'><b id='greatGrandchild'>x</b></i></span>"
+        "</div>"
+        "<div id='unrelated'></div>"_s);
+
+    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("self"_s).get()));
+    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("child"_s).get()));
+    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("grandchild"_s).get()));
+
+    EXPECT_FALSE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("greatGrandchild"_s).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("unrelated"_s).get()));
+}
+#endif
+
+TEST_F(QuirksTest, ExpediaMenuSelectorMatchesInEitherDocumentMode)
+{
+    for (auto doctype : { ""_s, "<!DOCTYPE html>"_s }) {
+        auto page = TestPageHarness::create();
+        page.loadHTML(makeString(doctype,
+            "<div class='uitk-menu-mounted'>"
+            "<div id='opening' class='uitk-menu-container uitk-menu-container-autoposition uitk-menu-container-has-intersection-root-el uitk-menu-open'></div>"
+            "<div id='closed' class='uitk-menu-container uitk-menu-container-autoposition uitk-menu-container-has-intersection-root-el'></div>"
+            "</div>"
+            "<div id='unmounted' class='uitk-menu-container uitk-menu-container-autoposition uitk-menu-container-has-intersection-root-el uitk-menu-open'></div>"_s));
+        ASSERT_EQ(page.document().inQuirksMode(), doctype.isEmpty());
+
+        EXPECT_TRUE(matchesSelector(onExpediaOpeningMenu, page.getElementById("opening"_s).get()));
+        EXPECT_FALSE(matchesSelector(onExpediaOpeningMenu, page.getElementById("closed"_s).get()));
+        EXPECT_FALSE(matchesSelector(onExpediaOpeningMenu, page.getElementById("unmounted"_s).get()));
+    }
+}
+
+TEST_F(QuirksTest, KinjaAvatarSelectorCoversTheSVGAndItsDirectPath)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html>"
+        "<div id='burner' class='js_switch-to-burner-login'></div>"
+        "<div id='plain'></div>"_s);
+
+    Ref avatars = page.document().createElementForBindings("div"_s).releaseReturnValue();
+    EXPECT_FALSE(avatars->setInnerHTML(String {
+        "<svg id='avatar' aria-label='UserFilled icon'><path id='glyph'></path><g><path id='deepGlyph'></path></g></svg>"
+        "<svg id='lowercase' aria-label='userfilled icon'></svg>"_s }).hasException());
+
+    auto avatarElement = [&](ASCIILiteral id) {
+        return avatars->querySelector(makeString('#', id)).releaseReturnValue();
+    };
+
+    EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, page.getElementById("burner"_s).get()));
+    EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, avatarElement("avatar"_s)));
+    EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, avatarElement("glyph"_s)));
+
+    EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, avatarElement("deepGlyph"_s)));
+    EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, avatarElement("lowercase"_s)));
+    EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, page.getElementById("plain"_s).get()));
 }
 
 TEST_F(QuirksTest, NeedsIPadMiniUserAgent)
