@@ -1519,8 +1519,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     Ref editor = document->editor();
     // FIXME: Serializing and re-parsing is an inefficient way to preserve style.
     RefPtr<DocumentFragment> fragment;
-    if (startOfParagraphToMove != endOfParagraphToMove)
-        fragment = createFragmentFromMarkup(document, serializePreservingVisualAppearance(*makeSimpleRange(start, end), nullptr, AnnotateForInterchange::No, ConvertBlocksToInlines::Yes), emptyString());
+    if (startOfParagraphToMove != endOfParagraphToMove) {
+        auto preserveWhiteSpace = PreserveWhiteSpace::No;
+        RefPtr startContainer = start.deepEquivalent().containerNode();
+        RefPtr destinationContainer = destination.deepEquivalent().containerNode();
+        if ((startContainer && EditingStyle::hasAuthorSpecifiedWhiteSpace(*startContainer)) || (destinationContainer && EditingStyle::hasAuthorSpecifiedWhiteSpace(*destinationContainer)))
+            preserveWhiteSpace = PreserveWhiteSpace::Yes;
+        fragment = createFragmentFromMarkup(document, serializePreservingVisualAppearance(*makeSimpleRange(start, end), nullptr, AnnotateForInterchange::No, ConvertBlocksToInlines::Yes, ResolveURLs::NoExcludingURLsForPrivacy, preserveWhiteSpace), emptyString());
+    }
 
     // A non-empty paragraph's style is moved when we copy and move it.  We don't move 
     // anything if we're given an empty paragraph, but an empty paragraph can have style
