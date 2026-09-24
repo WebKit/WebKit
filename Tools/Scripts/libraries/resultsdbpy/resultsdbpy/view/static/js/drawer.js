@@ -228,6 +228,8 @@ function BranchSelector(callback) {
     fetch('api/commits/branches').then(response => {
         response.json().then(json => {
             let branchNames = new Set();
+            if (branchModifier.current().length)
+                branchNames.add(branchModifier.current()[branchModifier.current().length -1]);
             Object.keys(json).forEach(repo => {
                 json[repo].forEach(branch => {
                     if (!defaultBranches.has(branch))

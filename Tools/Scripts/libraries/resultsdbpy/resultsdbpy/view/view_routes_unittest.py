@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import time
 
 from fakeredis import FakeStrictRedis
@@ -53,7 +54,7 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
         return control
 
     @classmethod
-    def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
+    def setup_webserver(cls, app, dashboard_queries=None, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
             redis_instance = redis()
@@ -72,6 +73,7 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
             view_routes = ViewRoutes(
                 model=model, controller=api_routes, import_name=__name__,
                 suite_types=dict(XcodeCloud=['Build']),
+                dashboard_queries=dashboard_queries,
             )
 
             app.register_blueprint(api_routes)
@@ -119,7 +121,6 @@ class WebSiteUnittest(WebSiteTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_constants(self, client, **kwargs):
-        self.maxDiff = None
         response = client.get(f'{self.URL}/assets/js/constants.js')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -155,6 +156,101 @@ const TESTS_LIMITS = JSON.parse('{"max": 50000, "default": 5000}');
 const SUITES_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
 const COMMITS_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
 const DASHBOARD_QUERY = JSON.parse('[]');
+
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}''',
+        )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(dashboard_queries=[dict(title='Main Build', suite='Build')])
+    def test_dashboard_query(self, client, **kwargs):
+        response = client.get(f'{self.URL}/assets/js/constants.js')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.text,
+            '''// Copyright (C) 2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+const XCODE_CLOUD_SUITES = [
+    'Build',
+];
+const DEFAULT_ARCHITECTURE = null;
+const TESTS_LIMITS = JSON.parse('{"max": 50000, "default": 5000}');
+const SUITES_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
+const COMMITS_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
+const DASHBOARD_QUERY = JSON.parse('[{"title": "Main Build", "suite": "Build"}]');
+
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}''',
+        )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(dashboard_queries=[dict(title='Main Build', suite='Build'), dict(title='$branch Build', branch=[re.compile('safari-.+')], suite='Build')])
+    def test_dashboard_query_with_branch(self, client, **kwargs):
+        for repo_id in ['safari', 'webkit']:
+            self.assertEqual(200, client.post(self.URL + '/api/commits/register', data=dict(
+                repository_id=repo_id,
+                id='1234567890abcdef',
+                branch='safari-7624-branch',
+                timestamp=int(time.time()),
+                order=0,
+                committer='example@webkit.org',
+                message='Branch commit',
+            )).status_code)
+
+        response = client.get(f'{self.URL}/assets/js/constants.js')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.text,
+            '''// Copyright (C) 2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+const XCODE_CLOUD_SUITES = [
+    'Build',
+];
+const DEFAULT_ARCHITECTURE = null;
+const TESTS_LIMITS = JSON.parse('{"max": 50000, "default": 5000}');
+const SUITES_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
+const COMMITS_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
+const DASHBOARD_QUERY = JSON.parse('[{"title": "Main Build", "suite": "Build"}, {"title": "safari-7624-branch Build", "branch": ["safari-7624-branch"], "suite": "Build"}]');
 
 export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}''',
         )

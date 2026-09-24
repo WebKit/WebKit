@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
 
 import json
 import os
+import re
 import requests
 import time
 
@@ -65,6 +66,8 @@ class ViewRoutes(AuthedBlueprint):
         self.suites_limits = suites_limits or dict(max=10000, default=1000)
         self.commits_limits = commits_limits or dict(max=10000, default=1000)
         self.dashboard_queries = dashboard_queries or []
+
+        self.commit_context = controller.commit_controller.commit_context
 
         # Protecting js and css with auth doesn't make sense
         self.add_url_rule('/library/<path:path>', 'library', self.library, authed=False, methods=('GET',))
@@ -178,6 +181,26 @@ class ViewRoutes(AuthedBlueprint):
             **kwargs)
 
     def constants(self):
+        branches = set()
+        with self.commit_context:
+            for repository in self.commit_context.repositories.keys():
+                branches_for_repo = self.commit_context.branches(repository, branch=None, limit=self.commits_limits['default'])
+                branches.update(branches_for_repo)
+        sorted_branches = sorted(branches)
+
+        resolved_queries = []
+        for query in self.dashboard_queries:
+            branch_query = query.get('branch', [None])[0]
+            if not isinstance(branch_query, re.Pattern):
+                resolved_queries.append(query)
+                continue
+            for branch in sorted_branches:
+                if not branch_query.match(branch):
+                    continue
+                resolved_queries.append(dict(**query))
+                resolved_queries[-1]['title'] = resolved_queries[-1]['title'].replace('$branch', branch)
+                resolved_queries[-1]['branch'] = [branch]
+
         return Response(
             self.environment.get_template('constants.js').render(
                 XcodeCloud=self.suite_types.get('XcodeCloud') or [],
@@ -185,6 +208,6 @@ class ViewRoutes(AuthedBlueprint):
                 tests_limits=json.dumps(self.tests_limits),
                 suites_limits=json.dumps(self.suites_limits),
                 commits_limits=json.dumps(self.commits_limits),
-                dashboard_queries=json.dumps(self.dashboard_queries),
+                dashboard_queries=json.dumps(resolved_queries),
             ), mimetype='application/javascript',
         )

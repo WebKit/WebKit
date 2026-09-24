@@ -72,9 +72,10 @@ class FlaskTestCase(unittest.TestCase):
         return decorator
 
     @classmethod
-    def run_with_real_webserver(cls):
+    def run_with_real_webserver(cls, **outer_kwargs):
         def decorator(method):
             def real_method(val, method=method, **kwargs):
+                kwargs |= outer_kwargs
                 with FlaskTestContext(type(val), **kwargs):
                     return method(val, client=requests, **kwargs)
             real_method.__name__ = method.__name__
@@ -86,12 +87,13 @@ class FlaskTestCase(unittest.TestCase):
         )
 
     @classmethod
-    def run_with_mock_webserver(cls):
+    def run_with_mock_webserver(cls, **outer_kwargs):
         def decorator(method):
             def real_method(val, method=method, **kwargs):
                 app = Flask('testing')
                 app.response_class = Response
                 app.config['TESTING'] = True
+                kwargs |= outer_kwargs
                 val.setup_webserver(app, **kwargs)
                 app.add_url_rule('/__health', 'health', lambda: 'ok', methods=('GET',))
                 return method(val, client=app.test_client(), **kwargs)
@@ -102,16 +104,16 @@ class FlaskTestCase(unittest.TestCase):
         return decorator
 
     @classmethod
-    def run_with_webserver(cls):
+    def run_with_webserver(cls, **kwargs):
         if int(os.environ.get('web_server', '0') and int(os.environ.get('slow_tests', '0'))):
             if not cls._printed_webserver_warning:
                 print('Using real web server, requests routed through requests library')
             cls._printed_webserver_warning = True
-            return cls.run_with_real_webserver()
+            return cls.run_with_real_webserver(**kwargs)
         if not cls._printed_webserver_warning:
             print('Using mock web server, requests routed through flask testing framework')
         cls._printed_webserver_warning = True
-        return cls.run_with_mock_webserver()
+        return cls.run_with_mock_webserver(**kwargs)
 
     @classmethod
     def run_with_selenium(cls):
