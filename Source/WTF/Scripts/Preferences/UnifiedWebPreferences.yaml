@@ -864,6 +864,14 @@ CSSCornerShapeEnabled:
   humanReadableDescription: "Enable support for CSS corner-shape property"
   defaultValue: true
 
+CSSCornersShorthandEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS corner shorthands"
+  humanReadableDescription: "Enable support for the CSS corner and corner-* shorthands"
+  defaultValue: false
+
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
   status: testable

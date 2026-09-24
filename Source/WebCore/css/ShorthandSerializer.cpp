@@ -28,6 +28,7 @@
 
 #include "CSSBorderImageWidthValue.h"
 #include "CSSCustomIdentValue.h"
+#include "CSSFunctionValue.h"
 #include "CSSGridAutoFlowValue.h"
 #include "CSSGridLineValue.h"
 #include "CSSGridTemplateAreasValue.h"
@@ -124,6 +125,11 @@ private:
     String serializeCommonValue(unsigned startIndex, unsigned count) const;
     String serializePair() const;
     String serializeQuad() const;
+
+    String serializeCornerSingle() const;
+    String serializeCornerPair() const;
+    String serializeCornerQuad() const;
+    String serializeOneCorner(unsigned radiusIndex, unsigned shapeIndex) const;
 
     String serializeLayered() const;
     String serializeCoordinatingListPropertyGroup() const;
@@ -372,6 +378,26 @@ String ShorthandSerializer::serialize()
     case CSSPropertyScrollPaddingInline:
     case CSSPropertySize:
         return serializePair();
+    case CSSPropertyCornerTopLeft:
+    case CSSPropertyCornerTopRight:
+    case CSSPropertyCornerBottomLeft:
+    case CSSPropertyCornerBottomRight:
+    case CSSPropertyCornerStartStart:
+    case CSSPropertyCornerStartEnd:
+    case CSSPropertyCornerEndStart:
+    case CSSPropertyCornerEndEnd:
+        return serializeCornerSingle();
+    case CSSPropertyCornerTop:
+    case CSSPropertyCornerRight:
+    case CSSPropertyCornerBottom:
+    case CSSPropertyCornerLeft:
+    case CSSPropertyCornerBlockStart:
+    case CSSPropertyCornerBlockEnd:
+    case CSSPropertyCornerInlineStart:
+    case CSSPropertyCornerInlineEnd:
+        return serializeCornerPair();
+    case CSSPropertyCorner:
+        return serializeCornerQuad();
     case CSSPropertyBlockStep:
     case CSSPropertyBorderBlockEnd:
     case CSSPropertyBorderBlockStart:
@@ -560,6 +586,90 @@ String ShorthandSerializer::serializeQuad() const
     if (right != top)
         return makeString(top, ' ', right);
     return top;
+}
+
+static bool cornerShorthandRadiusIsZero(const CSSValue& value)
+{
+    RefPtr pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair)
+        return false;
+    auto isZero = [](const CSSValue& value) {
+        RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value);
+        return primitive && (primitive->isLength() || primitive->isPercentage()) && primitive->isZero().value_or(false);
+    };
+    return isZero(pair->first()) && isZero(pair->second());
+}
+
+static bool cornerShorthandShapeIsRound(const CSSValue& value)
+{
+    if (RefPtr keyword = dynamicDowncast<CSSKeywordValue>(value))
+        return keyword->valueID() == CSSValueRound;
+
+    // round is equivalent to superellipse(1), which is also how computed values serialize.
+    RefPtr function = dynamicDowncast<CSSFunctionValue>(value);
+    if (!function || function->name() != CSSValueSuperellipse || function->size() != 1)
+        return false;
+    RefPtr parameter = dynamicDowncast<CSSPrimitiveValue>(function->item(0));
+    return parameter && parameter->isNumber() && parameter->isOne().value_or(false);
+}
+
+String ShorthandSerializer::serializeOneCorner(unsigned radiusIndex, unsigned shapeIndex) const
+{
+    RefPtr radius = m_longhandValues[radiusIndex];
+    RefPtr shape = m_longhandValues[shapeIndex];
+    if (!radius || !shape)
+        return String();
+    if (cornerShorthandRadiusIsZero(*radius) && cornerShorthandShapeIsRound(*shape))
+        return "normal"_s;
+    auto radiusStr = serializeLonghandValue(radiusIndex);
+    auto shapeStr = serializeLonghandValue(shapeIndex);
+    return makeString(radiusStr, ' ', shapeStr);
+}
+
+String ShorthandSerializer::serializeCornerSingle() const
+{
+    ASSERT(length() == 2);
+    return serializeOneCorner(0, 1);
+}
+
+String ShorthandSerializer::serializeCornerPair() const
+{
+    ASSERT(length() == 4);
+    auto first = serializeOneCorner(0, 1);
+    auto second = serializeOneCorner(2, 3);
+    if (first.isNull() || second.isNull())
+        return String();
+    if (first == second)
+        return first;
+    return makeString(first, " / "_s, second);
+}
+
+String ShorthandSerializer::serializeCornerQuad() const
+{
+    ASSERT(length() == 8);
+    std::array<String, 4> corners {
+        serializeOneCorner(0, 1),
+        serializeOneCorner(2, 3),
+        serializeOneCorner(4, 5),
+        serializeOneCorner(6, 7),
+    };
+    for (const auto& s : corners) {
+        if (s.isNull())
+            return String();
+    }
+    bool showBL = corners[1] != corners[3];
+    bool showBR = showBL || corners[0] != corners[2];
+    bool showTR = showBR || corners[0] != corners[1];
+
+    StringBuilder result;
+    result.append(corners[0]);
+    if (showTR)
+        result.append(" / "_s, corners[1]);
+    if (showBR)
+        result.append(" / "_s, corners[2]);
+    if (showBL)
+        result.append(" / "_s, corners[3]);
+    return result.toString();
 }
 
 class LayerValues {

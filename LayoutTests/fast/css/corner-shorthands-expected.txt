@@ -1,0 +1,60 @@
+Tests parsing and serialization of the CSS corner and corner-* shorthands.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Single corner shorthands set both longhands.
+PASS longhand("corner-top-left", "10px bevel", "border-top-left-radius") is "10px"
+PASS longhand("corner-top-left", "10px bevel", "corner-top-left-shape") is "bevel"
+PASS longhand("corner-top-left", "bevel 10px", "corner-top-left-shape") is "bevel"
+PASS longhand("corner-top-left", "4px 2% round", "border-top-left-radius") is "4px 2%"
+PASS longhand("corner-bottom-right", "superellipse(-0.5) 30% 10px", "corner-bottom-right-shape") is "superellipse(-0.5)"
+
+The normal keyword resets the corner to a zero radius and a round shape.
+PASS longhand("corner-start-start", "normal", "border-start-start-radius") is "0px"
+PASS longhand("corner-start-start", "normal", "corner-start-start-shape") is "round"
+PASS parse("corner-top-left", "normal") is "normal"
+
+Unrelated longhands are not set.
+PASS longhand("corner-top-left", "10px bevel", "border-top-right-radius") is ""
+PASS longhand("corner-top-left", "10px bevel", "corner-top-right-shape") is ""
+
+Side and master shorthands expand slash-separated corners.
+PASS longhand("corner-top", "10px bevel", "border-top-right-radius") is "10px"
+PASS longhand("corner-top", "10px bevel / 20px scoop", "border-top-right-radius") is "20px"
+PASS longhand("corner-top", "10px bevel / 20px scoop", "corner-top-right-shape") is "scoop"
+PASS longhand("corner", "10px bevel", "corner-bottom-left-shape") is "bevel"
+PASS longhand("corner", "10px bevel / 20px scoop", "border-bottom-left-radius") is "20px"
+PASS longhand("corner", "1px round / 2px round / 3px round", "border-bottom-right-radius") is "3px"
+PASS longhand("corner", "1px round / 2px round / 3px round", "border-bottom-left-radius") is "2px"
+PASS longhand("corner", "1px round / 2px round / 3px round / 4px round", "border-bottom-left-radius") is "4px"
+
+Serialization collapses equal corners.
+PASS parse("corner-top", "10px bevel / 10px bevel") is "10px bevel"
+PASS parse("corner-top", "10px bevel / 20px scoop") is "10px bevel / 20px scoop"
+PASS parse("corner", "10px bevel") is "10px bevel"
+PASS parse("corner", "1px round / 2px round / 1px round / 2px round") is "1px round / 2px round"
+
+Computed values use the computed corner-shape serialization of the longhands.
+PASS getComputedStyle(element).getPropertyValue("corner-top-left-shape") is "superellipse(1)"
+PASS computed("corner-top-left", "10px bevel") is "10px superellipse(0)"
+PASS computed("corner-top", "10px bevel") is "10px superellipse(0)"
+PASS computed("corner", "10px bevel") is "10px superellipse(0)"
+
+A zero radius with a round shape computes to normal.
+PASS computed("corner-top-left", "0px round") is "normal"
+PASS computed("corner-top-left", "normal") is "normal"
+PASS computed("corner-top", "normal / 2px round") is "normal / 2px superellipse(1)"
+PASS computed("corner", "normal") is "normal"
+
+Invalid values are rejected.
+PASS parse("corner-top-left", "bevel") is ""
+PASS parse("corner-top-left", "10px bevel scoop") is ""
+PASS parse("corner-top-left", "normal 10px") is ""
+PASS parse("corner-top-left", "10px / 20px") is ""
+PASS parse("corner-top", "10px bevel / 20px scoop / 30px round") is ""
+PASS parse("corner", "1px / 2px / 3px / 4px / 5px") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- webkit-test-runner [ CSSCornersShorthandEnabled=true ] -->
+<script src="../../resources/js-test.js"></script>
+<body>
+<div id="target"></div>
+<script>
+
+description('Tests parsing and serialization of the CSS corner and corner-* shorthands.');
+
+var element = document.getElementById('target');
+
+function parse(shorthand, value)
+{
+    element.style.cssText = '';
+    element.style.setProperty(shorthand, value);
+    return element.style.getPropertyValue(shorthand);
+}
+
+function longhand(shorthand, value, property)
+{
+    parse(shorthand, value);
+    return element.style.getPropertyValue(property);
+}
+
+function computed(shorthand, value)
+{
+    element.style.cssText = '';
+    element.style.setProperty(shorthand, value);
+    return getComputedStyle(element).getPropertyValue(shorthand);
+}
+
+debug('Single corner shorthands set both longhands.');
+shouldBeEqualToString('longhand("corner-top-left", "10px bevel", "border-top-left-radius")', '10px');
+shouldBeEqualToString('longhand("corner-top-left", "10px bevel", "corner-top-left-shape")', 'bevel');
+shouldBeEqualToString('longhand("corner-top-left", "bevel 10px", "corner-top-left-shape")', 'bevel');
+shouldBeEqualToString('longhand("corner-top-left", "4px 2% round", "border-top-left-radius")', '4px 2%');
+shouldBeEqualToString('longhand("corner-bottom-right", "superellipse(-0.5) 30% 10px", "corner-bottom-right-shape")', 'superellipse(-0.5)');
+
+debug('');
+debug('The normal keyword resets the corner to a zero radius and a round shape.');
+shouldBeEqualToString('longhand("corner-start-start", "normal", "border-start-start-radius")', '0px');
+shouldBeEqualToString('longhand("corner-start-start", "normal", "corner-start-start-shape")', 'round');
+shouldBeEqualToString('parse("corner-top-left", "normal")', 'normal');
+
+debug('');
+debug('Unrelated longhands are not set.');
+shouldBeEqualToString('longhand("corner-top-left", "10px bevel", "border-top-right-radius")', '');
+shouldBeEqualToString('longhand("corner-top-left", "10px bevel", "corner-top-right-shape")', '');
+
+debug('');
+debug('Side and master shorthands expand slash-separated corners.');
+shouldBeEqualToString('longhand("corner-top", "10px bevel", "border-top-right-radius")', '10px');
+shouldBeEqualToString('longhand("corner-top", "10px bevel / 20px scoop", "border-top-right-radius")', '20px');
+shouldBeEqualToString('longhand("corner-top", "10px bevel / 20px scoop", "corner-top-right-shape")', 'scoop');
+shouldBeEqualToString('longhand("corner", "10px bevel", "corner-bottom-left-shape")', 'bevel');
+shouldBeEqualToString('longhand("corner", "10px bevel / 20px scoop", "border-bottom-left-radius")', '20px');
+shouldBeEqualToString('longhand("corner", "1px round / 2px round / 3px round", "border-bottom-right-radius")', '3px');
+shouldBeEqualToString('longhand("corner", "1px round / 2px round / 3px round", "border-bottom-left-radius")', '2px');
+shouldBeEqualToString('longhand("corner", "1px round / 2px round / 3px round / 4px round", "border-bottom-left-radius")', '4px');
+
+debug('');
+debug('Serialization collapses equal corners.');
+shouldBeEqualToString('parse("corner-top", "10px bevel / 10px bevel")', '10px bevel');
+shouldBeEqualToString('parse("corner-top", "10px bevel / 20px scoop")', '10px bevel / 20px scoop');
+shouldBeEqualToString('parse("corner", "10px bevel")', '10px bevel');
+shouldBeEqualToString('parse("corner", "1px round / 2px round / 1px round / 2px round")', '1px round / 2px round');
+
+debug('');
+debug('Computed values use the computed corner-shape serialization of the longhands.');
+shouldBeEqualToString('getComputedStyle(element).getPropertyValue("corner-top-left-shape")', 'superellipse(1)');
+shouldBeEqualToString('computed("corner-top-left", "10px bevel")', '10px superellipse(0)');
+shouldBeEqualToString('computed("corner-top", "10px bevel")', '10px superellipse(0)');
+shouldBeEqualToString('computed("corner", "10px bevel")', '10px superellipse(0)');
+
+debug('');
+debug('A zero radius with a round shape computes to normal.');
+shouldBeEqualToString('computed("corner-top-left", "0px round")', 'normal');
+shouldBeEqualToString('computed("corner-top-left", "normal")', 'normal');
+shouldBeEqualToString('computed("corner-top", "normal / 2px round")', 'normal / 2px superellipse(1)');
+shouldBeEqualToString('computed("corner", "normal")', 'normal');
+
+debug('');
+debug('Invalid values are rejected.');
+shouldBeEqualToString('parse("corner-top-left", "bevel")', '');
+shouldBeEqualToString('parse("corner-top-left", "10px bevel scoop")', '');
+shouldBeEqualToString('parse("corner-top-left", "normal 10px")', '');
+shouldBeEqualToString('parse("corner-top-left", "10px / 20px")', '');
+shouldBeEqualToString('parse("corner-top", "10px bevel / 20px scoop / 30px round")', '');
+shouldBeEqualToString('parse("corner", "1px / 2px / 3px / 4px / 5px")', '');
+
+</script>
+</body>
+</html>
