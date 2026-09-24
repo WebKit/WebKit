@@ -52,6 +52,8 @@ enum class WebKit::GestureType : uint8_t {
 
 enum class WebKit::RespectSelectionAnchor : bool
 
+enum class WebKit::SelectionExtentAnchor : bool
+
 enum class WebKit::SelectionTouch : uint8_t {
     Started,
     Moved,

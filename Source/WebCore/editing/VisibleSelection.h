@@ -46,10 +46,10 @@ public:
 
     static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;
 
-    VisibleSelection(const Position& anchor, const Position& focus, Affinity = defaultAffinity, Directionality = Directionality::None);
+    WEBCORE_EXPORT VisibleSelection(const Position& anchor, const Position& focus, Affinity = defaultAffinity, Directionality = Directionality::None);
 
     // FIXME: A caret selection never has direction so we should remove the Directionality argument from this function.
-    VisibleSelection(const Position&, Affinity, Directionality = Directionality::None);
+    WEBCORE_EXPORT VisibleSelection(const Position&, Affinity, Directionality = Directionality::None);
     WEBCORE_EXPORT VisibleSelection(const SimpleRange&, Affinity = defaultAffinity, Directionality = Directionality::None);
     // FIXME: A caret selection never has direction so we should remove the Directionality argument from this function.
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, Directionality = Directionality::None);
@@ -112,6 +112,11 @@ public:
     void appendTrailingWhitespace();
 
     WEBCORE_EXPORT bool expandUsingGranularity(TextGranularity granularity);
+
+    // The endpoint of this selection that stays put when the selection is extended to `extent`: whichever
+    // one is further away, measured in characters. Extending moves the nearer endpoint, so a selection
+    // extended to a position inside itself shrinks rather than staying put.
+    WEBCORE_EXPORT Position endpointToPreserveWhenExtendedTo(const Position& extent) const;
 
     // FIXME: Rename to include the word "canonical" and remove the word "first" or remove.
     // We don't yet support multi-range selections, so we only ever have one range to return.

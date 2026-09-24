@@ -174,6 +174,7 @@ public:
 
     enum class ShouldCloseTyping : bool { No, Yes };
     WEBCORE_EXPORT bool setSelectedRange(const std::optional<SimpleRange>&, Affinity, ShouldCloseTyping, UserTriggered = UserTriggered::No);
+    WEBCORE_EXPORT bool setSelectedVisibleSelection(const VisibleSelection&, ShouldCloseTyping, UserTriggered = UserTriggered::No);
     WEBCORE_EXPORT void selectAll();
     WEBCORE_EXPORT void clear();
     void willBeRemovedFromFrame();

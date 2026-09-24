@@ -90,6 +90,7 @@ class WebKeyboardEvent;
 class WebMouseEvent;
 class WebWheelEvent;
 enum class SelectionEndpoint : bool;
+enum class SelectionExtentAnchor : bool;
 enum class SelectionWasFlipped : bool;
 enum class PDFPluginDisplayMode : uint8_t;
 struct DocumentEditingContextRequest;
@@ -329,7 +330,7 @@ public:
     virtual CursorContext cursorContext(WebCore::FloatPoint /* pointInRootView */) const { return { }; }
     virtual void setSelectionRange(WebCore::FloatPoint /* pointInRootView */, WebCore::TextGranularity) { }
     virtual SelectionWasFlipped moveSelectionEndpoint(WebCore::FloatPoint /* pointInRootView */, SelectionEndpoint);
-    virtual SelectionEndpoint extendInitialSelection(WebCore::FloatPoint /* pointInRootView */, WebCore::TextGranularity);
+    virtual SelectionEndpoint extendInitialSelection(WebCore::FloatPoint /* pointInRootView */, WebCore::TextGranularity, SelectionExtentAnchor);
 #if PLATFORM(IOS_FAMILY)
     virtual DocumentEditingContext documentEditingContext(DocumentEditingContextRequest&&) const;
 #endif

@@ -1586,6 +1586,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::SandboxExtensionHandle': ['"SandboxExtension.h"'],
         'WebKit::ScriptTrackingPrivacyHost': ['"ScriptTrackingPrivacyFilter.h"'],
         'WebKit::ScriptTrackingPrivacyRules': ['"ScriptTrackingPrivacyFilter.h"'],
+        'WebKit::SelectionExtentAnchor': ['"GestureTypes.h"'],
         'WebKit::SelectionFlags': ['"GestureTypes.h"'],
         'WebKit::SelectionTouch': ['"GestureTypes.h"'],
         'WebKit::SwapBuffersDisplayRequirement': ['"PrepareBackingStoreBuffersData.h"'],

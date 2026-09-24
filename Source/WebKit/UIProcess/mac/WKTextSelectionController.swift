@@ -83,21 +83,12 @@ extension WKTextSelectionController {
     // `updateSelectionWithExtentPointAndBoundary` in WebPageCocoa.mm); here we only need to know a
     // range-selection drag is in flight, which `lastRangeSelectionExtentPoint` tracks.
     func reextendSelectionForAutoscrollIfNeeded() {
-        guard let page = view?._protectedPage().get() else {
-            return
-        }
-
         guard let currentRangeSelectionGranularity, let point = lastRangeSelectionExtentPoint else {
             return
         }
 
         Task.immediate {
-            await page.updateSelection(
-                withExtentPoint: WebCore.IntPoint(point),
-                by: .init(currentRangeSelectionGranularity),
-                isInteractingWithFocusedElement: true, // FIXME: Properly handle the case where this isn't actually true.
-                source: .Mouse
-            )
+            await self.updateSelection(extendingTo: point, with: currentRangeSelectionGranularity)
         }
     }
 }
@@ -323,15 +314,17 @@ extension WKTextSelectionController {
         }
     }
 
-    @objc(beginRangeSelectionAtPoint:withGranularity:)
-    func beginRangeSelection(at point: NSPoint, with granularity: NSTextSelection.Granularity) {
+    @objc(beginRangeSelectionAtPoint:withGranularity:modifiers:)
+    func beginRangeSelection(at point: NSPoint, with granularity: NSTextSelection.Granularity, modifiers: NSEvent.ModifierFlags) {
         guard let view, let page = view._protectedPage().get(), let impl = view._impl() else {
             return
         }
 
         Logger.viewGestures.log(
-            "[pageProxyID=\(page.logIdentifier())] \(#function) point: \(String(reflecting: point)) granularity: \(String(reflecting: granularity))"
+            "[pageProxyID=\(page.logIdentifier())] \(#function) point: \(String(reflecting: point)) granularity: \(String(reflecting: granularity)) modifiers: \(String(reflecting: modifiers))"
         )
+
+        let shouldExtendExistingSelection = modifiers.contains(.shift) && page.editorState.selectionType != .None
 
         currentRangeSelectionGranularity = granularity
 
@@ -343,12 +336,21 @@ extension WKTextSelectionController {
         impl.beginSuppressingSingleClickGestureForTextSelection()
 
         Task.immediate {
-            await page.selectText(
-                at: WebCore.IntPoint(point),
-                by: .init(granularity),
-                isInteractingWithFocusedElement: true // FIXME: Properly handle the case where this isn't actually true.
-            )
+            if shouldExtendExistingSelection {
+                await self.updateSelection(extendingTo: point, with: granularity, anchoredOn: .CurrentSelection)
+            } else {
+                await page.selectText(
+                    at: WebCore.IntPoint(point),
+                    by: .init(granularity),
+                    isInteractingWithFocusedElement: true // FIXME: Properly handle the case where this isn't actually true.
+                )
+            }
         }
+    }
+
+    @objc(beginRangeSelectionAtPoint:withGranularity:)
+    func beginRangeSelection(at point: NSPoint, with granularity: NSTextSelection.Granularity) {
+        beginRangeSelection(at: point, with: granularity, modifiers: [])
     }
 
     @objc(continueRangeSelectionAtPoint:)
@@ -367,12 +369,7 @@ extension WKTextSelectionController {
         lastRangeSelectionExtentPoint = point
 
         Task.immediate {
-            await page.updateSelection(
-                withExtentPoint: WebCore.IntPoint(point),
-                by: .init(currentRangeSelectionGranularity),
-                isInteractingWithFocusedElement: true, // FIXME: Properly handle the case where this isn't actually true.
-                source: .Mouse
-            )
+            await self.updateSelection(extendingTo: point, with: currentRangeSelectionGranularity)
         }
     }
 
@@ -395,6 +392,26 @@ extension WKTextSelectionController {
         }
 
         currentRangeSelectionGranularity = nil
+    }
+}
+
+extension WKTextSelectionController {
+    private func updateSelection(
+        extendingTo point: NSPoint,
+        with granularity: NSTextSelection.Granularity,
+        anchoredOn anchor: WebKit.SelectionExtentAnchor = .GestureStart
+    ) async {
+        guard let page = view?._protectedPage().get() else {
+            return
+        }
+
+        await page.updateSelection(
+            withExtentPoint: WebCore.IntPoint(point),
+            by: .init(granularity),
+            isInteractingWithFocusedElement: true, // FIXME: Properly handle the case where this isn't actually true.
+            source: .Mouse,
+            anchor: anchor
+        )
     }
 }
 

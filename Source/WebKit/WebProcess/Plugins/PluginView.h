@@ -61,6 +61,7 @@ class WebFrame;
 class WebPage;
 enum class PDFPluginDisplayMode : uint8_t;
 enum class SelectionEndpoint : bool;
+enum class SelectionExtentAnchor : bool;
 enum class SelectionWasFlipped : bool;
 struct DocumentEditingContextRequest;
 struct DocumentEditingContext;
@@ -108,7 +109,7 @@ public:
     void clearSelection();
     void setSelectionRange(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity);
     SelectionWasFlipped moveSelectionEndpoint(WebCore::FloatPoint pointInRootView, SelectionEndpoint);
-    SelectionEndpoint extendInitialSelection(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity);
+    SelectionEndpoint extendInitialSelection(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity, SelectionExtentAnchor);
 #if PLATFORM(IOS_FAMILY)
     DocumentEditingContext documentEditingContext(DocumentEditingContextRequest&&) const;
 #endif

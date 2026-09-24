@@ -254,6 +254,12 @@ extension WebPage {
         return NSPasteboard.general.string(forType: .string)
     }
 
+    /// Selects the entire contents of the page.
+    public func selectAll() async {
+        NSApp.sendAction(#selector(NSText.selectAll(_:)), to: backingWebView, from: nil)
+        await waitForNextPresentationUpdate()
+    }
+
     private func mouseEvent(
         _ type: NSEvent.EventType,
         at location: NSPoint,
