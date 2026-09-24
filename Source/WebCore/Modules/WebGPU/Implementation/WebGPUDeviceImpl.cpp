@@ -315,8 +315,14 @@ RefPtr<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor
         });
     }
 
+    auto code = toBackingStringView(descriptor.code);
+    WGPUShaderSourceWGSL wgslSource {
+        .chain = { nullptr, WGPUSType_ShaderSourceWGSL },
+        .code = code,
+    };
+
     WGPUShaderModuleDescriptor backingDescriptor {
-        .wgslDescriptor = descriptor.code,
+        .nextInChain = &wgslSource.chain,
         .label = label,
         .hintCount = hintsEntries.size(),
         .hints = hintsEntries.size() ? &hintsEntries[0] : nullptr,
@@ -398,9 +404,9 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         if (buffer) {
             SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return buffer->attributes.map([&convertToBackingContext](const auto& attribute) {
                 return WGPUVertexAttribute {
-                    convertToBackingContext.convertToBacking(attribute.format),
-                    attribute.offset,
-                    attribute.shaderLocation,
+                    .format = convertToBackingContext.convertToBacking(attribute.format),
+                    .offset = attribute.offset,
+                    .shaderLocation = attribute.shaderLocation,
                 };
             });
         } else
@@ -410,10 +416,10 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
     Vector<WGPUVertexBufferLayout> backingBuffers(descriptor.vertex.buffers.size(), [&](size_t i) {
         const auto& buffer = descriptor.vertex.buffers[i];
         return WGPUVertexBufferLayout {
-            buffer ? buffer->arrayStride : WGPU_COPY_STRIDE_UNDEFINED,
-            buffer ? convertToBackingContext.convertToBacking(buffer->stepMode) : WGPUVertexStepMode_Vertex,
-            backingAttributes[i].size(),
-            backingAttributes[i].size() ? backingAttributes[i].span().data() : nullptr,
+            .arrayStride = buffer ? buffer->arrayStride : WGPU_COPY_STRIDE_UNDEFINED,
+            .stepMode = buffer ? convertToBackingContext.convertToBacking(buffer->stepMode) : WGPUVertexStepMode_Vertex,
+            .attributeCount = backingAttributes[i].size(),
+            .attributes = backingAttributes[i].size() ? backingAttributes[i].span().data() : nullptr,
         };
     });
 

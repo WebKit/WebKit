@@ -200,6 +200,35 @@ inline XRView& fromAPI(WGPUXRView view)
     return static_cast<XRView&>(*view);
 }
 
+// Associates a chainable extension struct with its sType tag. Specialize for each struct
+// that findChainedStruct() is used with.
+template<typename T> struct ChainedStructSType;
+
+template<> struct ChainedStructSType<WGPUShaderSourceWGSL> {
+    static constexpr WGPUSType value = WGPUSType_ShaderSourceWGSL;
+};
+
+template<> struct ChainedStructSType<WGPUInstanceCocoaDescriptor> {
+    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor);
+};
+
+template<> struct ChainedStructSType<WGPUSurfaceDescriptorCocoaCustomSurface> {
+    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking);
+};
+
+// Walks a descriptor's nextInChain looking for one particular extension struct. Every
+// chainable struct starts with its WGPUChainedStruct, so the match can be cast to it.
+template<typename T>
+inline const T* findChainedStruct(const WGPUChainedStruct* chain)
+{
+    static_assert(std::is_same_v<decltype(T::chain), WGPUChainedStruct>);
+    for (; chain; chain = chain->next) {
+        if (chain->sType == ChainedStructSType<T>::value)
+            return reinterpret_cast<const T*>(chain);
+    }
+    return nullptr;
+}
+
 inline String fromAPI(const char* string)
 {
     return String::fromUTF8(string);

@@ -80,6 +80,34 @@ typedef enum WGPUSTypeExtended {
 
 const int WGPUTextureSampleType_ExternalTexture = WGPUTextureSampleType_Force32 - 1;
 
+typedef void (^WGPUWorkItem)(void);
+typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
+typedef void (^WGPUDeviceLostBlockCallback)(WGPUDeviceLostReason reason, char const * message);
+
+typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
+typedef void (^WGPUOnSubmittedWorkScheduledCallback)(WGPUWorkItem);
+typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated, WGPUOnSubmittedWorkScheduledCallback onSubmittedWorkScheduledCallback);
+
+// Can be chained in WGPUInstanceDescriptor, with sType WGPUSTypeExtended_InstanceCocoaDescriptor.
+typedef struct WGPUInstanceCocoaDescriptor {
+    WGPUChainedStruct chain;
+    // The API contract is: callers must call WebGPU's functions in a non-racey way with respect
+    // to each other. This scheduleWorkBlock will execute on a background thread, and it must
+    // schedule the block it's passed to be run in a non-racey way with regards to all the other
+    // WebGPU calls. If calls to scheduleWorkBlock are ordered (e.g. multiple calls on the same
+    // thread), then the work that is scheduled must also be ordered in the same order.
+    // It's fine to pass NULL here, but if you do, you must periodically call
+    // wgpuInstanceProcessEvents() to synchronously run the queued callbacks.
+    __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
+    const void* webProcessResourceOwner;
+} WGPUInstanceCocoaDescriptor;
+
+// Can be chained in WGPUSurfaceDescriptor, with sType WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking.
+typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
+    WGPUChainedStruct chain;
+    WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
+} WGPUSurfaceDescriptorCocoaCustomSurface;
+
 typedef struct WGPUExternalTextureBindingLayout {
 } WGPUExternalTextureBindingLayout;
 

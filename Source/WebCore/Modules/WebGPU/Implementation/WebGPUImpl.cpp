@@ -98,11 +98,14 @@ RefPtr<PresentationContext> GPUImpl::createPresentationContext(const Presentatio
         compositorIntegration->registerCallbacks(makeBlockPtr(WTF::move(renderBuffersWereRecreatedCallback)), convert(WTF::move(onSubmittedWorkScheduledCallback)));
     });
 
+    WGPUSurfaceDescriptorCocoaCustomSurface cocoaDescriptor {
+        .chain = { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
+        .compositorIntegrationRegister = registerCallbacksBlock.get(),
+    };
+
     WGPUSurfaceDescriptor surfaceDescriptor {
+        .nextInChain = &cocoaDescriptor.chain,
         .label = { },
-        .cocoaDescriptor = WGPUSurfaceDescriptorCocoaCustomSurface {
-            .compositorIntegrationRegister = registerCallbacksBlock.get(),
-        }
     };
 
     auto result = PresentationContextImpl::create(adoptWebGPU(wgpuInstanceCreateSurface(m_backing.get(), &surfaceDescriptor)), m_convertToBackingContext);

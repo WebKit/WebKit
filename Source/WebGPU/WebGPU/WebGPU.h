@@ -515,17 +515,22 @@ typedef enum WGPURequestDeviceStatus {
 } WGPURequestDeviceStatus WGPU_ENUM_ATTRIBUTE;
 
 typedef enum WGPUSType {
-    WGPUSType_Invalid = 0x00000000,
-    WGPUSType_SurfaceDescriptorFromMetalLayer = 0x00000001,
-    WGPUSType_SurfaceDescriptorFromWindowsHWND = 0x00000002,
-    WGPUSType_SurfaceDescriptorFromXlibWindow = 0x00000003,
-    WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector = 0x00000004,
-    WGPUSType_ShaderModuleSPIRVDescriptor = 0x00000005,
-    WGPUSType_ShaderModuleWGSLDescriptor = 0x00000006,
-    WGPUSType_PrimitiveDepthClipControl = 0x00000007,
-    WGPUSType_SurfaceDescriptorFromWaylandSurface = 0x00000008,
-    WGPUSType_SurfaceDescriptorFromAndroidNativeWindow = 0x00000009,
-    WGPUSType_SurfaceDescriptorFromXcbWindow = 0x0000000A,
+    WGPUSType_ShaderSourceSPIRV = 0x00000001,
+    WGPUSType_ShaderSourceWGSL = 0x00000002,
+    WGPUSType_RenderPassMaxDrawCount = 0x00000003,
+    WGPUSType_SurfaceSourceMetalLayer = 0x00000004,
+    WGPUSType_SurfaceSourceWindowsHWND = 0x00000005,
+    WGPUSType_SurfaceSourceXlibWindow = 0x00000006,
+    WGPUSType_SurfaceSourceWaylandSurface = 0x00000007,
+    WGPUSType_SurfaceSourceAndroidNativeWindow = 0x00000008,
+    WGPUSType_SurfaceSourceXCBWindow = 0x00000009,
+    WGPUSType_SurfaceColorManagement = 0x0000000A,
+    WGPUSType_RequestAdapterWebXROptions = 0x0000000B,
+    WGPUSType_TextureComponentSwizzleDescriptor = 0x0000000C,
+    WGPUSType_ExternalTextureBindingLayout = 0x0000000D,
+    WGPUSType_ExternalTextureBindingEntry = 0x0000000E,
+    WGPUSType_CompatibilityModeLimits = 0x0000000F,
+    WGPUSType_TextureBindingViewDimension = 0x00000010,
     WGPUSType_Force32 = 0x7FFFFFFF
 } WGPUSType WGPU_ENUM_ATTRIBUTE;
 
@@ -815,7 +820,7 @@ typedef void (*WGPURequestAdapterCallback)(WGPURequestAdapterStatus status, WGPU
 typedef void (*WGPURequestDeviceCallback)(WGPURequestDeviceStatus status, WGPUDevice device, char const * message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 
 typedef struct WGPUChainedStruct {
-    struct WGPUChainedStruct const * next;
+    struct WGPUChainedStruct * next;
     WGPUSType sType;
 } WGPUChainedStruct WGPU_STRUCTURE_ATTRIBUTE;
 
@@ -906,28 +911,8 @@ typedef struct WGPUExtent3D {
     uint32_t depthOrArrayLayers;
 } WGPUExtent3D WGPU_STRUCTURE_ATTRIBUTE;
 
-typedef void (^WGPUWorkItem)(void);
-typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
-typedef void (^WGPUDeviceLostBlockCallback)(WGPUDeviceLostReason reason, char const * message);
-
-typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
-typedef void (^WGPUOnSubmittedWorkScheduledCallback)(WGPUWorkItem);
-typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated, WGPUOnSubmittedWorkScheduledCallback onSubmittedWorkScheduledCallback);
-
-typedef struct WGPUInstanceCocoaDescriptor {
-    // The API contract is: callers must call WebGPU's functions in a non-racey way with respect
-    // to each other. This scheduleWorkBlock will execute on a background thread, and it must
-    // schedule the block it's passed to be run in a non-racey way with regards to all the other
-    // WebGPU calls. If calls to scheduleWorkBlock are ordered (e.g. multiple calls on the same
-    // thread), then the work that is scheduled must also be ordered in the same order.
-    // It's fine to pass NULL here, but if you do, you must periodically call
-    // wgpuInstanceProcessEvents() to synchronously run the queued callbacks.
-    __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
-    const void* webProcessResourceOwner;
-} WGPUInstanceCocoaDescriptor;
-
 typedef struct WGPUInstanceDescriptor {
-    WGPUInstanceCocoaDescriptor cocoaDescriptor;
+    WGPUChainedStruct * nextInChain;
 } WGPUInstanceDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPULimits {
@@ -1081,13 +1066,9 @@ typedef struct WGPUStorageTextureBindingLayout {
     WGPUTextureViewDimension viewDimension;
 } WGPUStorageTextureBindingLayout WGPU_STRUCTURE_ATTRIBUTE;
 
-typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
-    WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
-} WGPUSurfaceDescriptorCocoaCustomSurface;
-
 typedef struct WGPUSurfaceDescriptor {
+    WGPUChainedStruct * nextInChain;
     WGPUStringView label;
-    WGPUSurfaceDescriptorCocoaCustomSurface cocoaDescriptor;
 } WGPUSurfaceDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 // Can be chained in WGPUSurfaceDescriptor
@@ -1251,8 +1232,13 @@ typedef struct WGPURequiredLimits {
     WGPULimits limits;
 } WGPURequiredLimits WGPU_STRUCTURE_ATTRIBUTE;
 
+typedef struct WGPUShaderSourceWGSL {
+    WGPUChainedStruct chain;
+    WGPUStringView code;
+} WGPUShaderSourceWGSL WGPU_STRUCTURE_ATTRIBUTE;
+
 typedef struct WGPUShaderModuleDescriptor {
-    WTF::String wgslDescriptor;
+    WGPUChainedStruct * nextInChain;
     WGPUStringView label;
     size_t hintCount;
     WGPUShaderModuleCompilationHint const * hints;

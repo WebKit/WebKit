@@ -49,15 +49,17 @@ struct ShaderModuleParameters {
     const WGPUShaderModuleCompilationHint* hints;
 };
 
-static std::optional<ShaderModuleParameters> NODELETE findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
+static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
-    const auto& wgslCode = descriptor.wgslDescriptor;
-    const WGPUShaderModuleCompilationHint* hints = descriptor.hints;
+    auto* wgsl = findChainedStruct<WGPUShaderSourceWGSL>(descriptor.nextInChain);
+    if (!wgsl)
+        return std::nullopt;
 
+    auto wgslCode = fromAPI(wgsl->code);
     if (!wgslCode)
         return std::nullopt;
 
-    return { { wgslCode, hints } };
+    return { { WTF::move(wgslCode), descriptor.hints } };
 }
 
 static MTLCompileOptions *compileOptions(const WGSL::DeviceState& deviceState)

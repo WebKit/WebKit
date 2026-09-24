@@ -56,9 +56,11 @@ static NSArray<id<MTLDevice>>* getDevices()
 
 Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {
-    const WGPUInstanceCocoaDescriptor& cocoaDescriptor = descriptor.cocoaDescriptor;
+    auto* cocoaDescriptor = findChainedStruct<WGPUInstanceCocoaDescriptor>(descriptor.nextInChain);
+    if (!cocoaDescriptor)
+        return adoptRef(*new Instance(nullptr, nullptr));
 
-    return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor.webProcessResourceOwner)));
+    return adoptRef(*new Instance(cocoaDescriptor->scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor->webProcessResourceOwner)));
 }
 
 Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock, const MachSendRight* webProcessResourceOwner)
