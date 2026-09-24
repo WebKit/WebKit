@@ -300,6 +300,8 @@ private:
 
     float deviceScaleFactor() const final;
     void scrollDidEnd() final;
+    void scrollSnapChangeEventTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) final;
+    void scrollSnapChangingEventTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) final;
 
 private:
     bool m_scrollDimensionsDirty { true };

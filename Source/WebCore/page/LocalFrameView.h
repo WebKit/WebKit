@@ -809,6 +809,8 @@ public:
 #endif
     void scrollDidEnd() final;
     void scrollOriginDidChange() final;
+    void scrollSnapChangeEventTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) final;
+    void scrollSnapChangingEventTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) final;
 
     void setLoadedWhileHidden() { m_loadedWhileHidden = true; }
 

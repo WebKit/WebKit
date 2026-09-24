@@ -979,6 +979,7 @@ void ScrollingEffectsController::discreteSnapTransitionTimerFired()
             return m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset());
         return m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset(), -wheelDeltaForGlideAnimation, -wheelDeltaForGlideAnimation);
     }();
+    notifyScrollSnapChangingTargetsChangedIfNeeded();
 
     if (shouldStartScrollSnapAnimation)
         startScrollSnapAnimation();
@@ -1016,12 +1017,14 @@ bool ScrollingEffectsController::processWheelEventForScrollSnap(const PlatformWh
     case WheelEventStatus::UserScrollEnd:
         if (m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset()))
             startScrollSnapAnimation();
+        notifyScrollSnapChangingTargetsChangedIfNeeded();
         break;
     case WheelEventStatus::MomentumScrollBegin:
         if (m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset(), m_scrollingVelocityForScrollSnap, -wheelEvent.delta())) {
             startScrollSnapAnimation();
             isMomentumScrolling = true;
         }
+        notifyScrollSnapChangingTargetsChangedIfNeeded();
         m_scrollingVelocityForScrollSnap = { };
         break;
     case WheelEventStatus::MomentumScrolling:

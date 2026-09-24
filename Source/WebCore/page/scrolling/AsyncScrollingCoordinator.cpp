@@ -1377,18 +1377,48 @@ bool AsyncScrollingCoordinator::haveScrollingTree() const
 void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex)
 {
     ASSERT(isMainThread());
-    
+
     if (!page())
         return;
-    
+
     RefPtr frameView = frameViewForScrollingNode(scrollingNodeID);
     if (!frameView)
         return;
-    
+
     if (CheckedPtr scrollableArea = frameView->scrollableAreaForScrollingNodeID(scrollingNodeID)) {
         scrollableArea->setCurrentHorizontalSnapPointIndex(horizontalIndex);
         scrollableArea->setCurrentVerticalSnapPointIndex(verticalIndex);
     }
+}
+
+void AsyncScrollingCoordinator::setActiveScrollSnapChangeTargets(ScrollingNodeID scrollingNodeID, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    ASSERT(isMainThread());
+
+    if (!page())
+        return;
+
+    RefPtr frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    if (CheckedPtr scrollableArea = frameView->scrollableAreaForScrollingNodeID(scrollingNodeID))
+        scrollableArea->updateSnapChangeEventTargets(horizontal, vertical);
+}
+
+void AsyncScrollingCoordinator::setActiveScrollSnapChangingTargets(ScrollingNodeID scrollingNodeID, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    ASSERT(isMainThread());
+
+    if (!page())
+        return;
+
+    RefPtr frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    if (CheckedPtr scrollableArea = frameView->scrollableAreaForScrollingNodeID(scrollingNodeID))
+        scrollableArea->updateSnapChangingEventTargets(horizontal, vertical);
 }
 
 bool AsyncScrollingCoordinator::isScrollSnapInProgress(std::optional<ScrollingNodeID> nodeID) const

@@ -452,6 +452,7 @@ namespace WebCore {
     macro(ShadowRoot) \
     macro(SharedWorker) \
     macro(SharedWorkerGlobalScope) \
+    macro(SnapEvent) \
     macro(SpeechRecognition) \
     macro(SpeechRecognitionAlternative) \
     macro(SpeechRecognitionErrorEvent) \
@@ -693,6 +694,8 @@ namespace WebCore {
     macro(onpushsubscriptionchange) \
     macro(onrtctransform) \
     macro(onscrollend) \
+    macro(onscrollsnapchange) \
+    macro(onscrollsnapchanging) \
     macro(ontouchcancel) \
     macro(ontouchend) \
     macro(ontouchmove) \

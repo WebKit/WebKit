@@ -33,6 +33,7 @@
 #include "LayoutRect.h"
 #include "Logging.h"
 #include "Node.h"
+#include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
@@ -638,6 +639,17 @@ std::pair<float, std::optional<unsigned>> FloatScrollSnapOffsetsInfo::closestSna
     auto horizontal = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Horizontal, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping, selectionMethod);
     auto vertical = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Vertical, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping, selectionMethod);
     return ensureVisibleTarget(*this, horizontal, vertical, axis, viewportSize, scrollDestinationOffset);
+}
+
+Node* resolveScrollSnapEventTarget(Markable<NodeIdentifier> identifier)
+{
+    if (!identifier)
+        return nullptr;
+
+    Node* node = Node::fromIdentifier(*identifier);
+    if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(node))
+        return pseudoElement->hostElement();
+    return node;
 }
 
 }

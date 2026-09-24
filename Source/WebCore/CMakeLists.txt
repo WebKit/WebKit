@@ -1219,6 +1219,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ShadowRootInit.idl
     dom/ShadowRootMode.idl
     dom/SlotAssignmentMode.idl
+    dom/SnapEvent.idl
     dom/StartViewTransitionOptions.idl
     dom/StaticRange.idl
     dom/StringCallback.idl

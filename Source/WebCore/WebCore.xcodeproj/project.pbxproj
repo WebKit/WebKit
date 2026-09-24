@@ -1741,6 +1741,7 @@
 		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447B137E2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 447B137C2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h */; };
 		4480E06B2A67D86A0081EAE8 /* ContentVisibilityAutoStateChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4480E06A2A67D8690081EAE8 /* ContentVisibilityAutoStateChangeEvent.h */; };
+		A2920EB202028029B304BDF7 /* SnapEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C25AA41E0300AF36C5437A1E /* SnapEvent.h */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		448C95942AC4417700161D5A /* RenderSVGResourceClipperInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 448C95932AC4417600161D5A /* RenderSVGResourceClipperInlines.h */; };
 		448DF9DC2F60EFA700F068C3 /* TextEffectController.h in Headers */ = {isa = PBXBuildFile; fileRef = 448DF9DB2F60EFA700F068C3 /* TextEffectController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17188,6 +17189,9 @@
 		9B46C0542DC4B821002E22C4 /* LocalFrameViewInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalFrameViewInlines.h; sourceTree = "<group>"; };
 		9B4F0630289F2F08007831DB /* SlotAssignmentMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SlotAssignmentMode.h; sourceTree = "<group>"; };
 		9B4F0632289F2F08007831DB /* SlotAssignmentMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SlotAssignmentMode.idl; sourceTree = "<group>"; };
+		C25AA41E0300AF36C5437A1E /* SnapEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SnapEvent.h; sourceTree = "<group>"; };
+		F2A3EE51096F9F2F35A35E9F /* SnapEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SnapEvent.cpp; sourceTree = "<group>"; };
+		A0F7F606038966705E5DC1D0 /* SnapEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SnapEvent.idl; sourceTree = "<group>"; };
 		9B50B1DC17CD4C0F0087F63C /* FormAssociatedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormAssociatedElement.h; sourceTree = "<group>"; };
 		9B532EA11BA928570038A827 /* SlotAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlotAssignment.cpp; sourceTree = "<group>"; };
 		9B532EA21BA928570038A827 /* SlotAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotAssignment.h; sourceTree = "<group>"; };
@@ -43602,6 +43606,9 @@
 				9B532EA21BA928570038A827 /* SlotAssignment.h */,
 				9B4F0630289F2F08007831DB /* SlotAssignmentMode.h */,
 				9B4F0632289F2F08007831DB /* SlotAssignmentMode.idl */,
+				F2A3EE51096F9F2F35A35E9F /* SnapEvent.cpp */,
+				C25AA41E0300AF36C5437A1E /* SnapEvent.h */,
+				A0F7F606038966705E5DC1D0 /* SnapEvent.idl */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
 				BA69206F2E0E939C0014E98A /* SpeculationRulesMatcher.cpp */,
@@ -49240,6 +49247,7 @@
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,
 				E4AFD00C0DAF335400F5F55C /* SMILTime.h in Headers */,
 				E4AFD00E0DAF335500F5F55C /* SMILTimeContainer.h in Headers */,
+				A2920EB202028029B304BDF7 /* SnapEvent.h in Headers */,
 				5C7C88D81D0F1F4A009D2F6D /* SocketProvider.h in Headers */,
 				510D4A34103165EE0049EA54 /* SocketStreamError.h in Headers */,
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,

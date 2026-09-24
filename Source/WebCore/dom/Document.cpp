@@ -307,6 +307,7 @@
 #include "ShadowRoot.h"
 #include "Site.h"
 #include "SleepDisabler.h"
+#include "SnapEvent.h"
 #include "SocketProvider.h"
 #include "SpeculationRules.h"
 #include "SpeculationRulesMatcher.h"
@@ -508,7 +509,14 @@ struct Document::PendingScrollEventTargetList {
     WTF_MAKE_TZONE_ALLOCATED(PendingScrollEventTargetList);
 
 public:
-    Vector<std::pair<GCReachableRef<ContainerNode>, ScrollEventType>> targets;
+    struct Entry {
+        GCReachableRef<ContainerNode> target;
+        ScrollEventType type;
+        // Only used for ScrollEventType::Scrollsnapchange(ing); see https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+        RefPtr<Node> snapTargetBlock;
+        RefPtr<Node> snapTargetInline;
+    };
+    Vector<Entry> targets;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Document::PendingScrollEventTargetList);
@@ -5956,6 +5964,21 @@ void Document::flushDeferredResizeEvents()
 
 void Document::addPendingScrollEventTarget(ContainerNode& originalTarget, ScrollEventType eventType)
 {
+    addPendingScrollEventTargetWithSnapTargets(originalTarget, eventType, nullptr, nullptr);
+}
+
+void Document::addPendingScrollSnapChangeEventTarget(ContainerNode& originalTarget, RefPtr<Node>&& snapTargetBlock, RefPtr<Node>&& snapTargetInline)
+{
+    addPendingScrollEventTargetWithSnapTargets(originalTarget, ScrollEventType::Scrollsnapchange, WTF::move(snapTargetBlock), WTF::move(snapTargetInline));
+}
+
+void Document::addPendingScrollSnapChangingEventTarget(ContainerNode& originalTarget, RefPtr<Node>&& snapTargetBlock, RefPtr<Node>&& snapTargetInline)
+{
+    addPendingScrollEventTargetWithSnapTargets(originalTarget, ScrollEventType::Scrollsnapchanging, WTF::move(snapTargetBlock), WTF::move(snapTargetInline));
+}
+
+void Document::addPendingScrollEventTargetWithSnapTargets(ContainerNode& originalTarget, ScrollEventType eventType, RefPtr<Node>&& snapTargetBlock, RefPtr<Node>&& snapTargetInline)
+{
     if (!m_pendingScrollEventTargetList)
         m_pendingScrollEventTargetList = makeUnique<PendingScrollEventTargetList>();
 
@@ -5968,17 +5991,21 @@ void Document::addPendingScrollEventTarget(ContainerNode& originalTarget, Scroll
     }();
 
     auto& targets = m_pendingScrollEventTargetList->targets;
-    auto it = targets.findIf([&] (auto& pair) {
-        auto& [element, type] = pair;
-        return element.ptr() == target.ptr() && type == eventType;
+    auto it = targets.findIf([&] (auto& entry) {
+        return entry.target.ptr() == target.ptr() && entry.type == eventType;
     });
-    if (it != notFound)
+    if (it != notFound) {
+        // Per https://drafts.csswg.org/css-scroll-snap-2/#snap-events, only the most recent snap
+        // target for a given container/event-type pair should be reported when this is flushed.
+        targets[it].snapTargetBlock = WTF::move(snapTargetBlock);
+        targets[it].snapTargetInline = WTF::move(snapTargetInline);
         return;
+    }
 
     if (targets.isEmpty())
         scheduleRenderingUpdate(RenderingUpdateStep::Scroll);
 
-    targets.append({ target.get(), eventType });
+    targets.append({ target.get(), eventType, WTF::move(snapTargetBlock), WTF::move(snapTargetInline) });
 }
 
 void Document::setNeedsVisualViewportScrollEvent()
@@ -6033,19 +6060,32 @@ void Document::runScrollSteps()
     if (m_pendingScrollEventTargetList && !m_pendingScrollEventTargetList->targets.isEmpty()) {
         LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to pending scroll event targets");
         auto currentTargets = WTF::move(m_pendingScrollEventTargetList->targets);
-        for (auto& [target, type] : currentTargets) {
+
+        auto dispatchEntry = [&](PendingScrollEventTargetList::Entry& entry) {
+            Ref target = entry.target.get();
             auto bubbles = target->isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No;
+
+            if (entry.type == ScrollEventType::Scrollsnapchange || entry.type == ScrollEventType::Scrollsnapchanging) {
+                auto eventName = entry.type == ScrollEventType::Scrollsnapchange ? eventNames().scrollsnapchangeEvent : eventNames().scrollsnapchangingEvent;
+                target->dispatchEvent(SnapEvent::create(eventName, bubbles, WTF::move(entry.snapTargetBlock), WTF::move(entry.snapTargetInline)));
+                return;
+            }
+
             auto eventName = [&] {
-                switch (type) {
+                switch (entry.type) {
                 case ScrollEventType::Scroll:
                     return eventNames().scrollEvent;
                 case ScrollEventType::Scrollend:
                     return eventNames().scrollendEvent;
+                case ScrollEventType::Scrollsnapchange:
+                case ScrollEventType::Scrollsnapchanging:
+                    ASSERT_NOT_REACHED();
+                    return eventNames().scrollEvent;
                 }
             }();
 
             WeakPtr<ScrollableArea> targetScrollableArea = [&]() -> ScrollableArea* {
-                if (type != ScrollEventType::Scroll)
+                if (entry.type != ScrollEventType::Scroll)
                     return nullptr;
 
                 RefPtr frameView = view();
@@ -6062,6 +6102,17 @@ void Document::runScrollSteps()
 
             if (targetScrollableArea)
                 targetScrollableArea->didDispatchScrollEvent();
+        };
+
+        // https://drafts.csswg.org/css-scroll-snap-2/#snap-events requires scrollsnapchanging to fire
+        // before scrollsnapchange, and both to fire before scrollend; dispatch in explicit priority
+        // passes (rather than sorting currentTargets in place, since GCReachableRef is move-only) so
+        // this holds regardless of enqueue order across different targets.
+        for (auto type : { ScrollEventType::Scrollsnapchanging, ScrollEventType::Scrollsnapchange, ScrollEventType::Scroll, ScrollEventType::Scrollend }) {
+            for (auto& entry : currentTargets) {
+                if (entry.type == type)
+                    dispatchEntry(entry);
+            }
         }
     }
     if (m_needsVisualViewportScrollEvent) {

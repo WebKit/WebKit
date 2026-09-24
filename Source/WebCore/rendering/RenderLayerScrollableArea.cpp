@@ -465,6 +465,22 @@ void RenderLayerScrollableArea::scrollDidEnd()
         protect(element->document())->addPendingScrollEventTarget(*element, ScrollEventType::Scrollend);
 }
 
+void RenderLayerScrollableArea::scrollSnapChangeEventTargetsChanged(Markable<NodeIdentifier> blockTarget, Markable<NodeIdentifier> inlineTarget)
+{
+    RefPtr element = m_layer.renderer().element();
+    if (!element)
+        return;
+    protect(element->document())->addPendingScrollSnapChangeEventTarget(*element, resolveScrollSnapEventTarget(blockTarget), resolveScrollSnapEventTarget(inlineTarget));
+}
+
+void RenderLayerScrollableArea::scrollSnapChangingEventTargetsChanged(Markable<NodeIdentifier> blockTarget, Markable<NodeIdentifier> inlineTarget)
+{
+    RefPtr element = m_layer.renderer().element();
+    if (!element)
+        return;
+    protect(element->document())->addPendingScrollSnapChangingEventTarget(*element, resolveScrollSnapEventTarget(blockTarget), resolveScrollSnapEventTarget(inlineTarget));
+}
+
 void RenderLayerScrollableArea::updateCompositingLayersAfterScroll()
 {
     if (m_layer.compositor().hasContentCompositingLayers()) {

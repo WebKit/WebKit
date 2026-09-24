@@ -135,6 +135,12 @@ public:
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
 
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events. Only called when the reported target(s)
+    // (block, inline) actually differ from the previous call; horizontal/vertical NodeIdentifiers have
+    // already been remapped to block/inline by ScrollableArea::updateSnapChange(ing)EventTargets().
+    virtual void scrollSnapChangeTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) { }
+    virtual void scrollSnapChangingTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) { }
+
     virtual float pageScaleFactor() const = 0;
     virtual ScrollExtents scrollExtents() const = 0;
     virtual bool scrollAnimationEnabled() const { return true; }
@@ -184,7 +190,15 @@ public:
     void resnapAfterLayout();
 
     std::optional<unsigned> NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
-    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest) const;
+    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest);
+
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events
+    Markable<NodeIdentifier> NODELETE currentScrollSnapTargetForAxis(ScrollEventAxis) const;
+    Markable<NodeIdentifier> NODELETE changingScrollSnapTargetForAxis(ScrollEventAxis) const;
+    // Called once a scrolling operation (gesture, animation, or immediate scroll) has actually
+    // concluded, i.e. alongside ScrollableArea::scrollDidEnd(); promotes the current active snap
+    // index/target to be this axis's settled ("change") target and fires changing+change as needed.
+    void notifyScrollSnapDidSettle();
 
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
     // FIXME: This is never called. We never set m_activeScrollSnapIndexDidChange back to false.
@@ -228,6 +242,11 @@ private:
     void setIsAnimatingRubberBand(bool);
     void setIsAnimatingScrollSnap(bool);
     void setIsAnimatingKeyboardScrolling(bool);
+
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events. No-ops if !usesScrollSnap(). Callable
+    // from platform-specific (.mm) subclass code as well, since these are private members of this class.
+    void notifyScrollSnapChangeTargetsChangedIfNeeded();
+    void notifyScrollSnapChangingTargetsChangedIfNeeded();
 
     void startScrollSnapAnimation();
     void stopScrollSnapAnimation();
