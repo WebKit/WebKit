@@ -288,6 +288,10 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     {
     },
 #endif
+#ifdef WL_POINTER_WARP_SINCE_VERSION
+    // warp
+    [](void*, struct wl_pointer*, wl_fixed_t, wl_fixed_t) { },
+#endif
 };
 
 const struct wl_keyboard_listener WaylandSeat::s_keyboardListener = {

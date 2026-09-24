@@ -307,6 +307,10 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
     // axis_relative_direction
     , [](void*, struct wl_pointer*, uint32_t, uint32_t) { }
 #endif
+#ifdef WL_POINTER_WARP_SINCE_VERSION
+    // warp
+    , [](void*, struct wl_pointer*, wl_fixed_t, wl_fixed_t) { }
+#endif
 };
 
 const struct wl_keyboard_listener WindowViewBackend::s_keyboardListener = {
