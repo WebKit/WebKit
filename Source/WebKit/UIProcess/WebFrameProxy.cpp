@@ -1330,6 +1330,8 @@ ProvisionalFrameCreationParameters WebFrameProxy::provisionalFrameCreationParame
         scrollingMode(),
         remoteFrameRect(),
         commitTiming,
+        m_page ? m_page->pageZoomFactor() : 1,
+        m_page ? m_page->textZoomFactor() : 1,
     };
 }
 

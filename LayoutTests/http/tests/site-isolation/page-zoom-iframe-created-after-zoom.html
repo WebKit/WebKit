@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const frameSize = 300;
+const childURL = "http://localhost:8000/site-isolation/resources/report-inner-width-and-window-clip-width.html";
+
+let pendingReport = null;
+
+window.addEventListener("message", event => {
+    if (pendingReport)
+        pendingReport(event.data);
+});
+
+function report(frame)
+{
+    return new Promise(resolve => {
+        pendingReport = resolve;
+        frame.contentWindow.postMessage("report", "*");
+    });
+}
+
+function addFrame()
+{
+    return new Promise(resolve => {
+        let frame = document.createElement("iframe");
+        frame.style.width = frame.style.height = `${frameSize}px`;
+        frame.frameBorder = 0;
+        frame.addEventListener("load", () => resolve(frame), { once: true });
+        frame.src = childURL;
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async t => {
+    let early = await addFrame();
+
+    eventSender.zoomPageIn();
+
+    let earlyReport = await report(early);
+    while (earlyReport.windowClipWidth !== frameSize * 1.2) {
+        await new Promise(requestAnimationFrame);
+        earlyReport = await report(early);
+    }
+
+    let late = await addFrame();
+    assert_equals((await report(late)).innerWidth, frameSize, "innerWidth of the frame created while zoomed");
+}, "Page zoom applies to a cross-origin iframe created after the zoom");
+</script>

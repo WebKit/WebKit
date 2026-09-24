@@ -1762,6 +1762,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         createProvisionalFrame(WTF::move(*provisionalFrameCreationParameters));
     }
 
+    didSetPageZoomFactor(parameters.pageZoomFactor);
+    didSetTextZoomFactor(parameters.textZoomFactor);
+
     platformReinitializeAccessibilityToken();
 }
 

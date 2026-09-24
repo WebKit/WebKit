@@ -3212,6 +3212,19 @@ TEST(ProcessSwap, PageZoomLevelAfterSwap)
 
     clientWidth = waitUntilClientWidthIs(webView.get(), 400);
     EXPECT_EQ(400U, clientWidth);
+
+    [webView _setPageZoomFactor:4.0];
+
+    clientWidth = waitUntilClientWidthIs(webView.get(), 200);
+    EXPECT_EQ(200U, clientWidth);
+
+    [webView goBack];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    clientWidth = waitUntilClientWidthIs(webView.get(), 200);
+    EXPECT_EQ(200U, clientWidth);
 }
 
 #endif // PLATFORM(MAC)

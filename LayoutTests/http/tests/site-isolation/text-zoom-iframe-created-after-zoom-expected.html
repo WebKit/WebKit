@@ -1,0 +1,16 @@
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function done() {
+    eventSender.textZoomIn();
+    let frame = document.createElement("iframe");
+    frame.frameBorder = 0;
+    frame.onload = () => testRunner.notifyDone();
+    frame.src = "http://127.0.0.1:8000/site-isolation/resources/text.html";
+    document.body.appendChild(frame);
+}
+</script>
+</head>
+<iframe onload="done()" src="http://127.0.0.1:8000/site-isolation/resources/text.html" frameborder=0></iframe>

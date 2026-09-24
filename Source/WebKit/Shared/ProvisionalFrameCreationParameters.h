@@ -52,6 +52,8 @@ struct ProvisionalFrameCreationParameters {
     WebCore::ScrollbarMode scrollingMode;
     std::optional<WebCore::IntRect> initialRect;
     CommitTiming commitTiming { CommitTiming::WaitForLoad };
+    double pageZoomFactor { 1 };
+    double textZoomFactor { 1 };
 };
 
 } // namespace WebKit
