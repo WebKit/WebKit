@@ -50,6 +50,7 @@
 
 #include <WebCore/ApplicationGLib.h>
 #include <WebCore/MemoryCache.h>
+#include <wtf/SetForScope.h>
 
 #if USE(WPE_RENDERER)
 #include <WebCore/PlatformDisplayLibWPE.h>
@@ -105,6 +106,11 @@ using namespace WebCore;
 
 void WebProcess::stopRunLoop()
 {
+    // Closing the last page terminates the process, which calls back here.
+    if (m_isStoppingRunLoop)
+        return;
+    SetForScope isStoppingRunLoop(m_isStoppingRunLoop, true);
+
     // Pages are normally closed after Close message is received from the UI
     // process, but it can happen that the connection is closed before the
     // Close message is processed because the UI process close the socket
@@ -114,8 +120,7 @@ void WebProcess::stopRunLoop()
     for (auto& webPage : copyToVector(m_pageMap.values()))
         webPage->close([] { });
 
-    if (auto* display = PlatformDisplay::sharedDisplayIfExists())
-        display->clearGLContexts();
+    PlatformDisplay::destroySharedDisplay();
 
 #if USE(ATSPI)
     AccessibilityAtspi::singleton().disconnect();

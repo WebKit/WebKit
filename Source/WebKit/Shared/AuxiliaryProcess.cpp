@@ -72,8 +72,8 @@ AuxiliaryProcess::~AuxiliaryProcess()
 
 void AuxiliaryProcess::didClose(IPC::Connection&)
 {
-// Stop the run loop for GTK and WPE to ensure a normal exit, since we need
-// atexit handlers to be called to cleanup resources like EGL displays.
+// Stop the run loop for GTK and WPE to ensure a normal exit, since stopRunLoop()
+// releases resources like EGL displays before the process exits.
 #if PLATFORM(GTK) || PLATFORM(WPE)
     stopRunLoop();
 #else

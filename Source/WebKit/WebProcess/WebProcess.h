@@ -900,6 +900,7 @@ private:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<RendererBufferTransportMode> m_rendererBufferTransportMode;
     OptionSet<AvailableInputDevices> m_availableInputDevices;
+    bool m_isStoppingRunLoop { false };
 #endif
 
     bool m_hasSuspendedPageProxy { false };

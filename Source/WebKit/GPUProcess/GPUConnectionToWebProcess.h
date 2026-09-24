@@ -163,6 +163,9 @@ public:
     USING_CAN_MAKE_WEAKPTR(WebCore::NowPlayingManagerClient);
 
     IPC::Connection& connection() { return m_connection.get(); }
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void close() { didClose(connection()); }
+#endif
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
     GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }

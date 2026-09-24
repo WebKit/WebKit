@@ -450,7 +450,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     AuxiliaryProcess::initializeConnection(connection);
 
 // Do not call exit in background queue for GTK and WPE because we need to ensure
-// atexit handlers are called in the main thread to cleanup resources like EGL displays.
+// resources like EGL displays are released in the main thread before exiting.
 // Unless the main thread doesn't exit after 10 senconds to avoid leaking the process.
 #if PLATFORM(GTK) || PLATFORM(WPE)
     IPC::Connection::DidCloseOnConnectionWorkQueueCallback callExitCallback = crashAfter10Seconds;

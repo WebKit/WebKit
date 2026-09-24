@@ -64,6 +64,7 @@ public:
 #if !PLATFORM(WIN)
     WEBCORE_EXPORT static void setSharedDisplay(std::unique_ptr<PlatformDisplay>&&);
     WEBCORE_EXPORT static PlatformDisplay* sharedDisplayIfExists();
+    WEBCORE_EXPORT static void destroySharedDisplay();
 #endif
     virtual ~PlatformDisplay();
 

@@ -452,14 +452,16 @@ GLContext::GLContext(GLDisplay& display, EGLContext context, EGLSurface surface,
 GLContext::~GLContext()
 {
     if (auto display = m_display.get()) {
-        EGLDisplay eglDisplay = display->eglDisplay();
-        if (m_context) {
-            eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-            eglDestroyContext(eglDisplay, m_context);
-        }
+        // Thread-local contexts are destroyed when their thread exits, which can happen _while_ the main thread terminates the display.
+        display->runIfNotTerminated([&](EGLDisplay eglDisplay) {
+            if (m_context) {
+                eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+                eglDestroyContext(eglDisplay, m_context);
+            }
 
-        if (m_surface)
-            eglDestroySurface(eglDisplay, m_surface);
+            if (m_surface)
+                eglDestroySurface(eglDisplay, m_surface);
+        });
     }
 
 #if USE(WPE_RENDERER)

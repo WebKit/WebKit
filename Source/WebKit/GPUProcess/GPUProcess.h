@@ -220,6 +220,9 @@ private:
     void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     Thread::QOS connectionReceiveQueueQOS() const override { return Thread::QOS::UserInteractive; }
     bool shouldTerminate() override;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void stopRunLoop() override;
+#endif
 
     void tryExitIfUnused();
     bool canExitUnderMemoryPressure() const;
