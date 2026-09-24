@@ -2059,30 +2059,30 @@ NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURend
     return nil;
 }
 
-bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescriptor& descriptor) const
+bool RenderPipeline::validateRenderBundle(bool depthReadOnly, bool stencilReadOnly, uint32_t sampleCount, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat) const
 {
-    if (!validateDepthStencilState(descriptor.depthReadOnly, descriptor.stencilReadOnly))
+    if (!validateDepthStencilState(depthReadOnly, stencilReadOnly))
         return false;
 
-    if (descriptor.sampleCount != m_descriptor.multisample.count)
+    if (sampleCount != m_descriptor.multisample.count)
         return false;
 
     size_t fragmentTargetCount = m_descriptor.fragment ? m_descriptor.fragment->targetCount : 0;
-    for (size_t i = 0, maxTargetCount = std::max<size_t>(fragmentTargetCount, descriptor.colorFormatCount); i < maxTargetCount; ++i) {
-        auto colorFormat = i < descriptor.colorFormatCount ? colorFormatsSpan(descriptor)[i] : WGPUTextureFormat_Undefined;
+    for (size_t i = 0, maxTargetCount = std::max<size_t>(fragmentTargetCount, colorFormats.size()); i < maxTargetCount; ++i) {
+        auto colorFormat = i < colorFormats.size() ? colorFormats[i] : WGPUTextureFormat_Undefined;
         auto descriptorFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
         if (descriptorFormat != colorFormat)
             return false;
     }
 
     if (!m_descriptor.depthStencil) {
-        if (descriptor.depthStencilFormat == WGPUTextureFormat_Undefined)
+        if (depthStencilFormat == WGPUTextureFormat_Undefined)
             return true;
 
         return false;
     }
 
-    if (descriptor.depthStencilFormat != m_descriptor.depthStencil->format)
+    if (depthStencilFormat != m_descriptor.depthStencil->format)
         return false;
 
     return true;

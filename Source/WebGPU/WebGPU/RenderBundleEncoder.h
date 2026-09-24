@@ -201,8 +201,11 @@ private:
 
     WeakPtr<RenderPassEncoder> m_renderPassEncoder;
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
-    WGPURenderBundleEncoderDescriptor m_descriptor;
-    const Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    const Vector<WGPUTextureFormat> m_colorFormats;
+    const WGPUTextureFormat m_depthStencilFormat { WGPUTextureFormat_Undefined };
+    const uint32_t m_sampleCount { 0 };
+    const bool m_depthReadOnly { false };
+    const bool m_stencilReadOnly { false };
     NSString* m_lastErrorString { nil };
     bool m_requiresCommandReplay { false };
     bool m_finished { false };

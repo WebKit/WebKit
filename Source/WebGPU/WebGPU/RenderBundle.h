@@ -66,9 +66,9 @@ class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle
 public:
     using MinVertexCountsContainer = HashMap<uint64_t, IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::BindableResources>&& bindableResources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::BindableResources>&& bindableResources, RefPtr<WebGPU::RenderBundleEncoder> encoder, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, WTF::move(bindableResources), encoder, descriptor, commandCount, makeSubmitInvalid, WTF::move(bindGroups), device));
+        return adoptRef(*new RenderBundle(resources, WTF::move(bindableResources), encoder, colorFormats, depthStencilFormat, sampleCount, depthReadOnly, stencilReadOnly, commandCount, makeSubmitInvalid, WTF::move(bindGroups), device));
     }
     static Ref<RenderBundle> createInvalid(Device& device, NSString* errorString)
     {
@@ -96,15 +96,18 @@ public:
     const Vector<WebGPU::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
 
 private:
-    RenderBundle(NSArray<RenderBundleICBWithResources*> *, Vector<WebGPU::BindableResources>&&, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&&, Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, Vector<WebGPU::BindableResources>&&, RefPtr<RenderBundleEncoder>, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&&, Device&);
     RenderBundle(Device&, NSString*);
 
     const Ref<Device> m_device;
     RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
     Vector<WebGPU::BindableResources> m_resources;
-    WGPURenderBundleEncoderDescriptor m_descriptor;
-    const Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    const Vector<WGPUTextureFormat> m_colorFormats;
+    const WGPUTextureFormat m_depthStencilFormat { WGPUTextureFormat_Undefined };
+    const uint32_t m_sampleCount { 0 };
+    const bool m_depthReadOnly { false };
+    const bool m_stencilReadOnly { false };
     HashSet<RefPtr<const BindGroup>> m_bindGroups;
 
     NSString* m_lastErrorString { nil };

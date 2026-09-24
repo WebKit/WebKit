@@ -95,7 +95,7 @@ public:
     Device& device() const { return m_device; }
     PipelineLayout& pipelineLayout() const { return m_pipelineLayout; }
     NSString* errorValidatingColorDepthStencilTargets(const WGPURenderPassDescriptor&, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
-    bool validateRenderBundle(const WGPURenderBundleEncoderDescriptor&) const;
+    bool validateRenderBundle(bool depthReadOnly, bool stencilReadOnly, uint32_t sampleCount, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat) const;
     bool writesDepth() const;
     bool NODELETE writesStencil() const;
 

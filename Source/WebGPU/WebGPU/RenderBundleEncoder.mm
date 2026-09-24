@@ -192,10 +192,12 @@ RenderBundleEncoder::RenderBundleEncoder(MTLIndirectCommandBufferDescriptor *ind
     , m_resources([NSMapTable strongToStrongObjectsMapTable])
     , m_vertexBuffers(m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1)
     , m_fragmentBuffers(m_device->maxBuffersForFragmentStage() + 1)
-    , m_descriptor(descriptor)
-    , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(unsafeMakeSpan(descriptor.colorFormats, descriptor.colorFormatCount)) : Vector<WGPUTextureFormat>())
+    , m_colorFormats(colorFormatsSpan(descriptor))
+    , m_depthStencilFormat(descriptor.depthStencilFormat)
+    , m_sampleCount(descriptor.sampleCount)
+    , m_depthReadOnly(descriptor.depthReadOnly)
+    , m_stencilReadOnly(descriptor.stencilReadOnly)
 {
-    m_descriptor.colorFormats = m_descriptorColorFormats.size() ? &m_descriptorColorFormats[0] : nullptr;
     m_icbArray = [NSMutableArray array];
     m_bindGroupDynamicOffsets = BindGroupDynamicOffsetsContainer();
     // The ICB path stores the ICB in an argument buffer and writes its render_command slots from a
@@ -703,7 +705,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
     bool passWasSplit = false;
     if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
-        auto result = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, *renderPassEncoder, m_device.get(), m_descriptor.sampleCount, m_primitiveType);
+        auto result = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, *renderPassEncoder, m_device.get(), m_sampleCount, m_primitiveType);
         useIndirectCall = result.result;
         indirectBuffer = result.buffer;
         indirectBufferOffset = result.offset;
@@ -768,7 +770,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
     bool needsValidationLayerWorkaround = false;
     if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
-        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, *renderPassEncoder.get(), splitPass);
+        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_sampleCount, *renderPassEncoder.get(), splitPass);
         if (splitPass)
             splitPass = renderPassEncoder->splitRenderPass();
         mtlIndirectBuffer = result.first;
@@ -843,7 +845,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
     bool needsValidationLayerWorkaround = false;
     if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
-        auto [adjustedBuffer, adjustedOffset] = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_descriptor.sampleCount, *renderPassEncoder.get(), splitPass);
+        auto [adjustedBuffer, adjustedOffset] = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_sampleCount, *renderPassEncoder.get(), splitPass);
         clampedIndirectBuffer = adjustedBuffer;
         indirectOffset = adjustedOffset;
         if (splitPass)
@@ -1055,12 +1057,12 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
 
     auto createRenderBundle = ^{
         if (m_requiresCommandReplay)
-            return RenderBundle::create(nil, makeBindableResources(m_resources), this, m_descriptor, m_currentCommandIndex, m_makeSubmitInvalid, WTF::move(m_allBindGroups), device);
+            return RenderBundle::create(nil, makeBindableResources(m_resources), this, m_colorFormats.span(), m_depthStencilFormat, m_sampleCount, m_depthReadOnly, m_stencilReadOnly, m_currentCommandIndex, m_makeSubmitInvalid, WTF::move(m_allBindGroups), device);
 
         auto commandCount = m_currentCommandIndex;
         endCurrentICB();
         if (m_requiresCommandReplay)
-            return RenderBundle::create(nil, makeBindableResources(m_resources), this, m_descriptor, m_currentCommandIndex, m_makeSubmitInvalid, WTF::move(m_allBindGroups), device);
+            return RenderBundle::create(nil, makeBindableResources(m_resources), this, m_colorFormats.span(), m_depthStencilFormat, m_sampleCount, m_depthReadOnly, m_stencilReadOnly, m_currentCommandIndex, m_makeSubmitInvalid, WTF::move(m_allBindGroups), device);
 
         m_vertexBuffers.clear();
         m_fragmentBuffers.clear();
@@ -1070,7 +1072,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
 
         RELEASE_ASSERT(m_icbArray || m_lastErrorString);
         if (m_icbArray)
-            return RenderBundle::create(m_icbArray, makeBindableResources(m_resources), nullptr, m_descriptor, commandCount, m_makeSubmitInvalid, WTF::move(m_allBindGroups), device);
+            return RenderBundle::create(m_icbArray, makeBindableResources(m_resources), nullptr, m_colorFormats.span(), m_depthStencilFormat, m_sampleCount, m_depthReadOnly, m_stencilReadOnly, commandCount, m_makeSubmitInvalid, WTF::move(m_allBindGroups), device);
 
         device->generateAValidationError(m_lastErrorString);
         return RenderBundle::createInvalid(device, m_lastErrorString);
@@ -1416,7 +1418,7 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         if (!pipeline.icbRenderPipelineState())
             return;
 
-        if (!pipeline.validateRenderBundle(m_descriptor)) {
+        if (!pipeline.validateRenderBundle(m_depthReadOnly, m_stencilReadOnly, m_sampleCount, m_colorFormats.span(), m_depthStencilFormat)) {
             makeInvalid(@"setPipeline: validation failed");
             return;
         }
