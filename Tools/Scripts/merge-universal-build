@@ -1,0 +1,267 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Merges per-architecture build trees into one universal product tree. Used by
+# CMake builds for Apple platforms.
+#
+#     merge-universal-build --output <dir> <arch-tree> <arch-tree> [...]
+#
+# build-webkit --architecture "x86_64 arm64" runs this after building each
+# slice; it is also usable on its own, so CI can build the slices on separate
+# machines and merge the results afterwards.
+#
+# The merged tree is the union of every tree: some products only exist in one
+# slice, such as the target-triple-named files inside a .swiftmodule directory.
+# Mach-O files present in more than one tree are lipo'd; anything else is taken
+# from the first tree listed that has it.
+#
+# lipo invalidates the signature the build applied, so merged products are
+# re-signed, preserving the identifier, entitlements and requirements the build
+# signed them with.
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import dataclasses
+import itertools
+import os
+import shutil
+import subprocess
+import sys
+from collections.abc import Iterable, Iterator
+from pathlib import Path
+
+MACH_O_MAGIC = {
+    b"\xca\xfe\xba\xbe",  # fat, big-endian
+    b"\xbe\xba\xfe\xca",  # fat, little-endian
+    b"\xcf\xfa\xed\xfe",  # 64-bit, little-endian
+    b"\xfe\xed\xfa\xcf",  # 64-bit, big-endian
+}
+
+# Used to find top-level bundles in the build directory, which are signed as a
+# unit.
+BUNDLE_SUFFIXES = (".framework", ".app", ".bundle", ".wkbundle", ".xpc")
+
+# Skip intermediate build directories when merging, to save time and avoid e.g.
+# lipoing every object.
+SKIPPED_NAMES = {
+    ".cache",
+    "CMakeFiles",
+    "CMakeCache.txt",
+    "SwiftModuleCache",
+    "Source",
+    "Tools",
+    "build.ninja",
+    ".ninja_deps",
+    ".ninja_log",
+    "__cmake_systeminformation",
+}
+
+
+@dataclasses.dataclass
+class MergeState:
+    copied: int = 0
+    lipoed: int = 0
+    # Merged Mach-O files, whose signatures lipo invalidated.
+    pending_signatures: list[Path] = dataclasses.field(default_factory=list)
+
+
+def is_mach_o(path: Path) -> bool:
+    try:
+        with path.open("rb") as f:
+            return f.read(4) in MACH_O_MAGIC
+    except OSError:
+        return False
+
+
+async def run(*argv: str | Path, semaphore: asyncio.Semaphore,
+              stderr: int | None = None,
+              check: bool = False) -> tuple[int, bytes]:
+    """Run `argv` once `semaphore` allows, returning its exit status and
+    stdout. Raises `CalledProcessError` if `check` is true and subprocess
+    indicated failure."""
+    async with semaphore:
+        process = await asyncio.create_subprocess_exec(*argv, stdout=asyncio.subprocess.PIPE, stderr=stderr)
+        output, _ = await process.communicate()
+    assert process.returncode is not None
+    if process.returncode and check:
+        raise subprocess.CalledProcessError(process.returncode, argv, output)
+    return process.returncode, output
+
+
+async def architectures_of(path: Path, limit: asyncio.Semaphore) -> frozenset[str]:
+    returncode, output = await run("/usr/bin/lipo", "-archs", path, semaphore=limit, stderr=asyncio.subprocess.DEVNULL)
+    if returncode:
+        return frozenset()
+    return frozenset(output.decode().split())
+
+
+def needs_update(destination: Path, sources: Iterable[Path]) -> bool:
+    if not os.path.lexists(destination):
+        return True
+    destination_mtime = destination.stat().st_mtime
+    return any(source.stat().st_mtime > destination_mtime for source in sources)
+
+
+def relative_paths(tree: Path) -> Iterator[Path]:
+    """Yield every non-directory path in `tree`, relative to it. Symlinks are
+    leaves, including symlinks to directories such as Versions/Current."""
+    # FIXME: Use Path.walk() once Apple platforms require Python 3.12, which
+    # doesn't require the symlink checking logic below.
+    for directory_string, directory_names, file_names in os.walk(tree):
+        directory = Path(directory_string)
+        directory_names[:] = [name for name in directory_names if name not in SKIPPED_NAMES]
+        # os.walk() lists symlinks to directories under directory_names, and
+        # doesn't descend into them, so yield them here or they would be lost.
+        symlinks = [name for name in directory_names if (directory / name).is_symlink()]
+        for name in file_names + symlinks:
+            if name not in SKIPPED_NAMES:
+                yield (directory / name).relative_to(tree)
+
+
+async def merge_file(relative: Path, trees: list[Path], output_root: Path, state: MergeState, limit: asyncio.Semaphore) -> None:
+    candidates = [tree / relative for tree in trees if os.path.lexists(tree / relative)]
+    primary = candidates[0]
+    destination = output_root / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+
+    # Copy symlinks as symlinks, and avoid copying through an existing
+    # destination symlink.
+    if primary.is_symlink():
+        target = os.readlink(primary)
+        if destination.is_symlink() and os.readlink(destination) == target:
+            return
+        if os.path.lexists(destination):
+            destination.unlink()
+        destination.symlink_to(target)
+        return
+    if destination.is_symlink():
+        destination.unlink()
+
+    slices = [path for path in candidates if path.is_file() and not path.is_symlink()]
+
+    # Copy headers, resources, scripts, and anything only one slice produces.
+    # Uses shutil.copy() to preserve permission bits but not other metadata.
+    if not is_mach_o(primary) or len(slices) == 1:
+        if needs_update(destination, [primary]):
+            shutil.copy(primary, destination)
+            state.copied += 1
+        return
+
+    if not needs_update(destination, slices):
+        return
+
+    # Copy single-arch binaries, such as build tools.
+    architecture_sets = await asyncio.gather(*(architectures_of(path, limit) for path in slices))
+    if len(set(architecture_sets)) == 1:
+        shutil.copy(primary, destination)
+        state.copied += 1
+        return
+
+    # Anything left is a multi-arch binary to lipo.
+    await run("/usr/bin/lipo", "-create", *slices, "-output", destination,
+              semaphore=limit, check=True)
+    state.lipoed += 1
+    state.pending_signatures.append(destination)
+
+
+def enclosing_bundles(path: Path, output_root: Path) -> list[Path]:
+    """Return every bundle directory containing `path`, outermost first."""
+    bundles = []
+    candidate = output_root
+    for part in path.relative_to(output_root).parts:
+        candidate /= part
+        if candidate.suffix in BUNDLE_SUFFIXES:
+            bundles.append(candidate)
+    return bundles
+
+
+async def sign(path: Path, identity: str, limit: asyncio.Semaphore) -> Path | None:
+    """Runs codesign, and returns the input path if it failed to sign."""
+    returncode, output = await run(
+        "/usr/bin/codesign", "--force",
+        "--preserve-metadata=identifier,entitlements,requirements",
+        "--sign", identity, path,
+        semaphore=limit, stderr=asyncio.subprocess.STDOUT)
+    # codesign announces "replacing existing signature" whenever it re-signs,
+    # which is every time here.
+    for line in output.decode(errors="replace").splitlines():
+        if "replacing existing signature" not in line:
+            print(line, file=sys.stderr)
+    return path if returncode else None
+
+
+async def main() -> int:
+    parser = argparse.ArgumentParser(description="Merge per-architecture build trees into one universal product tree.")
+    parser.add_argument("--output", required=True, type=Path, help="destination product directory")
+    parser.add_argument("--identity", default="-", help="codesigning identity (default: ad-hoc)")
+    parser.add_argument("trees", nargs="+", type=Path, help="per-architecture build trees")
+    args = parser.parse_args()
+
+    trees: list[Path] = [tree.absolute() for tree in args.trees]
+    output_root: Path = args.output.absolute()
+    for tree in trees:
+        if not tree.is_dir():
+            parser.error(f"no such build tree: {tree}")
+
+    # dict rather than set, so paths are merged in a stable order.
+    union: dict[Path, None] = {}
+    for tree in trees:
+        union.update(dict.fromkeys(relative_paths(tree)))
+    print('%d paths to merge...' % len(union))
+
+    # Upper bound to the number of lipo and codesign processes to run at once.
+    limit = asyncio.Semaphore(os.cpu_count() or 1)
+
+    state = MergeState()
+    await asyncio.gather(*(merge_file(relative, trees, output_root, state, limit) for relative in union))
+
+    # Re-sign every bundle containing a merged file, since changing a nested
+    # bundle breaks the seal of the bundle around it. Files outside any bundle
+    # are signed on their own.
+    targets: set[Path] = set()
+    for path in state.pending_signatures:
+        targets.update(enclosing_bundles(path, output_root) or [path])
+    print('%d paths to codesign...' % len(targets))
+
+    # Sign the deepest paths first, so that nested bundles such as XPC services
+    # are signed before the bundles that seal them.
+    def depth(path: Path) -> int:
+        return len(path.parts)
+
+    failures: list[Path] = []
+    for _, group in itertools.groupby(sorted(targets, key=depth, reverse=True), key=depth):
+        results = await asyncio.gather(*(sign(path, args.identity, limit) for path in group))
+        failures += [path for path in results if path]
+    for path in failures:
+        print(f"codesign failed for {path}", file=sys.stderr)
+
+    print("merged into %s: %d lipo'd, %d copied, %d signed"
+          % (output_root, state.lipoed, state.copied, len(targets) - len(failures)))
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    sys.exit(asyncio.run(main()))

@@ -1304,6 +1304,21 @@ sub setConfigurationProductDir($)
     ($configurationProductDir) = @_;
 }
 
+# The architectures a universal build is producing, or the empty list for an
+# ordinary single-architecture build.
+sub universalArchitectures()
+{
+    return () unless isAppleCocoaWebKit() && isCMakeBuild();
+    my @architectures = split(' ', architecture());
+    return @architectures > 1 ? @architectures : ();
+}
+
+sub perArchitectureProductDir($$)
+{
+    my ($baseProductDirectory, $arch) = @_;
+    return "$baseProductDirectory-$arch";
+}
+
 # The configuration recorded by the last build, or by set-webkit-configuration,
 # ignoring any --debug or --release given to this command.
 sub recordedConfiguration()
@@ -2955,7 +2970,7 @@ sub shouldRemoveCMakeCache(@)
     return 0;
 }
 
-sub removeCMakeCache(@)
+sub removeCMakeCacheIfNeeded(@)
 {
     my (@buildArgs) = @_;
     if (shouldRemoveCMakeCache(@buildArgs)) {
@@ -2965,6 +2980,26 @@ sub removeCMakeCache(@)
             unlink($cmakeCache);
         }
     }
+}
+
+sub removeCMakeCache(@)
+{
+    my (@buildArgs) = @_;
+
+    # For universal builds, check each slice's cache instead of the merged
+    # product directory's.
+    my @architectures = universalArchitectures();
+    if (!@architectures) {
+        removeCMakeCacheIfNeeded(@buildArgs);
+        return;
+    }
+
+    my $mergedProductDir = productDir();
+    for my $arch (@architectures) {
+        setConfigurationProductDir(perArchitectureProductDir($mergedProductDir, $arch));
+        removeCMakeCacheIfNeeded(@buildArgs);
+    }
+    setConfigurationProductDir($mergedProductDir);
 }
 
 sub canUseNinja(@)
@@ -3269,7 +3304,23 @@ sub buildCMakeProjectOrExit($$$@)
     my ($clean, $prefixPath, $makeArgs, @cmakeArgs) = @_;
     my $returnCode;
 
-    exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
+    if ($clean) {
+        # A universal build has no build system in productDir() itself, only
+        # merged products, so clean each slice's tree instead.
+        my @architectures = universalArchitectures();
+        if (@architectures) {
+            my $mergedProductDir = productDir();
+            for my $arch (@architectures) {
+                setConfigurationProductDir(perArchitectureProductDir($mergedProductDir, $arch));
+                $returnCode = exitStatus(cleanCMakeGeneratedProject());
+                exit($returnCode) if $returnCode;
+            }
+            rmtree($mergedProductDir, 0, 1);
+            setConfigurationProductDir($mergedProductDir);
+            exit 0;
+        }
+        exit(exitStatus(cleanCMakeGeneratedProject()));
+    }
 
     determineDefaultCompiler(@cmakeArgs);
     my @wrapper = wrapperPrefixIfNeeded();
@@ -3284,11 +3335,59 @@ sub buildCMakeProjectOrExit($$$@)
         }
     }
 
+    my @universalArchitectures = universalArchitectures();
+    if (@universalArchitectures) {
+        return buildUniversalCMakeProject($prefixPath, $makeArgs, \@universalArchitectures, @cmakeArgs);
+    }
+
     $returnCode = exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs));
     exit($returnCode) if $returnCode;
     exit 0 if isGenerateProjectOnly();
 
     $returnCode = exitStatus(buildCMakeGeneratedProject($makeArgs));
+    exit($returnCode) if $returnCode;
+    return 0;
+}
+
+# Build each architecture in its own tree and lipo the products together.
+# The trees are independent, so the workload could easily be distributed to
+# separate machines. This mode matches Xcode's native universal build semantics.
+sub buildUniversalCMakeProject($$$@)
+{
+    my ($prefixPath, $makeArgs, $architecturesRef, @cmakeArgs) = @_;
+    my @architectures = @{$architecturesRef};
+    my $returnCode;
+
+    # Building mutates the $productDir global while each slice is building,
+    # then restores it to the original value and merges into that directory.
+    my $mergedProductDir = productDir();
+
+    for my $arch (@architectures) {
+        print "\n=== Building $arch ===\n";
+        # generateBuildSystemFromCMakeProject() and buildCMakeGeneratedProject()
+        # both work from productDir(), so point it at this slice's tree.
+        setConfigurationProductDir(perArchitectureProductDir($mergedProductDir, $arch));
+
+        $returnCode = exitStatus(generateBuildSystemFromCMakeProject($prefixPath,
+            "-DCMAKE_OSX_ARCHITECTURES=$arch", @cmakeArgs));
+        exit($returnCode) if $returnCode;
+        next if isGenerateProjectOnly();
+
+        $returnCode = exitStatus(buildCMakeGeneratedProject($makeArgs));
+        exit($returnCode) if $returnCode;
+    }
+
+    setConfigurationProductDir($mergedProductDir);
+    exit 0 if isGenerateProjectOnly();
+
+    print "\n=== Merging " . join(" ", @architectures) . " ===\n";
+    my @slices = map { perArchitectureProductDir($mergedProductDir, $_) } @architectures;
+    my @mergeCommand = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "merge-universal-build"),
+        "--output", $mergedProductDir);
+    # Products built against an internal SDK are signed with a real identity;
+    # everything else takes merge-universal-build's ad-hoc default.
+    push @mergeCommand, "--identity", "Safari Engineering" if xcodeSDK() =~ /\.internal$/;
+    $returnCode = exitStatus(system(@mergeCommand, @slices));
     exit($returnCode) if $returnCode;
     return 0;
 }
