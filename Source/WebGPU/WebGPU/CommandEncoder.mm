@@ -591,7 +591,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     using SliceSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     HashMap<void*, SliceSet> depthSlices;
     NSUInteger compositorTextureSlice = 0;
-    for (auto [ i, attachment ] : indexedRange(descriptor.colorAttachmentsSpan())) {
+    for (auto [ i, attachment ] : indexedRange(colorAttachmentsSpan(descriptor))) {
         if (!attachment.view && !attachment.texture)
             continue;
 

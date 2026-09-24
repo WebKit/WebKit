@@ -644,7 +644,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
     }
 
     ShaderModule::VertexStageIn shaderLocations;
-    for (auto [ bufferIndex, buffer ] : indexedRange(vertexState.buffersSpan())) {
+    for (auto [ bufferIndex, buffer ] : indexedRange(buffersSpan(vertexState))) {
         if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
             continue;
 
@@ -671,7 +671,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
         vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode, buffer.arrayStride);
         if (vertexDescriptor.layouts[bufferIndex].stepFunction == MTLVertexStepFunctionConstant)
             vertexDescriptor.layouts[bufferIndex].stepRate = 0;
-        for (auto& attribute : buffer.attributesSpan()) {
+        for (auto& attribute : attributesSpan(buffer)) {
             auto formatSize = vertexFormatSize(attribute.format);
             auto offsetPlusFormatSize = checkedSum<uint64_t>(attribute.offset, formatSize);
             if (offsetPlusFormatSize.hasOverflowed()) {
@@ -1566,7 +1566,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
         if (NSString* error = errorValidatingVertexStageIn(vertexStageIn, *this))
             return callback(returnInvalidRenderPipeline(*this, isAsync, error));
         NSError *error = nil;
-        preparedVertexLibrary = prepareLibrary(vertexModule, pipelineLayout.get(), vertexEntryPoint, label.get(), descriptor.vertex.constantsSpan(), minimumBufferSizes, &error);
+        preparedVertexLibrary = prepareLibrary(vertexModule, pipelineLayout.get(), vertexEntryPoint, label.get(), constantsSpan(descriptor.vertex), minimumBufferSizes, &error);
         if (!preparedVertexLibrary)
             return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Vertex library failed creation"));
 
@@ -1616,7 +1616,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
     if (descriptor.fragment) {
         uint32_t bytesPerSample = 0;
         const auto& fragmentDescriptor = *descriptor.fragment;
-        for (auto [ i, targetDescriptor ] : indexedRange(fragmentDescriptor.targetsSpan())) {
+        for (auto [ i, targetDescriptor ] : indexedRange(targetsSpan(fragmentDescriptor))) {
             if (targetDescriptor.format == WGPUTextureFormat_Undefined)
                 continue;
 
@@ -1674,7 +1674,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
 
         NSError *error = nil;
         const auto& fragmentEntryPoint = fragmentDescriptor.entryPoint ? fromAPI(fragmentDescriptor.entryPoint) : fragmentModule->defaultFragmentEntryPoint();
-        preparedFragmentLibrary = prepareLibrary(*fragmentModule, pipelineLayout.get(), fragmentEntryPoint, label.get(), fragmentDescriptor.constantsSpan(), minimumBufferSizes, &error);
+        preparedFragmentLibrary = prepareLibrary(*fragmentModule, pipelineLayout.get(), fragmentEntryPoint, label.get(), constantsSpan(fragmentDescriptor), minimumBufferSizes, &error);
         if (!preparedFragmentLibrary)
             return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created"));
 
@@ -2064,7 +2064,7 @@ bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescripto
 
     size_t fragmentTargetCount = m_descriptor.fragment ? m_descriptor.fragment->targetCount : 0;
     for (size_t i = 0, maxTargetCount = std::max<size_t>(fragmentTargetCount, descriptor.colorFormatCount); i < maxTargetCount; ++i) {
-        auto colorFormat = i < descriptor.colorFormatCount ? descriptor.colorFormatsSpan()[i] : WGPUTextureFormat_Undefined;
+        auto colorFormat = i < descriptor.colorFormatCount ? colorFormatsSpan(descriptor)[i] : WGPUTextureFormat_Undefined;
         auto descriptorFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
         if (descriptorFormat != colorFormat)
             return false;

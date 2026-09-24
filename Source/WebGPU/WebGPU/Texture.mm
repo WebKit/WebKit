@@ -2940,7 +2940,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture
 
-    Vector viewFormats(descriptor.viewFormatsSpan());
+    Vector viewFormats(viewFormatsSpan(descriptor));
 
     if (NSString *error = errorValidatingTextureCreation(descriptor, viewFormats)) {
         generateAValidationError(error);

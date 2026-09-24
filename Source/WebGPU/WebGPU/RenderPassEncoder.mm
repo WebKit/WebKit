@@ -132,7 +132,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
     if (descriptor.depthStencilAttachment)
         m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
-    auto colorAttachments = descriptor.colorAttachmentsSpan();
+    auto colorAttachments = colorAttachmentsSpan(descriptor);
     for (auto& attachment : colorAttachments) {
         auto texture = attachment.view ? TextureOrTextureView(static_cast<TextureView*>(attachment.view)) : TextureOrTextureView(static_cast<Texture*>(attachment.texture));
         m_colorAttachmentViews.append(texture);

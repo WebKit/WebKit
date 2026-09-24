@@ -57,7 +57,7 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Ve
     , m_renderBundlesResources(resources)
     , m_resources(WTF::move(bindableResources))
     , m_descriptor(descriptor)
-    , m_descriptorColorFormats(descriptor.colorFormatsSpan())
+    , m_descriptorColorFormats(colorFormatsSpan(descriptor))
     , m_bindGroups(bindGroups)
     , m_commandCount(commandCount)
     , m_makeSubmitInvalid(makeSubmitInvalid)
@@ -124,7 +124,7 @@ bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, 
     if (m_descriptor.colorFormatCount != descriptor.colorAttachmentCount)
         return false;
 
-    auto descriptorColorFormats = m_descriptor.colorFormatsSpan();
+    auto descriptorColorFormats = colorFormatsSpan(m_descriptor);
 
     uint32_t defaultRasterSampleCount = 0;
     for (size_t i = 0, colorFormatCount = std::max(descriptor.colorAttachmentCount, m_descriptor.colorFormatCount); i < colorFormatCount; ++i) {

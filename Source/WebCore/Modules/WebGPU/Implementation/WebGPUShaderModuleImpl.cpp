@@ -28,6 +28,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUAPIUtilities.h"
 #include "WebGPUCompilationInfo.h"
 #include "WebGPUCompilationMessage.h"
 #include "WebGPUCompilationMessageType.h"
@@ -74,14 +75,10 @@ void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInf
 {
     auto blockPtr = makeBlockPtr([callback = WTF::move(callback)](WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo* compilationInfo) mutable {
         Vector<Ref<CompilationMessage>> messages;
-        if (!compilationInfo || !compilationInfo->messageCount) {
-            callback(CompilationInfo::create(WTF::move(messages)));
-            return;
+        if (compilationInfo) {
+            for (auto& message : messagesSpan(*compilationInfo))
+                messages.append(CompilationMessage::create(message.message, convertFromBacking(message.type), message.lineNum, message.linePos + 1, message.offset, message.length));
         }
-
-        for (auto& message : messagesSpan(*compilationInfo))
-            messages.append(CompilationMessage::create(message.message, convertFromBacking(message.type), message.lineNum, message.linePos + 1, message.offset, message.length));
-
         callback(CompilationInfo::create(WTF::move(messages)));
     });
 

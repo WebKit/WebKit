@@ -61,7 +61,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WebGPUPtr<WGPUBindGroupLayout> m_backing;
+    const WebGPUPtr<WGPUBindGroupLayout> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

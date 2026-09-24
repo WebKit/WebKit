@@ -131,7 +131,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGS
     HashMap<String, WGSL::PipelineLayout*> wgslHints;
     Vector<WGSL::PipelineLayout> wgslPipelineLayouts;
     wgslPipelineLayouts.reserveCapacity(suppliedHints.hintCount);
-    for (const auto& hint : suppliedHints.hintsSpan()) {
+    for (const auto& hint : hintsSpan(suppliedHints)) {
         auto hintKey = fromAPI(hint.entryPoint);
         Ref layout = WebGPU::fromAPI(hint.layout);
         hints.add(hintKey, layout);

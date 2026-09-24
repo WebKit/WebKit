@@ -227,6 +227,76 @@ inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
     return { bytes.data(), bytes.size() };
 }
 
+inline std::span<const WGPUBindGroupLayout> bindGroupLayoutsSpan(const WGPUPipelineLayoutDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.bindGroupLayouts, descriptor.bindGroupLayoutCount);
+}
+
+inline std::span<const WGPUTextureFormat> colorFormatsSpan(const WGPURenderBundleEncoderDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.colorFormats, descriptor.colorFormatCount);
+}
+
+inline std::span<const WGPUBindGroupEntry> entriesSpan(const WGPUBindGroupDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.entries, descriptor.entryCount);
+}
+
+inline std::span<const WGPUBindGroupLayoutEntry> entriesSpan(const WGPUBindGroupLayoutDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.entries, descriptor.entryCount);
+}
+
+inline std::span<const WGPUConstantEntry> constantsSpan(const WGPUComputeState& state)
+{
+    return unsafeMakeSpan(state.constants, state.constantCount);
+}
+
+inline std::span<const WGPUConstantEntry> constantsSpan(const WGPUVertexState& state)
+{
+    return unsafeMakeSpan(state.constants, state.constantCount);
+}
+
+inline std::span<const WGPUConstantEntry> constantsSpan(const WGPUFragmentState& state)
+{
+    return unsafeMakeSpan(state.constants, state.constantCount);
+}
+
+inline std::span<const WGPUShaderModuleCompilationHint> hintsSpan(const WGPUShaderModuleDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.hints, descriptor.hintCount);
+}
+
+inline std::span<const WGPUTextureFormat> viewFormatsSpan(const WGPUTextureDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.viewFormats, descriptor.viewFormatCount);
+}
+
+inline std::span<const WGPUVertexAttribute> attributesSpan(const WGPUVertexBufferLayout& layout)
+{
+    return unsafeMakeSpan(layout.attributes, layout.attributeCount);
+}
+
+inline std::span<const WGPUFeatureName> requiredFeaturesSpan(const WGPUDeviceDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.requiredFeatures, descriptor.requiredFeatureCount);
+}
+
+inline std::span<const WGPURenderPassColorAttachment> colorAttachmentsSpan(const WGPURenderPassDescriptor& descriptor)
+{
+    return unsafeMakeSpan(descriptor.colorAttachments, descriptor.colorAttachmentCount);
+}
+
+inline std::span<const WGPUVertexBufferLayout> buffersSpan(const WGPUVertexState& state)
+{
+    return unsafeMakeSpan(state.buffers, state.bufferCount);
+}
+
+inline std::span<const WGPUColorTargetState> targetsSpan(const WGPUFragmentState& state)
+{
+    return unsafeMakeSpan(state.targets, state.targetCount);
+}
+
 template<typename R, typename... Args>
 inline BlockPtr<R (Args...)> fromAPI(R (^ __strong &&block)(Args...))
 {

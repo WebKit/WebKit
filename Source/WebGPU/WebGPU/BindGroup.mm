@@ -1306,7 +1306,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     BindGroup::SamplersContainer samplersSet;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> usedBindingSlots;
 
-    for (const WGPUBindGroupEntry& entry : descriptor.entriesSpan()) {
+    for (const WGPUBindGroupEntry& entry : entriesSpan(descriptor)) {
         WGPUExternalTexture wgpuExternalTexture = entry.externalTexture;
 
         bool bufferIsPresent = WebGPU::bufferIsPresent(entry);

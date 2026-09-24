@@ -104,7 +104,7 @@ void Device::createComputePipeline(const WGPUComputePipelineDescriptor& descript
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule->defaultComputeEntryPoint();
     NSError *error;
     BufferBindingSizesForPipeline minimumBufferSizes;
-    auto preparedLibrary = prepareLibrary(shaderModule.get(), pipelineLayout.get(), entryPointName, label.get(), descriptor.compute.constantsSpan(), minimumBufferSizes, &error);
+    auto preparedLibrary = prepareLibrary(shaderModule.get(), pipelineLayout.get(), entryPointName, label.get(), constantsSpan(descriptor.compute), minimumBufferSizes, &error);
     if (!preparedLibrary || &pipelineLayout->device() != this)
         return callback(returnInvalidComputePipeline(*this, isAsync, error.localizedDescription ?: @"Compute library failed creation"));
 

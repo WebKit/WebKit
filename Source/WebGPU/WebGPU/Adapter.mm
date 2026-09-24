@@ -145,7 +145,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     } else
         limits = defaultLimits();
 
-    Vector<WGPUFeatureName> features(descriptor.requiredFeaturesSpan());
+    Vector<WGPUFeatureName> features(requiredFeaturesSpan(descriptor));
     if (includesUnsupportedFeatures(features, m_capabilities.features)) {
         callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested features"_s);
         return;

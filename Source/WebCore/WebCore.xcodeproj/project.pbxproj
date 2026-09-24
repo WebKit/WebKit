@@ -10157,6 +10157,7 @@
 		1CFAE2FE2A4D7A250004AE37 /* WebGPUShaderModuleImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleImpl.h; sourceTree = "<group>"; };
 		1CFAE2FF2A4D7A260004AE37 /* WebGPUQuerySetImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUQuerySetImpl.h; sourceTree = "<group>"; };
 		1CFAE3002A4D7A260004AE37 /* WebGPUConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUConvertToBackingContext.h; sourceTree = "<group>"; };
+		D54E58EB99024AC25995B361 /* WebGPUAPIUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUAPIUtilities.h; sourceTree = "<group>"; };
 		1CFAE3012A4D7A260004AE37 /* WebGPUDeviceImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDeviceImpl.h; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		1D0026A22374D62300CA6CDF /* JSPictureInPictureWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPictureInPictureWindow.h; sourceTree = "<group>"; };
@@ -26837,6 +26838,7 @@
 			children = (
 				1CFAE2E92A4D7A1F0004AE37 /* WebGPUAdapterImpl.cpp */,
 				1CFAE2F12A4D7A220004AE37 /* WebGPUAdapterImpl.h */,
+				D54E58EB99024AC25995B361 /* WebGPUAPIUtilities.h */,
 				1CFAE2E72A4D7A1F0004AE37 /* WebGPUBindGroupImpl.cpp */,
 				1CFAE2F62A4D7A230004AE37 /* WebGPUBindGroupImpl.h */,
 				1CFAE2DF2A4D7A1C0004AE37 /* WebGPUBindGroupLayoutImpl.cpp */,

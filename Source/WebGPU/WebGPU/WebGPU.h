@@ -975,8 +975,6 @@ typedef struct WGPUPipelineLayoutDescriptor {
     WGPUStringView label;
     size_t bindGroupLayoutCount;
     WGPUBindGroupLayout const * bindGroupLayouts;
-
-    auto bindGroupLayoutsSpan() const { return unsafeMakeSpan(bindGroupLayouts, bindGroupLayoutCount); }
 } WGPUPipelineLayoutDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUPrimitiveState {
@@ -1009,8 +1007,6 @@ typedef struct WGPURenderBundleEncoderDescriptor {
     uint32_t sampleCount;
     WGPUBool depthReadOnly;
     WGPUBool stencilReadOnly;
-
-    auto colorFormatsSpan() const { return unsafeMakeSpan(colorFormats, colorFormatCount); }
 } WGPURenderBundleEncoderDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPassDepthStencilAttachment {
@@ -1174,8 +1170,6 @@ typedef struct WGPUBindGroupDescriptor {
     WGPUBindGroupLayout layout;
     size_t entryCount;
     WGPUBindGroupEntry const * entries;
-
-    auto entriesSpan() const { return unsafeMakeSpan(entries, entryCount); }
 } WGPUBindGroupDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUBindGroupLayoutEntry {
@@ -1198,11 +1192,6 @@ typedef struct WGPUCompilationInfo {
     WGPUCompilationMessage const * messages;
 } WGPUCompilationInfo WGPU_STRUCTURE_ATTRIBUTE;
 
-inline std::span<const WGPUCompilationMessage> messagesSpan(const WGPUCompilationInfo& compilationInfo)
-{
-    return unsafeMakeSpan(compilationInfo.messages, compilationInfo.messageCount);
-}
-
 typedef struct WGPUComputePassDescriptor {
     WGPU_NULLABLE WTF::String label;
     WGPU_NULLABLE WGPUPassTimestampWrites const * timestampWrites;
@@ -1217,8 +1206,6 @@ typedef struct WGPUComputeState {
     char const * entryPoint;
     size_t constantCount;
     WGPUConstantEntry const * constants;
-
-    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
 } WGPUComputeState WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUDepthStencilState {
@@ -1254,8 +1241,6 @@ typedef struct WGPUShaderModuleDescriptor {
     WGPUStringView label;
     size_t hintCount;
     WGPUShaderModuleCompilationHint const * hints;
-
-    auto hintsSpan() const { return unsafeMakeSpan(hints, hintCount); }
 } WGPUShaderModuleDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUSupportedLimits {
@@ -1285,7 +1270,6 @@ typedef struct WGPUTextureDescriptor {
     size_t viewFormatCount;
     WGPUTextureFormat const * viewFormats;
 
-    auto viewFormatsSpan() const { return unsafeMakeSpan(viewFormats, viewFormatCount); }
 } WGPUTextureDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUVertexBufferLayout {
@@ -1293,16 +1277,12 @@ typedef struct WGPUVertexBufferLayout {
     WGPUVertexStepMode stepMode;
     size_t attributeCount;
     WGPUVertexAttribute const * attributes;
-
-    auto attributesSpan() const { return unsafeMakeSpan(attributes, attributeCount); }
 } WGPUVertexBufferLayout WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUBindGroupLayoutDescriptor {
     WGPUStringView label;
     size_t entryCount;
     WGPUBindGroupLayoutEntry const * entries;
-
-    auto entriesSpan() const { return unsafeMakeSpan(entries, entryCount); }
 } WGPUBindGroupLayoutDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUColorTargetState {
@@ -1325,8 +1305,6 @@ typedef struct WGPUDeviceDescriptor {
     WGPUQueueDescriptor defaultQueue;
     WGPUDeviceLostCallback deviceLostCallback;
     void * deviceLostUserdata;
-
-    auto requiredFeaturesSpan() const { return unsafeMakeSpan(requiredFeatures, requiredFeatureCount); }
 } WGPUDeviceDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPassDescriptor {
@@ -1337,8 +1315,6 @@ typedef struct WGPURenderPassDescriptor {
     WGPU_NULLABLE WGPURenderPassDepthStencilAttachment const * depthStencilAttachment;
     WGPU_NULLABLE WGPUQuerySet occlusionQuerySet;
     WGPU_NULLABLE WGPUPassTimestampWrites const * timestampWrites;
-
-    auto colorAttachmentsSpan() const { return unsafeMakeSpan(colorAttachments, colorAttachmentCount); }
 } SWIFT_ESCAPABLE WGPURenderPassDescriptor WGPU_STRUCTURE_ATTRIBUTE; // FIXME: This is unsafe!
 
 inline WGPUPassTimestampWrites const * _Nullable __counted_by(1) wgpuGetRenderPassDescriptorTimestampWrites(const WGPURenderPassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
@@ -1361,9 +1337,6 @@ typedef struct WGPUVertexState {
     WGPUConstantEntry const * constants;
     size_t bufferCount;
     WGPUVertexBufferLayout const * buffers;
-
-    auto buffersSpan() const { return unsafeMakeSpan(buffers, bufferCount); }
-    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
 } WGPUVertexState WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUFragmentState {
@@ -1373,9 +1346,6 @@ typedef struct WGPUFragmentState {
     WGPUConstantEntry const * constants;
     size_t targetCount;
     WGPUColorTargetState const * targets;
-
-    auto targetsSpan() const { return unsafeMakeSpan(targets, targetCount); }
-    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
 } WGPUFragmentState WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPipelineDescriptor {
