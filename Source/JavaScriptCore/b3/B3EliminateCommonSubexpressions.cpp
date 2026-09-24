@@ -44,12 +44,6 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
-#include "B3WasmArrayElementValue.h"
-#include "B3WasmArrayGetValue.h"
-#include "B3WasmArraySetValue.h"
-#include "B3WasmStructFieldValue.h"
-#include "B3WasmStructGetValue.h"
-#include "B3WasmStructSetValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/IndexSet.h>
@@ -75,8 +69,6 @@ static constexpr bool verbose = false;
 // in the same heap with the same inputs.
 
 using MemoryMatches = Vector<MemoryValue*, 1>;
-using WasmStructMatches = Vector<WasmStructFieldValue*, 1>;
-using WasmArrayMatches = Vector<WasmArrayElementValue*, 1>;
 
 class MemoryValueMap {
 public:
@@ -147,130 +139,12 @@ private:
     UncheckedKeyHashMap<Value*, Matches> m_map;
 };
 
-using WasmStructFieldKey = std::tuple<Value*, uint64_t>;
-
-class WasmStructValueMap {
-public:
-    WasmStructValueMap() = default;
-
-    void add(WasmStructFieldValue* value)
-    {
-        WasmStructFieldKey key(value->child(0), value->fieldHeapKey());
-        Matches& matches = m_map.add(key, Matches()).iterator->value;
-        if (matches.contains(value))
-            return;
-        matches.append(value);
-    }
-
-    template<typename Functor>
-    void removeIf(const Functor& functor)
-    {
-        m_map.removeIf(
-            [&](UncheckedKeyHashMap<WasmStructFieldKey, Matches>::KeyValuePairType& entry) -> bool {
-                entry.value.removeAllMatching(
-                    [&](Value* value) -> bool {
-                        if (auto* field = value->as<WasmStructFieldValue>())
-                            return functor(field);
-                        return true;
-                    });
-                return entry.value.isEmpty();
-            });
-    }
-
-    template<typename Functor>
-    WasmStructFieldValue* find(Value* structPtr, uint64_t fieldHeapKey, const Functor& functor)
-    {
-        auto iter = m_map.find(WasmStructFieldKey(structPtr, fieldHeapKey));
-        if (iter == m_map.end())
-            return nullptr;
-        for (auto* candidate : iter->value) {
-            if (auto* candidateStructField = candidate->as<WasmStructFieldValue>()) {
-                if (functor(candidateStructField))
-                    return candidateStructField;
-            }
-        }
-        return nullptr;
-    }
-
-    void dump(PrintStream& out) const
-    {
-        out.print("{"_s);
-        CommaPrinter comma;
-        for (auto& entry : m_map)
-            out.print(comma, "(", pointerDump(std::get<0>(entry.key)), ",", std::get<1>(entry.key), ")=>"_s, pointerListDump(entry.value));
-        out.print("}"_s);
-    }
-
-private:
-    UncheckedKeyHashMap<WasmStructFieldKey, Matches> m_map;
-};
-
-using WasmArrayElementKey = std::tuple<Value*, Value*>; // (arrayPtr, indexValue)
-
-class WasmArrayValueMap {
-public:
-    WasmArrayValueMap() = default;
-
-    void add(WasmArrayElementValue* value)
-    {
-        WasmArrayElementKey key(value->child(0), value->child(1));
-        Matches& matches = m_map.add(key, Matches()).iterator->value;
-        if (matches.contains(value))
-            return;
-        matches.append(value);
-    }
-
-    template<typename Functor>
-    void removeIf(const Functor& functor)
-    {
-        m_map.removeIf(
-            [&](UncheckedKeyHashMap<WasmArrayElementKey, Matches>::KeyValuePairType& entry) -> bool {
-                entry.value.removeAllMatching(
-                    [&](Value* value) -> bool {
-                        if (auto* elem = value->as<WasmArrayElementValue>())
-                            return functor(elem);
-                        return true;
-                    });
-                return entry.value.isEmpty();
-            });
-    }
-
-    template<typename Functor>
-    WasmArrayElementValue* find(Value* arrayPtr, Value* indexValue, const Functor& functor)
-    {
-        auto iter = m_map.find(WasmArrayElementKey(arrayPtr, indexValue));
-        if (iter == m_map.end())
-            return nullptr;
-        for (auto* candidate : iter->value) {
-            if (auto* candidateElem = candidate->as<WasmArrayElementValue>()) {
-                if (functor(candidateElem))
-                    return candidateElem;
-            }
-        }
-        return nullptr;
-    }
-
-    void dump(PrintStream& out) const
-    {
-        out.print("{"_s);
-        CommaPrinter comma;
-        for (auto& entry : m_map)
-            out.print(comma, "(", pointerDump(std::get<0>(entry.key)), ",", pointerDump(std::get<1>(entry.key)), ")=>"_s, pointerListDump(entry.value));
-        out.print("}"_s);
-    }
-
-private:
-    UncheckedKeyHashMap<WasmArrayElementKey, Matches> m_map;
-};
-
 struct ImpureBlockData {
     void dump(PrintStream& out) const
     {
         out.print(
             "{reads = ", reads, ", writes = ", writes,
             ", memoryStoresAtHead = ", memoryStoresAtHead, ", memoryValuesAtTail = ", memoryValuesAtTail,
-            ", wasmStructStoresAtHead = ", wasmStructStoresAtHead, ", wasmStructValuesAtTail = ", wasmStructValuesAtTail,
-            ", wasmArrayStoresAtHead = ", wasmArrayStoresAtHead, ", wasmArrayValuesAtTail = ", wasmArrayValuesAtTail,
             "}");
     }
 
@@ -281,12 +155,6 @@ struct ImpureBlockData {
 
     MemoryValueMap memoryStoresAtHead;
     MemoryValueMap memoryValuesAtTail;
-
-    WasmStructValueMap wasmStructStoresAtHead;
-    WasmStructValueMap wasmStructValuesAtTail;
-
-    WasmArrayValueMap wasmArrayStoresAtHead;
-    WasmArrayValueMap wasmArrayValuesAtTail;
 
     // This Maps x->y in "y = WasmAddress(@x)"
     UncheckedKeyHashMap<Value*, Value*> m_candidateWasmAddressesAtTail;
@@ -319,8 +187,6 @@ public:
             for (Value* value : *block) {
                 Effects effects = value->effects();
                 MemoryValue* memory = value->as<MemoryValue>();
-                WasmStructFieldValue* wasmStructField = value->as<WasmStructFieldValue>();
-                WasmArrayElementValue* wasmArrayElem = value->as<WasmArrayElementValue>();
 
                 if (memory) {
                     if (memory->isStore()
@@ -329,21 +195,6 @@ public:
                         && (!data.fence || !memory->hasFence()))
                         data.memoryStoresAtHead.add(memory);
                 }
-                if (wasmStructField) {
-                    if (wasmStructField->opcode() == WasmStructSet
-                        && !data.reads.overlaps(wasmStructField->range())
-                        && !data.writes.overlaps(wasmStructField->range())
-                        && !data.fence)
-                        data.wasmStructStoresAtHead.add(wasmStructField);
-                }
-                if (wasmArrayElem) {
-                    if (wasmArrayElem->opcode() == WasmArraySet
-                        && !data.reads.overlaps(wasmArrayElem->range())
-                        && !data.writes.overlaps(wasmArrayElem->range())
-                        && !data.fence)
-                        data.wasmArrayStoresAtHead.add(wasmArrayElem);
-                }
-
                 data.reads.add(effects.reads);
 
                 if (HeapRange writes = effects.writes)
@@ -352,13 +203,6 @@ public:
 
                 if (memory)
                     data.memoryValuesAtTail.add(memory);
-                if (wasmStructField) {
-                    data.wasmStructValuesAtTail.add(wasmStructField);
-                    noteStructKeyFilter(wasmStructField);
-                }
-                if (wasmArrayElem)
-                    data.wasmArrayValuesAtTail.add(wasmArrayElem);
-
                 if (WasmAddressValue* wasmAddress = value->as<WasmAddressValue>())
                     data.m_candidateWasmAddressesAtTail.add(wasmAddress->child(0), wasmAddress);
 
@@ -523,40 +367,15 @@ private:
         }
 
         MemoryValue* memory = m_value->as<MemoryValue>();
-        WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
-        WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
-        WasmArrayGetValue* arrayGet = m_value->as<WasmArrayGetValue>();
-        WasmArraySetValue* arraySet = m_value->as<WasmArraySetValue>();
 
-        // Before clobber - try to eliminate redundant operations
         if (memory && processMemoryBeforeClobber(memory))
             return;
 
-        if (structSet && processWasmStructSetBeforeClobber(structSet))
-            return;
-
-        if (arraySet && processWasmArraySetBeforeClobber(arraySet))
-            return;
-
-        // Clobber based on writes - this handles both MemoryValue and WasmStruct operations
         if (HeapRange writes = effects.writes)
             clobber(m_data, writes);
 
-        // After clobber - CSE and tracking
         if (memory)
             processMemoryAfterClobber(memory);
-
-        if (structGet)
-            processWasmStructGetAfterClobber(structGet);
-
-        if (structSet)
-            processWasmStructSetAfterClobber(structSet);
-
-        if (arrayGet)
-            processWasmArrayGetAfterClobber(arrayGet);
-
-        if (arraySet)
-            processWasmArraySetAfterClobber(arraySet);
 
         // The reads info should be updated even the block is processed
         // since the dominated store nodes may dependent on the data
@@ -616,26 +435,6 @@ private:
                 if (memory->readsMutability() == Mutability::Immutable)
                     return false;
                 return memory->range().overlaps(writes);
-            });
-
-        data.wasmStructValuesAtTail.removeIf(
-            [&](WasmStructFieldValue* value) {
-                // If field is immutable (only applies to Get), clobbering never changes the result
-                if (auto* structGet = value->as<WasmStructGetValue>()) {
-                    if (structGet->mutability() == Mutability::Immutable)
-                        return false;
-                }
-                return value->range().overlaps(writes);
-            });
-
-        data.wasmArrayValuesAtTail.removeIf(
-            [&](WasmArrayElementValue* value) {
-                // If element is immutable (only applies to Get), clobbering never changes the result
-                if (auto* arrayGet = value->as<WasmArrayGetValue>()) {
-                    if (arrayGet->mutability() == Mutability::Immutable)
-                        return false;
-                }
-                return value->range().overlaps(writes);
             });
     }
 
@@ -1091,493 +890,6 @@ private:
         }
     }
 
-    void processWasmStructGetAfterClobber(WasmStructGetValue* structGet)
-    {
-        Value* structPtr = structGet->child(0);
-        HeapRange range = structGet->range();
-        uint64_t fieldHeapKey = structGet->fieldHeapKey();
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Processing WasmStructGet: ", *structGet, " fieldHeapKey=", fieldHeapKey);
-        WasmStructMatches matches = findWasmStructValue(structPtr, range, fieldHeapKey, [&](WasmStructFieldValue*) { return true; }, structGet->mutability());
-        if (replaceWasmStructValue(matches, structGet))
-            return;
-        m_data.wasmStructValuesAtTail.add(structGet);
-        noteStructKeyFilter(structGet);
-    }
-
-    void noteStructKeyFilter(WasmStructFieldValue* value)
-    {
-        auto& holders = m_structKeyFilters.add(WasmStructFieldKey(value->child(0), value->fieldHeapKey()), StructKeyFilters { }).iterator->value;
-        if (!holders.count)
-            holders.first = value;
-        ++holders.count;
-    }
-
-    bool isOnlyHolderOfStructKey(const WasmStructFieldKey& key) const
-    {
-        auto iter = m_structKeyFilters.find(key);
-        if (iter == m_structKeyFilters.end())
-            return true;
-        return iter->value.count == 1 && iter->value.first == m_value;
-    }
-
-    template<typename Filter>
-    WasmStructMatches findWasmStructValue(Value* structPtr, HeapRange range, uint64_t fieldHeapKey, const Filter& filter, Mutability readsMutability = Mutability::Mutable)
-    {
-        if constexpr (B3EliminateCommonSubexpressionsInternal::verbose) {
-            dataLogLn(*m_value, ": looking backward for WasmStruct structPtr=", *structPtr, " fieldHeapKey=", fieldHeapKey);
-            dataLogLn("    Full value: ", deepDump(m_value));
-        }
-
-        // Check local block first
-        if (auto* match = m_data.wasmStructValuesAtTail.find(structPtr, fieldHeapKey, filter)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Found ", *match, " locally.");
-            return { match };
-        }
-
-        // Check if current block has clobbering writes
-        if (readsMutability != Mutability::Immutable && m_data.writes.overlaps(range)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because of writes.");
-            return { };
-        }
-
-        if (isOnlyHolderOfStructKey(WasmStructFieldKey(structPtr, fieldHeapKey))) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because nothing else holds this key.");
-            return { };
-        }
-
-        // Search backward through predecessors
-        BlockWorklist worklist;
-        worklist.pushAll(m_block->predecessors());
-
-        WasmStructMatches matches;
-
-        while (BasicBlock* block = worklist.pop()) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Looking at ", *block);
-
-            ImpureBlockData& data = m_impureBlockData[block];
-
-            auto* match = data.wasmStructValuesAtTail.find(structPtr, fieldHeapKey, filter);
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Considering match: ", pointerDump(match));
-            if (match && match != m_value) {
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Found match: ", *match);
-                matches.append(match);
-                continue;
-            }
-
-            if (readsMutability != Mutability::Immutable && data.writes.overlaps(range)) {
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because of writes.");
-                return { };
-            }
-
-            if (!block->numPredecessors()) {
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because it's live at root.");
-                // This essentially proves that this is live at the prologue. That means that we
-                // cannot reliably optimize this case.
-                return { };
-            }
-
-            worklist.pushAll(block->predecessors());
-        }
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Got matches: ", pointerListDump(matches));
-        return matches;
-    }
-
-    bool replaceWasmStructValue(const WasmStructMatches& matches, WasmStructGetValue* structGet)
-    {
-        if (matches.isEmpty())
-            return false;
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "Eliminating ", *m_value, " due to ", pointerListDump(matches));
-
-        m_changed = true;
-
-        Ref structType = structGet->rtt();
-        auto fieldIndex = structGet->fieldIndex();
-        auto fieldType = structType->field(fieldIndex).type;
-        auto structGetOrigin = structGet->origin();
-
-        auto replace = [&](Value* dominatingMatch, Vector<Value*>& extraValues) -> Value* {
-            if (auto* structSet = dominatingMatch->as<WasmStructSetValue>()) {
-                Value* storedValue = structSet->child(1);
-
-                Value* forwardedValue = storedValue;
-
-                // Handle packed types: truncate the stored value to match the field size
-                if (fieldType.is<Wasm::PackedType>()) {
-                    uint32_t mask = 0;
-                    switch (fieldType.as<Wasm::PackedType>()) {
-                    case Wasm::PackedType::I8:
-                        mask = 0xff;
-                        break;
-                    case Wasm::PackedType::I16:
-                        mask = 0xffff;
-                        break;
-                    }
-
-                    Value* maskValue = m_proc.add<Const32Value>(structGetOrigin, mask);
-                    forwardedValue = m_proc.add<Value>(BitAnd, structGetOrigin, storedValue, maskValue);
-                    extraValues.append(maskValue);
-                    extraValues.append(forwardedValue);
-                }
-
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Forwarding from WasmStructSet with value: ", *forwardedValue);
-                return forwardedValue;
-            }
-
-            return dominatingMatch;
-        };
-
-        if (matches.size() == 1) {
-            auto* dominatingMatch = matches[0];
-            RELEASE_ASSERT(m_dominators->dominates(dominatingMatch->owner, m_block));
-
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Eliminating using ", *dominatingMatch);
-
-            // Handle store-to-load forwarding from WasmStructSet
-
-            Vector<Value*> extraValues;
-            auto* value = replace(dominatingMatch, extraValues);
-            ASSERT(value);
-            for (auto* extraValue : extraValues)
-                m_insertionSet.insertValue(m_index, extraValue);
-            m_value->replaceWithIdentity(value);
-            return true;
-        }
-
-        SSACalculator::Variable* var = m_ssa->newVariable();
-        Value* placeholder = m_proc.addBottom(m_value->origin(), m_value->type());
-        m_insertionSet.insertValue(m_index, placeholder);
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting placeholder for value: ", *placeholder);
-        m_value->replaceWithIdentity(placeholder);
-
-        for (auto* match : matches) {
-            m_blocksWithSets.add(match->owner);
-            auto& extras = m_sets.add(match, Vector<Value*>()).iterator->value;
-            m_matched.add(match);
-            auto* value = replace(match, extras);
-            ASSERT(value);
-            m_ssa->newDef(var, match->owner, value);
-        }
-
-        m_pendingResolutions.append({ placeholder, m_block, var });
-        ASSERT(var->index() == m_pendingResolutions.size() - 1);
-        return true;
-    }
-
-    bool processWasmStructSetBeforeClobber(WasmStructSetValue* structSet)
-    {
-        Value* structPtr = structSet->child(0);
-        Value* value = structSet->child(1);
-        uint64_t fieldHeapKey = structSet->fieldHeapKey();
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Processing WasmStructSet (before clobber): ", *structSet, " fieldHeapKey=", fieldHeapKey);
-
-        WasmStructMatches matches = findWasmStructValue(structPtr, structSet->range(), fieldHeapKey, [&](WasmStructFieldValue* candidate) {
-            // @a: Set(@x, field0, @z)
-            // @b: Set(@x, field0, @z) -> setting same value again.
-            if (auto* candidateSet = candidate->as<WasmStructSetValue>())
-                return candidateSet->child(1) == value;
-
-            // @a: Get(@x, field0)
-            // @b: Set(@x, field0, @a) -> setting a value loaded from the same struct's field.
-            if (auto* candidateGet = candidate->as<WasmStructGetValue>())
-                return candidateGet == value;
-
-            return false;
-        });
-        if (matches.isEmpty())
-            return false;
-
-        m_value->replaceWithNop();
-        m_changed = true;
-        return true;
-    }
-
-    void processWasmStructSetAfterClobber(WasmStructSetValue* structSet)
-    {
-        Value* structPtr = structSet->child(0);
-        HeapRange range = structSet->range();
-        uint64_t fieldHeapKey = structSet->fieldHeapKey();
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Processing WasmStructSet (after clobber): ", *structSet, " fieldHeapKey=", fieldHeapKey);
-
-        if (!structSet->traps() && findWasmStructSetAfterClobber(structPtr, range, fieldHeapKey)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Forward elimination - replacing with nop");
-            m_value->replaceWithNop();
-            m_changed = true;
-            return;
-        }
-
-        m_data.wasmStructValuesAtTail.add(structSet);
-        noteStructKeyFilter(structSet);
-    }
-
-    bool findWasmStructSetAfterClobber(Value* structPtr, HeapRange range, uint64_t fieldHeapKey)
-    {
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, *m_value, ": looking forward for WasmStructSet to structPtr=", *structPtr, " fieldHeapKey=", fieldHeapKey, "...");
-
-        // Search forward in this basic block first
-        for (unsigned index = m_index + 1; index < m_block->size(); ++index) {
-            Value* value = m_block->at(index);
-
-            if (auto* candidateSet = value->as<WasmStructSetValue>()) {
-                if (candidateSet->child(0) == structPtr
-                    && candidateSet->fieldHeapKey() == fieldHeapKey)
-                    return true;
-            }
-
-            Effects effects = value->effects();
-            if (effects.reads.overlaps(range) || effects.writes.overlaps(range))
-                return false;
-        }
-
-        if (!m_block->numSuccessors())
-            return false;
-
-        BlockWorklist worklist;
-        worklist.pushAll(m_block->successorBlocks());
-
-        while (BasicBlock* block = worklist.pop()) {
-            ImpureBlockData& data = m_impureBlockData[block];
-
-            Value* match = data.wasmStructStoresAtHead.find(structPtr, fieldHeapKey, [&](Value*) { return true; });
-            if (match && match != m_value)
-                continue;
-
-            if (data.writes.overlaps(range) || data.reads.overlaps(range))
-                return false;
-
-            if (!block->numSuccessors())
-                return false;
-
-            worklist.pushAll(block->successorBlocks());
-        }
-
-        return true;
-    }
-
-    void processWasmArrayGetAfterClobber(WasmArrayGetValue* arrayGet)
-    {
-        Value* arrayPtr = arrayGet->child(0);
-        Value* indexValue = arrayGet->child(1);
-        HeapRange range = arrayGet->range();
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Processing WasmArrayGet: ", *arrayGet);
-        WasmArrayMatches matches = findWasmArrayValue(arrayPtr, indexValue, range, [&](WasmArrayElementValue*) { return true; }, arrayGet->mutability());
-        if (replaceWasmArrayValue(matches, arrayGet))
-            return;
-        m_data.wasmArrayValuesAtTail.add(arrayGet);
-    }
-
-    template<typename Filter>
-    WasmArrayMatches findWasmArrayValue(Value* arrayPtr, Value* indexValue, HeapRange range, const Filter& filter, Mutability readsMutability = Mutability::Mutable)
-    {
-        // Check local block first
-        if (auto* match = m_data.wasmArrayValuesAtTail.find(arrayPtr, indexValue, filter)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Found ", *match, " locally.");
-            return { match };
-        }
-
-        if (readsMutability != Mutability::Immutable && m_data.writes.overlaps(range)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because of writes.");
-            return { };
-        }
-
-        BlockWorklist worklist;
-        worklist.pushAll(m_block->predecessors());
-
-        WasmArrayMatches matches;
-
-        while (BasicBlock* block = worklist.pop()) {
-            ImpureBlockData& data = m_impureBlockData[block];
-
-            auto* match = data.wasmArrayValuesAtTail.find(arrayPtr, indexValue, filter);
-            if (match && match != m_value) {
-                matches.append(match);
-                continue;
-            }
-
-            if (readsMutability != Mutability::Immutable && data.writes.overlaps(range)) {
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because of writes.");
-                return { };
-            }
-
-            if (!block->numPredecessors()) {
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because it's live at root.");
-                return { };
-            }
-
-            worklist.pushAll(block->predecessors());
-        }
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Got matches: ", pointerListDump(matches));
-        return matches;
-    }
-
-    bool replaceWasmArrayValue(const WasmArrayMatches& matches, WasmArrayGetValue* arrayGet)
-    {
-        if (matches.isEmpty())
-            return false;
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "Eliminating ", *m_value, " due to ", pointerListDump(matches));
-
-        m_changed = true;
-
-        Ref arrayType = arrayGet->rtt();
-        auto elementType = arrayType->elementType().type;
-        auto arrayGetOrigin = arrayGet->origin();
-
-        auto replace = [&](Value* dominatingMatch, Vector<Value*>& extraValues) -> Value* {
-            if (auto* arraySet = dominatingMatch->as<WasmArraySetValue>()) {
-                Value* storedValue = arraySet->child(2);
-                Value* forwardedValue = storedValue;
-
-                // Handle packed types: mask the stored value to match the element size
-                if (elementType.is<Wasm::PackedType>()) {
-                    uint32_t mask = 0;
-                    switch (elementType.as<Wasm::PackedType>()) {
-                    case Wasm::PackedType::I8:
-                        mask = 0xff;
-                        break;
-                    case Wasm::PackedType::I16:
-                        mask = 0xffff;
-                        break;
-                    }
-                    Value* maskValue = m_proc.add<Const32Value>(arrayGetOrigin, mask);
-                    forwardedValue = m_proc.add<Value>(BitAnd, arrayGetOrigin, storedValue, maskValue);
-                    extraValues.append(maskValue);
-                    extraValues.append(forwardedValue);
-                }
-
-                dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Forwarding from WasmArraySet with value: ", *forwardedValue);
-                return forwardedValue;
-            }
-
-            return dominatingMatch;
-        };
-
-        if (matches.size() == 1) {
-            auto* dominatingMatch = matches[0];
-            RELEASE_ASSERT(m_dominators->dominates(dominatingMatch->owner, m_block));
-
-            Vector<Value*> extraValues;
-            auto* value = replace(dominatingMatch, extraValues);
-            ASSERT(value);
-            for (auto* extraValue : extraValues)
-                m_insertionSet.insertValue(m_index, extraValue);
-            m_value->replaceWithIdentity(value);
-            return true;
-        }
-
-        SSACalculator::Variable* var = m_ssa->newVariable();
-        Value* placeholder = m_proc.addBottom(m_value->origin(), m_value->type());
-        m_insertionSet.insertValue(m_index, placeholder);
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting placeholder for value: ", *placeholder);
-        m_value->replaceWithIdentity(placeholder);
-
-        for (auto* match : matches) {
-            m_blocksWithSets.add(match->owner);
-            auto& extras = m_sets.add(match, Vector<Value*>()).iterator->value;
-            m_matched.add(match);
-            auto* value = replace(match, extras);
-            ASSERT(value);
-            m_ssa->newDef(var, match->owner, value);
-        }
-
-        m_pendingResolutions.append({ placeholder, m_block, var });
-        ASSERT(var->index() == m_pendingResolutions.size() - 1);
-        return true;
-    }
-
-    bool processWasmArraySetBeforeClobber(WasmArraySetValue* arraySet)
-    {
-        Value* arrayPtr = arraySet->child(0);
-        Value* indexValue = arraySet->child(1);
-        Value* value = arraySet->child(2);
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Processing WasmArraySet (before clobber): ", *arraySet);
-
-        WasmArrayMatches matches = findWasmArrayValue(arrayPtr, indexValue, arraySet->range(), [&](WasmArrayElementValue* candidate) {
-            // Set(@arr, @idx, @z) after Set(@arr, @idx, @z) -> redundant
-            if (auto* candidateSet = candidate->as<WasmArraySetValue>())
-                return candidateSet->child(2) == value;
-
-            // Get(@arr, @idx) followed by Set(@arr, @idx, @get_result) -> no-op
-            if (auto* candidateGet = candidate->as<WasmArrayGetValue>())
-                return candidateGet == value;
-
-            return false;
-        });
-        if (matches.isEmpty())
-            return false;
-
-        m_value->replaceWithNop();
-        m_changed = true;
-        return true;
-    }
-
-    void processWasmArraySetAfterClobber(WasmArraySetValue* arraySet)
-    {
-        Value* arrayPtr = arraySet->child(0);
-        Value* indexValue = arraySet->child(1);
-        HeapRange range = arraySet->range();
-
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Processing WasmArraySet (after clobber): ", *arraySet);
-
-        if (!arraySet->traps() && findWasmArraySetAfterClobber(arrayPtr, indexValue, range)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Forward elimination - replacing with nop");
-            m_value->replaceWithNop();
-            m_changed = true;
-            return;
-        }
-
-        m_data.wasmArrayValuesAtTail.add(arraySet);
-    }
-
-    bool findWasmArraySetAfterClobber(Value* arrayPtr, Value* indexValue, HeapRange range)
-    {
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, *m_value, ": looking forward for WasmArraySet...");
-
-        for (unsigned index = m_index + 1; index < m_block->size(); ++index) {
-            Value* value = m_block->at(index);
-
-            if (auto* candidateSet = value->as<WasmArraySetValue>()) {
-                if (candidateSet->child(0) == arrayPtr && candidateSet->child(1) == indexValue)
-                    return true;
-            }
-
-            Effects effects = value->effects();
-            if (effects.reads.overlaps(range) || effects.writes.overlaps(range))
-                return false;
-        }
-
-        if (!m_block->numSuccessors())
-            return false;
-
-        BlockWorklist worklist;
-        worklist.pushAll(m_block->successorBlocks());
-
-        while (BasicBlock* block = worklist.pop()) {
-            ImpureBlockData& data = m_impureBlockData[block];
-
-            Value* match = data.wasmArrayStoresAtHead.find(arrayPtr, indexValue, [&](Value*) { return true; });
-            if (match && match != m_value)
-                continue;
-
-            if (data.writes.overlaps(range) || data.reads.overlaps(range))
-                return false;
-
-            if (!block->numSuccessors())
-                return false;
-
-            worklist.pushAll(block->successorBlocks());
-        }
-
-        return true;
-    }
-
     Procedure& m_proc;
 
     Dominators* m_dominators { nullptr };
@@ -1597,17 +909,6 @@ private:
     IndexSet<Value*> m_matched;
     // Blocks that own at least one m_sets key, so finalize() can skip whole blocks.
     IndexSet<BasicBlock*> m_blocksWithSets;
-
-    // Every value ever entered into some block's wasmStructValuesAtTail, tallied by field key.
-    // findWasmStructValue can only succeed by matching a value other than the one it is called
-    // for, so a key whose sole holder is that value makes its whole predecessor walk futile.
-    // Entries are never removed, which keeps the test conservative once clobber() prunes a
-    // block's map, and an overcount only means a walk we could have skipped still happens.
-    struct StructKeyFilters {
-        Value* first { nullptr };
-        unsigned count { 0 };
-    };
-    UncheckedKeyHashMap<WasmStructFieldKey, StructKeyFilters> m_structKeyFilters;
 
     InsertionSet m_insertionSet;
 

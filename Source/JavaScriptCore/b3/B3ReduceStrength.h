@@ -31,13 +31,13 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Does strength reduction, constant folding, canonicalization, CFG simplification, DCE, and very
-// simple CSE. This phase runs those optimizations to fixpoint. The goal of the phase is to
-// dramatically reduce the complexity of the code. In the future, it's preferable to add optimizations
-// to this phase rather than creating new optimizations because then the optimizations can participate
-// in the fixpoint. However, because of the many interlocking optimizations, it can be difficult to
-// add sophisticated optimizations to it. For that reason we have full CSE in a different phase, for
-// example.
+// Does strength reduction, constant folding, canonicalization, CFG simplification, DCE, and CSE of
+// values that a dominating block already computed. This phase runs those optimizations to fixpoint.
+// The goal of the phase is to dramatically reduce the complexity of the code. In the future, it's
+// preferable to add optimizations to this phase rather than creating new optimizations because then
+// the optimizations can participate in the fixpoint. However, because of the many interlocking
+// optimizations, it can be difficult to add sophisticated optimizations to it. For that reason CSE
+// that has to synthesize Phis for values arriving on several paths lives in a different phase.
 
 enum class ReduceStrengthPass : uint8_t {
     Initial,

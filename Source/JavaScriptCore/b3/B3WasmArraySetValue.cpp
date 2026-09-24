@@ -34,8 +34,8 @@ namespace JSC::B3 {
 
 WasmArraySetValue::~WasmArraySetValue() = default;
 
-WasmArraySetValue::WasmArraySetValue(Kind kind, Origin origin, Value* arrayPtr, Value* index, Value* value, Ref<const Wasm::RTT> rtt)
-    : WasmArrayElementValue(CheckedOpcode, kind, Void, Three, origin, WTF::move(rtt), Mutability::Mutable, arrayPtr, index, value)
+WasmArraySetValue::WasmArraySetValue(Kind kind, Origin origin, Value* arrayPtr, Value* index, Value* value, Ref<const Wasm::RTT> rtt, Mutability mutability)
+    : WasmArrayElementValue(CheckedOpcode, kind, Void, Three, origin, WTF::move(rtt), mutability, arrayPtr, index, value)
 {
 }
 
