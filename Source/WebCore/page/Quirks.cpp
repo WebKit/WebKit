@@ -1870,6 +1870,7 @@ bool Quirks::needsChromeMediaControlsPseudoElement() const
 
 // walmart.com: rdar://123734840
 // live.outlook.com: rdar://152277211
+// icloud.com: rdar://187710972
 bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);

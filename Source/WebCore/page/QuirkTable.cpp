@@ -128,6 +128,7 @@ static constexpr auto onGoogleDocsMLPromotion = ".docs-ml-promotion-action-conta
 static constexpr auto onSuggestionsLabel = "[aria-label=Suggestions], [aria-label=Suggestions] *"_s;
 static constexpr auto onSwatchColorPicker = "[id^=swatchColorPicker]"_s;
 static constexpr auto onButtonInListItem = "[role=listitem i] > [role=button i]"_s;
+static constexpr auto onTreeItem = "[role=treeitem i], [role=treeitem i] *"_s;
 static constexpr auto onVideoJSTech = "video.vjs-tech, audio.vjs-tech"_s;
 static constexpr auto onKinjaLoginAvatar = ".js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label=\"UserFilled icon\"], svg[aria-label=\"UserFilled icon\"] > path"_s;
 static constexpr auto onMicrosoftSignInButton = ".glyph_signIn_circle, .mectrl_headertext, .mectrl_header"_s;
@@ -487,6 +488,9 @@ static constexpr Quirk fullTable[] = {
             implicitMuteWhenVolumeSetToZero,
         } },
 
+    // icloud.com rdar://187710972
+    { .match = URLMatch::domain("icloud.com"_s),
+        .behaviors = { mayNeedToIgnoreContentObservation.when(elementMatchesSelector(onTreeItem)) } },
     // icloud.com rdar://131836301
     { .match = URLMatch::domain("icloud.com"_s).when(pathOrFragmentContains("mail"_s)),
         .behaviors = { shouldSilenceWindowResizeEventsDuringApplicationSnapshotting } },

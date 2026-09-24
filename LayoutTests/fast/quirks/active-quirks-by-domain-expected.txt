@@ -161,7 +161,7 @@ https://www.hulu.com/
     NeedsCanPlayAfterSeekedQuirk
     NeedsVideoShouldMaintainAspectRatioQuirk
 https://www.icloud.com/
-    (none)
+    MayNeedToIgnoreContentObservation
 https://www.iheart.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.imdb.com/
