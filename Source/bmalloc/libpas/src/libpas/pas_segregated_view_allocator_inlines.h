@@ -86,8 +86,10 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
            eligibility and locked the page. */
         if (!exclusive->is_owned) {
             bool was_stolen;
+            bool did_recommit;
 
             was_stolen = false;
+            did_recommit = false;
         
             if (!exclusive->page_boundary) {
                 if (verbose)
@@ -192,6 +194,8 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                 if (did_lock_lock)
                     pas_lock_unlock(&exclusive->commit_lock);
 
+                did_recommit = true;
+
                 if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT) {
                     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
                     pas_debug_spectrum_add(
@@ -209,6 +213,8 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
 
             pas_lock_lock_conditionally(&exclusive->ownership_lock, heap_lock_hold_mode);
             exclusive->is_owned = true;
+            if (did_recommit)
+                pas_segregated_exclusive_view_note_recommit(exclusive);
             if (verbose) {
                 pas_log("view %p has is owned = true due to exclusive will_start_allocating\n",
                         exclusive);

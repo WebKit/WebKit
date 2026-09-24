@@ -46,7 +46,9 @@ struct pas_segregated_exclusive_view {
     
     pas_compact_segregated_size_directory_ptr directory;
 
-    bool is_owned;
+    bool is_owned : 1;
+
+    bool recommitted_soon_after_decommit : 1;
 
     unsigned index;
 
@@ -66,6 +68,8 @@ struct pas_segregated_exclusive_view {
        I don't think we have a story for the ordering between the page lock and the ownership
        lock, if they are different. */
     pas_lock ownership_lock;
+
+    uint64_t decommit_epoch;
 };
 
 static inline pas_segregated_view
@@ -96,6 +100,9 @@ PAS_API pas_segregated_exclusive_view*
 pas_segregated_exclusive_view_create(
     pas_segregated_size_directory* directory,
     size_t index);
+
+PAS_API void pas_segregated_exclusive_view_note_decommit(pas_segregated_exclusive_view* view);
+PAS_API void pas_segregated_exclusive_view_note_recommit(pas_segregated_exclusive_view* view);
 
 PAS_API void pas_segregated_exclusive_view_note_emptiness(
     pas_segregated_exclusive_view* view,

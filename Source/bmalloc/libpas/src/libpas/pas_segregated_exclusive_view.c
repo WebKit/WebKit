@@ -29,9 +29,11 @@
 
 #include "pas_segregated_exclusive_view.h"
 
+#include "pas_epoch.h"
 #include "pas_immortal_heap.h"
 #include "pas_log.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_scavenger.h"
 #include "pas_segregated_heap.h"
 #include "pas_segregated_size_directory.h"
 
@@ -61,10 +63,35 @@ pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
     result->index = (unsigned)index;
     PAS_ASSERT(result->index == index);
     result->is_owned = false;
+    result->recommitted_soon_after_decommit = false;
+    result->decommit_epoch = 0;
     pas_lock_construct(&result->commit_lock);
     pas_lock_construct(&result->ownership_lock);
 
     return result;
+}
+
+void pas_segregated_exclusive_view_note_decommit(pas_segregated_exclusive_view* view)
+{
+    if (!pas_scavenger_recommit_retention_epoch_delta || pas_epoch_is_counter)
+        return;
+
+    view->decommit_epoch = pas_get_epoch();
+}
+
+void pas_segregated_exclusive_view_note_recommit(pas_segregated_exclusive_view* view)
+{
+    if (!pas_scavenger_recommit_retention_epoch_delta || pas_epoch_is_counter)
+        return;
+
+    /* Mark the page if we are recommitting within pas_scavenger_recommit_retention_epoch_delta
+       after its decommit, because the extra retention time will keep it committed if similar
+       behavior continues.
+       If the page was already marked, clear its marking. Other than during memory pressure, a
+       previously marked page is only decommitted after the extra retention has run out, so
+       recommitting it means the extra retention did not help keep it committed this time. */
+    view->recommitted_soon_after_decommit = !view->recommitted_soon_after_decommit
+        && pas_get_epoch() - view->decommit_epoch <= pas_scavenger_recommit_retention_epoch_delta;
 }
 
 void pas_segregated_exclusive_view_note_emptiness(
