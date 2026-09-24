@@ -1,4 +1,4 @@
-content
+Some content
 
-FAIL <template for> prepend text assert_equals: expected "Some content" but got " content"
+PASS <template for> prepend text
 

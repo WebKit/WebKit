@@ -2645,6 +2645,22 @@ HTMLInCanvasEnabled:
   humanReadableDescription: "Enable HTML-in-Canvas"
   defaultValue: false
 
+HTMLProcessingInstructionEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "HTML processing instructions"
+  humanReadableDescription: "Enable processing instructions in HTML"
+  defaultValue: true
+
+HTMLTemplateForEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "HTML template for attribute"
+  humanReadableDescription: "Enable declarative out-of-order streaming with HTML template elements"
+  defaultValue: false
+
 HTTPEquivEnabled:
   type: bool
   status: mature

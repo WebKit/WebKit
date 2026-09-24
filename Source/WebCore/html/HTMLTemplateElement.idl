@@ -34,6 +34,7 @@
     Exposed=Window
 ] interface HTMLTemplateElement : HTMLElement {
     readonly attribute DocumentFragment content;
+    [EnabledBySetting=HTMLTemplateForEnabled, CEReactions=NotNeeded, Reflect="for"] attribute DOMString htmlFor;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString shadowRootMode;
     [CEReactions=NotNeeded, Reflect] attribute boolean shadowRootDelegatesFocus;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString shadowRootSlotAssignment;
