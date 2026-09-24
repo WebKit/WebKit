@@ -162,6 +162,7 @@ _unit_test_config = {}
 _NO_CONFIG_H_PATH_PATTERNS = [
     '^Source/bmalloc/',
     '^Source/WebKitLegacy/',
+    '^Tools/MiniBrowser/',
 ]
 
 _LIBPAS_PATH_PATTERN = '(^|/)Source/bmalloc/libpas/'
