@@ -91,10 +91,14 @@
 
 namespace WebKit {
 
-static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+static void focusedElementPositionInformation(WebPage& page, const WebCore::LocalFrame& localRoot, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     RefPtr frame = page.corePage()->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().hasComposition())
+        return;
+
+    // `request.point` is relative to `localRoot`, not to frames under other local roots.
+    if (&frame->rootFrame() != &localRoot)
         return;
 
     const uint32_t kHitAreaWidth = 66;
@@ -495,7 +499,7 @@ static void selectionPositionInformation(WebPage& page, WebCore::LocalFrame& loc
 #if PLATFORM(MACCATALYST)
     bool isInsideFixedPosition;
     WebCore::VisiblePosition caretPosition(renderer->visiblePositionForPoint(contentsPoint, WebCore::HitTestSource::User));
-    info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
+    info.caretRect = frameView->contentsToRootView(caretPosition.absoluteCaretBounds(&isInsideFixedPosition));
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -696,7 +700,7 @@ Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> pos
         RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(WebCore::EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get()));
         if (RefPtr remoteFrameView = remoteFrame ? remoteFrame->view() : nullptr) {
             WebCore::RemoteFrameGeometryTransformer transformer(remoteFrameView.releaseNonNull(), localRootView.releaseNonNull(), remoteFrame->frameID());
-            return WebCore::RemoteUserInputEventData { remoteFrame->frameID(), transformer.transformToRemoteFrameCoordinates(WebCore::DoublePoint { hitTestPoint }) };
+            return WebCore::RemoteUserInputEventData { remoteFrame->frameID(), transformer.transformToRemoteFrameCoordinates(WebCore::DoublePoint { request.point }) };
         }
     }
 
@@ -715,7 +719,7 @@ Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> pos
     }();
 
     if (page.focusedElement())
-        focusedElementPositionInformation(page, *page.focusedElement(), request, info);
+        focusedElementPositionInformation(page, localRoot, *page.focusedElement(), request, info);
 
     RefPtr hitTestNode = hitTestResult.innerNonSharedNode();
 
