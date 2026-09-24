@@ -657,13 +657,13 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
 #if PLATFORM(MAC)
     PerformImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, WebCore::FloatPoint location)
-    ImmediateActionDidUpdate()
-    ImmediateActionDidCancel()
-    ImmediateActionDidComplete()
+    ImmediateActionDidUpdate(WebCore::FrameIdentifier frameID)
+    ImmediateActionDidCancel(WebCore::FrameIdentifier frameID)
+    ImmediateActionDidComplete(WebCore::FrameIdentifier frameID)
 
     DataDetectorsDidPresentUI(uint64_t pageOverlay)
     DataDetectorsDidChangeUI(uint64_t pageOverlay)
-    DataDetectorsDidHideUI(uint64_t pageOverlay)
+    DataDetectorsDidHideUI(WebCore::FrameIdentifier frameID, uint64_t pageOverlay)
 
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
 
@@ -957,7 +957,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ContentsToRootViewRect(WebCore::FrameIdentifier frameID, WebCore::FloatRect rect) -> (WebCore::FloatRect rect)
     ContentsToRootViewRects(WebCore::FrameIdentifier frameID, Vector<WebCore::FloatRect> rects) -> (Vector<WebCore::FloatRect> rects)
     ContentsToRootViewPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point) -> (WebCore::FloatPoint point)
-    RemoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, struct WebCore::DictionaryPopupInfo popupInfo) -> (struct WebCore::DictionaryPopupInfo popupInfo)
     HitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, struct WebKit::ContentWorldData world) -> (struct WebKit::NodeHitTestResult result)
 
 #if HAVE(SPATIAL_TRACKING_LABEL)

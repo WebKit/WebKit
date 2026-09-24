@@ -73,6 +73,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalFrameInlines.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PageIdentifier.h>
@@ -1367,7 +1368,42 @@ bool PDFPluginBase::performImmediateActionHitTestAtLocation(const WebCore::Float
     data.isTextNode = true;
     data.isSelected = true;
     data.dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection.get(), TextIndicatorPresentationTransition::FadeIn);
+    convertDictionaryPopupInfoToMainFrameView(data.dictionaryPopupInfo);
     return true;
+}
+
+void PDFPluginBase::convertDictionaryPopupInfoToMainFrameView(DictionaryPopupInfo& dictionaryPopupInfo) const
+{
+    RefPtr frame = m_frame.get();
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!coreFrame || coreFrame->rootFrame().isMainFrame())
+        return;
+
+    RefPtr rootView = coreFrame->rootFrame().view();
+    if (!rootView)
+        return;
+
+    auto toMainFrameView = [&](FloatRect rect) {
+        return rootView->convertToRootViewAcrossIsolatedFrames(rect);
+    };
+
+    dictionaryPopupInfo.origin = rootView->convertToRootViewAcrossIsolatedFrames(dictionaryPopupInfo.origin);
+
+    RefPtr textIndicator = dictionaryPopupInfo.textIndicator;
+    if (!textIndicator)
+        return;
+
+    auto boundingRect = textIndicator->textBoundingRectInRootViewCoordinates();
+    auto boundingRectInMainFrameView = toMainFrameView(boundingRect);
+    textIndicator->setTextRectsInBoundingRectCoordinates(textIndicator->textRectsInBoundingRectCoordinates().map([&](auto rect) {
+        rect.moveBy(boundingRect.location());
+        rect = toMainFrameView(rect);
+        rect.moveBy(-boundingRectInMainFrameView.location());
+        return rect;
+    }));
+    textIndicator->setTextBoundingRectInRootViewCoordinates(boundingRectInMainFrameView);
+    textIndicator->setSelectionRectInMainFrameViewCoordinates(toMainFrameView(textIndicator->selectionRectInMainFrameViewCoordinates()));
+    textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(toMainFrameView(textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()));
 }
 
 WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const

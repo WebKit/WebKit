@@ -48,6 +48,7 @@ using ImmediateActionHitTestResult = std::pair<RetainPtr<_WKHitTestResult>, _WKI
 @property (nonatomic, readonly) NSImmediateActionGestureRecognizer *immediateActionGesture;
 
 - (TestWebKitAPI::ImmediateActionHitTestResult)simulateImmediateAction:(NSPoint)location;
+- (TestWebKitAPI::ImmediateActionHitTestResult)simulateImmediateActionAnimation:(NSPoint)location;
 
 @end
 

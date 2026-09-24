@@ -36,7 +36,6 @@
 #import "DocumentView.h"
 #import "Editing.h"
 #import "EditingInlines.h"
-#import "FocusController.h"
 #import "FrameDestructionObserverInlines.h"
 #import "FrameSelection.h"
 #import "GraphicsContextCG.h"
@@ -311,11 +310,7 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node.get());
 
-    RefPtr focusedOrMainFrame = frame->page()->focusController().focusedOrMainFrame();
-    if (!focusedOrMainFrame)
-        return std::nullopt;
-
-    auto selection = focusedOrMainFrame->selection().selection();
+    auto selection = frame->selection().selection();
     NSRange selectionRange;
     NSUInteger hitIndex;
     std::optional<SimpleRange> fullCharacterRange;

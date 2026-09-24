@@ -126,7 +126,7 @@ struct WebHitTestResultData {
         const WebCore::DictionaryPopupInfo&, const RefPtr<WebCore::TextIndicator>&);
     ~WebHitTestResultData();
 
-    WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
+    WebCore::IntRect elementBoundingBoxInMainFrameViewCoordinates(const WebCore::HitTestResult&);
 
     static std::optional<FrameInfoData> frameInfoDataFromHitTestResult(const WebCore::HitTestResult&);
 

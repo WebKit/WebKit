@@ -2205,10 +2205,15 @@ public:
 #if PLATFORM(MAC)
     API::HitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
     void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
+    bool waitForImmediateActionHitTest(Seconds timeout);
 
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();
+
+    void dataDetectorsDidPresentUI(uint64_t pageOverlayID);
+    void dataDetectorsDidChangeUI(uint64_t pageOverlayID);
+    void dataDetectorsDidHideUI(uint64_t pageOverlayID);
 
     NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>);
 
@@ -4011,6 +4016,8 @@ private:
 
 #if PLATFORM(MAC)
     RefPtr<API::HitTestResult> m_lastMouseMoveHitTestResult;
+    std::optional<WebCore::FrameIdentifier> m_immediateActionHitTestFrameID;
+    bool m_hasPendingImmediateActionHitTest { false };
 #endif
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;

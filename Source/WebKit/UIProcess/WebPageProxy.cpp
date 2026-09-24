@@ -17515,42 +17515,69 @@ void WebPageProxy::setCaretBlinkingSuspended(bool suspended)
 
 void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, FloatPoint point)
 {
+    m_immediateActionHitTestFrameID = frameID;
+    m_hasPendingImmediateActionHitTest = true;
     sendToProcessContainingFrame(frameID, Messages::WebPage::PerformImmediateActionHitTestAtLocation(frameID, point));
+}
+
+bool WebPageProxy::waitForImmediateActionHitTest(Seconds timeout)
+{
+    // Each cross-origin iframe the hit test lands in forwards it to that iframe's process.
+    auto deadline = MonotonicTime::now() + timeout;
+    while (m_hasPendingImmediateActionHitTest) {
+        RefPtr frame = WebFrameProxy::webFrame(m_immediateActionHitTestFrameID);
+        if (!frame)
+            return false;
+        Ref process = frame->process();
+        if (!process->hasConnection())
+            return false;
+        if (protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(webPageIDInProcess(process), deadline - MonotonicTime::now()) != IPC::Error::NoError)
+            return false;
+    }
+    return true;
 }
 
 void WebPageProxy::immediateActionDidUpdate()
 {
-    send(Messages::WebPage::ImmediateActionDidUpdate());
+    if (m_immediateActionHitTestFrameID)
+        sendToProcessContainingFrame(m_immediateActionHitTestFrameID, Messages::WebPage::ImmediateActionDidUpdate(*m_immediateActionHitTestFrameID));
 }
 
 void WebPageProxy::immediateActionDidCancel()
 {
-    send(Messages::WebPage::ImmediateActionDidCancel());
+    if (m_immediateActionHitTestFrameID)
+        sendToProcessContainingFrame(m_immediateActionHitTestFrameID, Messages::WebPage::ImmediateActionDidCancel(*m_immediateActionHitTestFrameID));
 }
 
 void WebPageProxy::immediateActionDidComplete()
 {
-    send(Messages::WebPage::ImmediateActionDidComplete());
+    if (m_immediateActionHitTestFrameID)
+        sendToProcessContainingFrame(m_immediateActionHitTestFrameID, Messages::WebPage::ImmediateActionDidComplete(*m_immediateActionHitTestFrameID));
+}
+
+void WebPageProxy::dataDetectorsDidPresentUI(uint64_t pageOverlayID)
+{
+    sendToProcessContainingFrame(m_immediateActionHitTestFrameID, Messages::WebPage::DataDetectorsDidPresentUI(pageOverlayID));
+}
+
+void WebPageProxy::dataDetectorsDidChangeUI(uint64_t pageOverlayID)
+{
+    sendToProcessContainingFrame(m_immediateActionHitTestFrameID, Messages::WebPage::DataDetectorsDidChangeUI(pageOverlayID));
+}
+
+void WebPageProxy::dataDetectorsDidHideUI(uint64_t pageOverlayID)
+{
+    if (m_immediateActionHitTestFrameID)
+        sendToProcessContainingFrame(m_immediateActionHitTestFrameID, Messages::WebPage::DataDetectorsDidHideUI(*m_immediateActionHitTestFrameID, pageOverlayID));
 }
 
 void WebPageProxy::didPerformImmediateActionHitTest(IPC::Connection& connection, WebHitTestResultData&& result, bool contentPreventsDefault, const UserData& userData)
 {
-    if (protect(preferences())->siteIsolationEnabled()) {
-        if (result.remoteUserInputEventData) {
-            performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, FloatPoint(result.remoteUserInputEventData->transformedPoint));
-            return;
-        }
-        if (auto parentFrameID = result.frameInfo->parentFrameID) {
-            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, userData, result = WTF::move(result), contentPreventsDefault] (IPC::Connection* connection, WebCore::DictionaryPopupInfo popupInfo) mutable {
-                result.dictionaryPopupInfo = popupInfo;
-                if (!connection)
-                    return;
-                if (RefPtr pageClient = protectedThis->pageClient())
-                    pageClient->didPerformImmediateActionHitTest(result, contentPreventsDefault, WebProcessProxy::fromConnection(*connection)->transformHandlesToObjects(protect(userData.object()).get()).get());
-            });
-            return;
-        }
+    if (protect(preferences())->siteIsolationEnabled() && result.remoteUserInputEventData) {
+        performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, FloatPoint(result.remoteUserInputEventData->transformedPoint));
+        return;
     }
+    m_hasPendingImmediateActionHitTest = false;
     if (RefPtr pageClient = this->pageClient())
         pageClient->didPerformImmediateActionHitTest(result, contentPreventsDefault, WebProcessProxy::fromConnection(connection)->transformHandlesToObjects(protect(userData.object()).get()).get());
 }

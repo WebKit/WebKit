@@ -795,13 +795,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
     layoutIfNeeded();
 
     RefPtr currentFrame = WebProcess::singleton().webFrame(frameID);
-    if (!currentFrame)
-        return;
-    RefPtr localCurrentFrame = currentFrame->coreLocalFrame();
-    if (!localCurrentFrame)
-        return;
-    RefPtr currentFrameView = localCurrentFrame->view();
-
+    RefPtr localCurrentFrame = currentFrame ? currentFrame->coreLocalFrame() : nullptr;
+    RefPtr currentFrameView = localCurrentFrame ? localCurrentFrame->view() : nullptr;
     if (!currentFrameView || !currentFrameView->renderView()) {
         send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(WebHitTestResultData(), false, UserData()));
         return;
@@ -815,6 +810,19 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         HitTestRequest::Type::AllowChildFrameContent,
     });
 
+    auto subframe = EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get());
+    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
+        if (RefPtr remoteFrameView = remoteFrame->view()) {
+            WebHitTestResultData remoteResult;
+            remoteResult.remoteUserInputEventData = RemoteUserInputEventData {
+                remoteFrame->frameID(),
+                remoteFrameView->convertFromRootView(roundedIntPoint(locationInViewCoordinates))
+            };
+            send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(remoteResult, false, UserData()));
+            return;
+        }
+    }
+
     bool immediateActionHitTestPreventsDefault = false;
 
     RefPtr element = hitTestResult.targetElement();
@@ -824,21 +832,6 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         immediateActionHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
 
     WebHitTestResultData immediateActionResult(hitTestResult, { });
-
-    auto subframe = EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get());
-    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
-        if (RefPtr remoteFrameView = remoteFrame->view()) {
-            immediateActionResult.remoteUserInputEventData = RemoteUserInputEventData {
-                remoteFrame->frameID(),
-                remoteFrameView->convertFromRootView(roundedIntPoint(locationInViewCoordinates))
-            };
-        }
-    }
-
-    RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
-    if (!focusedOrMainFrame)
-        return;
-    auto selectionRange = focusedOrMainFrame->selection().selection().firstRange();
 
     auto indicatorOptions = [&](const SimpleRange& range) {
         OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorOption::UseUserSelectAllCommonAncestor };
@@ -853,13 +846,10 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(elementRange, indicatorOptions(elementRange), TextIndicatorPresentationTransition::FadeIn);
     }
 
-    if (auto lookupResult = lookupTextAtLocation(frameID, locationInViewCoordinates)) {
-        auto lookupRange = WTF::move(*lookupResult);
-        immediateActionResult.lookupText = plainText(lookupRange);
-        if (RefPtr node = hitTestResult.innerNode()) {
-            if (RefPtr frame = node->document().frame())
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, lookupRange, TextIndicatorPresentationTransition::FadeIn);
-        }
+    if (auto lookupRange = DictionaryLookup::rangeAtHitTestResult(hitTestResult)) {
+        immediateActionResult.lookupText = plainText(*lookupRange);
+        if (RefPtr frame = lookupRange->start.document().frame())
+            immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, *lookupRange, TextIndicatorPresentationTransition::FadeIn);
     }
 
     bool pageOverlayDidOverrideDataDetectors = false;
@@ -879,7 +869,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         pageOverlayDidOverrideDataDetectors = true;
         if (RetainPtr detectedContext = actionContext->context.get())
             immediateActionResult.platformData.detectedDataActionContext = { { detectedContext.get() } };
-        immediateActionResult.platformData.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
+        immediateActionResult.platformData.detectedDataBoundingBox = view->contentsToMainFrameView(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
         immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, indicatorOptions(actionContext->range), TextIndicatorPresentationTransition::FadeIn);
         immediateActionResult.platformData.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         break;
@@ -890,7 +880,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
             if (auto detectedContext = WTF::move(result->actionContext))
                 immediateActionResult.platformData.detectedDataActionContext = { { WTF::move(detectedContext) } };
-            immediateActionResult.platformData.detectedDataBoundingBox = result->boundingBox;
+            RefPtr rootView = localCurrentFrame->rootFrame().view();
+            immediateActionResult.platformData.detectedDataBoundingBox = rootView ? rootView->convertToRootViewAcrossIsolatedFrames(result->boundingBox) : result->boundingBox;
             immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(result->range, indicatorOptions(result->range), TextIndicatorPresentationTransition::FadeIn);
         }
     }
@@ -921,43 +912,34 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FrameIdentifier frameID, FloatPoint locationInViewCoordinates)
+static RefPtr<LocalFrame> immediateActionFrame(FrameIdentifier frameID)
 {
-    RefPtr currentFrame = WebProcess::singleton().webFrame(frameID);
-    RefPtr localCurrentFrame = dynamicDowncast<LocalFrame>(currentFrame->coreFrame());
-    if (!localCurrentFrame || !localCurrentFrame->view() || !localCurrentFrame->view()->renderView())
-        return std::nullopt;
-
-    return DictionaryLookup::rangeAtHitTestResult(localCurrentFrame->eventHandler().hitTestResultAtPoint(protect(localCurrentFrame->view())->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
-        HitTestRequest::Type::ReadOnly,
-        HitTestRequest::Type::Active,
-        HitTestRequest::Type::DisallowUserAgentShadowContentExceptForImageOverlays,
-        HitTestRequest::Type::AllowChildFrameContent,
-    }));
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    return frame ? frame->coreLocalFrame() : nullptr;
 }
 
-void WebPage::immediateActionDidUpdate()
+void WebPage::immediateActionDidUpdate(FrameIdentifier frameID)
 {
-    if (auto* localMainFrame = corePage()->localMainFrame())
-        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+    if (RefPtr frame = immediateActionFrame(frameID))
+        frame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
 }
 
-void WebPage::immediateActionDidCancel()
+void WebPage::immediateActionDidCancel(FrameIdentifier frameID)
 {
-    auto* localMainFrame = corePage()->localMainFrame();
-    if (!localMainFrame)
+    RefPtr frame = immediateActionFrame(frameID);
+    if (!frame)
         return;
-    ImmediateActionStage lastStage = localMainFrame->eventHandler().immediateActionStage();
+    ImmediateActionStage lastStage = frame->eventHandler().immediateActionStage();
     if (lastStage == ImmediateActionStage::ActionUpdated)
-        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
+        frame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
     else
-        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
+        frame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
 }
 
-void WebPage::immediateActionDidComplete()
+void WebPage::immediateActionDidComplete(FrameIdentifier frameID)
 {
-    if (auto* localMainFrame = corePage()->localMainFrame())
-        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
+    if (RefPtr frame = immediateActionFrame(frameID))
+        frame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
 void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)
@@ -982,13 +964,13 @@ void WebPage::dataDetectorsDidChangeUI(PageOverlay::PageOverlayID overlayID)
     }
 }
 
-void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
+void WebPage::dataDetectorsDidHideUI(FrameIdentifier frameID, PageOverlay::PageOverlayID overlayID)
 {
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
-    if (!localMainFrame)
+    RefPtr frame = immediateActionFrame(frameID);
+    if (!frame)
         return;
     // Dispatching a fake mouse event will allow clients to display any UI that is normally displayed on hover.
-    localMainFrame->eventHandler().dispatchFakeMouseMoveEventSoon();
+    frame->eventHandler().dispatchFakeMouseMoveEventSoon();
 
     for (const auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
         if (overlay->pageOverlayID() == overlayID) {

@@ -376,6 +376,7 @@ public:
 
 protected:
     virtual double contentScaleFactor() const = 0;
+    void convertDictionaryPopupInfoToMainFrameView(WebCore::DictionaryPopupInfo&) const;
     virtual bool platformPopulateEditorStateIfNeeded(EditorState&) const { return false; }
 
 private:

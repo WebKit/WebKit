@@ -3910,6 +3910,7 @@ bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
         return false;
 
     auto dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection, TextIndicatorPresentationTransition::Bounce);
+    convertDictionaryPopupInfoToMainFrameView(dictionaryPopupInfo);
     page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
     return true;
 }

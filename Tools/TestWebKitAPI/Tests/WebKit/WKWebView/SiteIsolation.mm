@@ -91,6 +91,10 @@
 
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
+#import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
+#import <WebKit/WKMenuItemIdentifiersPrivate.h>
+#import <WebKit/_WKHitTestResult.h>
+#import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
 @interface NSApplication ()
@@ -462,13 +466,14 @@ static RetainPtr<WKProcessPool> processPoolWithBackForwardCacheDisabled()
     return adoptNS([[WKProcessPool alloc] _initWithConfiguration:poolConfiguration.get()]);
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect, bool enable)
+template<typename WebViewClass = TestWKWebView>
+static std::pair<RetainPtr<WebViewClass>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect, bool enable)
 {
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     if (enable)
         enableSiteIsolation(configuration.get());
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:rect configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[WebViewClass alloc] initWithFrame:rect configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTF::move(webView), WTF::move(navigationDelegate) };
 }
@@ -534,11 +539,12 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     return siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), rect, true);
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithoutSharedProcess(const HTTPServer& server, CGRect rect = CGRectZero)
+template<typename WebViewClass = TestWKWebView>
+static std::pair<RetainPtr<WebViewClass>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithoutSharedProcess(const HTTPServer& server, CGRect rect = CGRectZero)
 {
     RetainPtr configuration = server.httpsProxyConfiguration();
     disableSharedProcess(configuration.get());
-    return siteIsolatedViewAndDelegate(configuration, rect, true);
+    return siteIsolatedViewAndDelegate<WebViewClass>(configuration, rect, true);
 }
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> viewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
@@ -11448,6 +11454,156 @@ TEST(SiteIsolation, SelectElementPopupAfterFocusChangesDuringTracking)
     }));
 }
 
+static constexpr auto lookUpTextHTML = "<!DOCTYPE html><body style='margin: 0; font-size: 32px'>test</body>"_s;
+
+static std::pair<RetainPtr<WKWebViewForTestingImmediateActions>, RetainPtr<TestNavigationDelegate>> loadLookUpTestPage(const HTTPServer& server)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess<WKWebViewForTestingImmediateActions>(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+struct LookUpPopupGeometry {
+    CGRect textBoundingRect;
+    CGPoint origin;
+};
+
+static LookUpPopupGeometry lookUpPopupGeometry(const HTTPServer& server, NSPoint location)
+{
+    auto [webView, navigationDelegate] = loadLookUpTestPage(server);
+    auto [hitTestResult, actionType] = [webView simulateImmediateAction:location];
+    EXPECT_NOT_NULL(hitTestResult.get());
+    if (!hitTestResult)
+        return { CGRectZero, CGPointZero };
+    EXPECT_EQ(actionType, _WKImmediateActionLookupText);
+    EXPECT_WK_STREQ([hitTestResult lookupText], "test");
+    return { [hitTestResult _dictionaryPopupTextBoundingRectForTesting], [hitTestResult _dictionaryPopupOriginForTesting] };
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInCrossOriginIframeUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // TextIndicator adds a (2, 1) margin around the text.
+    auto [rect, origin] = lookUpPopupGeometry(server, NSMakePoint(110, 115));
+    EXPECT_EQ(CGRectGetMinX(rect), 98);
+    EXPECT_EQ(CGRectGetMinY(rect), 99);
+    EXPECT_EQ(origin.x, 100);
+    EXPECT_TRUE(CGRectContainsPoint(rect, origin));
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInNestedCrossOriginIframesUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://domain3.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [rect, origin] = lookUpPopupGeometry(server, NSMakePoint(160, 165));
+    EXPECT_EQ(CGRectGetMinX(rect), 148);
+    EXPECT_EQ(CGRectGetMinY(rect), 149);
+    EXPECT_EQ(origin.x, 150);
+    EXPECT_TRUE(CGRectContainsPoint(rect, origin));
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInSameOriginIframeInsideCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://webkit.org/inner'></iframe></body>"_s } },
+        { "/inner"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [rect, origin] = lookUpPopupGeometry(server, NSMakePoint(160, 165));
+    EXPECT_EQ(CGRectGetMinX(rect), 148);
+    EXPECT_EQ(CGRectGetMinY(rect), 149);
+    EXPECT_EQ(origin.x, 150);
+    EXPECT_TRUE(CGRectContainsPoint(rect, origin));
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInSameSiteIframeBehindCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://example.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [rect, origin] = lookUpPopupGeometry(server, NSMakePoint(160, 165));
+    EXPECT_EQ(CGRectGetMinX(rect), 148);
+    EXPECT_EQ(CGRectGetMinY(rect), 149);
+    EXPECT_EQ(origin.x, 150);
+    EXPECT_TRUE(CGRectContainsPoint(rect, origin));
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInMainFrameIsNotOffset)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [rect, origin] = lookUpPopupGeometry(server, NSMakePoint(10, 15));
+    EXPECT_EQ(CGRectGetMinX(rect), -2);
+    EXPECT_EQ(CGRectGetMinY(rect), -1);
+    EXPECT_EQ(origin.x, 0);
+    EXPECT_TRUE(CGRectContainsPoint(rect, origin));
+}
+
+TEST(SiteIsolation, ForceClickLookUpInNestedCrossOriginIframes)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://domain3.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = loadLookUpTestPage(server);
+    auto [hitTestResult, actionType] = [webView simulateImmediateActionAnimation:NSMakePoint(160, 165)];
+    EXPECT_EQ(actionType, _WKImmediateActionLookupText);
+    EXPECT_WK_STREQ([hitTestResult lookupText], "test");
+}
+
+TEST(SiteIsolation, LookUpFromContextMenuInCrossOriginIframeUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 240px 0 0 40px; width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { lookUpTextHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)" inFrame:[webView firstChildFrame]];
+    [webView waitForNextPresentationUpdate];
+
+    __block bool didRevealItem = false;
+    InstanceMethodSwizzler revealSwizzler {
+        RVPresenter.class,
+        @selector(revealItem:documentContext:presentingContext:options:),
+        imp_implementationWithBlock(^BOOL(id, RVItem *, RVDocumentContext *, RVPresentingContext *, NSDictionary *) {
+            didRevealItem = true;
+            return YES;
+        })
+    };
+
+    // rightClick:andSelectItemMatching: always clicks at (50, 350) in window coordinates, which is (50, 250) in the view.
+    [webView rightClick:NSMakePoint(50, 350) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierLookUp];
+    }];
+    Util::run(&didRevealItem);
+
+    // The looked-up range is the selection, so TextIndicator adds no margin.
+    auto rect = [webView _textIndicatorBoundingRectForTesting];
+    EXPECT_EQ(CGRectGetMinX(rect), 40);
+    EXPECT_EQ(CGRectGetMinY(rect), 240);
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -12008,8 +12164,8 @@ TEST(SiteIsolation, SelectionBoundingRectInMainFrameIsNotOffset)
         Util::spinRunLoop();
     }
 
-    EXPECT_LT(CGRectGetMinX(rect), 50);
-    EXPECT_LT(CGRectGetMinY(rect), 50);
+    EXPECT_LT(CGRectGetMinX(rect), 5);
+    EXPECT_LT(CGRectGetMinY(rect), 5);
 }
 
 TEST(SiteIsolation, SelectionInCrossOriginIframeTracksMainFrameScroll)
