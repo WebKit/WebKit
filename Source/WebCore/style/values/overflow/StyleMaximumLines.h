@@ -30,12 +30,12 @@
 namespace WebCore {
 namespace Style {
 
-// <'max-lines`> = none | <integer [1,∞]>
+// <'max-lines`> = auto | <integer [1,∞]>
 // https://www.w3.org/TR/css-overflow-4/#propdef-max-lines.
-struct MaximumLines : ValueOrKeyword<Integer<CSS::Range{1,CSS::Range::infinity}>, CSS::Keyword::None> {
+struct MaximumLines : ValueOrKeyword<Integer<CSS::Range { 1, CSS::Range::infinity }>, CSS::Keyword::Auto> {
     using Base::Base;
 
-    constexpr bool isNone() const { return isKeyword(); }
+    constexpr bool isAuto() const { return isKeyword(); }
 };
 
 } // namespace Style
