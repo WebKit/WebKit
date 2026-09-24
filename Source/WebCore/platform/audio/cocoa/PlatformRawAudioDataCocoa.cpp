@@ -79,26 +79,39 @@ static CAAudioStreamDescription::IsInterleaved NODELETE interleavedFormat(AudioS
     return isAudioSampleFormatInterleaved(format) ? CAAudioStreamDescription::IsInterleaved::Yes : CAAudioStreamDescription::IsInterleaved::No;
 }
 
-static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescription& description, const CMTime& time, size_t numberOfFrames, const WebAudioBufferList& list)
+static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescription& description, const CMTime& time, size_t numberOfFrames, Ref<SharedBuffer>&& data, size_t dataSize)
 {
     CMAudioFormatDescriptionRef rawFormatDescription;
     if (PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &description.streamDescription(), 0, nullptr, 0, nullptr, nullptr, &rawFormatDescription))
         return nullptr;
     RetainPtr formatDescription = adoptCF(rawFormatDescription);
 
-    CMSampleBufferRef rawSampleBuffer;
-    if (PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, nullptr, false, nullptr, nullptr, rawFormatDescription, numberOfFrames, time, nullptr, &rawSampleBuffer))
-        return nullptr;
-    auto sampleBuffer = adoptCF(rawSampleBuffer);
-
-    if (auto error = PAL::CMSampleBufferSetDataBufferFromAudioBufferList(sampleBuffer.get(), kCFAllocatorDefault, kCFAllocatorDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, list.list())) {
-        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't allocate memory with error %d", error);
+    RetainPtr blockBuffer = data->createCMBlockBuffer();
+    if (!blockBuffer) {
+        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't create a block buffer");
         return nullptr;
     }
-    return sampleBuffer;
+
+    // The caller may have supplied more bytes than the format describes; the sample buffer must
+    // cover exactly the described bytes.
+    if (PAL::CMBlockBufferGetDataLength(blockBuffer) != dataSize) {
+        CMBlockBufferRef rawTrimmedBuffer;
+        if (auto error = PAL::CMBlockBufferCreateContiguous(kCFAllocatorDefault, blockBuffer, kCFAllocatorDefault, nullptr, 0, dataSize, 0, &rawTrimmedBuffer)) {
+            RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't trim the block buffer with error %d", error);
+            return nullptr;
+        }
+        blockBuffer = adoptCF(rawTrimmedBuffer);
+    }
+
+    CMSampleBufferRef rawSampleBuffer;
+    if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, blockBuffer, true, nullptr, nullptr, formatDescription, numberOfFrames, time, nullptr, &rawSampleBuffer)) {
+        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't create a sample buffer with error %d", error);
+        return nullptr;
+    }
+    return adoptCF(rawSampleBuffer);
 }
 
-RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t> sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
+RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(Ref<SharedBuffer>&& sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
 {
     // WebCodecsAudioDataAlgorithms's isValidAudioDataInit performs the checks ensuring all of the input parameters are valid (numberOfChannels != 0, numberOfFrames != 0 etc)
     CAAudioStreamDescription inputDescription(sampleRate, numberOfChannels, audioSampleFormatToPCMFormat(format), interleavedFormat(format));
@@ -112,26 +125,20 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
         RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create overflow");
         return nullptr;
     }
-    WebAudioBufferList inputList = inputDescription;
-    auto data = spanConstCast<uint8_t>(sourceData);
-    for (auto& buffer : inputList.buffers()) {
-        buffer.mData = data.data();
-        buffer.mNumberChannels = inputDescription.numberOfInterleavedChannels();
-        buffer.mDataByteSize = sizePlane;
-        if (data.size() < sizePlane) {
-            RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create nonsensical format data");
-            return nullptr;
-        }
-        skip(data, sizePlane);
+
+    size_t sizeData;
+    if (!WTF::safeMultiply(sizePlane, static_cast<size_t>(inputDescription.numberOfChannelStreams()), sizeData) || sourceData->size() < sizeData) {
+        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create nonsensical format data");
+        return nullptr;
     }
 
-    RetainPtr sample = createSampleBuffer(inputDescription, PAL::CMTimeMake(timestamp, 1000000), numberOfFrames, inputList);
+    RetainPtr sample = createSampleBuffer(inputDescription, PAL::CMTimeMake(timestamp, 1000000), numberOfFrames, WTF::move(sourceData), sizeData);
     if (!sample) {
         RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create failed");
         return nullptr;
     }
 
-    return PlatformRawAudioDataCocoa::create(MediaSampleAVFObjC::create(sample.get(), 0));
+    return PlatformRawAudioDataCocoa::create(MediaSampleAVFObjC::create(sample, 0));
 }
 
 PlatformRawAudioDataCocoa::PlatformRawAudioDataCocoa(Ref<MediaSampleAVFObjC>&& sample)
@@ -142,9 +149,9 @@ PlatformRawAudioDataCocoa::PlatformRawAudioDataCocoa(Ref<MediaSampleAVFObjC>&& s
 
 const AudioStreamBasicDescription& PlatformRawAudioDataCocoa::asbd() const
 {
-    RetainPtr description = PAL::CMSampleBufferGetFormatDescription(RetainPtr { m_sample->sampleBuffer() }.get());
+    RetainPtr description = PAL::CMSampleBufferGetFormatDescription(RetainPtr { m_sample->sampleBuffer() });
     ASSERT(description);
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description.get());
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description);
     ASSERT(asbd);
     return *asbd;
 }
@@ -178,7 +185,7 @@ size_t PlatformRawAudioDataCocoa::numberOfChannels() const
 
 size_t PlatformRawAudioDataCocoa::numberOfFrames() const
 {
-    return PAL::CMSampleBufferGetNumSamples(RetainPtr { m_sample->sampleBuffer() }.get());
+    return PAL::CMSampleBufferGetNumSamples(RetainPtr { m_sample->sampleBuffer() });
 }
 
 std::optional<uint64_t> PlatformRawAudioDataCocoa::duration() const

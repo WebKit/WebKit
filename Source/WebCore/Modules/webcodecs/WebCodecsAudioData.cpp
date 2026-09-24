@@ -34,6 +34,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "PlatformRawAudioData.h"
 #include "ScriptExecutionContext.h"
+#include "SharedBuffer.h"
 #include "WebCodecsAudioDataAlgorithms.h"
 #include "WebCodecsBufferTransfer.h"
 
@@ -49,12 +50,11 @@ ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::create(ScriptExecutionC
     if (!isValidAudioDataInit(init))
         return Exception { ExceptionCode::TypeError, "Invalid init data"_s };
 
-    auto data = PlatformRawAudioData::create(init.data.span(), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
+    Ref buffer = transferList.isEmpty() ? SharedBuffer::create(init.data.span()) : transferList.takeData(context.vm(), init.data);
 
+    RefPtr data = PlatformRawAudioData::create(WTF::move(buffer), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
     if (!data)
         return Exception { ExceptionCode::NotSupportedError, "AudioData creation failed"_s };
-
-    transferList.detachAll(context.vm());
 
     return adoptRef(*new WebCodecsAudioData(context, WebCodecsAudioInternalData { WTF::move(data) }));
 }

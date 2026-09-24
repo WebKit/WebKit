@@ -30,7 +30,7 @@
 namespace WebCore {
 
 #if !USE(GSTREAMER) && !USE(AVFOUNDATION)
-RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t>, AudioSampleFormat, float, int64_t, size_t, size_t)
+RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(Ref<SharedBuffer>&&, AudioSampleFormat, float, int64_t, size_t, size_t)
 {
     notImplemented();
     return nullptr;
