@@ -41,6 +41,10 @@
 #include <WebCore/UTIUtilities.h>
 #include <wtf/MachSendRight.h>
 
+#if ENABLE(LOCKDOWN_MODE_API)
+#include <pal/cocoa/LockdownModeCocoa.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -67,12 +71,20 @@ Ref<RemoteImageDecoderAVFManager> RemoteImageDecoderAVF::manager() const
 
 bool RemoteImageDecoderAVF::canDecodeType(const String& mimeType)
 {
+#if ENABLE(LOCKDOWN_MODE_API)
+    if (PAL::isLockdownModeEnabledForCurrentProcess())
+        return false;
+#endif
     // TODO: We may need to remove AVAssetMIMETypeCache in the Web process
     return AVAssetMIMETypeCache::singleton().canDecodeType(mimeType) != MediaPlayerEnums::SupportsType::IsNotSupported;
 }
 
 bool RemoteImageDecoderAVF::supportsMediaType(MediaType type)
 {
+#if ENABLE(LOCKDOWN_MODE_API)
+    if (PAL::isLockdownModeEnabledForCurrentProcess())
+        return false;
+#endif
     // TODO: We may need to remove AVAssetMIMETypeCache in the Web process
     return type == MediaType::Video && AVAssetMIMETypeCache::singleton().isAvailable();
 }
