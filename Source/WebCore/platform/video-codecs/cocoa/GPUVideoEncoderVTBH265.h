@@ -28,7 +28,6 @@
 #if USE(AVFOUNDATION)
 
 #include "GPUVideoEncoderVTB.h"
-#include <WebCore/HEVCUtilities.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -47,8 +46,6 @@ private:
     GPUVideoEncoderVTBH265(CreationInfo&&, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
     bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&) final;
-
-    HEVCBitstreamParser m_bitstreamParser;
 };
 
 }

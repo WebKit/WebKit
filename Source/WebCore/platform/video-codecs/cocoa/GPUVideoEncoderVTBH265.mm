@@ -52,12 +52,6 @@ bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sam
         if (annexBBuffer.isEmpty())
             return false;
 
-        {
-            m_bitstreamParser.parseBitstream(annexBBuffer.span());
-            if (auto qp = m_bitstreamParser.lastSliceQP())
-                info.qp = *qp;
-        }
-
         notifyEncodedFrame(annexBBuffer.span(), info);
         return true;
     }

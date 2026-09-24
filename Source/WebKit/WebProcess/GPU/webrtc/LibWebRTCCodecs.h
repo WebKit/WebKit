@@ -37,6 +37,8 @@
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/H264Utilities.h>
+#include <WebCore/HEVCUtilities.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoder.h>
@@ -138,8 +140,13 @@ public:
     struct Encoder {
         WTF_MAKE_TZONE_ALLOCATED(Encoder);
     public:
-        explicit Encoder(VideoEncoderIdentifier identifier)
+        explicit Encoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType type, const String& codec, bool useAnnexB, bool isRealtime, WebCore::VideoEncoderScalabilityMode scalabilityMode)
             : identifier(identifier)
+            , type(type)
+            , codec(codec.isolatedCopy())
+            , useAnnexB(useAnnexB)
+            , isRealtime(isRealtime)
+            , scalabilityMode(scalabilityMode)
         {
         }
 
@@ -153,9 +160,13 @@ public:
             bool shouldEncodeAsKeyFrame { false };
         };
 
-        VideoEncoderIdentifier identifier;
-        WebCore::VideoCodecType type;
-        String codec;
+        const VideoEncoderIdentifier identifier;
+        const WebCore::VideoCodecType type;
+        const String codec;
+        const bool useAnnexB { true };
+        const bool isRealtime { true };
+        const WebCore::VideoEncoderScalabilityMode scalabilityMode { WebCore::VideoEncoderScalabilityMode::L1T1 };
+
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
         Vector<PendingFrame> pendingFrames;
@@ -167,9 +178,8 @@ public:
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
         SharedVideoFrameWriter sharedVideoFrameWriter;
-        bool useAnnexB { true };
-        bool isRealtime { true };
-        WebCore::VideoEncoderScalabilityMode scalabilityMode { WebCore::VideoEncoderScalabilityMode::L1T1 };
+        WebCore::H264BitstreamParser h264BitstreamParser; // Used in LibWebRTCCodecs work queue.
+        WebCore::HEVCBitstreamParser hevcBitstreamParser; // Used in LibWebRTCCodecs work queue.
     };
 
     Encoder* createEncoder(WebCore::VideoCodecType, const std::map<std::string, std::string>&);

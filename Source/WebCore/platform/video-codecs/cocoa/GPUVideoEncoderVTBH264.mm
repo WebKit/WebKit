@@ -263,10 +263,6 @@ bool GPUVideoEncoderVTBH264::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sam
         if (annexBBuffer.isEmpty())
             return false;
 
-        m_bitstreamParser.parseBitstream(annexBBuffer.span());
-        if (auto qp = m_bitstreamParser.lastSliceQP())
-            info.qp = *qp;
-
         notifyDescriptionIfNeeded(sampleBuffer, CFSTR("avcC"));
         notifyEncodedFrame(annexBBuffer.span(), info);
         return true;

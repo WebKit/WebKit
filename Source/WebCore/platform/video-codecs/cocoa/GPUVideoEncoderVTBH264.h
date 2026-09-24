@@ -28,7 +28,6 @@
 #if USE(AVFOUNDATION)
 
 #include "GPUVideoEncoderVTB.h"
-#include "H264Utilities.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -50,8 +49,6 @@ private:
     void configureAdditionalProperties() final;
 
     const RetainPtr<CFStringRef> m_profileLevel;
-
-    H264BitstreamParser m_bitstreamParser;
 };
 
 }
