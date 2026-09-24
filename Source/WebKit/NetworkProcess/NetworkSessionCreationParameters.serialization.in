@@ -60,7 +60,6 @@ enum class WebKit::AllowsCellularAccess : bool;
     String networkCacheDirectory;
     WebKit::SandboxExtensionHandle networkCacheDirectoryExtensionHandle;
     String dataConnectionServiceType;
-    String ipAddressSpaceOverridesForTesting;
     bool fastServerTrustEvaluationEnabled;
     bool networkCacheSpeculativeValidationEnabled;
     bool shouldUseTestingNetworkSession;

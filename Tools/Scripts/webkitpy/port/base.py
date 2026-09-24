@@ -1136,20 +1136,6 @@ class Port(object):
     def experimental_feature(self):
         return self.get_option("experimental_feature", [])
 
-    def ip_address_space_overrides(self):
-        # Web Platform Tests synthesize the local and public address spaces with extra server ports
-        # bound to loopback, so the browser has to be told which port means which space. Documented
-        # here: https://github.com/web-platform-tests/rfcs/blob/master/rfcs/address_space_overrides.md
-        from webkitpy.layout_tests.servers import web_platform_test_server
-        config = web_platform_test_server.wpt_config_json(self)
-        if not config:
-            return ""
-        ports = (("http-local", "local"), ("http-public", "public"),
-                 ("https-local", "local"), ("https-public", "public"))
-        return ",".join("127.0.0.1:{}={}".format(port_number, address_space)
-                        for port_name, address_space in ports
-                        for port_number in config["ports"].get(port_name, []))
-
     def localhost_aliases(self):
         if not self.supports_localhost_aliases or self.get_option("disable_wpt_hostname_aliases"):
             return []

@@ -54,8 +54,6 @@
 #include "WebSharedWorkerServer.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
-#include <WebCore/DNS.h>
-#include <WebCore/IPAddressSpace.h>
 #include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/ResourceRequest.h>
@@ -64,7 +62,6 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
@@ -200,8 +197,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #endif
     , m_dataStoreIdentifier(parameters.dataStoreIdentifier)
 {
-    setIPAddressSpaceOverridesForTesting(parameters.ipAddressSpaceOverridesForTesting);
-
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;
         if (!networkCacheDirectory.isNull()) {
@@ -305,60 +300,6 @@ void NetworkSession::removeLocalNetworkAccessPermissions(const WebCore::Security
 void NetworkSession::clearLocalNetworkAccessPermissionsForTesting()
 {
     m_localNetworkAccessPermissions.clear();
-}
-
-static std::optional<WebCore::IPAddressSpace> addressSpaceFromName(StringView name)
-{
-    if (name == "local"_s)
-        return WebCore::IPAddressSpace::Local;
-    if (name == "public"_s)
-        return WebCore::IPAddressSpace::Public;
-    if (name == "loopback"_s)
-        return WebCore::IPAddressSpace::Loopback;
-    return std::nullopt;
-}
-
-void NetworkSession::setIPAddressSpaceOverridesForTesting(const String& overrides)
-{
-    m_ipAddressSpaceOverridesForTesting.clear();
-    if (overrides.isEmpty())
-        return;
-
-    // Each entry is <address>:<port>=<space>, e.g. "127.0.0.1:8802=local".
-    for (auto entry : StringView { overrides }.split(',')) {
-        auto equals = entry.reverseFind('=');
-        auto colon = entry.reverseFind(':');
-        if (equals == notFound || colon == notFound || colon > equals) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-
-        auto address = WebCore::IPAddress::fromString(entry.left(colon).toString());
-        auto port = parseInteger<uint16_t>(entry.substring(colon + 1, equals - colon - 1));
-        auto space = addressSpaceFromName(entry.substring(equals + 1));
-        if (!address || !port || !space) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-
-        m_ipAddressSpaceOverridesForTesting.append({ *address, *port, *space });
-    }
-}
-
-WebCore::IPAddressSpace NetworkSession::classifyConnectionAddressSpace(const std::optional<WebCore::IPAddress>& resolvedIPAddress, const URL& url) const
-{
-    if (!resolvedIPAddress)
-        return WebCore::IPAddressSpace::Unknown;
-
-    // Checked first, so a test can describe a space a loopback-only server could not otherwise produce.
-    if (auto port = url.port()) {
-        for (auto& candidate : m_ipAddressSpaceOverridesForTesting) {
-            if (candidate.port == *port && candidate.address == *resolvedIPAddress)
-                return candidate.space;
-        }
-    }
-
-    return WebCore::classifyIPAddressSpace(*resolvedIPAddress);
 }
 
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)

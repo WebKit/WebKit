@@ -2310,7 +2310,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.hstsStorageDirectory = WTF::move(hstsStorageDirectory);
     networkSessionParameters.hstsStorageDirectoryExtensionHandle = WTF::move(hstsStorageDirectoryExtensionHandle);
     networkSessionParameters.dataConnectionServiceType = m_configuration->dataConnectionServiceType();
-    networkSessionParameters.ipAddressSpaceOverridesForTesting = m_configuration->ipAddressSpaceOverridesForTesting();
     networkSessionParameters.fastServerTrustEvaluationEnabled = m_configuration->fastServerTrustEvaluationEnabled();
     networkSessionParameters.networkCacheSpeculativeValidationEnabled = m_configuration->networkCacheSpeculativeValidationEnabled();
     networkSessionParameters.shouldUseTestingNetworkSession = m_configuration->testingSessionEnabled();

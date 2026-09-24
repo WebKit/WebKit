@@ -59,7 +59,6 @@ struct Options {
     std::set<std::string> allowedHosts;
     std::set<std::string> localhostAliases;
     std::string webCoreLogChannels;
-    std::string ipAddressSpaceOverrides;
     std::string webKitLogChannels;
     TestFeatures features;
 };
