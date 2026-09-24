@@ -513,7 +513,8 @@ take_from(
     pas_page_sharing_pool* pool,
     pas_page_sharing_participant participant,
     pas_deferred_decommit_log* decommit_log,
-    pas_lock_hold_mode heap_lock_hold_mode)
+    pas_lock_hold_mode heap_lock_hold_mode,
+    bool is_forced_scavenge)
 {
     static const bool verbose = false;
     
@@ -529,7 +530,7 @@ take_from(
     }
     
     result = pas_page_sharing_participant_take_least_recently_used(
-        participant, decommit_log, heap_lock_hold_mode);
+        participant, decommit_log, heap_lock_hold_mode, is_forced_scavenge);
 
     switch (result) {
     case pas_page_sharing_pool_take_none_available:
@@ -555,10 +556,14 @@ pas_page_sharing_pool_take_least_recently_used(
 {
     static const bool verbose = false;
 
+    bool is_forced_scavenge;
+
     if (verbose) {
         pas_log("%p: taking least recently used.\n",
                 pool);
     }
+
+    is_forced_scavenge = max_epoch == PAS_EPOCH_MAX;
     
     for (;;) {
         pas_page_sharing_pool_take_result result;
@@ -621,7 +626,7 @@ pas_page_sharing_pool_take_least_recently_used(
             return pas_page_sharing_pool_take_none_within_max_epoch;
         }
         
-        result = take_from(pool, participant, decommit_log, heap_lock_hold_mode);
+        result = take_from(pool, participant, decommit_log, heap_lock_hold_mode, is_forced_scavenge);
         switch (result) {
         case pas_page_sharing_pool_take_none_available:
             if (verbose)

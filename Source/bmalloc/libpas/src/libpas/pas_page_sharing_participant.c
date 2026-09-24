@@ -163,7 +163,8 @@ pas_page_sharing_pool_take_result
 pas_page_sharing_participant_take_least_recently_used(
     pas_page_sharing_participant participant,
     pas_deferred_decommit_log* decommit_log,
-    pas_lock_hold_mode heap_lock_hold_mode)
+    pas_lock_hold_mode heap_lock_hold_mode,
+    bool is_forced_scavenge)
 {
     void* ptr;
     pas_page_sharing_pool_take_result result;
@@ -177,7 +178,7 @@ pas_page_sharing_participant_take_least_recently_used(
         
     case pas_page_sharing_participant_segregated_size_directory:
         return pas_segregated_size_directory_take_last_empty(
-            ptr, decommit_log, heap_lock_hold_mode);
+            ptr, decommit_log, heap_lock_hold_mode, is_forced_scavenge);
 
     case pas_page_sharing_participant_bitfit_directory:
         PAS_ASSERT(decommit_log);
