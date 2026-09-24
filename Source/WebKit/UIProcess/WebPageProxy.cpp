@@ -874,6 +874,7 @@ WebPageProxy::Internals::Internals(WebPageProxy& page, bool processInheritedFrom
     , audibleActivityTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::AudibleActivityTimer"_s, &page, &WebPageProxy::clearAudibleActivity)
     , geolocationPermissionRequestManager(page)
     , updatePlayingMediaDidChangeTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::UpdatePlayingMediaDidChangeTimer"_s, &page, &WebPageProxy::updatePlayingMediaDidChangeTimerFired)
+    , remoteFrameMouseEventTimeoutTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::RemoteFrameMouseEventTimeoutTimer"_s, &page, &WebPageProxy::remoteFrameMouseEventTimedOut)
     , notificationManagerMessageHandler(page)
     , pageLoadState(page)
     , resetRecentCrashCountTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::ResetRecentCrashCountTimer"_s, &page, &WebPageProxy::resetRecentCrashCount)
@@ -4667,13 +4668,29 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEve
     }
 
     auto eventType = event->type();
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, WTF::move(event), WTF::move(sandboxExtensions)), [weakThis = WeakPtr { *this }, eventType] (IPC::Connection* connection, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
+    Ref sentEvent = event;
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, WTF::move(event), WTF::move(sandboxExtensions)), [weakThis = WeakPtr { *this }, eventType, sentEvent = WTF::move(sentEvent)] (IPC::Connection* connection, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !connection)
+        if (!protectedThis)
             return;
 
-        if (protectedThis->internals().mouseEventQueue.isEmpty())
+        // Ignore replies for events that have already been retired, e.g. because the queue was cleared or the event timed out.
+        auto& mouseEventQueue = protectedThis->internals().mouseEventQueue;
+        bool isReplyForCurrentEvent = !mouseEventQueue.isEmpty() && mouseEventQueue.first().ptr() == sentEvent.ptr();
+
+        // The process handling this event went away (e.g. it crashed or was terminated for being unresponsive).
+        // Retire the event so that the queue doesn't get stuck forever.
+        if (!connection) {
+            if (isReplyForCurrentEvent)
+                protectedThis->mouseEventHandlingCompleted(false, std::nullopt);
             return;
+        }
+
+        if (!isReplyForCurrentEvent) {
+            if (eventType != WebEventType::MouseMove)
+                WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
+            return;
+        }
 
         MESSAGE_CHECK_BASE(!remoteUserInputEventData || protect(protectedThis->preferences())->siteIsolationEnabled(), connection);
 
@@ -13897,10 +13914,19 @@ void WebPageProxy::mouseEventHandlingCompleted(bool handled, std::optional<Remot
         // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
         if (RefPtr targetFrame = WebFrameProxy::webFrame(remoteUserInputEventData->targetFrameID)) {
             startResponsivenessTimerForMouseEvent(*targetFrame, event->type());
+            // Don't let an unresponsive subframe process block mouse events for the rest of the page.
+            internals().remoteFrameMouseEventTimeoutTimer.startOneShot(ResponsivenessTimer::defaultResponsivenessTimeout);
             sendMouseEvent(remoteUserInputEventData->targetFrameID, event.copyRef(), { });
+            return;
         }
-        return;
+
+        // The target frame is gone; retire the event instead of leaving it at the front of the queue.
+#if ENABLE(CONTEXT_MENU_EVENT) || PLATFORM(GTK) || PLATFORM(WPE)
+        handled = false;
+#endif
     }
+
+    internals().remoteFrameMouseEventTimeoutTimer.stop();
 
     // Retire the last sent event now that WebProcess is done handling it.
     Ref event = internals().mouseEventQueue.takeFirst();
@@ -13933,6 +13959,15 @@ void WebPageProxy::mouseEventHandlingCompleted(bool handled, std::optional<Remot
             automationSession->mouseEventsFlushedForPage(*this);
         didFinishProcessingAllPendingMouseEvents();
     }
+}
+
+void WebPageProxy::remoteFrameMouseEventTimedOut()
+{
+    if (internals().mouseEventQueue.isEmpty())
+        return;
+
+    WEBPAGEPROXY_RELEASE_LOG_ERROR(MouseHandling, "remoteFrameMouseEventTimedOut: Giving up on a mouse event sent to a subframe process");
+    mouseEventHandlingCompleted(false, std::nullopt);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -14678,6 +14713,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     internals().mouseEventQueue.clear();
     internals().coalescedMouseEvents.clear();
+    internals().remoteFrameMouseEventTimeoutTimer.stop();
     internals().keyEventQueue.clear();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();

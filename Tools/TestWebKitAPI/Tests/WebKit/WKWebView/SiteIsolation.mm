@@ -7432,6 +7432,81 @@ TEST(SiteIsolation, UnresponsiveProcessDies)
     Util::runFor(100_ms);
     EXPECT_TRUE(navigationDelegate.get().didBecomeResponsive);
 }
+
+static bool waitForMainFrameMouseDown(TestWKWebView *webView, unsigned maxAttempts)
+{
+    for (unsigned i = 0; i < maxAttempts; ++i) {
+        if ([[webView objectByEvaluatingJavaScript:@"window.mouseDownCount"] intValue] > 0)
+            return true;
+        Util::runFor(100_ms);
+    }
+    return false;
+}
+
+static constexpr auto mainFrameWithUnresponsiveSubframeHTML = "<!DOCTYPE html><head><style>iframe { width: 100px; height: 100px; }</style></head>"
+    "<body style='height: 500px'><iframe src='https://webkit.org/unresponsive-page'></iframe>"
+    "<script>window.mouseDownCount = 0; addEventListener('mousedown', () => { window.mouseDownCount++; });</script></body>"_s;
+
+TEST(SiteIsolation, MouseEventsAfterHoveringOverUnresponsiveSubframe)
+{
+    HTTPServer server({
+        { "/parent"_s, { mainFrameWithUnresponsiveSubframeHTML } },
+        { "/unresponsive-page"_s, { "<!DOCTYPE html><html><body onload='window.addEventListener(`mousemove`, () => { while (true) { } });'>unresponsive</body></html>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr navigationDelegate = adoptNS([NavigationDelegateWithUnresponsiveCallback new]);
+    enableSiteIsolation(configuration.get());
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/parent"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [webView firstChildFrame]._processIdentifier);
+
+    CGPoint insideSubframe = [webView convertPoint:CGPointMake(50, 50) toView:nil];
+    [webView mouseEnterAtPoint:insideSubframe];
+    [webView mouseMoveToPoint:insideSubframe withFlags:0];
+
+    // The subframe process never replies to the mouse move, but that shouldn't block mouse events for the main frame forever.
+    CGPoint outsideSubframe = [webView convertPoint:CGPointMake(400, 400) toView:nil];
+    [webView mouseMoveToPoint:outsideSubframe withFlags:0];
+    [webView mouseDownAtPoint:outsideSubframe simulatePressure:NO];
+    [webView mouseUpAtPoint:outsideSubframe];
+
+    EXPECT_TRUE(waitForMainFrameMouseDown(webView.get(), 100));
+}
+
+TEST(SiteIsolation, MouseEventsAfterUnresponsiveSubframeProcessIsTerminated)
+{
+    HTTPServer server({
+        { "/parent"_s, { mainFrameWithUnresponsiveSubframeHTML } },
+        { "/unresponsive-page"_s, { "<!DOCTYPE html><html><body onload='window.addEventListener(`mousedown`, () => { while (true) { } });'>unresponsive</body></html>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr navigationDelegate = adoptNS([NavigationDelegateWithUnresponsiveCallback new]);
+    enableSiteIsolation(configuration.get());
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/parent"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t childFramePID = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE([webView mainFrame].info._processIdentifier, childFramePID);
+
+    [webView sendClicksAtPoint:[webView convertPoint:CGPointMake(50, 50) toView:nil] numberOfClicks:1];
+    Util::runFor(500_ms);
+    kill(childFramePID, 9);
+
+    // Mouse events should resume as soon as the process goes away, well before the subframe mouse event timeout.
+    CGPoint outsideSubframe = [webView convertPoint:CGPointMake(400, 400) toView:nil];
+    [webView mouseMoveToPoint:outsideSubframe withFlags:0];
+    [webView mouseDownAtPoint:outsideSubframe simulatePressure:NO];
+    [webView mouseUpAtPoint:outsideSubframe];
+
+    EXPECT_TRUE(waitForMainFrameMouseDown(webView.get(), 20));
+}
 #endif
 
 TEST(SiteIsolation, FormSubmit)

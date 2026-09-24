@@ -259,6 +259,7 @@ public:
     WebCore::FloatSize minimumUnobscuredSize;
     Deque<Ref<NativeWebMouseEvent>> mouseEventQueue;
     Vector<Ref<WebMouseEvent>> coalescedMouseEvents;
+    RunLoop::Timer remoteFrameMouseEventTimeoutTimer;
     WebCore::MediaProducerMutedStateFlags mutedState;
     WebNotificationManagerMessageHandler notificationManagerMessageHandler;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
