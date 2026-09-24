@@ -50,7 +50,7 @@ template<typename Descriptor>
 WebCore::Color resolve(const RelativeColorResolver<Descriptor>& relative, const CSSToLengthConversionData& conversionData)
 {
     auto originColor = relative.origin;
-    auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();
+    auto originColorAsColorType = originColor.template toColorTypeLossyCarryingForwardMissing<GetColorType<Descriptor>>();
 
     auto originComponentsUnresolved = asColorComponents(originColorAsColorType.unresolved());
 
@@ -100,7 +100,7 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
     ASSERT(!componentsRequireConversionData<Descriptor>(relative.components));
 
     auto originColor = relative.origin;
-    auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();
+    auto originColorAsColorType = originColor.template toColorTypeLossyCarryingForwardMissing<GetColorType<Descriptor>>();
 
     auto originComponentsUnresolved = asColorComponents(originColorAsColorType.unresolved());
 
