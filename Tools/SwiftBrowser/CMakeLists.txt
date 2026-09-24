@@ -37,6 +37,7 @@ set(SwiftBrowser_FRAMEWORKS
 
 set(SwiftBrowser_DEPENDENCIES
     SwiftBrowserAssets
+    _WebKit_SwiftUI_StageSwiftModule
 )
 
 set(SwiftBrowser_CODE_SIGN_ENTITLEMENTS ${SWIFTBROWSER_DIR}/Resources/SwiftBrowser.entitlements)

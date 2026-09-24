@@ -2434,7 +2434,12 @@ add_dependencies(_WebKit_SwiftUI WebKit WebKit_StageSwiftModule)
 
 set(_swiftui_module_output "${CMAKE_BINARY_DIR}/Source/WebKit")
 set(_swiftui_module_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/_WebKit_SwiftUI.framework/Modules/_WebKit_SwiftUI.swiftmodule")
-add_custom_command(TARGET _WebKit_SwiftUI POST_BUILD
+set(_WebKit_SwiftUI_CODE_SIGN_INPUTS
+    "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftmodule"
+    "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftdoc"
+    "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.abi.json"
+)
+add_custom_command(OUTPUT ${_WebKit_SwiftUI_CODE_SIGN_INPUTS} DEPENDS "${_swiftui_module_output}/_WebKit_SwiftUI.swiftmodule"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${_swiftui_module_dir}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${_swiftui_module_output}/_WebKit_SwiftUI.swiftmodule"
@@ -2445,7 +2450,9 @@ add_custom_command(TARGET _WebKit_SwiftUI POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${_swiftui_module_output}/_WebKit_SwiftUI.abi.json"
         "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.abi.json"
+    VERBATIM
 )
+add_custom_target(_WebKit_SwiftUI_StageSwiftModule ALL DEPENDS ${_WebKit_SwiftUI_CODE_SIGN_INPUTS})
 
 WEBKIT_FRAMEWORK(_WebKit_SwiftUI)
 
@@ -2769,7 +2776,11 @@ add_dependencies(_WebKit_SwiftUI WebKit WebKit_StageSwiftModuleMac WebKit_CopyMo
 # this binary.
 set(_swiftui_framework "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/_WebKit_SwiftUI.framework")
 set(_swiftui_module_dir "${_swiftui_framework}/Versions/A/Modules/_WebKit_SwiftUI.swiftmodule")
-add_custom_command(TARGET _WebKit_SwiftUI POST_BUILD
+set(_WebKit_SwiftUI_CODE_SIGN_INPUTS
+    "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftmodule"
+    "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftdoc"
+)
+add_custom_command(OUTPUT ${_WebKit_SwiftUI_CODE_SIGN_INPUTS} DEPENDS "${CMAKE_BINARY_DIR}/Source/WebKit/_WebKit_SwiftUI.swiftmodule"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${_swiftui_module_dir}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_BINARY_DIR}/Source/WebKit/_WebKit_SwiftUI.swiftmodule"
@@ -2777,7 +2788,9 @@ add_custom_command(TARGET _WebKit_SwiftUI POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_BINARY_DIR}/Source/WebKit/_WebKit_SwiftUI.swiftdoc"
         "${_swiftui_module_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftdoc"
+    VERBATIM
 )
+add_custom_target(_WebKit_SwiftUI_StageSwiftModule ALL DEPENDS ${_WebKit_SwiftUI_CODE_SIGN_INPUTS})
 
 WEBKIT_FRAMEWORK(_WebKit_SwiftUI)
 
