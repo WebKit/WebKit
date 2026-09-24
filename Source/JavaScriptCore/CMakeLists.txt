@@ -1648,6 +1648,7 @@ if (ENABLE_MYA)
         corpse/CorpseMemory.h
         corpse/CorpseMemoryPtr.h
         corpse/CorpseMemorySpan.h
+        corpse/CorpsePlatform.h
         corpse/CorpseProcess.h
         corpse/CorpseRegion.h
         corpse/CorpseSnapshot.h

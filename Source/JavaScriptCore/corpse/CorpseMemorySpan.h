@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <JavaScriptCore/CorpsePlatform.h>
+
 #if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseMemory.h>
 #include <cstddef>
 #include <limits>
-#include <mach/mach.h>
 #include <span>
 #include <stdint.h>
 #include <type_traits>
@@ -77,7 +78,7 @@ public:
     explicit operator bool() const { return isValid(); }
 
     Error error() const { return m_error; }
-    kern_return_t kernResult() const { return m_kernResult; }
+    KernelResult kernResult() const { return m_kernResult; }
 
     Address address() const { return m_address; }
 
@@ -151,7 +152,7 @@ private:
     RefPtr<Region> m_region;
 
     Error m_error { Error::None };
-    kern_return_t m_kernResult { KERN_SUCCESS };
+    KernelResult m_kernResult { kernelSuccess };
 };
 
 template<typename T>

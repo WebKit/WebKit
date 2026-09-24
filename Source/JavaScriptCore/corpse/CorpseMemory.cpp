@@ -28,10 +28,16 @@
 
 #if ENABLE(MYA)
 
+#if OS(DARWIN)
 #include "CorpseMachVMSPI.h"
-
-#include <limits>
 #include <mach/mach.h>
+#else
+#include <errno.h>
+#include <sys/mman.h>
+#include <sys/uio.h>
+#include <wtf/PageBlock.h>
+#endif
+#include <limits>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
@@ -44,6 +50,8 @@ namespace Corpse {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Memory::Region);
 
+#if OS(DARWIN)
+
 Memory::MapResult Memory::Region::create(Memory& memory, Address remoteBase, size_t pageCount, size_t offset)
 {
     mach_vm_address_t target = 0;
@@ -52,7 +60,7 @@ Memory::MapResult Memory::Region::create(Memory& memory, Address remoteBase, siz
     vm_prot_t maximumProtection = VM_PROT_READ;
     boolean_t copyTheMemory = false; // i.e. share the corpse's pages instead of copying into new pages for this process.
     kern_return_t kr = mach_vm_remap_new(mach_task_self(), &target, pageCount * pageSize(), 0, VM_FLAGS_ANYWHERE,
-        memory.m_corpsePort, remoteBase.toMachVMAddress(), copyTheMemory, &currentProtection, &maximumProtection, VM_INHERIT_NONE);
+        memory.m_corpsePort, remoteBase.toTargetVMAddress(), copyTheMemory, &currentProtection, &maximumProtection, VM_INHERIT_NONE);
 
     if (kr != KERN_SUCCESS) {
         Error error;
@@ -78,18 +86,48 @@ Memory::MapResult Memory::Region::create(Memory& memory, Address remoteBase, siz
     return MapResult { WTF::move(region), localBase + offset };
 }
 
+Memory::Region::~Region()
+{
+    auto localBase = reinterpret_cast<mach_vm_address_t>(m_localBase);
+    mach_vm_deallocate(mach_task_self(), localBase, m_pageCount * pageSize());
+}
+
+#else
+
+Memory::MapResult Memory::Region::create(Memory& memory, Address remoteBase, size_t pageCount, size_t offset)
+{
+    size_t size = pageCount * pageSize();
+    void* target = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (target == MAP_FAILED)
+        return MapResult { .error = Error::OutOfAddressSpace, .kernResult = errno };
+
+    iovec local { target, size };
+    iovec remote { reinterpret_cast<void*>(remoteBase.toTargetVMAddress()), size };
+    ssize_t copied = process_vm_readv(memory.m_corpsePort, &local, 1, &remote, 1, 0);
+    if (copied != static_cast<ssize_t>(size)) {
+        KernelResult result = copied < 0 ? errno : EFAULT;
+        munmap(target, size);
+        return MapResult { .error = Error::Unknown, .kernResult = result };
+    }
+
+    auto* localBase = static_cast<const uint8_t*>(target);
+    RefPtr<Region> region = adoptRef(new Region(memory, remoteBase, pageCount, localBase));
+    return MapResult { WTF::move(region), localBase + offset };
+}
+
+Memory::Region::~Region()
+{
+    munmap(const_cast<uint8_t*>(m_localBase), m_pageCount * pageSize());
+}
+
+#endif // OS(DARWIN)
+
 Memory::Region::Region(Memory& memory, Address remoteBase, size_t pageCount, const uint8_t* localBase)
     : m_memory(memory)
     , m_remoteBase(remoteBase)
     , m_pageCount(pageCount)
     , m_localBase(localBase)
 {
-}
-
-Memory::Region::~Region()
-{
-    auto localBase = reinterpret_cast<mach_vm_address_t>(m_localBase);
-    mach_vm_deallocate(mach_task_self(), localBase, m_pageCount * pageSize());
 }
 
 void Memory::Region::deref()
@@ -114,10 +152,14 @@ void Memory::Region::deref()
 
 size_t Memory::pageSize()
 {
+#if OS(DARWIN)
     return vm_kernel_page_size;
+#else
+    return WTF::pageSize();
+#endif
 }
 
-Memory::Memory(mach_port_t corpsePort)
+Memory::Memory(TaskHandle corpsePort)
     : m_corpsePort(corpsePort)
 {
     // Placed here so we can assert this invariant only once on construction.
@@ -138,20 +180,20 @@ Memory::MapResult Memory::map(Address objAddress, size_t objSizeInBytes)
     if (!objSizeInBytes)
         return MapResult { .error = Error::InvalidRequest };
 
-    mach_vm_address_t objBase = objAddress.toMachVMAddress();
-    mach_vm_address_t objEnd = objBase + objSizeInBytes;
+    target_address_t objBase = objAddress.toTargetVMAddress();
+    target_address_t objEnd = objBase + objSizeInBytes;
     if (objEnd < objBase)
         return MapResult { .error = Error::InvalidRequest }; // objEnd overflows.
 
     size_t page = pageSize();
-    mach_vm_address_t pageMask = static_cast<mach_vm_address_t>(page) - 1;
+    target_address_t pageMask = static_cast<target_address_t>(page) - 1;
 
-    if (objEnd > std::numeric_limits<mach_vm_address_t>::max() - pageMask)
+    if (objEnd > std::numeric_limits<target_address_t>::max() - pageMask)
         return MapResult { .error = Error::InvalidRequest };
 
     // Compute Region that object resides in.
-    mach_vm_address_t regionBase = objBase & ~pageMask;
-    mach_vm_address_t regionEnd = (objEnd + pageMask) & ~pageMask;
+    target_address_t regionBase = objBase & ~pageMask;
+    target_address_t regionEnd = (objEnd + pageMask) & ~pageMask;
 
     // Reject "Page 0". A null Address is reserved as the empty value in the m_regions map.
     if (!regionBase)
@@ -230,7 +272,7 @@ void Memory::dump(const char* indent) const
     dataLogLn(indent, "m_regions: ", regionCount(), " region(s) at ", m_regions.size(), " base(s), ",
         mappedPageCount(), " page(s) mapped");
     for (auto& entry : m_regions) {
-        dataLog(indent, "  corpse ", RawHex(entry.key.toMachVMAddress()), " ->");
+        dataLog(indent, "  corpse ", RawHex(entry.key.toTargetVMAddress()), " ->");
         for (auto& region : entry.value) {
             const char* baseNote = region->remoteBase() == entry.key ? "" : " <base disagrees with its key>";
             dataLog(" [", region->pageCount(), " page(s), local ",
