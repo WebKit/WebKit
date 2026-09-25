@@ -1,0 +1,51 @@
+<style>
+.flex-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.auto-basis {
+    flex-basis: auto;
+}
+.layout-boundary {
+    overflow: hidden;
+    width: 200px;
+    height: 100px;
+}
+</style>
+Pass if this test does not time out: layout inside deeply nested column flexboxes with percentage flex-basis should take O(n).
+<div id=percentageBasis style="display: flex; flex-direction: column"></div>
+<div id=autoBasis style="display: flex; flex-direction: column"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function buildAndRelayout(container, ancestorClassName)
+{
+    let parent = container;
+    for (let i = 0; i < 40; ++i) {
+        let flexItem = document.createElement("div");
+        flexItem.className = ancestorClassName;
+        parent.appendChild(flexItem);
+        parent = flexItem;
+    }
+    // The layout boundary and its child keep the percentage flex-basis (flex: 1), which starts the percentage walk up the chain.
+    parent.className = "flex-item layout-boundary";
+    let inner = document.createElement("div");
+    inner.className = "flex-item";
+    parent.appendChild(inner);
+    let leaf = document.createElement("div");
+    leaf.textContent = "text";
+    inner.appendChild(leaf);
+
+    leaf.offsetHeight;
+    // Only the subtree under the layout boundary needs layout now. Ask the leaf, as body's offsetHeight would not force this layout.
+    leaf.textContent = "changed text";
+    leaf.offsetHeight;
+
+    container.remove();
+}
+
+buildAndRelayout(percentageBasis, "flex-item");
+buildAndRelayout(autoBasis, "flex-item auto-basis");
+</script>

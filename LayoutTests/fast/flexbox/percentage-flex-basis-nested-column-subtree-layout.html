@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<style>
+.flex-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.layout-boundary {
+    overflow: hidden;
+    width: 200px;
+    height: 100px;
+}
+</style>
+Pass if this test does not time out: layout inside deeply nested column flexboxes with percentage flex-basis should take O(n).
+<div id=container style="display: flex; flex-direction: column"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let parent = container;
+for (let i = 0; i < 40; ++i) {
+    let flexItem = document.createElement("div");
+    flexItem.className = "flex-item";
+    parent.appendChild(flexItem);
+    parent = flexItem;
+}
+parent.classList.add("layout-boundary");
+let inner = document.createElement("div");
+inner.className = "flex-item";
+parent.appendChild(inner);
+let leaf = document.createElement("div");
+leaf.textContent = "text";
+inner.appendChild(leaf);
+
+leaf.offsetHeight;
+leaf.textContent = "changed text";
+leaf.offsetHeight;
+
+container.remove();
+</script>
