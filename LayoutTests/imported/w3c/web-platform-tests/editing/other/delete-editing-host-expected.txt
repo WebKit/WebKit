@@ -1,0 +1,5 @@
+Here is a child
+
+PASS Should not do anything when deleting full editing host
+PASS Should retain all children when deleting full editing host
+
