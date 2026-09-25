@@ -193,7 +193,7 @@ PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contentedita
 PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>a[b]c</unknown-element></p>" queryCommandValue("delete") after
 PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>": execCommand("delete", false, "") return value
 PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" checks for modifications to non-editable content
-FAIL [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<p contenteditable=\"false\"><span contenteditable=\"\"></span></p>" but got "<p contenteditable=\"false\"><span contenteditable=\"\"><br></span></p>"
+PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" compare innerHTML
 PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" queryCommandIndeterm("delete") before
 PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" queryCommandState("delete") before
 PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" queryCommandValue("delete") before
@@ -211,7 +211,7 @@ PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>a[bc<br
 PASS [["delete",""]] "<p contenteditable=\"false\"><span contenteditable>a[bc<br>de]f</span></p>" queryCommandValue("delete") after
 PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>": execCommand("delete", false, "") return value
 PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" checks for modifications to non-editable content
-FAIL [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<p contenteditable=\"false\"><unknown-element contenteditable=\"\"></unknown-element></p>" but got "<p contenteditable=\"false\"><unknown-element contenteditable=\"\"><br></unknown-element></p>"
+PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" compare innerHTML
 PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" queryCommandIndeterm("delete") before
 PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" queryCommandState("delete") before
 PASS [["delete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" queryCommandValue("delete") before
