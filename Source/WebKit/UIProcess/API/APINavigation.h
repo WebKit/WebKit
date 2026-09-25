@@ -37,6 +37,7 @@
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SubstituteData.h>
@@ -189,6 +190,9 @@ public:
 
     void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
+
+    void setUnpartitionedStorageSite(std::optional<WebCore::RegistrableDomain>&& site) { m_unpartitionedStorageSite = WTF::move(site); }
+    const std::optional<WebCore::RegistrableDomain>& unpartitionedStorageSite() const LIFETIME_BOUND { return m_unpartitionedStorageSite; }
     void setSafeBrowsingCheckOngoing(size_t, bool);
     bool NODELETE safeBrowsingCheckOngoing(size_t);
     bool NODELETE safeBrowsingCheckOngoing();
@@ -251,6 +255,7 @@ private:
     bool m_hasCrossOriginRedirect : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
+    std::optional<WebCore::RegistrableDomain> m_unpartitionedStorageSite;
     MonotonicTime m_requestStart { MonotonicTime::now() };
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;

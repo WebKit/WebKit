@@ -1164,6 +1164,29 @@ SecurityOrigin& Document::topOrigin() const
     return SecurityOrigin::opaqueOrigin();
 }
 
+void Document::updateHasUnpartitionedStorageAccess(const DocumentLoader* loader)
+{
+    m_hasUnpartitionedStorageAccess = computeHasUnpartitionedStorageAccess(loader);
+}
+
+bool Document::computeHasUnpartitionedStorageAccess(const DocumentLoader* loader) const
+{
+    RefPtr frame = m_frame.get();
+    if (!frame || frame->isMainFrame())
+        return false;
+
+    RefPtr origin = SecurityContext::securityOrigin();
+    if (!origin || origin->isOpaque())
+        return false;
+
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(m_url)) {
+        RefPtr parentDocument = this->parentDocument();
+        return parentDocument && parentDocument->hasUnpartitionedStorageAccess() && protect(parentDocument->securityOrigin())->isSameOriginAs(*origin);
+    }
+
+    return loader && loader->hasUnpartitionedStorageAccess(origin->toURL());
+}
+
 inline DocumentFontLoader& Document::fontLoader()
 {
     ASSERT(m_constructionDidFinish);
@@ -12410,6 +12433,14 @@ void Document::securityOriginDidChange()
 {
     m_syncData->documentSecurityOrigin = SecurityContext::securityOrigin();
     m_permissionsPolicy = nullptr;
+    if (m_hasUnpartitionedStorageAccess) {
+        if (RefPtr origin = SecurityContext::securityOrigin(); !origin || origin->isOpaque()) {
+            m_hasUnpartitionedStorageAccess = false;
+            m_siteForCookies = { };
+            if (RefPtr frame = m_frame.get(); frame && frame->document() == this)
+                protect(frame->loader())->updateFirstPartyForCookies();
+        }
+    }
     if (m_frame && m_frame->document() == this)
         m_frame->documentURLOrOriginDidChange();
 }

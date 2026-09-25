@@ -734,8 +734,13 @@ void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, Pol
                 if (policyDecision.navigationID)
                     policyDocumentLoader->setNavigationID(*policyDecision.navigationID);
                 policyDocumentLoader->setIsOriginKeyedFromUIProcess(policyDecision.isOriginKeyed);
-            } else if (RefPtr provisionalDocumentLoader = loader.provisionalDocumentLoader())
+                if (forNavigationAction)
+                    policyDocumentLoader->setUnpartitionedStorageSite(WTF::move(policyDecision.unpartitionedStorageSite));
+            } else if (RefPtr provisionalDocumentLoader = loader.provisionalDocumentLoader()) {
                 provisionalDocumentLoader->setIsOriginKeyedFromUIProcess(policyDecision.isOriginKeyed);
+                if (forNavigationAction)
+                    provisionalDocumentLoader->setUnpartitionedStorageSite(WTF::move(policyDecision.unpartitionedStorageSite));
+            }
         }
     }
 

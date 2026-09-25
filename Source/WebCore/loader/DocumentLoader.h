@@ -49,6 +49,7 @@
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/OriginKeyed.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -493,6 +494,8 @@ public:
     const std::optional<CrossOriginOpenerPolicy>& crossOriginOpenerPolicy() const LIFETIME_BOUND { return m_responseCOOP; }
     OriginKeyed isOriginKeyedFromUIProcess() const { return m_isOriginKeyedFromUIProcess; }
     void setIsOriginKeyedFromUIProcess(OriginKeyed value) { m_isOriginKeyedFromUIProcess = value; }
+    bool hasUnpartitionedStorageAccess(const URL& url) const { return m_unpartitionedStorageSite && m_unpartitionedStorageSite->matches(url); }
+    void setUnpartitionedStorageSite(std::optional<RegistrableDomain>&& site) { m_unpartitionedStorageSite = WTF::move(site); }
     OptionSet<ClearSiteDataValue> responseClearSiteDataValues() const { return m_responseClearSiteDataValues; }
 
     std::unique_ptr<IntegrityPolicy> integrityPolicy();
@@ -565,6 +568,7 @@ private:
 #endif
 
     void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
+    void updateRequestForUnpartitionedStorageAccess(ResourceRequest&, bool isRedirect) const;
     void finishedLoading();
     void mainReceivedError(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
@@ -682,6 +686,7 @@ private:
 
     std::optional<CrossOriginOpenerPolicy> m_responseCOOP;
     OriginKeyed m_isOriginKeyedFromUIProcess { OriginKeyed::No };
+    std::optional<RegistrableDomain> m_unpartitionedStorageSite;
     OptionSet<ClearSiteDataValue> m_responseClearSiteDataValues;
     
     using SubstituteResourceMap = HashMap<Ref<ResourceLoader>, RefPtr<SubstituteResource>>;
