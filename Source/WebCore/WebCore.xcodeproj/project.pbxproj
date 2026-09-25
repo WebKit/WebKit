@@ -23475,6 +23475,7 @@
 		EDEC98020AED7E170059137F /* WebCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		EE042901F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMBindingFacade.cpp; sourceTree = "<group>"; };
 		EE042902F1A0DE0100A1B2C3 /* JSDOMBindingFacade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingFacade.h; sourceTree = "<group>"; };
+		EE05D7C6305CA42E0087E6DE /* StyleTransformColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTransformColor.h; sourceTree = "<group>"; };
 		EE073056303532EF00B23328 /* StyleResolvedColors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleResolvedColors.h; sourceTree = "<group>"; };
 		EE073057303532EF00B23328 /* StyleResolvedColors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolvedColors.cpp; sourceTree = "<group>"; };
 		EE0C7E002CE845CB0043DAF8 /* CSSPositionTryRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPositionTryRule.h; sourceTree = "<group>"; };
@@ -38415,6 +38416,7 @@
 				BC4AF4052CF62F0E0037C65C /* StyleResolvedColor.h */,
 				EE073057303532EF00B23328 /* StyleResolvedColors.cpp */,
 				EE073056303532EF00B23328 /* StyleResolvedColors.h */,
+				EE05D7C6305CA42E0087E6DE /* StyleTransformColor.h */,
 			);
 			path = color;
 			sourceTree = "<group>";
