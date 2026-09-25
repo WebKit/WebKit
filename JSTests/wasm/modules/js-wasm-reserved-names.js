@@ -15,9 +15,8 @@ assertLinkError(import("./reserved-import-name.wasm"))
         assert.eq(error instanceof WebAssembly.LinkError, true);
         assert.eq(String(error).includes("Import module"), true);
     }))
-    .then(() => import("./reserved-string-constant-name.wasm").then($vm.abort, function (error) {
-        assert.eq(error instanceof WebAssembly.LinkError, true);
-        assert.eq(String(error).includes("Import name"), true);
+    .then(() => import("./reserved-string-constant-name.wasm").then(function (ns) {
+        assert.eq(ns.s, "wasm:hello");
     }))
     .then(() => import("./reserved-import-and-export.wasm").then($vm.abort, function (error) {
         assert.eq(error instanceof WebAssembly.LinkError, true);
