@@ -107,3 +107,27 @@ class PrinterTest(unittest.TestCase):
         self.assertEqual(finished_output, '[1/1] test1 failed:\n  boom\n')
         self.assertEqual(printer.num_failures, 1)
         self.assertEqual(result_output, 'Ran 1 test in 0.000s\nFAILED (failures=1, errors=0)\n')
+
+    def test_single_failure_is_printed_and_counted(self):
+        printer, stream = self._make_printer()
+        printer.print_started_test(None, 'Foo.test1')
+        printer.print_finished_test(None, 'Foo.test1', 0, ['failure one'], [])
+        expected = '[0/1] Foo.test1\n[1/1] Foo.test1 failed:\n  failure one\n'
+        self.assertEqual(stream.getvalue(), expected)
+        self.assertEqual(printer.num_failures, 1)
+
+    def test_multiple_subtest_failures_are_all_printed_and_counted(self):
+        printer, stream = self._make_printer()
+        printer.print_started_test(None, 'Foo.test1')
+        printer.print_finished_test(None, 'Foo.test1', 0, ['failure one', 'failure two'], [])
+        expected = '[0/1] Foo.test1\n[1/1] Foo.test1 failed:\n  failure one\n  \n  failure two\n'
+        self.assertEqual(stream.getvalue(), expected)
+        self.assertEqual(printer.num_failures, 2)
+
+    def test_multiple_errors_are_all_printed_and_counted(self):
+        printer, stream = self._make_printer()
+        printer.print_started_test(None, 'Foo.test1')
+        printer.print_finished_test(None, 'Foo.test1', 0, [], ['error one', 'error two'])
+        expected = '[0/1] Foo.test1\n[1/1] Foo.test1 erred:\n  error one\n  \n  error two\n  \n'
+        self.assertEqual(stream.getvalue(), expected)
+        self.assertEqual(printer.num_errors, 2)

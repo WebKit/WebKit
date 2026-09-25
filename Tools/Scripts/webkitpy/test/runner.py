@@ -77,30 +77,20 @@ class _Worker(object):
 
     def handle(self, message_name, source, test_name):
         assert message_name == 'test'
-        result = TestResult()
+        result = unittest.TestResult()
         start = time.time()
         self._caller.post('started_test', test_name)
 
         # We will need to rework this if a test_name results in multiple tests.
         self._loader.loadTestsFromName(test_name, None).run(result)
 
-        assert(len(result.errors) + len(result.failures) +
-               len(result.skipped) + len(result.expectedFailures) +
-               len(result.unexpectedSuccesses) + result.successes) == result.testsRun
-
-        failures = [failure[1] for failure in result.failures]
+        failures = ['%s\n%s' % (test, err_string) for test, err_string in result.failures]
+        errors = ['%s\n%s' % (test, err_string) for test, err_string in result.errors]
         expected_failures = [failure[0].id() for failure in result.expectedFailures]
         unexpected_successes = [test.id() for test in result.unexpectedSuccesses]
 
+        assert result.wasSuccessful() == (not failures and not errors and not unexpected_successes)
+
         self._caller.post('finished_test', test_name, time.time() - start,
-                          failures, [error[1] for error in result.errors],
+                          failures, errors,
                           expected_failures, unexpected_successes)
-
-
-class TestResult(unittest.TestResult):
-    def __init__(self, *args, **kwargs):
-        super(TestResult, self).__init__(*args, **kwargs)
-        self.successes = 0
-
-    def addSuccess(self, test):
-        self.successes += 1

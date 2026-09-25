@@ -91,6 +91,31 @@ class FakeLoader(object):
         return FakeModuleSuite(*self._results[name])
 
 
+class _Test_Runner(unittest.TestCase):
+    def _test_all_subtests_pass(self):
+        for i in range(2):
+            with self.subTest(i=i):
+                pass
+
+    def _test_one_subtest_fails(self):
+        with self.subTest(i=0):
+            self.fail('boom')
+
+    def _test_two_subtests_fail(self):
+        for i in range(2):
+            with self.subTest(i=i):
+                self.fail('boom %d' % i)
+
+    def _test_plain_failure(self):
+        self.fail('boom')
+
+
+class StubLoader(object):
+    def loadTestsFromName(self, name, _):
+        _, method_name = name.rsplit('.', 1)
+        return _Test_Runner(method_name)
+
+
 class RunnerTest(unittest.TestCase):
     def setUp(self):
         # Here we have to jump through a hoop to make sure test-webkitpy doesn't log
@@ -130,3 +155,46 @@ class RunnerTest(unittest.TestCase):
         self.assertEqual(len(runner.errors), 0)
         self.assertEqual(len(runner.expected_failures), 1)
         self.assertEqual(len(runner.unexpected_successes), 1)
+
+    def _run(self, method_name):
+        options = MockOptions(verbose=0, timing=False, child_processes=1, quiet=False, pass_through=False)
+        stream = StringIO()
+        printer = Printer(stream, options)
+        runner = Runner(printer, StubLoader())
+        runner.run(['_Test_Runner.%s' % method_name], 1)
+        return runner
+
+    def test_one_failing_subtest_does_not_crash_the_runner(self):
+        runner = self._run('_test_one_subtest_fails')
+        self.assertEqual(len(runner.tests_run), 1)
+        self.assertEqual(len(runner.failures), 1)
+        self.assertEqual(len(runner.errors), 0)
+
+    def test_two_failing_subtests_do_not_crash_the_runner(self):
+        runner = self._run('_test_two_subtests_fail')
+        self.assertEqual(len(runner.tests_run), 1)
+        self.assertEqual(len(runner.failures), 1)
+        self.assertEqual(len(runner.errors), 0)
+
+    def test_all_passing_subtests_do_not_crash_the_runner(self):
+        runner = self._run('_test_all_subtests_pass')
+        self.assertEqual(len(runner.tests_run), 1)
+        self.assertEqual(len(runner.failures), 0)
+        self.assertEqual(len(runner.errors), 0)
+
+    def test_failing_subtest_failure_message_identifies_the_subtest(self):
+        runner = self._run('_test_two_subtests_fail')
+        _, failures = runner.failures[0]
+        self.assertEqual(failures[0].splitlines()[0],
+                         '_test_two_subtests_fail (webkitpy.test.runner_unittest._Test_Runner) (i=0)')
+        self.assertEqual(failures[0].splitlines()[-1], 'AssertionError: boom 0')
+        self.assertEqual(failures[1].splitlines()[0],
+                         '_test_two_subtests_fail (webkitpy.test.runner_unittest._Test_Runner) (i=1)')
+        self.assertEqual(failures[1].splitlines()[-1], 'AssertionError: boom 1')
+
+    def test_plain_failure_message_still_includes_the_traceback(self):
+        runner = self._run('_test_plain_failure')
+        _, failures = runner.failures[0]
+        self.assertEqual(failures[0].splitlines()[0],
+                         '_test_plain_failure (webkitpy.test.runner_unittest._Test_Runner)')
+        self.assertEqual(failures[0].splitlines()[-1], 'AssertionError: boom')
