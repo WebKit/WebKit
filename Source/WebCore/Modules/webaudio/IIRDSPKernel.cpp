@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "IIRDSPKernel.h"
+
+#include "AudioUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -40,20 +42,22 @@ IIRDSPKernel::IIRDSPKernel(IIRProcessor& processor)
 {
 }
 
-void IIRDSPKernel::getFrequencyResponse(unsigned length, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
+void IIRDSPKernel::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
-    ASSERT(frequencyHz.data());
-    ASSERT(magResponse.data());
-    ASSERT(phaseResponse.data());
+    ASSERT(magResponse.size() >= frequencyHz.size());
+    ASSERT(phaseResponse.size() >= frequencyHz.size());
 
-    Vector<float> frequency(length);
     double nyquist = this->nyquist();
 
     // Convert from frequency in Hz to normalized frequency (0 -> 1), with 1 equal to the Nyquist frequency.
-    for (unsigned k = 0; k < length; ++k)
-        frequency[k] = frequencyHz[k] / nyquist;
+    std::array<float, AudioUtilities::renderQuantumSize> frequency;
+    for (size_t offset = 0; offset < frequencyHz.size(); offset += frequency.size()) {
+        auto chunk = std::span { frequency }.first(std::min(frequency.size(), frequencyHz.size() - offset));
+        for (size_t k = 0; k < chunk.size(); ++k)
+            chunk[k] = frequencyHz[offset + k] / nyquist;
 
-    m_iirFilter.getFrequencyResponse(length, frequency.span(), magResponse, phaseResponse);
+        m_iirFilter.getFrequencyResponse(chunk, magResponse.subspan(offset, chunk.size()), phaseResponse.subspan(offset, chunk.size()));
+    }
 }
 
 void IIRDSPKernel::process(std::span<const float> source, std::span<float> destination)

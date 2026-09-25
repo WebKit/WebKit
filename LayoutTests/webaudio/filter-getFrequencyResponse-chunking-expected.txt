@@ -1,0 +1,32 @@
+Tests that BiquadFilterNode/IIRFilterNode getFrequencyResponse() is computed correctly for arrays longer than one render quantum.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS BiquadFilterNode.getFrequencyResponse() with length 1 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 1 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 2 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 2 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 127 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 127 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 128 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 128 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 129 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 129 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 255 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 255 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 256 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 256 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 257 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 257 matches per-frequency results.
+PASS BiquadFilterNode.getFrequencyResponse() with length 300 matches per-frequency results.
+PASS IIRFilterNode.getFrequencyResponse() with length 300 matches per-frequency results.
+PASS magResponse.every(Number.isNaN) && phaseResponse.every(Number.isNaN) is true
+PASS biquad.getFrequencyResponse(new Float32Array(4), new Float32Array(4), new Float32Array(5)) threw exception InvalidAccessError: The arrays passed as arguments must have the same length.
+PASS biquad.getFrequencyResponse(new Float32Array(0), new Float32Array(0), new Float32Array(0)) did not throw exception.
+PASS iir.getFrequencyResponse(new Float32Array(4), new Float32Array(4), new Float32Array(5)) threw exception InvalidAccessError: Arrays must have the same length.
+PASS iir.getFrequencyResponse(new Float32Array(0), new Float32Array(0), new Float32Array(0)) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

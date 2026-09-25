@@ -130,7 +130,7 @@ ExceptionOr<void> IIRFilterNode::getFrequencyResponse(Float32Array& frequencyHz,
 
     // Nothing to do if the length is 0.
     if (expectedLength > 0)
-        iirProcessor()->getFrequencyResponse(expectedLength, frequencyHz.typedSpan(), magResponse.typedMutableSpan(), phaseResponse.typedMutableSpan());
+        iirProcessor()->getFrequencyResponse(frequencyHz.typedSpan(), magResponse.typedMutableSpan(), phaseResponse.typedMutableSpan());
 
     return { };
 }
