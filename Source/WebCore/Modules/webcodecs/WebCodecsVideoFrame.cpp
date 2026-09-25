@@ -29,20 +29,23 @@
 #if ENABLE(WEB_CODECS)
 
 #include "CSSStyleImageValue.h"
-#include "CachedImage.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMRectReadOnly.h"
+#include "DefaultSizing.h"
 #include "ExceptionOr.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "Image.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
+#include "ImageOrientation.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPlaneLayout.h"
 #include "NativeImage.h"
+#include "ObjectSizeNegotiation.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
 #include "SVGImageElement.h"
@@ -96,6 +99,43 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
     }
 }
 
+static std::optional<Exception> checkNaturalDimensionsAreNotZero(Image* image)
+{
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError, "Image element has no data"_s };
+
+    auto naturalDimensions = image->naturalDimensions();
+    if ((naturalDimensions.width && !*naturalDimensions.width) || (naturalDimensions.height && !*naturalDimensions.height))
+        return Exception { ExceptionCode::InvalidStateError, "Image element has a natural dimension of zero"_s };
+    return { };
+}
+
+struct ImageElementSource {
+    Ref<Image> image;
+    ImageOrientation orientation;
+    ConcreteObjectSize codedSize;
+    IntSize defaultDisplaySize;
+};
+
+template<typename ImageElement> static ExceptionOr<ImageElementSource> imageElementSource(ImageElement& element)
+{
+    RefPtr image = element.sourceImage();
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError, "Image element has no video frame"_s };
+
+    auto orientation = element.orientationForSourceImage();
+    auto naturalDimensions = image->naturalDimensions(orientation);
+
+    if (!naturalDimensions.width || !naturalDimensions.height)
+        return Exception { ExceptionCode::InvalidStateError, "Image element has no natural dimensions"_s };
+
+    auto codedSize = ConcreteObjectSize::fixed({ *naturalDimensions.width, *naturalDimensions.height });
+
+    auto displaySize = DefaultSizing { std::nullopt, element.imageDevicePixelRatio() }.resolve(naturalDimensions).size();
+
+    return ImageElementSource { image.releaseNonNull(), orientation, codedSize, flooredIntSize(displaySize) };
+}
+
 // https://html.spec.whatwg.org/multipage/canvas.html#check-the-usability-of-the-image-argument
 static std::optional<Exception> checkImageUsability(ScriptExecutionContext& context, const WebCodecsVideoFrame::CanvasImageSource& source)
 {
@@ -104,22 +144,20 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
             if (!imageElement->originClean(protect(*context.securityOrigin())))
                 return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
 
-            RefPtr image = imageElement->cachedImage() ? protect(imageElement->cachedImage())->image() : nullptr;
-            if (!image)
+            if (!imageElement->hasSourceImage())
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-            if (!image->width() || !image->height())
-                return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
+            if (auto exception = checkNaturalDimensionsAreNotZero(imageElement->sourceImage().get()))
+                return exception;
             return { };
         },
         [](const Ref<SVGImageElement>& imageElement) -> std::optional<Exception> {
             if (imageElement->renderingTaintsOrigin())
                 return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
 
-            RefPtr image = imageElement->cachedImage() ? protect(imageElement->cachedImage())->image() : nullptr;
-            if (!image)
+            if (!imageElement->hasSourceImage())
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-            if (!image->width() || !image->height())
-                return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
+            if (auto exception = checkNaturalDimensionsAreNotZero(imageElement->sourceImage().get()))
+                return exception;
             return { };
         },
         [&](const Ref<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
@@ -178,31 +216,27 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
             if (!init.timestamp)
                 return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-            auto image = protect(protect(protect(imageElement)->cachedImage())->image())->currentNativeImage();
-            if (!image)
-                return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+            auto source = imageElementSource(imageElement.get());
+            if (source.hasException())
+                return source.releaseException();
 
-            return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTF::move(init));
+            auto [image, orientation, codedSize, defaultDisplaySize] = source.releaseReturnValue();
+            return initializeFrameWithResourceAndSize(context, image, codedSize, orientation, defaultDisplaySize, WTF::move(init));
         },
         [&](Ref<SVGImageElement>&& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
             if (!init.timestamp)
                 return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-            auto image = protect(protect(protect(imageElement)->cachedImage())->image())->currentNativeImage();
-            if (!image)
-                return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+            auto source = imageElementSource(imageElement.get());
+            if (source.hasException())
+                return source.releaseException();
 
-            return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTF::move(init));
+            auto [image, orientation, codedSize, defaultDisplaySize] = source.releaseReturnValue();
+            return initializeFrameWithResourceAndSize(context, image, codedSize, orientation, defaultDisplaySize, WTF::move(init));
         },
-        [&](Ref<CSSStyleImageValue>&& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-            if (!init.timestamp)
-                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
-
-            auto image = protect(protect(protect(cssImage)->image())->image())->currentNativeImage();
-            if (!image)
-                return Exception { ExceptionCode::InvalidStateError,  "CSS Image has no video frame"_s };
-
-            return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTF::move(init));
+        [&](Ref<CSSStyleImageValue>&&) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            ASSERT_NOT_REACHED();
+            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
         },
 #if ENABLE(VIDEO)
         [&](Ref<HTMLVideoElement>&& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
@@ -449,7 +483,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-with-resource-and-size
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithResourceAndSize(ScriptExecutionContext& context, Ref<NativeImage>&& image, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithResourceAndSize(ScriptExecutionContext& context, Ref<NativeImage>&& image, Init&& init, std::optional<IntSize> defaultDisplaySize)
 {
     auto internalVideoFrame = VideoFrame::fromNativeImage(image.get());
     if (!internalVideoFrame)
@@ -467,7 +501,8 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     result->m_data.codedWidth = codedWidth;
     result->m_data.codedHeight = codedHeight;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, result->m_data.codedWidth, result->m_data.codedHeight);
+    auto displaySize = defaultDisplaySize.value_or(IntSize { static_cast<int>(codedWidth), static_cast<int>(codedHeight) });
+    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, displaySize.width(), displaySize.height());
 
     result->m_data.duration = init.duration;
     if (init.timestamp)
@@ -477,6 +512,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     return result;
 }
 
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithResourceAndSize(ScriptExecutionContext& context, Image& image, ConcreteObjectSize concreteObjectSize, ImageOrientation orientation, IntSize defaultDisplaySize, Init&& init)
+{
+    RefPtr nativeImage = image.currentPreTransformedNativeImage(concreteObjectSize, orientation);
+    if (!nativeImage)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+
+    return initializeFrameWithResourceAndSize(context, nativeImage.releaseNonNull(), WTF::move(init), defaultDisplaySize);
+}
 
 ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(const CopyToOptions& options)
 {

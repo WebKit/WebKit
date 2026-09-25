@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,28 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "GeneratedImage.h"
-#include "Image.h"
+#include <WebCore/ImageSizingContext.h>
 
-namespace WebCore {
+namespace WebCore::Style {
 
-class NamedImageGeneratedImage final : public GeneratedImage {
+class BackgroundImageSizing final : public ObjectSizeNegotiation::ImageSizingContext {
 public:
-    static Ref<NamedImageGeneratedImage> create(String name, const FloatSize& size)
+    BackgroundImageSizing(FloatSize positioningArea, ObjectSizeNegotiation::SpecifiedSize specified, ObjectSizeNegotiation::SizingConstraint constraint)
+        : m_positioningArea(positioningArea)
+        , m_specified(specified)
+        , m_constraint(constraint)
     {
-        return adoptRef(*new NamedImageGeneratedImage(name, size));
     }
 
+    ConcreteObjectSize resolve(NaturalDimensions) const final;
+
 private:
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) override;
-    void drawPattern(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) override;
+    ObjectSizeNegotiation::SpecifiedSize specifiedSize() const final { return m_specified; }
+    FloatSize defaultObjectSize() const final { return m_positioningArea; }
 
-    NamedImageGeneratedImage(String name, const FloatSize&);
-
-    bool isNamedImageGeneratedImage() const override { return true; }
-    void dump(WTF::TextStream&) const override;
-
-    String m_name;
+    FloatSize m_positioningArea;
+    ObjectSizeNegotiation::SpecifiedSize m_specified;
+    ObjectSizeNegotiation::SizingConstraint m_constraint;
 };
 
-}
-
-SPECIALIZE_TYPE_TRAITS_IMAGE(NamedImageGeneratedImage)
+} // namespace WebCore::Style

@@ -36,6 +36,7 @@
 #import "WebView.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/DragController.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
@@ -206,7 +207,7 @@ static NSString* NSStringOrNil(String coreString)
 - (NSImage *)_image
 {
     RefPtr image = _result->image();
-    return image ? image->adapter().nsImage() : nil;
+    return image ? image->adapter().nsImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions())) : nil;
 }
 
 - (NSValue *)_imageRect

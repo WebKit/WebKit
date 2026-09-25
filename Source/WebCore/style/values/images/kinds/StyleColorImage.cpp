@@ -27,8 +27,10 @@
 #include "StyleColorImage.h"
 
 #include "CSSColorImageValue.h"
-#include "ColorImageGeneratedImage.h"
 #include "DeprecatedCSSOMValue.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "NinePieceGeometry.h"
 #include "RenderElement.h"
 #include "StyleColorResolver.h"
 
@@ -36,7 +38,7 @@ namespace WebCore {
 namespace Style {
 
 ColorImage::ColorImage(Color&& color)
-    : GeneratedImage { Type::ColorImage, ColorImage::isFixedSize }
+    : GeneratedImage { Type::ColorImage }
     , m_color { WTF::move(color) }
 {
 }
@@ -73,26 +75,41 @@ void ColorImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-RefPtr<WebCore::Image> ColorImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext&, bool) const
+WebCore::Color ColorImage::resolvedColor(const RenderElement& renderer) const
 {
-    if (!renderer)
-        return &WebCore::Image::nullImage();
+    return ColorResolver { renderer.style() }.colorResolvingCurrentColor(m_color);
+}
 
-    if (size.isEmpty())
-        return nullptr;
+ImageDrawResult ColorImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect&, ImagePaintingOptions options, bool) const
+{
+    if (concreteObjectSize.size().isEmpty())
+        return ImageDrawResult::DidNothing;
 
-    auto color = ColorResolver { renderer->style() }.colorResolvingCurrentColor(m_color);
-    return ColorImageGeneratedImage::create(color, size);
+    WebCore::Image::fillWithSolidColor(context, destination, resolvedColor(renderer), options.compositeOperator());
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult ColorImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, bool) const
+{
+    auto color = resolvedColor(renderer);
+
+    if (spacing.isZero()) {
+        WebCore::Image::fillWithSolidColor(context, destination, color, options.compositeOperator());
+        return ImageDrawResult::DidDraw;
+    }
+
+    auto imageBuffer = context.createAlignedImageBuffer(concreteObjectSize.size());
+    if (!imageBuffer)
+        return ImageDrawResult::DidNothing;
+
+    imageBuffer->context().fillRect(FloatRect { { }, concreteObjectSize.size() }, color);
+    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options);
+    return ImageDrawResult::DidDraw;
 }
 
 bool ColorImage::knownToBeOpaque(const RenderElement& renderer) const
 {
     return ColorResolver { renderer.style() }.colorResolvingCurrentColor(m_color).isOpaque();
-}
-
-FloatSize ColorImage::fixedSize(const RenderElement&) const
-{
-    return { };
 }
 
 } // namespace Style

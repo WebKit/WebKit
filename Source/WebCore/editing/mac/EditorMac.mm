@@ -35,6 +35,7 @@
 #import "ColorSerialization.h"
 #import "ContainerNodeInlines.h"
 #import "DataTransfer.h"
+#import "DefaultSizing.h"
 #import "DocumentFragment.h"
 #import "Editing.h"
 #import "EditorClient.h"
@@ -200,21 +201,24 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     return nullptr;
 }
 
-static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
+static std::optional<SizedImage> getImage(Element& imageElement, CachedImage*& cachedImage)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)
-        return;
+        return std::nullopt;
 
     RefPtr tentativeCachedImage = renderImage->cachedImage();
     if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
-        return;
+        return std::nullopt;
 
-    image = tentativeCachedImage->imageForRenderer(renderImage.get());
+    RefPtr image = tentativeCachedImage->image();
     if (!image)
-        return;
+        return std::nullopt;
 
     cachedImage = tentativeCachedImage.get();
+
+    auto concreteObjectSize = DefaultSizing { renderImage->usedImageSize() }.resolve(image->naturalDimensions());
+    return SizedImage { image.releaseNonNull(), concreteObjectSize };
 }
 
 void Editor::selectionWillChange()
@@ -244,7 +248,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     PasteboardImage pasteboardImage;
 
     CachedImage* cachedImage = nullptr;
-    getImage(imageElement, pasteboardImage.image, cachedImage);
+    pasteboardImage.image = getImage(imageElement, cachedImage);
     if (!pasteboardImage.image)
         return;
     ASSERT(cachedImage);

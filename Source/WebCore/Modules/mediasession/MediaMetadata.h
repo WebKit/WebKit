@@ -31,6 +31,7 @@
 #include <WebCore/CachedImageClient.h>
 #include <WebCore/CachedResourceHandle.h>
 #include <WebCore/MediaSession.h>
+#include <WebCore/SizedImage.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
@@ -97,7 +98,7 @@ public:
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
 
     const String& artworkSrc() const LIFETIME_BOUND { return m_artworkImageSrc; }
-    const RefPtr<Image>& artworkImage() const { return m_artworkImage; }
+    const std::optional<SizedImage>& artworkImage() const { return m_artworkImage; }
 
     const MediaSessionMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
 
@@ -113,7 +114,7 @@ private:
     };
 
     MediaMetadata();
-    void setArtworkImage(Image*);
+    void setArtworkImage(std::optional<SizedImage>&&);
     void metadataUpdated();
     void refreshArtworkImage();
     void tryNextArtworkImage(uint32_t, Vector<Pair>&&);
@@ -125,7 +126,7 @@ private:
     MediaSessionMetadata m_metadata;
     RefPtr<ArtworkImageLoader> m_artworkLoader;
     String m_artworkImageSrc;
-    RefPtr<Image> m_artworkImage;
+    std::optional<SizedImage> m_artworkImage;
     Vector<URL> m_defaultImages;
 };
 

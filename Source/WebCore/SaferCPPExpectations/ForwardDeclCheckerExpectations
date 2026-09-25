@@ -34,4 +34,3 @@ rendering/RenderTextLineBoxes.h
 rendering/svg/SVGRenderingContext.h
 style/StyleBuilderState.h
 style/StyleExtractorState.h
-style/values/images/kinds/StyleCachedImage.cpp

@@ -417,31 +417,11 @@ void BifurcatedGraphicsContext::drawPattern(const NativeImage& nativeImage, cons
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    auto result = m_primaryContext.drawImage(image, destination, source, options);
-    m_secondaryContext.drawImage(image, destination, source, options);
+    auto result = m_primaryContext.drawImage(image, concreteObjectSize, destination, source, options, extras);
+    m_secondaryContext.drawImage(image, concreteObjectSize, destination, source, options, extras);
 
-    VERIFY_STATE_SYNCHRONIZATION();
-
-    return result;
-}
-
-ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options)
-{
-    auto result = m_primaryContext.drawTiledImage(image, destination, source, tileSize, spacing, options);
-    m_secondaryContext.drawTiledImage(image, destination, source, tileSize, spacing, options);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-
-    return result;
-}
-
-ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, ImagePaintingOptions options)
-{
-    auto result = m_primaryContext.drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
-    m_secondaryContext.drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
-    
     VERIFY_STATE_SYNCHRONIZATION();
 
     return result;

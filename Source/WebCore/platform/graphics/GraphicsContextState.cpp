@@ -83,7 +83,6 @@ constexpr void GraphicsContextState::forEachProperty(NOESCAPE const Functor& fun
     functor(Change::ShouldSmoothFonts, &GraphicsContextState::m_shouldSmoothFonts);
     functor(Change::ShouldSubpixelQuantizeFonts, &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
     functor(Change::ShadowsIgnoreTransforms, &GraphicsContextState::m_shadowsIgnoreTransforms);
-    functor(Change::DrawLuminanceMask, &GraphicsContextState::m_drawLuminanceMask);
 }
 
 void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state)
@@ -193,9 +192,6 @@ static ASCIILiteral stateChangeName(GraphicsContextState::Change change)
 
     case GraphicsContextState::Change::ShadowsIgnoreTransforms:
         return "shadows-ignore-transforms"_s;
-
-    case GraphicsContextState::Change::DrawLuminanceMask:
-        return "draw-luminance-mask"_s;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -208,8 +204,7 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
         forEachProperty([&](Change, auto) { ++count; });
         return count;
     };
-    // DrawLuminanceMask is the highest Change bit, so its index plus one is the number of changes.
-    static_assert(numberOfProperties() == WTF::ctz(std::to_underlying(Change::DrawLuminanceMask)) + 1,
+    static_assert(numberOfProperties() == WTF::ctz(std::to_underlying(Change::ShadowsIgnoreTransforms)) + 1,
         "forEachProperty() must list every Change enumerator");
 
     ts.dumpProperty("change-flags"_s, m_changeFlags);

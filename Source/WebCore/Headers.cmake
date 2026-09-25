@@ -1568,6 +1568,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     html/Allowlist.h
     html/AnchorElementFunctions.h
+    html/ApplyImageDevicePixelRatio.h
     html/AttachmentAssociatedElement.h
     html/Autocapitalize.h
     html/AutocapitalizeTypes.h
@@ -1671,6 +1672,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/ImageDataPixelFormat.h
     html/ImageDataSettings.h
     html/ImageDocument.h
+    html/ImageRequestState.h
     html/InputMode.h
     html/InputType.h
     html/LinkIconCollector.h
@@ -2533,6 +2535,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Damage.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
+    platform/graphics/DefaultSizing.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorFactory.h
@@ -2586,7 +2589,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GainMap.h
     platform/graphics/GCGLExtension.h
     platform/graphics/GCGLSpan.h
-    platform/graphics/GeneratedImage.h
     platform/graphics/GeometryUtilities.h
     platform/graphics/Glyph.h
     platform/graphics/GlyphBuffer.h
@@ -2596,7 +2598,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Gradient.h
     platform/graphics/GradientColorStop.h
     platform/graphics/GradientColorStops.h
-    platform/graphics/GradientImage.h
     platform/graphics/GraphicsContext.h
     platform/graphics/GraphicsContextGL.h
     platform/graphics/GraphicsContextGLActiveInfo.h
@@ -2636,9 +2637,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferTransferIdentifier.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
+    platform/graphics/ImageDrawingExtras.h
     platform/graphics/ImageFrame.h
     platform/graphics/ImageObserver.h
     platform/graphics/ImageOrientation.h
+    platform/graphics/ImageSizingContext.h
     platform/graphics/ImagePaintingOptions.h
     platform/graphics/ImageResolution.h
     platform/graphics/ImageSource.h
@@ -2685,6 +2688,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Model.h
     platform/graphics/ModelContext.h
     platform/graphics/NativeImage.h
+    platform/graphics/NaturalDimensions.h
+    platform/graphics/ObjectSizeNegotiation.h
     platform/graphics/NullGraphicsContext.h
     platform/graphics/NullImageBufferBackend.h
     platform/graphics/Path.h
@@ -2732,6 +2737,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ShareableBitmapHandle.h
 
     platform/graphics/ShouldLocalizeAxisNames.h
+    platform/graphics/SizedImage.h
     platform/graphics/SourceBrush.h
     platform/graphics/SourceBrushLogicalGradient.h
     platform/graphics/SourceBufferPrivate.h
@@ -3088,6 +3094,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/LineClampUpdater.h
     rendering/MarkedText.h
     rendering/MotionPath.h
+    rendering/NinePieceGeometry.h
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
     rendering/Pagination.h
@@ -3413,12 +3420,28 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/grid/StyleGridTrackSizingDirection.h
 
     style/values/images/StyleGradient.h
+    style/values/images/StyleImageDrawingExtras.h
     style/values/images/StyleImageOrNone.h
     style/values/images/StyleImageOrientation.h
     style/values/images/StyleImageWrapper.h
     style/values/images/StyleObjectPosition.h
     style/values/images/StyleObjectViewBox.h
 
+    style/values/images/sizing/StyleBackgroundImageSizing.h
+    style/values/images/sizing/StyleBorderImagePartSizing.h
+    style/values/images/sizing/StyleBorderImageSizing.h
+    style/values/images/sizing/StyleCanvasDrawImageSizing.h
+    style/values/images/sizing/StyleCanvasPatternSizing.h
+    style/values/images/sizing/StyleContentPropertySizing.h
+    style/values/images/sizing/StyleCrossfadeInputSizing.h
+    style/values/images/sizing/StyleCursorSizing.h
+    style/values/images/sizing/StyleListStyleImageSizing.h
+    style/values/images/sizing/StyleMaskBorderSizing.h
+    style/values/images/sizing/StyleMaskImageSizing.h
+    style/values/images/sizing/StyleReplacedElementIntrinsicSizing.h
+    style/values/images/sizing/StyleReplacedElementSizing.h
+    style/values/images/sizing/StyleSVGImageElementSizing.h
+    style/values/images/sizing/StyleShapeOutsideSizing.h
     style/values/images/kinds/StyleImage.h
 
     style/values/inline/StyleLineFitEdge.h
@@ -3658,8 +3681,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
 
     svg/graphics/SVGImage.h
-    svg/graphics/SVGImageCache.h
-    svg/graphics/SVGImageForContainer.h
 
     svg/graphics/filters/SVGFilterExpression.h
     svg/graphics/filters/SVGFilterRenderer.h

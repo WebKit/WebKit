@@ -57,7 +57,6 @@ public:
         ShouldSmoothFonts           = 1 << 12,
         ShouldSubpixelQuantizeFonts = 1 << 13,
         ShadowsIgnoreTransforms     = 1 << 14,
-        DrawLuminanceMask           = 1 << 15,
     };
     using ChangeFlags = OptionSet<Change>;
 
@@ -147,8 +146,6 @@ public:
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
     void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { setProperty(Change::ShadowsIgnoreTransforms, &GraphicsContextState::m_shadowsIgnoreTransforms, shadowsIgnoreTransforms); }
 
-    bool drawLuminanceMask() const { return m_drawLuminanceMask; }
-    void setDrawLuminanceMask(bool drawLuminanceMask) { setProperty(Change::DrawLuminanceMask, &GraphicsContextState::m_drawLuminanceMask, drawLuminanceMask); }
 
     void mergeLastChanges(const GraphicsContextState&);
     void mergeAllChanges(const GraphicsContextState&);
@@ -217,7 +214,6 @@ private:
     bool m_shouldSmoothFonts { true };
     bool m_shouldSubpixelQuantizeFonts { true };
     bool m_shadowsIgnoreTransforms { false };
-    bool m_drawLuminanceMask { false };
 
     Purpose m_purpose { Purpose::Initial };
 };

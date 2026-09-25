@@ -43,12 +43,18 @@ class DOMRectReadOnly;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
+class Image;
+struct ImageOrientation;
 class ImageBitmap;
 class ImageBuffer;
+class IntSize;
 class NativeImage;
 class OffscreenCanvas;
 class SVGImageElement;
 class VideoColorSpace;
+
+namespace ObjectSizeNegotiation { class ConcreteObjectSize; }
+using ObjectSizeNegotiation::ConcreteObjectSize;
 
 template<typename> class ExceptionOr;
 
@@ -152,7 +158,8 @@ private:
 
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&, VideoFrame::ShouldCloneWithDifferentTimestamp);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&, VideoFrame::ShouldCloneWithDifferentTimestamp);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&, std::optional<IntSize> defaultDisplaySize = std::nullopt);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Image&, ConcreteObjectSize, ImageOrientation, IntSize defaultDisplaySize, Init&&);
 
     WebCodecsVideoFrameData m_data;
     mutable RefPtr<VideoColorSpace> m_colorSpace;

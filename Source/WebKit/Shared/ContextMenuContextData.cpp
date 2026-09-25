@@ -31,6 +31,7 @@
 
 #include "WebEventConversion.h"
 #include <WebCore/ContextMenuContext.h>
+#include <WebCore/DefaultSizing.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/MouseEvent.h>
 
@@ -105,10 +106,12 @@ void ContextMenuContextData::setImage(WebCore::Image& image)
 {
     // FIXME: figure out the rounding strategy for ShareableBitmap.
 
-    RefPtr controlledImage = ShareableBitmap::create({ IntSize(image.size()) });
+    auto concreteSize = WebCore::DefaultSizing { }.resolve(image.naturalDimensions());
+    RefPtr controlledImage = ShareableBitmap::create({ IntSize(concreteSize.size()) });
     m_controlledImage = controlledImage;
+    auto imageRect = FloatRect { { }, concreteSize.size() };
     if (auto graphicsContext = controlledImage->createGraphicsContext())
-        graphicsContext->drawImage(image, IntPoint());
+        graphicsContext->drawImage(image, concreteSize, imageRect, imageRect);
 }
 
 std::optional<ShareableBitmap::Handle> ContextMenuContextData::createControlledImageReadOnlyHandle() const

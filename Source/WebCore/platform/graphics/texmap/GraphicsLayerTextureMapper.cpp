@@ -21,6 +21,7 @@
 #include "config.h"
 #include "GraphicsLayerTextureMapper.h"
 
+#include "DefaultSizing.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayerFactory.h"
 #include "GraphicsLayerFilterAnimationValue.h"
@@ -315,7 +316,7 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
         // Make the decision about whether the image has changed.
         // This code makes the assumption that pointer equality on a PlatformImagePtr is a valid way to tell if the image is changed.
         // This assumption is true for the GTK+ port.
-        auto newNativeImage = image->currentNativeImage();
+        auto newNativeImage = image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions()));
         if (!newNativeImage)
             return;
 

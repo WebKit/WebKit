@@ -642,7 +642,7 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
         return;
     }
 
-    auto nativeImage = cursor.image()->currentNativeImage();
+    RefPtr nativeImage = cursor.image();
     if (!nativeImage)
         return;
 
@@ -655,7 +655,7 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
         static_cast<SkImage*>(data)->unref();
     }, platformImage.get()));
 
-    WebCore::IntPoint hotspot = WebCore::determineHotSpot(cursor.image().get(), cursor.hotSpot());
+    WebCore::IntPoint hotspot = cursor.hotSpot();
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y());
 }
 

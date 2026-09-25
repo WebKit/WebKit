@@ -41,6 +41,7 @@ class RenderView;
 
 namespace Style {
 class ComputedStyle;
+class Image;
 }
 
 class ImageQualityController {
@@ -50,20 +51,20 @@ public:
     explicit ImageQualityController(const RenderView&);
 
     static std::optional<InterpolationQuality> NODELETE interpolationQualityFromStyle(const Style::ComputedStyle&);
-    static InterpolationQuality chooseInterpolationQualityForSVG(GraphicsContext&, const RenderElement&, Image&);
-    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
+    static InterpolationQuality chooseInterpolationQualityForSVG(GraphicsContext&, const RenderElement&, const Style::Image&);
+    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject&, const Style::Image&, const void* layer, const LayoutSize&);
 
-    void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }
+    void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(renderer); }
 
 private:
     using LayerSizeMap = HashMap<const void*, LayoutSize>;
     using ObjectLayerSizeMap = HashMap<SingleThreadWeakRef<RenderBoxModelObject>, LayerSizeMap>;
 
-    void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
-    void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);
+    void removeLayer(RenderBoxModelObject&, LayerSizeMap* innerMap, const void* layer);
+    void set(RenderBoxModelObject&, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);
     void highQualityRepaintTimerFired();
     void restartTimer();
-    void removeObject(RenderBoxModelObject*);
+    void removeObject(RenderBoxModelObject&);
 
     const CheckedRef<const RenderView> m_renderView;
     ObjectLayerSizeMap m_objectLayerSizeMap;

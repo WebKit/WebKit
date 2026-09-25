@@ -27,6 +27,7 @@
 #include "DragImage.h"
 
 #include "BitmapImage.h"
+#include "DefaultSizing.h"
 #include "FrameSnapshotting.h"
 #include "ImageBuffer.h"
 #include "LocalFrameInlines.h"
@@ -108,7 +109,7 @@ static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, No
     auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(snapshot)));
     if (!image)
         return nullptr;
-    return createDragImageFromImage(image.get(), orientation);
+    return createDragImageFromImage(image.get(), DefaultSizing { }.resolve(image->naturalDimensions()), orientation);
 }
 
 DragImageRef createDragImageForNode(LocalFrame& frame, Node& node)
@@ -303,7 +304,7 @@ DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path
     return nullptr;
 }
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient*, float)
+DragImageRef createDragImageFromImage(Image*, ConcreteObjectSize, ImageOrientation, GraphicsClient*, float)
 {
     notImplemented();
     return nullptr;

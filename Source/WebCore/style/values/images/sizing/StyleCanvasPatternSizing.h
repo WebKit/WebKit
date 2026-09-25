@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,17 @@
 
 #pragma once
 
-#include <WebCore/GeneratedImage.h>
+#include <WebCore/ImageSizingContext.h>
 
-namespace WebCore {
+namespace WebCore::Style {
 
-class Gradient;
-class ImageBuffer;
-
-class GradientImage final : public GeneratedImage {
+class CanvasPatternSizing final : public ObjectSizeNegotiation::ImageSizingContext {
 public:
-    static Ref<GradientImage> create(Gradient& generator, const FloatSize& size)
-    {
-        return adoptRef(*new GradientImage(generator, size));
-    }
-
-    virtual ~GradientImage();
-
-    const Gradient& gradient() const { return m_gradient.get(); }
+    CanvasPatternSizing() = default;
 
 private:
-    WEBCORE_EXPORT GradientImage(Gradient&, const FloatSize&);
-
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
-    bool isGradientImage() const final { return true; }
-    void dump(WTF::TextStream&) const final;
-    
-    const Ref<Gradient> m_gradient;
-    RefPtr<ImageBuffer> m_cachedImage;
-    FloatSize m_cachedAdjustedSize;
-    unsigned m_cachedGeneratorHash { 0 };
-    FloatSize m_cachedScaleFactor;
+    ObjectSizeNegotiation::SpecifiedSize specifiedSize() const final { return ObjectSizeNegotiation::SpecifiedSize::none(); }
+    FloatSize defaultObjectSize() const final { return ObjectSizeNegotiation::defaultObjectSize; }
 };
 
-}
-
-SPECIALIZE_TYPE_TRAITS_IMAGE(GradientImage)
+} // namespace WebCore::Style

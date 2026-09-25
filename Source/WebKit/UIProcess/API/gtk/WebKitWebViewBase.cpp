@@ -3778,11 +3778,11 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
         return;
     }
 
-    RefPtr nativeImage = cursor.image()->currentNativeImage();
+    RefPtr nativeImage = cursor.image();
     if (!nativeImage)
         return;
 
-    IntPoint effectiveHotSpot = determineHotSpot(cursor.image().get(), cursor.hotSpot());
+    IntPoint effectiveHotSpot = cursor.hotSpot();
     auto platformImage = nativeImage->platformImage();
 
 #if USE(GTK4)

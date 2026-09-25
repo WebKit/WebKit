@@ -46,6 +46,9 @@ public:
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
     WEBCORE_EXPORT static std::optional<Ref<BitmapImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
 
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
+    using Image::toShareableBitmap;
+
     WEBCORE_EXPORT static BitmapImage& nullImage();
 
     // Animation
@@ -68,12 +71,31 @@ public:
 
     // Primary & current NativeImage
     RefPtr<NativeImage> primaryNativeImage() { return m_source->primaryNativeImage(); }
-    RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) final { return primaryNativeImage(); }
-    RefPtr<NativeImage> currentNativeImage() final { return m_source->currentNativeImage(); }
+    RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) { return primaryNativeImage(); }
+    RefPtr<NativeImage> nativeImage(ConcreteObjectSize, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr) final { return primaryNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final { return currentNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage() { return m_source->currentNativeImage(); }
 
     // Image Metadata
     String uti() const final { return m_source->uti(); }
-    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->size(orientation); }
+    NaturalDimensions unorientedNaturalDimensions() const final
+    {
+        auto size = m_source->size(ImageOrientation::Orientation::None);
+        if (size.isEmpty())
+            return NaturalDimensions::none();
+        return NaturalDimensions::fixed(size);
+    }
+
+    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->size(orientation); }
+
+    FloatRect rect() const { return FloatRect { { }, size() }; }
+    float width() const { return size().width(); }
+    float height() const { return size().height(); }
+
+    bool isNull() const { return size().isEmpty(); }
+    bool hasNothingToDraw() const final { return isNull(); }
+
+    std::optional<IntPoint> hotSpot() const final { return m_source->hotSpot(); }
     FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->sourceSize(orientation); }
     FloatSize density() const { return m_source->density(); }
     ColorSpace colorSpace() final { return m_source->colorSpace(); }
@@ -88,7 +110,8 @@ public:
     Seconds frameDurationAtIndex(unsigned index) const { return m_source->frameDurationAtIndex(index); }
 
     // NativeImage
-    RefPtr<NativeImage> nativeImageAtIndex(unsigned index) final { return m_source->nativeImageAtIndex(index); }
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index, ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final { return nativeImageAtIndex(index); }
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index) { return m_source->nativeImageAtIndex(index); }
 
     // Testing support.
     UTF8CString sourceUTF8() const { return sourceURL().string().utf8(); }
@@ -123,13 +146,13 @@ private:
     bool currentFrameIsComplete() const final { return m_source->currentImageFrame().isComplete(); }
 
     // Current NativeImage
-    RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation) final { return m_source->currentPreTransformedNativeImage(orientation); }
+    RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation orientation, const ImageDrawingExtras* = nullptr) final { return currentPreTransformedNativeImage(orientation); }
+    RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) { return m_source->currentPreTransformedNativeImage(orientation); }
 
     // Image Metadata
     bool hasDensityCorrectedSize() const final { return m_source->hasDensityCorrectedSize(); }
     String filenameExtension() const final { return m_source->filenameExtension(); }
     String accessibilityDescription() const final { return m_source->accessibilityDescription(); }
-    std::optional<IntPoint> hotSpot() const final { return m_source->hotSpot(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_source->singlePixelSolidColor(); }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
@@ -146,8 +169,8 @@ private:
 
     bool hasHDRContentForTesting() const { return m_source->hasHDRContentForTesting(); }
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }) final;
-    void drawPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
     void drawLuminanceMaskPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions);
 
     void dump(WTF::TextStream&) const final;

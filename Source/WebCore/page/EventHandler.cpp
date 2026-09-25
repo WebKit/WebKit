@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AutoscrollController.h"
 #include "BackForwardController.h"
+#include "BitmapImage.h"
 #include "BoundaryPointInlines.h"
 #include "CachedImage.h"
 #include "Chrome.h"
@@ -137,6 +138,8 @@
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
+#include "StyleCursorSizing.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "Styleable.h"
 #include "TextEvent.h"
@@ -218,7 +221,9 @@ const Seconds fakeMouseMoveShortInterval = { 100_ms };
 const Seconds fakeMouseMoveLongInterval = { 250_ms };
 #endif
 
-const int maximumCursorSize = 128;
+constexpr int maximumCursorSize = 128;
+
+constexpr FloatSize uaDefinedCursorSize { 32, 32 };
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
 // It's pretty unlikely that a scale of less than one would ever be used. But all we really
@@ -1654,7 +1659,8 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
         return std::nullopt;
 
-    if (!m_frame->page())
+    RefPtr page = m_frame->page();
+    if (!page)
         return std::nullopt;
 
 #if ENABLE(PAN_SCROLLING)
@@ -1712,68 +1718,80 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
         }
     }
 
-    auto styleCursor = style ? style->cursor() : Style::Cursor { CSS::Keyword::Auto { } };
-    if (styleCursor.images) {
-        for (auto& styleCursorImage : *styleCursor.images) {
-            Ref styleImage = styleCursorImage.image;
-            RefPtr cachedImage = styleImage->cachedImage();
-            if (!cachedImage)
-                continue;
-            float scale = styleImage->imageScaleFactor();
+    auto selectCursorImage = [&](const Style::Cursor& styleCursor) -> std::optional<Cursor> {
+        if (styleCursor.images) {
             // Get hotspot and convert from logical pixels to physical pixels.
-            auto hotSpot = styleCursorImage.hotSpot ? Style::evaluate<IntPoint>(*styleCursorImage.hotSpot) : IntPoint { -1, -1 };
-
             CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer);
             if (!renderElement && renderer && renderer->parent())
                 renderElement = renderer->parent();
-
-            if (renderElement) {
-                RefPtr image = cachedImage->image();
-                if (image && image->drawsSVGImage()) {
-                    // For SVG cursors, scale the image size with device resolution so
-                    // on high-DPI displays SVG images get crisp rendering.
-                    RefPtr page = frame->page();
-                    float deviceScale = page ? page->deviceScaleFactor() : 1.0f;
-
-                    FloatSize scaledSize = image->size() * deviceScale;
-                    styleImage->setContainerContextForRenderer(*renderElement, scaledSize, deviceScale);
-
-                    renderer = renderElement;
-                    scale *= deviceScale;
-                }
-            }
-
-            FloatSize size = protect(cachedImage->imageForRenderer(renderer))->size();
-            if (cachedImage->errorOccurred())
-                continue;
-            // Limit the size of cursors (in UI pixels) so that they cannot be
-            // used to cover UI elements in chrome.
-            size.scale(1 / scale);
-            if (size.width() > maximumCursorSize || size.height() > maximumCursorSize)
-                continue;
+            if (!renderElement)
+                renderElement = frame->contentRenderer();
+            if (!renderElement)
+                return std::nullopt;
 
             RefPtr frameView = frame->view();
             if (!frameView)
-                continue;
+                return std::nullopt;
+
             IntRect visibleContentRect = frameView->visibleContentRect();
-            IntRect cursorRect = { roundedIntPoint(result.pointInMainFrame()), expandedIntSize(size) };
-            cursorRect.moveBy(-hotSpot);
 
-            if (!visibleContentRect.contains(cursorRect))
-                continue;
+#if ENABLE(MOUSE_CURSOR_SCALE)
+            float deviceScale = page->deviceScaleFactor();
+#else
+            float deviceScale = 1;
+#endif
 
-            RefPtr image = cachedImage->imageForRenderer(renderer);
+            for (auto& styleCursorImage : *styleCursor.images) {
+                Ref styleImage = styleCursorImage.image;
+                if (styleImage->errorOccurred())
+                    continue;
+
+                auto concreteCursorSize = Style::negotiate(styleImage, *renderElement, Style::CursorSizing { uaDefinedCursorSize });
+                if (concreteCursorSize.size().isEmpty())
+                    continue;
+                float imageScaleFactor = styleImage->imageScaleFactor();
+                auto size = concreteCursorSize.size();
+                size.scale(1 / imageScaleFactor);
+
+                if (size.width() > maximumCursorSize || size.height() > maximumCursorSize)
+                    continue;
+
+                auto cursorRect = IntRect { roundedIntPoint(result.pointInMainFrame()), expandedIntSize(size) };
+
+                auto hotSpot = styleCursorImage.hotSpot ? Style::evaluate<IntPoint>(*styleCursorImage.hotSpot) : IntPoint { -1, -1 };
+
+                cursorRect.moveBy(-hotSpot);
+
+                if (!visibleContentRect.contains(cursorRect))
+                    continue;
+
+                RefPtr image = styleImage->nativeImage(*renderElement, ConcreteObjectSize::fixed(FloatSize { expandedIntSize(size.scaled(deviceScale)) }));
+                if (!image || image->size().isEmpty())
+                    continue;
+
+                float scale = imageScaleFactor * image->size().width() / concreteCursorSize.size().width();
+
+                std::optional<IntPoint> specifiedHotSpot;
+                if (styleCursorImage.hotSpot)
+                    specifiedHotSpot = roundedIntPoint(FloatPoint { hotSpot }.scaled(scale));
+                auto effectiveHotSpot = determineHotSpot(image->size(), specifiedHotSpot, styleImage->hotSpot());
 #if ENABLE(MOUSE_CURSOR_SCALE)
             // Ensure no overflow possible in calculations above.
-            if (scale < minimumCursorScale)
-                continue;
-            return Cursor(image.get(), hotSpot, scale);
+                if (scale < minimumCursorScale)
+                    continue;
+                return Cursor(WTF::move(image), effectiveHotSpot, scale);
 #else
-            ASSERT(scale == 1);
-            return Cursor(image.get(), hotSpot);
+                return Cursor(WTF::move(image), effectiveHotSpot);
 #endif // ENABLE(MOUSE_CURSOR_SCALE)
+            }
         }
-    }
+
+        return std::nullopt;
+    };
+
+    auto styleCursor = style ? style->cursor() : Style::Cursor { CSS::Keyword::Auto { } };
+    if (auto selectedCursorImage = selectCursorImage(styleCursor))
+        return *selectedCursorImage;
 
     switch (styleCursor.predefined) {
     case CursorType::Auto: {

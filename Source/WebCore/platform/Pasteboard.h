@@ -31,6 +31,7 @@
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/PasteboardItemInfo.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SizedImage.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OrderedHashSet.h>
@@ -126,7 +127,7 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
-    RefPtr<Image> image;
+    std::optional<SizedImage> image;
 #if PLATFORM(MAC)
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     String dataInHTMLFormat;

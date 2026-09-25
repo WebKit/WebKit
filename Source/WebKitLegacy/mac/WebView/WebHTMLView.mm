@@ -82,6 +82,7 @@
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
@@ -2007,7 +2008,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()]];
     } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()] && _private->promisedDragTIFFDataSource) {
         if (RefPtr image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation()) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
+            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()))) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }

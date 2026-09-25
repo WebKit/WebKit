@@ -38,10 +38,13 @@
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
+#include "ObjectSizeNegotiation.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "RenderImageResource.h"
 #include "RenderObjectDocument.h"
 #include "RenderView.h"
+#include "StyleCachedImage.h"
 #include "TextRecognitionOptions.h"
 #include "Timer.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -76,16 +79,18 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
     if (!renderer)
         return;
 
-    RefPtr cachedImage = renderer->cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
+    RefPtr styleCachedImage = dynamicDowncast<Style::CachedImage>(renderer->imageResource().styleImage());
+    if (!styleCachedImage || styleCachedImage->errorOccurred())
         return;
 
-    RefPtr image = cachedImage->image();
-    if (!image || image->width() < minimumWidthForAnalysis || image->height() < minimumHeightForAnalysis)
+    auto usedImageSize = renderer->usedImageSize();
+    if (!usedImageSize)
+        return;
+    if (usedImageSize->width() < minimumWidthForAnalysis || usedImageSize->height() < minimumHeightForAnalysis)
         return;
 
     bool shouldAddToQueue = [&] {
-        auto url = cachedImage->url();
+        auto url = styleCachedImage->url().resolved;
         auto iterator = m_queuedElements.find(element);
         if (iterator == m_queuedElements.end()) {
             m_queuedElements.add(element, url);
@@ -171,8 +176,10 @@ void ImageAnalysisQueue::resumeProcessing()
         Ref page = *m_page;
         page->resetTextRecognitionResult(*element);
 
-        if (RefPtr image = element->cachedImage(); image && !image->errorOccurred())
-            m_queuedElements.set(*element, image->url());
+        if (CheckedPtr renderer = dynamicDowncast<RenderImage>(element->renderer())) {
+            if (RefPtr styleCachedImage = dynamicDowncast<Style::CachedImage>(renderer->imageResource().styleImage()); styleCachedImage && !styleCachedImage->errorOccurred())
+                m_queuedElements.set(*element, styleCachedImage->url().resolved);
+        }
 
         auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
         page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }](auto&&) {

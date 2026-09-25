@@ -35,6 +35,7 @@
 
 #include "BitmapImage.h"
 #include "ContainerNodeInlines.h"
+#include "ApplyImageDevicePixelRatio.h"
 #include "CSSFontSelector.h"
 #include "CSSMarkup.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
@@ -84,6 +85,9 @@
 #include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SizedImage.h"
+#include "StyleCanvasDrawImageSizing.h"
+#include "StyleCanvasPatternSizing.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleProperties.h"
@@ -1549,25 +1553,25 @@ bool CanvasRenderingContext2DBase::shouldDrawShadows() const
     return state().shadowColor.isVisible() && (state().shadowBlur || !state().shadowOffset.isZero());
 }
 
-enum class ImageSizeType { AfterDevicePixelRatio, BeforeDevicePixelRatio };
-static LayoutSize size(CachedImage* cachedImage, RenderElement* renderer, ImageSizeType sizeType = ImageSizeType::BeforeDevicePixelRatio)
+template<typename ImageElement> static ConcreteObjectSize sourceSize(ImageElement& element, FloatSize outputBitmapSize, ApplyImageDevicePixelRatio applyImageDevicePixelRatio)
 {
-    if (!cachedImage)
-        return { };
-    LayoutSize size = cachedImage->imageSizeForRenderer(renderer, 1.0f); // FIXME: Not sure about this.
-    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && !protect(cachedImage->image())->hasRelativeWidth())
-        size.scale(renderImage->imageDevicePixelRatio());
-    return size;
+    RefPtr cachedImage = element.cachedImage();
+    RefPtr image = cachedImage && cachedImage->hasImage() ? cachedImage->image() : nullptr;
+    if (!image)
+        return ConcreteObjectSize::zeroSize();
+
+    auto density = applyImageDevicePixelRatio == ApplyImageDevicePixelRatio::Yes ? element.imageDevicePixelRatio() : 1;
+    return Style::CanvasDrawImageSizing { outputBitmapSize, density }.resolve(image->naturalDimensions(element.orientationForSourceImage()));
 }
 
-static LayoutSize size(HTMLImageElement& element, ImageSizeType sizeType = ImageSizeType::BeforeDevicePixelRatio)
+static ConcreteObjectSize size(HTMLImageElement& element, FloatSize outputBitmapSize, ApplyImageDevicePixelRatio applyImageDevicePixelRatio = ApplyImageDevicePixelRatio::No)
 {
-    return size(protect(element.cachedImage()), protect(element.renderer()).get(), sizeType);
+    return sourceSize(element, outputBitmapSize, applyImageDevicePixelRatio);
 }
 
-static LayoutSize size(SVGImageElement& element, ImageSizeType sizeType = ImageSizeType::BeforeDevicePixelRatio)
+static ConcreteObjectSize size(SVGImageElement& element, FloatSize outputBitmapSize, ApplyImageDevicePixelRatio applyImageDevicePixelRatio = ApplyImageDevicePixelRatio::No)
 {
-    return size(protect(element.cachedImage()), protect(element.renderer()).get(), sizeType);
+    return sourceSize(element, outputBitmapSize, applyImageDevicePixelRatio);
 }
 
 static inline FloatSize NODELETE size(CanvasBase& canvas)
@@ -1606,13 +1610,16 @@ static inline FloatSize size(HTMLVideoElement& video)
 
 #endif
 
-static inline FloatSize size(CSSStyleImageValue& image)
+static inline ConcreteObjectSize size(CSSStyleImageValue& image, FloatSize outputBitmapSize)
 {
     RefPtr cachedImage = image.image();
     if (!cachedImage)
-        return FloatSize();
+        return ConcreteObjectSize::zeroSize();
 
-    return cachedImage->imageSizeForRenderer(nullptr, 1.0f);
+    RefPtr sourceImage = cachedImage->hasImage() ? cachedImage->image() : nullptr;
+    if (!sourceImage)
+        return ConcreteObjectSize::zeroSize();
+    return Style::CanvasDrawImageSizing { outputBitmapSize }.resolve(sourceImage->naturalDimensions());
 }
 
 #if ENABLE(WEB_CODECS)
@@ -1626,14 +1633,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& im
 {
     return WTF::switchOn(image,
         [&](Ref<HTMLImageElement>& imageElement) -> ExceptionOr<void> {
-            LayoutSize destRectSize = size(imageElement, ImageSizeType::AfterDevicePixelRatio);
-            LayoutSize sourceRectSize = size(imageElement, ImageSizeType::BeforeDevicePixelRatio);
+            auto destRectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::Yes).size();
+            auto sourceRectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No).size();
             return this->drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, destRectSize.width(), destRectSize.height() });
         },
         [&](Ref<SVGImageElement>& imageElement) -> ExceptionOr<void> {
-            LayoutSize destRectSize = size(imageElement, ImageSizeType::AfterDevicePixelRatio);
-            LayoutSize sourceRectSize = size(imageElement, ImageSizeType::BeforeDevicePixelRatio);
+            auto destRectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::Yes).size();
+            auto sourceRectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No).size();
             return this->drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, destRectSize.width(), destRectSize.height() });
+        },
+        [&](Ref<CSSStyleImageValue>& cssImage) -> ExceptionOr<void> {
+            auto imageSize = size(cssImage, FloatSize { canvasBase().size() }).size();
+            return this->drawImage(cssImage, FloatRect { 0, 0, imageSize.width(), imageSize.height() }, FloatRect { dx, dy, imageSize.width(), imageSize.height() });
         },
         [&](auto& element) -> ExceptionOr<void> {
             FloatSize elementSize = size(element);
@@ -1645,6 +1656,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& im
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& image, float dx, float dy, float dw, float dh)
 {
     return WTF::switchOn(image,
+        [&](Ref<HTMLImageElement>& imageElement) -> ExceptionOr<void> {
+            auto sourceRectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No).size();
+            return this->drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, dw, dh });
+        },
+        [&](Ref<SVGImageElement>& imageElement) -> ExceptionOr<void> {
+            auto sourceRectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No).size();
+            return this->drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, dw, dh });
+        },
+        [&](Ref<CSSStyleImageValue>& cssImage) -> ExceptionOr<void> {
+            auto imageSize = size(cssImage, FloatSize { canvasBase().size() }).size();
+            return this->drawImage(cssImage, FloatRect { 0, 0, imageSize.width(), imageSize.height() }, FloatRect { dx, dy, dw, dh });
+        },
         [&](auto& element) -> ExceptionOr<void> {
             FloatSize elementSize = size(element);
             return this->drawImage(element, FloatRect { 0, 0, elementSize.width(), elementSize.height() }, FloatRect { dx, dy, dw, dh });
@@ -1668,27 +1691,21 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imageElement, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode)
 {
-    if (!imageElement.complete())
-        return { };
-
-    RefPtr cachedImage = imageElement.cachedImage();
-    if (!cachedImage)
-        return { };
-
-    if (cachedImage->status() == CachedImage::Status::DecodeError)
+    auto requestState = imageElement.currentRequestState();
+    if (requestState == ImageRequestState::Broken)
         return Exception { ExceptionCode::InvalidStateError, "The HTMLImageElement provided is in the 'broken' state."_s };
+    if (requestState != ImageRequestState::CompletelyAvailable)
+        return { };
 
-    auto imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
+    RefPtr sourceImage = imageElement.sourceImage();
+    if (!sourceImage)
+        return { };
 
-    auto orientation = ImageOrientation::Orientation::FromImage;
-    if (imageElement.allowsOrientationOverride()) {
-        if (CheckedPtr renderer = imageElement.renderer())
-            orientation = Style::toPlatform(renderer->style().imageOrientation()).orientation();
-        else if (CheckedPtr computedStyle = imageElement.computedStyle())
-            orientation = Style::toPlatform(computedStyle->imageOrientation()).orientation();
-    }
+    auto concreteObjectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No);
 
-    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageRect, srcRect, dstRect, op, blendMode, orientation);
+    auto orientation = imageElement.orientationForSourceImage();
+
+    auto result = drawImage(protect(imageElement.document()).get(), *sourceImage, concreteObjectSize, srcRect, dstRect, op, blendMode, orientation);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1702,16 +1719,19 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(SVGImageElement& image
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(SVGImageElement& imageElement, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode)
 {
-    RefPtr cachedImage = imageElement.cachedImage();
-    if (!cachedImage)
+    auto requestState = imageElement.currentRequestState();
+    if (requestState == ImageRequestState::Broken)
+        return Exception { ExceptionCode::InvalidStateError, "The SVGImageElement provided is in the 'broken' state."_s };
+    if (requestState != ImageRequestState::CompletelyAvailable)
         return { };
 
-    if (cachedImage->status() == CachedImage::Status::DecodeError)
-        return Exception { ExceptionCode::InvalidStateError, "The SVGImageElement provided is in the 'broken' state."_s };
+    RefPtr sourceImage = imageElement.sourceImage();
+    if (!sourceImage)
+        return { };
 
-    auto imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
+    auto concreteObjectSize = size(imageElement, FloatSize { canvasBase().size() }, ApplyImageDevicePixelRatio::No);
 
-    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageRect, srcRect, dstRect, op, blendMode);
+    auto result = drawImage(protect(imageElement.document()).get(), *sourceImage, concreteObjectSize, srcRect, dstRect, op, blendMode);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1726,9 +1746,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& im
     RefPtr imageDocument = image.document();
     if (!imageDocument)
         return { };
-    auto imageRect = FloatRect(FloatPoint(), size(image));
+    RefPtr sourceImage = cachedImage->image();
+    if (!sourceImage)
+        return { };
+    auto concreteObjectSize = size(image, FloatSize { canvasBase().size() });
 
-    auto result = drawImage(*imageDocument, *cachedImage, nullptr, imageRect, srcRect, dstRect, state().globalComposite, state().globalBlend);
+    auto result = drawImage(*imageDocument, *sourceImage, concreteObjectSize, srcRect, dstRect, state().globalComposite, state().globalBlend);
 
     if (!result.hasException())
         checkOrigin(image);
@@ -1769,7 +1792,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
 }
 #endif
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage& cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Image& sourceImage, ConcreteObjectSize concreteObjectSize, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
 {
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
@@ -1798,16 +1821,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (!hasInvertibleTransform()) [[unlikely]]
         return { };
 
-    RefPtr<Image> image = cachedImage.imageForRenderer(renderer);
-    if (!image)
-        return { };
+    RefPtr<Image> image = &sourceImage;
 
-    bool drawsSVGImage = image->drawsSVGImage();
-    ImageObserverDisableScope imageObserverDisabler(*image, drawsSVGImage);
+    ImageObserverDisableScope imageObserverDisabler(*image, image->isSVGImage());
     auto shouldPostProcess { true };
-
-    if (drawsSVGImage)
-        image->setContainerSize(imageRect.size());
 
     if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
@@ -1815,7 +1832,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
             // FIXME: This draws the SDR base image, so an animated HDR image loses its HDR
             // content: the copy is backed by a NativeImageSource, which never reports a gain
             // map and always prefers DecodingDestination::Base.
-            bitmapImage = BitmapImage::create(image->nativeImage());
+            bitmapImage = BitmapImage::create(bitmapImage->nativeImage());
             if (!bitmapImage)
                 return { };
             image = bitmapImage.copyRef();
@@ -1841,17 +1858,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     } else if (isFullCanvasCompositeMode(op)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op, options);
+        auto sizedImage = SizedImage { *image, concreteObjectSize };
+        fullCanvasCompositedDrawImage(sizedImage, normalizedDstRect, normalizedSrcRect, op, options);
     } else if (op == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     }
 
     return { };
@@ -2164,9 +2182,9 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
     c->restore();
 }
 
-static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+static void drawImageToContext(const SizedImage& sizedImage, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
 {
-    context.drawImage(image, dest, src, options);
+    context.drawImage(sizedImage.image, sizedImage.concreteObjectSize, dest, src, options);
 }
 
 static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
@@ -2337,79 +2355,75 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
     );
 }
 
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CachedImage& cachedImage, RenderElement* renderer, bool repeatX, bool repeatY)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(Image& image, ConcreteObjectSize concreteObjectSize, bool originClean, bool repeatX, bool repeatY)
 {
-    bool originClean = cachedImage.isOriginClean(protect(canvasBase())->securityOrigin());
-
     // FIXME: SVG images with animations can switch between clean and dirty (leaking cross-origin
     // data). We should either:
     //   1) Take a fixed snapshot of an SVG image when creating a pattern and determine then whether
     //      the origin is clean.
     //   2) Dynamically verify the origin checks at draw time, and dirty the canvas accordingly.
     // To be on the safe side, taint the origin for all patterns containing SVG images for now.
-    if (protect(cachedImage.image())->drawsSVGImage())
+    if (image.isSVGImage())
         originClean = false;
 
-    RefPtr image = cachedImage.imageForRenderer(renderer);
-    if (!image)
-        return Exception { ExceptionCode::InvalidStateError };
-
-    RefPtr nativeImage = image->nativeImage();
+    RefPtr nativeImage = image.nativeImage(concreteObjectSize);
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
     return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, originClean) };
 }
 
+static ConcreteObjectSize concreteObjectSizeForPattern(Image& image)
+{
+    return Style::CanvasPatternSizing { }.resolve(image.naturalDimensions());
+}
+
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
 {
+    auto requestState = imageElement.currentRequestState();
+    if (requestState == ImageRequestState::Broken)
+        return Exception { ExceptionCode::InvalidStateError };
+    if (requestState != ImageRequestState::CompletelyAvailable)
+        return nullptr;
+
     RefPtr cachedImage = imageElement.cachedImage();
-
-    // If the image loading hasn't started or the image is not complete, it is not fully decodable.
-    if (!cachedImage || !imageElement.complete())
+    if (!cachedImage)
         return nullptr;
 
-    if (cachedImage->errorOccurred())
-        return Exception { ExceptionCode::InvalidStateError };
-
-    if (cachedImage->status() == CachedResource::LoadError)
-        return Exception { ExceptionCode::InvalidStateError };
-
-    // Image may have a zero-width or a zero-height.
-    float intrinsicWidth = 0;
-    float intrinsicHeight = 0;
-    FloatSize intrinsicRatio;
-    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    if (intrinsicWidth == 0 || intrinsicHeight == 0)
+    auto naturalDimensions = cachedImage->naturalDimensions();
+    if (!naturalDimensions.width.value_or(0) || !naturalDimensions.height.value_or(0))
         return nullptr;
 
-    return createPattern(*cachedImage, protect(imageElement.renderer()).get(), repeatX, repeatY);
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    bool originClean = cachedImage->isOriginClean(protect(canvasBase())->securityOrigin());
+    return createPattern(*image, concreteObjectSizeForPattern(*image), originClean, repeatX, repeatY);
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(SVGImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    RefPtr cachedImage = imageElement.cachedImage();
+    auto requestState = imageElement.currentRequestState();
+    if (requestState == ImageRequestState::Broken)
+        return Exception { ExceptionCode::InvalidStateError };
+    if (requestState != ImageRequestState::CompletelyAvailable)
+        return nullptr;
 
-    // The image loading hasn't started.
+    RefPtr cachedImage = imageElement.cachedImage();
     if (!cachedImage)
         return nullptr;
 
-    if (cachedImage->errorOccurred())
+    auto naturalDimensions = cachedImage->naturalDimensions();
+    if (!naturalDimensions.width.value_or(0) || !naturalDimensions.height.value_or(0))
+        return nullptr;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
         return Exception { ExceptionCode::InvalidStateError };
 
-    // The image loading has started but it is not complete.
-    if (!cachedImage->image())
-        return nullptr;
-
-    // Image may have a zero-width or a zero-height.
-    float intrinsicWidth = 0;
-    float intrinsicHeight = 0;
-    FloatSize intrinsicRatio;
-    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    if (intrinsicWidth == 0 || intrinsicHeight == 0)
-        return nullptr;
-
-    return createPattern(*cachedImage, protect(imageElement.renderer()).get(), repeatX, repeatY);
+    bool originClean = cachedImage->isOriginClean(protect(canvasBase())->securityOrigin());
+    return createPattern(*image, concreteObjectSizeForPattern(*image), originClean, repeatX, repeatY);
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasBase& canvas, bool repeatX, bool repeatY)

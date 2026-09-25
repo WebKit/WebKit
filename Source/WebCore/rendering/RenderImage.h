@@ -51,6 +51,7 @@ public:
     RenderImageResource& imageResource() { return *m_imageResource; }
     const RenderImageResource& imageResource() const { return *m_imageResource; }
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
+    bool hasCachedImageSource() const { return imageResource().hasCachedImageSource(); }
 
     ImageSizeChangeType setImageSizeForAltText(CachedImage* newImage = nullptr);
 
@@ -81,13 +82,14 @@ public:
     bool shouldRespectZeroIntrinsicWidth() const final;
     bool shouldRespectZeroIntrinsicHeight() const final;
 
-    String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
+    String accessibilityDescription() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     bool isMultiRepresentationHEIC() const;
 #endif
 
     FloatSize preferredAspectRatioAsSize() const final;
+    WEBCORE_EXPORT std::optional<FloatSize> usedImageSize() const final;
 
 protected:
     RenderImage(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag>, Style::Image* = nullptr, const float imageDevicePixelRatio = 1.0f);
@@ -137,11 +139,11 @@ private:
     void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
     void updateIntrinsicSizeIfNeeded(const LayoutSize&);
     // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
-    void updateInnerContentRect();
+    IntSize imageContainerSize() const;
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
 
-    bool isDimensionlessSVG() const;
+    bool hasNaturalAspectRatio() const;
 
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 

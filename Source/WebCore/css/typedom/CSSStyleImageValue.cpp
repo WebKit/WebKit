@@ -31,6 +31,7 @@
 #include "CSSStyleImageValue.h"
 
 #include "CSSSerializationContext.h"
+#include "CachedImage.h"
 #include "Document.h"
 
 #include <wtf/TZoneMallocInlines.h>

@@ -20,6 +20,7 @@
 #include "TextureMapperTile.h"
 
 #include "BitmapTexture.h"
+#include "DefaultSizing.h"
 #include "Image.h"
 #include "NativeImage.h"
 #include "TextureMapper.h"
@@ -68,7 +69,7 @@ void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
         m_texture = BitmapTexture::create(targetRect.size(), flags);
     }
 
-    auto nativeImage = image->currentNativeImage();
+    auto nativeImage = image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions()));
     m_texture->updateContents(nativeImage.get(), targetRect, sourceOffset);
 }
 

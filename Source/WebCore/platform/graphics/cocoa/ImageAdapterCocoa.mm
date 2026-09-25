@@ -116,43 +116,62 @@ void ImageAdapter::invalidate()
 {
 #if USE(APPKIT)
     m_nsImage = nullptr;
+    m_nsImageKey = std::nullopt;
 #endif
     m_tiffRep = nullptr;
+    m_tiffRepKey = std::nullopt;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     m_multiRepHEIC = nullptr;
 #endif
 }
 
-CFDataRef ImageAdapter::tiffRepresentation()
+ImageAdapter::RasterizationKey::RasterizationKey(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+    : concreteObjectSize(concreteObjectSize)
+    , extras(extras ? extras->copy() : nullptr)
 {
-    if (m_tiffRep)
+}
+
+bool ImageAdapter::RasterizationKey::matches(ConcreteObjectSize otherConcreteObjectSize, const ImageDrawingExtras* otherExtras) const
+{
+    if (concreteObjectSize != otherConcreteObjectSize)
+        return false;
+    if (!extras || !otherExtras)
+        return !extras && !otherExtras;
+    return *extras == *otherExtras;
+}
+
+CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+{
+    if (m_tiffRep && m_tiffRepKey && m_tiffRepKey->matches(concreteObjectSize, extras))
         return m_tiffRep.get();
 
-    auto data = tiffRepresentation(allNativeImages());
+    auto data = tiffRepresentation(allNativeImages(concreteObjectSize, extras));
     if (!data)
         return nullptr;
 
     m_tiffRep = data;
+    m_tiffRepKey.emplace(concreteObjectSize, extras);
     return m_tiffRep.get();
 }
 
 #if USE(APPKIT)
-NSImage* ImageAdapter::nsImage()
+NSImage* ImageAdapter::nsImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
-    if (m_nsImage)
+    if (m_nsImage && m_nsImageKey && m_nsImageKey->matches(concreteObjectSize, extras))
         return m_nsImage.get();
 
-    CFDataRef data = tiffRepresentation();
+    CFDataRef data = tiffRepresentation(concreteObjectSize, extras);
     if (!data)
         return nullptr;
 
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data]);
+    m_nsImageKey.emplace(concreteObjectSize, extras);
     return m_nsImage.get();
 }
 
-RetainPtr<NSImage> ImageAdapter::snapshotNSImage()
+RetainPtr<NSImage> ImageAdapter::snapshotNSImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
-    RefPtr nativeImage =  image().currentNativeImage();
+    RefPtr nativeImage = image().currentNativeImage(concreteObjectSize, extras);
     if (!nativeImage)
         return nullptr;
 

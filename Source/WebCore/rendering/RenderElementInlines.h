@@ -34,6 +34,15 @@ inline Overflow RenderElement::effectiveOverflowInlineDirection() const { return
 inline Element* RenderElement::element() const { return downcast<Element>(RenderObject::node()); }
 inline Element* RenderElement::nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
 
+inline std::optional<FloatSize> RenderElement::usedZoomedImageSize() const
+{
+    auto size = usedImageSize();
+    if (!size)
+        return std::nullopt;
+    size->scale(style().usedZoom());
+    return size;
+}
+
 inline bool RenderElement::isFixedPositioned() const
 {
     return isOutOfFlowPositioned() && style().position() == PositionType::Fixed;

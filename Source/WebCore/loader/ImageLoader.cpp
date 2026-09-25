@@ -562,6 +562,21 @@ RenderImageResource* ImageLoader::renderImageResource()
     return nullptr;
 }
 
+ImageRequestState ImageLoader::currentRequestState() const
+{
+    RefPtr image = m_image;
+    if (!image)
+        return ImageRequestState::Unavailable;
+
+    if (image->errorOccurred())
+        return ImageRequestState::Broken;
+
+    if (!image->hasImage())
+        return ImageRequestState::Unavailable;
+
+    return m_imageComplete ? ImageRequestState::CompletelyAvailable : ImageRequestState::PartiallyAvailable;
+}
+
 void ImageLoader::updateRenderer()
 {
     CheckedPtr imageResource = renderImageResource();

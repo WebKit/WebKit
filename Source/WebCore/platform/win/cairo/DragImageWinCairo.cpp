@@ -152,7 +152,7 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     return hbmp.leak();
 }
 
-DragImageRef createDragImageFromImage(Image* img, ImageOrientation, GraphicsClient*, float)
+DragImageRef createDragImageFromImage(Image* img, ConcreteObjectSize concreteObjectSize, ImageOrientation, GraphicsClient*, float)
 {
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
@@ -160,7 +160,7 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientation, GraphicsClie
         return 0;
 
     GraphicsContextCairo* drawContext = nullptr;
-    auto hbmp = allocImage(workingDC.get(), IntSize(img->size()), &drawContext);
+    auto hbmp = allocImage(workingDC.get(), IntSize(concreteObjectSize.size()), &drawContext);
     if (!hbmp || !drawContext)
         return 0;
 
@@ -168,7 +168,7 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientation, GraphicsClie
     cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
     cairo_fill_preserve(cr);
 
-    if (auto nativeImage = img->currentNativeImage()) {
+    if (auto nativeImage = img->currentNativeImage(concreteObjectSize)) {
         auto surface = nativeImage->platformImage();
         // Draw the image.
         cairo_set_source_surface(cr, surface.get(), 0.0, 0.0);

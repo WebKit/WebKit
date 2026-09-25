@@ -53,6 +53,9 @@ namespace InlineIterator {
 class InlineBoxIterator;
 };
 
+namespace ObjectSizeNegotiation { class ImageSizingContext; }
+using ObjectSizeNegotiation::ImageSizingContext;
+
 namespace Style {
 class Image;
 }
@@ -209,8 +212,8 @@ public:
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
     bool NODELETE fixedBackgroundPaintsInLocalCoordinates() const;
-    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&) const;
-    DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
+    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, const Style::Image&, const void*, const LayoutSize&) const;
+    DecodingMode decodingModeForImageDraw(const Style::Image&, const PaintInfo&) const;
 
     void paintMaskForTextFillBox(GraphicsContext&, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 
@@ -220,7 +223,8 @@ public:
     void clearFirstLetterRemainingText();
 
     enum class ScaleByUsedZoom : bool { No, Yes };
-    LayoutSize calculateImageIntrinsicDimensions(Style::Image*, const LayoutSize& scaledPositioningAreaSize, ScaleByUsedZoom) const;
+
+    LayoutSize calculateImageIntrinsicDimensions(const Style::Image&, const ImageSizingContext&, ScaleByUsedZoom) const;
 
     RenderBlock* containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const;
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const;

@@ -27,6 +27,7 @@
 #include "ShareableBitmapUtilities.h"
 
 #include <WebCore/CachedImage.h>
+#include <WebCore/DefaultSizing.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
@@ -85,14 +86,18 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!cachedImage || cachedImage->errorOccurred())
         return { };
 
-    RefPtr image = cachedImage->imageForRenderer(&renderImage);
-    if (!image || image->width() <= 1 || image->height() <= 1)
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return { };
+
+    auto usedImageSize = renderImage.usedImageSize();
+    if (!usedImageSize || usedImageSize->width() <= 1 || usedImageSize->height() <= 1)
         return { };
 
     if (options.allowAnimatedImages == AllowAnimatedImages::No && image->isAnimated())
         return { };
 
-    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
+    auto bitmapSize = *usedImageSize;
     if (options.screenSizeInPixels) {
         auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *options.screenSizeInPixels }).size();
         bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
@@ -107,7 +112,11 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!graphicsContext)
         return { };
 
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
+    auto orientation = renderImage.imageOrientation();
+    if (orientation == WebCore::ImageOrientation::Orientation::FromImage)
+        orientation = image->orientation();
+    auto imageSize = WebCore::DefaultSizing { }.resolve(image->naturalDimensions());
+    graphicsContext->drawImage(*image, imageSize, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), FloatRect { { }, imageSize.size() }, { renderImage.imageOrientation() });
     return sharedBitmap;
 }
 

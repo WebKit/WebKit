@@ -240,6 +240,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/grid"
     "${WEBCORE_DIR}/style/values/images"
     "${WEBCORE_DIR}/style/values/images/kinds"
+    "${WEBCORE_DIR}/style/values/images/sizing"
     "${WEBCORE_DIR}/style/values/inline"
     "${WEBCORE_DIR}/style/values/line-grid"
     "${WEBCORE_DIR}/style/values/link-params"

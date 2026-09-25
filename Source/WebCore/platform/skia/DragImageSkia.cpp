@@ -94,9 +94,9 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
     return SkImages::RasterFromBitmap(bitmap);
 }
 
-DragImageRef createDragImageFromImage(Image* image, ImageOrientation, GraphicsClient*, float)
+DragImageRef createDragImageFromImage(Image* image, ConcreteObjectSize concreteObjectSize, ImageOrientation, GraphicsClient*, float)
 {
-    return image->currentNativeImage()->platformImage();
+    return image->currentNativeImage(concreteObjectSize)->platformImage();
 }
 
 DragImageRef createDragImageIconForCachedImageFilename(const String&)

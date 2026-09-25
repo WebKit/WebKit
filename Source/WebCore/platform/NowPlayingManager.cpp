@@ -107,7 +107,7 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo, 
     else if (!m_nowPlayingInfoArtwork || nowPlayingInfo.metadata.artwork->src != m_nowPlayingInfoArtwork->src)
         m_nowPlayingInfoArtwork = ArtworkCache { nowPlayingInfo.metadata.artwork->src, nowPlayingInfo.metadata.artwork->image };
     else
-        m_nowPlayingInfo->metadata.artwork->image = nullptr;
+        m_nowPlayingInfo->metadata.artwork->image = std::nullopt;
 
     setNowPlayingInfoPrivate(*m_nowPlayingInfo, shouldUpdateNowPlayingSuppression, pageIdentifier);
     m_setAsNowPlayingApplication = true;

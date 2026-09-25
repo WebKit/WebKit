@@ -21,12 +21,17 @@
 
 #pragma once
 
+#include "ApplyImageDevicePixelRatio.h"
+#include "ImageRequestState.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageLoader.h"
 #include "SVGURIReference.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+class Image;
+struct ImageOrientation;
 
 class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGImageElement);
@@ -35,6 +40,16 @@ public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
+
+    ImageRequestState currentRequestState() const;
+
+    RefPtr<Image> sourceImage() const;
+
+    ImageOrientation orientationForSourceImage();
+
+    bool hasSourceImage() const;
+
+    float imageDevicePixelRatio() const { return 1; }
     bool renderingTaintsOrigin() const;
     String imageSourceURL() const final;
 

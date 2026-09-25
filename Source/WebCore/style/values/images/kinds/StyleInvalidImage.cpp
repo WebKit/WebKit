@@ -41,17 +41,12 @@ Ref<InvalidImage> InvalidImage::create()
 InvalidImage::~InvalidImage() = default;
 
 InvalidImage::InvalidImage()
-    : GeneratedImage(Image::Type::InvalidImage, true)
+    : GeneratedImage(Image::Type::InvalidImage)
 {
 }
 
 void InvalidImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
-}
-
-RefPtr<WebCore::Image> InvalidImage::image(const RenderElement*, const FloatSize&, const GraphicsContext&, bool) const
-{
-    return &WebCore::Image::nullImage();
 }
 
 Ref<CSSValue> InvalidImage::computedStyleValue(const Style::ComputedStyle&) const

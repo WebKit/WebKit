@@ -123,6 +123,7 @@
 #import <WebCore/CompositionHighlight.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
@@ -11836,7 +11837,7 @@ static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
     if (!image)
         return nil;
 
-    auto nativeImage = image->nativeImage();
+    auto nativeImage = image->nativeImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()));
     if (!nativeImage)
         return nil;
 

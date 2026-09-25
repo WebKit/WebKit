@@ -105,7 +105,6 @@ void forBoth(WebCore::GraphicsContext& a, WebCore::GraphicsContext& b, F&& func)
     MACRO(shouldSmoothFonts) \
     MACRO(shouldSubpixelQuantizeFonts) \
     MACRO(shadowsIgnoreTransforms) \
-    MACRO(drawLuminanceMask) \
     MACRO(isInTransparencyLayer) \
     MACRO(scaleFactor)
 
@@ -674,21 +673,6 @@ struct SetDefaultShadowsIgnoreTransforms {
     }
 };
 
-struct SetDefaultDrawLuminanceMask {
-    void operator()(WebCore::GraphicsContext& c)
-    {
-        c.setDrawLuminanceMask(false);
-    }
-
-    static String description()
-    {
-        return R"DL(
-(set-state
-  (change-flags [draw-luminance-mask])
-  (draw-luminance-mask 0)))DL"_s;
-    }
-};
-
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
@@ -696,7 +680,7 @@ using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialia
     SetDefaultFillBrush, SetDefaultFillRule, SetDefaultStrokeBrush, SetDefaultStrokeThickness, SetDefaultStrokeStyle,
     SetDefaultCompositeMode, SetDefaultDropShadow, SetDefaultStyle, SetDefaultAlpha, SetDefaultImageInterpolationQuality,
     SetDefaultTextDrawingMode, SetDefaultShouldAntialias, SetDefaultShouldSmoothFonts, SetDefaultShouldSubpixelQuantizeFonts,
-    SetDefaultShadowsIgnoreTransforms, SetDefaultDrawLuminanceMask>;
+    SetDefaultShadowsIgnoreTransforms>;
 
 }
 

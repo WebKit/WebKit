@@ -29,7 +29,6 @@
 
 #if USE(SYSTEM_PREVIEW)
 
-#include <WebCore/Image.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/SystemImage.h>
 #include <optional>
@@ -53,14 +52,14 @@ public:
         static constexpr int smallOffset = 8;
         static constexpr int minimumSizeForLarge = 240;
     };
-    static Ref<ARKitBadgeSystemImage> create(Image& image)
+    static Ref<ARKitBadgeSystemImage> create(Ref<NativeImage>&& nativeImage)
     {
-        return adoptRef(*new ARKitBadgeSystemImage(image));
+        return adoptRef(*new ARKitBadgeSystemImage(WTF::move(nativeImage)));
     }
 
-    static Ref<ARKitBadgeSystemImage> create(std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, FloatSize size)
+    static Ref<ARKitBadgeSystemImage> create(std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     {
-        return adoptRef(*new ARKitBadgeSystemImage(renderingResourceIdentifier, size));
+        return adoptRef(*new ARKitBadgeSystemImage(renderingResourceIdentifier));
     }
 
     static Ref<ARKitBadgeSystemImage> createWithoutImage();
@@ -69,30 +68,27 @@ public:
 
     void draw(GraphicsContext&, const FloatRect&) const final;
 
-    Image* image() const { return m_image.get(); }
-    void setImage(Image& image) { m_image = image; }
+    NativeImage* nativeImage() const { return m_nativeImage.get(); }
+    void setNativeImage(Ref<NativeImage>&& nativeImage) { m_nativeImage = WTF::move(nativeImage); }
 
     std::optional<RenderingResourceIdentifier> imageIdentifier() const;
 
 private:
     friend struct IPC::ArgumentCoder<ARKitBadgeSystemImage>;
-    ARKitBadgeSystemImage(Image& image)
+    explicit ARKitBadgeSystemImage(Ref<NativeImage>&& nativeImage)
         : SystemImage(SystemImageType::ARKitBadge)
-        , m_image(image)
-        , m_imageSize(image.size())
+        , m_nativeImage(WTF::move(nativeImage))
     {
     }
 
-    ARKitBadgeSystemImage(std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, FloatSize size)
+    explicit ARKitBadgeSystemImage(std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
         : SystemImage(SystemImageType::ARKitBadge)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
-        , m_imageSize(size)
     {
     }
 
-    RefPtr<Image> m_image;
+    RefPtr<NativeImage> m_nativeImage;
     Markable<RenderingResourceIdentifier> m_renderingResourceIdentifier;
-    FloatSize m_imageSize;
 };
 
 } // namespace WebCore

@@ -864,6 +864,20 @@ SVGSVGElement* SVGSVGElement::findRootAnchor(StringView fragmentIdentifier) cons
     return nullptr;
 }
 
+void SVGSVGElement::invalidateCurrentView(RenderElement& renderer)
+{
+    if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+            ASSERT(svgRoot->viewportContainer());
+            protect(svgRoot->viewportContainer())->updateHasSVGTransformFlags();
+        }
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+}
+
 bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
 {
     CheckedPtr renderer = downcast<RenderLayerModelObject>(this->renderer());
@@ -875,19 +889,6 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
     bool hadUseCurrentView = m_useCurrentView;
     m_useCurrentView = false;
 
-    auto invalidateView = [&](RenderElement& renderer) {
-        if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-            if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
-                ASSERT(svgRoot->viewportContainer());
-                protect(svgRoot->viewportContainer())->updateHasSVGTransformFlags();
-            }
-            updateSVGRendererForElementChange();
-            return;
-        }
-
-        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-    };
-
     if (fragmentIdentifier.startsWith("svgView("_s)) {
         if (!view)
             view = currentView(); // Create the SVGViewSpec.
@@ -896,7 +897,7 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
         else
             view->reset();
         if (renderer && (hadUseCurrentView || m_useCurrentView))
-            invalidateView(*renderer);
+            invalidateCurrentView(*renderer);
         return m_useCurrentView;
     }
 
@@ -921,7 +922,7 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
 
             rootElement->inheritViewAttributes(*viewElement);
             if (CheckedPtr renderer = rootElement->renderer())
-                invalidateView(*renderer);
+                invalidateCurrentView(*renderer);
             m_currentViewFragmentIdentifier = fragmentIdentifier.toString();
             return true;
         }
@@ -962,6 +963,21 @@ void SVGSVGElement::resetViewToDefault()
     }
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+}
+
+void SVGSVGElement::forcePreserveAspectRatioNoneForSVGImage()
+{
+    auto viewBox = currentViewBoxRect();
+
+    Ref view = currentView();
+    if (!m_useCurrentView)
+        view->setZoomAndPan(zoomAndPan());
+    view->setViewBox(viewBox);
+    view->setPreserveAspectRatio({ SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE, SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET });
+    m_useCurrentView = true;
+
+    if (CheckedPtr renderer = this->renderer())
+        invalidateCurrentView(*renderer);
 }
 
 void SVGSVGElement::inheritViewAttributes(const SVGViewElement& viewElement)

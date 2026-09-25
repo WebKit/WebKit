@@ -470,7 +470,7 @@ TEST_F(GraphicsContextGLCocoaTest, CopyNativeImageAfterReshape)
     EXPECT_NE(drawingImage, nullptr);
     EXPECT_EQ(displayImage, nullptr);
     EXPECT_EQ(drawingImage->size(), FloatSize(10, 10));
-    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::transparentBlack, *drawingImage, FloatPoint(5, 5)));
 }
 
 static void clearBottomHalf(GraphicsContextGL& gl, IntSize size, Color color, AlphaPremultiplication contentsAlpha)
@@ -528,8 +528,8 @@ TEST_P(AnyContextAttributeTest, CopyNativeImage)
         // unpremultiplied context must not be described as premultiplied, or the colors
         // would be wrong wherever the contents are not opaque.
         EXPECT_EQ(CGImageGetAlphaInfo(image->platformImage().get()), expectedAlphaInfo);
-        EXPECT_TRUE(imagePixelIs(expectedFill, *image, FloatPoint(5, 8)));
-        EXPECT_TRUE(imagePixelIs(expectedRest, *image, FloatPoint(5, 1)));
+        EXPECT_TRUE(nativeImagePixelsIs(expectedFill, *image, FloatPoint(5, 8)));
+        EXPECT_TRUE(nativeImagePixelsIs(expectedRest, *image, FloatPoint(5, 1)));
     }
 }
 
@@ -542,30 +542,30 @@ TEST_F(GraphicsContextGLCocoaTest, CopyImageAndMutateDrawingBuffer)
     gl->reshape(10, 10);
     RefPtr drawingImage0 = gl->copyNativeImage(GL::SurfaceBuffer::DrawingBuffer);
     ASSERT_NE(drawingImage0, nullptr);
-    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
     gl->clearColor(0.f, 1.f, 0.f, 1.f);
     gl->clear(GL::COLOR_BUFFER_BIT);
     RefPtr drawingImage1 = gl->copyNativeImage(GL::SurfaceBuffer::DrawingBuffer);
     ASSERT_NE(drawingImage1, nullptr);
-    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
 
     gl->clearColor(0.f, 0.f, 1.f, 1.f);
     gl->clear(GL::COLOR_BUFFER_BIT);
-    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
     RefPtr drawingImage2 = gl->copyNativeImage(GL::SurfaceBuffer::DrawingBuffer);
     ASSERT_NE(drawingImage2, nullptr);
-    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::blue, *drawingImage2, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::blue, *drawingImage2, FloatPoint(5, 5)));
     gl->prepareForDisplay();
     RefPtr displayImage = gl->copyNativeImage(GL::SurfaceBuffer::DisplayBuffer);
     ASSERT_NE(displayImage, nullptr);
-    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::blue, *drawingImage2, FloatPoint(5, 5)));
-    EXPECT_TRUE(imagePixelIs(Color::blue, *displayImage, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::blue, *drawingImage2, FloatPoint(5, 5)));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::blue, *displayImage, FloatPoint(5, 5)));
 }
 
 TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)

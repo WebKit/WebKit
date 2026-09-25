@@ -26,6 +26,7 @@
 #include <WebCore/CachedImageClient.h>
 #include <WebCore/CachedResourceHandle.h>
 #include <WebCore/Element.h>
+#include <WebCore/ImageRequestState.h>
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/Timer.h>
@@ -74,6 +75,8 @@ public:
     bool shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandidate&) const;
 
     bool imageComplete() const { return m_imageComplete; }
+
+    ImageRequestState currentRequestState() const;
 
     CachedImage* image() const { return m_image.get(); }
     void clearImage(); // Cancels pending load events, and doesn't dispatch new ones.

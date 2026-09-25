@@ -26,117 +26,30 @@
 #include "StyleGeneratedImage.h"
 
 #include "Document.h"
-#include "GeneratedImage.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
 #include "StyleResolver.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
 
-static constexpr auto timeToKeepCachedGeneratedImages = 3_s;
-
-// MARK: - CachedGeneratedImage
-
-class GeneratedImage::CachedGeneratedImage {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedGeneratedImage);
-public:
-    CachedGeneratedImage(GeneratedImage&, FloatSize, WebCore::GeneratedImage&);
-    WebCore::GeneratedImage& NODELETE image() const { return m_image; }
-    void puntEvictionTimer() { m_evictionTimer.restart(); }
-
-private:
-    void evictionTimerFired();
-
-    GeneratedImage& m_owner;
-    const FloatSize m_size;
-    const Ref<WebCore::GeneratedImage> m_image;
-    DeferrableOneShotTimer m_evictionTimer;
-};
-
-inline GeneratedImage::CachedGeneratedImage::CachedGeneratedImage(GeneratedImage& owner, FloatSize size, WebCore::GeneratedImage& image)
-    : m_owner(owner)
-    , m_size(size)
-    , m_image(image)
-    , m_evictionTimer(*this, &GeneratedImage::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImages)
-{
-    m_evictionTimer.restart();
-}
-
-void GeneratedImage::CachedGeneratedImage::evictionTimerFired()
-{
-    // NOTE: This is essentially a "delete this", the object is no longer valid after this line.
-    protect(m_owner)->evictCachedGeneratedImage(m_size);
-}
-
 // MARK: - GeneratedImage.
 
-GeneratedImage::GeneratedImage(Image::Type type, bool fixedSize)
+GeneratedImage::GeneratedImage(Image::Type type)
     : Image { type }
-    , m_fixedSize { fixedSize }
 {
 }
 
 GeneratedImage::~GeneratedImage() = default;
 
-WebCore::GeneratedImage* GeneratedImage::cachedImageForSize(FloatSize size)
+NaturalDimensions GeneratedImage::naturalDimensions(const RenderElement&, const ImageSizingContext&) const
 {
-    if (size.isEmpty())
-        return nullptr;
-
-    auto* cachedGeneratedImage = m_images.get(size);
-    if (!cachedGeneratedImage)
-        return nullptr;
-
-    cachedGeneratedImage->puntEvictionTimer();
-    return &cachedGeneratedImage->image();
+    return NaturalDimensions::none();
 }
 
-void GeneratedImage::saveCachedImageForSize(FloatSize size, WebCore::GeneratedImage& image)
+ImageDrawResult GeneratedImage::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, bool isForFirstLine) const
 {
-    ASSERT(!m_images.contains(size));
-    m_images.add(size, makeUnique<CachedGeneratedImage>(*this, size, image));
-}
-
-void GeneratedImage::evictCachedGeneratedImage(FloatSize size)
-{
-    ASSERT(m_images.contains(size));
-    m_images.remove(size);
-}
-
-FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType) const
-{
-    if (!m_fixedSize)
-        return m_containerSize;
-
-    if (!renderer)
-        return { };
-
-    FloatSize fixedSize = this->fixedSize(*renderer);
-    if (multiplier == 1.0f)
-        return fixedSize;
-
-    float width = fixedSize.width() * multiplier;
-    float height = fixedSize.height() * multiplier;
-
-    // Don't let images that have a width/height >= 1 shrink below 1 device pixel when zoomed.
-    float deviceScaleFactor = protect(renderer->document())->deviceScaleFactor();
-    if (fixedSize.width() > 0)
-        width = std::max<float>(1 / deviceScaleFactor, width);
-    if (fixedSize.height() > 0)
-        height = std::max<float>(1 / deviceScaleFactor, height);
-
-    return { width, height };
-}
-
-void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    // At a zoom level of 1 the image is guaranteed to have a device pixel size.
-    FloatSize size = floorSizeToDevicePixels(LayoutSize(this->imageSize(renderer, 1)), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
-    intrinsicWidth = size.width();
-    intrinsicHeight = size.height();
-    intrinsicRatio = size;
+    return Image::drawTiled(context, renderer, ConcreteObjectSize::fixed(tileSize), destination, phase, tileSize, spacing, options, isForFirstLine);
 }
 
 // MARK: Client support.

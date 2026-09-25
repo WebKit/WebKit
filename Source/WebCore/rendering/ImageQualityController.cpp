@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ImageQualityController.h"
 
+#include "BitmapImage.h"
+#include "CachedImage.h"
 #include "DocumentView.h"
 #include "FrameDestructionObserverInlines.h"
 #include "GraphicsContext.h"
@@ -35,8 +37,14 @@
 #include "RenderBoxModelObject.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImage.h"
 #include <wtf/TZoneMallocInlines.h>
+
+#if USE(CG)
+#include "PDFDocumentImage.h"
+#endif
 
 namespace WebCore {
 
@@ -51,7 +59,7 @@ ImageQualityController::ImageQualityController(const RenderView& renderView)
 {
 }
 
-void ImageQualityController::removeLayer(RenderBoxModelObject* object, LayerSizeMap* innerMap, const void* layer)
+void ImageQualityController::removeLayer(RenderBoxModelObject& object, LayerSizeMap* innerMap, const void* layer)
 {
     if (!innerMap)
         return;
@@ -60,20 +68,20 @@ void ImageQualityController::removeLayer(RenderBoxModelObject* object, LayerSize
         removeObject(object);
 }
 
-void ImageQualityController::set(RenderBoxModelObject* object, LayerSizeMap* innerMap, const void* layer, const LayoutSize& size)
+void ImageQualityController::set(RenderBoxModelObject& object, LayerSizeMap* innerMap, const void* layer, const LayoutSize& size)
 {
     if (innerMap)
         innerMap->set(layer, size);
     else {
         LayerSizeMap newInnerMap;
         newInnerMap.set(layer, size);
-        m_objectLayerSizeMap.set(*object, newInnerMap);
+        m_objectLayerSizeMap.set(object, newInnerMap);
     }
 }
 
-void ImageQualityController::removeObject(RenderBoxModelObject* object)
+void ImageQualityController::removeObject(RenderBoxModelObject& object)
 {
-    m_objectLayerSizeMap.remove(object);
+    m_objectLayerSizeMap.remove(&object);
     if (m_objectLayerSizeMap.isEmpty()) {
         m_animatedResizeIsActive = false;
         m_timer.stop();
@@ -121,10 +129,26 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
     return std::nullopt;
 }
 
-InterpolationQuality ImageQualityController::chooseInterpolationQualityForSVG(GraphicsContext& context, const RenderElement& renderElement, Image& image)
+static std::optional<FloatSize> sizeOfImageWithSizeOfItsOwn(const Style::Image& styleImage)
+{
+    RefPtr styleCachedImage = styleImage.cachedImage();
+    RefPtr image = styleCachedImage ? protect(styleCachedImage->resource())->image() : nullptr;
+    if (!image)
+        return std::nullopt;
+
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image))
+        return bitmapImage->size();
+#if USE(CG)
+    if (RefPtr pdfDocumentImage = dynamicDowncast<PDFDocumentImage>(*image))
+        return pdfDocumentImage->size();
+#endif
+    return std::nullopt;
+}
+
+InterpolationQuality ImageQualityController::chooseInterpolationQualityForSVG(GraphicsContext& context, const RenderElement& renderElement, const Style::Image& styleImage)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
+    if (!sizeOfImageWithSizeOfItsOwn(styleImage) || context.paintingDisabled())
         return InterpolationQuality::Default;
 
     if (auto styleInterpolation = interpolationQualityFromStyle(renderElement.style()))
@@ -133,21 +157,20 @@ InterpolationQuality ImageQualityController::chooseInterpolationQualityForSVG(Gr
     return InterpolationQuality::Default;
 }
 
-InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void* layer, const LayoutSize& size)
+InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject& object, const Style::Image& styleImage, const void* layer, const LayoutSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
+    auto sizeOfImage = sizeOfImageWithSizeOfItsOwn(styleImage);
+    if (!sizeOfImage || context.paintingDisabled())
         return InterpolationQuality::Default;
 
-    if (std::optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object->style()))
+    if (std::optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object.style()))
         return styleInterpolation.value();
 
-    // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
-    // is actually being scaled.
-    IntSize imageSize(image.width(), image.height());
+    IntSize imageSize(*sizeOfImage);
 
     // Look ourselves up in the hashtables.
-    auto i = m_objectLayerSizeMap.find(object);
+    auto i = m_objectLayerSizeMap.find(&object);
     auto* innerMap = i != m_objectLayerSizeMap.end() ? &i->value : 0;
     std::optional<LayoutSize> oldSize;
     if (innerMap) {
@@ -157,7 +180,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
     }
 
     // If the containing FrameView is being resized, paint at low quality until resizing is finished.
-    if (RefPtr frame = object->document().frame()) {
+    if (RefPtr frame = object.document().frame()) {
         bool frameViewIsCurrentlyInLiveResize = frame->view() && frame->view()->inLiveResize();
         if (frameViewIsCurrentlyInLiveResize) {
             set(object, innerMap, layer, size);
@@ -181,7 +204,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
     if (m_renderView->page().inLowQualityImageInterpolationMode()) {
-        double totalPixels = static_cast<double>(image.width()) * static_cast<double>(image.height());
+        double totalPixels = static_cast<double>(imageSize.width()) * static_cast<double>(imageSize.height());
         if (totalPixels > cInterpolationCutoff)
             return InterpolationQuality::Low;
     }

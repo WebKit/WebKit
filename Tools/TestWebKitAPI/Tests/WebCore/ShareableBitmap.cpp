@@ -29,7 +29,9 @@
 #if USE(CG)
 #include <CoreGraphics/CGImage.h>
 #endif
+#include <WebCore/BitmapImage.h>
 #include <WebCore/ShareableBitmap.h>
+#include <WebCore/SizedImage.h>
 
 #if OS(DARWIN)
 
@@ -102,6 +104,28 @@ TEST(ShareableBitmap, DISABLED_ensureCOWBothMapsROSenderWrite)
     fillTestPattern(bitmap->mutableSpan(), 1);
     expectTestPattern(bitmap->mutableSpan(), 1);
     expectTestPattern(bitmap2->mutableSpan(), 0);
+}
+
+TEST(ShareableBitmap, EmptyBitmapImageCrossesAsEmptyImage)
+{
+    Ref empty = WebCore::BitmapImage::create();
+    EXPECT_TRUE(empty->isNull());
+    EXPECT_NULL(empty->toShareableBitmap());
+
+    auto decoded = WebCore::BitmapImage::create(RefPtr<WebCore::ShareableBitmap> { });
+    ASSERT_TRUE(decoded.has_value());
+    EXPECT_TRUE((*decoded)->isNull());
+}
+
+TEST(ShareableBitmap, ZeroSizedImageCrossesAsEmptyImage)
+{
+    WebCore::SizedImage sized { WebCore::BitmapImage::create(), WebCore::ConcreteObjectSize::zeroSize() };
+    EXPECT_NULL(sized.toShareableBitmap());
+
+    auto decoded = WebCore::SizedImage::fromShareableBitmap(nullptr);
+    ASSERT_TRUE(decoded.has_value());
+    EXPECT_TRUE(decoded->concreteObjectSize.size().isEmpty());
+    EXPECT_TRUE(decoded->image->naturalDimensions().isNone());
 }
 
 }

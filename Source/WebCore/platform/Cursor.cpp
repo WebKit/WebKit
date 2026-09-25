@@ -26,9 +26,9 @@
 #include "config.h"
 #include "Cursor.h"
 
-#include "Image.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "ShareableBitmap.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -37,21 +37,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Cursor);
 
-IntPoint determineHotSpot(Image* image, const IntPoint& specifiedHotSpot)
+IntPoint determineHotSpot(const IntSize& imageSize, std::optional<IntPoint> specifiedHotSpot, std::optional<IntPoint> intrinsicHotSpot)
 {
-    if (image->isNull())
+    IntRect imageRect { { }, imageSize };
+    if (imageRect.isEmpty())
         return IntPoint();
 
-    // Hot spot must be inside cursor rectangle.
-    IntRect imageRect = IntRect(image->rect());
-    if (imageRect.contains(specifiedHotSpot))
-        return specifiedHotSpot;
+    if (specifiedHotSpot && imageRect.contains(*specifiedHotSpot))
+        return *specifiedHotSpot;
 
     // If hot spot is not specified externally, it can be extracted from some image formats (e.g. .cur).
-    if (auto intrinsicHotSpot = image->hotSpot()) {
-        if (imageRect.contains(intrinsicHotSpot.value()))
-            return intrinsicHotSpot.value();
-    }
+    if (intrinsicHotSpot && imageRect.contains(*intrinsicHotSpot))
+        return *intrinsicHotSpot;
 
     return IntPoint();
 }
@@ -152,22 +149,63 @@ const Cursor& Cursor::fromType(Cursor::Type type)
     return pointerCursor();
 }
 
-Cursor::Cursor(Image* image, const IntPoint& hotSpot)
+Cursor::Cursor(RefPtr<NativeImage>&& image, const IntPoint& hotSpot)
     : m_type(Type::Custom)
-    , m_image(image)
-    , m_hotSpot(determineHotSpot(image, hotSpot))
+    , m_image(WTF::move(image))
 {
+    if (RefPtr image = m_image)
+        m_hotSpot = determineHotSpot(image->size(), hotSpot);
 }
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
-Cursor::Cursor(Image* image, const IntPoint& hotSpot, float scale)
+Cursor::Cursor(RefPtr<NativeImage>&& image, const IntPoint& hotSpot, float scale)
     : m_type(Type::Custom)
-    , m_image(image)
-    , m_hotSpot(determineHotSpot(image, hotSpot))
+    , m_image(WTF::move(image))
     , m_imageScaleFactor(scale)
 {
+    if (RefPtr image = m_image)
+        m_hotSpot = determineHotSpot(image->size(), hotSpot);
 }
 #endif
+
+std::optional<Cursor> Cursor::fromIPCData(IPCData&& ipcData)
+{
+    return WTF::switchOn(WTF::move(ipcData), [](Type&& type) -> std::optional<Cursor> {
+        if (type == Type::Invalid || type == Type::Custom)
+            return std::nullopt;
+        auto& cursorReference = Cursor::fromType(type);
+        (void)cursorReference.platformCursor();
+        return cursorReference;
+    }, [](std::optional<CustomCursorIPCData>&& imageData) -> std::optional<Cursor> {
+        if (!imageData)
+            return Cursor { nullptr, IntPoint() };
+        Ref bitmap = imageData->image;
+        RefPtr image = NativeImage::create(bitmap->createPlatformImage());
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        return Cursor(WTF::move(image), imageData->hotSpot, imageData->scaleFactor);
+#else
+        return Cursor(WTF::move(image), imageData->hotSpot);
+#endif
+    });
+}
+
+auto Cursor::ipcData() const -> IPCData
+{
+    auto type = this->type();
+    if (type != Type::Custom)
+        return type;
+    RefPtr image = m_image;
+    RefPtr bitmap = image ? ShareableBitmap::createFromImageDraw(*image, image->colorSpace()) : nullptr;
+    if (!bitmap)
+        return std::optional<CustomCursorIPCData> { std::nullopt };
+    return CustomCursorIPCData {
+        bitmap.releaseNonNull()
+        , m_hotSpot
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        , m_imageScaleFactor
+#endif
+    };
+}
 
 Cursor::Cursor(Type type)
     : m_type(type)

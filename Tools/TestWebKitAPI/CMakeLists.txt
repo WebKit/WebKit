@@ -322,6 +322,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NativeImageTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
+        Tests/WebCore/ObjectSizeNegotiationTests.cpp
         Tests/WebCore/PODIntervalTree.cpp
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/ParsedContentType.cpp
@@ -338,7 +339,6 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/RegistrableDomain.cpp
         Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/STUNMessageParsingTest.cpp
-        Tests/WebCore/SVGImageCasts.cpp
         Tests/WebCore/SampleMap.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/SerializedScriptValue.cpp

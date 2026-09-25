@@ -6132,18 +6132,14 @@ static bool rendererHasHDRContent(const RenderElement& renderer)
             return true;
         }
 
-        if (auto image = style.borderImageSource().tryImage()) {
-            if (auto* cachedImage = image ? image->value->cachedImage() : nullptr) {
-                if (cachedImage->hasHDRContent())
-                    return true;
-            }
+        if (RefPtr image = style.borderImageSource().tryStyleImage()) {
+            if (image->hasHDRContent())
+                return true;
         }
 
         if (RefPtr image = style.listStyleImage().tryStyleImage()) {
-            if (auto* cachedImage = image->cachedImage()) {
-                if (cachedImage->hasHDRContent())
-                    return true;
-            }
+            if (image->hasHDRContent())
+                return true;
         }
 
         return false;
@@ -6658,7 +6654,7 @@ bool RenderLayer::isBitmapOnly() const
         if (auto* cachedImage = imageRenderer->cachedImage()) {
             if (!cachedImage->hasImage())
                 return false;
-            return is<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+            return is<BitmapImage>(cachedImage->image());
         }
         return false;
     }

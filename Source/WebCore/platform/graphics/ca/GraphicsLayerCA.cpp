@@ -28,6 +28,7 @@
 
 #if USE(CA)
 
+#include "DefaultSizing.h"
 #include "DisplayList.h"
 #include "DisplayListRecorderImpl.h"
 #include "FloatConversion.h"
@@ -1354,7 +1355,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
-        auto newImage = image->currentNativeImage();
+        auto newImage = image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions()));
         if (!newImage)
             return;
 

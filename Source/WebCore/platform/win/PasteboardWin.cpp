@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
+#include "DefaultSizing.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
@@ -811,7 +812,7 @@ void Pasteboard::writeImage(Element& element, const URL&, const String&)
     CachedImage* cachedImage = renderer.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
-    Image* image = cachedImage->imageForRenderer(&renderer);
+    Image* image = cachedImage->image();
     ASSERT(image);
 
     clear();
@@ -819,16 +820,19 @@ void Pasteboard::writeImage(Element& element, const URL&, const String&)
     HWndDC dc(0);
     auto compatibleDC = adoptGDIObject(::CreateCompatibleDC(0));
     auto sourceDC = adoptGDIObject(::CreateCompatibleDC(0));
-    auto resultBitmap = adoptGDIObject(::CreateCompatibleBitmap(dc, image->width(), image->height()));
+    auto concreteObjectSize = DefaultSizing { renderer.usedImageSize() }.resolve(image->naturalDimensions());
+    auto imageSize = IntSize(concreteObjectSize.size());
+
+    GDIObject<HBITMAP> resultBitmap = adoptGDIObject(::CreateCompatibleBitmap(dc, imageSize.width(), imageSize.height()));
     HGDIOBJ oldBitmap = ::SelectObject(compatibleDC.get(), resultBitmap.get());
 
-    BitmapInfo bmInfo = BitmapInfo::create(IntSize(image->size()));
+    BitmapInfo bmInfo = BitmapInfo::create(imageSize);
 
     auto coreBitmap = adoptGDIObject(::CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0));
     HGDIOBJ oldSource = ::SelectObject(sourceDC.get(), coreBitmap.get());
-    image->adapter().getHBITMAP(coreBitmap.get());
+    image->adapter().getHBITMAP(coreBitmap.get(), concreteObjectSize);
 
-    ::BitBlt(compatibleDC.get(), 0, 0, image->width(), image->height(), sourceDC.get(), 0, 0, SRCCOPY);
+    ::BitBlt(compatibleDC.get(), 0, 0, imageSize.width(), imageSize.height(), sourceDC.get(), 0, 0, SRCCOPY);
 
     ::SelectObject(sourceDC.get(), oldSource);
     ::SelectObject(compatibleDC.get(), oldBitmap);
@@ -1090,10 +1094,10 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
 {
     // Shove image data into a DataObject for use as a file
     CachedImage* cachedImage = getCachedImage(element);
-    if (!cachedImage || !cachedImage->imageForRenderer(element.renderer()) || !cachedImage->isLoaded())
+    if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
         return;
 
-    FragmentedSharedBuffer* imageBuffer = cachedImage->imageForRenderer(element.renderer())->data();
+    FragmentedSharedBuffer* imageBuffer = cachedImage->image()->data();
     if (!imageBuffer || !imageBuffer->size())
         return;
 

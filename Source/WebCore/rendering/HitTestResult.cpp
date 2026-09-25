@@ -438,7 +438,7 @@ Image* HitTestResult::image() const
 
     if (auto* image = dynamicDowncast<RenderImage>(imageNode->renderer())) {
         if (image->cachedImage() && !image->cachedImage()->errorOccurred())
-            return protect(image->cachedImage())->imageForRenderer(image);
+            return protect(image->cachedImage())->image();
     }
 
     return nullptr;

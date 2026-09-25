@@ -27,6 +27,7 @@
 #include "NotificationService.h"
 
 #include "WebNotification.h"
+#include <WebCore/DefaultSizing.h>
 #include <WebCore/Image.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/NotificationResources.h>
@@ -134,7 +135,7 @@ public:
             return nullptr;
 
         auto writeIconToTemporaryFile = [](const RefPtr<WebCore::Image>& icon) -> CString {
-            auto nativeImage = icon->nativeImage();
+            auto nativeImage = icon->nativeImage(DefaultSizing { }.resolve(icon->naturalDimensions()));
             if (!nativeImage)
                 return { };
 
@@ -180,7 +181,7 @@ public:
             return nullptr;
 
         auto writeIconToBuffer = [](const RefPtr<WebCore::Image>& icon) -> GRefPtr<GBytes> {
-            auto nativeImage = icon->nativeImage();
+            auto nativeImage = icon->nativeImage(DefaultSizing { }.resolve(icon->naturalDimensions()));
             if (!nativeImage)
                 return nullptr;
 

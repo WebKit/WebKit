@@ -59,7 +59,6 @@ public:
     bool equals(const CrossfadeImage&) const;
     bool equalInputImages(const CrossfadeImage&) const;
 
-    static constexpr bool isFixedSize = true;
 
 private:
     explicit CrossfadeImage(RefPtr<Image>&&, RefPtr<Image>&&, Progress, bool);
@@ -68,10 +67,16 @@ private:
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool currentFrameIsComplete(const RenderElement*) const final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions, bool isForFirstLine) const final;
+
+    void drawCrossfade(GraphicsContext&, const RenderElement&, ConcreteObjectSize, bool isForFirstLine) const;
+
+    bool currentFrameIsComplete() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
-    FloatSize fixedSize(const RenderElement&) const final;
+    bool isOriginClean(Document&) const final;
+    Vector<Ref<const CachedImage>, 1> cachedImages() const final;
+    NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 

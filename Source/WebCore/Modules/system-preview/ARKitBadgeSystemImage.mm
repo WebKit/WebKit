@@ -79,16 +79,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitBadgeSystemImage);
 
 Ref<ARKitBadgeSystemImage> ARKitBadgeSystemImage::createWithoutImage()
 {
-    return adoptRef(*new ARKitBadgeSystemImage(std::nullopt, { }));
+    return adoptRef(*new ARKitBadgeSystemImage(std::nullopt));
 }
 
 std::optional<RenderingResourceIdentifier> ARKitBadgeSystemImage::imageIdentifier() const
 {
-    if (m_image) {
-        if (RefPtr nativeImage = protect(m_image)->nativeImage())
-            return nativeImage->renderingResourceIdentifier();
-        return std::nullopt;
-    }
+    if (RefPtr nativeImage = m_nativeImage)
+        return nativeImage->renderingResourceIdentifier();
     if (m_renderingResourceIdentifier)
         return *m_renderingResourceIdentifier;
     return std::nullopt;
@@ -112,7 +109,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
     CGRect insetBadgeRect = CGRectMake(rect.width() - badgeDimension - badgeOffset, badgeOffset, badgeDimension, badgeDimension);
     CGRect badgeRect = CGRectMake(0, 0, badgeDimension, badgeDimension);
 
-    RefPtr nativeImage = m_image ? protect(m_image)->nativeImage() : nullptr;
+    RefPtr nativeImage = m_nativeImage;
     bool hasBackdropImage = !!nativeImage;
 
     // Create a circle to be used for the clipping path in the badge, as well as the drop shadow.
@@ -163,8 +160,9 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
         CIImage *inputImage = [CIImage imageWithCGImage:nativeImage->platformImage().get()];
 
         // Draw the blurred backdrop. Scale from intrinsic size to render size.
+        auto rasterizedSize = nativeImage->size();
         CGAffineTransform transform = CGAffineTransformIdentity;
-        transform = CGAffineTransformScale(transform, rect.width() / m_imageSize.width(), rect.height() / m_imageSize.height());
+        transform = CGAffineTransformScale(transform, rect.width() / rasterizedSize.width(), rect.height() / rasterizedSize.height());
         CIImage *scaledImage = [inputImage imageByApplyingTransform:transform];
 
         // CoreImage coordinates are y-up, so we need to flip the badge rectangle within the image frame.

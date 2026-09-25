@@ -280,7 +280,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imag
     if (!image || image->image() == &Image::nullImage())
         return;
 
-    RefPtr<FragmentedSharedBuffer> data = imageRenderer ? image->imageForRenderer(imageRenderer)->data() : 0;
+    RefPtr<FragmentedSharedBuffer> data = imageRenderer ? image->image()->data() : 0;
     if (!data)
         data = image->image()->data();
 

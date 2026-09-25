@@ -39,6 +39,7 @@
 #include "MediaImage.h"
 #include "MediaMetadataInit.h"
 #include "NodeInlinesLight.h"
+#include "ObjectSizeNegotiation.h"
 #include "SpaceSplitString.h"
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
@@ -133,7 +134,7 @@ void MediaMetadata::resetMediaSession()
 {
     m_session.clear();
     m_artworkLoader = nullptr;
-    m_artworkImage = nullptr;
+    m_artworkImage = std::nullopt;
 }
 
 void MediaMetadata::setTitle(const String& title)
@@ -218,7 +219,7 @@ void MediaMetadata::refreshArtworkImage()
         return;
 
     m_artworkImageSrc = String();
-    m_artworkImage = nullptr;
+    m_artworkImage = std::nullopt;
 
     size_t numArtworks = m_defaultImages.size() ? m_defaultImages.size() : m_metadata.artwork.size();
     if (!numArtworks)
@@ -274,12 +275,16 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
         RefPtr strongThis = weakThis;
         if (!strongThis)
             return;
-        if (image && image->data() && image->width() && image->height()) {
-            IntSize size { int(image->width()), int(image->height()) };
+        auto naturalDimensions = image ? image->naturalDimensions() : NaturalDimensions::none();
+        auto imageSize = FloatSize { naturalDimensions.width.value_or(0), naturalDimensions.height.value_or(0) };
+        if (image && image->data() && imageSize.width() && imageSize.height()) {
+            IntSize size { int(imageSize.width()), int(imageSize.height()) };
             float imageScore = imageDimensionsScore(size.width(), size.height(), s_minimumSize, s_idealSize);
-            if (!index || (strongThis->m_artworkImage && (imageDimensionsScore(protect(strongThis->m_artworkImage)->width(), protect(strongThis->m_artworkImage)->height(), s_minimumSize, s_idealSize) < imageScore))) {
+            auto& currentArtwork = strongThis->m_artworkImage;
+            auto artworkSize = currentArtwork ? currentArtwork->concreteObjectSize.size() : FloatSize { };
+            if (!index || (currentArtwork && (imageDimensionsScore(artworkSize.width(), artworkSize.height(), s_minimumSize, s_idealSize) < imageScore))) {
                 strongThis->m_artworkImageSrc = artworkImageSrc;
-                strongThis->setArtworkImage(image);
+                strongThis->setArtworkImage(SizedImage { Ref { *image }, ConcreteObjectSize::fixed(imageSize) });
                 strongThis->metadataUpdated();
             }
             // If selection from `sizes` attribute yielded a valid image, or we have downloaded an image bigger than the ideal size we stop.
@@ -293,9 +298,9 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
     protect(m_artworkLoader)->requestImageResource();
 }
 
-void MediaMetadata::setArtworkImage(Image* image)
+void MediaMetadata::setArtworkImage(std::optional<SizedImage>&& image)
 {
-    m_artworkImage = image;
+    m_artworkImage = WTF::move(image);
 }
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)

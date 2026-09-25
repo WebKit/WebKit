@@ -24,11 +24,14 @@
 #pragma once
 
 #include <WebCore/ActiveDOMObject.h>
+#include <WebCore/ApplyImageDevicePixelRatio.h>
 #include <WebCore/AttachmentAssociatedElement.h>
 #include <WebCore/DecodingOptions.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FormAssociatedElement.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/HTMLElement.h>
+#include <WebCore/ImageRequestState.h>
 #include <WebCore/MediaQuery.h>
 #include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
@@ -42,6 +45,7 @@ class HTMLFormElement;
 class HTMLImageLoader;
 class HTMLMapElement;
 class Image;
+struct ImageOrientation;
 class LayoutSize;
 class SecurityOrigin;
 
@@ -79,6 +83,8 @@ public:
 
     WEBCORE_EXPORT unsigned naturalWidth() const;
     WEBCORE_EXPORT unsigned naturalHeight() const;
+
+    float imageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
     const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
     WEBCORE_EXPORT const AtomString& currentSrc();
 
@@ -87,6 +93,12 @@ public:
     const AtomString& NODELETE altText() const;
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
+
+    ImageRequestState currentRequestState() const;
+
+    WEBCORE_EXPORT RefPtr<Image> sourceImage() const;
+
+    bool hasSourceImage() const;
 
     void NODELETE setLoadManually(bool);
 
@@ -166,6 +178,8 @@ public:
     ReferrerPolicy referrerPolicy() const;
 
     bool NODELETE allowsOrientationOverride() const;
+
+    ImageOrientation orientationForSourceImage();
 
     bool allowsAnimation() const;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

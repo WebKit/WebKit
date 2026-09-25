@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "Image.h"
 #include "SharedBuffer.h"
+#include "SizedImage.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
@@ -53,10 +53,10 @@ public:
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     void clearURIList() { m_uriList = emptyString(); }
 
-    void setImage(RefPtr<Image>&& newImage) { m_image = WTF::move(newImage); }
-    const RefPtr<Image>& image() const { return m_image; }
-    bool hasImage() const { return m_image; }
-    void clearImage() { m_image = nullptr; }
+    void setImage(std::optional<SizedImage>&& newImage) { m_image = WTF::move(newImage); }
+    const std::optional<SizedImage>& image() const { return m_image; }
+    bool hasImage() const { return !!m_image; }
+    void clearImage() { m_image = std::nullopt; }
 
     void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
     bool canSmartReplace() const { return m_canSmartReplace; }
@@ -74,7 +74,7 @@ public:
     void clearAll();
     void clearAllExceptFilenames();
 
-    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, RefPtr<WebCore::Image>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
+    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, std::optional<SizedImage>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
     SelectionData() = default;
 
 private:
@@ -83,7 +83,7 @@ private:
     URL m_url;
     String m_uriList;
     Vector<String> m_filenames;
-    RefPtr<Image> m_image;
+    std::optional<SizedImage> m_image;
     bool m_canSmartReplace { false };
     RefPtr<SharedBuffer> m_customData;
     HashMap<String, Ref<SharedBuffer>> m_buffers;

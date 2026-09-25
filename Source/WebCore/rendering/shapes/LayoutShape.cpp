@@ -40,6 +40,7 @@
 #include "RasterLayoutShape.h"
 #include "RectangleLayoutShape.h"
 #include "StyleBasicShape.h"
+#include "StyleImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
@@ -195,7 +196,7 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
     return shape;
 }
 
-Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode writingMode, float logicalMargin)
+Ref<const LayoutShape> LayoutShape::createRasterShape(const Style::Image& styleImage, const RenderElement& renderer, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode writingMode, float logicalMargin, ConcreteObjectSize concreteObjectSize)
 {
     ASSERT(logicalMarginRect.height() >= 0);
 
@@ -216,9 +217,7 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
     if (!imageBuffer)
         return createShape();
 
-    GraphicsContext& graphicsContext = imageBuffer->context();
-    if (image)
-        graphicsContext.drawImage(*image, IntRect({ }, snappedPhysicalImageSize));
+    styleImage.draw(imageBuffer->context(), renderer, concreteObjectSize, FloatRect { { }, snappedPhysicalImageSize }, FloatRect { { }, concreteObjectSize.size() });
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, snappedPhysicalImageSize });

@@ -28,7 +28,6 @@
 
 #if HAVE(NSCURSOR)
 
-#import "ImageAdapter.h"
 #import "NativeImage.h"
 #import <AppKit/NSCursor.h>
 #import <objc/runtime.h>
@@ -137,32 +136,41 @@ static RetainPtr<NSCursor> cursor(ASCIILiteral)
 
 #if ENABLE(CUSTOM_CURSOR_SUPPORT)
 #if ENABLE(MOUSE_CURSOR_SCALE)
-static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot, float scale)
+static RetainPtr<NSCursor> createCustomCursor(NativeImage& image, const IntPoint& hotSpot, float scale)
 #else
-static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
+static RetainPtr<NSCursor> createCustomCursor(NativeImage& image, const IntPoint& hotSpot)
 #endif
 {
     // FIXME: The cursor won't animate.  Not sure if that's a big deal.
-    auto nsImage = image->adapter().snapshotNSImage();
-    if (!nsImage)
+    RetainPtr platformImage = image.platformImage();
+    if (!platformImage)
         return nullptr;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
+    RetainPtr nsImage = adoptNS([[NSImage alloc] initWithCGImage:platformImage.get() size:NSZeroSize]);
+
 #if ENABLE(MOUSE_CURSOR_SCALE)
-    NSSize size = NSMakeSize(image->width() / scale, image->height() / scale);
+    NSPoint hotSpotInPoints = NSMakePoint(hotSpot.x() / scale, hotSpot.y() / scale);
+#else
+    NSPoint hotSpotInPoints = hotSpot;
+#endif
+
+#if ENABLE(MOUSE_CURSOR_SCALE)
+    auto cursorSize = image.size();
+    NSSize size = NSMakeSize(cursorSize.width() / scale, cursorSize.height() / scale);
     NSSize expandedSize = NSMakeSize(ceil(size.width), ceil(size.height));
 
     // Pad the image with transparent pixels so it has an integer boundary.
     if (size.width != expandedSize.width || size.height != expandedSize.height) {
         RetainPtr<NSImage> expandedImage = adoptNS([[NSImage alloc] initWithSize:expandedSize]);
         NSRect toRect = NSMakeRect(0, expandedSize.height - size.height, size.width, size.height);
-        NSRect fromRect = NSMakeRect(0, 0, image->width(), image->height());
+        NSRect fromRect = NSMakeRect(0, 0, cursorSize.width(), cursorSize.height());
 
         [expandedImage lockFocus];
         [nsImage drawInRect:toRect fromRect:fromRect operation:NSCompositingOperationSourceOver fraction:1];
         [expandedImage unlockFocus];
 
-        return adoptNS([[NSCursor alloc] initWithImage:expandedImage.get() hotSpot:hotSpot]);
+        return adoptNS([[NSCursor alloc] initWithImage:expandedImage.get() hotSpot:hotSpotInPoints]);
     }
 
     // Scale the image and its representation to match retina resolution.
@@ -170,7 +178,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     [[retainPtr([nsImage representations]) objectAtIndex:0] setSize:expandedSize];
 #endif
 
-    return adoptNS([[NSCursor alloc] initWithImage:nsImage.get() hotSpot:hotSpot]);
+    return adoptNS([[NSCursor alloc] initWithImage:nsImage.get() hotSpot:hotSpotInPoints]);
     END_BLOCK_OBJC_EXCEPTIONS
     return nullptr;
 }
@@ -333,11 +341,13 @@ void Cursor::ensurePlatformCursor() const
 
     case Type::Custom:
 #if ENABLE(CUSTOM_CURSOR_SUPPORT)
+        if (RefPtr image = m_image) {
 #if ENABLE(MOUSE_CURSOR_SCALE)
-        m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot, m_imageScaleFactor);
+            m_platformCursor = createCustomCursor(*image, m_hotSpot, m_imageScaleFactor);
 #else
-        m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot);
+            m_platformCursor = createCustomCursor(*image, m_hotSpot);
 #endif // ENABLE(MOUSE_CURSOR_SCALE)
+        }
 #endif // ENABLE(CUSTOM_CURSOR_SUPPORT)
         break;
 

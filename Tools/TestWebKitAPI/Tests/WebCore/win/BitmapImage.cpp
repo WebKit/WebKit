@@ -27,6 +27,7 @@
 #include "config.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/BitmapInfo.h>
+#include <WebCore/DefaultSizing.h>
 #include <WebCore/ImageAdapter.h>
 #include <wtf/win/GDIObject.h>
 
@@ -55,7 +56,7 @@ TEST(WebCore, BitmapImageEmptyFrameTest)
     int bits[256];
     auto bitmap = adoptGDIObject(CreateBitmap(sz.width(), sz.height(), 1, 32, bits));
 
-    bitmapImageTest->adapter().getHBITMAPOfSize(bitmap.get(), &sz);
+    bitmapImageTest->adapter().getHBITMAPOfSize(bitmap.get(), &sz, DefaultSizing { }.resolve(bitmapImageTest->naturalDimensions()));
 }
 
 } // namespace TestWebKitAPI

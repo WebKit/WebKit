@@ -29,6 +29,8 @@
 
 #include "StyleGeneratedImage.h"
 #include "StyleGradient.h"
+#include <WebCore/FloatSizeHash.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 namespace Style {
@@ -44,7 +46,6 @@ public:
     bool operator==(const Image&) const final;
     bool equals(const GradientImage&) const;
 
-    static constexpr bool isFixedSize = false;
 
     const Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
 
@@ -55,14 +56,27 @@ private:
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
-    FloatSize fixedSize(const RenderElement&) const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
+    class CachedGradient;
+
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions, bool isForFirstLine) const final;
+
+    ImageDrawResult drawUsing(GraphicsContext&, WebCore::Gradient&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) const;
+    ImageDrawResult drawAsPattern(GraphicsContext&, WebCore::Gradient&, CachedGradient*, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) const;
+
+    CachedGradient* cachedGradientForSize(FloatSize);
+
+    Ref<WebCore::Gradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
+
+    void evictCachedGradient(FloatSize);
+
     Gradient m_gradient;
     bool m_knownCacheableBarringFilter { false };
+    HashMap<FloatSize, std::unique_ptr<CachedGradient>> m_gradients;
 };
 
 } // namespace Style

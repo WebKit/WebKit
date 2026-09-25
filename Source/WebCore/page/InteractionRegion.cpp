@@ -51,7 +51,6 @@
 #include "LegacyRenderSVGShapeInlines.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
-#include "NativeImage.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PathOperation.h"
@@ -60,6 +59,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderImage.h"
+#include "RenderImageResource.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderObjectStyle.h"
@@ -67,7 +67,9 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "SimpleRange.h"
+#include "SizedImage.h"
 #include "SliderThumbElement.h"
+#include "StyleCachedImage.h"
 #include "StyleResolver.h"
 #include "TextIterator.h"
 #include <wtf/NeverDestroyed.h>
@@ -87,8 +89,8 @@ class InteractionRegionPathCache {
 public:
     static InteractionRegionPathCache& NODELETE singleton();
 
-    std::optional<Path> get(const Image&, const FloatSize&);
-    void add(const Image&, const FloatSize&, Path);
+    std::optional<Path> get(const Image&, const FloatSize&, const ImageDrawingExtras&);
+    void add(const Image&, const FloatSize&, const ImageDrawingExtras&, Path);
 
     void clear();
 
@@ -97,7 +99,13 @@ private:
 
     InteractionRegionPathCache() = default;
 
-    WeakHashMap<const Image, HashMap<FloatSize, Path>> m_imageCache;
+    struct Entry {
+        FloatSize size;
+        std::unique_ptr<ImageDrawingExtras> extras;
+        Path path;
+    };
+
+    WeakHashMap<const Image, Vector<Entry>> m_imageCache;
 };
 
 InteractionRegionPathCache& InteractionRegionPathCache::singleton()
@@ -106,18 +114,23 @@ InteractionRegionPathCache& InteractionRegionPathCache::singleton()
     return cache;
 }
 
-std::optional<Path> InteractionRegionPathCache::get(const Image& image, const FloatSize& size)
+std::optional<Path> InteractionRegionPathCache::get(const Image& image, const FloatSize& size, const ImageDrawingExtras& extras)
 {
-    if (auto cacheBySize = m_imageCache.getOptional(image))
-        return cacheBySize->getOptional(size);
+    auto iterator = m_imageCache.find(image);
+    if (iterator == m_imageCache.end())
+        return std::nullopt;
+    for (auto& entry : iterator->value) {
+        if (entry.size == size && *entry.extras == extras)
+            return entry.path;
+    }
     return std::nullopt;
 }
 
-void InteractionRegionPathCache::add(const Image& image, const FloatSize& size, Path path)
+void InteractionRegionPathCache::add(const Image& image, const FloatSize& size, const ImageDrawingExtras& extras, Path path)
 {
     m_imageCache.ensure(image, [] {
-        return HashMap<FloatSize, Path>();
-    }).iterator->value.add(size, path);
+        return Vector<Entry>();
+    }).iterator->value.append({ size, extras.copy(), WTF::move(path) });
 }
 
 void InteractionRegionPathCache::clear()
@@ -334,37 +347,33 @@ static FloatSize boundingSize(const RenderObject& renderer, const std::optional<
     return size;
 }
 
-static bool cachedImageIsPhoto(const CachedImage& cachedImage)
+static bool styleImageIsPhoto(const Style::Image* styleImage)
 {
-    if (cachedImage.errorOccurred())
+    RefPtr styleCachedImage = dynamicDowncast<Style::CachedImage>(styleImage);
+    if (!styleCachedImage)
         return false;
 
-    RefPtr image = cachedImage.image();
-    if (!image || !image->isBitmapImage())
-        return false;
-
-    if (image->nativeImage() && image->nativeImage()->hasAlpha())
-        return false;
-
-    return true;
+    return styleCachedImage->isOpaqueBitmap();
 }
 
-static RefPtr<Image> findIconImage(const RenderObject& renderer)
+static std::optional<std::pair<Ref<const Style::CachedImage>, FloatSize>> findIconImage(const RenderObject& renderer)
 {
-    if (const auto& renderImage = dynamicDowncast<RenderImage>(renderer)) {
-        if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
-            return nullptr;
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
+    if (!renderImage)
+        return std::nullopt;
 
-        RefPtr image = protect(*renderImage->cachedImage())->imageForRenderer(renderImage);
-        if (!image)
-            return nullptr;
+    RefPtr styleCachedImage = dynamicDowncast<Style::CachedImage>(protect(renderImage->imageResource())->styleImage());
+    if (!styleCachedImage || !styleCachedImage->hasDecodedImage())
+        return std::nullopt;
 
-        if (image->isSVGImageForContainer()
-            || (image->isBitmapImage() && image->nativeImage() && image->nativeImage()->hasAlpha()))
-            return image;
-    }
+    if (!styleCachedImage->isSVGImage() && !styleCachedImage->isTransparentBitmap())
+        return std::nullopt;
 
-    return nullptr;
+    auto usedSize = renderImage->usedImageSize();
+    if (!usedSize || usedSize->isEmpty())
+        return std::nullopt;
+
+    return { { styleCachedImage.releaseNonNull(), *usedSize } };
 }
 
 static std::optional<std::pair<Ref<SVGSVGElement>, Ref<SVGGraphicsElement>>> findSVGClipElements(const RenderObject& renderer)
@@ -505,20 +514,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
                 if (is<RenderVideo>(renderImage))
                     return true;
 #endif
-                if (!renderImage->cachedImage())
-                    return false;
-
-                return cachedImageIsPhoto(protect(*renderImage->cachedImage()));
+                return styleImageIsPhoto(RefPtr { protect(renderImage->imageResource())->styleImage() }.get());
             }();
-        } else if (auto& backgroundLayers = regionRenderer.style().backgroundLayers(); Style::hasImageInAnyLayer(backgroundLayers)) {
-            isPhoto = [&]() -> bool {
-                RefPtr backgroundImage = backgroundLayers.usedFirst().image().tryStyleImage();
-                if (!backgroundImage || !backgroundImage->cachedImage())
-                    return false;
-
-                return cachedImageIsPhoto(protect(*backgroundImage->cachedImage()));
-            }();
-        }
+        } else if (auto& backgroundLayers = regionRenderer.style().backgroundLayers(); Style::hasImageInAnyLayer(backgroundLayers))
+            isPhoto = styleImageIsPhoto(backgroundLayers.usedFirst().image().tryStyleImage().get());
     }
 
     bool matchedElementIsGuardContainer = isGuardContainer(*matchedElement);
@@ -540,7 +539,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     if (transform)
         hasRotationOrShear = transform->isRotateOrShear();
 
-    RefPtr<Image> iconImage;
+    std::optional<std::pair<Ref<const Style::CachedImage>, FloatSize>> iconImage;
     std::optional<std::pair<Ref<SVGSVGElement>, Ref<SVGGraphicsElement>>> svgClipElements;
     if (!hasRotationOrShear && !needsContentHint)
         iconImage = findIconImage(regionRenderer);
@@ -564,17 +563,23 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
 
         clipPath = path;
     } else if (iconImage && originalElement) {
+        auto& [iconStyleImage, iconUsedSize] = *iconImage;
+        CheckedRef iconRenderer = downcast<RenderImage>(regionRenderer);
+        Ref iconCacheKey = iconStyleImage->decodedImage();
+        auto iconExtras = iconStyleImage->drawingExtras(iconRenderer);
+
         auto size = boundingSize(regionRenderer, transform);
         auto generateAndCachePath = [&] {
             LayoutRect imageRect(FloatPoint(), size);
-            Ref shape = LayoutShape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0);
+            Ref shape = LayoutShape::createRasterShape(iconStyleImage, iconRenderer, 0, imageRect, imageRect, WritingMode(), 0,
+                ConcreteObjectSize::fixed(iconUsedSize));
             LayoutShape::DisplayPaths paths;
             shape->buildDisplayPaths(paths);
             auto path = paths.shape;
-            InteractionRegionPathCache::singleton().add(*iconImage.get(), size, path);
+            InteractionRegionPathCache::singleton().add(iconCacheKey, size, iconExtras, path);
             return path;
         };
-        auto cachedPath = InteractionRegionPathCache::singleton().get(*iconImage.get(), size);
+        auto cachedPath = InteractionRegionPathCache::singleton().get(iconCacheKey, size, iconExtras);
         auto path = cachedPath ? *cachedPath : generateAndCachePath();
 
         if (!clipOffset.isZero())

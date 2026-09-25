@@ -53,6 +53,11 @@ namespace WebCore {
 
 class IntSize;
 
+enum AspectRatioFit {
+    AspectRatioFitShrink,
+    AspectRatioFitGrow
+};
+
 class FloatSize {
 public:
     constexpr FloatSize() = default;
@@ -76,6 +81,17 @@ public:
 
     constexpr float aspectRatio() const { return m_width / m_height; }
     constexpr double aspectRatioDouble() const { return m_width / static_cast<double>(m_height); }
+
+    FloatSize fitToAspectRatio(const FloatSize& aspectRatio, AspectRatioFit fit) const
+    {
+        float heightScale = height() / aspectRatio.height();
+        float widthScale = width() / aspectRatio.width();
+
+        if ((widthScale > heightScale) != (fit == AspectRatioFitGrow))
+            return { height() * aspectRatio.width() / aspectRatio.height(), height() };
+
+        return { width(), width() * aspectRatio.height() / aspectRatio.width() };
+    }
 
     void expand(float width, float height)
     {

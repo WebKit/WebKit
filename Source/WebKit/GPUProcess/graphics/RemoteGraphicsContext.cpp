@@ -37,7 +37,6 @@
 #include "SharedFont.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "SharedVideoFrame.h"
-#include <WebCore/BitmapImage.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
 #include <WebCore/SVGFilterRenderer.h>
@@ -275,11 +274,6 @@ void RemoteGraphicsContext::setShadowsIgnoreTransforms(bool value)
     context().setShadowsIgnoreTransforms(value);
 }
 
-void RemoteGraphicsContext::setDrawLuminanceMask(bool value)
-{
-    context().setDrawLuminanceMask(value);
-}
-
 void RemoteGraphicsContext::setLineCap(LineCap lineCap)
 {
     context().setLineCap(lineCap);
@@ -446,7 +440,7 @@ void RemoteGraphicsContext::drawSystemImage(Ref<SystemImage>&& systemImage, cons
         if (auto imageIdentifier = badge->imageIdentifier()) {
             RefPtr nativeImage = resourceCache().cachedNativeImage(*imageIdentifier);
             MESSAGE_CHECK(nativeImage);
-            badge->setImage(BitmapImage::create(nativeImage.releaseNonNull()));
+            badge->setNativeImage(nativeImage.releaseNonNull());
         }
     }
 #endif

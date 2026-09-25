@@ -84,7 +84,6 @@ public:
     void setShouldSmoothFonts(bool);
     void setShouldSubpixelQuantizeFonts(bool);
     void setShadowsIgnoreTransforms(bool);
-    void setDrawLuminanceMask(bool);
     void setLineCap(WebCore::LineCap);
     void setLineDash(FixedVector<double>&&, float dashOffset);
     void setLineJoin(WebCore::LineJoin);

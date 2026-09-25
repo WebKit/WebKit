@@ -85,6 +85,7 @@
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/DNS.h>
 #import <WebCore/DOMWrapperWorld.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentPage.h>
 #import <WebCore/DocumentView.h>
@@ -2043,7 +2044,7 @@ static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
     // to WebCore::Image at some point.
     if (!image)
         return nil;
-    RetainPtr nsImage = image->adapter().nsImage();
+    RetainPtr nsImage = image->adapter().nsImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()));
     if (!nsImage)
         return nil;
     if (!NSEqualSizes([nsImage.get() size], size))

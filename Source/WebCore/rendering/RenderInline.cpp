@@ -56,6 +56,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -108,7 +109,7 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
     if (styleImage && isNonEmpty) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
+            protect(document())->didLoadImage(protect(styleable->element).get(), styleImage.get());
     }
     // FIXME: We can do better.
     repaint();

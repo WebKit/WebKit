@@ -45,6 +45,7 @@
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -52,6 +53,7 @@
 #include "ContextMenuController.h"
 #include "CustomElementDefaultARIA.h"
 #include "DOMTokenList.h"
+#include "DefaultSizing.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
 #include "EditingInlines.h"
@@ -117,6 +119,7 @@
 #include "SVGNames.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include "StyleImage.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "TextControlInnerElements.h"
@@ -3341,27 +3344,49 @@ String AccessibilityObject::embeddedImageDescription() const
     return renderImage->accessibilityDescription();
 }
 
-static RefPtr<Image> imageFromRenderer(RenderObject* renderer)
+struct RendererImage {
+    CheckedRef<const RenderImage> renderer;
+    Ref<const Style::Image> image;
+    ConcreteObjectSize concreteObjectSize;
+};
+
+static std::optional<RendererImage> imageFromRenderer(RenderObject* renderer)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
-    RefPtr cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
-    return cachedImage ? cachedImage->image() : nullptr;
+    if (!renderImage)
+        return std::nullopt;
+
+    CheckedRef imageResource = renderImage->imageResource();
+    if (imageResource->errorOccurred() || !imageResource->hasDecodedImage())
+        return std::nullopt;
+
+    RefPtr styleImage = imageResource->styleImage();
+    if (!styleImage)
+        return std::nullopt;
+
+    auto concreteObjectSize = Style::negotiate(*styleImage, *renderImage, DefaultSizing { renderImage->usedImageSize() });
+    return RendererImage { *renderImage, styleImage.releaseNonNull(), concreteObjectSize };
 }
 
 FloatSize AccessibilityObject::imageDataSize() const
 {
-    if (RefPtr image = imageFromRenderer(renderer()))
-        return image->size();
+    if (auto rendererImage = imageFromRenderer(renderer()))
+        return rendererImage->concreteObjectSize.size();
     return { };
 }
 
 RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters& parameters) const
 {
-    RefPtr image = imageFromRenderer(renderer());
-    if (!image || image->isNull())
+    auto rendererImage = imageFromRenderer(renderer());
+    if (!rendererImage)
         return nullptr;
 
-    auto nativeSize = image->size();
+    Ref image = rendererImage->image;
+    if (image->hasNothingToDraw(rendererImage->renderer))
+        return nullptr;
+
+    auto imageSize = rendererImage->concreteObjectSize;
+    auto nativeSize = imageSize.size();
     if (nativeSize.isEmpty())
         return nullptr;
 
@@ -3384,7 +3409,7 @@ RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters&
         return nullptr;
 
     // Draw the source image scaled into the buffer.
-    imageBuffer->context().drawImage(*image, FloatRect({ }, bufferSize), FloatRect({ }, nativeSize));
+    image->draw(imageBuffer->context(), rendererImage->renderer, imageSize, FloatRect({ }, bufferSize), FloatRect({ }, nativeSize));
 
     // Determine the extraction rect from subrect parameters or full image.
     IntRect extractionRect;
