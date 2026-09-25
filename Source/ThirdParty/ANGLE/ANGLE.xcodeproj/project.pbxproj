@@ -1758,6 +1758,8 @@
 		7BFAF92D2DE6F99B00327F7F /* angle_unittest_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF92B2DE6F99B00327F7F /* angle_unittest_main.cpp */; };
 		7BFD81842D50CF7C0010ED68 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BFD81832D50CF7C0010ED68 /* span.h */; };
 		7BFD81852D50CF7C0010ED68 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BFD81832D50CF7C0010ED68 /* span.h */; };
+		101138976D047E7DE6EA892D /* DawnNativeWebGPUFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63A7212EC0AB2E05093C509 /* DawnNativeWebGPUFramework.cpp */; };
+		D00CFD6D3064E693A0529DCE /* DawnNativeWebGPUFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63A7212EC0AB2E05093C509 /* DawnNativeWebGPUFramework.cpp */; };
 		7BFF6EDF29E9908A009E1A57 /* SourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */; };
 		7BFF6EE229E9908A009E1A57 /* SourcesPlatform-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */; };
 		7C10447197ABE4D36D35E577 /* dePoolSet.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BD401F840F5D5BCDC5AD4B /* dePoolSet.c */; };
@@ -2431,6 +2433,88 @@
 		FFD002B02746E560002BE3BC /* entry_points_gles_3_1_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD002AB2746E55F002BE3BC /* entry_points_gles_3_1_autogen.h */; };
 		FFE447DE9596051BF33327B4 /* es3fShaderOperatorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D144E25BC63593E858A0456 /* es3fShaderOperatorTests.cpp */; };
 		FFF84620AF167DAC8D50A5B2 /* es2pTextureCases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0184B90A6F356864E8A5968 /* es2pTextureCases.cpp */; };
+		55E426715A32329D538AD118 /* GatherDefaultUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31CFF77BCF743A8F81C69DD /* GatherDefaultUniforms.cpp */; };
+		D8884543A4D028E7F2518ED5 /* GatherDefaultUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31CFF77BCF743A8F81C69DD /* GatherDefaultUniforms.cpp */; };
+		6AAA3FCC35FAE339B6859810 /* EmulateMutableFunctionParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8207C1D584D4C715276E85D2 /* EmulateMutableFunctionParams.cpp */; };
+		BC339118044EC79C7484C9EE /* EmulateMutableFunctionParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8207C1D584D4C715276E85D2 /* EmulateMutableFunctionParams.cpp */; };
+		97EA815648EA97C0C9792108 /* PullExpressionsIntoFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A7999638C9A004EF16B /* PullExpressionsIntoFunctions.cpp */; };
+		61A122E84320506F74889DF1 /* PullExpressionsIntoFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A7999638C9A004EF16B /* PullExpressionsIntoFunctions.cpp */; };
+		D58633A0B8C0C950ACBF7542 /* RewriteMixedTypeMathExprs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F003573E83B26428FEF0C73 /* RewriteMixedTypeMathExprs.cpp */; };
+		F0FA4353CC904ADB3C9577CA /* RewriteMixedTypeMathExprs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F003573E83B26428FEF0C73 /* RewriteMixedTypeMathExprs.cpp */; };
+		E0783FE835620099BBDE447C /* RewriteMultielementSwizzleAssignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0268AD4E74F9280AB61C098D /* RewriteMultielementSwizzleAssignment.cpp */; };
+		11B52F8D7B279F6616AD0466 /* RewriteMultielementSwizzleAssignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0268AD4E74F9280AB61C098D /* RewriteMultielementSwizzleAssignment.cpp */; };
+		8A572C0DEE3554D0BB3641B7 /* OutputUniformBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 301023DEE6EAFB52BEE47A72 /* OutputUniformBlocks.cpp */; };
+		8DEF53EA2E36788ED7CAEC27 /* OutputUniformBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 301023DEE6EAFB52BEE47A72 /* OutputUniformBlocks.cpp */; };
+		78403B19B8DFA29A4A4C8670 /* RewritePipelineVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FB1DD9CF0732D7A6D73A4EE /* RewritePipelineVariables.cpp */; };
+		7618EE59770AF4AB90C898E2 /* RewritePipelineVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FB1DD9CF0732D7A6D73A4EE /* RewritePipelineVariables.cpp */; };
+		11357E5C492B805AF52678FD /* TranslatorWGSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B7567F1CD3E53D0BF9D364 /* TranslatorWGSL.cpp */; };
+		6198DAC9A8480E3467F467DF /* TranslatorWGSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B7567F1CD3E53D0BF9D364 /* TranslatorWGSL.cpp */; };
+		5594C741D8557FD6F9A24873 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B362C4626A941B60D5994A2F /* Utils.cpp */; };
+		7F0C34401E5B0F4A29FD248B /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B362C4626A941B60D5994A2F /* Utils.cpp */; };
+		0E7437F83173F9F2F8D469EB /* WGSLProgramPrelude.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92CB49B754A69363D7D99D74 /* WGSLProgramPrelude.cpp */; };
+		66BC7E7D8358A46355453919 /* WGSLProgramPrelude.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92CB49B754A69363D7D99D74 /* WGSLProgramPrelude.cpp */; };
+		315AE48E7C61E6972FCEF81C /* BufferWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 865A7E6CFF3D38AFF32BDBC6 /* BufferWgpu.cpp */; };
+		5AC6704FD5B04AFDF8946C78 /* BufferWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 865A7E6CFF3D38AFF32BDBC6 /* BufferWgpu.cpp */; };
+		6A2B4A255A228B05032586AE /* CompilerWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE8D3E10CB32DB5C258E530 /* CompilerWgpu.cpp */; };
+		AF9097AE625191C0A4460049 /* CompilerWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE8D3E10CB32DB5C258E530 /* CompilerWgpu.cpp */; };
+		93371A9075FB9EE44EB55C10 /* ContextWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE37F1418BC61C531FB6FA9A /* ContextWgpu.cpp */; };
+		8B5F46640FA6C7130A485579 /* ContextWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE37F1418BC61C531FB6FA9A /* ContextWgpu.cpp */; };
+		165955FC872D224FC9E2959E /* DeviceWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16748AECD4CCF0369E323373 /* DeviceWgpu.cpp */; };
+		3203C08B1E8567712F20A236 /* DeviceWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16748AECD4CCF0369E323373 /* DeviceWgpu.cpp */; };
+		56E6D35304F45603D989CED3 /* DisplayWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33D792EDE3B0D0EFD218167 /* DisplayWgpu.cpp */; };
+		9DB3BD9EEFCAB47FA21C9F8E /* DisplayWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33D792EDE3B0D0EFD218167 /* DisplayWgpu.cpp */; };
+		3B20510D60D47E79A2F7B528 /* FenceNVWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2B54C22C611B887C808CBB5 /* FenceNVWgpu.cpp */; };
+		8E4DDEB378BF08CFA5F5395D /* FenceNVWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2B54C22C611B887C808CBB5 /* FenceNVWgpu.cpp */; };
+		F211F0297E504382CD820690 /* FramebufferWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91CBDCAF039686786CC130A1 /* FramebufferWgpu.cpp */; };
+		440C3F12F7C04EAC39C2E772 /* FramebufferWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91CBDCAF039686786CC130A1 /* FramebufferWgpu.cpp */; };
+		E0474059907D321F1B48005D /* ImageWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D35F0AC20C004FF647387F /* ImageWgpu.cpp */; };
+		E42051BFC985E3E287311A1D /* ImageWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D35F0AC20C004FF647387F /* ImageWgpu.cpp */; };
+		2EC882A49EC418181BCCDB2E /* ProgramExecutableWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7711D334FB34614477C83718 /* ProgramExecutableWgpu.cpp */; };
+		A33FB0605E8B8D78988C4B7D /* ProgramExecutableWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7711D334FB34614477C83718 /* ProgramExecutableWgpu.cpp */; };
+		532DF6AD3EFFA3928307A9B0 /* ProgramPipelineWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E9E49D88D2773E0BDD18969 /* ProgramPipelineWgpu.cpp */; };
+		123DD7AEDC9AB4BA775BBAB3 /* ProgramPipelineWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E9E49D88D2773E0BDD18969 /* ProgramPipelineWgpu.cpp */; };
+		F6346C72EBE81A7511ACDD0C /* ProgramWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECFA74AE1A55443B2B38C2A /* ProgramWgpu.cpp */; };
+		A16CECC89FCB83C8023D36DF /* ProgramWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECFA74AE1A55443B2B38C2A /* ProgramWgpu.cpp */; };
+		36CAB10DDFA082625B7C7151 /* QueryWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 35C6DE2813792B17FCC4E736 /* QueryWgpu.cpp */; };
+		AA776CA09D44CCF233ED3D08 /* QueryWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 35C6DE2813792B17FCC4E736 /* QueryWgpu.cpp */; };
+		442F990E22932D570E1DA16B /* RenderTargetWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9803F3DB89C8CEA4757EEE3E /* RenderTargetWgpu.cpp */; };
+		651D81E12819527E53666D6E /* RenderTargetWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9803F3DB89C8CEA4757EEE3E /* RenderTargetWgpu.cpp */; };
+		507901F49E0926471F28ACD4 /* RenderbufferWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 592085A8B658F3E465707713 /* RenderbufferWgpu.cpp */; };
+		8B66DB675FB8B510498A1F0A /* RenderbufferWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 592085A8B658F3E465707713 /* RenderbufferWgpu.cpp */; };
+		091EBAAD9CC3DF6A9D293DA6 /* SamplerWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5914736E024904B4C7A7869A /* SamplerWgpu.cpp */; };
+		5B81C0ACB31A074549C0E42A /* SamplerWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5914736E024904B4C7A7869A /* SamplerWgpu.cpp */; };
+		32B8C3575E29AE64F806F44B /* ShaderWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A187EB78C12BC1730E00E63 /* ShaderWgpu.cpp */; };
+		3BB0F2223CC8193E9969B64A /* ShaderWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A187EB78C12BC1730E00E63 /* ShaderWgpu.cpp */; };
+		A99A283997E754795339229F /* SurfaceWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B52ADAFF2C2CB5922DE8607 /* SurfaceWgpu.cpp */; };
+		9C10AA22236BA4A4AFFD26F4 /* SurfaceWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B52ADAFF2C2CB5922DE8607 /* SurfaceWgpu.cpp */; };
+		B455516E371207CFC407099B /* SyncWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 051E1468870626702201F4C9 /* SyncWgpu.cpp */; };
+		32C085F4B49AA6721A782724 /* SyncWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 051E1468870626702201F4C9 /* SyncWgpu.cpp */; };
+		DAE14CDFCEE2049C683EF79F /* TextureWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5A5E1F3C950965F66BB9190 /* TextureWgpu.cpp */; };
+		13901BFE0BAD827EFE31084E /* TextureWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5A5E1F3C950965F66BB9190 /* TextureWgpu.cpp */; };
+		FF0B9EDDFE1CEEB3997CF41E /* TransformFeedbackWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9F4B6450B3559055B47014 /* TransformFeedbackWgpu.cpp */; };
+		453A0441C3C15C1E47CCFE88 /* TransformFeedbackWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9F4B6450B3559055B47014 /* TransformFeedbackWgpu.cpp */; };
+		1840503A381AEDDA8DD93BDA /* UtilsWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6122C14592AAF150D6DE2 /* UtilsWgpu.cpp */; };
+		02D5AD6129A08058AEE97DBF /* UtilsWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6122C14592AAF150D6DE2 /* UtilsWgpu.cpp */; };
+		10466E33869DBF04D29FB4A3 /* VertexArrayWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE616F3550AAFB97561F3AE5 /* VertexArrayWgpu.cpp */; };
+		F0FAF2D9CEFA4B90E17C9ECB /* VertexArrayWgpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE616F3550AAFB97561F3AE5 /* VertexArrayWgpu.cpp */; };
+		3FFC99AD0F11DA74A1379F9B /* WindowSurfaceWgpuMetalLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0B635E858E15B1EFB0AE5529 /* WindowSurfaceWgpuMetalLayer.mm */; };
+		9E1AB6B5E75FDF743A892E78 /* WindowSurfaceWgpuMetalLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0B635E858E15B1EFB0AE5529 /* WindowSurfaceWgpuMetalLayer.mm */; };
+		24200DE50E9A23864773BB1E /* wgpu_command_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53E383215F092BCCC3A2DBD /* wgpu_command_buffer.cpp */; };
+		D74930BCCB2FBC7039503FBC /* wgpu_command_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B53E383215F092BCCC3A2DBD /* wgpu_command_buffer.cpp */; };
+		A5E175D358DCFD214B6A6033 /* wgpu_format_table_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF350B43FF22225F81A23364 /* wgpu_format_table_autogen.cpp */; };
+		1FB1369559779F74782F931D /* wgpu_format_table_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF350B43FF22225F81A23364 /* wgpu_format_table_autogen.cpp */; };
+		75C07053A7B150931EDE03E5 /* wgpu_format_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F332D19692D743FCCD4122F0 /* wgpu_format_utils.cpp */; };
+		81C557B6A58ED17E6AAB9198 /* wgpu_format_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F332D19692D743FCCD4122F0 /* wgpu_format_utils.cpp */; };
+		6AE3CFBCC734CD916F093A4A /* wgpu_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DEDE8A77D1BFA1BCA5E6669A /* wgpu_helpers.cpp */; };
+		FD676785060AF1622AB9089C /* wgpu_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DEDE8A77D1BFA1BCA5E6669A /* wgpu_helpers.cpp */; };
+		385076562936FEECD52BD90D /* wgpu_pipeline_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B32D67D4F9B8887968032C2C /* wgpu_pipeline_state.cpp */; };
+		0E39BF33D4F650C560E0D20D /* wgpu_pipeline_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B32D67D4F9B8887968032C2C /* wgpu_pipeline_state.cpp */; };
+		59ECDD31818B9A605C70F9BF /* wgpu_proc_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4019C201B2E6EBB83FB5211 /* wgpu_proc_utils.cpp */; };
+		60D6A173D943C7345B4A4FAA /* wgpu_proc_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4019C201B2E6EBB83FB5211 /* wgpu_proc_utils.cpp */; };
+		C8FC9CECC1F5160D8265F39A /* wgpu_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42EF3DD99319840974427CDA /* wgpu_utils.cpp */; };
+		FD9A61ECF6AEA5207BB74AD8 /* wgpu_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42EF3DD99319840974427CDA /* wgpu_utils.cpp */; };
+		49B9E56180AC47F808A600B6 /* wgpu_wgsl_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */; };
+		4E80C274F0A21B34D0FD9948 /* wgpu_wgsl_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -3675,6 +3759,7 @@
 		79F143D4B72FCB267C0B9F86 /* glwFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glwFunctions.cpp; sourceTree = "<group>"; };
 		79F840F1895ACBF63F8C6222 /* gluCallLogWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gluCallLogWrapper.cpp; sourceTree = "<group>"; };
 		7AD040C5B86C36A168052773 /* GPUTestConfig.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUTestConfig.cpp; sourceTree = "<group>"; };
+		B63A7212EC0AB2E05093C509 /* DawnNativeWebGPUFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DawnNativeWebGPUFramework.cpp; path = dawn/native/DawnNativeWebGPUFramework.cpp; sourceTree = "<group>"; };
 		7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourcesPlatform.cpp; sourceTree = "<group>"; };
 		7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "SourcesPlatform-mm.mm"; sourceTree = "<group>"; };
 		7B0D483DB1C1F5CE55759772 /* dePoolStringBuilder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dePoolStringBuilder.c; sourceTree = "<group>"; };
@@ -4829,6 +4914,87 @@
 		FFD002AB2746E55F002BE3BC /* entry_points_gles_3_1_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_3_1_autogen.h; sourceTree = "<group>"; };
 		FFDA50D6269F9E5800AE11E2 /* create_mtl_internal_shaders.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = create_mtl_internal_shaders.py; sourceTree = "<group>"; };
 		FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AngleMetalLib.xcconfig; sourceTree = "<group>"; };
+		A31CFF77BCF743A8F81C69DD /* GatherDefaultUniforms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GatherDefaultUniforms.cpp; path = src/compiler/translator/tree_ops/GatherDefaultUniforms.cpp; sourceTree = "<group>"; };
+		800F940B0C075191B48B3D61 /* GatherDefaultUniforms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GatherDefaultUniforms.h; path = src/compiler/translator/tree_ops/GatherDefaultUniforms.h; sourceTree = "<group>"; };
+		8207C1D584D4C715276E85D2 /* EmulateMutableFunctionParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EmulateMutableFunctionParams.cpp; path = src/compiler/translator/tree_ops/wgsl/EmulateMutableFunctionParams.cpp; sourceTree = "<group>"; };
+		97FD530A4601EEB77EC910AE /* EmulateMutableFunctionParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EmulateMutableFunctionParams.h; path = src/compiler/translator/tree_ops/wgsl/EmulateMutableFunctionParams.h; sourceTree = "<group>"; };
+		CFED5A7999638C9A004EF16B /* PullExpressionsIntoFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PullExpressionsIntoFunctions.cpp; path = src/compiler/translator/tree_ops/wgsl/PullExpressionsIntoFunctions.cpp; sourceTree = "<group>"; };
+		1282E5629E11C9D9BF2C5590 /* PullExpressionsIntoFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = PullExpressionsIntoFunctions.h; path = src/compiler/translator/tree_ops/wgsl/PullExpressionsIntoFunctions.h; sourceTree = "<group>"; };
+		3F003573E83B26428FEF0C73 /* RewriteMixedTypeMathExprs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RewriteMixedTypeMathExprs.cpp; path = src/compiler/translator/tree_ops/wgsl/RewriteMixedTypeMathExprs.cpp; sourceTree = "<group>"; };
+		0C7B705293845BB43C5A962E /* RewriteMixedTypeMathExprs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RewriteMixedTypeMathExprs.h; path = src/compiler/translator/tree_ops/wgsl/RewriteMixedTypeMathExprs.h; sourceTree = "<group>"; };
+		0268AD4E74F9280AB61C098D /* RewriteMultielementSwizzleAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RewriteMultielementSwizzleAssignment.cpp; path = src/compiler/translator/tree_ops/wgsl/RewriteMultielementSwizzleAssignment.cpp; sourceTree = "<group>"; };
+		2EF5B03F540293AB35A36840 /* RewriteMultielementSwizzleAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RewriteMultielementSwizzleAssignment.h; path = src/compiler/translator/tree_ops/wgsl/RewriteMultielementSwizzleAssignment.h; sourceTree = "<group>"; };
+		301023DEE6EAFB52BEE47A72 /* OutputUniformBlocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OutputUniformBlocks.cpp; path = src/compiler/translator/wgsl/OutputUniformBlocks.cpp; sourceTree = "<group>"; };
+		6CF3A3E3CE75A0BE1CC3D2FB /* OutputUniformBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = OutputUniformBlocks.h; path = src/compiler/translator/wgsl/OutputUniformBlocks.h; sourceTree = "<group>"; };
+		6FB1DD9CF0732D7A6D73A4EE /* RewritePipelineVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RewritePipelineVariables.cpp; path = src/compiler/translator/wgsl/RewritePipelineVariables.cpp; sourceTree = "<group>"; };
+		6315DF3D9A2E91647F84CBA9 /* RewritePipelineVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RewritePipelineVariables.h; path = src/compiler/translator/wgsl/RewritePipelineVariables.h; sourceTree = "<group>"; };
+		A5B7567F1CD3E53D0BF9D364 /* TranslatorWGSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorWGSL.cpp; path = src/compiler/translator/wgsl/TranslatorWGSL.cpp; sourceTree = "<group>"; };
+		B362C4626A941B60D5994A2F /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utils.cpp; path = src/compiler/translator/wgsl/Utils.cpp; sourceTree = "<group>"; };
+		0D3E67AECDBFD215EB6DAACD /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Utils.h; path = src/compiler/translator/wgsl/Utils.h; sourceTree = "<group>"; };
+		92CB49B754A69363D7D99D74 /* WGSLProgramPrelude.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WGSLProgramPrelude.cpp; path = src/compiler/translator/wgsl/WGSLProgramPrelude.cpp; sourceTree = "<group>"; };
+		C81607D396707BE30A69E69B /* WGSLProgramPrelude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = WGSLProgramPrelude.h; path = src/compiler/translator/wgsl/WGSLProgramPrelude.h; sourceTree = "<group>"; };
+		865A7E6CFF3D38AFF32BDBC6 /* BufferWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BufferWgpu.cpp; path = src/libANGLE/renderer/wgpu/BufferWgpu.cpp; sourceTree = "<group>"; };
+		D7BE59E72C3B5C1A8EBB0E61 /* BufferWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BufferWgpu.h; path = src/libANGLE/renderer/wgpu/BufferWgpu.h; sourceTree = "<group>"; };
+		7CE8D3E10CB32DB5C258E530 /* CompilerWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompilerWgpu.cpp; path = src/libANGLE/renderer/wgpu/CompilerWgpu.cpp; sourceTree = "<group>"; };
+		853D276D43FFB39F40ADFFAC /* CompilerWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CompilerWgpu.h; path = src/libANGLE/renderer/wgpu/CompilerWgpu.h; sourceTree = "<group>"; };
+		FE37F1418BC61C531FB6FA9A /* ContextWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContextWgpu.cpp; path = src/libANGLE/renderer/wgpu/ContextWgpu.cpp; sourceTree = "<group>"; };
+		DAFBCF195406DE670638601E /* ContextWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ContextWgpu.h; path = src/libANGLE/renderer/wgpu/ContextWgpu.h; sourceTree = "<group>"; };
+		16748AECD4CCF0369E323373 /* DeviceWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceWgpu.cpp; path = src/libANGLE/renderer/wgpu/DeviceWgpu.cpp; sourceTree = "<group>"; };
+		16FFDA239B6E10F609917DE1 /* DeviceWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DeviceWgpu.h; path = src/libANGLE/renderer/wgpu/DeviceWgpu.h; sourceTree = "<group>"; };
+		F33D792EDE3B0D0EFD218167 /* DisplayWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayWgpu.cpp; path = src/libANGLE/renderer/wgpu/DisplayWgpu.cpp; sourceTree = "<group>"; };
+		BB1AD7ECBDDC0E6A05105521 /* DisplayWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DisplayWgpu.h; path = src/libANGLE/renderer/wgpu/DisplayWgpu.h; sourceTree = "<group>"; };
+		EC2FDF2724EB12F269B4BEFF /* DisplayWgpu_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DisplayWgpu_api.h; path = src/libANGLE/renderer/wgpu/DisplayWgpu_api.h; sourceTree = "<group>"; };
+		F2B54C22C611B887C808CBB5 /* FenceNVWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FenceNVWgpu.cpp; path = src/libANGLE/renderer/wgpu/FenceNVWgpu.cpp; sourceTree = "<group>"; };
+		0B5FFD87BD24FD89C385AE72 /* FenceNVWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FenceNVWgpu.h; path = src/libANGLE/renderer/wgpu/FenceNVWgpu.h; sourceTree = "<group>"; };
+		91CBDCAF039686786CC130A1 /* FramebufferWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FramebufferWgpu.cpp; path = src/libANGLE/renderer/wgpu/FramebufferWgpu.cpp; sourceTree = "<group>"; };
+		1F81B587373BE1E103505B68 /* FramebufferWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FramebufferWgpu.h; path = src/libANGLE/renderer/wgpu/FramebufferWgpu.h; sourceTree = "<group>"; };
+		41D35F0AC20C004FF647387F /* ImageWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageWgpu.cpp; path = src/libANGLE/renderer/wgpu/ImageWgpu.cpp; sourceTree = "<group>"; };
+		DBECAD96FF0CE8AC4CE9E9F6 /* ImageWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ImageWgpu.h; path = src/libANGLE/renderer/wgpu/ImageWgpu.h; sourceTree = "<group>"; };
+		7711D334FB34614477C83718 /* ProgramExecutableWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProgramExecutableWgpu.cpp; path = src/libANGLE/renderer/wgpu/ProgramExecutableWgpu.cpp; sourceTree = "<group>"; };
+		F2259D1E8B98720D4DEAAABA /* ProgramExecutableWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ProgramExecutableWgpu.h; path = src/libANGLE/renderer/wgpu/ProgramExecutableWgpu.h; sourceTree = "<group>"; };
+		5E9E49D88D2773E0BDD18969 /* ProgramPipelineWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProgramPipelineWgpu.cpp; path = src/libANGLE/renderer/wgpu/ProgramPipelineWgpu.cpp; sourceTree = "<group>"; };
+		143EEE730B0398AE3CD610B6 /* ProgramPipelineWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ProgramPipelineWgpu.h; path = src/libANGLE/renderer/wgpu/ProgramPipelineWgpu.h; sourceTree = "<group>"; };
+		CECFA74AE1A55443B2B38C2A /* ProgramWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProgramWgpu.cpp; path = src/libANGLE/renderer/wgpu/ProgramWgpu.cpp; sourceTree = "<group>"; };
+		DA3168B9A499FFCA20F8A3FC /* ProgramWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ProgramWgpu.h; path = src/libANGLE/renderer/wgpu/ProgramWgpu.h; sourceTree = "<group>"; };
+		35C6DE2813792B17FCC4E736 /* QueryWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QueryWgpu.cpp; path = src/libANGLE/renderer/wgpu/QueryWgpu.cpp; sourceTree = "<group>"; };
+		4A5536F8199CA4BA7D11765C /* QueryWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = QueryWgpu.h; path = src/libANGLE/renderer/wgpu/QueryWgpu.h; sourceTree = "<group>"; };
+		9803F3DB89C8CEA4757EEE3E /* RenderTargetWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderTargetWgpu.cpp; path = src/libANGLE/renderer/wgpu/RenderTargetWgpu.cpp; sourceTree = "<group>"; };
+		74AEF2A495696C50DB37F726 /* RenderTargetWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderTargetWgpu.h; path = src/libANGLE/renderer/wgpu/RenderTargetWgpu.h; sourceTree = "<group>"; };
+		592085A8B658F3E465707713 /* RenderbufferWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderbufferWgpu.cpp; path = src/libANGLE/renderer/wgpu/RenderbufferWgpu.cpp; sourceTree = "<group>"; };
+		C4D3B3848FAA0BC7FACA246D /* RenderbufferWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderbufferWgpu.h; path = src/libANGLE/renderer/wgpu/RenderbufferWgpu.h; sourceTree = "<group>"; };
+		5914736E024904B4C7A7869A /* SamplerWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SamplerWgpu.cpp; path = src/libANGLE/renderer/wgpu/SamplerWgpu.cpp; sourceTree = "<group>"; };
+		6561C1C9519274A9D0F9C416 /* SamplerWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SamplerWgpu.h; path = src/libANGLE/renderer/wgpu/SamplerWgpu.h; sourceTree = "<group>"; };
+		3A187EB78C12BC1730E00E63 /* ShaderWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderWgpu.cpp; path = src/libANGLE/renderer/wgpu/ShaderWgpu.cpp; sourceTree = "<group>"; };
+		49981AA6DA9399E8ADE81EC3 /* ShaderWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ShaderWgpu.h; path = src/libANGLE/renderer/wgpu/ShaderWgpu.h; sourceTree = "<group>"; };
+		3B52ADAFF2C2CB5922DE8607 /* SurfaceWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceWgpu.cpp; path = src/libANGLE/renderer/wgpu/SurfaceWgpu.cpp; sourceTree = "<group>"; };
+		C6D1F07EA14520399B4CA747 /* SurfaceWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SurfaceWgpu.h; path = src/libANGLE/renderer/wgpu/SurfaceWgpu.h; sourceTree = "<group>"; };
+		051E1468870626702201F4C9 /* SyncWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SyncWgpu.cpp; path = src/libANGLE/renderer/wgpu/SyncWgpu.cpp; sourceTree = "<group>"; };
+		0C998868A504B26886D36A8D /* SyncWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SyncWgpu.h; path = src/libANGLE/renderer/wgpu/SyncWgpu.h; sourceTree = "<group>"; };
+		C5A5E1F3C950965F66BB9190 /* TextureWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureWgpu.cpp; path = src/libANGLE/renderer/wgpu/TextureWgpu.cpp; sourceTree = "<group>"; };
+		F3364D4046D4B914B4F9C055 /* TextureWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TextureWgpu.h; path = src/libANGLE/renderer/wgpu/TextureWgpu.h; sourceTree = "<group>"; };
+		7C9F4B6450B3559055B47014 /* TransformFeedbackWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformFeedbackWgpu.cpp; path = src/libANGLE/renderer/wgpu/TransformFeedbackWgpu.cpp; sourceTree = "<group>"; };
+		B36C0180C65A83D5FCDBD2D0 /* TransformFeedbackWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TransformFeedbackWgpu.h; path = src/libANGLE/renderer/wgpu/TransformFeedbackWgpu.h; sourceTree = "<group>"; };
+		84B6122C14592AAF150D6DE2 /* UtilsWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UtilsWgpu.cpp; path = src/libANGLE/renderer/wgpu/UtilsWgpu.cpp; sourceTree = "<group>"; };
+		5D9AC2DC23F6DFE3F8827D47 /* UtilsWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UtilsWgpu.h; path = src/libANGLE/renderer/wgpu/UtilsWgpu.h; sourceTree = "<group>"; };
+		BE616F3550AAFB97561F3AE5 /* VertexArrayWgpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertexArrayWgpu.cpp; path = src/libANGLE/renderer/wgpu/VertexArrayWgpu.cpp; sourceTree = "<group>"; };
+		DBB7E128F4E1712F7A974077 /* VertexArrayWgpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VertexArrayWgpu.h; path = src/libANGLE/renderer/wgpu/VertexArrayWgpu.h; sourceTree = "<group>"; };
+		72E79C40E6B764D989DC530D /* WindowSurfaceWgpuMetalLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = WindowSurfaceWgpuMetalLayer.h; path = src/libANGLE/renderer/wgpu/mac/WindowSurfaceWgpuMetalLayer.h; sourceTree = "<group>"; };
+		0B635E858E15B1EFB0AE5529 /* WindowSurfaceWgpuMetalLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WindowSurfaceWgpuMetalLayer.mm; path = src/libANGLE/renderer/wgpu/mac/WindowSurfaceWgpuMetalLayer.mm; sourceTree = "<group>"; };
+		B53E383215F092BCCC3A2DBD /* wgpu_command_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_command_buffer.cpp; path = src/libANGLE/renderer/wgpu/wgpu_command_buffer.cpp; sourceTree = "<group>"; };
+		D063C06C510FED0C97D9B349 /* wgpu_command_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_command_buffer.h; path = src/libANGLE/renderer/wgpu/wgpu_command_buffer.h; sourceTree = "<group>"; };
+		EF350B43FF22225F81A23364 /* wgpu_format_table_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_format_table_autogen.cpp; path = src/libANGLE/renderer/wgpu/wgpu_format_table_autogen.cpp; sourceTree = "<group>"; };
+		F332D19692D743FCCD4122F0 /* wgpu_format_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_format_utils.cpp; path = src/libANGLE/renderer/wgpu/wgpu_format_utils.cpp; sourceTree = "<group>"; };
+		2673D594A39B0D2BF610B656 /* wgpu_format_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_format_utils.h; path = src/libANGLE/renderer/wgpu/wgpu_format_utils.h; sourceTree = "<group>"; };
+		DEDE8A77D1BFA1BCA5E6669A /* wgpu_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_helpers.cpp; path = src/libANGLE/renderer/wgpu/wgpu_helpers.cpp; sourceTree = "<group>"; };
+		D0170853BBCCCBAFD8717C22 /* wgpu_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_helpers.h; path = src/libANGLE/renderer/wgpu/wgpu_helpers.h; sourceTree = "<group>"; };
+		B32D67D4F9B8887968032C2C /* wgpu_pipeline_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_pipeline_state.cpp; path = src/libANGLE/renderer/wgpu/wgpu_pipeline_state.cpp; sourceTree = "<group>"; };
+		CCAC7C73EF1DE54B7FC62295 /* wgpu_pipeline_state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_pipeline_state.h; path = src/libANGLE/renderer/wgpu/wgpu_pipeline_state.h; sourceTree = "<group>"; };
+		C4019C201B2E6EBB83FB5211 /* wgpu_proc_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_proc_utils.cpp; path = src/libANGLE/renderer/wgpu/wgpu_proc_utils.cpp; sourceTree = "<group>"; };
+		9A71F24F15AE0D0C776445E3 /* wgpu_proc_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_proc_utils.h; path = src/libANGLE/renderer/wgpu/wgpu_proc_utils.h; sourceTree = "<group>"; };
+		42EF3DD99319840974427CDA /* wgpu_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_utils.cpp; path = src/libANGLE/renderer/wgpu/wgpu_utils.cpp; sourceTree = "<group>"; };
+		E7F9DD07B93265375D536F8F /* wgpu_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_utils.h; path = src/libANGLE/renderer/wgpu/wgpu_utils.h; sourceTree = "<group>"; };
+		9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgpu_wgsl_util.cpp; path = src/libANGLE/renderer/wgpu/wgpu_wgsl_util.cpp; sourceTree = "<group>"; };
+		7216F9B11C12BEAEAF228CC0 /* wgpu_wgsl_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = wgpu_wgsl_util.h; path = src/libANGLE/renderer/wgpu/wgpu_wgsl_util.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6160,6 +6326,7 @@
 				7BD3D2DF2FCDB8A300C386DC /* ANGLEEnd2EndTestsAppInfo.plist */,
 				7BD3D1E92FCDB4A400C386DC /* ANGLEEnd2EndTestsAppLaunch.storyboard */,
 				7B359DF62A7CF7AF0016DC59 /* ANGLEShaderProgramVersion.h */,
+				B63A7212EC0AB2E05093C509 /* DawnNativeWebGPUFramework.cpp */,
 				7BD3D1EB2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp */,
 				7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */,
 				7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */,
@@ -7787,6 +7954,94 @@
 			path = msl;
 			sourceTree = "<group>";
 		};
+		00D40E5838A231171EFD1C4C /* ANGLE wgpu backend */ = {
+			isa = PBXGroup;
+			children = (
+				865A7E6CFF3D38AFF32BDBC6 /* BufferWgpu.cpp */,
+				D7BE59E72C3B5C1A8EBB0E61 /* BufferWgpu.h */,
+				7CE8D3E10CB32DB5C258E530 /* CompilerWgpu.cpp */,
+				853D276D43FFB39F40ADFFAC /* CompilerWgpu.h */,
+				FE37F1418BC61C531FB6FA9A /* ContextWgpu.cpp */,
+				DAFBCF195406DE670638601E /* ContextWgpu.h */,
+				16748AECD4CCF0369E323373 /* DeviceWgpu.cpp */,
+				16FFDA239B6E10F609917DE1 /* DeviceWgpu.h */,
+				F33D792EDE3B0D0EFD218167 /* DisplayWgpu.cpp */,
+				BB1AD7ECBDDC0E6A05105521 /* DisplayWgpu.h */,
+				EC2FDF2724EB12F269B4BEFF /* DisplayWgpu_api.h */,
+				8207C1D584D4C715276E85D2 /* EmulateMutableFunctionParams.cpp */,
+				97FD530A4601EEB77EC910AE /* EmulateMutableFunctionParams.h */,
+				F2B54C22C611B887C808CBB5 /* FenceNVWgpu.cpp */,
+				0B5FFD87BD24FD89C385AE72 /* FenceNVWgpu.h */,
+				91CBDCAF039686786CC130A1 /* FramebufferWgpu.cpp */,
+				1F81B587373BE1E103505B68 /* FramebufferWgpu.h */,
+				A31CFF77BCF743A8F81C69DD /* GatherDefaultUniforms.cpp */,
+				800F940B0C075191B48B3D61 /* GatherDefaultUniforms.h */,
+				41D35F0AC20C004FF647387F /* ImageWgpu.cpp */,
+				DBECAD96FF0CE8AC4CE9E9F6 /* ImageWgpu.h */,
+				301023DEE6EAFB52BEE47A72 /* OutputUniformBlocks.cpp */,
+				6CF3A3E3CE75A0BE1CC3D2FB /* OutputUniformBlocks.h */,
+				7711D334FB34614477C83718 /* ProgramExecutableWgpu.cpp */,
+				F2259D1E8B98720D4DEAAABA /* ProgramExecutableWgpu.h */,
+				5E9E49D88D2773E0BDD18969 /* ProgramPipelineWgpu.cpp */,
+				143EEE730B0398AE3CD610B6 /* ProgramPipelineWgpu.h */,
+				CECFA74AE1A55443B2B38C2A /* ProgramWgpu.cpp */,
+				DA3168B9A499FFCA20F8A3FC /* ProgramWgpu.h */,
+				CFED5A7999638C9A004EF16B /* PullExpressionsIntoFunctions.cpp */,
+				1282E5629E11C9D9BF2C5590 /* PullExpressionsIntoFunctions.h */,
+				35C6DE2813792B17FCC4E736 /* QueryWgpu.cpp */,
+				4A5536F8199CA4BA7D11765C /* QueryWgpu.h */,
+				592085A8B658F3E465707713 /* RenderbufferWgpu.cpp */,
+				C4D3B3848FAA0BC7FACA246D /* RenderbufferWgpu.h */,
+				9803F3DB89C8CEA4757EEE3E /* RenderTargetWgpu.cpp */,
+				74AEF2A495696C50DB37F726 /* RenderTargetWgpu.h */,
+				3F003573E83B26428FEF0C73 /* RewriteMixedTypeMathExprs.cpp */,
+				0C7B705293845BB43C5A962E /* RewriteMixedTypeMathExprs.h */,
+				0268AD4E74F9280AB61C098D /* RewriteMultielementSwizzleAssignment.cpp */,
+				2EF5B03F540293AB35A36840 /* RewriteMultielementSwizzleAssignment.h */,
+				6FB1DD9CF0732D7A6D73A4EE /* RewritePipelineVariables.cpp */,
+				6315DF3D9A2E91647F84CBA9 /* RewritePipelineVariables.h */,
+				5914736E024904B4C7A7869A /* SamplerWgpu.cpp */,
+				6561C1C9519274A9D0F9C416 /* SamplerWgpu.h */,
+				3A187EB78C12BC1730E00E63 /* ShaderWgpu.cpp */,
+				49981AA6DA9399E8ADE81EC3 /* ShaderWgpu.h */,
+				3B52ADAFF2C2CB5922DE8607 /* SurfaceWgpu.cpp */,
+				C6D1F07EA14520399B4CA747 /* SurfaceWgpu.h */,
+				051E1468870626702201F4C9 /* SyncWgpu.cpp */,
+				0C998868A504B26886D36A8D /* SyncWgpu.h */,
+				C5A5E1F3C950965F66BB9190 /* TextureWgpu.cpp */,
+				F3364D4046D4B914B4F9C055 /* TextureWgpu.h */,
+				7C9F4B6450B3559055B47014 /* TransformFeedbackWgpu.cpp */,
+				B36C0180C65A83D5FCDBD2D0 /* TransformFeedbackWgpu.h */,
+				A5B7567F1CD3E53D0BF9D364 /* TranslatorWGSL.cpp */,
+				B362C4626A941B60D5994A2F /* Utils.cpp */,
+				0D3E67AECDBFD215EB6DAACD /* Utils.h */,
+				84B6122C14592AAF150D6DE2 /* UtilsWgpu.cpp */,
+				5D9AC2DC23F6DFE3F8827D47 /* UtilsWgpu.h */,
+				BE616F3550AAFB97561F3AE5 /* VertexArrayWgpu.cpp */,
+				DBB7E128F4E1712F7A974077 /* VertexArrayWgpu.h */,
+				B53E383215F092BCCC3A2DBD /* wgpu_command_buffer.cpp */,
+				D063C06C510FED0C97D9B349 /* wgpu_command_buffer.h */,
+				EF350B43FF22225F81A23364 /* wgpu_format_table_autogen.cpp */,
+				F332D19692D743FCCD4122F0 /* wgpu_format_utils.cpp */,
+				2673D594A39B0D2BF610B656 /* wgpu_format_utils.h */,
+				DEDE8A77D1BFA1BCA5E6669A /* wgpu_helpers.cpp */,
+				D0170853BBCCCBAFD8717C22 /* wgpu_helpers.h */,
+				B32D67D4F9B8887968032C2C /* wgpu_pipeline_state.cpp */,
+				CCAC7C73EF1DE54B7FC62295 /* wgpu_pipeline_state.h */,
+				C4019C201B2E6EBB83FB5211 /* wgpu_proc_utils.cpp */,
+				9A71F24F15AE0D0C776445E3 /* wgpu_proc_utils.h */,
+				42EF3DD99319840974427CDA /* wgpu_utils.cpp */,
+				E7F9DD07B93265375D536F8F /* wgpu_utils.h */,
+				9960AF0C0B69617E59791473 /* wgpu_wgsl_util.cpp */,
+				7216F9B11C12BEAEAF228CC0 /* wgpu_wgsl_util.h */,
+				92CB49B754A69363D7D99D74 /* WGSLProgramPrelude.cpp */,
+				C81607D396707BE30A69E69B /* WGSLProgramPrelude.h */,
+				72E79C40E6B764D989DC530D /* WindowSurfaceWgpuMetalLayer.h */,
+				0B635E858E15B1EFB0AE5529 /* WindowSurfaceWgpuMetalLayer.mm */,
+			);
+			name = "ANGLE wgpu backend";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -9029,6 +9284,7 @@
 				DF83E2F72639FE17000825EF /* Buffer.cpp in Sources */,
 				DF83E3992639FED4000825EF /* BufferImpl.cpp in Sources */,
 				DF83E38A2639FEB8000825EF /* BufferMtl.mm in Sources */,
+				315AE48E7C61E6972FCEF81C /* BufferWgpu.cpp in Sources */,
 				DF83E29D2639FD83000825EF /* BuiltInFunctionEmulator.cpp in Sources */,
 				7B359DD22A7CEE9D0016DC59 /* BuiltInFunctionEmulatorGLSL.cpp in Sources */,
 				DF83E2A32639FD83000825EF /* CallDAG.cpp in Sources */,
@@ -9042,6 +9298,7 @@
 				DF83E2CC2639FD84000825EF /* Compiler.cpp in Sources */,
 				DF83E3232639FE18000825EF /* Compiler.cpp in Sources */,
 				DF83E3782639FEB8000825EF /* CompilerMtl.mm in Sources */,
+				6A2B4A255A228B05032586AE /* CompilerWgpu.cpp in Sources */,
 				7B5D3BD72FF2A28A00AA5CEC /* compression_utils_portable.cc in Sources */,
 				DF83E3282639FE18000825EF /* Config.cpp in Sources */,
 				3A2C67012923742600FEDF46 /* ConstantNames.cpp in Sources */,
@@ -9051,8 +9308,10 @@
 				DF83E39A2639FED4000825EF /* ContextImpl.cpp in Sources */,
 				DF83E3772639FEB8000825EF /* ContextMtl.mm in Sources */,
 				7B359DEA2A7CEF9F0016DC59 /* ContextMutex.cpp in Sources */,
+				93371A9075FB9EE44EB55C10 /* ContextWgpu.cpp in Sources */,
 				7B359DB62A7CEDAA0016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.cpp in Sources */,
 				DF83E2DD2639FE17000825EF /* copyimage.cpp in Sources */,
+				D00CFD6D3064E693A0529DCE /* DawnNativeWebGPUFramework.cpp in Sources */,
 				DF83E2F12639FE17000825EF /* Debug.cpp in Sources */,
 				DF83E2172639FC74000825EF /* debug.cpp in Sources */,
 				DF83E2BB2639FD83000825EF /* Declarator.cpp in Sources */,
@@ -9062,6 +9321,7 @@
 				DF83E32D2639FE18000825EF /* Device.cpp in Sources */,
 				DF83E3952639FED4000825EF /* DeviceImpl.cpp in Sources */,
 				FFD0022727449647002BE3BC /* DeviceMtl.mm in Sources */,
+				165955FC872D224FC9E2959E /* DeviceWgpu.cpp in Sources */,
 				DF83E2D52639FD84000825EF /* Diagnostics.cpp in Sources */,
 				DF83E22F2639FCB0000825EF /* DiagnosticsBase.cpp in Sources */,
 				DF83E2922639FD83000825EF /* DirectiveHandler.cpp in Sources */,
@@ -9072,6 +9332,7 @@
 				DF83E3002639FE17000825EF /* Display.cpp in Sources */,
 				DF83E3982639FED4000825EF /* DisplayImpl.cpp in Sources */,
 				DF83E3762639FEB8000825EF /* DisplayMtl.mm in Sources */,
+				56E6D35304F45603D989CED3 /* DisplayWgpu.cpp in Sources */,
 				DF83E3942639FED4000825EF /* driver_utils.cpp in Sources */,
 				DF83E38E2639FED4000825EF /* driver_utils_mac.mm in Sources */,
 				FF62F64627446DC800AD6EDC /* DriverUniform.cpp in Sources */,
@@ -9085,6 +9346,7 @@
 				DF83E2482639FCD5000825EF /* EmitMetal.cpp in Sources */,
 				DF83E2582639FD33000825EF /* EmulateGLFragColorBroadcast.cpp in Sources */,
 				DF83E26A2639FD33000825EF /* EmulateMultiDrawShaderBuiltins.cpp in Sources */,
+				6AAA3FCC35FAE339B6859810 /* EmulateMutableFunctionParams.cpp in Sources */,
 				7B8EC8492DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp in Sources */,
 				FFD002A12746E4CF002BE3BC /* entry_points_egl_autogen.cpp in Sources */,
 				FFD002A22746E4CF002BE3BC /* entry_points_egl_ext_autogen.cpp in Sources */,
@@ -9101,6 +9363,7 @@
 				DF83E2BE2639FD83000825EF /* ExtensionBehavior.cpp in Sources */,
 				7B359DDB2A7CEE9D0016DC59 /* ExtensionGLSL.cpp in Sources */,
 				DF83E31A2639FE17000825EF /* Fence.cpp in Sources */,
+				3B20510D60D47E79A2F7B528 /* FenceNVWgpu.cpp in Sources */,
 				DF83E29F2639FD83000825EF /* FindFunction.cpp in Sources */,
 				DF83E2912639FD83000825EF /* FindMain.cpp in Sources */,
 				DF83E2C72639FD84000825EF /* FindSymbolNode.cpp in Sources */,
@@ -9115,8 +9378,10 @@
 				DF83E3372639FE18000825EF /* FramebufferAttachment.cpp in Sources */,
 				7B76083C289832BD000012A1 /* FramebufferImpl.cpp in Sources */,
 				DF83E3892639FEB8000825EF /* FrameBufferMtl.mm in Sources */,
+				F211F0297E504382CD820690 /* FramebufferWgpu.cpp in Sources */,
 				7BD3D2ED2FCDD69500C386DC /* FrameCapture_mock.cpp in Sources */,
 				DF83E2D72639FD84000825EF /* FunctionLookup.cpp in Sources */,
+				55E426715A32329D538AD118 /* GatherDefaultUniforms.cpp in Sources */,
 				DF83E2E82639FE17000825EF /* GLES1Renderer.cpp in Sources */,
 				DF83E2ED2639FE17000825EF /* GLES1State.cpp in Sources */,
 				FF62F69A27448D6A00AD6EDC /* gles_extensions_autogen.cpp in Sources */,
@@ -9134,6 +9399,7 @@
 				FF3A9FFB2756B7C000BE0397 /* ImageImpl.cpp in Sources */,
 				DF83E3212639FE18000825EF /* ImageIndex.cpp in Sources */,
 				3154A847266C4AFF00BF33B7 /* ImageMtl.mm in Sources */,
+				E0474059907D321F1B48005D /* ImageWgpu.cpp in Sources */,
 				7BA890562CB522400020C411 /* ImmutableString_autogen.cpp in Sources */,
 				DF83E2992639FD83000825EF /* ImmutableStringBuilder.cpp in Sources */,
 				DF83E31B2639FE17000825EF /* IndexRangeCache.cpp in Sources */,
@@ -9192,6 +9458,7 @@
 				7B359DDA2A7CEE9D0016DC59 /* OutputGLSL.cpp in Sources */,
 				7B359DD62A7CEE9D0016DC59 /* OutputGLSLBase.cpp in Sources */,
 				DF83E2A52639FD83000825EF /* OutputTree.cpp in Sources */,
+				8A572C0DEE3554D0BB3641B7 /* OutputUniformBlocks.cpp in Sources */,
 				DF83E2142639FC74000825EF /* PackedEGLEnums_autogen.cpp in Sources */,
 				DF83E2222639FC74000825EF /* PackedEnums.cpp in Sources */,
 				DF83E2132639FC74000825EF /* PackedGLEnums_autogen.cpp in Sources */,
@@ -9209,21 +9476,26 @@
 				DF83E3052639FE17000825EF /* Program.cpp in Sources */,
 				DF83E3062639FE17000825EF /* ProgramExecutable.cpp in Sources */,
 				7BB62F5C2AA2032500C1DDA8 /* ProgramExecutableMtl.mm in Sources */,
+				2EC882A49EC418181BCCDB2E /* ProgramExecutableWgpu.cpp in Sources */,
 				7B76083E289832BD000012A1 /* ProgramImpl.cpp in Sources */,
 				DF83E3352639FE18000825EF /* ProgramLinkedResources.cpp in Sources */,
 				DF83E37F2639FEB8000825EF /* ProgramMtl.mm in Sources */,
 				DF83E3362639FE18000825EF /* ProgramPipeline.cpp in Sources */,
 				DF83E38F2639FED4000825EF /* ProgramPipelineImpl.cpp in Sources */,
+				532DF6AD3EFFA3928307A9B0 /* ProgramPipelineWgpu.cpp in Sources */,
 				DF83E2392639FCD5000825EF /* ProgramPrelude.cpp in Sources */,
+				F6346C72EBE81A7511ACDD0C /* ProgramWgpu.cpp in Sources */,
 				FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */,
 				DF83E2702639FD33000825EF /* PruneEmptyCases.cpp in Sources */,
 				DF83E27C2639FD33000825EF /* PruneNoOps.cpp in Sources */,
+				97EA815648EA97C0C9792108 /* PullExpressionsIntoFunctions.cpp in Sources */,
 				DF83E2A02639FD83000825EF /* QualifierTypes.cpp in Sources */,
 				DF83E3302639FE18000825EF /* Query.cpp in Sources */,
 				DF83E32A2639FE18000825EF /* queryconversions.cpp in Sources */,
 				DF83E39B2639FED4000825EF /* QueryImpl.cpp in Sources */,
 				DF83E3862639FEB8000825EF /* QueryMtl.mm in Sources */,
 				DF83E3192639FE17000825EF /* queryutils.cpp in Sources */,
+				36CAB10DDFA082625B7C7151 /* QueryWgpu.cpp in Sources */,
 				DF83E27A2639FD33000825EF /* RecordConstantPrecision.cpp in Sources */,
 				7B9A99BA2DDC685100160B6E /* ReduceInterfaceBlocks.cpp in Sources */,
 				DF83E26F2639FD33000825EF /* RemoveArrayLengthMethod.cpp in Sources */,
@@ -9236,9 +9508,11 @@
 				DF83E31F2639FE17000825EF /* Renderbuffer.cpp in Sources */,
 				7B76083B289832BD000012A1 /* RenderbufferImpl.cpp in Sources */,
 				DF83E3852639FEB8000825EF /* RenderBufferMtl.mm in Sources */,
+				507901F49E0926471F28ACD4 /* RenderbufferWgpu.cpp in Sources */,
 				DF83E39C2639FED4000825EF /* renderer_utils.cpp in Sources */,
 				3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */,
 				DF83E3842639FEB8000825EF /* RenderTargetMtl.mm in Sources */,
+				442F990E22932D570E1DA16B /* RenderTargetWgpu.cpp in Sources */,
 				DF83E2B42639FD83000825EF /* ReplaceArrayOfMatrixVarying.cpp in Sources */,
 				FF62F64427446DC800AD6EDC /* ReplaceClipCullDistanceVariable.cpp in Sources */,
 				DF83E2AE2639FD83000825EF /* ReplaceShadowingVariables.cpp in Sources */,
@@ -9250,8 +9524,11 @@
 				7B359DA02A7CEDAA0016DC59 /* RewriteCaseDeclarations.cpp in Sources */,
 				DF83E2632639FD33000825EF /* RewriteDfdy.cpp in Sources */,
 				7B359DB02A7CEDAA0016DC59 /* RewriteInterpolants.cpp in Sources */,
+				D58633A0B8C0C950ACBF7542 /* RewriteMixedTypeMathExprs.cpp in Sources */,
+				E0783FE835620099BBDE447C /* RewriteMultielementSwizzleAssignment.cpp in Sources */,
 				7B359DB42A7CEDAA0016DC59 /* RewriteOutArgs.cpp in Sources */,
 				DF83E2432639FCD5000825EF /* RewritePipelines.cpp in Sources */,
+				78403B19B8DFA29A4A4C8670 /* RewritePipelineVariables.cpp in Sources */,
 				7B7608342898326C000012A1 /* RewritePixelLocalStorage.cpp in Sources */,
 				FF62F64527446DC800AD6EDC /* RewriteSampleMaskVariable.cpp in Sources */,
 				DF83E2642639FD33000825EF /* RewriteStructSamplers.cpp in Sources */,
@@ -9261,6 +9538,7 @@
 				DF83E2AD2639FD83000825EF /* RunAtTheEndOfShader.cpp in Sources */,
 				DF83E3202639FE17000825EF /* Sampler.cpp in Sources */,
 				DF83E37C2639FEB8000825EF /* SamplerMtl.mm in Sources */,
+				091EBAAD9CC3DF6A9D293DA6 /* SamplerWgpu.cpp in Sources */,
 				7B62E9E22DA91F0900793212 /* ScalarizeVecAndMatConstructorArgs.cpp in Sources */,
 				DF83E2FF2639FE17000825EF /* Semaphore.cpp in Sources */,
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
@@ -9272,6 +9550,7 @@
 				DF83E28D2639FD83000825EF /* ShaderLang.cpp in Sources */,
 				DF83E3832639FEB8000825EF /* ShaderMtl.mm in Sources */,
 				DF83E2952639FD83000825EF /* ShaderVars.cpp in Sources */,
+				32B8C3575E29AE64F806F44B /* ShaderWgpu.cpp in Sources */,
 				7B359DEC2A7CEF9F0016DC59 /* ShareGroup.cpp in Sources */,
 				DF83E2532639FD33000825EF /* SimplifyLoopConditions.cpp in Sources */,
 				7B4556F12F18CE2B00DC54D0 /* SizeClipCullDistance.cpp in Sources */,
@@ -9284,12 +9563,14 @@
 				DF83E3162639FE17000825EF /* Surface.cpp in Sources */,
 				DF83E3962639FED4000825EF /* SurfaceImpl.cpp in Sources */,
 				DF83E37E2639FEB8000825EF /* SurfaceMtl.mm in Sources */,
+				A99A283997E754795339229F /* SurfaceWgpu.cpp in Sources */,
 				DF83E28B2639FD83000825EF /* Symbol.cpp in Sources */,
 				DF83E24E2639FCD5000825EF /* SymbolEnv.cpp in Sources */,
 				7B24C80D28D9A25100E2DDB1 /* SymbolTable.cpp in Sources */,
 				7BA890582CB5227C0020C411 /* SymbolTable_autogen.cpp in Sources */,
 				DF83E2972639FD83000825EF /* SymbolUniqueId.cpp in Sources */,
 				DF83E3812639FEB8000825EF /* SyncMtl.mm in Sources */,
+				B455516E371207CFC407099B /* SyncWgpu.cpp in Sources */,
 				DF83E2112639FC74000825EF /* system_utils.cpp in Sources */,
 				FFD0029527449D6B002BE3BC /* system_utils_apple.cpp in Sources */,
 				DF83E21E2639FC74000825EF /* system_utils_mac.cpp in Sources */,
@@ -9299,6 +9580,7 @@
 				DF83E3172639FE17000825EF /* Texture.cpp in Sources */,
 				DF83E3932639FED4000825EF /* TextureImpl.cpp in Sources */,
 				DF83E37D2639FEB8000825EF /* TextureMtl.mm in Sources */,
+				DAE14CDFCEE2049C683EF79F /* TextureWgpu.cpp in Sources */,
 				DF83E3272639FE18000825EF /* Thread.cpp in Sources */,
 				DF83E21F2639FC74000825EF /* tls.cpp in Sources */,
 				DF83E2302639FCB0000825EF /* Token.cpp in Sources */,
@@ -9307,9 +9589,11 @@
 				DF83E3182639FE17000825EF /* TransformFeedback.cpp in Sources */,
 				7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */,
 				DF83E38C2639FEB8000825EF /* TransformFeedbackMtl.mm in Sources */,
+				FF0B9EDDFE1CEEB3997CF41E /* TransformFeedbackWgpu.cpp in Sources */,
 				7B359DD42A7CEE9D0016DC59 /* TranslatorESSL.cpp in Sources */,
 				7B359DDC2A7CEE9D0016DC59 /* TranslatorGLSL.cpp in Sources */,
 				7B359D5E2A7CECAE0016DC59 /* TranslatorMSL.cpp in Sources */,
+				11357E5C492B805AF52678FD /* TranslatorWGSL.cpp in Sources */,
 				7B359DB22A7CEDAA0016DC59 /* TransposeRowMajorMatrices.cpp in Sources */,
 				DF83E2D02639FD84000825EF /* Types.cpp in Sources */,
 				DF83E3262639FE18000825EF /* Uniform.cpp in Sources */,
@@ -9317,7 +9601,9 @@
 				FF194FE227432CC3006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp in Sources */,
 				DF83E2B32639FD83000825EF /* util.cpp in Sources */,
 				DF83E21A2639FC74000825EF /* utilities.cpp in Sources */,
+				5594C741D8557FD6F9A24873 /* Utils.cpp in Sources */,
 				7B359D5A2A7CECAE0016DC59 /* UtilsMSL.cpp in Sources */,
+				1840503A381AEDDA8DD93BDA /* UtilsWgpu.cpp in Sources */,
 				DF83E2A72639FD83000825EF /* ValidateAST.cpp in Sources */,
 				DF83E29E2639FD83000825EF /* ValidateGlobalInitializer.cpp in Sources */,
 				DF83E2D32639FD84000825EF /* ValidateVaryingLocations.cpp in Sources */,
@@ -9335,7 +9621,18 @@
 				DF83E2FC2639FE17000825EF /* VertexArray.cpp in Sources */,
 				7B76083D289832BD000012A1 /* VertexArrayImpl.cpp in Sources */,
 				DF83E3882639FEB8000825EF /* VertexArrayMtl.mm in Sources */,
+				10466E33869DBF04D29FB4A3 /* VertexArrayWgpu.cpp in Sources */,
 				DF83E31C2639FE17000825EF /* VertexAttribute.cpp in Sources */,
+				24200DE50E9A23864773BB1E /* wgpu_command_buffer.cpp in Sources */,
+				A5E175D358DCFD214B6A6033 /* wgpu_format_table_autogen.cpp in Sources */,
+				75C07053A7B150931EDE03E5 /* wgpu_format_utils.cpp in Sources */,
+				6AE3CFBCC734CD916F093A4A /* wgpu_helpers.cpp in Sources */,
+				385076562936FEECD52BD90D /* wgpu_pipeline_state.cpp in Sources */,
+				59ECDD31818B9A605C70F9BF /* wgpu_proc_utils.cpp in Sources */,
+				C8FC9CECC1F5160D8265F39A /* wgpu_utils.cpp in Sources */,
+				49B9E56180AC47F808A600B6 /* wgpu_wgsl_util.cpp in Sources */,
+				0E7437F83173F9F2F8D469EB /* WGSLProgramPrelude.cpp in Sources */,
+				3FFC99AD0F11DA74A1379F9B /* WindowSurfaceWgpuMetalLayer.mm in Sources */,
 				3A2C66F5292371B200FEDF46 /* WorkerThread.cpp in Sources */,
 				7B359DBB2A7CEDAA0016DC59 /* WrapMain.cpp in Sources */,
 				7B19599526C3C64E00C09322 /* xxhash.c in Sources */,
@@ -10054,9 +10351,11 @@
 				7BB973332DE4873000455D13 /* Buffer.cpp in Sources */,
 				7BB9736E2DE4888800455D13 /* BufferImpl.cpp in Sources */,
 				7BB973982DE4888800455D13 /* BufferMtl.mm in Sources */,
+				5AC6704FD5B04AFDF8946C78 /* BufferWgpu.cpp in Sources */,
 				7BB973412DE4873000455D13 /* Caps.cpp in Sources */,
 				7BB9732E2DE4873000455D13 /* Compiler.cpp in Sources */,
 				7BB973722DE4888800455D13 /* CompilerMtl.mm in Sources */,
+				AF9097AE625191C0A4460049 /* CompilerWgpu.cpp in Sources */,
 				7B5D3BD62FF2A28A00AA5CEC /* compression_utils_portable.cc in Sources */,
 				7BB9733D2DE4873000455D13 /* Config.cpp in Sources */,
 				7BB973182DE4873000455D13 /* Context.cpp in Sources */,
@@ -10064,14 +10363,18 @@
 				7BB9739C2DE4888800455D13 /* ContextImpl.cpp in Sources */,
 				7BB973752DE4888800455D13 /* ContextMtl.mm in Sources */,
 				7BB973522DE4873000455D13 /* ContextMutex.cpp in Sources */,
+				8B5F46640FA6C7130A485579 /* ContextWgpu.cpp in Sources */,
 				7BB973562DE4874100455D13 /* copyimage.cpp in Sources */,
+				101138976D047E7DE6EA892D /* DawnNativeWebGPUFramework.cpp in Sources */,
 				7BB973152DE4873000455D13 /* Debug.cpp in Sources */,
 				7BB9733C2DE4873000455D13 /* Device.cpp in Sources */,
 				7BB973652DE4888800455D13 /* DeviceImpl.cpp in Sources */,
 				7BB973682DE4888800455D13 /* DeviceMtl.mm in Sources */,
+				3203C08B1E8567712F20A236 /* DeviceWgpu.cpp in Sources */,
 				7BB973322DE4873000455D13 /* Display.cpp in Sources */,
 				7BB9737C2DE4888800455D13 /* DisplayImpl.cpp in Sources */,
 				7BB973872DE4888800455D13 /* DisplayMtl.mm in Sources */,
+				9DB3BD9EEFCAB47FA21C9F8E /* DisplayWgpu.cpp in Sources */,
 				7BB973942DE4888800455D13 /* driver_utils.cpp in Sources */,
 				7BB9737F2DE4888800455D13 /* driver_utils_mac.mm in Sources */,
 				7BB9730D2DE486B800455D13 /* egl_ext_stubs.cpp in Sources */,
@@ -10091,6 +10394,7 @@
 				7BB973222DE4873000455D13 /* Error.cpp in Sources */,
 				7BB9732D2DE4873000455D13 /* es3_copy_conversion_table_autogen.cpp in Sources */,
 				7BB973112DE4873000455D13 /* Fence.cpp in Sources */,
+				8E4DDEB378BF08CFA5F5395D /* FenceNVWgpu.cpp in Sources */,
 				7BB9734B2DE4873000455D13 /* format_map_autogen.cpp in Sources */,
 				7BB9737A2DE4888800455D13 /* Format_table_autogen.cpp in Sources */,
 				7BB973352DE4873000455D13 /* formatutils.cpp in Sources */,
@@ -10098,6 +10402,7 @@
 				7BB9734A2DE4873000455D13 /* FramebufferAttachment.cpp in Sources */,
 				7BB973802DE4888800455D13 /* FramebufferImpl.cpp in Sources */,
 				7BB973832DE4888800455D13 /* FrameBufferMtl.mm in Sources */,
+				440C3F12F7C04EAC39C2E772 /* FramebufferWgpu.cpp in Sources */,
 				7BD3D2E62FCDBAB500C386DC /* FrameCapture_mock.cpp in Sources */,
 				7BB973492DE4873000455D13 /* GLES1Renderer.cpp in Sources */,
 				7BB973272DE4873000455D13 /* GLES1State.cpp in Sources */,
@@ -10110,6 +10415,7 @@
 				7BB973932DE4888800455D13 /* ImageImpl.cpp in Sources */,
 				7BB973532DE4873000455D13 /* ImageIndex.cpp in Sources */,
 				7BB9737B2DE4888800455D13 /* ImageMtl.mm in Sources */,
+				E42051BFC985E3E287311A1D /* ImageWgpu.cpp in Sources */,
 				7BB973482DE4873000455D13 /* IndexRangeCache.cpp in Sources */,
 				7BB9736F2DE4888800455D13 /* IOSurfaceSurfaceMtl.mm in Sources */,
 				7BB973902DE4888800455D13 /* load_functions_table_autogen.cpp in Sources */,
@@ -10143,49 +10449,62 @@
 				7BB973362DE4873000455D13 /* Program.cpp in Sources */,
 				7BB973422DE4873000455D13 /* ProgramExecutable.cpp in Sources */,
 				7BB973912DE4888800455D13 /* ProgramExecutableMtl.mm in Sources */,
+				A33FB0605E8B8D78988C4B7D /* ProgramExecutableWgpu.cpp in Sources */,
 				7BB973972DE4888800455D13 /* ProgramImpl.cpp in Sources */,
 				7BB973302DE4873000455D13 /* ProgramLinkedResources.cpp in Sources */,
 				7BB9738A2DE4888800455D13 /* ProgramMtl.mm in Sources */,
 				7BB9734D2DE4873000455D13 /* ProgramPipeline.cpp in Sources */,
 				7BB973742DE4888800455D13 /* ProgramPipelineImpl.cpp in Sources */,
+				123DD7AEDC9AB4BA775BBAB3 /* ProgramPipelineWgpu.cpp in Sources */,
+				A16CECC89FCB83C8023D36DF /* ProgramWgpu.cpp in Sources */,
 				7BB9736D2DE4888800455D13 /* ProvokingVertexHelper.mm in Sources */,
 				7BB973462DE4873000455D13 /* Query.cpp in Sources */,
 				7BB9733E2DE4873000455D13 /* queryconversions.cpp in Sources */,
 				7BB9737D2DE4888800455D13 /* QueryImpl.cpp in Sources */,
 				7BB973882DE4888800455D13 /* QueryMtl.mm in Sources */,
 				7BB9731F2DE4873000455D13 /* queryutils.cpp in Sources */,
+				AA776CA09D44CCF233ED3D08 /* QueryWgpu.cpp in Sources */,
 				7BB9734E2DE4873000455D13 /* Renderbuffer.cpp in Sources */,
 				7BB9736B2DE4888800455D13 /* RenderbufferImpl.cpp in Sources */,
 				7BB973862DE4888800455D13 /* RenderBufferMtl.mm in Sources */,
+				8B66DB675FB8B510498A1F0A /* RenderbufferWgpu.cpp in Sources */,
 				7BB973992DE4888800455D13 /* renderer_utils.cpp in Sources */,
 				7BB9738C2DE4888800455D13 /* renderermtl_utils.cpp in Sources */,
 				7BB9736A2DE4888800455D13 /* RenderTargetMtl.mm in Sources */,
+				651D81E12819527E53666D6E /* RenderTargetWgpu.cpp in Sources */,
 				7BB9731D2DE4873000455D13 /* ResourceManager.cpp in Sources */,
 				7BB973542DE4873000455D13 /* Sampler.cpp in Sources */,
 				7BB973732DE4888800455D13 /* SamplerMtl.mm in Sources */,
+				5B81C0ACB31A074549C0E42A /* SamplerWgpu.cpp in Sources */,
 				7BB9731A2DE4873000455D13 /* Semaphore.cpp in Sources */,
 				7BD3D2E72FCDBABC00C386DC /* serialize_mock.cpp in Sources */,
 				7BB9735F2DE4877900455D13 /* sha1.cc in Sources */,
 				7BB973312DE4873000455D13 /* Shader.cpp in Sources */,
 				7BB973772DE4888800455D13 /* ShaderImpl.cpp in Sources */,
 				7BB9738F2DE4888800455D13 /* ShaderMtl.mm in Sources */,
+				3BB0F2223CC8193E9969B64A /* ShaderWgpu.cpp in Sources */,
 				7BB9731E2DE4873000455D13 /* ShareGroup.cpp in Sources */,
 				7BB973512DE4873000455D13 /* State.cpp in Sources */,
 				7BB9732C2DE4873000455D13 /* Stream.cpp in Sources */,
 				7BB973242DE4873000455D13 /* Surface.cpp in Sources */,
 				7BB9738D2DE4888800455D13 /* SurfaceImpl.cpp in Sources */,
 				7BB9738B2DE4888800455D13 /* SurfaceMtl.mm in Sources */,
+				9C10AA22236BA4A4AFFD26F4 /* SurfaceWgpu.cpp in Sources */,
 				7BB973622DE4888800455D13 /* SyncMtl.mm in Sources */,
+				32C085F4B49AA6721A782724 /* SyncWgpu.cpp in Sources */,
 				7BB9735E2DE4875E00455D13 /* SystemInfo.cpp in Sources */,
 				7BB9735D2DE4875E00455D13 /* SystemInfo_apple.mm in Sources */,
 				7BB973552DE4873000455D13 /* Texture.cpp in Sources */,
 				7BB973662DE4888800455D13 /* TextureImpl.cpp in Sources */,
 				7BB9737E2DE4888800455D13 /* TextureMtl.mm in Sources */,
+				13901BFE0BAD827EFE31084E /* TextureWgpu.cpp in Sources */,
 				7BB973162DE4873000455D13 /* Thread.cpp in Sources */,
 				7BB973172DE4873000455D13 /* TransformFeedback.cpp in Sources */,
 				7BB9739B2DE4888800455D13 /* TransformFeedbackImpl.cpp in Sources */,
 				7BB973842DE4888800455D13 /* TransformFeedbackMtl.mm in Sources */,
+				453A0441C3C15C1E47CCFE88 /* TransformFeedbackWgpu.cpp in Sources */,
 				7BB973282DE4873000455D13 /* Uniform.cpp in Sources */,
+				02D5AD6129A08058AEE97DBF /* UtilsWgpu.cpp in Sources */,
 				7BB9731B2DE4873000455D13 /* validationEGL.cpp in Sources */,
 				7BB973132DE4873000455D13 /* validationES.cpp in Sources */,
 				7BB9732A2DE4873000455D13 /* validationES1.cpp in Sources */,
@@ -10198,7 +10517,17 @@
 				7BB973142DE4873000455D13 /* VertexArray.cpp in Sources */,
 				7BB973812DE4888800455D13 /* VertexArrayImpl.cpp in Sources */,
 				7BB973922DE4888800455D13 /* VertexArrayMtl.mm in Sources */,
+				F0FAF2D9CEFA4B90E17C9ECB /* VertexArrayWgpu.cpp in Sources */,
 				7BB973402DE4873000455D13 /* VertexAttribute.cpp in Sources */,
+				D74930BCCB2FBC7039503FBC /* wgpu_command_buffer.cpp in Sources */,
+				1FB1369559779F74782F931D /* wgpu_format_table_autogen.cpp in Sources */,
+				81C557B6A58ED17E6AAB9198 /* wgpu_format_utils.cpp in Sources */,
+				FD676785060AF1622AB9089C /* wgpu_helpers.cpp in Sources */,
+				0E39BF33D4F650C560E0D20D /* wgpu_pipeline_state.cpp in Sources */,
+				60D6A173D943C7345B4A4FAA /* wgpu_proc_utils.cpp in Sources */,
+				FD9A61ECF6AEA5207BB74AD8 /* wgpu_utils.cpp in Sources */,
+				4E80C274F0A21B34D0FD9948 /* wgpu_wgsl_util.cpp in Sources */,
+				9E1AB6B5E75FDF743A892E78 /* WindowSurfaceWgpuMetalLayer.mm in Sources */,
 				7BB973A72DE48E4A00455D13 /* WorkerThread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10656,6 +10985,7 @@
 				7BF5554E2C81F198002B101E /* EmitMetal.cpp in Sources */,
 				7BF5553E2C81F198002B101E /* EmulateGLFragColorBroadcast.cpp in Sources */,
 				7BF554F12C81F198002B101E /* EmulateMultiDrawShaderBuiltins.cpp in Sources */,
+				BC339118044EC79C7484C9EE /* EmulateMutableFunctionParams.cpp in Sources */,
 				7B8EC8462DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp in Sources */,
 				7BF555422C81F198002B101E /* entry_points_enum_autogen.cpp in Sources */,
 				7BF5556A2C81F198002B101E /* ExtensionBehavior.cpp in Sources */,
@@ -10668,6 +10998,7 @@
 				7BF555412C81F198002B101E /* Float16ToFloat32.cpp in Sources */,
 				7BF555742C81F198002B101E /* FoldExpressions.cpp in Sources */,
 				7BF555012C81F198002B101E /* FunctionLookup.cpp in Sources */,
+				D8884543A4D028E7F2518ED5 /* GatherDefaultUniforms.cpp in Sources */,
 				7BF554EF2C81F198002B101E /* glslang_lex_autogen.cpp in Sources */,
 				7BF554F52C81F198002B101E /* glslang_tab_autogen.cpp in Sources */,
 				7BF555452C81F198002B101E /* GuardFragDepthWrite.cpp in Sources */,
@@ -10703,6 +11034,7 @@
 				7BFAF9192DE6F85B00327F7F /* OutputGLSL.cpp in Sources */,
 				7BFAF9162DE6F85B00327F7F /* OutputGLSLBase.cpp in Sources */,
 				7BF5553A2C81F198002B101E /* OutputTree.cpp in Sources */,
+				8DEF53EA2E36788ED7CAEC27 /* OutputUniformBlocks.cpp in Sources */,
 				7BF554FB2C81F198002B101E /* PackedEGLEnums_autogen.cpp in Sources */,
 				7BF555302C81F198002B101E /* PackedEnums.cpp in Sources */,
 				7BF555692C81F198002B101E /* PackedGLEnums_autogen.cpp in Sources */,
@@ -10718,6 +11050,7 @@
 				7BF554EA2C81F198002B101E /* ProgramPrelude.cpp in Sources */,
 				7BF5556D2C81F198002B101E /* PruneEmptyCases.cpp in Sources */,
 				7BF554EE2C81F198002B101E /* PruneNoOps.cpp in Sources */,
+				61A122E84320506F74889DF1 /* PullExpressionsIntoFunctions.cpp in Sources */,
 				7BF555252C81F198002B101E /* QualifierTypes.cpp in Sources */,
 				7BF555202C81F198002B101E /* RecordConstantPrecision.cpp in Sources */,
 				7B9A99BC2DDC685100160B6E /* ReduceInterfaceBlocks.cpp in Sources */,
@@ -10738,8 +11071,11 @@
 				7BF555372C81F198002B101E /* RewriteCaseDeclarations.cpp in Sources */,
 				7BF5555B2C81F198002B101E /* RewriteDfdy.cpp in Sources */,
 				7BF555592C81F198002B101E /* RewriteInterpolants.cpp in Sources */,
+				F0FA4353CC904ADB3C9577CA /* RewriteMixedTypeMathExprs.cpp in Sources */,
+				11B52F8D7B279F6616AD0466 /* RewriteMultielementSwizzleAssignment.cpp in Sources */,
 				7BF5554A2C81F198002B101E /* RewriteOutArgs.cpp in Sources */,
 				7BF555272C81F198002B101E /* RewritePipelines.cpp in Sources */,
+				7618EE59770AF4AB90C898E2 /* RewritePipelineVariables.cpp in Sources */,
 				7BF5553B2C81F198002B101E /* RewritePixelLocalStorage.cpp in Sources */,
 				7BF555802C81F198002B101E /* RewriteSampleMaskVariable.cpp in Sources */,
 				7BF5553D2C81F198002B101E /* RewriteStructSamplers.cpp in Sources */,
@@ -10772,18 +11108,21 @@
 				7BFAF9122DE6F85B00327F7F /* TranslatorESSL.cpp in Sources */,
 				7BFAF9142DE6F85B00327F7F /* TranslatorGLSL.cpp in Sources */,
 				7BF554E02C81F198002B101E /* TranslatorMSL.cpp in Sources */,
+				6198DAC9A8480E3467F467DF /* TranslatorWGSL.cpp in Sources */,
 				7BF554FD2C81F198002B101E /* TransposeRowMajorMatrices.cpp in Sources */,
 				7BF555402C81F198002B101E /* Types.cpp in Sources */,
 				7BF5557B2C81F198002B101E /* uniform_type_info_autogen.cpp in Sources */,
 				7BF555292C81F198002B101E /* UseGeneratedNamesForAnonymousStructs.cpp in Sources */,
 				7BF5553C2C81F198002B101E /* util.cpp in Sources */,
 				7BF555162C81F198002B101E /* utilities.cpp in Sources */,
+				7F0C34401E5B0F4A29FD248B /* Utils.cpp in Sources */,
 				7BF5557E2C81F198002B101E /* UtilsMSL.cpp in Sources */,
 				7BF555192C81F198002B101E /* ValidateAST.cpp in Sources */,
 				7BF5556C2C81F198002B101E /* ValidateGlobalInitializer.cpp in Sources */,
 				7BF555482C81F198002B101E /* ValidateVaryingLocations.cpp in Sources */,
 				7BF554E92C81F198002B101E /* VariablePacker.cpp in Sources */,
 				7BFAF9182DE6F85B00327F7F /* VersionGLSL.cpp in Sources */,
+				66BC7E7D8358A46355453919 /* WGSLProgramPrelude.cpp in Sources */,
 				7BF5551E2C81F198002B101E /* WrapMain.cpp in Sources */,
 				7BF5550B2C81F198002B101E /* xxhash.c in Sources */,
 			);

@@ -6,6 +6,7 @@
 
 #include "compiler/translator/wgsl/RewritePipelineVariables.h"
 
+#include <iostream>
 #include <string>
 #include <utility>
 

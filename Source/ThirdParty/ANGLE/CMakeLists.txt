@@ -25,6 +25,9 @@ include(GLESv2.cmake)
 include(D3D.cmake)
 include(GL.cmake)
 include(Metal.cmake)
+include(Wgpu.cmake)
+
+option(ENABLE_WEBGL_WEBGPU "Build ANGLE's WebGPU backend" OFF)
 
 set(no_gl_prototypes
     GL_GLES_PROTOTYPES=0
@@ -119,6 +122,25 @@ if (WIN32)
         "src/libANGLE/renderer/dxgi_format_map_autogen.cpp"
         "src/libANGLE/renderer/dxgi_support_table.h"
         "src/libANGLE/renderer/dxgi_support_table_autogen.cpp"
+    )
+endif ()
+
+if (ENABLE_WEBGL_WEBGPU)
+    list(APPEND ANGLE_SOURCES
+        ${wgpu_backend_sources}
+
+        ${angle_translator_lib_wgsl_sources}
+
+        WebKit/dawn/native/DawnNativeWebGPUFramework.cpp
+        WebKit/dawn/dawn_proc.h
+        WebKit/dawn/dawn_proc_table.h
+        WebKit/dawn/native/DawnNative.h
+        WebKit/dawn/webgpu.h
+        WebKit/webgpu/webgpu.h
+    )
+
+    list(APPEND ANGLE_DEFINITIONS
+        ANGLE_ENABLE_WGPU
     )
 endif ()
 
