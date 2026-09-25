@@ -919,14 +919,19 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     auto textureDimension = texture->dimension();
     uint32_t sliceCount = textureDimension == WGPUTextureDimension_3D ? 1 : size.depthOrArrayLayers;
     bool clearWasNeeded = false;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    const bool writeCompletelyClearsSlice = writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers);
+    auto markSliceAsCleared = [&](NSUInteger destinationSlice) {
+        if (writeCompletelyClearsSlice)
+            texture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
+    };
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (uint32_t layer = 0; layer < sliceCount; ++layer) {
         auto checkedDestinationSlice = checkedSum<uint32_t>(destination.origin.z, layer);
         if (checkedDestinationSlice.hasOverflowed())
             return;
         NSUInteger destinationSlice = textureDimension == WGPUTextureDimension_3D ? 0 : checkedDestinationSlice.value();
-#ifndef RC_REMOVE_SEC_ACCEL_3
-        texture->discardProvisionalClear(destination.mipLevel, destinationSlice);
-#endif // RC_REMOVE_SEC_ACCEL_3
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (!texture->previouslyCleared(destination.mipLevel, destinationSlice)) {
             if (writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers))
                 texture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
@@ -935,6 +940,13 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                 clearTextureIfNeeded(destination, destinationSlice);
             }
         }
+#else
+        texture->discardProvisionalClear(destination.mipLevel, destinationSlice);
+        if (!texture->previouslyCleared(destination.mipLevel, destinationSlice) && !writeCompletelyClearsSlice) {
+            clearWasNeeded = true;
+            clearTextureIfNeeded(destination, destinationSlice);
+        }
+#endif
     }
 
     auto checkedBlockSizeTimes2048 = checkedProduct<uint32_t>(2048, blockSize);
@@ -1203,6 +1215,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                             withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                             bytesPerRow:0
                             bytesPerImage:0];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                        markSliceAsCleared(destinationSlice);
+#endif // RC_REMOVE_SEC_ACCEL_3
                     }
                     break;
                 }
@@ -1233,6 +1248,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                             withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                             bytesPerRow:bytesPerRow
                             bytesPerImage:0];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                        markSliceAsCleared(destinationSlice);
+#endif // RC_REMOVE_SEC_ACCEL_3
                     }
                     break;
                 }
@@ -1251,6 +1269,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                         withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                         bytesPerRow:bytesPerRow
                         bytesPerImage:bytesPerImage];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                    markSliceAsCleared(0);
+#endif // RC_REMOVE_SEC_ACCEL_3
                     break;
                 }
                 case WGPUTextureDimension_Force32:
@@ -1332,6 +1353,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
                 options:options];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            markSliceAsCleared(destinationSlice);
+#endif // RC_REMOVE_SEC_ACCEL_3
         }
         break;
     }
@@ -1365,6 +1389,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
                 options:options];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            markSliceAsCleared(destinationSlice);
+#endif // RC_REMOVE_SEC_ACCEL_3
         }
         break;
     }
@@ -1385,6 +1412,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
             destinationLevel:destination.mipLevel
             destinationOrigin:destinationOrigin
             options:options];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        markSliceAsCleared(0);
+#endif // RC_REMOVE_SEC_ACCEL_3
         break;
     }
     case WGPUTextureDimension_Force32:
