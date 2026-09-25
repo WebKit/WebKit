@@ -28,6 +28,10 @@
 
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
+#include "WebFrameProxy.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
+#include "WebProcessProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -172,6 +176,33 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildren()
     Ref frameState = copyFrameState();
     for (auto& child : m_children)
         frameState->children.append(child->copyFrameStateWithChildren());
+    return frameState;
+}
+
+static Ref<FrameState> copyTreeStructure(const FrameState& frameState)
+{
+    Ref copy = FrameState::create();
+    copy->frameID = frameState.frameID;
+    copy->itemID = frameState.itemID;
+    copy->frameItemID = frameState.frameItemID;
+    copy->itemSequenceNumber = frameState.itemSequenceNumber;
+    copy->documentSequenceNumber = frameState.documentSequenceNumber;
+    return copy;
+}
+
+// With UseUIProcessForBackForwardItemLoading, the UI process sends each frame its own FrameState when it
+// loads, so a process only needs the tree structure of frames it does not host.
+Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildrenForProcess(WebPageProxy& page, WebProcessProxy& process)
+{
+    if (!protect(page.preferences())->useUIProcessForBackForwardItemLoading())
+        return copyFrameStateWithChildren();
+
+    RefPtr frame = m_parent ? WebFrameProxy::webFrame(frameID()) : page.mainFrame();
+    bool processHostsFrame = frame && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+
+    Ref frameState = processHostsFrame ? copyFrameState() : copyTreeStructure(m_frameState.get());
+    for (Ref child : m_children)
+        frameState->children.append(child->copyFrameStateWithChildrenForProcess(page, process));
     return frameState;
 }
 

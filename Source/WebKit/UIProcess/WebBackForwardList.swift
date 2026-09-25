@@ -1309,10 +1309,16 @@ final class WebBackForwardList {
         frameID: WebCore.FrameIdentifier,
         completionHandler: CompletionHandlers.WebBackForwardList.BackForwardAllItemsCompletionHandler
     ) {
+        guard let webPageProxy = page.get() else {
+            completionHandler.pointee(consuming: WebKit.VectorRefFrameState())
+            return
+        }
+
+        let process = WebKit.WebProcessProxy.fromConnection(connection)
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
-                frameStates.append(frameItem.copyFrameStateWithChildren().ptr())
+                frameStates.append(frameItem.copyFrameStateWithChildrenForProcess(webPageProxy, process.ptr()).ptr())
             }
         }
         completionHandler.pointee(consuming: WebKit.VectorRefFrameState(array: frameStates))
@@ -1324,25 +1330,24 @@ final class WebBackForwardList {
         frameID: WebCore.FrameIdentifier,
         completionHandler: CompletionHandlers.WebBackForwardList.BackForwardItemAtIndexForWebContentCompletionHandler
     ) throws(InvalidMessage) {
-        let reply = try itemAtIndexForWebContent(delta: delta, frameID: frameID)
+        let reply = try itemAtIndexForWebContent(connection: connection, delta: delta, frameID: frameID)
         completionHandler.pointee(consuming: reply)
     }
 
     private func itemAtIndexForWebContent(
+        connection: IPC.Connection,
         delta: Int32,
         frameID: WebCore.FrameIdentifier
     ) throws(InvalidMessage) -> WebKit.RefPtrFrameState {
         try messageCheck { delta != Int32.min }
 
-        // FIXME: This should verify that the web process requesting the item hosts the specified frame.
         let delta = Int(delta)
-        guard let item = itemAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
+        guard let webPageProxy = page.get(), let item = itemAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
             return WebKit.RefPtrFrameState()
         }
-        guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
-            return WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr())
-        }
-        return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren().ptr())
+        let frameItem = item.mainFrameItem().childItemForFrameID(frameID) ?? item.mainFrameItem()
+        let process = WebKit.WebProcessProxy.fromConnection(connection)
+        return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildrenForProcess(webPageProxy, process.ptr()).ptr())
     }
 
     func backForwardListCounts(

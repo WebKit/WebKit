@@ -935,14 +935,19 @@ void WebBackForwardList::backForwardGoToItemShared(IPC::Connection& connection, 
     goToItem(*item);
 }
 
-void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+void WebBackForwardList::backForwardAllItems(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return completionHandler({ });
+
     auto frameItems = WTF::compactMap(entries(), [frameID](const auto& item) -> RefPtr<WebBackForwardListFrameItem> {
         return item->mainFrameItem().childItemForFrameID(frameID);
     });
 
-    completionHandler(WTF::map(WTF::move(frameItems), [](const auto& frameItem) {
-        return frameItem->copyFrameStateWithChildren();
+    Ref process = WebProcessProxy::fromConnection(connection);
+    completionHandler(WTF::map(WTF::move(frameItems), [&](const auto& frameItem) {
+        return frameItem->copyFrameStateWithChildrenForProcess(*page, process);
     }));
 }
 
@@ -950,11 +955,15 @@ void WebBackForwardList::backForwardItemAtIndexForWebContent(IPC::Connection& co
 {
     MESSAGE_CHECK_COMPLETION_BASE(delta != std::numeric_limits<int32_t>::min(), connection, completionHandler(nullptr));
 
-    // FIXME: This should verify that the web process requesting the item hosts the specified frame.
+    RefPtr page = m_page.get();
+    if (!page)
+        return completionHandler(nullptr);
+
+    Ref process = WebProcessProxy::fromConnection(connection);
     if (RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No)) {
         if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
-            return completionHandler(frameItem->copyFrameStateWithChildren());
-        completionHandler(item->copyMainFrameStateWithChildren());
+            return completionHandler(frameItem->copyFrameStateWithChildrenForProcess(*page, process));
+        completionHandler(protect(item->mainFrameItem())->copyFrameStateWithChildrenForProcess(*page, process));
     } else
         completionHandler(nullptr);
 }

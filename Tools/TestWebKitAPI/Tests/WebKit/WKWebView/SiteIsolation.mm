@@ -6312,6 +6312,46 @@ TEST(SiteIsolation, GoBackToCrossSiteIframeAfterPersistedSessionRestore)
     EXPECT_WK_STREQ("destination", [newWebView _test_waitForAlert]);
 }
 
+#if ENABLE(IPC_TESTING_API)
+static NSString *frameStateSecretsInBackForwardReplies(TestWKWebView *webView, WKFrameInfo *frame, NSString *requestedFrameID)
+{
+    NSString *script = [NSString stringWithFormat:@"(() => {"
+        "    const frameID = { type: 'FrameID', value: [BigInt('%@')] };"
+        "    const replies = ["
+        "        IPC.sendSyncMessage('UI', IPC.pageID, IPC.messages.WebBackForwardList_BackForwardAllItems.name, 1000, [frameID]),"
+        "        IPC.sendSyncMessage('UI', IPC.pageID, IPC.messages.WebBackForwardList_BackForwardItemAtIndexForWebContent.name, 1000, [{ type: 'int32_t', value: 0 }, frameID]),"
+        "    ];"
+        "    const texts = replies.flatMap(reply => {"
+        "        const bytes = new Uint8Array(reply.buffer);"
+        "        return [new TextDecoder('latin1').decode(bytes), new TextDecoder('utf-16le').decode(bytes), new TextDecoder('utf-16le').decode(bytes.subarray(1))];"
+        "    });"
+        "    return ['main-frame-secret', 'iframe-secret'].filter(secret => texts.some(text => text.includes(secret))).join(' ');"
+        "})()", requestedFrameID];
+    return [webView objectByEvaluatingJavaScript:script inFrame:frame];
+}
+
+TEST(SiteIsolation, BackForwardFrameStateOnlyIncludesFramesHostedByRequestingProcess)
+{
+    HTTPServer server({
+        { "/main-frame-secret"_s, { "<iframe src='https://webkit.org/iframe-secret'></iframe>"_s } },
+        { "/iframe-secret"_s, { "iframe"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main-frame-secret"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr iframe = [webView firstChildFrame];
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [iframe _processIdentifier]);
+
+    NSString *mainFrameID = [webView stringByEvaluatingJavaScript:@"String(IPC.frameID)"];
+    EXPECT_WK_STREQ("iframe-secret", frameStateSecretsInBackForwardReplies(webView.get(), iframe.get(), mainFrameID));
+    EXPECT_WK_STREQ("main-frame-secret", frameStateSecretsInBackForwardReplies(webView.get(), nil, mainFrameID));
+}
+#endif
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
