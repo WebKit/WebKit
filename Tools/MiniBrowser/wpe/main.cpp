@@ -25,6 +25,7 @@
 
 #include "cmakeconfig.h"
 
+#include "BrowserLoggingInputMethodContext.h"
 #include "BuildRevision.h"
 #include <glib-unix.h>
 #include <memory>
@@ -53,6 +54,7 @@ IGNORE_WARNINGS_END
 static const char** uriArguments;
 static const char** ignoreHosts;
 static gboolean headlessMode;
+static gboolean logInputMethod;
 static gboolean privateMode;
 static const char* profileDirectory;
 static gboolean automationMode;
@@ -121,6 +123,7 @@ static gboolean parseWindowSize(const char*, const char* value, gpointer, GError
 static const GOptionEntry commandLineOptions[] =
 {
     { "headless", 'h', 0, G_OPTION_ARG_NONE, &headlessMode, "Run in headless mode", nullptr },
+    { "log-input-method", 0, 0, G_OPTION_ARG_NONE, &logInputMethod, "Log what WebKit reports to the input method. Disables composition", nullptr },
     { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", nullptr },
     { "profile-dir", 0, 0, G_OPTION_ARG_FILENAME, &profileDirectory, "Custom profile directory to store session data", "DIR" },
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", nullptr },
@@ -687,6 +690,11 @@ static void activate(GApplication* application, gpointer)
         nullptr));
     g_object_unref(settings);
     g_object_unref(defaultWebsitePolicies);
+
+    if (logInputMethod) {
+        g_autoptr(WebKitInputMethodContext) inputMethodContext = browser_logging_input_method_context_new();
+        webkit_web_view_set_input_method_context(webView, inputMethodContext);
+    }
 #if ENABLE_WPE_PLATFORM_HEADLESS
     g_clear_object(&wpeDisplay);
 #endif

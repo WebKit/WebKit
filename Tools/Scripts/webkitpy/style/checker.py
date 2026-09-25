@@ -450,6 +450,7 @@ _PATH_RULES_SPECIFIER = [
      ["-non-inclusive-term"]),
 
     ([  # The GTK/WPE MiniBrowser uses public API and GLib-style conventions and indentation.
+     os.path.join('Tools', 'MiniBrowser', 'glib'),
      os.path.join('Tools', 'MiniBrowser', 'gtk'),
      os.path.join('Tools', 'MiniBrowser', 'wpe')],
      ["-readability/enum_casing",

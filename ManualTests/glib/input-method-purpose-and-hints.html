@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Input method purpose and hints</title>
+<style>
+body { font: 14px sans-serif; margin: 16px; max-width: 900px; }
+h1 { font-size: 18px; }
+p { line-height: 1.5; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: #f0f0f0; font-weight: 600; }
+td.expect { font-family: monospace; font-size: 12px; white-space: nowrap; }
+input, textarea, [contenteditable] { font: 14px sans-serif; padding: 4px; width: 14em; }
+[contenteditable] { border: 1px solid #999; min-height: 1.4em; }
+#log { font-family: monospace; font-size: 12px; white-space: pre; background: #111; color: #eee;
+       padding: 10px; height: 260px; overflow: auto; border-radius: 4px; }
+button { font: 13px sans-serif; padding: 4px 10px; }
+</style>
+</head>
+<body>
+
+<h1>Input method purpose and hints</h1>
+
+<p>Run MiniBrowser with <code>--log-input-method</code> and focus each field in turn. The page
+cannot read what WebKit reports to the input method, so compare the expected value for each field
+with the line MiniBrowser prints to the terminal:</p>
+
+<p><code>input-method: focus in: purpose=... hints=...</code></p>
+
+<p>Click an empty part of the page before each field. When focus moves straight from one field to
+another, WebKit does not send focus out and focus in, and MiniBrowser only prints a
+<code>content type</code> line if the purpose or hints change.</p>
+
+<p>A field that is focused without user input, for example by script, also reports
+<code>InhibitOSK</code>.</p>
+
+<table>
+<tr><th>Field</th><th>Expected</th></tr>
+<tr class="case" data-expected="purpose=Digits hints=None">
+  <td><input id="im-numeric" inputmode="numeric" spellcheck="false"> <code>inputmode=numeric</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Number hints=None">
+  <td><input id="im-decimal" inputmode="decimal" spellcheck="false"> <code>inputmode=decimal</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Phone hints=None">
+  <td><input id="im-tel" inputmode="tel" spellcheck="false"> <code>inputmode=tel</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Email hints=None">
+  <td><input id="im-email" inputmode="email" spellcheck="false"> <code>inputmode=email</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Url hints=None">
+  <td><input id="im-url" inputmode="url" spellcheck="false"> <code>inputmode=url</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Search hints=None">
+  <td><input id="im-search" inputmode="search" spellcheck="false"> <code>inputmode=search</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=FreeForm hints=InhibitOSK">
+  <td><input id="im-none" inputmode="none" spellcheck="false"> <code>inputmode=none</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=FreeForm hints=None">
+  <td><input id="im-text" inputmode="text" spellcheck="false"> <code>inputmode=text</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Digits hints=None">
+  <td><div id="ce-numeric" contenteditable inputmode="numeric" spellcheck="false"></div>
+      <code>contenteditable inputmode=numeric</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=FreeForm hints=InhibitOSK">
+  <td><div id="ce-none" contenteditable inputmode="none" spellcheck="false"></div>
+      <code>contenteditable inputmode=none</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Phone hints=None">
+  <td><textarea id="ta-tel" inputmode="tel" spellcheck="false" rows="1"></textarea>
+      <code>textarea inputmode=tel</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Phone hints=None">
+  <td><input id="type-tel" type="tel" spellcheck="false"> <code>type=tel</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Number hints=None">
+  <td><input id="type-number" type="number" spellcheck="false"> <code>type=number</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Digits hints=None">
+  <td><input id="type-pattern" type="text" pattern="\d*" spellcheck="false">
+      <code>type=text pattern="\d*"</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=Password hints=None">
+  <td><input id="type-password" type="password" spellcheck="false"> <code>type=password</code></td>
+  <td class="expect"></td></tr>
+<tr class="case" data-expected="purpose=FreeForm hints=Spellcheck">
+  <td><input id="spellcheck-on" type="text" spellcheck="true"> <code>spellcheck=true</code></td>
+  <td class="expect"></td></tr>
+</table>
+
+<h2>Log</h2>
+<p><button id="clear">Clear</button> Focus each field, then read the terminal alongside this.</p>
+<div id="log"></div>
+
+<script>
+const logArea = document.getElementById('log');
+
+function log(line)
+{
+    const now = new Date();
+    const stamp = now.toTimeString().slice(0, 8) + '.'
+        + String(now.getMilliseconds()).padStart(3, '0');
+    logArea.textContent += stamp + '  ' + line + '\n';
+    logArea.scrollTop = logArea.scrollHeight;
+}
+
+document.getElementById('clear').addEventListener('click', () => {
+    logArea.textContent = '';
+});
+
+for (const row of document.querySelectorAll('tr.case')) {
+    const field = row.querySelector('input, textarea, [contenteditable]');
+    const expected = row.dataset.expected;
+    row.querySelector('td.expect').textContent = expected;
+
+    field.addEventListener('focus', () => {
+        log('focus  ' + field.id);
+        log('       expected: ' + expected);
+    });
+
+    field.addEventListener('blur', () => {
+        log('blur   ' + field.id);
+        log('');
+    });
+}
+</script>
+
+</body>
+</html>

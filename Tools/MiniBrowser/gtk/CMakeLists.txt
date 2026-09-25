@@ -3,6 +3,8 @@ set(MiniBrowser_DIR "${TOOLS_DIR}/MiniBrowser/gtk")
 file(MAKE_DIRECTORY ${MiniBrowser_DERIVED_SOURCES_DIR})
 
 set(MiniBrowser_SOURCES
+    ${TOOLS_DIR}/MiniBrowser/glib/BrowserLoggingInputMethodContext.c
+    ${TOOLS_DIR}/MiniBrowser/glib/BrowserLoggingInputMethodContext.h
     BrowserCellRendererVariant.c
     BrowserCellRendererVariant.h
     BrowserDownloadsBar.c
@@ -20,6 +22,7 @@ set(MiniBrowser_SOURCES
 
 set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
+    ${TOOLS_DIR}/MiniBrowser/glib
     ${MiniBrowser_DERIVED_SOURCES_DIR}
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}
     ${CMAKE_SOURCE_DIR}/Source
