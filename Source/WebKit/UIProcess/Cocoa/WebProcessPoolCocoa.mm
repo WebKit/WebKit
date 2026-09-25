@@ -751,7 +751,7 @@ void WebProcessPool::hardwareKeyboardAvailabilityChangedCallback(CFNotificationC
 void WebProcessPool::hardwareKeyboardAvailabilityChanged()
 {
     for (Ref process : borrow(this->processes()).get()) {
-        auto pages = process->pages();
+        auto pages = process->mainPages();
         for (auto& page : pages)
             page->hardwareKeyboardAvailabilityChanged(cachedHardwareKeyboardState());
     }

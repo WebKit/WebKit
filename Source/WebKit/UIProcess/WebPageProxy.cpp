@@ -14894,6 +14894,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.deviceOrientation = m_deviceOrientation;
     parameters.hardwareKeyboardState = protect(protect(m_configuration)->processPool())->cachedHardwareKeyboardState();
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();
+    parameters.isCapturingScreen = pageClient && pageClient->isScreenBeingCaptured();
     parameters.insertionPointColor = pageClient ? pageClient->insertionPointColor() : WebCore::Color { };
 #endif
 
