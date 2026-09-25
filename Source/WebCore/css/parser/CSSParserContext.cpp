@@ -62,6 +62,7 @@ static void NODELETE applyUASheetBehaviorsToContext(CSSParserContext& context)
 #endif
     context.cssInternalAutoBaseParsingEnabled = true;
     context.htmlEnhancedSelectEnabled = true;
+    context.openPseudoClassEnabled = true;
 }
 
 CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
