@@ -68,6 +68,8 @@ class WebGLRenderingContextBase;
 
 template<typename> class ExceptionOr;
 
+struct UpdateElementGeometryOptions;
+
 using OffscreenRenderingContext = Variant<
 #if ENABLE(WEBGL)
     Ref<WebGLRenderingContext>,
@@ -132,7 +134,8 @@ public:
     void setHeight(unsigned);
     void setSizeForControllingContext(IntSize) final;
 
-    ExceptionOr<Ref<DOMMatrix>> getElementTransform(const CanvasElementImageSource&, DOMMatrix& drawTransform);
+    ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>);
+    ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 

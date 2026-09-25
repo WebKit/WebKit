@@ -99,8 +99,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUComputePassTimestampWrites.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
-	$(WebCore)/Modules/WebGPU/GPUCopyElementImageDestination.idl \
-	$(WebCore)/Modules/WebGPU/GPUCopyElementImageSource.idl \
     $(WebCore)/Modules/WebGPU/GPUCullMode.idl \
     $(WebCore)/Modules/WebGPU/GPUDebugCommandsMixin.idl \
     $(WebCore)/Modules/WebGPU/GPUDepthStencilState.idl \
@@ -111,6 +109,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUDeviceLostInfo.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceLostReason.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceUncapturedError.idl \
+	$(WebCore)/Modules/WebGPU/GPUDrawElementImageDestination.idl \
+	$(WebCore)/Modules/WebGPU/GPUDrawElementImageSource.idl \
     $(WebCore)/Modules/WebGPU/GPUError.idl \
     $(WebCore)/Modules/WebGPU/GPUErrorFilter.idl \
     $(WebCore)/Modules/WebGPU/GPUExtent3DDict.idl \
@@ -1429,6 +1429,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasCompositing.idl \
     $(WebCore)/html/canvas/CanvasDirection.idl \
 	$(WebCore)/html/canvas/CanvasDrawElementImage.idl \
+	$(WebCore)/html/canvas/CanvasDrawElementImageOptions.idl \
     $(WebCore)/html/canvas/CanvasDrawImage.idl \
     $(WebCore)/html/canvas/CanvasDrawPath.idl \
 	$(WebCore)/html/canvas/CanvasElementImage.idl \
@@ -1496,6 +1497,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/PaintRenderingContext2D.idl \
     $(WebCore)/html/canvas/Path2D.idl \
     $(WebCore)/html/canvas/PredefinedColorSpace.idl \
+	$(WebCore)/html/canvas/UpdateElementGeometryOptions.idl \
     $(WebCore)/html/canvas/WebGL2RenderingContext.idl \
     $(WebCore)/html/canvas/WebGLActiveInfo.idl \
     $(WebCore)/html/canvas/WebGLBlendFuncExtended.idl \

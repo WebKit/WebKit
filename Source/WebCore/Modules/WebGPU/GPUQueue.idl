@@ -59,9 +59,9 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
         GPUImageCopyTextureTagged destination,
         GPUExtent3D copySize);
         
-    [EnabledBySetting=HTMLInCanvasEnabled] undefined copyElementImageToTexture(
-        GPUCopyElementImageSource source,
-        GPUCopyElementImageDestination destination);
+    [EnabledBySetting=HTMLInCanvasEnabled] undefined drawElementImageToTexture(
+        GPUDrawElementImageSource source,
+        GPUDrawElementImageDestination destination);
 };
 GPUQueue includes GPUObjectBase;
 

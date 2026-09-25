@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUDrawElementImageDestination.h"
 
-#include "GPUIntegralTypes.h"
-#include "WebGPUExtent3D.h"
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
 
-struct GPUExtent3DDict {
-    WebGPU::Extent3DDict convertToBacking() const
-    {
-        return {
-            width,
-            height,
-            depthOrArrayLayers,
-        };
-    }
-
-    Ref<JSON::Object> toJSON() const;
-
-    GPUIntegerCoordinate width { 0 };
-    GPUIntegerCoordinate height { 1 };
-    GPUIntegerCoordinate depthOrArrayLayers { 1 };
-};
-
-using GPUExtent3D = Variant<Vector<GPUIntegerCoordinate>, GPUExtent3DDict>;
-
-Ref<JSON::Value> toJSON(const GPUExtent3D&);
-
-inline WebGPU::Extent3D convertToBacking(const GPUExtent3D& extent3D)
+Ref<JSON::Object> GPUDrawElementImageDestination::toJSON() const
 {
-    return WTF::switchOn(extent3D, [](const Vector<GPUIntegerCoordinate>& vector) -> WebGPU::Extent3D {
-        return vector;
-    }, [](const GPUExtent3DDict& extent3D) -> WebGPU::Extent3D {
-        return extent3D.convertToBacking();
-    });
+    Ref json = GPUImageCopyTextureTagged::toJSON();
+    if (size)
+        json->setValue("size"_s, WebCore::toJSON(*size));
+    return json;
 }
 
-}
+} // namespace WebCore

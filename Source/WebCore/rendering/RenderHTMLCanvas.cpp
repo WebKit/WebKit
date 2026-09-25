@@ -83,7 +83,7 @@ bool RenderHTMLCanvas::requiresLayer() const
 
 bool RenderHTMLCanvas::canHaveChildren() const
 {
-    return settings().htmlInCanvasEnabled() && (protect(canvasElement())->layoutSubtree() || firstChild());
+    return settings().htmlInCanvasEnabled() && (protect(canvasElement())->canvasContent() == CanvasContent::Drawable || firstChild());
 }
 
 void RenderHTMLCanvas::layout()
@@ -135,6 +135,9 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     canvasEl->setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
     canvasEl->paint(context, paintRect);
     canvasEl->setIsSnapshotting(false);
+
+    if (paintInfo.context().paintingDisabled())
+        return;
 
     CheckedPtr innerRenderer = this->innerRenderer();
     if (!innerRenderer)

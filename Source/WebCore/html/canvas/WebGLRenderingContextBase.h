@@ -341,7 +341,7 @@ public:
     virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
     virtual ExceptionOr<void> texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, std::optional<TexImageSource>&&);
 
-    virtual ExceptionOr<void> texElementImage2D(GCGLenum target, GCGLenum internalformat, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>);
+    virtual ExceptionOr<void> texElementSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>);
 
     template<typename TypedArray, typename DataType>
     class TypedList {

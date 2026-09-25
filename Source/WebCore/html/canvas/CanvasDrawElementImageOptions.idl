@@ -25,15 +25,9 @@
  * SUCH DAMAGE.
  */
 
-typedef (Element or CanvasElementImage) CanvasElementImageSource;
-
 // https://github.com/WICG/html-in-canvas
 [
     EnabledBySetting=HTMLInCanvasEnabled,
-] dictionary GPUCopyElementImageSource {
-    required CanvasElementImageSource source;
-    float sx;
-    float sy;
-    float swidth;
-    float sheight;
+] dictionary CanvasDrawElementImageOptions {
+    boolean preserveElementGeometry = false;
 };
