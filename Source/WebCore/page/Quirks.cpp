@@ -2344,6 +2344,7 @@ static AccessibilityRole accessibilityRole(const Element& element)
 
 // walmart.com: rdar://123734840
 // live.outlook.com: rdar://152277211
+// icloud.com: rdar://187710972
 bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2363,6 +2364,14 @@ bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) cons
     if (m_quirksData.isOutlook) {
         if (target && target->getIdAttribute().startsWith("swatchColorPicker"_s))
             return true;
+    }
+
+    if (m_quirksData.isICloud) {
+        for (Ref ancestor : lineageOfType<Element>(targetNode)) {
+            if (accessibilityRole(ancestor) == AccessibilityRole::TreeItem)
+                return true;
+        }
+        return false;
     }
 
     if (m_quirksData.isWalmart) {
@@ -3097,6 +3106,11 @@ static void handleICloudQuirks(QuirksData& quirksData, const URL& quirksURL, con
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("icloud.com"_s);
 
+#if ENABLE(TWO_PHASE_CLICKS)
+    // icloud.com rdar://187710972
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::MayNeedToIgnoreContentObservation);
+    quirksData.isICloud = true;
+#endif
 #if PLATFORM(IOS_FAMILY)
     // icloud.com rdar://131836301
     bool shouldSilenceWindowResizeEventsDuringApplicationSnapshotting = quirksURL.path().contains("mail"_s) || quirksURL.fragmentIdentifier().contains("mail"_s);

@@ -45,6 +45,7 @@ struct QuirksData {
     bool isGoogleDocs : 1 { false };
     bool isGoogleProperty : 1 { false };
     bool isGoogleMaps : 1 { false };
+    bool isICloud : 1 { false };
     bool isIHeart : 1 { false };
     bool isInVideo : 1 { false };
     bool isLinkedIn : 1 { false };
