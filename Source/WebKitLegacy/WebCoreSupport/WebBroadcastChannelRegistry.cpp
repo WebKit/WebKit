@@ -78,9 +78,28 @@ void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurity
 
     auto channelsForNameIterator = channelsForOriginIterator->value.find(name);
     ASSERT(channelsForNameIterator != channelsForOriginIterator->value.end());
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (auto& channelIdentifier : channelsForNameIterator->value) {
         if (channelIdentifier == source)
             continue;
         WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, message.copyRef(), [callbackAggregator] { });
     }
+#else
+    if (channelsForNameIterator == channelsForOriginIterator->value.end())
+        return;
+
+    size_t numberOfMessagesNeeded = 0;
+    for (auto& channelIdentifier : channelsForNameIterator->value) {
+        if (channelIdentifier != source)
+            ++numberOfMessagesNeeded;
+    }
+
+    for (auto& channelIdentifier : channelsForNameIterator->value) {
+        if (channelIdentifier == source)
+            continue;
+        // SerializedScriptValue::deserialize() is destructive, so each recipient needs its own copy.
+        auto messageToDispatch = numberOfMessagesNeeded-- > 1 ? message->clone() : WTF::move(message);
+        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, WTF::move(messageToDispatch), [callbackAggregator] { });
+    }
+#endif
 }

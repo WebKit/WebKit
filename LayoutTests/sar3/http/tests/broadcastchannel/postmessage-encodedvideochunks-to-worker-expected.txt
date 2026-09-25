@@ -1,0 +1,4 @@
+Posts EncodedVideoChunks over a BroadcastChannel whose only other recipient lives on a worker thread. The message is also forwarded to the NetworkProcess, and the WebContent process used to encode it for IPC while the worker was already deserializing the very same SerializedScriptValue, which is destructive. This test passes if it does not crash.
+
+PASS: did not crash
+
