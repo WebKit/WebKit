@@ -752,7 +752,7 @@ TEST_F(CaptionPreferenceTests, NullProfileNameShouldYieldEmptyStyleSheet)
     auto preferences = CaptionUserPreferencesMediaAF::create(group);
 
     SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyActiveProfileID, CFSTR(""));
-    EXPECT_EQ(preferences->captionsStyleSheetOverride(), ""_s);
+    EXPECT_TRUE(preferences->captionsStyleSheetOverride().isEmpty());
 }
 
 }
