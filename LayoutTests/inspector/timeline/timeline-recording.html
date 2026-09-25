@@ -16,7 +16,7 @@ function test()
             async function awaitCapturingState(capturingState) {
                 return new Promise((resolve, reject) => {
                     let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
-                        if (event.data.capturingState !== capturingState)
+                        if (WI.timelineManager.capturingState !== capturingState)
                             return;
 
                         WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);

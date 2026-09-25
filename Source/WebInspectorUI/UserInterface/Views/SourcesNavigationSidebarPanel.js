@@ -2783,7 +2783,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         this._updateTemporarilyDisabledBreakpointsButtons();
 
-        switch (event.data.capturingState) {
+        switch (WI.timelineManager.capturingState) {
         case WI.TimelineManager.CapturingState.Starting:
             if (!this._timelineRecordingWarningElement) {
                 let stopRecordingButton = document.createElement("button");

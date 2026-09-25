@@ -64,16 +64,16 @@ WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends W
         this.element.classList.toggle("hidden", !this._visible);
 
         if (this._visible)
-            this._updateState(WI.timelineManager.capturingState);
+            this._updateState();
     }
 
     // Private
 
-    _updateState(capturingState) {
+    _updateState() {
         if (!this._visible)
             return;
 
-        switch (capturingState) {
+        switch (WI.timelineManager.capturingState) {
         case WI.TimelineManager.CapturingState.Starting:
         case WI.TimelineManager.CapturingState.Active:
             this._statusElement.textContent = WI.UIString("Recording Timeline Data", "Recording Timeline Data @ Timeline Recording Progress", "Message for progress of a timeline recording.");
@@ -92,7 +92,7 @@ WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends W
 
     _handleTimelineCapturingStateChanged(event)
     {
-        this._updateState(event.data.capturingState);
+        this._updateState();
     }
 
 };
