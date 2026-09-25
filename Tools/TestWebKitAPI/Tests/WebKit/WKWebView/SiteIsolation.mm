@@ -49,6 +49,7 @@
 #import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKMediaKeySystemPermissionCallback.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
@@ -8412,6 +8413,35 @@ TEST(SiteIsolation, MediaCapturePermissionUsesRemoteFrameOrigin)
 }
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#if ENABLE(ENCRYPTED_MEDIA)
+TEST(SiteIsolation, RequestMediaKeySystemAccessInCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto requestAccess = [&] {
+        return [webView objectByCallingAsyncFunction:@"return navigator.requestMediaKeySystemAccess('org.w3.clearkey', [{ initDataTypes: ['cenc'], videoCapabilities: [{ contentType: 'video/mp4; codecs=\"avc1.64001F\"' }] }]).then(() => 'granted', (error) => error.name)" withArguments:@{ } inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld];
+    };
+
+    EXPECT_WK_STREQ(requestAccess(), "granted");
+
+    WKPageUIClientV16 uiClient;
+    zeroBytes(uiClient);
+    uiClient.base.version = 16;
+    uiClient.decidePolicyForMediaKeySystemPermissionRequest = [](WKPageRef, WKSecurityOriginRef, WKStringRef, WKMediaKeySystemPermissionCallbackRef callback) {
+        WKMediaKeySystemPermissionCallbackComplete(callback, false);
+    };
+    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
+    EXPECT_WK_STREQ(requestAccess(), "NotSupportedError");
+}
+#endif
 
 TEST(SiteIsolation, AutoplayPolicyInRemoteFrameFollowsMainFrame)
 {
