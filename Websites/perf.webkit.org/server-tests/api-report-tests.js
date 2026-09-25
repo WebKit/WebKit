@@ -255,6 +255,32 @@ describe("/api/report", function () {
         });
     });
 
+    it('should store a report from an unknown worker authenticated by the universal worker password', async () => {
+        TestServer.overwriteTestConfig({universalWorkerPassword: 'someUniversalPassword'});
+
+        const report = emptyWorkerReport();
+        report['workerPassword'] = 'someUniversalPassword';
+        const response = await TestServer.remoteAPI().postJSON('/api/report/', [report]);
+        assert.strictEqual(response['status'], 'OK');
+        assert.strictEqual(response['failureStored'], false);
+
+        const workers = await TestServer.database().selectAll('build_workers');
+        assert.strictEqual(workers.length, 1);
+        assert.strictEqual(workers[0]['name'], report['workerName']);
+    });
+
+    it('should reject a report whose worker password is a JSON boolean when the universal worker password is set', async () => {
+        TestServer.overwriteTestConfig({universalWorkerPassword: 'someUniversalPassword'});
+
+        const report = emptyWorkerReport();
+        report['workerPassword'] = true;
+        const response = await TestServer.remoteAPI().postJSON('/api/report/', [report]);
+        assert.strictEqual(response['status'], 'BuilderNotFound');
+
+        const workers = await TestServer.database().selectAll('build_workers');
+        assert.strictEqual(workers.length, 0);
+    });
+
     it("should store the builder name but not the builder password", () => {
         return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);

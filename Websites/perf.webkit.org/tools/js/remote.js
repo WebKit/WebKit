@@ -95,8 +95,11 @@ class NodeRemoteAPI extends CommonRemoteAPI {
 
                     if ('set-cookie' in response.headers) {
                         for (let cookie of response.headers['set-cookie']) {
-                            const nameValue = cookie.split('=');
-                            this._cookies.set(nameValue[0], nameValue[1]);
+                            const nameValue = cookie.split(';')[0];
+                            const separatorIndex = nameValue.indexOf('=');
+                            if (separatorIndex < 0)
+                                continue;
+                            this._cookies.set(nameValue.substring(0, separatorIndex).trim(), nameValue.substring(separatorIndex + 1));
                         }
                     }
                     resolve({statusCode: response.statusCode, responseText: responseText, headers: response.headers});

@@ -150,7 +150,7 @@ function compute_token() {
 
 function verify_token($token) {
     $expected_token = compute_token();
-    return $expected_token && $token == $expected_token && $_COOKIE['CSRFExpiration'] > time();
+    return $expected_token && $token === $expected_token && $_COOKIE['CSRFExpiration'] > time();
 }
 
 function verify_worker($db, $params) {

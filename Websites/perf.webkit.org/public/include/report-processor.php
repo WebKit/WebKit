@@ -70,7 +70,8 @@ class ReportProcessor {
             if ($worker_name && (array_key_exists('workerPassword', $report) || array_key_exists('slavePassword', $report))) {
                 $universal_password = config('universalWorkerPassword', config('universalSlavePassword'));
                 $worker_password = array_get($report, 'workerPassword', array_get($report, 'slavePassword'));
-                if ($worker_name && $universal_password && $universal_password == $worker_password)
+                if ($worker_name && $universal_password && is_string($worker_password)
+                    && hash_equals($universal_password, $worker_password))
                     $worker_id = $this->db->select_or_insert_row('build_workers', 'worker', array('name' => $worker_name));
                 else {
                     $hash = hash('sha256', $worker_password);

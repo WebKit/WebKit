@@ -7,6 +7,7 @@ const assert = require('assert');
 const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
+const assertThrows = require('./resources/common-operations.js').assertThrows;
 
 describe("/privileged-api/update-run-status", function () {
     prepareServerTest(this);
@@ -98,6 +99,20 @@ describe("/privileged-api/update-run-status", function () {
         }, (error) => {
             assert.strictEqual(error, 'InvalidToken');
         });
+    });
+
+    it('should reject when the token in the request content is a JSON boolean', async () => {
+        await addBuilderForReport(reportWithRevision[0]);
+
+        const response = await TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
+        assert.strictEqual(response['status'], 'OK');
+
+        const runRows = await TestServer.database().selectAll('test_runs');
+        assert.strictEqual(runRows.length, 1);
+        assert.strictEqual(runRows[0]['marked_outlier'], false);
+
+        await PrivilegedAPI.requestCSRFToken();
+        await assertThrows('InvalidToken', () => RemoteAPI.postJSONWithStatus('/privileged-api/update-run-status', {token: true}));
     });
 
     it("should be able to unmark a run as an outlier", () => {
