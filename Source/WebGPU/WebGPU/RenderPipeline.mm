@@ -1084,6 +1084,30 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
     return generatedPipelineLayout;
 }
 
+static Vector<WGPUTextureFormat> colorTargetFormats(const WGPURenderPipelineDescriptor& descriptor)
+{
+    if (!descriptor.fragment)
+        return { };
+    return WTF::map(targetsSpan(*descriptor.fragment), [](const auto& target) {
+        return target.format;
+    });
+}
+
+static bool writesStencil(const WGPURenderPipelineDescriptor& descriptor)
+{
+    auto* depthStencil = descriptor.depthStencil;
+    if (!depthStencil || !depthStencil->stencilWriteMask)
+        return false;
+    const auto& stencilFront = depthStencil->stencilFront;
+    const auto& stencilBack = depthStencil->stencilBack;
+    const auto& cullMode = descriptor.primitive.cullMode;
+    if (cullMode != WGPUCullMode_Front && (stencilFront.passOp != WGPUStencilOperation_Keep || stencilFront.depthFailOp != WGPUStencilOperation_Keep || stencilFront.failOp != WGPUStencilOperation_Keep))
+        return true;
+    if (cullMode != WGPUCullMode_Back && (stencilBack.passOp != WGPUStencilOperation_Keep || stencilBack.depthFailOp != WGPUStencilOperation_Keep || stencilBack.failOp != WGPUStencilOperation_Keep))
+        return true;
+    return false;
+}
+
 static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Device &object, bool isAsync, NSString* error)
 {
     if (!isAsync)
@@ -1806,7 +1830,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
     // mtlRenderPipelineDescriptor, and its MTLRenderPipelineState is installed (or, for the
     // synchronous path, left to be compiled on demand) once Metal is done with the MSL. Everything
     // which reads `descriptor` has to happen here, before that.
-    Ref pipeline = RenderPipeline::create(mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, WTF::move(finalPipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, descriptor, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), ++m_pipelineId, vertexShaderBindingCount, *this);
+    Ref pipeline = RenderPipeline::create(mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, WTF::move(finalPipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, primitiveTopology, descriptor.primitive.stripIndexFormat, descriptor.multisample.count, !!descriptor.fragment, colorTargetFormats(descriptor), descriptor.depthStencil ? std::optional { descriptor.depthStencil->format } : std::nullopt, writesStencil(descriptor), WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), ++m_pipelineId, vertexShaderBindingCount, *this);
 
     auto vertexCompileRequest = libraryCompileRequest(*preparedVertexLibrary);
     std::optional<LibraryCompileRequest> fragmentCompileRequest;
@@ -1906,7 +1930,7 @@ void Device::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WGPUR
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPipeline);
 
-RenderPipeline::RenderPipeline(MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, const WGPURenderPipelineDescriptor& descriptor, RequiredBufferIndicesContainer&& requiredBufferIndices, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint32_t vertexShaderBindingCount, Device& device)
+RenderPipeline::RenderPipeline(MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, WGPUPrimitiveTopology primitiveTopology, WGPUIndexFormat stripIndexFormat, uint32_t sampleCount, bool hasFragment, Vector<WGPUTextureFormat>&& colorTargetFormats, std::optional<WGPUTextureFormat> depthStencilFormat, bool writesStencil, RequiredBufferIndicesContainer&& requiredBufferIndices, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint32_t vertexShaderBindingCount, Device& device)
     : m_device(device)
     , m_primitiveType(primitiveType)
     , m_indexType(indexType)
@@ -1923,30 +1947,17 @@ RenderPipeline::RenderPipeline(MTLPrimitiveType primitiveType, std::optional<MTL
     , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
     , m_requiredBufferIndices(WTF::move(requiredBufferIndices))
     , m_pipelineLayout(WTF::move(pipelineLayout))
-    , m_descriptor(descriptor)
-    , m_descriptorDepthStencil(descriptor.depthStencil ? *descriptor.depthStencil : WGPUDepthStencilState())
-    , m_descriptorFragment(descriptor.fragment ? *descriptor.fragment : WGPUFragmentState())
-    , m_descriptorTargets(descriptor.fragment && descriptor.fragment->targetCount ? Vector<WGPUColorTargetState>(unsafeMakeSpan(descriptor.fragment->targets, descriptor.fragment->targetCount)) : Vector<WGPUColorTargetState>())
+    , m_primitiveTopology(primitiveTopology)
+    , m_stripIndexFormat(stripIndexFormat)
+    , m_sampleCount(sampleCount)
+    , m_hasFragment(hasFragment)
+    , m_colorTargetFormats(WTF::move(colorTargetFormats))
+    , m_depthStencilFormat(depthStencilFormat)
     , m_minimumBufferSizes(minimumBufferSizes)
     , m_uniqueId(uniqueId)
     , m_vertexShaderBindingCount(vertexShaderBindingCount)
+    , m_writesStencil(writesStencil)
 {
-    if (descriptor.depthStencil)
-        m_descriptor.depthStencil = &m_descriptorDepthStencil;
-    if (m_descriptorTargets.size())
-        m_descriptorFragment.targets = &m_descriptorTargets[0];
-    if (descriptor.fragment)
-        m_descriptor.fragment = &m_descriptorFragment;
-
-    if (auto* depthStencil = descriptor.depthStencil; depthStencil && depthStencil->stencilWriteMask) {
-        const auto& stencilFront = depthStencil->stencilFront;
-        const auto& stencilBack = depthStencil->stencilBack;
-        const auto& cullMode = descriptor.primitive.cullMode;
-        if (cullMode != WGPUCullMode_Front && (stencilFront.passOp != WGPUStencilOperation_Keep || stencilFront.depthFailOp != WGPUStencilOperation_Keep || stencilFront.failOp != WGPUStencilOperation_Keep))
-            m_writesStencil = true;
-        else if (cullMode != WGPUCullMode_Back && (stencilBack.passOp != WGPUStencilOperation_Keep || stencilBack.depthFailOp != WGPUStencilOperation_Keep || stencilBack.failOp != WGPUStencilOperation_Keep))
-            m_writesStencil = true;
-    }
 }
 
 RenderPipeline::RenderPipeline(Device& device)
@@ -2013,13 +2024,13 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
 
 NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURenderPassDescriptor& descriptor, const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
 {
-    if (!m_descriptor.fragment) {
+    if (!m_hasFragment) {
         if (descriptor.colorAttachmentCount)
             return @"No fragment shader but render pass has color attachments";
     } else {
-        for (size_t i = 0, maxCount = std::max<size_t>(m_descriptorTargets.size(), colorAttachmentViews.size()); i < maxCount; ++i) {
+        for (size_t i = 0, maxCount = std::max<size_t>(m_colorTargetFormats.size(), colorAttachmentViews.size()); i < maxCount; ++i) {
             auto* attachmentView = i < colorAttachmentViews.size() ? &colorAttachmentViews[i] : nullptr;
-            auto descriptorTargetFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
+            auto descriptorTargetFormat = i < m_colorTargetFormats.size() ? m_colorTargetFormats[i] : WGPUTextureFormat_Undefined;
             if (!attachmentView || !*attachmentView) {
                 if (descriptorTargetFormat == WGPUTextureFormat_Undefined)
                     continue;
@@ -2027,12 +2038,12 @@ NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURend
             }
             if (descriptorTargetFormat != attachmentView->format())
                 return [NSString stringWithFormat:@"descriptorTargetFormat(%d) != attachmentView->format(%d)", descriptorTargetFormat, attachmentView->format()];
-            if (attachmentView->sampleCount() != m_descriptor.multisample.count)
-                return [NSString stringWithFormat:@"attachmentView->sampleCount(%d) != m_descriptor.multisample.count(%d)", attachmentView->sampleCount(), m_descriptor.multisample.count];
+            if (attachmentView->sampleCount() != m_sampleCount)
+                return [NSString stringWithFormat:@"attachmentView->sampleCount(%d) != m_sampleCount(%d)", attachmentView->sampleCount(), m_sampleCount];
         }
     }
 
-    if (!m_descriptor.depthStencil) {
+    if (!m_depthStencilFormat) {
         if (!descriptor.depthStencilAttachment)
             return nil;
 
@@ -2043,18 +2054,18 @@ NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURend
         if (!depthStencilView || !*depthStencilView)
             return @"depthStencilAttachment exists but no depthStencilView";
         auto& texture = *depthStencilView;
-        if (texture.format() != m_descriptor.depthStencil->format)
-            return [NSString stringWithFormat:@"texture.format(%d) != m_descriptor.depthStencil->format(%d)", texture.format(), m_descriptor.depthStencil->format];
+        if (texture.format() != *m_depthStencilFormat)
+            return [NSString stringWithFormat:@"texture.format(%d) != m_depthStencilFormat(%d)", texture.format(), *m_depthStencilFormat];
         auto mtlPixelFormat = texture.texture().pixelFormat;
-        auto descriptorFormat = m_descriptor.depthStencil->format;
+        auto descriptorFormat = *m_depthStencilFormat;
         if (mtlPixelFormat == MTLPixelFormatX32_Stencil8 && descriptorFormat == WGPUTextureFormat_Stencil8)
             return @"mtlPixelFormat == MTLPixelFormatX32_Stencil8 && descriptorFormat == WGPUTextureFormat_Stencil8";
         if (mtlPixelFormat == MTLPixelFormatDepth32Float_Stencil8 && (descriptorFormat == WGPUTextureFormat_Depth32Float || descriptorFormat == WGPUTextureFormat_Depth24Plus))
             return @"mtlPixelFormat == MTLPixelFormatDepth32Float_Stencil8 && (descriptorFormat == WGPUTextureFormat_Depth32Float || descriptorFormat == WGPUTextureFormat_Depth24Plus)";
-        if (texture.sampleCount() != m_descriptor.multisample.count)
-            return [NSString stringWithFormat:@"texture.sampleCount(%d) != m_descriptor.multisample.count(%d)", texture.sampleCount(), m_descriptor.multisample.count];
-    } else if (m_descriptor.depthStencil->format != WGPUTextureFormat_Undefined)
-        return [NSString stringWithFormat:@"m_descriptor.depthStencil->format(%d) != WGPUTextureFormat_Undefined", m_descriptor.depthStencil->format];
+        if (texture.sampleCount() != m_sampleCount)
+            return [NSString stringWithFormat:@"texture.sampleCount(%d) != m_sampleCount(%d)", texture.sampleCount(), m_sampleCount];
+    } else if (*m_depthStencilFormat != WGPUTextureFormat_Undefined)
+        return [NSString stringWithFormat:@"m_depthStencilFormat(%d) != WGPUTextureFormat_Undefined", *m_depthStencilFormat];
 
     return nil;
 }
@@ -2064,25 +2075,24 @@ bool RenderPipeline::validateRenderBundle(bool depthReadOnly, bool stencilReadOn
     if (!validateDepthStencilState(depthReadOnly, stencilReadOnly))
         return false;
 
-    if (sampleCount != m_descriptor.multisample.count)
+    if (sampleCount != m_sampleCount)
         return false;
 
-    size_t fragmentTargetCount = m_descriptor.fragment ? m_descriptor.fragment->targetCount : 0;
-    for (size_t i = 0, maxTargetCount = std::max<size_t>(fragmentTargetCount, colorFormats.size()); i < maxTargetCount; ++i) {
+    for (size_t i = 0, maxTargetCount = std::max<size_t>(m_colorTargetFormats.size(), colorFormats.size()); i < maxTargetCount; ++i) {
         auto colorFormat = i < colorFormats.size() ? colorFormats[i] : WGPUTextureFormat_Undefined;
-        auto descriptorFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
+        auto descriptorFormat = i < m_colorTargetFormats.size() ? m_colorTargetFormats[i] : WGPUTextureFormat_Undefined;
         if (descriptorFormat != colorFormat)
             return false;
     }
 
-    if (!m_descriptor.depthStencil) {
+    if (!m_depthStencilFormat) {
         if (depthStencilFormat == WGPUTextureFormat_Undefined)
             return true;
 
         return false;
     }
 
-    if (depthStencilFormat != m_descriptor.depthStencil->format)
+    if (depthStencilFormat != *m_depthStencilFormat)
         return false;
 
     return true;
@@ -2110,7 +2120,7 @@ RefPtr<RenderPipeline> RenderPipeline::recomputeLastStrideAsStride() const
     }
 
     auto minimumBufferSizes = m_minimumBufferSizes;
-    m_lastStrideAsStridePipeline = RenderPipeline::create(m_primitiveType, m_indexType, m_frontFace, m_cullMode, m_clipMode, m_depthStencilDescriptor, m_pipelineLayout.copyRef(), m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_sampleMask, clonedRenderPipelineDescriptor, m_colorAttachmentCount, m_descriptor, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), m_uniqueId, m_vertexShaderBindingCount, m_device);
+    m_lastStrideAsStridePipeline = RenderPipeline::create(m_primitiveType, m_indexType, m_frontFace, m_cullMode, m_clipMode, m_depthStencilDescriptor, m_pipelineLayout.copyRef(), m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_sampleMask, clonedRenderPipelineDescriptor, m_colorAttachmentCount, m_primitiveTopology, m_stripIndexFormat, m_sampleCount, m_hasFragment, Vector { m_colorTargetFormats }, m_depthStencilFormat, m_writesStencil, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), m_uniqueId, m_vertexShaderBindingCount, m_device);
 
     return m_lastStrideAsStridePipeline;
 }
