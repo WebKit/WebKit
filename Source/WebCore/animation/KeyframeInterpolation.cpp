@@ -26,7 +26,11 @@
 #include "config.h"
 #include "KeyframeInterpolation.h"
 
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
+
+static constexpr auto maximumAccumulativeIterationCount = 1000000;
 
 const KeyframeInterpolation::KeyframeInterval KeyframeInterpolation::interpolationKeyframes(Property property, double iterationProgress, const Keyframe& defaultStartKeyframe, const Keyframe& defaultEndKeyframe) const
 {
@@ -170,14 +174,24 @@ void KeyframeInterpolation::interpolateKeyframes(Property property, const Keyfra
         // If this keyframe effect has an iteration composite operation of accumulate,
         if (iterationCompositeOperation() == IterationCompositeOperation::Accumulate && currentIteration && requiresInterpolationForAccumulativeIterationCallback()) {
             usedInterpolationForAccumulativeIteration = true;
+
+            auto accumulateOntoStartKeyframe = !startKeyframe.offset() && !interval.hasImplicitZeroKeyframe;
+            auto accumulateOntoEndKeyframe = endKeyframe.offset() == 1 && !interval.hasImplicitOneKeyframe;
+
+            auto accumulativeIterationCount = [&] {
+                if (!accumulateOntoStartKeyframe && !accumulateOntoEndKeyframe)
+                    return 0;
+                return clampTo<int>(currentIteration, 0, maximumAccumulativeIterationCount);
+            }();
+
             // apply the following step current iteration times:
-            for (auto i = 0; i < currentIteration; ++i) {
+            for (auto i = 0; i < accumulativeIterationCount; ++i) {
                 // replace the property value of target property on keyframe with the result of combining the
                 // property value on the final keyframe in property-specific keyframes (Va) with the property
                 // value on keyframe (Vb) using the accumulation procedure defined for target property.
-                if (!startKeyframe.offset() && !interval.hasImplicitZeroKeyframe)
+                if (accumulateOntoStartKeyframe)
                     accumulationCallback(startKeyframe);
-                if (endKeyframe.offset() == 1 && !interval.hasImplicitOneKeyframe)
+                if (accumulateOntoEndKeyframe)
                     accumulationCallback(endKeyframe);
             }
         }
