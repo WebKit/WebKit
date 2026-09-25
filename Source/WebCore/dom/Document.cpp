@@ -65,6 +65,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentVisibilityDocumentState.h"
 #include "ContentfulPaintChecker.h"
+#include "Cookie.h"
 #include "CookieJar.h"
 #include "CryptoClient.h"
 #include "ContainerNodeInlines.h"
@@ -7416,7 +7417,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
 
     invalidateDOMCookieCache();
     if (RefPtr page = this->page())
-        page->cookieJar().setCookies(*this, cookieURL, value);
+        page->cookieJar().setCookies(*this, cookieURL, CookieUtil::cookieStringForStorage(value));
     return { };
 }
 

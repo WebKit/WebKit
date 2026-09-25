@@ -159,6 +159,23 @@ std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
         cookieString.substring(monthStart, monthEnd - monthStart), cookieString.substring(dayEnd));
 }
 
+#if !PLATFORM(COCOA)
+String cookieStringForScript(const String& storedValue)
+{
+    return storedValue;
+}
+
+String cookieStringForScript(String&& storedValue)
+{
+    return WTF::move(storedValue);
+}
+
+String cookieStringForStorage(const String& scriptValue)
+{
+    return scriptValue;
+}
+#endif
+
 } // namespace CookieUtil
 
 } // namespace WebCore

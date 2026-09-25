@@ -130,6 +130,14 @@ WEBCORE_EXPORT String defaultPathForURL(const URL&);
 
 std::optional<String> cookieStringWithDayFirstExpires(StringView);
 
+// On platforms whose cookie storage only preserves ISO-Latin-1 characters (i.e. Cocoa's CFNetwork),
+// a JS-supplied Unicode cookie name/value must be encoded as UTF-8 and those bytes reinterpreted
+// as Latin-1 before reaching storage, and the reverse must happen before a stored value is shown
+// to script. These are identity functions on platforms without that constraint.
+WEBCORE_EXPORT String cookieStringForScript(const String& storedValue);
+WEBCORE_EXPORT String cookieStringForScript(String&& storedValue);
+WEBCORE_EXPORT String cookieStringForStorage(const String& scriptValue);
+
 } // namespace CookieUtil
 
 } // namespace WebCore
