@@ -285,9 +285,9 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
         FloatPoint currentPosition = scrollableArea->scrollAnimator().currentPosition();
         int destinationPosition = (m_orientation == ScrollbarOrientation::Horizontal ? currentPosition.x() : currentPosition.y()) + delta;
         if (delta > 0)
-            destinationPosition = std::min(destinationPosition + delta, maximum());
+            destinationPosition = std::min(destinationPosition, maximum());
         else if (delta < 0)
-            destinationPosition = std::max(destinationPosition + delta, 0);
+            destinationPosition = std::max(destinationPosition, 0);
         scrollableArea->scrollToOffsetWithoutAnimation(m_orientation, destinationPosition);
         m_documentDragPos = pos;
         return;
