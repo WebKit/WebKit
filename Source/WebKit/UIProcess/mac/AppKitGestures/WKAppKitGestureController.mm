@@ -1983,6 +1983,14 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     return (a == x && b == y) || (b == x && a == y);
 }
 
+static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view)
+{
+    if ([gesture respondsToSelector:@selector(_startLocationInView:)])
+        return [gesture _startLocationInView:view];
+
+    return [gesture locationInView:view];
+}
+
 - (BOOL)_shouldRecognizeSimultaneouslyWithMouseTrackingGesture:(NSGestureRecognizer *)gesture
 {
     RetainPtr webView = _view.get();
@@ -2116,7 +2124,9 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Gesture: %@", gestureLogDescription(gestureRecognizer));
 
-    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView];
+    NSPoint locationInViewCoordinates = gestureRecognizer == _panGestureRecognizer
+        ? startLocationInView(_panGestureRecognizer, webView)
+        : [gestureRecognizer locationInView:webView];
 
     // While catching a decelerating scroll, only select gestures are allowed to begin:
     // - single click, so it can reset the interruption state
