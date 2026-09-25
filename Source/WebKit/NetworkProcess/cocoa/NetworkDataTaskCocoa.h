@@ -96,6 +96,8 @@ public:
 
     void checkTAO(const WebCore::ResourceResponse&);
 
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
+
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
@@ -120,6 +122,7 @@ private:
     bool m_isForMainResourceNavigationForAnyFrame { false };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
     uint64_t m_requiredCookiesVersion { 0 };
+    const OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtections;
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

@@ -68,7 +68,7 @@ class Download final : public IPC::MessageSender, public RefCountedAndCanMakeWea
 public:
     static Ref<Download> create(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)
-    static Ref<Download> create(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { });
+    static Ref<Download> create(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { }, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
 #endif
 
     ~Download();
@@ -106,7 +106,7 @@ public:
 private:
     Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { });
+    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { }, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
 #endif
 
     // IPC::MessageSender
@@ -121,6 +121,22 @@ private:
     void startUpdatingProgress();
     void updateProgress(uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite);
     static Vector<uint8_t> updateResumeDataWithPlaceholderURL(NSURL *, std::span<const uint8_t> resumeData);
+#endif
+
+#if PLATFORM(COCOA)
+public:
+    struct ResumeInfo {
+        OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+        bool wasPrivateRelayed { false };
+        URL url;
+    };
+    static Vector<uint8_t> resumeDataWithResumeInfo(std::span<const uint8_t> resumeData, const ResumeInfo&);
+    static ResumeInfo resumeInfoFromResumeData(std::span<const uint8_t> resumeData);
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    static Vector<uint8_t> placeholderBookmarkDataFromResumeData(std::span<const uint8_t> resumeData);
+#endif
+private:
+    ResumeInfo currentResumeInfo() const;
 #endif
 
     CheckedPtr<DownloadManager> m_downloadManager;
@@ -145,6 +161,7 @@ private:
     PAL::SessionID m_sessionID;
     bool m_hasReceivedData { false };
     IgnoreDidFailCallback m_ignoreDidFailCallback { IgnoreDidFailCallback::No };
+    const OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     DownloadMonitor m_monitor { *this };
     unsigned m_testSpeedMultiplier { 1 };
 };
