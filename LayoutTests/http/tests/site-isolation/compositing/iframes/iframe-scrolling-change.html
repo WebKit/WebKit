@@ -11,49 +11,22 @@
         border: 1px solid black;
     }
   </style>
-  <script src="/js-test-resources/js-test.js"></script>
-  <script src="/js-test-resources/ui-helper.js"></script>
   <script type="text/javascript" charset="utf-8">
-    description("Tests that changing the 'scrolling' attribute of a cross-origin iframe updates the scrollbar modes of the iframe's frame scrolling node.");
-    jsTestIsAsync = true;
-
-    const scrollbarModeNames = ["Auto", "AlwaysOff", "AlwaysOn"];
-
-    async function subframeScrollbarModes()
-    {
-        const tree = await UIHelper.getScrollingTree();
-        const subframeTree = tree.slice(tree.indexOf("(frame hosting node"));
-        const horizontal = subframeTree.match(/\(horizontal scrollbar mode (\d)\)/);
-        const vertical = subframeTree.match(/\(vertical scrollbar mode (\d)\)/);
-        if (!horizontal || !vertical)
-            return "not found";
-        return `horizontal ${scrollbarModeNames[horizontal[1]]}, vertical ${scrollbarModeNames[vertical[1]]}`;
-    }
-
-    var modesBefore;
-    var modesAfter;
-
     async function doTest()
     {
-      await UIHelper.renderingUpdate();
-      modesBefore = await subframeScrollbarModes();
+      testRunner?.waitUntilDone();
+      await testRunner.displayAndTrackRepaints();
 
       document.getElementById('iframe').setAttribute('scrolling', 'yes');
-
-      await UIHelper.waitForConditionAsync(async () => {
-          modesAfter = await subframeScrollbarModes();
-          return modesAfter != modesBefore;
-      }, 100);
-
-      shouldBeEqualToString("modesBefore", "horizontal AlwaysOff, vertical AlwaysOff");
-      shouldBeEqualToString("modesAfter", "horizontal Auto, vertical Auto");
-      finishJSTest();
+      testRunner?.notifyDone();
     }
 
     window.addEventListener('load', doTest, false);
   </script>
 </head>
 <body>
+    <!-- Test with already-composited iframe contents, and iframe itself composited. -->
+    <!-- You should see a green square, no red. -->
     <iframe id="iframe" scrolling="no" src="http://localhost:8000/root/compositing/iframes/resources/red-green-subframe.html"></iframe>
 </body>
 </html>

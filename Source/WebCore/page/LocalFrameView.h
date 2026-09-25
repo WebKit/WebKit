@@ -886,7 +886,6 @@ private:
     void scrollToFocusedElementInternal();
 
     void delegatedScrollingModeDidChange() final;
-    void scrollbarModesDidChange() final;
 
     void unobscuredContentSizeChanged() final;
     

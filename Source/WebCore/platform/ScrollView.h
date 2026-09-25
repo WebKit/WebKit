@@ -439,7 +439,6 @@ protected:
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
     virtual void addedOrRemovedScrollbar() = 0;
     virtual void delegatedScrollingModeDidChange() = 0;
-    virtual void scrollbarModesDidChange() { }
 
     // These functions are used to create/destroy scrollbars.
     // They return true if the scrollbar was added or removed.
