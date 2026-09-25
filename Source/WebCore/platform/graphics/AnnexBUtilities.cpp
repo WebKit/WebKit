@@ -26,6 +26,9 @@
 #include "config.h"
 #include "AnnexBUtilities.h"
 
+#include <wtf/FlipBytes.h>
+#include <wtf/StdLibExtras.h>
+
 namespace WebCore {
 
 Vector<NaluIndex> findNaluIndices(std::span<const uint8_t> buffer)
@@ -80,6 +83,27 @@ Vector<uint8_t> parseRbsp(std::span<const uint8_t> data)
             out.append(data[i++]);
     }
     return out;
+}
+
+Vector<uint8_t> annexBToLengthPrefixed(std::span<const uint8_t> data, std::span<const NaluIndex> naluIndices)
+{
+    size_t totalSize = 0;
+    for (auto& index : naluIndices) {
+        if (index.payloadSize)
+            totalSize += sizeof(uint32_t) + index.payloadSize;
+    }
+
+    Vector<uint8_t> result;
+    result.reserveInitialCapacity(totalSize);
+    for (auto& index : naluIndices) {
+        if (!index.payloadSize)
+            continue;
+        uint32_t length = flipBytes(static_cast<uint32_t>(index.payloadSize));
+        result.append(asByteSpan(length));
+        result.append(data.subspan(index.payloadStartOffset, index.payloadSize));
+    }
+
+    return result;
 }
 
 }

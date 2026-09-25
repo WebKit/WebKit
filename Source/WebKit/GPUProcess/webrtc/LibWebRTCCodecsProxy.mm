@@ -458,15 +458,9 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
     }
 
     if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) == kCVPixelFormatType_32BGRA) {
-        sharedVideoFrame.colorSpace = {
-            .primaries = PlatformVideoColorPrimaries::Bt709,
-            // FIXME: We probably want to use PlatformVideoTransferCharacteristics::Bt709, but we match with libwebrtc default decoder config for now.
-            .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
-            .matrix = PlatformVideoMatrixCoefficients::Bt709,
-            .fullRange = false
-        };
+        sharedVideoFrame.colorSpace = srgbColorSpace();
         if (!m_pixelBufferConformer) {
-            m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) });
+            m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) });
         }
         pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
         if (!pixelBuffer) {

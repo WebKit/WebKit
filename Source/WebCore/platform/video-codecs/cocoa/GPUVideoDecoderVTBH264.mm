@@ -25,40 +25,41 @@
  */
 
 #import "config.h"
-#import "GPUVideoDecoderVTBH265.h"
+#import "GPUVideoDecoderVTBH264.h"
 
 #if USE(LIBWEBRTC)
 
 #import "CMUtilities.h"
-#import "HEVCUtilitiesCocoa.h"
+#import "H264Utilities.h"
+#import "H264UtilitiesCocoa.h"
 #import "Logging.h"
 #import "TrackInfo.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBH265);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBH264);
 
-GPUVideoDecoderVTBH265::GPUVideoDecoderVTBH265(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+GPUVideoDecoderVTBH264::GPUVideoDecoderVTBH264(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
     : GPUVideoDecoderVTB(callback, WTF::move(queue), WTF::move(colorSpaceOverride))
 {
 }
 
-int32_t GPUVideoDecoderVTBH265::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
+int32_t GPUVideoDecoderVTBH264::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
 {
     if (!m_isAnnexB)
         return decodeFrameInternal(timeStamp, data);
 
     auto naluIndices = findNaluIndices(data);
 
-    // FIXME: Skip rebuilding the VideoInfo when the VPS/SPS/PPS triplet is unchanged from the previous one.
-    if (RefPtr videoInfo = createVideoInfoFromHEVCAnnexBStream(data, naluIndices))
-        setVideoInfo(videoInfo.releaseNonNull(), findHEVCAnnexBMaxNumReorderPics(data, naluIndices).value_or(0));
+    // FIXME: Skip rebuilding the VideoInfo when the SPS/PPS pair is unchanged from the previous one.
+    if (RefPtr videoInfo = createVideoInfoFromAVCAnnexBStream(data, naluIndices))
+        setVideoInfo(videoInfo.releaseNonNull(), findH264AnnexBMaxNumReorderFrames(data, naluIndices).value_or(0));
 
-    auto lengthPrefixedData = convertHEVCAnnexBToLengthPrefixed(data, naluIndices);
+    auto lengthPrefixedData = convertAVCAnnexBToLengthPrefixed(data, naluIndices);
     return decodeFrameInternal(timeStamp, lengthPrefixedData.span());
 }
 
-void GPUVideoDecoderVTBH265::setFormat(std::span<const uint8_t> data, uint16_t width, uint16_t height)
+void GPUVideoDecoderVTBH264::setFormat(std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     // FIXME: We should provide this info at decoder construction time.
     setFrameSize(width, height);
@@ -66,29 +67,24 @@ void GPUVideoDecoderVTBH265::setFormat(std::span<const uint8_t> data, uint16_t w
     if (data.empty())
         return;
 
-    // Receiving an explicit format description means the incoming frames are hvcC-style.
+    // Receiving an explicit format description means the incoming frames are avcC-style.
     m_isAnnexB = false;
 
-    auto parameterSets = parseHVCCParameterSets(data);
-    RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to correctly parse the hvcC data");
-
-    RefPtr<VideoInfo> videoInfo;
-    if (parameterSets)
-        videoInfo = createVideoInfoFromHVCC(*parameterSets);
+    RefPtr<VideoInfo> videoInfo = createVideoInfoFromAVCC(data);
     if (!videoInfo) {
-        RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to create video info from hvcC data");
+        RELEASE_LOG_ERROR(WebRTC, "GPUVideoDecoderVTBH264::setFormat use default video info");
         videoInfo = VideoInfo::create({
             {
-                .codecName = kCMVideoCodecType_HEVC
+                .codecName = kCMVideoCodecType_H264
             }, {
                 .size = { static_cast<float>(width), static_cast<float>(height) },
                 .displaySize = { static_cast<float>(width), static_cast<float>(height) },
-                .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(data) } },
+                .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_H264), SharedBuffer::create(data) } },
             }
         });
     }
 
-    setVideoInfo(videoInfo.releaseNonNull(), parameterSets ? findHVCCMaxNumReorderPics(*parameterSets).value_or(0) : 0);
+    setVideoInfo(videoInfo.releaseNonNull(), findAVCCMaxNumReorderFrames(data).value_or(0));
 }
 
 } // namespace WebCore
