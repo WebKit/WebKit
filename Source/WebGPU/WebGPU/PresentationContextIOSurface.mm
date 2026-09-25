@@ -422,6 +422,9 @@ void PresentationContextIOSurface::present(uint32_t currentIndex)
     Ref deviceQueue = device->getQueue();
 
     if (auto texture = m_renderBuffers[currentIndex].luminanceClampTexture; texture && m_computePipelineState) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        deviceQueue->resolveProvisionalTextureClears();
+#endif // RC_REMOVE_SEC_ACCEL_3
         MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
         id<MTLCommandBuffer> commandBuffer = deviceQueue->commandBufferWithDescriptor(descriptor);
         MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];

@@ -282,7 +282,11 @@ extension WebGPU.CommandEncoder {
     }
 
     fileprivate func clearTextureIfNeeded(destination: WGPUImageCopyTexture, slice: UInt) {
-        WebGPU.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder)
+        #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
+        WebGPU.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder, nil)
+        #else
+        WebGPU.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder, self)
+        #endif
     }
 
     private func clearTextureIfNeeded(
@@ -307,7 +311,12 @@ extension WebGPU.CommandEncoder {
             return
         }
 
+        #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
+        // FIXME: rdar://138042799 remove default argument.
         texture.setPreviouslyCleared(UInt32(mipLevel), UInt32(slice), true)
+        #else
+        texture.setProvisionallyCleared(UInt32(mipLevel), UInt32(slice), self)
+        #endif
         let logicalExtent = texture.logicalMiplevelSpecificTextureExtent(UInt32(mipLevel))
         if logicalExtent.width == 0 {
             return
@@ -1276,6 +1285,7 @@ extension WebGPU.CommandEncoder {
                 if var textureToClear {
                     let textureWithResolve = TextureAndClearColor(texture: textureToClear)
                     attachmentsToClear[i as NSNumber] = textureWithResolve
+                    #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
                     texture.setPreviouslyCleared()
                     // FIMXE: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = attachment.resolveTarget {
@@ -1286,6 +1296,18 @@ extension WebGPU.CommandEncoder {
                     if var resolveTexture = attachment.resolveTexture {
                         WebGPU.fromAPI(resolveTexture).setPreviouslyCleared()
                     }
+                    #else
+                    texture.setProvisionallyCleared(self)
+                    // FIMXE: (rdar://170907318) This should be changed to `if let` when possible.
+                    if var resolveTarget = attachment.resolveTarget {
+                        // FIXME: rdar://138042799 remove default argument.
+                        WebGPU.fromAPI(resolveTarget).setProvisionallyCleared(self, 0, 0)
+                    }
+                    // FIMXE: (rdar://170907318) This should be changed to `if let` when possible.
+                    if var resolveTexture = attachment.resolveTexture {
+                        WebGPU.fromAPI(resolveTexture).setProvisionallyCleared(self)
+                    }
+                    #endif
                 }
             }
         }
@@ -1452,7 +1474,11 @@ extension WebGPU.CommandEncoder {
             let attachment = wgpuGetRenderPassDescriptorDepthStencilAttachment(descriptorSpan)?[0]
             if attachment != nil && depthStencilAttachmentToClear != nil {
                 var texture = WebGPU.TextureOrTextureView(attachment)
+                #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
                 texture.setPreviouslyCleared()
+                #else
+                texture.setProvisionallyCleared(self)
+                #endif
             }
 
             // FIXME: rdar://138042799 remove default argument.
@@ -1976,8 +2002,12 @@ extension WebGPU.CommandEncoder {
                 depthForMetal,
                 logicalSize.depthOrArrayLayers
             ) {
+                #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
                 // FIXME: rdar://138042799 remove default argument.
                 destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSlice, true)
+                #else
+                destinationTexture.setProvisionallyCleared(destination.mipLevel, destinationSlice, self)
+                #endif
             } else {
                 clearTextureIfNeeded(destination: destination, slice: UInt(destinationSlice))
             }
@@ -2413,8 +2443,12 @@ extension WebGPU.CommandEncoder {
                 guard let destinationSliceUInt32 = UInt32(exactly: destinationSlice) else {
                     return
                 }
+                #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
                 // FIXME: rdar://138042799 remove default argument.
                 destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSliceUInt32, true)
+                #else
+                destinationTexture.setProvisionallyCleared(destination.mipLevel, destinationSliceUInt32, self)
+                #endif
             } else {
                 self.clearTextureIfNeeded(destination: destination, slice: destinationSlice)
             }
