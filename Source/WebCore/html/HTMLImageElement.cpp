@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -462,9 +462,13 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
     case AttributeNames::loadingAttr:
-        // No action needed for eager to lazy transition.
         if (!hasLazyLoadableAttributeValue(newValue))
             loadDeferredImage();
+        else if (!isConnected() && !m_imageLoader->image()) {
+            // An eager-to-lazy transition before the element is connected may need to defer a
+            // pending error queued for an empty/whitespace source. Re-run to re-evaluate deferral.
+            m_imageLoader->updateFromElementIgnoringPreviousError();
+        }
         break;
     case AttributeNames::referrerpolicyAttr: {
         auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);

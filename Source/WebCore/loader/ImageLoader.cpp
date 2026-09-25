@@ -231,11 +231,19 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         return;
     }
 
-    // Fire an error event if the URL contains only whitespace.
+    // Fire an error event if the URL contains only whitespace. However, if this is a lazily-loaded
+    // image that is not yet connected, defer the error until the element is inserted into a document
+    // (which re-runs this algorithm), matching the deferral of a lazily-loaded network request.
     if (StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>()) {
         m_failedLoadURL = attr;
-        m_hasPendingErrorEvent = true;
-        loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
+        RefPtr lazyImageElement = dynamicDowncast<HTMLImageElement>(element);
+        if (lazyImageElement && lazyImageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !element->isConnected()) {
+            loadEventSender().cancelEvent(*this, eventNames().errorEvent);
+            m_hasPendingErrorEvent = false;
+        } else {
+            m_hasPendingErrorEvent = true;
+            loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
+        }
         didUpdateCachedImage(relevantMutation, WTF::move(newImage));
         return;
     }
