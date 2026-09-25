@@ -306,8 +306,13 @@ angle::Result Buffer::bufferSubData(const Context *context,
     ANGLE_TRY_WITH_FINALLY(mImpl->setSubData(context, target, data, size, offset, &feedback),
                            applyImplFeedback(context, feedback));
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     mIndexRangeCache.invalidateRange(static_cast<unsigned int>(offset),
                                      static_cast<unsigned int>(size));
+#else
+    mIndexRangeCache.invalidateRange(static_cast<size_t>(offset),
+                                     static_cast<size_t>(size));
+#endif
 
     // Notify when data changes.
     onContentsChange(context);
@@ -326,8 +331,13 @@ angle::Result Buffer::copyBufferSubData(const Context *context,
                                               destOffset, size, &feedback),
                            applyImplFeedback(context, feedback));
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     mIndexRangeCache.invalidateRange(static_cast<unsigned int>(destOffset),
                                      static_cast<unsigned int>(size));
+#else
+    mIndexRangeCache.invalidateRange(static_cast<size_t>(destOffset),
+                                     static_cast<size_t>(size));
+#endif
 
     // Notify when data changes.
     onContentsChange(context);
@@ -386,8 +396,13 @@ angle::Result Buffer::mapRange(const Context *context,
 
     if ((access & GL_MAP_WRITE_BIT) > 0)
     {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         mIndexRangeCache.invalidateRange(static_cast<unsigned int>(offset),
                                          static_cast<unsigned int>(length));
+#else
+        mIndexRangeCache.invalidateRange(static_cast<size_t>(offset),
+                                         static_cast<size_t>(length));
+#endif
     }
 
     // Notify when state changes.
