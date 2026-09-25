@@ -8896,6 +8896,7 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
 
         emitGetCallee(node->origin.semantic, scratchGPR);
         storePtr(scratchGPR, Address(resultGPR, ClonedArguments::offsetOfCallee()));
+        store32(TrustedImm32(0), Address(resultGPR, ClonedArguments::offsetOfDeletedArgumentSpecials()));
         boxInt32(sizeGPR, scratchGPR);
         storeValue(scratchGPR, Address(storageGPR, offsetRelativeToBase(clonedArgumentsLengthPropertyOffset)));
 

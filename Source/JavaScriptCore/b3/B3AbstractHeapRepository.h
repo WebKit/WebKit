@@ -50,6 +50,7 @@ namespace JSC::B3 {
     macro(CallFrame_callerFrame, CallFrame::callerFrameOffset(), Mutability::Mutable) \
     macro(ClassInfo_parentClass, ClassInfo::offsetOfParentClass(), Mutability::Immutable) \
     macro(ClonedArguments_callee, ClonedArguments::offsetOfCallee(), Mutability::Mutable) \
+    macro(ClonedArguments_deletedArgumentSpecials, ClonedArguments::offsetOfDeletedArgumentSpecials(), Mutability::Mutable) \
     macro(ConcatKeyAtomStringCache_quickCache0_key, ConcatKeyAtomStringCache::offsetOfQuickCache0() + ConcatKeyAtomStringCache::CacheEntry::offsetOfKey(), Mutability::Mutable) \
     macro(ConcatKeyAtomStringCache_quickCache0_value, ConcatKeyAtomStringCache::offsetOfQuickCache0() + ConcatKeyAtomStringCache::CacheEntry::offsetOfValue(), Mutability::Mutable) \
     macro(ConcatKeyAtomStringCache_quickCache1_key, ConcatKeyAtomStringCache::offsetOfQuickCache1() + ConcatKeyAtomStringCache::CacheEntry::offsetOfKey(), Mutability::Mutable) \
@@ -62,6 +63,7 @@ namespace JSC::B3 {
     macro(DirectArguments_minCapacity, DirectArguments::offsetOfMinCapacity(), Mutability::Mutable) \
     macro(DirectArguments_mappedArguments, DirectArguments::offsetOfMappedArguments(), Mutability::Mutable) \
     macro(DirectArguments_modifiedArgumentsDescriptor, DirectArguments::offsetOfModifiedArgumentsDescriptor(), Mutability::Mutable) \
+    macro(DirectArguments_deletedArgumentSpecials, DirectArguments::offsetOfDeletedArgumentSpecials(), Mutability::Mutable) \
     macro(FunctionExecutable_rareData, FunctionExecutable::offsetOfRareData(), Mutability::Mutable) \
     macro(FunctionExecutableRareData_asString, FunctionExecutable::RareData::offsetOfAsString(), Mutability::Mutable) \
     macro(FunctionRareData_allocator, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfAllocator(), Mutability::Mutable) \

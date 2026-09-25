@@ -9599,6 +9599,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.store32(m_out.constInt32(minCapacity), fastObject, m_heaps.DirectArguments_minCapacity);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_mappedArguments);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_modifiedArgumentsDescriptor);
+        m_out.store32(m_out.constInt32(0), fastObject, m_heaps.DirectArguments_deletedArgumentSpecials);
 
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
@@ -9716,6 +9717,7 @@ IGNORE_CLANG_WARNINGS_END
             ValueFromBlock fastButterfly = m_out.anchor(butterfly);
             LValue arguments = allocateObject<ClonedArguments>(m_graph.registerStructure(globalObject->clonedArgumentsStructure()), butterfly, slowCase);
             m_out.store64(callee, arguments, m_heaps.ClonedArguments_callee);
+            m_out.store32(m_out.constInt32(0), arguments, m_heaps.ClonedArguments_deletedArgumentSpecials);
             ValueFromBlock startLength = m_out.anchor(m_out.zeroExtPtr(length));
             m_out.branch(m_out.isZero32(length), unsure(finish), unsure(loopStart));
 

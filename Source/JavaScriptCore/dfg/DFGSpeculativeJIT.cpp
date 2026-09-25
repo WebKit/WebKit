@@ -8721,6 +8721,8 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
 
     storePtr(
         TrustedImmPtr(nullptr), Address(resultGPR, DirectArguments::offsetOfModifiedArgumentsDescriptor()));
+    store32(
+        TrustedImm32(0), Address(resultGPR, DirectArguments::offsetOfDeletedArgumentSpecials()));
     
     if (lengthIsKnown) {
         addSlowPathGenerator(

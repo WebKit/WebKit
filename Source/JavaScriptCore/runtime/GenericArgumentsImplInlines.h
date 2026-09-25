@@ -101,20 +101,45 @@ void GenericArgumentsImpl<Type>::getOwnPropertyNames(JSObject* object, JSGlobalO
     Type* thisObject = uncheckedDowncast<Type>(object);
 
     if (array.includeStringProperties()) {
+        // Integer indices are ascending numeric order, not creation order. Mapped parameters and
+        // indexed storage are separate, so collect both and sort. A modified mapped parameter can
+        // be non-enumerable; indexed storage already applies that filter.
+        Vector<unsigned, 8> indices;
+        bool includeDontEnum = mode == DontEnumPropertiesMode::Include;
         for (unsigned i = 0; i < thisObject->internalLength(); ++i) {
             if (!thisObject->isMappedArgument(i))
                 continue;
-            array.add(Identifier::from(vm, i));
+            if (!includeDontEnum && thisObject->isModifiedArgumentDescriptor(i)) {
+                PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
+                if (GenericArgumentsImpl<Type>::getOwnPropertySlotByIndex(thisObject, globalObject, i, slot)
+                    && (slot.attributes() & PropertyAttribute::DontEnum))
+                    continue;
+            }
+            indices.append(i);
         }
-        thisObject->getOwnIndexedPropertyNames(globalObject, array, mode);
+
+        PropertyNameArrayBuilder indexedNames(vm, PropertyNameMode::Strings, array.privateSymbolMode());
+        thisObject->getOwnIndexedPropertyNames(globalObject, indexedNames, mode);
+        for (const Identifier& propertyName : indexedNames) {
+            if (std::optional<uint32_t> index = parseIndex(propertyName))
+                indices.append(index.value());
+        }
+
+        std::ranges::sort(indices);
+        unsigned count = 0;
+        for (unsigned i = 0; i < indices.size(); ++i) {
+            if (count && indices[count - 1] == indices[i])
+                continue;
+            indices[count++] = indices[i];
+        }
+        indices.resize(count);
+        for (unsigned index : indices)
+            array.add(Identifier::from(vm, index));
     }
 
-    if (mode == DontEnumPropertiesMode::Include && !thisObject->overrodeThings()) {
-        array.add(vm.propertyNames->length);
-        array.add(vm.propertyNames->callee);
-        array.add(vm.propertyNames->iteratorSymbol);
-    }
-    thisObject->getOwnNonIndexPropertyNames(globalObject, array, mode);
+    // https://tc39.es/ecma262/#sec-createmappedargumentsobject
+    auto order = thisObject->overrodeThings() ? JSObject::ArgumentsPropertyOrder::MappedMaterialized : JSObject::ArgumentsPropertyOrder::MappedLazy;
+    thisObject->appendArgumentsNonIndexPropertyNames(globalObject, array, mode, order, thisObject->deletedArgumentSpecials());
 }
 
 template<typename Type>
@@ -180,7 +205,10 @@ bool GenericArgumentsImpl<Type>::deleteProperty(JSCell* cell, JSGlobalObject* gl
     if (std::optional<uint32_t> index = parseIndex(ident))
         RELEASE_AND_RETURN(scope, GenericArgumentsImpl<Type>::deletePropertyByIndex(thisObject, globalObject, *index));
 
-    RELEASE_AND_RETURN(scope, Base::deleteProperty(thisObject, globalObject, ident, slot));
+    bool deleted = Base::deleteProperty(thisObject, globalObject, ident, slot);
+    RETURN_IF_EXCEPTION(scope, false);
+    recordDeletedArgumentSpecial(vm, thisObject->deletedArgumentSpecials(), ident, slot, deleted);
+    return deleted;
 }
 
 template<typename Type>

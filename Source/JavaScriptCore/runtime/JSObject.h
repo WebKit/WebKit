@@ -373,6 +373,17 @@ public:
     JS_EXPORT_PRIVATE void getPropertyNames(JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     JS_EXPORT_PRIVATE static void NODELETE getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
+
+    // https://tc39.es/ecma262/#sec-ordinaryownpropertykeys
+    enum class ArgumentsPropertyOrder : uint8_t {
+        MappedLazy, // length, callee, and @@iterator are not stored yet
+        MappedMaterialized, // overrideThings() appended that group
+        Unmapped, // length was created first; callee and @@iterator may still be lazy
+    };
+    static constexpr uint32_t deletedArgumentLengthBit = 1u << 0;
+    static constexpr uint32_t deletedArgumentCalleeBit = 1u << 1;
+    static constexpr uint32_t deletedArgumentIteratorBit = 1u << 2;
+    void appendArgumentsNonIndexPropertyNames(JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode, ArgumentsPropertyOrder, uint32_t deletedSpecials);
     JS_EXPORT_PRIVATE void getOwnIndexedPropertyNames(JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     JS_EXPORT_PRIVATE void getOwnNonIndexPropertyNames(JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     void getNonReifiedStaticPropertyNames(VM&, PropertyNameArrayBuilder&, DontEnumPropertiesMode);

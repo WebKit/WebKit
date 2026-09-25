@@ -152,6 +152,9 @@ public:
     static constexpr ptrdiff_t offsetOfMinCapacity() { return OBJECT_OFFSETOF(DirectArguments, m_minCapacity); }
     static constexpr ptrdiff_t offsetOfMappedArguments() { return OBJECT_OFFSETOF(DirectArguments, m_mappedArguments); }
     static constexpr ptrdiff_t offsetOfModifiedArgumentsDescriptor() { return OBJECT_OFFSETOF(DirectArguments, m_modifiedArgumentsDescriptor); }
+    static constexpr ptrdiff_t offsetOfDeletedArgumentSpecials() { return OBJECT_OFFSETOF(DirectArguments, m_deletedArgumentSpecials); }
+
+    uint32_t& deletedArgumentSpecials() { return m_deletedArgumentSpecials; }
     
     static size_t storageOffset()
     {
@@ -181,6 +184,7 @@ private:
     uint32_t m_minCapacity; // The max of this and length determines the capacity of this object. It may be the actual capacity, or maybe something smaller. We arrange it this way to be kind to the JITs.
     using MappedArguments = CagedBarrierPtr<Gigacage::Primitive, bool>;
     MappedArguments m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
+    uint32_t m_deletedArgumentSpecials { 0 };
 
     friend size_t cellSize(JSCell*);
 };
