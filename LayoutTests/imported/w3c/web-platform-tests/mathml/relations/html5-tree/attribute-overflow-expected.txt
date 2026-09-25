@@ -1,0 +1,8 @@
+
+PASS mpadded lspace positive overflow maintains rightward displacement (LTR)
+PASS mpadded voffset positive overflow maintains upward displacement
+PASS Monotonic rightward displacement of lspace across different container widths
+𝑋
+𝑌
+𝐴
+𝐵
