@@ -105,7 +105,7 @@ public:
     enum class ShouldCancel : uint8_t { No, Yes };
     virtual ShouldCancel adjustForNewBackForwardEntry() { return ShouldCancel::No; }
 
-    enum class AccumulateResult : uint8_t { NotHandled, Accumulated, CancelPending };
+    enum class AccumulateResult : uint8_t { NotHandled, Accumulated, CancelPending, Enqueue };
     virtual AccumulateResult accumulateHistorySteps(Frame& /*frame*/, int /*additionalSteps*/) { return AccumulateResult::NotHandled; }
 
     double NODELETE delay() const { return m_delay; }
@@ -354,7 +354,15 @@ public:
         if (!localFrame)
             return false;
 
-        RefPtr historyItem = targetHistoryItem(*localFrame);
+        RefPtr page = localFrame->page();
+        if (!page)
+            return false;
+
+        // Evaluate same-document-ness for the originating frame, not the root. A subframe's
+        // traversal forwards to the top scheduler (so fire()/targetHistoryItem() resolve against
+        // the root), but whether an observable same-document event fires depends on the
+        // originating frame's own items, so look those up directly instead of the cached root item.
+        RefPtr historyItem = protect(page->backForward())->itemAtIndex(m_steps, localFrame->frameID());
         if (!historyItem)
             return false;
 
@@ -376,8 +384,11 @@ public:
         // history.go(0) is reload per spec, not a delta-traversal — fall through to normal scheduling.
         if (!additionalSteps)
             return AccumulateResult::NotHandled;
+        // A pending same-document traversal (hash/pushState) must fire its own popstate/hashchange
+        // before the next runs, so it can't coalesce into a net delta. Queue it instead of letting
+        // the schedule() path evict the pending navigation.
         if (isSameDocumentNavigation(frame))
-            return AccumulateResult::NotHandled;
+            return AccumulateResult::Enqueue;
         m_steps += additionalSteps;
         if (!m_steps)
             return AccumulateResult::CancelPending;
@@ -647,6 +658,7 @@ void NavigationScheduler::clear()
 {
     m_timer.stop();
     m_redirect = nullptr;
+    m_queuedHistorySteps.clear();
 }
 
 inline bool NavigationScheduler::shouldScheduleNavigation() const
@@ -860,6 +872,10 @@ void NavigationScheduler::scheduleHistoryNavigation(Frame& originatingFrame, int
         case ScheduledNavigation::AccumulateResult::CancelPending:
             cancel();
             return;
+        case ScheduledNavigation::AccumulateResult::Enqueue:
+            // Same-document pending traversal: keep it and queue this one so it fires after.
+            m_queuedHistorySteps.append(steps);
+            return;
         case ScheduledNavigation::AccumulateResult::NotHandled:
             break;
         }
@@ -923,6 +939,15 @@ void NavigationScheduler::timerFired()
     LOG(History, "NavigationScheduler %p timerFired - firing redirect %p", this, redirect.get());
 
     redirect->fire(frame);
+
+    // Per "traverse the history by a delta", each queued traversal computes its target index
+    // (currentStepIndex + delta) when it runs. Schedule the next step now that the current one's
+    // event has dispatched, so it resolves against the updated current entry.
+    if (m_redirect || m_queuedHistorySteps.isEmpty())
+        return;
+    if (!frame->page())
+        return;
+    scheduleHistoryNavigation(frame.get(), m_queuedHistorySteps.takeFirst());
 }
 
 void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect)
@@ -985,6 +1010,10 @@ void NavigationScheduler::adjustPendingHistoryNavigationForNewBackForwardEntry()
             return;
         }
     }
+    // Creating a new same-document entry (pushState/replaceState/fragment) removes any tasks
+    // queued by the history traversal task source, so drop queued traversals along with adjusting
+    // the pending one.
+    m_queuedHistorySteps.clear();
     if (!m_redirect)
         return;
     if (m_redirect->adjustForNewBackForwardEntry() == ScheduledNavigation::ShouldCancel::Yes)
@@ -1003,7 +1032,7 @@ void NavigationScheduler::cancel(NewLoadInProgress newLoadInProgress)
 
 bool NavigationScheduler::hasQueuedNavigation() const
 {
-    return m_redirect && !m_redirect->delay();
+    return (m_redirect && !m_redirect->delay()) || !m_queuedHistorySteps.isEmpty();
 }
 
 } // namespace WebCore

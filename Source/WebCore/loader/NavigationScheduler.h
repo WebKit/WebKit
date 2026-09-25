@@ -36,6 +36,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakRef.h>
 
@@ -95,6 +96,7 @@ private:
     WeakRef<Frame> m_frame;
     Timer m_timer;
     std::unique_ptr<ScheduledNavigation> m_redirect;
+    Deque<int> m_queuedHistorySteps;
 };
 
 } // namespace WebCore
