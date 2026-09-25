@@ -120,7 +120,7 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
 
     ReceivedQualifiedServerTrust(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebCore::CertificateInfo serverTrust, WebCore::CertificateInfo qualifiedServerTrust)
 
-    AuthorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers, WebCore::ProcessIdentifier destinationProcess) -> ()
+    HandOverTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers, WebCore::ProcessIdentifier destinationProcess)
 }
 
 }

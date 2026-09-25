@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+description("A message transferring an ImageBitmap, posted to a cross-site iframe, should arrive before a message posted after it to a same-site window, since both windows share an event loop.");
+jsTestIsAsync = true;
+
+const rounds = 5;
+let readyCount = 0;
+let popup;
+
+async function postMessages() {
+    const target = frame.contentWindow;
+    const source = document.createElement("canvas");
+    source.width = 4;
+    source.height = 4;
+    source.getContext("2d").fillRect(0, 0, source.width, source.height);
+    const bitmaps = [];
+    for (let round = 0; round < rounds; ++round)
+        bitmaps.push(await createImageBitmap(source));
+
+    for (let round = 0; round < rounds; ++round) {
+        // In one task, so nothing but the relay can reorder them.
+        const bitmap = bitmaps[round];
+        target.postMessage({ type: "sequence", sequence: 2 * round, bitmap }, "*", [bitmap]);
+        popup.postMessage({ type: "sequence", sequence: 2 * round + 1 }, "*");
+        await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+    target.postMessage({ type: "report" }, "*");
+}
+
+addEventListener("message", (event) => {
+    if (!event.data)
+        return;
+    if (event.data.type == "ready" && ++readyCount == 2) {
+        postMessages();
+        return;
+    }
+    if (event.data.type == "order") {
+        order = event.data.order;
+        shouldBeEqualToString("order", "0,1,2,3,4,5,6,7,8,9");
+        popup.close();
+        finishJSTest();
+    }
+});
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/record-message-order-across-windows.html"></iframe>
+<script>
+popup = open("http://localhost:8000/site-isolation/resources/relay-message-order-to-opener-frame.html");
+</script>
+</body>

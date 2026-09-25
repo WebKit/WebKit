@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<iframe src="http://localhost:8000/site-isolation/resources/record-message-order.html" id="frame"></iframe>
+<script>
+description("Messages sent over a MessagePort to a cross-site iframe should arrive in the order they were sent, even when some transfer an ImageBitmap.");
+jsTestIsAsync = true;
+
+const messageCount = 8;
+
+addEventListener("message", (event) => {
+    if (!event.data || event.data.type != "order")
+        return;
+    order = event.data.order;
+    shouldBeEqualToString("order", "0,1,2,3,4,5,6,7");
+    finishJSTest();
+});
+
+frame.addEventListener("load", async () => {
+    const source = document.createElement("canvas");
+    source.width = 4;
+    source.height = 4;
+    source.getContext("2d").fillRect(0, 0, source.width, source.height);
+    const bitmaps = [await createImageBitmap(source), await createImageBitmap(source), await createImageBitmap(source), await createImageBitmap(source)];
+
+    const channel = new MessageChannel();
+    frame.contentWindow.postMessage({ type: "port" }, "*", [channel.port2]);
+
+    // Each in its own task, so that the recipient takes them in separate batches: messages taken
+    // together are never reordered.
+    for (let sequence = 0; sequence < messageCount; ++sequence) {
+        if (sequence % 2) {
+            channel.port1.postMessage({ type: "sequence", sequence, count: messageCount });
+        } else {
+            const bitmap = bitmaps[sequence / 2];
+            channel.port1.postMessage({ type: "sequence", sequence, count: messageCount, bitmap }, [bitmap]);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    setTimeout(() => {
+        testFailed("the cross-site iframe never reported the order it received the messages in");
+        finishJSTest();
+    }, 5000);
+});
+</script>
+</body>

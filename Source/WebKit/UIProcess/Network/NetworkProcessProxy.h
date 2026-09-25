@@ -294,7 +294,7 @@ public:
     void receivedQualifiedServerTrust(WebKit::WebPageProxyIdentifier, WebCore::CertificateInfo&&, WebCore::CertificateInfo&&);
 
     // The network process brokers MessagePort delivery but has no GPU process connection.
-    void authorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier>&&, WebCore::ProcessIdentifier destinationProcess, CompletionHandler<void()>&&);
+    void handOverTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&&, WebCore::ProcessIdentifier destinationProcess);
 
     void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&, std::optional<IPC::FormDataReference>&&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);

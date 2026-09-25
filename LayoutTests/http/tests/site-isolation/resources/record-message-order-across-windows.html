@@ -1,0 +1,17 @@
+<script>
+const received = [];
+function record(sequence) {
+    received.push(sequence);
+}
+addEventListener("message", (event) => {
+    if (!event.data)
+        return;
+    if (event.data.type == "report") {
+        parent.postMessage({ type: "order", order: received.join(",") }, "*");
+        return;
+    }
+    if (event.data.type == "sequence")
+        record(event.data.sequence);
+});
+parent.postMessage({ type: "ready" }, "*");
+</script>

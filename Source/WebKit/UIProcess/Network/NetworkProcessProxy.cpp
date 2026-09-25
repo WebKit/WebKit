@@ -2184,17 +2184,14 @@ void NetworkProcessProxy::flushNetworkProcessIPC(CompletionHandler<void()>&& com
     sendWithAsyncReply(Messages::NetworkProcess::FlushNetworkProcessIPC(), WTF::move(completionHandler));
 }
 
-void NetworkProcessProxy::authorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier>&& transferIdentifiers, WebCore::ProcessIdentifier destinationProcess, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::handOverTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&& transferIdentifiers, WebCore::ProcessIdentifier destinationProcess)
 {
 #if ENABLE(GPU_PROCESS)
-    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
-    if (!gpuProcess)
-        return completionHandler();
-    gpuProcess->sendWithAsyncReply(Messages::GPUProcess::AuthorizeImageBufferTransfers(WTF::move(transferIdentifiers), destinationProcess), WTF::move(completionHandler));
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::HandOverTransferredImageBuffers(WTF::move(transferIdentifiers), destinationProcess), 0);
 #else
     UNUSED_PARAM(transferIdentifiers);
     UNUSED_PARAM(destinationProcess);
-    completionHandler();
 #endif
 }
 

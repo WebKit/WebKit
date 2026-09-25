@@ -3316,6 +3316,8 @@ header: <WebCore/ImageBufferParameters.h>
     WebCore::RenderingPurpose purpose;
 };
 
+using WebCore::ImageBufferTransferIdentifier = WTF::UUID;
+
 header: <WebCore/ImageBuffer.h>
 [CustomHeader] struct WebCore::ImageBufferTransferHandle {
     WebCore::ImageBufferTransferIdentifier identifier;

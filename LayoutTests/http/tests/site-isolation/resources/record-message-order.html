@@ -1,0 +1,18 @@
+<script>
+const received = [];
+function record(data) {
+    if (!data || data.type != "sequence")
+        return;
+    received.push(data.sequence);
+    if (received.length == data.count)
+        parent.postMessage({ type: "order", order: received.join(",") }, "*");
+}
+addEventListener("message", (event) => {
+    // Messages then arrive over the port instead.
+    if (event.data && event.data.type == "port") {
+        event.ports[0].onmessage = (portEvent) => record(portEvent.data);
+        return;
+    }
+    record(event.data);
+});
+</script>

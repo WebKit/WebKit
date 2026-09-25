@@ -1911,19 +1911,13 @@ void NetworkConnectionToWebProcess::takeAllMessagesForPort(const MessagePortIden
                 transferIdentifiers.appendVector(serializedValue->transferredImageBufferIdentifiers());
         }
 
-        auto deliver = [callback = WTF::move(callback), messages = WTF::move(messages), deliveryCallback = WTF::move(deliveryCallback), protectedThis] () mutable {
-            callback(WTF::move(messages), protectedThis->nextMessageBatchIdentifier(WTF::move(deliveryCallback)));
-        };
-
-        if (transferIdentifiers.isEmpty()) {
-            deliver();
-            return;
-        }
-
         // This process brokers the handover but has no GPU process connection, so the UI process
-        // performs it. Held back until it has: the recipient's claims travel on its own connection
-        // and could otherwise overtake the handover.
-        protect(m_networkProcess)->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::AuthorizeImageBufferTransfers(WTF::move(transferIdentifiers), m_webProcessIdentifier), WTF::move(deliver));
+        // performs it. Not waited for: the recipient can claim the buffers either way, since they
+        // were deposited before being sent.
+        if (!transferIdentifiers.isEmpty())
+            protect(m_networkProcess)->parentProcessConnection()->send(Messages::NetworkProcessProxy::HandOverTransferredImageBuffers(WTF::move(transferIdentifiers), m_webProcessIdentifier), 0);
+
+        callback(WTF::move(messages), nextMessageBatchIdentifier(WTF::move(deliveryCallback)));
     });
 }
 

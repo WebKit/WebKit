@@ -25,14 +25,12 @@
 
 #pragma once
 
-#include <WebCore/ProcessQualified.h>
-#include <wtf/ObjectIdentifier.h>
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
-struct ImageBufferTransferIdentifierType;
-
-// Process qualified because the sinking process and the claiming process differ.
-using ImageBufferTransferIdentifier = ProcessQualified<AtomicObjectIdentifier<ImageBufferTransferIdentifierType>>;
+// Names a buffer deposited in the GPU process for another process to claim. Minted there, and
+// unguessable, since holding one is all it takes to claim the buffer.
+using ImageBufferTransferIdentifier = WTF::UUID;
 
 } // namespace WebCore

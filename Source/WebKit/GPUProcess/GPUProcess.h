@@ -183,11 +183,11 @@ public:
     RefPtr<RemoteSnapshot> snapshot(RemoteSnapshotIdentifier);
 
     // Hands an ImageBuffer from one web process's rendering backend to another's. Unlike
-    // m_snapshots, a buffer is claimable only by its current owner, so an identifier alone is not
-    // enough to obtain one. A depositing process cannot name its successor: it owns the buffer until
-    // the process brokering delivery hands ownership on.
-    bool depositTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier, WebCore::ProcessIdentifier owner, Ref<WebCore::ImageBuffer>&&);
-    RefPtr<WebCore::ImageBuffer> takeTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier, WebCore::ProcessIdentifier claimingProcess);
+    // m_snapshots, the identifier is minted here and unguessable, so only a process it was given
+    // can claim the buffer. The depositing process owns an unclaimed buffer until the process
+    // brokering delivery hands it on, which only decides whose exit discards it.
+    WebCore::ImageBufferTransferIdentifier depositTransferredImageBuffer(WebCore::ProcessIdentifier owner, Ref<WebCore::ImageBuffer>&&);
+    RefPtr<WebCore::ImageBuffer> takeTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier);
     void removeTransferredImageBuffersForProcess(WebCore::ProcessIdentifier);
 
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
@@ -207,7 +207,7 @@ public:
 
     void terminateWebProcess(WebCore::ProcessIdentifier, IPC::MessageName);
 
-    void authorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier>&&, WebCore::ProcessIdentifier destinationProcess, CompletionHandler<void()>&&);
+    void handOverTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&&, WebCore::ProcessIdentifier destinationProcess);
 
 private:
     GPUProcess();
@@ -331,18 +331,6 @@ private:
         RefPtr<WebCore::ImageBuffer> imageBuffer;
     };
     HashMap<WebCore::ImageBufferTransferIdentifier, TransferredImageBuffer> m_transferredImageBuffers WTF_GUARDED_BY_LOCK(m_globalResourceLocker);
-
-    // An authorization can arrive before the buffers it names have been deposited: a deposit travels
-    // on the depositing process's rendering backend work queue while the authorization arrives on the
-    // UI process's connection, so neither orders against the other. The reply is held back until
-    // every named buffer has landed, which is what lets the broker guarantee the recipient's claim
-    // cannot overtake the handover.
-    struct PendingImageBufferTransferAuthorization {
-        HashSet<WebCore::ImageBufferTransferIdentifier> awaitingDeposit;
-        CompletionHandler<void()> completionHandler;
-    };
-    Vector<PendingImageBufferTransferAuthorization> m_pendingImageBufferTransferAuthorizations WTF_GUARDED_BY_LOCK(m_globalResourceLocker);
-    Vector<CompletionHandler<void()>> takeSettledImageBufferTransferAuthorizations(NOESCAPE const Function<void(HashSet<WebCore::ImageBufferTransferIdentifier>&)>& prune) WTF_REQUIRES_LOCK(m_globalResourceLocker);
 
     struct GPUSession {
         String mediaCacheDirectory;

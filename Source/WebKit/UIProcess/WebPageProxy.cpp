@@ -19866,16 +19866,13 @@ void WebPageProxy::postMessageToRemote(WebCore::FrameIdentifier source, IPC::Unt
     };
 
     // Only this process knows where the message is going, so it hands ownership of any sunk
-    // ImageBuffers to the destination. Held back until the GPU process confirms: the destination's
-    // claim travels on its own connection and could otherwise overtake the handover.
+    // ImageBuffers to the destination, so that they outlive the process that sent them. Not waited
+    // for: the destination can claim them either way, since they were deposited before being sent.
 #if ENABLE(GPU_PROCESS)
     RefPtr serializedValue = message.message;
     auto transferIdentifiers = serializedValue ? serializedValue->transferredImageBufferIdentifiers() : Vector<WebCore::ImageBufferTransferIdentifier> { };
-    if (RefPtr gpuProcess = transferIdentifiers.isEmpty() ? nullptr : GPUProcessProxy::singletonIfCreated()) {
-        auto destinationProcess = processContainingFrame(target)->coreProcessIdentifier();
-        gpuProcess->sendWithAsyncReply(Messages::GPUProcess::AuthorizeImageBufferTransfers(WTF::move(transferIdentifiers), destinationProcess), WTF::move(deliver));
-        return;
-    }
+    if (RefPtr gpuProcess = transferIdentifiers.isEmpty() ? nullptr : GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::HandOverTransferredImageBuffers(WTF::move(transferIdentifiers), processContainingFrame(target)->coreProcessIdentifier()), 0);
 #endif
 
     deliver();
