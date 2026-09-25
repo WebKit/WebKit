@@ -41,6 +41,11 @@ public:
 
     void recompileAllJSFunctions() override;
 
+    // True between attachDebugger() and detachDebugger(), i.e. while an agent is actually
+    // debugging the frame. The debugger outlives that window, since FrameInspectorController
+    // creates it up front and keeps it for the lifetime of the frame target.
+    bool isAttachedToFrame() const { return m_isAttachedToFrame; }
+
 private:
     // JSC::Debugger
     void attachDebugger() final;
@@ -59,6 +64,7 @@ private:
     bool platformShouldContinueRunningEventLoopWhilePaused();
 
     WeakRef<LocalFrame> m_frame;
+    bool m_isAttachedToFrame { false };
 };
 
 } // namespace WebCore

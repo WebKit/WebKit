@@ -250,6 +250,8 @@ public:
 
     void NODELETE setProfilingClient(ProfilingClient*);
     bool hasProfilingClient() const { return m_profilingClient != nullptr; }
+    // Lets a client find the debuggers it installed itself into without keeping pointers to them.
+    bool hasProfilingClient(const ProfilingClient& client) const { return m_profilingClient == &client; }
     bool isAlreadyProfiling() const { return m_profilingClient && m_profilingClient->isAlreadyProfiling(); }
     JS_EXPORT_PRIVATE Seconds willEvaluateScript();
     JS_EXPORT_PRIVATE void didEvaluateScript(Seconds startTime, ProfilingReason);

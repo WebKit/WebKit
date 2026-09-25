@@ -66,6 +66,8 @@ void FrameDebugger::attachDebugger()
     if (!frame)
         return;
 
+    m_isAttachedToFrame = true;
+
     Ref windowProxy = frame->windowProxy();
     for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
         auto* globalObject = jsWindowProxy->window();
@@ -77,6 +79,8 @@ void FrameDebugger::attachDebugger()
 void FrameDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
+
+    m_isAttachedToFrame = false;
 
     // Undo attachDebugger(), skipping global objects it left to another debugger (detach() asserts membership).
     Ref windowProxy = m_frame->windowProxy();
