@@ -212,6 +212,10 @@ protected:
 
     explicit MouseEvent(enum EventInterfaceType);
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+    static DoublePoint screenLocationForTouchAtIndex(const PlatformTouchEvent&, unsigned touchIndex, const WindowProxy&);
+#endif
+
 private:
     bool isMouseEvent() const final { return true; }
 

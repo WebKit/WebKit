@@ -29,6 +29,9 @@
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 
 #import "EventNames.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
+#import "WindowProxy.h"
 
 namespace WebCore {
 
@@ -69,9 +72,28 @@ static DoublePoint computeMovementDelta(const PlatformTouchEvent& event, unsigne
     return { };
 }
 
+DoublePoint MouseEvent::screenLocationForTouchAtIndex(const PlatformTouchEvent& event, unsigned index, const WindowProxy& view)
+{
+    // On iOS a screen location is a point in the top-level page's root view rather than device screen space.
+    // A touch location is in the local root frame's root view, which with site isolation can be a cross-origin
+    // iframe's, so map it up across any remote ancestor frames.
+    auto location = event.touchLocationInRootViewAtIndex(index);
+    RefPtr frame = dynamicDowncast<LocalFrame>(view.frame());
+    if (!frame)
+        return location;
+    Ref localRootFrame = frame->rootFrame();
+    if (localRootFrame->isMainFrame())
+        return location;
+    RefPtr localRootView = localRootFrame->view();
+    if (!localRootView)
+        return location;
+    return localRootView->convertToRootViewAcrossIsolatedFrames(FloatPoint { location });
+}
+
 Ref<MouseEvent> MouseEvent::create(const PlatformTouchEvent& event, unsigned index, Ref<WindowProxy>&& view, IsCancelable cancelable, ShouldComputeMovementDelta shouldComputeMovementDelta)
 {
     const auto movementDelta = shouldComputeMovementDelta == ShouldComputeMovementDelta::Yes ? computeMovementDelta(event, index) : DoublePoint { };
+    auto screenLocation = screenLocationForTouchAtIndex(event, index, view);
 
     return adoptRef(
         *new MouseEvent(
@@ -83,7 +105,7 @@ Ref<MouseEvent> MouseEvent::create(const PlatformTouchEvent& event, unsigned ind
             event.timestamp(),
             WTF::move(view),
             0,
-            event.touchLocationInRootViewAtIndex(index),
+            screenLocation,
             event.touchLocationInRootViewAtIndex(index),
             movementDelta.x(),
             movementDelta.y(),
