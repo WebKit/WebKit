@@ -244,6 +244,8 @@ class Branch(Command):
             args._title = issue.title
         if issue:
             args._bug_urls = Commit.bug_urls(issue)
+        elif not getattr(args, 'update_issue', True) and ' ' in args.issue.strip():
+            args._title = args.issue.strip()
 
         return issue, 0
 
