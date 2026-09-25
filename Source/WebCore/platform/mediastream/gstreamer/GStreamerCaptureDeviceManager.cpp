@@ -113,6 +113,7 @@ void GStreamerCaptureDeviceManager::teardown()
     m_capturers.clear();
     RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(*this);
     m_devices.clear();
+    m_speakerDevices.clear();
     m_gstreamerDevices.clear();
 }
 
@@ -133,6 +134,7 @@ void GStreamerCaptureDeviceManager::devicesChanged()
     stopMonitor();
     m_gstreamerDevices.clear();
     m_devices.clear();
+    m_speakerDevices.clear();
 }
 
 void GStreamerCaptureDeviceManager::deviceWillBeRemoved(const String& persistentId)
@@ -250,6 +252,9 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     if (!gstCaptureDevice)
         return;
 
+    if (std::ranges::any_of(m_gstreamerDevices, [&](auto& existing) { return existing.persistentId() == gstCaptureDevice->persistentId(); }))
+        return;
+
     GST_INFO_OBJECT(gstCaptureDevice->device(), "Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", gstCaptureDevice->label().utf8().legacyCStringPointer());
     const auto type = gstCaptureDevice->type();
     m_gstreamerDevices.append(WTF::move(*gstCaptureDevice));
@@ -313,6 +318,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 {
     GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Refreshing capture devices");
     m_devices.clear();
+    m_speakerDevices.clear();
     m_gstreamerDevices.clear();
     if (m_isTearingDown)
         return;

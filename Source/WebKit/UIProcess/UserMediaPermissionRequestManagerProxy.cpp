@@ -998,7 +998,8 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
     bool revealIdsAndLabels = cameraState == PermissionState::Granted || microphoneState == PermissionState::Granted;
     RefPtr page = m_page.get();
     bool shoulExposeCaptureDevicesBasedOnPermission = page && !protect(page->preferences())->exposeCaptureDevicesAfterCaptureEnabled();
-    platformGetMediaStreamDevices(revealIdsAndLabels || wasGrantedVideoAccess(frameID) || wasGrantedAudioAccess(frameID), [frameID, logIdentifier = LOGIDENTIFIER, weakThis = WeakPtr { *this }, cameraState, microphoneState, revealIdsAndLabels, shoulExposeCaptureDevicesBasedOnPermission, completion = WTF::move(completion)](auto&& devicesWithCapabilities) mutable {
+    bool exposeSpeakersWithoutMicrophone = page && protect(page->preferences())->exposeSpeakersWithoutMicrophoneEnabled();
+    platformGetMediaStreamDevices(revealIdsAndLabels || wasGrantedVideoAccess(frameID) || wasGrantedAudioAccess(frameID), [frameID, logIdentifier = LOGIDENTIFIER, weakThis = WeakPtr { *this }, cameraState, microphoneState, revealIdsAndLabels, shoulExposeCaptureDevicesBasedOnPermission, exposeSpeakersWithoutMicrophone, completion = WTF::move(completion)](auto&& devicesWithCapabilities) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completion({ });
@@ -1016,7 +1017,7 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
             shouldRestrictMicrophone = microphoneState == PermissionState::Denied || (!revealIdsAndLabels && !protectedThis->wasGrantedAudioAccess(frameID));
         }
 
-        bool shouldRestrictSpeaker = !protectedThis->wasGrantedAudioAccess(frameID);
+        bool shouldRestrictSpeaker = !exposeSpeakersWithoutMicrophone && !protectedThis->wasGrantedAudioAccess(frameID);
         Vector<CaptureDeviceWithCapabilities> filteredDevices;
         for (auto& deviceWithCapabilities : devicesWithCapabilities) {
             auto& device = deviceWithCapabilities.device;
