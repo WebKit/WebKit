@@ -91,6 +91,24 @@ PlaybackSessionModel* PlaybackSessionInterfaceIOS::playbackSessionModel() const
     return m_playbackSessionModel.get();
 }
 
+bool PlaybackSessionInterfaceIOS::isInWindowFullscreenActive() const
+{
+    CheckedPtr model = playbackSessionModel();
+    return model && model->isInWindowFullscreenActive();
+}
+
+void PlaybackSessionInterfaceIOS::enterInWindowFullscreen()
+{
+    if (CheckedPtr model = playbackSessionModel())
+        model->enterInWindowFullscreen();
+}
+
+void PlaybackSessionInterfaceIOS::exitInWindowFullscreen()
+{
+    if (CheckedPtr model = playbackSessionModel())
+        model->exitInWindowFullscreen();
+}
+
 void PlaybackSessionInterfaceIOS::modelDestroyed()
 {
     ASSERT(isUIThread());

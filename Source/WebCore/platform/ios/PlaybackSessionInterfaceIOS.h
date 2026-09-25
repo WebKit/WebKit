@@ -71,6 +71,9 @@ public:
     virtual WKAVContentSource *contentSource() const;
 #endif
     PlaybackSessionModel* NODELETE playbackSessionModel() const;
+    WEBCORE_EXPORT bool isInWindowFullscreenActive() const;
+    WEBCORE_EXPORT void enterInWindowFullscreen();
+    WEBCORE_EXPORT void exitInWindowFullscreen();
     void durationChanged(double) override = 0;
     void currentTimeChanged(double currentTime, double anchorTime) override = 0;
     void bufferedTimeChanged(double) override = 0;

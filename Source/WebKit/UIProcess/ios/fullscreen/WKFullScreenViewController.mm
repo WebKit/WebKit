@@ -94,6 +94,12 @@ public:
             controller.get().pictureInPictureActive = active;
     }
 
+    void isInWindowFullscreenActiveChanged(bool active) override
+    {
+        if (RetainPtr controller = m_parent.getAutoreleased())
+            controller.get().inWindowFullscreenActive = active;
+    }
+
     void setInterface(WebCore::PlaybackSessionInterfaceIOS* interface)
     {
         if (m_interface == interface)
@@ -165,6 +171,7 @@ private:
 #endif
     RetainPtr<WKExtrinsicButton> _cancelButton;
     RetainPtr<WKExtrinsicButton> _pipButton;
+    RetainPtr<WKExtrinsicButton> _videoViewerButton;
     RetainPtr<UIButton> _locationButton;
     RetainPtr<UILayoutGuide> _topGuide;
     RetainPtr<NSLayoutConstraint> _topConstraint;
@@ -307,6 +314,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)showUI
 {
     ASSERT(_valid);
+    if (_inWindowFullscreenActive)
+        return;
+
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
 
     if (_playing) {
@@ -438,6 +448,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     isPiPEnabled = !_shouldHideCustomControls && isPiPEnabled;
 #endif
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
+
+    bool isVideoViewerModeAvailable = false;
+    if (RefPtr page = [self._webView _page].get()) {
+        if (RefPtr playbackSessionManager = page->playbackSessionManager())
+            isVideoViewerModeAvailable = protect(page->preferences())->videoViewerModeEnabled() && playbackSessionManager->canEnterVideoFullscreen();
+    }
+    [_videoViewerButton setHidden:!isVideoViewerModeAvailable];
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     if (auto page = [self._webView _page]; page && !page->preferences().videoFullsceenPrefersMostVisibleHeuristic())
@@ -779,6 +796,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
+- (void)setInWindowFullscreenActive:(BOOL)active
+{
+    ASSERT(_valid);
+    if (_inWindowFullscreenActive == active)
+        return;
+
+    _inWindowFullscreenActive = active;
+
+    if (active)
+        [self hideUI];
+    else
+        [self showUI];
+}
+
 - (void)setPictureInPictureActive:(BOOL)active
 {
     ASSERT(_valid);
@@ -900,11 +931,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_pipButton sizeToFit];
         [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
 
+#if !PLATFORM(APPLETV)
+        _videoViewerButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        [_videoViewerButton setImage:[UIImage systemImageNamed:@"popcorn.fill"] forState:UIControlStateNormal];
+        [_videoViewerButton sizeToFit];
+        [_videoViewerButton setHidden:YES];
+        [_videoViewerButton addTarget:self action:@selector(_enterVideoViewerModeAction:) forControlEvents:UIControlEventTouchUpInside];
+#endif
+
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
 #if PLATFORM(APPLETV)
         [stackView addArrangedSubview:_cancelButton.get()];
 #else
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+        [stackView addArrangedSubview:_videoViewerButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
 #endif
         _stackView = WTF::move(stackView);
@@ -1150,6 +1190,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     [[self delegate] requestExitFullScreen];
+}
+
+- (void)_enterVideoViewerModeAction:(id)sender
+{
+    ASSERT(_valid);
+
+    RefPtr playbackSessionInterface = [self _playbackSessionInterface];
+    if (!playbackSessionInterface)
+        return;
+
+    if (CheckedPtr playbackSessionModel = playbackSessionInterface->playbackSessionModel())
+        playbackSessionModel->enterInWindowFullscreen();
 }
 
 - (void)_togglePiPAction:(id)sender

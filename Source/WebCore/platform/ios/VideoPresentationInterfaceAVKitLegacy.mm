@@ -715,6 +715,43 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 #endif
 }
 
+- (void)setCanIncludePlaybackControlsWhenInline:(BOOL)canIncludePlaybackControlsWhenInline
+{
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!canIncludePlaybackControlsWhenInline);
+#if PLATFORM(WATCHOS)
+    UNUSED_PARAM(canIncludePlaybackControlsWhenInline);
+#else
+    [_avPlayerViewController setCanIncludePlaybackControlsWhenInline:canIncludePlaybackControlsWhenInline];
+#endif
+}
+
+- (void)setPrefersFullScreenStyleForEmbeddedMode:(BOOL)prefersFullScreenStyleForEmbeddedMode
+{
+#if PLATFORM(IOS)
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!prefersFullScreenStyleForEmbeddedMode);
+    RetainPtr configuration = [_avPlayerViewController configuration];
+    [configuration setPrefersFullScreenStyleForEmbeddedMode:prefersFullScreenStyleForEmbeddedMode];
+    [_avPlayerViewController setConfiguration:configuration.get()];
+#else
+    UNUSED_PARAM(prefersFullScreenStyleForEmbeddedMode);
+#endif
+}
+
+#if PLATFORM(IOS)
+- (AVPlayerControls)excludedControls
+{
+    return [[_avPlayerViewController configuration] excludedControls];
+}
+
+- (void)setExcludedControls:(AVPlayerControls)excludedControls
+{
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, static_cast<uint64_t>(excludedControls));
+    RetainPtr configuration = [_avPlayerViewController configuration];
+    [configuration setExcludedControls:excludedControls];
+    [_avPlayerViewController setConfiguration:configuration.get()];
+}
+#endif
+
 - (void)setDelegate:(WebAVPlayerViewControllerDelegate *)delegate
 {
 #if PLATFORM(WATCHOS)
@@ -908,6 +945,59 @@ void VideoPresentationInterfaceAVKitLegacy::setAllowsPictureInPicturePlayback(bo
 void VideoPresentationInterfaceAVKitLegacy::setShowsPlaybackControls(bool showsPlaybackControls)
 {
     [m_playerViewController setShowsPlaybackControls:showsPlaybackControls];
+}
+
+void VideoPresentationInterfaceAVKitLegacy::setCanIncludePlaybackControlsWhenInline(bool canIncludePlaybackControlsWhenInline)
+{
+    [m_playerViewController setCanIncludePlaybackControlsWhenInline:canIncludePlaybackControlsWhenInline];
+}
+
+void VideoPresentationInterfaceAVKitLegacy::setPrefersFullScreenStyleForEmbeddedMode(bool prefersFullScreenStyleForEmbeddedMode)
+{
+    [m_playerViewController setPrefersFullScreenStyleForEmbeddedMode:prefersFullScreenStyleForEmbeddedMode];
+}
+
+void VideoPresentationInterfaceAVKitLegacy::setExcludesPlaybackControlsCloseButton(bool excludesCloseButton)
+{
+#if PLATFORM(IOS)
+    AVPlayerControls excludedControls = [m_playerViewController excludedControls];
+    if (excludesCloseButton)
+        excludedControls |= AVPlayerControlsCloseButton;
+    else
+        excludedControls &= ~AVPlayerControlsCloseButton;
+    [m_playerViewController setExcludedControls:excludedControls];
+#else
+    UNUSED_PARAM(excludesCloseButton);
+#endif
+}
+
+void VideoPresentationInterfaceAVKitLegacy::flashPlaybackControls(Seconds duration)
+{
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+    [m_playerViewController flashPlaybackControlsWithDuration:duration.seconds()];
+#else
+    UNUSED_PARAM(duration);
+#endif
+}
+
+void VideoPresentationInterfaceAVKitLegacy::setVideoHeightFraction(float videoHeightFraction)
+{
+    [fullscreenPlayerLayer() setVideoHeightFraction:videoHeightFraction];
+}
+
+void VideoPresentationInterfaceAVKitLegacy::setVideoCornerRadius(float videoCornerRadius)
+{
+    [fullscreenPlayerLayer() setVideoCornerRadius:videoCornerRadius];
+}
+
+FloatRect VideoPresentationInterfaceAVKitLegacy::videoViewerModeVideoRect() const
+{
+    RetainPtr playerLayer = fullscreenPlayerLayer();
+    RetainPtr playerViewControllerView = [avPlayerViewController() view];
+    if (!playerLayer || !playerViewControllerView)
+        return { };
+
+    return FloatRect([playerLayer convertRect:[playerLayer calculateTargetVideoFrame] toLayer:[playerViewControllerView layer]]);
 }
 
 void VideoPresentationInterfaceAVKitLegacy::setContentDimensions(const FloatSize& contentDimensions)
