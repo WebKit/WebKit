@@ -63,6 +63,9 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     }
 
     if (auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines().tryValue()) {
+        // Ignore top level legacy line clamp for now.
+        if (m_blockContainer->style().overflowContinue() ==  OverflowContinue::WebkitLegacy)
+            return;
         // New, top level line clamp.
         layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
         return;
