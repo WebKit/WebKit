@@ -294,6 +294,28 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const Style::Compu
     // This is really just a placeholder to mark the start of the inline box <span>.
     ++m_nonSpanningInlineLevelBoxCount;
     auto logicalLeft = lastRunLogicalRight();
+
+    // The preceding text run's logical width is the sum of its per-item widths, which may exceed
+    // the width of the run when shaped as a whole. Measuring items independently loses
+    // cross-boundary kerning/shaping. Re-measure the run as a whole and use that width to
+    // position this inline box, preventing it from being pushed to the right.
+    if (!m_runs.isEmpty()) {
+        auto& lastRun = m_runs.last();
+        if (lastRun.isText() && lastRun.textContent().length && !lastRun.hasTrailingWhitespace()) {
+            if (CheckedPtr textBox = dynamicDowncast<InlineTextBox>(lastRun.layoutBox())) {
+                auto from = static_cast<unsigned>(lastRun.textContent().start);
+                auto to = static_cast<unsigned>(lastRun.textContent().start + lastRun.textContent().length);
+                auto wholeRunWidth = TextUtil::width(*textBox, lastRun.style().fontCascade(), from, to, lastRun.logicalLeft(), TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+                auto overMeasuredWidth = lastRun.logicalWidth() - wholeRunWidth;
+                if (overMeasuredWidth > 0) {
+                    lastRun.shrinkHorizontally(overMeasuredWidth);
+                    m_contentLogicalWidth -= overMeasuredWidth;
+                    logicalLeft = lastRunLogicalRight();
+                }
+            }
+        }
+    }
+
     // Do not let negative margin make the content shorter than it already is.
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, logicalLeft + logicalWidth);
 
