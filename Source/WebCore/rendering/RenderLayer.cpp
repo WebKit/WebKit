@@ -1345,7 +1345,12 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
             WeakPtr repaintContainer = renderer().containerForRepaint().renderer.get();
             LAYER_POSITIONS_ASSERT(repaintRects() || (isSubtreeVisibilityHiddenOrOpacityZero() || !isSelfPaintingLayer()));
             LAYER_POSITIONS_ASSERT(m_repaintContainer == repaintContainer);
-            LAYER_POSITIONS_ASSERT_IMPLIES(repaintRects(), *repaintRects() == renderer().rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes));
+#if LAYER_POSITIONS_ASSERT_ENABLED
+            // Cached repaint rects can lag an accelerated animated transform. Skip the repaint-rect verification in that case.
+            auto styleable = Styleable::fromRenderer(renderer());
+            bool runningAcceleratedTransformAnimation = styleable && styleable->isRunningAcceleratedTransformRelatedAnimation();
+            LAYER_POSITIONS_ASSERT_IMPLIES(repaintRects() && !runningAcceleratedTransformAnimation, *repaintRects() == renderer().rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes));
+#endif
             return;
         }
 
