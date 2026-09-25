@@ -1664,11 +1664,15 @@ bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
 
 // m365.cloud.microsoft rdar://157794706
 // Allow popups from m365.cloud.microsoft to onedrive.live.com
-bool Quirks::needsPopupFromMicrosoftOfficeToOneDrive(const URL& targetURL) const
+bool Quirks::needsPopupFromMicrosoftOfficeToOneDrive(const String& targetURLString) const
 {
+    constexpr auto id = QuirkBehaviorID::ShouldAllowPopupFromMicrosoftOfficeToOneDrive;
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return targetURL.host().endsWithIgnoringASCIICase("onedrive.live.com"_s);
+    if (!m_quirksData.isBehaviorEnabled(id))
+        return false;
+
+    return m_quirksData.behaviorAppliesToURL(id, protect(m_document)->encodingParseURL(targetURLString));
 }
 
 bool Quirks::needsConsistentQueryParameterFilteringQuirk(const URL& url) const
@@ -1769,8 +1773,7 @@ Vector<String, 1> Quirks::scriptsToEvaluateBeforeRunningScriptFromURL(const URL&
         if (!behavior.parameters || behavior.parameters->script.isEmpty())
             continue;
 
-        auto& scriptURLCondition = behavior.parameters->scriptURLCondition;
-        if (scriptURLCondition && !scriptURLCondition->matches(scriptURLContext))
+        if (!behavior.secondaryURLConditionMatches(scriptURLContext))
             continue;
 
         scripts.append(behavior.parameters->script);
@@ -1852,18 +1855,13 @@ bool Quirks::shouldSynthesizeTouchEventsAfterNonSyntheticClick(const Element& ta
 
 bool Quirks::needsChromeOSNavigatorUserAgentQuirk(const Document& document) const
 {
+    constexpr auto id = QuirkBehaviorID::NeedsChromeOSNavigatorUserAgentQuirk;
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsChromeOSNavigatorUserAgentQuirk))
+    if (!m_quirksData.isBehaviorEnabled(id))
         return false;
 
-    if (document.url().lastPathComponent() != "wordeditorframe.aspx"_s)
-        return false;
-
-    if (document.currentSourceURL().lastPathComponent() != "wordeditords.js"_s)
-        return false;
-
-    return true;
+    return m_quirksData.behaviorAppliesToURL(id, document.currentSourceURL());
 }
 
 // instagram.com: rdar://174936655
@@ -2120,16 +2118,11 @@ void Quirks::clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, in
     if (!needsQuirks()) [[unlikely]]
         return;
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsLogoutCookieCleanupQuirk))
+    constexpr auto id = QuirkBehaviorID::NeedsLogoutCookieCleanupQuirk;
+    if (!m_quirksData.isBehaviorEnabled(id))
         return;
 
     if (httpStatusCode < 200 || httpStatusCode >= 300)
-        return;
-
-    if (!equalLettersIgnoringASCIICase(fetchURL.host(), "claude.ai"_s))
-        return;
-
-    if (fetchURL.path() != "/api/auth/logout"_s)
         return;
 
     RefPtr document = m_document.get();
@@ -2141,9 +2134,14 @@ void Quirks::clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, in
         return;
 
     auto& documentURL = document->url();
-    static constexpr std::array cookiesToDelete = { "__ssid"_s, "__cf_bm"_s, "anthropic-device-id"_s, "lastActiveOrg"_s, "activitySessionId"_s };
-    for (auto& cookieName : cookiesToDelete)
-        page->cookieJar().deleteCookie(*document, documentURL, cookieName, [] { });
+    URLMatchContext fetchURLContext { fetchURL };
+    for (const auto& behavior : m_quirksData.behaviors()) {
+        if (behavior.id != id || !behavior.parameters || !behavior.secondaryURLConditionMatches(fetchURLContext))
+            continue;
+
+        for (auto cookieName : behavior.parameters->cookieNames)
+            page->cookieJar().deleteCookie(*document, documentURL, cookieName, [] { });
+    }
 }
 
 bool Quirks::needsCustomUserAgentData() const
@@ -2254,7 +2252,7 @@ bool Quirks::shouldRewriteMediaRangeRequestForURL(const URL& url) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsMediaRewriteRangeRequestQuirk) && RegistrableDomain(url).string() == "bing.com"_s;
+    return m_quirksData.behaviorAppliesToURL(QuirkBehaviorID::NeedsMediaRewriteRangeRequestQuirk, url);
 }
 
 // rdar://106770785

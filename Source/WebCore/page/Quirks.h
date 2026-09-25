@@ -264,8 +264,7 @@ public:
     bool NODELETE shouldDisableElementFullscreenQuirk() const;
     bool NODELETE shouldIgnorePlaysInlineRequirementQuirk() const;
 
-    bool shouldAllowPopupFromMicrosoftOfficeToOneDrive() const { return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAllowPopupFromMicrosoftOfficeToOneDrive); }
-    bool needsPopupFromMicrosoftOfficeToOneDrive(const URL& targetURL) const;
+    bool needsPopupFromMicrosoftOfficeToOneDrive(const String& targetURLString) const;
 
     WEBCORE_EXPORT bool needsConsistentQueryParameterFilteringQuirk(const URL&) const;
     bool mayBenefitFromFingerprintingProtectionQuirk(const URL&) const;

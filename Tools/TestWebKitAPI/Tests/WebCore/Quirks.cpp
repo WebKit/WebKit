@@ -160,7 +160,7 @@ static Vector<String> scriptsForScriptURL(const WebCore::QuirksData& quirks, ASC
         if (!behavior.parameters)
             continue;
 
-        if (behavior.parameters->script.length() && (!behavior.parameters->scriptURLCondition || behavior.parameters->scriptURLCondition->matches(scriptURLContext)))
+        if (behavior.parameters->script.length() && behavior.secondaryURLConditionMatches(scriptURLContext))
             scripts.append(behavior.parameters->script);
     }
 
@@ -213,12 +213,13 @@ TEST_F(QuirksTest, ParametersAreOnlyReturnedForTheBehaviorThatSuppliedThem)
 
 TEST_F(QuirksTest, OneQuirkCanCarryDifferentParametersForDifferentScriptURLs)
 {
+    using namespace WebCore::QuirkBehaviorConditions;
     static constexpr auto firstScriptURL = WebCore::URLMatch::host("first.example.com"_s);
     static constexpr auto secondScriptURL = WebCore::URLMatch::host("second.example.com"_s);
 
     static constexpr auto behaviors = WTF::toArray({
-        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("firstScript"_s, firstScriptURL)),
-        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("secondScript"_s, secondScriptURL)),
+        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("firstScript"_s)).when(secondaryURLMatches(firstScriptURL)),
+        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("secondScript"_s)).when(secondaryURLMatches(secondScriptURL)),
     });
 
     WebCore::QuirksData quirks;
@@ -229,15 +230,24 @@ TEST_F(QuirksTest, OneQuirkCanCarryDifferentParametersForDifferentScriptURLs)
     EXPECT_EQ(scriptsForScriptURL(quirks, "https://second.example.com/b.js"_s), Vector<String> { "secondScript"_str });
 
     EXPECT_TRUE(scriptsForScriptURL(quirks, "https://third.example.com/c.js"_s).isEmpty());
+
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk;
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://first.example.com/a.js"_s }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://second.example.com/b.js"_s }));
+    EXPECT_FALSE(quirks.behaviorAppliesToURL(id, URL { "https://third.example.com/c.js"_s }));
+
+    quirks.addBehavior(WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("unscopedScript"_s)));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://third.example.com/c.js"_s }));
 }
 
 TEST_F(QuirksTest, EveryMatchingRowContributesWhenSeveralSupplyTheSameBehavior)
 {
+    using namespace WebCore::QuirkBehaviorConditions;
     static constexpr auto anyScriptURL = WebCore::URLMatch::anyURL();
 
     static constexpr auto behaviors = WTF::toArray({
-        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("firstScript"_s, anyScriptURL)),
-        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("secondScript"_s, anyScriptURL)),
+        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("firstScript"_s)).when(secondaryURLMatches(anyScriptURL)),
+        WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("secondScript"_s)).when(secondaryURLMatches(anyScriptURL)),
     });
 
     WebCore::QuirksData quirks;
@@ -267,20 +277,96 @@ TEST_F(QuirksTest, AnElementSelectorConditionIsRecordedOnTheBehavior)
     EXPECT_FALSE(behavior.parameters.has_value());
 }
 
-TEST_F(QuirksTest, AScriptURLConditionTravelsWithTheParametersItScopes)
+TEST_F(QuirksTest, ASecondaryURLConditionIsRecordedOnTheBehavior)
 {
+    using namespace WebCore::QuirkBehaviorConditions;
     static constexpr auto scriptURL = WebCore::URLMatch::host("cdn.example.com"_s);
-    static constexpr auto behavior = WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("script"_s, scriptURL));
+    static constexpr auto behavior = WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("script"_s)).when(secondaryURLMatches(scriptURL));
 
     ASSERT_TRUE(behavior.parameters.has_value());
-    ASSERT_TRUE(behavior.parameters->scriptURLCondition.has_value());
-    EXPECT_TRUE(behavior.parameters->scriptURLCondition->matches(WebCore::URLMatchContext { URL { "https://cdn.example.com/a.js"_s } }));
-    EXPECT_FALSE(behavior.parameters->scriptURLCondition->matches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
+    ASSERT_TRUE(behavior.secondaryURLCondition.has_value());
+    EXPECT_TRUE(behavior.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://cdn.example.com/a.js"_s } }));
+    EXPECT_FALSE(behavior.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
 
     static constexpr auto unscoped = WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("script"_s));
-    ASSERT_TRUE(unscoped.parameters.has_value());
-    EXPECT_FALSE(unscoped.parameters->scriptURLCondition.has_value());
+    EXPECT_FALSE(unscoped.secondaryURLCondition.has_value());
+    EXPECT_TRUE(unscoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
 }
+
+TEST_F(QuirksTest, BehaviorAppliesToURLRequiresTheBehaviorToBeEnabled)
+{
+    WebCore::QuirksData quirks;
+    quirks.addBehavior(WebCore::QuirkBehaviors::needsAirIndiaExpressLayeringQuirk);
+
+    EXPECT_FALSE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, URL { "https://www.example.com/a.js"_s }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk, URL { "https://www.example.com/a.js"_s }));
+}
+
+TEST_F(QuirksTest, MediaRangeRewriteAppliesOnlyToBingRequestURLs)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsMediaRewriteRangeRequestQuirk;
+
+    auto bing = resolveQuirksForTopURL("https://www.bing.com/videos"_s);
+    EXPECT_TRUE(bing.behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_s }));
+    EXPECT_FALSE(bing.behaviorAppliesToURL(id, URL { "https://cdn.example.com/video.mp4"_s }));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_s }));
+}
+
+TEST_F(QuirksTest, LogoutCookieCleanupAppliesOnlyToTheLogoutEndpoint)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsLogoutCookieCleanupQuirk;
+
+    auto claude = resolveQuirksForTopURL("https://claude.ai/chat"_s);
+    EXPECT_TRUE(claude.behaviorAppliesToURL(id, URL { "https://claude.ai/api/auth/logout"_s }));
+    for (auto urlString : { "https://claude.ai/api/auth/logout/"_s, "https://claude.ai/api/auth/login"_s, "https://api.claude.ai/api/auth/logout"_s, "https://claude.com/api/auth/logout"_s })
+        EXPECT_FALSE(claude.behaviorAppliesToURL(id, URL { urlString }));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://claude.ai/api/auth/logout"_s }));
+}
+
+TEST_F(QuirksTest, LogoutCookieCleanupCarriesTheCookiesToDelete)
+{
+    auto behaviors = resolveQuirksForTopURL("https://claude.ai/"_s).behaviorsMatching(WebCore::QuirkBehaviorID::NeedsLogoutCookieCleanupQuirk);
+    ASSERT_EQ(behaviors.size(), 1u);
+    ASSERT_TRUE(behaviors[0].parameters.has_value());
+
+    auto cookieNames = WTF::map(behaviors[0].parameters->cookieNames, [](auto name) {
+        return String { name };
+    });
+    Vector<String> expected { "__ssid"_str, "__cf_bm"_str, "anthropic-device-id"_str, "lastActiveOrg"_str, "activitySessionId"_str };
+    EXPECT_EQ(cookieNames, expected);
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST_F(QuirksTest, OneDrivePopupBypassRequiresAOneDriveTarget)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::ShouldAllowPopupFromMicrosoftOfficeToOneDrive;
+
+    auto m365 = resolveQuirksForTopURL("https://m365.cloud.microsoft/"_s);
+    EXPECT_TRUE(m365.behaviorAppliesToURL(id, URL { "https://onedrive.live.com/edit"_s }));
+    EXPECT_TRUE(m365.behaviorAppliesToURL(id, URL { "https://foo.onedrive.live.com/"_s }));
+    EXPECT_FALSE(m365.behaviorAppliesToURL(id, URL { "https://xonedrive.live.com/"_s }));
+    EXPECT_FALSE(m365.behaviorAppliesToURL(id, URL { "https://live.com/"_s }));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://onedrive.live.com/edit"_s }));
+}
+
+TEST_F(QuirksTest, ChromeOSUserAgentAppliesOnlyToTheWordEditorScriptInItsFrame)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsChromeOSNavigatorUserAgentQuirk;
+    constexpr auto editorFrameURL = "https://word-edit.officeapps.live.com/we/wordeditorframe.aspx"_s;
+
+    auto editorFrame = resolveQuirksForEmbeddedDocument("https://onedrive.live.com/"_s, editorFrameURL);
+    EXPECT_TRUE(editorFrame.behaviorAppliesToURL(id, URL { "https://cdn.example.com/we/wordeditords.js"_s }));
+    EXPECT_FALSE(editorFrame.behaviorAppliesToURL(id, URL { "https://cdn.example.com/we/other.js"_s }));
+
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://onedrive.live.com/"_s, "https://word-edit.officeapps.live.com/we/other.aspx"_s).isBehaviorEnabled(id));
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, editorFrameURL).isBehaviorEnabled(id));
+    EXPECT_FALSE(resolveQuirksForTopURL(editorFrameURL).isBehaviorEnabled(id));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://onedrive.live.com/"_s).isBehaviorEnabled(id));
+}
+#endif
 
 TEST_F(QuirksTest, AddingAndRemovingBehaviorsKeepsTheEnabledFlagInSync)
 {

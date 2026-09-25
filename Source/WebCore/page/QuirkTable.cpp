@@ -49,6 +49,7 @@ static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-noco
 static constexpr std::array claudeDomains { "claude.ai"_s, "claude.com"_s };
 static constexpr std::array kinjaLoginDomains { "jalopnik.com"_s, "kotaku.com"_s, "theroot.com"_s, "theinventory.com"_s };
 static constexpr std::array playStationSignInHosts { "www.playstation.com"_s, "my.playstation.com"_s };
+static constexpr std::array claudeLogoutSurvivingCookieNames { "__ssid"_s, "__cf_bm"_s, "anthropic-device-id"_s, "lastActiveOrg"_s, "activitySessionId"_s };
 
 static constexpr auto chromeUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"_s;
 
@@ -126,6 +127,8 @@ static constexpr auto anyclipPlayerScriptURL = URLMatch::host("player.anyclip.co
 static constexpr auto ceacBrowserCloseScriptURL = URLMatch::anyURL().when(lastPathComponentIs("CheckBrowserClose.js"_s));
 static constexpr auto googleSignInClientScriptURL = URLMatch::host("accounts.google.com"_s).when(pathIs("/gsi/client"_s));
 static constexpr auto webExPushDownloadScriptURL = URLMatch::anyURL().when(lastPathComponentStartsWith("pushdownload."_s));
+static constexpr auto wordEditorScriptURL = URLMatch::anyURL().when(lastPathComponentIs("wordeditords.js"_s));
+static constexpr auto claudeLogoutURL = URLMatch::host("claude.ai"_s).when(pathIs("/api/auth/logout"_s));
 
 static constexpr Quirk fullTable[] = {
     // 365scores.com rdar://116491386
@@ -206,7 +209,7 @@ static constexpr Quirk fullTable[] = {
             // bing.com rdar://133223599
             maybeBypassBackForwardCache,
             // bing.com rdar://126573838
-            needsMediaRewriteRangeRequestQuirk,
+            needsMediaRewriteRangeRequestQuirk.when(secondaryURLMatches(URLMatch::domain("bing.com"_s))),
         },
         .site = QuirkSite::Bing },
 
@@ -233,7 +236,7 @@ static constexpr Quirk fullTable[] = {
             // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
             needsFormControlToBeMouseFocusableQuirk,
             // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=311383
-            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(ceacBeforeUnloadFixScript, ceacBrowserCloseScriptURL)),
+            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(ceacBeforeUnloadFixScript)).when(secondaryURLMatches(ceacBrowserCloseScriptURL)),
         } },
 
     // secure.chase.com rdar://126715227
@@ -250,8 +253,7 @@ static constexpr Quirk fullTable[] = {
             needsClaudeSidebarViewportUnitQuirk.when(elementMatchesSelector(onClaudeSidebar)),
             // rdar://174779259 - logout flow leaves identification cookies
             // causing redirect loop on next /chat boot.
-            // See Quirks::clearLogoutSurvivingIdentityCookiesIfNeeded().
-            needsLogoutCookieCleanupQuirk,
+            needsLogoutCookieCleanupQuirk(QuirkParameters::fromCookieNames(claudeLogoutSurvivingCookieNames)).when(secondaryURLMatches(claudeLogoutURL)),
         } },
 
     { .match = URLMatch::domain(claudeDomains),
@@ -288,7 +290,7 @@ static constexpr Quirk fullTable[] = {
 
     // player.anyclip.com rdar://138789765
     { .match = URLMatch::domain("dictionary.com"_s),
-        .behaviors = { needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(chromeUserAgentScript, anyclipPlayerScriptURL)) },
+        .behaviors = { needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(chromeUserAgentScript)).when(secondaryURLMatches(anyclipPlayerScriptURL)) },
         .isAvailable = iOSFamily },
 
     // digitaltrends.com rdar://121014613
@@ -518,13 +520,13 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("linkedin.com"_s),
         .behaviors = { shouldAllowNativeTapsOnMediaElementsQuirk.when(elementMatchesSelector(onVideoJSTech)) } },
 
+    // live.com: rdar://167489768
+    { .match = QuirkURLMatch::embeddedDocumentInTopMatch(URLMatch::domain("live.com"_s), URLMatch::anyURL().when(lastPathComponentIs("wordeditorframe.aspx"_s))),
+        .behaviors = { needsChromeOSNavigatorUserAgentQuirk.when(secondaryURLMatches(wordEditorScriptURL)) } },
+
+    // live.com rdar://52116170
     { .match = URLMatch::domain("live.com"_s),
-        .behaviors = {
-            // live.com: rdar://167489768
-            needsChromeOSNavigatorUserAgentQuirk,
-            // live.com rdar://52116170
-            shouldAvoidResizingWhenInputViewBoundsChangeQuirk,
-        } },
+        .behaviors = { shouldAvoidResizingWhenInputViewBoundsChangeQuirk } },
 
     { .match = URLMatch::host("outlook.live.com"_s),
         .behaviors = {
@@ -577,7 +579,7 @@ static constexpr Quirk fullTable[] = {
 
     // m365.cloud.microsoft rdar://157794706
     { .match = URLMatch::hostOrSubdomainOf("m365.cloud.microsoft"_s),
-        .behaviors = { shouldAllowPopupFromMicrosoftOfficeToOneDrive } },
+        .behaviors = { shouldAllowPopupFromMicrosoftOfficeToOneDrive.when(secondaryURLMatches(URLMatch::hostOrSubdomainOf("onedrive.live.com"_s))) } },
 
     // safe.menlosecurity.com rdar://135114489
     { .match = URLMatch::host("safe.menlosecurity.com"_s),
@@ -767,7 +769,7 @@ static constexpr Quirk fullTable[] = {
 
     // player.anyclip.com rdar://138789765
     { .match = URLMatch::domain("thesaurus.com"_s),
-        .behaviors = { needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(chromeUserAgentScript, anyclipPlayerScriptURL)) },
+        .behaviors = { needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(chromeUserAgentScript)).when(secondaryURLMatches(anyclipPlayerScriptURL)) },
         .isAvailable = iOSFamily },
 
     { .match = URLMatch::domain("tiktok.com"_s),
@@ -840,7 +842,7 @@ static constexpr Quirk fullTable[] = {
 
     { .match = URLMatch::domain("webex.com"_s),
         .behaviors = {
-            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(webExUndefinedTouchScript, webExPushDownloadScriptURL)),
+            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(webExUndefinedTouchScript)).when(secondaryURLMatches(webExPushDownloadScriptURL)),
             // webex.com rdar://143715630
             needsWebExScrollabilityQuirk,
         },
@@ -885,7 +887,7 @@ static constexpr Quirk fullTable[] = {
             // x.com: rdar://73369869
             requiresUserGestureToPauseInPictureInPictureQuirk,
             // x.com: https://bugs.webkit.org/show_bug.cgi?id=323931 rdar://183399060
-            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(xGoogleSignInButtonFixScript, googleSignInClientScriptURL)),
+            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(xGoogleSignInButtonFixScript)).when(secondaryURLMatches(googleSignInClientScriptURL)),
         } },
 
     { .match = URLMatch::domain("x.com"_s),
@@ -1015,9 +1017,21 @@ consteval bool everyQuirkCarriesWhatItDeclares()
 
                 if (parametersNeeded.contains(QuirkParametersNeeded::NeedsChromeCompatibilityVersion) && behavior.parameters->chromeCompatibilityVersion.isEmpty())
                     return false;
+
+                if (parametersNeeded.contains(QuirkParametersNeeded::NeedsCookieNames) && behavior.parameters->cookieNames.empty())
+                    return false;
             }
 
             if (behavior.elementSelectorCondition && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::ElementSelector))
+                return false;
+
+            if (behavior.secondaryURLCondition && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::SecondaryURL))
+                return false;
+
+            if (behavior.quirkConditionsNeeded.contains(QuirkConditionsSupported::SecondaryURL) && !behavior.secondaryURLCondition)
+                return false;
+
+            if (behavior.quirkConditionsSupported.containsAll({ QuirkConditionsSupported::ElementSelector, QuirkConditionsSupported::SecondaryURL }))
                 return false;
         }
     }
@@ -1025,7 +1039,7 @@ consteval bool everyQuirkCarriesWhatItDeclares()
     return true;
 }
 
-static_assert(everyQuirkCarriesWhatItDeclares(), "A quirk in fullTable does not supply the parameters it declares, supplies parameters it does not declare, or applies a condition the behavior does not support");
+static_assert(everyQuirkCarriesWhatItDeclares(), "A quirk in fullTable does not supply the parameters it declares, supplies parameters it does not declare, applies a condition the behavior does not support, or omits a condition the behavior needs");
 
 consteval bool shouldEmit(const Quirk& quirk)
 {

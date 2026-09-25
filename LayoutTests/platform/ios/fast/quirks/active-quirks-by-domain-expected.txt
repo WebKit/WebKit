@@ -197,19 +197,15 @@ https://www.linkedin.com/
     (none)
 https://outlook.live.com/
     MayNeedToIgnoreContentObservation
-    NeedsChromeOSNavigatorUserAgentQuirk
     NeedsMozillaFileTypeForDataTransferQuirk
     NeedsUserAgentStringOverrideQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://live.com/
-    NeedsChromeOSNavigatorUserAgentQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://onedrive.live.com/
-    NeedsChromeOSNavigatorUserAgentQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldDisableDataURLPaddingValidation
 https://officeapps.live.com/
-    NeedsChromeOSNavigatorUserAgentQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldDisableDataURLPaddingValidation
 https://madisoncity.k12.al.us/

@@ -62,6 +62,17 @@ public:
             | WTF::rangeTo<decltype(m_behaviors)>();
     }
 
+    inline bool behaviorAppliesToURL(QuirkBehaviorID id, const URL& url) const
+    {
+        if (!isBehaviorEnabled(id))
+            return false;
+
+        URLMatchContext context { url };
+        return std::ranges::any_of(m_behaviors, [&](const auto& behavior) {
+            return behavior.id == id && behavior.secondaryURLConditionMatches(context);
+        });
+    }
+
     inline void addSite(QuirkSite site)
     {
         m_sites.set(static_cast<size_t>(site));

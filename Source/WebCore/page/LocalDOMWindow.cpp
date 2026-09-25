@@ -2983,11 +2983,8 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
 #if PLATFORM(IOS_FAMILY)
 static bool shouldBypassPopupBlockerForQuirk(const Document* document, const String& urlString)
 {
-    if (RefPtr firstFrameDocument = document) {
-        if (firstFrameDocument->quirks().shouldAllowPopupFromMicrosoftOfficeToOneDrive())
-            return firstFrameDocument->quirks().needsPopupFromMicrosoftOfficeToOneDrive(firstFrameDocument->encodingParseURL(urlString));
-    }
-    return false;
+    RefPtr firstFrameDocument = document;
+    return firstFrameDocument && firstFrameDocument->quirks().needsPopupFromMicrosoftOfficeToOneDrive(urlString);
 }
 #endif
 
