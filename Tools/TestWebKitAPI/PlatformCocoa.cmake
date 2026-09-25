@@ -885,6 +885,8 @@ target_link_libraries(TestWebKitAPIWebProcessPlugIn PRIVATE
     "-framework Foundation"
 )
 
+_WEBKIT_ADD_DSYM(TestWebKitAPIWebProcessPlugIn)
+
 # TestWebKit loads this bundle via NSBundle lookup at runtime, so it must be
 # built and staged next to the TestWebKitAPI executable.
 add_dependencies(TestWebKit TestWebKitAPIWebProcessPlugIn)

@@ -26,6 +26,7 @@ if (ENABLE_WEBKIT_TEST_RUNNER AND ENABLE_WEBKIT)
     # https://bugs.webkit.org/show_bug.cgi?id=312070
     file(CONFIGURE OUTPUT "${CMAKE_BINARY_DIR}/LayoutTestHelper-stub/config.h" CONTENT
         "// Stub: https://bugs.webkit.org/show_bug.cgi?id=312070\n#include <wtf/Platform.h>\n")
+    # FIXME: Use the WEBKIT_EXECUTABLE macro pair.
     add_executable(LayoutTestHelper DumpRenderTree/mac/LayoutTestHelper.m)
     target_include_directories(LayoutTestHelper BEFORE PRIVATE
         "${CMAKE_BINARY_DIR}/LayoutTestHelper-stub"
@@ -42,6 +43,7 @@ if (ENABLE_WEBKIT_TEST_RUNNER AND ENABLE_WEBKIT)
         "-framework IOKit"
         "-framework ApplicationServices"
     )
+    _WEBKIT_ADD_DSYM(LayoutTestHelper)
 endif ()
 
 # Exercises the lldb summary providers and dump_class_layout (Tools/Scripts/test-lldb-webkit).

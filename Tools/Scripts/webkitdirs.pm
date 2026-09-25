@@ -3097,6 +3097,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, "-DENABLE_SANITIZERS=thread" if tsanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=undefined" if ubsanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=fuzzer" if libFuzzerIsEnabled();
+    push @args, "-DGENERATE_DSYM=ON" if generateDsym();
 
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 

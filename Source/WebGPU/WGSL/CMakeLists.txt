@@ -180,10 +180,11 @@ add_dependencies(WGSLCore wgsl-types)
 set(wgslc_SOURCES wgslc.cpp)
 set(wgslc_LIBRARIES WGSLCore)
 WEBKIT_EXECUTABLE_DECLARE(wgslc)
-WEBKIT_EXECUTABLE(wgslc)
+# Before WEBKIT_EXECUTABLE(), which reads the bundle properties.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     set_target_properties(wgslc PROPERTIES MACOSX_BUNDLE FALSE)
 endif ()
+WEBKIT_EXECUTABLE(wgslc)
 WEBKIT_REUSE_PREFIX_HEADER(wgslc WGSLCore WGSLPrefix.h PREFIX_LANGUAGES CXX)
 
 install(TARGETS wgslc EXCLUDE_FROM_ALL

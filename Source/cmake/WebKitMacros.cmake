@@ -692,6 +692,48 @@ macro(_WEBKIT_LIBRARY_LINK_FRAMEWORK _target)
     endif ()
 endmacro()
 
+# Produce a .dSYM bundle and strips debugging symbols for a Mach-O target after
+# linking. Needs to be called before code signing.
+function(_WEBKIT_ADD_DSYM _target)
+    if (NOT GENERATE_DSYM OR NOT APPLE)
+        return()
+    endif ()
+    get_target_property(_skip_dsym ${_target} SKIP_DSYM)
+    if (_skip_dsym)
+        return()
+    endif ()
+    # Skip targets that will be linked into other targets (i.e. static and
+    # object libraries).
+    get_target_property(_target_type ${_target} TYPE)
+    if (NOT _target_type MATCHES "^(EXECUTABLE|SHARED_LIBRARY|MODULE_LIBRARY)$")
+        return()
+    endif ()
+
+    # Produce the dSYM in the build directory, next to whichever binary it's
+    # based on.
+    get_target_property(_is_framework ${_target} FRAMEWORK)
+    get_target_property(_is_loadable_bundle ${_target} BUNDLE)
+    if (_target_type STREQUAL "EXECUTABLE")
+        get_target_property(_is_app_bundle ${_target} MACOSX_BUNDLE)
+    endif ()
+    if (_is_framework OR _is_app_bundle OR _is_loadable_bundle)
+        set(_dsym "${CMAKE_BINARY_DIR}/$<TARGET_BUNDLE_DIR_NAME:${_target}>.dSYM")
+    else ()
+        set(_dsym "${CMAKE_BINARY_DIR}/$<TARGET_FILE_NAME:${_target}>.dSYM")
+    endif ()
+
+    add_custom_command(
+        TARGET ${_target} POST_BUILD
+        # Ninja doesn't track the dSYM bundle, and it can accumulate stale
+        # metadata, so always remove it before rebuilding.
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${_dsym}
+        COMMAND ${DSYMUTIL_EXECUTABLE} --out ${_dsym} $<TARGET_FILE:${_target}>
+        # Remove debugging symbol table from the main binary.
+        COMMAND ${CMAKE_STRIP} -S $<TARGET_FILE:${_target}>
+        VERBATIM
+        COMMENT "Generating dSYM for ${_target}")
+endfunction()
+
 function(_WEBKIT_ADD_CODE_SIGN _target)
     get_target_property(_skip_codesign ${_target} SKIP_CODESIGN)
     if (_skip_codesign)
@@ -720,6 +762,7 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         set(_extra_flags "")
     endif ()
     get_target_property(_entitlements_path ${_target} CODE_SIGN_ENTITLEMENTS)
+    set(_entitlements "")
     if (_entitlements_path)
         set(_entitlements --entitlements ${_entitlements_path})
         list(APPEND _arg_DEPENDS ${_entitlements_path})
@@ -848,6 +891,7 @@ macro(WEBKIT_FRAMEWORK _target)
         target_compile_options(${_target} BEFORE PUBLIC -F${CMAKE_BINARY_DIR})
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
         _WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE(${_target})
+        _WEBKIT_ADD_DSYM(${_target})
         _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()
 
@@ -870,6 +914,7 @@ macro(WEBKIT_LIBRARY _target)
     endif ()
 
     if (APPLE AND ${${_target}_LIBRARY_TYPE} MATCHES SHARED)
+        _WEBKIT_ADD_DSYM(${_target})
         _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()
 
@@ -886,6 +931,7 @@ macro(WEBKIT_EXECUTABLE _target)
     endif ()
 
     if (APPLE)
+        _WEBKIT_ADD_DSYM(${_target})
         _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()
 endmacro()

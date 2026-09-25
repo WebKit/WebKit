@@ -328,6 +328,27 @@ if (RELATIVE_DEBUG_INFO)
     )
 endif ()
 
+option(GENERATE_DSYM "Extract debug info from linked binaries into corresponding .dSYM bundles." OFF)
+
+if (GENERATE_DSYM)
+    WEBKIT_RESOLVE_TOOL(DSYMUTIL_EXECUTABLE "dsymutil")
+    WEBKIT_RESOLVE_TOOL(CMAKE_STRIP "strip")
+
+    # Sanity check that the build will produce debug info.
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" _dsym_config)
+    if (NOT "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_dsym_config}}" MATCHES "(^| )-g($| )")
+        message(WARNING "GENERATE_DSYM is enabled but ${CMAKE_BUILD_TYPE} emits no debug info.")
+    endif ()
+
+    # dsymutil follows the N_OSO stabs back to the object files. Under LTO the
+    # linker synthesizes those objects in a temporary directory and deletes them
+    # when it exits, so they have to be kept somewhere durable.
+    if (LTO_MODE)
+        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/LTO")
+        add_link_options("LINKER-Wl,:-object_path_lto,${CMAKE_BINARY_DIR}/LTO")
+    endif ()
+endif ()
+
 if (ENABLE_SANITIZERS)
     add_compile_definitions(RELEASE_WITHOUT_OPTIMIZATIONS)
 

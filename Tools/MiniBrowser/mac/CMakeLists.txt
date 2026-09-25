@@ -64,6 +64,7 @@ add_custom_target(MiniBrowserNibs ALL DEPENDS
 )
 
 include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
+# FIXME: Use the standard WEBKIT_EXECUTABLE macro.
 add_executable(MiniBrowser MACOSX_BUNDLE ${MiniBrowser_SOURCES})
 target_compile_options(MiniBrowser PRIVATE -fobjc-arc)
 # FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
@@ -81,6 +82,7 @@ endforeach ()
 
 set_property(TARGET MiniBrowser PROPERTY CODE_SIGN_ENTITLEMENTS
     ${MINIBROWSER_DIR}/../MiniBrowser.entitlements)
+_WEBKIT_ADD_DSYM(MiniBrowser)
 _WEBKIT_ADD_CODE_SIGN(MiniBrowser)
 
 # SIP strips DYLD_* for XPC children, so they load system WebKit -> version mismatch crash.
