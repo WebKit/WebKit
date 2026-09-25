@@ -31,6 +31,7 @@
 
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/CorpseAddress.h>
+#include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -38,6 +39,8 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/VM.h>
+#include <errno.h>
+#include <signal.h>
 #include <stdint.h>
 #include <wtf/text/MakeString.h>
 
@@ -79,6 +82,12 @@ void analyze(Snapshot& snapshot, Address fixtureAddress)
     TEST_ASSERT_EQ(fixture->sum, 40 + 2, "the target's VM computed the sum");
 }
 
+void analyzeExited(Snapshot& snapshot, Address fixtureAddress)
+{
+    TEST_ASSERT(kill(snapshot.process()->pid(), 0) && errno == ESRCH, "the target has exited");
+    analyze(snapshot, fixtureAddress);
+}
+
 } // anonymous namespace
 
 void testVM()
@@ -88,6 +97,7 @@ void testVM()
         return;
 
     analyzeInAndOutOfProcess(createFixture, analyze);
+    analyzeAfterTargetExits(createFixture, analyzeExited);
 }
 
 } // namespace JSCToolsTest

@@ -32,6 +32,7 @@
 
 #include "LibJSCToolsTestUtilities.h"
 
+#include <bmalloc/bmalloc.h>
 #include <stdlib.h>
 #include <string.h>
 #include <string_view>
@@ -72,6 +73,7 @@ bool parseUint64(std::string_view text, uint64_t& out)
 void runCorpseSuite()
 {
     JSCToolsTest::testByteParser();
+    JSCToolsTest::testDiagnostics();
     JSCToolsTest::testExportsTrie();
     JSCToolsTest::testAddress();
     JSCToolsTest::testProcess();
@@ -126,6 +128,8 @@ int main(int argc, char** argv)
         }
         JSCToolsTest::suiteFilter = arguments[index];
     }
+
+    bmalloc::api::disableScavenger();
 
     dataLogLn("Starting libJavaScriptCoreTools tests");
 

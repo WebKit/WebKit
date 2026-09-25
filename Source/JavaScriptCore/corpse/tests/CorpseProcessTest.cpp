@@ -29,7 +29,9 @@
 
 #include "LibJSCToolsTestUtilities.h"
 
+#include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseProcess.h>
+#include <JavaScriptCore/CorpseSnapshot.h>
 #include <errno.h>
 #include <signal.h>
 #include <spawn.h>
@@ -41,7 +43,21 @@
 
 namespace JSCToolsTest {
 
+using JSC::Corpse::Address;
 using JSC::Corpse::Process;
+using JSC::Corpse::Snapshot;
+
+static uint64_t targetGlobal;
+
+static Address createTargetGlobal()
+{
+    return Address { &targetGlobal };
+}
+
+[[noreturn]] static Address exitBeforeReporting()
+{
+    _exit(0);
+}
 
 // A pid that is certainly not in use: a child that has been reaped. Returns 0 if no
 // child could be made, reporting why, since the caller only sees the missing pid.
@@ -169,7 +185,7 @@ void testProcess()
         if (!gone)
             TEST_ASSERT(gone, "a child could be forked and reaped");
         else {
-            dataLogLn("    (the next line is the failure this test asks for)");
+            ExpectedErrors expectedErrors;
 #if OS(DARWIN)
             unsigned namesBefore = machPortNameCount();
 #endif
@@ -212,6 +228,17 @@ void testProcess()
         }
     }
 #endif // OS(DARWIN) && CPU(ARM64)
+    {
+        bool analyzed = analyzeInSeparateProcess(exitBeforeReporting, [](Snapshot&, Address) {
+            TEST_ASSERT(false, "a target that exits before it reports is not analyzed");
+        });
+        TEST_ASSERT(!analyzed, "a target that exits before it reports is not snapshotted");
+    }
+    analyzeInSeparateProcessStartedByRelativePath(createTargetGlobal, [](Snapshot& snapshot, Address) {
+        UTF8CString path = snapshot.process()->executablePath();
+        TEST_ASSERT(!path.isNull() && path == Process::create(getpid())->executablePath(),
+            "a target started by a relative path has the absolute path of its executable");
+    });
 }
 
 } // namespace JSCToolsTest
