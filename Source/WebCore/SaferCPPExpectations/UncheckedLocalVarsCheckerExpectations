@@ -57,7 +57,6 @@ rendering/RenderFragmentedFlow.cpp
 rendering/RenderFrameSet.cpp
 rendering/RenderGrid.cpp
 rendering/RenderImage.cpp
-rendering/RenderInline.cpp
 rendering/RenderIterator.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
