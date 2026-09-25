@@ -229,19 +229,16 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     m_rendererBufferTransportMode = parameters.rendererBufferTransportMode;
 #if PLATFORM(WPE)
 #if USE(WPE_RENDERER)
-    if (!parameters.isServiceWorkerProcess) {
-        if (m_rendererBufferTransportMode.isEmpty()) {
-            auto& implementationLibraryName = parameters.implementationLibraryName;
-            if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != u8'\0')
-                wpe_loader_init(implementationLibraryName.legacyCStringPointer());
-            PlatformDisplay::setSharedDisplay(PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
-        } else
-            initializePlatformDisplayIfNeeded();
+    if (!parameters.isServiceWorkerProcess && m_rendererBufferTransportMode.isEmpty()) {
+        auto& implementationLibraryName = parameters.implementationLibraryName;
+        if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != u8'\0')
+            wpe_loader_init(implementationLibraryName.legacyCStringPointer());
+        PlatformDisplay::setSharedDisplay(PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
     }
-#else
-    initializePlatformDisplayIfNeeded();
 #endif
+#if !ENABLE(WPE_PLATFORM)
     initializeVulkanIfNeeded();
+#endif
 #endif // PLATFORM(WPE)
 
     m_availableInputDevices = parameters.availableInputDevices;
