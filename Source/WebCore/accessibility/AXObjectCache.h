@@ -59,6 +59,7 @@ class TextStream;
 namespace WebCore {
 
 class AXComputedObjectAttributeCache;
+class AXFormActivityMonitor;
 class AXGeometryManager;
 class AXIsolatedTree;
 class AXLiveRegionManager;
@@ -71,6 +72,8 @@ class Document;
 class HTMLAreaElement;
 class HTMLCanvasElement;
 class HTMLDetailsElement;
+class HTMLFormControlElement;
+class HTMLFormElement;
 class HTMLMediaElement;
 class HTMLSelectElement;
 class HTMLTableElement;
@@ -196,6 +199,20 @@ struct AXTextChangeContext {
     String insertedText;
     VisibleSelection selection;
 };
+
+// Describes text that appeared after a form submission attempt that did not navigate, and that no
+// live region announced. It is a heuristic signal -- the assistive technology decides what to do with it.
+struct PossibleFormValidationErrorData {
+    Vector<String> unannouncedText;
+    // How many of the form's fields are wrong.
+    unsigned errorFieldCount { 0 };
+
+    String debugDescription() const
+    {
+        return makeString("PossibleFormValidationErrorData { unannouncedText: ["_s, makeStringByJoining(unannouncedText, ", "_s),
+            "], errorFieldCount: "_s, errorFieldCount, " }"_s);
+    }
+};
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -224,6 +241,7 @@ struct AXNotificationWithData {
     using DataVariant = Variant<std::monostate, AriaNotifyData
 #if PLATFORM(COCOA)
         , LiveRegionAnnouncementData
+        , PossibleFormValidationErrorData
 #endif
     >;
 
@@ -240,6 +258,9 @@ struct AXNotificationWithData {
 #if PLATFORM(COCOA)
     AXNotificationWithData(AXNotification notification, const LiveRegionAnnouncementData& data)
         : notification(notification), data(data) { }
+
+    AXNotificationWithData(AXNotification notification, PossibleFormValidationErrorData&& data)
+        : notification(notification), data(WTF::move(data)) { }
 #endif
 
     String debugDescription() const;
@@ -399,6 +420,8 @@ private:
 #endif
 
 public:
+    void scheduleCacheUpdate();
+
     void onPageActivityStateChange(OptionSet<ActivityState>);
     void setPageActivityState(OptionSet<ActivityState> state) { m_pageActivityState = state; }
     OptionSet<ActivityState> pageActivityState() const { return m_pageActivityState; }
@@ -458,6 +481,32 @@ public:
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
+
+    // Fields a form-error detection pass paired with a message the author never associated (i.e. via
+    // aria-errormessage).
+    Vector<Ref<Element>> formFieldsForErrorPairing(HTMLFormElement&);
+    struct DetectedFormErrorPairing {
+        Ref<Element> field;
+        Ref<Element> message;
+    };
+    void addDetectedFormErrors(Vector<DetectedFormErrorPairing>&&);
+    void clearDetectedErrorsForField(Element&);
+    void clearDetectedErrorsForForm(HTMLFormElement&);
+    void updateDetectedFormErrors();
+    bool fieldHasDetectedError(const Element&) const;
+
+    // Controls a form owns that are worth presenting as its fields.
+    AXCoreObject::AccessibilityChildrenVector formFieldObjects(HTMLFormElement&);
+    // The form this element belongs to (if there is one).
+    AccessibilityObject* formOwnerObject(Element*);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#endif
+#if PLATFORM(COCOA)
+    void onFormSubmissionAttemptWithoutNavigation(HTMLFormElement&, HTMLFormControlElement* submitter);
+    void onFormSubmissionWillNavigate(HTMLFormElement&);
+#endif
+
     void onTextCompositionChange(Node&, CompositionState, bool, const String&, size_t, bool);
     void onWidgetVisibilityChanged(RenderWidget&);
     void onPostRenderingUpdate();
@@ -693,6 +742,11 @@ public:
     void postARIANotifyNotification(Node&, const String&, const AriaNotifyOptions&);
 #if PLATFORM(COCOA)
     void postLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
+    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount);
+    // Records text an announcement carried, so the form-activity monitor does not report it as unannounced.
+    void noteAnnouncedText(const String&);
+#else
+    void noteAnnouncedText(const String&) { }
 #endif
     // Requests clients to announce to the user the given message in the way they deem appropriate.
     WEBCORE_EXPORT void announce(const String&);
@@ -888,6 +942,7 @@ protected:
     WEBCORE_EXPORT void postPlatformAnnouncementNotification(const String&);
     WEBCORE_EXPORT void postPlatformARIANotifyNotification(AccessibilityObject&, const AriaNotifyData&);
     WEBCORE_EXPORT void postPlatformLiveRegionNotification(AccessibilityObject&, const LiveRegionAnnouncementData&);
+    WEBCORE_EXPORT void postPlatformPossibleFormValidationErrorNotification(AccessibilityObject&, const PossibleFormValidationErrorData&);
 #else
     void postPlatformAnnouncementNotification(const String&) { }
     void postPlatformARIANotifyNotification(AccessibilityObject&, const AriaNotifyData&) { }
@@ -1023,6 +1078,7 @@ private:
     bool addRelation(AccessibilityObject*, AccessibilityObject*, AXRelation, AddSymmetricRelation = AddSymmetricRelation::Yes);
     bool addRelation(Element&, const QualifiedName&);
     void addLabelForRelation(Element&);
+    void addDetectedFormErrorRelations();
     bool removeRelation(Element&, AXRelation);
     void removeAllRelations(AXID);
     void removeRelationByID(AXID originID, AXID targetID, AXRelation);
@@ -1077,6 +1133,7 @@ private:
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 #if PLATFORM(COCOA)
     std::unique_ptr<AXLiveRegionManager> m_liveRegionManager;
+    std::unique_ptr<AXFormActivityMonitor> m_formActivityMonitor;
 #endif
 
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
@@ -1228,6 +1285,19 @@ private:
     HashSet<AXID> m_relationTargets;
     HashMap<AXID, AXRelations> m_recentlyRemovedRelations;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithRelationAttributes;
+    // The message paired with each field, kept because relations are rebuilt from scratch and this pairing
+    // is not written anywhere in the markup to rebuild it from.
+    struct DetectedFormError {
+        WeakPtr<Element, WeakPtrImplWithEventTargetData> message;
+        // Let's us detect whether an error's message was empty or not last time we checked.
+        // This matters because some pages implement the addition and removal of error messages
+        // by emptying / re-adding text to some container (vs. outright adding / deleting element(s)).
+        bool messageWasEmpty { false };
+    };
+    WeakHashMap<Element, DetectedFormError, WeakPtrImplWithEventTargetData> m_detectedFormErrors;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // Forms whose field list, and controls whose owning form, the isolated tree needs told about.
+#endif
     // Ids referenced by a relation attribute (e.g. aria-labelledby) whose target didn't exist when
     // relations were last built. If an element with one of these ids is later inserted, we must
     // re-resolve relations.

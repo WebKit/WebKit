@@ -1,0 +1,15 @@
+This tests that a control reaches its form through AXFormOwner and that the form lists the fields it owns through AXFormFieldElements. That round trip is how an assistive technology gets from a submit button to the rest of the form. The button itself is not a field, because it takes no input.
+
+PASS: form().domIdentifier === 'form'
+PASS: formFieldIdentifiers() === 'email, password, outside'
+PASS: stripAXPrefix(formFields()[0].description) === 'Email'
+PASS: stripAXPrefix(formFields()[0].stringValue) === 'a@b.c'
+PASS: stripAXPrefix(formFields()[1].stringValue).indexOf('hunter2') === -1
+document.getElementById('email').remove();
+PASS: formFieldIdentifiers() === 'password, outside'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email Password  Sign in
+

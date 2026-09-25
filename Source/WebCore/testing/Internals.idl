@@ -1030,6 +1030,7 @@ enum ContentsFormat {
 
     undefined forceAXObjectCacheUpdate();
     undefined setAccessibilityAnnouncementTranslationTimeout(unrestricted double seconds);
+    undefined setAccessibilityFormErrorSettleDelay(unrestricted double seconds);
     unsigned long liveRegionSnapshotBuildCount();
     undefined resetLiveRegionSnapshotBuildCount();
     undefined setShouldMockParentSearchResultsForTesting(boolean enabled);

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <div id="origin-error"></div>
+
+  <label for="destination">To</label><input id="destination" type="text">
+  <div id="destination-error"></div>
+
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that submitting again without fixing anything keeps the messages already paired with their fields, and drops only the ones the page has taken away. A message that is already on screen is not written again, so there is no change to rediscover it by, and treating each attempt as a clean slate would lose it.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    // Both fields report on the first attempt. On the second, origin is still wrong and says the same
+    // thing it already says, while destination has been filled in and its message is taken away.
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").textContent = "Please enter a valid origin.";
+        if (document.getElementById("destination").value.length > 0)
+            document.getElementById("destination-error").textContent = "";
+        else
+            document.getElementById("destination-error").textContent = "Please enter a valid destination.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += await expectAsync("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+
+        output += evalAndReturn("document.getElementById('destination').value = 'SFO';");
+        output += evalAndReturn("document.getElementById('submit').click();");
+
+        // Origin's message is unchanged and still stands, so it is still there to be read.
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+
+        // Destination's was taken away, so nothing claims that field any more.
+        output += await expectAsync("errorMessageText(axElement('destination'))", "'no error messages'");
+        output += expect("axElement('destination').stringAttributeValue('AXInvalid')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

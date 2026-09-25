@@ -1,0 +1,25 @@
+This tests that a message is found when it appears by being unhidden or inserted, not only when text changes inside an element that was already visible, and that it is found even when it arrives inside a container holding unrelated interactive content.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('destination').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+PASS: axElement('submit').stringAttributeValue('AXInvalid') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+To
+Dismiss
+Please enter a valid destination.
+How to plan a group trip
+
+Search
+Slide 6 of 8
+Explore San Francisco on a budget
+Loading

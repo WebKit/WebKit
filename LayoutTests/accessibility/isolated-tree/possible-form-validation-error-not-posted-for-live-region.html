@@ -1,0 +1,55 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAriaLiveRegionManagementEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="email">
+  <button id="submit" type="submit">Sign in</button>
+</form>
+<div id="errors" aria-live="polite"></div>
+
+<script>
+var output = "This tests that a cancelled form submission whose error text a live region already announced does not also post AXPossibleFormValidationError, so the user does not receive the same message twice.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var formValidationErrors = 0;
+    var payload = "";
+
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification == "AXPossibleFormValidationError") {
+            formValidationErrors++;
+            payload = formatFormValidationUserInfo(userInfo);
+        }
+    });
+
+    document.getElementById("form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        setTimeout(function() {
+            document.getElementById("errors").textContent = "Enter a valid email address.";
+        }, 0);
+    });
+
+    setTimeout(async function() {
+        output += evalAndReturn("document.getElementById('submit').click();");
+
+        // The notification is still posted, because the fields the user has to fix are worth reaching
+        // whoever announced the message. What it must not carry is text the live region already spoke,
+        // since that is what would be said twice.
+        await sleep(500);
+        output += await expectAsync("formValidationErrors", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: \\n'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

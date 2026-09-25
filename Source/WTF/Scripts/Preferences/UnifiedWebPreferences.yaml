@@ -198,6 +198,16 @@ AccessHandleEnabled:
     default: false
     WebKitLegacy: false
 
+AccessibilityFormErrorDetectionEnabled:
+  type: bool
+  status: internal
+  defaultsOverridable: true
+  humanReadableName: "Form Error Detection"
+  humanReadableDescription: "Detect and report form submissions that may have failed validation"
+  defaultValue:
+    "ENABLE(ACCESSIBILITY_FORM_ERROR_DETECTION)": true
+    default: false
+
 AccessibilityTextStitchingEnabled:
   type: bool
   status: embedder

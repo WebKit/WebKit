@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "AXObjectCache.h"
+#import "CocoaAccessibilityConstants.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -37,6 +38,7 @@
 #import "RenderObjectDocument.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
 
@@ -93,6 +95,9 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
         break;
     case AXNotification::AnnouncementRequested:
         name = "AXAnnouncementRequested"_s;
+        break;
+    case AXNotification::PossibleFormValidationError:
+        name = "AXPossibleFormValidationError"_s;
         break;
     default:
         break;
@@ -181,6 +186,27 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject&, con
             [protect(root->wrapper()) accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : mutableAttributedString.get() }];
         }
     }
+}
+
+void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(AccessibilityObject& object, const PossibleFormValidationErrorData& formData)
+{
+    RetainPtr notificationName = notificationPlatformName(AXNotification::PossibleFormValidationError).createNSString();
+    RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (const String& text) {
+        return text.createNSString();
+    });
+    NSDictionary *userInfo = @{
+        NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
+        NSAccessibilityFormValidationErrorFieldCountKey: @(formData.errorFieldCount),
+    };
+
+    NSError *error = nil;
+    RetainPtr data = [NSKeyedArchiver archivedDataWithRootObject:userInfo requiringSecureCoding:YES error:&error];
+    if (data)
+        relayNotification(String { notificationName.get() }, WTF::move(data));
+
+    // For tests, also call the wrapper's accessibilityPostedNotification.
+    if (gShouldRepostNotificationsForTests) [[unlikely]]
+        [object.wrapper() accessibilityPostedNotification:notificationName.get() userInfo:userInfo];
 }
 
 void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)

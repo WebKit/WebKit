@@ -1,0 +1,11 @@
+This tests that a cancelled form submission whose error text a live region already announced does not also post AXPossibleFormValidationError, so the user does not receive the same message twice.
+
+document.getElementById('submit').click();
+PASS: formValidationErrors === 1
+PASS: payload === 'AXFormValidationUnannouncedText: \n'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email  Sign in
+Enter a valid email address.

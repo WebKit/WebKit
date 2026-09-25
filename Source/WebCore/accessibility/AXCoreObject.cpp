@@ -872,13 +872,6 @@ String AXCoreObject::autoCompleteValue() const
     return explicitValue.isEmpty() ? "none"_s : explicitValue;
 }
 
-String AXCoreObject::invalidStatus() const
-{
-    auto explicitValue = explicitInvalidStatus();
-    // "false" is the default if no invalid status is explicitly provided (e.g. via aria-invalid).
-    return explicitValue.isEmpty() ? "false"_s : explicitValue;
-}
-
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
 {
     if (isTabList())

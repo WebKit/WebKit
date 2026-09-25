@@ -265,6 +265,8 @@ public:
     virtual RefPtr<AccessibilityUIElement> errorMessageForElementAtIndex(unsigned);
     virtual RefPtr<AccessibilityUIElement> flowFromElementAtIndex(unsigned);
     virtual RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
+    virtual JSValueRef formFieldElements(JSContextRef);
+    virtual RefPtr<AccessibilityUIElement> formOwnerElement();
     virtual RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
     virtual RefPtr<AccessibilityUIElement> labelForElementAtIndex(unsigned);
     virtual RefPtr<AccessibilityUIElement> ownerElementAtIndex(unsigned);

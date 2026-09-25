@@ -1,0 +1,76 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="parsedForm">
+  <input id="parsedField" type="text" value="parsed">
+</form>
+
+<div id="container"></div>
+
+<script>
+var output = "This tests that a form built by script, after the accessibility tree has already been built once, still reports its fields and is still reachable from its controls. Form membership is read from the DOM rather than remembered, so a form that never existed at parse time has to answer the same as one that did.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function fieldCount(formIdentifier) {
+        var form = axElement(formIdentifier);
+        return form ? form.formFieldElements().length : -1;
+    }
+
+    function hasFormOwner(fieldIdentifier) {
+        var field = axElement(fieldIdentifier);
+        return !!(field && field.formOwnerElement());
+    }
+
+    setTimeout(async function() {
+        // Read the parsed form first, so the tree is already built when the second form appears.
+        output += expect("fieldCount('parsedForm')", "1");
+
+        output += evalAndReturn("var form = document.createElement('form');"
+            + "form.id = 'createdForm';"
+            + "var field = document.createElement('input');"
+            + "field.id = 'createdField'; field.type = 'text';"
+            + "form.appendChild(field);"
+            // Not counted as a field, because a button takes no input. It still reports the form as its owner,
+            // which is how an assistive technology gets from a submit button to the form it submits.
+            + "var submit = document.createElement('button');"
+            + "submit.id = 'createdSubmit'; submit.type = 'submit'; submit.textContent = 'Send';"
+            + "form.appendChild(submit);"
+            // Connected last, so both controls registered with the form while it was still detached.
+            + "document.getElementById('container').appendChild(form);");
+
+        output += await expectAsync("fieldCount('createdForm')", "1");
+        output += expect("hasFormOwner('createdField')", "true");
+        output += expect("hasFormOwner('createdSubmit')", "true");
+
+        // A control added after the form is already in the document and already has an object.
+        output += evalAndReturn("var late = document.createElement('input');"
+            + "late.id = 'lateField'; late.type = 'text';"
+            + "document.getElementById('createdForm').appendChild(late);");
+
+        output += await expectAsync("fieldCount('createdForm')", "2");
+        output += expect("hasFormOwner('lateField')", "true");
+
+        // Moved out of the form, so it belongs to nothing now and the form is back to one field.
+        output += evalAndReturn("document.getElementById('container').appendChild(document.getElementById('lateField'));");
+
+        output += await expectAsync("fieldCount('createdForm')", "1");
+        output += expect("hasFormOwner('lateField')", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

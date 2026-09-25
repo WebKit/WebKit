@@ -1,0 +1,16 @@
+This tests that a message inside a live region is still paired with its field, and that the user does not receive it twice. Repairing the form and speaking are separate concerns. The relation and invalid state are worth having even once the message has been announced, because they are what lets the user come back to the field, but the announcement itself must not be repeated.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: formFieldWithErrorCount(axElement('form')) === 0
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageCount(axElement('origin')) > 0 === true
+PASS: formValidationErrors === 1
+PASS: payload === 'AXFormValidationUnannouncedText: \n'
+PASS: formFieldWithErrorCount(axElement('form')) === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search

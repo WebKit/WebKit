@@ -1,0 +1,63 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <!-- The page marks these valid while showing an error beside them, which is what a framework does when it
+       writes aria-invalid unconditionally. -->
+  <label for="origin">From</label><input id="origin" type="text" aria-invalid="false">
+  <div id="origin-error"></div>
+
+  <!-- Said to be misspelled rather than invalid, which is the author describing a real error. -->
+  <label for="nickname">Nickname</label><input id="nickname" type="text" aria-invalid="spelling">
+  <div id="nickname-error"></div>
+
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests which answer wins when the page has said something about a field's validity itself. A message shown beside a field outranks the page calling that field valid, because a page doing both is contradicting itself. It does not outrank the page saying what kind of error it is.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").textContent = "Please enter a valid origin.";
+        document.getElementById("nickname-error").textContent = "That is not a word.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        // The page said valid and the page showed an error, so the error wins.
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+
+        // The page said what is wrong, so that stands, and the message is still associated with the field.
+        output += expect("axElement('nickname').stringAttributeValue('AXInvalid')", "'spelling'");
+        output += await expectAsync("errorMessageText(axElement('nickname'))", "'That is not a word.'");
+
+        // Once the page takes the message away, what the page said about the field is what is left.
+        output += evalAndReturn("document.getElementById('origin').value = 'SFO'; document.getElementById('origin-error').remove();");
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'no error messages'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

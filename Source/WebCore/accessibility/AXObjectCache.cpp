@@ -84,6 +84,7 @@
 #include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFieldSetElement.h"
+#include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
@@ -92,8 +93,10 @@
 #include "HTMLMediaElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
+#include "HTMLOutputElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLSummaryElement.h"
@@ -156,6 +159,7 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
+#include "AXFormActivityMonitor.h"
 #include "AXLiveRegionManager.h"
 #include <wtf/spi/darwin/OSVariantSPI.h>
 #endif
@@ -548,6 +552,9 @@ String AXNotificationWithData::debugDescription() const
 #if PLATFORM(COCOA)
         , [&] (const LiveRegionAnnouncementData& liveRegionData) {
             stream << ", data: " << liveRegionData.debugDescription();
+        }
+        , [&] (const PossibleFormValidationErrorData& formData) {
+            stream << ", data: " << formData.debugDescription();
         }
 #endif
     );
@@ -1574,6 +1581,11 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
 
     postNotification(object, protect(object->document()).get(), AXNotification::TextChanged);
     object->recomputeIsIgnored();
+
+#if PLATFORM(COCOA)
+    if (m_formActivityMonitor)
+        m_formActivityMonitor->noteChangedContent(*object);
+#endif
 }
 
 void AXObjectCache::onRendererCreated(Node& node)
@@ -1858,6 +1870,11 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     // The role of list objects is dependent on their children, so we'll need to re-compute it here.
     if (object.isAccessibilityList())
         object.updateRole();
+
+#if PLATFORM(COCOA)
+    if (m_formActivityMonitor)
+        m_formActivityMonitor->noteChangedContent(object);
+#endif
 }
 
 void AXObjectCache::handleRecomputeCellSlots(AccessibilityNodeObject& axTable)
@@ -2146,6 +2163,9 @@ void AXObjectCache::notificationPostTimerFired()
 #if PLATFORM(COCOA)
             [&](const LiveRegionAnnouncementData& data) {
                 postPlatformLiveRegionNotification(note.first, data);
+            },
+            [&](const PossibleFormValidationErrorData& data) {
+                postPlatformPossibleFormValidationErrorNotification(note.first, data);
             },
 #endif
             [&](std::monostate) {
@@ -2521,6 +2541,7 @@ void AXObjectCache::postARIANotifyNotification(Node& node, const String& announc
         if (!cache)
             return;
 
+        cache->noteAnnouncedText(segments[0]);
         cache->enqueueNotificationToPost(Ref { *object }, AXNotificationWithData(AXNotification::ARIANotify,
             AriaNotifyData { WTF::move(segments[0]), priority, interruptBehavior, language.isEmpty() ? sourceLanguage : language }));
     };
@@ -2531,7 +2552,19 @@ void AXObjectCache::postARIANotifyNotification(Node& node, const String& announc
 #if PLATFORM(COCOA)
 void AXObjectCache::postLiveRegionNotification(AccessibilityObject& object, LiveRegionStatus status, const AttributedString& announcement)
 {
+    noteAnnouncedText(announcement.string);
     enqueueNotificationToPost(Ref { object }, AXNotificationWithData(AXNotification::LiveRegionAnnouncement, LiveRegionAnnouncementData { announcement, status }));
+}
+
+void AXObjectCache::noteAnnouncedText(const String& text)
+{
+    if (m_formActivityMonitor)
+        m_formActivityMonitor->noteAnnouncedText(text);
+}
+
+void AXObjectCache::postPossibleFormValidationErrorNotification(AccessibilityObject& object, Vector<String>&& unannouncedText, unsigned errorFieldCount)
+{
+    enqueueNotificationToPost(Ref { object }, AXNotificationWithData(AXNotification::PossibleFormValidationError, PossibleFormValidationErrorData { WTF::move(unannouncedText), errorFieldCount }));
 }
 #endif
 
@@ -3231,6 +3264,42 @@ void AXObjectCache::onValidityChange(Element& element)
     postNotification(protect(get(&element)), AXNotification::InvalidStatusChanged);
 }
 
+static bool messageIsEmpty(const Element* message)
+{
+    return !message || !message->isConnected() || message->textContent().trim(isASCIIWhitespace).isEmpty();
+}
+
+bool AXObjectCache::fieldHasDetectedError(const Element& element) const
+{
+    return !messageIsEmpty(m_detectedFormErrors.get(element).message.get());
+}
+
+#if PLATFORM(COCOA)
+void AXObjectCache::onFormSubmissionAttemptWithoutNavigation(HTMLFormElement& form, HTMLFormControlElement* submitter)
+{
+    if (!m_formActivityMonitor) {
+        RefPtr document = m_document.get();
+        if (!document || !document->settings().accessibilityFormErrorDetectionEnabled())
+            return;
+        m_formActivityMonitor = makeUnique<AXFormActivityMonitor>(*this);
+    }
+
+    m_formActivityMonitor->didAttemptSubmissionWithoutNavigation(form, submitter);
+
+    // Attempting a submission is what makes an empty required field worth reporting. It changes no validity,
+    // so without this nothing would tell the isolated tree that these fields now answer differently.
+    for (Ref listedElement : form.copyListedElementsVector())
+        postNotification(protect(get(&listedElement->asHTMLElement())), AXNotification::InvalidStatusChanged);
+}
+
+void AXObjectCache::onFormSubmissionWillNavigate(HTMLFormElement&)
+{
+    // This submission will replace the page contents, so there is nothing left to watch for.
+    if (m_formActivityMonitor)
+        m_formActivityMonitor->cancel();
+}
+#endif // PLATFORM(COCOA)
+
 void AXObjectCache::onTextCompositionChange(Node& node, CompositionState compositionState, bool valueChanged, const String& text, size_t position, bool handlingAcceptedCandidate)
 {
 #if HAVE(INLINE_PREDICTIONS)
@@ -3579,6 +3648,11 @@ void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection,
 
 void AXObjectCache::frameLoadingEventNotification(LocalFrame* frame, AXLoadingEvent loadingEvent)
 {
+#if PLATFORM(COCOA)
+    if (m_formActivityMonitor && loadingEvent == AXLoadingEvent::Started)
+        m_formActivityMonitor->didStartLoading(frame);
+#endif
+
     if (frame) {
         // We pass the RenderView* (via contentRenderer()) rather than calling getOrCreate and passing
         // that because some platforms don't handle all loading event types, and we don't want to call
@@ -4184,9 +4258,9 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
 
         if (RefPtr currentModalElement = m_currentModalElement.get(); currentModalElement && currentModalElement->isDescendantOf(element))
             deferModalChange(*currentModalElement);
-    } else if (attrName == aria_invalidAttr)
+    } else if (attrName == aria_invalidAttr) {
         postNotification(element, AXNotification::InvalidStatusChanged);
-    else if (attrName == aria_modalAttr) {
+    } else if (attrName == aria_modalAttr) {
         // aria-modal changed, so the element may have become modal or un-modal.
         if (isModalElement(*element))
             m_modalElements.appendIfNotContains(element);
@@ -5806,6 +5880,11 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
                 // A legend (which can label a fieldset) was added or removed.
                 markRelationsDirty();
             }
+
+#if PLATFORM(COCOA)
+            if (m_formActivityMonitor && element->isConnected())
+                m_formActivityMonitor->noteChangedContent(*element);
+#endif
         }
     }
     m_deferredElementAddedOrRemovedList.clear();
@@ -5984,6 +6063,15 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     if (m_liveRegionManager && !m_changedLiveRegions.isEmpty()) {
         m_liveRegionChangedPostTimer.stop();
         processChangedLiveRegions();
+    }
+
+    updateDetectedFormErrors();
+
+    if (m_formActivityMonitor) {
+        m_formActivityMonitor->collectErrorMessagesFromChangedElements();
+
+        if (m_formActivityMonitor->reportIsPending())
+            m_formActivityMonitor->report();
     }
 #endif
 }
@@ -6299,7 +6387,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXNotification::FlowToChanged:
         case AXNotification::GrabbedStateChanged:
         case AXNotification::HasPopupChanged:
-        case AXNotification::InvalidStatusChanged:
         case AXNotification::IsAtomicChanged:
         case AXNotification::LiveRegionStatusChanged:
         case AXNotification::LiveRegionRelevantChanged:
@@ -6310,6 +6397,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXNotification::TextChanged:
         case AXNotification::TextSecurityChanged:
             tree->queueNodeUpdate(notification.first->objectID(), NodeUpdateOptions::nodeUpdate());
+            break;
+        case AXNotification::InvalidStatusChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::InvalidStatus });
             break;
         case AXNotification::ValueChanged:
             tree->queueNodeUpdate(notification.first->objectID(), NodeUpdateOptions::nodeUpdate());
@@ -7062,6 +7152,7 @@ void AXObjectCache::updateRelationsIfNeeded()
         if (m_document)
             updateRelationsForTree(m_document->rootNode());
         m_doneInitialRelationsBuild = true;
+        addDetectedFormErrorRelations();
         return;
     }
 
@@ -7072,6 +7163,8 @@ void AXObjectCache::updateRelationsIfNeeded()
             addRelation(element.get(), attribute);
         addLabelForRelation(element.get());
     }
+
+    addDetectedFormErrorRelations();
 }
 
 void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
@@ -7244,6 +7337,174 @@ void AXObjectCache::addLabelForRelation(Element& origin)
         dirtyIsolatedTreeRelations();
 }
 
+static bool isFormControlForAccessibility(FormListedElement& listedElement)
+{
+    if (!listedElement.isEnumeratable())
+        return false;
+
+    Ref element = listedElement.asHTMLElement();
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element.get()))
+        return !input->isInputTypeHidden();
+    // Fieldsets, <object> and <output> are listed elements, but they are groupings or computed
+    // results rather than controls the user interacts with.
+    return !is<HTMLFieldSetElement>(element.get()) && !is<HTMLObjectElement>(element.get()) && !is<HTMLOutputElement>(element.get());
+}
+
+// Whether this control is a field (something the user puts a value into). A button is a control but not a
+// field, so it is neither listed as one nor paired with an error message.
+static bool isFormFieldForAccessibility(FormListedElement& listedElement)
+{
+    if (!isFormControlForAccessibility(listedElement))
+        return false;
+
+    Ref element = listedElement.asHTMLElement();
+    if (is<HTMLButtonElement>(element.get()))
+        return false;
+
+    RefPtr input = dynamicDowncast<HTMLInputElement>(element.get());
+    return !input || (!input->isTextButton() && !input->isImageButton());
+}
+
+AXCoreObject::AccessibilityChildrenVector AXObjectCache::formFieldObjects(HTMLFormElement& form)
+{
+    // copyListedElementsVector() is maintained in tree order, and it is the DOM's own record of what the
+    // form owns, including controls associated by the form attribute rather than by containment.
+    AXCoreObject::AccessibilityChildrenVector fields;
+    for (Ref listedElement : form.copyListedElementsVector()) {
+        if (!isFormFieldForAccessibility(listedElement.get()))
+            continue;
+
+        RefPtr object = getOrCreate(listedElement->asHTMLElement());
+        if (object && !object->isIgnored())
+            fields.append(object.releaseNonNull());
+    }
+    return fields;
+}
+
+AccessibilityObject* AXObjectCache::formOwnerObject(Element* element)
+{
+    if (!element)
+        return nullptr;
+
+    RefPtr listedElement = element->asFormListedElement();
+    if (!listedElement || !isFormControlForAccessibility(*listedElement))
+        return nullptr;
+
+    RefPtr form = listedElement->form();
+    return form ? getOrCreate(*form) : nullptr;
+}
+
+Vector<Ref<Element>> AXObjectCache::formFieldsForErrorPairing(HTMLFormElement& form)
+{
+    Vector<Ref<Element>> fields;
+    for (Ref listedElement : form.copyListedElementsVector()) {
+        if (!isFormFieldForAccessibility(listedElement.get()))
+            continue;
+
+        fields.append(listedElement->asHTMLElement());
+    }
+    return fields;
+}
+
+void AXObjectCache::addDetectedFormErrors(Vector<DetectedFormErrorPairing>&& detectedErrors)
+{
+    bool pairingChanged = false;
+    for (auto& [field, message] : detectedErrors) {
+        // The field will now report as invalid based on the errors we detected via heuristics. This
+        // overrides aria-invalid=false intentionally, as this is a repair for webpages who don't properly
+        // maintain that state or aria-errormessage. This isn't theoretical -- such a case was found on a
+        // popular flight booking webpage.
+        RefPtr previousMessage = m_detectedFormErrors.get(field.get()).message.get();
+        m_detectedFormErrors.set(field.get(), DetectedFormError { message.get(), messageIsEmpty(message.ptr()) });
+
+        if (previousMessage == message.ptr())
+            continue;
+
+        pairingChanged = true;
+        postNotification(protect(get(field.ptr())), AXNotification::InvalidStatusChanged);
+    }
+
+    if (pairingChanged)
+        relationsNeedUpdate(true);
+}
+
+void AXObjectCache::addDetectedFormErrorRelations()
+{
+    for (auto entry : m_detectedFormErrors) {
+        RefPtr errorElement = entry.value.message.get();
+        // If the detected error element reads nothing now, skip it.
+        // The page may be in the process of clearing it out and re-writing to it.
+        if (messageIsEmpty(errorElement.get()))
+            continue;
+        addRelation(entry.key, *errorElement, AXRelation::ErrorMessage);
+    }
+}
+
+void AXObjectCache::clearDetectedErrorsForField(Element& element)
+{
+    bool removedFromError = m_detectedFormErrors.remove(element);
+    if (!removedFromError)
+        return;
+
+    // The relation was added outside the markup (by our heuristics), so rebuild relations to take it back out.
+    relationsNeedUpdate(true);
+    postNotification(protect(get(&element)), AXNotification::InvalidStatusChanged);
+}
+
+void AXObjectCache::scheduleCacheUpdate()
+{
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::updateDetectedFormErrors()
+{
+    if (m_detectedFormErrors.isEmptyIgnoringNullReferences())
+        return;
+
+    Vector<Ref<Element>> fieldsWithDeadMessage;
+    Vector<Ref<Element>> fieldsToRefresh;
+    for (auto entry : m_detectedFormErrors) {
+        RefPtr message = entry.value.message.get();
+        // Gone for good rather than merely empty, so there is no pairing left to derive from.
+        if (!message) {
+            fieldsWithDeadMessage.append(entry.key);
+            continue;
+        }
+
+        bool isEmpty = messageIsEmpty(message.get());
+        if (isEmpty == entry.value.messageWasEmpty)
+            continue;
+        entry.value.messageWasEmpty = isEmpty;
+        fieldsToRefresh.append(entry.key);
+    }
+
+    for (Ref field : fieldsWithDeadMessage)
+        clearDetectedErrorsForField(field);
+
+    if (fieldsToRefresh.isEmpty())
+        return;
+
+    // Update relations now that the synthesized error relationship has changed.
+    relationsNeedUpdate(true);
+
+    for (Ref field : fieldsToRefresh)
+        postNotification(protect(get(field.ptr())), AXNotification::InvalidStatusChanged);
+}
+
+void AXObjectCache::clearDetectedErrorsForForm(HTMLFormElement& form)
+{
+    Vector<Ref<Element>> fieldsToClear;
+    for (auto entry : m_detectedFormErrors) {
+        RefPtr formControl = dynamicDowncast<HTMLFormControlElement>(entry.key);
+        if (formControl && formControl->form() == &form)
+            fieldsToClear.append(entry.key);
+    }
+
+    for (Ref field : fieldsToClear)
+        clearDetectedErrorsForField(field);
+}
+
 void AXObjectCache::updateRelations(Element& origin, const QualifiedName& attribute)
 {
     if (!canHaveRelations(origin))
@@ -7321,6 +7582,7 @@ std::optional<ListHashSet<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCore
 #if PLATFORM(COCOA)
 void AXObjectCache::announce(const String& message)
 {
+    noteAnnouncedText(message);
     postPlatformAnnouncementNotification(message);
 }
 #else

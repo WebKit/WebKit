@@ -61,6 +61,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityDatetimeValue;
 - (NSArray *)accessibilityDetailsElements;
 - (NSArray *)accessibilityErrorMessageElements;
+- (NSArray *)accessibilityFormFieldElements;
+- (id)accessibilityFormOwnerElement;
 - (NSArray *)accessibilityMathPostscripts;
 - (NSArray *)accessibilityMathPrescripts;
 - (NSString *)accessibilityPlaceholderValue;
@@ -323,6 +325,21 @@ JSValueRef AccessibilityUIElementIOS::errorMessageElements(JSContextRef context)
     if ([elements isKindOfClass:NSArray.class])
         return makeJSArray(context, makeVector<RefPtr<AccessibilityUIElement>>(elements));
     return { };
+}
+
+JSValueRef AccessibilityUIElementIOS::formFieldElements(JSContextRef context)
+{
+    NSArray *elements = [m_element accessibilityFormFieldElements];
+    if ([elements isKindOfClass:NSArray.class])
+        return makeJSArray(context, makeVector<RefPtr<AccessibilityUIElement>>(elements));
+    return { };
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementIOS::formOwnerElement()
+{
+    if (id formOwner = [m_element accessibilityFormOwnerElement])
+        return AccessibilityUIElement::create(formOwner);
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElementIOS::ariaOwnsElementAtIndex(unsigned index)

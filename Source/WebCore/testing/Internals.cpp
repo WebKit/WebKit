@@ -28,6 +28,7 @@
 #include "Internals.h"
 
 #include "AXCrossProcessSearch.h"
+#include "AXFormActivityMonitor.h"
 #include "AXObjectCacheInlines.h"
 #include "AnimationTimeline.h"
 #include "AnimationTimelinesController.h"
@@ -689,6 +690,9 @@ void Internals::resetToConsistentState(Page& page)
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
     AXObjectCache::disableAccessibilityForTesting();
     AXObjectCache::setAnnouncementTranslationTimeoutForTesting(std::nullopt);
+#if PLATFORM(COCOA)
+    AXFormActivityMonitor::setSettleDelayForTesting(std::nullopt);
+#endif
     WebCore::setShouldMockParentSearchResultsForTesting(false);
     WebCore::setShouldMockChildFrameSearchResultsForTesting(false);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -4909,6 +4913,15 @@ void Internals::forceAXObjectCacheUpdate() const
 void Internals::setAccessibilityAnnouncementTranslationTimeout(double seconds)
 {
     AXObjectCache::setAnnouncementTranslationTimeoutForTesting(Seconds { seconds });
+}
+
+void Internals::setAccessibilityFormErrorSettleDelay(double seconds)
+{
+#if PLATFORM(COCOA)
+    AXFormActivityMonitor::setSettleDelayForTesting(Seconds { seconds });
+#else
+    UNUSED_PARAM(seconds);
+#endif
 }
 
 unsigned Internals::liveRegionSnapshotBuildCount() const

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label>
+  <input id="email" type="text">
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<div id="banner"></div>
+
+<script>
+var output = "This tests that a long run of text next to a field is not taken as a validation error message. Real messages are short, and page furniture such as a promotional banner that happens to sit beside a field is not describing it. Without this the whole banner is spoken as though the page had said it about the field.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var formValidationErrors = 0;
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification == "AXPossibleFormValidationError")
+            formValidationErrors++;
+    });
+
+    // Longer than any validation message, and written where a message would go.
+    var banner = "Up to 60,000 bonus miles plus save 10 percent or more on selected fares when you book today, "
+        + "with no change fees on most itineraries and complimentary upgrades for eligible members travelling "
+        + "in premium cabins on qualifying routes this season.";
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("banner").textContent = banner;
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("banner.length > 150", "true");
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+        await sleep(500);
+
+        // The banner is not a message, so the field is not wrong and nothing is reported.
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("errorMessageCount(axElement('email'))", "0");
+        output += expect("formValidationErrors", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

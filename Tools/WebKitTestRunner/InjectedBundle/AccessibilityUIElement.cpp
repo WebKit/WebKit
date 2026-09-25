@@ -546,6 +546,16 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
     return nullptr;
 }
 
+JSValueRef AccessibilityUIElement::formFieldElements(JSContextRef)
+{
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::formOwnerElement()
+{
+    return nullptr;
+}
+
 bool AccessibilityUIElement::hasMenuItemTrait()
 {
     return false;

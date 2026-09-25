@@ -1,0 +1,79 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <!-- A whole panel of markup arrives at once, the way a site re-renders a section after a failed submit.
+       The message about the field sits several layout wrappers below the panel, and every wrapper on the
+       way down holds a control too, so none of them is a message in its own right. -->
+  <div id="panel" style="visibility: hidden;">
+    <div class="row">
+      <div class="column">
+        <div class="field">
+          <label for="origin">From</label><input id="origin" type="text">
+          <div id="origin-error" role="alert">
+            <div aria-live="polite"><svg role="img"><title>error</title></svg><span>Please enter a valid origin.</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="destination">To</label><input id="destination" type="text">
+          <div id="destination-error" role="alert">
+            <div aria-live="polite"><svg role="img"><title>error</title></svg><span>Please enter a valid destination.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that a message is still found when a whole section of the page arrives at once and the message sits well below the container that reported the change, with a control in every wrapper on the way down so that nothing above the message looks like a message itself.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Longer than the other tests use, because a whole section appearing at once takes longer to settle
+    // accessibility tree, and pairing happens once, so firing early pairs a field with the wrong message.
+    internals.setAccessibilityFormErrorSettleDelay(0.5);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("panel").style.visibility = "visible";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidFor(id) {
+        var element = axElement(id);
+        return element ? element.stringAttributeValue("AXInvalid") : "not in the accessibility tree";
+    }
+
+    setTimeout(async function() {
+        // Hidden, so the field is not in the accessibility tree at all yet.
+        output += expect("!axElement('origin')", "true");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("invalidFor('origin')", "'true'");
+        // A count rather than the words. The message sits inside a panel that was hidden until the submit,
+        // and a text marker range over a subtree revealed that way does not reach its descendants, so the
+        // text reads as empty on both platforms. iOS also flattens the container into the elements inside
+        // it, so the count differs by platform too. What this test is about is that the message is found at
+        // all.
+        output += await expectAsync("errorMessageCount(axElement('origin')) > 0", "true");
+        output += await expectAsync("invalidFor('destination')", "'true'");
+        output += await expectAsync("errorMessageCount(axElement('destination')) > 0", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

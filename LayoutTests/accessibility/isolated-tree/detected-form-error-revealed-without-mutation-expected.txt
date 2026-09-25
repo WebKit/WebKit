@@ -1,0 +1,16 @@
+This tests that a message already in the document is found when the submit reveals it without changing the tree, which is what happens when a site hides its error slot with visibility or opacity rather than display. No element is inserted and no text changes, so nothing about the message is reported as a mutation.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('destination').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+To
+Please enter a valid destination.
+Search

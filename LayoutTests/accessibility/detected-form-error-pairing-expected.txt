@@ -1,0 +1,22 @@
+This tests that a message the page never associated with a field is paired with the nearest field above it, giving that field the aria-errormessage relation and the invalid state the author omitted. Repairing the form this way is what lets an assistive technology find the fields that are actually wrong.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('origin')) === 'no error messages'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('destination').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+PASS: axElement('submit').stringAttributeValue('AXInvalid') === 'false'
+PASS: formFieldWithErrorCount(axElement('form')) === 2
+document.getElementById('origin').value = 'SFO'; document.getElementById('origin-error').remove();
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: formFieldWithErrorCount(axElement('form')) === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From To
+Please enter a valid destination.
+Search

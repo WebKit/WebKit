@@ -49,6 +49,7 @@ enum class AccessibilitySearchKey : uint8_t {
     DifferentType,
     FontChange,
     FontColorChange,
+    FormFieldWithError,
     Frame,
     Graphic,
     HeadingLevel1,

@@ -1,0 +1,12 @@
+This tests that iOS is told about a submission that reported a validation error nothing announced, and that the message it carries is the text the page put on screen. The notification is what an assistive technology has to work from, since nothing about a plain div says an error appeared.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: notifications === 1
+PASS: payload === 'AXFormValidationUnannouncedText: Please enter a valid origin.\n'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAriaLiveRegionManagementEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="widget">
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <button id="submit" type="submit">Search</button>
+</form>
+</div>
+
+<script>
+var output = "This tests that a message inside a live region is still paired with its field, and that the user does not receive it twice. Repairing the form and speaking are separate concerns. The relation and invalid state are worth having even once the message has been announced, because they are what lets the user come back to the field, but the announcement itself must not be repeated.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var formValidationErrors = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification == "AXPossibleFormValidationError") {
+            formValidationErrors++;
+            payload = formatFormValidationUserInfo(userInfo);
+        }
+    });
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        // The shape real sites use, with role="alert" wrapping an aria-live container, an icon carrying its
+        // own accessible name, and the message itself in a span.
+        var error = document.createElement("div");
+        error.id = "origin-error";
+        error.setAttribute("role", "alert");
+        error.innerHTML = '<div aria-live="polite"><svg role="img"><title>error</title></svg>'
+            + '<span>Please enter a valid origin.</span></div>';
+        document.getElementById("form").insertBefore(error, document.getElementById("submit"));
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("formFieldWithErrorCount(axElement('form'))", "0");
+
+        document.getElementById("submit").click();
+
+        // The live region speaks it, so the field is repaired and the notification carries no text to
+        // say it again. It is still posted, because the field it repaired is worth navigating to.
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        // Asked as "any" rather than an exact count, because the message here is a nested container and iOS
+        // flattens containers into the focusable elements inside them, so it vends more of them than mac.
+        output += expect("errorMessageCount(axElement('origin')) > 0", "true");
+        // Polled rather than read once, because the report lands a settle window after the submit, so a read
+        // here could see zero simply because nothing had arrived yet.
+        output += await expectAsync("formValidationErrors", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: \\n'");
+
+        // The point of repairing the form is that the field is now findable, which is what lets a Form Errors
+        // rotor reach it and read the message. Receiving the error once is no help in getting back to it.
+        output += expect("formFieldWithErrorCount(axElement('form'))", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

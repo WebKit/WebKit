@@ -1,0 +1,20 @@
+This tests that a form built by script, after the accessibility tree has already been built once, still reports its fields and is still reachable from its controls. Form membership is read from the DOM rather than remembered, so a form that never existed at parse time has to answer the same as one that did.
+
+PASS: fieldCount('parsedForm') === 1
+var form = document.createElement('form');form.id = 'createdForm';var field = document.createElement('input');field.id = 'createdField'; field.type = 'text';form.appendChild(field);var submit = document.createElement('button');submit.id = 'createdSubmit'; submit.type = 'submit'; submit.textContent = 'Send';form.appendChild(submit);document.getElementById('container').appendChild(form);
+PASS: fieldCount('createdForm') === 1
+PASS: hasFormOwner('createdField') === true
+PASS: hasFormOwner('createdSubmit') === true
+var late = document.createElement('input');late.id = 'lateField'; late.type = 'text';document.getElementById('createdForm').appendChild(late);
+PASS: fieldCount('createdForm') === 2
+PASS: hasFormOwner('lateField') === true
+document.getElementById('container').appendChild(document.getElementById('lateField'));
+PASS: fieldCount('createdForm') === 1
+PASS: hasFormOwner('lateField') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Send
+

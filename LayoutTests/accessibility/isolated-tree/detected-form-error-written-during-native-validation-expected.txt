@@ -1,0 +1,13 @@
+This tests that a message the page writes from the invalid event is found. Native validation runs before the submit event and never reaches it, so a page that renders its own message from that listener has already written it by the time the submission is known to have failed.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: submitEventsSeen === 0
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search

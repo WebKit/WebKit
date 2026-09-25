@@ -830,8 +830,9 @@ public:
     String popupValueString() const;
     virtual bool supportsHasPopup() const = 0;
     virtual bool pressedIsPresent() const = 0;
-    virtual String explicitInvalidStatus() const = 0;
-    String invalidStatus() const;
+    // Assembled from aria-invalid, HTML constraint validation and any error message detected beside the
+    // field. Prefer this over explicitInvalidStatus() for determining an object's computed / final invalid state.
+    virtual String invalidStatus() const = 0;
     virtual bool supportsExpanded() const = 0;
     virtual bool supportsChecked() const = 0;
     virtual AccessibilitySortDirection sortDirection() const = 0;

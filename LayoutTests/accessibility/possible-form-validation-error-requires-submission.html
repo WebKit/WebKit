@@ -1,0 +1,53 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="email">
+  <button id="submit" type="submit">Sign in</button>
+</form>
+<div id="errors"></div>
+
+<script>
+var output = "This tests that text appearing outside a live region is only reported as a possible form validation error while a submission attempt is being watched, not at any other time.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    // Longer than the other tests in this family deliberately. The error text here is written by the test
+    // after the submit rather than from the page's own submit listener, so it has to survive a cache
+    // update cycle, and a short window can expire first on a loaded machine.
+    internals.setAccessibilityFormErrorSettleDelay(0.5);
+
+    var deliveries = 0;
+
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification == "AXPossibleFormValidationError")
+            deliveries++;
+    });
+
+    document.getElementById("form").addEventListener("submit", function(event) {
+        event.preventDefault();
+    });
+
+    setTimeout(async function() {
+        // No submission has been attempted, so this text is just ordinary page content.
+        output += evalAndReturn("document.getElementById('errors').textContent = 'Unrelated page text.';");
+        await sleep(500);
+        output += expect("deliveries", "0");
+
+        // The same kind of mutation, this time inside the window a submission attempt opens.
+        output += evalAndReturn("document.getElementById('submit').click();");
+        output += evalAndReturn("document.getElementById('errors').textContent = 'Enter a valid email address.';");
+        output += await expectAsync("deliveries", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
