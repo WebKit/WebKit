@@ -491,13 +491,15 @@ InlineLayoutUnit TextOnlySimpleLineBuilder::availableWidth() const
     return (m_lineLogicalRect.width() + epsilon) - (!std::isnan(contentLogicalRight) ? contentLogicalRight : 0.f);
 }
 
-bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems& inlineItems, const PlacedFloats& placedFloats)
+bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems& inlineItems, const InlineLayoutState& inlineLayoutState)
 {
     if (inlineItems.isEmpty())
         return false;
     if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.hasInlineBoxes() || inlineItems.requiresVisualReordering() || inlineItems.hasTextAutospace())
         return false;
-    if (!placedFloats.isEmpty())
+    if (!inlineLayoutState.placedFloats().isEmpty())
+        return false;
+    if (auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp(); lineClamp && !lineClamp->isLegacy)
         return false;
     return true;
 }
