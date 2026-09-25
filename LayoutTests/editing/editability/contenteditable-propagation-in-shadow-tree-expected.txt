@@ -1,0 +1,45 @@
+xxxSlotted in
+
+Verifies that contenteditable should propagate across the light tree, not the flattened tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+At first, everything is read-only.
+PASS checkEditability(slottedIn) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(assignedSlot) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: false, canTypeInto: false"
+
+Everything can be made editable. However, the replaced slot isn't rendered so it cannot be typed into.
+PASS checkEditability(slottedIn) is "isContentEditable: true, canTypeInto: true"
+PASS checkEditability(assignedSlot) is "isContentEditable: true, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: true, canTypeInto: true"
+
+Making the slotted element editable works.
+PASS checkEditability(slottedIn) is "isContentEditable: true, canTypeInto: true"
+PASS checkEditability(assignedSlot) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: false, canTypeInto: false"
+
+Making the shadow host editable doesn't affect the shadow tree, but it affects slotted-in content because they are light-tree descendants.
+PASS checkEditability(slottedIn) is "isContentEditable: true, canTypeInto: true"
+PASS checkEditability(assignedSlot) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: false, canTypeInto: false"
+
+Making parts of the shadow DOM editable only affects unreplaced elements.
+PASS checkEditability(slottedIn) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(assignedSlot) is "isContentEditable: true, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: true, canTypeInto: true"
+
+Making a slot editable has no effect on what replaces it.
+PASS checkEditability(slottedIn) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(assignedSlot) is "isContentEditable: true, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: false, canTypeInto: false"
+
+Making a slot editable has an effect if the slot is not replaced.
+PASS checkEditability(slottedIn) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(assignedSlot) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(unassignedSlot) is "isContentEditable: true, canTypeInto: true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

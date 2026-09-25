@@ -116,9 +116,11 @@ private:
         SelectorMatchingState selectorMatchingState;
         RefPtr<ShadowRoot> shadowRoot;
         RefPtr<Scope> enclosingScope;
+        // Style of shadowRoot's host, resolved before this scope was pushed. Constant for the whole scope.
+        const Style::ComputedStyle* hostStyle { nullptr };
 
         Scope(Document&, Update&);
-        Scope(ShadowRoot&, Scope& enclosingScope);
+        Scope(ShadowRoot&, const Style::ComputedStyle& hostStyle, Scope& enclosingScope);
         ~Scope();
     };
 
@@ -149,7 +151,7 @@ private:
     Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
     const Parent& parent() const LIFETIME_BOUND { return m_parentStack.last(); }
 
-    void pushScope(ShadowRoot&);
+    void pushScope(ShadowRoot&, const Style::ComputedStyle& hostStyle);
     void pushEnclosingScope();
     void popScope();
 

@@ -192,7 +192,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     m_buttonSlot = WTF::move(buttonSlot);
 
     if (!document->settings().htmlEnhancedSelectEnabled()) {
-        root.appendChild(HTMLSlotElement::create(slotTag, document));
+        root.appendChild(HTMLSlotElement::create(slotTag, document, true));
         return;
     }
 
@@ -201,7 +201,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     popover->setAttributeWithoutSynchronization(popoverAttr, autoAtom());
     popover->setUserAgentPart(pickerSelectAtom());
 
-    popover->appendChild(HTMLSlotElement::create(slotTag, document));
+    popover->appendChild(HTMLSlotElement::create(slotTag, document, true));
 
     root.appendChild(popover);
     m_popover = WTF::move(popover);

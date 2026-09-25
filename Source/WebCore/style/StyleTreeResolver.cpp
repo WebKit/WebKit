@@ -110,10 +110,11 @@ TreeResolver::Scope::Scope(Document& document, Update& update)
     selectorMatchingState.containerQueryEvaluationState.styleUpdate = &update;
 }
 
-TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
+TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, const Style::ComputedStyle& hostStyle, Scope& enclosingScope)
     : resolver(shadowRoot.styleScope().resolver())
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
+    , hostStyle(&hostStyle)
 {
     selectorMatchingState.containerQueryEvaluationState = enclosingScope.selectorMatchingState.containerQueryEvaluationState;
 }
@@ -139,9 +140,9 @@ TreeResolver::Parent::Parent(Element& element, const Style::ComputedStyle& style
 {
 }
 
-void TreeResolver::pushScope(ShadowRoot& shadowRoot)
+void TreeResolver::pushScope(ShadowRoot& shadowRoot, const Style::ComputedStyle& hostStyle)
 {
-    m_scopeStack.append(adoptRef(*new Scope(shadowRoot, scope())));
+    m_scopeStack.append(adoptRef(*new Scope(shadowRoot, hostStyle, scope())));
 }
 
 void TreeResolver::pushEnclosingScope()
@@ -218,7 +219,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
 
     // Fully custom styles in UA shadow trees that don't originate from selector matching don't need adjusting.
     if (unadjustedStyle.matchResult) {
-        Adjuster adjuster(m_document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, element.ptr());
+        Adjuster adjuster(m_document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, element.ptr(), resolutionContext.shadowHostStyle);
         adjuster.adjust(*style);
     }
 
@@ -722,6 +723,7 @@ ResolutionContext TreeResolver::makeResolutionContext()
         .parentStyle = &parent().style,
         .parentBoxStyle = parentBoxStyle(),
         .documentElementStyle = documentElementStyle(),
+        .shadowHostStyle = scope().hostStyle,
         .selectorMatchingState = &scope().selectorMatchingState,
         .treeResolutionState = &m_treeResolutionState
     };
@@ -928,7 +930,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
         }
 
-        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr, resolutionContext.shadowHostStyle);
         adjuster.adjustAnimatedStyle(*animatedStyle, animationImpact);
 
         return { WTF::move(animatedStyle), animationImpact };
@@ -1074,7 +1076,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
     if (newStyle->display() == DisplayType::None)
         return nullptr;
 
-    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr, resolutionContext.shadowHostStyle);
     adjuster.adjust(*newStyle);
 
     return newStyle;
@@ -1162,7 +1164,7 @@ void TreeResolver::pushParent(Element& element, const Style::ComputedStyle& styl
 #endif
 
     if (RefPtr shadowRoot = element.shadowRoot()) {
-        pushScope(*shadowRoot);
+        pushScope(*shadowRoot, style);
         parent.didPushScope = true;
     } else if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(element); slot && slot->assignedNodes()) {
         pushEnclosingScope();

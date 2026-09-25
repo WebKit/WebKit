@@ -264,6 +264,12 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
             state.style()->inheritIgnoringCustomPropertiesFrom(*state.parentStyle());
         } else
             state.style()->inheritFrom(*state.parentStyle());
+
+        // Editability should not cross a shadow boundary (assigned
+        // slots are a special case and handled elsewhere):
+        if (is<ShadowRoot>(element.parentNode()))
+            state.style()->setUserModify(UserModify::ReadOnly);
+
     } else {
         state.setStyle(defaultStyleForElement(&element));
         state.setParentStyle(Style::ComputedStyle::clonePtr(*state.style()));
@@ -338,7 +344,7 @@ ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContex
 
     auto style = WTF::move(unadjustedStyle.style);
 
-    Adjuster adjuster(document(), parentStyle, context.parentBoxStyle, &element);
+    Adjuster adjuster(document(), parentStyle, context.parentBoxStyle, &element, context.shadowHostStyle);
     adjuster.adjust(*style);
 
     return {
@@ -454,7 +460,7 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     if (state.style()->usesViewportUnits())
         element.document().setHasStyleWithViewportUnits();
 
-    Adjuster adjuster(document(), *state.parentStyle(), nullptr, !pseudoElementIdentifier ? &element : nullptr);
+    Adjuster adjuster(document(), *state.parentStyle(), nullptr, !pseudoElementIdentifier ? &element : nullptr, context.shadowHostStyle);
     adjuster.adjust(*state.style());
 
     blendingKeyframe.setHasPropertiesWithRevertRuleOrLayer(builder.state().hasRevertRuleOrLayerInKeyframeStyle());
@@ -665,7 +671,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
 
     applyMatchedProperties(state, collector.matchResult(), PropertyCascade::normalProperties());
 
-    Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
+    Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr, context.shadowHostStyle);
     adjuster.adjust(*state.style());
 
     Adjuster::adjustVisibilityForPseudoElement(*state.style(), element);
