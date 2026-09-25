@@ -82,6 +82,8 @@
 #if ENABLE(WEBDRIVER_BIDI)
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/Page.h>
+#include <WebCore/SecurityOrigin.h>
 #endif
 
 namespace WebKit {
@@ -1333,18 +1335,106 @@ void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier fram
 
 void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier frameID)
 {
-    WeakPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
+    auto realmIterator = m_frameToRealmIdentifier.find(frameID);
+    if (realmIterator == m_frameToRealmIdentifier.end())
         return;
 
-    auto it = m_frameToRealmIdentifier.find(frameID);
-    if (it == m_frameToRealmIdentifier.end())
-        return;
+    auto realmIdentifier = realmIterator->value;
+    m_frameToRealmIdentifier.remove(realmIterator);
 
-    auto realmIdentifier = it->value;
-    m_frameToRealmIdentifier.remove(it);
+    m_dedicatedWorkerRealmInfo.removeIf([realmIdentifier](auto& entry) {
+        return entry.value.ownerRealmIdentifier == realmIdentifier;
+    });
 
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, realmIdentifier), 0);
+}
+
+void WebAutomationSessionProxy::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier, const WebCore::SecurityOriginData& origin)
+{
+    WeakPtr ownerFrame = WebProcess::singleton().webFrame(ownerFrameIdentifier);
+    if (!ownerFrame || !ownerFrame->isMainFrame())
+        return;
+
+    RefPtr coreFrame = ownerFrame->coreLocalFrame();
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    RefPtr page = document ? document->page() : nullptr;
+    if (!document || document->identifier() != ownerDocumentIdentifier || !page || !page->isControlledByAutomation())
+        return;
+
+    auto ownerRealmIterator = m_frameToRealmIdentifier.find(ownerFrameIdentifier);
+    if (ownerRealmIterator == m_frameToRealmIdentifier.end()) {
+        scriptRealmCreated(ownerFrameIdentifier, document->securityOrigin().data());
+        ownerRealmIterator = m_frameToRealmIdentifier.find(ownerFrameIdentifier);
+        if (ownerRealmIterator == m_frameToRealmIdentifier.end())
+            return;
+    }
+
+    DedicatedWorkerRealmKey key { ownerFrameIdentifier, workerIdentifier };
+    auto workerRealmIterator = m_dedicatedWorkerRealmInfo.find(key);
+    if (workerRealmIterator == m_dedicatedWorkerRealmInfo.end()) {
+        auto realmIdentifier = RealmIdentifier::generate();
+        workerRealmIterator = m_dedicatedWorkerRealmInfo.add(key, DedicatedWorkerRealmInfo { realmIdentifier, ownerRealmIterator->value, ownerDocumentIdentifier, origin.isolatedCopy() }).iterator;
+    } else if (workerRealmIterator->value.ownerRealmIdentifier != ownerRealmIterator->value
+        || workerRealmIterator->value.ownerDocumentIdentifier != ownerDocumentIdentifier)
+        return;
+    else
+        workerRealmIterator->value.origin = origin.isolatedCopy();
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmCreated(workerIdentifier, ownerFrameIdentifier, workerRealmIterator->value.realmIdentifier, workerRealmIterator->value.ownerRealmIdentifier, origin), 0);
+}
+
+void WebAutomationSessionProxy::scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier)
+{
+    DedicatedWorkerRealmKey key { ownerFrameIdentifier, workerIdentifier };
+    auto workerRealmIterator = m_dedicatedWorkerRealmInfo.find(key);
+    if (workerRealmIterator == m_dedicatedWorkerRealmInfo.end() || workerRealmIterator->value.ownerDocumentIdentifier != ownerDocumentIdentifier)
+        return;
+
+    auto realmInfo = workerRealmIterator->value;
+    m_dedicatedWorkerRealmInfo.remove(workerRealmIterator);
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier, realmInfo.realmIdentifier, realmInfo.ownerRealmIdentifier), 0);
+}
+
+void WebAutomationSessionProxy::getDedicatedWorkerRealms(WebCore::PageIdentifier pageID, CompletionHandler<void(Vector<DedicatedWorkerRealmSnapshot>&&)>&& completionHandler)
+{
+    Vector<DedicatedWorkerRealmSnapshot> workerRealmSnapshots;
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage || !corePage->isControlledByAutomation()) {
+        completionHandler(WTF::move(workerRealmSnapshots));
+        return;
+    }
+
+    for (const auto& entry : m_dedicatedWorkerRealmInfo) {
+        auto ownerFrameIdentifier = entry.key.first;
+        const auto& workerIdentifier = entry.key.second;
+        const auto& realmInfo = entry.value;
+
+        RefPtr ownerFrame = WebProcess::singleton().webFrame(ownerFrameIdentifier);
+        if (!ownerFrame || !ownerFrame->isMainFrame() || ownerFrame->page() != page.get())
+            continue;
+
+        RefPtr coreFrame = ownerFrame->coreLocalFrame();
+        RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+        if (!document || document->identifier() != realmInfo.ownerDocumentIdentifier)
+            continue;
+
+        auto ownerRealmIterator = m_frameToRealmIdentifier.find(ownerFrameIdentifier);
+        if (ownerRealmIterator == m_frameToRealmIdentifier.end() || ownerRealmIterator->value != realmInfo.ownerRealmIdentifier)
+            continue;
+
+        workerRealmSnapshots.append({
+            workerIdentifier.isolatedCopy(),
+            ownerFrameIdentifier,
+            realmInfo.realmIdentifier,
+            realmInfo.ownerRealmIdentifier,
+            realmInfo.origin.isolatedCopy()
+        });
+    }
+
+    completionHandler(WTF::move(workerRealmSnapshots));
 }
 
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)

@@ -43,6 +43,9 @@
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
+#include <tuple>
 #endif
 
 namespace WebCore {
@@ -123,7 +126,12 @@ private:
     void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
+    void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier, const WebCore::SecurityOriginData&) override;
+    void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+
+    using DedicatedWorkerRealmSnapshot = std::tuple<String, WebCore::FrameIdentifier, RealmIdentifier, RealmIdentifier, WebCore::SecurityOriginData>;
+    void getDedicatedWorkerRealms(WebCore::PageIdentifier, CompletionHandler<void(Vector<DedicatedWorkerRealmSnapshot>&&)>&&);
 #endif
 
     String m_sessionIdentifier;
@@ -142,7 +150,17 @@ private:
     // the UI-process copy.
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
+    struct DedicatedWorkerRealmInfo {
+        RealmIdentifier realmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
+        RealmIdentifier ownerRealmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
+        WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier { WTF::HashTraits<WebCore::ScriptExecutionContextIdentifier>::emptyValue() };
+        WebCore::SecurityOriginData origin;
+    };
+
+    using DedicatedWorkerRealmKey = std::pair<WebCore::FrameIdentifier, String>;
+
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
+    HashMap<DedicatedWorkerRealmKey, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealmInfo;
 #endif
 };
 

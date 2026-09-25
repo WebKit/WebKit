@@ -35,6 +35,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
+#include <utility>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -50,6 +51,7 @@ namespace WebKit {
 
 enum PreloadScriptIdentifierType { };
 using PreloadScriptIdentifier = ObjectIdentifier<PreloadScriptIdentifierType>;
+using WorkerIdentifier = String;
 
 class WebAutomationSession;
 class WebFrameProxy;
@@ -65,7 +67,11 @@ public:
     struct RealmInfo {
         WebCore::SecurityOriginData origin;
         Inspector::Protocol::BidiScript::RealmType type;
-        Inspector::Protocol::BidiBrowsingContext::BrowsingContext context;
+        std::optional<Inspector::Protocol::BidiBrowsingContext::BrowsingContext> context;
+        Vector<RealmIdentifier> owners;
+        HashSet<Inspector::Protocol::BidiBrowsingContext::BrowsingContext> associatedBrowsingContexts;
+        bool creationNotified { false };
+        std::optional<WebCore::FrameIdentifier> frameIdentifier;
     };
 
 
@@ -81,8 +87,12 @@ public:
     void getRealms(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalBrowsingContext , std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&) override;
 
     // Realm lifecycle events.
-    void notifyRealmCreated(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
-    void notifyRealmDestroyed(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyRealmCreatedFromBrowsingContext(RealmIdentifier, WebCore::FrameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
+    void notifyRealmDestroyedFromBrowsingContext(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyRealmCreatedFromWorker(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext, const WebCore::SecurityOriginData&);
+    void notifyRealmDestroyedFromWorker(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier);
+    void removeDedicatedWorkerRealmsForBrowsingContext(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&);
+    std::optional<bool> dedicatedWorkerRealmMatches(RealmIdentifier, const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier ownerRealmIdentifier) const;
 
     // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
     std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;
@@ -106,12 +116,24 @@ private:
         std::optional<Vector<String>> userContexts;
     };
 
-    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    struct DedicatedWorkerRealmInfo {
+        WorkerIdentifier workerIdentifier;
+        WebCore::FrameIdentifier ownerFrameIdentifier { WTF::HashTraits<WebCore::FrameIdentifier>::emptyValue() };
+        RealmIdentifier ownerRealmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
+        Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext;
+    };
+
+    void sendRealmCreatedEvent(RealmIdentifier, const RealmInfo&);
+    void sendRealmDestroyedEvent(RealmIdentifier, const RealmInfo&);
 
     void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
     void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
     bool NODELETE isFrameExecutionReady(const FrameInfoData&);
     RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
+    std::optional<RealmIdentifier> registerDedicatedWorkerRealm(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData&, bool emitCreatedEvent);
+    void removeDedicatedWorkerRealm(RealmIdentifier);
+    void removeDedicatedWorkerRealmsForOwnerRealm(RealmIdentifier);
+    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createProtocolRealmInfo(RealmIdentifier, const RealmInfo&);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
     RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
@@ -130,8 +152,8 @@ private:
     // Store active realms (key: realm identifier, value: realm info).
     HashMap<RealmIdentifier, RealmInfo> m_activeRealms;
 
-    // Track realm counters for navigation detection: frame ID -> counter
-
+    // Store dedicated worker identity and ownership by realm identifier.
+    HashMap<RealmIdentifier, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealms;
     Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
 };
 
