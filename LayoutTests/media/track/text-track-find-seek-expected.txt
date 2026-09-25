@@ -1,0 +1,24 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(loadeddata)
+Test that seekToFindMatch seeks the media element directly when no "seekto" media session action handler is registered, and defers to the handler when one is.
+
+** With no "seekto" handler, seekToFindMatch seeks the element directly.
+RUN(video.currentTime = 0)
+EXPECTED (video.currentTime == '0') OK
+RUN(internals.seekMediaElementToFindMatch(video, 3))
+EXPECTED (video.currentTime == '3') OK
+RUN(internals.seekMediaElementToFindMatch(video, 0))
+EXPECTED (video.currentTime == '0') OK
+
+** With a "seekto" handler registered, seekToFindMatch invokes the handler instead of seeking.
+RUN(internals.seekMediaElementToFindMatch(video, 3))
+ACTION: seekto, seekTime: 3
+EXPECTED (video.currentTime == '0') OK
+
+** After clearing the handler, seekToFindMatch seeks directly again.
+RUN(internals.seekMediaElementToFindMatch(video, 3))
+EXPECTED (video.currentTime == '3') OK
+
+END OF TEST
+
