@@ -95,6 +95,7 @@ enum {
     PROP_0,
 #if PLATFORM(GTK)
     PROP_GEOMETRY,
+    PROP_HAS_CUSTOM_GEOMETRY,
 #endif
     PROP_TOOLBAR_VISIBLE,
     PROP_STATUSBAR_VISIBLE,
@@ -103,6 +104,7 @@ enum {
     PROP_LOCATIONBAR_VISIBLE,
     PROP_RESIZABLE,
     PROP_FULLSCREEN,
+    PROP_IS_POPUP,
     N_PROPERTIES,
 };
 
@@ -111,6 +113,7 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 struct _WebKitWindowPropertiesPrivate {
 #if PLATFORM(GTK)
     GdkRectangle geometry;
+    bool hasCustomGeometry : 1;
 #endif
 
     bool toolbarVisible : 1;
@@ -121,6 +124,7 @@ struct _WebKitWindowPropertiesPrivate {
 
     bool resizable : 1;
     bool fullscreen : 1;
+    bool isPopup : 1;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWindowProperties, webkit_window_properties, G_TYPE_OBJECT, GObject)
@@ -133,6 +137,9 @@ static void webkitWindowPropertiesGetProperty(GObject* object, guint propId, GVa
 #if PLATFORM(GTK)
     case PROP_GEOMETRY:
         g_value_set_boxed(value, &windowProperties->priv->geometry);
+        break;
+    case PROP_HAS_CUSTOM_GEOMETRY:
+        g_value_set_boolean(value, webkit_window_properties_get_has_custom_geometry(windowProperties));
         break;
 #endif
     case PROP_TOOLBAR_VISIBLE:
@@ -156,6 +163,9 @@ static void webkitWindowPropertiesGetProperty(GObject* object, guint propId, GVa
     case PROP_FULLSCREEN:
         g_value_set_boolean(value, webkit_window_properties_get_fullscreen(windowProperties));
         break;
+    case PROP_IS_POPUP:
+        g_value_set_boolean(value, webkit_window_properties_get_is_popup(windowProperties));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -170,6 +180,9 @@ static void webkitWindowPropertiesSetProperty(GObject* object, guint propId, con
     case PROP_GEOMETRY:
         if (GdkRectangle* geometry = static_cast<GdkRectangle*>(g_value_get_boxed(value)))
             windowProperties->priv->geometry = *geometry;
+        break;
+    case PROP_HAS_CUSTOM_GEOMETRY:
+        windowProperties->priv->hasCustomGeometry = g_value_get_boolean(value);
         break;
 #endif
     case PROP_TOOLBAR_VISIBLE:
@@ -192,6 +205,9 @@ static void webkitWindowPropertiesSetProperty(GObject* object, guint propId, con
         break;
     case PROP_FULLSCREEN:
         windowProperties->priv->fullscreen = g_value_get_boolean(value);
+        break;
+    case PROP_IS_POPUP:
+        windowProperties->priv->isPopup = g_value_get_boolean(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -217,6 +233,20 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
             "geometry",
             nullptr, nullptr,
             GDK_TYPE_RECTANGLE,
+            paramFlags);
+
+    /**
+     * WebKitWindowProperties:has-custom-geometry:
+     *
+     * Whether the window geometry was explicitly requested by the web page.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_HAS_CUSTOM_GEOMETRY] =
+        g_param_spec_boolean(
+            "has-custom-geometry",
+            nullptr, nullptr,
+            FALSE,
             paramFlags);
 #endif
 
@@ -303,6 +333,20 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
             FALSE,
             paramFlags);
 
+    /**
+     * WebKitWindowProperties:is-popup:
+     *
+     * Whether the window was requested to be opened as a pop-up window.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_IS_POPUP] =
+        g_param_spec_boolean(
+            "is-popup",
+            nullptr, nullptr,
+            FALSE,
+            paramFlags);
+
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 }
 
@@ -321,6 +365,14 @@ void webkitWindowPropertiesSetGeometry(WebKitWindowProperties* windowProperties,
         return;
     windowProperties->priv->geometry = *geometry;
     g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_GEOMETRY]);
+}
+
+void webkitWindowPropertiesSetHasCustomGeometry(WebKitWindowProperties* windowProperties, bool hasCustomGeometry)
+{
+    if (windowProperties->priv->hasCustomGeometry == hasCustomGeometry)
+        return;
+    windowProperties->priv->hasCustomGeometry = hasCustomGeometry;
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_HAS_CUSTOM_GEOMETRY]);
 }
 #endif
 
@@ -380,19 +432,37 @@ void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowPropertie
     g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_FULLSCREEN]);
 }
 
+void webkitWindowPropertiesSetIsPopup(WebKitWindowProperties* windowProperties, bool isPopup)
+{
+    if (windowProperties->priv->isPopup == isPopup)
+        return;
+    windowProperties->priv->isPopup = isPopup;
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_IS_POPUP]);
+}
+
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* windowProperties, const WindowFeatures& windowFeatures)
 {
 #if PLATFORM(GTK)
     GdkRectangle geometry = windowProperties->priv->geometry;
-    if (windowFeatures.x)
+    bool hasCustomGeometry = false;
+    if (windowFeatures.x) {
         geometry.x = *windowFeatures.x;
-    if (windowFeatures.y)
+        hasCustomGeometry = true;
+    }
+    if (windowFeatures.y) {
         geometry.y = *windowFeatures.y;
-    if (windowFeatures.width)
+        hasCustomGeometry = true;
+    }
+    if (windowFeatures.width) {
         geometry.width = *windowFeatures.width;
-    if (windowFeatures.height)
+        hasCustomGeometry = true;
+    }
+    if (windowFeatures.height) {
         geometry.height = *windowFeatures.height;
+        hasCustomGeometry = true;
+    }
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
+    webkitWindowPropertiesSetHasCustomGeometry(windowProperties, hasCustomGeometry);
 #endif
 
     if (windowFeatures.menuBarVisible)
@@ -409,6 +479,7 @@ void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* w
         webkitWindowPropertiesSetResizable(windowProperties, *windowFeatures.resizable);
     if (windowFeatures.fullscreen)
         webkitWindowPropertiesSetFullscreen(windowProperties, *windowFeatures.fullscreen);
+    webkitWindowPropertiesSetIsPopup(windowProperties, windowFeatures.wantsPopup());
 }
 
 #if PLATFORM(GTK)
@@ -425,6 +496,23 @@ void webkit_window_properties_get_geometry(WebKitWindowProperties* windowPropert
     g_return_if_fail(geometry);
 
     *geometry = windowProperties->priv->geometry;
+}
+
+/**
+ * webkit_window_properties_get_has_custom_geometry:
+ * @window_properties: a #WebKitWindowProperties
+ *
+ * Get whether the window geometry was explicitly requested by the web page.
+ *
+ * Returns: %TRUE if the window geometry was explicitly requested or %FALSE otherwise.
+ *
+ * Since: 2.56
+ */
+gboolean webkit_window_properties_get_has_custom_geometry(WebKitWindowProperties* windowProperties)
+{
+    g_return_val_if_fail(WEBKIT_IS_WINDOW_PROPERTIES(windowProperties), FALSE);
+
+    return windowProperties->priv->hasCustomGeometry;
 }
 #endif
 
@@ -531,4 +619,21 @@ gboolean webkit_window_properties_get_fullscreen(WebKitWindowProperties* windowP
     g_return_val_if_fail(WEBKIT_IS_WINDOW_PROPERTIES(windowProperties), FALSE);
 
     return windowProperties->priv->fullscreen;
+}
+
+/**
+ * webkit_window_properties_get_is_popup:
+ * @window_properties: a #WebKitWindowProperties
+ *
+ * Get whether the window was requested to be opened as a pop-up window.
+ *
+ * Returns: %TRUE if the window was requested as a pop-up or %FALSE otherwise.
+ *
+ * Since: 2.56
+ */
+gboolean webkit_window_properties_get_is_popup(WebKitWindowProperties* windowProperties)
+{
+    g_return_val_if_fail(WEBKIT_IS_WINDOW_PROPERTIES(windowProperties), FALSE);
+
+    return windowProperties->priv->isPopup;
 }
