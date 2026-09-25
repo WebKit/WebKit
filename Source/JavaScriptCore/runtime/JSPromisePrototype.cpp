@@ -136,7 +136,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseProtoFuncCatch, (JSGlobalObject* globalObject, C
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     JSValue onRejected = callFrame->argument(0);
 
-    if (auto* promise = dynamicDowncast<JSPromise>(thisValue); promise && promise->isThenFastAndNonObservable()) [[likely]]
+    if (auto* promise = dynamicDowncast<JSPromise>(thisValue); promise && promise->realm() == globalObject && promise->isThenFastAndNonObservable()) [[likely]]
         RELEASE_AND_RETURN(scope, JSValue::encode(promise->then(globalObject, jsUndefined(), onRejected)));
 
     JSValue then = thisValue.get(globalObject, vm.propertyNames->then);
@@ -282,7 +282,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseProtoFuncFinally, (JSGlobalObject* globalObject,
         return throwVMTypeError(globalObject, scope, "|this| is not an object"_s);
 
     JSValue onFinally = callFrame->argument(0);
-    if (auto* promise = dynamicDowncast<JSPromise>(thisValue); promise && promise->isThenFastAndNonObservable()) [[likely]] {
+    if (auto* promise = dynamicDowncast<JSPromise>(thisValue); promise && promise->realm() == globalObject && promise->isThenFastAndNonObservable()) [[likely]] {
         if (!onFinally.isCallable())
             RELEASE_AND_RETURN(scope, JSValue::encode(promise->then(globalObject, onFinally, onFinally)));
 
