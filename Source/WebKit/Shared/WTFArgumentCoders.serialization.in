@@ -130,6 +130,7 @@ template: struct WebCore::MediaSessionIdentifierType
 template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::NavigationIdentifierType
 template: struct WebCore::PageIdentifierType
+template: struct WebCore::PlaceholderRenderingContextIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
 template: struct WebCore::PushSubscriptionIdentifierType

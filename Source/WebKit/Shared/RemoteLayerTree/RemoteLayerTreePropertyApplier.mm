@@ -503,8 +503,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         if (backingStore && properties.backingStoreAttached) {
             RELEASE_ASSERT(layerTreeNode);
             layerTreeNode->applyBackingStore(layerTreeHost, *backingStore);
-        } else
+        } else {
             [layer _web_clearContents];
+            if (layerTreeNode)
+                layerTreeNode->setAsyncContentsIdentifier(std::nullopt);
+        }
     }
 
     if (properties.changedProperties & LayerChange::BackdropRootIsOpaqueChanged && layerTreeNode)

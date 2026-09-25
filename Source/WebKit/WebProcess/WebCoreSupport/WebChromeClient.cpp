@@ -52,6 +52,7 @@
 #include "RemoteFaceDetectorProxy.h"
 #include "RemoteGPUProxy.h"
 #include "RemoteImageBufferProxy.h"
+#include "RemotePlaceholderRenderingContextSource.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteTextDetectorProxy.h"
 #include "SharedBufferReference.h"
@@ -1208,6 +1209,19 @@ RefPtr<WebCore::ImageBuffer> WebChromeClient::createImageBufferFromTransferHandl
         return nullptr;
     return protect(page->ensureRemoteRenderingBackendProxy())->takeTransferredBuffer(handle);
 }
+
+#if ENABLE(OFFSCREEN_CANVAS)
+RefPtr<WebCore::PlaceholderRenderingContextSource> WebChromeClient::createPlaceholderRenderingContextSource(WebCore::PlaceholderRenderingContextIdentifier identifier)
+{
+    return RemotePlaceholderRenderingContextSource::create(identifier);
+}
+
+void WebChromeClient::offscreenCanvasPlaceholderLayerChanged(WebCore::PlaceholderRenderingContextIdentifier identifier, std::optional<WebCore::PlatformLayerIdentifier> layerID)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::SetOffscreenCanvasPlaceholderLayer(identifier, layerID));
+}
+#endif
 #endif
 
 std::unique_ptr<WebCore::WorkerClient> WebChromeClient::createWorkerClient(SerialFunctionDispatcher& dispatcher)

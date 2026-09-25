@@ -518,6 +518,7 @@
 }
 
 [UnsafeWrapper] std::optional<WebKit::ImageBufferBackendHandle> {
+    [NeedsReview] MessageParam WebProcessProxy.CommitOffscreenCanvasPlaceholderFrame layerContentsHandle
     [Legacy] MessageParamReply RemoteImageBuffer.GetBackendHandle handle
     [Legacy] MessageParamReply WebPage.TakeSnapshot image
     [Legacy] StructureParam WebKit::RemoteLayerBackingStoreProperties.m_bufferHandle

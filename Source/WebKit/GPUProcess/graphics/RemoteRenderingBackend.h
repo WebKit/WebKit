@@ -158,7 +158,7 @@ private:
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferIdentifier);
     void moveToImageBuffer(RemoteSerializedImageBufferIdentifier, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
     void moveSerializedBufferToTransferHeap(RemoteSerializedImageBufferIdentifier, CompletionHandler<void(std::optional<WebCore::ImageBufferTransferIdentifier>)>&&);
-    void takeTransferredBuffer(WebCore::ImageBufferTransferIdentifier, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
+    void takeTransferredBuffer(const WebCore::ImageBufferTransferHandle&, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
     void createDisplayListRecorder(RemoteDisplayListRecorderIdentifier);
     void sinkDisplayListRecorderIntoDisplayList(RemoteDisplayListRecorderIdentifier, RemoteDisplayListIdentifier);
     void releaseDisplayList(RemoteDisplayListIdentifier);

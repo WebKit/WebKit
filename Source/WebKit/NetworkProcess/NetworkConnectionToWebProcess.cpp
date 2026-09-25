@@ -1945,6 +1945,12 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
     for (auto& transferredPort : message.transferredPorts)
         MESSAGE_CHECK(registry->claimPendingTransferOrigin(transferredPort.first, m_webProcessIdentifier));
 
+#if ENABLE(OFFSCREEN_CANVAS)
+    // FIXME: Broker the placeholder grant through the UI process, similar to transferred ImageBuffers.
+    if (RefPtr serializedValue = message.message)
+        serializedValue->dropTransferredPlaceholdersExcept({ });
+#endif
+
     if (registry->didPostMessageToRemote(WTF::move(message), port, retainBlobURLsWhileMessageIsInFlight(blobURLs))) {
         if (auto destinationProcess = channel->processForPort(port)) {
             if (RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(*destinationProcess))

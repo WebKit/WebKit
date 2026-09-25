@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/PlaceholderFrameIdentifier.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/RefCounted.h>
 
 #if !USE(CA) && !USE(COORDINATED_GRAPHICS)
@@ -83,7 +85,14 @@ class GraphicsLayerAsyncContentsDisplayDelegate : public GraphicsLayerContentsDi
 public:
     virtual ~GraphicsLayerAsyncContentsDisplayDelegate() = default;
 
-    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&, bool opaque) = 0;
+    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier) = 0;
+
+    // Like tryCopyToLayer(), but for a buffer that nothing will draw into again, and leaving it to the
+    // next rendering update to deliver where that is how the layer's contents reach the compositor.
+    virtual bool setContentsForNextDisplay(ImageBuffer& buffer, bool opaque, PlaceholderFrameIdentifier frame) { return tryCopyToLayer(buffer, opaque, frame); }
+
+    // Set only when the layer is hosted in another process, and so can be targeted from one.
+    virtual std::optional<PlatformLayerIdentifier> destinationLayerID() const { return std::nullopt; }
 
     virtual bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const { return false; }
     virtual bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const { return false; }

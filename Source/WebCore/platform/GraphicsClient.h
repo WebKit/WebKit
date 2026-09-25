@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(OFFSCREEN_CANVAS)
+#include <WebCore/PlaceholderRenderingContextSource.h>
+#endif
 #include <WebCore/PlatformScreen.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -55,6 +58,12 @@ public:
     virtual ~GraphicsClient() = default;
 
     virtual PlatformDisplayID displayID() const = 0;
+
+#if ENABLE(OFFSCREEN_CANVAS)
+    // The source for an OffscreenCanvas whose placeholder is in another process. Null when this
+    // process cannot reach that placeholder.
+    virtual RefPtr<PlaceholderRenderingContextSource> createPlaceholderRenderingContextSource(PlaceholderRenderingContextIdentifier) { return nullptr; }
+#endif
 
 #if ENABLE(WEBGL)
     virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const = 0;

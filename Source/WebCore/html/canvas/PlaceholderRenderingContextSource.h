@@ -1,0 +1,76 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(OFFSCREEN_CANVAS)
+
+#include <WebCore/PlaceholderFrameIdentifier.h>
+#include <WebCore/PlaceholderRenderingContextIdentifier.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+namespace WebCore {
+
+class ImageBuffer;
+struct ImageBufferTransferHandle;
+
+// Thread-safe interface to submit frames from an OffscreenCanvas to the placeholder rendering context
+// of the canvas element it was transferred from. When the OffscreenCanvas is transferred to another
+// process, it gets a source there that forwards each frame back to the process owning the placeholder.
+class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
+    WTF_MAKE_NONCOPYABLE(PlaceholderRenderingContextSource);
+public:
+    virtual ~PlaceholderRenderingContextSource() = default;
+
+    PlaceholderRenderingContextIdentifier identifier() const { return m_identifier; }
+
+    // Called by the offscreen context to submit the frame.
+    virtual void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque) = 0;
+
+    // Where a source in another process delivers its frames: straight to the placeholder, on the main
+    // thread of the process that owns it. Returns false, leaving the frame's buffer unclaimed, if the
+    // placeholder no longer exists or cannot take it.
+    WEBCORE_EXPORT static bool commitFrameFromAnotherProcess(PlaceholderRenderingContextIdentifier, const ImageBufferTransferHandle&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
+
+    // Tells the embedder, on the main thread, that a placeholder is gone, so that no other process goes
+    // on committing to it. Process wide rather than through the page, which the placeholder's document
+    // has often lost by the time its canvas element is collected.
+    using PlaceholderDestroyedHandler = void (*)(PlaceholderRenderingContextIdentifier);
+    WEBCORE_EXPORT static void setPlaceholderDestroyedHandler(PlaceholderDestroyedHandler);
+
+protected:
+    explicit PlaceholderRenderingContextSource(PlaceholderRenderingContextIdentifier identifier)
+        : m_identifier(identifier)
+    {
+    }
+
+private:
+    const PlaceholderRenderingContextIdentifier m_identifier;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(OFFSCREEN_CANVAS)

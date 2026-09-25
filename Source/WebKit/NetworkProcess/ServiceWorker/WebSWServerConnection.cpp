@@ -384,6 +384,12 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier, Vector<URL>&& blobURLs)
 {
+#if ENABLE(OFFSCREEN_CANVAS)
+    // Cannot send OffscreenCanvas to a service worker.
+    if (RefPtr serializedValue = message.message)
+        serializedValue->dropTransferredPlaceholdersExcept({ });
+#endif
+
     RefPtr server = this->server();
     if (!server)
         return;

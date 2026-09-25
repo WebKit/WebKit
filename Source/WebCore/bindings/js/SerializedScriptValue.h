@@ -31,6 +31,9 @@
 #include <JavaScriptCore/StructuredCloneTags.h>
 #include <WebCore/FileSystemHandleGlobalIdentifier.h>
 #include <WebCore/ImageBufferTransferIdentifier.h>
+#if ENABLE(OFFSCREEN_CANVAS)
+#include <WebCore/PlaceholderRenderingContextIdentifier.h>
+#endif
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -120,6 +123,14 @@ public:
     // process brokering delivery hand ownership to the recipient.
     WEBCORE_EXPORT Vector<ImageBufferTransferIdentifier> sinkBuffersIntoTransferHandles();
     WEBCORE_EXPORT Vector<ImageBufferTransferIdentifier> transferredImageBufferIdentifiers() const;
+
+#if ENABLE(OFFSCREEN_CANVAS)
+    // Lets the UI process grant the recipient permission to commit frames to these placeholders.
+    WEBCORE_EXPORT Vector<PlaceholderRenderingContextIdentifier> transferredPlaceholderIdentifiers() const;
+    // For the process brokering delivery: a recipient that was not granted a placeholder gets its
+    // OffscreenCanvas without one.
+    WEBCORE_EXPORT void dropTransferredPlaceholdersExcept(const HashSet<PlaceholderRenderingContextIdentifier>& granted);
+#endif
 
     WEBCORE_EXPORT std::unique_ptr<Vector<JSC::ArrayBufferContents>>& sharedBufferContentsArray();
     WEBCORE_EXPORT std::optional<NonSerializedDataToken> nonSerializedDataToken() const;

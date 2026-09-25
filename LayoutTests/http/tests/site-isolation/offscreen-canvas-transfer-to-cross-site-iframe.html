@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<canvas id="canvas" width="100" height="100"></canvas>
+<iframe src="http://localhost:8000/site-isolation/resources/offscreen-canvas-draw-and-ack.html" id="frame"></iframe>
+<script>
+description("Transferring an OffscreenCanvas to a cross-site iframe should let that iframe paint into the placeholder canvas.");
+jsTestIsAsync = true;
+
+function placeholderPixel()
+{
+    const copy = document.createElement("canvas");
+    copy.width = 100;
+    copy.height = 100;
+    const context = copy.getContext("2d");
+    context.drawImage(canvas, 0, 0);
+    return Array.from(context.getImageData(50, 50, 1, 1).data).join();
+}
+
+addEventListener("message", (event) => {
+    if (!event.data || event.data.type != "child-ack")
+        return;
+    debug("iframe reported: " + event.data.result);
+    // The iframe commits the frame asynchronously and it is relayed back to this process, so poll.
+    let attempts = 0;
+    (function poll() {
+        if (placeholderPixel() == "255,0,0,255" || ++attempts > 120) {
+            shouldBeEqualToString("placeholderPixel()", "255,0,0,255");
+            finishJSTest();
+            return;
+        }
+        requestAnimationFrame(poll);
+    })();
+});
+
+frame.addEventListener("load", () => {
+    try {
+        const offscreen = canvas.transferControlToOffscreen();
+        frame.contentWindow.postMessage({ type: "offscreen-canvas", canvas: offscreen }, "*", [offscreen]);
+        setTimeout(() => {
+            testFailed("the cross-site iframe never acknowledged the OffscreenCanvas");
+            finishJSTest();
+        }, 3000);
+    } catch (e) {
+        testFailed("posting the OffscreenCanvas threw: " + e);
+        finishJSTest();
+    }
+});
+</script>
+</body>

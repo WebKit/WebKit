@@ -410,7 +410,7 @@ RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::takeTransferredBuffe
     auto resultIdentifier = result->renderingResourceIdentifier();
     auto addResult = m_imageBuffers.add(resultIdentifier, result);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::RemoteRenderingBackend::TakeTransferredBuffer(handle.identifier, resultIdentifier, result->contextIdentifier()));
+    send(Messages::RemoteRenderingBackend::TakeTransferredBuffer(handle, resultIdentifier, result->contextIdentifier()));
     return result;
 }
 

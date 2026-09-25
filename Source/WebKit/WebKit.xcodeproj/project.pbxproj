@@ -5951,6 +5951,8 @@
 		46851A9B2E83D222000A59E2 /* NetworkRTCSharedMonitorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCSharedMonitorCocoa.mm; sourceTree = "<group>"; };
 		46851A9C2E83D636000A59E2 /* NetworkRTCSharedMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCSharedMonitor.h; sourceTree = "<group>"; };
 		46851A9D2E83D636000A59E2 /* NetworkRTCSharedMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCSharedMonitor.cpp; sourceTree = "<group>"; };
+		33406A32D7A2B82A8465732F /* RemotePlaceholderRenderingContextSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePlaceholderRenderingContextSource.cpp; sourceTree = "<group>"; };
+		C7B3F06E178BBE8B83E67A24 /* RemotePlaceholderRenderingContextSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePlaceholderRenderingContextSource.h; sourceTree = "<group>"; };
 		4689B90F2756D1430007C651 /* RemoteWebLockRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebLockRegistry.h; sourceTree = "<group>"; };
 		4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWebLockRegistry.cpp; sourceTree = "<group>"; };
 		4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerType.h; sourceTree = "<group>"; };
@@ -7057,7 +7059,6 @@
 		71F62F722D076DEE00B591D2 /* RemoteAnimation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAnimation.h; sourceTree = "<group>"; };
 		71F62F732D076DEE00B591D2 /* RemoteAnimation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAnimation.cpp; sourceTree = "<group>"; };
 		71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteSimulatedMouseEventsDispatchPolicy.h; sourceTree = "<group>"; };
-		7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MonotonicObjectIdentifier.h; sourceTree = "<group>"; };
 		7203449B26A6C476000A5F54 /* RenderingUpdateID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingUpdateID.h; sourceTree = "<group>"; };
 		722074302D07D671009FA90F /* ImageBufferRemotePDFDocumentBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemotePDFDocumentBackend.h; sourceTree = "<group>"; };
 		722074312D07D671009FA90F /* ImageBufferRemotePDFDocumentBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferRemotePDFDocumentBackend.cpp; sourceTree = "<group>"; };
@@ -10575,7 +10576,6 @@
 				869055832912C6B000B5ECD3 /* Model.serialization.in */,
 				2DA8153328A46A0000CF811C /* ModelProcessConnectionParameters.h */,
 				541A3D0A2B5F2BA3009CE0D6 /* ModelProcessConnectionParameters.serialization.in */,
-				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
 				3D3C75A22B6875120013828A /* MonotonicObjectIdentifier.serialization.in */,
 				2D50366A1BCDE17900E20BB3 /* NativeWebGestureEvent.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
@@ -16088,6 +16088,8 @@
 				46CBA2B02EAB07AA00D771E2 /* cocoa */,
 				2D28F3DF1885CCB4004B9EAE /* ios */,
 				BC111ADE112F5B9A00337BAB /* mac */,
+				33406A32D7A2B82A8465732F /* RemotePlaceholderRenderingContextSource.cpp */,
+				C7B3F06E178BBE8B83E67A24 /* RemotePlaceholderRenderingContextSource.h */,
 				4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */,
 				4689B90F2756D1430007C651 /* RemoteWebLockRegistry.h */,
 				46E9760B2757F6C900ACDD37 /* RemoteWebLockRegistry.messages.in */,

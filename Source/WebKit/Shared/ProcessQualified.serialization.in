@@ -27,6 +27,7 @@ additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID =
 additional_forward_declaration: namespace WebCore { using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PageIdentifier = ObjectIdentifier<PageIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using PlaceholderRenderingContextIdentifierID = ObjectIdentifier<PlaceholderRenderingContextIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlaybackTargetClientContextID = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using RTCDataChannelLocalIdentifier =  AtomicObjectIdentifier<RTCDataChannelLocalIdentifierType>; }
@@ -61,6 +62,13 @@ header: <WebCore/ProcessQualified.h>
     WebCore::PlatformLayerIdentifierID object();
     WebCore::ProcessIdentifier processIdentifier();
 };
+
+#if ENABLE(OFFSCREEN_CANVAS)
+[Alias=class ProcessQualified<PlaceholderRenderingContextIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::PlaceholderRenderingContextIdentifier {
+    WebCore::PlaceholderRenderingContextIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+#endif
 
 [Alias=class ProcessQualified<PlaybackTargetClientContextID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::PlaybackTargetClientContextIdentifier {
     WebCore::PlaybackTargetClientContextID object();

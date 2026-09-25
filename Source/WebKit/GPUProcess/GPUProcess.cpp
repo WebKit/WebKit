@@ -581,6 +581,19 @@ RefPtr<WebCore::ImageBuffer> GPUProcess::takeTransferredImageBuffer(WebCore::Ima
     return m_transferredImageBuffers.take(identifier).imageBuffer;
 }
 
+void GPUProcess::releaseTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier identifier)
+{
+    Locker locker(m_globalResourceLocker);
+    m_transferredImageBuffers.remove(identifier);
+}
+
+void GPUProcess::releaseTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&& identifiers)
+{
+    Locker locker(m_globalResourceLocker);
+    for (auto identifier : identifiers)
+        m_transferredImageBuffers.remove(identifier);
+}
+
 void GPUProcess::removeTransferredImageBuffersForProcess(WebCore::ProcessIdentifier processIdentifier)
 {
     Locker locker(m_globalResourceLocker);
