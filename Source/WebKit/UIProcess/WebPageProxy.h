@@ -3828,6 +3828,7 @@ private:
 
     WebProcessProxy& processForTheFrameItem(WebBackForwardListFrameItem&) const;
     Ref<FrameState> copyFrameStateForBackForwardNavigation(WebBackForwardListFrameItem&) const;
+    void dispatchSameDocumentJointTraversals(WebBackForwardListFrameItem& fromFrameItem, WebBackForwardListFrameItem& toFrameItem, WebCore::FrameLoadType, std::optional<WebCore::FrameIdentifier> primaryFrameID);
     WebProcessProxy* frameProcessForNonCachedBackForwardNavigation(WebBackForwardListFrameItem&) const;
 
     void setClientNavigationActivity(API::Navigation&);
