@@ -484,8 +484,13 @@ String Pasteboard::readStringInCustomData(const String& type)
 
 Pasteboard::FileContentState Pasteboard::fileContentState()
 {
-    if (m_selectionData)
-        return m_selectionData->filenames().isEmpty() ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
+    if (m_selectionData) {
+        if (!m_selectionData->filenames().isEmpty())
+            return FileContentState::MayContainFilePaths;
+        if (m_selectionData->hasImage())
+            return FileContentState::InMemoryImage;
+        return FileContentState::NoFileOrImageData;
+    }
 
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
     if (types.contains("text/uri-list"_s)) {
@@ -497,7 +502,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
     auto result = types.findIf([](const String& type) {
         return MIMETypeRegistry::isSupportedImageMIMEType(type);
     });
-    return result == notFound ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
+    return result == notFound ? FileContentState::NoFileOrImageData : FileContentState::InMemoryImage;
 }
 
 void Pasteboard::writeMarkup(const String&)
