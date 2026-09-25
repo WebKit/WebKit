@@ -2749,9 +2749,13 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
     if (layer.isRenderViewLayer())
         return;
 
-    auto clippedBounds = computeClippedOverlapBounds(overlapMap, layer, extent);
-
+    computeExtent(overlapMap, layer, extent);
     computeClippingScopes(layer, extent);
+
+    if (overlapMap.isCoveredByRecentRects(extent.bounds, extent.clippingScopes))
+        return;
+
+    auto clippedBounds = computeClippedOverlapBounds(overlapMap, layer, extent);
     overlapMap.add(layer, clippedBounds, extent.clippingScopes);
 }
 

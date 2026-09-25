@@ -105,6 +105,7 @@ public:
     // Layers are added in z-order, lazily creating clipping scopes as necessary.
     void add(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers);
     bool overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
+    bool isCoveredByRecentRects(const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
     void append(std::unique_ptr<OverlapMapContainer>&&);
 
     bool isEmpty() const;
@@ -263,6 +264,15 @@ OverlapMapContainer::ClippingScope* OverlapMapContainer::ensureClippingScopeForL
     return const_cast<ClippingScope*>(currScope);
 }
 
+bool OverlapMapContainer::isCoveredByRecentRects(const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
+{
+    auto* clippingScope = findClippingScopeForLayers(enclosingClippingLayers);
+    if (!clippingScope)
+        return false;
+
+    return clippingScope->rectList.isAlreadyCovered(bounds);
+}
+
 OverlapMapContainer::ClippingScope* NODELETE OverlapMapContainer::findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
 {
     ASSERT(enclosingClippingLayers.size());
@@ -311,6 +321,21 @@ LayerOverlapMap::LayerOverlapMap(const RenderLayer& rootLayer)
 }
 
 LayerOverlapMap::~LayerOverlapMap() = default;
+
+bool LayerOverlapMap::isCoveredByRecentRects(const LayoutRect& bounds, const LayerAndBoundsVector& enclosingClippingLayers) const
+{
+    if (m_overlapStack.size() < 2)
+        return false;
+
+    if (!m_overlapStack[m_overlapStack.size() - 2]->isCoveredByRecentRects(bounds, enclosingClippingLayers))
+        return false;
+
+    if (m_speculativeOverlapStack.size() >= 2
+        && !m_speculativeOverlapStack[m_speculativeOverlapStack.size() - 2]->isCoveredByRecentRects(bounds, enclosingClippingLayers))
+        return false;
+
+    return true;
+}
 
 void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, const LayerAndBoundsVector& enclosingClippingLayers)
 {
