@@ -96,7 +96,7 @@ inline LineClampUpdater::~LineClampUpdater()
     }
 
     size_t lineCount = 0;
-    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline() && !blockFlow->establishesIndependentFormattingContext())
         lineCount = blockFlow->lineCount();
     layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow });
 }
