@@ -76,6 +76,11 @@ bool containsCurrentColor(const ContrastColor& contrastColor)
     return WebCore::Style::containsCurrentColor(contrastColor.color);
 }
 
+bool containsCurrentAccentColor(const ContrastColor& contrastColor)
+{
+    return WebCore::Style::containsCurrentAccentColor(contrastColor.color);
+}
+
 // MARK: - Serialization
 
 void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const ContrastColor& contrastColor)

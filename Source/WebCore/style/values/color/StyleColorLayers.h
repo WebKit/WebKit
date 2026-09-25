@@ -58,6 +58,7 @@ inline bool operator==(const UniqueRef<ColorLayers>& a, const UniqueRef<ColorLay
 Color toStyleColor(const CSS::ColorLayers&, ColorResolutionState&);
 WebCore::Color resolveColor(const ColorLayers&, const ResolvedColors&);
 bool containsCurrentColor(const ColorLayers&);
+bool containsCurrentAccentColor(const ColorLayers&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorLayers&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorLayers&);
