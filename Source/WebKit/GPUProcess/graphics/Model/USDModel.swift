@@ -1962,6 +1962,8 @@ private func fromWKBridgeDataType(_ dataType: WKBridgeDataType) -> ShaderGraph.D
     }
 }
 
+#if RC_REMOVE_SEC_ACCEL_3
+
 private func makeCGColor3(colorSpace: CGColorSpace, _ a: CGFloat, _ b: CGFloat, _ c: CGFloat) -> CGColor {
     // rdar://177971578 - CG should provide an API for not requiring unsafe
     guard let cs = unsafe CGColor(colorSpace: colorSpace, components: [a, b, c, 1.0]) else {
@@ -1978,18 +1980,63 @@ private func makeCGColor4(colorSpace: CGColorSpace, _ a: CGFloat, _ b: CGFloat, 
     return cs
 }
 
-private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> ShaderGraph.Value {
-    let values = constant.constantValues
+private func bridgeColorSpace(named name: String?) -> CGColorSpace {
     // Resolve the color space from the transmitted name, falling back to extendedLinearSRGB.
     // USD color3f/color4f values are in linear sRGB, so extendedLinearSRGB is the correct fallback.
     // swift-format-ignore: NeverForceUnwrap
     guard
         let colorSpace =
-            (constant.colorSpaceName.flatMap { CGColorSpace(name: $0 as CFString) }
+            (name.flatMap { CGColorSpace(name: $0 as CFString) }
                 ?? CGColorSpace(name: CGColorSpace.extendedLinearSRGB))
     else {
         fatalError("extendedLinearSRGB could not be constructed, should never occur")
     }
+    return colorSpace
+}
+
+#else
+
+private let cgColorComponentCount = 3
+
+private func makeCGColor3(colorSpace: CGColorSpace, _ a: CGFloat, _ b: CGFloat, _ c: CGFloat) -> CGColor {
+    makeCGColor4(colorSpace: colorSpace, a, b, c, 1.0)
+}
+
+private func makeCGColor4(colorSpace: CGColorSpace, _ a: CGFloat, _ b: CGFloat, _ c: CGFloat, _ d: CGFloat) -> CGColor {
+    guard colorSpace.numberOfComponents == cgColorComponentCount else {
+        fatalError("colorSpace \(colorSpace) has \(colorSpace.numberOfComponents) components, expected \(cgColorComponentCount)")
+    }
+    // rdar://177971578 - CG should provide an API for not requiring unsafe
+    guard let cs = unsafe CGColor(colorSpace: colorSpace, components: [a, b, c, d]) else {
+        fatalError("\(a) \(b) \(c) \(d) could not form a CGColor with colorSpace \(colorSpace)")
+    }
+    return cs
+}
+
+private func bridgeColorSpace(named name: String?) -> CGColorSpace {
+    // Resolve the color space from the transmitted name, falling back to extendedLinearSRGB.
+    // USD color3f/color4f values are in linear sRGB, so extendedLinearSRGB is the correct fallback.
+    if let name, let colorSpace = CGColorSpace(name: name as CFString) {
+        if colorSpace.model == .rgb && colorSpace.numberOfComponents == cgColorComponentCount {
+            return colorSpace
+        }
+        logError(
+            "rejecting color space \"\(name)\": model \(colorSpace.model.rawValue) with "
+                + "\(colorSpace.numberOfComponents) components, expected a "
+                + "\(cgColorComponentCount)-component RGB space"
+        )
+    }
+    guard let fallback = CGColorSpace(name: CGColorSpace.extendedLinearSRGB) else {
+        fatalError("extendedLinearSRGB could not be constructed, should never occur")
+    }
+    return fallback
+}
+
+#endif // RC_REMOVE_SEC_ACCEL_3
+
+private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> ShaderGraph.Value {
+    let values = constant.constantValues
+    let colorSpace = bridgeColorSpace(named: constant.colorSpaceName)
 
     switch constant.constant {
     case .bool:

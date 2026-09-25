@@ -1,0 +1,218 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ModelElementEnabled=true WebGPUEnabled=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+// RemoteMesh::UpdateMaterial carries, for every Constant node of its MaterialGraph, a
+// ConstantContainer whose colorSpaceName the WebContent process fully controls.
+// fromWKBridgeConstant() in USDModel.swift used to hand that name straight to CGColorSpace(name:)
+// and pass the resulting space to
+//
+//     makeCGColor4(colorSpace:) -> CGColor(colorSpace: colorSpace, components: [a, b, c, d])
+//
+// CGColorCreate reads numberOfComponents + 1 CGFloats out of `components`, but that array is always
+// four elements long, because the bridge only ever transmits three color components plus an
+// optional alpha. Naming a wider space -- "kCGColorSpaceGenericCMYK" has four color components --
+// therefore made the GPU process read a fifth CGFloat, eight bytes past the 32-byte payload of the
+// Swift array literal, and store it in the sender's own shader graph as the color's alpha.
+//
+// This test plays the part of a compromised WebContent process: it stands up a RemoteGPU stream by
+// hand, creates a model backing (which is what mints a RemoteMesh in the GPU process), then sends
+// UpdateMaterial naming color spaces of the wrong width and the wrong model, for each of the four
+// color constants that reach the CGColor helpers. It passes as long as the GPU process falls back
+// to its default color space instead of over-reading; under ASAN the over-read is a
+// heap-buffer-overflow in create_color().
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const log = (s) => { document.getElementById('log').textContent += s + '\n'; };
+
+// Invalidating the connection below can surface a cancelled reply as a rejected promise.
+window.addEventListener('unhandledrejection', (e) => { e.preventDefault(); });
+
+(async () => {
+    let gpuConnection = null;
+    try {
+        // ENABLE(GPU_PROCESS_MODEL) is off in this configuration, so there is nothing to test.
+        if (!window.IPC || !IPC.messages.RemoteGPU_CreateModelBacking || !IPC.messages.RemoteMesh_UpdateMaterial) {
+            log('PASS');
+            return;
+        }
+
+        const messages = IPC.messages;
+        const timeoutSeconds = 30;
+
+        const u8 = (value) => ({ type: 'uint8_t', value });
+        const u32 = (value) => ({ type: 'uint32_t', value });
+        const u64 = (value) => ({ type: 'uint64_t', value });
+        const i64 = (value) => ({ type: 'int64_t', value });
+        const boolean = (value) => ({ type: 'bool', value: value ? 1 : 0 });
+        const string = (value) => ({ type: 'String', value });
+        const vector = (value) => ({ type: 'Vector', value });
+
+        // Look the constant and node types up by name rather than hard-coding their wire values.
+        function enumValue(enumType, name) {
+            const entry = IPC.serializedEnumInfo[enumType]?.valueMap?.find(candidate => candidate.name === name);
+            if (entry === undefined)
+                throw new Error(`no ${enumType} named ${name}`);
+            return entry.value;
+        }
+
+        let nextIdentifier = (Math.floor(Math.random() * 90000) + 10000) * 100000;
+        const newIdentifier = () => ++nextIdentifier;
+
+        // 1. RemoteRenderingBackend: RemoteGPU is created relative to one.
+        const [backendConnection, backendHandle] = IPC.createStreamClientConnection(14, timeoutSeconds);
+        backendConnection.open();
+        const backendIdentifier = newIdentifier();
+        IPC.sendMessage('GPU', 0, messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+            [u64(backendIdentifier), { type: 'StreamServerConnectionHandle', value: backendHandle }]);
+        const didInitialize = backendConnection.waitForMessage(backendIdentifier, messages.RemoteRenderingBackendProxy_DidInitialize.name);
+        backendConnection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+
+        // 2. RemoteGPU.
+        const gpuHandlePair = IPC.createStreamClientConnection(18, timeoutSeconds);
+        gpuConnection = gpuHandlePair[0];
+        gpuConnection.open();
+        const gpuIdentifier = newIdentifier();
+        IPC.sendMessage('GPU', 0, messages.GPUConnectionToWebProcess_CreateGPU.name,
+            [u64(gpuIdentifier), u64(backendIdentifier), { type: 'StreamServerConnectionHandle', value: gpuHandlePair[1] }]);
+        const wasCreated = gpuConnection.waitForMessage(gpuIdentifier, messages.RemoteGPUProxy_WasCreated.name);
+        if (!wasCreated || !wasCreated[0].value) {
+            log('FAIL: could not create a RemoteGPU');
+            return;
+        }
+        gpuConnection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+
+        // 3. RemoteMesh. RemoteGPU::createModelBacking MESSAGE_CHECKs the two bootstrap environment
+        //    maps against Mesh.h's WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES
+        //    field for field, including the exact handle size, so reproduce them precisely: a
+        //    64x64 R16Float cube is 64 * 64 * 2 * 6 = 49152 bytes, and a 9-mip 256x256 R16Float cube
+        //    is 2 * (256^2 + 128^2 + ... + 1^2) * 6 = 1048572 bytes. Getting any of this wrong kills
+        //    this process instead of exercising the code under test.
+        const imageAsset = (sharedMemory, widthAndHeight, mipmapLevelCount) => ([
+            boolean(1),                                     // std::optional<SharedMemory::Handle> engaged
+            { type: 'SharedMemory', value: sharedMemory, protection: 'ReadWrite' },
+            i64(widthAndHeight), i64(widthAndHeight), i64(1),
+            u8(enumValue('WebCore::WebGPU::TextureViewDimension', 'Cube')),
+            u8(enumValue('WebCore::WebGPU::TextureFormat', 'R16float')),
+            i64(mipmapLevelCount), i64(6),
+            u8(4),                                          // OptionSet { TextureUsage::TextureBinding }
+            u8(0), u8(0), u8(0), u8(0)                      // swizzle red, green, blue, alpha
+        ]);
+
+        const meshIdentifier = newIdentifier();
+        gpuConnection.sendSyncMessage(gpuIdentifier, messages.RemoteGPU_CreateModelBacking.name, [
+            u32(64), u32(64),
+            imageAsset(IPC.createSharedMemory(49152), 64, 1),
+            imageAsset(IPC.createSharedMemory(1048572), 256, 9),
+            u64(meshIdentifier),
+            boolean(1)
+        ]);
+
+        // The bridge encodes constant values as Variant<String, double>; every color constant reads
+        // them back through NSNumber.floatValue, so plain doubles are what real traffic sends.
+        const doubleValue = (value) => ([u8(1), { type: 'double', value }]);
+
+        const constantContainer = (constant, values, name, colorSpaceName) => ([
+            u8(constant),
+            vector(values.map(doubleValue)),
+            string(name),
+            colorSpaceName === null ? [boolean(0)] : [boolean(1), string(colorSpaceName)]
+        ]);
+
+        const emptyBuiltin = [string(''), string('')];
+        const nodeTypeConstant = enumValue('WebModel::NodeType', 'Constant');
+        const nodeTypeArguments = enumValue('WebModel::NodeType', 'Arguments');
+        const nodeTypeResults = enumValue('WebModel::NodeType', 'Results');
+        // ShaderGraph.fromWKDescriptor() ignores the arguments and results nodes' constants, but
+        // they are not optional on the wire.
+        const placeholderConstant = constantContainer(enumValue('WebModel::Constant', 'kBool'), [], '', null);
+
+        let caseNumber = 0;
+        function updateMaterialDescriptor(constant, values, colorSpaceName) {
+            ++caseNumber;
+            const constantNode = [u8(nodeTypeConstant), emptyBuiltin, constantContainer(constant, values, `constant-${caseNumber}`, colorSpaceName)];
+            const materialGraph = [
+                string(`graph-${caseNumber}`),
+                vector([constantNode]),
+                vector([]),                                                     // edges
+                [u8(nodeTypeArguments), emptyBuiltin, placeholderConstant],
+                [u8(nodeTypeResults), emptyBuiltin, placeholderConstant],
+                vector([]), vector([]),                                         // inputs, outputs
+                vector([]), vector([]),                                         // primvar name mappings
+                vector([])                                                      // functionConstantInputNames
+            ];
+            // WebKitMesh.mm turns TypedResourceId::value into an NSUUID and hands it to a
+            // non-optional Swift UUID, so it has to parse; a distinct one per case keeps the cases
+            // from sharing a cached material.
+            const identifier = [
+                string(`5f2c3d4e-0000-4000-8000-${String(caseNumber).padStart(12, '0')}`),
+                string(`/material-${caseNumber}.usda`),
+                i64(caseNumber)
+            ];
+            return [materialGraph, identifier];
+        }
+
+        // The reply is unconditionally true, so it is a barrier rather than a result: once it
+        // arrives the GPU process has processed this descriptor and is still alive.
+        function updateMaterial(constant, values, colorSpaceName) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => reject(new Error(`no UpdateMaterial reply for color space ${colorSpaceName}`)), 5000);
+                gpuConnection.sendWithAsyncReply(meshIdentifier, messages.RemoteMesh_UpdateMaterial.name,
+                    [vector([updateMaterialDescriptor(constant, values, colorSpaceName)])], resolve);
+            });
+        }
+
+        // ModelInlineConverters.h maps WKBridgeConstantCgColor3/CgColor4 onto kColor3f/kColor4f, so
+        // these four names cover all six color-typed cases in fromWKBridgeConstant().
+        const threeComponentConstants = ['kColor3f', 'kColor3h'].map(name => enumValue('WebModel::Constant', name));
+        const fourComponentConstants = ['kColor4f', 'kColor4h'].map(name => enumValue('WebModel::Constant', name));
+
+        async function sendAll(colorSpaceNames) {
+            for (const colorSpaceName of colorSpaceNames) {
+                for (const constant of threeComponentConstants)
+                    await updateMaterial(constant, [0.1, 0.2, 0.3], colorSpaceName);
+                for (const constant of fourComponentConstants)
+                    await updateMaterial(constant, [0.1, 0.2, 0.3, 0.4], colorSpaceName);
+            }
+        }
+
+        // kCGColorSpaceGenericCMYK is the four-component space that made CGColorCreate read a fifth
+        // CGFloat out of the four-element array; the gray names are the mirror image (one
+        // component), and Lab is three components of the wrong model, so treating it as an RGB
+        // triple is meaningless even though it stays in bounds.
+        await sendAll([
+            'kCGColorSpaceGenericCMYK',
+            'kCGColorSpaceGenericGray',
+            'kCGColorSpaceExtendedGray',
+            'kCGColorSpaceGenericLab',
+            'not-a-color-space',
+            ''
+        ]);
+
+        // Positive controls. These are the values the GPU process itself puts on the wire in
+        // toWebNode(), so a check that turned any of them away would be silently reinterpreting
+        // legitimate content in the fallback color space.
+        await sendAll([
+            null,                                   // no name transmitted at all
+            'kCGColorSpaceSRGB',
+            'kCGColorSpaceExtendedLinearSRGB',      // the fallback itself
+            'kCGColorSpaceDisplayP3',
+            'kCGColorSpaceITUR_2100_PQ'
+        ]);
+
+        log('PASS');
+    } catch (error) {
+        log(`FAIL: ${error}`);
+    } finally {
+        try { gpuConnection?.invalidate(); } catch (error) { }
+        window.testRunner?.notifyDone();
+    }
+})();
+</script>
+</body>
+</html>
