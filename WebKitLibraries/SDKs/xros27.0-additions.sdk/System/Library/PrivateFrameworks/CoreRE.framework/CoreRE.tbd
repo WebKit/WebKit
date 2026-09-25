@@ -1,0 +1,44 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/CoreRE.framework/CoreRE
+current-version: 403.0.26
+swift-abi-version: 7
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        symbols: [_REAABBExtents, _REAnimationComponentGetComponentType, _REAnimationComponentPlay, _REAnimationHandoffDefaultDescEx,
+                _REAnimationLibraryComponentGetAnimationLibraryAsset, _REAnimationLibraryComponentGetComponentType, _REAnimationLibraryDefinitionCreateFromAnimationLibraryAsset,
+                _REAnimationLibraryDefinitionGetEntryAsset, _REAnimationLibraryDefinitionGetEntryCount, _REAnimationSceneAssetGetRootTimeline,
+                _REAssetGetType, _REAssetHandleAssetType, _REAssetSetMemoryAttributionTarget, _RECALayerClientComponentGetCALayer,
+                _RECALayerClientComponentSetShouldSyncToRemotes, _RECALayerGetCALayerClientComponent, _RECALayerServiceCreateRootComponent,
+                _RECALayerSetEmbeddedStereoContent, _RECGCommandsCacheCreate, _RECGCommandsContextCopyEncodedDataWithOptions,
+                _RECGCommandsContextCreate, _RECGContextDrawCGCommandsEncodedData, _REClippingPrimitiveComponentClipToBox,
+                _REClippingPrimitiveComponentGetComponentType, _REClippingPrimitiveComponentSetShouldClipChildren, _REClippingPrimitiveComponentSetShouldClipSelf,
+                _REComponentClassGetName, _REComponentGetClass, _REComponentGetEntity, _RECreateWorldRoot, _REECSManagerAddEngineSystem,
+                _REECSManagerAddScene, _REEmbeddedStereoContentComponentGetComponentType, _REEmbeddedStereoContentComponentSetAllowsCrossing,
+                _REEmbeddedStereoContentComponentSetClearColor, _REEmbeddedStereoContentComponentSetEnableClipping, _REEmbeddedStereoContentComponentSetIsStereo,
+                _REEmbeddedStereoContentComponentSetLightingBlendDistance, _REEmbeddedStereoContentComponentSetUseFixedPerspective,
+                _REEmbeddedStereoContentComponentSetWorldRoot, _REEngineConfigurationCreateDefault, _REEngineConfigurationGetServicesToCreate,
+                _REEngineConfigurationSetCALayerServiceType, _REEngineConfigurationSetClockMode, _REEngineConfigurationSetEngineQueue,
+                _REEngineConfigurationSetRenderFlags, _REEngineConfigurationSetServicesToCreate, _REEngineConfigurationSetServicesToUpdate,
+                _REEngineConfigurationSetUseMetal, _REEngineCreate, _REEngineDoUpdateEventSubscribe, _REEngineGetEventBus,
+                _REEngineGetServiceLocator, _REEngineGetShared, _REEngineInitWithConfiguration, _REEngineSetShared, _REEngineStart,
+                _REEntityAddComponentByClass, _REEntityComputeMeshBounds, _REEntityCreate, _REEntityGetChild, _REEntityGetChildCount,
+                _REEntityGetComponentByClass, _REEntityGetName, _REEntityGetOrAddComponentByClass, _REEntityRemoveComponentByClass,
+                _REEntityRemoveFromSceneOrParent, _REEntitySetName, _REEntitySetParent, _REEntitySubtreeAddNetworkComponentRecursive,
+                _REEventBusUnsubscribe, _REHierarchicalFadeComponentGetComponentType, _REHierarchicalFadeComponentSetOpacity,
+                _REIBLAssetGetDiffuseTexture, _REIBLAssetGetSkyboxTexture, _REIBLAssetGetSpecularTexture, _REMakeSRTFromMatrix,
+                _REMeshComponentGetComponentType, _RENetworkComponentGetComponentType, _RENetworkMarkComponentDirty, _RENetworkMarkEntityMetadataDirty,
+                _REPortalCrossingFlagsComponentGetComponentType, _REPortalCrossingFlagsComponentSetEnabled, _REPortalCrossingFlagsComponentSetInherited,
+                _RERelease, _RERetain, _RESRTMatrix, _RESceneAddEntity, _REServiceLocatorGetAssetManager, _REServiceLocatorGetCALayerService,
+                _REServiceLocatorGetECSService, _RETimelineDefinitionCreateChildTimelineRef, _RETimelineDefinitionCreateClipSourceRef,
+                _RETimelineDefinitionCreateFromTimeline, _RETimelineDefinitionCreateTimelineAsset, _RETimelineDefinitionCreateTimelineClip,
+                _RETimelineDefinitionGetChildrenTimelineCount, _RETimelineDefinitionGetClipDelay, _RETimelineDefinitionGetClipDuration,
+                _RETimelineDefinitionGetClipEnd, _RETimelineDefinitionGetClipLoopBehavior, _RETimelineDefinitionGetClipOffset,
+                _RETimelineDefinitionGetClipSpeed, _RETimelineDefinitionGetClipStart, _RETimelineDefinitionGetEndTime, _RETimelineDefinitionGetFrameInterval,
+                _RETimelineDefinitionGetName, _RETimelineDefinitionGetStartTime, _RETimelineDefinitionGetTargetPath, _RETimelineDefinitionGetTimelineType,
+                _RETimelineDefinitionGetValueCount, _RETimelineDefinitionSetClipDuration, _RETimelineDefinitionSetClipLoopBehavior,
+                _RETransformComponentGetComponentType, _RETransformComponentGetLocalSRT, _RETransformComponentSetLocalSRT,
+                _REWorldRootComponentGetComponentType, _REWorldRootComponentSetApplyToSelf, _REWorldRootComponentSetWorldRoot,
+                __REStartup, _kInvalidAnimationToken]
+...

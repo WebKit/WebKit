@@ -1,0 +1,21 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/IconServices.framework/IconServices
+current-version: 729.255
+swift-abi-version: 7
+reexported-libraries:
+-       targets: [arm64-xros, arm64e-xros]
+        libraries: [/System/Library/PrivateFrameworks/IconFoundation.framework/IconFoundation]
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        objc-classes: [ISIcon, ISImageDescriptor]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/IconFoundation.framework/IconFoundation
+current-version: 729.255
+swift-abi-version: 7
+exports: []
+...

@@ -1,0 +1,7 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/URLFormatting.framework/URLFormatting
+current-version: 288
+exports: []
+...
