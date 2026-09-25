@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Safe area inset opt-in is per-document, so an embed can opt in independently of its embedder</title>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// The embedder here does not opt in, so it should be quirked, but the embed that declares
+// viewport-fit=cover should keep requestFullscreen regardless of what its embedder did.
+const order = [
+    "embedder without viewport-fit=cover",
+    "embed with viewport-fit=cover",
+    "embed without viewport-fit=cover",
+];
+const results = new Map();
+
+function record(label, present) {
+    results.set(label, present);
+    if (results.size < order.length)
+        return;
+    document.getElementById("output").textContent =
+        order.map(l => `${l}: requestFullscreen ${results.get(l) ? "present" : "absent"}`).join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("message", event => record(event.data.label, event.data.present));
+
+for (const src of ["resources/safe-area-opt-in-frame-cover.html", "resources/safe-area-opt-in-frame-no-cover.html"]) {
+    const iframe = document.createElement("iframe");
+    iframe.src = src;
+    document.body.appendChild(iframe);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    record("embedder without viewport-fit=cover", "requestFullscreen" in Element.prototype);
+});
+</script>
+</body>
+</html>

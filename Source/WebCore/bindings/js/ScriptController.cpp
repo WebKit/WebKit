@@ -43,7 +43,9 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "JSDocument.h"
+#include "JSElement.h"
 #include "JSExecState.h"
+#include "JSShadowRoot.h"
 #include "LoadableModuleScript.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameInlines.h"
@@ -523,6 +525,24 @@ void ScriptController::updateDocument()
         downcast<JSDOMWindow>(jsWindowProxy->window())->updateDocument();
         if (document)
             document->addMicrotaskGlobalObject(jsWindowProxy->window());
+    }
+}
+
+void ScriptController::reevaluateQuirkDependentProperties()
+{
+    // FIXME: This list has to be kept in sync by hand with the interfaces marked
+    // [QuirksCanChangeAtRuntime], because the bindings generator has no cross-IDL aggregation point to
+    // emit it from. Adding the attribute to an interface that is not listed here silently does nothing.
+    // Isolated worlds get their own prototypes, so every window proxy has to be visited, not just the
+    // normal world's.
+    for (auto& jsWindowProxy : protect(windowProxy())->jsWindowProxiesAsVector()) {
+        auto* window = jsWindowProxy->window();
+        if (!window)
+            continue;
+        JSLockHolder lock(jsWindowProxy->world().vm());
+        JSElement::reevaluateQuirkDependentPrototypeProperties(*window);
+        JSDocument::reevaluateQuirkDependentPrototypeProperties(*window);
+        JSShadowRoot::reevaluateQuirkDependentPrototypeProperties(*window);
     }
 }
 

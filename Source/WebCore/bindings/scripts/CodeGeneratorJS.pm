@@ -2214,6 +2214,38 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{SecureContext};
 }
 
+# Members marked [QuirksCanChangeAtRuntime] have their runtime-enable condition re-evaluated after the
+# prototype has already been created, because the quirk gating them is not resolved until later in the
+# page's lifetime. Only prototype members are supported; instance and static members are installed
+# elsewhere and have no re-evaluation entry point.
+sub GetQuirkReevaluatableProperties
+{
+    my ($interface) = @_;
+
+    my @properties = ();
+
+    foreach my $attribute (@{$interface->attributes}) {
+        next unless $attribute->extendedAttributes->{QuirksCanChangeAtRuntime};
+        assert("[QuirksCanChangeAtRuntime] is not supported on global interfaces:[" . $interface->type->name . "::" . $attribute->name . "]") if IsGlobalInterface($interface);
+        assert("[QuirksCanChangeAtRuntime] is not supported on static members:[" . $interface->type->name . "::" . $attribute->name . "]") if $attribute->isStatic;
+        assert("[QuirksCanChangeAtRuntime] is not supported on instance members:[" . $interface->type->name . "::" . $attribute->name . "]") if AttributeShouldBeOnInstance($interface, $attribute);
+        assert("[QuirksCanChangeAtRuntime] on '" . $attribute->name . "' requires a runtime-enable condition.") unless NeedsRuntimeCheck($interface, $attribute);
+        push(@properties, $attribute);
+    }
+
+    foreach my $operation (@{$interface->operations}) {
+        next unless $operation->extendedAttributes->{QuirksCanChangeAtRuntime};
+        next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
+        next if $operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier};
+        assert("[QuirksCanChangeAtRuntime] is not supported on global interfaces:[" . $interface->type->name . "::" . $operation->name . "]") if IsGlobalInterface($interface);
+        assert("[QuirksCanChangeAtRuntime] is not supported on static members:[" . $interface->type->name . "::" . $operation->name . "]") if $operation->isStatic;
+        assert("[QuirksCanChangeAtRuntime] on '" . $operation->name . "' requires a runtime-enable condition.") unless NeedsRuntimeCheck($interface, $operation);
+        push(@properties, $operation);
+    }
+
+    return @properties;
+}
+
 sub NeedsRuntimeReadWriteCheck
 {
     my ($interface, $context) = @_;
@@ -3534,6 +3566,12 @@ sub GenerateHeader
         foreach my $customEnabledByMethod (uniq(@customEnabledByMethods)) {
             push(@headerContent, "    static bool ${customEnabledByMethod}(ScriptExecutionContext*);\n");
         }
+    }
+
+    if (GetQuirkReevaluatableProperties($interface)) {
+        push(@headerContent, "\n    // Re-evaluates the runtime-enable conditions of [QuirksCanChangeAtRuntime] prototype\n");
+        push(@headerContent, "    // members, removing any that are no longer enabled. No-op if the prototype does not exist yet.\n");
+        push(@headerContent, "    static void reevaluateQuirkDependentPrototypeProperties(JSDOMGlobalObject&);\n");
     }
 
 
@@ -5134,6 +5172,39 @@ sub GenerateImplementation
 
     if (!ShouldUseOrdinaryObjectPrototype($interface)) {
         push(@implContent, "    WebCore::putDirectWithoutTransition(this, vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, info()->className), JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);\n");
+        push(@implContent, "}\n\n");
+    }
+
+    my @quirkReevaluatableProperties = GetQuirkReevaluatableProperties($interface);
+    if (@quirkReevaluatableProperties) {
+        AddToImplIncludes("JSDOMBindingFacade.h");
+        AddToImplIncludes("JSDOMWrapperCache.h");
+
+        push(@implContent, "void ${className}::reevaluateQuirkDependentPrototypeProperties(JSDOMGlobalObject& globalObject)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    auto* structure = getCachedDOMStructure(globalObject, ${className}::info());\n");
+        push(@implContent, "    if (!structure)\n");
+        push(@implContent, "        return;\n");
+        push(@implContent, "    auto* prototype = dynamicDowncast<${className}Prototype>(WebCore::storedPrototypeObject(structure));\n");
+        push(@implContent, "    if (!prototype)\n");
+        push(@implContent, "        return;\n\n");
+        push(@implContent, "    auto& vm = globalObject.vm();\n");
+        push(@implContent, "    bool didRemoveProperties = false;\n");
+
+        foreach my $property (@quirkReevaluatableProperties) {
+            my $conditionalString = $codeGenerator->GenerateConditionalString($property);
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $property, "(&globalObject)", 1);
+            my $name = $property->name;
+            push(@implContent, "    if (${runtimeEnableConditionalString})\n");
+            push(@implContent, "        addRuntimeEnabledProperty(vm, *prototype, ${className}::info(), ${className}PrototypeTableValues, \"$name\"_s);\n");
+            push(@implContent, "    else\n");
+            push(@implContent, "        didRemoveProperties |= removeRuntimeEnabledProperty(vm, *prototype, \"$name\"_s);\n");
+            push(@implContent, "#endif\n") if $conditionalString;
+        }
+
+        push(@implContent, "\n    if (didRemoveProperties && prototype->structure()->isDictionary())\n");
+        push(@implContent, "        prototype->flattenDictionaryObject(vm);\n");
         push(@implContent, "}\n\n");
     }
 

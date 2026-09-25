@@ -111,6 +111,39 @@ JSC::JSObject* storedPrototypeObject(JSC::Structure* structure)
     return structure->storedPrototypeObject();
 }
 
+bool removeRuntimeEnabledProperty(JSC::VM& vm, JSC::JSObject& target, ASCIILiteral name)
+{
+    auto propertyName = JSC::Identifier::fromString(vm, name);
+    unsigned attributes;
+    if (!JSC::isValidOffset(target.structure()->get(vm, propertyName, attributes)))
+        return false;
+
+    JSC::VM::DeletePropertyModeScope scope(vm, JSC::VM::DeletePropertyMode::IgnoreConfigurable);
+    JSC::DeletePropertySlot slot;
+    JSC::JSObject::deleteProperty(&target, target.realm(), propertyName, slot);
+    return true;
+}
+
+bool addRuntimeEnabledProperty(JSC::VM& vm, JSC::JSObject& target, const JSC::ClassInfo* classInfo, std::span<const JSC::HashTableValue> tableValues, ASCIILiteral name)
+{
+    auto propertyName = JSC::Identifier::fromString(vm, name);
+    unsigned attributes;
+    // Never overwrite what is already there. If the page installed its own value while the property was
+    // disabled, that value wins over reinstating the native one.
+    if (JSC::isValidOffset(target.structure()->get(vm, propertyName, attributes)))
+        return false;
+
+    for (auto& value : tableValues) {
+        if (value.m_key != name)
+            continue;
+        JSC::reifyStaticProperty(vm, classInfo, propertyName, value, target);
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 JSC::JSValue arrayGetDirectIndex(JSC::JSArray* array, JSC::JSGlobalObject* globalObject, unsigned index)
 {
     return array->getDirectIndex(globalObject, index);

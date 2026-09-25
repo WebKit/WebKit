@@ -110,6 +110,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include <pal/system/ios/UserInterfaceIdiom.h>
+#endif
+
 #define QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(returnValue) \
     if (!needsQuirks()) [[unlikely]] \
         return returnValue
@@ -447,16 +451,6 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    // Vimeo.com has incorrect layout on iOS on certain videos with wider
-    // aspect ratios than the device's screen in landscape mode.
-    // (Ref: rdar://116531089)
-    // Instagram.com stories flow under the notch and status bar
-    // (Ref: rdar://121014613)
-    // x.com (Twitter) video embeds have controls that are too tiny and
-    // show page behind fullscreen.
-    // (Ref: rdar://121473410)
-    // YouTube.com does not provide AirPlay controls in fullscreen
-    // (Ref: rdar://121471373)
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk);
 }
 
@@ -2435,6 +2429,19 @@ void Quirks::determineRelevantQuirks()
 
     // rdar://133423460
     m_quirksData.setEnabled(QuirkBehaviors::shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk, shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(quirksURL));
+
+#if PLATFORM(IOS)
+    // Use the opt-in Document tracks while parsing and freezes afterwards, rather than the live
+    // viewport arguments: a page that rewrites its own <meta name="viewport"> once loaded does not
+    // actually get the safe area insets honored, so it must not be able to toggle this quirk either.
+    // This is deliberately the local document's own opt-in, not the main frame's, so that embedded
+    // content (a YouTube embed, say) can declare that it handles safe area insets independently of
+    // whatever its embedder did. Note a subframe's viewport-fit has no effect on the insets the
+    // platform actually reports, so for a subframe this is a declaration of intent rather than a
+    // description of the platform state.
+    if (PAL::currentUserInterfaceIdiomIsSmallScreen())
+        m_quirksData.setEnabled(QuirkBehaviors::shouldDisableElementFullscreenQuirk, document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn);
+#endif
 }
 
 void Quirks::logQuirksToConsoleIfNecessary() const

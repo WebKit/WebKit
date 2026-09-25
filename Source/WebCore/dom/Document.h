@@ -554,6 +554,14 @@ public:
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
+    // Whether this document asked to lay out underneath the safe area insets, via "viewport-fit=cover"
+    // in its <meta name="viewport"> tag. Tracked while the document is parsing and frozen afterwards:
+    // rewriting the meta tag from script once loaded does not make the platform start honoring the
+    // safe area insets, so it must not change the answer here either.
+    // This is per-document, not per-page, so embedded content can opt in independently of its embedder.
+    enum class SafeAreaInsetOptIn : uint8_t { Undetermined, OptedIn, NotOptedIn };
+    SafeAreaInsetOptIn safeAreaInsetOptIn() const { return m_safeAreaInsetOptIn; }
+
     OptionSet<DisabledAdaptations> disabledAdaptations() const { return m_disabledAdaptations; }
 
     WEBCORE_EXPORT DocumentType* NODELETE doctype() const;
@@ -2194,6 +2202,11 @@ private:
     void createRenderTree();
     void detachParser();
 
+    // Recomputes the safe area opt-in from the current viewport arguments and, if it changed, pushes
+    // the new answer through the quirks and into the already-created bindings.
+    void updateSafeAreaInsetOptIn();
+
+
     DocumentEventTiming* documentEventTimingFromNavigationTiming();
 
     // ScriptExecutionContext
@@ -2525,6 +2538,7 @@ private:
     WeakHashMap<Node, std::unique_ptr<QuerySelectorAllResults>, WeakPtrImplWithEventTargetData> m_querySelectorAllResults;
 
     ViewportArguments m_viewportArguments;
+    SafeAreaInsetOptIn m_safeAreaInsetOptIn { SafeAreaInsetOptIn::Undetermined };
 
     DocumentEventTiming m_eventTiming;
     mutable std::unique_ptr<LargestContentfulPaintData> m_largestContentfulPaintData;
