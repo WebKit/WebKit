@@ -24,12 +24,20 @@
 
 #pragma once
 
-#include <WebCore/IntersectionObserverMarginBox.h>
+#include <WebCore/LayoutRect.h>
 #include <WebCore/RepaintRectCalculation.h>
 #include <optional>
 #include <wtf/OptionSet.h>
+#include <wtf/ScopedLambda.h>
 
 namespace WebCore {
+
+class Frame;
+
+// Given a scroll container or frame viewport clip rect (in the coordinate space of the clipping
+// renderer or frame), and the frame that it belongs to, returns an adjusted clip rect,
+// or std::nullopt to leave the clip unchanged.
+using ClipRectAdjuster = ScopedLambda<std::optional<LayoutRect>(const Frame&, const LayoutRect& clipRect)>;
 
 // Configuration for a visible rect computation. Constant for the duration of a traversal,
 // so it is passed by const reference.
@@ -43,11 +51,18 @@ struct VisibleRectContext {
     };
 
     OptionSet<Option> options { };
-    std::optional<IntersectionObserverMarginBox> scrollMargin { };
+    const ClipRectAdjuster* scrollContainerClipRectAdjuster { nullptr };
 
     RepaintRectCalculation repaintRectCalculation() const
     {
         return options.contains(Option::CalculateAccurateRepaintRect) ? RepaintRectCalculation::Accurate : RepaintRectCalculation::Fast;
+    }
+
+    std::optional<LayoutRect> adjustScrollContainerClipRect(const Frame& frame, const LayoutRect& clipRect) const
+    {
+        if (!scrollContainerClipRectAdjuster)
+            return std::nullopt;
+        return (*scrollContainerClipRectAdjuster)(frame, clipRect);
     }
 };
 

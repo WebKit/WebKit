@@ -48,7 +48,6 @@ static LayoutRect visibleAbsoluteRect(const RenderObject& renderer)
             VisibleRectContext::Option::ApplyCompositedClips,
             VisibleRectContext::Option::ApplyCompositedContainerScrolls,
         },
-        .scrollMargin = { },
     });
 }
 

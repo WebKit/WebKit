@@ -50,7 +50,6 @@
 #include "RenderSVGImage.h"
 #include "RenderText.h"
 #include "RenderView.h"
-#include "VisibleRectContext.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/text/TextStream.h>
@@ -270,7 +269,6 @@ RefPtr<LargestContentfulPaint> LargestContentfulPaintData::generateLargestConten
     return std::exchange(m_pendingEntry, nullptr);
 }
 
-// This is a simplified version of IntersectionObserver::computeIntersectionState(). Some code should be shared.
 FloatRect LargestContentfulPaintData::computeViewportIntersectionRect(Element& element, FloatRect localRect)
 {
     RefPtr frameView = element.document().view();
@@ -281,31 +279,12 @@ FloatRect LargestContentfulPaintData::computeViewportIntersectionRect(Element& e
     if (!targetRenderer)
         return { };
 
-    if (targetRenderer->isSkippedContent())
+    auto clippedBounds = targetRenderer->computeClippedRectInContentCoordinates(LayoutRect { localRect });
+    if (!clippedBounds)
         return { };
 
-    CheckedPtr rootRenderer = frameView->renderView();
-    auto layoutViewport = frameView->layoutViewportRect();
-
-    auto localTargetBounds = LayoutRect { localRect };
-    auto absoluteRects = targetRenderer->computeVisibleRectsInContainer(
-        { localTargetBounds },
-        &protect(targetRenderer->view()).get(),
-        {
-            .options = {
-                VisibleRectContext::Option::UseEdgeInclusiveIntersection,
-                VisibleRectContext::Option::ApplyCompositedClips,
-                VisibleRectContext::Option::ApplyCompositedContainerScrolls
-            },
-        },
-        { }
-    );
-
-    if (!absoluteRects)
-        return { };
-
-    auto intersectionRect = layoutViewport;
-    intersectionRect.edgeInclusiveIntersect(absoluteRects->clippedOverflowRect);
+    auto intersectionRect = frameView->layoutViewportRect();
+    intersectionRect.edgeInclusiveIntersect(*clippedBounds);
     return intersectionRect;
 }
 

@@ -44,7 +44,6 @@
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "JSNodeCustom.h"
-#include "LegacyRenderSVGModelObject.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
@@ -53,9 +52,7 @@
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderInline.h"
-#include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
-#include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
@@ -68,6 +65,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <ranges>
+#include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
@@ -362,127 +360,6 @@ static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const Intersec
     rootBounds.expand(rootMarginEdges);
 }
 
-// Given a rectangle in the coordinate space of rendererOrFrame, compute the visible
-// rectangle in the content coordinate space of the root's (main frame) RenderView.
-// This is done by computing the visible rectangle in the nearest frame, then its
-// parent frame, ... up to the main frame.
-//
-// If rendererOrFrame is a:
-// * Renderer: rect is in the coordinate space of the renderer.
-// * Frame: rect is in the coordinate space of the frame's owner renderer.
-//   This is only used in Site Isolation mode, when the frame is out-of-process
-//   and its owner renderer is not available.
-//
-// targetSecurityOrigin is the security origin of the target (the element that
-// originates the very first rect)
-static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const SecurityOrigin& targetSecurityOrigin, Variant<const RenderElement*, const Frame*> rendererOrFrame, std::optional<IntersectionObserverMarginBox> scrollMargin)
-{
-    RefPtr<const Frame> enclosingFrame = WTF::visit(WTF::makeVisitor(
-        [&] (const RenderElement* renderer) { return static_cast<const Frame*>(&renderer->frame()); },
-        [&] (const Frame* frame) { return static_cast<const Frame*>(frame->tree().parent()); }
-    ), rendererOrFrame);
-
-    if (!enclosingFrame)
-        return std::nullopt;
-
-    RefPtr<const FrameView> enclosingFrameView = enclosingFrame->virtualView();
-    ASSERT(enclosingFrameView);
-    if (!enclosingFrameView)
-        return std::nullopt;
-
-    // Scroll margin should not propagate past the first cross-origin frame in the chain leading to the main frame.
-    // e.g given the chain: main <- cross-origin <- same-origin 2 <- same-origin 1 <- target
-    // then scroll margin is applied to same-origin frame 1/2 but not to cross-origin and main frames.
-    // Hence, clear out the scroll margin when we see a cross-origin frame.
-    bool isSameOriginDomain = [&] () {
-        if (RefPtr enclosingFrameSecurityOrigin = enclosingFrame->frameDocumentSecurityOrigin())
-            return enclosingFrameSecurityOrigin->isSameOriginDomain(targetSecurityOrigin);
-
-        return false;
-    }();
-    if (!isSameOriginDomain)
-        scrollMargin.reset();
-
-    auto absoluteClippedRect = WTF::visit(WTF::makeVisitor(
-        [&] (const RenderElement* renderer) {
-            auto visibleRects = renderer->computeVisibleRectsInContainer(
-                { rect },
-                &renderer->view(),
-                {
-                    .options = {
-                        VisibleRectContext::Option::UseEdgeInclusiveIntersection,
-                        VisibleRectContext::Option::ApplyCompositedClips,
-                        VisibleRectContext::Option::ApplyCompositedContainerScrolls
-                    },
-                    .scrollMargin = scrollMargin
-                },
-                { }
-            );
-
-            return visibleRects.transform([] (auto&& repaintRects) { return repaintRects.clippedOverflowRect; } );
-        },
-        [&] (const Frame* frame) -> std::optional<LayoutRect> {
-            // This rect is in coordinate space of parent frame. It doesn't account for
-            // scroll margin, which is fine as this codepath is only reached when Site
-            // Isolation is enabled, and the frame is cross-origin. Scroll margin doesn't
-            // get applied to cross-origin frames.
-            auto visibleRectInParentFrame = enclosingFrameView->visibleRectOfChild(*frame);
-            if (!visibleRectInParentFrame)
-                return std::nullopt;
-
-            // rect is in coordinate space of the frame's owner renderer,
-            // it needs to be converted to parent frame's coordinate space first before intersecting.
-            auto absoluteRect = LayoutRect { enclosingFrameView->childFrameOwnerToRootContentTransform(*frame).mapRect(rect) };
-            if (!absoluteRect.edgeInclusiveIntersect(*visibleRectInParentFrame))
-                return std::nullopt;
-
-            return std::make_optional(absoluteRect);
-    }), rendererOrFrame);
-
-    if (!absoluteClippedRect)
-        return std::nullopt;
-
-    // Stop here if there are no more parent frames to traverse to.
-    RefPtr enclosingFrameParent = enclosingFrame->parent();
-    if (!enclosingFrameParent)
-        return absoluteClippedRect;
-
-    RefPtr enclosingFrameParentView = enclosingFrameParent->virtualView();
-    if (!enclosingFrameParentView)
-        return absoluteClippedRect;
-
-    // The computed visible rect is in the coordinate space of enclosingFrame.
-    // But only the iframe's viewport is visible, so clip by the iframe's viewport.
-
-    // Compute the frame's viewport (this is in the coordinate space of enclosingFrame too.)
-    auto frameRect = enclosingFrameView->layoutViewportRect();
-    if (scrollMargin) {
-        auto scrollMarginEdges = LayoutBoxExtent {
-            LayoutUnit(Style::evaluate<int>(scrollMargin->top(), frameRect.height(), Style::ZoomFactor::none())),
-            LayoutUnit(Style::evaluate<int>(scrollMargin->right(), frameRect.width(), Style::ZoomFactor::none())),
-            LayoutUnit(Style::evaluate<int>(scrollMargin->bottom(), frameRect.height(), Style::ZoomFactor::none())),
-            LayoutUnit(Style::evaluate<int>(scrollMargin->left(), frameRect.width(), Style::ZoomFactor::none())),
-        };
-        frameRect.expand(scrollMarginEdges);
-    }
-
-    if (!absoluteClippedRect->edgeInclusiveIntersect(frameRect))
-        return std::nullopt;
-
-    // Then convert it to the view coordinate space of enclosingFrame.
-    // This is now the visible portion in enclosingFrame's owner renderer's content box.
-    absoluteClippedRect = LayoutRect { enclosingFrameView->contentsToView(*absoluteClippedRect) };
-
-    if (RefPtr ownerRenderer = enclosingFrame->ownerRenderer()) {
-        // Adjust for borders and/or padding of the owner renderer box.
-        absoluteClippedRect->moveBy(ownerRenderer->contentBoxLocation());
-        return computeClippedRectInRootContentsSpace(*absoluteClippedRect, targetSecurityOrigin, ownerRenderer.get(), scrollMargin);
-    }
-
-    absoluteClippedRect->moveBy(enclosingFrameParentView->childFrameOwnerContentBoxLocation(*enclosingFrame));
-    return computeClippedRectInRootContentsSpace(*absoluteClippedRect, targetSecurityOrigin, enclosingFrame.get(), WTF::move(scrollMargin));
-}
-
 auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRegistration& registration, FrameView& hostFrameView, Element& target, ApplyRootMargin applyRootMargin) const -> IntersectionObservationState
 {
     bool isFirstObservation = !registration.previousThresholdIndex;
@@ -573,27 +450,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         expandRootBoundsWithRootMargin(intersectionState.rootBounds, rootMarginBox(), rootUsedZoom);
     }
 
-    auto localTargetBounds = [&]() -> LayoutRect {
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*targetRenderer))
-            return renderBox->borderBoundingBox();
-
-        if (targetRenderer->isInlineBox()) {
-            Vector<LayoutRect> rects;
-            targetRenderer->boundingRects(rects, { });
-            return unionRect(rects);
-        }
-
-        if (CheckedPtr renderLineBreak = dynamicDowncast<RenderLineBreak>(targetRenderer.get()))
-            return renderLineBreak->linesBoundingBox();
-
-        if (CheckedPtr svgModelObject = dynamicDowncast<RenderSVGModelObject>(*targetRenderer))
-            return svgModelObject->borderBoxRectEquivalent();
-
-        if (CheckedPtr legacySVGModelObject = dynamicDowncast<LegacyRenderSVGModelObject>(*targetRenderer))
-            return enclosingLayoutRect(legacySVGModelObject->strokeBoundingBox());
-
-        return { };
-    }();
+    auto localTargetBounds = targetRenderer->localBoundsForIntersection();
 
     auto rootRelativeTargetRect = [&]() -> std::optional<LayoutRect> {
         if (targetRenderer->isSkippedContent())
@@ -609,7 +466,6 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
                         VisibleRectContext::Option::ApplyCompositedClips,
                         VisibleRectContext::Option::ApplyCompositedContainerScrolls
                     },
-                    .scrollMargin = { }
                 },
                 { }
             );
@@ -618,7 +474,32 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             return result->clippedOverflowRect;
         }
 
-        return computeClippedRectInRootContentsSpace(localTargetBounds, protect(protect(target)->document().securityOrigin()), targetRenderer, scrollMarginBox());
+        // Scroll margin should not propagate past the first cross-origin frame in the chain leading to the main frame.
+        // e.g given the chain: main <- cross-origin <- same-origin 2 <- same-origin 1 <- target
+        // then scroll margin is applied to same-origin frame 1/2 but not to cross-origin and main frames.
+        // Clips are visited from the target's frame outwards, so stop applying scroll margin once we see a cross-origin frame.
+        Ref targetSecurityOrigin = target.document().securityOrigin();
+        auto& scrollMargin = scrollMarginBox();
+        bool hasSeenCrossOriginFrame = false;
+        auto applyScrollMargin = [&](const Frame& frame, const LayoutRect& clipRect) -> std::optional<LayoutRect> {
+            if (!hasSeenCrossOriginFrame) {
+                RefPtr frameSecurityOrigin = frame.frameDocumentSecurityOrigin();
+                hasSeenCrossOriginFrame = !frameSecurityOrigin || !frameSecurityOrigin->isSameOriginDomain(targetSecurityOrigin);
+            }
+            if (hasSeenCrossOriginFrame)
+                return std::nullopt;
+
+            auto adjustedClipRect = clipRect;
+            adjustedClipRect.expand(LayoutBoxExtent {
+                Style::evaluate<LayoutUnit>(scrollMargin.top(), clipRect.height(), Style::ZoomFactor::none()),
+                Style::evaluate<LayoutUnit>(scrollMargin.right(), clipRect.width(), Style::ZoomFactor::none()),
+                Style::evaluate<LayoutUnit>(scrollMargin.bottom(), clipRect.height(), Style::ZoomFactor::none()),
+                Style::evaluate<LayoutUnit>(scrollMargin.left(), clipRect.width(), Style::ZoomFactor::none())
+            });
+            return adjustedClipRect;
+        };
+
+        return targetRenderer->computeClippedRectInMainFrameContentCoordinates(localTargetBounds, applyScrollMargin);
     }();
 
     auto rootLocalIntersectionRect = intersectionState.rootBounds;

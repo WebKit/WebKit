@@ -113,6 +113,7 @@
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/RuntimeApplicationChecks.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -1509,17 +1510,11 @@ bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const Rend
     if (effectiveOverflowY() == Overflow::Visible)
         clipRect.expandToInfiniteY();
 
-    if (context.scrollMargin && (isScrollContainerX() || isScrollContainerY())) {
-        auto borderWidths = this->borderWidths();
-        clipRect.contract(borderWidths);
-        auto scrollMarginEdges = LayoutBoxExtent {
-            Style::evaluate<LayoutUnit>(context.scrollMargin->top(), clipRect.height(), Style::ZoomFactor::none()),
-            Style::evaluate<LayoutUnit>(context.scrollMargin->right(), clipRect.width(), Style::ZoomFactor::none()),
-            Style::evaluate<LayoutUnit>(context.scrollMargin->bottom(), clipRect.height(), Style::ZoomFactor::none()),
-            Style::evaluate<LayoutUnit>(context.scrollMargin->left(), clipRect.width(), Style::ZoomFactor::none())
-        };
-
-        clipRect.expand(scrollMarginEdges);
+    if (context.scrollContainerClipRectAdjuster && (isScrollContainerX() || isScrollContainerY())) {
+        auto scrollportRect = clipRect;
+        scrollportRect.contract(borderWidths());
+        if (auto adjustedClipRect = context.adjustScrollContainerClipRect(frame(), scrollportRect))
+            clipRect = *adjustedClipRect;
     }
 
     bool intersects;
