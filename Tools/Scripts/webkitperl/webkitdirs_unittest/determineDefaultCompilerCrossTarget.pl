@@ -34,6 +34,10 @@ use File::Temp;
 use Test::More;
 use webkitdirs;
 
+if (!webkitdirs::isLinux()) {
+    plan(skip_all => "cross-target builds are only supported on Linux");
+}
+
 my $helper = File::Spec->catfile(webkitdirs::sourceDir(), "Tools", "Scripts", "cross-toolchain-helper");
 chomp(my @targets = `'$helper' --print-available-targets 2>/dev/null`);
 if (!@targets) {
