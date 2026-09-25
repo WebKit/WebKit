@@ -172,6 +172,19 @@ static bool isStretchedForAutomaticSize(const PlacedGridItem& placedGridItem, co
     return alignmentPosition == ItemPosition::Stretch;
 }
 
+// https://drafts.csswg.org/css-grid-1/#grid-item-sizing
+bool hasFitContentBlockSize(const PlacedGridItem& placedGridItem)
+{
+    auto& blockAxisSizes = placedGridItem.blockAxisSizes();
+    if (!blockAxisSizes.preferredSize.isAuto())
+        return false;
+
+    if (isStretchedForAutomaticSize(placedGridItem, blockAxisSizes, placedGridItem.blockAxisAlignment()))
+        return false;
+
+    return !placedGridItem.isReplacedElement() && !preferredAspectRatio(placedGridItem.layoutBox());
+}
+
 bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const ElementBox& gridItem, WritingMode containerWritingMode)
 {
     CheckedRef itemStyle = gridItem.style();

@@ -335,11 +335,20 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, inlineMargins);
         usedInlineSizes.append(inlineUsedSize);
 
-        // The grid area is the item's containing block, as it was while sizing the rows.
-        auto blockUsedSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
-        usedBlockSizes.append(blockUsedSize);
-
-        integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
+        // When the grid item has a fit-content block height RenderGrid just calls layout on it, so
+        // we do the same to match behavior instead of running layout to compute the min-content and
+        // max-content sizes as well which is what blockUsedSize does.
+        bool hasFitContentBlockSize = GridLayoutUtils::hasFitContentBlockSize(gridItem);
+        if (!hasFitContentBlockSize) {
+            auto usedBlockSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, usedBlockSize, gridAreaInlineSize);
+            usedBlockSizes.append(usedBlockSize);
+        } else {
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, { }, gridAreaInlineSize);
+            // The item's padding in its box geometry is resolved against the grid container rather than
+            // the grid area, so only take the content box size from it.
+            usedBlockSizes.append(formattingContext.geometryForGridItem(gridItem.layoutBox()).contentBoxHeight() + blockBorderAndPadding);
+        }
     }
     return { usedInlineSizes, usedBlockSizes };
 }

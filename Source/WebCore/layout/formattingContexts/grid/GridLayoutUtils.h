@@ -97,6 +97,7 @@ bool sizeDependsOnContainingBlockSize(const SizeType& size)
 }
 
 std::optional<double> preferredAspectRatio(const ElementBox&);
+bool hasFitContentBlockSize(const PlacedGridItem&);
 bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const ElementBox&, WritingMode containerWritingMode);
 
 } // namespace GridLayoutUtils
