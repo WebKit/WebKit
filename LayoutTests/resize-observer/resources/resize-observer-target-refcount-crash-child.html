@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<body>
+<div id="trigger" style="width: 50px; height: 50px; background: red;"></div>
+<script>
+if (top == self && window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const trigger = document.getElementById("trigger");
+const observerCount = 2000;
+const roundCount = 5;
+let round = 1;
+let observers = null;
+let victim = null;
+let racedThisRound = false;
+
+function raceOnGCThreads()
+{
+    if (racedThisRound)
+        return;
+    racedThisRound = true;
+
+    for (const observer of observers)
+        observer.unobserve(victim);
+
+    victim = null;
+    observers = null;
+
+    if (window.GCController)
+        GCController.collect();
+
+    if (++round < roundCount) {
+        setTimeout(startRound, 0);
+        return;
+    }
+
+    top.postMessage('done', '*');
+}
+
+function align()
+{
+    return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          setTimeout(resolve, 0);
+        });
+    });
+}
+
+async function startRound()
+{
+    victim = document.createElement("div");
+    victim.style.cssText = "width:50px;height:50px;";
+    document.body.appendChild(victim);
+
+    await align();
+
+    observers = [];
+    racedThisRound = false;
+
+    new ResizeObserver(raceOnGCThreads).observe(trigger);
+
+    for (let i = 0; i < observerCount; ++i) {
+        const observer = new ResizeObserver(function () { });
+        observer.observe(victim);
+        observers.push(observer);
+    }
+
+    await align();
+
+    trigger.style.width = (50 + round) + "px";
+}
+
+onload = startRound;
+</script>
+</body>
