@@ -34,6 +34,7 @@
 #include "FontCascadeDescription.h"
 #include "FontSelector.h"
 #include "GraphicsLayerCA.h"
+#include "ProcessIdentifier.h"
 #include "TextRun.h"
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -51,7 +52,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameProcessIndicators);
 FrameProcessIndicators::FrameProcessIndicators(GraphicsLayerCA& graphicsLayer)
     : m_graphicsLayer(graphicsLayer)
     , m_backgroundColor(borderColor())
-    , m_text(makeString("pid="_s, getCurrentProcessID()))
+    , m_text(makeString("pid="_s, getCurrentProcessID(), "("_s, Process::identifier(), ")"_s))
     , m_borderLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_indicatorLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeWebLayer, this))
 {
