@@ -30,6 +30,9 @@
 #include "WebSharedWorkerServerToContextConnection.h"
 #include <WebCore/Site.h>
 #include <wtf/HashMap.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/HashSet.h>
+#endif
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -107,19 +110,27 @@ void WebSharedWorker::launch(WebSharedWorkerServerToContextConnection& connectio
         connection.suspendSharedWorker(identifier());
 }
 
-void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort& port)
+void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, const WebCore::TransferredMessagePort& port)
 {
-    ASSERT(!m_sharedWorkerObjects.contains({ sharedWorkerObjectIdentifier, { false, port } }));
+    ASSERT(!m_sharedWorkerObjects.contains({ sharedWorkerObjectIdentifier, { } }));
+#if ENABLE(WEBDRIVER_BIDI)
+    m_sharedWorkerObjects.add({ sharedWorkerObjectIdentifier, { ownerFrameIdentifier, false, port } });
+#else
+    UNUSED_PARAM(ownerFrameIdentifier);
     m_sharedWorkerObjects.add({ sharedWorkerObjectIdentifier, { false, port } });
+#endif
     if (RefPtr connection = contextConnection())
         connection->addSharedWorkerObject(sharedWorkerObjectIdentifier);
+    sendOwnerFrameIdentifiers();
 
     resumeIfNeeded();
 }
 
 void WebSharedWorker::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    m_sharedWorkerObjects.remove({ sharedWorkerObjectIdentifier, { } });
+    bool didRemove = m_sharedWorkerObjects.remove({ sharedWorkerObjectIdentifier, { } });
+    ASSERT_UNUSED(didRemove, didRemove);
+    sendOwnerFrameIdentifiers();
     if (RefPtr connection = contextConnection())
         connection->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
 
@@ -132,7 +143,12 @@ void WebSharedWorker::suspend(WebCore::SharedWorkerObjectIdentifier sharedWorker
     if (iterator == m_sharedWorkerObjects.end())
         return;
 
+    if (iterator->state.isSuspended)
+        return;
+
     iterator->state.isSuspended = true;
+    sendOwnerFrameIdentifiers();
+
     ASSERT(!m_isSuspended);
     suspendIfNeeded();
 }
@@ -158,7 +174,12 @@ void WebSharedWorker::resume(WebCore::SharedWorkerObjectIdentifier sharedWorkerO
     if (iterator == m_sharedWorkerObjects.end())
         return;
 
+    if (!iterator->state.isSuspended)
+        return;
+
     iterator->state.isSuspended = false;
+    sendOwnerFrameIdentifiers();
+
     resumeIfNeeded();
 }
 
@@ -176,6 +197,30 @@ void WebSharedWorker::forEachSharedWorkerObject(NOESCAPE const Function<void(Web
 {
     for (auto& object : m_sharedWorkerObjects)
         apply(object.identifier, *object.state.port);
+}
+
+#if ENABLE(WEBDRIVER_BIDI)
+Vector<WebCore::FrameIdentifier> WebSharedWorker::ownerFrameIdentifiers(OwnerFrameFilter ownerFrameFilter) const
+{
+    Vector<WebCore::FrameIdentifier> result;
+    HashSet<WebCore::FrameIdentifier> seenFrameIdentifiers;
+    for (auto& object : m_sharedWorkerObjects) {
+        if (ownerFrameFilter == OwnerFrameFilter::ActiveOnly && object.state.isSuspended)
+            continue;
+        RELEASE_ASSERT(object.state.ownerFrameIdentifier);
+        if (seenFrameIdentifiers.add(*object.state.ownerFrameIdentifier).isNewEntry)
+            result.append(*object.state.ownerFrameIdentifier);
+    }
+    return result;
+}
+#endif
+
+void WebSharedWorker::sendOwnerFrameIdentifiers() const
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr connection = contextConnection(); connection && isRunning())
+        connection->updateSharedWorkerOwnerFrameIdentifiers(*this);
+#endif
 }
 
 std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObjectProcess() const

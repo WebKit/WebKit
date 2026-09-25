@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CrossOriginEmbedderPolicyValue.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -71,7 +72,7 @@ public:
     using ContextConnectionKey = std::pair<WebCore::RegistrableDomain, WebCore::CrossOriginEmbedderPolicyValue>;
     WebSharedWorkerServerToContextConnection* contextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&, WebCore::CrossOriginEmbedderPolicyValue) const;
 
-    void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
+    void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
     void sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier);
     void suspendForBackForwardCache(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier);
     void resumeForBackForwardCache(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier);

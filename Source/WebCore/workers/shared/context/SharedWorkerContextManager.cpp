@@ -49,6 +49,19 @@ SharedWorkerThreadProxy* SharedWorkerContextManager::sharedWorker(SharedWorkerId
     return m_workerMap.get(sharedWorkerIdentifier);
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+Vector<Ref<SharedWorkerThreadProxy>> SharedWorkerContextManager::sharedWorkers() const
+{
+    Vector<Ref<SharedWorkerThreadProxy>> result;
+    result.reserveInitialCapacity(m_workerMap.size() + m_terminatingWorkersByContextIdentifier.size());
+    for (Ref worker : m_workerMap.values())
+        result.append(WTF::move(worker));
+    for (Ref worker : m_terminatingWorkersByContextIdentifier.values())
+        result.append(WTF::move(worker));
+    return result;
+}
+#endif
+
 void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
 {
     auto worker = m_workerMap.take(sharedWorkerIdentifier);
@@ -57,18 +70,39 @@ void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedW
         return;
 
     worker->setAsTerminatingOrTerminated();
+#if ENABLE(WEBDRIVER_BIDI)
+    auto contextIdentifier = worker->contextIdentifier();
+    auto addResult = m_terminatingWorkersByContextIdentifier.add(contextIdentifier, Ref { *worker });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+#endif
 
     // FIXME: We should be able to deal with the thread being unresponsive here.
 
     Ref thread = worker->thread();
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr connection = this->connection();
+    thread->stop([worker = WTF::move(worker), sharedWorkerIdentifier, contextIdentifier, connection = WTF::move(connection)]() mutable {
+        ASSERT(isMainThread());
+        worker->workerTerminated();
+        bool didRemove = SharedWorkerContextManager::singleton().m_terminatingWorkersByContextIdentifier.remove(contextIdentifier);
+        ASSERT_UNUSED(didRemove, didRemove);
+        if (connection && !connection->isClosed())
+            connection->sharedWorkerTerminated(sharedWorkerIdentifier);
+
+        // Spin the runloop before releasing the shared worker thread proxy, as there would otherwise be
+        // a race towards its destruction.
+        callOnMainThread([worker = WTF::move(worker)] { });
+    });
+#else
     thread->stop([worker = WTF::move(worker)]() mutable {
         // Spin the runloop before releasing the shared worker thread proxy, as there would otherwise be
         // a race towards its destruction.
         callOnMainThread([worker = WTF::move(worker)] { });
     });
 
-    if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
+    if (RefPtr connection = this->connection())
         connection->sharedWorkerTerminated(sharedWorkerIdentifier);
+#endif
 }
 
 void SharedWorkerContextManager::suspendSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
@@ -112,7 +146,17 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
     auto result = m_workerMap.add(proxy->identifier(), proxy.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    proxy->thread().start([](const String& /*exceptionMessage*/) { });
+#if ENABLE(WEBDRIVER_BIDI)
+    auto weakProxy = ThreadSafeWeakPtr { proxy.get() };
+    proxy->thread().start([](const String& /* exceptionMessage */) { }, [weakProxy = WTF::move(weakProxy)](SecurityOriginData&& origin) mutable {
+        callOnMainThread([weakProxy = WTF::move(weakProxy), origin = WTF::move(origin)]() mutable {
+            if (RefPtr proxy = weakProxy.get())
+                proxy->workerBecameExecutionReady(WTF::move(origin));
+        });
+    });
+#else
+    proxy->thread().start([](const String& /* exceptionMessage */) { });
+#endif
 }
 
 void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
@@ -129,6 +173,15 @@ void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdenti
     });
     completionHandler(true);
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void SharedWorkerContextManager::Connection::setSharedWorkerOwnerFrameIdentifiers(SharedWorkerIdentifier sharedWorkerIdentifier, Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers)
+{
+    ASSERT(isMainThread());
+    if (RefPtr proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier))
+        proxy->setOwnerFrameIdentifiers(WTF::move(activeOwnerFrameIdentifiers), WTF::move(attachedOwnerFrameIdentifiers));
+}
+#endif
 
 void SharedWorkerContextManager::Connection::terminateSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
 {
