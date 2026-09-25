@@ -99,7 +99,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestRequ
 std::optional<OptionSet<ResourceType>> readResourceType(StringView);
 std::optional<OptionSet<LoadType>> readLoadType(StringView);
 std::optional<OptionSet<LoadContext>> readLoadContext(StringView);
-std::optional<RequestMethod> readRequestMethod(StringView);
+std::optional<RequestMethod> WEBCORE_EXPORT readRequestMethod(StringView);
 
 ASCIILiteral resourceTypeToString(OptionSet<ResourceType>);
 ASCIILiteral resourceTypeToStringForMatchedRule(OptionSet<ResourceType>);

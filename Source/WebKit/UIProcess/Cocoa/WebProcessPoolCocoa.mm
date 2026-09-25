@@ -1568,15 +1568,6 @@ void WebProcessPool::setCachedHardwareKeyboardState(HardwareKeyboardState hardwa
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleList* list)
-{
-    if (!list)
-        return nullptr;
-
-    auto data = list->_contentRuleList->compiledRuleList().data();
-    return WebCompiledContentRuleList::create(WTF::move(data));
-}
-
 void WebProcessPool::platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

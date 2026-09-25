@@ -1493,6 +1493,11 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page, WebsiteD
     auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<WebPageProxyIdentifier>()).iterator->value.add(page.identifier());
     ASSERT_UNUSED(result, result.isNewEntry);
     dataStore.addPage(page);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (protect(page.preferences())->scriptTrackingPrivacyNetworkRequestBlockingEnabled())
+        NetworkProcessProxy::requestTrackingPreventionContentRuleList();
+#endif
 }
 
 void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page, WebsiteDataStore& dataStore)

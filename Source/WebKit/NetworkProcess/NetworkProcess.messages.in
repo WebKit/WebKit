@@ -304,6 +304,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if ENABLE(CONTENT_EXTENSIONS)
     ResetResourceMonitorThrottlerForTesting(PAL::SessionID sessionID) -> ();
+    SetTrackingPreventionContentRuleList(std::optional<WebKit::WebCompiledContentRuleListData> ruleListData)
 #endif
 
     SetDefaultRequestTimeoutInterval(double timeoutInterval)

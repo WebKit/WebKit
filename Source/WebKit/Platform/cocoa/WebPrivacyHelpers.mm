@@ -56,10 +56,6 @@
 #import <WebKitAdditions/WebPrivacyHelpersAdditions.mm>
 #endif
 
-#if !defined(IS_REQUEST_UNCONDITIONALLY_BLOCKABLE)
-#define IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain) false
-#endif
-
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 #if !defined(WebKit_libnetworkLibrary_SoftLinked)
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
@@ -516,28 +512,21 @@ void ResourceMonitorURLsController::setContentRuleListStore(API::ContentRuleList
     m_contentRuleListStore = &store;
 }
 
-void ResourceMonitorURLsController::prepare(CompletionHandler<void(WKContentRuleList*, bool)>&& completionHandler)
+bool ResourceMonitorURLsController::canRequestContentRuleList() const
 {
-    ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(prepareResourceMonitorRulesForStore:completionHandler:)]) {
-        completionHandler(nullptr, false);
-        return;
-    }
+    return PAL::isWebPrivacyFrameworkAvailable() && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(prepareResourceMonitorRulesForStore:completionHandler:)];
+}
 
-    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void(WKContentRuleList*, bool)>, 1>> lookupCompletionHandlers;
-    lookupCompletionHandlers->append(WTF::move(completionHandler));
-    if (lookupCompletionHandlers->size() > 1)
-        return;
-
+void ResourceMonitorURLsController::requestContentRuleList(PrepareCompletionHandler&& completionHandler)
+{
     Ref<API::ContentRuleListStore> store = m_contentRuleListStore ? *m_contentRuleListStore : API::ContentRuleListStore::defaultStoreSingleton();
 
-    [[PAL::getWPResourcesClassSingleton() sharedInstance] prepareResourceMonitorRulesForStore:protect(wrapper(store.get())).get() completionHandler:^(WKContentRuleList *list, bool updated, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] prepareResourceMonitorRulesForStore:protect(wrapper(store.get())).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WKContentRuleList *list, bool updated, NSError *error) mutable {
         if (error)
             RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls from WebPrivacy: %@", error);
 
-        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
-            completionHandler(list, updated);
-    }];
+        completionHandler(list, updated);
+    }).get()];
 }
 
 void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&& completionHandler)
@@ -560,6 +549,34 @@ void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
             completionHandler(source);
     }];
+}
+
+TrackingPreventionContentRuleListController& TrackingPreventionContentRuleListController::singleton()
+{
+    static MainRunLoopNeverDestroyed<TrackingPreventionContentRuleListController> sharedInstance;
+    return sharedInstance.get();
+}
+
+unsigned TrackingPreventionContentRuleListController::resourceTypeValue() const
+{
+    return WPResourceTypeDefaultTrackerBlockRules;
+}
+
+bool TrackingPreventionContentRuleListController::canRequestContentRuleList() const
+{
+    return PAL::isWebPrivacyFrameworkAvailable() && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(loadDefaultContentRuleListForStore:completionHandler:)];
+}
+
+void TrackingPreventionContentRuleListController::requestContentRuleList(PrepareCompletionHandler&& completionHandler)
+{
+    Ref<API::ContentRuleListStore> store = API::ContentRuleListStore::defaultStoreSingleton();
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] loadDefaultContentRuleListForStore:protect(wrapper(store.get())).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WKContentRuleList *list, NSError *error) mutable {
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to load the tracking prevention content rule list from WebPrivacy: %@", error);
+
+        completionHandler(list);
+    }).get()];
 }
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
@@ -758,13 +775,7 @@ private:
 
 class TrackerDomainLookupInfo {
 public:
-    enum class CanBlock : uint8_t { No, WithAdvancedPrivacyProtections, WithDefaultProtections };
-
-    TrackerDomainLookupInfo(String&& owner, CanBlock canBlock)
-        : m_owner { owner.utf8() }
-        , m_canBlock { canBlock }
-    {
-    }
+    enum class CanBlock : uint8_t { No, WithAdvancedPrivacyProtections };
 
     TrackerDomainLookupInfo(WPTrackingDomain *domain)
         : m_owner { domain.owner }
@@ -924,28 +935,11 @@ WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore:
 {
     return request.isThirdParty() && isKnownTrackerAddressOrDomain(request.url().host()) ? WebCore::IsKnownCrossSiteTracker::Yes : WebCore::IsKnownCrossSiteTracker::No;
 }
-
-bool isRequestBlockable(const WebCore::ResourceRequest& request)
-{
-    TrackerAddressLookupInfo::populateIfNeeded();
-    TrackerDomainLookupInfo::populateIfNeeded();
-
-    auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, request.url().host()) } };
-    if (domain == "tainted.example" || IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain))
-        return true;
-
-    bool blockable = false;
-    TrackerDomainLookupInfo::find(domain.string(), [&](auto& info) {
-        blockable = info.canBlock() == TrackerDomainLookupInfo::CanBlock::WithDefaultProtections;
-    });
-    return blockable;
-}
 #else
 
 void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 bool isKnownTrackerAddressOrDomain(StringView) { return false; }
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&) { return WebCore::IsKnownCrossSiteTracker::No; }
-bool isRequestBlockable(const WebCore::ResourceRequest&) { return false; }
 
 #endif
 

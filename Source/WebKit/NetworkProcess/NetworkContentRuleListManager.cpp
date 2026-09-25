@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "WebCompiledContentRuleList.h"
@@ -116,6 +117,24 @@ void NetworkContentRuleListManager::removeAllContentRuleLists(UserContentControl
 void NetworkContentRuleListManager::remove(UserContentControllerIdentifier identifier)
 {
     m_contentExtensionBackends.remove(identifier);
+}
+
+void NetworkContentRuleListManager::setTrackingPreventionContentRuleList(std::optional<WebCompiledContentRuleListData>&& ruleListData)
+{
+    m_trackingPreventionContentExtensionBackend = nullptr;
+    if (!ruleListData)
+        return;
+
+    auto identifier = ruleListData->identifier;
+    RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(*ruleListData));
+    if (!compiledContentRuleList) {
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "NetworkContentRuleListManager::setTrackingPreventionContentRuleList: Failed to create rule list");
+        return;
+    }
+
+    auto backend = makeUnique<WebCore::ContentExtensions::ContentExtensionsBackend>();
+    backend->addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), { }, ContentExtensions::ContentExtension::ShouldCompileCSS::No);
+    m_trackingPreventionContentExtensionBackend = WTF::move(backend);
 }
 
 } // namespace WebKit

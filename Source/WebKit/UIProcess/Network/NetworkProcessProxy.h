@@ -107,6 +107,7 @@ namespace WebKit {
 class DownloadProxy;
 class DownloadProxyMap;
 class ListDataObserver;
+class WebCompiledContentRuleList;
 class WebPageProxy;
 class WebUserContentControllerProxy;
 
@@ -264,6 +265,8 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
+
+    static void requestTrackingPreventionContentRuleList();
 #endif
 
     enum class SendParametersToNetworkProcess : bool { No, Yes };
@@ -429,6 +432,11 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentExtensionRules(UserContentControllerIdentifier);
+
+    static void loadTrackingPreventionContentRuleList();
+    void setTrackingPreventionContentRuleList(WebCompiledContentRuleList*);
+    static void platformLoadTrackingPreventionContentRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
+    static void platformObserveTrackingPreventionContentRuleListUpdates();
 #endif
 
 #if USE(RUNNINGBOARD)

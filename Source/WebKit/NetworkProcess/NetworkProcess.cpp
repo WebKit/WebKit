@@ -3682,6 +3682,11 @@ void NetworkProcess::resetResourceMonitorThrottlerForTesting(PAL::SessionID sess
     else
         completionHandler();
 }
+
+void NetworkProcess::setTrackingPreventionContentRuleList(std::optional<WebCompiledContentRuleListData>&& ruleListData)
+{
+    protect(networkContentRuleListManager())->setTrackingPreventionContentRuleList(WTF::move(ruleListData));
+}
 #endif
 
 void NetworkProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)

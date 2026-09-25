@@ -35,6 +35,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/ios/UserInterfaceSwizzler.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
@@ -155,6 +156,75 @@ static bool supportsFingerprintingScriptRequests()
         && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestFingerprintingScripts:completionHandler:)];
 }
 
+static IMP makeTrackingPreventionContentRuleListHandler(NSArray<NSString *> *blockedHosts, bool& didInstallList)
+{
+    return imp_implementationWithBlock([blockedHosts = RetainPtr { blockedHosts }, didInstallList = &didInstallList](WPResources *, WKContentRuleListStore *store, void(^completion)(WKContentRuleList *, NSError *)) mutable {
+        RetainPtr rules = [NSMutableArray arrayWithCapacity:[blockedHosts count]];
+        for (NSString *host in blockedHosts.get()) {
+            RetainPtr urlFilter = [host stringByReplacingOccurrencesOfString:@"." withString:@"\\."];
+            [rules addObject:@{
+                @"trigger": @{
+                    @"url-filter": urlFilter.get(),
+                    @"load-type": @[ @"third-party" ]
+                },
+                @"action": @{ @"type": @"block" }
+            }];
+        }
+
+        RetainPtr sourceData = [NSJSONSerialization dataWithJSONObject:rules.get() options:0 error:nil];
+        RetainPtr source = adoptNS([[NSString alloc] initWithData:sourceData.get() encoding:NSUTF8StringEncoding]);
+        [store compileContentRuleListForIdentifier:@"TestWebKitAPI.TrackingPreventionContentRuleList" encodedContentRuleList:source.get() completionHandler:makeBlockPtr([completion = makeBlockPtr(completion), didInstallList](WKContentRuleList *list, NSError *error) {
+            completion(list, error);
+            *didInstallList = true;
+        }).get()];
+    });
+}
+
+static NSString * const unusedBlockedHost = @"unused-by-any-test.invalid";
+
+static void installTrackingPreventionContentRuleList(WKWebsiteDataStore *dataStore, NSArray<NSString *> *blockedHosts)
+{
+    bool didInstallList = false;
+    InstanceMethodSwizzler swizzler {
+        PAL::getWPResourcesClassSingleton(),
+        @selector(loadDefaultContentRuleListForStore:completionHandler:),
+        makeTrackingPreventionContentRuleListHandler(blockedHosts, didInstallList)
+    };
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:PAL::get_WebPrivacy_WPResourceDataChangedNotificationNameSingleton() object:nil userInfo:@{ PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKeySingleton() : @(WPResourceTypeDefaultTrackerBlockRules) }];
+    Util::run(&didInstallList);
+
+    __block bool fetchedDataRecords = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeCookies] completionHandler:^(NSArray<WKWebsiteDataRecord *> *) {
+        fetchedDataRecords = true;
+    }];
+    Util::run(&fetchedDataRecords);
+}
+
+static RetainPtr<NSArray<NSString *>> trackingPreventionContentRuleListBlockedHosts;
+static bool trackingPreventionContentRuleListNeedsReset = false;
+
+class TrackingPreventionContentRuleListSwizzler {
+    WTF_MAKE_NONCOPYABLE(TrackingPreventionContentRuleListSwizzler);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TrackingPreventionContentRuleListSwizzler);
+public:
+    TrackingPreventionContentRuleListSwizzler(NSArray<NSString *> *blockedHosts)
+    {
+        trackingPreventionContentRuleListBlockedHosts = blockedHosts;
+    }
+
+    ~TrackingPreventionContentRuleListSwizzler()
+    {
+        trackingPreventionContentRuleListBlockedHosts = nil;
+    }
+};
+
+static bool supportsTrackingPreventionContentRuleListRequests()
+{
+    return PAL::isWebPrivacyFrameworkAvailable()
+        && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(loadDefaultContentRuleListForStore:completionHandler:)];
+}
+
 static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pageURLString, id<WKUIDelegate> uiDelegate, NSDictionary<NSString *, NSString *> *responseData,
     NSString *referrer = @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicy policies = _WKWebsiteNetworkConnectionIntegrityPolicyNone, WKWebsiteDataStore *datastore = nil,
     BOOL enableResourceLoadStatistics = YES)
@@ -204,6 +274,11 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300) configuration:configuration.get()]);
     [webView setUIDelegate:uiDelegate];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    if (trackingPreventionContentRuleListBlockedHosts || trackingPreventionContentRuleListNeedsReset) {
+        installTrackingPreventionContentRuleList(dataStore.get(), trackingPreventionContentRuleListBlockedHosts.get() ?: @[ unusedBlockedHost ]);
+        trackingPreventionContentRuleListNeedsReset = !!trackingPreventionContentRuleListBlockedHosts;
+    }
 
     if (!pageURLString)
         return webView;
@@ -853,10 +928,11 @@ TEST(ScriptTrackingPrivacyTests, ScriptAccessCategoriesWithTimeout)
 
 TEST(ScriptTrackingPrivacyTests, SameSiteFetchNotBlocked)
 {
-    if (!supportsFingerprintingScriptRequests())
+    if (!supportsFingerprintingScriptRequests() || !supportsTrackingPreventionContentRuleListRequests())
         return;
 
     FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+    TrackingPreventionContentRuleListSwizzler ruleListSwizzler { @[ @"tainted.example" ] };
 
     static constexpr auto taintedSiteIndexHTML = R"markup(
         <!DOCTYPE html>
@@ -919,10 +995,11 @@ TEST(ScriptTrackingPrivacyTests, SameSiteFetchNotBlocked)
 
 TEST(ScriptTrackingPrivacyTests, MainFrameNavigationNotBlocked)
 {
-    if (!supportsFingerprintingScriptRequests())
+    if (!supportsFingerprintingScriptRequests() || !supportsTrackingPreventionContentRuleListRequests())
         return;
 
     FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+    TrackingPreventionContentRuleListSwizzler ruleListSwizzler { @[ @"tainted.example" ] };
 
     bool receivedNavigationRequest = false;
 
@@ -973,6 +1050,7 @@ TEST(ScriptTrackingPrivacyTests, MainFrameNavigationNotBlocked)
 static RetainPtr<NSString> crossSiteFetchResultToTrackerDomain(BOOL enableResourceLoadStatistics)
 {
     FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+    TrackingPreventionContentRuleListSwizzler ruleListSwizzler { @[ @"tainted.example" ] };
 
     auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (1) {
@@ -1022,7 +1100,7 @@ static RetainPtr<NSString> crossSiteFetchResultToTrackerDomain(BOOL enableResour
 
 TEST(ScriptTrackingPrivacyTests, CrossSiteFetchBlocked)
 {
-    if (!supportsFingerprintingScriptRequests())
+    if (!supportsFingerprintingScriptRequests() || !supportsTrackingPreventionContentRuleListRequests())
         return;
 
     EXPECT_TRUE([crossSiteFetchResultToTrackerDomain(YES) hasPrefix:@"error"]);
@@ -1030,7 +1108,7 @@ TEST(ScriptTrackingPrivacyTests, CrossSiteFetchBlocked)
 
 TEST(ScriptTrackingPrivacyTests, CrossSiteFetchNotBlockedWhenResourceLoadStatisticsDisabled)
 {
-    if (!supportsFingerprintingScriptRequests())
+    if (!supportsFingerprintingScriptRequests() || !supportsTrackingPreventionContentRuleListRequests())
         return;
 
     EXPECT_TRUE([crossSiteFetchResultToTrackerDomain(NO) hasPrefix:@"success"]);

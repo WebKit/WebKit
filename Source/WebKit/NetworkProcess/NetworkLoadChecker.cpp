@@ -29,6 +29,7 @@
 #include "Download.h"
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
+#include "NetworkContentRuleListManager.h"
 #include "NetworkOriginAccessPatterns.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
@@ -44,6 +45,7 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceLoadInfo.h>
 #include <WebCore/TimingAllowOrigin.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -379,6 +381,63 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
 #endif
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+static ContentExtensions::ResourceType contentExtensionResourceType(ResourceRequestRequester requester, FetchOptions::Destination destination)
+{
+    using ResourceType = ContentExtensions::ResourceType;
+
+    switch (requester) {
+    case ResourceRequestRequester::XHR:
+    case ResourceRequestRequester::Fetch:
+        return ResourceType::Fetch;
+    case ResourceRequestRequester::Ping:
+        return ResourceType::Ping;
+    default:
+        break;
+    }
+
+    switch (destination) {
+    case FetchOptions::Destination::Document:
+        return ResourceType::TopDocument;
+    case FetchOptions::Destination::Iframe:
+        return ResourceType::ChildDocument;
+    case FetchOptions::Destination::Image:
+        return ResourceType::Image;
+    case FetchOptions::Destination::Style:
+    case FetchOptions::Destination::Xslt:
+        return ResourceType::StyleSheet;
+    case FetchOptions::Destination::Json:
+    case FetchOptions::Destination::Script:
+    case FetchOptions::Destination::Text:
+        return ResourceType::Script;
+    case FetchOptions::Destination::Font:
+        return ResourceType::Font;
+    case FetchOptions::Destination::Audio:
+    case FetchOptions::Destination::Track:
+    case FetchOptions::Destination::Video:
+        return ResourceType::Media;
+    case FetchOptions::Destination::Report:
+        return ResourceType::CSPReport;
+    case FetchOptions::Destination::EmptyString:
+    case FetchOptions::Destination::Audioworklet:
+    case FetchOptions::Destination::CompressionDictionary:
+    case FetchOptions::Destination::Embed:
+    case FetchOptions::Destination::Environmentmap:
+    case FetchOptions::Destination::Manifest:
+    case FetchOptions::Destination::Model:
+    case FetchOptions::Destination::Object:
+    case FetchOptions::Destination::Paintworklet:
+    case FetchOptions::Destination::Serviceworker:
+    case FetchOptions::Destination::Sharedworker:
+    case FetchOptions::Destination::Speculationrules:
+    case FetchOptions::Destination::Worker:
+        return ResourceType::Other;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ResourceType::Other;
+}
+
 bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& request)
 {
     if (!m_webPageProxyID)
@@ -388,25 +447,33 @@ bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& req
     if (!networkResourceLoader)
         return false;
 
-    if (!networkResourceLoader->parameters().mayBlockNetworkRequest)
+    auto& parameters = networkResourceLoader->parameters();
+    if (parameters.isMainFrameNavigation)
+        return false;
+
+    Ref contentRuleListManager = m_networkProcess->networkContentRuleListManager();
+    auto* backend = contentRuleListManager->trackingPreventionContentExtensionBackend();
+    if (!backend)
         return false;
 
     CheckedPtr networkSession = m_networkProcess->networkSession(m_sessionID);
     if (!networkSession || !networkSession->isTrackingPreventionEnabled())
         return false;
 
-    if (RefPtr topOrigin = networkResourceLoader->parameters().topOrigin) {
+    if (RefPtr topOrigin = parameters.topOrigin) {
         if (RegistrableDomain(request.url()).matches(topOrigin->data()))
             return false;
     }
 
-    if (NetworkSession::isRequestBlockable(request)) {
-        LOAD_CHECKER_RELEASE_LOG("shouldBlockForTrackingPolicy - Blocked by tracking protections");
-        return true;
-    }
+    auto requestMethod = ContentExtensions::readRequestMethod(request.httpMethod()).value_or(ContentExtensions::RequestMethod::None);
+    auto resourceType = contentExtensionResourceType(request.requester(), m_options.destination);
+    if (!backend->shouldBlockLoad({ request.url(), m_mainDocumentURL, m_frameURL, resourceType, false, requestMethod }))
+        return false;
 
-    return false;
+    LOAD_CHECKER_RELEASE_LOG("shouldBlockForTrackingPolicy - Blocked by tracking protections");
+    return true;
 }
+#endif // ENABLE(CONTENT_EXTENSIONS)
 
 void NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect(ResourceRequest&& originalRequest, ResourceRequest&& currentRequest, ValidationHandler&& handler)
 {

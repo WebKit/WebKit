@@ -31,6 +31,23 @@
 #import <WebCore/ContentExtensionParser.h>
 #import <WebCore/WebCoreObjCExtras.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
+namespace WebKit {
+
+RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleList *list)
+{
+    if (!list)
+        return nullptr;
+
+    auto data = list->_contentRuleList->compiledRuleList().data();
+    return WebCompiledContentRuleList::create(WTF::move(data));
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(CONTENT_EXTENSIONS)
+
 @implementation WKContentRuleList
 
 - (void)dealloc

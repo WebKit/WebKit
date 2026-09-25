@@ -84,6 +84,7 @@
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
@@ -93,6 +94,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/MakeString.h>
@@ -265,6 +267,16 @@ static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
     return false;
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+static RefPtr<WebCompiledContentRuleList>& cachedTrackingPreventionContentRuleList()
+{
+    static MainRunLoopNeverDestroyed<RefPtr<WebCompiledContentRuleList>> ruleList;
+    return ruleList.get();
+}
+
+static bool isLoadingTrackingPreventionContentRuleList = false;
+#endif
+
 NetworkProcessProxy::NetworkProcessProxy()
     : AuxiliaryProcessProxy("NetworkProcess"_s, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , anyProcessPoolAlwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No
@@ -294,6 +306,11 @@ NetworkProcessProxy::NetworkProcessProxy()
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(StorageAccessPromptQuirkController::sharedSingleton().cachedListData()), 0);
     });
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (RefPtr ruleList = cachedTrackingPreventionContentRuleList())
+        setTrackingPreventionContentRuleList(ruleList.get());
 #endif
 }
 
@@ -1519,6 +1536,40 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 {
     send(Messages::NetworkContentRuleListManager::Remove { proxy.identifier() }, 0);
 }
+
+void NetworkProcessProxy::requestTrackingPreventionContentRuleList()
+{
+    static bool isObservingUpdates = false;
+    if (!std::exchange(isObservingUpdates, true))
+        platformObserveTrackingPreventionContentRuleListUpdates();
+
+    if (!cachedTrackingPreventionContentRuleList() && !isLoadingTrackingPreventionContentRuleList)
+        loadTrackingPreventionContentRuleList();
+}
+
+void NetworkProcessProxy::loadTrackingPreventionContentRuleList()
+{
+    isLoadingTrackingPreventionContentRuleList = true;
+    platformLoadTrackingPreventionContentRuleList([](RefPtr<WebCompiledContentRuleList>&& ruleList) {
+        isLoadingTrackingPreventionContentRuleList = false;
+
+        auto& cachedRuleList = cachedTrackingPreventionContentRuleList();
+        if (!ruleList && !cachedRuleList)
+            return;
+
+        if (!ruleList)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "NetworkProcessProxy::loadTrackingPreventionContentRuleList: failed to load rule list, clearing the previous one");
+
+        cachedRuleList = WTF::move(ruleList);
+        for (Ref networkProcess : allNetworkProcesses())
+            networkProcess->setTrackingPreventionContentRuleList(cachedRuleList.get());
+    });
+}
+
+void NetworkProcessProxy::setTrackingPreventionContentRuleList(WebCompiledContentRuleList* ruleList)
+{
+    send(Messages::NetworkProcess::SetTrackingPreventionContentRuleList(ruleList ? std::optional { ruleList->data() } : std::nullopt), 0);
+}
 #endif
 
 void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
@@ -2159,7 +2210,20 @@ void NetworkProcessProxy::resetResourceMonitorThrottlerForTesting(PAL::SessionID
 {
     sendWithAsyncReply(Messages::NetworkProcess::ResetResourceMonitorThrottlerForTesting(sessionID), WTF::move(completionHandler));
 }
-#endif
+
+#if !PLATFORM(COCOA)
+void NetworkProcessProxy::platformLoadTrackingPreventionContentRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(nullptr);
+}
+
+void NetworkProcessProxy::platformObserveTrackingPreventionContentRuleListUpdates()
+{
+    notImplemented();
+}
+#endif // !PLATFORM(COCOA)
+#endif // ENABLE(CONTENT_EXTENSIONS)
 
 void NetworkProcessProxy::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {

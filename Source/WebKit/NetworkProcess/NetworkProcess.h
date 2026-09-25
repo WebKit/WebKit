@@ -641,6 +641,7 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void resetResourceMonitorThrottlerForTesting(PAL::SessionID, CompletionHandler<void()>&&);
+    void setTrackingPreventionContentRuleList(std::optional<WebCompiledContentRuleListData>&&);
 #endif
 
     struct TaskIdentifierType;

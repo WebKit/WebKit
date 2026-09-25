@@ -35,6 +35,11 @@ template<> struct WrapperTraits<API::ContentRuleList> {
     using WrapperClass = WKContentRuleList;
 };
 
+#if ENABLE(CONTENT_EXTENSIONS)
+class WebCompiledContentRuleList;
+RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleList *);
+#endif
+
 }
 
 @interface WKContentRuleList () <WKObject> {

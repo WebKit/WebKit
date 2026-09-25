@@ -40,6 +40,15 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/darwin/XPCExtras.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#import "WKContentRuleListInternal.h"
+#import "WebCompiledContentRuleList.h"
+#endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#import "WebPrivacyHelpers.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
 #import <wtf/BlockPtr.h>
@@ -178,5 +187,31 @@ void NetworkProcessProxy::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyId
     completionHandler(page->userAgent());
 }
 #endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+
+void NetworkProcessProxy::platformLoadTrackingPreventionContentRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RELEASE_LOG(ResourceLoadStatistics, "NetworkProcessProxy::platformLoadTrackingPreventionContentRuleList request to load rule list.");
+
+    TrackingPreventionContentRuleListController::singleton().prepare([completionHandler = WTF::move(completionHandler)](WKContentRuleList *list) mutable {
+        completionHandler(createCompiledContentRuleList(list));
+    });
+#else
+    completionHandler(nullptr);
+#endif
+}
+
+void NetworkProcessProxy::platformObserveTrackingPreventionContentRuleListUpdates()
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    static MainRunLoopNeverDestroyed<Ref<ListDataObserver>> updateObserver { TrackingPreventionContentRuleListController::singleton().observeUpdates([] {
+        loadTrackingPreventionContentRuleList();
+    }) };
+#endif
+}
+
+#endif // ENABLE(CONTENT_EXTENSIONS)
 
 }
