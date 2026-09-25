@@ -474,7 +474,7 @@
 		0F94B6522209150600157014 /* ScrollingStatePositionedNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F94B651220914FF00157014 /* ScrollingStatePositionedNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F94F37E23661626003AA5C7 /* StyleRuleType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F94F37C23661131003AA5C7 /* StyleRuleType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F98C8F8286AA8FE00C7F4B2 /* ProcessCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F98C8F6286AA8FA00C7F4B2 /* ProcessCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F99059A26F6BE850054FBE0 /* ScrollingMomentumCalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99059926F6BE7F0054FBE0 /* ScrollingMomentumCalculator.h */; };
+		0F99059A26F6BE850054FBE0 /* ScrollingMomentumCalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99059926F6BE7F0054FBE0 /* ScrollingMomentumCalculator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F99059D26F6BE9A0054FBE0 /* ScrollingMomentumCalculatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99059B26F6BE940054FBE0 /* ScrollingMomentumCalculatorMac.h */; };
 		0F9DAA0F1FD1C66A0079C5B2 /* DOMGCOutputConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9DAA0E1FD1C6640079C5B2 /* DOMGCOutputConstraint.h */; };
 		0FA61B0E26F43213001AADB6 /* ScrollAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA61B0C26F43212001AADB6 /* ScrollAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5988,7 +5988,7 @@
 		CD1F9B43270CED9D00617EB6 /* JSMediaKeyMessageEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B41270CED8600617EB6 /* JSMediaKeyMessageEventInit.h */; };
 		CD1F9B45270CF1CE00617EB6 /* ElementInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B44270CF1CB00617EB6 /* ElementInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B47270CFC1600617EB6 /* EventOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B46270CFC1600617EB6 /* EventOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD1F9B4D270D03A900617EB6 /* ScrollExtents.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B4C270D03A900617EB6 /* ScrollExtents.h */; };
+		CD1F9B4D270D03A900617EB6 /* ScrollExtents.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B4C270D03A900617EB6 /* ScrollExtents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B7D270E667800617EB6 /* HTMLAnchorElementInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B7C270E667800617EB6 /* HTMLAnchorElementInlines.h */; };
 		CD1F9B80270E671A00617EB6 /* SVGElementInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B7F270E671A00617EB6 /* SVGElementInlines.h */; };
 		CD20ED3C27878FFB0038BE44 /* QueuedVideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = CD20ED3A27878FFB0038BE44 /* QueuedVideoOutput.h */; };

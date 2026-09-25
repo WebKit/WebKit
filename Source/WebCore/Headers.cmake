@@ -2353,6 +2353,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ScrollAnimation.h
     platform/ScrollAnimationMomentum.h
     platform/ScrollAnimator.h
+    platform/ScrollExtents.h
     platform/ScrollSnapAnimatorState.h
     platform/ScrollTypes.h
     platform/ScrollView.h
@@ -2364,6 +2365,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ScrollbarsController.h
     platform/ScrollbarsControllerInlines.h
     platform/ScrollingEffectsController.h
+    platform/ScrollingMomentumCalculator.h
     platform/SearchPopupMenu.h
     platform/SelectionGeometry.h
     platform/SerializedPlatformDataCue.h
