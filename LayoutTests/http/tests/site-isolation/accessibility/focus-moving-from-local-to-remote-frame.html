@@ -1,0 +1,70 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<!-- Same-origin, so this is an in-process frame with its own AXObjectCache and isolated tree. -->
+<iframe id="local-frame" src="/site-isolation/resources/iframe-with-text-input.html" onload="frameLoaded();"></iframe>
+<!-- Cross-origin, so this is a site-isolated frame whose content lives in another process. -->
+<iframe id="remote-frame" src="http://localhost:8000/site-isolation/resources/iframe-with-text-input.html" onload="frameLoaded();"></iframe>
+
+<script>
+var output = "Ensures that accessibility returns a remote element from the focused-ui-element API when focus leaves an in-process frame for a remote one, rather than the in-process frame's tree going on claiming focus.\n";
+
+window.jsTestIsAsync = true;
+
+var focusedObject;
+
+// Read the focused element from inside the focus notification, which is when an assistive technology
+// is told to look.
+function focusAndReadFocusedElementAtNotification(focusOperation) {
+    return new Promise(resolve => {
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification != "AXFocusChanged")
+                return;
+            accessibilityController.removeNotificationListener();
+            resolve(accessibilityController.focusedElement);
+        });
+        focusOperation();
+    });
+}
+
+var loadCount = 0;
+function frameLoaded() {
+    if (++loadCount < 2)
+        return;
+    if (!window.accessibilityController)
+        return;
+
+    // Build the trees up front, so the in-process frame has one that could go stale.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    setTimeout(async () => {
+        focusedObject = await focusAndReadFocusedElementAtNotification(() => {
+            document.getElementById("local-frame").contentDocument.getElementById("input").focus();
+        });
+        output += expect("focusedObject.isRemotePlatformElement", "false");
+
+        // Leave the notification's call stack before moving focus again, since dirtying style from
+        // inside it would violate performDeferredCacheUpdate's clean-style invariant. Real assistive
+        // technologies can't run JS synchronously in response to a notification, so this is a
+        // layout-test-only concern.
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        focusedObject = await focusAndReadFocusedElementAtNotification(() => {
+            // Tab out of the in-process frame. The next focusable content is in the remote frame.
+            eventSender.keyDown("\t");
+            // Avoid leaving lingering dirty style and layout by forcing it to be clean.
+            document.body.offsetHeight;
+        });
+        output += expect("focusedObject.isRemotePlatformElement", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

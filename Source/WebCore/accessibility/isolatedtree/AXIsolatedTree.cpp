@@ -185,7 +185,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     m_nodeMap.set(axWebArea->objectID(), ParentChildrenIDs { axRoot.objectID(), { } });
 
     setPendingRootNodeID(axRoot.objectID());
-    markDirtyAndGetWorkingChanges().focusedNodeID = Markable<AXID> { axWebArea->objectID() };
+    setFocusedNodeID(axWebArea->objectID());
     Vector<NodeChange> appends;
     appends.reserveInitialCapacity(2);
     appends.append(WTF::move(rootAppend));
@@ -1291,13 +1291,19 @@ void AXIsolatedTree::setPendingRootNodeID(AXID axID)
     markDirtyAndGetWorkingChanges().rootNodeID = axID;
 }
 
-void AXIsolatedTree::setFocusedNodeID(std::optional<AXID> axID)
+AXFocusDidChange AXIsolatedTree::setFocusedNodeID(std::optional<AXID> axID)
 {
     AXTRACE("AXIsolatedTree::setFocusedNodeID"_s);
     AXLOG(makeString("axID "_s, axID ? axID->loggingString() : ""_str));
     AX_ASSERT(isMainThread());
 
-    markDirtyAndGetWorkingChanges().focusedNodeID = Markable<AXID> { axID };
+    Markable<AXID> focusedNodeID { axID };
+    if (m_lastPublishedFocusedNodeID == std::optional { focusedNodeID })
+        return AXFocusDidChange::No;
+
+    m_lastPublishedFocusedNodeID = focusedNodeID;
+    markDirtyAndGetWorkingChanges().focusedNodeID = focusedNodeID;
+    return AXFocusDidChange::Yes;
 }
 
 void AXIsolatedTree::updateRelations(HashMap<AXID, AXRelations>&& relations)

@@ -533,7 +533,7 @@ public:
     // Main-thread setters that route writes through m_workingChanges.
     // Published to the AX thread on the next commitWorkingChanges().
     void setPendingRootNodeID(AXID);
-    void setFocusedNodeID(std::optional<AXID>);
+    AXFocusDidChange setFocusedNodeID(std::optional<AXID>);
 
     // Relationships between objects.
     std::optional<ListHashSet<AXID>> relatedObjectIDsFor(const AXIsolatedObject&, AXRelation);
@@ -841,6 +841,8 @@ private:
 #endif
 
     Markable<AXID> m_focusedNodeID;
+    // Main-thread only.
+    std::optional<Markable<AXID>> m_lastPublishedFocusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
     std::atomic<double> m_processingProgress { 1 };
     // Written only under m_changeLogLock, but read without it, so it can't be WTF_GUARDED_BY_LOCK.

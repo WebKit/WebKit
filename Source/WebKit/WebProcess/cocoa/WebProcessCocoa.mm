@@ -279,7 +279,10 @@ id WebProcess::accessibilityFocusedUIElement()
             return retrieveFocusedUIElementFromMainThread();
         }
 
-        RefPtr object = (*isolatedTree)->focusedNode();
+        RefPtr<WebCore::AXCoreObject> focusedNode = (*isolatedTree)->focusedNode();
+        // A tree whose focus is an AXLocalFrame only points toward the frame holding focus, so follow
+        // it down to the element that actually has it, as -accessibilityFocusedUIElement does.
+        RefPtr object = focusedNode ? focusedNode->focusedUIElementInAnyLocalFrame() : nullptr;
         RetainPtr platformElement = object ? object->platformElement() : nil;
         if (platformElement) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
