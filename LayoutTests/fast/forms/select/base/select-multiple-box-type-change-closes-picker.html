@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+/* js-test grows its console at the top of the body, which would push these out of reach. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="losesItsSize" multiple size="1"><option>one</option><option>two</option></select>
+</div>
+<script>
+description("A multi-select dropdown box closes its picker when removing size takes its preferred size above one. This needs its own file because a select with multiple only has a base appearance picker when the preference is on.");
+
+jsTestIsAsync = true;
+
+(async () => {
+    await UIHelper.activateElement(losesItsSize);
+    await UIHelper.animationFrame();
+    shouldBeTrue("losesItsSize.matches(':open')");
+
+    losesItsSize.removeAttribute("size");
+    await UIHelper.animationFrame();
+    shouldBeFalse("losesItsSize.matches(':open')");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

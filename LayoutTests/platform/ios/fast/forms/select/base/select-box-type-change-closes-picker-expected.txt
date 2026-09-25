@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: The select element stopped being a dropdown box while its picker was open. The picker has been closed.
+CONSOLE MESSAGE: The select element's appearance property changed while its picker was open. The picker has been closed.
+CONSOLE MESSAGE: The select element stopped being a dropdown box while its picker was open. The picker has been closed.
+CONSOLE MESSAGE: The select element's appearance property changed while its picker was open. The picker has been closed.
+A select that stops being a dropdown box closes its picker, since only a dropdown box has one. The console messages below show which ones closed for that reason rather than incidentally, as a renderer teardown would.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS becomesMultiple.matches(':open') is true
+PASS becomesMultiple.matches(':open') is false
+PASS document.activeElement is becomesMultiple
+
+PASS becomesSized.matches(':open') is true
+PASS becomesSized.matches(':open') is false
+
+Setting size to what it already is leaves the picker alone.
+PASS staysADropdown.matches(':open') is true
+PASS staysADropdown.matches(':open') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+one
+two
+

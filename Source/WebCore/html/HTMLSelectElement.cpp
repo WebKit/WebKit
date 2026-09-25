@@ -245,7 +245,7 @@ void HTMLSelectElement::didRecalcStyle(OptionSet<Style::Change> styleChange)
 
     bool newIsBaseAppearance = hasBaseAppearance(existingComputedStyle());
     if (m_wasBaseAppearance && !newIsBaseAppearance && m_popupIsVisible)
-        queuePickerCloseForAppearanceChange();
+        queuePickerClose(PickerCloseReason::Appearance);
     m_wasBaseAppearance = newIsBaseAppearance;
 
     HTMLFormControlElement::didRecalcStyle(styleChange);
@@ -430,14 +430,24 @@ void HTMLSelectElement::hidePickerPopoverElement()
     popover->hidePopover();
 }
 
-void HTMLSelectElement::queuePickerCloseForAppearanceChange()
+void HTMLSelectElement::closePickerIfNoLongerSupported(bool hadOpenPicker)
 {
-    protect(protect(document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+    if (!hadOpenPicker || supportsPickerPseudoElement())
+        return;
+
+    queuePickerClose(PickerCloseReason::PickerSupport);
+}
+
+void HTMLSelectElement::queuePickerClose(PickerCloseReason reason)
+{
+    protect(protect(document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, reason] {
         RefPtr select = weakThis.get();
         if (!select)
             return;
-        protect(select->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning,
-            "The select element's appearance property changed while its picker was open. The picker has been closed."_s);
+        auto message = reason == PickerCloseReason::Appearance
+            ? "The select element's appearance property changed while its picker was open. The picker has been closed."_s
+            : "The select element stopped being a dropdown box while its picker was open. The picker has been closed."_s;
+        protect(select->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, message);
         select->hidePickerPopoverElement();
     });
 }
@@ -615,8 +625,10 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (oldSize != size)
             updateListItemSelectedStates();
 
+        bool hadOpenPicker = m_popupIsVisible && usesBaseAppearancePicker();
         m_size = size;
         updateValidity();
+        closePickerIfNoLongerSupported(hadOpenPicker);
         if (m_size != oldSize) {
             invalidateStyleAndRenderersForSubtree();
             setRecalcListItems();
@@ -1613,9 +1625,11 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
 {
     auto oldBoxType = boxType();
     bool oldMultiple = m_multiple;
+    bool hadOpenPicker = m_popupIsVisible && usesBaseAppearancePicker();
     int oldSelectedIndex = selectedIndex();
     m_multiple = !value.isNull();
     updateValidity();
+    closePickerIfNoLongerSupported(hadOpenPicker);
     if (oldBoxType != boxType())
         invalidateStyleAndRenderersForSubtree();
     if (oldMultiple != m_multiple) {

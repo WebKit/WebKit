@@ -207,7 +207,8 @@ public:
     SelectPopoverElement* NODELETE pickerPopoverElement() const;
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
-    void queuePickerCloseForAppearanceChange();
+    enum class PickerCloseReason : bool { Appearance, PickerSupport };
+    void queuePickerClose(PickerCloseReason);
 
     struct NavigationKeyIdentifiers {
         ASCIILiteral next;
@@ -284,6 +285,7 @@ private:
     int lastSelectedListIndex() const;
     void updateSelectedState(int listIndex, bool multi, bool shift);
     void menuListDefaultEventHandler(Event&);
+    void closePickerIfNoLongerSupported(bool hadOpenPicker);
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event&);
     void setOptionsChangedOnRenderer();

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+/* js-test grows its console at the top of the body, which would push these out of reach. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="becomesMultiple"><option>one</option><option>two</option></select>
+<select id="becomesSized"><option>one</option><option>two</option></select>
+<select id="staysADropdown" size="1"><option>one</option><option>two</option></select>
+</div>
+<script>
+description("A select that stops being a dropdown box closes its picker, since only a dropdown box has one. The console messages below show which ones closed for that reason rather than incidentally, as a renderer teardown would.");
+
+jsTestIsAsync = true;
+
+async function openPicker(select)
+{
+    await UIHelper.activateElement(select);
+    await UIHelper.animationFrame();
+}
+
+(async () => {
+    await openPicker(becomesMultiple);
+    shouldBeTrue("becomesMultiple.matches(':open')");
+    // The preferred size goes from one to four, so this is a list box now.
+    becomesMultiple.multiple = true;
+    await UIHelper.animationFrame();
+    shouldBeFalse("becomesMultiple.matches(':open')");
+    shouldBe("document.activeElement", "becomesMultiple");
+
+    debug("");
+    await openPicker(becomesSized);
+    shouldBeTrue("becomesSized.matches(':open')");
+    becomesSized.size = 4;
+    await UIHelper.animationFrame();
+    shouldBeFalse("becomesSized.matches(':open')");
+
+    debug("");
+    debug("Setting size to what it already is leaves the picker alone.");
+    await openPicker(staysADropdown);
+    shouldBeTrue("staysADropdown.matches(':open')");
+    staysADropdown.size = 1;
+    await UIHelper.animationFrame();
+    shouldBeTrue("staysADropdown.matches(':open')");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

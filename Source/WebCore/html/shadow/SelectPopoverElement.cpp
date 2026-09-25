@@ -64,7 +64,7 @@ void SelectPopoverElement::didAttachRenderers()
 
     if (m_wasBaseAppearancePicker && !newIsAppearanceBase) {
         if (RefPtr select = selectElement(); select && select->popupIsVisible())
-            select->queuePickerCloseForAppearanceChange();
+            select->queuePickerClose(HTMLSelectElement::PickerCloseReason::Appearance);
     }
 
     m_wasBaseAppearancePicker = newIsAppearanceBase;
