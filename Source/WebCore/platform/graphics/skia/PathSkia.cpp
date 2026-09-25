@@ -48,6 +48,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PathSkia);
 Ref<PathSkia> PathSkia::create(std::span<const PathSegment> segments)
 {
     Ref pathSkia = adoptRef(*new PathSkia);
+    pathSkia->m_builder.incReserve(segments.size());
     for (auto& segment : segments)
         pathSkia->addSegment(segment);
     return pathSkia;
