@@ -64,7 +64,7 @@ size_t Adapter::enumerateFeatures(WGPUFeatureName* features)
 
 bool Adapter::getLimits(WGPUSupportedLimits& limits)
 {
-    limits.limits = m_capabilities.limits;
+    limits.limits = toAPI(m_capabilities.limits);
     return true;
 }
 
@@ -127,21 +127,20 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    WGPULimits limits { };
+    Limits limits { };
 
     if (descriptor.requiredLimits) {
+        limits = fromAPI(descriptor.requiredLimits->limits);
 
-        if (!WebGPU::isValid(descriptor.requiredLimits->limits)) {
+        if (!WebGPU::isValid(limits)) {
             callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
             return;
         }
 
-        if (anyLimitIsBetterThan(descriptor.requiredLimits->limits, m_capabilities.limits)) {
+        if (anyLimitIsBetterThan(limits, m_capabilities.limits)) {
             callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
             return;
         }
-
-        limits = descriptor.requiredLimits->limits;
     } else
         limits = defaultLimits();
 

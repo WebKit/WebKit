@@ -33,8 +33,47 @@
 
 namespace WebGPU {
 
+// The limits of WGPULimits, as plain values.
+struct Limits {
+    uint32_t maxTextureDimension1D { 0 };
+    uint32_t maxTextureDimension2D { 0 };
+    uint32_t maxTextureDimension3D { 0 };
+    uint32_t maxTextureArrayLayers { 0 };
+    uint32_t maxBindGroups { 0 };
+    uint32_t maxBindGroupsPlusVertexBuffers { 0 };
+    uint32_t maxBindingsPerBindGroup { 0 };
+    uint32_t maxDynamicUniformBuffersPerPipelineLayout { 0 };
+    uint32_t maxDynamicStorageBuffersPerPipelineLayout { 0 };
+    uint32_t maxSampledTexturesPerShaderStage { 0 };
+    uint32_t maxSamplersPerShaderStage { 0 };
+    uint32_t maxStorageBuffersPerShaderStage { 0 };
+    uint32_t maxStorageTexturesPerShaderStage { 0 };
+    uint32_t maxUniformBuffersPerShaderStage { 0 };
+    uint64_t maxUniformBufferBindingSize { 0 };
+    uint64_t maxStorageBufferBindingSize { 0 };
+    uint32_t minUniformBufferOffsetAlignment { 0 };
+    uint32_t minStorageBufferOffsetAlignment { 0 };
+    uint32_t maxVertexBuffers { 0 };
+    uint64_t maxBufferSize { 0 };
+    uint32_t maxVertexAttributes { 0 };
+    uint32_t maxVertexBufferArrayStride { 0 };
+    uint32_t maxInterStageShaderVariables { 0 };
+    uint32_t maxColorAttachments { 0 };
+    uint32_t maxColorAttachmentBytesPerSample { 0 };
+    uint32_t maxComputeWorkgroupStorageSize { 0 };
+    uint32_t maxComputeInvocationsPerWorkgroup { 0 };
+    uint32_t maxComputeWorkgroupSizeX { 0 };
+    uint32_t maxComputeWorkgroupSizeY { 0 };
+    uint32_t maxComputeWorkgroupSizeZ { 0 };
+    uint32_t maxComputeWorkgroupsPerDimension { 0 };
+    uint32_t maxStorageBuffersInFragmentStage { 0 };
+    uint32_t maxStorageTexturesInFragmentStage { 0 };
+    uint32_t maxStorageBuffersInVertexStage { 0 };
+    uint32_t maxStorageTexturesInVertexStage { 0 };
+};
+
 struct HardwareCapabilities {
-    WGPULimits limits { };
+    Limits limits { };
     Vector<WGPUFeatureName> features;
 
     struct BaseCapabilities {
@@ -49,9 +88,11 @@ struct HardwareCapabilities {
 };
 
 std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
-bool NODELETE isValid(const WGPULimits&);
-WGPULimits NODELETE defaultLimits();
-bool NODELETE anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
+bool NODELETE isValid(const Limits&);
+Limits NODELETE defaultLimits();
+bool NODELETE anyLimitIsBetterThan(const Limits& target, const Limits& reference);
+Limits NODELETE fromAPI(const WGPULimits&);
+WGPULimits NODELETE toAPI(const Limits&);
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
 bool isShaderValidationEnabled(id<MTLDevice>);
 bool NODELETE isWebGPUSwiftEnabled();

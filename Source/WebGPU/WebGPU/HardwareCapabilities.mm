@@ -499,7 +499,7 @@ static T mergeAlignment(T previous, T next)
     return std::min(roundUpToPowerOfTwo(previous), roundUpToPowerOfTwo(next));
 };
 
-static WGPULimits mergeLimits(const WGPULimits& previous, const WGPULimits& next)
+static Limits mergeLimits(const Limits& previous, const Limits& next)
 {
     return {
         .maxTextureDimension1D = mergeMaximum(previous.maxTextureDimension1D, next.maxTextureDimension1D),
@@ -630,7 +630,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return result;
 }
 
-bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference)
+bool anyLimitIsBetterThan(const Limits& target, const Limits& reference)
 {
     if (target.maxTextureDimension1D > reference.maxTextureDimension1D)
         return true;
@@ -714,7 +714,7 @@ bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Ve
     return false;
 }
 
-WGPULimits defaultLimits()
+Limits defaultLimits()
 {
     // https://gpuweb.github.io/gpuweb/#limit-default
 
@@ -770,14 +770,96 @@ std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice> device)
     return result;
 }
 
-bool isValid(const WGPULimits& limits)
+bool isValid(const Limits& limits)
 {
     return isPowerOfTwo(limits.minUniformBufferOffsetAlignment) && isPowerOfTwo(limits.minStorageBufferOffsetAlignment);
+}
+
+Limits fromAPI(const WGPULimits& limits)
+{
+    return {
+        .maxTextureDimension1D = limits.maxTextureDimension1D,
+        .maxTextureDimension2D = limits.maxTextureDimension2D,
+        .maxTextureDimension3D = limits.maxTextureDimension3D,
+        .maxTextureArrayLayers = limits.maxTextureArrayLayers,
+        .maxBindGroups = limits.maxBindGroups,
+        .maxBindGroupsPlusVertexBuffers = limits.maxBindGroupsPlusVertexBuffers,
+        .maxBindingsPerBindGroup = limits.maxBindingsPerBindGroup,
+        .maxDynamicUniformBuffersPerPipelineLayout = limits.maxDynamicUniformBuffersPerPipelineLayout,
+        .maxDynamicStorageBuffersPerPipelineLayout = limits.maxDynamicStorageBuffersPerPipelineLayout,
+        .maxSampledTexturesPerShaderStage = limits.maxSampledTexturesPerShaderStage,
+        .maxSamplersPerShaderStage = limits.maxSamplersPerShaderStage,
+        .maxStorageBuffersPerShaderStage = limits.maxStorageBuffersPerShaderStage,
+        .maxStorageTexturesPerShaderStage = limits.maxStorageTexturesPerShaderStage,
+        .maxUniformBuffersPerShaderStage = limits.maxUniformBuffersPerShaderStage,
+        .maxUniformBufferBindingSize = limits.maxUniformBufferBindingSize,
+        .maxStorageBufferBindingSize = limits.maxStorageBufferBindingSize,
+        .minUniformBufferOffsetAlignment = limits.minUniformBufferOffsetAlignment,
+        .minStorageBufferOffsetAlignment = limits.minStorageBufferOffsetAlignment,
+        .maxVertexBuffers = limits.maxVertexBuffers,
+        .maxBufferSize = limits.maxBufferSize,
+        .maxVertexAttributes = limits.maxVertexAttributes,
+        .maxVertexBufferArrayStride = limits.maxVertexBufferArrayStride,
+        .maxInterStageShaderVariables = limits.maxInterStageShaderVariables,
+        .maxColorAttachments = limits.maxColorAttachments,
+        .maxColorAttachmentBytesPerSample = limits.maxColorAttachmentBytesPerSample,
+        .maxComputeWorkgroupStorageSize = limits.maxComputeWorkgroupStorageSize,
+        .maxComputeInvocationsPerWorkgroup = limits.maxComputeInvocationsPerWorkgroup,
+        .maxComputeWorkgroupSizeX = limits.maxComputeWorkgroupSizeX,
+        .maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
+        .maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
+        .maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
+        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersInFragmentStage,
+        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesInFragmentStage,
+        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersInVertexStage,
+        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesInVertexStage,
+    };
+}
+
+WGPULimits toAPI(const Limits& limits)
+{
+    return {
+        .maxTextureDimension1D = limits.maxTextureDimension1D,
+        .maxTextureDimension2D = limits.maxTextureDimension2D,
+        .maxTextureDimension3D = limits.maxTextureDimension3D,
+        .maxTextureArrayLayers = limits.maxTextureArrayLayers,
+        .maxBindGroups = limits.maxBindGroups,
+        .maxBindGroupsPlusVertexBuffers = limits.maxBindGroupsPlusVertexBuffers,
+        .maxBindingsPerBindGroup = limits.maxBindingsPerBindGroup,
+        .maxDynamicUniformBuffersPerPipelineLayout = limits.maxDynamicUniformBuffersPerPipelineLayout,
+        .maxDynamicStorageBuffersPerPipelineLayout = limits.maxDynamicStorageBuffersPerPipelineLayout,
+        .maxSampledTexturesPerShaderStage = limits.maxSampledTexturesPerShaderStage,
+        .maxSamplersPerShaderStage = limits.maxSamplersPerShaderStage,
+        .maxStorageBuffersPerShaderStage = limits.maxStorageBuffersPerShaderStage,
+        .maxStorageTexturesPerShaderStage = limits.maxStorageTexturesPerShaderStage,
+        .maxUniformBuffersPerShaderStage = limits.maxUniformBuffersPerShaderStage,
+        .maxUniformBufferBindingSize = limits.maxUniformBufferBindingSize,
+        .maxStorageBufferBindingSize = limits.maxStorageBufferBindingSize,
+        .minUniformBufferOffsetAlignment = limits.minUniformBufferOffsetAlignment,
+        .minStorageBufferOffsetAlignment = limits.minStorageBufferOffsetAlignment,
+        .maxVertexBuffers = limits.maxVertexBuffers,
+        .maxBufferSize = limits.maxBufferSize,
+        .maxVertexAttributes = limits.maxVertexAttributes,
+        .maxVertexBufferArrayStride = limits.maxVertexBufferArrayStride,
+        .maxInterStageShaderVariables = limits.maxInterStageShaderVariables,
+        .maxColorAttachments = limits.maxColorAttachments,
+        .maxColorAttachmentBytesPerSample = limits.maxColorAttachmentBytesPerSample,
+        .maxComputeWorkgroupStorageSize = limits.maxComputeWorkgroupStorageSize,
+        .maxComputeInvocationsPerWorkgroup = limits.maxComputeInvocationsPerWorkgroup,
+        .maxComputeWorkgroupSizeX = limits.maxComputeWorkgroupSizeX,
+        .maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
+        .maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
+        .maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
+        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersInFragmentStage,
+        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesInFragmentStage,
+        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersInVertexStage,
+        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesInVertexStage,
+    };
 }
 
 } // namespace WebGPU
 
 WGPULimits NODELETE wgpuDefaultLimits()
 {
-    return WebGPU::defaultLimits();
+    return WebGPU::toAPI(WebGPU::defaultLimits());
 }

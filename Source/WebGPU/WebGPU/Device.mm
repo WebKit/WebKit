@@ -469,7 +469,7 @@ size_t Device::enumerateFeatures(WGPUFeatureName* features)
 
 bool Device::getLimits(WGPUSupportedLimits& limits)
 {
-    limits.limits = m_capabilities.limits;
+    limits.limits = toAPI(m_capabilities.limits);
     return true;
 }
 

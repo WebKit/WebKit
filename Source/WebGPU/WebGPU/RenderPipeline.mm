@@ -632,7 +632,7 @@ static bool NODELETE matchesFormat(const ShaderModule::VertexStageIn& stageIn, u
     return formatType(it->value) == formatType(format);
 }
 
-static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, const WGPULimits& limits, const ShaderModule::VertexStageIn& stageIn, RenderPipeline::RequiredBufferIndicesContainer& requiredBufferIndices, NSString** error, ShaderModule::VertexStageIn& outShaderLocations)
+static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, const Limits& limits, const ShaderModule::VertexStageIn& stageIn, RenderPipeline::RequiredBufferIndicesContainer& requiredBufferIndices, NSString** error, ShaderModule::VertexStageIn& outShaderLocations)
 {
     MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor new];
     Checked<uint32_t> totalAttributeCount = 0;
