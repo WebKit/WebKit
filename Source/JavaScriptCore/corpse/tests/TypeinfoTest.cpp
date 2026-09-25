@@ -34,26 +34,16 @@
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/SourceProvider.h>
-#include <array>
 #include <cxxabi.h>
-#include <errno.h>
 #include <lldb/API/LLDB.h>
 #include <optional>
-#include <signal.h>
-#include <spawn.h>
 #include <stdlib.h>
 #include <string_view>
-#include <sys/wait.h>
 #include <typeinfo>
-#include <unistd.h>
-#include <wtf/SafeStrerror.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringCommon.h>
-
-extern char** environ;
 
 #if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 // We should only link this if it is actually found; Xcode doesn't have optional dependencies.
@@ -69,35 +59,11 @@ namespace JSCToolsTest {
 namespace {
 
 using JSC::Corpse::Address;
-using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
 
 TextPosition targetStartPosition()
 {
     return { OrdinalNumber::fromZeroBasedInt(1234), OrdinalNumber::fromZeroBasedInt(5678) };
-}
-
-// The target holds a JSC::StringSourceProvider through its base class, so only
-// the target's RTTI says which class the object really is.
-Ref<JSC::SourceProvider> createTargetObject()
-{
-    return JSC::StringSourceProvider::create("1 + 1"_s, JSC::SourceOrigin { }, "typeinfo-target.js"_s,
-        JSC::SourceTaintedOrigin::Untainted, targetStartPosition());
-}
-
-CString readCString(const Snapshot& snapshot, Address address)
-{
-    constexpr size_t maxLength = 256;
-    Vector<char> characters;
-    for (size_t offset = 0; offset < maxLength; ++offset) {
-        auto character = snapshot.read<char>(address + offset);
-        if (!character)
-            return { };
-        if (!*character)
-            return UTF8CString(byteCast<char8_t>(characters.span()));
-        characters.append(*character);
-    }
-    return { };
 }
 
 // The mangled name in the type_info of the object at `object`, read out of the
@@ -123,9 +89,10 @@ CString dynamicTypeName(const Snapshot& snapshot, Address object)
 
     // libc++ sets the top bit of the name pointer when the name is not unique across images.
     constexpr uint64_t nonUniqueBit = 1ull << 63;
-    CString name = readCString(snapshot, Address { *namePointer & ~nonUniqueBit }.stripped());
-    TEST_ASSERT(!name.isNull(), "the target object's type_info name is readable");
-    return name;
+    constexpr size_t maxNameLength = 256;
+    auto name = snapshot.copyCString(Address { *namePointer & ~nonUniqueBit }.stripped(), maxNameLength);
+    TEST_ASSERT(name, "the target object's type_info name is readable");
+    return name ? *name : CString { };
 }
 
 CString demangledTypeName(const CString& mangledName)
@@ -242,80 +209,6 @@ void analyze(Snapshot& snapshot, Address object)
         "the corpse holds the target's m_startPosition at the offset the debug info gives");
 }
 
-void attachAndAnalyze(pid_t pid, Address object)
-{
-    RefPtr<Process> process = Process::create(pid);
-    bool attached = process->attach();
-    TEST_ASSERT(attached, "attaching to the target process succeeds");
-    if (!attached)
-        return;
-    Snapshot snapshot(process);
-    TEST_ASSERT(snapshot.isValid(), "a snapshot of the target process is valid");
-    if (!snapshot.isValid())
-        return;
-
-    analyze(snapshot, object);
-}
-
-void testInThisProcess()
-{
-    Ref<JSC::SourceProvider> object = createTargetObject();
-    attachAndAnalyze(getpid(), Address { object.ptr() });
-}
-
-// The analysis and the target are separate processes: this process launches a
-// copy of itself as the target and takes a corpse of it.
-void testInSeparateProcess()
-{
-    // The target writes the address of its object to its stdout.
-    std::array<int, 2> addressPipe { -1, -1 };
-    TEST_ASSERT(!pipe(addressPipe.data()), "a pipe from the target opens");
-    auto closePipe = makeScopeExit([&] {
-        for (int fd : addressPipe) {
-            if (fd >= 0)
-                close(fd);
-        }
-    });
-    if (addressPipe[0] < 0)
-        return;
-
-    CString executablePath = Process::create(getpid())->executablePath();
-    TEST_ASSERT(!executablePath.isNull(), "this process's executable path is readable");
-    if (executablePath.isNull())
-        return;
-
-    char* const arguments[] = {
-        const_cast<char*>(executablePath.data()),
-        const_cast<char*>("--typeinfo-target"),
-        nullptr
-    };
-    posix_spawn_file_actions_t actions;
-    posix_spawn_file_actions_init(&actions);
-    posix_spawn_file_actions_adddup2(&actions, addressPipe[1], STDOUT_FILENO);
-    posix_spawn_file_actions_addclose(&actions, addressPipe[0]);
-    posix_spawn_file_actions_addclose(&actions, addressPipe[1]);
-    pid_t child = 0;
-    int error = posix_spawn(&child, executablePath.data(), &actions, nullptr, arguments, environ);
-    posix_spawn_file_actions_destroy(&actions);
-    TEST_ASSERT(!error, "the target process launches");
-    if (error) {
-        dataLogLn("    posix_spawn: ", safeStrerror(error));
-        return;
-    }
-    auto killChild = makeScopeExit([&] {
-        kill(child, SIGKILL);
-        while (waitpid(child, nullptr, 0) < 0 && errno == EINTR) { }
-    });
-
-    uint64_t object = 0;
-    bool reported = read(addressPipe[0], &object, sizeof(object)) == sizeof(object);
-    TEST_ASSERT(reported, "the target reports the address of its object");
-    if (!reported)
-        return;
-
-    attachAndAnalyze(child, Address { object });
-}
-
 } // anonymous namespace
 
 void testTypeinfo()
@@ -324,21 +217,12 @@ void testTypeinfo()
     if (!tracer.shouldRun())
         return;
 
-    testInThisProcess();
-    if (!linuxSkip("Typeinfo in a separate process", "attaching to another process is not implemented on Linux yet"))
-        testInSeparateProcess();
-}
-
-int runTypeinfoTarget()
-{
-    Ref<JSC::SourceProvider> object = createTargetObject();
-    auto address = reinterpret_cast<uint64_t>(object.ptr());
-    if (write(STDOUT_FILENO, &address, sizeof(address)) != sizeof(address))
-        return 1;
-
-    // The analysis kills this process when it is done with the object.
-    while (true)
-        pause();
+    // The object is a JSC::StringSourceProvider, which the analysis can only
+    // learn from the target's RTTI.
+    analyzeInAndOutOfProcess([] {
+        return Address { &JSC::StringSourceProvider::create("1 + 1"_s, JSC::SourceOrigin { }, "typeinfo-target.js"_s,
+            JSC::SourceTaintedOrigin::Untainted, targetStartPosition()).leakRef() };
+    }, analyze);
 }
 
 #else // No SB API, so there is nothing to ask.
@@ -354,11 +238,6 @@ void testTypeinfo()
 #else
     skipSuite("Typeinfo", "mya_heap is not enabled");
 #endif
-}
-
-int runTypeinfoTarget()
-{
-    return 1;
 }
 
 #endif // ENABLE(MYA_HEAP)

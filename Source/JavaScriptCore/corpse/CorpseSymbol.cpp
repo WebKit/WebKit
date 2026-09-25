@@ -31,14 +31,12 @@
 
 #include "CorpseError.h"
 #include "CorpseExportsTrie.h"
+#include "CorpseImage.h"
+#include "CorpseLimits.h"
 #include "CorpseSnapshot.h"
 
 #if OS(DARWIN)
-#include <mach-o/dyld_images.h>
 #include <mach-o/loader.h>
-#include <mach/mach.h>
-#include <mach/mach_vm.h>
-#include <mach/task_info.h>
 #endif
 #include <optional>
 #include <span>
@@ -49,12 +47,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
-
-#if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
-#define CORPSE_DIAGNOSTIC_DO(statement) statement
-#else
-#define CORPSE_DIAGNOSTIC_DO(statement) ((void)0)
-#endif
 
 namespace JSC {
 namespace Corpse {
@@ -71,71 +63,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Symbol);
 // dyld exports trie and get addresses of symbols.
 
 namespace {
-
-// Sizes and counts read out of a corpse are used to bound loops and to size
-// allocations, so they are checked against these limits first. Each one is a
-// sanity check on a single value: it says the struct we read was not what we
-// thought it was, in which case the addresses in it are not worth chasing. They
-// are not a bound on the work a lookup can do, because the per-image limits
-// multiply by the image count. maxTotalBytesRead below is that bound.
-//
-// The values sit above what was empirically measured: across every Mach-O image
-// installed on a sample system the largest load commands were 7.4 KB and the
-// largest exports trie 2.1 MB, and a process that dlopens every framework on the
-// system reaches about 2,800 images.
-constexpr size_t maxLoadCommandsSize = 128 * KB; // About 17× the measured maximum.
-constexpr size_t maxExportsTrieSize = 16 * MB; // About 8× the measured maximum.
-constexpr uint32_t maxImageCount = 16 * 1024; // About 6× the measured maximum.
-
-// A lookup that finds nothing will read every image's load commands and exports
-// trie, which measured 101 MB for the ~2,800 image process above and 0.4 MB for
-// a small one. This caps the total for one lookup, so a corpse claiming many
-// large images cannot turn a single symbol lookup into unbounded copying.
-constexpr size_t maxTotalBytesRead = 256 * MB; // About 2.5× the measured maximum.
-
-// Copies data from a corpse task's virtual address space.
-// FIXME: This is a temporary "get things to work solution", and will be replaced with
-// a more efficient memory access from a page manager later that eliminates copying.
-class TaskMemory {
-public:
-    explicit TaskMemory(mach_port_t task)
-        : m_task(task)
-    {
-    }
-
-    template<typename T>
-    std::optional<T> read(Address address) const
-    {
-        static_assert(std::is_trivially_copyable_v<T>);
-        T out;
-        if (!readRaw(address, &out, sizeof out))
-            return std::nullopt;
-        return out;
-    }
-
-    std::optional<Vector<uint8_t>> readBytes(Address address, size_t length) const
-    {
-        Vector<uint8_t> buffer;
-        // Callers derive `length` from the corpse, so failing to allocate is a
-        // potential outcome here due to potential corruption.
-        if (!buffer.tryGrow(length))
-            return std::nullopt;
-        if (!readRaw(address, buffer.mutableSpan().data(), length))
-            return std::nullopt;
-        return buffer;
-    }
-
-private:
-    bool readRaw(Address address, void* destination, size_t length) const
-    {
-        mach_vm_size_t got = 0;
-        kern_return_t kr = mach_vm_read_overwrite(m_task, address.toTargetVMAddress(), length,
-            reinterpret_cast<mach_vm_address_t>(destination), &got);
-        return kr == KERN_SUCCESS && got == length;
-    }
-
-    mach_port_t m_task;
-};
 
 template<typename T>
 std::optional<T> readCommand(std::span<const uint8_t> commands, size_t offset)
@@ -165,7 +92,7 @@ bool segmentNameIs(const char (&name)[16], std::string_view expected)
 bool Symbol::hasReadBudget(size_t length)
 {
     if (length > m_readBudget) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.readBudgetExhausted);
+        Diagnostics::count("images skipped for the read budget"_s);
         return false;
     }
     m_readBudget -= length;
@@ -174,28 +101,26 @@ bool Symbol::hasReadBudget(size_t length)
 
 // Resolves `name` in the one image loaded at `imageAddress`, via its exports
 // trie. Returns a null address if this image does not export it.
-Address Symbol::resolveInImage(mach_port_t task, Address imageAddress, std::string_view name)
+Address Symbol::resolveInImage(const Snapshot& snapshot, Address imageAddress, std::string_view name)
 {
-    TaskMemory memory(task);
-
-    auto header = memory.read<mach_header_64>(imageAddress);
+    auto header = snapshot.read<mach_header_64>(imageAddress);
     if (!header || header->magic != MH_MAGIC_64) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.unreadableHeader);
+        Diagnostics::count("unreadable image headers"_s);
         return { };
     }
-    CORPSE_DIAGNOSTIC_DO(++m_diagnostics.examined);
+    Diagnostics::count("image headers read"_s);
     if (header->flags & MH_DYLIB_IN_CACHE)
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.inSharedCache);
+        Diagnostics::count("images in the shared cache"_s);
 
     if (header->sizeofcmds > maxLoadCommandsSize) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.implausibleCommandsSize);
+        Diagnostics::count("implausible load command sizes"_s);
         return { };
     }
     if (!hasReadBudget(header->sizeofcmds))
         return { };
-    auto commandsBuffer = memory.readBytes(imageAddress + sizeof(mach_header_64), header->sizeofcmds);
+    auto commandsBuffer = snapshot.copyBytes(imageAddress + sizeof(mach_header_64), header->sizeofcmds);
     if (!commandsBuffer) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.unreadableCommands);
+        Diagnostics::count("unreadable load commands"_s);
         return { };
     }
     std::span<const uint8_t> commands = commandsBuffer->span();
@@ -266,11 +191,11 @@ Address Symbol::resolveInImage(mach_port_t task, Address imageAddress, std::stri
     }
 
     if (!textVMAddress || !linkeditVMAddress || !linkeditFileOffset || !linkeditFileSize || !exportSize) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.withoutTrie);
+        Diagnostics::count("images without an exports trie"_s);
         return { };
     }
     if (exportSize > maxExportsTrieSize) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.implausibleTrieSize);
+        Diagnostics::count("implausible exports trie sizes"_s);
         return { };
     }
 
@@ -278,12 +203,12 @@ Address Symbol::resolveInImage(mach_port_t task, Address imageAddress, std::stri
     // be less than the start of __LINKEDIT, cannot exceed the end of __LINKEDIT, and
     // the whole trie must fit inside it.
     if (exportOffset < *linkeditFileOffset) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.trieOutsideLinkedit);
+        Diagnostics::count("exports tries outside __LINKEDIT"_s);
         return { };
     }
     uint64_t trieSegmentOffset = exportOffset - *linkeditFileOffset;
     if (trieSegmentOffset > *linkeditFileSize || exportSize > *linkeditFileSize - trieSegmentOffset) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.trieOutsideLinkedit);
+        Diagnostics::count("exports tries outside __LINKEDIT"_s);
         return { };
     }
 
@@ -295,21 +220,19 @@ Address Symbol::resolveInImage(mach_port_t task, Address imageAddress, std::stri
 
     if (!hasReadBudget(exportSize))
         return { };
-    auto trieBuffer = memory.readBytes(trieAddress, exportSize);
+    auto trieBuffer = snapshot.copyBytes(trieAddress, exportSize);
     if (!trieBuffer) {
-        CORPSE_DIAGNOSTIC_DO(++m_diagnostics.unreadableTrie);
+        Diagnostics::count("unreadable exports tries"_s);
         return { };
     }
-    CORPSE_DIAGNOSTIC_DO(++m_diagnostics.searched);
+    Diagnostics::count("exports tries searched"_s);
 
     auto found = ExportsTrie::lookUp(trieBuffer->span(), name);
     if (!found) {
-#if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
         if (found.error() == ExportsTrie::Failure::ReExport)
-            ++m_diagnostics.reExports;
+            Diagnostics::count("re-exports, which are not followed"_s);
         else if (found.error() == ExportsTrie::Failure::UnsupportedKind)
-            ++m_diagnostics.unsupportedKind;
-#endif
+            Diagnostics::count("exports without a single address"_s);
         return { };
     }
     if (found->kind == ExportsTrie::Export::Kind::Absolute)
@@ -317,177 +240,53 @@ Address Symbol::resolveInImage(mach_port_t task, Address imageAddress, std::stri
     return imageAddress + found->value;
 }
 
-Address Symbol::lookUpName(const Snapshot& snapshot)
+Address Symbol::lookUpName(Snapshot& snapshot)
 {
-    if (!snapshot.isValid() || m_name.empty())
+    if (!snapshot.isValid()) {
+        CORPSE_REPORT("Cannot look up '%s' in an invalid snapshot", m_name.c_str());
         return { };
+    }
+    int pid = static_cast<int>(snapshot.process()->pid());
+    CORPSE_DIAGNOSTICS("looking up the symbol '_%s' in pid %d", m_name.c_str(), pid);
 
     m_readBudget = maxTotalBytesRead;
 
-    auto doLookUp = [&] () -> Address {
-        std::string name = "_" + m_name; // Use Mach-O symbol name for look up.
+    std::string name = "_" + m_name; // Use Mach-O symbol name for look up.
 
-        mach_port_t task = snapshot.corpsePort();
-        TaskMemory memory(task);
+    const Vector<Image>& images = snapshot.images();
+    Diagnostics::count("images listed"_s, images.size());
+    for (const Image& image : images) {
+        if (Address address = resolveInImage(snapshot, image.loadAddress(), name))
+            return address;
+    }
 
-        // dyld publishes the list of loaded images; search each one in turn.
-        task_dyld_info_data_t dyldInfo;
-        mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;
-        if (task_info(task, TASK_DYLD_INFO, reinterpret_cast<task_info_t>(&dyldInfo), &count) != KERN_SUCCESS)
-            return { };
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.readDyldInfo = true);
-
-        Address allImageInfosAddress { dyldInfo.all_image_info_addr };
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.allImageInfosAddress = allImageInfosAddress);
-        if (!allImageInfosAddress)
-            return { };
-
-        auto allImages = memory.read<dyld_all_image_infos>(allImageInfosAddress);
-        if (!allImages)
-            return { };
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.readAllImageInfos = true);
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.version = allImages->version);
-
-        Address rawArrayAddress { allImages->infoArray };
-        Address arrayAddress = rawArrayAddress.stripped();
-        uint32_t imageCount = allImages->infoArrayCount;
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.rawImageArrayAddress = rawArrayAddress);
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.imageArrayAddress = arrayAddress);
-        CORPSE_DIAGNOSTIC_DO(m_diagnostics.images = imageCount);
-        if (!arrayAddress || !imageCount)
-            return { };
-        // Each image below costs a Mach round-trip and two buffer reads, so an
-        // implausible count is a lot of work to be talked into doing.
-        if (imageCount > maxImageCount) {
-            CORPSE_DIAGNOSTIC_DO(m_diagnostics.implausibleImageCount = true);
-            return { };
-        }
-
-        for (uint32_t i = 0; i < imageCount; ++i) {
-            auto info = memory.read<dyld_image_info>(arrayAddress + static_cast<uint64_t>(i) * sizeof(dyld_image_info));
-            if (!info) {
-                CORPSE_DIAGNOSTIC_DO(++m_diagnostics.unreadableInfo);
-                continue;
-            }
-            auto imageAddress = Address(info->imageLoadAddress).stripped();
-            auto symbolAddress = resolveInImage(task, imageAddress, name);
-            if (symbolAddress)
-                return symbolAddress;
-        }
-
-        return { };
-    };
-
-    Address address = doLookUp();
-#if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
-    if (!address)
-        reportFailure(snapshot);
-#endif
-    return address;
+    if (!Diagnostics::total("exports tries searched"_s))
+        CORPSE_REPORT("No symbol '_%s' in pid %d: no exports trie could be read, so this is a memory access problem", m_name.c_str(), pid);
+    else
+        CORPSE_REPORT("No symbol '_%s' in pid %d: only exported symbols are in an exports trie, so a symbol the linker hid is invisible here", m_name.c_str(), pid);
+    return { };
 }
-
-#if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
-
-// Says how a failed search went, so a caller can tell "the symbol is not
-// exported" from "the corpse could not be read".
-void Symbol::reportFailure(const Snapshot& snapshot) const
-{
-    const Diagnostics& d = m_diagnostics;
-
-    Error::report("No symbol '_%s' in pid %d", m_name.c_str(),
-        static_cast<int>(snapshot.process()->pid()));
-
-    if (!d.readDyldInfo) {
-        Error::report("  could not read dyld information (task_info TASK_DYLD_INFO failed)");
-        return;
-    }
-    if (!d.allImageInfosAddress) {
-        Error::report("  dyld reports no image list (all_image_info_addr is 0)");
-        return;
-    }
-    if (!d.readAllImageInfos) {
-        Error::report("  could not read dyld_all_image_infos at 0x%llx",
-            d.allImageInfosAddress.toTargetVMAddress());
-        return;
-    }
-
-    // A sane version says the struct read probably landed on real data, which is what
-    // makes the image count and array address below worth printing.
-    Error::report("  dyld_all_image_infos v%u at 0x%llx lists %u images at 0x%llx",
-        d.version, d.allImageInfosAddress.toTargetVMAddress(),
-        d.images, d.imageArrayAddress.toTargetVMAddress());
-    if (d.rawImageArrayAddress != d.imageArrayAddress) {
-        Error::report("  that address was ptrauth-signed as 0x%llx; the signature was stripped",
-            d.rawImageArrayAddress.toTargetVMAddress());
-    }
-    if (!d.imageArrayAddress || !d.images) {
-        Error::report("  that list is empty, so there was nothing to search");
-        return;
-    }
-    if (d.implausibleImageCount) {
-        Error::report("  that count is too large to be a real image list, so the struct read"
-            " was not dyld_all_image_infos and was not searched");
-        return;
-    }
-
-    Error::report("  read %u of %u image headers (%u in the shared cache), walked %u exports tries",
-        d.examined, d.images, d.inSharedCache, d.searched);
-    if (d.unreadableInfo)
-        Error::report("  %u image list entries were unreadable", d.unreadableInfo);
-    if (d.unreadableHeader)
-        Error::report("  %u image headers were unreadable or not 64-bit Mach-O", d.unreadableHeader);
-    if (d.implausibleCommandsSize)
-        Error::report("  %u images had implausible load command sizes", d.implausibleCommandsSize);
-    if (d.unreadableCommands)
-        Error::report("  %u images had unreadable load commands", d.unreadableCommands);
-    if (d.withoutTrie)
-        Error::report("  %u images had no exports trie", d.withoutTrie);
-    if (d.implausibleTrieSize)
-        Error::report("  %u images had implausible exports trie sizes", d.implausibleTrieSize);
-    if (d.trieOutsideLinkedit)
-        Error::report("  %u images placed their exports trie outside __LINKEDIT", d.trieOutsideLinkedit);
-    if (d.unreadableTrie)
-        Error::report("  %u exports tries were not readable", d.unreadableTrie);
-    if (d.readBudgetExhausted) {
-        Error::report("  gave up after reading %u MB from the corpse; %u images were skipped",
-            static_cast<unsigned>(maxTotalBytesRead / MB), d.readBudgetExhausted);
-    }
-    if (d.reExports)
-        Error::report("  %u images re-export the name from elsewhere, which is not followed", d.reExports);
-    if (d.unsupportedKind)
-        Error::report("  %u images export the name in a form that has no single address, such as a thread-local", d.unsupportedKind);
-
-    if (d.searched) {
-        Error::report(
-            "  only exported symbols appear in an exports trie: a symbol hidden"
-            " by the linker is invisible here even though lldb can still find"
-            " it in the symbol table");
-    } else {
-        Error::report(
-            "  no trie was searched, so this is a memory-access problem rather"
-            " than the symbol being absent");
-    }
-}
-
-#endif // CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
 
 #else
 
-Address Symbol::resolveInImage(TaskHandle, Address, std::string_view) { return { }; }
-Address Symbol::lookUpName(const Snapshot&) { return { }; }
+Address Symbol::lookUpName(Snapshot&)
+{
+    CORPSE_REPORT("Symbol lookup is not supported on this platform");
+    return { };
+}
 
 #endif // OS(DARWIN)
 
-Symbol::Symbol(const Snapshot& snapshot, const char* name)
+Symbol::Symbol(Snapshot& snapshot, const char* name)
     : m_name(name ? name : "")
 {
-    if (!m_name.empty())
+    if (m_name.empty())
+        CORPSE_REPORT("A symbol lookup needs a name");
+    else
         m_address = lookUpName(snapshot);
 }
 
 } // namespace Corpse
 } // namespace JSC
-
-#undef CORPSE_DIAGNOSTIC_DO
 
 #endif // ENABLE(MYA)

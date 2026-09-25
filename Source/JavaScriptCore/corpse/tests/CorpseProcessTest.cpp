@@ -169,7 +169,7 @@ void testProcess()
         if (!gone)
             TEST_ASSERT(gone, "a child could be forked and reaped");
         else {
-            dataLogLn("    (the next line is the failure this test asks for)");
+            ExpectedErrors expectedErrors;
 #if OS(DARWIN)
             unsigned namesBefore = machPortNameCount();
 #endif

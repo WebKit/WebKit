@@ -1864,6 +1864,9 @@
 		7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		56C6C2B7EBDCC63B6ECEA9AD /* CorpseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 211E3D6CA97F31CEB385A75A /* CorpseThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EF648B9EEAF54C44048B416A /* CorpseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960BD2B783EAEBE3233F91BF /* CorpseThread.cpp */; };
+		A0547F981FDF49C7BDC24F95 /* CorpseImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03AAE0A788924A40A7E10371 /* CorpseImage.cpp */; };
+		DF0C9A4200224B938B005C98 /* CorpseImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FA99A410A84B7AB85B3D8D /* CorpseImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4C1E8A7D2B5F4E0F9A3D6C2B /* CorpseLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2F9B3C4D5A6E7F8091A2B3 /* CorpseLimits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA47D093D003440A28D15924 /* CorpseSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 94711688984F16F71D615DE5 /* CorpseSnapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5601486802533982ACC870BE /* CorpseSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1FA0900D09DF06EE63F7D2 /* CorpseSymbol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377C8C2416AE3DF90650C0E9 /* CorpseSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8D1735B28066A3B1D756ECC /* CorpseSymbol.cpp */; };
@@ -4105,6 +4108,9 @@
 		7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseExportsTrie.h; sourceTree = "<group>"; };
 		211E3D6CA97F31CEB385A75A /* CorpseThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseThread.h; sourceTree = "<group>"; };
 		960BD2B783EAEBE3233F91BF /* CorpseThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseThread.cpp; sourceTree = "<group>"; };
+		03AAE0A788924A40A7E10371 /* CorpseImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseImage.cpp; sourceTree = "<group>"; };
+		29FA99A410A84B7AB85B3D8D /* CorpseImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseImage.h; sourceTree = "<group>"; };
+		7E2F9B3C4D5A6E7F8091A2B3 /* CorpseLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseLimits.h; sourceTree = "<group>"; };
 		1482B7E10A43076000517CFC /* JSObjectRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRef.h; sourceTree = "<group>"; };
 		1482B7E20A43076000517CFC /* JSObjectRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObjectRef.cpp; sourceTree = "<group>"; };
 		148521D526EAEBDF00CC1D1A /* WasmHandlerInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmHandlerInfo.cpp; sourceTree = "<group>"; };
@@ -6975,6 +6981,9 @@
 				8DDA7A78AD90B64B97AE329C /* CorpseError.h */,
 				7E83C43617D785F3003DC41B /* CorpseExportsTrie.cpp */,
 				7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */,
+				03AAE0A788924A40A7E10371 /* CorpseImage.cpp */,
+				29FA99A410A84B7AB85B3D8D /* CorpseImage.h */,
+				7E2F9B3C4D5A6E7F8091A2B3 /* CorpseLimits.h */,
 				1AB0DEAD00000019000D0001 /* CorpsePlatform.h */,
 				68BBF9CBD85C8635B2B8385F /* CorpseProcess.cpp */,
 				55D0F2DD9CA70132D5104B34 /* CorpseProcess.h */,
@@ -11705,6 +11714,8 @@
 				80B96670131FB9EBB9AD49CC /* CorpseClient.h in Headers */,
 				85428E7BE0B3557DD2988043 /* CorpseError.h in Headers */,
 				7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */,
+				DF0C9A4200224B938B005C98 /* CorpseImage.h in Headers */,
+				4C1E8A7D2B5F4E0F9A3D6C2B /* CorpseLimits.h in Headers */,
 				1AB0DEAD00000018000D0001 /* CorpsePlatform.h in Headers */,
 				0D9C2E68ACFF010D91916993 /* CorpseProcess.h in Headers */,
 				3A7C1E5D9B0F4A2681C34D07 /* CorpseRegion.h in Headers */,
@@ -14387,6 +14398,7 @@
 				C2EB941F3198AE0BD86A2324 /* CorpseClient.cpp in Sources */,
 				121D90BB8171A66F1922D548 /* CorpseError.cpp in Sources */,
 				7E83C43817D785F3003DC41B /* CorpseExportsTrie.cpp in Sources */,
+				A0547F981FDF49C7BDC24F95 /* CorpseImage.cpp in Sources */,
 				C366EA5039A3B51405995EA6 /* CorpseProcess.cpp in Sources */,
 				5E2B94A17C6D40F3B85219CE /* CorpseRegion.cpp in Sources */,
 				0946712DEC51E0E86C4A49E3 /* CorpseSnapshot.cpp in Sources */,

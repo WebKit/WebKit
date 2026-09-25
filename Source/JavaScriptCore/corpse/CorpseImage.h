@@ -26,46 +26,40 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
+#include <JavaScriptCore/CorpsePlatform.h>
 
 #if ENABLE(MYA)
 
-#if OS(DARWIN)
-#include <mach/mach.h>
-#include <wtf/MachSendRight.h>
-#endif
+#include <JavaScriptCore/CorpseAddress.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 namespace Corpse {
 
-#if OS(DARWIN)
-using TaskHandle = mach_port_t;
-constexpr TaskHandle invalidTaskHandle = MACH_PORT_NULL;
-inline bool isValidTaskHandle(TaskHandle handle) { return MACH_PORT_VALID(handle); }
+class Snapshot;
 
-using OwnedTaskHandle = MachSendRight;
-inline TaskHandle taskHandle(const OwnedTaskHandle& owned) { return owned.sendRight(); }
-#else
-using TaskHandle = int;
-constexpr TaskHandle invalidTaskHandle = -1;
-inline bool isValidTaskHandle(TaskHandle handle) { return handle >= 0; }
-
-class OwnedTaskHandle {
+// One image (the executable or a shared library) mapped into a corpse.
+class Image {
 public:
-    static OwnedTaskHandle adopt(TaskHandle handle) { return OwnedTaskHandle { handle }; }
-    OwnedTaskHandle() = default;
+    const CString& path() const { return m_path; }
+    Address loadAddress() const { return m_loadAddress; } // Where the image's header landed.
 
 private:
-    explicit OwnedTaskHandle(TaskHandle handle)
-        : m_handle(handle)
+    Image(CString&& path, Address loadAddress)
+        : m_path(WTF::move(path))
+        , m_loadAddress(loadAddress)
     {
     }
 
-    friend TaskHandle taskHandle(const OwnedTaskHandle& owned) { return owned.m_handle; }
+    static Vector<Image> collect(const Snapshot&);
+    static Vector<Image> platformCollect(const Snapshot&);
 
-    TaskHandle m_handle { invalidTaskHandle };
+    CString m_path;
+    Address m_loadAddress;
+
+    friend class Snapshot;
 };
-#endif
 
 } // namespace Corpse
 } // namespace JSC

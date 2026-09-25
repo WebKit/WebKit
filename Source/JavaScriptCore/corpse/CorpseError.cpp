@@ -32,21 +32,85 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace Corpse {
 
+thread_local unsigned Error::s_reportCount = 0;
+thread_local Diagnostics* Diagnostics::s_current = nullptr;
+
 void Error::report(const char* format, ...)
 {
-    fprintf(stderr, "%s: ", Client::name().characters());
+    ++s_reportCount;
+    SAFE_FPRINTF(stderr, "%s: ", Client::name());
 
     va_list args;
     va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
 
+    fputc('\n', stderr);
+
+    for (const Diagnostics* scope = Diagnostics::s_current; scope; scope = scope->m_parent)
+        scope->print();
+}
+
+Diagnostics::Diagnostics(const char* format, ...)
+    : m_parent(s_current)
+{
+    StringPrintStream out;
+    va_list args;
+    va_start(args, format);
+    out.vprintf(format, args);
+    va_end(args);
+    m_operation = out.toUTF8CString();
+    s_current = this;
+}
+
+Diagnostics::~Diagnostics()
+{
+    ASSERT(s_current == this);
+    s_current = m_parent;
+}
+
+void Diagnostics::count(ASCIILiteral what, uint64_t by)
+{
+    ASSERT(s_current);
+    if (!s_current)
+        return;
+    for (auto& counter : s_current->m_counters) {
+        if (counter.first == what) {
+            counter.second += by;
+            return;
+        }
+    }
+    s_current->m_counters.append({ what, by });
+}
+
+uint64_t Diagnostics::total(ASCIILiteral what)
+{
+    ASSERT(s_current);
+    if (!s_current)
+        return 0;
+    for (auto& counter : s_current->m_counters) {
+        if (counter.first == what)
+            return counter.second;
+    }
+    return 0;
+}
+
+void Diagnostics::print() const
+{
+    SAFE_FPRINTF(stderr, "%s:   while %s", Client::name(), m_operation);
+    ASCIILiteral separator = ": "_s;
+    for (auto& [what, value] : m_counters) {
+        SAFE_FPRINTF(stderr, "%s%s %llu", separator, what, static_cast<unsigned long long>(value));
+        separator = ", "_s;
+    }
     fputc('\n', stderr);
 }
 

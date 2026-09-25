@@ -34,9 +34,6 @@
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <dlfcn.h>
-#if OS(DARWIN)
-#include <mach/mach.h>
-#endif
 #include <stdlib.h>
 #include <unistd.h>
 #include <wtf/MonotonicTime.h>
@@ -106,6 +103,7 @@ void testSymbol()
         }
     }
     {
+        ExpectedErrors expectedErrors(3);
         TEST_ASSERT(!snapshot.symbol("jscToolsTestNoSuchSymbolAnywhere"),
             "a name that is not exported anywhere is not found");
         TEST_ASSERT(!snapshot.symbol(nullptr), "no name resolves to nothing");
@@ -114,6 +112,7 @@ void testSymbol()
     {
         // Only exported symbols appear in a trie. This one is in the binary, and
         // still must not be found: saying so is the honest answer.
+        ExpectedErrors expectedErrors;
         TEST_ASSERT(jscToolsTestHiddenGlobal == 42, "the hidden global is in this binary");
         TEST_ASSERT(!snapshot.symbol("jscToolsTestHiddenGlobal"),
             "a symbol hidden from the linker is not found");
@@ -121,6 +120,7 @@ void testSymbol()
     {
         // A look up prepends the underscore that a Mach-O symbol name carries, so a
         // name that already has one is asking for a different symbol.
+        ExpectedErrors expectedErrors;
         TEST_ASSERT(!snapshot.symbol("_malloc"),
             "a name given with its underscore already attached is not found");
     }
@@ -137,6 +137,7 @@ void testSymbol()
         TEST_ASSERT(symbol.address() == snapshot.symbol("g_config"),
             "a Symbol resolves to what the snapshot reports");
 
+        ExpectedErrors expectedErrors(2);
         Symbol missing(snapshot, "jscToolsTestNoSuchSymbolAnywhere");
         TEST_ASSERT(!missing.isValid(), "a Symbol that did not resolve is not valid");
         TEST_ASSERT(!missing.address(), "a Symbol that did not resolve has no address");
@@ -150,6 +151,7 @@ void testSymbol()
     {
         // A name that is nowhere walks every image in the corpse, which is the most
         // work a look up can be asked to do. It has to stay bounded.
+        ExpectedErrors expectedErrors;
         static constexpr double budgetSeconds = 60;
         MonotonicTime start = MonotonicTime::now();
         TEST_ASSERT(!snapshot.symbol("jscToolsTestAnotherNameThatIsNowhere"),

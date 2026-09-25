@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,54 +30,34 @@
 
 #if ENABLE(MYA)
 
-#include <JavaScriptCore/CorpseAddress.h>
-#include <JavaScriptCore/CorpseRegion.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <string>
-#include <wtf/Vector.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 namespace Corpse {
 
-class Snapshot;
+// Sizes and counts read out of a corpse are used to bound loops and to size
+// allocations, so they are checked against these limits first. Each one is a
+// sanity check on a single value: it says the struct we read was not what we
+// thought it was, in which case the addresses in it are not worth chasing. They
+// are not a bound on the work a lookup can do, because the per-image limits
+// multiply by the image count. maxTotalBytesRead below is that bound.
+//
+// The values sit above what was empirically measured: across every Mach-O image
+// installed on a sample system the largest load commands were 7.4 KB and the
+// largest exports trie 2.1 MB, and a process that dlopens every framework on the
+// system reaches about 2,800 images.
+constexpr size_t maxLoadCommandsSize = 128 * KB; // About 17× the measured maximum.
+constexpr size_t maxExportsTrieSize = 16 * MB; // About 8× the measured maximum.
+constexpr uint32_t maxImageCount = 16 * 1024; // About 6× the measured maximum.
+constexpr size_t maxPathLength = 4 * KB; // PATH_MAX on Darwin and on Linux.
 
-// A snapshot of thread values read out of a corpse.
-class Thread {
-public:
-    // The kernel's system-wide unique 64-bit thread id, as reported by lldb and
-    // spindump. This is an identifier, not an address.
-    uint64_t id() const { return m_id; }
-
-    // The pthread name, empty if the thread was never named.
-    const std::string& name() const { return m_name; }
-
-    int runState() const { return m_runState; }
-    int suspendCount() const { return m_suspendCount; }
-    uint64_t userTimeUsec() const { return m_userTimeUsec; }
-    uint64_t systemTimeUsec() const { return m_systemTimeUsec; }
-
-    Address stackPointer() const { return m_stackPointer; }
-
-    const Region& stackRegion() const { return m_stackRegion; }
-    bool hasStack() const { return m_stackRegion.size(); }
-
-    const char* runStateDescription() const;
-
-private:
-    static Vector<Thread> collect(const Snapshot&);
-    static Vector<Thread> platformCollect(const Snapshot&);
-
-    uint64_t m_id { 0 };
-    std::string m_name;
-    int m_runState { 0 };
-    int m_suspendCount { 0 };
-    uint64_t m_userTimeUsec { 0 };
-    uint64_t m_systemTimeUsec { 0 };
-    Address m_stackPointer;
-    Region m_stackRegion;
-
-    friend class Snapshot;
-};
+// A lookup that finds nothing will read every image's load commands and exports
+// trie, which measured 101 MB for the ~2,800 image process above and 0.4 MB for
+// a small one. This caps the total for one lookup, so a corpse claiming many
+// large images cannot turn a single symbol lookup into unbounded copying.
+constexpr size_t maxTotalBytesRead = 256 * MB; // About 2.5× the measured maximum.
 
 } // namespace Corpse
 } // namespace JSC

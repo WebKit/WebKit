@@ -45,17 +45,15 @@ class Process final : public RefCounted<Process> {
 public:
     static Ref<Process> create(pid_t pid) { return adoptRef(*new Process(pid)); }
 
-    ~Process() { detach(); }
-
     bool attach();
-    void detach();
+    void detach() { m_taskPort = { }; }
 
     pid_t pid() const { return m_pid; }
 
     CString executablePath() const;
-    TaskHandle taskPort() const { return m_taskPort; }
+    TaskHandle taskPort() const { return taskHandle(m_taskPort); }
 
-    bool isAttached() const { return isValidTaskHandle(m_taskPort); }
+    bool isAttached() const { return isValidTaskHandle(taskPort()); }
 
     // The target process may have terminated while we still hold the port.
     bool holdsLiveTask() const;
@@ -73,7 +71,7 @@ private:
     }
 
     pid_t m_pid;
-    TaskHandle m_taskPort { invalidTaskHandle };
+    OwnedTaskHandle m_taskPort;
 };
 
 } // namespace Corpse

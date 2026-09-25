@@ -71,10 +71,10 @@ static bool reportIfNoProcess(pid_t pid)
 // process that inherited the same pid.
 bool Process::holdsLiveTask() const
 {
-    if (!MACH_PORT_VALID(m_taskPort))
+    if (!isAttached())
         return false;
     int pid = -1;
-    return pid_for_task(m_taskPort, &pid) == KERN_SUCCESS && pid == m_pid;
+    return pid_for_task(taskPort(), &pid) == KERN_SUCCESS && pid == m_pid;
 }
 
 bool Process::isTranslated() const
@@ -101,7 +101,7 @@ bool Process::attach()
     mach_port_t taskPort = MACH_PORT_NULL;
     kern_return_t kr = task_for_pid(mach_task_self(), m_pid, &taskPort);
     if (kr == KERN_SUCCESS) {
-        m_taskPort = taskPort;
+        m_taskPort = OwnedTaskHandle::adopt(taskPort);
         return true;
     }
 
@@ -111,13 +111,6 @@ bool Process::attach()
             static_cast<unsigned>(m_pid), mach_error_string(kr), kr);
     }
     return false;
-}
-
-void Process::detach()
-{
-    if (MACH_PORT_VALID(m_taskPort))
-        mach_port_deallocate(mach_task_self(), m_taskPort);
-    m_taskPort = MACH_PORT_NULL;
 }
 
 CString Process::executablePath() const
@@ -134,7 +127,7 @@ CString Process::executablePath() const
 // FIXME: We can only attach to ourself
 bool Process::holdsLiveTask() const
 {
-    return isAttached() && m_taskPort == getpid();
+    return isAttached() && taskPort() == getpid();
 }
 
 bool Process::isTranslated() const { return false; }
@@ -145,7 +138,7 @@ bool Process::attach()
         return true;
 
     if (m_pid == getpid()) {
-        m_taskPort = m_pid;
+        m_taskPort = OwnedTaskHandle::adopt(m_pid);
         return true;
     }
 
@@ -154,11 +147,6 @@ bool Process::attach()
             "on this platform yet", static_cast<int>(m_pid));
     }
     return false;
-}
-
-void Process::detach()
-{
-    m_taskPort = invalidTaskHandle;
 }
 
 CString Process::executablePath() const

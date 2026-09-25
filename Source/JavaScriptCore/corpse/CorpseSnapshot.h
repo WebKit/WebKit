@@ -30,6 +30,7 @@
 #if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
+#include <JavaScriptCore/CorpseImage.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <JavaScriptCore/CorpseThread.h>
@@ -44,6 +45,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -67,17 +69,18 @@ public:
     Snapshot& operator=(const Snapshot&) = delete;
     Snapshot(Snapshot&& other) = delete;
 
-    bool isValid() const { return isValidTaskHandle(m_corpsePort); }
+    bool isValid() const { return isValidTaskHandle(corpsePort()); }
 
     // A monotonically increasing identifier assigned at construction. IDs are
     // never reused, so they stay stable as snapshots are added and removed.
     unsigned id() const { return m_id; }
 
     Process* process() const { return m_process.get(); }
-    TaskHandle corpsePort() const { return m_corpsePort; }
+    TaskHandle corpsePort() const { return taskHandle(m_corpsePort); }
 
-    // The threads captured in this corpse, read and cached on the first call.
+    // The threads and images captured in this corpse, read and cached on the first call.
     const Vector<Thread>& threads();
+    const Vector<Image>& images();
 
     // The address of `name` in this corpse, null if it is not there.
     Address symbol(const char* name);
@@ -96,14 +99,21 @@ public:
         return value;
     }
 
+    // Nullopt if the bytes could not be read, or if `length` could not be allocated.
+    std::optional<Vector<uint8_t>> copyBytes(Address, size_t length) const;
+
+    // Nullopt if no terminator is readable within maxLength bytes.
+    std::optional<CString> copyCString(Address, size_t maxLength) const;
+
 private:
     static unsigned s_nextId;
 
     RefPtr<Process> m_process;
-    TaskHandle m_corpsePort { invalidTaskHandle };
+    OwnedTaskHandle m_corpsePort;
     unsigned m_id;
 
     std::optional<Vector<Thread>> m_threads;
+    std::optional<Vector<Image>> m_images;
     HashMap<String, std::unique_ptr<Symbol>> m_symbols;
 
     Snapshot* m_prev { nullptr }; // Required by DoublyLinkedListNode.

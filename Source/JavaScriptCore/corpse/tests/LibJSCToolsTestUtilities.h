@@ -32,6 +32,7 @@
 #include <stdint.h>
 #include <string_view>
 #include <wtf/DataLog.h>
+#include <wtf/Function.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
@@ -43,6 +44,8 @@
 #endif
 
 #if ENABLE(MYA)
+#include <JavaScriptCore/CorpseAddress.h>
+
 namespace JSC {
 namespace Corpse {
 class Process;
@@ -78,9 +81,6 @@ void testThreads();
 void fuzzExportsTrie(uint64_t seed, unsigned iterations);
 void testTypeinfo();
 
-// Targets: run as the target that a test above attaches too
-int runTypeinfoTarget();
-
 // Announces a suite, times it, and reports on the way out. Destroyed on every path out
 // of a suite, including the early returns a suite takes when it cannot set itself up.
 class SuiteTracer {
@@ -98,7 +98,21 @@ public:
 private:
     const char* m_name;
     MonotonicTime m_start;
+    unsigned m_reportsAtStart { 0 };
     bool m_shouldRun;
+};
+
+class ExpectedErrors {
+public:
+    explicit ExpectedErrors(unsigned count = 1);
+    ~ExpectedErrors();
+
+    ExpectedErrors(const ExpectedErrors&) = delete;
+    ExpectedErrors& operator=(const ExpectedErrors&) = delete;
+
+private:
+    unsigned m_count;
+    unsigned m_reportsAtStart;
 };
 
 Seconds totalSuiteTime();
@@ -209,6 +223,13 @@ public:
 private:
     Vector<Thread*> m_threads;
 };
+
+// create() an object, then analyze() it in and out of process.
+void analyzeInAndOutOfProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// The main function for a copy of this process launched as `--target <offset>`: runs the
+// create function at `offset` into this executable and holds its object.
+int runCorpseTarget(const char* offsetText);
 
 #endif // ENABLE(MYA)
 

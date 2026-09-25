@@ -36,9 +36,6 @@
 #include <string_view>
 #include <wtf/TZoneMalloc.h>
 
-// Enable for more detailed error messages on what may have caused a symbol lookup failure.
-#define CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS 0
-
 namespace JSC {
 namespace Corpse {
 
@@ -58,7 +55,7 @@ class Snapshot;
 class Symbol {
     WTF_MAKE_TZONE_ALLOCATED(Symbol);
 public:
-    Symbol(const Snapshot&, const char* name);
+    Symbol(Snapshot&, const char* name);
 
     const std::string& name() const { return m_name; }
 
@@ -66,51 +63,15 @@ public:
     bool isValid() const { return static_cast<bool>(m_address); }
 
 private:
-    Address lookUpName(const Snapshot&);
-    Address resolveInImage(TaskHandle, Address loadAddress, std::string_view name);
-#if OS(DARWIN)
+    Address lookUpName(Snapshot&);
+    Address resolveInImage(const Snapshot&, Address loadAddress, std::string_view name);
     bool hasReadBudget(size_t length);
-#endif
-
-#if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
-    // How far a search got, so a failure can name the stage that fell short.
-    struct Diagnostics {
-        bool readDyldInfo { false };
-        Address allImageInfosAddress;
-        bool readAllImageInfos { false };
-        uint32_t version { 0 };                 // dyld_all_image_infos::version.
-        Address rawImageArrayAddress;           // As stored, possibly signed.
-        Address imageArrayAddress;              // ...with any signature stripped.
-        unsigned images { 0 };                  // Images dyld reported.
-        bool implausibleImageCount { false };   // ...but too many to be believed.
-        unsigned examined { 0 };                // ...whose Mach header we read.
-        unsigned inSharedCache { 0 };           // ...of those, in the shared cache.
-        unsigned unreadableInfo { 0 };          // dyld_image_info unreadable.
-        unsigned unreadableHeader { 0 };        // Header missing or not 64-bit.
-        unsigned implausibleCommandsSize { 0 }; // sizeofcmds too large to believe.
-        unsigned unreadableCommands { 0 };      // Load commands unreadable.
-        unsigned withoutTrie { 0 };             // No trie, or no __TEXT/__LINKEDIT.
-        unsigned implausibleTrieSize { 0 };     // Trie size too large to believe.
-        unsigned trieOutsideLinkedit { 0 };     // Trie not within __LINKEDIT.
-        unsigned unreadableTrie { 0 };          // Trie located but not readable.
-        unsigned readBudgetExhausted { 0 };     // Gave up: the lookup hit its read budget.
-        unsigned searched { 0 };                // Tries actually walked.
-        unsigned reExports { 0 };               // Matched, but re-exported.
-        unsigned unsupportedKind { 0 };         // Matched, but not an export kind with one address.
-    };
-
-    void reportFailure(const Snapshot&) const;
-
-    Diagnostics m_diagnostics;
-#endif
 
     std::string m_name;
     Address m_address;
 
-#if OS(DARWIN)
     // What this lookup may still copy out of the corpse. Set when the search starts.
     size_t m_readBudget { 0 };
-#endif
 };
 
 } // namespace Corpse

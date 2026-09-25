@@ -51,7 +51,7 @@ void printUsage()
 {
     dataLogLn("Usage: testLibJSCTools [--verbose] [<suite filter>]");
     dataLogLn("       testLibJSCTools --fuzz-trie [<seed> [<iterations>]]");
-    dataLogLn("       testLibJSCTools --typeinfo-target");
+    dataLogLn("       testLibJSCTools --target <offset>");
     dataLogLn("");
     dataLogLn("  Runs the tests for libJavaScriptCoreTools. With a filter, only the");
     dataLogLn("  suites whose name contains it run.");
@@ -101,8 +101,14 @@ int main(int argc, char** argv)
             JSCToolsTest::verbose = true;
             continue;
         }
-        if (argument == "--typeinfo-target")
-            return JSCToolsTest::runTypeinfoTarget();
+        if (argument == "--target") {
+            if (index + 1 >= arguments.size()) {
+                dataLogLn("--target needs the offset of a create function into this executable, in hex");
+                printUsage();
+                return 1;
+            }
+            return JSCToolsTest::runCorpseTarget(arguments[index + 1]);
+        }
         if (argument == "--fuzz-trie") {
             fuzzOnly = true;
             if (index + 1 < arguments.size() && parseUint64(arguments[index + 1], fuzzSeed)) {

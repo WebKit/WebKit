@@ -29,18 +29,27 @@
 
 #include "LibJSCToolsTestUtilities.h"
 
+#include <JavaScriptCore/CorpseImage.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #if OS(DARWIN)
+#include <mach-o/loader.h>
 #include <mach/mach.h>
 #endif
 #include <unistd.h>
 
 namespace JSCToolsTest {
 
+using JSC::Corpse::Image;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
 using JSC::Corpse::TaskHandle;
+
+#if OS(DARWIN)
+constexpr uint32_t imageHeaderMagic = MH_MAGIC_64;
+#else
+constexpr uint32_t imageHeaderMagic = 0x464c457f; // "\177ELF", read little-endian.
+#endif
 
 void testSnapshot()
 {
@@ -93,8 +102,12 @@ void testSnapshot()
         RefPtr<Process> unattached = Process::create(getpid());
         Snapshot snapshot(unattached);
         TEST_ASSERT(!snapshot.isValid(), "a snapshot of an unattached process is invalid");
-        TEST_ASSERT(snapshot.threads().isEmpty(), "an invalid snapshot reports no threads");
-        TEST_ASSERT(!snapshot.symbol("g_config"), "an invalid snapshot resolves no symbol");
+        {
+            ExpectedErrors expectedErrors(3);
+            TEST_ASSERT(snapshot.threads().isEmpty(), "an invalid snapshot reports no threads");
+            TEST_ASSERT(snapshot.images().isEmpty(), "an invalid snapshot reports no images");
+            TEST_ASSERT(!snapshot.symbol("g_config"), "an invalid snapshot resolves no symbol");
+        }
     }
     {
         RefPtr<Process> none;
@@ -103,8 +116,27 @@ void testSnapshot()
     }
     {
         Snapshot snapshot(process);
+        ExpectedErrors expectedErrors(2);
         TEST_ASSERT(!snapshot.symbol(nullptr), "an unnamed symbol resolves to nothing");
         TEST_ASSERT(!snapshot.symbol(""), "an empty symbol name resolves to nothing");
+    }
+    {
+        Snapshot snapshot(process);
+        const Vector<Image>& images = snapshot.images();
+        TEST_ASSERT(!images.isEmpty(), "a snapshot lists the images of its process");
+        TEST_ASSERT(&snapshot.images() == &images, "the image list is read once");
+
+        unsigned unnamed = 0;
+        unsigned withoutHeader = 0;
+        for (const Image& image : images) {
+            if (image.path().isEmpty())
+                ++unnamed;
+            auto magic = snapshot.read<uint32_t>(image.loadAddress());
+            if (!magic || *magic != imageHeaderMagic)
+                ++withoutHeader;
+        }
+        TEST_ASSERT_EQ(unnamed, 0u, "every image has a path");
+        TEST_ASSERT_EQ(withoutHeader, 0u, "every image's load address is where its header is");
     }
 
 #if OS(DARWIN)
