@@ -113,10 +113,7 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
     if (!directive)
         return true;
     bool didReceiveRedirectResponse = false;
-    for (RefPtr current = frame.tree().parent(); current; current = current->tree().parent()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(*current);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : ancestorFrames<LocalFrame>(frame)) {
         URL origin = urlFromOrigin(protect(protect(localFrame->document())->securityOrigin()));
         if (!origin.isValid() || !directive->allows(origin, didReceiveRedirectResponse))
             return false;

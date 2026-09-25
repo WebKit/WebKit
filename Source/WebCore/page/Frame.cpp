@@ -47,10 +47,15 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "WindowProxy.h"
+#include <ranges>
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+static_assert(std::ranges::viewable_range<FrameAncestorRange<Frame>>);
+static_assert(std::ranges::viewable_range<FrameAncestorRange<LocalFrame>>);
+static_assert(std::ranges::viewable_range<FrameAncestorRange<RemoteFrame>>);
 
 #if ASSERT_ENABLED
 class FrameLifetimeVerifier {

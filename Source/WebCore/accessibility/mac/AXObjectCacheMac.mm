@@ -594,13 +594,11 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
     // (child) tree identifiers, so the announced selection resolves correctly cross-frame.
     RefPtr document = this->document();
     RefPtr frame = document ? document->frame() : nullptr;
-    for (RefPtr<Frame> ancestor = frame ? frame->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
-        if (RefPtr localAncestorFrame = dynamicDowncast<LocalFrame>(ancestor.get())) {
-            RefPtr ancestorDocument = localAncestorFrame->document();
-            CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr;
-            if (RefPtr ancestorRoot = ancestorCache ? ancestorCache->rootWebArea() : nullptr)
-                AXPostNotificationWithUserInfo(ancestorRoot->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
-        }
+    for (Ref localAncestorFrame : ancestorFrames<LocalFrame>(frame.get())) {
+        RefPtr ancestorDocument = localAncestorFrame->document();
+        CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr;
+        if (RefPtr ancestorRoot = ancestorCache ? ancestorCache->rootWebArea() : nullptr)
+            AXPostNotificationWithUserInfo(ancestorRoot->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
     }
 #endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 }

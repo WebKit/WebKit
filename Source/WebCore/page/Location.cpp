@@ -142,7 +142,7 @@ Ref<DOMStringList> Location::ancestorOrigins() const
     if (!m_ancestorOrigins) {
         Ref ancestorOrigins = DOMStringList::create();
         m_ancestorOrigins = ancestorOrigins.copyRef();
-        for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
+        for (Ref ancestor : ancestorFrames(*frame)) {
             if (RefPtr origin = ancestor->frameDocumentSecurityOrigin())
                 ancestorOrigins->append(origin->toString());
         }

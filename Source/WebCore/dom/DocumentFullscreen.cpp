@@ -351,7 +351,7 @@ ExceptionOr<void> DocumentFullscreen::willEnterFullscreen(Element& element, HTML
     m_fullscreenElement = element;
 
     Vector<Ref<Element>> ancestors { { element } };
-    for (RefPtr<Frame> frame = element.document().frame(); frame; frame = frame->tree().parent()) {
+    for (Ref frame : inclusiveAncestorFrames(element.document().frame())) {
         if (RefPtr ownerElement = frame->ownerElement())
             ancestors.append(ownerElement.releaseNonNull());
     }
@@ -442,10 +442,7 @@ LocalFrame* DocumentFullscreen::frame() const
 static Vector<Ref<Document>> documentsToUnfullscreen(Frame& firstFrame)
 {
     Vector<Ref<Document>> documents;
-    for (RefPtr frame = firstFrame; frame; frame = frame->tree().parent()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(firstFrame)) {
         RefPtr document = localFrame->document();
         if (!document)
             continue;

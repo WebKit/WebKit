@@ -633,7 +633,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         // Use the WebFrame to get the parent because this may be a provisional frame not hooked up to its parent yet.
         RefPtr thisWebFrame = WebFrame::webFrame(frame ? std::optional(frame->frameID()) : std::nullopt);
         RefPtr parentWebFrame = thisWebFrame ? thisWebFrame->parentFrame() : nullptr;
-        for (RefPtr frame = parentWebFrame ? parentWebFrame->coreFrame() : nullptr; frame; frame = frame->tree().parent()) {
+        for (Ref frame : inclusiveAncestorFrames(parentWebFrame ? parentWebFrame->coreFrame() : nullptr)) {
             RefPtr<WebCore::SecurityOrigin> frameOrigin = frame->frameDocumentSecurityOrigin();
             if (!frameOrigin) {
                 WEBLOADERSTRATEGY_RELEASE_LOG_ERROR("scheduleLoad: Unable to get document origin of frame (frameID=%" PRIu64 ")", frame->frameID().toUInt64());

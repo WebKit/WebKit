@@ -109,7 +109,7 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
     Ref origin = document.securityOrigin();
     auto url = document.url();
     std::optional<SecurityOriginData> crossOriginParent;
-    for (RefPtr parentFrame = document.frame() ? document.frame()->tree().parent() : nullptr; parentFrame; parentFrame = parentFrame->tree().parent()) {
+    for (Ref parentFrame : ancestorFrames(document.frame())) {
         RefPtr parentOrigin = parentFrame->frameDocumentSecurityOrigin();
         if (!parentOrigin || is<RemoteFrame>(parentFrame) || RegistrableDomain(parentOrigin->data()) != RegistrableDomain(origin->data()))
             isSameSite = false;

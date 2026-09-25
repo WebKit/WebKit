@@ -293,7 +293,7 @@ public:
     bool shouldInterruptLoadForXFrameOptions(const String&, const URL&, ResourceLoaderIdentifier);
 
     void completed();
-    bool NODELETE allAncestorsAreComplete() const; // including this
+    bool allAncestorsAreComplete() const; // including this
     void clientRedirected(const URL&, double delay, WallTime fireDate, LockBackForwardList);
     void clientRedirectCancelledOrFinished(NewLoadInProgress);
 
@@ -486,7 +486,7 @@ private:
 
     // SubframeLoader specific.
     void loadURLIntoChildFrame(const URL&, const String& referer, LocalFrame&);
-    void NODELETE started();
+    void started();
 
     // PolicyChecker specific.
     void clearProvisionalLoadForPolicyCheck();

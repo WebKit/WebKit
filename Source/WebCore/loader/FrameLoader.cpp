@@ -74,6 +74,7 @@
 #include "FloatRect.h"
 #include "FormState.h"
 #include "FormSubmission.h"
+#include "Frame.h"
 #include "FrameInlines.h"
 #include "FrameLoadRequest.h"
 #include "FrameNetworkingContext.h"
@@ -981,10 +982,7 @@ bool FrameLoader::allChildrenAreComplete() const
 
 bool FrameLoader::allAncestorsAreComplete() const
 {
-    for (Frame* ancestor = m_frame.ptr(); ancestor; ancestor = ancestor->tree().parent()) {
-        auto* localAncestor = dynamicDowncast<LocalFrame>(*ancestor);
-        if (!localAncestor)
-            continue;
+    for (Ref localAncestor : inclusiveAncestorFrames<LocalFrame>(m_frame.get())) {
         if (!localAncestor->loader().m_isComplete)
             return false;
     }
@@ -1490,10 +1488,8 @@ void FrameLoader::completed()
 
 void FrameLoader::started()
 {
-    for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().parent()) {
-        if (auto* localFrame = dynamicDowncast<LocalFrame>(*frame))
-            localFrame->loader().m_isComplete = false;
-    }
+    for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(m_frame.get()))
+        localFrame->loader().m_isComplete = false;
 }
 
 void FrameLoader::prepareForLoadStart()
@@ -4518,12 +4514,10 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
         Ref origin = SecurityOrigin::create(url);
         if (!topFrame || !origin->isSameSchemeHostPort(protect(protect(topFrame->document())->securityOrigin())))
             return true;
-        for (RefPtr frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
-            RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
-            if (!localFrame || !origin->isSameSchemeHostPort(protect(protect(localFrame->document())->securityOrigin())))
-                return true;
-        }
-        return false;
+        return std::ranges::any_of(ancestorFrames(m_frame.get()), [&](Frame& frame) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+            return !localFrame || !origin->isSameSchemeHostPort(protect(protect(localFrame->document())->securityOrigin()));
+        });
     }
     case XFrameOptionsDisposition::Deny:
         return true;

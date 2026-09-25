@@ -31,6 +31,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -200,5 +201,85 @@ private:
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Frame&);
+
+template<typename FrameType>
+class FrameAncestorIterator {
+public:
+    using difference_type = std::ptrdiff_t;
+    using value_type = FrameType;
+
+    explicit FrameAncestorIterator(Frame* first)
+        : m_current(firstOfType(first))
+    {
+    }
+
+    FrameType& operator*() const { return *m_current; }
+    FrameType* operator->() const { return m_current.get(); }
+    bool operator==(std::nullptr_t) const { return !m_current; }
+
+    FrameAncestorIterator& operator++()
+    {
+        RefPtr<Frame> parent = m_current->tree().parent();
+        m_current = firstOfType(parent);
+        return *this;
+    }
+
+    void operator++(int) { ++*this; }
+
+private:
+    static FrameType* firstOfType(Frame* frame)
+    {
+        if constexpr (std::is_same_v<FrameType, Frame>)
+            return frame;
+        else {
+            for (RefPtr current = frame; current; current = current->tree().parent()) {
+                if (auto* typedFrame = dynamicDowncast<FrameType>(*current))
+                    return typedFrame;
+            }
+            return nullptr;
+        }
+    }
+
+    RefPtr<FrameType> m_current;
+};
+
+template<typename FrameType>
+class FrameAncestorRange {
+public:
+    explicit FrameAncestorRange(Frame* first)
+        : m_first(first)
+    {
+    }
+
+    FrameAncestorIterator<FrameType> begin() const { return FrameAncestorIterator<FrameType>(m_first.get()); }
+    static constexpr std::nullptr_t end() { return nullptr; }
+
+private:
+    RefPtr<Frame> m_first;
+};
+
+template<typename FrameType = Frame>
+FrameAncestorRange<FrameType> ancestorFrames(const Frame& frame)
+{
+    return FrameAncestorRange<FrameType>(frame.tree().parent());
+}
+
+template<typename FrameType = Frame>
+FrameAncestorRange<FrameType> ancestorFrames(const Frame* frame)
+{
+    return FrameAncestorRange<FrameType>(frame ? frame->tree().parent() : nullptr);
+}
+
+template<typename FrameType = Frame>
+FrameAncestorRange<FrameType> inclusiveAncestorFrames(Frame& frame)
+{
+    return FrameAncestorRange<FrameType>(&frame);
+}
+
+template<typename FrameType = Frame>
+FrameAncestorRange<FrameType> inclusiveAncestorFrames(Frame* frame)
+{
+    return FrameAncestorRange<FrameType>(frame);
+}
 
 } // namespace WebCore

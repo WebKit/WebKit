@@ -492,12 +492,8 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
         oldFrameView->stopKeyboardScrollAnimation();
         oldFrame->selection().setFocused(false);
         protect(oldFrame->document())->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        RefPtr<Frame> frame = oldFrame;
-        do {
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                protect(localFrame->document())->updateServiceWorkerClientData();
-            frame = frame->tree().parent();
-        } while (frame);
+        for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(*oldFrame))
+            protect(localFrame->document())->updateServiceWorkerClientData();
     }
 
 #if PLATFORM(COCOA)
@@ -508,12 +504,8 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     if (newFrame && newFrame->view() && isFocused()) {
         newFrame->selection().setFocused(true);
         protect(newFrame->document())->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        RefPtr<Frame> frame = newFrame;
-        do {
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                protect(localFrame->document())->updateServiceWorkerClientData();
-            frame = frame->tree().parent();
-        } while (frame);
+        for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(*newFrame))
+            protect(localFrame->document())->updateServiceWorkerClientData();
     } else if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame)) {
         RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
         if (CheckedPtr cache = focusedOrMainFrame ? protect(focusedOrMainFrame->document())->existingAXObjectCache() : nullptr)

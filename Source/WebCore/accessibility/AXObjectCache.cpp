@@ -907,9 +907,8 @@ void AXObjectCache::updateAncestorFramesFocusedObject()
 
     RefPtr document = this->document();
     RefPtr frame = document ? document->frame() : nullptr;
-    for (RefPtr<Frame> ancestor = frame ? frame->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
-        RefPtr localAncestorFrame = dynamicDowncast<LocalFrame>(ancestor.get());
-        RefPtr ancestorDocument = localAncestorFrame ? localAncestorFrame->document() : nullptr;
+    for (Ref localAncestorFrame : ancestorFrames<LocalFrame>(frame.get())) {
+        RefPtr ancestorDocument = localAncestorFrame->document();
         // focusedObjectForLocalFrame() returns the AXLocalFrame leading toward the focused subframe
         // for an ancestor cache, so this points each ancestor tree's focus at the correct child frame.
         if (CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr) {

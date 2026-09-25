@@ -1679,10 +1679,7 @@ void LocalDOMWindow::notifyActivated(MonotonicTime activationTime)
     if (!frame)
         return;
 
-    for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
-        RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor);
-        if (!localAncestor)
-            continue;
+    for (Ref localAncestor : ancestorFrames<LocalFrame>(*frame)) {
         if (RefPtr window = localAncestor->window())
             updateActivationTimestampAndNotify(*window, activationTime, closeWatcherEnabled);
     }

@@ -958,7 +958,7 @@ void WebFullScreenManager::enterFullScreenForOwnerElements(WebCore::FrameIdentif
         return completionHandler();
 
     Vector<Ref<Element>> elements;
-    for (RefPtr frame = coreFrame; frame; frame = frame->tree().parent()) {
+    for (Ref frame : inclusiveAncestorFrames(*coreFrame)) {
         if (RefPtr element = frame->ownerElement())
             elements.append(element.releaseNonNull());
     }

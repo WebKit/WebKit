@@ -75,7 +75,7 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
 
         Vector<String> ancestorOrigins;
         if (RefPtr frame = document->frame()) {
-            for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
+            for (Ref ancestor : ancestorFrames(*frame)) {
                 if (RefPtr origin = ancestor->frameDocumentSecurityOrigin())
                     ancestorOrigins.append(origin->toString());
             }

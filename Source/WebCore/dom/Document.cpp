@@ -573,10 +573,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
         return false;
 
     const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
-    for (RefPtr<Frame> ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
-        RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame.get());
-        if (!localAncestor)
-            continue;
+    for (Ref localAncestor : inclusiveAncestorFrames<LocalFrame>(*targetFrame)) {
         RefPtr ancestorDocument = localAncestor->document();
         // FIXME: Should be an ASSERT? Frames should alway have documents.
         if (!ancestorDocument)
@@ -4168,7 +4165,7 @@ bool Document::isFullyActive() const
     // The document is fully active only if the ancestor chain reaches the main frame. A
     // RemoteFrame ancestor lives in another process, but if it became parentless without
     // being the main frame, its iframe was removed there and the chain was severed.
-    for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
+    for (Ref ancestor : ancestorFrames(*frame)) {
         if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor.get())) {
             if (!localAncestor->document() || localAncestor->document()->frame() != localAncestor)
                 return false;
@@ -8125,8 +8122,8 @@ RefPtr<Document> Document::sameOriginTopLevelTraversable() const
         return nullptr;
 
     RefPtr<Frame> topLevelAncestorFrame = m_frame;
-    for (RefPtr<Frame> parent = topLevelAncestorFrame->tree().parent(); parent; parent = parent->tree().parent())
-        topLevelAncestorFrame = parent;
+    for (Ref ancestor : ancestorFrames(*m_frame))
+        topLevelAncestorFrame = ancestor.ptr();
 
     RefPtr localTopAncestor = dynamicDowncast<LocalFrame>(topLevelAncestorFrame);
     if (!localTopAncestor)
@@ -8661,8 +8658,8 @@ bool Document::isSecureContext() const
     if (page() && page()->isServiceWorkerPage())
         return true;
 
-    for (RefPtr frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame)) {
+    for (Ref frame : ancestorFrames(*m_frame)) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get())) {
             Ref<Document> ancestorDocument = *localFrame->document();
             if (!isDocumentSecure(ancestorDocument))
                 return false;
