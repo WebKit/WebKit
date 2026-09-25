@@ -306,9 +306,39 @@ unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame,
         throwStackOverflowError(globalObject, scope);
         return 0;
     }
-    
+
     return length;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+unsigned sizeFrameForVarargsWithSpread(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, JSValue* values, unsigned argc, const BitVector& bitVector, unsigned numUsedStackSlots)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    CheckedUint32 checkedLength = 0;
+    for (unsigned i = 0; i < argc; ++i) {
+        if (bitVector.get(i)) {
+            JSCellButterfly* array = uncheckedDowncast<JSCellButterfly>(values[-static_cast<int>(i)]);
+            checkedLength += array->publicLength();
+        } else
+            checkedLength += 1U;
+    }
+
+    if (checkedLength.hasOverflowed() || checkedLength > maxArguments) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return 0;
+    }
+
+    unsigned length = checkedLength;
+    CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
+    if (!vm.ensureJSStackCapacityFor(calleeFrame->registers())) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return 0;
+    }
+
+    return length;
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -408,6 +438,83 @@ void setupVarargsFrameAndSetThis(JSGlobalObject* globalObject, CallFrame* callFr
     setupVarargsFrame(globalObject, callFrame, newCallFrame, arguments, firstVarArgOffset, length);
     newCallFrame->setThisValue(thisValue);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+void setupVarargsFrameWithSpread(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue* values, unsigned argc, const BitVector& bitVector, unsigned length)
+{
+    VirtualRegister calleeFrameOffset(newCallFrame - callFrame);
+    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0)));
+
+    for (unsigned i = 0; i < argc; ++i) {
+        JSValue value = values[-static_cast<int>(i)];
+        if (bitVector.get(i)) {
+            JSCellButterfly* array = uncheckedDowncast<JSCellButterfly>(value);
+            unsigned n = array->publicLength();
+            array->copyToArguments(globalObject, dest, 0, n);
+            dest += n;
+        } else
+            *dest++ = value;
+    }
+
+    newCallFrame->setArgumentCountIncludingThis(length + 1);
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+void setupVarargsFrameWithSpreadAndSetThis(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValue, JSValue* values, unsigned argc, const BitVector& bitVector, unsigned length)
+{
+    setupVarargsFrameWithSpread(globalObject, callFrame, newCallFrame, values, argc, bitVector, length);
+    newCallFrame->setThisValue(thisValue);
+}
+
+// A buffer slot is a spread iff it is a JSCellButterfly (user values never are), so no bitVector.
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+unsigned sizeFrameForVarargsWithSpreadBuffer(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, JSValue* buffer, unsigned argc, unsigned numUsedStackSlots)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    CheckedUint32 checkedLength = 0;
+    for (unsigned i = 0; i < argc; ++i) {
+        if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(buffer[i]))
+            checkedLength += array->publicLength();
+        else
+            checkedLength += 1U;
+    }
+
+    if (checkedLength.hasOverflowed() || checkedLength > maxArguments) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return 0;
+    }
+
+    unsigned length = checkedLength;
+    CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
+    if (!vm.ensureJSStackCapacityFor(calleeFrame->registers())) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return 0;
+    }
+
+    return length;
+}
+
+void setupVarargsFrameWithSpreadBuffer(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue* buffer, unsigned argc, unsigned length)
+{
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+    VirtualRegister calleeFrameOffset(newCallFrame - callFrame);
+    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0)));
+
+    for (unsigned i = 0; i < argc; ++i) {
+        JSValue value = buffer[i];
+        if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value)) {
+            unsigned n = array->publicLength();
+            array->copyToArguments(globalObject, dest, 0, n);
+            dest += n;
+        } else
+            *dest++ = value;
+    }
+
+    newCallFrame->setArgumentCountIncludingThis(length + 1);
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, uint32_t length)
 {

@@ -113,7 +113,7 @@ public:
                         if (operand.isHeader())
                             return;
                         auto op = node->op();
-                        RELEASE_ASSERT(op == PutStack || op == LoadVarargs || op == ForwardVarargs || op == KillStack);
+                        RELEASE_ASSERT(op == PutStack || op == LoadVarargs || op == LoadVarargsWithSpread || op == ForwardVarargs || op == KillStack);
                         writes.append(operand);
                     };
 
@@ -288,7 +288,7 @@ public:
                         ASSERT(!operand.isTmp());
                         if (operand.isHeader())
                             return;
-                        RELEASE_ASSERT(node->op() == VarargsLength || node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        RELEASE_ASSERT(node->op() == VarargsLength || node->op() == VarargsLengthWithSpread || node->op() == LoadVarargs || node->op() == LoadVarargsWithSpread || node->op() == ForwardVarargs);
                         dataLogLnIf(verbose, "Writing dead flush for ", node, " at operand ", operand);
                         deferred.operand(operand) = DeadFlush;
                     };
@@ -509,7 +509,7 @@ public:
                         // locations they write to. This makes those stack locations dead right 
                         // before a LoadVarargs/ForwardVarargs. This means we should never sink
                         // PutStacks right to this point.
-                        RELEASE_ASSERT(node->op() == VarargsLength || node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        RELEASE_ASSERT(node->op() == VarargsLength || node->op() == VarargsLengthWithSpread || node->op() == LoadVarargs || node->op() == LoadVarargsWithSpread || node->op() == ForwardVarargs);
                         deferred.operand(operand) = DeadFlush;
                     };
 
