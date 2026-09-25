@@ -3996,11 +3996,11 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
         if (auto fixedMaxLogicalWidth = maxLogicalWidth.tryFixed())
             return adjustContentBoxLogicalWidthForBoxSizing(*fixedMaxLogicalWidth);
 
-        if (maxLogicalWidth.isMinContent()) {
-            if (!hasFixedLogicalWidth())
-                return minIntrinsicLogicalWidth;
+        if (maxLogicalWidth.isMinContent() || maxLogicalWidth.isMaxContent()) {
+            if (hasFixedLogicalWidth())
+                return computeSizingKeywordLogicalWidthUsing(maxLogicalWidth, contentBoxLogicalWidth(), { });
 
-            return computeSizingKeywordLogicalWidthUsing(maxLogicalWidth, contentBoxLogicalWidth(), { });
+            return maxLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
         }
 
         return LayoutUnit::max();
