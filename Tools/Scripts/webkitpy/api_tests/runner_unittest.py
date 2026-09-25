@@ -109,5 +109,34 @@ class ReportResultEarlyExitTest(unittest.TestCase):
         self.assertEqual(self.fake._failure_count, 0)
 
 
+class ShardOrderTest(unittest.TestCase):
+    """The biggest shard goes out first, so the longest one is not the last thing running alone."""
+
+    def test_biggest_shard_is_dispatched_first(self):
+        shards = {
+            'TestWebKitAPI.Small': ['a', 'b'],
+            'TestWebKitAPI.Biggest': ['c', 'd', 'e', 'f'],
+            'TestWebKitAPI.Middle': ['g', 'h', 'i'],
+        }
+        self.assertEqual(
+            [name for name, _ in Runner._shards_longest_first(shards)],
+            ['TestWebKitAPI.Biggest', 'TestWebKitAPI.Middle', 'TestWebKitAPI.Small'])
+
+    def test_shards_of_equal_size_keep_a_stable_order(self):
+        shards = {'TestWebKitAPI.B': ['1'], 'TestWebKitAPI.A': ['2'], 'TestWebKitAPI.C': ['3']}
+        self.assertEqual(
+            [name for name, _ in Runner._shards_longest_first(shards)],
+            ['TestWebKitAPI.A', 'TestWebKitAPI.B', 'TestWebKitAPI.C'])
+
+    def test_every_shard_is_still_dispatched(self):
+        shards = {'a': ['1', '2'], 'b': ['3'], 'c': ['4', '5', '6']}
+        ordered = Runner._shards_longest_first(shards)
+        self.assertEqual(len(ordered), 3)
+        self.assertEqual(sorted(t for _, tests in ordered for t in tests), ['1', '2', '3', '4', '5', '6'])
+
+    def test_no_shards(self):
+        self.assertEqual(Runner._shards_longest_first({}), [])
+
+
 if __name__ == '__main__':
     unittest.main()

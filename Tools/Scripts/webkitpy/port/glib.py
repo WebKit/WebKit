@@ -98,8 +98,8 @@ class GLibPort(Port):
             return new_value + ":" + current_value
         return new_value
 
-    def setup_test_run(self, device_type=None):
-        super(GLibPort, self).setup_test_run(device_type)
+    def setup_test_run(self, device_type=None, workers_per_device=1):
+        super(GLibPort, self).setup_test_run(device_type, workers_per_device=workers_per_device)
 
         if self.get_option("leaks"):
             self._leakdetector.clean_leaks_files_from_results_directory()

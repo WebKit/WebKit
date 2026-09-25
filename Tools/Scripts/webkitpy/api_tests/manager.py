@@ -248,7 +248,7 @@ class Manager(object):
         if 'simulator' in self._port.port_name:
             if device_type is None:
                 device_type = self._port.supported_device_types()[0]
-            self._port.setup_test_run(device_type=device_type)
+            self._port.setup_test_run(device_type=device_type, workers_per_device=Runner.WORKERS_PER_DEVICE)
         elif 'device' in self._port.port_name:
             raise RuntimeError(f'Running api tests on {self._port.port_name} is not supported')
 
@@ -293,7 +293,7 @@ class Manager(object):
         if not self._set_up_run(args):
             return Manager.FAILED_BUILD_CHECK
 
-        configuration_for_upload = self._port.configuration_for_upload(self._port.target_host(0))
+        configuration_for_upload = self._port.configuration_for_upload(self._port.device_for_upload())
 
         self._stream.write_update('Collecting tests ...')
         try:
