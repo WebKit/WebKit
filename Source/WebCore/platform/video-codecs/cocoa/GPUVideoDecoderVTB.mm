@@ -157,6 +157,8 @@ int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<con
         return -1;
 
     if (!m_decoder || !protect(m_decoder)->canAccept(m_format.get())) {
+        if (RefPtr decoder = std::exchange(m_decoder, { }))
+            decoder->flush();
         m_decoder = VideoDecoderVTBSession::create(m_format.get(), createPixelBufferAttributes(m_format.get()).get());
         if (!m_decoder)
             return -1;

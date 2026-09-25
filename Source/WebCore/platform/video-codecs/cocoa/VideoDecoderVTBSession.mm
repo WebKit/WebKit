@@ -48,7 +48,10 @@ RefPtr<VideoDecoderVTBSession> VideoDecoderVTBSession::create(CMVideoFormatDescr
     return adoptRef(*new VideoDecoderVTBSession(adoptCF(decompressionSession)));
 }
 
-VideoDecoderVTBSession::~VideoDecoderVTBSession() = default;
+VideoDecoderVTBSession::~VideoDecoderVTBSession()
+{
+    VTDecompressionSessionInvalidate(m_decompressionSession);
+}
 
 OSStatus VideoDecoderVTBSession::flush()
 {
