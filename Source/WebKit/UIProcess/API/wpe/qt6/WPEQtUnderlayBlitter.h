@@ -29,6 +29,9 @@
 
 #include <QMatrix4x4>
 #include <QOpenGLFunctions>
+#include <QRect>
+
+#include <optional>
 
 class WPEQtUnderlayBlitter final {
 public:
@@ -42,7 +45,7 @@ public:
     bool initialize();
     void invalidate();
     bool importEGLImage(EGLImage);
-    bool draw(const QMatrix4x4& matrix, float opacity);
+    bool draw(const QMatrix4x4& matrix, float opacity, std::optional<QRect> scissorRect, std::optional<int> stencilValue);
     bool isInitialized() const { return m_program; }
 
 private:
