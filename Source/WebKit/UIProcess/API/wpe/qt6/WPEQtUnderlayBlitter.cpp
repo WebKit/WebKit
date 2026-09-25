@@ -171,34 +171,6 @@ bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity, std::op
     if (!initialize() || !m_texture)
         return false;
 
-    // QtQuick owns the surrounding GL state, so save the state changed here and restore
-    // it before returning.
-    GLint prevProgram = 0;
-    m_gl->glGetIntegerv(GL_CURRENT_PROGRAM, &prevProgram);
-
-    GLint prevActiveTexture = GL_TEXTURE0;
-    m_gl->glGetIntegerv(GL_ACTIVE_TEXTURE, &prevActiveTexture);
-
-    GLint prevTexture2D = 0;
-    m_gl->glGetIntegerv(GL_TEXTURE_BINDING_2D, &prevTexture2D);
-
-    GLint prevArrayBuffer = 0;
-    m_gl->glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &prevArrayBuffer);
-
-    GLboolean wasScissorEnabled = m_gl->glIsEnabled(GL_SCISSOR_TEST);
-    GLint prevScissorBox[4] = { 0, 0, 0, 0 };
-    m_gl->glGetIntegerv(GL_SCISSOR_BOX, prevScissorBox);
-
-    GLboolean wasBlendEnabled = m_gl->glIsEnabled(GL_BLEND);
-    GLint prevBlendSrcRGB = GL_ONE;
-    GLint prevBlendDstRGB = GL_ZERO;
-    GLint prevBlendSrcAlpha = GL_ONE;
-    GLint prevBlendDstAlpha = GL_ZERO;
-    m_gl->glGetIntegerv(GL_BLEND_SRC_RGB, &prevBlendSrcRGB);
-    m_gl->glGetIntegerv(GL_BLEND_DST_RGB, &prevBlendDstRGB);
-    m_gl->glGetIntegerv(GL_BLEND_SRC_ALPHA, &prevBlendSrcAlpha);
-    m_gl->glGetIntegerv(GL_BLEND_DST_ALPHA, &prevBlendDstAlpha);
-
     if (scissorRect) {
         m_gl->glEnable(GL_SCISSOR_TEST);
         m_gl->glScissor(scissorRect->x(), scissorRect->y(), scissorRect->width(), scissorRect->height());
@@ -230,21 +202,6 @@ bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity, std::op
     m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     m_gl->glDisableVertexAttribArray(m_positionLocation);
-    m_gl->glBindBuffer(GL_ARRAY_BUFFER, prevArrayBuffer);
-    m_gl->glBindTexture(GL_TEXTURE_2D, prevTexture2D);
-    m_gl->glActiveTexture(prevActiveTexture);
-    m_gl->glUseProgram(prevProgram);
-    m_gl->glBlendFuncSeparate(prevBlendSrcRGB, prevBlendDstRGB, prevBlendSrcAlpha, prevBlendDstAlpha);
-    if (wasBlendEnabled)
-        m_gl->glEnable(GL_BLEND);
-    else
-        m_gl->glDisable(GL_BLEND);
-
-    m_gl->glScissor(prevScissorBox[0], prevScissorBox[1], prevScissorBox[2], prevScissorBox[3]);
-    if (wasScissorEnabled)
-        m_gl->glEnable(GL_SCISSOR_TEST);
-    else
-        m_gl->glDisable(GL_SCISSOR_TEST);
 
     return true;
 }
