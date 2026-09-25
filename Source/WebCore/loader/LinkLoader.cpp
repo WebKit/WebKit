@@ -175,24 +175,24 @@ void LinkLoader::loadCompressionDictionariesFromHeader(const String& headerValue
     }
 }
 
-std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, Document& document, ShouldLog shouldLogError, IsModulePreload isModulePreload)
+std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, bool mediaPreloadingEnabled, IsModulePreload isModulePreload, AsAttributeParseError* error)
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"_s))
         return CachedResource::Type::RawResource;
     // `as` is an enumerated attribute, so its keywords are matched ASCII case-insensitively.
     auto destination = parseEnumerationFromString<FetchRequestDestination>(as.convertToASCIILowercase());
     if (!destination) {
-        if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
+        if (error)
+            *error = AsAttributeParseError::Invalid;
         return std::nullopt;
     }
     switch (*destination) {
     case FetchRequestDestination::EmptyString:
-        if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> cannot have the empty string as `as` value"_s);
+        if (error)
+            *error = AsAttributeParseError::EmptyString;
         return std::nullopt;
     case FetchRequestDestination::Audio:
-        if (document.settings().mediaPreloadingEnabled())
+        if (mediaPreloadingEnabled)
             return CachedResource::Type::MediaResource;
         return std::nullopt;
     case FetchRequestDestination::Audioworklet:
@@ -214,8 +214,8 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     case FetchRequestDestination::Json:
         if (isModulePreload == IsModulePreload::Yes)
             return CachedResource::Type::JSON;
-        if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_s);
+        if (error)
+            *error = AsAttributeParseError::JSONNotSupported;
         return std::nullopt;
     case FetchRequestDestination::Manifest:
         return std::nullopt;
@@ -240,8 +240,8 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     case FetchRequestDestination::Text:
         if (isModulePreload == IsModulePreload::Yes)
             return CachedResource::Type::Text;
-        if (shouldLogError == ShouldLog::Yes)
-            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `text` as `as` value"_s);
+        if (error)
+            *error = AsAttributeParseError::TextNotSupported;
         return std::nullopt;
     case FetchRequestDestination::Track:
 #if ENABLE(VIDEO)
@@ -250,13 +250,39 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         return std::nullopt;
 #endif
     case FetchRequestDestination::Video:
-        if (document.settings().mediaPreloadingEnabled())
+        if (mediaPreloadingEnabled)
             return CachedResource::Type::MediaResource;
         return std::nullopt;
     case FetchRequestDestination::Worker:
         return CachedResource::Type::Script;
     case FetchRequestDestination::Xslt:
         return std::nullopt;
+    }
+    return std::nullopt;
+}
+
+std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, Document& document, ShouldLog shouldLogError, IsModulePreload isModulePreload)
+{
+    auto error = AsAttributeParseError::UnsupportedDestination;
+    auto type = resourceTypeFromAsAttribute(as, document.settings().mediaPreloadingEnabled(), isModulePreload, &error);
+    if (type || shouldLogError == ShouldLog::No)
+        return type;
+
+    switch (error) {
+    case AsAttributeParseError::Invalid:
+        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
+        break;
+    case AsAttributeParseError::EmptyString:
+        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> cannot have the empty string as `as` value"_s);
+        break;
+    case AsAttributeParseError::JSONNotSupported:
+        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_s);
+        break;
+    case AsAttributeParseError::TextNotSupported:
+        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `text` as `as` value"_s);
+        break;
+    case AsAttributeParseError::UnsupportedDestination:
+        break;
     }
     return std::nullopt;
 }
