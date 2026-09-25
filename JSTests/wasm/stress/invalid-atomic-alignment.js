@@ -1,17 +1,6 @@
 //@ skip if $architecture != "arm64" && $architecture != "x86_64"  && !($architecture == "arm" && !$cloop)
 import * as assert from '../assert.js';
-import { instantiate } from "../wabt-wrapper.js";
-
-async function buildAndThrow(text)
-{
-    let error = null;
-    try {
-        await instantiate(text, { }, { threads: true });
-    } catch (e) {
-        error = e;
-    }
-    return error;
-}
+import { watToWasm } from "../wabt-wrapper.js";
 
 async function testLoad()
 {
@@ -20,8 +9,8 @@ async function testLoad()
       (memory 1 1 shared)
       (func (export "i32.atomic.load") (param $addr i32) (result i32) (i32.atomic.load align=8 (local.get $addr)))
     )`;
-    let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 6: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    await assert.compileErrorAsync(watToWasm(text, { threads: true }),
+        `WebAssembly.Module doesn't parse at byte 6: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0`);
 }
 
 async function testStore()
@@ -31,8 +20,8 @@ async function testStore()
       (memory 1 1 shared)
       (func (export "i32.atomic.store") (param $addr i32) (param $value i32) (i32.atomic.store align=8 (local.get $addr) (local.get $value)))
     )`;
-    let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    await assert.compileErrorAsync(watToWasm(text, { threads: true }),
+        `WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0`);
 }
 
 async function testRMW()
@@ -42,8 +31,8 @@ async function testRMW()
       (memory 1 1 shared)
       (func (export "i32.atomic.rmw.add") (param $addr i32) (param $value i32) (result i32) (i32.atomic.rmw.add align=8 (local.get $addr) (local.get $value)))
     )`;
-    let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    await assert.compileErrorAsync(watToWasm(text, { threads: true }),
+        `WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0`);
 }
 
 async function testCmpXchg()
@@ -53,8 +42,8 @@ async function testCmpXchg()
       (memory 1 1 shared)
       (func (export "i32.atomic.rmw.cmpxchg") (param $addr i32) (param $expected i32) (param $value i32) (result i32) (i32.atomic.rmw.cmpxchg align=8 (local.get $addr) (local.get $expected) (local.get $value)))
     )`;
-    let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 10: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    await assert.compileErrorAsync(watToWasm(text, { threads: true }),
+        `WebAssembly.Module doesn't parse at byte 10: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0`);
 }
 
 async function testAtomicNotify()
@@ -66,8 +55,8 @@ async function testAtomicNotify()
       (func (export "memory.atomic.notify") (param $addr i32) (param $expected i32) (result i32)
           (memory.atomic.notify align=8 (local.get 0) (local.get 1)))
     )`;
-    let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 1 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    await assert.compileErrorAsync(watToWasm(text, { threads: true }),
+        `WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 1`);
 }
 
 async function testAtomicWait()
@@ -78,8 +67,8 @@ async function testAtomicWait()
       (func (export "memory.atomic.wait32") (param $addr i32) (param $expected i32) (param $timeout i64) (result i32)
           (memory.atomic.wait32 align=8 (local.get 0) (local.get 1) (local.get 2)))
     )`;
-    let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 10: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    await assert.compileErrorAsync(watToWasm(text, { threads: true }),
+        `WebAssembly.Module doesn't parse at byte 10: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0`);
 }
 
 await testLoad();

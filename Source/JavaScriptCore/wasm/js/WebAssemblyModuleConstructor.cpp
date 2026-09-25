@@ -43,6 +43,7 @@
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
 #include "WebAssemblyBuiltin.h"
+#include "WebAssemblyCompileOptions.h"
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
@@ -91,7 +92,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globa
     const auto& customSections = module->moduleInformation().customSections;
     for (const Wasm::CustomSection& section : customSections) {
         if (equal(sectionNameString, section.name.span())) {
-            auto buffer = ArrayBuffer::tryCreate(section.payload.span());
+            auto buffer = ArrayBuffer::tryCreate(section.payload);
             if (!buffer)
                 return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
 
@@ -307,7 +308,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyModule, (JSGlobalObject* globalOb
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* compileOptionsObject = nullptr;
-    if (Options::useWasmJSStringBuiltins()) {
+    if (WebAssemblyCompileOptions::isAnyOptionEnabled()) {
         JSValue compileOptionsArgument = callFrame->argument(1);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
@@ -337,7 +338,8 @@ JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* 
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyModuleStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto result = Wasm::Module::validateSync(vm, WTF::move(buffer));
+    auto validationMode = (options && options->eagerValidate()) ? Wasm::ValidationMode::Eager : Wasm::ValidationMode::Lazy;
+    auto result = Wasm::Module::validateSync(vm, WTF::move(buffer), validationMode);
     if (!result.has_value()) [[unlikely]] {
         throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
         return nullptr;

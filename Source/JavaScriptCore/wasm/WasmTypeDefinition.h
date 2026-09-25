@@ -68,6 +68,7 @@ class RTTGroup;
 class SectionParser;
 class TypeSectionState;
 struct CallInformation;
+enum class CallRole : uint8_t;
 
 // Shared aINT/uINT bytecode, canonicalized per signature. Aliased so
 // offlineasm can reference it without template syntax.
@@ -752,9 +753,11 @@ public:
     // to `const RTT*`.
     TypeIndex asTypeIndex() const { return std::bit_cast<TypeIndex>(this); }
 
-    const RTTFunctionPayload& functionPayload() const LIFETIME_BOUND { return std::get<RTTFunctionPayload>(m_payload); }
-    const RTTStructPayload& structPayload() const LIFETIME_BOUND { return std::get<RTTStructPayload>(m_payload); }
-    const RTTArrayPayload& arrayPayload() const LIFETIME_BOUND { return std::get<RTTArrayPayload>(m_payload); }
+    // std::get would also test for the valueless state, which a live RTT is never in, and
+    // carries a throwing path that keeps the payload out of registers.
+    const RTTFunctionPayload& functionPayload() const LIFETIME_BOUND { return *uncheckedPayload<RTTFunctionPayload>(); }
+    const RTTStructPayload& structPayload() const LIFETIME_BOUND { return *uncheckedPayload<RTTStructPayload>(); }
+    const RTTArrayPayload& arrayPayload() const LIFETIME_BOUND { return *uncheckedPayload<RTTArrayPayload>(); }
 
     // Function payload accessors.
     FunctionArgCount argumentCount() const { return functionPayload().argumentCount(); }
@@ -866,10 +869,26 @@ public:
     CodePtr<JSEntryPtrTag> jsToWasmICEntrypoint() const;
 #endif
 
+    // Function-kind only. The stack sizes the calling convention gives this signature, which
+    // every call site sharing the signature agrees on. This is all a caller needs to size its
+    // frame; the argument locations behind them are only needed to build the mINT bytecode.
+    struct CallFrameSizes {
+        uint32_t headerAndArgumentStackSizeInBytes;
+        uint32_t headerIncludingThisSizeInBytes;
+    };
+    CallFrameSizes callerCallFrameSizes() const;
+    CallFrameSizes calleeCallFrameSizes() const;
+
     // Function-kind only. Lazy-installed via a CAS in ThreadSafeLazyUniquePtr;
     // buffer is immutable once published.
-    void ensureArgumINTBytecode(const CallInformation&) const;
-    void ensureUINTBytecode(const CallInformation&) const;
+    void ensureArgumINTBytecode() const;
+    void ensureUINTBytecode() const;
+
+    // Null until the matching ensure...() has run. A reader that reaches these through
+    // something other than the pointer the ensure published -- IPIntCallee caches them in
+    // its metadata, for instance -- is responsible for its own ordering.
+    const IPIntSharedBytecode* argumINTBytecode() const LIFETIME_BOUND { return m_argumINTBytecode.get(); }
+    const IPIntSharedBytecode* uINTBytecode() const LIFETIME_BOUND { return m_uINTBytecode.get(); }
 
     // Unified mINT call bytecode: [arg bytecode][Call][CallReturnMetadata][result bytecode][End].
     // MC walks through this buffer during the entire call -- arg dispatch leaves MC at
@@ -1029,10 +1048,25 @@ private:
     mutable RefPtr<JSToWasmICCallee> m_jsToWasmICCallee;
     mutable Lock m_jitCodeLock;
 #endif
+    // Function-kind only. Packed CallFrameSizes, zero until computed. Both halves are nonzero
+    // once set, so a zero word means "not computed yet"; two threads computing at the same
+    // time derive the same value, so the store needs no synchronization beyond atomicity.
+    CallFrameSizes cachedCallFrameSizes(Atomic<uint64_t>& cache, CallRole) const;
+
+    mutable Atomic<uint64_t> m_callerCallFrameSizes { 0 };
+    mutable Atomic<uint64_t> m_calleeCallFrameSizes { 0 };
     mutable ThreadSafeLazyUniquePtr<const IPIntSharedBytecode> m_argumINTBytecode;
     mutable ThreadSafeLazyUniquePtr<const IPIntSharedBytecode> m_uINTBytecode;
     mutable ThreadSafeLazyUniquePtr<const IPIntSharedBytecode> m_callBytecode;
     mutable ThreadSafeLazyUniquePtr<const IPIntSharedBytecode> m_tailCallBytecode;
+    template<typename PayloadType>
+    const PayloadType* uncheckedPayload() const LIFETIME_BOUND
+    {
+        const PayloadType* payload = std::get_if<PayloadType>(&m_payload);
+        ASSERT(payload);
+        return payload;
+    }
+
     Variant<RTTFunctionPayload, RTTStructPayload, RTTArrayPayload> m_payload;
 };
 
@@ -1194,6 +1228,12 @@ public:
     // by ModuleInformation::typeIndexFromTypeSignatureIndex / Tag::typeIndex /
     // WebAssemblyFunctionBase). This bit-casts directly, no lookup.
     static Ref<const RTT> getCanonicalRTT(TypeIndex);
+
+    // Same RTT, borrowed. A canonical RTT outlives every type that names it, so a caller
+    // that only reads through it does not need to own it, and taking a Ref is not free:
+    // RTT is thread-safe refcounted, so it costs an atomic pair. Type and subtype checks
+    // do this constantly while a function body is parsed, where it dominates.
+    static const RTT& canonicalRTT(TypeIndex type) { return *std::bit_cast<const RTT*>(type); }
 
     // The index passed to tryGetRTTRef may be an abstract type or
     // invalid, in which case nullptr is returned. The non-null result

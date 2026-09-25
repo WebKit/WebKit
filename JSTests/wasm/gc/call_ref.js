@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function testRefSubtyping() {
   // A call to a subtype should validate.
@@ -29,16 +29,13 @@ function testArgSubtyping() {
 
 function testTypeDefCheck() {
   // Non-func typedefs are invalid.
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct))
         (func (call_ref 0 (ref.null func)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: invalid type index (not a function signature) for call_ref, got 0, in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: invalid type index (not a function signature) for call_ref, got 0, in function at index 0");
 }
 
 testRefSubtyping();

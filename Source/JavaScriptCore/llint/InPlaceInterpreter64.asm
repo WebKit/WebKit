@@ -180,16 +180,16 @@ const argumINTSrc = csr2
 const argumINTEnd = csr3
 const argumINTDsp = csr4
 
-macro ipintEntry()
+macro ipintEntry(data)
     const argumINTEndAsScratch = argumINTEnd
-    checkStackOverflow(ws0, argumINTEndAsScratch)
+    checkStackOverflow(ws0, data, argumINTEndAsScratch)
 
     # Allocate space for locals and rethrow values
     if ARM64 or ARM64E
-        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], argumINTTmp, argumINTEnd
+        loadpairi Wasm::IPIntCallee::IPIntData::m_localSizeToAlloc[data], argumINTTmp, argumINTEnd
     else
-        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], argumINTTmp
-        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], argumINTEnd
+        loadi Wasm::IPIntCallee::IPIntData::m_localSizeToAlloc[data], argumINTTmp
+        loadi Wasm::IPIntCallee::IPIntData::m_numRethrowSlotsToAlloc[data], argumINTEnd
     end
     mulp LocalSize, argumINTEnd
     mulp LocalSize, argumINTTmp
@@ -202,9 +202,7 @@ macro ipintEntry()
     # so after localSizeToAlloc handlers, argumINTDst = argumINTDsp - LocalSize.
     move argumINTDsp, argumINTEnd
     subp LocalSize, argumINTEnd
-    loadp Wasm::IPIntCallee::m_signatureRTT[ws0], MC
-    loadp Wasm::RTT::m_argumINTBytecode[MC], MC
-    addp (constexpr (Wasm::IPIntSharedBytecode::offsetOfData())), MC
+    loadp Wasm::IPIntCallee::IPIntData::m_argumINTBytecode[data], MC
 
     push argumINTTmp, argumINTDst, argumINTSrc, argumINTEnd
 
@@ -10615,11 +10613,11 @@ _ipint_end_ret:
 if X86_64
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
 end
-    # uINT buffer lives on the signature RTT. The stack-return FP offset is
+    # uINT buffer belongs to the signature RTT, but is reached through the callee's metadata so
+    # that the load is ordered by the one that published it. The stack-return FP offset is
     # embedded as a u32 at the head of the buffer.
-    loadp Wasm::IPIntCallee::m_signatureRTT[ws0], MC
-    loadp Wasm::RTT::m_uINTBytecode[MC], MC
-    addp (constexpr (Wasm::IPIntSharedBytecode::offsetOfData())), MC
+    loadp Wasm::IPIntCallee::m_data[ws0], MC
+    loadp Wasm::IPIntCallee::IPIntData::m_uINTBytecode[MC], MC
     loadi [MC], sc0
     addp cfr, sc0
     addp 4, MC

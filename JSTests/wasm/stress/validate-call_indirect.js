@@ -1,3 +1,5 @@
+import * as assert from "../assert.js";
+
 let imports = {};
 let buffer = new Uint8Array([
   0,97,115,109,1,0,0,0,1,8,1,96,1,124,3,127,127,127,3,2,1,0,
@@ -8,14 +10,4 @@ let buffer = new Uint8Array([
   0,16,0,17,0,178,46,65,0,11,0,14,4,110,97,109,101,1,7,1,0,4,
   109,97,105,110
 ]);
-var error = undefined;
-try {
-    let module = new WebAssembly.Module(buffer);
-    let instance = new WebAssembly.Instance(module, imports);
-    main = function() { return instance.exports.main(); };
-    main();
-} catch (err) {
-    error = err;
-}
-if (!error || error.message !== "WebAssembly.Module doesn't validate: argument type mismatch in call_indirect, got I32, expected F64, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')")
-    throw "Expected validation error";
+assert.compileError(buffer, "WebAssembly.Module doesn't validate: argument type mismatch in call_indirect, got I32, expected F64, in function at index 0");

@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -66,7 +66,7 @@ function testArrayNewCanonElemExternref() {
 }
 
 function testBadTypeIndex() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -78,11 +78,11 @@ function testBadTypeIndex() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
 }
 
 function testNonArrayType() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -95,7 +95,7 @@ function testNonArrayType() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
 }
 
 function testImmutableArrayType() {
@@ -115,7 +115,7 @@ function testImmutableArrayType() {
 }
 
 function testWrongTypeOffset() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -127,11 +127,11 @@ function testWrongTypeOffset() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem: offset has type F32 expected I32, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: array.new_elem: offset has type F32 expected I32, in function at index 1");
 }
 
 function testWrongTypeSize() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -143,11 +143,11 @@ function testWrongTypeSize() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem: size has type F32 expected I32, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: array.new_elem: size has type F32 expected I32, in function at index 1");
 }
 
 function testNoElementSegments() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (type (array (mut funcref)))
@@ -158,11 +158,11 @@ function testNoElementSegments() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem in module with no elements segments, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: array.new_elem in module with no elements segments, in function at index 1");
 }
 
 function testOutOfBoundsElementSegmentIndex() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (func $g (result i32) (i32.const 42))
@@ -176,11 +176,11 @@ function testOutOfBoundsElementSegmentIndex() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem segment index 3 is out of bounds (maximum element segment index is 1), in function at index 2");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: array.new_elem segment index 3 is out of bounds (maximum element segment index is 1), in function at index 2");
 }
 
 function testTypeMismatch() {
-    let f = () => instantiate(`
+    let f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -193,12 +193,12 @@ function testTypeMismatch() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type (ref null func) but array.new_elem operation expects elements of type I32, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type (ref null func) but array.new_elem operation expects elements of type I32, in function at index 1");
 }
 
 function testWrongNumberOfArguments() {
     // 0 arguments
-    var f = () => instantiate(`
+    var f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -208,10 +208,10 @@ function testWrongNumberOfArguments() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 5: can't pop empty stack in array.new_elem, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't parse at byte 5: can't pop empty stack in array.new_elem, in function at index 1");
 
     // 1 argument
-    f = () => instantiate(`
+    f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -222,10 +222,10 @@ function testWrongNumberOfArguments() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 7: can't pop empty stack in array.new_elem, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't parse at byte 7: can't pop empty stack in array.new_elem, in function at index 1");
 
     // 3 arguments
-    f = () => instantiate(`
+    f = watToWasm(`
       (module
         (func $f (result i32) (i32.const 37))
         (elem $elem0 funcref (ref.func $f) (ref.func $f) (ref.func $f) (ref.func $f))
@@ -238,7 +238,7 @@ function testWrongNumberOfArguments() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate:  block with type: () -> [RefNull] returns: 1 but stack has: 2 values, in function at index 1");
+    assert.compileError(f, "WebAssembly.Module doesn't validate:  block with type: () -> [RefNull] returns: 1 but stack has: 2 values, in function at index 1");
 }
 
 //- offset + arraySize overflows int32
@@ -732,8 +732,7 @@ function testNullFunctionIndex() {
           (array.new_elem 0 0)
           (i32.const 2)
           (array.get 0)))`);
-    assert.throws(() => compile(m),
-                  WebAssembly.CompileError,
+    assert.compileError(watToWasm(m),
                   "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type (ref null func) but array.new_elem operation expects elements of type (ref func), in function at index 2");
 
     // Element segment type is a subtype of declared array type: this should work

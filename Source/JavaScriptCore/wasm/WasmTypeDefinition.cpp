@@ -841,20 +841,20 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
         return false;
     }
 
-    RefPtr rtt = TypeInformation::getCanonicalRTT(typeIndex);
-    switch (rtt->kind()) {
+    const RTT& rtt = TypeInformation::canonicalRTT(typeIndex);
+    switch (rtt.kind()) {
     case RTTKind::Function: {
         WebAssemblyFunctionBase* funcRef = dynamicDowncast<WebAssemblyFunctionBase>(refValue);
         if (!funcRef)
             return false;
-        return funcRef->rtt()->isSubRTT(*rtt);
+        return funcRef->rtt()->isSubRTT(rtt);
     }
     case RTTKind::Array:
     case RTTKind::Struct: {
         auto* object = dynamicDowncast<WebAssemblyGCObjectBase>(refValue);
         if (!object)
             return false;
-        return object->rtt().isSubRTT(*rtt);
+        return object->rtt().isSubRTT(rtt);
     }
     }
 
@@ -1097,7 +1097,35 @@ void Type::dump(PrintStream& out) const
     }
 }
 
-void RTT::ensureArgumINTBytecode(const CallInformation& callCC) const
+RTT::CallFrameSizes RTT::callerCallFrameSizes() const
+{
+    return cachedCallFrameSizes(m_callerCallFrameSizes, CallRole::Caller);
+}
+
+RTT::CallFrameSizes RTT::calleeCallFrameSizes() const
+{
+    return cachedCallFrameSizes(m_calleeCallFrameSizes, CallRole::Callee);
+}
+
+RTT::CallFrameSizes RTT::cachedCallFrameSizes(Atomic<uint64_t>& cache, CallRole role) const
+{
+    ASSERT(kind() == RTTKind::Function);
+
+    if (uint64_t packed = cache.load(std::memory_order_relaxed))
+        return std::bit_cast<CallFrameSizes>(packed);
+
+    CallInformation callCC = wasmCallingConvention().callInformationFor(*this, role);
+    ASSERT(callCC.headerAndArgumentStackSizeInBytes >= callCC.headerIncludingThisSizeInBytes);
+    CallFrameSizes sizes {
+        static_cast<uint32_t>(callCC.headerAndArgumentStackSizeInBytes),
+        static_cast<uint32_t>(callCC.headerIncludingThisSizeInBytes),
+    };
+    ASSERT(std::bit_cast<uint64_t>(sizes));
+    cache.store(std::bit_cast<uint64_t>(sizes), std::memory_order_relaxed);
+    return sizes;
+}
+
+void RTT::ensureArgumINTBytecode() const
 {
     ASSERT(kind() == RTTKind::Function);
 
@@ -1108,6 +1136,7 @@ void RTT::ensureArgumINTBytecode(const CallInformation& callCC) const
     ASSERT_UNUSED(NUM_ARGUMINT_FPRS, wasmCallingConvention().fprArgs.size() <= NUM_ARGUMINT_FPRS);
 
     m_argumINTBytecode.ensure([&] {
+        CallInformation callCC = wasmCallingConvention().callInformationFor(*this, CallRole::Callee);
         auto numArgs = argumentCount();
         auto candidate = IPIntSharedBytecode::createWithSizeFromGenerator(numArgs + 1,
             [&](size_t index) -> uint8_t {
@@ -1144,7 +1173,7 @@ void RTT::ensureArgumINTBytecode(const CallInformation& callCC) const
     });
 }
 
-void RTT::ensureUINTBytecode(const CallInformation& returnCC) const
+void RTT::ensureUINTBytecode() const
 {
     ASSERT(kind() == RTTKind::Function);
 
@@ -1155,6 +1184,8 @@ void RTT::ensureUINTBytecode(const CallInformation& returnCC) const
     ASSERT_UNUSED(NUM_UINT_FPRS, wasmCallingConvention().fprArgs.size() <= NUM_UINT_FPRS);
 
     m_uINTBytecode.ensure([&] {
+        CallInformation returnCC = wasmCallingConvention().callInformationFor(*this, CallRole::Callee);
+
         // Offset past the last stack-typed return, in signature order.
         uint32_t topOfReturnStackFPOffset = 0;
         for (const auto& argLoc : returnCC.results) {

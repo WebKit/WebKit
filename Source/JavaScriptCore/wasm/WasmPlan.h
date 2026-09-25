@@ -76,6 +76,25 @@ public:
     virtual bool multiThreaded() const = 0;
 
     JS_EXPORT_PRIVATE void waitForCompletion();
+
+    // Runs the plan to completion on the calling thread instead of handing it to the worklist,
+    // so its completion tasks run here too. Only for callers that were going to block until the
+    // plan finished anyway: it gives up the worklist's fan-out, and every work() the plan has
+    // left is charged to this thread.
+    //
+    // Worth it when the per-function work is trivial: the worklist fans one plan out over
+    // Options::numberOfWasmCompilerThreads() threads, and for ort-wasm-simd-threaded.wasm that
+    // makes the plan slower, 3.9 ms across 15 threads versus 2.3 ms on one, on top of the
+    // ~0.9 ms of eagerly creating the pool. When function bodies are parsed up front the
+    // fan-out is worth far more than it costs (8 ms versus 45 ms for the same module), so ask
+    // prefersSynchronousExecution() rather than calling this unconditionally.
+    //
+    // work() must leave the plan either advanced or failed on every path, or this spins.
+    JS_EXPORT_PRIVATE void runSynchronously();
+
+    // Whether runSynchronously() beats waiting on the worklist.
+    virtual bool prefersSynchronousExecution() const { return false; }
+
     // Returns true if it cancelled the plan.
     bool tryRemoveContextAndCancelIfLast(VM&);
 

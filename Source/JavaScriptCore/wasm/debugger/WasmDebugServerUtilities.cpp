@@ -394,7 +394,7 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
 }
 
 StopData::StopData(IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
-    : address(VirtualAddress::toVirtual(instance, callee->functionIndex(), callee->bytecode()))
+    : address(VirtualAddress::toVirtual(instance, callee->functionIndex(), callee->bytecodeStart()))
     , callee(callee)
     , instance(instance)
     , callFrame(callFrame)

@@ -147,7 +147,7 @@ static void switchTarget(VM* newDebuggee)
 // The address LLDB would install a site at for this instance's view of the callee's entry.
 static JSC::Wasm::VirtualAddress entryAddress(JSWebAssemblyInstance* instance, JSC::Wasm::IPIntCallee* callee)
 {
-    return JSC::Wasm::VirtualAddress::toVirtual(instance, callee->functionIndex(), callee->bytecode());
+    return JSC::Wasm::VirtualAddress::toVirtual(instance, callee->functionIndex(), callee->bytecodeStart());
 }
 
 // Installs a site at every function entry of every live instance, the way LLDB does once a symbol
@@ -176,7 +176,7 @@ static void setBreakpointsAtAllFunctionEntries()
             auto callee = instance->calleeGroup()->ipintCalleeFromFunctionIndexSpace(spaceIndex);
             // Instances of one module share the bytecode a site patches, but each instance needs a
             // site of its own: a site only stops the instance its address names.
-            breakpointManager->setBreakpointAt(entryAddress(instance, callee.ptr()), moduleInfo, const_cast<uint8_t*>(callee->bytecode()));
+            breakpointManager->setBreakpointAt(entryAddress(instance, callee.ptr()), moduleInfo, const_cast<uint8_t*>(callee->bytecodeStart()));
             count++;
         }
     }
@@ -406,11 +406,11 @@ static void testSharedBytecodeBreakpoints()
             auto callee = instance->calleeGroup()->ipintCalleeFromFunctionIndexSpace(spaceIndex);
 
             if (!sharedPC) {
-                sharedPC = callee->bytecode();
+                sharedPC = callee->bytecodeStart();
                 owner = &moduleInfo;
                 originalBytecode = *sharedPC;
             } else
-                CHECK(sharedPC == callee->bytecode(), "Instances of module ", RawPointer(pair.key), " should share function 0's bytecode");
+                CHECK(sharedPC == callee->bytecodeStart(), "Instances of module ", RawPointer(pair.key), " should share function 0's bytecode");
 
             // Instance-scoped addresses, one shared patch.
             auto address = entryAddress(instance, callee.ptr());
@@ -549,7 +549,7 @@ static void testPatchLifetime()
     FunctionSpaceIndex spaceIndex = moduleInfo.toSpaceIndex(JSC::Wasm::FunctionCodeIndex(0));
     auto callee = instance->calleeGroup()->ipintCalleeFromFunctionIndexSpace(spaceIndex);
     auto address = entryAddress(instance, callee.ptr());
-    uint8_t* pc = const_cast<uint8_t*>(callee->bytecode());
+    uint8_t* pc = const_cast<uint8_t*>(callee->bytecodeStart());
     const uint8_t originalBytecode = *pc;
 
     CHECK(!breakpointManager->removeBreakpointAt(address), "Removing an address that holds no site should report there was nothing to remove");

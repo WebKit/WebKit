@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 async function testGCConstExprs() {
   {
@@ -187,35 +187,26 @@ async function testGCConstExprs() {
 }
 
 async function testInvalidConstExprs() {
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct (field i32)))
         (global (export "g") (ref 0) (struct.new 0 (i64.const 1))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in struct.new, got I64, expected I32"
-  );
+    "WebAssembly.Module doesn't validate: argument type mismatch in struct.new, got I64, expected I32");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct (field i32)))
         (global (export "g") i32 (struct.new 0 (i32.const 1))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <struct:0>) is not a I32"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <struct:0>) is not a I32");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (array i32))
         (global (export "g") (ref 0) (array.len (array.new 0 (i32.const 1) (i32.const 1)))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 37: Invalid instruction for constant expression"
-  );
+    "WebAssembly.Module doesn't parse at byte 37: Invalid instruction for constant expression");
 }
 
 async function testConstExprGlobalOrdering() {
@@ -266,25 +257,19 @@ async function testConstExprGlobalOrdering() {
       (elem (table 0) (offset (i32.add (global.get 0) (i32.const 42))) funcref (ref.null func)))
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (global i32 (global.get 1))
         (global i32 (i32.const 0)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 19: get_global's index 1 exceeds the number of globals 0"
-  );
+    "WebAssembly.Module doesn't parse at byte 19: get_global's index 1 exceeds the number of globals 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (table 10 externref (global.get 0))
         (global externref (ref.null extern)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 22: get_global's index 0 exceeds the number of globals 0"
-  );
+    "WebAssembly.Module doesn't parse at byte 22: get_global's index 0 exceeds the number of globals 0");
 }
 
 async function testElementConstExprs() {

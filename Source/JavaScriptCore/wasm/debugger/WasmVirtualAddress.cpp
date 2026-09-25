@@ -66,7 +66,7 @@ VirtualAddress VirtualAddress::toVirtual(JSWebAssemblyInstance* jsInstance, Func
 {
     RELEASE_ASSERT(jsInstance->debugId() != INVALID_ID, "Wasm debugger encoding an unregistered instance");
     const Wasm::FunctionData& functionData = jsInstance->moduleInformation().functions[index];
-    uint32_t offset = static_cast<uint32_t>(pc - &functionData.data[0] + functionData.start);
+    uint32_t offset = static_cast<uint32_t>(pc - functionData.data.data() + functionData.start);
     return VirtualAddress::createModule(jsInstance->debugId(), offset);
 }
 
@@ -98,7 +98,7 @@ uint8_t* VirtualAddress::toPhysicalPC(JSWebAssemblyInstance& jsInstance)
         const FunctionData& functionData = *it;
         if (offset >= functionData.start && offset < functionData.end) {
             uint32_t offsetInFunction = offset - functionData.start;
-            uint8_t* pc = const_cast<uint8_t*>(&functionData.data[0]) + offsetInFunction;
+            uint8_t* pc = const_cast<uint8_t*>(functionData.data.data()) + offsetInFunction;
             dataLogLnIf(Options::verboseWasmDebugger(), "Resolved virtual address: ", *this, " to physical PC: ", RawPointer(pc), " (function index: ", static_cast<size_t>(it - functions.begin()), ")");
             return pc;
         }

@@ -926,7 +926,7 @@ std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> sour
 std::expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpression& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info)
 {
     ConstExprInterpreter interpreter(constantExpression.sourceOffset, info, instance);
-    return interpreter.run(constantExpression.bytes.span(), constantExpression.maxStackHeight);
+    return interpreter.run(constantExpression.bytes, constantExpression.maxStackHeight);
 }
 
 } } // namespace JSC::Wasm

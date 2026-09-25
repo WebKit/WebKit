@@ -152,7 +152,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
 
     JSObject* compileOptionsObject = nullptr;
-    if (Options::useWasmJSStringBuiltins()) {
+    if (WebAssemblyCompileOptions::isAnyOptionEnabled()) {
         JSValue compileOptionsArgument = callFrame->argument(1);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
@@ -176,7 +176,8 @@ void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject,
     dependencies.append(globalObject);
 
     auto weakTicket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, promise, WTF::move(dependencies));
-    Wasm::Module::validateAsync(vm, WTF::move(source), createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), compileOptions = WTF::move(compileOptions), &vm] (Wasm::Module::ValidationResult&& result) mutable {
+    auto validationMode = (compileOptions && compileOptions->eagerValidate()) ? Wasm::ValidationMode::Eager : Wasm::ValidationMode::Lazy;
+    Wasm::Module::validateAsync(vm, WTF::move(source), validationMode, createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), compileOptions = WTF::move(compileOptions), &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoonIfActive(weakTicket, [result = WTF::move(result), compileOptions = WTF::move(compileOptions), &vm](DeferredWorkTimer::Ticket& ticket) mutable {
             auto* promise = uncheckedDowncast<JSPromise>(ticket.target());
             auto* globalObject = uncheckedDowncast<JSGlobalObject>(ticket.dependencies()[0]);
@@ -300,7 +301,8 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
         auto sourceURLString = sourceProvider->sourceOrigin().url().string();
         sourceURL = Wasm::Name(sourceURLString.utf8().span());
     }
-    Wasm::Module::validateAsync(vm, WTF::move(source), WTF::move(sourceURL), createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+    auto validationMode = (compileOptions && compileOptions->eagerValidate()) ? Wasm::ValidationMode::Eager : Wasm::ValidationMode::Lazy;
+    Wasm::Module::validateAsync(vm, WTF::move(source), validationMode, WTF::move(sourceURL), createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoonIfActive(weakTicket, [importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), result = WTF::move(result), resolveKind, creationMode, &vm](DeferredWorkTimer::Ticket& ticket) mutable {
             auto* promise = uncheckedDowncast<JSPromise>(ticket.target());
             auto& deps = ticket.dependencies();
@@ -375,7 +377,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
         RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument)))));
 
     JSObject* compileOptionsObject = nullptr;
-    if (Options::useWasmJSStringBuiltins()) {
+    if (WebAssemblyCompileOptions::isAnyOptionEnabled()) {
         JSValue compileOptionsArgument = callFrame->argument(2);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
@@ -428,7 +430,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSObject* compileOptionsObject = nullptr;
-    if (Options::useWasmJSStringBuiltins()) {
+    if (WebAssemblyCompileOptions::isAnyOptionEnabled()) {
         JSValue compileOptionsArgument = callFrame->argument(1);
         compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
@@ -437,7 +439,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
         }
     }
 
-    auto validationResult = Wasm::Module::validateSync(vm, WTF::move(source));
+    auto validationResult = Wasm::Module::validateSync(vm, WTF::move(source), Wasm::ValidationMode::Eager);
     bool success = validationResult.has_value();
     if (success) {
         auto compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
@@ -472,7 +474,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingFunc, (JSGlobalObject* globa
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
     std::optional<WebAssemblyCompileOptions> compileOptions;
-    if (Options::useWasmJSStringBuiltins()) {
+    if (WebAssemblyCompileOptions::isAnyOptionEnabled()) {
         JSValue compileOptionsArgument = callFrame->argument(1);
         JSObject* compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
@@ -521,7 +523,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingFunc, (JSGlobalObject* g
     }
 
     std::optional<WebAssemblyCompileOptions> compileOptions;
-    if (Options::useWasmJSStringBuiltins()) {
+    if (WebAssemblyCompileOptions::isAnyOptionEnabled()) {
         JSValue compileOptionsArgument = callFrame->argument(2);
         JSObject* compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {

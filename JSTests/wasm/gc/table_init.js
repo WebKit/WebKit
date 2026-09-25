@@ -1,16 +1,13 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function testTableValidation() {
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (array i32))
         (table (export "t") 10 arrayref (array.new_default 0)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 3: can't pop empty stack in array.new_default"
-  );
+    "WebAssembly.Module doesn't parse at byte 3: can't pop empty stack in array.new_default");
 }
 
 function testTableInit() {
@@ -62,15 +59,12 @@ function testTableInit() {
   }
 
   // Table init can't refer to non-imported globals.
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (global i31ref (ref.i31 (i32.const 42)))
         (table (export "t") 10 i31ref (global.get 0)))
     `),
-    WebAssembly.CompileError,
-    "get_global's index 0 exceeds the number of globals 0"
-  );
+    "get_global's index 0 exceeds the number of globals 0");
 }
 
 testTableValidation();

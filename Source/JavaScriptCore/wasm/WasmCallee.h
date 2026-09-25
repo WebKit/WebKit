@@ -39,7 +39,6 @@
 #include <JavaScriptCore/WasmFormat.h>
 #include <JavaScriptCore/WasmFunctionIPIntMetadataGenerator.h>
 #include <JavaScriptCore/WasmHandlerInfo.h>
-#include <JavaScriptCore/WasmIPIntGenerator.h>
 #include <JavaScriptCore/WasmIPIntTierUpCounter.h>
 #include <JavaScriptCore/WasmIndexOrName.h>
 #include <JavaScriptCore/WasmTierUpCount.h>
@@ -47,7 +46,9 @@
 #include <wtf/FixedVector.h>
 #include <wtf/RefCountedFixedVector.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeLazyUniquePtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TrailingArray.h>
 
 namespace JSC {
 
@@ -83,7 +84,8 @@ public:
 
     const HandlerInfo* handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*);
 
-    bool hasExceptionHandlers() const { return !m_exceptionHandlers.isEmpty(); }
+    const FixedVector<HandlerInfo>& exceptionHandlers() const LIFETIME_BOUND;
+    bool hasExceptionHandlers() const { return !exceptionHandlers().isEmpty(); }
 
     void dump(PrintStream&) const;
     void dumpSimpleName(PrintStream&) const;
@@ -105,6 +107,8 @@ public:
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, FunctionSpaceIndex, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+    const FixedVector<HandlerInfo>& exceptionHandlersImpl() const LIFETIME_BOUND { return m_exceptionHandlers; }
 
     template<typename Func>
     void runWithDowncast(const Func&);
@@ -165,9 +169,9 @@ public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;
 
-    static inline Ref<JSToWasmCallee> create(Ref<const RTT>&& rtt, bool usesSIMD)
+    static inline Ref<JSToWasmCallee> create(Ref<const RTT>&& rtt)
     {
-        return adoptRef(*new JSToWasmCallee(WTF::move(rtt), usesSIMD));
+        return adoptRef(*new JSToWasmCallee(WTF::move(rtt)));
     }
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const;
@@ -192,7 +196,7 @@ public:
     }
 
 private:
-    JSToWasmCallee(Ref<const RTT>&&, bool);
+    JSToWasmCallee(Ref<const RTT>&&);
 
     unsigned m_frameSize { };
     // This must be initialized after the callee is created unfortunately.
@@ -474,32 +478,115 @@ class IPIntCallee final : public Callee {
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
-    static Ref<IPIntCallee> create(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    using IPIntMetadata = uint8_t;
+    class IPIntData final : public TrailingArray<IPIntData, IPIntMetadata> {
+        WTF_MAKE_NONMOVABLE(IPIntData);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IPIntData);
+        using TrailingArrayType = TrailingArray<IPIntData, IPIntMetadata>;
+        friend TrailingArrayType;
+        friend class IPIntCallee;
+        friend class JSC::LLIntOffsetsExtractor;
+    public:
+        static std::unique_ptr<IPIntData> create(size_t metadataSize)
+        {
+            return std::unique_ptr<IPIntData>(new (fastMalloc(allocationSize(metadataSize))) IPIntData(metadataSize));
+        }
+
+        // Inline capacity matches FunctionIPIntMetadataGenerator's, so that handing the
+        // generator's buffer over here is a move rather than a copy: WTF::Vector only offers
+        // cross-inline-capacity assignment by copy.
+        Vector<uint8_t, 8> m_localInitBytecode;
+        Vector<FunctionSpaceIndex> m_callTargets;
+        FixedVector<HandlerInfo> m_exceptionHandlers;
+        IPIntTierUpCounter m_tierUpCounter;
+
+        // First opcode of the body, i.e. IPIntCallee::m_bytecode + m_bytecodeOffset.
+        const uint8_t* m_bytecodeStart { nullptr };
+        // Argument- and result-marshalling bytecode for this function's signature. Owned by the
+        // signature's RTT, which outlives every callee naming it, and copied here so that the
+        // interpreter reaches it through the pointer that publishes this metadata. Reading it off
+        // the RTT instead would be a second, independent load, which on a weakly ordered CPU can
+        // be satisfied from before the RTT's own copy was installed.
+        const uint8_t* m_argumINTBytecode { nullptr };
+        const uint8_t* m_uINTBytecode { nullptr };
+        // Offset from raw function bytecode to the first opcode (post locals header).
+        unsigned m_bytecodeOffset { 0 };
+        unsigned m_maxFrameSizeInV128 { 0 };
+        unsigned m_localSizeToAlloc { 0 };
+        unsigned m_numRethrowSlotsToAlloc { 0 };
+        unsigned m_numLocals { 0 };
+        unsigned m_numArgumentsOnStack { 0 };
+        unsigned m_maxCalleeStackSize { 0 };
+
+        static constexpr ptrdiff_t offsetOfMetadata() { return TrailingArrayType::offsetOfData(); }
+        static constexpr ptrdiff_t offsetOfLocalInitBytecode() { return OBJECT_OFFSETOF(IPIntData, m_localInitBytecode); }
+        static constexpr ptrdiff_t offsetOfTierUpCounter() { return OBJECT_OFFSETOF(IPIntData, m_tierUpCounter); }
+        static constexpr ptrdiff_t offsetOfBytecodeStart() { return OBJECT_OFFSETOF(IPIntData, m_bytecodeStart); }
+        static constexpr ptrdiff_t offsetOfArgumINTBytecode() { return OBJECT_OFFSETOF(IPIntData, m_argumINTBytecode); }
+        static constexpr ptrdiff_t offsetOfUINTBytecode() { return OBJECT_OFFSETOF(IPIntData, m_uINTBytecode); }
+        static constexpr ptrdiff_t offsetOfBytecodeOffset() { return OBJECT_OFFSETOF(IPIntData, m_bytecodeOffset); }
+        static constexpr ptrdiff_t offsetOfMaxFrameSizeInV128() { return OBJECT_OFFSETOF(IPIntData, m_maxFrameSizeInV128); }
+        static constexpr ptrdiff_t offsetOfLocalSizeToAlloc() { return OBJECT_OFFSETOF(IPIntData, m_localSizeToAlloc); }
+        static constexpr ptrdiff_t offsetOfNumRethrowSlotsToAlloc() { return OBJECT_OFFSETOF(IPIntData, m_numRethrowSlotsToAlloc); }
+
+    private:
+        explicit IPIntData(size_t metadataSize)
+            : TrailingArrayType(metadataSize)
+            , m_tierUpCounter(UncheckedKeyHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>())
+        {
+        }
+    };
+
+    static Ref<IPIntCallee> create(FunctionCodeIndex functionIndex, FunctionSpaceIndex index, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&& name, const uint8_t* bytecode, const uint8_t* bytecodeEnd)
     {
-        return adoptRef(*new IPIntCallee(generator, index, signatureRTT, WTF::move(name)));
+        return adoptRef(*new IPIntCallee(functionIndex, index, signatureRTT, WTF::move(name), bytecode, bytecodeEnd));
     }
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
+    bool isLazy() const { return !data(); }
+    void initializeMetadata(FunctionIPIntMetadataGenerator&);
+
+    // A body that does not parse fails identically for every caller and on every attempt, so the
+    // diagnostic is kept and the body is never parsed a second time. Null until that happens.
+    const String* parseFailure() const { return m_parseFailure.get(); }
+    const String& recordParseFailure(String&& message)
+    {
+        return m_parseFailure.ensure([&] {
+            return makeUnique<const String>(WTF::move(message));
+        });
+    }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
     void setEntrypointWithoutRegistration(CodePtr<WasmEntryPtrTag>);
     void setName(std::pair<const Name*, RefPtr<NameSection>>&& name) { setIndexOrName(IndexOrName(index(), WTF::move(name))); }
     const uint8_t* bytecode() const { return m_bytecode; }
     const uint8_t* bytecodeEnd() const { return m_bytecodeEnd; }
-    const uint8_t* metadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
+    // First opcode of the body. bytecode() is the raw body, which starts with the locals
+    // declaration, so anything addressing executable code wants this instead.
+    const uint8_t* bytecodeStart() const { return parsedData().m_bytecodeStart; }
+    IPIntData* data() const { return m_data.get(); }
+    const uint8_t* metadata() const LIFETIME_BOUND { return data() ? data()->data() : nullptr; }
 
-    unsigned numLocals() const { return m_numLocals; }
-    unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
-    unsigned rethrowSlots() const { return m_numRethrowSlotsToAlloc; }
-    unsigned maxFrameSizeInV128() const { return m_maxFrameSizeInV128; }
-    unsigned maxCalleeStackSize() const { return m_maxCalleeStackSize; }
+    // Everything below describes a body that has been parsed, so a caller has to have entered
+    // the function or run ensureNotLazy() first. Asking earlier is a bug, not an empty answer.
+    IPIntData& parsedData() const LIFETIME_BOUND
+    {
+        ASSERT(!isLazy());
+        return *m_data.get();
+    }
 
-    const Vector<FunctionSpaceIndex>& callTargets() const LIFETIME_BOUND { return m_callTargets; }
-    unsigned numCallProfiles() const { return m_callTargets.size(); }
+    unsigned numLocals() const { return parsedData().m_numLocals; }
+    unsigned localSizeToAlloc() const { return parsedData().m_localSizeToAlloc; }
+    unsigned rethrowSlots() const { return parsedData().m_numRethrowSlotsToAlloc; }
+    unsigned maxFrameSizeInV128() const { return parsedData().m_maxFrameSizeInV128; }
+    unsigned maxCalleeStackSize() const { return parsedData().m_maxCalleeStackSize; }
 
-    IPIntTierUpCounter& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
-    const IPIntTierUpCounter& tierUpCounter() const LIFETIME_BOUND { return m_tierUpCounter; }
+    const Vector<FunctionSpaceIndex>& callTargets() const LIFETIME_BOUND { return parsedData().m_callTargets; }
+    unsigned numCallProfiles() const { return parsedData().m_callTargets.size(); }
 
-    FunctionSpaceIndex callTarget(unsigned callProfileIndex) const { return m_callTargets[callProfileIndex]; }
+    IPIntTierUpCounter& tierUpCounter() LIFETIME_BOUND { return parsedData().m_tierUpCounter; }
+    const IPIntTierUpCounter& tierUpCounter() const LIFETIME_BOUND { return parsedData().m_tierUpCounter; }
+
+    FunctionSpaceIndex callTarget(unsigned callProfileIndex) const { return parsedData().m_callTargets[callProfileIndex]; }
 
     const RTT& signatureRTT() const LIFETIME_BOUND { return *m_signatureRTT; }
 
@@ -507,32 +594,32 @@ public:
 
     unsigned computeCodeHashImpl() const;
 
+    static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(IPIntCallee, m_data); }
+
 private:
-    IPIntCallee(FunctionIPIntMetadataGenerator&, FunctionSpaceIndex, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&&);
+    IPIntCallee(FunctionCodeIndex, FunctionSpaceIndex, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&&, const uint8_t* bytecode, const uint8_t* bytecodeEnd);
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint; }
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; };
     JS_EXPORT_PRIVATE const RegisterAtOffsetList* calleeSaveRegistersImpl();
+    const FixedVector<HandlerInfo>& exceptionHandlersImpl() const LIFETIME_BOUND;
 
+    // FIXME: Do we really need this. We only use it for gating tier up so we can
+    // compute it from the instance + m_functionSpaceIndex in Callee.
     FunctionCodeIndex m_functionIndex;
     CodePtr<WasmEntryPtrTag> m_entrypoint;
 
-    const uint8_t* m_bytecode;
-    const uint8_t* m_bytecodeEnd;
-    Vector<uint8_t> m_metadata;
-    Vector<uint8_t> m_localInitBytecode;
+    // m_bytecode points at raw function body (including locals header).
+    // Opcodes start at m_bytecode + m_data->m_bytecodeOffset.
+    // FIXME: Maybe this should be an offset to the start of the code. Could also be a tagged union with
+    // m_data as we won't need it after we've initialzed.
+    const uint8_t* m_bytecode { nullptr };
+    const uint8_t* m_bytecodeEnd { nullptr };
     RefPtr<const RTT> m_signatureRTT;
-    Vector<FunctionSpaceIndex> m_callTargets;
+    ThreadSafeLazyUniquePtr<IPIntData> m_data;
+    ThreadSafeLazyUniquePtr<const String> m_parseFailure;
 
-    unsigned m_localSizeToAlloc;
-    unsigned m_numRethrowSlotsToAlloc;
-    unsigned m_numLocals;
-    unsigned m_numArgumentsOnStack;
-    unsigned m_maxFrameSizeInV128;
-    unsigned m_maxCalleeStackSize;
     mutable unsigned m_codeHash { 0 };
-
-    IPIntTierUpCounter m_tierUpCounter;
 };
 
 using IPIntCallees = ThreadSafeRefCountedFixedVector<Ref<IPIntCallee>>;

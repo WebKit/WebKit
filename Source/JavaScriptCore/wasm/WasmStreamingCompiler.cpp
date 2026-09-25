@@ -45,6 +45,7 @@ namespace JSC { namespace Wasm {
 StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
     : m_vm(vm)
     , m_compilerMode(compilerMode)
+    , m_validationMode((compileOptions && compileOptions->eagerValidate()) ? ValidationMode::Eager : ValidationMode::Lazy)
     , m_compileOptions(WTF::move(compileOptions))
     , m_info(Wasm::ModuleInformation::create())
     , m_parser(m_info.get(), *this)
@@ -80,7 +81,7 @@ Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMo
 bool StreamingCompiler::didReceiveFunctionData(FunctionCodeIndex functionIndex, const Wasm::FunctionData&)
 {
     if (!m_plan) {
-        m_plan = adoptRef(*new IPIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
+        m_plan = adoptRef(*new IPIntPlan(m_vm, m_info.copyRef(), m_compilerMode, m_validationMode, Plan::dontFinalize()));
 
         // Plan already failed in preparation. We do not start threaded compilation.
         // Keep Plan failed, and "finalize" will reject promise with that failure.
@@ -118,7 +119,7 @@ void StreamingCompiler::didFinishParsing()
         // Reaching here means that this WebAssembly module has no functions.
         ASSERT(!m_info->functions.size());
         ASSERT(!m_remainingCompilationRequests);
-        m_plan = adoptRef(*new IPIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
+        m_plan = adoptRef(*new IPIntPlan(m_vm, m_info.copyRef(), m_compilerMode, m_validationMode, Plan::dontFinalize()));
         // If plan is already failed in preparation, we will reject promise with plan's failure soon in finalize.
     }
 }

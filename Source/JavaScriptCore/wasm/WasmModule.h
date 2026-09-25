@@ -38,6 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/WasmJS.h>
 #include <JavaScriptCore/WasmMemory.h>
 #include <JavaScriptCore/WasmOps.h>
+#include <JavaScriptCore/WasmStreamingParser.h>
 #include <wtf/Lock.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -62,9 +63,9 @@ public:
     typedef void CallbackType(ValidationResult&&);
     using AsyncValidationCallback = RefPtr<SharedTask<CallbackType>>;
 
-    static ValidationResult validateSync(VM&, Vector<uint8_t>&& source);
-    static void validateAsync(VM&, Vector<uint8_t>&& source, Module::AsyncValidationCallback&&);
-    static void validateAsync(VM&, Vector<uint8_t>&& source, Name&& sourceURL, Module::AsyncValidationCallback&&);
+    static ValidationResult validateSync(VM&, Vector<uint8_t>&& source, ValidationMode);
+    static void validateAsync(VM&, Vector<uint8_t>&& source, ValidationMode, Module::AsyncValidationCallback&&);
+    static void validateAsync(VM&, Vector<uint8_t>&& source, ValidationMode, Name&& sourceURL, Module::AsyncValidationCallback&&);
 
     static Ref<Module> create(IPIntPlan& plan, Name&& sourceURL = { })
     {

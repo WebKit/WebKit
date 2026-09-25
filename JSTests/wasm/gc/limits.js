@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -12,18 +12,12 @@ function module(bytes, valid = true) {
 
 function testLimits() {
     // 1,000,000 recursion group size, at the limit.
-    assert.throws(
-        () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x87\x80\x80\x80\x00\x01\x4e\xC0\x84\x3D\x00\x00")),
-        WebAssembly.CompileError,
-        "WebAssembly.Module doesn't parse at byte 20: 0th Type is non-Func, non-Struct, and non-Array 0 (evaluating 'new WebAssembly.Module(buffer)'"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x87\x80\x80\x80\x00\x01\x4e\xC0\x84\x3D\x00\x00"),
+        "WebAssembly.Module doesn't parse at byte 20: 0th Type is non-Func, non-Struct, and non-Array 0");
 
     // 1,000,001 recursion group size, above limit.
-    assert.throws(
-        () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x87\x80\x80\x80\x00\x01\x4e\xC1\x84\x3D\x00\x00")),
-        WebAssembly.CompileError,
-        "WebAssembly.Module doesn't parse at byte 19: number of types for recursion group at position 0 is too big 1000001 maximum 1000000 (evaluating 'new WebAssembly.Module(buffer)"
-    );
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x87\x80\x80\x80\x00\x01\x4e\xC1\x84\x3D\x00\x00"),
+        "WebAssembly.Module doesn't parse at byte 19: number of types for recursion group at position 0 is too big 1000001 maximum 1000000");
 
     // 63 depth subtype, at limit.
     compile(`
@@ -47,8 +41,7 @@ function testLimits() {
       )
     `);
 
-    assert.throws(
-        () => compile(`
+    assert.compileError(watToWasm(`
           (module
             (type (sub (struct)))    (type (sub 0 (struct)))  (type (sub 1 (struct)))  (type (sub 2 (struct)))
             (type (sub 3 (struct)))  (type (sub 4 (struct)))  (type (sub 5 (struct)))  (type (sub 6 (struct)))
@@ -69,9 +62,7 @@ function testLimits() {
             (type (sub 63 (struct)))
           )
         `),
-        WebAssembly.CompileError,
-        "WebAssembly.Module doesn't parse at byte 339: subtype depth for Type section's 64th signature exceeded the limits of 63"
-    );
+        "WebAssembly.Module doesn't parse at byte 339: subtype depth for Type section's 64th signature exceeded the limits of 63");
 }
 
 testLimits();

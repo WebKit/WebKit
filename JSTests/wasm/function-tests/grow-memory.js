@@ -5,17 +5,7 @@ const pageSize = 64 * 1024;
 const maxPageCount = (2**32) / pageSize;
 
 function binaryShouldNotParse(builder, msg = "") {
-    const bin = builder.WebAssembly().get();
-    let threw = false;
-    try {
-        const module = new WebAssembly.Module(bin);
-    } catch(e) {
-        assert.truthy(e instanceof WebAssembly.CompileError);
-        if (msg)
-            assert.truthy(e.message.indexOf(msg) !== -1);
-        threw = true;
-    }
-    assert.truthy(threw);
+    assert.compileError(builder.WebAssembly().get(), msg);
 }
 
 {

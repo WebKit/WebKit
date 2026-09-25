@@ -35,6 +35,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "FrameTracers.h"
 #include "JITExceptions.h"
 #include "JSWebAssemblyArrayInlines.h"
+#include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntData.h"
@@ -1114,7 +1115,7 @@ WASM_IPINT_EXTERN_CPP_DECL(prepare_function_body, CallFrame* callFrame)
 {
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
     instance->ensureBaselineData(callee->functionIndex()).incrementTotalCount();
-    WASM_RETURN_TWO(callee, nullptr);
+    WASM_RETURN_TWO(callee, callee->data());
 }
 
 enum class PrepareCallKind : uint8_t { Call, TailCall };
@@ -1125,6 +1126,42 @@ static ALWAYS_INLINE void ensureCallBytecodeForKind(const Wasm::RTT& rtt, Prepar
         rtt.ensureTailCallBytecode();
     else
         rtt.ensureCallBytecode();
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(lazy_initialize, CallFrame* callFrame)
+{
+    auto* callee = IPINT_CALLEE(callFrame);
+    if (!callee->isLazy())
+        WASM_RETURN_TWO(nullptr, callee->data());
+
+    VM& vm = instance->vm();
+    SlowPathFrameTracer tracer(vm, callFrame);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    JSGlobalObject* globalObject = instance->realm();
+
+    // Parsing a body runs a fair amount of C++ on whatever stack is left. The interpreter's own
+    // frame check cannot run first, because the frame size it checks against is one of the things
+    // parsing produces, so the budget has to be checked here instead. A wasm stack overflow
+    // reaches JS as a RangeError (throwWasmToJSException special-cases it), so report the same
+    // thing here rather than the trap that ExceptionType::StackOverflow would otherwise become.
+    if (vm.softStackLimit() > callFrame) [[unlikely]] {
+        throwException(globalObject, throwScope, createStackOverflowError(globalObject));
+        WASM_RETURN_TWO(nullptr, nullptr);
+    }
+
+    auto& moduleInformation = const_cast<Wasm::ModuleInformation&>(instance->moduleInformation());
+    auto parseResult = parseAndInitializeIPIntCallee(*callee, moduleInformation);
+    if (!parseResult) [[unlikely]] {
+        // The module was accepted without its function bodies being looked at, so this is a
+        // validation failure surfacing late rather than a trap. Report it as one.
+        throwException(globalObject, throwScope, createJSWebAssemblyCompileError(globalObject, vm, parseResult.error()));
+        WASM_RETURN_TWO(nullptr, nullptr);
+    }
+
+    // The caller distinguishes success from failure by this pointer, so it must be null on
+    // every path that throws and non-null on every path that does not.
+    ASSERT(callee->data());
+    WASM_RETURN_TWO(nullptr, callee->data());
 }
 
 /**

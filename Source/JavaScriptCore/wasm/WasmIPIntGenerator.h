@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <JavaScriptCore/WasmCallee.h>
 #include <JavaScriptCore/WasmCallingConvention.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,11 @@ struct FunctionDebugInfo;
 
 std::expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t>, const RTT&, ModuleInformation&, FunctionCodeIndex functionIndex);
 JS_EXPORT_PRIVATE void parseForDebugInfo(std::span<const uint8_t>, const RTT&, ModuleInformation&, FunctionCodeIndex, FunctionDebugInfo&);
+
+// Parses the callee's function body and publishes its metadata, unless that has already
+// happened. A body that does not parse leaves the callee unpublished and its diagnostic cached,
+// so asking again is cheap and gives the same answer.
+std::expected<void, String> parseAndInitializeIPIntCallee(IPIntCallee&, ModuleInformation&);
 
 } // namespace JSC::Wasm
 

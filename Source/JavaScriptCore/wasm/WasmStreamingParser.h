@@ -45,6 +45,12 @@ struct ModuleInformation;
 
 enum class CompilerMode : uint8_t { FullCompile, Validation };
 
+// Whether function bodies must be validated while the module is being compiled. Lazy leaves that
+// to the first call into each function, which is the default; Eager is what the non-standard
+// `eagerValidate` compile option asks for, and is orthogonal to CompilerMode because either
+// compiler mode can be asked for either.
+enum class ValidationMode : uint8_t { Lazy, Eager };
+
 class StreamingParserClient {
 public:
     virtual ~StreamingParserClient() = default;
@@ -99,11 +105,11 @@ private:
     State parseModuleHeader(Vector<uint8_t>&&);
     State parseSectionID(Vector<uint8_t>&&);
     State NODELETE parseSectionSize(uint32_t);
-    State parseSectionPayload(Vector<uint8_t>&&);
+    State parseSectionPayload(std::span<const uint8_t>, bool payloadIsRetained);
 
     State parseCodeSectionSize(uint32_t);
     State parseFunctionSize(uint32_t);
-    State parseFunctionPayload(Vector<uint8_t>&&);
+    State parseFunctionPayload(std::span<const uint8_t>);
 
     std::optional<Vector<uint8_t>> consume(std::span<const uint8_t> bytes, size_t&, size_t);
     std::expected<uint32_t, State> consumeVarUInt32(std::span<const uint8_t> bytes, size_t&, IsEndOfStream);

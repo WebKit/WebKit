@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -53,51 +53,36 @@ function testNone() {
       (global (ref null none) (ref.null none)))
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (global (ref null 0) (ref.null none)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 31: Global init_expr opcode of type RefNull doesn't match global's type RefNull"
-  );
+    "WebAssembly.Module doesn't parse at byte 31: Global init_expr opcode of type RefNull doesn't match global's type RefNull");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (global (ref null func) (ref.null none)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull"
-  );
+    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (global (ref null nofunc) (ref.null none)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull"
-  );
+    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (global (ref null extern) (ref.null none)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull"
-  );
+    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (global (ref null noextern) (ref.null none)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull"
-  );
+    "WebAssembly.Module doesn't parse at byte 20: Global init_expr opcode of type RefNull doesn't match global's type RefNull");
 }
 
 testNone();

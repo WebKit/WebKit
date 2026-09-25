@@ -195,15 +195,8 @@ async function testRefGlobalCheck() {
    *   (global $g (import "m" "g") (mut (ref extern)))
    *   (func (global.set $g (ref.null extern))))
    */
-  assert.throws(
-    () => {
-      module(
-        "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x02\x09\x01\x01\x6d\x01\x67\x03\x64\x6f\x01\x03\x02\x01\x00\x0a\x08\x01\x06\x00\xd0\x6f\x24\x00\x0b"
-      )
-    },
-    WebAssembly.CompileError,
-    `WebAssembly.Module doesn't validate: set_global 0 with type Ref with a variable of type RefNull, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')`
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x02\x09\x01\x01\x6d\x01\x67\x03\x64\x6f\x01\x03\x02\x01\x00\x0a\x08\x01\x06\x00\xd0\x6f\x24\x00\x0b"),
+    `WebAssembly.Module doesn't validate: set_global 0 with type Ref with a variable of type RefNull, in function at index 0`);
 }
 
 async function testExternFuncrefNonNullCheck() {
@@ -260,14 +253,8 @@ async function testNonNullExternrefIncompatible() {
    *   (type $t (func (param externref) (result (ref extern))))
    *   (func $f (type $t) (local.get 0)))
    */
-  assert.throws(
-    () =>
-      module(
-        "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x6f\x01\x64\x6f\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"
-      ),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref extern), in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x6f\x01\x64\x6f\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"),
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref extern), in function at index 0");
 }
 
 // Ensure two ways of writing funcref are equivalent.
@@ -288,14 +275,8 @@ async function testNonNullFuncrefIncompatible() {
    *   (type $t (func (param funcref) (result (ref func))))
    *   (func $f (type $t) (local.get 0)))
    */
-  assert.throws(
-    () =>
-      module(
-        "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x70\x01\x64\x70\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"
-      ),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null func) is not a (ref func), in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x70\x01\x64\x70\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"),
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null func) is not a (ref func), in function at index 0");
 }
 
 async function testWasmJSGlobals() {

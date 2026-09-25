@@ -41,12 +41,17 @@ namespace JSC {
 // present) are qualified: "foo" becomes "wasm:foo".
 class WebAssemblyCompileOptions {
 public:
+    // Whether the options bag is read at all. Each field it can carry is behind its own JSC
+    // option, so a caller cannot key this off any one of them.
+    static bool isAnyOptionEnabled();
+
     // Create an instance if `optionsObject` is not a nullptr, or return a `nullopt`.
     static std::optional<WebAssemblyCompileOptions> tryCreate(JSGlobalObject*, JSObject* optionsObject);
     static WebAssemblyCompileOptions esmIntegrationDefaults();
 
     const std::optional<String>& importedStringConstants() const LIFETIME_BOUND { return m_importedStringConstants; }
     const Vector<String>& qualifiedBuiltinSetNames() const LIFETIME_BOUND { return m_qualifiedBuiltinSetNames; }
+    bool eagerValidate() const { return m_eagerValidate; }
 
     // Validate the options in the context of the given module as specified in
     // https://webassembly.github.io/js-string-builtins/js-api/#validate-builtins-and-imported-string-for-a-webassembly-module.
@@ -59,6 +64,7 @@ private:
 
     std::optional<String> m_importedStringConstants;
     Vector<String> m_qualifiedBuiltinSetNames;
+    bool m_eagerValidate { false };
 };
 
 } // namespace JSC

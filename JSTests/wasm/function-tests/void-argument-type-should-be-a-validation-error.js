@@ -17,6 +17,6 @@ function getBinary(params) {
     return builder.WebAssembly().get();
 }
 
-assert.throws(() => new WebAssembly.Module(getBinary(["i32", "void"])), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 15: can't get 1th argument Type");
-assert.throws(() => new WebAssembly.Module(getBinary(["void"])), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 14: can't get 0th argument Type");
-assert.throws(() => new WebAssembly.Module(getBinary(["i32", "void", "i32"])), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 15: can't get 1th argument Type");
+assert.compileError(getBinary(["i32", "void"]), "WebAssembly.Module doesn't parse at byte 15: can't get 1th argument Type");
+assert.compileError(getBinary(["void"]), "WebAssembly.Module doesn't parse at byte 14: can't get 0th argument Type");
+assert.compileError(getBinary(["i32", "void", "i32"]), "WebAssembly.Module doesn't parse at byte 15: can't get 1th argument Type");

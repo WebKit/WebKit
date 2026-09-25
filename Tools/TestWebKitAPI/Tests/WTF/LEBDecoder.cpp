@@ -89,6 +89,13 @@ TEST(WTF, LEBDecoderUInt32)
     testUInt32LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 0, false, 0x0lu, 0lu);
     // Test decode off end of array
     testUInt32LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 2, false, 0x0lu, 0lu);
+    // Test a trailing continuation byte, i.e. the encoding is truncated by the end
+    // of the array with no terminating byte.
+    testUInt32LEBDecode({ 0x80 }, 0, false, 0x0lu, 0lu);
+    testUInt32LEBDecode({ 0xff }, 0, false, 0x0lu, 0lu);
+    testUInt32LEBDecode({ 0x07, 0x80 }, 1, false, 0x0lu, 0lu);
+    testUInt32LEBDecode({ 0x80, 0x80 }, 0, false, 0x0lu, 0lu);
+    testUInt32LEBDecode({ 0xf3, 0x85, 0xff }, 0, false, 0x0lu, 0lu);
     // Test decode overflow
     testUInt32LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x1f }, 0, false, 0x0lu, 0lu);
     testUInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x10 }, 0, false, 0x0lu, 0lu);
