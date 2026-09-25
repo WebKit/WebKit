@@ -30,6 +30,9 @@
 #include <WebCore/NotificationEventType.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <WebCore/SecurityOriginData.h>
+#endif
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
@@ -56,12 +59,20 @@ enum class AdvancedPrivacyProtections : uint16_t;
 
 class ServiceWorkerThread final : public WorkerThread {
 public:
+#if ENABLE(WEBDRIVER_BIDI)
+    using ExecutionReadyCallback = Function<void(ScriptExecutionContextIdentifier, SecurityOriginData&&)>;
+#endif
+
     static Ref<ServiceWorkerThread> create(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
     virtual ~ServiceWorkerThread();
 
     WorkerObjectProxy& NODELETE workerObjectProxy() const;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    void start(Function<void(const String&, bool)>&&, ExecutionReadyCallback&& = { });
+#else
     void start(Function<void(const String&, bool)>&&);
+#endif
 
     void willPostTaskToFireInstallEvent();
     void willPostTaskToFireActivateEvent();

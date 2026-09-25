@@ -30,3 +30,7 @@ WK_EXPORT void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView
 typedef void (*ForceRepaintCallback) (gpointer userData);
 WK_EXPORT void webkitWebViewForceRepaintForTesting(WebKitWebView*, ForceRepaintCallback, gpointer userData);
 WK_EXPORT void webkitSetCachedProcessSuspensionDelayForTesting(double seconds);
+#if ENABLE(WEBDRIVER_BIDI)
+WK_EXPORT bool webkitSetUseSeparateRemoteWorkerProcessForTesting(bool);
+WK_EXPORT bool webkitWebViewTerminateStandaloneSharedWorkerProcessForTesting(WebKitWebView*);
+#endif
