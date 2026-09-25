@@ -157,6 +157,12 @@ public:
     bool setCookieFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>, WebCore::ApplyTrackingPrevention, WebCore::RequiresScriptTrackingPrivacy, const WebCore::Cookie&, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::IsKnownCrossSiteTracker) const;
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
     void deleteCookie(const URL& firstParty, const URL&, const String&, CompletionHandler<void()>&&) const;
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    // FIXME: Remove after rdar://185837942 (month before day), rdar://186224951 (name casing) and
+    // rdar://186225250 (leading byte order mark) are resolved.
+    void repairCookiesFromHTTPResponse(const URL& firstParty, const URL&, const WebCore::SameSiteInfo&, const String& setCookieHeaderValue, WebCore::ThirdPartyCookieBlockingDecision, NOESCAPE const Function<RetainPtr<NSArray>(NSArray *)>& transformCookies) const;
+#endif
 #if !PLATFORM(COCOA)
     void deleteAllCookies(CompletionHandler<void()>&&);
 #endif

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that WebKit's Set-Cookie repair stores nothing for a response whose cookies are blocked, including after a redirect out of a blocked third party.");
+    jsTestIsAsync = true;
+
+    const firstPartyOrigin = "https://127.0.0.1:8443";
+    const thirdPartyOrigin = "https://localhost:8443";
+    const setCookies = "/cookies/resources/set-cookies-needing-repair.py?case=";
+    const thisTest = "/resourceLoadStatistics/blocked-cookies-are-not-repaired.https.html";
+
+    function openIframe(url)
+    {
+        return new Promise(resolve => {
+            const element = document.createElement("iframe");
+            element.onload = resolve;
+            element.src = url;
+            document.body.appendChild(element);
+        });
+    }
+
+    function cookieNamed(name)
+    {
+        return internals.getCookies().find(cookie => cookie.name === name) || null;
+    }
+
+    // Results from before the navigation to the third party travel in the URL, since that
+    // navigation discards this page's output.
+    const results = [];
+    function check(label, passed)
+    {
+        results.push([label, passed]);
+    }
+
+    async function runFirstPartySteps()
+    {
+        // Control: unblocked, the same headers are repaired, so the checks below are not vacuous.
+        await openIframe(firstPartyOrigin + setCookies + "control");
+        check("unblocked control: the date was repaired", cookieNamed("control_date")?.isSession === false);
+        check("unblocked control: the UTF-8 value was repaired", cookieNamed("control_utf8")?.value === "北京");
+
+        await new Promise(resolve => testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, resolve));
+        await new Promise(resolve => testRunner.statisticsUpdateCookieBlocking(resolve));
+
+        await openIframe(thirdPartyOrigin + setCookies + "blocked");
+
+        // Blocking latches for the whole chain, so the first-party hop must store nothing either.
+        await openIframe(thirdPartyOrigin + "/resourceLoadStatistics/resources/redirect.py?redirectTo=" + encodeURIComponent(firstPartyOrigin + setCookies + "latched"));
+        check("redirect out of a blocked third party: no dated cookie stored", !cookieNamed("latched_date"));
+        check("redirect out of a blocked third party: no UTF-8 cookie stored", !cookieNamed("latched_utf8"));
+
+        // The third party's own jar can only be read from a page it is first party for.
+        document.location.href = thirdPartyOrigin + thisTest + "#check=" + encodeURIComponent(JSON.stringify(results));
+    }
+
+    function runThirdPartyCheck()
+    {
+        for (const [label, passed] of JSON.parse(decodeURIComponent(document.location.hash.substring("#check=".length))))
+            passed ? testPassed(label) : testFailed(label);
+        shouldBeNull('cookieNamed("blocked_date")');
+        shouldBeNull('cookieNamed("blocked_utf8")');
+        setEnableFeature(false, () => testRunner.removeAllCookies(finishJSTest));
+    }
+
+    if (document.location.hash.startsWith("#check="))
+        runThirdPartyCheck();
+    else {
+        setEnableFeature(true, () => {
+            if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                testFailed("Localhost was classified as prevalent resource before the test starts.");
+            runFirstPartySteps();
+        });
+    }
+</script>
+</body>
+</html>

@@ -31,6 +31,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSArray;
@@ -86,14 +87,19 @@ protected:
 #endif
 
     bool isAlwaysOnLoggingAllowed() const { return m_isAlwaysOnLoggingAllowed; }
+    bool hasBeenSetToUseStatelessCookieStorage() const { return m_hasBeenSetToUseStatelessCookieStorage; }
+    // The transform installed on the task, kept here because reading it back from the task is SPI.
+    const BlockPtr<NSArray *(NSArray *)>& cookieTransform() const { return m_cookieTransform; }
     virtual NSURLSessionTask* task() const = 0;
     virtual WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const = 0;
 
 private:
     void setCookieTransformForFirstPartyRequest(const WebCore::ResourceRequest&);
     void setCookieTransformForThirdPartyRequest(const WebCore::ResourceRequest&, IsRedirect);
+    void setCookieTransformCallback(NSArray *(^)(NSArray *));
 
     WeakPtr<NetworkSession> m_networkSession;
+    BlockPtr<NSArray *(NSArray *)> m_cookieTransform;
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     bool m_hasBeenSetToAllowOnlyPartitionedCookies { false };

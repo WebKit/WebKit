@@ -1,8 +1,14 @@
 
 PASS ASCII name and utf-8 value
+PASS ASCII name and utf-8 value via document.cookie
 PASS utf-8 name and ASCII value
+PASS utf-8 name and ASCII value via document.cookie
 PASS ASCII name and quoted utf-8 value
+PASS ASCII name and quoted utf-8 value via document.cookie
 PASS utf-8 name and value
+PASS utf-8 name and value via document.cookie
 PASS quoted utf-8 name and value
+PASS quoted utf-8 name and value via document.cookie
 PASS utf-8 name and value, with (invalid) utf-8 attribute
+PASS utf-8 name and value, with (invalid) utf-8 attribute via document.cookie
 
