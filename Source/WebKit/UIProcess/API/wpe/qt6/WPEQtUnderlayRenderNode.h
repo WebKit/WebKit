@@ -27,7 +27,6 @@
 
 #include "WPEQtUnderlayBlitter.h"
 
-#include <QMatrix4x4>
 #include <QRectF>
 #include <QSGRenderNode>
 
@@ -46,9 +45,7 @@ public:
     void setView(WPEQtView*, WPEViewQtQuick*);
     void setRect(const QRectF& rect) { m_rect = rect; }
     QRectF rect() const override { return m_rect; }
-    StateFlags changedStates() const override;
     RenderingFlags flags() const override { return BoundedRectRendering; }
-    void prepare() override;
     void render(const RenderState*) override;
     void releaseResources() override;
     void syncFrame();
@@ -62,5 +59,4 @@ private:
     bool m_frameNeedsAck { false };
     bool m_frameReadyForAck { false };
     QRectF m_rect;
-    QMatrix4x4 m_modelView;
 };

@@ -37,22 +37,6 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
-static QRect wpeQtUnderlayViewportFor(const QMatrix4x4& projectionModelView, const QRectF& rect, const int glViewport[4])
-{
-    auto toWindow = [&](qreal x, qreal y) -> QPointF {
-        const QVector4D clip = projectionModelView * QVector4D(x, y, 0, 1);
-        if (qFuzzyIsNull(clip.w()))
-            return QPointF();
-        // Convert clip coordinates to framebuffer pixels: NDC [-1, 1] -> [0, 1],
-        // then scale and offset by the GL viewport (-1 to 0, 0 to 0.5 etc).
-        return QPointF(glViewport[0] + (clip.x() / clip.w() * 0.5 + 0.5) * glViewport[2], glViewport[1] + (clip.y() / clip.w() * 0.5 + 0.5) * glViewport[3]);
-    };
-    // GL's Y axis is opposite to item coordinates, so normalize the mapped corners.
-    const auto first = toWindow(rect.left(), rect.top());
-    const auto second = toWindow(rect.right(), rect.bottom());
-    return QRect(qRound(qMin(first.x(), second.x())), qRound(qMin(first.y(), second.y())), qRound(qAbs(second.x() - first.x())), qRound(qAbs(second.y() - first.y())));
-}
-
 static WTF::UnixFileDescriptor wpeQtUnderlayCreateReleaseFence(QOpenGLFunctions* gl)
 {
     auto display = eglGetCurrentDisplay();
@@ -105,16 +89,6 @@ void WPEQtUnderlayRenderNode::releaseResources()
     m_qtView = nullptr;
     m_frameNeedsAck = false;
     m_frameReadyForAck = false;
-}
-
-QSGRenderNode::StateFlags WPEQtUnderlayRenderNode::changedStates() const
-{
-    return ViewportState;
-}
-
-void WPEQtUnderlayRenderNode::prepare()
-{
-    m_modelView = matrix() ? *matrix() : QMatrix4x4();
 }
 
 void WPEQtUnderlayRenderNode::syncFrame()
@@ -171,10 +145,10 @@ void WPEQtUnderlayRenderNode::render(const RenderState* state)
     if (!gl)
         return;
 
-    int sceneViewport[4] = { 0, 0, 0, 0 };
-    gl->glGetIntegerv(GL_VIEWPORT, sceneViewport);
-    const auto viewport = wpeQtUnderlayViewportFor(*state->projectionMatrix() * (matrix() ? *matrix() : QMatrix4x4()), m_rect, sceneViewport);
-    if (!m_blitter.draw(viewport.x(), viewport.y(), viewport.width(), viewport.height(), float(inheritedOpacity())))
+    QMatrix4x4 itemToClip = *state->projectionMatrix() * (matrix() ? *matrix() : QMatrix4x4());
+    itemToClip.translate(m_rect.x(), m_rect.y());
+    itemToClip.scale(m_rect.width(), m_rect.height());
+    if (!m_blitter.draw(itemToClip, float(inheritedOpacity())))
         return;
 
     m_releaseFence = wpeQtUnderlayCreateReleaseFence(gl);
