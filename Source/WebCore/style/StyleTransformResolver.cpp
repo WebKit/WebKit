@@ -185,7 +185,8 @@ void TransformResolver::applyMotionPathTransform(const TransformOperationData& t
     auto transformOrigin = computeTransformOrigin(boundingBox).xy();
     auto transformBox = m_style->transformBox();
 
-    auto offsetDistance = evaluate<float>(m_style->offsetDistance(), offsetPath->length(), zoom);
+    auto offsetPathLength = offsetPath->length();
+    auto offsetDistance = evaluate<float>(m_style->offsetDistance(), offsetPathLength, zoom);
     auto offsetAnchor = WTF::switchOn(m_style->offsetAnchor(),
         [&](const Position& position) -> std::optional<FloatPoint> {
             return evaluate<FloatPoint>(position, boundingBox.size(), zoom);
@@ -203,6 +204,7 @@ void TransformResolver::applyMotionPathTransform(const TransformOperationData& t
         transformOrigin,
         transformBox,
         *offsetPath,
+        offsetPathLength,
         offsetAnchor,
         offsetDistance,
         offsetRotate,
