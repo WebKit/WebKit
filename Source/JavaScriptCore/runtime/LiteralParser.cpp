@@ -887,6 +887,62 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::nextMaybeId
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
+ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::nextAfterValue()
+{
+    if constexpr (reviverMode == JSONReviverMode::Enabled)
+        return next();
+    if (m_ptr < m_end) [[likely]] {
+        TokenType type;
+        switch (*m_ptr) {
+        case ',':
+            type = TokComma;
+            break;
+        case '}':
+            type = TokRBrace;
+            break;
+        case ']':
+            type = TokRBracket;
+            break;
+        default:
+            return next();
+        }
+        ++m_ptr;
+#if ASSERT_ENABLED
+        m_currentTokenID++;
+#endif
+        m_currentToken.type = type;
+        return type;
+    }
+    return next();
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::nextString()
+{
+    if constexpr (reviverMode == JSONReviverMode::Enabled)
+        return next();
+    ASSERT(peek() == '"');
+#if ASSERT_ENABLED
+    m_currentTokenID++;
+#endif
+    m_currentToken.type = TokError;
+    return lexString<JSONIdentifierHint::Unknown>(m_currentToken, '"');
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::nextNumber()
+{
+    if constexpr (reviverMode == JSONReviverMode::Enabled)
+        return next();
+    ASSERT(peek() == '-' || isASCIIDigit(peek()));
+#if ASSERT_ENABLED
+    m_currentTokenID++;
+#endif
+    m_currentToken.type = TokError;
+    return lexNumber(m_currentToken);
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::Lexer::consumeColon()
 {
     if constexpr (reviverMode == JSONReviverMode::Enabled)
@@ -1283,27 +1339,27 @@ ALWAYS_INLINE JSValue LiteralParser<CharType, reviverMode>::parsePrimitiveValue(
     switch (m_lexer.currentToken()->type) {
     case TokString: {
         JSString* result = makeJSString(vm, m_lexer.currentToken());
-        m_lexer.next();
+        m_lexer.nextAfterValue();
         return result;
     }
     case TokNumberInt32: {
         JSValue result = jsNumber(m_lexer.currentToken()->int32Token);
-        m_lexer.next();
+        m_lexer.nextAfterValue();
         return result;
     }
     case TokNumber: {
         JSValue result = jsNumber(m_lexer.currentToken()->numberToken);
-        m_lexer.next();
+        m_lexer.nextAfterValue();
         return result;
     }
     case TokNull:
-        m_lexer.next();
+        m_lexer.nextAfterValue();
         return jsNull();
     case TokTrue:
-        m_lexer.next();
+        m_lexer.nextAfterValue();
         return jsBoolean(true);
     case TokFalse:
-        m_lexer.next();
+        m_lexer.nextAfterValue();
         return jsBoolean(false);
     case TokRBracket:
         m_parseErrorMessage = "Unexpected token ']'"_s;
@@ -1470,7 +1526,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
     if (type == TokLBracket) {
         TokenType type = m_lexer.next();
         if (type == TokRBracket) {
-            m_lexer.next();
+            m_lexer.nextAfterValue();
             RELEASE_AND_RETURN(scope, constructEmptyArray(m_globalObject, nullptr));
         }
 
@@ -1512,7 +1568,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 return { };
             }
 
-            m_lexer.next();
+            m_lexer.nextAfterValue();
             break;
         }
 
@@ -1600,12 +1656,35 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 return { };
             }
 
-            type = m_lexer.next();
-            JSValue value;
-            if (type == TokLBrace || type == TokLBracket)
-                value = parseRecursively<parserMode>(vm, stackLimit);
-            else
-                value = parsePrimitiveValue(vm);
+            // Dispatching on the first character skips the generic token dispatch that
+            // parsePrimitiveValue would otherwise repeat on the token type.
+            auto parseValue = [&, &vm = vm] ALWAYS_INLINE_LAMBDA -> JSValue {
+                switch (m_lexer.peek()) {
+                case '"':
+                    if (m_lexer.nextString() == TokString) [[likely]] {
+                        JSString* result = makeJSString(vm, m_lexer.currentToken());
+                        m_lexer.nextAfterValue();
+                        return result;
+                    }
+                    return parsePrimitiveValue(vm);
+                case '-':
+                case '0': case '1': case '2': case '3': case '4':
+                case '5': case '6': case '7': case '8': case '9':
+                    if (m_lexer.nextNumber() == TokNumberInt32) [[likely]] {
+                        JSValue result = jsNumber(m_lexer.currentToken()->int32Token);
+                        m_lexer.nextAfterValue();
+                        return result;
+                    }
+                    return parsePrimitiveValue(vm);
+                default: {
+                    TokenType type = m_lexer.next();
+                    if (type == TokLBrace || type == TokLBracket)
+                        return parseRecursively<parserMode>(vm, stackLimit);
+                    return parsePrimitiveValue(vm);
+                }
+                }
+            };
+            JSValue value = parseValue();
             EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
             if (!value) [[unlikely]]
                 return { };
@@ -1696,7 +1775,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 return { };
             }
 
-            m_lexer.next();
+            m_lexer.nextAfterValue();
             return object;
         }
     }
@@ -1706,7 +1785,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
         return { };
     }
 
-    m_lexer.next();
+    m_lexer.nextAfterValue();
     return object;
 }
 

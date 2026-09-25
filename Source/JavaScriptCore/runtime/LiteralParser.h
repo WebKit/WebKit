@@ -221,7 +221,11 @@ private:
         
         TokenType next();
         TokenType nextMaybeIdentifier();
+        TokenType nextAfterValue();
         bool consumeColon();
+        CharType peek() const { return m_ptr < m_end ? *m_ptr : 0; }
+        TokenType nextString();
+        TokenType nextNumber();
         bool tryConsumeStringEqualTo(std::span<const Latin1Character>);
 
 #if !ASSERT_ENABLED
