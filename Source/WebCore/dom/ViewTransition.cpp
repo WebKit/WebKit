@@ -737,7 +737,8 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
     Ref keyframe = StyleRuleKeyframe::create(protect(capturedElement.oldState.properties)->copyProperties(keyframeProperties));
     keyframe->setKeyText("from"_s);
 
-    Ref keyframes = StyleRuleKeyframes::create(AtomString(makeString("-ua-view-transition-group-anim-"_s, name)));
+    auto keyframesName = StyleRuleKeyframesName::fromString(makeAtomString("-ua-view-transition-group-anim-"_s, name));
+    Ref keyframes = StyleRuleKeyframes::create(WTF::move(keyframesName));
     keyframes->wrapperAppendKeyframe(WTF::move(keyframe));
 
     // Register through the document scope so the keyframes are re-established if the resolver
