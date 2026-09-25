@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="timeout" content="long">
+        <title>Ensuring concurrently gathering connections do not allocate a port per connection</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+function gatherHostEndpoints(test)
+{
+    var pc = new RTCPeerConnection();
+    test.add_cleanup(() => pc.close());
+    pc.createDataChannel("");
+
+    var endpoints = new Set();
+    return new Promise((resolve, reject) => {
+        var timeout = setTimeout(() => {
+            reject("gathering did time out with " + endpoints.size + " endpoints");
+        }, 20000);
+        pc.onicecandidate = (event) => {
+            if (event.candidate === null) {
+                clearTimeout(timeout);
+                resolve(endpoints);
+                return;
+            }
+            var candidate = event.candidate.candidate;
+            var items = candidate.split(" ");
+            // TCP host candidates are all reported on the discard port, so only UDP ones can be counted.
+            if (items[2].toLowerCase() !== "udp" || candidate.indexOf(" typ host") === -1)
+                return;
+            endpoints.add(items[4] + ":" + items[5]);
+        };
+        pc.createOffer().then((offer) => {
+            return pc.setLocalDescription(offer);
+        }).catch(reject);
+    });
+}
+
+function gatherConcurrently(test, count)
+{
+    var connections = [];
+    for (var i = 0; i < count; ++i)
+        connections.push(gatherHostEndpoints(test));
+    return Promise.all(connections).then((results) => {
+        return results.map((endpoints) => endpoints.size);
+    });
+}
+
+promise_test((test) => {
+    // How many endpoints one connection gathers depends on this host's interfaces. This also primes
+    // the network list, the state in which concurrent gathering used to fan out.
+    return gatherConcurrently(test, 1).then((baselineCounts) => {
+        var baseline = baselineCounts[0];
+        assert_greater_than(baseline, 0, "a single connection should gather host candidates");
+
+        // Connections used to allocate a port per concurrently gathering connection, so gathering on
+        // many at once should not allocate more endpoints per connection than gathering on one.
+        var connectionCount = 10;
+        return gatherConcurrently(test, connectionCount).then((counts) => {
+            counts.forEach((count) => {
+                assert_less_than_equal(count, baseline, "gathering on " + connectionCount + " connections at once should not allocate extra ports, but one of them gathered " + count + " endpoints for a baseline of " + baseline);
+            });
+        });
+    });
+}, "Checking concurrently gathering connections do not allocate a port per connection");
+        </script>
+    </body>
+</html>
