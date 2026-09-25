@@ -1644,6 +1644,9 @@ if (APPLE)
         corpse/CorpseClient.h
         corpse/CorpseError.h
         corpse/CorpseExportsTrie.h
+        corpse/CorpseMemory.h
+        corpse/CorpseMemoryPtr.h
+        corpse/CorpseMemorySpan.h
         corpse/CorpseProcess.h
         corpse/CorpseRegion.h
         corpse/CorpseSnapshot.h

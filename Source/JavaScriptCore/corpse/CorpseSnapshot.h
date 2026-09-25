@@ -28,6 +28,7 @@
 #if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #include <JavaScriptCore/CorpseAddress.h>
+#include <JavaScriptCore/CorpseMemory.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <JavaScriptCore/CorpseThread.h>
@@ -73,6 +74,12 @@ public:
     Process* process() const { return m_process.get(); }
     mach_port_t corpsePort() const { return m_corpsePort; }
 
+    Memory& memory() LIFETIME_BOUND
+    {
+        RELEASE_ASSERT(isValid());
+        return m_memory;
+    }
+
     // The threads captured in this corpse, read and cached on the first call.
     const Vector<Thread>& threads();
 
@@ -88,6 +95,7 @@ private:
 
     std::optional<Vector<Thread>> m_threads;
     HashMap<String, std::unique_ptr<Symbol>> m_symbols;
+    Memory m_memory;
 
     Snapshot* m_prev { nullptr }; // Required by DoublyLinkedListNode.
     Snapshot* m_next { nullptr }; // Required by DoublyLinkedListNode.
