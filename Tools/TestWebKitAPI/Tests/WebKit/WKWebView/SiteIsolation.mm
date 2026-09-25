@@ -12205,6 +12205,157 @@ TEST(SiteIsolation, SelectionInCrossOriginIframeIsContainedByContentView)
     // selection loupe/handles are positioned in the wrong coordinate space.
     EXPECT_EQ(webView.get().selectionHighlightView.superview, webView.get().textInputContentView);
 }
+
+TEST(SiteIsolation, SelectionInCrossOriginIframeIsClippedToIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0; font: 50px/60px monospace'>test test test test test test test test test test test test test test test test test test test test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"SelectionHonorsOverflowScrolling"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (CGRectIsNull([webView selectionClipRect]))
+        Util::spinRunLoop();
+    [webView waitForNextPresentationUpdate];
+
+    // The selected text extends below the bottom of the iframe, so the selection must be clipped to
+    // the iframe's bounds (in main-frame coordinates) as it would be for a same-process iframe.
+    EXPECT_GT([[webView objectByEvaluatingJavaScript:@"document.body.scrollHeight" inFrame:childFrame.get()] intValue], 300);
+    auto selectionClipRect = [webView selectionClipRect];
+    EXPECT_EQ(100, selectionClipRect.origin.x);
+    EXPECT_EQ(100, selectionClipRect.origin.y);
+    EXPECT_EQ(400, selectionClipRect.size.width);
+    EXPECT_EQ(300, selectionClipRect.size.height);
+
+    // UIKit clips the highlight to the selection clip rect.
+    CGRect selectionBounds = CGRectNull;
+    for (NSValue *rect in [webView selectionViewRectsInContentCoordinates])
+        selectionBounds = CGRectUnion(selectionBounds, rect.CGRectValue);
+    EXPECT_FALSE(CGRectIsNull(selectionBounds));
+    EXPECT_TRUE(CGRectContainsRect(selectionClipRect, selectionBounds));
+}
+
+TEST(SiteIsolation, SelectionInOverflowScrollerInCrossOriginIframeIsClippedToScroller)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><div id='scroller' style='margin: 20px; width: 200px; height: 100px; overflow: scroll; font: 50px/60px monospace'>test test test test test test test test test test</div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"SelectionHonorsOverflowScrolling"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    [webView objectByEvaluatingJavaScript:@"const text = document.getElementById('scroller').firstChild; getSelection().setBaseAndExtent(text, 0, text, text.length); true" inFrame:childFrame.get()];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:49 inFrame:childFrame.get()])
+        Util::spinRunLoop();
+    [webView waitForNextPresentationUpdate];
+
+    // The selected text overflows the scroller, which is 200x100 at (120, 120) in main-frame
+    // coordinates, so the selection must be clipped to the scroller rather than to the iframe.
+    EXPECT_GT([[webView objectByEvaluatingJavaScript:@"document.getElementById('scroller').scrollHeight" inFrame:childFrame.get()] intValue], 100);
+    auto selectionClipRect = [webView selectionClipRect];
+    EXPECT_EQ(120, selectionClipRect.origin.x);
+    EXPECT_EQ(120, selectionClipRect.origin.y);
+    EXPECT_EQ(200, selectionClipRect.size.width);
+    EXPECT_EQ(100, selectionClipRect.size.height);
+
+    CGRect selectionBounds = CGRectNull;
+    for (NSValue *rect in [webView selectionViewRectsInContentCoordinates])
+        selectionBounds = CGRectUnion(selectionBounds, rect.CGRectValue);
+    EXPECT_FALSE(CGRectIsNull(selectionBounds));
+    EXPECT_TRUE(CGRectContainsRect(selectionClipRect, selectionBounds));
+}
+
+TEST(SiteIsolation, SelectionInSameSiteIframeNestedInCrossOriginIframeIsClippedToInnerIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/child'></iframe></body>"_s } },
+        { "/child"_s, { "<body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 100px; border: none;' src='/grandchild'></iframe></body>"_s } },
+        { "/grandchild"_s, { "<!DOCTYPE html><body style='margin: 0; font: 50px/60px monospace'>test test test test test test test test test test test test test test test test test test test test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"SelectionHonorsOverflowScrolling"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto grandchildFrame = [&] {
+        return [webView mainFrame].childFrames.firstObject.childFrames.firstObject.info;
+    };
+    [webView evaluateJavaScript:@"document.querySelector('iframe').focus()" inFrame:childFrame.get() completionHandler:nil];
+    while (![grandchildFrame() _isFocused])
+        Util::spinRunLoop();
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    while (![webView selectionRangeHasStartOffset:0 endOffset:99 inFrame:grandchildFrame()])
+        Util::spinRunLoop();
+    [webView waitForNextPresentationUpdate];
+
+    CGRect selectionBounds = CGRectNull;
+    for (NSValue *rect in [webView selectionViewRectsInContentCoordinates])
+        selectionBounds = CGRectUnion(selectionBounds, rect.CGRectValue);
+    EXPECT_EQ(150, CGRectGetMinX(selectionBounds));
+    EXPECT_NEAR(150, CGRectGetMinY(selectionBounds), 2);
+
+    // The inner iframe is 200x100 at (150, 150) in main-frame coordinates, and the selected text
+    // extends below it, so the selection must be clipped to the inner iframe rather than the outer one.
+    auto selectionClipRect = [webView selectionClipRect];
+    EXPECT_EQ(150, selectionClipRect.origin.x);
+    EXPECT_EQ(150, selectionClipRect.origin.y);
+    EXPECT_EQ(200, selectionClipRect.size.width);
+    EXPECT_EQ(100, selectionClipRect.size.height);
+}
 #endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 
 #if HAVE(UI_EDIT_MENU_INTERACTION)

@@ -345,6 +345,34 @@ static void convertContentToRootView(const LocalFrameView& view, Vector<Selectio
         geometry.setQuad(view.contentsToRootView(geometry.quad()));
 }
 
+static std::optional<IntRect> overflowClipRectForSelection(const VisibleSelection& selection)
+{
+    auto range = selection.range();
+    if (!range)
+        return std::nullopt;
+
+    CheckedPtr enclosingLayer = computeEnclosingLayer(*range).enclosingLayer;
+    if (!enclosingLayer)
+        return std::nullopt;
+
+    CheckedRef renderer = enclosingLayer->renderer();
+    std::optional<IntRect> clipRect;
+    CheckedPtr block = dynamicDowncast<RenderBlock>(renderer.get());
+    if (!block)
+        block = renderer->containingBlock();
+    for (; block && !is<RenderView>(*block); block = block->containingBlock()) {
+        if (!block->hasNonVisibleOverflow())
+            continue;
+
+        auto blockClipRect = enclosingIntRect(block->localToAbsoluteQuad(FloatQuad { block->overflowClipRect({ }) }).boundingBox());
+        if (clipRect)
+            clipRect->intersect(blockClipRect);
+        else
+            clipRect = blockClipRect;
+    }
+    return clipRect;
+}
+
 void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     getPlatformEditorStateCommon(frame, result);
@@ -466,13 +494,24 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     // the top-level page as well as any CSS transforms on the remote ancestor frames -- so UIKit reads
     // the correct location synchronously without a UI-process round-trip. A plain translation offset
     // could not represent a scale on an ancestor iframe.
-    if (!frame.localMainFrame()) {
+    RefPtr localRootView = frame.rootFrame().view();
+    if (!frame.localMainFrame() && localRootView) {
+        auto frameClipRect = view->convertToRootView(IntRect { { }, view->size() });
+        for (RefPtr ancestor = dynamicDowncast<LocalFrameView>(view->parent()); ancestor; ancestor = dynamicDowncast<LocalFrameView>(ancestor->parent()))
+            frameClipRect.intersect(ancestor->convertToRootView(IntRect { { }, ancestor->size() }));
+        if (auto overflowClipRect = overflowClipRectForSelection(selection))
+            frameClipRect.intersect(view->contentsToRootView(*overflowClipRect));
+        if (visualData.selectionClipRect.isEmpty())
+            visualData.selectionClipRect = frameClipRect;
+        else
+            visualData.selectionClipRect.intersect(frameClipRect);
+
         auto convertRect = [&](IntRect& rect) {
-            rect = roundedIntRect(view->convertToRootViewAcrossIsolatedFrames(FloatRect { rect }));
+            rect = roundedIntRect(localRootView->convertToRootViewAcrossIsolatedFrames(FloatRect { rect }));
         };
         auto convertGeometries = [&](Vector<SelectionGeometry>& geometries) {
             for (auto& geometry : geometries)
-                geometry.setQuad(view->convertToRootViewAcrossIsolatedFrames(geometry.quad()));
+                geometry.setQuad(localRootView->convertToRootViewAcrossIsolatedFrames(geometry.quad()));
         };
         convertRect(visualData.caretRectAtStart);
         convertRect(visualData.caretRectAtEnd);
