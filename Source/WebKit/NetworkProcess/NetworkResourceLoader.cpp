@@ -1947,6 +1947,9 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
         if (newRequest.firstPartyForCookies() != firstPartyForCookiesFromRedirectRequest) {
             auto allowCookieAccess = connection->networkProcess().allowsFirstPartyForCookies(connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
             MESSAGE_CHECK_COMPLETION_BASE(allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow, connection->connection(), completionHandler({ }));
+
+            if (RegistrableDomain { newRequest.firstPartyForCookies() } != RegistrableDomain { firstPartyForCookiesFromRedirectRequest })
+                protectedThis->m_shouldRestartLoad = true;
         }
 
         protectedThis->continueWillSendRequest(WTF::move(newRequest), isAllowedToAskUserForCredentials, WTF::move(completionHandler));
@@ -2053,7 +2056,8 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
             return completionHandler({ });
         }
         LOADER_RELEASE_LOG("continueWillSendRequest: Navigation is not using service workers");
-        m_shouldRestartLoad = !!m_serviceWorkerFetchTask;
+        if (m_serviceWorkerFetchTask)
+            m_shouldRestartLoad = true;
         m_serviceWorkerFetchTask = nullptr;
     }
     if (m_serviceWorkerFetchTask) {

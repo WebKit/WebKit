@@ -34,6 +34,7 @@ enum class WebCore::OriginKeyed : bool;
     WebKit::SafeBrowsingCheckOngoing isSafeBrowsingCheckOngoing;
     RefPtr<WebKit::FrameState> backForwardFrameState;
     WebCore::OriginKeyed isOriginKeyed;
+    std::optional<WebCore::RegistrableDomain> unpartitionedStorageSite;
 }
 
 [CustomHeader] struct WebKit::PolicyDecisionConsoleMessage {

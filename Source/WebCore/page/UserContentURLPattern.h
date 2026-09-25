@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class RegistrableDomain;
+
 class UserContentURLPattern {
 public:
     UserContentURLPattern() = default;
@@ -83,6 +85,8 @@ public:
     WEBCORE_EXPORT bool NODELETE operator==(const UserContentURLPattern& other) const;
 
     static bool matchesPatterns(const URL&, const Vector<String>& allowlist, const Vector<String>& blocklist);
+
+    WEBCORE_EXPORT static std::optional<RegistrableDomain> siteMatchedByPatterns(const Vector<UserContentURLPattern>&);
 
 private:
     WEBCORE_EXPORT Error parse(StringView pattern);
