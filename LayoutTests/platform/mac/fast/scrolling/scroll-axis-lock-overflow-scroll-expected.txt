@@ -7,14 +7,13 @@ PASS scrollElement.scrollTop is 0
 PASS scrollElement.scrollLeft is 0
 PASS getComputedStyle(scrollElement).scrollAxisLock is "none"
 PASS scrollElement.scrollTop is > 0
-FAIL scrollElement.scrollLeft should be > 0. Was 0 (of type number).
+PASS scrollElement.scrollLeft is > 0
 PASS scrollElement.scrollTop is 0
 PASS scrollElement.scrollLeft is 0
 PASS getComputedStyle(scrollElement).scrollAxisLock is "auto"
 PASS scrollElement.scrollTop is > 0
 PASS scrollElement.scrollLeft is 0
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 
