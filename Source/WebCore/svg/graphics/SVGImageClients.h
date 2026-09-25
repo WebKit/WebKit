@@ -80,7 +80,16 @@ private:
         if (!imageObserver)
             return;
 
-        imageObserver->imageFrameAvailable(*image, image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &rect);
+        auto changedRect = rect;
+        if (auto naturalDimensions = image->naturalDimensions(); naturalDimensions.width && naturalDimensions.height) {
+            if (auto containerSize = image->containerSize(); !containerSize.isEmpty()) {
+                FloatRect scaledRect = rect;
+                scaledRect.scale(*naturalDimensions.width / containerSize.width(), *naturalDimensions.height / containerSize.height());
+                changedRect = enclosingIntRect(scaledRect);
+            }
+        }
+
+        imageObserver->imageFrameAvailable(*image, image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &changedRect);
     }
 
     bool scheduleRenderingUpdate() final

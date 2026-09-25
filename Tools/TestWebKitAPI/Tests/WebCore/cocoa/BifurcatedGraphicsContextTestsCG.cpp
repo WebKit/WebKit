@@ -28,14 +28,15 @@
 #if USE(CG)
 
 #include <WebCore/BifurcatedGraphicsContext.h>
+#include <WebCore/BitmapImage.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorderImpl.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/FontSelector.h>
-#include <WebCore/GradientImage.h>
 #include <WebCore/GraphicsContextCG.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/TextRun.h>
 #include <numbers>
 
@@ -114,7 +115,22 @@ TEST(BifurcatedGraphicsContextTests, Text)
     runTest(secondaryContext.takeDisplayList());
 }
 
-TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
+static RefPtr<BitmapImage> createRedImage()
+{
+    auto imageBuffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return nullptr;
+
+    imageBuffer->context().fillRect(FloatRect { 0, 0, 1, 1 }, Color::red);
+
+    RefPtr nativeImage = imageBuffer->copyNativeImage();
+    if (!nativeImage)
+        return nullptr;
+
+    return BitmapImage::create(nativeImage.releaseNonNull());
+}
+
+TEST(BifurcatedGraphicsContextTests, DrawPattern)
 {
     auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
@@ -124,12 +140,13 @@ TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
     GraphicsContextCG secondaryContext(secondaryCGContext.get());
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
-    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0, Color::red });
+    auto redImage = createRedImage();
+    ASSERT_TRUE(redImage);
 
-    auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
+    RefPtr nativeImage = redImage->currentNativeImage(WebCore::ConcreteObjectSize::fixed(FloatSize { 1, 1 }));
+    ASSERT_TRUE(nativeImage);
 
-    ctx.drawTiledImage(gradientImage.get(), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 }, FloatSize { 1, 1 }, Image::RepeatTile, Image::RepeatTile);
+    ctx.drawPattern(*nativeImage, FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 }, AffineTransform { }, FloatPoint { }, FloatSize { });
 
     // The primary context should be red.
     CGContextFlush(primaryCGContext.get());
@@ -146,7 +163,7 @@ TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
     EXPECT_EQ(secondaryData[2], 0);
 }
 
-TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
+TEST(BifurcatedGraphicsContextTests, DrawImage)
 {
     auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
@@ -156,12 +173,10 @@ TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
     GraphicsContextCG secondaryContext(secondaryCGContext.get());
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
-    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0, Color::red });
+    auto redImage = createRedImage();
+    ASSERT_TRUE(redImage);
 
-    auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
-
-    ctx.drawImage(gradientImage.get(), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
+    ctx.drawImage(*redImage, WebCore::ConcreteObjectSize::fixed(FloatSize { 1, 1 }), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
 
     // The primary context should be red.
     CGContextFlush(primaryCGContext.get());

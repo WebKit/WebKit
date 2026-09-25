@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "StyleBackgroundImageSizing.h"
 
-#include "Color.h"
-#include "GeneratedImage.h"
+namespace WebCore::Style {
 
-namespace WebCore {
-
-class FloatSize;
-
-class ColorImageGeneratedImage final : public GeneratedImage {
-public:
-    static Ref<ColorImageGeneratedImage> create(const Color& color, const FloatSize& size)
-    {
-        return adoptRef(*new ColorImageGeneratedImage(color, size));
+ConcreteObjectSize BackgroundImageSizing::resolve(NaturalDimensions naturalDimensions) const
+{
+    switch (m_constraint) {
+    case ObjectSizeNegotiation::SizingConstraint::Contain:
+        return ObjectSizeNegotiation::resolveContainConstraint(naturalDimensions, m_positioningArea, inputs());
+    case ObjectSizeNegotiation::SizingConstraint::Cover:
+        return ObjectSizeNegotiation::resolveCoverConstraint(naturalDimensions, m_positioningArea, inputs());
+    case ObjectSizeNegotiation::SizingConstraint::None:
+        break;
     }
 
-private:
-    ColorImageGeneratedImage(const Color&, const FloatSize&);
+    return ObjectSizeNegotiation::ImageSizingContext::resolve(naturalDimensions);
+}
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }) override;
-    void drawPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) override;
-
-    void dump(WTF::TextStream&) const override;
-
-    Color m_color;
-};
-
-} // namespace WebCore
+} // namespace WebCore::Style

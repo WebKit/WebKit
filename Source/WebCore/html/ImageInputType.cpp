@@ -26,6 +26,7 @@
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "DOMFormData.h"
+#include "DefaultSizing.h"
 #include "ElementInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
@@ -186,8 +187,10 @@ unsigned ImageInputType::height() const
 
     // If the image is available, use its height.
     RefPtr imageLoader = element->imageLoader();
-    if (imageLoader && imageLoader->image())
-        return protect(imageLoader->image())->imageSizeForRenderer(renderer.get(), 1).height().toUnsigned();
+    if (imageLoader && imageLoader->image()) {
+        if (RefPtr image = protect(imageLoader->image())->image())
+            return LayoutUnit(DefaultSizing { }.resolve(image->naturalDimensions()).size().height()).toUnsigned();
+    }
 
     return 0;
 }
@@ -209,8 +212,10 @@ unsigned ImageInputType::width() const
 
     // If the image is available, use its width.
     RefPtr imageLoader = element->imageLoader();
-    if (imageLoader && imageLoader->image())
-        return protect(imageLoader->image())->imageSizeForRenderer(renderer.get(), 1).width().toUnsigned();
+    if (imageLoader && imageLoader->image()) {
+        if (RefPtr image = protect(imageLoader->image())->image())
+            return LayoutUnit(DefaultSizing { }.resolve(image->naturalDimensions()).size().width()).toUnsigned();
+    }
 
     return 0;
 }

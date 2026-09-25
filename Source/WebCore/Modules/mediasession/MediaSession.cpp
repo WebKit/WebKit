@@ -612,8 +612,9 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
     }
 
     if (RefPtr metadataWithImage = m_metadata && m_metadata->artworkImage() ? m_metadata : (m_defaultMetadata && m_defaultMetadata->artworkImage() ? m_defaultMetadata : nullptr)) {
-        ASSERT(metadataWithImage->artworkImage()->data(), "An image must always have associated data");
-        info.metadata.artwork = { { metadataWithImage->artworkSrc(), protect(metadataWithImage->artworkImage())->mimeType(), metadataWithImage->artworkImage() } };
+        auto& artworkImage = *metadataWithImage->artworkImage();
+        ASSERT(artworkImage.image->data(), "An image must always have associated data");
+        info.metadata.artwork = { { metadataWithImage->artworkSrc(), protect(artworkImage.image)->mimeType(), metadataWithImage->artworkImage() } };
     }
     if (m_metadata) {
         info.metadata.title = m_metadata->title();

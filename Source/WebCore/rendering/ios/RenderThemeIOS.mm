@@ -1440,9 +1440,14 @@ String RenderThemeIOS::extraDefaultStyleSheet()
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintSystemPreviewBadge(Image& image, ConcreteObjectSize concreteObjectSize, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    paintInfo.context().drawSystemImage(ARKitBadgeSystemImage::create(image), rect);
+    RefPtr nativeImage = image.nativeImage(concreteObjectSize);
+    if (!nativeImage) {
+        paintSystemPreviewBadge(paintInfo, rect);
+        return;
+    }
+    paintInfo.context().drawSystemImage(ARKitBadgeSystemImage::create(nativeImage.releaseNonNull()), rect);
 }
 
 void RenderThemeIOS::paintSystemPreviewBadge(const PaintInfo& paintInfo, const FloatRect& rect)

@@ -75,12 +75,12 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize)
 
 static float maximumAllowedDragImageArea = 600 * 1024;
 
-DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation, GraphicsClient* client, float scale)
+DragImageRef createDragImageFromImage(Image* image, ConcreteObjectSize concreteObjectSize, ImageOrientation orientation, GraphicsClient* client, float scale)
 {
     if (!image)
         return nil;
 
-    auto imageSize = image->size();
+    auto imageSize = concreteObjectSize.size();
     if (imageSize.isEmpty())
         return nil;
 
@@ -97,7 +97,8 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
 
     buffer->context().translate(0, imageSize.height());
     buffer->context().scale({ adjustedImageScale, -adjustedImageScale });
-    buffer->context().drawImage(*image, FloatPoint { }, { orientation });
+    auto imageRect = FloatRect { { }, concreteObjectSize.size() };
+    buffer->context().drawImage(*image, concreteObjectSize, imageRect, imageRect, { orientation });
 
     RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
     if (!nativeImage)
@@ -201,7 +202,7 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
     UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
-        context.drawImage(image, FloatPoint());
+        context.drawBitmapImage(image, FloatPoint::zero());
     }];
 
     return finalImage.CGImage;
@@ -243,7 +244,7 @@ RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
     return nullptr;
 }
 
-RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientation, GraphicsClient*, float)
+RetainPtr<CGImageRef> createDragImageFromImage(Image*, ConcreteObjectSize, ImageOrientation, GraphicsClient*, float)
 {
     return nullptr;
 }

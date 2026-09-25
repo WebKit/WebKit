@@ -89,7 +89,7 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
     return dissolvedImage;
 }
 
-RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orientation, GraphicsClient*, float)
+RetainPtr<NSImage> createDragImageFromImage(Image* image, ConcreteObjectSize concreteObjectSize, ImageOrientation orientation, GraphicsClient*, float)
 {
     if (auto* bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         if (orientation == ImageOrientation::Orientation::FromImage)
@@ -97,7 +97,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
 
         if (orientation != ImageOrientation::Orientation::None) {
             // Construct a correctly-rotated copy of the image to use as the drag image.
-            FloatSize imageSize = image->size(orientation);
+            FloatSize imageSize = bitmapImage->size(orientation);
             RetainPtr<NSImage> rotatedDragImage = adoptNS([[NSImage alloc] initWithSize:(NSSize)(imageSize)]);
             [rotatedDragImage lockFocus];
 
@@ -118,7 +118,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
             [cocoaTransform concat];
 
             FloatRect imageRect(FloatPoint(), imageSize);
-            [image->adapter().snapshotNSImage() drawInRect:imageRect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
+            [image->adapter().snapshotNSImage(concreteObjectSize) drawInRect:imageRect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
 
             [rotatedDragImage unlockFocus];
 
@@ -126,9 +126,8 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
         }
     }
 
-    FloatSize imageSize = image->size();
-    auto dragImage = image->adapter().snapshotNSImage();
-    [dragImage setSize:(NSSize)imageSize];
+    auto dragImage = image->adapter().snapshotNSImage(concreteObjectSize);
+    [dragImage setSize:(NSSize)concreteObjectSize.size()];
     return dragImage;
 }
     

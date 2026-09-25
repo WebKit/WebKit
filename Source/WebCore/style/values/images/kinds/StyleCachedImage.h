@@ -29,6 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -48,62 +49,103 @@ class CachedImage final : public Image {
 public:
     static Ref<CachedImage> create(URL&&, Ref<CSSImageValue>&&, float scaleFactor = 1);
     static Ref<CachedImage> create(const URL&, const Ref<CSSImageValue>&, float scaleFactor = 1);
-    static Ref<CachedImage> create(WebCore::CachedImage&, float scaleFactor = 1);
+    static Ref<CachedImage> create(WebCore::CachedImage&, WTF::URL&& authoredURL, float scaleFactor = 1);
     static Ref<CachedImage> copyOverridingScaleFactor(CachedImage&, float scaleFactor);
     virtual ~CachedImage();
 
     bool operator==(const Image&) const final;
     bool equals(const CachedImage&) const;
 
-    WebCore::CachedImage* NODELETE cachedImage() const final;
+    const CachedImage* cachedImage() const final { return m_cachedImage ? this : nullptr; }
+
+    WebCore::CachedImage* NODELETE resource() const;
+
+    bool hasDecodedImage() const final;
+    RefPtr<NativeImage> nativeImage(const RenderElement&, ConcreteObjectSize, const ColorSpace&) const final;
+    std::optional<IntPoint> hotSpot() const final;
+
+    bool isOpaqueBitmap() const;
+
+    bool isTransparentBitmap() const;
+
+    bool isSVGImage() const final;
+    bool hasNothingToDraw(const RenderElement&) const final;
 
     WrappedImagePtr data() const final { return m_cachedImage.get(); }
 
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 
-    bool canRender(const RenderElement*, float multiplier) const final;
+    bool canRender(const RenderElement&, float multiplier) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    bool isLoaded(const RenderElement*) const final;
+    bool isLoaded(const RenderElement&) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
-    bool imageHasRelativeWidth() const final;
-    bool imageHasRelativeHeight() const final;
-    bool imageHasNaturalAspectRatio() const final;
-    void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
-    bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) final;
+    NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
+    WTF::String accessibilityDescription() const final;
+
+    bool isAnimated() const final;
+    void stopAnimation() final;
+    void resetAnimation() final;
+
+    ImageDrawingExtras::IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio(const RenderElement&) const;
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
     bool hasImage() const final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool currentFrameIsComplete(const RenderElement*) const final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions) const final;
+
+    ImageDrawResult drawInOwnSpace(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) const;
+
+    ConcreteObjectSize concreteSizeToDrawAt(const RenderElement&, ConcreteObjectSize laidOut) const;
+
+    Ref<WebCore::Image> decodedImage() const;
+    bool currentFrameIsComplete() const final;
     float imageScaleFactor() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
+    bool isOriginClean(Document&) const final;
     bool usesDataProtocol() const final;
 
     URL url() const final;
 
 private:
+    NaturalDimensions tileNaturalDimensions(const RenderElement&) const;
+    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const final;
+    RefPtr<WebCore::Image> resolvedImage() const;
+    WebCore::ImageOrientation orientationForRenderer(const RenderElement&) const;
+    bool allowsOrientationOverride() const;
+
+    struct ReferencedSVGResource {
+        SingleThreadWeakPtr<RenderSVGResourceContainer> resource;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> legacyResource;
+
+        explicit operator bool() const { return resource || legacyResource; }
+    };
+    ReferencedSVGResource referencedSVGResource(const RenderElement&) const;
+    ImageDrawResult drawSVGResource(GraphicsContext&, const ReferencedSVGResource&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) const;
+    ImageDrawResult drawSVGResourceAsPattern(GraphicsContext&, const ReferencedSVGResource&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) const;
+
     CachedImage(URL&&, Ref<CSSImageValue>&&, float);
 
     Vector<CSS::ParamFunction> urlLinkParameters(const CSSParserContext&, StringView fragment) const;
 
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
-    LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
-    RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
-    bool isRenderSVGResource(const RenderElement*) const;
+    LegacyRenderSVGResourceContainer* uncheckedLegacyRenderSVGResource(TreeScope&, const AtomString& fragment) const;
+    LegacyRenderSVGResourceContainer* uncheckedLegacyRenderSVGResource(const RenderElement&) const;
+    LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement&) const;
+    RenderSVGResourceContainer* renderSVGResource(const RenderElement&) const;
+    bool isRenderSVGResource(const RenderElement&) const;
 
     URL m_url;
+    WTF::URL m_authoredURL;
     const Ref<CSSImageValue> m_cssValue;
     bool m_isPending { true };
     mutable float m_scaleFactor { 1 };
     mutable CachedResourceHandle<WebCore::CachedImage> m_cachedImage;
-    mutable std::optional<bool> m_isRenderSVGResource;
-    FloatSize m_containerSize;
+    enum class ResourceType : uint8_t { Unknown, SVGResource, LegacySVGResource, ResolvedImage };
+    mutable ResourceType m_resourceType { ResourceType::Unknown };
 };
 
 } // namespace Style

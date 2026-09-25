@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
+#include "DefaultSizing.h"
 #include "Editor.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlinesLight.h"
@@ -47,6 +48,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "ImageOrientation.h"
 #include "JSRequestPriority.h"
 #include "LazyLoadElementObserver.h"
 #include "LocalFrameView.h"
@@ -56,17 +58,21 @@
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "NodeTraversal.h"
+#include "ObjectSizeNegotiation.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
+#include "RenderImageResource.h"
 #include "RenderView.h"
 #include "RequestPriority.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SizesAttributeParser.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImageOrientation.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include "DocumentPage.h"
@@ -669,12 +675,24 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
     m_pictureElement = pictureElement;
 }
     
+static FloatSize intrinsicSizeRespectingDefaultObjectSize(const CachedImage& image, const RenderElement* renderer, float density)
+{
+    if (!image.hasImage())
+        return { };
+
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
+    auto naturalDimensions = renderImage ? protect(renderImage->imageResource())->naturalDimensions()
+        : image.naturalDimensions(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+
+    return DefaultSizing { std::nullopt, density }.resolve(naturalDimensions).size();
+}
+
 LayoutSize HTMLImageElement::naturalSize() const
 {
     RefPtr image = m_imageLoader->image();
     if (!image)
         return { };
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio);
+    return LayoutSize(intrinsicSizeRespectingDefaultObjectSize(*image, protect(renderer()).get(), m_imageDevicePixelRatio));
 }
 
 unsigned HTMLImageElement::width()
@@ -718,6 +736,26 @@ unsigned HTMLImageElement::height()
     LayoutRect contentRect = box->contentBoxRect();
     return Style::unapplyingZoom<LayoutUnit>(contentRect.height(), *box).round();
 }
+
+ImageRequestState HTMLImageElement::currentRequestState() const
+{
+    return m_imageLoader->currentRequestState();
+}
+
+RefPtr<Image> HTMLImageElement::sourceImage() const
+{
+    RefPtr cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return nullptr;
+    return cachedImage->image();
+}
+
+bool HTMLImageElement::hasSourceImage() const
+{
+    return !!sourceImage();
+}
+
+
 
 unsigned HTMLImageElement::naturalWidth() const
 {
@@ -916,6 +954,17 @@ bool HTMLImageElement::allowsOrientationOverride() const
     if (auto* cachedImage = this->cachedImage())
         return cachedImage->allowsOrientationOverride();
     return true;
+}
+
+ImageOrientation HTMLImageElement::orientationForSourceImage()
+{
+    if (!allowsOrientationOverride())
+        return ImageOrientation::Orientation::FromImage;
+    if (CheckedPtr renderer = this->renderer())
+        return Style::toPlatform(renderer->style().imageOrientation()).orientation();
+    if (CheckedPtr computedStyle = this->computedStyle())
+        return Style::toPlatform(computedStyle->imageOrientation()).orientation();
+    return ImageOrientation::Orientation::FromImage;
 }
 
 Image* HTMLImageElement::image() const

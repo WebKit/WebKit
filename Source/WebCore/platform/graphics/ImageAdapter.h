@@ -44,7 +44,9 @@ typedef SIZE* LPSIZE;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
+#include <WebCore/ImageDrawingExtras.h>
 #include <WebCore/NativeImage.h>
+#include <WebCore/ObjectSizeNegotiation.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -75,12 +77,12 @@ public:
 #endif
 
 #if USE(APPKIT)
-    WEBCORE_EXPORT NSImage *nsImage();
-    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage();
+    WEBCORE_EXPORT NSImage *nsImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
+    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT CFDataRef tiffRepresentation();
+    WEBCORE_EXPORT CFDataRef tiffRepresentation(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -88,8 +90,8 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT bool getHBITMAP(HBITMAP);
-    WEBCORE_EXPORT bool getHBITMAPOfSize(HBITMAP, const IntSize*);
+    WEBCORE_EXPORT bool getHBITMAP(HBITMAP, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
+    WEBCORE_EXPORT bool getHBITMAPOfSize(HBITMAP, const IntSize*, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
 #endif
     void invalidate();
 
@@ -100,16 +102,28 @@ public:
 private:
     Image& image() const { return m_image; }
 
-    RefPtr<NativeImage> nativeImageOfSize(const IntSize&);
-    Vector<Ref<NativeImage>> allNativeImages();
+    RefPtr<NativeImage> nativeImageOfSize(const IntSize&, ConcreteObjectSize, const ImageDrawingExtras*);
+    Vector<Ref<NativeImage>> allNativeImages(ConcreteObjectSize, const ImageDrawingExtras*);
+
+#if USE(CG)
+    struct RasterizationKey {
+        ConcreteObjectSize concreteObjectSize;
+        std::unique_ptr<ImageDrawingExtras> extras;
+
+        RasterizationKey(ConcreteObjectSize, const ImageDrawingExtras*);
+        bool matches(ConcreteObjectSize, const ImageDrawingExtras*) const;
+    };
+#endif
 
     WeakRef<Image> m_image;
 
 #if USE(APPKIT)
-    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of all the frames. Only built lazily if someone actually queries for one.
+    mutable RetainPtr<NSImage> m_nsImage;
+    mutable std::optional<RasterizationKey> m_nsImageKey;
 #endif
 #if USE(CG)
-    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
+    mutable RetainPtr<CFDataRef> m_tiffRep;
+    mutable std::optional<RasterizationKey> m_tiffRepKey;
 #endif
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     mutable RetainPtr<NSAdaptiveImageGlyph> m_multiRepHEIC;

@@ -41,6 +41,7 @@
 #import <WebCore/BoundaryPointInlines.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/ContainerNodeInlines.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/DocumentPage.h>
 #import <WebCore/DocumentView.h>
 #import <WebCore/DragImage.h>
@@ -647,10 +648,12 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* renderer = protect(core(self))->renderer();
     if (!is<WebCore::RenderImage>(renderer))
         return nil;
-    RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    auto& renderImage = downcast<WebCore::RenderImage>(*renderer);
+    RefPtr cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(renderer)->adapter().nsImage();
+    RefPtr image = cachedImage->image();
+    return image->adapter().nsImage(WebCore::DefaultSizing { renderImage.usedImageSize() }.resolve(image->naturalDimensions()));
 }
 
 #endif
@@ -675,10 +678,12 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* renderer = protect(core(self))->renderer();
     if (!is<WebCore::RenderImage>(renderer))
         return nil;
-    RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    auto& renderImage = downcast<WebCore::RenderImage>(*renderer);
+    RefPtr cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->adapter().tiffRepresentation();
+    RefPtr image = cachedImage->image();
+    return (__bridge NSData *)image->adapter().tiffRepresentation(WebCore::DefaultSizing { renderImage.usedImageSize() }.resolve(image->naturalDimensions()));
 }
 
 #endif

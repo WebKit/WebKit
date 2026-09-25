@@ -28,6 +28,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/ObjectSizeNegotiation.h>
 #include <WebCore/Path.h>
 #include <WebCore/TextFlags.h>
 #include <WebCore/TextIndicator.h>
@@ -88,7 +89,7 @@ DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
 DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef, float deviceScaleFactor);
 DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
+DragImageRef createDragImageFromImage(Image*, ConcreteObjectSize, ImageOrientation, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
 struct DragImageData {

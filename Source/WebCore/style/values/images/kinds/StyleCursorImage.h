@@ -50,13 +50,12 @@ public:
 
     bool usesDataProtocol() const final;
 
-    std::optional<HotSpot> hotSpot() const { return m_hotSpot; }
+    std::optional<HotSpot> specifiedHotSpot() const { return m_hotSpot; }
 
 private:
     explicit CursorImage(const Ref<Image>&, std::optional<HotSpot>, const URL&);
     explicit CursorImage(Ref<Image>&&, std::optional<HotSpot>, URL&&);
 
-    void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& = WTF::URL()) final;
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     ImageWithScale selectBestFitImage(const Document&) final;

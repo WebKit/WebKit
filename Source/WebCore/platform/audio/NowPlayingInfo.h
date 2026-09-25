@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <WebCore/Image.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/MediaUniqueIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformMediaSessionTypes.h>
+#include <WebCore/SizedImage.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 struct NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<Image> image;
+    std::optional<SizedImage> image;
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {

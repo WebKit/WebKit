@@ -95,12 +95,7 @@ bool ShapeOutside::ShapeAndShapeBox::operator==(const ShapeAndShapeBox&) const =
 
 bool ShapeOutside::Image::isValid() const
 {
-    Ref styleImage = image.value;
-    if (styleImage->hasCachedImage()) {
-        RefPtr cachedImage = styleImage->cachedImage();
-        return cachedImage && cachedImage->hasImage();
-    }
-    return styleImage->isGeneratedImage();
+    return protect(image.value)->hasDecodedImage();
 }
 
 // MARK: - Conversion

@@ -57,11 +57,16 @@ RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
 std::optional<Ref<BitmapImage>> BitmapImage::create(RefPtr<ShareableBitmap>&& bitmap)
 {
     if (!bitmap)
-        return std::nullopt;
+        return BitmapImage::create();
     RefPtr image = bitmap->createImage();
     if (!image)
         return std::nullopt;
     return image.releaseNonNull();
+}
+
+RefPtr<ShareableBitmap> BitmapImage::toShareableBitmap() const
+{
+    return Image::toShareableBitmap(ConcreteObjectSize::fixed(size()));
 }
 
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
@@ -103,7 +108,7 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
     invalidateAdapter();
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     if (destinationRect.isEmpty() || sourceRect.isEmpty())
         return ImageDrawResult::DidNothing;
@@ -170,7 +175,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     return ImageDrawResult::DidDraw;
 }
 
-void BitmapImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (tileRect.isEmpty())
         return;
@@ -178,16 +183,16 @@ void BitmapImage::drawPattern(GraphicsContext& context, const FloatRect& destina
     auto headroom = options.headroom();
     if (headroom == Headroom::FromImage && hasHDRContentForTesting())
         fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
-    else if (context.drawLuminanceMask())
+    else if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options);
     else
-        Image::drawPattern(context, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+        Image::drawPattern(context, concreteObjectSize, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage }, extras);
 }
 
 void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     ASSERT(!tileRect.isEmpty());
-    ASSERT(context.drawLuminanceMask());
+    ASSERT(options.drawLuminanceMask() == DrawLuminanceMask::Yes);
 
     auto buffer = context.createImageBuffer(expandedIntSize(tileRect.size()));
     if (!buffer)
@@ -197,12 +202,11 @@ void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const Float
     {
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
         ImageObserverDisableScope imageObserverDisabler(*this);
-        draw(buffer->context(), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
+        draw(buffer->context(), ConcreteObjectSize::fixed(bufferRect.size()), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
     }
 
     buffer->convertToLuminanceMask();
 
-    context.setDrawLuminanceMask(false);
     context.drawPattern(*buffer, destinationRect, bufferRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 

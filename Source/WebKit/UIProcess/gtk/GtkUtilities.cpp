@@ -228,11 +228,11 @@ GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOperation> coreAc
 
 GRefPtr<GdkPixbuf> selectionDataImageAsGdkPixbuf(const SelectionData& selectionData)
 {
-    auto image = selectionData.image();
+    auto& image = selectionData.image();
     if (!image)
         return nullptr;
 
-    RefPtr nativeImage = image->currentNativeImage();
+    RefPtr nativeImage = image->image->currentNativeImage(image->concreteObjectSize);
     if (!nativeImage)
         return nullptr;
 

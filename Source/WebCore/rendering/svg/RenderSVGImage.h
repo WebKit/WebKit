@@ -45,6 +45,8 @@ public:
     const RenderImageResource& imageResource() const { return m_imageResource; }
 
     bool updateImageViewport();
+    IntSize imageContainerSize() const;
+    std::optional<FloatSize> usedImageSize() const final;
 
     bool isObjectBoundingBoxValid() const { return !m_objectBoundingBox.isEmpty(); }
 
@@ -70,7 +72,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     void paintForeground(PaintInfo&, const LayoutPoint&);
-    ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&, const FloatRect&);
+    ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect& destination, const FloatRect& source, FloatSize imageRenderingSize);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 

@@ -29,10 +29,10 @@
 #include "config.h"
 #include "FrameConsoleClient.h"
 
-#include "CachedImage.h"
 #include "CanvasRenderingContext2D.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DefaultSizing.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
@@ -379,12 +379,18 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                 // Only try to do something special for subclasses of Node if they're detached from the DOM tree.
                 if (!node->document().contains(*node)) {
                     auto snapshotImageElement = [&snapshot] (HTMLImageElement& imageElement) {
-                        if (RefPtr cachedImage = imageElement.cachedImage()) {
-                            if (RefPtr image = cachedImage->image(); image && image != &Image::nullImage()) {
-                                snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
-                                snapshot->context().drawImage(*image, FloatPoint(0, 0));
-                            }
-                        }
+                        RefPtr image = imageElement.sourceImage();
+                        if (!image)
+                            return;
+                        RefPtr nativeImage = image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions()));
+                        if (!nativeImage)
+                            return;
+
+                        auto imageRect = FloatRect { { }, FloatSize { nativeImage->size() } };
+                        snapshot = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+                        if (!snapshot)
+                            return;
+                        snapshot->context().drawNativeImage(*nativeImage, imageRect, imageRect);
                     };
 
                     if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(node))

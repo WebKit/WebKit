@@ -71,6 +71,7 @@
 #include "DOMStringList.h"
 #include "DOMURL.h"
 #include "DOMWrapperWorld.h"
+#include "DefaultSizing.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DisabledAdaptations.h"
@@ -8382,7 +8383,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             return;
 
         auto promise = std::exchange(protectedThis->m_artworkImagePromise, { });
-        RefPtr nativeImage = image ? image->nativeImage() : nullptr;
+        RefPtr nativeImage = image ? image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions())) : nullptr;
         if (!nativeImage) {
             promise->reject(Exception { ExceptionCode::InvalidAccessError, "No image retrieved."_s });
             return;

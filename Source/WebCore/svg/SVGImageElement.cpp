@@ -25,8 +25,10 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "HTMLParserIdioms.h"
+#include "ImageOrientation.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
@@ -71,6 +73,31 @@ CachedImage* SVGImageElement::cachedImage() const
 {
     return m_imageLoader->image();
 }
+
+ImageRequestState SVGImageElement::currentRequestState() const
+{
+    return m_imageLoader->currentRequestState();
+}
+
+RefPtr<Image> SVGImageElement::sourceImage() const
+{
+    RefPtr cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return nullptr;
+    return cachedImage->image();
+}
+
+ImageOrientation SVGImageElement::orientationForSourceImage()
+{
+    return ImageOrientation::Orientation::FromImage;
+}
+
+bool SVGImageElement::hasSourceImage() const
+{
+    return !!sourceImage();
+}
+
+
 
 bool SVGImageElement::renderingTaintsOrigin() const
 {

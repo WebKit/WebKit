@@ -45,27 +45,27 @@ void ImageAdapter::invalidate()
 }
 #endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
 
-RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size)
+RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size, ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
     unsigned count = protect(image())->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        RefPtr nativeImage = protect(image())->nativeImageAtIndex(i);
+        RefPtr nativeImage = protect(image())->nativeImageAtIndex(i, concreteObjectSize, extras);
         if (nativeImage && nativeImage->size() == size)
             return nativeImage;
     }
 
     // Fallback to the first frame image if we can't find the right size
-    return protect(image())->nativeImageAtIndex(0);
+    return protect(image())->nativeImageAtIndex(0, concreteObjectSize, extras);
 }
 
-Vector<Ref<NativeImage>> ImageAdapter::allNativeImages()
+Vector<Ref<NativeImage>> ImageAdapter::allNativeImages(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
     Vector<Ref<NativeImage>> nativeImages;
     unsigned count = protect(image())->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        if (RefPtr nativeImage = protect(image())->nativeImageAtIndex(i))
+        if (RefPtr nativeImage = protect(image())->nativeImageAtIndex(i, concreteObjectSize, extras))
             nativeImages.append(nativeImage.releaseNonNull());
     }
 

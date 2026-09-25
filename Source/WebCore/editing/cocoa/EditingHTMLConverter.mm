@@ -38,6 +38,7 @@
 #import "ComposedTreeAncestorIterator.h"
 #import "ComposedTreeIterator.h"
 #import "ContainerNodeInlines.h"
+#import "DefaultSizing.h"
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "DocumentPage.h"
@@ -147,7 +148,8 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& el
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer)) {
         RefPtr image = renderImage->cachedImage();
         if (image && !image->errorOccurred()) {
-            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)protect(protect(image->imageForRenderer(renderer))->adapter().tiffRepresentation()).get()]);
+            RefPtr sourceImage = image->image();
+            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)protect(sourceImage->adapter().tiffRepresentation(DefaultSizing { renderImage->usedImageSize() }.resolve(sourceImage->naturalDimensions()))).get()]);
             [wrapper setPreferredFilename:@"image.tiff"];
             return wrapper;
         }

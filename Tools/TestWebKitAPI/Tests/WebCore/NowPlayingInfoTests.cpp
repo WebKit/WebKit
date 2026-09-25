@@ -33,7 +33,7 @@ static void testEmptyArtwork(const WebCore::NowPlayingInfoArtwork& artwork)
 {
     EXPECT_TRUE(artwork.src.isEmpty());
     EXPECT_TRUE(artwork.mimeType.isEmpty());
-    EXPECT_EQ(nullptr, artwork.image.get());
+    EXPECT_FALSE(artwork.image.has_value());
 }
 
 TEST(NowPlayingInfoArtwork, DefaultConstruction)
@@ -45,7 +45,7 @@ TEST(NowPlayingInfoArtwork, DefaultConstruction)
 
 TEST(NowPlayingInfoArtwork, ValueConstruction)
 {
-    WebCore::NowPlayingInfoArtwork test { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
+    WebCore::NowPlayingInfoArtwork test { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, std::nullopt };
 
     EXPECT_EQ("http://artwork.com/how_so_pretty.jpeg"_s, test.src);
     EXPECT_EQ("image/jpeg"_s, test.mimeType);
@@ -53,8 +53,8 @@ TEST(NowPlayingInfoArtwork, ValueConstruction)
 
 TEST(NowPlayingInfoArtwork, OperatorEqual)
 {
-    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
-    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
+    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, std::nullopt };
+    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, std::nullopt };
 
     EXPECT_TRUE(test1 == test2);
     EXPECT_FALSE(test1 != test2);
@@ -62,8 +62,8 @@ TEST(NowPlayingInfoArtwork, OperatorEqual)
 
 TEST(NowPlayingInfoArtwork, OperatorDifferent)
 {
-    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
-    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_visually_challenging.png"_s, "image/png"_s, nullptr };
+    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, std::nullopt };
+    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_visually_challenging.png"_s, "image/png"_s, std::nullopt };
 
     EXPECT_FALSE(test1 == test2);
     EXPECT_TRUE(test1 != test2);

@@ -51,7 +51,7 @@ RefPtr<NativeImage> ImageAdapter::nativeImageOfHBITMAP(HBITMAP bmp)
     return NativeImage::create(WTF::move(surface));
 }
 
-bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
+bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size, ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
     ASSERT(bmp);
 
@@ -69,17 +69,16 @@ bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
 
     GraphicsContextCairo gc(platformImage.get());
 
-    auto imageSize = image().size();
     auto destinationRect = FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight);
 
-    if (auto nativeImage = size ? nativeImageOfSize(*size) : nullptr) {
+    if (auto nativeImage = size ? nativeImageOfSize(*size, concreteObjectSize, extras) : nullptr) {
         auto sourceRect = FloatRect { { }, *size };
         gc.drawNativeImage(*nativeImage, destinationRect, sourceRect, { CompositeOperator::Copy });
         return true;
     }
 
-    auto sourceRect = FloatRect { { }, imageSize };
-    gc.drawImage(image(), destinationRect, sourceRect, { CompositeOperator::Copy });
+    auto sourceRect = FloatRect { { }, concreteObjectSize.size() };
+    gc.drawImage(image(), concreteObjectSize, destinationRect, sourceRect, { CompositeOperator::Copy }, extras);
     return true;
 }
 

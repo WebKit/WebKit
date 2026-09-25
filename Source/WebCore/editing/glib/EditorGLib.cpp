@@ -30,6 +30,7 @@
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(HAIKU)
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
+#include "DefaultSizing.h"
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "FrameDestructionObserverInlines.h"
@@ -86,27 +87,32 @@ static String elementURL(Element& element)
     return nullString();
 }
 
-static bool getImageForElement(Element& element, RefPtr<Image>& image)
+static std::optional<SizedImage> getImageForElement(Element& element)
 {
     auto* renderer = element.renderer();
     if (!is<RenderImage>(renderer))
-        return false;
+        return std::nullopt;
 
-    CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
+    auto& renderImage = downcast<RenderImage>(*renderer);
+    CachedImage* cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
-        return false;
+        return std::nullopt;
 
-    image = cachedImage->imageForRenderer(renderer);
-    return image;
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return std::nullopt;
+
+    auto concreteObjectSize = DefaultSizing { renderImage.usedImageSize() }.resolve(image->naturalDimensions());
+    return SizedImage { image.releaseNonNull(), concreteObjectSize };
 }
 
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, const String& title)
 {
     PasteboardImage pasteboardImage;
 
-    if (!getImageForElement(imageElement, pasteboardImage.image))
+    pasteboardImage.image = getImageForElement(imageElement);
+    if (!pasteboardImage.image)
         return;
-    ASSERT(pasteboardImage.image);
 
     pasteboardImage.url.url = imageElement.document().encodingParseURL(elementURL(imageElement));
     pasteboardImage.url.title = title;

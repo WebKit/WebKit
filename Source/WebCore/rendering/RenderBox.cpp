@@ -100,7 +100,9 @@
 #include "ScrollbarTheme.h"
 #include "ScrollbarsController.h"
 #include "Settings.h"
+#include "StyleBackgroundImageSizing.h"
 #include "StyleBoxShadow.h"
+#include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -2127,7 +2129,7 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
     if (hasNonVisibleOverflow() && topLayer.attachment() == FillAttachment::LocalBackground)
         return false;
 
-    if (topLayer.hasOpaqueImage(*this) && topLayer.hasRepeatXY() && topLayer.image().tryStyleImage()->canRender(this, style().usedZoom()))
+    if (topLayer.hasOpaqueImage(*this) && topLayer.hasRepeatXY() && topLayer.image().tryStyleImage()->canRender(*this, style().usedZoom()))
         return true;
 
     // If there is only one layer and no image, check whether the background color is opaque.
@@ -2180,7 +2182,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
         // Don't render a masked element until all the mask images have loaded, to prevent a flash of unmasked content.
         if (RefPtr maskBorder = style().maskBorderSource().tryStyleImage())
-            allMaskImagesLoaded &= maskBorder->isLoaded(this);
+            allMaskImagesLoaded &= maskBorder->isLoaded(*this);
 
         allMaskImagesLoaded &= Style::imagesAreLoaded(style().maskLayers(), *this);
 
@@ -2263,9 +2265,11 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     bool isNonEmpty;
     RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
     if (styleImage && isNonEmpty) {
-        incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(styleImage->imageSize(this, style().usedZoom())));
+        incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(calculateImageIntrinsicDimensions(*styleImage, Style::BackgroundImageSizing {
+            borderBoxRect().size(), ObjectSizeNegotiation::SpecifiedSize::none(), ObjectSizeNegotiation::SizingConstraint::None
+        }, ScaleByUsedZoom::Yes)));
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
+            protect(document())->didLoadImage(protect(styleable->element).get(), styleImage.get());
     }
 
     if (!isComposited())
@@ -2294,7 +2298,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
     RenderBox* layerRenderer = nullptr;
 
     for (auto& layer : layers.usedValues()) {
-        if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && layerImage->data() == image && (layerImage->isLoaded(this) || layerImage->canRender(this, style().usedZoom()))) {
+        if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && layerImage->data() == image && (layerImage->isLoaded(*this) || layerImage->canRender(*this, style().usedZoom()))) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
             bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
             if (!layerRenderer) {

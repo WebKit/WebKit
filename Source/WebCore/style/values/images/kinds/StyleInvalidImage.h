@@ -42,15 +42,15 @@ public:
 
     bool operator==(const Image&) const final { return false; }
     bool equals(const InvalidImage&) const { return false; }
-    bool canRender(const RenderElement*, float) const final { return false; }
+    bool canRender(const RenderElement&, float) const final { return false; }
+    bool hasNothingToDraw(const RenderElement&) const final { return true; }
 
-    static constexpr bool isFixedSize = true;
 
 protected:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    FloatSize fixedSize(const RenderElement&) const final { return { }; }
+    NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final { return NaturalDimensions::zeroSize(); }
 
 private:
     InvalidImage();
@@ -59,7 +59,10 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool knownToBeOpaque(const RenderElement&) const { return false; }
 
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImagePaintingOptions, bool) const final { return ImageDrawResult::DidNothing; }
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions, bool) const final { return ImageDrawResult::DidNothing; }
+    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions) const final { return ImageDrawResult::DidNothing; }
+    RefPtr<NativeImage> nativeImage(const RenderElement&, ConcreteObjectSize, const ColorSpace&) const final { return nullptr; }
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 };

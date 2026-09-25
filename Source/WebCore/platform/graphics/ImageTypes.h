@@ -88,11 +88,15 @@ enum class DecodingStatus {
 enum class ImageDrawResult {
     DidNothing,
     DidRequestDecoding,
-    DidRecord,
     DidDraw
 };
 
 enum class ShowDebugBackground : bool {
+    No,
+    Yes
+};
+
+enum class DrawLuminanceMask : bool {
     No,
     Yes
 };

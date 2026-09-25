@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import <WebCore/ColorCocoa.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/Image.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
@@ -116,7 +117,7 @@ static RetainPtr<UIImage> uiImageForImage(Image* image)
     if (!image)
         return nullptr;
 
-    auto nativeImage = image->nativeImage();
+    auto nativeImage = image->nativeImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()));
     if (!nativeImage)
         return nullptr;
 

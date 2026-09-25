@@ -273,7 +273,7 @@ public:
     virtual InnerSpinButtonLayout innerSpinButtonLayout(const RenderElement&) const { return InnerSpinButtonLayout::Vertical; }
 
 #if USE(SYSTEM_PREVIEW)
-    virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
+    virtual void paintSystemPreviewBadge(Image&, ConcreteObjectSize, const PaintInfo&, const FloatRect&);
     virtual void paintSystemPreviewBadge(const PaintInfo&, const FloatRect&);
 #endif
     virtual Seconds switchAnimationVisuallyOnDuration() const { return 0_s; }

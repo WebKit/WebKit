@@ -44,6 +44,7 @@
 #import <WebCore/ColorSpace.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/DefaultSizing.h>
 #import <WebCore/Document.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageAdapter.h>
@@ -229,7 +230,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!image)
         return nil;
 
-    return image->adapter().snapshotNSImage();
+    return image->adapter().snapshotNSImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()));
 }
 
 #endif
@@ -248,7 +249,7 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
 
         // FIXME: <rdar://165255055> Migrate from deprecated NSItemProvider APIs
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:image->adapter().snapshotNSImage().get() typeIdentifier:@"public.image"]);
+        RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:image->adapter().snapshotNSImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions())).get() typeIdentifier:@"public.image"]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
         bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();

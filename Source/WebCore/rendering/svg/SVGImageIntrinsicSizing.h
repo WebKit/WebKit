@@ -20,20 +20,19 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "NaturalDimensions.h"
 
 namespace WebCore {
 
 class CachedImage;
+class RenderElement;
 class SVGImageElement;
+class SVGPreserveAspectRatioValue;
 
 namespace Style {
 class ComputedStyle;
+class Image;
 }
-
-// SVG 2 §12.2 Placement of the embedded content mandates a 300x150 default object size when the
-// referenced resource has no intrinsic size.
-// https://w3c.github.io/svgwg/svg2-draft/embedded.html#Placement
-constexpr FloatSize defaultObjectSizeForSVGImage { 300, 150 };
 
 struct SVGImageIntrinsicSizing {
     enum class HasRatio : bool { No, Yes };
@@ -53,5 +52,14 @@ SVGImageIntrinsicSizing resolveSVGImageIntrinsicSizing(CachedImage&, float usedZ
 // Resolves the <svg:image> object bounding box from the CSS 'width' / 'height' computed values and
 // the source's intrinsic sizing, per SVG 2 §12.2. Shared by the LBSE and legacy SVG renderers.
 FloatRect calculateSVGImageObjectBoundingBox(const SVGImageElement&, const Style::ComputedStyle&, CachedImage*);
+
+struct SVGImageRendering {
+    FloatRect destination;
+    FloatRect source;
+    FloatSize imageRenderingSize;
+};
+
+SVGImageRendering fitSVGImage(const SVGPreserveAspectRatioValue&, const FloatRect& positioningRectangle, const NaturalDimensions&);
+NaturalDimensions svgImageNaturalDimensions(const Style::Image&, const RenderElement&);
 
 } // namespace WebCore

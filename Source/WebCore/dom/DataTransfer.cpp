@@ -31,6 +31,7 @@
 #include "CommonAtomStrings.h"
 #include "DataTransferItem.h"
 #include "DataTransferItemList.h"
+#include "DefaultSizing.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFragment.h"
 #include "DocumentPage.h"
@@ -649,7 +650,8 @@ DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& l
     if (m_dragImage) {
         HostWindow* hostWindow = document && document->view() ? protect(document->view())->hostWindow() : nullptr;
         auto deviceScaleFactor = document ? document->deviceScaleFactor() : 1.f;
-        return createDragImageFromImage(protect(protect(m_dragImage)->image()).get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
+        RefPtr image = protect(m_dragImage)->image();
+        return createDragImageFromImage(image.get(), DefaultSizing { }.resolve(image->naturalDimensions()), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
     }
 
     if (m_dragImageElement) {

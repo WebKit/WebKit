@@ -28,19 +28,22 @@
 #include "config.h"
 #include "StyleFilterImage.h"
 
-#include "BitmapImage.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFilterRenderer.h"
 #include "CSSValuePool.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "DeprecatedCSSOMValue.h"
+#include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
+#include "NativeImage.h"
+#include "NinePieceGeometry.h"
 #include "NullGraphicsContext.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "StyleFilter.h"
 #include <wtf/PointerComparison.h>
 
@@ -48,7 +51,7 @@ namespace WebCore {
 namespace Style {
 
 FilterImage::FilterImage(RefPtr<Image>&& image, Filter&& filter)
-    : GeneratedImage { Type::FilterImage, FilterImage::isFixedSize }
+    : GeneratedImage { Type::FilterImage }
     , m_image { WTF::move(image) }
     , m_filter { WTF::move(filter) }
     , m_inputImageIsReady { false }
@@ -103,7 +106,7 @@ void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const Resourc
 
     if (RefPtr image = m_image) {
         image->load(cachedResourceLoader, options);
-        m_cachedImage = image->cachedImage();
+        m_cachedImage = image->cachedImage() ? image->cachedImage()->resource() : nullptr;
     } else
         m_cachedImage = nullptr;
 
@@ -126,47 +129,127 @@ void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const Resourc
     m_inputImageIsReady = true;
 }
 
-RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, const FloatSize& size, const GraphicsContext& destinationContext, bool isForFirstLine) const
+RefPtr<NativeImage> FilterImage::filteredNativeImage(const RenderElement& renderElement, FloatSize size, const GraphicsContext& destinationContext, bool isForFirstLine) const
 {
-    CheckedPtr renderer = renderElement;
-    if (!renderer)
-        return &WebCore::Image::nullImage();
+    CheckedRef renderer = renderElement;
 
     if (size.isEmpty())
         return nullptr;
 
     RefPtr styleImage = m_image;
-    if (!styleImage)
-        return &WebCore::Image::nullImage();
-
-    auto image = styleImage->image(renderer, size, destinationContext, isForFirstLine);
-    if (!image || image->isNull())
-        return &WebCore::Image::nullImage();
+    if (!styleImage || styleImage->hasNothingToDraw(renderer))
+        return nullptr;
 
     auto preferredFilterRenderingModes = protect(renderer->page())->preferredFilterRenderingModes(destinationContext);
     auto sourceImageRect = FloatRect { { }, size };
 
     auto renderingOptions(protect(renderer->settings())->showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
-    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(*renderer), m_filter, {
+    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(renderer.get()), m_filter, {
             .referenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
             .scale = { 1, 1 },
         }, preferredFilterRenderingModes, renderingOptions, NullGraphicsContext());
     if (!cssFilter)
-        return &WebCore::Image::nullImage();
+        return nullptr;
 
     cssFilter->setFilterRegion(sourceImageRect);
 
     auto sourceImage = ImageBuffer::create(size, destinationContext.renderingMode(), RenderingPurpose::DOM, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
     if (!sourceImage)
-        return &WebCore::Image::nullImage();
+        return nullptr;
 
     auto filteredImage = sourceImage->filteredNativeImage(*cssFilter, [&](GraphicsContext& context) {
-        context.drawImage(*image, sourceImageRect);
+        styleImage->draw(context, renderer, ConcreteObjectSize::fixed(size), sourceImageRect, FloatRect { { }, size }, { }, isForFirstLine);
     });
-    if (!filteredImage)
-        return &WebCore::Image::nullImage();
-    return BitmapImage::create(WTF::move(filteredImage));
+    return filteredImage;
+}
+
+static ImagePaintingOptions drawingOptions(ImagePaintingOptions options)
+{
+    return { options, WebCore::ImageOrientation::Orientation::None };
+}
+
+ImageDrawResult FilterImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, bool isForFirstLine) const
+{
+    RefPtr nativeImage = filteredNativeImage(renderer, concreteObjectSize.size(), context, isForFirstLine);
+    if (!nativeImage)
+        return ImageDrawResult::DidNothing;
+
+    context.drawNativeImage(*nativeImage, destination, source, drawingOptions(options));
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult FilterImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, bool isForFirstLine) const
+{
+    RefPtr nativeImage = filteredNativeImage(renderer, concreteObjectSize.size(), context, isForFirstLine);
+    if (!nativeImage)
+        return ImageDrawResult::DidNothing;
+
+    context.drawPattern(*nativeImage, destination, tile, patternTransform, phase, spacing, drawingOptions(options));
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult FilterImage::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, bool isForFirstLine) const
+{
+    if (tileSize.isEmpty())
+        return ImageDrawResult::DidNothing;
+
+    RefPtr nativeImage = filteredNativeImage(renderer, tileSize, context, isForFirstLine);
+    if (!nativeImage)
+        return ImageDrawResult::DidNothing;
+
+    auto drawTile = [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
+        context.drawNativeImage(*nativeImage, destination, source, drawingOptions(options));
+        return ImageDrawResult::DidDraw;
+    };
+
+    auto drawTilePattern = [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
+        context.drawPattern(*nativeImage, destination, tile, patternTransform, phase, spacing, drawingOptions(options));
+        return ImageDrawResult::DidDraw;
+    };
+
+    return drawTiledUsing(context, NaturalDimensions::fixed(nativeImage->size()), drawTile, drawTilePattern, ConcreteObjectSize::fixed(tileSize), destination, phase, tileSize, spacing, options);
+}
+
+ImageDrawResult FilterImage::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImagePaintingOptions options) const
+{
+    RefPtr nativeImage = filteredNativeImage(renderer, concreteObjectSize.size(), context, false);
+    if (!nativeImage)
+        return ImageDrawResult::DidNothing;
+
+    auto result = ImageDrawResult::DidNothing;
+    auto record = [&] {
+        result = ImageDrawResult::DidDraw;
+    };
+
+    for (auto piece : allImagePieces) {
+        if (geometry.shouldSkipPiece(piece))
+            continue;
+
+        if (isCornerPiece(piece)) {
+            context.drawNativeImage(*nativeImage, geometry.destinationRects[piece], geometry.sourceRects[piece], drawingOptions(options));
+            record();
+            continue;
+        }
+
+        auto horizontalRule = isHorizontalPiece(piece)
+            ? static_cast<WebCore::Image::TileRule>(geometry.horizontalRule)
+            : WebCore::Image::StretchTile;
+
+        auto verticalRule = isVerticalPiece(piece)
+            ? static_cast<WebCore::Image::TileRule>(geometry.verticalRule)
+            : WebCore::Image::StretchTile;
+
+        auto drawTilePattern = [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
+            context.drawPattern(*nativeImage, destination, tile, patternTransform, phase, spacing, drawingOptions(options));
+            return ImageDrawResult::DidDraw;
+        };
+
+        if (drawTiledUsing(context, drawTilePattern, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], horizontalRule, verticalRule) == ImageDrawResult::DidDraw)
+            record();
+    }
+
+    return result;
 }
 
 bool FilterImage::knownToBeOpaque(const RenderElement&) const
@@ -174,11 +257,24 @@ bool FilterImage::knownToBeOpaque(const RenderElement&) const
     return false;
 }
 
-FloatSize FilterImage::fixedSize(const RenderElement& renderer) const
+Vector<Ref<const CachedImage>, 1> FilterImage::cachedImages() const
 {
     if (RefPtr image = m_image)
-        return image->imageSize(&renderer, 1);
+        return image->cachedImages();
     return { };
+}
+
+bool FilterImage::isOriginClean(Document& document) const
+{
+    return !m_image || protect(m_image)->isOriginClean(document);
+}
+
+NaturalDimensions FilterImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext& context) const
+{
+    if (RefPtr image = m_image)
+        return image->naturalDimensions(renderer, context);
+
+    return NaturalDimensions::zeroSize();
 }
 
 void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)

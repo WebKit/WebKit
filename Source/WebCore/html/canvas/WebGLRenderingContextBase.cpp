@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ContainerNodeInlines.h"
+#include "DefaultSizing.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
@@ -101,6 +102,7 @@
 #include "RenderBox.h"
 #include "Settings.h"
 #include "ScriptExecutionContextInlines.h"
+#include "StyleCanvasDrawImageSizing.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
@@ -3257,7 +3259,7 @@ static TexImageSourceImage nativeImageForTexImageSource(Image& image, bool premu
     // Images without encoded data are backed by image buffers, which hold premultiplied alpha.
     RefPtr data = image.data();
     if (!data)
-        return { image.currentNativeImage(), AlphaPremultiplication::Premultiplied };
+        return { image.currentNativeImage(DefaultSizing { }.resolve(image.naturalDimensions())), AlphaPremultiplication::Premultiplied };
     bool hasAlpha = !image.currentFrameKnownToBeOpaque();
     if (ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) {
         auto decodedImage = BitmapImage::create(nullptr, premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
@@ -3266,7 +3268,7 @@ static TexImageSourceImage nativeImageForTexImageSource(Image& image, bool premu
             return { };
         return { decodedImage->currentNativeImage(), std::nullopt };
     }
-    return { image.currentNativeImage(), std::nullopt };
+    return { image.currentNativeImage(DefaultSizing { }.resolve(image.naturalDimensions())), std::nullopt };
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&& source)
@@ -3395,14 +3397,16 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validationResult.returnValue())
         return { };
 
-    RefPtr imageForRender = protect(source.cachedImage())->imageForRenderer(protect(source.renderer()).get());
+    RefPtr imageForRender = source.sourceImage();
     if (!imageForRender)
         return { };
 
     TexImageSourceImage sourceImage;
-    if (imageForRender->drawsSVGImage() || imageForRender->orientation() != ImageOrientation::Orientation::None || imageForRender->hasDensityCorrectedSize()) {
+    if (imageForRender->isSVGImage() || imageForRender->orientation() != ImageOrientation::Orientation::None || imageForRender->hasDensityCorrectedSize()) {
+        auto bufferSize = FloatSize(source.width(), source.height());
+        auto concreteObjectSize = Style::CanvasDrawImageSizing { bufferSize }.resolve(imageForRender->naturalDimensions(imageForRender->orientation()));
         // Drawing to an image buffer produces premultiplied alpha.
-        sourceImage = { drawImageIntoBuffer(*imageForRender, source.width(), source.height(), 1, functionName), AlphaPremultiplication::Premultiplied };
+        sourceImage = { drawImageIntoBuffer({ *imageForRender, concreteObjectSize }, source.width(), source.height(), 1, functionName), AlphaPremultiplication::Premultiplied };
     } else
         sourceImage = nativeImageForTexImageSource(*imageForRender, m_unpackPremultiplyAlpha, m_unpackColorspaceConversion == GraphicsContextGL::NONE);
 
@@ -4257,7 +4261,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint
     return texImageSourceHelper(TexImageFunctionID::TexImage2D, target, level, internalformat, 0, format, type, 0, 0, 0, sentinelEmptyRect(), 1, 0, WTF::move(*source));
 }
 
-RefPtr<NativeImage> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int width, int height, int deviceScaleFactor, ASCIILiteral functionName)
+RefPtr<NativeImage> WebGLRenderingContextBase::drawImageIntoBuffer(const SizedImage& sizedImage, int width, int height, int deviceScaleFactor, ASCIILiteral functionName)
 {
     IntSize size(width, height);
     size.scale(deviceScaleFactor);
@@ -4267,9 +4271,9 @@ RefPtr<NativeImage> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image,
         return nullptr;
     }
 
-    FloatRect srcRect(FloatPoint(), image.size());
+    FloatRect srcRect(FloatPoint(), sizedImage.concreteObjectSize.size());
     FloatRect destRect(FloatPoint(), size);
-    buf->context().drawImage(image, destRect, srcRect);
+    buf->context().drawImage(sizedImage.image, sizedImage.concreteObjectSize, destRect, srcRect);
     // FIXME: createNativeImageReference() does not make sense for GPUP.
     // Instead, should fix by GPUP side upload.
     return buf->createNativeImageReference();

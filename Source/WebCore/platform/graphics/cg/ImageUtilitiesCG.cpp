@@ -37,7 +37,6 @@
 #include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "SVGImage.h"
-#include "SVGImageForContainer.h"
 #include "UTIRegistry.h"
 #include "UTIUtilities.h"
 #include <CoreFoundation/CoreFoundation.h>
@@ -268,7 +267,7 @@ static void tryCreateNativeImageFromData(std::span<const uint8_t> data, std::opt
             completionHandler(nullptr);
             return;
         }
-        completionHandler(svgImage->nativeImage(svgImage->size()));
+        completionHandler(svgImage->nativeImage(svgImage->documentSize()));
     });
 }
 
@@ -295,8 +294,8 @@ static RefPtr<NativeImage> createNativeImageFromSVGImage(SVGImage& image, const 
     if (!buffer)
         return nullptr;
 
-    Ref svgImageContainer = SVGImageForContainer::create(&image, { .containerSize = size });
-    buffer->context().drawImage(svgImageContainer.get(), FloatPoint::zero());
+    auto imageRect = FloatRect { { }, FloatSize { size } };
+    buffer->context().drawImage(image, ConcreteObjectSize::fixed(imageRect.size()), imageRect, imageRect);
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }

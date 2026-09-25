@@ -1662,7 +1662,6 @@ html/CanvasNoiseInjection.cpp
 html/CheckboxInputType.cpp @header:RenderStyleGetters @cost:6
 html/ColorInputType.cpp @header:RenderStyleGetters @cost:9
 html/CustomPaintCanvas.cpp
-html/CustomPaintImage.cpp @header:RenderStyleGetters @cost:6
 html/DOMFormData.cpp
 html/DOMTokenList.cpp
 html/DOMURL.cpp
@@ -2682,7 +2681,6 @@ platform/graphics/ComplexTextController.cpp
 platform/graphics/ContentTypeUtilities.cpp
 platform/graphics/ContentsFormat.cpp
 platform/graphics/CornerRadii.cpp
-platform/graphics/CrossfadeGeneratedImage.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
 platform/graphics/DisplayRefreshMonitorClient.cpp
 platform/graphics/DisplayRefreshMonitorManager.cpp
@@ -2722,12 +2720,10 @@ platform/graphics/FontSelectionAlgorithm.cpp
 platform/graphics/FontSelector.cpp
 platform/graphics/FontTaggedSettings.cpp
 platform/graphics/FourCC.cpp
-platform/graphics/GeneratedImage.cpp
 platform/graphics/GeometryUtilities.cpp
 platform/graphics/Gradient.cpp
 platform/graphics/GradientColorStop.cpp
 platform/graphics/GradientColorStops.cpp
-platform/graphics/GradientImage.cpp
 platform/graphics/GraphicsContext.cpp
 platform/graphics/GraphicsContextGL.cpp
 platform/graphics/GraphicsContextGLImageExtractor.cpp
@@ -2757,6 +2753,7 @@ platform/graphics/ImageFrameAnimator.cpp
 platform/graphics/ImageFrameWorkQueue.cpp
 platform/graphics/ImagePaintingOptions.cpp
 platform/graphics/ImageResolution.cpp
+platform/graphics/ImageSizingContext.cpp
 platform/graphics/ImageSource.cpp
 platform/graphics/ImageUtilities.cpp
 platform/graphics/InbandGenericCue.cpp
@@ -2779,10 +2776,9 @@ platform/graphics/MediaSampleConverter.cpp
 platform/graphics/MediaSourcePrivate.cpp
 platform/graphics/Model.cpp
 platform/graphics/ModelContext.cpp
-platform/graphics/ColorImageGeneratedImage.cpp
-platform/graphics/NamedImageGeneratedImage.cpp
 platform/graphics/NativeImage.cpp
 platform/graphics/NativeImageSource.cpp
+platform/graphics/ObjectSizeNegotiation.cpp
 platform/graphics/NullImageBufferBackend.cpp
 platform/graphics/Path.cpp
 platform/graphics/PathArcLengthMapper.cpp
@@ -2807,6 +2803,7 @@ platform/graphics/RotationDirection.cpp
 platform/graphics/ShadowBlur.cpp
 platform/graphics/ShareableBitmap.cpp
 platform/graphics/ShareableBitmapHandle.cpp
+platform/graphics/SizedImage.cpp
 platform/graphics/SourceBrush.cpp
 platform/graphics/SourceBufferPrivate.cpp
 platform/graphics/SourceImage.cpp
@@ -3514,6 +3511,9 @@ style/values/grid/StyleGridTemplateList.cpp @header:RenderStyleGetters @cost:6
 style/values/grid/StyleGridTrackBreadth.cpp
 style/values/grid/StyleGridTrackSize.cpp
 style/values/grid/StyleGridTrackSizes.cpp
+style/values/images/sizing/StyleBackgroundImageSizing.cpp
+style/values/images/sizing/StyleMaskImageSizing.cpp
+style/values/images/sizing/StyleReplacedElementSizing.cpp
 style/values/images/kinds/StyleCachedImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleCanvasImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleCrossfadeImage.cpp
@@ -3521,6 +3521,7 @@ style/values/images/kinds/StyleCursorImage.cpp
 style/values/images/kinds/StyleFilterImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleGeneratedImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleGradientImage.cpp @header:RenderStyleGetters @cost:6
+style/values/images/kinds/StyleImage.cpp
 style/values/images/kinds/StyleImageSet.cpp
 style/values/images/kinds/StyleInvalidImage.cpp
 style/values/images/kinds/StyleMultiImage.cpp
@@ -3789,9 +3790,6 @@ svg/animation/SMILTime.cpp
 svg/animation/SMILTimeContainer.cpp
 svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp @header:RenderStyleGetters
-svg/graphics/SVGImageCache.cpp
-svg/graphics/SVGImageForContainer.cpp
-svg/graphics/SVGResourceImage.cpp
 svg/graphics/filters/SVGFilterPrimitiveGraph.cpp
 svg/graphics/filters/SVGFilterRenderer.cpp
 svg/properties/SVGAnimatedPropertyBase.cpp

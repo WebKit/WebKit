@@ -36,6 +36,7 @@
 #include "CoordinatedPlatformLayer.h"
 #include "CoordinatedPlatformLayerBuffer.h"
 #include "CoordinatedPlatformLayerBufferProxy.h"
+#include "DefaultSizing.h"
 #include "FloatQuad.h"
 #include "GraphicsLayerAsyncContentsDisplayDelegateCoordinated.h"
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
@@ -468,7 +469,7 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCoordinated::crea
 void GraphicsLayerCoordinated::setContentsToImage(Image* image)
 {
     if (image) {
-        auto nativeImage = image->currentNativeImage();
+        auto nativeImage = image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions()));
         if (!nativeImage)
             return;
 

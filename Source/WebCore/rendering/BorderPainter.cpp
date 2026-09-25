@@ -47,7 +47,9 @@
 #include "RenderObjectDocument.h"
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
+#include "StyleBorderImageSizing.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleMaskBorderSizing.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
@@ -215,10 +217,10 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const Style::ComputedSty
         if (!image)
             return false;
 
-        if (!protect(image->value)->isLoaded(m_renderer.ptr()))
+        if (!protect(image->value)->isLoaded(m_renderer.get()))
             return false;
 
-        if (!protect(image->value)->canRender(m_renderer.ptr(), style.usedZoom()))
+        if (!protect(image->value)->canRender(m_renderer.get(), style.usedZoom()))
             return false;
 
         auto rectWithOutsets = rect;
@@ -423,6 +425,14 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
         paintBorderSides(borderShape, sides, edgesToDraw, antialias);
 }
 
+template<typename T> struct NinePieceImageSizingKind;
+template<> struct NinePieceImageSizingKind<Style::BorderImage> {
+    using Type = Style::BorderImageSizing;
+};
+template<> struct NinePieceImageSizingKind<Style::MaskBorder> {
+    using Type = Style::MaskBorderSizing;
+};
+
 template<typename T>
 bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style::ComputedStyle& style, const T& ninePieceImage, CompositeOperator op) const
 {
@@ -430,10 +440,10 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style:
     if (!image)
         return false;
 
-    if (!image->isLoaded(m_renderer.ptr()))
+    if (!image->isLoaded(m_renderer.get()))
         return true; // Never paint a nine-piece image incrementally, but don't paint the fallback borders either.
 
-    if (!image->canRender(m_renderer.ptr(), style.usedZoom()))
+    if (!image->canRender(m_renderer.get(), style.usedZoom()))
         return false;
 
     CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer);
@@ -455,12 +465,9 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style:
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage, deviceScaleFactor));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
-    auto source = modelObject->calculateImageIntrinsicDimensions(image.get(), destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);
+    auto source = modelObject->calculateImageIntrinsicDimensions(*image, typename NinePieceImageSizingKind<T>::Type { destination.size() }, RenderBoxModelObject::ScaleByUsedZoom::No);
 
-    // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-    image->setContainerContextForRenderer(m_renderer, source, style.usedZoom());
-
-    NinePieceImagePainter::paint(ninePieceImage, m_paintInfo.context(), m_renderer.ptr(), style, destination, source, deviceScaleFactor, options);
+    NinePieceImagePainter::paint(ninePieceImage, m_paintInfo.context(), m_renderer.get(), style, destination, source, deviceScaleFactor, options);
     return true;
 }
 

@@ -35,6 +35,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorInlineBox.h"
+#include "ObjectSizeNegotiation.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -46,7 +47,10 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleBackgroundImageSizing.h"
 #include "StyleBoxShadow.h"
+#include "StyleCachedImage.h"
+#include "StyleMaskImageSizing.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextBoxPainter.h"
 
@@ -163,7 +167,7 @@ template<typename Layers> void BackgroundPainter::paintFillLayersImpl(const Colo
         // and pass it down.
         if (layer.clipOccludesNextLayers()
             && layer.hasOpaqueImage(m_renderer)
-            && layer.image().tryStyleImage()->canRender(&m_renderer, m_renderer.style().usedZoom())
+            && layer.image().tryStyleImage()->canRender(m_renderer, m_renderer.style().usedZoom())
             && layer.hasRepeatXY()
             && layer.blendMode() == BlendMode::Normal
             && !boxShadowShouldBeAppliedToBackground(m_renderer, rect.location(), bleedAvoidance, { }))
@@ -244,7 +248,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
     Color bgColor = color;
     RefPtr bgImage = layer.layer.image().tryStyleImage();
-    bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(&m_renderer, style.usedZoom());
+    bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(m_renderer, style.usedZoom());
 
     if (context.detectingContentfulPaint()) {
         if (!context.contentfulPaintDetected() && shouldPaintBackgroundImage && bgImage->cachedImage()) {
@@ -255,8 +259,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     }
 
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (shouldPaintBackgroundImage && bgImage->cachedImage()->isClientWaitingForAsyncDecoding(m_renderer.cachedImageClient()))
-            protect(bgImage->cachedImage())->removeAllClientsWaitingForAsyncDecoding();
+        if (RefPtr styleCachedImage = bgImage->cachedImage(); shouldPaintBackgroundImage && styleCachedImage && protect(styleCachedImage->resource())->isClientWaitingForAsyncDecoding(m_renderer.cachedImageClient()))
+            protect(styleCachedImage->resource())->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
@@ -540,14 +544,10 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         auto geometry = calculateFillLayerImageGeometry(m_renderer, m_paintInfo.paintContainer, layer.layer, layer.zoom, paintOffset, imageRect, m_overrideOrigin);
 
         auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
-        bgImage->setContainerContextForRenderer(clientForBackgroundImage, geometry.tileSizeWithoutPixelSnapping, m_renderer.style().usedZoom());
 
         geometry.clip(LayoutRect(pixelSnappedRect));
-        RefPtr<Image> image;
         bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox()->isFirst();
-        if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize, context, isFirstLine))) {
-            context.setDrawLuminanceMask(layer.layer.maskMode() == Style::MaskMode::Luminance);
-
+        if (!geometry.destinationRect.isEmpty()) {
             // image-orientation does not apply to mask images (https://drafts.csswg.org/css-images-3/#propdef-image-orientation).
             auto orientation = [&] {
                 if constexpr (std::is_same_v<Layer, Style::MaskLayer>)
@@ -559,9 +559,10 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             ImagePaintingOptions options = {
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
                 layerBlendMode,
-                m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
+                m_renderer.decodingModeForImageDraw(*bgImage, m_paintInfo),
                 orientation,
-                m_renderer.chooseInterpolationQuality(context, *image, &layer.layer, geometry.tileSize),
+                m_renderer.chooseInterpolationQuality(context, *bgImage, &layer.layer, geometry.tileSize),
+                layer.layer.maskMode() == Style::MaskMode::Luminance ? DrawLuminanceMask::Yes : DrawLuminanceMask::No,
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
                 document().settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
                 document().settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
@@ -569,19 +570,24 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
+            auto drawResult = bgImage->drawTiled(context, clientForBackgroundImage, ConcreteObjectSize::fixed(FloatSize(geometry.tileSizeWithoutPixelSnapping)),
+                geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), FloatSize(geometry.tileSize),
+                geometry.spaceSize, options, isFirstLine);
+
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
-                ASSERT(bgImage->hasCachedImage());
-                protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
+                ASSERT(bgImage->cachedImage());
+                protect(bgImage->cachedImage()->resource())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
             }
 
-            if (!context.paintingDisabled()) {
+            if (drawResult == ImageDrawResult::DidDraw && !context.paintingDisabled()) {
                 if (m_renderer.element())
                     protect(m_renderer)->element()->setHasEverPaintedImages(true);
 
-                if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsComplete(&m_renderer)) {
-                    if (auto styleable = Styleable::fromRenderer(m_renderer))
-                        document().didPaintImage(protect(styleable->element), image, geometry.destinationRect);
+                if constexpr (!std::is_same_v<Layer, Style::MaskLayer>) {
+                    if (bgImage->currentFrameIsComplete()) {
+                        if (auto styleable = Styleable::fromRenderer(m_renderer))
+                            document().didPaintImage(protect(styleable->element), bgImage.get(), geometry.destinationRect);
+                    }
                 }
             }
         }
@@ -815,54 +821,61 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     return BackgroundImageGeometry(destinationRect, tileSizeWithoutPixelSnapping, tileSize, phase, spaceSize, fixedAttachment);
 }
 
+template<typename Layer> struct FillLayerSizingKind;
+template<> struct FillLayerSizingKind<Style::BackgroundLayer> {
+    using Type = Style::BackgroundImageSizing;
+};
+template<> struct FillLayerSizingKind<Style::MaskLayer> {
+    using Type = Style::MaskImageSizing;
+};
+
 template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& renderer, const Layer& fillLayer, Style::ZoomFactor zoom, const LayoutSize& positioningAreaSize)
 {
     RefPtr image = fillLayer.image().tryStyleImage();
     auto devicePixelSize = LayoutUnit { 1.0 / protect(renderer)->document().deviceScaleFactor() };
 
+    using Sizing = typename FillLayerSizingKind<Layer>::Type;
+
+    Sizing layerSizing { positioningAreaSize, ObjectSizeNegotiation::SpecifiedSize::none(), ObjectSizeNegotiation::SizingConstraint::None };
+
     LayoutSize imageIntrinsicSize;
     if (image) {
-        imageIntrinsicSize = renderer.calculateImageIntrinsicDimensions(image.get(), positioningAreaSize, RenderBoxModelObject::ScaleByUsedZoom::Yes);
+        imageIntrinsicSize = renderer.calculateImageIntrinsicDimensions(*image, layerSizing, RenderBoxModelObject::ScaleByUsedZoom::Yes);
         imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
     } else
         imageIntrinsicSize = positioningAreaSize;
 
     auto handleKeyword = [&](auto keyword) -> LayoutSize {
-        if (image && !image->imageHasNaturalAspectRatio())
+        if (image && !image->naturalDimensions(renderer, layerSizing).aspectRatio)
             return positioningAreaSize;
 
         // Scale computation needs higher precision than what LayoutUnit can offer.
         FloatSize localImageIntrinsicSize = imageIntrinsicSize;
         FloatSize localPositioningAreaSize = positioningAreaSize;
 
+        Sizing sizing {
+            localPositioningAreaSize,
+            ObjectSizeNegotiation::SpecifiedSize::none(),
+            keyword.value == CSSValueContain ? ObjectSizeNegotiation::SizingConstraint::Contain : ObjectSizeNegotiation::SizingConstraint::Cover
+        };
+
+        auto resolveConstraint = [&](NaturalDimensions naturalDimensions) {
+            return sizing.resolve(naturalDimensions);
+        };
+
         if (image && localImageIntrinsicSize.isEmpty()) {
-            float intrinsicWidth = 0;
-            float intrinsicHeight = 0;
-            FloatSize intrinsicRatio;
-            image->computeIntrinsicDimensions(&renderer, intrinsicWidth, intrinsicHeight, intrinsicRatio);
-            if (!intrinsicRatio.isEmpty()) {
-                float heightAtFullWidth = localPositioningAreaSize.width() * intrinsicRatio.height() / intrinsicRatio.width();
-                bool fitToWidth = keyword.value == CSSValueContain
-                    ? heightAtFullWidth <= localPositioningAreaSize.height()
-                    : heightAtFullWidth >= localPositioningAreaSize.height();
-                auto concreteSize = fitToWidth
-                    ? FloatSize(localPositioningAreaSize.width(), heightAtFullWidth)
-                    : FloatSize(localPositioningAreaSize.height() * intrinsicRatio.width() / intrinsicRatio.height(), localPositioningAreaSize.height());
-                LayoutSize tileSize(concreteSize);
+            if (auto intrinsicRatio = image->naturalDimensions(renderer, layerSizing).aspectRatio) {
+                LayoutSize tileSize(resolveConstraint({ .width = std::nullopt, .height = std::nullopt, .aspectRatio = intrinsicRatio }).size());
                 if (tileSize.isEmpty())
                     return { };
                 return tileSize.expandedTo({ devicePixelSize, devicePixelSize });
             }
         }
 
-        float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
-        float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
-        float scaleFactor = keyword.value == CSSValueContain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
-
         if (localImageIntrinsicSize.isEmpty())
             return { };
 
-        return LayoutSize(localImageIntrinsicSize.scaled(scaleFactor).expandedTo({ devicePixelSize, devicePixelSize }));
+        return LayoutSize(resolveConstraint({ .width = std::nullopt, .height = std::nullopt, .aspectRatio = localImageIntrinsicSize }).size().expandedTo({ devicePixelSize, devicePixelSize }));
     };
 
     return WTF::switchOn(fillLayer.size(),
@@ -900,7 +913,7 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
 
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
-            bool hasNaturalAspectRatio = image && image->imageHasNaturalAspectRatio();
+            bool hasNaturalAspectRatio = image && image->naturalDimensions(renderer, layerSizing).aspectRatio.has_value();
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
                 if (hasNaturalAspectRatio && imageIntrinsicSize.height())
                     tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
@@ -1145,7 +1158,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
         if (!inlineBox->nextInlineBoxLineLeftward() && !inlineBox->nextInlineBoxLineRightward())
             return true;
         auto& renderer = inlineBox->renderer();
-        bool hasFillImage = image && image->canRender(&renderer, renderer.style().usedZoom());
+        bool hasFillImage = image && image->canRender(renderer, renderer.style().usedZoom());
         return !hasFillImage && !renderer.style().border().hasBorderRadius();
     };
 

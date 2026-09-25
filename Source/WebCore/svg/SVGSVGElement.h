@@ -89,6 +89,8 @@ public:
     bool setViewForFragment(StringView fragmentIdentifier);
     void resetViewToDefault();
 
+    void forcePreserveAspectRatioNoneForSVGImage();
+
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGFitToViewBox>;
     using SVGGraphicsElement::ref;
     using SVGGraphicsElement::deref;
@@ -134,6 +136,7 @@ public:
     SVGAnimatedLength& heightAnimated() { return m_height; }
 
     void inheritViewAttributes(const SVGViewElement&);
+    void invalidateCurrentView(RenderElement&);
 
 private:
     SVGSVGElement(const QualifiedName&, Document&);

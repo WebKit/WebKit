@@ -10,13 +10,13 @@ TEST CASE: 25x25 image at 1x
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
 
 TEST CASE: 25x25 image at 2x
-Cursor Info: type=Custom hotSpot=0,0 image=25x25 scale=2
+Cursor Info: type=Custom hotSpot=0,0 image=13x13 scale=1.04
 
 TEST CASE: 25x25 image at 1x, 30x30 image at 2x
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
 
 TEST CASE: 25x25 image at 1.5x, 30x30 image at 5x
-Cursor Info: type=Custom hotSpot=0,0 image=25x25 scale=1.5
+Cursor Info: type=Custom hotSpot=0,0 image=17x17 scale=1.02
 
 TEST CASE: Invalid tiny scale on with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
@@ -25,7 +25,7 @@ TEST CASE: Over-large image with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
 
 TEST CASE: 200x200 image at 4x (not over-large in UI pixels)
-Cursor Info: type=Custom hotSpot=0,0 image=200x200 scale=4
+Cursor Info: type=Custom hotSpot=0,0 image=50x50
 
 TEST CASE: Non-existent image in image-set with fallback to 25x25 image
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
@@ -37,19 +37,19 @@ TEST CASE: Explicit hotspot at (5,24) logical in 1x
 Cursor Info: type=Custom hotSpot=5,24 image=25x25
 
 TEST CASE: Explicit hotspot at (7,3) logical in 0.7x and 1.4x - should round to nearest integer
-Cursor Info: type=Custom hotSpot=7,3 image=30x30 scale=1.4
+Cursor Info: type=Custom hotSpot=7,3 image=22x22 scale=1.0266666
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 1x
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 2x
-Cursor Info: type=Custom hotSpot=0,0 image=25x25 scale=2
+Cursor Info: type=Custom hotSpot=0,0 image=13x13 scale=1.04
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 1x, 30x30 image at 2x
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 1.5x, 30x30 image at 5x
-Cursor Info: type=Custom hotSpot=0,0 image=25x25 scale=1.5
+Cursor Info: type=Custom hotSpot=0,0 image=17x17 scale=1.02
 
 TEST CASE: [-webkit- prefixed] Invalid tiny scale on with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
@@ -58,7 +58,7 @@ TEST CASE: [-webkit- prefixed] Over-large image with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
 
 TEST CASE: [-webkit- prefixed] 200x200 image at 4x (not over-large in UI pixels)
-Cursor Info: type=Custom hotSpot=0,0 image=200x200 scale=4
+Cursor Info: type=Custom hotSpot=0,0 image=50x50
 
 TEST CASE: [-webkit- prefixed] Non-existent image in image-set with fallback to 25x25 image
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
@@ -70,10 +70,10 @@ TEST CASE: [-webkit- prefixed] Explicit hotspot at (5,24) logical in 1x
 Cursor Info: type=Custom hotSpot=5,24 image=25x25
 
 TEST CASE: [-webkit- prefixed] Explicit hotspot at (7,3) logical in 0.7x and 1.4x - should round to nearest integer
-Cursor Info: type=Custom hotSpot=7,3 image=30x30 scale=1.4
+Cursor Info: type=Custom hotSpot=7,3 image=22x22 scale=1.0266666
 
 TEST CASE: SVG image with no specified size
-Cursor Info: type=Custom hotSpot=0,0 image=25x25
+Cursor Info: type=Custom hotSpot=0,0 image=32x32
 
 Checking cursors with device pixel ratio of 2
 ----------------------------------------------
@@ -81,13 +81,13 @@ TEST CASE: 25x25 image at 1x
 Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=2
 
 TEST CASE: 25x25 image at 2x
-Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=4
+Cursor Info: type=Custom hotSpot=0,0 image=25x25 scale=2
 
 TEST CASE: 25x25 image at 1x, 30x30 image at 2x
-Cursor Info: type=Custom hotSpot=0,0 image=60x60 scale=4
+Cursor Info: type=Custom hotSpot=0,0 image=30x30 scale=2
 
 TEST CASE: 25x25 image at 1.5x, 30x30 image at 5x
-Cursor Info: type=Custom hotSpot=0,0 image=60x60 scale=10
+Cursor Info: type=Custom hotSpot=0,0 image=12x12 scale=2
 
 TEST CASE: Invalid tiny scale on with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
@@ -96,31 +96,31 @@ TEST CASE: Over-large image with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
 
 TEST CASE: 200x200 image at 4x (not over-large in UI pixels)
-Cursor Info: type=Custom hotSpot=0,0 image=400x400 scale=8
+Cursor Info: type=Custom hotSpot=0,0 image=100x100 scale=2
 
 TEST CASE: Non-existent image in image-set with fallback to 25x25 image
 Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=2
 
 TEST CASE: Explicit hotspot at (5,3) logical in 1x and 2x
-Cursor Info: type=Custom hotSpot=5,3 image=60x60 scale=4
+Cursor Info: type=Custom hotSpot=10,6 image=30x30 scale=2
 
 TEST CASE: Explicit hotspot at (5,24) logical in 1x
-Cursor Info: type=Custom hotSpot=5,24 image=50x50 scale=2
+Cursor Info: type=Custom hotSpot=10,48 image=50x50 scale=2
 
 TEST CASE: Explicit hotspot at (7,3) logical in 0.7x and 1.4x - should round to nearest integer
-Cursor Info: type=Custom hotSpot=7,3 image=60x60 scale=2.8
+Cursor Info: type=Custom hotSpot=14,6 image=43x43 scale=2.0066667
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 1x
 Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=2
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 2x
-Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=4
+Cursor Info: type=Custom hotSpot=0,0 image=25x25 scale=2
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 1x, 30x30 image at 2x
-Cursor Info: type=Custom hotSpot=0,0 image=60x60 scale=4
+Cursor Info: type=Custom hotSpot=0,0 image=30x30 scale=2
 
 TEST CASE: [-webkit- prefixed] 25x25 image at 1.5x, 30x30 image at 5x
-Cursor Info: type=Custom hotSpot=0,0 image=60x60 scale=10
+Cursor Info: type=Custom hotSpot=0,0 image=12x12 scale=2
 
 TEST CASE: [-webkit- prefixed] Invalid tiny scale on with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
@@ -129,22 +129,22 @@ TEST CASE: [-webkit- prefixed] Over-large image with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
 
 TEST CASE: [-webkit- prefixed] 200x200 image at 4x (not over-large in UI pixels)
-Cursor Info: type=Custom hotSpot=0,0 image=400x400 scale=8
+Cursor Info: type=Custom hotSpot=0,0 image=100x100 scale=2
 
 TEST CASE: [-webkit- prefixed] Non-existent image in image-set with fallback to 25x25 image
 Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=2
 
 TEST CASE: [-webkit- prefixed] Explicit hotspot at (5,3) logical in 1x and 2x
-Cursor Info: type=Custom hotSpot=5,3 image=60x60 scale=4
+Cursor Info: type=Custom hotSpot=10,6 image=30x30 scale=2
 
 TEST CASE: [-webkit- prefixed] Explicit hotspot at (5,24) logical in 1x
-Cursor Info: type=Custom hotSpot=5,24 image=50x50 scale=2
+Cursor Info: type=Custom hotSpot=10,48 image=50x50 scale=2
 
 TEST CASE: [-webkit- prefixed] Explicit hotspot at (7,3) logical in 0.7x and 1.4x - should round to nearest integer
-Cursor Info: type=Custom hotSpot=7,3 image=60x60 scale=2.8
+Cursor Info: type=Custom hotSpot=14,6 image=43x43 scale=2.0066667
 
 TEST CASE: SVG image with no specified size
-Cursor Info: type=Custom hotSpot=0,0 image=50x50 scale=2
+Cursor Info: type=Custom hotSpot=0,0 image=64x64 scale=2
 
 PASS successfullyParsed is true
 

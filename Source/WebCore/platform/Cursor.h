@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/Image.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/NativeImage.h>
 #include <wtf/Assertions.h>
 #include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
@@ -51,7 +51,7 @@ typedef HICON HCURSOR;
 
 namespace WebCore {
 
-class Image;
+class ShareableBitmap;
 
 #if PLATFORM(WIN)
 
@@ -130,7 +130,7 @@ public:
     using Type = PlatformCursorType;
 
     struct CustomCursorIPCData {
-        Ref<Image> image;
+        Ref<ShareableBitmap> image;
         IntPoint hotSpot;
 #if ENABLE(MOUSE_CURSOR_SCALE)
         float scaleFactor { 0 };
@@ -139,23 +139,22 @@ public:
     using IPCData = Variant<Type /* Non custom type */, std::optional<CustomCursorIPCData>>;
 
     Cursor() = default;
-    static std::optional<Cursor> fromIPCData(IPCData&&);
+    WEBCORE_EXPORT static std::optional<Cursor> fromIPCData(IPCData&&);
 
     WEBCORE_EXPORT static const Cursor& NODELETE fromType(Cursor::Type);
 
-    WEBCORE_EXPORT Cursor(Image*, const IntPoint& hotSpot);
+    WEBCORE_EXPORT Cursor(RefPtr<NativeImage>&&, const IntPoint& hotSpot);
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
-    // Hot spot is in image pixels.
-    WEBCORE_EXPORT Cursor(Image*, const IntPoint& hotSpot, float imageScaleFactor);
+    WEBCORE_EXPORT Cursor(RefPtr<NativeImage>&&, const IntPoint& hotSpot, float imageScaleFactor);
 #endif
 
     explicit Cursor(Type);
 
-    IPCData ipcData() const;
+    WEBCORE_EXPORT IPCData ipcData() const;
 
     Type type() const;
-    RefPtr<Image> image() const { return m_image; }
+    RefPtr<NativeImage> image() const { return m_image; }
     const IntPoint& hotSpot() const LIFETIME_BOUND { return m_hotSpot; }
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
@@ -171,7 +170,7 @@ private:
     void ensurePlatformCursor() const;
 
     Type m_type { Type::Invalid };
-    RefPtr<Image> m_image;
+    RefPtr<NativeImage> m_image;
     IntPoint m_hotSpot;
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
@@ -186,7 +185,7 @@ private:
 
 };
 
-IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
+IntPoint determineHotSpot(const IntSize& imageSize, std::optional<IntPoint> specifiedHotSpot, std::optional<IntPoint> intrinsicHotSpot = std::nullopt);
 
 WEBCORE_EXPORT const Cursor& NODELETE pointerCursor();
 const Cursor& NODELETE crossCursor();
@@ -237,44 +236,6 @@ inline Cursor::Type Cursor::type() const
     ASSERT(m_type > Type::Invalid);
     ASSERT(m_type <= Type::Custom);
     return m_type;
-}
-
-inline std::optional<Cursor> Cursor::fromIPCData(IPCData&& ipcData)
-{
-    return WTF::switchOn(WTF::move(ipcData), [](Type&& type) -> std::optional<Cursor> {
-        if (type == Type::Invalid || type == Type::Custom)
-            return std::nullopt;
-        auto& cursorReference = Cursor::fromType(type);
-        // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
-        // This will avoid having to re-create the platform cursors over and over.
-        (void)cursorReference.platformCursor();
-        return cursorReference;
-    }, [](std::optional<CustomCursorIPCData>&& imageData) -> std::optional<Cursor> {
-        if (!imageData)
-            return Cursor { &Image::nullImage(), IntPoint() };
-        ASSERT(imageData->image->rect().contains(imageData->hotSpot));
-#if ENABLE(MOUSE_CURSOR_SCALE)
-        return Cursor(imageData->image.ptr(), imageData->hotSpot, imageData->scaleFactor);
-#else
-        return Cursor(imageData->image.ptr(), imageData->hotSpot);
-#endif
-    });
-}
-
-inline auto Cursor::ipcData() const -> IPCData
-{
-    auto type = this->type();
-    if (type != Type::Custom)
-        return type;
-    if (Ref { *m_image }->isNull())
-        return std::nullopt;
-    return CustomCursorIPCData {
-        *m_image
-        , m_hotSpot
-#if ENABLE(MOUSE_CURSOR_SCALE)
-        , m_imageScaleFactor
-#endif
-    };
 }
 
 } // namespace WebCore

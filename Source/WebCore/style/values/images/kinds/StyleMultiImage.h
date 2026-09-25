@@ -59,29 +59,39 @@ protected:
     bool equals(const MultiImage& other) const;
 
     virtual ImageWithScale selectBestFitImage(const Document&) = 0;
-    WebCore::CachedImage* cachedImage() const final;
+    const CachedImage* cachedImage() const final;
 
 private:
     WrappedImagePtr data() const final;
 
-    bool canRender(const RenderElement*, float multiplier) const final;
+    bool canRender(const RenderElement&, float multiplier) const final;
     bool isPending() const final { return m_isPending; }
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    bool isLoaded(const RenderElement*) const final;
+    bool isLoaded(const RenderElement&) const final;
+    bool isSVGImage() const final;
+    bool hasNothingToDraw(const RenderElement&) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
-    bool imageHasRelativeWidth() const final;
-    bool imageHasRelativeHeight() const final;
-    void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
-    bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL());
+    NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
+    WTF::String accessibilityDescription() const final;
+    bool isAnimated() const final;
+    void stopAnimation() final;
+    void resetAnimation() final;
+    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const override;
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool currentFrameIsComplete(const RenderElement*) const final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions, bool isForFirstLine) const final;
+    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions) const final;
+    bool currentFrameIsComplete() const final;
     float imageScaleFactor() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
+    bool isOriginClean(Document&) const final;
+    Vector<Ref<const CachedImage>, 1> cachedImages() const final;
+    bool hasDecodedImage() const final;
+    RefPtr<NativeImage> nativeImage(const RenderElement&, ConcreteObjectSize, const ColorSpace&) const final;
+    std::optional<IntPoint> hotSpot() const final;
     const Image* selectedImage() const final { return m_selectedImage.get(); }
     Image* selectedImage() final { return m_selectedImage.get(); }
 

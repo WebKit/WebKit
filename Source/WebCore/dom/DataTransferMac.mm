@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "CachedImage.h"
+#import "DefaultSizing.h"
 #import "Document.h"
 #import "DragImage.h"
 #import "Element.h"
@@ -55,7 +56,8 @@ DragImageRef DataTransfer::createDragImage(const Document*, IntPoint& location) 
             location.setY(imageRect.height() - (elementRect.y() - imageRect.y() + m_dragLocation.y()));
         }
     } else if (RefPtr dragImage = m_dragImage) {
-        result = protect(dragImage->image())->adapter().snapshotNSImage();
+        RefPtr image = dragImage->image();
+        result = image->adapter().snapshotNSImage(DefaultSizing { }.resolve(image->naturalDimensions()));
         
         location = m_dragLocation;
         location.setY([result size].height - location.y());

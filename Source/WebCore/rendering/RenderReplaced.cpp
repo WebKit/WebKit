@@ -529,11 +529,14 @@ static FloatSize computeIntrinsicSizeForRenderer(const RenderReplaced& replacedR
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(replacedRenderer)) {
         auto intrinsicSize = FloatSize { renderImage->intrinsicLogicalWidth(), renderImage->intrinsicLogicalHeight() };
         // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
-        if (intrinsicSize.isEmpty() && (renderImage->imageResource().imageHasRelativeWidth() || renderImage->imageResource().imageHasRelativeHeight())) {
-            CheckedPtr containingBlock = renderImage->isOutOfFlowPositioned() ? renderImage->container() : renderImage->containingBlock();
-            if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(containingBlock)) {
-                intrinsicSize.setWidth(renderBox->contentBoxLogicalWidth());
-                intrinsicSize.setHeight(renderBox->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
+        if (CheckedRef imageResource = renderImage->imageResource(); intrinsicSize.isEmpty() && imageResource->hasDecodedImage()) {
+            auto naturalDimensions = imageResource->naturalDimensions();
+            if (!naturalDimensions.width || !naturalDimensions.height) {
+                CheckedPtr containingBlock = renderImage->isOutOfFlowPositioned() ? renderImage->container() : renderImage->containingBlock();
+                if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(containingBlock)) {
+                    intrinsicSize.setWidth(renderBox->contentBoxLogicalWidth());
+                    intrinsicSize.setHeight(renderBox->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
+                }
             }
         }
         return intrinsicSize;

@@ -38,6 +38,7 @@
 #include <WebCore/AbortSignal.h>
 #include <WebCore/Color.h>
 #include <WebCore/ContainerNodeInlines.h>
+#include <WebCore/DefaultSizing.h>
 #include <WebCore/DocumentFullscreen.h>
 #include <WebCore/DocumentPage.h>
 #include <WebCore/DocumentQuirks.h>
@@ -269,7 +270,8 @@ FullScreenMediaDetails WebFullScreenManager::getImageMediaDetails(CheckedPtr<Ren
     if (!(image->isMaybePanoramic() || image->isSpatial() || updating == IsUpdating::Yes))
         return { };
 
-    auto imageSize = image->size();
+    auto concreteObjectSize = DefaultSizing { }.resolve(image->naturalDimensions());
+    auto imageSize = concreteObjectSize.size();
 
     FullScreenMediaDetails mediaDetails;
     mediaDetails.type = FullScreenMediaDetails::Type::Image;
@@ -286,7 +288,7 @@ FullScreenMediaDetails WebFullScreenManager::getImageMediaDetails(CheckedPtr<Ren
         }
     }
 
-    RefPtr nativeImage = image->nativeImage();
+    RefPtr nativeImage = image->nativeImage(concreteObjectSize);
     if (!nativeImage)
         return { };
 

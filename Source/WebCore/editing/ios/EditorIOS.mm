@@ -32,6 +32,7 @@
 #import "CachedImage.h"
 #import "ContainerNodeInlines.h"
 #import "DataTransfer.h"
+#import "DefaultSizing.h"
 #import "DictationCommandIOS.h"
 #import "DocumentFragment.h"
 #import "DocumentMarkerController.h"
@@ -81,31 +82,33 @@ void Editor::removeUnchangeableStyles()
     applyStyleToSelection(defaultStyle.ptr(), EditAction::ChangeAttributes);
 }
 
-static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
+static std::optional<SizedImage> getImage(Element& imageElement, CachedImage*& cachedImage)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)
-        return;
+        return std::nullopt;
 
     RefPtr tentativeCachedImage = renderImage->cachedImage();
     if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
-        return;
+        return std::nullopt;
 
-    image = tentativeCachedImage->imageForRenderer(renderImage.get());
+    RefPtr image = tentativeCachedImage->image();
     if (!image)
-        return;
+        return std::nullopt;
 
     cachedImage = tentativeCachedImage.get();
+
+    auto concreteObjectSize = DefaultSizing { renderImage->usedImageSize() }.resolve(image->naturalDimensions());
+    return SizedImage { image.releaseNonNull(), concreteObjectSize };
 }
 
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
 {
     PasteboardImage pasteboardImage;
 
-    RefPtr<Image> image;
     CachedImage* cachedImage = nullptr;
-    getImage(imageElement, image, cachedImage);
-    if (!image)
+    pasteboardImage.image = getImage(imageElement, cachedImage);
+    if (!pasteboardImage.image)
         return;
     ASSERT(cachedImage);
 
@@ -117,7 +120,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         pasteboardImage.url.title = title;
     }
     pasteboardImage.suggestedName = imageSourceURL.lastPathComponent().toString();
-    pasteboardImage.imageSize = image->size();
+    pasteboardImage.imageSize = pasteboardImage.image->concreteObjectSize.size();
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType().createNSString().get());
     if (RefPtr buffer = cachedImage->resourceBuffer())
         pasteboardImage.resourceData = buffer->makeContiguous();

@@ -3242,7 +3242,6 @@ class WebCore::SpeechRecognitionUpdate {
 #if USE(SYSTEM_PREVIEW)
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ARKitBadgeSystemImage {
     std::optional<WebCore::RenderingResourceIdentifier> imageIdentifier();
-    WebCore::FloatSize m_imageSize;
 };
 #endif
 
@@ -5694,7 +5693,7 @@ header: <WebCore/NowPlayingInfo.h>
 [CustomHeader] struct WebCore::NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<WebCore::Image> image;
+    std::optional<WebCore::SizedImage> image;
 }
 
 header: <WebCore/NowPlayingInfo.h>
@@ -6198,8 +6197,8 @@ header: <WebCore/AppleVisualEffect.h>
 #endif
 
 [CustomHeader, Nested] struct WebCore::Cursor::CustomCursorIPCData {
-    Ref<WebCore::Image> image;
-    [Validator='Ref { *image }->rect().contains(*hotSpot)'] WebCore::IntPoint hotSpot;
+    Ref<WebCore::ShareableBitmap> image;
+    [Validator='WebCore::IntRect({ }, (*image)->size()).contains(*hotSpot)'] WebCore::IntPoint hotSpot;
 #if ENABLE(MOUSE_CURSOR_SCALE)
     float scaleFactor;
 #endif
@@ -6214,11 +6213,6 @@ header: <WebCore/AppleVisualEffect.h>
     WebCore::PointLightSource
     WebCore::SpotLightSource
 }
-
-header: <WebCore/Image.h>
-[RefCounted] class WebCore::Image {
-    RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
-};
 
 header: <WebCore/BitmapImage.h>
 [RefCounted] class WebCore::BitmapImage {

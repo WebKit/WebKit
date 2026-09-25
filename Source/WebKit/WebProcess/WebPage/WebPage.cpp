@@ -204,6 +204,7 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DatabaseManager.h>
+#include <WebCore/DefaultSizing.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DisplayListRecorderImpl.h>
 #include <WebCore/Document.h>
@@ -3567,12 +3568,8 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& 
         }
 
         if (imageElement) {
-            if (RefPtr cachedImage = imageElement->cachedImage()) {
-                if (RefPtr image = cachedImage->image()) {
-                    if (RefPtr nativeImage = image->currentNativeImage())
-                        bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
-                }
-            }
+            if (RefPtr image = imageElement->sourceImage())
+                bitmap = image->toShareableBitmap(DefaultSizing { }.resolve(image->naturalDimensions()));
         } else if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(node)) {
             if (RefPtr imageBuffer = canvasElement->makeRenderingResultsAvailable()) {
                 if (RefPtr nativeImage = imageBuffer->copyNativeImage())

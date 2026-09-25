@@ -100,6 +100,7 @@
 #include "ScaleTransformOperation.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include "StyleTransformResolver.h"
@@ -2504,12 +2505,13 @@ void RenderLayerBacking::updateSeparatedProperties()
             return false;
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return false;
-        auto* image = renderImage->cachedImage()->imageForRenderer(renderImage);
+        auto* image = renderImage->cachedImage()->image();
         if (!image)
             return false;
         if (image == &Image::nullImage())
             return false;
-        return !image->isAnimated() && image->isBitmapImage() && image->nativeImage();
+        RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image);
+        return bitmapImage && !bitmapImage->isAnimated() && bitmapImage->nativeImage();
     }();
 
     m_graphicsLayer->setIsSeparatedImage(isSeparatedImage);
@@ -3436,7 +3438,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& r
     if (!styleImage->hasCachedImage())
         return false;
 
-    RefPtr image = styleImage->cachedImage()->image();
+    RefPtr image = protect(styleImage->cachedImage()->resource())->image();
     if (!image->isBitmapImage())
         return false;
 
@@ -3531,7 +3533,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
     m_graphicsLayer->setContentsTilePhase(geometry.phase);
     m_graphicsLayer->setContentsRect(geometry.destinationRect);
     m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(geometry.destinationRect));
-    m_graphicsLayer->setContentsToImage(backgroundLayer.image().tryStyleImage()->cachedImage()->image());
+    m_graphicsLayer->setContentsToImage(protect(backgroundLayer.image().tryStyleImage()->cachedImage()->resource())->image());
 
     didUpdateContentsRect = true;
 }
@@ -3893,7 +3895,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (!cachedImage->hasImage())
             return false;
 
-        RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+        RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
         if (!image)
             return false;
 
@@ -3938,7 +3940,7 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
             if (!cachedImage->hasImage())
                 return false;
 
-            RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+            RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
             if (!image)
                 return false;
 
@@ -4030,7 +4032,7 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
         if (!cachedImage)
             return;
 
-        RefPtr image = cachedImage->imageForRenderer(&imageRenderer);
+        RefPtr image = cachedImage->image();
         if (!image)
             return;
 

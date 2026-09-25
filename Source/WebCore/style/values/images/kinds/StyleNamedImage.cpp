@@ -30,13 +30,17 @@
 
 #include "CSSNamedImageValue.h"
 #include "DeprecatedCSSOMValue.h"
-#include "NamedImageGeneratedImage.h"
+#include "GraphicsContext.h"
+#include "Image.h"
+#include "ImageBuffer.h"
+#include "NinePieceGeometry.h"
+#include "Theme.h"
 
 namespace WebCore {
 namespace Style {
 
 NamedImage::NamedImage(CustomIdent&& name)
-    : GeneratedImage { Type::NamedImage, NamedImage::isFixedSize }
+    : GeneratedImage { Type::NamedImage }
     , m_name { WTF::move(name) }
 {
 }
@@ -73,25 +77,42 @@ void NamedImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-RefPtr<WebCore::Image> NamedImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext&, bool) const
+static ImageDrawResult drawNamedImage(GraphicsContext& context, const WTF::String& name, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
-    if (!renderer)
-        return &WebCore::Image::nullImage();
+    GraphicsContextStateSaver stateSaver(context);
+    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    context.clip(destination);
+    context.translate(destination.location());
+    if (destination.size() != source.size())
+        context.scale(FloatSize(destination.width() / source.width(), destination.height() / source.height()));
+    context.translate(-source.location());
 
-    if (size.isEmpty())
-        return nullptr;
+    Theme::singleton().drawNamedImage(name, context, destination.size());
+    return ImageDrawResult::DidDraw;
+}
 
-    return NamedImageGeneratedImage::create(m_name.value, size);
+ImageDrawResult NamedImage::draw(GraphicsContext& context, const RenderElement&, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, bool) const
+{
+    if (concreteObjectSize.size().isEmpty())
+        return ImageDrawResult::DidNothing;
+
+    return drawNamedImage(context, m_name.value, destination, source, options);
+}
+
+ImageDrawResult NamedImage::drawAsPattern(GraphicsContext& context, const RenderElement&, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, bool) const
+{
+    auto imageBuffer = context.createAlignedImageBuffer(concreteObjectSize.size());
+    if (!imageBuffer)
+        return ImageDrawResult::DidNothing;
+
+    Theme::singleton().drawNamedImage(m_name.value, imageBuffer->context(), concreteObjectSize.size());
+    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options);
+    return ImageDrawResult::DidDraw;
 }
 
 bool NamedImage::knownToBeOpaque(const RenderElement&) const
 {
     return false;
-}
-
-FloatSize NamedImage::fixedSize(const RenderElement&) const
-{
-    return { };
 }
 
 } // namespace Style

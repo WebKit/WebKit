@@ -42,6 +42,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "HostWindow.h"
+#include "Image.h"
 #include "ImageBitmapOptions.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -448,7 +449,11 @@ static std::optional<PixelFormat> bufferFormatForDecodedPixels(PixelFormat decod
 
 static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext& scriptExecutionContext, Image& image, const IntRect& sourceRectangle, const FloatSize& outputSize, ImageOrientation orientation, const ImageBitmapOptions& options, DrawsHDRContent drawsHDRContent)
 {
-    RefPtr nativeImage = image.nativeImage();
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image);
+    if (!bitmapImage)
+        return nullptr;
+
+    RefPtr nativeImage = bitmapImage->nativeImage();
     if (!nativeImage)
         return nullptr;
 
@@ -513,7 +518,7 @@ static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext& sc
         if (!buffer)
             return nullptr;
         Ref channelBitmap = BitmapImage::create(channelImage.releaseNonNull());
-        buffer->context().drawImage(channelBitmap.get(), FloatRect { FloatPoint(), outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+        buffer->context().drawBitmapImage(channelBitmap.get(), FloatRect { FloatPoint(), outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
         // Buffer is opaque so unpremultiplied is free
         return buffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, { { }, outputIntSize });
@@ -611,15 +616,15 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTF::move(options), rect, WTF::move(completionHandler));
+    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), WTF::move(options), rect, WTF::move(completionHandler));
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<SVGImageElement>&& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTF::move(options), rect, WTF::move(completionHandler));
+    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), WTF::move(options), rect, WTF::move(completionHandler));
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CachedImage* cachedImage, RenderElement* renderer, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CachedImage* cachedImage, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
@@ -634,7 +639,11 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //    resizeHeight options are not specified, then return a promise rejected with
     //    an "InvalidStateError" DOMException and abort these steps.
 
-    auto imageSize = cachedImage->imageSizeForRenderer(renderer, 1.0f);
+    auto imageSize = FloatSize { };
+    if (RefPtr image = cachedImage->hasImage() ? cachedImage->image() : nullptr) {
+        auto naturalDimensions = image->naturalDimensions();
+        imageSize = { naturalDimensions.width.value_or(0), naturalDimensions.height.value_or(0) };
+    }
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s });
         return;
@@ -676,17 +685,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    RefPtr imageForRenderer = cachedImage->imageForRenderer(renderer);
-    if (!imageForRenderer) {
+    RefPtr sourceImage = cachedImage->image();
+    if (!sourceImage) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto drawsHDRContent = imageForRenderer->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
+    auto drawsHDRContent = sourceImage->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
     const bool originClean = !taintsOrigin(*cachedImage);
 
-    auto orientation = imageForRenderer->orientation();
+    auto orientation = sourceImage->orientation();
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = ImageOrientation::Orientation::None;
 
@@ -697,16 +706,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
     auto sourceRect = sourceRectangle.releaseReturnValue();
     auto bufferAlphaFormat = AlphaPremultiplication::Unpremultiplied;
-    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *imageForRenderer, sourceRect, outputSize, orientation, options, drawsHDRContent);
+    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *sourceImage, sourceRect, outputSize, orientation, options, drawsHDRContent);
     if (!bitmapData) {
         bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
-        bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace(), 1, drawsHDRContent);
+        bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), sourceImage->colorSpace(), 1, drawsHDRContent);
         if (!bitmapData) {
             completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
             return;
         }
+        auto concreteSize = ConcreteObjectSize::fixed(imageSize);
         FloatRect destRect(FloatPoint(), outputSize);
-        bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+        bitmapData->context().drawImage(*sourceImage, concreteSize, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
@@ -942,7 +952,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    bitmapData->context().drawBitmapImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     const bool originClean = existingImageBitmap->originClean();
     bool forciblyPremultiplyAlpha = false;
@@ -1126,7 +1136,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
             return;
         }
         FloatRect destRect(FloatPoint(), outputSize);
-        bitmapData->context().drawImage(image, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+        bitmapData->context().drawBitmapImage(image, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);

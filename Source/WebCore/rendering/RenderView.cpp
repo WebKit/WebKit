@@ -70,6 +70,7 @@
 #include "SVGImage.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
 #include "TransformState.h"
@@ -1063,7 +1064,7 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
 
         for (auto& layer : renderElement.style().backgroundLayers().usedValues()) {
             RefPtr image = layer.image().tryStyleImage();
-            updateAnimation(image ? protect(image->cachedImage()) : nullptr);
+            updateAnimation(image && image->cachedImage() ? protect(image->cachedImage()->resource()) : nullptr);
         }
         if (auto* renderImage = dynamicDowncast<RenderImage>(renderElement))
             updateAnimation(protect(renderImage->cachedImage()));

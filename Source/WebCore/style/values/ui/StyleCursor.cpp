@@ -60,7 +60,7 @@ auto CSSValueConversion<Cursor>::operator()(BuilderState& state, const CSSValue&
             return CursorImageAndHotSpot { InvalidImage::create(), std::nullopt };
         }
 
-        auto hotSpot = styleImage->hotSpot();
+        auto hotSpot = styleImage->specifiedHotSpot();
         return CursorImageAndHotSpot { styleImage.releaseNonNull(), WTF::move(hotSpot) };
     });
 

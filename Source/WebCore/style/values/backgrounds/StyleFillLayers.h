@@ -66,7 +66,7 @@ bool imagesAreLoaded(const CoordinatedValueList<T>& list, const RenderElement& r
 {
     return std::ranges::all_of(list.usedValues(), [&renderer](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
-        return !image || image->isLoaded(&renderer);
+        return !image || image->isLoaded(renderer);
     });
 }
 
@@ -91,11 +91,7 @@ bool hasHDRContent(const CoordinatedValueList<T>& list)
 {
     return std::ranges::any_of(list.usedValues(), [](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
-        if (auto* cachedImage = image ? image->cachedImage() : nullptr) {
-            if (cachedImage->hasHDRContent())
-                return true;
-        }
-        return false;
+        return image && image->hasHDRContent();
     });
 }
 

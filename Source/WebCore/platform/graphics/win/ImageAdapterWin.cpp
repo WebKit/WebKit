@@ -50,13 +50,13 @@ void ImageAdapter::invalidate()
 {
 }
 
-bool ImageAdapter::getHBITMAP(HBITMAP bmp)
+bool ImageAdapter::getHBITMAP(HBITMAP bmp, ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
-    return getHBITMAPOfSize(bmp, 0);
+    return getHBITMAPOfSize(bmp, nullptr, concreteObjectSize, extras);
 }
 
 #if USE(SKIA)
-bool ImageAdapter::getHBITMAPOfSize(HBITMAP, const IntSize*)
+bool ImageAdapter::getHBITMAPOfSize(HBITMAP, const IntSize*, ConcreteObjectSize, const ImageDrawingExtras*)
 {
     return false;
 }

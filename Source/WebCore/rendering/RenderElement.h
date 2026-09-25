@@ -265,6 +265,10 @@ public:
 
     WEBCORE_EXPORT ImageOrientation imageOrientation() const;
 
+    virtual std::optional<FloatSize> usedImageSize() const { return std::nullopt; }
+
+    inline std::optional<FloatSize> usedZoomedImageSize() const;
+
     void removeFromRenderFragmentedFlow();
     virtual void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*);
 

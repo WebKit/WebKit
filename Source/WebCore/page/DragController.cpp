@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DragController.h"
 
+#include "BitmapImage.h"
 #include "HTMLAnchorElement.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -36,6 +37,7 @@
 #include "ColorSerialization.h"
 #include "ContainerNodeInlines.h"
 #include "DataTransfer.h"
+#include "DefaultSizing.h"
 #include "DocumentEventLoop.h"
 #include "DocumentFragment.h"
 #include "DocumentPage.h"
@@ -782,7 +784,7 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const LocalFr
         return false;
 
     RefPtr cachedImage = renderImage->cachedImage();
-    return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderImage.get());
+    return cachedImage && !cachedImage->errorOccurred() && cachedImage->image();
 }
 
 #if ENABLE(MODEL_ELEMENT)
@@ -889,9 +891,6 @@ static CachedImage* getCachedImage(Element& element)
 static Image* getImage(Element& element)
 {
     RefPtr cachedImage = getCachedImage(element);
-    // Don't use cachedImage->imageForRenderer() here as that may return BitmapImages for cached SVG Images.
-    // Users of getImage() want access to the SVGImage, in order to figure out the filename extensions,
-    // which would be empty when asking the cached BitmapImages.
     return (cachedImage && !cachedImage->errorOccurred()) ?
         cachedImage->image() : nullptr;
 }
@@ -965,7 +964,7 @@ void DragController::prepareForDragStart(LocalFrame& source, OptionSet<DragSourc
 
     RefPtr image = getImage(element);
     auto imageURL = hitTestResult->absoluteImageURL();
-    if (actionMask.contains(DragSourceAction::Image) && !imageURL.isEmpty() && image && !image->isNull()) {
+    if (actionMask.contains(DragSourceAction::Image) && !imageURL.isEmpty() && image && !image->hasNothingToDraw()) {
         editor->writeImageToPasteboard(pasteboard, element, imageURL, { });
         return;
     }
@@ -1135,7 +1134,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         return false;
     }
 
-    if (!imageURL.isEmpty() && image && !image->isNull() && m_dragSourceAction.contains(DragSourceAction::Image)) {
+    if (!imageURL.isEmpty() && image && !image->hasNothingToDraw() && m_dragSourceAction.contains(DragSourceAction::Image)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
@@ -1336,7 +1335,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 
     RefPtr image = getImage(element);
     if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image)
-        && (dragImage = DragImage { createDragImageFromImage(image.get(), orientation, frame.view() ? protect(frame.view())->hostWindow() : nullptr, protect(element.document())->deviceScaleFactor()) })) {
+        && (dragImage = DragImage { createDragImageFromImage(image.get(), DefaultSizing { renderer->usedImageSize() }.resolve(image->naturalDimensions()), orientation, frame.view() ? protect(frame.view())->hostWindow() : nullptr, protect(element.document())->deviceScaleFactor()) })) {
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
         IntSize fittedSize = dragImageSize(dragImage.get());
 
@@ -1621,7 +1620,10 @@ bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
     UNUSED_PARAM(image);
     return true;
 #else
-    return image.size().height() * image.size().width() <= MaxOriginalImageArea;
+    auto naturalDimensions = image.naturalDimensions();
+    if (!naturalDimensions.width || !naturalDimensions.height)
+        return true;
+    return *naturalDimensions.width * *naturalDimensions.height <= MaxOriginalImageArea;
 #endif
 }
 

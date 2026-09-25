@@ -1,4 +1,3 @@
-[ macOS ] mac/DOM/DOM.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebSharingServicePickerController.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
