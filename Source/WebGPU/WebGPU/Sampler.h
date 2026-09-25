@@ -25,25 +25,25 @@
 
 #pragma once
 
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/GenericHashKey.h>
 #import <wtf/Hasher.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 struct WGPUSamplerImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpusampler
-class Sampler : public WGPUSamplerImpl, public RefCounted<Sampler> {
+class Sampler final : public WebGPU::Sampler, public WGPUSamplerImpl {
     WTF_MAKE_TZONE_ALLOCATED(Sampler);
 public:
     using UniqueSamplerIdentifier = std::array<uint32_t, 4>;
@@ -65,9 +65,9 @@ public:
 
     ~Sampler();
 
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
 
     id<MTLSamplerState> cachedSamplerState() const { return m_cachedSamplerState; }
     id<MTLSamplerState> tryCacheSamplerState() const;
@@ -100,4 +100,4 @@ private:
     mutable __weak id<MTLSamplerState> m_cachedSamplerState { nil };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

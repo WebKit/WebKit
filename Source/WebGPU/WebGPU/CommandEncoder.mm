@@ -60,7 +60,7 @@
 }
 @end
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 #define GENERATE_INVALID_ENCODER_STATE_ERROR() \
 if (m_state == EncoderState::Ended) \
@@ -2467,86 +2467,86 @@ void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
     m_bindGroups.append(group);
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuCommandEncoderAddRef(WGPUCommandEncoder commandEncoder)
 {
-    WebGPU::fromAPI(commandEncoder).ref();
+    WebGPU::Metal::fromAPI(commandEncoder).ref();
 }
 
 void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 {
-    WebGPU::fromAPI(commandEncoder).deref();
+    WebGPU::Metal::fromAPI(commandEncoder).deref();
 }
 
 WGPUComputePassEncoder wgpuCommandEncoderBeginComputePass(WGPUCommandEncoder commandEncoder, const WGPUComputePassDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(commandEncoder))->beginComputePass(*descriptor));
+    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(commandEncoder))->beginComputePass(*descriptor));
 }
 
 WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder commandEncoder, const WGPURenderPassDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(commandEncoder))->beginRenderPass(*descriptor));
+    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(commandEncoder))->beginRenderPass(*descriptor));
 }
 
 void wgpuCommandEncoderCopyBufferToBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer source, uint64_t sourceOffset, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->copyBufferToBuffer(protect(WebGPU::fromAPI(source)), sourceOffset, protect(WebGPU::fromAPI(destination)), destinationOffset, size);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->copyBufferToBuffer(protect(WebGPU::Metal::fromAPI(source)), sourceOffset, protect(WebGPU::Metal::fromAPI(destination)), destinationOffset, size);
 }
 
 void wgpuCommandEncoderCopyBufferToTexture(WGPUCommandEncoder commandEncoder, const WGPUTexelCopyBufferInfo* source, const WGPUTexelCopyTextureInfo* destination, const WGPUExtent3D* copySize)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->copyBufferToTexture(*source, *destination, *copySize);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->copyBufferToTexture(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderCopyTextureToBuffer(WGPUCommandEncoder commandEncoder, const WGPUTexelCopyTextureInfo* source, const WGPUTexelCopyBufferInfo* destination, const WGPUExtent3D* copySize)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->copyTextureToBuffer(*source, *destination, *copySize);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->copyTextureToBuffer(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderCopyTextureToTexture(WGPUCommandEncoder commandEncoder, const WGPUTexelCopyTextureInfo* source, const WGPUTexelCopyTextureInfo* destination, const WGPUExtent3D* copySize)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->copyTextureToTexture(*source, *destination, *copySize);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->copyTextureToTexture(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->clearBuffer(protect(WebGPU::fromAPI(buffer)), offset, size);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->clearBuffer(protect(WebGPU::Metal::fromAPI(buffer)), offset, size);
 }
 
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(commandEncoder))->finish(*descriptor));
+    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(commandEncoder))->finish(*descriptor));
 }
 
 void wgpuCommandEncoderInsertDebugMarker(WGPUCommandEncoder commandEncoder, WGPUStringView markerLabel)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->insertDebugMarker(WebGPU::fromAPI(markerLabel));
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->insertDebugMarker(WebGPU::Metal::fromAPI(markerLabel));
 }
 
 void wgpuCommandEncoderPopDebugGroup(WGPUCommandEncoder commandEncoder)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->popDebugGroup();
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->popDebugGroup();
 }
 
 void wgpuCommandEncoderPushDebugGroup(WGPUCommandEncoder commandEncoder, WGPUStringView groupLabel)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->pushDebugGroup(WebGPU::Metal::fromAPI(groupLabel));
 }
 
 void wgpuCommandEncoderResolveQuerySet(WGPUCommandEncoder commandEncoder, WGPUQuerySet querySet, uint32_t firstQuery, uint32_t queryCount, WGPUBuffer destination, uint64_t destinationOffset)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->resolveQuerySet(protect(WebGPU::fromAPI(querySet)), firstQuery, queryCount, protect(WebGPU::fromAPI(destination)), destinationOffset);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->resolveQuerySet(protect(WebGPU::Metal::fromAPI(querySet)), firstQuery, queryCount, protect(WebGPU::Metal::fromAPI(destination)), destinationOffset);
 }
 
 void wgpuCommandEncoderWriteTimestamp(WGPUCommandEncoder commandEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->writeTimestamp(protect(WebGPU::fromAPI(querySet)), queryIndex);
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->writeTimestamp(protect(WebGPU::Metal::fromAPI(querySet)), queryIndex);
 }
 
 void wgpuCommandEncoderSetLabel(WGPUCommandEncoder commandEncoder, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(commandEncoder))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(commandEncoder))->setLabel(WebGPU::Metal::fromAPI(label));
 }

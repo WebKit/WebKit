@@ -43,7 +43,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
@@ -118,9 +118,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_stencilReadOnly(stencilReadOnly)
     , m_parentEncoder(rawParentEncoder)
     , m_visibilityResultBuffer(visibilityResultBuffer)
-    , m_descriptor(descriptor)
-    , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(unsafeMakeSpan(descriptor.colorAttachments, descriptor.colorAttachmentCount)) : Vector<WGPURenderPassColorAttachment>())
-    , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
     , m_metalDescriptor(metalDescriptor)
     , m_maxDrawCount(maxDrawCount)
     , m_rasterizationRateMap(metalDescriptor.rasterizationRateMap)
@@ -128,10 +125,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     if (m_device->baseCapabilities().memoryBarrierLimit > maxDrawCount)
         m_metalDescriptor = nil;
 
-    if (m_descriptorColorAttachments.size())
-        m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
-    if (descriptor.depthStencilAttachment)
-        m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
     auto colorAttachments = colorAttachmentsSpan(descriptor);
     for (auto& attachment : colorAttachments) {
         auto texture = attachment.view ? TextureOrTextureView(static_cast<TextureView*>(attachment.view)) : TextureOrTextureView(static_cast<Texture*>(attachment.texture));
@@ -1219,7 +1212,7 @@ bool RenderPassEncoder::splitRenderPass()
 #endif
     m_parentEncoder->endEncoding(m_renderCommandEncoder);
     if (issuedDrawCall()) {
-        for (size_t i = 0; i < m_descriptorColorAttachments.size(); ++i)
+        for (size_t i = 0; i < m_colorAttachmentViews.size(); ++i)
             m_metalDescriptor.colorAttachments[i].loadAction = MTLLoadActionLoad;
 
         m_metalDescriptor.depthAttachment.loadAction = MTLLoadActionLoad;
@@ -1393,9 +1386,9 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
     struct IndirectEncodeWork {
         RetainPtr<RenderBundleICBWithResources> icb;
         uint64_t slotIndex { 0 };
-        WebGPU::IndirectDrawData* data { nullptr };
-        RefPtr<WebGPU::Buffer> indirectBuffer;
-        RefPtr<WebGPU::Buffer> indexBuffer;
+        WebGPU::Metal::IndirectDrawData* data { nullptr };
+        RefPtr<WebGPU::Metal::Buffer> indirectBuffer;
+        RefPtr<WebGPU::Metal::Buffer> indexBuffer;
         uint64_t indirectGeneration { 0 };
         uint64_t indexGeneration { 0 };
         bool clamps { false }; // false => read raw app args (no min-count clamp required)
@@ -1420,7 +1413,7 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
 
         bundle->updateMinMaxDepths(minDepth, maxDepth);
 
-        if (!bundle->validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor, m_colorAttachmentViews, m_depthStencilView) || !bundle->validatePipeline(m_pipeline.get())) {
+        if (!bundle->validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_colorAttachmentViews, m_depthStencilView) || !bundle->validatePipeline(m_pipeline.get())) {
             makeInvalid(@"executeBundles: validation failed");
             return;
         }
@@ -1709,7 +1702,7 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
 
 NSString* RenderPassEncoder::errorValidatingColorDepthStencilTargets(const RenderPipeline& pipeline) const
 {
-    return pipeline.errorValidatingColorDepthStencilTargets(m_descriptor, m_colorAttachmentViews, m_depthStencilView);
+    return pipeline.errorValidatingColorDepthStencilTargets(m_colorAttachmentViews, m_depthStencilView);
 }
 
 id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
@@ -2041,122 +2034,122 @@ void RenderPassEncoder::setLabel(String&& label)
 #undef CHECKED_SET_PSO
 #undef RETURN_IF_FINISHED
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuRenderPassEncoderAddRef(WGPURenderPassEncoder renderPassEncoder)
 {
-    WebGPU::fromAPI(renderPassEncoder).ref();
+    WebGPU::Metal::fromAPI(renderPassEncoder).ref();
 }
 
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 {
-    WebGPU::fromAPI(renderPassEncoder).deref();
+    WebGPU::Metal::fromAPI(renderPassEncoder).deref();
 }
 
 void wgpuRenderPassEncoderBeginOcclusionQuery(WGPURenderPassEncoder renderPassEncoder, uint32_t queryIndex)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->beginOcclusionQuery(queryIndex);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->beginOcclusionQuery(queryIndex);
 }
 
 void wgpuRenderPassEncoderDraw(WGPURenderPassEncoder renderPassEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void wgpuRenderPassEncoderDrawIndexed(WGPURenderPassEncoder renderPassEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void wgpuRenderPassEncoderDrawIndexedIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->drawIndexedIndirect(protect(WebGPU::fromAPI(indirectBuffer)), indirectOffset);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->drawIndexedIndirect(protect(WebGPU::Metal::fromAPI(indirectBuffer)), indirectOffset);
 }
 
 void wgpuRenderPassEncoderDrawIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->drawIndirect(protect(WebGPU::fromAPI(indirectBuffer)), indirectOffset);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->drawIndirect(protect(WebGPU::Metal::fromAPI(indirectBuffer)), indirectOffset);
 }
 
 void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEncoder)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->endOcclusionQuery();
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->endOcclusionQuery();
 }
 
 void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->endPass();
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->endPass();
 }
 
 void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder, size_t bundlesCount, const WGPURenderBundle* bundles)
 {
-    Vector<Ref<WebGPU::RenderBundle>> bundlesToForward;
+    Vector<Ref<WebGPU::Metal::RenderBundle>> bundlesToForward;
     for (auto& bundle : unsafeMakeSpan(bundles, bundlesCount))
-        bundlesToForward.append(protect(WebGPU::fromAPI(bundle)));
-    protect(WebGPU::fromAPI(renderPassEncoder))->executeBundles(WTF::move(bundlesToForward));
+        bundlesToForward.append(protect(WebGPU::Metal::fromAPI(bundle)));
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->executeBundles(WTF::move(bundlesToForward));
 }
 
 void wgpuRenderPassEncoderInsertDebugMarker(WGPURenderPassEncoder renderPassEncoder, WGPUStringView markerLabel)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->insertDebugMarker(WebGPU::fromAPI(markerLabel));
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->insertDebugMarker(WebGPU::Metal::fromAPI(markerLabel));
 }
 
 void wgpuRenderPassEncoderPopDebugGroup(WGPURenderPassEncoder renderPassEncoder)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->popDebugGroup();
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->popDebugGroup();
 }
 
 void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder, WGPUStringView groupLabel)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->pushDebugGroup(WebGPU::Metal::fromAPI(groupLabel));
 }
 
 void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, uint32_t groupIndex, WGPUBindGroup group, std::optional<Vector<uint32_t>>&& dynamicOffsets)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::fromAPI(group)).ptr() : nullptr, WTF::move(dynamicOffsets));
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setBindGroup(groupIndex, group ? protect(WebGPU::Metal::fromAPI(group)).ptr() : nullptr, WTF::move(dynamicOffsets));
 }
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setBlendConstant(*color);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setBlendConstant(*color);
 }
 
 void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setIndexBuffer(protect(WebGPU::fromAPI(buffer)), format, offset, size);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setIndexBuffer(protect(WebGPU::Metal::fromAPI(buffer)), format, offset, size);
 }
 
 void wgpuRenderPassEncoderSetPipeline(WGPURenderPassEncoder renderPassEncoder, WGPURenderPipeline pipeline)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setPipeline(protect(WebGPU::fromAPI(pipeline)));
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setPipeline(protect(WebGPU::Metal::fromAPI(pipeline)));
 }
 
 void wgpuRenderPassEncoderSetScissorRect(WGPURenderPassEncoder renderPassEncoder, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setScissorRect(x, y, width, height);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setScissorRect(x, y, width, height);
 }
 
 void wgpuRenderPassEncoderSetStencilReference(WGPURenderPassEncoder renderPassEncoder, uint32_t reference)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setStencilReference(reference);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setStencilReference(reference);
 }
 
 void wgpuRenderPassEncoderSetVertexBuffer(WGPURenderPassEncoder renderPassEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    RefPtr<WebGPU::Buffer> optionalBuffer;
+    RefPtr<WebGPU::Metal::Buffer> optionalBuffer;
     if (buffer)
-        optionalBuffer = protect(WebGPU::fromAPI(buffer)).ptr();
-    protect(WebGPU::fromAPI(renderPassEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
+        optionalBuffer = protect(WebGPU::Metal::fromAPI(buffer)).ptr();
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
 }
 
 void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setViewport(x, y, width, height, minDepth, maxDepth);
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setViewport(x, y, width, height, minDepth, maxDepth);
 }
 
 void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(renderPassEncoder))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(renderPassEncoder))->setLabel(WebGPU::Metal::fromAPI(label));
 }

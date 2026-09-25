@@ -33,7 +33,7 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/Base64.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 static bool NODELETE validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
@@ -224,7 +224,7 @@ static NSUInteger samplerStateHardLimit(id<MTLDevice> device)
 static id<MTLSamplerState> tryCacheSamplerState(const Sampler::UniqueSamplerIdentifier& samplerIdentifier, id<MTLDevice> device, const WGPUSamplerDescriptor& descriptor)
 {
     Locker locker { samplerStatesLock };
-    auto& samplerStates = WebGPU::samplerStates();
+    auto& samplerStates = WebGPU::Metal::samplerStates();
 
     if (auto it = samplerStates.find(samplerIdentifier); it != samplerStates.end()) {
         if (auto mtlSamplerState = it->value.weak.get()) {
@@ -264,7 +264,7 @@ static id<MTLSamplerState> tryCacheSamplerState(const Sampler::UniqueSamplerIden
 static void uncacheSamplerState(const Sampler::UniqueSamplerIdentifier& samplerIdentifier, id<MTLSamplerState> samplerState)
 {
     Locker locker { samplerStatesLock };
-    auto& samplerStates = WebGPU::samplerStates();
+    auto& samplerStates = WebGPU::Metal::samplerStates();
 
     auto it = samplerStates.find(samplerIdentifier);
     RELEASE_ASSERT(it != samplerStates.end());
@@ -358,26 +358,26 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
         .maxAnisotropy = m_maxAnisotropy,
     };
 
-    auto cachedSamplerState = WebGPU::tryCacheSamplerState(*m_samplerIdentifier, device, descriptor);
+    auto cachedSamplerState = WebGPU::Metal::tryCacheSamplerState(*m_samplerIdentifier, device, descriptor);
     m_cachedSamplerState = cachedSamplerState;
     return m_cachedSamplerState;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuSamplerAddRef(WGPUSampler sampler)
 {
-    WebGPU::fromAPI(sampler).ref();
+    WebGPU::Metal::fromAPI(sampler).ref();
 }
 
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
-    WebGPU::fromAPI(sampler).deref();
+    WebGPU::Metal::fromAPI(sampler).deref();
 }
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(sampler))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(sampler))->setLabel(WebGPU::Metal::fromAPI(label));
 }

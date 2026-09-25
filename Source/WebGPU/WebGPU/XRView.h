@@ -26,21 +26,21 @@
 #pragma once
 
 #import <utility>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 struct WGPUXRViewImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 class XRProjectionLayer;
 
-class XRView : public RefCountedAndCanMakeWeakPtr<XRView>, public WGPUXRViewImpl {
+class XRView final : public WebGPU::XRView, public WGPUXRViewImpl {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRView);
 public:
     static Ref<XRView> create(Device& device)
@@ -54,9 +54,9 @@ public:
 
     ~XRView();
 
-    void NODELETE setLabel(String&&);
+    void NODELETE setLabel(String&&) final;
 
-    bool isValid() const { return true; }
+    bool isValid() const final { return true; }
     Device& device() { return m_device; }
 
 private:
@@ -66,4 +66,4 @@ private:
     const Ref<Device> m_device;
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

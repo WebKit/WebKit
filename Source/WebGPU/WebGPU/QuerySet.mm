@@ -33,7 +33,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 Lock QuerySet::querySetLock;
 __attribute__((no_destroy)) std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> QuerySet::m_counterSampleBuffers;
@@ -223,36 +223,36 @@ void QuerySet::createContainersIfNeeded()
     }
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuQuerySetAddRef(WGPUQuerySet querySet)
 {
-    WebGPU::fromAPI(querySet).ref();
+    WebGPU::Metal::fromAPI(querySet).ref();
 }
 
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
-    WebGPU::fromAPI(querySet).deref();
+    WebGPU::Metal::fromAPI(querySet).deref();
 }
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
-    protect(WebGPU::fromAPI(querySet))->destroy();
+    protect(WebGPU::Metal::fromAPI(querySet))->destroy();
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(querySet))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(querySet))->setLabel(WebGPU::Metal::fromAPI(label));
 }
 
 uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).count();
+    return WebGPU::Metal::fromAPI(querySet).count();
 }
 
 WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).type();
+    return WebGPU::Metal::fromAPI(querySet).type();
 }

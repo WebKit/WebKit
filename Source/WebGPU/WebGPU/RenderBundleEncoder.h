@@ -27,17 +27,17 @@
 
 #import "CommandsMixin.h"
 #import "RenderBundle.h"
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 class RenderPipeline;
 }
 
@@ -46,7 +46,7 @@ struct WGPURenderBundleEncoderImpl {
 
 @interface RenderBundleICBWithResources : NSObject
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline minVertexCounts:(WebGPU::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::Metal::RenderPipeline*)pipeline minVertexCounts:(WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly, nonatomic) id<MTLBuffer> outOfBoundsReadFlag;
@@ -61,13 +61,13 @@ struct WGPURenderBundleEncoderImpl {
 @property (readonly, nonatomic) float depthBiasSlopeScale;
 @property (readonly, nonatomic) float depthBiasClamp;
 @property (readonly, nonatomic) id<MTLBuffer> fragmentDynamicOffsetsBuffer;
-@property (readonly, nonatomic) WeakPtr<WebGPU::RenderPipeline> pipeline;
+@property (readonly, nonatomic) ThreadSafeWeakPtr<const WebGPU::Metal::RenderPipeline> pipeline;
 
-- (WebGPU::RenderBundle::MinVertexCountsContainer*)minVertexCountForDrawCommand;
-- (WebGPU::IndirectDrawForSlotContainer*)indirectDrawsForSlot;
+- (WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCountForDrawCommand;
+- (WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDrawsForSlot;
 @end
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroup;
 class Buffer;
@@ -77,7 +77,7 @@ class RenderPipeline;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundleencoder
-class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
+class RenderBundleEncoder final : public WebGPU::RenderBundleEncoder, public WGPURenderBundleEncoderImpl, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(RenderBundleEncoder);
 public:
     static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
@@ -104,9 +104,9 @@ public:
     void setIndexBuffer(Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
     void setVertexBuffer(uint32_t slot, Buffer*, uint64_t offset, uint64_t size);
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
     void replayCommands(RenderPassEncoder&);
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
@@ -199,7 +199,7 @@ private:
     uint64_t m_vertexDynamicOffset { 0 };
     uint64_t m_fragmentDynamicOffset { 0 };
 
-    WeakPtr<RenderPassEncoder> m_renderPassEncoder;
+    ThreadSafeWeakPtr<RenderPassEncoder> m_renderPassEncoder;
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
     const Vector<WGPUTextureFormat> m_colorFormats;
     const WGPUTextureFormat m_depthStencilFormat { WGPUTextureFormat_Undefined };
@@ -213,4 +213,4 @@ private:
     bool m_makeSubmitInvalid { false };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

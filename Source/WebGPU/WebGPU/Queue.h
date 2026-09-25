@@ -28,13 +28,13 @@
 #import "Instance.h"
 #import <CoreVideo/CVPixelBuffer.h>
 #import <Metal/Metal.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
-#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -44,7 +44,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 struct WGPUQueueImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Buffer;
 class CommandBuffer;
@@ -61,7 +61,7 @@ std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPi
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
-class Queue : public WGPUQueueImpl, public ThreadSafeRefCounted<Queue> {
+class Queue final : public WebGPU::Queue, public WGPUQueueImpl {
     WTF_MAKE_TZONE_ALLOCATED(Queue);
 public:
     static Ref<Queue> create(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
@@ -76,17 +76,17 @@ public:
     ~Queue();
 
     void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
-    void submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands);
+    void submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands);
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data) HAS_SWIFTCXX_THUNK;
     void clearBuffer(id<MTLBuffer>, NSUInteger offset = 0, NSUInteger size = NSUIntegerMax);
     void writeTexture(const WGPUTexelCopyTextureInfo& destination, std::span<uint8_t> data, const WGPUTexelCopyBufferLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
     void copyExternalImageToTexture(const WGPUImageCopyExternalImage& source, const WGPUImageCopyTextureTagged& destination, const WGPUExtent3D& copySize);
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
     void onSubmittedWorkScheduled(Function<void()>&&);
 
-    bool isValid() const { return m_commandQueue; }
+    bool isValid() const final { return m_commandQueue; }
     void makeInvalid();
     void setCommittedSignalEvent(id<MTLSharedEvent>, size_t frameIndex);
 
@@ -122,7 +122,7 @@ private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);
     Queue(Adapter&, Device&);
 
-    NSString * _Nullable errorValidatingSubmit(const Vector<Ref<WebGPU::CommandBuffer>>&) const;
+    NSString * _Nullable errorValidatingSubmit(const Vector<Ref<WebGPU::Metal::CommandBuffer>>&) const;
     bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
 
 
@@ -165,14 +165,14 @@ private:
     uint64_t m_temporaryBufferOffset;
 } SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refQueue(WebGPU::Queue* obj)
+inline void refQueue(WebGPU::Metal::Queue* obj)
 {
     obj->ref();
 }
 
-inline void derefQueue(WebGPU::Queue* obj)
+inline void derefQueue(WebGPU::Metal::Queue* obj)
 {
     obj->deref();
 }

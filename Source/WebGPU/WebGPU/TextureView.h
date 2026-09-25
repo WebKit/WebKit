@@ -27,22 +27,22 @@
 
 #import "BindableResource.h"
 #import <WebGPU/WGPUTextureViewImpl.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gputextureview
-class TextureView : public RefCountedAndCanMakeWeakPtr<TextureView>, public WGPUTextureViewImpl, public TrackedResource {
+class TextureView final : public WebGPU::TextureView, public WGPUTextureViewImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(TextureView);
 public:
     static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
@@ -56,9 +56,9 @@ public:
 
     ~TextureView();
 
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
 
     id<MTLTexture> NODELETE texture() const;
     id<MTLTexture> NODELETE parentTexture() const;
@@ -113,14 +113,14 @@ private:
     const Ref<Texture> m_parentTexture;
 } SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refTextureView(WebGPU::TextureView* obj)
+inline void refTextureView(WebGPU::Metal::TextureView* obj)
 {
     obj->ref();
 }
 
-inline void derefTextureView(WebGPU::TextureView* obj)
+inline void derefTextureView(WebGPU::Metal::TextureView* obj)
 {
     obj->deref();
 }

@@ -26,25 +26,25 @@
 #pragma once
 
 #import <utility>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/WeakPtr.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 struct WGPUXRSubImageImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 class Texture;
 class XRProjectionLayer;
 
-class XRSubImage : public RefCountedAndCanMakeWeakPtr<XRSubImage>, public WGPUXRSubImageImpl {
+class XRSubImage final : public WebGPU::XRSubImage, public WGPUXRSubImageImpl {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRSubImage);
 public:
     static Ref<XRSubImage> create(Device& device)
@@ -58,9 +58,9 @@ public:
 
     ~XRSubImage();
 
-    void NODELETE setLabel(String&&);
+    void NODELETE setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
     void update(const XRProjectionLayer&);
     Texture* colorTexture();
     Texture* depthTexture();
@@ -76,4 +76,4 @@ private:
     ThreadSafeWeakPtr<Device> m_device;
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

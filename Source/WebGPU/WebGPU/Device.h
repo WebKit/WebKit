@@ -34,6 +34,7 @@
 #import <IOSurface/IOSurfaceRef.h>
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
 #import <simd/matrix_types.h>
 #import <wtf/CompletionHandler.h>
@@ -55,7 +56,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 struct WGPUDeviceImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroup;
 class BindGroupLayout;
@@ -100,7 +101,7 @@ struct WebKitMTLDrawPrimitivesIndirectArguments { \
 WEBKIT_DRAW_INDIRECT_STRUCT_TYPE
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
-class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
+class Device final : public WebGPU::Device, public WGPUDeviceImpl {
     WTF_MAKE_TZONE_ALLOCATED(Device);
 public:
     static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
@@ -145,12 +146,12 @@ public:
     void pushErrorScope(WGPUErrorFilter);
     void setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&&);
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
-    void NODELETE setLabel(String&&);
+    void NODELETE setLabel(String&&) final;
 
-    bool isValid() const { return m_device; }
+    bool isValid() const final { return m_device; }
     bool isLost() const { return m_isLost; }
-    const WGPULimits& limits() const LIFETIME_BOUND { return m_capabilities.limits; }
-    const WGPULimits limitsCopy() const { return m_capabilities.limits; }
+    const Limits& limits() const LIFETIME_BOUND { return m_capabilities.limits; }
+    const Limits limitsCopy() const { return m_capabilities.limits; }
     const Vector<WGPUFeatureName>& features() const LIFETIME_BOUND { return m_capabilities.features; }
     const HardwareCapabilities::BaseCapabilities& baseCapabilities() const LIFETIME_BOUND { return m_capabilities.baseCapabilities; }
 
@@ -384,14 +385,14 @@ private:
     bool m_shaderValidationEnabled { true };
 } SWIFT_SHARED_REFERENCE(refDevice, derefDevice) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refDevice(WebGPU::Device* obj)
+inline void refDevice(WebGPU::Metal::Device* obj)
 {
     obj->ref();
 }
 
-inline void derefDevice(WebGPU::Device* obj)
+inline void derefDevice(WebGPU::Metal::Device* obj)
 {
     obj->deref();
 }

@@ -27,14 +27,15 @@
 
 #include <Metal/Metal.h>
 #include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUCpp.h>
 #include <WebGPU/WebGPUExt.h>
 #include <optional>
 #include <wtf/Vector.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 struct HardwareCapabilities {
-    WGPULimits limits { };
+    Limits limits { };
     Vector<WGPUFeatureName> features;
 
     struct BaseCapabilities {
@@ -49,11 +50,13 @@ struct HardwareCapabilities {
 };
 
 std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
-bool NODELETE isValid(const WGPULimits&);
-WGPULimits NODELETE defaultLimits();
-bool NODELETE anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
+bool NODELETE isValid(const Limits&);
+Limits NODELETE defaultLimits();
+bool NODELETE anyLimitIsBetterThan(const Limits& target, const Limits& reference);
+Limits NODELETE fromAPI(const WGPULimits&);
+WGPULimits NODELETE toAPI(const Limits&);
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
 bool isShaderValidationEnabled(id<MTLDevice>);
 bool NODELETE isWebGPUSwiftEnabled();
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
