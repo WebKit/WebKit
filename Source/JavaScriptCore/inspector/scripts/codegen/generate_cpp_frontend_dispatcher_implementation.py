@@ -32,13 +32,11 @@ from string import Template
 try:
     from .cpp_generator import CppGenerator
     from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-    from .generator import Generator, ucfirst
-    from .models import ObjectType, ArrayType, AliasedType, EnumType
+    from .generator import Generator
 except:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-    from generator import Generator, ucfirst
-    from models import ObjectType, ArrayType, AliasedType, EnumType
+    from generator import Generator
 
 log = logging.getLogger('global')
 
@@ -74,6 +72,20 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
         ]
         return '\n'.join(self.generate_includes_from_entries(header_includes))
 
+    def _generate_nullable_event_parameter_assignments(self, parameter, _type, parameter_name, indent):
+        null_type = 'NullTag'
+        value_type = CppGenerator.cpp_type_for_event_parameter(_type, False, False, True)
+        lines = []
+        lines.append('%sif (std::holds_alternative<%s>(%s))' % (indent, null_type, parameter_name))
+        lines.append('%s    protocol_paramsObject->setValue("%s"_s, JSON::Value::null());' % (indent, parameter.parameter_name))
+
+        parameter_value = 'std::get<%s>(WTF::move(%s))' % (value_type, parameter_name)
+        if _type.is_enum():
+            parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
+        lines.append('%selse' % indent)
+        lines.append('%s    protocol_paramsObject->%s("%s"_s, %s);' % (indent, CppGenerator.cpp_setter_method_for_type(_type), parameter.parameter_name, parameter_value))
+        return lines
+
     def _generate_dispatcher_implementations_for_domain(self, domain):
         implementations = []
         events = self.events_for_domain(domain)
@@ -94,39 +106,31 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
 
-            parameter_value = parameter_name
-
-            _type = parameter.type
-            if isinstance(_type, AliasedType):
-                _type = _type.aliased_type
-            if isinstance(_type, EnumType) and _type.is_anonymous:
-                _type = _type.primitive_type
-
-            if _type.is_enum():
-                if parameter.is_optional:
-                    parameter_value = '*' + parameter_value
-                parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
-            elif CppGenerator.should_release_argument(_type, parameter.is_optional):
-                parameter_value = parameter_value + '.releaseNonNull()'
-            elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
-                parameter_value = '*' + parameter_value
-            elif CppGenerator.should_move_argument(_type, parameter.is_optional):
-                parameter_value = 'WTF::move(%s)' % parameter_value
+            _type = CppGenerator.cpp_resolved_event_parameter_type(parameter.type)
 
             parameter_args = {
                 'parameterKey': parameter.parameter_name,
                 'parameterName': parameter_name,
-                'parameterValue': parameter_value,
                 'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(_type),
             }
 
-            if parameter.is_optional:
-                parameter_assignments.append('    if (!!%(parameterName)s)' % parameter_args)
-                parameter_assignments.append('        protocol_paramsObject->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % parameter_args)
+            if parameter.is_nullable:
+                nullable_parameter_name = parameter_name if not parameter.is_optional else '*' + parameter_name
+                if parameter.is_optional:
+                    parameter_assignments.append('    if (!!%(parameterName)s) {' % parameter_args)
+                    parameter_assignments.extend(self._generate_nullable_event_parameter_assignments(parameter, _type, nullable_parameter_name, '        '))
+                    parameter_assignments.append('    }')
+                else:
+                    parameter_assignments.extend(self._generate_nullable_event_parameter_assignments(parameter, _type, nullable_parameter_name, '    '))
             else:
-                parameter_assignments.append('    protocol_paramsObject->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % parameter_args)
+                parameter_args['parameterValue'] = self.cpp_serialized_event_parameter_value(_type, parameter_name, parameter.is_optional)
+                if parameter.is_optional:
+                    parameter_assignments.append('    if (!!%(parameterName)s)' % parameter_args)
+                    parameter_assignments.append('        protocol_paramsObject->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % parameter_args)
+                else:
+                    parameter_assignments.append('    protocol_paramsObject->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % parameter_args)
 
-            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(_type, parameter.is_optional), parameter_name))
+            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(parameter.type, parameter.is_optional, parameter.is_nullable), parameter_name))
 
         event_args = {
             'domainName': domain.domain_name,
