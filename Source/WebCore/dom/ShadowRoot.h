@@ -137,6 +137,7 @@ public:
     inline void didRemoveAllChildrenOfShadowHost(); // Defined in SlotAssignment.h
     inline void didMutateTextNodesOfShadowHost(); // Defined in SlotAssignment.h
     inline void hostChildElementDidChange(const Element&); // Defined in SlotAssignment.h
+    inline void hostChildElementDidMove(const Element&); // Defined in SlotAssignment.h
     inline void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue); // Defined in SlotAssignment.h
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&);
