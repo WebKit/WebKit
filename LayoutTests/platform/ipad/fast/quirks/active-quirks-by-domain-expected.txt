@@ -124,6 +124,7 @@ https://maps.google.com/maps/
 https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
     MaybeBypassBackForwardCache
+    ShouldOpenAsAboutBlankQuirk
     ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
 https://translate.google.com/
@@ -135,7 +136,7 @@ https://mail.google.com/
     NeedsGMailOverflowScrollQuirk
 https://sites.google.com/
     MaybeBypassBackForwardCache
-    ShouldPreventDispatchOfTouchEventQuirk
+    ShouldPreventTouchEndDispatchQuirk
 https://meet.google.com/
     MaybeBypassBackForwardCache
     ShouldEnableCameraBackgroundPlayback
@@ -309,7 +310,8 @@ https://www.thesaurus.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.tiktok.com/
     NeedsChromeCompatibilityUserAgentQuirk
-    NeedsTikTokOverflowingContentQuirk
+    NeedsTikTokCommentsOverflowingContentQuirk
+    NeedsTikTokVideoOverflowingContentQuirk
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
     ShouldDispatchSimulatedMouseEventsQuirk

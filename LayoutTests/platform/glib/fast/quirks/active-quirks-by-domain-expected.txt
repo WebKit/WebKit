@@ -117,7 +117,7 @@ https://mail.google.com/
     MaybeBypassBackForwardCache
 https://sites.google.com/
     MaybeBypassBackForwardCache
-    ShouldPreventDispatchOfTouchEventQuirk
+    ShouldPreventTouchEndDispatchQuirk
 https://meet.google.com/
     MaybeBypassBackForwardCache
     ShouldEnableCameraBackgroundPlayback
@@ -178,7 +178,7 @@ https://outlook.live.com/
     NeedsMozillaFileTypeForDataTransferQuirk
     NeedsUserAgentStringOverrideQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
-    ShouldPreventDispatchOfTouchEventQuirk
+    ShouldPreventTouchMoveDispatchQuirk
 https://live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://onedrive.live.com/
@@ -278,7 +278,8 @@ https://www.theguardian.com/
 https://www.thesaurus.com/
     (none)
 https://www.tiktok.com/
-    NeedsTikTokOverflowingContentQuirk
+    NeedsTikTokCommentsOverflowingContentQuirk
+    NeedsTikTokVideoOverflowingContentQuirk
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
@@ -313,7 +314,7 @@ https://twitter.com/
 https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
-    ShouldPreventDispatchOfTouchEventQuirk
+    ShouldPreventTouchEndDispatchQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/

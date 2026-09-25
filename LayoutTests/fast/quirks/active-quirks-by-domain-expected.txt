@@ -279,7 +279,8 @@ https://www.thesaurus.com/
     NeedsAnchorToBeMouseFocusableQuirk
 https://www.tiktok.com/
     NeedsChromeCompatibilityUserAgentQuirk
-    NeedsTikTokOverflowingContentQuirk
+    NeedsTikTokCommentsOverflowingContentQuirk
+    NeedsTikTokVideoOverflowingContentQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
 https://trix-editor.org/
     IsNeverRichlyEditableForTouchBarQuirk

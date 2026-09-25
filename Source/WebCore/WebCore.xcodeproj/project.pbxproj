@@ -89,6 +89,7 @@
 		056A7AC8256C4F48002F9DDF /* GetHTMLOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 054E3A33256C3BD90072C5BF /* GetHTMLOptions.h */; };
 		05D47708FFB4C18C6BA6928A /* URLMatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05D47707FFB4C18C6BA6928A /* URLMatch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05D4770CFFB4C18C6BA6928C /* QuirkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 05D4770BFFB4C18C6BA6928C /* QuirkTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		05D4770FFFB4C18C6BA6928C /* QuirkSelectors.h in Headers */ = {isa = PBXBuildFile; fileRef = 05D4770EFFB4C18C6BA6928C /* QuirkSelectors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05EA8404DBBF61228730170B /* InspectorIdentifierRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2D731AED156CD1D13490F9 /* InspectorIdentifierRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05FD69E012845D4300B2BEB3 /* EpochTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 05FD69DF12845D4300B2BEB3 /* EpochTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7845,6 +7846,7 @@
 		05D47709FFB4C18C6BA6928A /* URLMatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLMatch.cpp; sourceTree = "<group>"; };
 		05D4770AFFB4C18C6BA6928B /* QuirkTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuirkTable.cpp; sourceTree = "<group>"; };
 		05D4770BFFB4C18C6BA6928C /* QuirkTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirkTable.h; sourceTree = "<group>"; };
+		05D4770EFFB4C18C6BA6928C /* QuirkSelectors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirkSelectors.h; sourceTree = "<group>"; };
 		05FD69DF12845D4300B2BEB3 /* EpochTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EpochTimeStamp.h; sourceTree = "<group>"; };
 		06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuItem.h; sourceTree = "<group>"; };
 		062287830B4DB322000C34DF /* FocusDirection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FocusDirection.h; sourceTree = "<group>"; };
@@ -31697,6 +31699,7 @@
 				CD9A87F9215D6CF3006F17B5 /* Quirks.cpp */,
 				CD9A87FB215D6CF3006F17B5 /* Quirks.h */,
 				7ABB0F5F2CE7C170009A837D /* QuirksData.h */,
+				05D4770EFFB4C18C6BA6928C /* QuirkSelectors.h */,
 				05D4770AFFB4C18C6BA6928B /* QuirkTable.cpp */,
 				05D4770BFFB4C18C6BA6928C /* QuirkTable.h */,
 				46B9518D207D632A00A7D2DD /* RemoteDOMWindow.cpp */,
@@ -48574,6 +48577,7 @@
 				7ABB0F622CE7C170009A837F /* QuirkBehaviors.h in Headers */,
 				9BAEE92C22388A7D004157A9 /* Quirks.h in Headers */,
 				7ABB0F602CE7C170009A837D /* QuirksData.h in Headers */,
+				05D4770FFFB4C18C6BA6928C /* QuirkSelectors.h in Headers */,
 				05D4770CFFB4C18C6BA6928C /* QuirkTable.h in Headers */,
 				FE7CF1A5010000000000E002 /* QuotaExceededError.h in Headers */,
 				FE7CF1A5010000000000E006 /* QuotaExceededErrorOptions.h in Headers */,

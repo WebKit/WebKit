@@ -26,11 +26,14 @@
 #include "config.h"
 #include "TestPageHarness.h"
 
+#include <WebCore/DocumentQuirks.h>
 #include <WebCore/NodeInlines.h>
+#include <WebCore/QuirkSelectors.h>
 #include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/Settings.h>
 #include <array>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -39,6 +42,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
+
+using namespace WebCore::QuirkSelectors;
 
 class QuirksTest : public testing::Test {
 public:
@@ -327,9 +332,6 @@ TEST_F(QuirksTest, MergeUnionsFlagsAndSitesAndConcatenatesBehaviors)
     EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<String> { ".first"_str, ".second"_str }));
 }
 
-static constexpr auto onSliderRole = "[role=slider], [role=slider] *"_s;
-static constexpr auto onDockPanelTabBar = ".lm-DockPanel-tabBar, .lm-DockPanel-tabBar *"_s;
-
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
 TEST_F(QuirksTest, SitesThatOnlyNeedSimulatedMouseEventsOnSomeElementsCarryASelector)
 {
@@ -464,25 +466,12 @@ TEST_F(QuirksTest, TheSameSelectorIsEvaluatedPerDocument)
     EXPECT_FALSE(matchesSelector(onDockPanelTabBar, standardsModePage.getElementById("tabBar"_s).get()));
 }
 
-static constexpr auto onAmazonMagnifierLens = "#magnifierLens, :has(+ #magnifierLens)"_s;
-static constexpr auto onCrosswordID = "[id*=crossword]"_s;
-static constexpr auto onEANetworkNav = "ea-network-nav"_s;
-static constexpr auto onExpediaOpeningMenu = ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"_s;
-static constexpr auto onSwatchColorPicker = "[id^=swatchColorPicker]"_s;
-static constexpr auto onButtonInListItem = "[role=listitem i] > [role=button i]"_s;
-static constexpr auto onVideoJSTech = "video.vjs-tech, audio.vjs-tech"_s;
-static constexpr auto onKinjaLoginAvatar = ".js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label=\"UserFilled icon\"], svg[aria-label=\"UserFilled icon\"] > path"_s;
-static constexpr auto onMicrosoftSignInButton = ".glyph_signIn_circle, .mectrl_headertext, .mectrl_header"_s;
-static constexpr auto onPlayStationSignInButton = ".web-toolbar__signin-button, .web-toolbar__signin-button-label, .sb-signin-button"_s;
-
 static Vector<String> selectorsFor(ASCIILiteral urlString, WebCore::QuirkBehaviorID id)
 {
     return elementSelectorsFor(resolveQuirksForTopURL(urlString), id);
 }
 
 #if ENABLE(TOUCH_EVENTS)
-static constexpr auto onSliderRoleItself = "[role=slider]"_s;
-static constexpr auto onSoundCloudSceneLayer = ".sceneLayer"_s;
 
 TEST_F(QuirksTest, SitesThatAssumeDefaultPreventedScopeItToTheTargetElement)
 {
@@ -497,7 +486,6 @@ TEST_F(QuirksTest, SitesThatAssumeDefaultPreventedScopeItToTheTargetElement)
 #endif
 
 #if ENABLE(TWO_PHASE_CLICKS)
-static constexpr auto onSuggestionsLabel = "[aria-label=Suggestions], [aria-label=Suggestions] *"_s;
 
 TEST_F(QuirksTest, ContentObservationSelectorsAreScopedPerSite)
 {
@@ -536,8 +524,6 @@ TEST_F(QuirksTest, SingleSiteSelectorConditions)
 }
 
 #if PLATFORM(IOS_FAMILY)
-static constexpr auto onAviaButton = "avia-button"_s;
-static constexpr auto onGoogleDocsMLPromotion = ".docs-ml-promotion-action-container, .docs-ml-promotion-action-container > *, .docs-ml-promotion-action-container > * > *"_s;
 
 TEST_F(QuirksTest, SingleSiteSelectorConditionsOnIOS)
 {
@@ -570,7 +556,6 @@ TEST_F(QuirksTest, StorageAccessQuirksCarrySignInSelectors)
 }
 
 #if PLATFORM(COCOA)
-static constexpr auto onYouTubeWatchLaterIcon = ".ytp-watch-later-icon"_s;
 TEST_F(QuirksTest, YouTubeWatchLaterStorageAccessIsEmbeddedOnly)
 {
     constexpr auto id = WebCore::QuirkBehaviorID::NeedsStorageAccessForYouTubeWatchLaterQuirk;
@@ -858,5 +843,167 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideAmazonPrimeVideo)
     EXPECT_FALSE(customUserAgentFor("https://www.amazon.com/gp/video/storefront"_s).has_value());
 }
 #endif // PLATFORM(IOS)
+
+#if PLATFORM(COCOA)
+TEST_F(QuirksTest, OnlyGoogleSearchLimitsMouseFocusableAnchorsToTheExpandablePanel)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsAnchorToBeMouseFocusableQuirk;
+
+    auto search = resolveQuirksForTopURL("https://www.google.com/search"_s);
+    EXPECT_TRUE(search.isBehaviorEnabled(id));
+    EXPECT_EQ(elementSelectorsFor(search, id), Vector<String> { String { onExpandablePanel } });
+
+    for (auto urlString : { "https://www.dictionary.com/"_s, "https://www.thesaurus.com/"_s }) {
+        auto quirks = resolveQuirksForTopURL(urlString);
+        EXPECT_TRUE(quirks.isBehaviorEnabled(id));
+        EXPECT_TRUE(elementSelectorsFor(quirks, id).isEmpty());
+    }
+}
+#endif // PLATFORM(COCOA)
+
+TEST_F(QuirksTest, ExpandablePanelSelectorMatchesThePanelAndAnythingInsideIt)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html><div data-expc><span><a id='inside' href='#'>x</a></span></div><a id='panel' data-expc href='#'>y</a><a id='outside' href='#'>z</a>"_s);
+
+    EXPECT_TRUE(matchesSelector(onExpandablePanel, page.getElementById("inside"_s).get()));
+    EXPECT_TRUE(matchesSelector(onExpandablePanel, page.getElementById("panel"_s).get()));
+    EXPECT_FALSE(matchesSelector(onExpandablePanel, page.getElementById("outside"_s).get()));
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST_F(QuirksTest, ClaudeSidebarQuirkCarriesTheSidebarSelector)
+{
+    auto quirks = resolveQuirksForTopURL("https://claude.ai/"_s);
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsClaudeSidebarViewportUnitQuirk), Vector<String> { String { onClaudeSidebar } });
+}
+
+TEST_F(QuirksTest, OnlyGoogleDocsOpensAboutURLsAsAboutBlank)
+{
+    EXPECT_TRUE(resolveQuirksForTopURL("https://docs.google.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldOpenAsAboutBlankQuirk));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.google.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldOpenAsAboutBlankQuirk));
+}
+#endif // PLATFORM(IOS_FAMILY)
+
+TEST_F(QuirksTest, ClaudeSidebarSelectorMatchesTheAriaLabelExactly)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html><nav id='sidebar' aria-label='Sidebar'></nav><nav id='lowercase' aria-label='sidebar'></nav><nav id='plain'></nav>"_s);
+
+    EXPECT_TRUE(matchesSelector(onClaudeSidebar, page.getElementById("sidebar"_s).get()));
+    EXPECT_FALSE(matchesSelector(onClaudeSidebar, page.getElementById("lowercase"_s).get()));
+    EXPECT_FALSE(matchesSelector(onClaudeSidebar, page.getElementById("plain"_s).get()));
+}
+
+TEST_F(QuirksTest, TikTokCarriesSeparateSelectorsForTheCommentsAndVideoContainers)
+{
+    auto quirks = resolveQuirksForTopURL("https://www.tiktok.com/"_s);
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsTikTokCommentsOverflowingContentQuirk), Vector<String> { String { onTikTokCommentsContainer } });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsTikTokVideoOverflowingContentQuirk), Vector<String> { String { onTikTokVideoContainer } });
+}
+
+TEST_F(QuirksTest, TikTokSelectorsMatchClassNameSubstringsUnderTheBrowserModeContainer)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html>"
+        "<div class='css-1-DivBrowserModeContainer'><div id='comments' class='a css-2-DivContentContainer'></div><div id='video' class='css-3-DivVideoContainer b'></div></div>"
+        "<div><div id='orphan' class='css-2-DivContentContainer'></div></div>"_s);
+
+    RefPtr comments = page.getElementById("comments"_s);
+    RefPtr video = page.getElementById("video"_s);
+    RefPtr orphan = page.getElementById("orphan"_s);
+
+    EXPECT_TRUE(matchesSelector(onTikTokCommentsContainer, comments.get()));
+    EXPECT_FALSE(matchesSelector(onTikTokVideoContainer, comments.get()));
+    EXPECT_TRUE(matchesSelector(onTikTokVideoContainer, video.get()));
+    EXPECT_FALSE(matchesSelector(onTikTokCommentsContainer, video.get()));
+    EXPECT_FALSE(matchesSelector(onTikTokCommentsContainer, orphan.get()));
+}
+
+#if ENABLE(TOUCH_EVENTS)
+TEST_F(QuirksTest, EachSiteThatPreventsTouchDispatchCarriesOnlyItsOwnSelector)
+{
+    constexpr auto touchEnd = WebCore::QuirkBehaviorID::ShouldPreventTouchEndDispatchQuirk;
+    constexpr auto touchMove = WebCore::QuirkBehaviorID::ShouldPreventTouchMoveDispatchQuirk;
+
+    auto sites = resolveQuirksForTopURL("https://sites.google.com/"_s);
+    EXPECT_EQ(elementSelectorsFor(sites, touchEnd), Vector<String> { String { onGoogleSitesButton } });
+    EXPECT_FALSE(sites.isBehaviorEnabled(touchMove));
+
+    auto yahoo = resolveQuirksForTopURL("https://www.yahoo.com/"_s);
+    EXPECT_EQ(elementSelectorsFor(yahoo, touchEnd), Vector<String> { String { onYahooButton } });
+    EXPECT_FALSE(yahoo.isBehaviorEnabled(touchMove));
+
+    auto outlook = resolveQuirksForTopURL("https://outlook.live.com/"_s);
+    EXPECT_EQ(elementSelectorsFor(outlook, touchMove), Vector<String> { String { onOutlookSuggestions } });
+    EXPECT_FALSE(outlook.isBehaviorEnabled(touchEnd));
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
+TEST_F(QuirksTest, TouchDispatchSelectorsRequireEveryClassInThePair)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html>"
+        "<div id='button' class='DPvwYc sm8sCf'></div><div id='half' class='DPvwYc'></div>"
+        "<div id='captions' class='vjs-menu-button vjs-subs-cap-button'></div>"
+        "<div class='ms-Suggestions'><div><span id='suggestion'>x</span></div></div><div id='elsewhere'></div>"_s);
+
+    EXPECT_TRUE(matchesSelector(onGoogleSitesButton, page.getElementById("button"_s).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleSitesButton, page.getElementById("half"_s).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleSitesButton, page.getElementById("captions"_s).get()));
+    EXPECT_TRUE(matchesSelector(onYahooButton, page.getElementById("captions"_s).get()));
+
+    EXPECT_TRUE(matchesSelector(onOutlookSuggestions, page.getElementById("suggestion"_s).get()));
+    EXPECT_FALSE(matchesSelector(onOutlookSuggestions, page.getElementById("elsewhere"_s).get()));
+}
+
+TEST_F(QuirksTest, InstagramReelsQuirkOnlyAppliesToElementsContainingAVideo)
+{
+    auto quirks = resolveQuirksForTopURL("https://www.instagram.com/"_s);
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsInstagramResizingReelsQuirk), Vector<String> { String { onElementContainingVideo } });
+
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html><div id='reel'><div><video></video></div></div><div id='empty'><img></div>"_s);
+
+    EXPECT_TRUE(matchesSelector(onElementContainingVideo, page.getElementById("reel"_s).get()));
+    EXPECT_FALSE(matchesSelector(onElementContainingVideo, page.getElementById("empty"_s).get()));
+}
+
+#if ENABLE(VIDEO)
+struct ReelWidths {
+    int withVideo;
+    int withoutVideo;
+};
+
+static ReelWidths reelWidthsForTopURL(ASCIILiteral topURLString)
+{
+    auto page = TestPageHarness::create({ .configureSettings = [](auto& settings) {
+        settings.setNeedsSiteSpecificQuirks(true);
+    } });
+    page.loadHTML("<!DOCTYPE html><style>"
+        "body { margin: 0 } .container { display: flex; width: 50% } .item { overflow: hidden }"
+        "video, .placeholder { display: block; width: 100px; height: 50px }"
+        "</style>"
+        "<div class='container'><div id='reel' class='item'><video></video></div></div>"
+        "<div class='container'><div id='empty' class='item'><div class='placeholder'></div></div></div>"_s);
+
+    Ref document = page.document();
+    document->quirks().setTopDocumentURLForTesting(URL { topURLString });
+    document->scheduleFullStyleRebuild();
+
+    return { page.getElementById("reel"_s)->offsetWidth(), page.getElementById("empty"_s)->offsetWidth() };
+}
+
+TEST_F(QuirksTest, InstagramReelsGrowToFillTheirFlexContainerOnlyWhenTheyContainAVideo)
+{
+    auto instagram = reelWidthsForTopURL("https://www.instagram.com/"_s);
+    EXPECT_EQ(instagram.withVideo, 400);
+    EXPECT_EQ(instagram.withoutVideo, 100);
+
+    auto elsewhere = reelWidthsForTopURL("https://www.example.com/"_s);
+    EXPECT_EQ(elsewhere.withVideo, 100);
+    EXPECT_EQ(elsewhere.withoutVideo, 100);
+}
+#endif // ENABLE(VIDEO)
 
 } // namespace TestWebKitAPI

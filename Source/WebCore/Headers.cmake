@@ -2103,6 +2103,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PrintContext.h
     page/ProcessWarming.h
     page/QuirkBehaviors.h
+    page/QuirkSelectors.h
     page/QuirkTable.h
     page/Quirks.h
     page/QuirksData.h

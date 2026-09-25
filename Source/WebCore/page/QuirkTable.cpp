@@ -26,6 +26,7 @@
 #include "config.h"
 #include "QuirkTable.h"
 #include "QuirkBehaviors.h"
+#include "QuirkSelectors.h"
 
 #include <algorithm>
 #include <array>
@@ -114,30 +115,10 @@ static constexpr auto xGoogleSignInButtonFixScript = R"js((function() {
 })();
 )js"_s;
 
-static constexpr auto onSliderRole = "[role=slider], [role=slider] *"_s;
-static constexpr auto onDockerPanelTabBar = ".lm-DockPanel-tabBar, .lm-DockPanel-tabBar *"_s;
-// assume-default-prevented path only ever inspected the event target.
-static constexpr auto onSliderRoleItself = "[role=slider]"_s;
-static constexpr auto onAmazonMagnifierLens = "#magnifierLens, :has(+ #magnifierLens)"_s;
-static constexpr auto onSoundCloudSceneLayer = ".sceneLayer"_s;
-static constexpr auto onCrosswordID = "[id*=crossword]"_s;
-static constexpr auto onEANetworkNav = "ea-network-nav"_s;
-static constexpr auto onExpediaOpeningMenu = ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"_s;
-static constexpr auto onAviaButton = "avia-button"_s;
-static constexpr auto onGoogleDocsMLPromotion = ".docs-ml-promotion-action-container, .docs-ml-promotion-action-container > *, .docs-ml-promotion-action-container > * > *"_s;
-static constexpr auto onSuggestionsLabel = "[aria-label=Suggestions], [aria-label=Suggestions] *"_s;
-static constexpr auto onSwatchColorPicker = "[id^=swatchColorPicker]"_s;
-static constexpr auto onButtonInListItem = "[role=listitem i] > [role=button i]"_s;
-static constexpr auto onTreeItem = "[role=treeitem i], [role=treeitem i] *"_s;
-static constexpr auto onVideoJSTech = "video.vjs-tech, audio.vjs-tech"_s;
-static constexpr auto onKinjaLoginAvatar = ".js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label=\"UserFilled icon\"], svg[aria-label=\"UserFilled icon\"] > path"_s;
-static constexpr auto onMicrosoftSignInButton = ".glyph_signIn_circle, .mectrl_headertext, .mectrl_header"_s;
-static constexpr auto onPlayStationSignInButton = ".web-toolbar__signin-button, .web-toolbar__signin-button-label, .sb-signin-button"_s;
-static constexpr auto onYouTubeWatchLaterIcon = ".ytp-watch-later-icon"_s;
-
 namespace SiteSpecificQuirks {
 using namespace QuirkBehaviors;
 using namespace QuirkBehaviorConditions;
+using namespace QuirkSelectors;
 using namespace URLRefinement;
 using namespace BuildCondition;
 
@@ -266,7 +247,7 @@ static constexpr Quirk fullTable[] = {
 
     { .match = URLMatch::domain("claude.ai"_s),
         .behaviors = {
-            needsClaudeSidebarViewportUnitQuirk,
+            needsClaudeSidebarViewportUnitQuirk.when(elementMatchesSelector(onClaudeSidebar)),
             // rdar://174779259 - logout flow leaves identification cookies
             // causing redirect loop on next /chat boot.
             // See Quirks::clearLogoutSurvivingIdentityCookiesIfNeeded().
@@ -407,8 +388,7 @@ static constexpr Quirk fullTable[] = {
 
     // google.com https://bugs.webkit.org/show_bug.cgi?id=323851 rdar://181740296
     { .match = URLMatch::anyTopLevelDomain("google"_s).when(pathIs("/search"_s)),
-        .behaviors = { needsAnchorToBeMouseFocusableQuirk },
-        .site = QuirkSite::GoogleSearch },
+        .behaviors = { needsAnchorToBeMouseFocusableQuirk.when(elementMatchesSelector(onExpandablePanel)) } },
 
     { .match = URLMatch::anyTopLevelDomain("google"_s).when(pathStartsWith("/maps/"_s)),
         .behaviors = {
@@ -432,8 +412,9 @@ static constexpr Quirk fullTable[] = {
             shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk,
             // docs.google.com rdar://59402637
             shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk.when(elementMatchesSelector(onGoogleDocsMLPromotion)),
-        },
-        .site = QuirkSite::GoogleDocs },
+            // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199933
+            shouldOpenAsAboutBlankQuirk,
+        } },
 
     // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199587
     { .match = URLMatch::host("docs.google.com"_s).when(pathStartsWith("/spreadsheets/"_s)),
@@ -456,7 +437,7 @@ static constexpr Quirk fullTable[] = {
 
     // sites.google.com rdar://58653069
     { .match = URLMatch::host("sites.google.com"_s),
-        .behaviors = { shouldPreventDispatchOfTouchEventQuirk } },
+        .behaviors = { shouldPreventTouchEndDispatchQuirk.when(elementMatchesSelector(onGoogleSitesButton)) } },
 
     { .match = URLMatch::host("meet.google.com"_s),
         .behaviors = { shouldEnableCameraBackgroundPlayback } },
@@ -518,7 +499,7 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("instagram.com"_s),
         .behaviors = {
             // rdar://166400170
-            needsInstagramResizingReelsQuirk,
+            needsInstagramResizingReelsQuirk.when(elementMatchesSelector(onElementContainingVideo)),
             // instagram.com: rdar://174936655
             shouldSendFakeTouchForceChangeEvent,
         } },
@@ -557,7 +538,7 @@ static constexpr Quirk fullTable[] = {
 
     // outlook.live.com rdar://48008837
     { .match = URLMatch::host("outlook.live.com"_s),
-        .behaviors = { shouldPreventDispatchOfTouchEventQuirk },
+        .behaviors = { shouldPreventTouchMoveDispatchQuirk.when(elementMatchesSelector(onOutlookSuggestions)) },
         .isAvailable = touchEvents },
 
     // Microsoft office online generates data URLs with incorrect padding on Safari only (rdar://114573089).
@@ -627,7 +608,7 @@ static constexpr Quirk fullTable[] = {
 
     // mybinder.org rdar://51770057
     { .match = URLMatch::domain("mybinder.org"_s),
-        .behaviors = { shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onDockerPanelTabBar)) },
+        .behaviors = { shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onDockPanelTabBar)) },
         .isAvailable = touchEvents || touchEventRegions },
 
     // naver.com rdar://48068610
@@ -791,7 +772,8 @@ static constexpr Quirk fullTable[] = {
 
     { .match = URLMatch::domain("tiktok.com"_s),
         .behaviors = {
-            needsTikTokOverflowingContentQuirk,
+            needsTikTokCommentsOverflowingContentQuirk.when(elementMatchesSelector(onTikTokCommentsContainer)),
+            needsTikTokVideoOverflowingContentQuirk.when(elementMatchesSelector(onTikTokVideoContainer)),
             // tiktok.com rdar://174179805
             shouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk.when(elementMatchesSelector(onSliderRoleItself)),
             // tiktok.com rdar://174179805
@@ -800,8 +782,7 @@ static constexpr Quirk fullTable[] = {
             shouldComputeSimulatedMouseEventMovementDeltaQuirk,
             // FIXME(rdar://148759791): Remove this once TikTok removes the outdated error message.
             needsChromeCompatibilityUserAgentQuirk(QuirkParameters::fromChromeCompatibilityVersion("136"_s)),
-        },
-        .site = QuirkSite::TikTok },
+        } },
 
     // trix-editor.org rdar://28242210
     { .match = URLMatch::domain("trix-editor.org"_s),
@@ -930,7 +911,7 @@ static constexpr Quirk fullTable[] = {
 
     // yahoo.com : rdar://142894603
     { .match = URLMatch::anyTopLevelDomain("yahoo"_s),
-        .behaviors = { shouldPreventDispatchOfTouchEventQuirk },
+        .behaviors = { shouldPreventTouchEndDispatchQuirk.when(elementMatchesSelector(onYahooButton)) },
         .isAvailable = touchEvents },
 
     // news.ycombinator.com: rdar://127246368

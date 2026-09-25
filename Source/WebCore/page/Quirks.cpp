@@ -57,7 +57,6 @@
 #include "HTMLObjectElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTextAreaElement.h"
-#include "HTMLVideoElement.h"
 #include "JSEventListener.h"
 #include "KeyframeEffect.h"
 #include "LayoutUnit.h"
@@ -232,28 +231,7 @@ bool Quirks::needsAnchorToBeMouseFocusable(const Element& anchor) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsAnchorToBeMouseFocusableQuirk))
-        return false;
-
-    // On a Google search page only the links inside the "Where to watch" panel need
-    // this. That panel closes on blur, so a link that does not take focus on press
-    // loses its click: the panel collapses before mouseup and the click retargets to
-    // an ancestor. Every other site opted into this quirk needs it for every anchor.
-    if (m_quirksData.isSite(QuirkSite::GoogleSearch)) {
-        // The panel carries data-expc. Bounded walk: this runs on every press on a link.
-        static MainThreadNeverDestroyed<const AtomString> expandablePanelAttribute("data-expc"_s);
-        static constexpr unsigned maxDepth = 12;
-        unsigned depth = 0;
-        for (Ref ancestor : lineageOfType<Element>(anchor)) {
-            if (ancestor->hasAttribute(expandablePanelAttribute.get()))
-                return true;
-            if (++depth > maxDepth)
-                break;
-        }
-        return false;
-    }
-
-    return true;
+    return behaviorAppliesToNode(QuirkBehaviorID::NeedsAnchorToBeMouseFocusableQuirk, &anchor);
 }
 
 // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
@@ -485,32 +463,11 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldPreventDispatchOfTouchEventQuirk))
-        return false;
-
-    // yahoo.com : rdar://142894603
-    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent) {
-        if (element->hasClassName("DPvwYc"_s) && element->hasClassName("sm8sCf"_s))
-            return true;
-        if (element->hasClassName("vjs-subs-cap-button"_s) && element->hasClassName("vjs-menu-button"_s))
-            return true;
-    }
-
-    // sites.google.com rdar://58653069
-    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent)
-        return element->hasClassName("DPvwYc"_s) && element->hasClassName("sm8sCf"_s);
-
-    // outlook.live.com rdar://48008837
-    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchmoveEvent) {
-        static constexpr unsigned max_depth = 15;
-        unsigned depth = 0;
-        for (Ref ancestor : lineageOfType<HTMLElement>(*element)) {
-            if (ancestor->hasClassName("ms-Suggestions"_s))
-                return true;
-            if (++depth > max_depth)
-                break;
-        }
-    }
+    auto& eventNames = WebCore::eventNames();
+    if (touchEventType == eventNames.touchendEvent)
+        return behaviorAppliesToNode(QuirkBehaviorID::ShouldPreventTouchEndDispatchQuirk, dynamicDowncast<Node>(target));
+    if (touchEventType == eventNames.touchmoveEvent)
+        return behaviorAppliesToNode(QuirkBehaviorID::ShouldPreventTouchMoveDispatchQuirk, dynamicDowncast<Node>(target));
 
     return false;
 }
@@ -865,7 +822,7 @@ bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 #if PLATFORM(IOS_FAMILY)
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isSite(QuirkSite::GoogleDocs))
+    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldOpenAsAboutBlankQuirk))
         return false;
 
     auto openerURL = protect(m_document)->url();
@@ -2090,7 +2047,7 @@ bool Quirks::needsClaudeSidebarViewportUnitQuirk(Element& element, const Style::
     if (style.position() != PositionType::Fixed)
         return false;
 
-    if (element.attributeWithoutSynchronization(HTMLNames::aria_labelAttr) != "Sidebar"_s)
+    if (!behaviorAppliesToNode(QuirkBehaviorID::NeedsClaudeSidebarViewportUnitQuirk, &element))
         return false;
 
     if (auto fixedHeight = style.height().tryFixed()) {
@@ -2222,7 +2179,9 @@ std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOver
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE({ });
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsTikTokOverflowingContentQuirk))
+    constexpr auto commentsID = QuirkBehaviorID::NeedsTikTokCommentsOverflowingContentQuirk;
+    constexpr auto videoID = QuirkBehaviorID::NeedsTikTokVideoOverflowingContentQuirk;
+    if (!m_quirksData.isBehaviorEnabled(commentsID) && !m_quirksData.isBehaviorEnabled(videoID))
         return { };
 
     if (parentStyle.display() != Style::DisplayType::BlockFlex)
@@ -2231,35 +2190,14 @@ std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOver
     if (parentStyle.position() != PositionType::Fixed)
         return { };
 
-    if (!element.elementData() || !element.hasClass())
+    if (!element.hasClass())
         return { };
 
-    static NeverDestroyed<AtomString> contentContainerSubstring { "DivContentContainer"_s };
-    static NeverDestroyed<AtomString> videoContainerSubstring { "DivVideoContainer"_s };
-    static NeverDestroyed<AtomString> browserModeContainerSubstring { "DivBrowserModeContainer"_s };
+    if (behaviorAppliesToNode(commentsID, &element))
+        return TikTokOverflowingContentQuirkType::CommentsSectionQuirk;
 
-    auto parentElementClassNamesContainsBrowserModeContainerSubstring = [&] {
-        RefPtr parentElement = element.parentElement();
-        if (!parentElement || !parentElement->elementData() || !parentElement->hasClass())
-            return false;
-
-        for (auto& className : parentElement->classNames()) {
-            if (className.contains(browserModeContainerSubstring.get()))
-                return true;
-        }
-        return false;
-    };
-
-    if (!parentElementClassNamesContainsBrowserModeContainerSubstring())
-        return { };
-
-    for (auto& className : element.classNames()) {
-        if (className.contains(contentContainerSubstring.get()))
-            return TikTokOverflowingContentQuirkType::CommentsSectionQuirk;
-
-        if (className.contains(videoContainerSubstring.get()))
-            return TikTokOverflowingContentQuirkType::VideoSectionQuirk;
-    }
+    if (behaviorAppliesToNode(videoID, &element))
+        return TikTokOverflowingContentQuirkType::VideoSectionQuirk;
 
     return { };
 }
@@ -2288,7 +2226,7 @@ bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const Styl
     if (!parentStyle.width().isPercent())
         return false;
 
-    return descendantsOfType<HTMLVideoElement>(element).first();
+    return behaviorAppliesToNode(QuirkBehaviorID::NeedsInstagramResizingReelsQuirk, &element);
 #else
     UNUSED_PARAM(element);
     UNUSED_PARAM(elementStyle);
