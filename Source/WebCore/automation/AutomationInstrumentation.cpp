@@ -34,6 +34,8 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "DOMWrapperWorld.h"
+#include "SharedWorkerContextManager.h"
+#include "SharedWorkerThreadProxy.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/NeverDestroyed.h>
@@ -103,6 +105,64 @@ void AutomationInstrumentation::scriptRealmDestroyed(FrameIdentifier frameID, DO
         if (RefPtr client = automationClient().get())
             client->scriptRealmDestroyed(frameID);
     });
+}
+
+void AutomationInstrumentation::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData& origin)
+{
+    if (!automationClient()) [[likely]]
+        return;
+
+    WTF::ensureOnMainThread([workerIdentifier = workerIdentifier.isolatedCopy(), ownerFrameIdentifier, ownerDocumentIdentifier, origin = origin.isolatedCopy()] {
+        if (RefPtr client = automationClient().get())
+            client->scriptDedicatedWorkerRealmCreated(workerIdentifier, ownerFrameIdentifier, ownerDocumentIdentifier, origin);
+    });
+}
+
+void AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier)
+{
+    if (!automationClient()) [[likely]]
+        return;
+
+    WTF::ensureOnMainThread([workerIdentifier = workerIdentifier.isolatedCopy(), ownerFrameIdentifier, ownerDocumentIdentifier] {
+        if (RefPtr client = automationClient().get())
+            client->scriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier, ownerDocumentIdentifier);
+    });
+}
+
+void AutomationInstrumentation::scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier workerIdentifier, ScriptExecutionContextIdentifier contextIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData& origin)
+{
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient().get())
+        client->scriptSharedWorkerRealmStateChanged(workerIdentifier, contextIdentifier, activeOwnerFrameIdentifiers, attachedOwnerFrameIdentifiers, origin);
+}
+
+void AutomationInstrumentation::scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier workerIdentifier, ScriptExecutionContextIdentifier contextIdentifier)
+{
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient().get())
+        client->scriptSharedWorkerRealmDestroyed(workerIdentifier, contextIdentifier);
+}
+
+Vector<AutomationInstrumentation::SharedWorkerRealmSnapshot> AutomationInstrumentation::sharedWorkerRealms()
+{
+    ASSERT(isMainThread());
+    Vector<SharedWorkerRealmSnapshot> snapshots;
+
+    for (Ref worker : SharedWorkerContextManager::singleton().sharedWorkers()) {
+        const auto& origin = worker->automationSecurityOrigin();
+        if (!origin)
+            continue;
+
+        snapshots.append(SharedWorkerRealmSnapshot {
+            worker->identifier(),
+            worker->contextIdentifier(),
+            worker->activeOwnerFrameIdentifiers(),
+            worker->attachedOwnerFrameIdentifiers(),
+            origin->isolatedCopy()
+        });
+    }
+
+    return snapshots;
 }
 
 } // namespace WebCore

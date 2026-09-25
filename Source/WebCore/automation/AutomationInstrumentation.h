@@ -35,13 +35,17 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/SharedWorkerIdentifier.h>
+#include <tuple>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 
 namespace Inspector {
@@ -59,17 +63,27 @@ public:
     virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
     virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
+    virtual void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&) = 0;
+    virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier) = 0;
+    virtual void scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier, ScriptExecutionContextIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData&) = 0;
+    virtual void scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier, ScriptExecutionContextIdentifier) = 0;
 };
 
 
 class WEBCORE_EXPORT AutomationInstrumentation {
 public:
+    using SharedWorkerRealmSnapshot = std::tuple<SharedWorkerIdentifier, ScriptExecutionContextIdentifier, Vector<FrameIdentifier>, Vector<FrameIdentifier>, SecurityOriginData>;
     static void NODELETE setClient(const AutomationInstrumentationClient&);
     static void NODELETE clearClient();
 
     static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
     static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);
     static void scriptRealmDestroyed(FrameIdentifier, DOMWrapperWorld&);
+    static void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&);
+    static void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier);
+    static void scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier, ScriptExecutionContextIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData&);
+    static void scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier, ScriptExecutionContextIdentifier);
+    static Vector<SharedWorkerRealmSnapshot> sharedWorkerRealms();
 };
 
 } // namespace WebCore

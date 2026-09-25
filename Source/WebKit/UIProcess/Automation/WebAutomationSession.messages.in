@@ -33,5 +33,9 @@ messages -> WebAutomationSession {
 #if ENABLE(WEBDRIVER_BIDI)
     ScriptRealmCreated(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
     ScriptRealmDestroyed(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier)
+    ScriptDedicatedWorkerRealmCreated(String workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebKit::RealmIdentifier realmIdentifier, WebKit::RealmIdentifier ownerRealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
+    ScriptDedicatedWorkerRealmDestroyed(String workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebKit::RealmIdentifier realmIdentifier, WebKit::RealmIdentifier ownerRealmIdentifier)
+    ScriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier workerIdentifier, WebKit::RealmIdentifier realmIdentifier, Vector<WebCore::FrameIdentifier> activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier> attachedOwnerFrameIdentifiers, IPC::Untrusted<WebCore::SecurityOriginData> origin)
+    ScriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier workerIdentifier, WebKit::RealmIdentifier realmIdentifier)
 #endif
 }
