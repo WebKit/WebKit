@@ -73,4 +73,7 @@
 - path: ../LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi
   cmd: runWebAssemblyWPTJSAPI unless parseRunCommands
   recursive: true
-
+# asterisk is not recognized so this has to hardcode wide-arithmetic
+- path: ../LayoutTests/imported/w3c/web-platform-tests/wasm/proposals/wide-arithmetic/core/js
+  cmd: runWebAssemblyWPTCore unless parseRunCommands
+  recursive: true
