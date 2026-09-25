@@ -170,6 +170,9 @@ private:
     id<MTLBuffer> _Nullable snapshotRangeBeforeClear(Queue&, NSUInteger offset, NSUInteger size);
     void restoreSnapshotAfterCommit(CommandBuffer&, Queue&, id<MTLBuffer> _Nullable snapshot, NSUInteger offset);
     void invalidateDrawIndexedCache(CommandEncoder* = nullptr);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    bool hasPendingRecordedIndexWrite() const;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     id<MTLBuffer> m_buffer { nil };
     id<MTLBuffer> _Nullable m_indirectBuffer { nil };
@@ -221,6 +224,9 @@ private:
     const Ref<Device> m_device;
     mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    mutable HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pendingIndexWriteCommandEncoders; // NOLINT
+#endif // RC_REMOVE_SEC_ACCEL_3
     bool m_mustTakeSlowIndexValidationPath { false };
 #ifndef RC_REMOVE_SEC_ACCEL_3
     // Identity of the command buffer this buffer was last cleared for, so that several failed validations
