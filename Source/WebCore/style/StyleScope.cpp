@@ -673,6 +673,15 @@ const Vector<Ref<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
         result.append(*sheet);
     }
 
+    // Adopted style sheets are absent from m_styleSheetsForStyleSheetList, since document.styleSheets
+    // must not contain them, but the inspector still needs to see them.
+    for (auto& adoptedStyleSheet : treeScope().adoptedStyleSheets()) {
+        if (adoptedStyleSheet->disabled())
+            continue;
+
+        result.append(adoptedStyleSheet.get());
+    }
+
     return result;
 }
 
