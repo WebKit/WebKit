@@ -75,6 +75,23 @@ LayoutUnit inlineMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding)
 LayoutUnit blockMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit inlineUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit gridAreaInlineSize, const IntegrationUtils&, const UsedMargins&);
 LayoutUnit blockUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit gridAreaBlockSize, const GridFormattingContext&, LayoutUnit gridAreaInlineSize, const UsedMargins&);
+// Used by the sizing of grid items with a preferred aspect ratio to know which phase of the grid
+// layout algorithm it is running in. Whether a grid item's sizes are automatic or definite, and so
+// which axis is ratio-determining and which minimum and maximum sizes are transferred through the
+// ratio, depends on whether its grid area is known yet.
+// https://drafts.csswg.org/css-grid-1/#layout-algorithm
+enum class AspectRatioSizingLayoutPhase : bool {
+    TrackSizing, // The grid areas are not known yet.
+    ItemSizing // The grid areas are definite.
+};
+
+// Whether the grid item is non-replaced, has a preferred aspect ratio, and has an automatic size in
+// at least one axis, so that its sizes in the two axes depend on each other.
+bool sizeDependsOnAspectRatio(const PlacedGridItem&, AspectRatioSizingLayoutPhase);
+// Used inline and block sizes of a grid item for which sizeDependsOnAspectRatio() is true.
+std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridItem&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions,
+    LayoutUnit inlineBorderAndPadding, LayoutUnit blockBorderAndPadding, LayoutUnit gridAreaInlineSize, LayoutUnit gridAreaBlockSize, const GridFormattingContext&,
+    const UsedMargins& inlineMargins, const UsedMargins& blockMargins);
 
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
 LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);

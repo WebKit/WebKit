@@ -332,11 +332,20 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
 
         auto [inlineBorderAndPadding, blockBorderAndPadding] = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize);
 
-        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, inlineMargins);
-        usedInlineSizes.append(inlineUsedSize);
+        auto [inlineUsedSize, blockUsedSize] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+            // A preferred aspect ratio makes the size in one axis depend on the size in the other.
+            if (GridLayoutUtils::sizeDependsOnAspectRatio(gridItem, GridLayoutUtils::AspectRatioSizingLayoutPhase::ItemSizing)) {
+                return GridLayoutUtils::usedSizesForAspectRatioItem(gridItem, columnTrackSizingFunctions, rowTrackSizingFunctions, inlineBorderAndPadding, blockBorderAndPadding,
+                    gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);
+            }
 
-        // The grid area is the item's containing block, as it was while sizing the rows.
-        auto blockUsedSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
+            // The grid area is the item's containing block, as it was while sizing the rows.
+            return {
+                GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, inlineMargins),
+                GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins)
+            };
+        }();
+        usedInlineSizes.append(inlineUsedSize);
         usedBlockSizes.append(blockUsedSize);
 
         integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
