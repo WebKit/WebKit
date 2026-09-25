@@ -84,6 +84,8 @@ public:
     bool hasSolidColor() final { return m_source->hasSolidColor(); }
 #endif
 
+    NaturalDimensions unorientedNaturalDimensions() const final;
+
     // ImageFrame
     Seconds frameDurationAtIndex(unsigned index) const { return m_source->frameDurationAtIndex(index); }
 

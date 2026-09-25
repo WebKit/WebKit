@@ -853,6 +853,7 @@
 				WebCore/MonospaceFontTests.cpp,
 				WebCore/NativeImageTests.cpp,
 				WebCore/NowPlayingInfoTests.cpp,
+				WebCore/ObjectSizeNegotiationTests.cpp,
 				WebCore/ParsedContentRange.cpp,
 				WebCore/ParsedContentType.cpp,
 				WebCore/PathTests.cpp,

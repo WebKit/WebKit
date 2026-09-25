@@ -71,6 +71,7 @@ private:
 
     void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) override;
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override;
+    NaturalDimensions unorientedNaturalDimensions() const override;
 
     bool shouldDrawFromCachedSubimage(GraphicsContext&) const override;
     bool mustDrawFromCachedSubimage(GraphicsContext&) const override;

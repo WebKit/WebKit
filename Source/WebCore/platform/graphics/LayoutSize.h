@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <WebCore/AspectRatioFit.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/LayoutUnit.h>
@@ -41,11 +42,6 @@ class TextStream;
 namespace WebCore {
 
 class LayoutPoint;
-
-enum AspectRatioFit {
-    AspectRatioFitShrink,
-    AspectRatioFitGrow
-};
 
 class LayoutSize {
 public:
@@ -133,7 +129,7 @@ public:
         float heightScale = height().toFloat() / aspectRatio.height().toFloat();
         float widthScale = width().toFloat() / aspectRatio.width().toFloat();
 
-        if ((widthScale > heightScale) != (fit == AspectRatioFitGrow))
+        if ((widthScale > heightScale) != (fit == AspectRatioFit::Grow))
             return LayoutSize(height() * aspectRatio.width() / aspectRatio.height(), height());
 
         return LayoutSize(width(), width() * aspectRatio.height() / aspectRatio.width());

@@ -103,6 +103,14 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
     invalidateAdapter();
 }
 
+NaturalDimensions BitmapImage::unorientedNaturalDimensions() const
+{
+    auto size = m_source->size(ImageOrientation::Orientation::None);
+    if (size.isEmpty())
+        return NaturalDimensions::none();
+    return NaturalDimensions::fixed(size);
+}
+
 ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     if (destinationRect.isEmpty() || sourceRect.isEmpty())

@@ -49,6 +49,9 @@ public:
     bool usesContainerSize() const final { return protect(m_image)->usesContainerSize(); }
     bool hasRelativeWidth() const final { return protect(m_image)->hasRelativeWidth(); }
     bool hasRelativeHeight() const final { return protect(m_image)->hasRelativeHeight(); }
+
+    NaturalDimensions unorientedNaturalDimensions() const final { return protect(m_image)->unorientedNaturalDimensions(); }
+
     void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final
     {
         protect(m_image)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);

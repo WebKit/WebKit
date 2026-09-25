@@ -33,6 +33,7 @@
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImagePaintingOptions.h>
 #include <WebCore/ImageTypes.h>
+#include <WebCore/NaturalDimensions.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
@@ -114,6 +115,16 @@ public:
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
     virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::FromImage; }
 
+    // https://drafts.csswg.org/css-images-3/#natural-dimensions
+    NaturalDimensions naturalDimensions(ImageOrientation requestedOrientation = ImageOrientation::Orientation::FromImage) const
+    {
+        auto orientation = requestedOrientation.orientation() == ImageOrientation::Orientation::FromImage ? this->orientation() : requestedOrientation;
+        if (orientation.orientation() == ImageOrientation::Orientation::FromImage)
+            orientation = ImageOrientation::Orientation::None;
+        return unorientedNaturalDimensions().oriented(orientation);
+    }
+
+public:
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /* allDataReceived */) { return EncodedDataStatus::Unknown; }
 
@@ -201,6 +212,8 @@ protected:
 
     virtual bool canReplaceData() const { return false; }
     virtual void dataReplaced() { }
+
+    virtual NaturalDimensions unorientedNaturalDimensions() const { return NaturalDimensions::none(); }
 
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;

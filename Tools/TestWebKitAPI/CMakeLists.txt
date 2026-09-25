@@ -322,6 +322,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NativeImageTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
+        Tests/WebCore/ObjectSizeNegotiationTests.cpp
         Tests/WebCore/PODIntervalTree.cpp
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/ParsedContentType.cpp

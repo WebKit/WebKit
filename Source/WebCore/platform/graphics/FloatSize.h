@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <WebCore/AspectRatioFit.h>
 #include <WebCore/DoubleSize.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/JSONValues.h>
@@ -76,6 +77,17 @@ public:
 
     constexpr float aspectRatio() const { return m_width / m_height; }
     constexpr double aspectRatioDouble() const { return m_width / static_cast<double>(m_height); }
+
+    constexpr FloatSize fitToAspectRatio(const FloatSize& aspectRatio, AspectRatioFit fit) const
+    {
+        float heightScale = height() / aspectRatio.height();
+        float widthScale = width() / aspectRatio.width();
+
+        if ((widthScale > heightScale) != (fit == AspectRatioFit::Grow))
+            return { height() * aspectRatio.width() / aspectRatio.height(), height() };
+
+        return { width(), width() * aspectRatio.height() / aspectRatio.width() };
+    }
 
     void expand(float width, float height)
     {
