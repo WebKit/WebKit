@@ -27,9 +27,15 @@
 
 #if ENABLE(GPU_PROCESS_MODEL)
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include "ModelTypes.h"
+#endif // RC_REMOVE_SEC_ACCEL_3
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebModelIdentifier.h"
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include <wtf/HashMap.h>
+#endif // RC_REMOVE_SEC_ACCEL_3
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -112,6 +118,9 @@ private:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;
     const bool m_standardDynamicRange { false };
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    HashMap<int64_t, WebModel::MeshDescriptor, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_meshDescriptors;
+#endif // RC_REMOVE_SEC_ACCEL_3
 };
 
 } // namespace WebKit
