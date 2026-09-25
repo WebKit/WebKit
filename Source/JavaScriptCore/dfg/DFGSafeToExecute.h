@@ -310,7 +310,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case Int52Rep:
     case BooleanToNumber:
     case FiatInt52:
+#ifdef RC_REMOVE_SEC_ACCEL_3
     case HasIndexedProperty:
+#endif
     case CheckStructureImmediate:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
@@ -410,6 +412,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case ArrayPop:
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    case HasIndexedProperty:
+#endif
     case StringAt:
     case StringCharAt:
     case StringCharCodeAt:
