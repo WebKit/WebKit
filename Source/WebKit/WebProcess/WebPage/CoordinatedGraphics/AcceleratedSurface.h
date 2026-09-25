@@ -245,10 +245,14 @@ private:
         void sync(bool) override;
         void setReleaseFenceFD(UnixFileDescriptor&&) override;
 
+        enum class StencilFormat : bool { StencilOnly, PackedDepthStencil };
+
         void initializeColorBuffer(EGLImage = nullptr);
+        void createStencilBuffer(const WebCore::IntSize&, StencilFormat);
+        void ensureCompleteStencilAttachment();
 
         unsigned m_fbo { 0 };
-        unsigned m_depthStencilBuffer { 0 };
+        unsigned m_stencilBuffer { 0 };
         unsigned m_colorBuffer { 0 };
         UnixFileDescriptor m_renderingFenceFD;
         UnixFileDescriptor m_releaseFenceFD;
