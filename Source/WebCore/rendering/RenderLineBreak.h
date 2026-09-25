@@ -69,11 +69,8 @@ private:
     LayoutUnit marginStart(const WritingMode) const final { return 0; }
     LayoutUnit marginEnd(const WritingMode) const final { return 0; }
     LayoutRect firstFragmentBorderBoxRect() const final { return linesBoundingBox(); }
-    LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
-    LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
     LayoutRect borderBoxRectInContainer() const final { return linesBoundingBox(); }
     LayoutRect visualOverflowRect() const final { return linesBoundingBox(); }
-    LayoutRect frameRectForStickyPositioning() const final { ASSERT_NOT_REACHED(); return { }; }
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final { return { }; }
 
     void NODELETE updateFromStyle() final;
