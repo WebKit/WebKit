@@ -27,19 +27,21 @@
 #include "TextCheckerCompletion.h"
 
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page)
+Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page, WebProcessProxy& process)
 {
-    return adoptRef(*new TextCheckerCompletion(requestID, requestData, page));
+    return adoptRef(*new TextCheckerCompletion(requestID, requestData, page, process));
 }
 
-TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page)
+TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page, WebProcessProxy& process)
     : m_requestID(requestID)
     , m_requestData(requestData)
     , m_page(page)
+    , m_process(process)
 {
 }
 
@@ -59,22 +61,24 @@ int64_t TextCheckerCompletion::spellDocumentTag()
 void TextCheckerCompletion::didFinishCheckingText(const Vector<TextCheckingResult>& result) const
 {
     RefPtr page = m_page.get();
-    if (!page)
+    RefPtr process = m_process.get();
+    if (!page || !process)
         return;
 
     if (result.isEmpty())
         didCancelCheckingText();
 
-    page->didFinishCheckingText(m_requestID, result);
+    page->didFinishCheckingText(*process, m_requestID, result);
 }
 
 void TextCheckerCompletion::didCancelCheckingText() const
 {
     RefPtr page = m_page.get();
-    if (!page)
+    RefPtr process = m_process.get();
+    if (!page || !process)
         return;
 
-    page->didCancelCheckingText(m_requestID);
+    page->didCancelCheckingText(*process, m_requestID);
 }
 
 } // namespace WebKit
