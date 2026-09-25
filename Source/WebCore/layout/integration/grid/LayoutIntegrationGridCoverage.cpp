@@ -285,6 +285,46 @@ static bool gridItemHasValidHeight(const Style::PreferredSize& height)
     );
 }
 
+static bool isUnsupportedGridTrackSize(const Style::GridTrackSize& trackSize)
+{
+    // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
+    // MaxTrackBreadth to the same value we only need to check one.
+    return !trackSize.isBreadth();
+}
+
+static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackList)
+{
+    return trackList.containsIf([](auto& trackListEntry) {
+        return WTF::switchOn(trackListEntry,
+            [](const Style::GridTrackSize& trackSize) {
+                return isUnsupportedGridTrackSize(trackSize);
+            },
+            [](const Style::GridLineNames& names) {
+                return !names.isEmpty();
+            },
+            [](const Style::GridTrackEntryRepeat& repeat) {
+                return repeat.list.containsIf([](auto& repeatEntry) {
+                    return WTF::switchOn(repeatEntry,
+                        [](const Style::GridTrackSize& trackSize) {
+                            return isUnsupportedGridTrackSize(trackSize);
+                        },
+                        [](const Style::GridLineNames& names) {
+                            return !names.isEmpty();
+                        }
+                    );
+                });
+            },
+            // auto-fill/auto-fit require computing the repetition count from the available space.
+            [](const Style::GridTrackEntryAutoRepeat&) {
+                return true;
+            },
+            [](const Style::GridTrackEntrySubgrid&) {
+                return true;
+            }
+        );
+    });
+}
+
 static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& renderGrid, ReasonCollectionMode reasonCollectionMode)
 {
     auto reasons = EnumSet<GridAvoidanceReason> { };
@@ -339,75 +379,12 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     auto& gridTemplateColumns = renderGridStyle->gridTemplateColumns();
     auto& gridTemplateColumnsTrackList = gridTemplateColumns.list;
-    if (gridTemplateColumnsTrackList.isEmpty())
+    if (gridTemplateColumnsTrackList.isEmpty() || hasUnsupportedGridTrackListEntry(gridTemplateColumnsTrackList))
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns, reasons, reasonCollectionMode);
 
-    for (auto& columnsTrackListEntry : gridTemplateColumnsTrackList) {
-        auto avoidanceReason = WTF::switchOn(columnsTrackListEntry,
-            [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
-                // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
-                // MaxTrackBreadth to the same value we only need to check one.
-                if (!trackSize.isBreadth())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
-                return { };
-            },
-            [&](const Style::GridLineNames& names) -> std::optional<GridAvoidanceReason> {
-                if (!names.isEmpty())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
-                return std::nullopt;
-            },
-            [&](const Style::GridTrackEntryRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
-            },
-            [&](const Style::GridTrackEntryAutoRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
-            },
-            [&](const Style::GridTrackEntrySubgrid&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
-            }
-        );
-
-        if (avoidanceReason) {
-            reasons.add(*avoidanceReason);
-            if (reasonCollectionMode == ReasonCollectionMode::FirstOnly)
-                return reasons;
-        }
-    }
-
     auto& gridTemplateRows = renderGridStyle->gridTemplateRows();
-    auto& gridTemplateRowsTrackList = gridTemplateRows.list;
-
-    for (auto& rowsTrackListEntry : gridTemplateRowsTrackList) {
-        auto avoidanceReason = WTF::switchOn(rowsTrackListEntry,
-            [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
-                // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
-                // MaxTrackBreadth to the same value we only need to check one.
-                if (!trackSize.isBreadth())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
-                return { };
-            },
-            [&](const Style::GridLineNames& names) -> std::optional<GridAvoidanceReason> {
-                if (!names.isEmpty())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
-                return std::nullopt;
-            },
-            [&](const Style::GridTrackEntryRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
-            },
-            [&](const Style::GridTrackEntryAutoRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
-            },
-            [&](const Style::GridTrackEntrySubgrid&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
-            }
-        );
-
-        if (avoidanceReason) {
-            reasons.add(*avoidanceReason);
-            if (reasonCollectionMode == ReasonCollectionMode::FirstOnly)
-                return reasons;
-        }
-    }
+    if (hasUnsupportedGridTrackListEntry(gridTemplateRows.list))
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows, reasons, reasonCollectionMode);
 
     // These are the forms of containment GFC cannot honour: it would size these grids' tracks from
     // their grid items rather than from contain-intrinsic-size.
@@ -439,11 +416,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     // container size, run the Grid Sizing Algorithm to size the grid." so that the
     // grid has a height to resolve the percentages again in the second step.
     auto gridBlockSizeIsIndefinite = renderGridStyle->height().isAuto() || renderGridStyle->height().isIntrinsic();
+    // Check the expanded track sizes so tracks inside repeat() are included.
     auto hasPercentageRowTrack = [&] {
-        return gridTemplateRowsTrackList.containsIf([&](const auto& rowsTrackListEntry) {
-            if (auto* trackSize = std::get_if<Style::GridTrackSize>(&rowsTrackListEntry))
-                return trackSize->minTrackBreadth().isPercentOrCalculated() || trackSize->maxTrackBreadth().isPercentOrCalculated();
-            return false;
+        return gridTemplateRows.sizes.containsIf([&](auto& trackSize) {
+            return trackSize.minTrackBreadth().isPercentOrCalculated() || trackSize.maxTrackBreadth().isPercentOrCalculated();
         });
     };
     if (gridBlockSizeIsIndefinite && hasPercentageRowTrack())
