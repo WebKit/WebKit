@@ -131,7 +131,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
                 // so we should still see both bits set right now.
                 ASSERT((lock.load() & mask) == (isHeldBit | hasParkedBit));
                 
-                if (result.didUnparkThread && (fairness == Fair || result.timeToBeFair)) {
+                if (result.unparkedCount && (fairness == Fair || result.timeToBeFair)) {
                     // We don't unlock anything. Instead, we hand the lock to the thread that was
                     // waiting.
                     lock.transaction(

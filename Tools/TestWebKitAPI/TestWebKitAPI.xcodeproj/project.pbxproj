@@ -1335,6 +1335,7 @@
 				WTF/PreciseSum.cpp,
 				WTF/PriorityQueue.cpp,
 				WTF/RapidHash.cpp,
+				WTF/ReadWriteLock.cpp,
 				WTF/RedBlackTree.cpp,
 				WTF/Ref.cpp,
 				WTF/RefCountedFixedVector.cpp,

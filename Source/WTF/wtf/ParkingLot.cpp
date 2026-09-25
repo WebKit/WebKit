@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -653,116 +653,76 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
 
 NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
 {
-    if (verbose)
-        dataLogForCurrentThread(": unparking one.\n");
-    
     UnparkResult result;
-
-    RefPtr<ThreadData> threadData;
-    result.mayHaveMoreThreads = dequeue(
-        address,
-        // Why is this here?
-        // FIXME: It seems like this could be IgnoreEmpty, but I switched this to EnsureNonEmpty
-        // without explanation in r199760. We need it to use EnsureNonEmpty if we need to perform
-        // some operation while holding the bucket lock, which usually goes into the finish func.
-        // But if that operation is a no-op, then it's not clear why we need this.
-        BucketMode::EnsureNonEmpty,
-        [&] (ThreadData* element, bool) {
-            if (element->address != address)
-                return DequeueResult::Ignore;
-            threadData = element;
-            result.didUnparkThread = true;
-            return DequeueResult::RemoveAndStop;
-        },
-        [] (bool) { });
-
-    if (!threadData) {
-        ASSERT(!result.didUnparkThread);
-        result.mayHaveMoreThreads = false;
-        return result;
-    }
-    
-    ASSERT(threadData->address);
-    
-    {
-        MutexLocker locker(threadData->parkingLock);
-        threadData->address = nullptr;
-        threadData->token = 0;
-    }
-    threadData->parkingCondition.signal();
-
-    return result;
-}
-
-NEVER_INLINE void ParkingLot::unparkOneImpl(
-    const void* address,
-    const ScopedLambda<intptr_t(ParkingLot::UnparkResult)>& callback)
-{
-    if (verbose)
-        dataLogForCurrentThread(": unparking one the hard way.\n");
-    
-    RefPtr<ThreadData> threadData;
-    bool timeToBeFair = false;
-    dequeue(
-        address,
-        BucketMode::EnsureNonEmpty,
-        [&] (ThreadData* element, bool passedTimeToBeFair) {
-            if (element->address != address)
-                return DequeueResult::Ignore;
-            threadData = element;
-            timeToBeFair = passedTimeToBeFair;
-            return DequeueResult::RemoveAndStop;
-        },
-        [&] (bool mayHaveMoreThreads) {
-            UnparkResult result;
-            result.didUnparkThread = !!threadData;
-            result.mayHaveMoreThreads = result.didUnparkThread && mayHaveMoreThreads;
-            if (timeToBeFair)
-                RELEASE_ASSERT(threadData);
-            result.timeToBeFair = timeToBeFair;
-            intptr_t token = callback(result);
-            if (threadData)
-                threadData->token = token;
+    unparkCountImpl(
+        address, 1,
+        [&] (UnparkResult passedResult) -> intptr_t {
+            result = passedResult;
+            return 0;
         });
-
-    if (!threadData)
-        return;
-
-    ASSERT(threadData->address);
-    
-    {
-        MutexLocker locker(threadData->parkingLock);
-        threadData->address = nullptr;
-    }
-    // At this point, the threadData may die. Good thing we have a RefPtr<> on it.
-    threadData->parkingCondition.signal();
+    return result;
 }
 
 NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned count)
 {
     if (!count)
         return 0;
-    
+
+    unsigned unparkedCount = 0;
+    unparkCountImpl(
+        address, count,
+        [&] (UnparkResult result) -> intptr_t {
+            unparkedCount = result.unparkedCount;
+            // Threads unparked without a token-carrying callback see token 0, as documented on
+            // ParkResult.
+            return 0;
+        });
+    return unparkedCount;
+}
+
+NEVER_INLINE void ParkingLot::unparkCountImpl(
+    const void* address, unsigned count,
+    const ScopedLambda<intptr_t(ParkingLot::UnparkResult)>& callback)
+{
     if (verbose)
-        dataLogForCurrentThread(": unparking count = ", count, " from ", RawPointer(address), ".\n");
-    
-    Vector<RefPtr<ThreadData>, 8> threadDatas;
+        dataLogForCurrentThread(": unparking count = ", count, " the hard way from ", RawPointer(address), ".\n");
+
+    Vector<RefPtr<ThreadData>, 16> threadDatas;
+    bool timeToBeFair = false;
     dequeue(
         address,
-        // FIXME: It seems like this ought to be EnsureNonEmpty if we follow what unparkOne() does,
-        // but that seems wrong.
-        BucketMode::IgnoreEmpty,
-        [&] (ThreadData* element, bool) {
-            if (verbose)
-                dataLogForCurrentThread(": Observing element with address = ", RawPointer(element->address), "\n");
+        // EnsureNonEmpty, so that the callback runs even when there is nothing to dequeue, and
+        // runs holding the bucket lock. The lock is what serializes the callback's decision
+        // against a thread that is on its way to parking: without it, that thread's validation
+        // could still observe the pre-callback state and enqueue itself after we have concluded
+        // the queue is empty, leaving it asleep with nobody left to wake it. The token-less forms have
+        // nothing to serialize but take this path too: the bucket this materializes lives in the
+        // hashtable slot and is reused forever after, so the cost is one allocation per slot rather
+        // than per call, and once a slot has had a waiter IgnoreEmpty would take the lock as well.
+        BucketMode::EnsureNonEmpty,
+        [&] (ThreadData* element, bool passedTimeToBeFair) {
+            // Only reachable for a zero count, which this makes unpark nobody.
+            if (threadDatas.size() == count)
+                return DequeueResult::Ignore;
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadDatas.append(element);
+            timeToBeFair = passedTimeToBeFair;
             if (threadDatas.size() == count)
                 return DequeueResult::RemoveAndStop;
             return DequeueResult::RemoveAndContinue;
         },
-        [] (bool) { });
+        [&] (bool mayHaveMoreThreads) {
+            UnparkResult result;
+            result.unparkedCount = threadDatas.size();
+            result.mayHaveMoreThreads = result.unparkedCount && mayHaveMoreThreads;
+            result.timeToBeFair = timeToBeFair;
+            if (timeToBeFair)
+                RELEASE_ASSERT(result.unparkedCount);
+            intptr_t token = callback(result);
+            for (auto& threadData : threadDatas)
+                threadData->token = token;
+        });
 
     for (auto& threadData : threadDatas) {
         if (verbose)
@@ -774,11 +734,6 @@ NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned coun
         }
         threadData->parkingCondition.signal();
     }
-
-    if (verbose)
-        dataLogForCurrentThread(": done unparking.\n");
-    
-    return threadDatas.size();
 }
 
 NEVER_INLINE void ParkingLot::unparkAll(const void* address)

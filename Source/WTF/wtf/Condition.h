@@ -158,7 +158,7 @@ public:
             [&] (ParkingLot::UnparkResult result) -> intptr_t {
                 if (!result.mayHaveMoreThreads)
                     m_hasWaiters.store(false);
-                didNotifyThread = result.didUnparkThread;
+                didNotifyThread = result.unparkedCount;
                 return 0;
             });
         return didNotifyThread;

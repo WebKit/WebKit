@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "config.h"
 
 #include "ToyLocks.h"
+#include <algorithm>
 #include <thread>
 #include <unistd.h>
 #include <wtf/DataLog.h>
@@ -47,6 +48,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/CString.h>
@@ -58,10 +60,13 @@ unsigned numThreadsPerGroup;
 unsigned workPerCriticalSection;
 unsigned workBetweenCriticalSections;
 double secondsPerTest;
+// Microseconds a writer sleeps between acquisitions. Zero means hammer the lock, which is the
+// pathological case; a real workload with rare writes wants this nonzero.
+unsigned writerSleepUsec;
     
 [[noreturn]] void usage()
 {
-    printf("Usage: LockSpeedTest yieldspinlock|pausespinlock|wordlock|lock|barginglock|bargingwordlock|thunderlock|thunderwordlock|cascadelock|cascadewordlock|handofflock|unfairlock|mutex|all <num thread groups> <num threads per group> <work per critical section> <work between critical sections> <spin limit> <seconds per test>\n");
+    printf("Usage: LockSpeedTest yieldspinlock|pausespinlock|wordlock|lock|barginglock|bargingwordlock|thunderlock|thunderwordlock|cascadelock|cascadewordlock|handofflock|unfairlock|mutex|all|readwritelock|pftlock|pftparkinglock|countedrwlock|sharedmutex|allrw <num thread groups> <num threads per group> <work per critical section> <work between critical sections> <spin limit> <seconds per test> [<num writers per group> [<writer sleep usec>]]\n");
     exit(1);
 }
 
@@ -73,9 +78,9 @@ struct WithPadding {
 
 HashMap<CString, Vector<double>> results;
 
-void reportResult(const char* name, double value)
+void reportResult(const char* name, double value, const char* unit = "KHz")
 {
-    dataLogF("%s: %.3lf KHz\n", name, value);
+    dataLogF("%s: %.3lf %s\n", name, value, unit);
     results.add(name, Vector<double>()).iterator->value.append(value);
 }
 
@@ -135,6 +140,102 @@ struct Benchmark {
     }
 };
 
+// Same shape as Benchmark, but each thread group is a mix of writers and readers, so that the
+// read-write locks are measured on what they are for. Readers only read the shared word, which
+// means a lock that lets readers run concurrently should scale with the reader count.
+//
+// Reader and writer throughput are reported separately as well as together, because the
+// interesting differences between these locks are in how they split the two: a writer-preference
+// lock can post a fine combined number while starving readers, and a reader-preference lock the
+// reverse.
+struct RWBenchmark {
+    template<typename LockType>
+    static void run(const char* name)
+    {
+        unsigned writersPerGroup = std::min(toyLockWritersPerGroup, numThreadsPerGroup);
+
+        // These locks are neither copyable nor movable, so they cannot live in a Vector.
+        auto locks = makeUniqueArray<WithPadding<LockType>>(numThreadGroups);
+        Vector<WithPadding<double>> words(numThreadGroups);
+        Vector<RefPtr<Thread>> threads(numThreadGroups * numThreadsPerGroup);
+
+        std::atomic<bool> keepGoing = true;
+
+        MonotonicTime before = MonotonicTime::now();
+
+        Lock numIterationsLock;
+        uint64_t numReadIterations = 0;
+        uint64_t numWriteIterations = 0;
+        // How long writers spent inside writeLock(). With rare writes, this is what matters about a
+        // writer far more than its throughput does.
+        double totalWriteAcquireSeconds = 0;
+
+        for (unsigned threadGroupIndex = numThreadGroups; threadGroupIndex--;) {
+            words[threadGroupIndex].value = 0;
+
+            for (unsigned threadIndex = numThreadsPerGroup; threadIndex--;) {
+                bool isWriter = threadIndex < writersPerGroup;
+                threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = Thread::create(
+                    "Benchmark thread"_s,
+                    [threadGroupIndex, isWriter, &locks, &words, &keepGoing, &numIterationsLock, &numReadIterations, &numWriteIterations, &totalWriteAcquireSeconds] () {
+                        double localWord = 0;
+                        double value = 1;
+                        unsigned myNumIterations = 0;
+                        double myAcquireSeconds = 0;
+                        while (keepGoing) {
+                            if (isWriter) {
+                                MonotonicTime before = MonotonicTime::now();
+                                locks[threadGroupIndex].value.writeLock();
+                                myAcquireSeconds += (MonotonicTime::now() - before).seconds();
+                                for (unsigned j = workPerCriticalSection; j--;) {
+                                    words[threadGroupIndex].value += value;
+                                    value = words[threadGroupIndex].value;
+                                }
+                                locks[threadGroupIndex].value.writeUnlock();
+                                if (writerSleepUsec)
+                                    usleep(writerSleepUsec);
+                            } else {
+                                locks[threadGroupIndex].value.readLock();
+                                for (unsigned j = workPerCriticalSection; j--;)
+                                    value += words[threadGroupIndex].value;
+                                locks[threadGroupIndex].value.readUnlock();
+                            }
+                            for (unsigned j = workBetweenCriticalSections; j--;) {
+                                localWord += value;
+                                value = localWord;
+                            }
+                            myNumIterations++;
+                        }
+                        Locker locker { numIterationsLock };
+                        if (isWriter) {
+                            numWriteIterations += myNumIterations;
+                            totalWriteAcquireSeconds += myAcquireSeconds;
+                        } else
+                            numReadIterations += myNumIterations;
+                    });
+            }
+        }
+
+        sleep(Seconds { secondsPerTest });
+        keepGoing = false;
+
+        for (unsigned threadIndex = numThreadGroups * numThreadsPerGroup; threadIndex--;)
+            threads[threadIndex]->waitForCompletion();
+
+        MonotonicTime after = MonotonicTime::now();
+
+        double seconds = (after - before).seconds();
+        char label[256];
+        reportResult(name, (numReadIterations + numWriteIterations) / seconds / 1000);
+        snprintf(label, sizeof(label), "%s reads", name);
+        reportResult(label, numReadIterations / seconds / 1000);
+        snprintf(label, sizeof(label), "%s writes", name);
+        reportResult(label, numWriteIterations / seconds / 1000);
+        snprintf(label, sizeof(label), "%s write acquire", name);
+        reportResult(label, numWriteIterations ? totalWriteAcquireSeconds / numWriteIterations * 1000000 : 0, "usec");
+    }
+};
+
 unsigned rangeMin;
 unsigned rangeMax;
 unsigned rangeStep;
@@ -150,7 +251,7 @@ bool parseValue(const char* string, unsigned* variable)
             fprintf(stderr, "Can only have one variable with a range.\n");
             return false;
         }
-        
+
         rangeMin = myRangeMin;
         rangeMax = myRangeMax;
         rangeStep = myRangeStep;
@@ -170,24 +271,28 @@ int main(int argc, char** argv)
 {
     WTF::initialize();
     
-    if (argc != 8
+    if ((argc != 8 && argc != 9 && argc != 10)
         || !parseValue(argv[2], &numThreadGroups)
         || !parseValue(argv[3], &numThreadsPerGroup)
         || !parseValue(argv[4], &workPerCriticalSection)
         || !parseValue(argv[5], &workBetweenCriticalSections)
         || !parseValue(argv[6], &toyLockSpinLimit)
-        || sscanf(argv[7], "%lf", &secondsPerTest) != 1)
+        || sscanf(argv[7], "%lf", &secondsPerTest) != 1
+        || (argc >= 9 && !parseValue(argv[8], &toyLockWritersPerGroup))
+        || (argc >= 10 && !parseValue(argv[9], &writerSleepUsec)))
         usage();
-    
     if (rangeVariable) {
         dataLog("Running with rangeMin = ", rangeMin, ", rangeMax = ", rangeMax, ", rangeStep = ", rangeStep, "\n");
         for (unsigned value = rangeMin; value <= rangeMax; value += rangeStep) {
             dataLog("Running with value = ", value, "\n");
             *rangeVariable = value;
             runEverything<Benchmark>(argv[1]);
+            runEverythingRW<RWBenchmark>(argv[1]);
         }
-    } else
+    } else {
         runEverything<Benchmark>(argv[1]);
+        runEverythingRW<RWBenchmark>(argv[1]);
+    }
     
     for (auto& entry : results) {
         printf("%s = {", entry.key.data());

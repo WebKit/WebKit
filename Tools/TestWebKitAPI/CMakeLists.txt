@@ -129,6 +129,7 @@ set(TestWTF_SOURCES
     Tests/WTF/PreciseSum.cpp
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RapidHash.cpp
+    Tests/WTF/ReadWriteLock.cpp
     Tests/WTF/RedBlackTree.cpp
     Tests/WTF/Ref.cpp
     Tests/WTF/RefCountedFixedVector.cpp
