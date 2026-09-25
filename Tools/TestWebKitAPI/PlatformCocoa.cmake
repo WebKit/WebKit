@@ -1044,6 +1044,7 @@ set_target_properties(TestWebKit PROPERTIES
 )
 
 set(_twkapi_bundle_id "org.webkit.TestWebKitAPI")
+set(_twkapi_app_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKit.app")
 
 if (USE_EXTENSIONKIT)
     add_dependencies(TestWebKit WebContentExtension NetworkingExtension)
@@ -1052,11 +1053,14 @@ if (USE_EXTENSIONKIT)
     endif ()
 
     WEBKIT_EMBED_EXTENSION(TestWebKit WebContentExtension ${_twkapi_bundle_id}
+        BUNDLE_DIR ${_twkapi_app_dir}
         CHANGE_EXTENSION_POINT ADD_ATS)
     WEBKIT_EMBED_EXTENSION(TestWebKit NetworkingExtension ${_twkapi_bundle_id}
+        BUNDLE_DIR ${_twkapi_app_dir}
         ADD_ATS)
     if (ENABLE_GPU_PROCESS)
-        WEBKIT_EMBED_EXTENSION(TestWebKit GPUExtension ${_twkapi_bundle_id})
+        WEBKIT_EMBED_EXTENSION(TestWebKit GPUExtension ${_twkapi_bundle_id}
+            BUNDLE_DIR ${_twkapi_app_dir})
     endif ()
 endif ()
 

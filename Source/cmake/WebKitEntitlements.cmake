@@ -69,3 +69,24 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
     add_custom_target(${_target}Entitlements DEPENDS ${_arg_OUTPUT})
     add_dependencies(${_target} ${_target}Entitlements)
 endfunction()
+
+# Simulator builds carry their entitlements in the binary's __TEXT,__entitlements and
+# __TEXT,__ents_der sections instead of the code signature.
+function(WEBKIT_GENERATE_DER_ENTITLEMENTS _xml_path _der_output)
+    execute_process(COMMAND derq query -f xml -i "${_xml_path}" -o "${_der_output}" --raw)
+endfunction()
+
+# Entitlements the simulator accepts in a code signature; everything else has to travel in
+# the binary's sections.
+function(WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS _output)
+    file(WRITE ${_output}
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
+        "<plist version=\"1.0\">\n"
+        "<dict>\n"
+        "\t<key>com.apple.security.get-task-allow</key>\n"
+        "\t<true/>\n"
+        "</dict>\n"
+        "</plist>\n"
+    )
+endfunction()

@@ -3376,6 +3376,7 @@ if (APPLE)
         "LINKER:-allowable_client,WebKit2"
         "LINKER:-allowable_client,WebKitLegacy"
         "LINKER:-allowable_client,WebKitTestRunner"
+        "LINKER:-allowable_client,WebKitTestRunnerApp"
         "LINKER:-allowable_client,WebKitTestRunnerInjectedBundle"
         "LINKER:-allowable_client,DumpRenderTree"
         "LINKER:-allowable_client,InjectedBundleTestWebKitAPI"
@@ -3422,8 +3423,8 @@ if (ENABLE_WEBCORE_TEST_SUPPORT)
 
     if (APPLE AND USE_LIBWEBRTC)
         # testing/MockLibWebRTCPeerConnection.cpp subclasses webrtc interfaces, so
-        # whoever links this library resolves those symbols from libwebrtc.dylib.
-        target_link_options(WebCoreTestSupport INTERFACE
+        # this library and whoever links it resolve those symbols from libwebrtc.dylib.
+        target_link_options(WebCoreTestSupport PUBLIC
             "LINKER:-weak_library,$<TARGET_FILE:webrtc>")
         add_dependencies(WebCoreTestSupport webrtc)
     endif ()
