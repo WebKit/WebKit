@@ -161,8 +161,8 @@ public:
     unsigned start() const { return m_start; }
     unsigned stop() const { return m_stop; }
     unsigned char level() const { return m_level; }
-    bool reversed(bool visuallyOrdered) { return m_level % 2 && !visuallyOrdered; }
-    bool dirOverride(bool visuallyOrdered) { return m_override || visuallyOrdered; }
+    bool reversed(bool visuallyOrdered) const { return m_level % 2 && !visuallyOrdered; }
+    bool dirOverride(bool visuallyOrdered) const { return m_override || visuallyOrdered; }
 
     ConcreteRunType* next() const LIFETIME_BOUND { return m_next.get(); }
     std::unique_ptr<ConcreteRunType> takeNext() { return WTF::move(m_next); }

@@ -297,6 +297,8 @@ public:
         float minimumValue() const { return m_minimumValue; }
         float maximumValue() const { return m_maximumValue; }
 
+        friend bool operator==(const FontVariationAxis&, const FontVariationAxis&) = default;
+
     private:
         const String m_name;
         const String m_tag;
