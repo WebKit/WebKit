@@ -304,6 +304,11 @@ public:
     // Returns timeout duration for GPU process connections. Thread-safe.
     Seconds NODELETE gpuProcessTimeoutDuration() const;
     void gpuProcessConnectionClosed();
+#if HAVE(IOSURFACE)
+    // Sends the GPU process the largest main-frame tile size among this process's pages, for its
+    // IOSurface pool, when it changes or there is a new connection.
+    void updateIOSurfacePoolTileSizeHint();
+#endif
     void gpuProcessConnectionDidBecomeUnresponsive();
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -822,6 +827,10 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
+#if HAVE(IOSURFACE)
+    // What the current connection was last told; 0 for a new connection.
+    uint64_t m_sentIOSurfacePoolTileSizeHint { 0 };
+#endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
 #if ENABLE(WEB_CODECS)

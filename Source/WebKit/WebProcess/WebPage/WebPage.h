@@ -644,6 +644,10 @@ public:
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const LIFETIME_BOUND { return m_viewSize; }
     inline WebCore::IntRect bounds() const;
+#if HAVE(IOSURFACE)
+    // Bytes in one tile of the main frame at the current view width and device scale factor.
+    uint64_t ioSurfacePoolTileSizeHint() const;
+#endif
 
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
 

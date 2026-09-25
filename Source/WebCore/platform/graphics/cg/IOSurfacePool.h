@@ -64,35 +64,41 @@ public:
 
     WEBCORE_EXPORT void setPoolSize(size_t);
 
+    // The size in bytes of one tile of the client's main frame, which depends on its view width and
+    // device scale factor. Sizes the number of in-use surfaces the pool keeps for reuse.
+    WEBCORE_EXPORT void setTileSizeHint(size_t tileBytes);
+
+    WEBCORE_EXPORT size_t inUseBytesLimitForTesting();
+
 private:
     IOSurfacePool();
 
-    struct CachedSurfaceDetails {
-        CachedSurfaceDetails()
-            : hasMarkedPurgeable(false)
-        { }
-
-        void resetLastUseTime() { lastUseTime = MonotonicTime::now(); }
-
-        MonotonicTime lastUseTime;
-        bool hasMarkedPurgeable;
-        bool inCurrentlyUsedSurfaceCache;
-    };
-
     using CachedSurfaceQueue = Deque<std::unique_ptr<IOSurface>>;
     using CachedSurfaceMap = HashMap<IntSize, CachedSurfaceQueue>;
-    using CachedSurfaceDetailsMap = HashMap<IOSurface*, CachedSurfaceDetails>;
 
-#if PLATFORM(MAC)
+    // Pooled surfaces are marked volatile on insertion, so pool bytes are not charged to the owning
+    // process's ledger. That makes a large pool cheap and a high hit rate valuable: every miss mints
+    // a fresh non-volatile (charged) surface, while a hit just borrows uncharged bytes back. Measured
+    // on apple.com/iphone-duo: 64 MB -> 84% hit rate, owned-unmapped p90/p95 518/587 MB; 256 MB ->
+    // 93% and 455/483 MB, despite holding ~166 MB more surfaces.
     static constexpr size_t defaultMaximumBytesCached { 256 * MB };
+    // in-use surfaces can't be immediately recycled but may be available soon. We should
+    // limit caching in use surfaces so that we don't end up with a pool of surfaces we
+    // can't readily recycle.
+#if PLATFORM(MAC)
+    static constexpr size_t maximumInUseBytes = 0.5 * defaultMaximumBytesCached;
 #else
-    static constexpr size_t defaultMaximumBytesCached { 64 * MB };
+    // 32 MB is chosen for iOS as it is approximately the size of a set of front and back buffer
+    // for 4 page tiles of dimensions 1024x1024. This should provide a good trade off of soon to be
+    // available surfaces without contributing too much non-volatile footprint during memory pressure situations.
+    static constexpr size_t maximumInUseBytes { 32 * MB };
 #endif
+    // With a tile size hint, keep front and back buffers for this many tiles of that size instead,
+    // since tiles on large screens are several times 1024x1024 (an unfolded iPhone in landscape has
+    // 2721x1536 tiles, 16.7 MB). At most half the pool.
+    static constexpr size_t tilesToKeepInUse { 4 };
+    size_t inUseBytesLimit() const WTF_REQUIRES_LOCK(m_lock);
 
-    // We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
-    // they can't be immediately returned when requested (but will be freed up in the future).
-    static constexpr size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
-    
     bool NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
@@ -109,7 +115,6 @@ private:
     void stopCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
     void collectionTimerFired();
     void collectInUseSurfaces() WTF_REQUIRES_LOCK(m_lock);
-    bool markOlderSurfacesPurgeable() WTF_REQUIRES_LOCK(m_lock);
 
     void platformGarbageCollectNow();
 
@@ -121,12 +126,12 @@ private:
     RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);
-    CachedSurfaceDetailsMap m_surfaceDetails WTF_GUARDED_BY_LOCK(m_lock);
     Vector<IntSize> m_sizesInPruneOrder WTF_GUARDED_BY_LOCK(m_lock);
 
     size_t m_bytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_inUseBytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_maximumBytesCached WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumBytesCached };
+    size_t m_tileSizeHint WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     const IOSurfacePoolIdentifier m_poolIdentifier { IOSurfacePoolIdentifier::generate() };
 };
 

@@ -350,6 +350,9 @@
 #include <WebCore/TextExtraction.h>
 #include <WebCore/TextExtractionScriptFiltering.h>
 #include <WebCore/TextIterator.h>
+#if HAVE(IOSURFACE)
+#include <WebCore/TileController.h>
+#endif
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/TextRecognitionOptions.h>
 #include <WebCore/TranslationContextMenuInfo.h>
@@ -1617,6 +1620,10 @@ void WebPage::consumeUserActivations(const Vector<FrameIdentifier>& frameIDs)
 void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
 {
     UNUSED_PARAM(gpuProcessConnection);
+
+#if HAVE(IOSURFACE)
+    WebProcess::singleton().updateIOSurfacePoolTileSizeHint();
+#endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     gpuProcessConnection.createVisibilityPropagationContextForPage(*this);
@@ -2909,7 +2916,23 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     cacheAXSize(m_viewSize);
 #endif
+
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    WebProcess::singleton().updateIOSurfacePoolTileSizeHint();
+#endif
 }
+
+#if HAVE(IOSURFACE)
+uint64_t WebPage::ioSurfacePoolTileSizeHint() const
+{
+    // TileController gives the vertically scrolling main frame tiles as wide as the view and
+    // kDefaultTileSize points tall, backed at the device scale factor, 4 bytes per pixel.
+    float scale = deviceScaleFactor();
+    uint64_t width = std::ceil(m_viewSize.width() * scale);
+    uint64_t height = std::ceil(WebCore::kDefaultTileSize * scale);
+    return width * height * 4;
+}
+#endif
 
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
@@ -3207,6 +3230,9 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
         return;
 
     page->setDeviceScaleFactor(scaleFactor);
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    WebProcess::singleton().updateIOSurfacePoolTileSizeHint();
+#endif
 
     // Tell all our plug-in views that the device scale factor changed.
 #if PLATFORM(MAC)

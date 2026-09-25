@@ -1573,10 +1573,31 @@ Seconds WebProcess::gpuProcessTimeoutDuration() const
     return m_childProcessDebuggabilityEnabled ? Seconds::infinity() : defaultTimeoutDuration;
 }
 
+#if HAVE(IOSURFACE)
+void WebProcess::updateIOSurfacePoolTileSizeHint()
+{
+    RefPtr gpuProcessConnection = m_gpuProcessConnection;
+    if (!gpuProcessConnection)
+        return;
+
+    uint64_t tileBytes = 0;
+    for (auto& page : m_pageMap.values())
+        tileBytes = std::max(tileBytes, page->ioSurfacePoolTileSizeHint());
+    if (!tileBytes || tileBytes == m_sentIOSurfacePoolTileSizeHint)
+        return;
+
+    m_sentIOSurfacePoolTileSizeHint = tileBytes;
+    gpuProcessConnection->setIOSurfacePoolTileSizeHint(tileBytes);
+}
+#endif
+
 void WebProcess::gpuProcessConnectionClosed()
 {
     ASSERT(m_gpuProcessConnection);
     m_gpuProcessConnection = nullptr;
+#if HAVE(IOSURFACE)
+    m_sentIOSurfacePoolTileSizeHint = 0;
+#endif
 
     for (auto& page : m_pageMap.values())
         page->gpuProcessConnectionWasDestroyed();

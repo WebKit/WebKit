@@ -30,6 +30,9 @@
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
     void ReleaseRenderingBackend(WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier) AllowedWhenWaitingForSyncReply
+#if HAVE(IOSURFACE)
+    void SetIOSurfacePoolTileSizeHint(uint64_t tileBytes)
+#endif
 #if ENABLE(WEBGL)
     [EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled] void CreateGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
     [EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled] void ReleaseGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
