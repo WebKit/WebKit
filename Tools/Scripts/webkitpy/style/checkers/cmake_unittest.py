@@ -110,6 +110,24 @@ class CMakeCheckerTest(unittest.TestCase):
             '\n',
             'c/a.a\n',
             ')\n',
+            'if (a)\n',
+            '    list(APPEND name\n',
+            '        "${aVariable}/a.a")\n',
+            'else ()\n',
+            '    list(APPEND name\n',
+            '        "${aVariable}/b.b")\n',
+            'endif ()\n',
+            'list(APPEND name\n',
+            '    # First group\n',
+            '    b\n',
+            '    # Second group\n',
+            '    a\n',
+            '    c/a.a\n',
+            ')\n',
+            'if (NOT "${a}" MATCHES "(^| )-g($| )")\n',
+            '    message("If ( spaces inside a string )")\n',
+            '    message("escaped \\" quote" )\n',
+            'endif ()\n',
             ]
         checker.check(lines)
 
@@ -127,6 +145,7 @@ class CMakeCheckerTest(unittest.TestCase):
             (15, 'whitespace/parentheses', 5, 'No space between command "macro" and its parentheses, should be "macro("'),
             (16, 'command/lowercase', 5, 'Use lowercase command "endmacro"'),
             (18, 'whitespace/parentheses', 5, 'No space between command "function" and its parentheses, should be "function("'),
+            (76, 'whitespace/parentheses', 5, 'No space before ")"'),
             (23, 'list/parentheses', 5, 'First listitem "a" should be in a new line.'),
             (24, 'list/parentheses', 5, 'The parentheses after the last listitem "b" should be in a new line.'),
             (31,  'list/duplicate', 5, 'The item "a" should be added only once to the list.'),
@@ -135,4 +154,5 @@ class CMakeCheckerTest(unittest.TestCase):
             (50, 'list/emptyline', 5, 'There should be no empty line between "a" and "b".'),
             (55, 'list/emptyline', 5, 'There should be exactly one empty line instead of 0 between "a/b.b" and "b/a.a".'),
             (58, 'list/emptyline', 5, 'There should be exactly one empty line instead of 2 between "b/a.a" and "c/a.a".'),
+            (72, 'list/emptyline', 5, 'There should be exactly one empty line instead of 0 between "a" and "c/a.a".'),
             ])
