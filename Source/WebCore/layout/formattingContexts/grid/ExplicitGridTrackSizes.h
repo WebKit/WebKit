@@ -25,10 +25,14 @@
 
 #pragma once
 
-#include <WebCore/StyleGridTrackSize.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+namespace Style {
+struct GridTrackSize;
+}
+
 namespace Layout {
 
 // https://drafts.csswg.org/css-grid-1/#explicit-grids
