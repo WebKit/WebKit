@@ -534,6 +534,10 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (!elementUpdate.style->hasPseudoStyle(pseudoElementIdentifier.type))
         return resolveAncestorPseudoElement(element, pseudoElementIdentifier, elementUpdate);
 
+    // No matching rule can generate a box. Animations still might (e.g. animating 'content'), and running ones need updating.
+    if ((pseudoElementIdentifier.type == PseudoElementType::Before || pseudoElementIdentifier.type == PseudoElementType::After) && !elementUpdate.style->pseudoElementsMayGenerateBox() && !element.mayHaveKeyframeEffects())
+        return { };
+
     if ((pseudoElementIdentifier.type == PseudoElementType::FirstLine || pseudoElementIdentifier.type == PseudoElementType::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
         return { };
 

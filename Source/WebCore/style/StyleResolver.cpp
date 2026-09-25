@@ -318,7 +318,7 @@ UnadjustedStyle Resolver::unadjustedStyleForElement(Element& element, const Reso
     if (state.parentStyle())
         matchedPseudoElements.add(state.parentStyle()->highlightPseudoElementTypes());
     if (matchedPseudoElements)
-        style.setHasPseudoStyles(matchedPseudoElements);
+        style.setHasPseudoStyles(matchedPseudoElements, collector.matchedPseudoElementsMayGenerateBox());
 
     auto elementStyleRelations = commitRelationsToRenderStyle(style, element, collector.styleRelations());
 

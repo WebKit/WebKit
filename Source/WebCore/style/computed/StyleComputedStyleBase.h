@@ -614,7 +614,8 @@ public:
     inline bool hasAnyPublicPseudoStyles() const;
     inline bool hasPseudoStyle(PseudoElementType) const;
     inline EnumSet<PseudoElementType> highlightPseudoElementTypes() const;
-    inline void setHasPseudoStyles(EnumSet<PseudoElementType>);
+    inline void setHasPseudoStyles(EnumSet<PseudoElementType>, bool mayGenerateBox);
+    inline bool pseudoElementsMayGenerateBox() const;
 
     Style::ComputedStyle* NODELETE pseudoElementStyle(const PseudoElementIdentifier&) const;
     Style::ComputedStyle* addPseudoElementStyle(std::unique_ptr<Style::ComputedStyle>);
@@ -771,7 +772,7 @@ public:
 
         inline bool hasAnyPublicPseudoStyles() const;
         bool hasPseudoStyle(PseudoElementType) const;
-        void setHasPseudoStyles(EnumSet<PseudoElementType>);
+        void setHasPseudoStyles(EnumSet<PseudoElementType>, bool mayGenerateBox);
 
 #if !LOG_DISABLED
         void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
@@ -802,6 +803,8 @@ public:
         PREFERRED_TYPE(bool) unsigned isLink : 1;
         PREFERRED_TYPE(PseudoElementType) unsigned pseudoElementType : PseudoElementTypeBits;
         unsigned pseudoBits : PublicPseudoIDBits;
+        // Shared by ::before and ::after.
+        PREFERRED_TYPE(bool) unsigned pseudoElementsMayGenerateBox : 1;
     };
 
     struct InheritedFlags {
