@@ -61,7 +61,7 @@ public:
     void setSelectedForBindings(bool);
 
     WEBCORE_EXPORT HTMLSelectElement* NODELETE ownerSelectElement() const;
-    bool belongsToBaseAppearancePicker() const;
+    bool isRenderedWithBaseAppearance() const;
 
     WEBCORE_EXPORT String label() const;
     WEBCORE_EXPORT String displayLabel() const;
@@ -90,6 +90,7 @@ private:
     void movingSteps(IsSubtreeRoot, ContainerNode&) final;
 
     bool supportsFocus() const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isFocusable() const final;
     bool matchesDefaultPseudoClass() const final { return m_isDefault; }
 

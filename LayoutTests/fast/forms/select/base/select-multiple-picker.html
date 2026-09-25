@@ -1,0 +1,104 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+/* js-test grows its console at the top of the body, which would push the select out of the viewport
+   and out of reach of the synthesized clicks below. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="select" multiple size="1">
+    <option id="one">one</option>
+    <option id="two">two</option>
+    <option id="disabledOption" disabled>disabled</option>
+</select>
+</div>
+<script>
+description("appearance: base-select renders &lt;select multiple size=1&gt; as a dropdown box whose options toggle without closing the picker.");
+
+const select = document.getElementById("select");
+const one = document.getElementById("one");
+const two = document.getElementById("two");
+const disabledOption = document.getElementById("disabledOption");
+
+function buttonText()
+{
+    return internals.shadowRoot(select).textContent.trim();
+}
+
+function activate(element)
+{
+    const rect = element.getBoundingClientRect();
+    return UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+jsTestIsAsync = true;
+
+(async () => {
+    shouldBeEqualToString("getComputedStyle(select).display", "inline-flex");
+    shouldBeFalse("select.matches(':open')");
+    shouldBe("select.selectedOptions.length", "0");
+
+    debug("");
+    debug("The button reports how many options are selected, or the label of the only one.");
+    shouldBeEqualToString("buttonText()", "0 Items");
+    two.selected = true;
+    shouldBeEqualToString("buttonText()", "two");
+    one.selected = true;
+    shouldBeEqualToString("buttonText()", "2 Items");
+    one.selected = two.selected = false;
+    shouldBeEqualToString("buttonText()", "0 Items");
+
+    debug("");
+    debug("Clicking the select opens the picker and focuses the first option.");
+    await activate(select);
+    await UIHelper.animationFrame();
+    shouldBeTrue("select.matches(':open')");
+    shouldBe("document.activeElement", "one");
+
+    debug("");
+    debug("Clicking options toggles them and leaves the picker open.");
+    await activate(one);
+    await UIHelper.animationFrame();
+    shouldBeTrue("select.matches(':open')");
+    shouldBeTrue("one.selected");
+    shouldBe("select.selectedOptions.length", "1");
+
+    await activate(two);
+    await UIHelper.animationFrame();
+    shouldBeTrue("select.matches(':open')");
+    shouldBeTrue("one.selected");
+    shouldBeTrue("two.selected");
+    shouldBe("select.selectedOptions.length", "2");
+
+    await activate(two);
+    await UIHelper.animationFrame();
+    shouldBeTrue("one.selected");
+    shouldBeFalse("two.selected");
+    shouldBe("select.selectedOptions.length", "1");
+
+    debug("");
+    debug("A disabled option cannot be toggled.");
+    await activate(disabledOption);
+    await UIHelper.animationFrame();
+    shouldBeFalse("disabledOption.selected");
+    shouldBe("select.selectedOptions.length", "1");
+
+    debug("");
+    debug("Clicking the select again closes the picker.");
+    await activate(select);
+    await UIHelper.animationFrame();
+    shouldBeFalse("select.matches(':open')");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

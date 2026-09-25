@@ -3562,7 +3562,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
 
         // Base-appearance select options can have interactive content (buttons, links) whose text
         // should be included in the menu item's title for VoiceOver to read.
-        if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(node.get()); optionElement && optionElement->belongsToBaseAppearancePicker())
+        if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(node.get()); optionElement && optionElement->isRenderedWithBaseAppearance())
             mode.includeFocusableContent = true;
 
         // Track nodes referenced via aria-labelledby to avoid double-counting them

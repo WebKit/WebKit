@@ -1,0 +1,156 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select {
+    appearance: base-select;
+}
+</style>
+<style id="checkmarkStyle"></style>
+<style>
+/* js-test grows its console at the top of the body, which would push these out of the viewport
+   and out of reach of the synthesized clicks below. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="multiple" multiple>
+    <option id="multipleOne">one</option>
+    <option id="multipleTwo">two</option>
+</select>
+<select id="single" size="4">
+    <option id="singleOne">one</option>
+    <option id="singleTwo">two</option>
+</select>
+<select id="sized" size="2">
+    <option>one</option>
+    <option>two</option>
+    <option>three</option>
+</select>
+</div>
+<script>
+description("appearance: base-select renders a &lt;select&gt; with a preferred size greater than one as a list box that lays out its own options.");
+
+const multiple = document.getElementById("multiple");
+const multipleOne = document.getElementById("multipleOne");
+const multipleTwo = document.getElementById("multipleTwo");
+const single = document.getElementById("single");
+const singleOne = document.getElementById("singleOne");
+const singleTwo = document.getElementById("singleTwo");
+const sized = document.getElementById("sized");
+const checkmarkStyle = document.getElementById("checkmarkStyle");
+// Top level so that shouldBe()'s eval() can reach them.
+let inputEvents = 0;
+let changeEvents = 0;
+
+function center(element)
+{
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+}
+
+function elementAtCenterOf(element)
+{
+    const point = center(element);
+    return document.elementFromPoint(point.x, point.y);
+}
+
+function activate(element)
+{
+    const point = center(element);
+    return UIHelper.activateAt(point.x, point.y);
+}
+
+// The checkmark is laid out even when unchecked, where it is only visibility: hidden, so dropping
+// its content narrows a shrink-to-fit list box.
+function checkmarkWidth(select)
+{
+    const withCheckmark = select.getBoundingClientRect().width;
+    checkmarkStyle.textContent = "select option::checkmark { content: none }";
+    const withoutCheckmark = select.getBoundingClientRect().width;
+    checkmarkStyle.textContent = "";
+    return withCheckmark - withoutCheckmark;
+}
+
+function rowCount(select)
+{
+    // The preferred size counts rows of content, so the border sits outside them. clientHeight is
+    // an integer and the row height is not, so round rather than compare the ratio exactly.
+    return Math.round(select.clientHeight / select.options[0].getBoundingClientRect().height);
+}
+
+jsTestIsAsync = true;
+
+(async () => {
+    debug("The options generate boxes of their own rather than being painted by the select.");
+    shouldBe("elementAtCenterOf(multipleOne)", "multipleOne");
+    shouldBe("elementAtCenterOf(multipleTwo)", "multipleTwo");
+    shouldBe("elementAtCenterOf(singleOne)", "singleOne");
+    shouldBeEqualToString("getComputedStyle(multiple).overflow", "auto");
+    shouldBeEqualToString("getComputedStyle(single).overflow", "auto");
+    shouldBeEqualToString("getComputedStyle(multiple).display", "inline-block");
+    shouldBeFalse("multiple.matches(':open')");
+    shouldBeFalse("single.matches(':open')");
+
+    debug("");
+    debug("The list box is exactly as many rows tall as its preferred size.");
+    shouldBe("rowCount(multiple)", "4");
+    shouldBe("rowCount(single)", "4");
+    shouldBe("rowCount(sized)", "2");
+
+    debug("");
+    debug("Options render a ::checkmark.");
+    shouldBeTrue("checkmarkWidth(multiple) > 0");
+    shouldBeTrue("checkmarkWidth(single) > 0");
+
+    debug("");
+    debug("A multi-select list box toggles each clicked option.");
+    await activate(multipleOne);
+    await UIHelper.animationFrame();
+    shouldBeTrue("multipleOne.selected");
+    shouldBe("multiple.selectedOptions.length", "1");
+
+    await activate(multipleTwo);
+    await UIHelper.animationFrame();
+    shouldBeTrue("multipleOne.selected");
+    shouldBeTrue("multipleTwo.selected");
+    shouldBe("multiple.selectedOptions.length", "2");
+
+    await activate(multipleTwo);
+    await UIHelper.animationFrame();
+    shouldBeTrue("multipleOne.selected");
+    shouldBeFalse("multipleTwo.selected");
+    shouldBe("multiple.selectedOptions.length", "1");
+
+    debug("");
+    debug("A single-select list box keeps at most one option selected, and unselects it when clicked again.");
+    await activate(singleOne);
+    await UIHelper.animationFrame();
+    shouldBeTrue("singleOne.selected");
+    shouldBe("single.selectedOptions.length", "1");
+
+    await activate(singleTwo);
+    await UIHelper.animationFrame();
+    shouldBeFalse("singleOne.selected");
+    shouldBeTrue("singleTwo.selected");
+    shouldBe("single.selectedOptions.length", "1");
+
+    debug("");
+    debug("Unselecting fires input and change, like any other list box selection change.");
+    single.addEventListener("input", () => inputEvents++);
+    single.addEventListener("change", () => changeEvents++);
+
+    await activate(singleTwo);
+    await UIHelper.animationFrame();
+    shouldBe("single.selectedOptions.length", "0");
+    shouldBe("inputEvents", "1");
+    shouldBe("changeEvents", "1");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

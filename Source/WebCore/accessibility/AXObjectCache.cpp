@@ -1807,7 +1807,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 
     object.recomputeIsIgnored();
 
-    if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(object.node()); optionElement && optionElement->belongsToBaseAppearancePicker()) {
+    if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(object.node()); optionElement && optionElement->isRenderedWithBaseAppearance()) {
         // When a base-appearance select option's children change, its text descendants may need to
         // change their is-ignored state. Text is only exposed when the option has complex content
         // (non-text descendants like buttons or links), so adding or removing such elements

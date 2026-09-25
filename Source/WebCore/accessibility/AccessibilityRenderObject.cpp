@@ -1163,7 +1163,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
                     // text alongside buttons and links). When the option has interactive
                     // content, expose text nodes so VoiceOver can navigate to them.
                     // Presentational wrappers like <span> don't count.
-                    if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(ancestor->node()); optionElement && optionElement->belongsToBaseAppearancePicker()) {
+                    if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(ancestor->node()); optionElement && optionElement->isRenderedWithBaseAppearance()) {
                         bool hasInteractiveContent = false;
                         for (Ref descendant : descendantsOfType<HTMLElement>(*optionElement)) {
                             if (descendant->isInteractiveContent()) {

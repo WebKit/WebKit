@@ -1,0 +1,69 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+/* js-test grows its console at the top of the body, which would push the select out of the viewport
+   and out of reach of the synthesized clicks below. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="select" multiple size="1">
+    <option id="one">one</option>
+    <option id="two">two</option>
+    <option id="disabledOption" disabled>disabled</option>
+</select>
+</div>
+<script>
+description("Keyboard interaction with an appearance: base-select multi-select dropdown box. Separate from select-multiple-picker.html so that it can be skipped where key events cannot be synthesized.");
+
+const select = document.getElementById("select");
+const two = document.getElementById("two");
+
+function activate(element)
+{
+    const rect = element.getBoundingClientRect();
+    return UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+jsTestIsAsync = true;
+
+(async () => {
+    await activate(select);
+    await UIHelper.animationFrame();
+    shouldBeTrue("select.matches(':open')");
+
+    debug("");
+    debug("Space toggles the focused option and leaves the picker open.");
+    two.focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+    shouldBeTrue("select.matches(':open')");
+    shouldBeTrue("two.selected");
+
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+    shouldBeFalse("two.selected");
+
+    debug("");
+    debug("Return with the picker closed does not take the single-select path.");
+    await activate(select);
+    await UIHelper.animationFrame();
+    shouldBeFalse("select.matches(':open')");
+    select.focus();
+    await UIHelper.keyDown("\r");
+    await UIHelper.animationFrame();
+    shouldBeFalse("select.matches(':open')");
+    shouldBe("select.selectedOptions.length", "0");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

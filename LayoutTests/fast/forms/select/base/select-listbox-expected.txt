@@ -1,0 +1,59 @@
+appearance: base-select renders a <select> with a preferred size greater than one as a list box that lays out its own options.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The options generate boxes of their own rather than being painted by the select.
+PASS elementAtCenterOf(multipleOne) is multipleOne
+PASS elementAtCenterOf(multipleTwo) is multipleTwo
+PASS elementAtCenterOf(singleOne) is singleOne
+PASS getComputedStyle(multiple).overflow is "auto"
+PASS getComputedStyle(single).overflow is "auto"
+PASS getComputedStyle(multiple).display is "inline-block"
+PASS multiple.matches(':open') is false
+PASS single.matches(':open') is false
+
+The list box is exactly as many rows tall as its preferred size.
+PASS rowCount(multiple) is 4
+PASS rowCount(single) is 4
+PASS rowCount(sized) is 2
+
+Options render a ::checkmark.
+PASS checkmarkWidth(multiple) > 0 is true
+PASS checkmarkWidth(single) > 0 is true
+
+A multi-select list box toggles each clicked option.
+PASS multipleOne.selected is true
+PASS multiple.selectedOptions.length is 1
+PASS multipleOne.selected is true
+PASS multipleTwo.selected is true
+PASS multiple.selectedOptions.length is 2
+PASS multipleOne.selected is true
+PASS multipleTwo.selected is false
+PASS multiple.selectedOptions.length is 1
+
+A single-select list box keeps at most one option selected, and unselects it when clicked again.
+PASS singleOne.selected is true
+PASS single.selectedOptions.length is 1
+PASS singleOne.selected is false
+PASS singleTwo.selected is true
+PASS single.selectedOptions.length is 1
+
+Unselecting fires input and change, like any other list box selection change.
+PASS single.selectedOptions.length is 0
+PASS inputEvents is 1
+PASS changeEvents is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+one
+two
+
+one
+two
+
+one
+two
+three
+

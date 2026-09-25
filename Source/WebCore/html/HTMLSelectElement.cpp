@@ -258,6 +258,18 @@ const AtomString& HTMLSelectElement::formControlType() const
     return m_multiple ? selectMultiple : selectOne;
 }
 
+void HTMLSelectElement::optionDeselectedByUser(HTMLOptionElement& option)
+{
+    saveLastSelection();
+    option.setSelectedState(false);
+    invalidateSelectedItems();
+    invalidateButtonText();
+    updateValidity();
+    if (CheckedPtr renderer = this->renderer())
+        renderer->updateFromElement();
+    listBoxOnChange();
+}
+
 void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeNow, bool allowMultipleSelection)
 {
     // User interaction such as mousedown events can cause list box select elements to send change events.
@@ -290,13 +302,25 @@ void HTMLSelectElement::pickOrToggleOption(HTMLOptionElement& option)
 {
     ASSERT(!m_multiple || document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
 
-    if (isDisabledFormControl())
+    // Callers run script before getting here, which may have moved the option elsewhere.
+    if (option.ownerSelectElement() != this)
+        return;
+
+    if (isDisabledFormControl() || option.isDisabledFormControl())
+        return;
+
+    // That script may also have taken the renderer away, which updateListBoxSelection() needs.
+    if (!renderer())
         return;
 
     option.setDirty(true);
 
-    // Toggling rather than picking is not yet in the specification.
-    optionSelectedByUser(option.index(), true, m_multiple);
+    if (!m_multiple && isBaseListBox() && option.selected())
+        optionDeselectedByUser(option);
+    else {
+        // Toggling rather than picking is not yet in the specification.
+        optionSelectedByUser(option.index(), true, m_multiple);
+    }
 
     if (!m_multiple)
         hidePickerPopoverElement();
@@ -415,6 +439,19 @@ bool HTMLSelectElement::usesBaseAppearancePicker() const
     return pickerStyle && pickerStyle->usedAppearance() == StyleAppearance::Base;
 }
 
+// https://html.spec.whatwg.org/#select's-options-are-being-rendered-with-base-appearance
+bool HTMLSelectElement::optionsAreRenderedWithBaseAppearance() const
+{
+    return usesBaseAppearancePicker() || isBaseListBox();
+}
+
+Element* HTMLSelectElement::optionContainer() const
+{
+    if (isBaseListBox())
+        return const_cast<HTMLSelectElement*>(this);
+    return m_popover.get();
+}
+
 SelectPopoverElement* HTMLSelectElement::pickerPopoverElement() const
 {
     return m_popover;
@@ -477,10 +514,10 @@ static inline auto navigationKeyIdentifiersForWritingMode(WritingMode writingMod
     return { next, previous, writingMode };
 }
 
-auto HTMLSelectElement::pickerNavigationKeyIdentifiers() const -> NavigationKeyIdentifiers
+auto HTMLSelectElement::optionNavigationKeyIdentifiers() const -> NavigationKeyIdentifiers
 {
-    RefPtr popover = m_popover;
-    CheckedPtr renderer = popover ? popover->renderer() : nullptr;
+    RefPtr container = optionContainer();
+    CheckedPtr renderer = container ? container->renderer() : nullptr;
     auto writingMode = renderer ? renderer->writingMode() : WritingMode { };
     return navigationKeyIdentifiersForWritingMode(writingMode);
 }
@@ -513,15 +550,13 @@ int HTMLSelectElement::computeNavigationIndex(const String& keyIdentifier, int c
         return firstSelectableListIndex();
     if (keyIdentifier == "End"_s)
         return lastSelectableListIndex();
-    if (keyIdentifier == "PageDown"_s) {
+    if (keyIdentifier == "PageDown"_s || keyIdentifier == "PageUp"_s) {
+        auto direction = keyIdentifier == "PageDown"_s ? SkipDirection::Forwards : SkipDirection::Backwards;
         if (usesBaseAppearancePicker())
-            return nextSelectableListIndexForPickerPageMove(currentListIndex, SkipDirection::Forwards, navigationKeys.writingMode);
-        return nextValidIndex(currentListIndex, SkipDirection::Forwards, 3);
-    }
-    if (keyIdentifier == "PageUp"_s) {
-        if (usesBaseAppearancePicker())
-            return nextSelectableListIndexForPickerPageMove(currentListIndex, SkipDirection::Backwards, navigationKeys.writingMode);
-        return nextValidIndex(currentListIndex, SkipDirection::Backwards, 3);
+            return nextSelectableListIndexForPickerPageMove(currentListIndex, direction, navigationKeys.writingMode);
+        // A base list box shows its preferred size in rows, less one to keep some context.
+        int skip = isBaseListBox() ? static_cast<int>(preferredSize()) - 1 : 3;
+        return nextValidIndex(currentListIndex, direction, skip);
     }
 
     return -1;
@@ -1035,15 +1070,13 @@ int HTMLSelectElement::nextValidIndex(int listIndex, SkipDirection direction, in
     int lastGoodIndex = listIndex;
     int size = listItems.size();
     int step = direction == SkipDirection::Forwards ? 1 : -1;
-    bool isBaseSelectPicker = usesBaseAppearancePicker();
+    bool skipHiddenOptions = optionsAreRenderedWithBaseAppearance();
     for (listIndex += step; listIndex >= 0 && listIndex < size; listIndex += step) {
         --skip;
         RefPtr listItem = listItems[listIndex].get();
         if (!listItem->isDisabledFormControl() && is<HTMLOptionElement>(*listItem)) {
-            if (isBaseSelectPicker && !listItem->isFocusable()) {
-                // Skip hidden options.
+            if (skipHiddenOptions && !listItem->isFocusable())
                 continue;
-            }
             lastGoodIndex = listIndex;
             if (skip <= 0)
                 break;
@@ -1196,9 +1229,9 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     ASSERT(renderer());
 
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(renderer()->isRenderListBox() || m_multiple);
+    ASSERT(renderer()->isRenderListBox() || m_multiple || isBaseListBox());
 #else
-    ASSERT(renderer()->isRenderMenuList() || m_multiple);
+    ASSERT(renderer()->isRenderMenuList() || m_multiple || isBaseListBox());
 #endif
 
     ASSERT(!listItems().size() || m_activeSelectionAnchorIndex >= 0);
@@ -1818,9 +1851,12 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
         if (!keyboardEvent)
             return;
 
-        // When popover is open in base-select mode, let focused option handle key presses.
-        if (popoverOpen)
+        // When popover is open in base-select mode, let focused option handle key presses. Nothing
+        // is focused when every option is hidden or disabled, so type-ahead is handled here too.
+        if (popoverOpen) {
+            handleTypeAheadKeypress(*keyboardEvent);
             return;
+        }
 
         int keyCode = keyboardEvent->keyCode();
         bool handled = false;
@@ -1860,7 +1896,10 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             } else if (keyCode == '\r') {
                 if (RefPtr form = this->form())
                     form->submitImplicitly(*keyboardEvent, false);
-                dispatchChangeEventForMenuList();
+                if (isSingleSelectDropdownBox())
+                    dispatchChangeEventForMenuList();
+                else
+                    listBoxOnChange();
                 handled = true;
             }
         }
@@ -2145,12 +2184,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         if (!keyboardEvent)
             return;
 
-        int keyCode = keyboardEvent->keyCode();
-        if (keyCode == '\r') {
-            if (RefPtr form = this->form())
-                form->submitImplicitly(*keyboardEvent, false);
-            keyboardEvent->setDefaultHandled();
-        } else if (m_multiple && keyCode == ' ' && m_allowsNonContiguousSelection) {
+        if (handleImplicitSubmissionKeypress(*keyboardEvent))
+            return;
+
+        if (m_multiple && keyboardEvent->keyCode() == ' ' && m_allowsNonContiguousSelection) {
             // Use space to toggle selection change.
             m_activeSelectionState = !m_activeSelectionState;
             ASSERT(m_activeSelectionEndIndex >= 0);
@@ -2161,6 +2198,40 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             keyboardEvent->setDefaultHandled();
         }
     }
+}
+
+void HTMLSelectElement::baseAppearanceListBoxDefaultEventHandler(Event& event)
+{
+    ASSERT(renderer());
+    ASSERT(isBaseListBox());
+
+    if (!event.isTrusted())
+        return;
+
+    auto& eventNames = WebCore::eventNames();
+
+    if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames.mousedownEvent && mouseEvent->button() == MouseButton::Left) {
+        focus();
+        event.setDefaultHandled();
+        return;
+    }
+
+    RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
+    if (!keyboardEvent)
+        return;
+
+    if (event.type() == eventNames.keydownEvent) {
+        handleNavigationKeydown(*keyboardEvent, optionToListIndex(selectedIndex()));
+        return;
+    }
+
+    if (event.type() != eventNames.keypressEvent)
+        return;
+
+    if (handleImplicitSubmissionKeypress(*keyboardEvent))
+        return;
+
+    handleTypeAheadKeypress(*keyboardEvent);
 }
 
 void HTMLSelectElement::defaultEventHandler(Event& event)
@@ -2174,7 +2245,9 @@ void HTMLSelectElement::defaultEventHandler(Event& event)
         return;
     }
 
-    if (isDropdownBox())
+    if (isBaseListBox())
+        baseAppearanceListBoxDefaultEventHandler(event);
+    else if (isDropdownBox())
         menuListDefaultEventHandler(event);
     else
         listBoxDefaultEventHandler(event);
@@ -2182,7 +2255,9 @@ void HTMLSelectElement::defaultEventHandler(Event& event)
     if (event.defaultHandled())
         return;
 
-    if (event.type() == eventNames().keypressEvent) {
+    // Type-ahead moves focus where the options are focusable, which the handlers above do. A
+    // dropdown box with its picker closed has none, so it still selects.
+    if (event.type() == eventNames().keypressEvent && !isBaseListBox() && !(popupIsVisible() && usesBaseAppearancePicker())) {
         if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
             if (!keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey() && u_isprint(keyboardEvent->charCode())) {
                 typeAheadFind(*keyboardEvent);
@@ -2381,9 +2456,51 @@ void HTMLSelectElement::openPickerForUserInteraction(std::optional<bool> focusVi
     focusOptionAtIndex(listIndex, focusVisible);
 }
 
-void HTMLSelectElement::focusOptionAtIndex(int listIndex, std::optional<bool> focusVisible, PickerScrollMode scrollMode)
+bool HTMLSelectElement::handleNavigationKeydown(KeyboardEvent& event, int currentListIndex)
 {
-    if (!usesBaseAppearancePicker())
+    const String& keyIdentifier = event.keyIdentifier();
+    int listIndex = computeNavigationIndex(keyIdentifier, currentListIndex, optionNavigationKeyIdentifiers());
+    if (listIndex < 0)
+        return false;
+
+    auto scrollMode = OptionScrollMode::Nearest;
+    if (keyIdentifier == "PageDown"_s)
+        scrollMode = OptionScrollMode::AlignBottom;
+    else if (keyIdentifier == "PageUp"_s)
+        scrollMode = OptionScrollMode::AlignTop;
+
+    focusOptionAtIndex(listIndex, std::nullopt, scrollMode);
+    event.setDefaultHandled();
+    return true;
+}
+
+bool HTMLSelectElement::handleTypeAheadKeypress(KeyboardEvent& event)
+{
+    // Type-ahead moves focus rather than selecting, as it does once an option has focus.
+    if (event.ctrlKey() || event.altKey() || event.metaKey() || !u_isprint(event.charCode()))
+        return false;
+
+    int listIndex = typeAheadMatchIndex(event);
+    if (listIndex >= 0)
+        focusOptionAtIndex(listIndex);
+    event.setDefaultHandled();
+    return true;
+}
+
+bool HTMLSelectElement::handleImplicitSubmissionKeypress(KeyboardEvent& event)
+{
+    if (event.keyCode() != '\r')
+        return false;
+
+    if (RefPtr form = this->form())
+        form->submitImplicitly(event, false);
+    event.setDefaultHandled();
+    return true;
+}
+
+void HTMLSelectElement::focusOptionAtIndex(int listIndex, std::optional<bool> focusVisible, OptionScrollMode scrollMode)
+{
+    if (!optionsAreRenderedWithBaseAppearance())
         return;
 
     auto& items = listItems();
@@ -2400,13 +2517,13 @@ void HTMLSelectElement::focusOptionAtIndex(int listIndex, std::optional<bool> fo
     option->focus(focusOptions);
 
     switch (scrollMode) {
-    case PickerScrollMode::Nearest:
+    case OptionScrollMode::Nearest:
         option->scrollIntoViewIfNeeded();
         break;
-    case PickerScrollMode::AlignTop:
+    case OptionScrollMode::AlignTop:
         option->scrollIntoView(true);
         break;
-    case PickerScrollMode::AlignBottom:
+    case OptionScrollMode::AlignBottom:
         option->scrollIntoView(false);
         break;
     }

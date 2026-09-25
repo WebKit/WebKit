@@ -92,14 +92,8 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
         if (!selectElement)
             return;
 
-        auto containerRenderer = [&] -> CheckedPtr<RenderElement> {
-            if (selectElement->isBaseListBox())
-                return selectElement->renderer();
-            if (RefPtr pickerElement = selectElement->pickerPopoverElement())
-                return pickerElement->renderer();
-            return nullptr;
-        }();
-
+        RefPtr container = selectElement->optionContainer();
+        CheckedPtr containerRenderer = container ? container->renderer() : nullptr;
         if (containerRenderer)
             updatePseudoElement(PseudoElementType::Checkmark, renderer, containerRenderer->style().usedAppearance(), renderer.firstChild());
 

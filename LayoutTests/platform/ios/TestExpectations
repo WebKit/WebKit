@@ -3734,6 +3734,10 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/250767 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?mouse [ Skip ]
 webkit.org/b/250767 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?pen [ Skip ]
 
+# Key events cannot be synthesized on iOS.
+fast/forms/select/base/select-listbox-keyboard.html [ Skip ]
+fast/forms/select/base/select-multiple-picker-keyboard.html [ Skip ]
+
 # :hover simulation not working on iOS
 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/selectors/hover-boundary-events.html [ Skip ]

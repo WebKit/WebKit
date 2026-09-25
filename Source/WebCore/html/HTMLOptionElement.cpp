@@ -277,7 +277,7 @@ void HTMLOptionElement::finishParsingChildren()
 
 bool HTMLOptionElement::supportsFocus() const
 {
-    return HTMLElement::supportsFocus() || belongsToBaseAppearancePicker();
+    return HTMLElement::supportsFocus() || isRenderedWithBaseAppearance();
 }
 
 bool HTMLOptionElement::isFocusable() const
@@ -334,7 +334,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
         return HTMLElement::defaultEventHandler(event);
 
     RefPtr select = ownerSelectElement();
-    if (!select || !select->document().settings().htmlEnhancedSelectEnabled() || !select->usesBaseAppearancePicker())
+    if (!select || !select->document().settings().htmlEnhancedSelectEnabled() || !select->optionsAreRenderedWithBaseAppearance())
         return HTMLElement::defaultEventHandler(event);
 
     auto& eventNames = WebCore::eventNames();
@@ -348,7 +348,8 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
 
         // [Shift+]Tab closes the picker; fall through to move focus.
         if (keyIdentifier == "U+0009"_s) {
-            select->hidePickerPopoverElement();
+            if (select->usesBaseAppearancePicker())
+                select->hidePickerPopoverElement();
             return HTMLElement::defaultEventHandler(event);
         }
 
@@ -359,18 +360,8 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
             return;
         }
 
-        int currentIndex = select->optionToListIndex(index());
-        int listIndex = select->computeNavigationIndex(keyIdentifier, currentIndex, select->pickerNavigationKeyIdentifiers());
-        if (listIndex >= 0) {
-            auto scrollMode = HTMLSelectElement::PickerScrollMode::Nearest;
-            if (keyIdentifier == "PageDown"_s)
-                scrollMode = HTMLSelectElement::PickerScrollMode::AlignBottom;
-            else if (keyIdentifier == "PageUp"_s)
-                scrollMode = HTMLSelectElement::PickerScrollMode::AlignTop;
-            select->focusOptionAtIndex(listIndex, std::nullopt, scrollMode);
-            keyboardEvent->setDefaultHandled();
+        if (select->handleNavigationKeydown(*keyboardEvent, select->optionToListIndex(index())))
             return;
-        }
     }
 
     if (event.type() == eventNames.keypressEvent) {
@@ -378,13 +369,8 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
         if (!keyboardEvent)
             return HTMLElement::defaultEventHandler(event);
 
-        if (!keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey() && u_isprint(keyboardEvent->charCode())) {
-            int listIndex = select->typeAheadMatchIndex(*keyboardEvent);
-            if (listIndex >= 0)
-                select->focusOptionAtIndex(listIndex);
-            keyboardEvent->setDefaultHandled();
+        if (select->handleTypeAheadKeypress(*keyboardEvent))
             return;
-        }
     }
 
     if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->button() == MouseButton::Left) {
@@ -573,10 +559,19 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
     return nullptr;
 }
 
-bool HTMLOptionElement::belongsToBaseAppearancePicker() const
+// https://html.spec.whatwg.org/#option-base-appearance
+bool HTMLOptionElement::isRenderedWithBaseAppearance() const
 {
     RefPtr select = ownerSelectElement();
-    return select && select->usesBaseAppearancePicker();
+    return select && select->optionsAreRenderedWithBaseAppearance();
+}
+
+bool HTMLOptionElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
+{
+    // For a base list box the select is the tab stop and the arrow keys reach its options.
+    if (RefPtr select = ownerSelectElement(); select && select->isBaseListBox() && !tabIndexSetExplicitly())
+        return false;
+    return HTMLElement::isKeyboardFocusable(focusEventData);
 }
 
 String HTMLOptionElement::label() const
