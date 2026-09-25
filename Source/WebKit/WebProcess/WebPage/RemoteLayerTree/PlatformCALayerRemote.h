@@ -36,7 +36,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class LayerPool;
 #if ENABLE(THREADED_ANIMATIONS)
 class AcceleratedEffect;
 struct AcceleratedEffectValues;
@@ -307,8 +306,6 @@ private:
 #endif
 
     bool NODELETE requiresCustomAppearanceUpdateOnBoundsChange() const;
-
-    WebCore::LayerPool* layerPool() override;
 
     LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
