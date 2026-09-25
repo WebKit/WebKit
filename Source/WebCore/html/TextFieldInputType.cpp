@@ -713,12 +713,12 @@ void TextFieldInputType::didSetValueByUserEdit()
 
 void TextFieldInputType::spinButtonStepDown()
 {
-    stepUpFromRenderer(-1);
+    stepUpOrDown(-1);
 }
 
 void TextFieldInputType::spinButtonStepUp()
 {
-    stepUpFromRenderer(1);
+    stepUpOrDown(1);
 }
 
 void TextFieldInputType::updateInnerTextValue()
