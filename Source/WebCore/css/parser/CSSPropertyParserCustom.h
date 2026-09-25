@@ -2052,9 +2052,10 @@ inline bool PropertyParserCustom::consumeListStyleShorthand(CSSParserTokenRange&
     return range.atEnd();
 }
 
-inline bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand&, PropertyParserResult& result)
+bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
 {
-    ASSERT(state.context.propertySettings.cssLineClampEnabled);
+    bool isLegacyLineClamp = shorthand.id() == CSSPropertyWebkitLineClamp;
+    ASSERT(state.context.propertySettings.cssLineClampEnabled || isLegacyLineClamp);
 
     if (range.peek().id() == CSSValueNone) {
         // Sets max-lines to none, continue to auto, and block-ellipsis to none.
@@ -2088,6 +2089,8 @@ inline bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange&
         break;
     } while (!range.atEnd());
 
+    if (isLegacyLineClamp && (autoKeyword || blockEllipsis || webkitLegacy))
+        return false;
     if (!numLines && !autoKeyword && !blockEllipsis)
         return false;
 
@@ -2109,7 +2112,7 @@ inline bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange&
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyMaxLines, WTF::move(maxLines));
     result.addPropertyForCurrentShorthand(state, CSSPropertyBlockEllipsis, WTF::move(blockEllipsis));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyContinue, CSSKeywordValue::create(webkitLegacy ? CSSValueWebkitLegacy : CSSValueDiscard));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyContinue, CSSKeywordValue::create(isLegacyLineClamp || webkitLegacy ? CSSValueWebkitLegacy : CSSValueDiscard));
     return range.atEnd();
 }
 
