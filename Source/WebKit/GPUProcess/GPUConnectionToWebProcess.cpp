@@ -722,6 +722,14 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RemoteRenderingBackendId
     m_gpuProcess->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
+#if HAVE(IOSURFACE)
+void GPUConnectionToWebProcess::setIOSurfacePoolTileSizeHint(uint64_t tileBytes)
+{
+    // The pool bounds what the hint can do (at most half the pool), so any value is safe.
+    sharedResourceCache()->ioSurfacePool().setTileSizeHint(static_cast<size_t>(std::min<uint64_t>(tileBytes, std::numeric_limits<size_t>::max())));
+}
+#endif
+
 #if ENABLE(WEBGL)
 void GPUConnectionToWebProcess::createGraphicsContextGL(RemoteGraphicsContextGLIdentifier identifier, WebCore::GraphicsContextGLAttributes attributes, RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {

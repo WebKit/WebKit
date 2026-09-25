@@ -57,6 +57,31 @@ TEST(IOSurfacePoolTest, TakeSurfaceFindsSurfaceThatIsNoLongerInUse)
     EXPECT_EQ(taken->surface(), expected);
 }
 
+TEST(IOSurfacePoolTest, TileSizeHintSizesInUseLimit)
+{
+    auto pool = IOSurfacePool::create();
+    pool->setPoolSize(1024 * MB);
+    auto defaultLimit = pool->inUseBytesLimitForTesting();
+
+    // Front and back buffers for 4 tiles of the hinted size.
+    pool->setTileSizeHint(40 * MB);
+    EXPECT_EQ(pool->inUseBytesLimitForTesting(), 320 * MB);
+
+    // Never below the platform default.
+    pool->setTileSizeHint(1 * MB);
+    EXPECT_EQ(pool->inUseBytesLimitForTesting(), defaultLimit);
+
+    // At most half the pool.
+    pool->setTileSizeHint(200 * MB);
+    EXPECT_EQ(pool->inUseBytesLimitForTesting(), 512 * MB);
+    pool->setPoolSize(256 * MB);
+    EXPECT_EQ(pool->inUseBytesLimitForTesting(), std::max<size_t>(defaultLimit, 128 * MB));
+
+    // No hint: the platform default.
+    pool->setTileSizeHint(0);
+    EXPECT_EQ(pool->inUseBytesLimitForTesting(), defaultLimit);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // HAVE(IOSURFACE)

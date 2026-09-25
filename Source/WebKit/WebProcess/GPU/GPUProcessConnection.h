@@ -119,6 +119,9 @@ public:
 
     void createRenderingBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RemoteRenderingBackendIdentifier);
+#if HAVE(IOSURFACE)
+    void setIOSurfacePoolTileSizeHint(uint64_t tileBytes);
+#endif
 #if ENABLE(WEBGL)
     void createGraphicsContextGL(RemoteGraphicsContextGLIdentifier, const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseGraphicsContextGL(RemoteGraphicsContextGLIdentifier);

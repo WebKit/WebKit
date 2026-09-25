@@ -217,6 +217,29 @@ void IOSurfacePool::setPoolSize(size_t poolSizeInBytes)
     evict(0);
 }
 
+void IOSurfacePool::setTileSizeHint(size_t tileBytes)
+{
+    Locker locker { m_lock };
+    if (m_tileSizeHint == tileBytes)
+        return;
+    m_tileSizeHint = tileBytes;
+    evict(0);
+}
+
+size_t IOSurfacePool::inUseBytesLimit() const
+{
+    // Front and back buffers for tilesToKeepInUse tiles, never less than the platform default and at
+    // most half the pool, so that surfaces which can be taken right away still have room.
+    size_t tileBudget = 2 * tilesToKeepInUse * m_tileSizeHint;
+    return std::max(maximumInUseBytes, std::min(tileBudget, m_maximumBytesCached / 2));
+}
+
+size_t IOSurfacePool::inUseBytesLimitForTesting()
+{
+    Locker locker { m_lock };
+    return inUseBytesLimit();
+}
+
 void IOSurfacePool::tryEvictInUseSurface()
 {
     if (m_inUseSurfaces.isEmpty())
@@ -268,14 +291,15 @@ void IOSurfacePool::evict(size_t additionalSize)
     // Interleave eviction of old cached surfaces and more recent in-use surfaces.
     // In-use surfaces are more recently used, but less useful in the pool, as they aren't
     // immediately available when requested.
+    auto inUseLimit = inUseBytesLimit();
     while (m_bytesCached > targetSize) {
         tryEvictOldestCachedSurface();
 
-        if (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
+        if (m_inUseBytesCached > inUseLimit || m_bytesCached > targetSize)
             tryEvictInUseSurface();
     }
 
-    while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
+    while (m_inUseBytesCached > inUseLimit || m_bytesCached > targetSize)
         tryEvictInUseSurface();
 
     DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << m_poolIdentifier << "] - after evict\n" << poolStatistics());

@@ -64,6 +64,12 @@ public:
 
     WEBCORE_EXPORT void setPoolSize(size_t);
 
+    // The size in bytes of one tile of the client's main frame, which depends on its view width and
+    // device scale factor. Sizes the number of in-use surfaces the pool keeps for reuse.
+    WEBCORE_EXPORT void setTileSizeHint(size_t tileBytes);
+
+    WEBCORE_EXPORT size_t inUseBytesLimitForTesting();
+
 private:
     IOSurfacePool();
 
@@ -87,6 +93,11 @@ private:
     // available surfaces without contributing too much non-volatile footprint during memory pressure situations.
     static constexpr size_t maximumInUseBytes { 32 * MB };
 #endif
+    // With a tile size hint, keep front and back buffers for this many tiles of that size instead,
+    // since tiles on large screens are several times 1024x1024 (an unfolded iPhone in landscape has
+    // 2721x1536 tiles, 16.7 MB). At most half the pool.
+    static constexpr size_t tilesToKeepInUse { 4 };
+    size_t inUseBytesLimit() const WTF_REQUIRES_LOCK(m_lock);
 
     bool NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
@@ -120,6 +131,7 @@ private:
     size_t m_bytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_inUseBytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_maximumBytesCached WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumBytesCached };
+    size_t m_tileSizeHint WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     const IOSurfacePoolIdentifier m_poolIdentifier { IOSurfacePoolIdentifier::generate() };
 };
 

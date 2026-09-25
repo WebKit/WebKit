@@ -432,6 +432,13 @@ void GPUProcessConnection::createRenderingBackend(RemoteRenderingBackendIdentifi
     m_connection->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(identifier, WTF::move(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
+#if HAVE(IOSURFACE)
+void GPUProcessConnection::setIOSurfacePoolTileSizeHint(uint64_t tileBytes)
+{
+    m_connection->send(Messages::GPUConnectionToWebProcess::SetIOSurfacePoolTileSizeHint(tileBytes), 0);
+}
+#endif
+
 void GPUProcessConnection::releaseRenderingBackend(RemoteRenderingBackendIdentifier identifier)
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
