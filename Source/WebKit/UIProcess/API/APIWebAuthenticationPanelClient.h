@@ -32,7 +32,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
+#if PLATFORM(COCOA)
 #include <wtf/spi/cocoa/SecuritySPI.h>
+#endif
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS LAContext;

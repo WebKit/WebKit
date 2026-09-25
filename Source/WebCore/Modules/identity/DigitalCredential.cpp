@@ -148,6 +148,8 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
         // FIXME (webkit.org/b/320207): support once DCQL parsing lands.
         return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt };
     }
+    ASSERT_NOT_REACHED();
+    return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt };
 }
 
 ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> DigitalCredential::convertObjectsToDigitalPresentationRequests(const Document& document, const Vector<DigitalCredentialGetRequest>& requests)

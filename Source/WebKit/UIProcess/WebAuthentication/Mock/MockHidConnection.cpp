@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MockHidConnection.h"
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 
 #include "Logging.h"
 #include <WebCore/AuthenticatorGetInfoResponse.h>
@@ -382,4 +382,4 @@ void MockHidConnection::validateExpectedCommandsCompleted()
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(COCOA)

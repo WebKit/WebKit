@@ -1,0 +1,4 @@
+
+FAIL create() with remoteDesktopClientOverride promise_rejects_dom: function "function() { throw e; }" threw object "NotSupportedError: Not implemented." that is not a DOMException NotAllowedError: property "code" is equal to 9, expected 0
+FAIL get() with remoteDesktopClientOverride on an unauthorized site promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+
