@@ -87,7 +87,7 @@ void JSFinalizationRegistry::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     totalBufferSizesInBytes += thisObject->m_liveRegistrations.capacity() * sizeof(typename decltype(thisObject->m_deadRegistrations)::KeyValuePairType);
     totalBufferSizesInBytes += thisObject->m_noUnregistrationLive.capacity() * sizeof(decltype(thisObject->m_noUnregistrationLive.takeLast()));
     totalBufferSizesInBytes += thisObject->m_noUnregistrationDead.capacity() * sizeof(decltype(thisObject->m_noUnregistrationLive.takeLast()));
-    visitor.vm().heap.reportExtraMemoryVisited(totalBufferSizesInBytes);
+    thisObject->vm().heap.reportExtraMemoryVisited(totalBufferSizesInBytes);
 }
 
 DEFINE_VISIT_CHILDREN(JSFinalizationRegistry);

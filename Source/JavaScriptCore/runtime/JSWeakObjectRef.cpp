@@ -46,7 +46,7 @@ void JSWeakObjectRef::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     // This doesn't need to be atomic because if we are out of date we will get write barriered and revisit ourselves.
-    if (visitor.vm().currentWeakRefVersion() == thisObject->m_lastAccessVersion) {
+    if (thisObject->vm().currentWeakRefVersion() == thisObject->m_lastAccessVersion) {
         ASSERT(thisObject->m_value);
         visitor.append(thisObject->m_value);
     }

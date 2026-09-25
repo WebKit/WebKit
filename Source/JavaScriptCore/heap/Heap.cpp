@@ -2537,9 +2537,7 @@ void Heap::addCoreConstraints()
     
     m_constraintSet->add(
         "O"_s, "Output"_s,
-        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([] (auto& visitor) {
-            JSC::Heap* heap = visitor.heap();
-
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             auto callOutputConstraint = [] (auto& visitor, HeapCell* heapCell, HeapCell::Kind) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Output);
                 JSCell* cell = static_cast<JSCell*>(heapCell);
@@ -2553,16 +2551,16 @@ void Heap::addCoreConstraints()
 
             {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ExecutableToCodeBlockEdges);
-                add(heap->functionExecutableSpaceAndSet.outputConstraintsSet);
-                add(heap->programExecutableSpaceAndSet.outputConstraintsSet);
-                if (heap->m_evalExecutableSpace)
-                    add(heap->m_evalExecutableSpace->outputConstraintsSet);
-                if (heap->m_moduleProgramExecutableSpace)
-                    add(heap->m_moduleProgramExecutableSpace->outputConstraintsSet);
+                add(functionExecutableSpaceAndSet.outputConstraintsSet);
+                add(programExecutableSpaceAndSet.outputConstraintsSet);
+                if (m_evalExecutableSpace)
+                    add(m_evalExecutableSpace->outputConstraintsSet);
+                if (m_moduleProgramExecutableSpace)
+                    add(m_moduleProgramExecutableSpace->outputConstraintsSet);
             }
-            if (heap->m_weakMapSpace) {
+            if (m_weakMapSpace) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakMapSpace);
-                add(*heap->m_weakMapSpace);
+                add(*m_weakMapSpace);
             }
         })),
         ConstraintVolatility::GreyedByMarking,
@@ -2606,7 +2604,7 @@ void Heap::addCoreConstraints()
             MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::JITWorkList);
 
-                JITWorklist::ensureGlobalWorklist().visitWeakReferences(visitor);
+                JITWorklist::ensureGlobalWorklist().visitWeakReferences(vm(), visitor);
                 
                 // FIXME: This is almost certainly unnecessary.
                 // https://bugs.webkit.org/show_bug.cgi?id=166829

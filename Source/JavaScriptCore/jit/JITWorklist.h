@@ -78,7 +78,7 @@ public:
 
     // Only called on the main thread after suspending all threads.
     template<typename Visitor>
-    void visitWeakReferences(Visitor&);
+    void visitWeakReferences(VM&, Visitor&);
 
     template<typename Visitor>
     void iterateCodeBlocksForGC(Visitor&, VM&, NOESCAPE const Function<void(CodeBlock*)>&);

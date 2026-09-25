@@ -133,7 +133,7 @@ void JSAPIWrapperObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     void* wrappedObject = thisObject->wrappedObject();
     if (wrappedObject)
-        scanExternalObjectGraph(visitor.vm(), visitor, wrappedObject);
+        scanExternalObjectGraph(thisObject->vm(), visitor, wrappedObject);
 }
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSAPIWrapperObject);
