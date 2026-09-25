@@ -40,8 +40,10 @@ namespace WebCore {
 // stream. This avoids speculatively fetching alternative-format <source>
 // candidates (e.g. JXL/WebP/AVIF) for images that are still far below the
 // viewport.
+// elementDepth counts open elements between the <picture> and the current token.
 struct PreloadScannerPictureState {
     bool sourceMatched { false };
+    unsigned elementDepth { 0 };
     std::unique_ptr<PreloadRequest> bufferedSourceRequest;
 };
 

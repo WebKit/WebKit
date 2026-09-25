@@ -426,6 +426,24 @@ tentative_tests = [
       u'true'
     ),
     (
+      # Unlike <br> above, a <div> nests the <img>, so it is not the <picture>'s image
+      u'picture-source-div-img',
+      u'utf-8',
+      u'<picture><source srcset="{}"><div><img></div></picture>',
+      None,
+      u'false',
+      u'true'
+    ),
+    (
+      # The nested <img> loads its own src, even though a <source> above it matched
+      u'picture-source-div-img-src',
+      u'utf-8',
+      u'<picture><source srcset="/images/blue.png"><div><img src="{}"></div></picture>',
+      None,
+      u'true',
+      u'true'
+    ),
+    (
       u'video-poster',
       u'utf-8',
       u'<video poster="{}"></video>',
