@@ -218,6 +218,7 @@ enum class QuirkBehaviorID {
     NeedsPreloadAutoQuirk,
     NeedsResettingTransitionCancelsRunningTransitionQuirk,
     NeedsReuseLiveRangeForSelectionUpdateQuirk,
+    NeedsSafariVersionUserAgentQuirk,
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,
     NeedsScrollbarWidthThinDisabledQuirk,
     NeedsSeekingSupportDisabledQuirk,
@@ -339,6 +340,7 @@ struct QuirkParameters {
     ASCIILiteral script = ""_s;
     ASCIILiteral userAgent = ""_s;
     ASCIILiteral chromeCompatibilityVersion = ""_s;
+    ASCIILiteral safariVersion = ""_s;
     std::span<const ASCIILiteral> cookieNames { };
 
     static consteval QuirkParameters fromScript(ASCIILiteral script)
@@ -362,6 +364,13 @@ struct QuirkParameters {
         };
     }
 
+    static consteval QuirkParameters fromSafariVersion(ASCIILiteral safariVersion)
+    {
+        return QuirkParameters {
+            .safariVersion = safariVersion
+        };
+    }
+
     static consteval QuirkParameters fromCookieNames(std::span<const ASCIILiteral> cookieNames)
     {
         return QuirkParameters {
@@ -375,6 +384,7 @@ enum class QuirkParametersNeeded : uint8_t {
     NeedsUserAgent = 1 << 1,
     NeedsChromeCompatibilityVersion = 1 << 2,
     NeedsCookieNames = 1 << 3,
+    NeedsSafariVersion = 1 << 4,
 };
 
 enum class QuirkConditionsSupported : uint8_t {
@@ -501,6 +511,7 @@ inline constexpr QuirkBehavior needsSuppressedPauseEventOnFullscreenExitQuirk { 
 inline constexpr QuirkBehavior needsPreloadAutoQuirk { WebCore::QuirkBehaviorID::NeedsPreloadAutoQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsResettingTransitionCancelsRunningTransitionQuirk { WebCore::QuirkBehaviorID::NeedsResettingTransitionCancelsRunningTransitionQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsReuseLiveRangeForSelectionUpdateQuirk { WebCore::QuirkBehaviorID::NeedsReuseLiveRangeForSelectionUpdateQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior needsSafariVersionUserAgentQuirk { WebCore::QuirkBehaviorID::NeedsSafariVersionUserAgentQuirk, BuildCondition::cocoa, QuirkParametersNeeded::NeedsSafariVersion };
 inline constexpr QuirkBehavior needsScriptToEvaluateBeforeRunningScriptFromURLQuirk { .id = WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, .isAvailable = BuildCondition::always, .quirkParametersNeeded = QuirkParametersNeeded::NeedsScript, .quirkConditionsSupported = QuirkConditionsSupported::SecondaryURL };
 inline constexpr QuirkBehavior needsScrollbarWidthThinDisabledQuirk { WebCore::QuirkBehaviorID::NeedsScrollbarWidthThinDisabledQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsSeekingSupportDisabledQuirk { WebCore::QuirkBehaviorID::NeedsSeekingSupportDisabledQuirk, BuildCondition::always };

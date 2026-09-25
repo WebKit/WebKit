@@ -896,7 +896,6 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideRewritesBaseAgent)
     };
 
     Case cases[] = {
-        { "https://www.tiktok.com/"_s, "like Chrome/136."_s },
         { "https://mms.pinduoduo.com/"_s, "like Chrome/149."_s },
         { "https://github.com/WebKit/WebKit"_s, "like Chrome/151."_s },
     };
@@ -914,7 +913,55 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideRewritesBaseAgent)
     EXPECT_TRUE(customUserAgentFor("https://gist.github.com/"_s).has_value());
     EXPECT_TRUE(customUserAgentFor("https://ads.tiktok.com/"_s).has_value());
 }
+
+TEST_F(QuirksTest, NeedsCustomUserAgentOverrideSafariVersion)
+{
+    for (auto url : { "https://www.bilibili.com/"_s, "https://www.gunbroker.com/"_s }) {
+        auto agent = customUserAgentFor(url);
+        ASSERT_TRUE(agent.has_value());
+        EXPECT_TRUE(agent->startsWith("Mozilla/5.0 (Macintosh; "_s));
+        EXPECT_TRUE(agent->endsWith(" (KHTML, like Gecko) Version/18.6 Safari/605.1.15"_s));
+    }
+}
+
+TEST_F(QuirksTest, NeedsCustomUserAgentOverrideLayersChromeCompatibilityOnSafariVersion)
+{
+    auto agent = customUserAgentFor("https://www.tiktok.com/"_s);
+    ASSERT_TRUE(agent.has_value());
+    EXPECT_TRUE(agent->startsWith("Mozilla/5.0 (Macintosh; "_s));
+    EXPECT_TRUE(agent->endsWith(" (KHTML, like Gecko, like Chrome/136.) Version/18.6 Safari/605.1.15"_s));
+}
 #endif // PLATFORM(COCOA)
+
+TEST_F(QuirksTest, NeedsCustomUserAgentOverrideChrome152)
+{
+    for (auto url : {
+        "https://studio.atomm.com/"_s, "https://www.capcut.com/ai-creator/agent"_s, "https://commitmono.com/"_s,
+        "https://mypay.dfas.mil/"_s, "https://digits.t-mobile.com/"_s, "https://www.digiposte.fr/"_s,
+        "https://tool.european-calculator.eu/"_s, "https://meet.goto.com/"_s, "https://www.hfhs.org/"_s,
+        "https://invideo.io/"_s, "https://ippk.pl/"_s, "https://www.irs.gov/"_s, "https://www.sapo.pt/"_s,
+        "https://www.sutterhealth.org/"_s, "https://santaclaracounty.telleronline.net/"_s, "https://dev.ti.com/"_s,
+        "https://www.upgrad.com/"_s }) {
+        auto agent = customUserAgentFor(url);
+        ASSERT_TRUE(agent.has_value());
+        EXPECT_TRUE(agent->contains("Chrome/152.0.0.0"_s));
+    }
+
+    EXPECT_FALSE(customUserAgentFor("https://www.atomm.com/"_s).has_value());
+    EXPECT_FALSE(customUserAgentFor("https://www.goto.com/"_s).has_value());
+    EXPECT_FALSE(customUserAgentFor("https://www.ti.com/"_s).has_value());
+    EXPECT_FALSE(customUserAgentFor("https://www.t-mobile.com/"_s).has_value());
+
+    auto outlook = customUserAgentFor("https://outlook.live.com/mail/0/"_s);
+    ASSERT_TRUE(outlook.has_value());
+    EXPECT_TRUE(outlook->contains("Chrome/143.0.0.0"_s));
+}
+
+TEST_F(QuirksTest, NeedsCustomUserAgentOverrideHSBC)
+{
+    EXPECT_EQ(customUserAgentFor("https://security.us.hsbc.com/"_s), String { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"_s });
+    EXPECT_FALSE(customUserAgentFor("https://us.hsbc.com/"_s).has_value());
+}
 
 #if PLATFORM(IOS)
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideAmazonPrimeVideo)
