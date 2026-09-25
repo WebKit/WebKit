@@ -771,7 +771,6 @@ public:
     inline bool hasName() const;
     inline const SpaceSplitString& classNames() const;
     inline bool hasClassName(const AtomString& className) const;
-    inline bool hasClassNamePrefix(StringView prefix) const;
 
     ScrollPosition NODELETE savedLayerScrollPosition() const;
     void setSavedLayerScrollPosition(const ScrollPosition&);

@@ -798,6 +798,18 @@ void CSSSelector::setNth(int a, int b)
     m_data.rareData->b = b;
 }
 
+// A class token matches a prefix (e.g. ".foo-*") if it starts with the prefix, has at least
+// one character beyond it, and that character isn't also a hyphen.
+// https://drafts.csswg.org/selectors-5/#class-prefix
+bool CSSSelector::classNameMatchesPrefix(StringView className, StringView prefix)
+{
+    if (className.length() <= prefix.length())
+        return false;
+    if (!className.startsWith(prefix))
+        return false;
+    return className[prefix.length()] != '-';
+}
+
 bool CSSSelector::matchNth(int count) const
 {
     ASSERT(m_hasRareData);
