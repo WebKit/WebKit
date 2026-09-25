@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("CSSTokenizer");
+
+    function stringifyTokens(tokens)
+    {
+        return tokens.map((token) => `${JSON.stringify(token.value)}[${token.type || ""}]`).join(" ");
+    }
+
+    function tokenizeCSSText(cssText)
+    {
+        let mode = CodeMirror.getMode({indentUnit: 0}, "text/css");
+        let state = CodeMirror.startState(mode);
+        let stream = new CodeMirror.StringStream(cssText);
+        let tokens = [];
+        while (!stream.eol()) {
+            let type = mode.token(stream, state);
+            let value = stream.current();
+            if (value.trim())
+                tokens.push({value, type});
+
+            stream.start = stream.pos;
+        }
+        return tokens;
+    }
+
+    function addVariableReferenceTestCase({name, cssValue, expected})
+    {
+        suite.addTestCase({
+            name,
+            test() {
+                let tokens = WI.tokenizeCSSValue(cssValue);
+                InspectorTest.log(stringifyTokens(tokens));
+
+                let variableTokens = tokens.filter((token) => /\bvariable-2\b/.test(token.type));
+                InspectorTest.expectEqual(variableTokens.length, 1, `"${cssValue}" should contain one variable token.`);
+                InspectorTest.expectEqual(variableTokens[0]?.value, expected, `Variable token should be "${expected}".`);
+                InspectorTest.expectThat(WI.CSSProperty.isVariable(variableTokens[0]?.value ?? ""), `"${expected}" should be a variable name.`);
+            },
+        });
+    }
+
+    addVariableReferenceTestCase({
+        name: "CSSTokenizer.VariableReference.ASCII",
+        cssValue: "var(--x)",
+        expected: "--x",
+    });
+
+    addVariableReferenceTestCase({
+        name: "CSSTokenizer.VariableReference.NonASCII",
+        cssValue: "var(--色)",
+        expected: "--色",
+    });
+
+    addVariableReferenceTestCase({
+        name: "CSSTokenizer.VariableReference.MixedASCIIAndNonASCII",
+        cssValue: "var(--色-a_b)",
+        expected: "--色-a_b",
+    });
+
+    addVariableReferenceTestCase({
+        name: "CSSTokenizer.VariableReference.Emoj",
+        cssValue: "var(--😀)",
+        expected: "--😀",
+    });
+
+    addVariableReferenceTestCase({
+        name: "CSSTokenizer.VariableReference.NonASCIIWithFallback",
+        cssValue: "var(--色, -4px)",
+        expected: "--色",
+    });
+
+    suite.addTestCase({
+        name: "CSSTokenizer.VariableDefinition.NonASCII",
+        test() {
+            let tokens = tokenizeCSSText(".a { --色: red; }");
+            InspectorTest.log(stringifyTokens(tokens));
+
+            let nameToken = tokens.find((token) => /\bvariable-2\b/.test(token.type));
+            InspectorTest.expectEqual(nameToken?.value, "--色", `Variable definition name should be "--色".`);
+
+            let valueToken = tokens.find((token) => token.value === "red");
+            InspectorTest.expectThat(/\bkeyword\b/.test(valueToken?.type), `Value "red" should be tokenized as a keyword.`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSSTokenizer.Dash",
+        test() {
+            function log(cssValue) {
+                InspectorTest.log(`${cssValue} => ${stringifyTokens(WI.tokenizeCSSValue(cssValue))}`);
+            }
+
+            log("-2px");
+            log("-.5em");
+            log("calc(1px - -3px)");
+            log("-webkit-foo");
+            log("translate(-50%, - 1px)");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests CodeMirror CSS tokenization of custom property names and dashes.</p>
+</body>
+</html>
