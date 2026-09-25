@@ -479,6 +479,11 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     [_contentView _simulateLongPressActionAtLocation:location];
 }
 
+- (void)_simulateDoubleClickAtLocation:(CGPoint)location
+{
+    [_contentView _simulateDoubleClickAtLocation:location];
+}
+
 - (void)_simulateTextEntered:(NSString *)text
 {
     [_contentView _simulateTextEntered:text];

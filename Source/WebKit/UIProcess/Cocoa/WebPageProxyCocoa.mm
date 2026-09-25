@@ -2404,7 +2404,25 @@ void WebPageProxy::commitPotentialTapFailed()
 
 void WebPageProxy::handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastInteractionStart, WebEventInputSource inputSource, WebMouseEventSyntheticClickType syntheticClickType)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(point, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType), webPageIDInMainFrameProcess());
+    handleDoubleTapForDoubleClickAtPointInFrame(std::nullopt, point, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType);
+}
+
+void WebPageProxy::handleDoubleTapForDoubleClickAtPointInFrame(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastInteractionStart, WebEventInputSource inputSource, WebMouseEventSyntheticClickType syntheticClickType)
+{
+    RefPtr frame = frameID ? WebFrameProxy::webFrame(*frameID) : m_mainFrame.get();
+    if (!frame || frame->page() != this)
+        return;
+
+    frame->notifyActivated(MonotonicTime::now());
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(frameID, point, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType), Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType](auto remoteUserInputEventData) {
+        if (!remoteUserInputEventData)
+            return;
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->handleDoubleTapForDoubleClickAtPointInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType);
+    } });
 }
 
 void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)

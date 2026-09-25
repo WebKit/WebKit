@@ -14797,6 +14797,12 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     } forRequest:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(location))];
 }
 
+- (void)_simulateDoubleClickAtLocation:(CGPoint)location
+{
+    _layerTreeTransactionIdAtLastInteractionStart = protect(downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()))->lastCommittedMainFrameLayerTreeTransactionID();
+    protect(_page)->handleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint(location), { }, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::UserDriven, WebKit::WebMouseEventSyntheticClickType::OneFingerTap);
+}
+
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex
 {
 #if HAVE(PEPPER_UI_CORE)

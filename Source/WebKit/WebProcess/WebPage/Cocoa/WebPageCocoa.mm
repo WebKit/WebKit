@@ -3749,16 +3749,31 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
 #endif
 }
 
-void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId, WebEventInputSource inputSource, WebMouseEventSyntheticClickType webSyntheticClickType)
+Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::handleDoubleTapForDoubleClickAtPoint(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId, WebEventInputSource inputSource, WebMouseEventSyntheticClickType webSyntheticClickType)
 {
-    FloatPoint adjustedPoint;
-    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
-    RefPtr nodeRespondingToDoubleClick = localMainFrame ? localMainFrame->nodeRespondingToDoubleClickEvent(point, adjustedPoint) : nullptr;
+    if (frameID && !WebProcess::singleton().webFrame(*frameID))
+        co_return std::nullopt;
 
-    RefPtr windowListeningToDoubleClickEvents = localMainFrame ? localMainFrame->windowWithDoubleClickEventListener() : nullptr;
+    RefPtr localRoot = localRootFrame(frameID);
+    RefPtr localRootView = localRoot ? localRoot->view() : nullptr;
+    if (!localRootView)
+        co_return std::nullopt;
+
+    auto hitTestRequestTypes = OptionSet<WebCore::HitTestRequest::Type> {
+        WebCore::HitTestRequest::Type::ReadOnly,
+        WebCore::HitTestRequest::Type::AllowFrameScrollbars,
+        WebCore::HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
+    };
+    auto hitTestResult = localRoot->eventHandler().hitTestResultAtPoint(localRootView->rootViewToContents(point), hitTestRequestTypes);
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForHitTestResult(hitTestResult, *localRootView, point))
+        co_return remoteUserInputEventData;
+
+    FloatPoint adjustedPoint;
+    RefPtr nodeRespondingToDoubleClick = localRoot->nodeRespondingToDoubleClickEvent(point, adjustedPoint);
+    RefPtr windowListeningToDoubleClickEvents = localRoot->windowWithDoubleClickEventListener();
 
     if (!nodeRespondingToDoubleClick && !windowListeningToDoubleClickEvents)
-        return;
+        co_return std::nullopt;
 
     RefPtr<LocalFrame> frameRespondingToDoubleClick;
     if (nodeRespondingToDoubleClick)
@@ -3769,14 +3784,14 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
     }
 
     if (!frameRespondingToDoubleClick)
-        return;
+        co_return std::nullopt;
 
     auto firstTransactionID = WebFrame::fromCoreFrame(*frameRespondingToDoubleClick)->firstLayerTreeTransactionIDAfterDidCommitLoad();
-    // FIXME: We should probably guard the comparison with a processIdentifier() equality
-    // check (as commitPotentialTap() does) so that a cross-process transaction ID doesn't
-    // yield a meaningless comparison.
-    if (!firstTransactionID || lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID))
-        return;
+    if (!firstTransactionID)
+        co_return std::nullopt;
+    if (lastLayerTreeTransactionId.processIdentifier() == firstTransactionID->processIdentifier()
+        && lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID))
+        co_return std::nullopt;
 
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3784,16 +3799,19 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
     auto platformInputSource = platform(inputSource);
     auto syntheticClickType = coreSyntheticClickType(webSyntheticClickType);
     auto roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
+    auto globalPoint = globalPositionForSyntheticMouseEvent(*localRoot, adjustedPoint);
 
     bool becomesPointerEvents = platformInputSource == WebCore::MouseEventInputSource::Automation;
-    auto pressEvent = PlatformMouseEvent { roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 2, platformModifiers, MonotonicTime::now(), becomesPointerEvents ? WebCore::ForceAtClick : 0.0, syntheticClickType, platformInputSource };
+    auto pressEvent = PlatformMouseEvent { roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 2, platformModifiers, MonotonicTime::now(), becomesPointerEvents ? WebCore::ForceAtClick : 0.0, syntheticClickType, platformInputSource };
     if (becomesPointerEvents)
         pressEvent.setButtons(1);
 
     frameRespondingToDoubleClick->eventHandler().handleMousePressEvent(pressEvent);
     if (m_isClosed)
-        return;
-    frameRespondingToDoubleClick->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 2, platformModifiers, MonotonicTime::now(), 0, syntheticClickType, platformInputSource));
+        co_return std::nullopt;
+    frameRespondingToDoubleClick->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 2, platformModifiers, MonotonicTime::now(), 0, syntheticClickType, platformInputSource));
+
+    co_return std::nullopt;
 }
 
 #endif // ENABLE(TWO_PHASE_CLICKS)
