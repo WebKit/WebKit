@@ -1,0 +1,25 @@
+Tests that changing an iframe's 'scrolling' attribute updates the scrollbar modes of its frame scrolling node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Content height 100px, scrolling="no" to scrolling="yes":
+PASS modes is "horizontal AlwaysOff, vertical AlwaysOff"
+PASS modes is "horizontal Auto, vertical Auto"
+
+Content height 100px, scrolling="yes" to scrolling="no":
+PASS modes is "horizontal Auto, vertical Auto"
+PASS modes is "horizontal AlwaysOff, vertical AlwaysOff"
+
+Content height 400px, scrolling="no" to scrolling="yes":
+PASS modes is "horizontal AlwaysOff, vertical AlwaysOff"
+PASS modes is "horizontal Auto, vertical Auto"
+
+Content height 400px, scrolling="yes" to scrolling="no":
+PASS modes is "horizontal Auto, vertical Auto"
+PASS modes is "horizontal AlwaysOff, vertical AlwaysOff"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

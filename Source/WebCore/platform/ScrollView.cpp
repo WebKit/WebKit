@@ -144,6 +144,8 @@ void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode v
         platformSetScrollbarModes();
     else
         updateScrollbars(scrollPosition());
+
+    scrollbarModesDidChange();
 }
 
 void ScrollView::scrollbarModes(ScrollbarMode& horizontalMode, ScrollbarMode& verticalMode) const
