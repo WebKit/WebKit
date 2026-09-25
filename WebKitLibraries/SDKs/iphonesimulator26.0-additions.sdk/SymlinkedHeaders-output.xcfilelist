@@ -12,5 +12,4 @@ $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AVKit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AudioToolbox.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/MediaAccessibility.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/Metal.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/OpenGLES.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/UIKit.framework
