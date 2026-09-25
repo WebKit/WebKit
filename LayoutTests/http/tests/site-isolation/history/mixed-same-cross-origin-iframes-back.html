@@ -1,0 +1,41 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that back navigation correctly restores a mix of same-origin and cross-origin iframes.");
+jsTestIsAsync = true;
+
+var loadCount = 0;
+var sameOriginUrl = "";
+var crossOriginUrl = "";
+
+onmessage = (event) => {
+    var url = event.data;
+    if (url.includes("id=same"))
+        sameOriginUrl = url;
+    else if (url.includes("id=cross"))
+        crossOriginUrl = url;
+    loadCount++;
+
+    if (sessionStorage.verifyPhase) {
+        if (loadCount < 2)
+            return;
+        shouldBeEqualToString("crossOriginUrl", "http://localhost:8000/site-isolation/history/resources/report-url.html?id=cross&navigated=true");
+        shouldBeEqualToString("sameOriginUrl", "http://127.0.0.1:8000/site-isolation/history/resources/report-url.html?id=same");
+        delete sessionStorage.verifyPhase;
+        finishJSTest();
+        return;
+    }
+
+    if (loadCount === 2) {
+        // Both iframes loaded. Navigate the cross-origin iframe.
+        document.getElementById("cross").src =
+            "http://localhost:8000/site-isolation/history/resources/report-url.html?id=cross&navigated=true";
+    } else if (loadCount === 3) {
+        // Cross-origin iframe navigated. Navigate main frame away.
+        sessionStorage.verifyPhase = "true";
+        location.href = "/site-isolation/history/resources/go-back.html";
+    }
+};
+</script>
+<iframe id="same" src="http://127.0.0.1:8000/site-isolation/history/resources/report-url.html?id=same"></iframe>
+<iframe id="cross" src="http://localhost:8000/site-isolation/history/resources/report-url.html?id=cross"></iframe>
