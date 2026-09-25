@@ -287,6 +287,9 @@ WebCoreOpaqueRoot CSSStyleSheet::opaqueRootForGCThread()
     if (m_ownerNode)
         return root(m_ownerNode.get());
     if (auto* ownerRule = m_ownerRule.get()) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker ruleLocker { ownerRule->opaqueRootLockForGC() };
+#endif
         if (auto* parentSheet = ownerRule->parentStyleSheet())
             return parentSheet->opaqueRootForGCThread();
     }

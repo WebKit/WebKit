@@ -69,6 +69,13 @@ CSSStyleRule::~CSSStyleRule()
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->clearParentRule();
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    for (auto& wrapper : m_childRuleCSSOMWrappers) {
+        if (wrapper)
+            wrapper->setParentRule(nullptr);
+    }
+#endif
+
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);
         setHasCachedSelectorText(false);
