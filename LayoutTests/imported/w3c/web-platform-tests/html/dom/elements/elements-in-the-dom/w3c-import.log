@@ -10,9 +10,7 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/elements-in-the-dom/click-in-progress-flag.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/elements-in-the-dom/historical.html
-/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/elements-in-the-dom/unknown-element.html

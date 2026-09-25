@@ -143,7 +143,7 @@ PASS <optgroup> containing <optgroup> ("<select><optgroup class='poke-optgroup'>
 PASS <optgroup> containing <option> ("<select><optgroup><option>abc</select>")
 FAIL <div> in <option> ("<select><option class='poke-div'>123</select>") assert_equals: innerText expected "123\nabc" but got "123abc"
 PASS empty <optgroup> in <div> ("<div>a<optgroup></optgroup>bc")
-FAIL <optgroup> in <div> ("<div>a<optgroup>123</optgroup>bc") assert_equals: innerText expected "a\nbc" but got "a\n123\nbc"
+PASS <optgroup> in <div> ("<div>a<optgroup>123</optgroup>bc")
 PASS empty <option> in <div> ("<div>a<option></option>bc")
 PASS <option> in <div> ("<div>a<option>123</option>bc")
 PASS undefined ("<select><option>one</option><div><optgroup label=optgroup><div><option><span>two")

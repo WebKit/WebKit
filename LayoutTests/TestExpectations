@@ -1151,7 +1151,6 @@ imported/w3c/web-platform-tests/content-security-policy/font-src/font-match-allo
 
 # These tests are slow in debug and may flakily time out.
 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Skip ]
 [ Debug ] accessibility/visible-character-range-scrolling.html [ Skip ]
 # This test does too much work (and thus runs too slowly) to work in debug.
 [ Debug ] accessibility/aria-owns-deep-chain-no-timeout.html [ Skip ]
