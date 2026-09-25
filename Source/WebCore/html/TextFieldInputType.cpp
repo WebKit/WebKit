@@ -928,12 +928,12 @@ void TextFieldInputType::dataListButtonElementWasClicked()
     }
 }
 
-IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
+IntRect TextFieldInputType::elementRectInMainFrameViewCoordinates() const
 {
     if (!element()->renderer())
         return IntRect();
     Ref element = *this->element();
-    return protect(element->document().view())->contentsToRootView(protect(element->renderer())->absoluteBoundingBoxRect());
+    return protect(element->document().view())->contentsToMainFrameView(protect(element->renderer())->absoluteBoundingBoxRect());
 }
 
 std::optional<FrameIdentifier> TextFieldInputType::rootFrameID() const

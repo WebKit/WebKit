@@ -32,6 +32,7 @@
 #include "Untrusted.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentSecurityPolicy.h>
+#include <WebCore/FrameGeometrySyncData.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
@@ -328,6 +329,9 @@ public:
     std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
     void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }
 
+    void setFrameGeometry(const WebCore::FrameGeometrySyncData& geometry) { m_frameGeometry = geometry; }
+    void setFrameViewportInfo(const WebCore::FrameViewportInfo& viewportInfo) { m_frameViewportInfo = viewportInfo; }
+
     void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -400,6 +404,8 @@ private:
     bool m_isPendingInitialHistoryItem { false };
     bool m_isShowingInitialAboutBlank { true };
     std::optional<WebCore::IntRect> m_remoteFrameRect;
+    WebCore::FrameGeometrySyncData m_frameGeometry;
+    WebCore::FrameViewportInfo m_frameViewportInfo;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     MonotonicTime m_lastActivationTimestamp { -MonotonicTime::infinity() };
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };

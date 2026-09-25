@@ -407,6 +407,9 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
         protect(process())->didCommitLoadClientOrigin(ClientOrigin { mainFrame ? mainFrame->documentSecurityOriginData() : SecurityOriginData { }, documentSecurityOriginData() });
     }
 
+    m_frameGeometry = { };
+    m_frameViewportInfo = { };
+
     RefPtr webPage = page();
     if (webPage && protect(webPage->preferences())->siteIsolationEnabled())
         broadcastFrameTreeSyncData(calculateFrameTreeSyncData());
@@ -909,7 +912,7 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     bool isSecureForPaymentSession = false;
 #endif
 
-    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, FrameGeometrySyncData { }, FrameViewportInfo { });
+    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, FrameGeometrySyncData { m_frameGeometry }, FrameViewportInfo { m_frameViewportInfo });
 }
 
 Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const

@@ -134,7 +134,7 @@ private:
     void showPicker() override;
 
     // DataListSuggestionsClient
-    IntRect elementRectInRootViewCoordinates() const final;
+    IntRect elementRectInMainFrameViewCoordinates() const final;
     Vector<DataListSuggestion> suggestions() final;
     std::optional<FrameIdentifier> rootFrameID() const final;
     void didSelectDataListOption(const String&) final;

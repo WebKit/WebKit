@@ -9352,6 +9352,10 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
 
     if (data.value.index() == std::to_underlying(WebCore::FrameTreeSyncDataType::FrameRect))
         webFrameProxy->setRemoteFrameRect(std::get<IntRect>(data.value));
+    else if (auto* frameGeometry = std::get_if<WebCore::FrameGeometrySyncData>(&data.value))
+        webFrameProxy->setFrameGeometry(*frameGeometry);
+    else if (auto* viewportInfo = std::get_if<WebCore::FrameViewportInfo>(&data.value))
+        webFrameProxy->setFrameViewportInfo(*viewportInfo);
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
@@ -12537,22 +12541,14 @@ void WebPageProxy::showDataListSuggestions(WebCore::DataListSuggestionInformatio
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
             return;
-        internals().dataListSuggestionsDropdown = pageClient->createDataListSuggestionsDropdown(*this);
+        RefPtr pageClientDropdown = pageClient->createDataListSuggestionsDropdown(*this);
+        if (!pageClientDropdown)
+            return;
+
+        internals().dataListSuggestionsDropdown = WTF::move(pageClientDropdown);
     }
-    if (!internals().dataListSuggestionsDropdown)
-        return;
 
-    convertRectToMainFrameCoordinates(info.elementRect, info.rootFrameID, [weakThis = WeakPtr { *this }, info = WTF::move(info)](std::optional<FloatRect> convertedRect) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect)
-            return;
-
-        if (!protectedThis->internals().dataListSuggestionsDropdown)
-            return;
-
-        info.elementRect = IntRect(*convertedRect);
-        protect(*protectedThis->internals().dataListSuggestionsDropdown)->show(WTF::move(info));
-    });
+    protect(internals().dataListSuggestionsDropdown.get())->show(WTF::move(info));
 }
 
 void WebPageProxy::handleKeydownInDataList(const String& key)

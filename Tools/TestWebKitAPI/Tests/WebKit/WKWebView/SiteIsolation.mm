@@ -44,6 +44,7 @@
 #import "TestURLSchemeHandler.h"
 #import "WKWebViewFindStringFindDelegate.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/IntRect.h>
 #import <WebCore/SQLiteDatabase.h>
 #import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKContentWorldPrivate.h>
@@ -83,7 +84,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/FrameIdentifier.h>
-#import <WebCore/IntRect.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 
 @interface WKContentView ()
@@ -11441,6 +11441,77 @@ TEST(SiteIsolation, ColorInputPickerLocationInDelayLoadedCrossSiteIframe)
 
     auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
     EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
+}
+
+static CGRect dataListSuggestionsElementRectAfterClicking(HTTPServer& server, NSPoint clickLocation)
+{
+    __block CGRect dataListSuggestionsElementRect = CGRectNull;
+    __block bool didRequestDataListSuggestionsDropdownRect = false;
+
+    InstanceMethodSwizzler dropdownRectSwizzler {
+        NSClassFromString(@"WKDataListSuggestionsController"),
+        NSSelectorFromString(@"dropdownRectForElementRect:"),
+        imp_implementationWithBlock(^NSRect(id, const WebCore::IntRect& elementRect) {
+            dataListSuggestionsElementRect = CGRectMake(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+            didRequestDataListSuggestionsDropdownRect = true;
+            return NSZeroRect;
+        })
+    };
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded");
+    [webView waitForNextPresentationUpdate];
+
+    [webView sendClickAtPoint:clickLocation];
+    Util::run(&didRequestDataListSuggestionsDropdownRect);
+
+    return dataListSuggestionsElementRect;
+}
+
+TEST(SiteIsolation, DataListSuggestionsElementRectInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'>"
+            "<iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/iframe'></iframe>"
+            "</body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html>"
+            "<body style='margin: 0' onload='alert(\"loaded\")'>"
+            "<input list='fruits' style='display: block; margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'>"
+            "<datalist id='fruits'>"
+            "<option>Apple</option>"
+            "<option>Orange</option>"
+            "</datalist>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto elementRect = dataListSuggestionsElementRectAfterClicking(server, NSMakePoint(200, 425));
+    EXPECT_EQ(elementRect, CGRectMake(150, 150, 100, 50));
+}
+
+TEST(SiteIsolation, DataListSuggestionsElementRectInNestedCrossOriginIframes)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'>"
+            "<iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe>"
+            "</body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html>"
+            "<body style='margin: 0'>"
+            "<iframe style='display: block; margin: 50px; width: 200px; height: 150px; border: none;' src='https://domain3.com/inner'></iframe>"
+            "</body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html>"
+            "<body style='margin: 0' onload='alert(\"loaded\")'>"
+            "<input list='fruits' style='display: block; margin: 25px; width: 100px; height: 50px; border: none; padding: 0;'>"
+            "<datalist id='fruits'>"
+            "<option>Apple</option>"
+            "<option>Orange</option>"
+            "</datalist>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // Two nested frame offsets: 100 + 50 + 25.
+    auto elementRect = dataListSuggestionsElementRectAfterClicking(server, NSMakePoint(225, 400));
+    EXPECT_EQ(elementRect, CGRectMake(175, 175, 100, 50));
 }
 
 TEST(SiteIsolation, SelectElementPopupAfterFocusChangesDuringTracking)
