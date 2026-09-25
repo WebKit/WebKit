@@ -2609,12 +2609,8 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) -> ContextMenuItemTag
 
 std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuEventRootViewPoint, WebEventInputSource inputSource) const
 {
-    RefPtr frame = m_frame.get();
-    if (!frame || !frame->coreLocalFrame())
-        return std::nullopt;
-
-    RefPtr frameView = frame->coreLocalFrame()->view();
-    if (!frameView)
+    RefPtr page = this->page();
+    if (!page)
         return std::nullopt;
 
     Vector<PDFContextMenuItem> menuItems;
@@ -2650,7 +2646,9 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const IntPoint
     auto contextMenuEventDocumentPoint = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, contextMenuEventPluginPoint);
     menuItems.appendVector(navigationContextMenuItemsForPageAtIndex(protect(m_presentationController)->nearestPageIndexForDocumentPoint(contextMenuEventDocumentPoint)));
 
-    auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEventRootViewPoint), IntSize())).location();
+    // rootViewToScreen() takes main-frame coordinates; the event position is local-root relative.
+    auto contextMenuPointInMainFrameView = convertFromRootViewToMainFrameView(FloatPoint { contextMenuEventRootViewPoint });
+    auto contextMenuPoint = page->chrome().rootViewToScreen(roundedIntPoint(contextMenuPointInMainFrameView));
 
     return PDFContextMenu {
         contextMenuPoint,
@@ -3910,6 +3908,15 @@ bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
         return false;
 
     auto dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection, TextIndicatorPresentationTransition::Bounce);
+
+    // Lift at the sender, not in the producer: the force touch path shares it and is still converted
+    // by RemoteDictionaryPopupInfoToRootView, so lifting there would convert twice.
+    // FIXME: That path costs an IPC per hop, walks only one hop, and mis-maps
+    // textRectsInBoundingRectCoordinates. It should lift in process like this.
+    dictionaryPopupInfo.origin = convertFromRootViewToMainFrameView(dictionaryPopupInfo.origin);
+    if (RefPtr textIndicator = dictionaryPopupInfo.textIndicator)
+        convertTextIndicatorFromRootViewToMainFrameView(*textIndicator);
+
     page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
     return true;
 }

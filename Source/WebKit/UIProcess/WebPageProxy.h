@@ -1713,6 +1713,9 @@ public:
     void setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
     void setUseDarkAppearanceForTesting(bool);
     void setCursorDidChangeCallbackForTesting(Function<void(const WebCore::Cursor&)>&& callback) { m_cursorDidChangeCallbackForTesting = WTF::move(callback); }
+#if PLATFORM(MAC)
+    void setDidPerformDictionaryLookupCallbackForTesting(Function<void(const WebCore::DictionaryPopupInfo&)>&& callback) { m_didPerformDictionaryLookupCallbackForTesting = WTF::move(callback); }
+#endif
 
     WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const;
 
@@ -4040,6 +4043,9 @@ private:
     String m_toolTip;
 
     Function<void(const WebCore::Cursor&)> m_cursorDidChangeCallbackForTesting;
+#if PLATFORM(MAC)
+    Function<void(const WebCore::DictionaryPopupInfo&)> m_didPerformDictionaryLookupCallbackForTesting;
+#endif
 
     bool m_isEditable { false };
 

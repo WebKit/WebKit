@@ -67,6 +67,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLPlugInElement.h>
@@ -719,6 +720,54 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
 #endif
 
     return true;
+}
+
+RefPtr<FrameView> PDFPluginBase::rootFrameView() const
+{
+    RefPtr frame = m_frame.get();
+    // A plugin only ever lives in a local frame, so null means the frame is gone.
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!coreFrame)
+        return nullptr;
+
+    return Ref { coreFrame->rootFrame() }->virtualView();
+}
+
+FloatPoint PDFPluginBase::convertFromRootViewToMainFrameView(FloatPoint point) const
+{
+    // A null view means the frame was detached, leaving no ancestor chain to walk.
+    RefPtr view = rootFrameView();
+    if (!view)
+        return point;
+
+    return view->convertToRootViewAcrossIsolatedFrames(point);
+}
+
+FloatRect PDFPluginBase::convertFromRootViewToMainFrameView(FloatRect rect) const
+{
+    RefPtr view = rootFrameView();
+    if (!view)
+        return rect;
+
+    return view->convertToRootViewAcrossIsolatedFrames(rect);
+}
+
+void PDFPluginBase::convertTextIndicatorFromRootViewToMainFrameView(TextIndicator& textIndicator) const
+{
+    auto boundingRect = textIndicator.textBoundingRectInRootViewCoordinates();
+    auto boundingRectInMainFrameView = convertFromRootViewToMainFrameView(boundingRect);
+
+    textIndicator.setTextBoundingRectInRootViewCoordinates(boundingRectInMainFrameView);
+    textIndicator.setSelectionRectInRootViewCoordinates(convertFromRootViewToMainFrameView(textIndicator.selectionRectInRootViewCoordinates()));
+    textIndicator.setContentImageWithoutSelectionRectInRootViewCoordinates(convertFromRootViewToMainFrameView(textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates()));
+
+    // Relative to the bounding rect, so absolutize, convert, then re-relativize.
+    textIndicator.setTextRectsInBoundingRectCoordinates(textIndicator.textRectsInBoundingRectCoordinates().map([&](auto rect) {
+        rect.moveBy(boundingRect.location());
+        rect = convertFromRootViewToMainFrameView(rect);
+        rect.moveBy(-boundingRectInMainFrameView.location());
+        return rect;
+    }));
 }
 
 #if ENABLE(PDF_HUD)
