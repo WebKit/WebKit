@@ -619,6 +619,7 @@ UIProcess/ios/WKMouseDeviceObserver.mm @nonARC
 UIProcess/ios/WKMouseInteraction.mm @nonARC
 UIProcess/ios/WKPageHostedPortalView.mm @nonARC
 UIProcess/ios/WKPasswordView.mm @nonARC
+UIProcess/ios/WKPortalVolumetricSceneController.mm @nonARC
 UIProcess/ios/WKScrollView.mm @nonARC
 UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm @nonARC
 UIProcess/ios/WKStylusDeviceObserver.mm @nonARC

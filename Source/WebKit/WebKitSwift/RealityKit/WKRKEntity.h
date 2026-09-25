@@ -79,6 +79,9 @@ NS_SWIFT_UI_ACTOR
 - (void)recenterEntityAtTransform:(WKEntityTransform)transform;
 - (void)applyDefaultIBL;
 - (void)removeIBL;
+- (void)setIBLReceiverEnabled:(BOOL)enabled;
+- (void)setProvidesEnvironmentLighting:(BOOL)provides;
+- (void)setGroundingShadowsEnabled:(BOOL)enabled;
 - (void)removeFromParentEntity;
 
 #if HAVE(CORE_RE)

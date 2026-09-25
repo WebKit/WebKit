@@ -182,6 +182,12 @@ public:
     virtual void exitImmersivePresentation(CompletionHandler<void()>&&);
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    virtual void enterVolumetricPresentation(CompletionHandler<void(std::optional<LayerHostingContextIdentifier>)>&&);
+    virtual void exitVolumetricPresentation(CompletionHandler<void()>&&);
+    virtual void updateVolumetricPresentationSize(const FloatSize&);
+#endif
+
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     virtual void setDynamicRangeLimit(PlatformDynamicRangeLimit, float, bool);
     virtual std::optional<double> getEffectiveDynamicRangeLimitValue() const;

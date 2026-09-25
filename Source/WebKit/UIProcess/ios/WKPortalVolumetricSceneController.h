@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,31 @@
 
 #pragma once
 
-#if ENABLE(MODEL_ELEMENT)
+#if PLATFORM(VISION) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
-#include <WebCore/Color.h>
-#include <WebCore/LayoutPoint.h>
-#include <WebCore/LayoutSize.h>
-#include <WebCore/Model.h>
-#include <wtf/RefPtr.h>
+#import <WebCore/FloatSize.h>
+#import <WebCore/LayerHostingContextIdentifier.h>
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-#include <WebCore/ModelPresentationMode.h>
-#endif
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-namespace WebCore {
+// Owns one volumetric UIWindowScene hosting an element's model content; one per presented element.
+@interface WKPortalVolumetricSceneController : NSObject
 
-struct ModelPlayerGraphicsLayerConfiguration {
-    RefPtr<Model> model;
-    LayoutSize contentSize;
-    LayoutPoint contentOrigin;
-    Color backgroundColor;
-    bool isInteractive;
-#if ENABLE(MODEL_ELEMENT_PORTAL)
-    bool hasPortal;
-#endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    ModelPresentationMode presentationMode { ModelPresentationMode::Inline };
-#endif
-};
+// closeHandler runs only for a user-initiated close.
+- (instancetype)initWithCloseHandler:(void (^)(void))closeHandler;
 
-} // namespace WebCore
+- (void)presentWithCompletion:(void (^)(BOOL success))completion;
+- (void)dismissWithCompletion:(nullable void (^)(void))completion;
 
-#endif
+// Returns the volume's extent in meters, or zero if the scene has not laid out yet.
+- (WebCore::FloatSize)hostContentWithContext:(WebCore::LayerHostingContextIdentifier)contentContext pid:(int)pid;
+
+- (void)setVolumeSizeChangedHandler:(nullable void (^)(WebCore::FloatSize))handler;
+
+- (void)updateLayoutForVolumeSize;
+
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
+
+#endif // PLATFORM(VISION) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)

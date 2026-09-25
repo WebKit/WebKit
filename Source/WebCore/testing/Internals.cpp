@@ -450,6 +450,10 @@
 #include "SpatialPortalController.h"
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include "ElementVolumetricScene.h"
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
@@ -9078,6 +9082,13 @@ String Internals::effectiveEnvironmentMap(Element& element)
     UNUSED_PARAM(element);
 #endif
     return "auto"_s;
+}
+#endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+String Internals::volumetricScenePresentationMode(Element& element)
+{
+    return ElementVolumetricScene::presentationModeForTesting(element);
 }
 #endif
 

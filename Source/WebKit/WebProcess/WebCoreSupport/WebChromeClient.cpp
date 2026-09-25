@@ -886,6 +886,28 @@ void WebChromeClient::setHasModelElement(bool hasModelElement)
 }
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+void WebChromeClient::enterVolumetricSceneForElement(WebCore::Element& element, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return completion(false);
+    page->enterVolumetricSceneForElement(element, WTF::move(completion));
+}
+
+void WebChromeClient::exitVolumetricSceneForElement(WebCore::Element& element)
+{
+    if (RefPtr page = m_page.get())
+        page->exitVolumetricSceneForElement(element);
+}
+
+void WebChromeClient::reconnectVolumetricSceneForElement(WebCore::Element& element)
+{
+    if (RefPtr page = m_page.get())
+        page->reconnectVolumetricSceneForElement(element);
+}
+#endif
+
 PlatformPageClient WebChromeClient::platformPageClient() const
 {
     notImplemented();

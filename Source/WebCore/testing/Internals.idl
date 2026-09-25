@@ -1588,6 +1588,8 @@ enum ContentsFormat {
     [Conditional=SPATIAL_PORTAL] sequence<unrestricted double>? spatialPortalResolvedTransform(Element element);
     [Conditional=SPATIAL_PORTAL] DOMString effectiveEnvironmentMap(Element element);
 
+    [Conditional=CONNECTED_VOLUMETRIC_SCENE] DOMString volumetricScenePresentationMode(Element element);
+
     undefined copyImageAtLocation(long x, long y);
 
     unsigned long fileConnectionHandleCount(FileSystemHandle handle);

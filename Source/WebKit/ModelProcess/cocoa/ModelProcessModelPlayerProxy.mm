@@ -456,11 +456,7 @@ void ModelProcessModelPlayerProxy::reloadModel(WebCore::NodeIdentifier nodeID, R
     }
     tracked.animationStateToRestore = WTF::move(animationStateToRestore);
 
-    bool isForImmersive = false;
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    isForImmersive = m_immersivePresentation;
-#endif
-    load(nodeID, model, layoutSize, isForImmersive);
+    load(nodeID, model, layoutSize, isImmersive());
 }
 
 void ModelProcessModelPlayerProxy::modelVisibilityDidChange(bool isVisible)
@@ -592,10 +588,8 @@ static CGFloat effectivePointsPerMeter(CALayer *caLayer)
 
 RESRT ModelProcessModelPlayerProxy::modelStandardizedTransformSRT(RESRT originalSRT) const
 {
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    if (m_immersivePresentation)
+    if (isImmersive())
         return originalSRT;
-#endif
 
     originalSRT.scale *= defaultScaleFactor;
     originalSRT.translation *= defaultScaleFactor;
@@ -605,10 +599,8 @@ RESRT ModelProcessModelPlayerProxy::modelStandardizedTransformSRT(RESRT original
 
 RESRT ModelProcessModelPlayerProxy::modelLocalizedTransformSRT(RESRT originalSRT) const
 {
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    if (m_immersivePresentation)
+    if (isImmersive())
         return originalSRT;
-#endif
 
     originalSRT.scale /= defaultScaleFactor;
     originalSRT.translation /= defaultScaleFactor;
@@ -674,6 +666,12 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     if (m_trackedModels.isEmpty() || !m_layer)
         return;
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // The volume fit is not derived from the layer bounds, so layout must not recompute over it.
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric)
+        return;
+#endif
+
 #if ENABLE(SPATIAL_PORTAL)
     auto beforeAutoMatrix = static_cast<simd_float4x4>(m_portalTransform.transformBeforeAuto);
     float beforeAutoScale = maximumScale(beforeAutoMatrix);
@@ -736,11 +734,7 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
         boundingRadius = std::max(boundingRadius, simd_length(entityCenter - boundingBoxCenter) + entityRadius);
     }
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, m_immersivePresentation);
-#else
-    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, false);
-#endif
+    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, isImmersive());
     m_transformSRT = newSRT;
 
     notifyModelPlayerOfTransformChange();
@@ -1065,6 +1059,14 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     updateOpacity();
     setUpLoadedEntity(nodeID, loadedEntity.get());
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric) {
+        setGroundingShadowsEnabled(true);
+        applyVolumetricPresentationTransform();
+    }
+    updateLightingForPresentationMode();
+#endif
+
     if (isReportingModel) {
         applyEnvironmentMapDataAndRelease([weakThis = WeakPtr { *this }] () mutable {
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
@@ -1348,12 +1350,10 @@ void ModelProcessModelPlayerProxy::sizeDidChange(WebCore::LayoutSize layoutSize)
 {
     RELEASE_LOG_INFO(ModelElement, "%p - ModelProcessModelPlayerProxy::sizeDidChange w=%lf h=%lf id=%" PRIu64, this, layoutSize.width().toDouble(), layoutSize.height().toDouble(), m_id.toUInt64());
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     m_layoutSize = layoutSize;
 
-    if (m_immersivePresentation)
+    if (!isPresentedInline())
         return;
-#endif
 
     auto width = layoutSize.width().toDouble();
     auto height = layoutSize.height().toDouble();
@@ -1393,6 +1393,14 @@ void ModelProcessModelPlayerProxy::setEntityTransform(WebCore::NodeIdentifier no
     RESRT newSRT = REMakeSRTFromMatrix(transform);
     m_transformSRT = modelLocalizedTransformSRT(newSRT);
     m_entityTransformSetByScript = true;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric) {
+        applyVolumetricPresentationTransform();
+        return;
+    }
+#endif
+
     updateTransform();
 }
 
@@ -1782,6 +1790,11 @@ void ModelProcessModelPlayerProxy::updateForCurrentStageMode()
 #if HAVE(CORE_RE)
     applyStageModeOperationToDriver();
 #endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric)
+        applyVolumetricPresentationTransform();
+#endif
 }
 
 void ModelProcessModelPlayerProxy::setStageMode(WebCore::StageModeOperation stagemodeOp)
@@ -1909,6 +1922,124 @@ void ModelProcessModelPlayerProxy::removeIBL()
     [entity removeIBL];
 }
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void ModelProcessModelPlayerProxy::updateLightingForPresentationMode()
+{
+    bool receivesIBL = m_presentationMode != WebCore::ModelPresentationMode::Volumetric;
+    RetainPtr entity = environmentMapTargetEntity();
+    [entity setIBLReceiverEnabled:receivesIBL];
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    [entity setProvidesEnvironmentLighting:m_presentationMode == WebCore::ModelPresentationMode::Immersive];
+#endif
+}
+
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void ModelProcessModelPlayerProxy::setPresentationMode(WebCore::ModelPresentationMode mode)
+{
+    m_presentationMode = mode;
+
+    switch (mode) {
+    case WebCore::ModelPresentationMode::Inline:
+        [m_layer setFrame:CGRectMake(0, 0, m_layoutSize.width().toDouble(), m_layoutSize.height().toDouble())];
+        break;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    case WebCore::ModelPresentationMode::Immersive:
+        [m_layer setFrame:CGRectZero];
+        break;
+#endif
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    case WebCore::ModelPresentationMode::Volumetric:
+        break;
+#endif
+    }
+
+    m_entityTransformToRestore = std::nullopt;
+    applyPresentationTransform();
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    updateLightingForPresentationMode();
+#endif
+}
+
+#endif // ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void ModelProcessModelPlayerProxy::applyPresentationTransform()
+{
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric) {
+        applyVolumetricPresentationTransform();
+        return;
+    }
+#endif
+
+    computeTransform(false);
+    updateTransform();
+}
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+// MARK: - Connected volumetric scene
+
+void ModelProcessModelPlayerProxy::applyVolumetricPresentationTransform()
+{
+    // FIXME: Fit the content to m_volumeSizeInMeters and center it in the volume.
+    updateTransform();
+}
+
+void ModelProcessModelPlayerProxy::setGroundingShadowsEnabled(bool enabled)
+{
+#if HAVE(CORE_RE)
+    if (m_containerEntityWrapper) {
+        [m_containerEntityWrapper setGroundingShadowsEnabled:enabled];
+        return;
+    }
+#endif
+    [m_modelRKEntity setGroundingShadowsEnabled:enabled];
+}
+
+void ModelProcessModelPlayerProxy::enterVolumetricPresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&& completion)
+{
+    // WebCore rejects this per element; this is the backstop for the shared-player case it cannot see.
+    if (isImmersive()) {
+        RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::enterVolumetricPresentation: content is already presented immersively id=%" PRIu64, this, m_id.toUInt64());
+        return completion(std::nullopt);
+    }
+
+    if (!m_layerHostingContext) {
+        RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::enterVolumetricPresentation: no hosting context id=%" PRIu64, this, m_id.toUInt64());
+        return completion(std::nullopt);
+    }
+
+    // Also runs on reload for an already-presented element; the UI process rebinds rather than opening a second scene.
+    setPresentationMode(WebCore::ModelPresentationMode::Volumetric);
+    setGroundingShadowsEnabled(true);
+
+    completion(layerHostingContextIdentifier());
+}
+
+void ModelProcessModelPlayerProxy::exitVolumetricPresentation(CompletionHandler<void()>&& completion)
+{
+    setGroundingShadowsEnabled(false);
+    m_volumeSizeInMeters = { };
+
+    setPresentationMode(WebCore::ModelPresentationMode::Inline);
+
+    completion();
+}
+
+void ModelProcessModelPlayerProxy::updateVolumetricPresentationSize(const WebCore::FloatSize& volumeSizeInMeters)
+{
+    m_volumeSizeInMeters = volumeSizeInMeters;
+
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric)
+        applyVolumetricPresentationTransform();
+}
+
+#endif // ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 
 void ModelProcessModelPlayerProxy::teardownEntity()
@@ -1964,8 +2095,18 @@ void ModelProcessModelPlayerProxy::captureStateForReload()
 void ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&& completion)
 {
     // FIXME: Add immersive presentation for spatial portal
-    if (m_trackedModels.size() > 1) {
+    // A portal hosting exactly one model would slip through the size check.
+    bool isPortal = m_trackedModels.size() > 1;
+#if ENABLE(SPATIAL_PORTAL)
+    isPortal |= m_isSpatialPortal;
+#endif
+    if (isPortal) {
         RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::ensureImmersivePresentation: unsupported for %u hosted models id=%" PRIu64, this, m_trackedModels.size(), m_id.toUInt64());
+        return completion(std::nullopt);
+    }
+
+    if (!isPresentedInline()) {
+        RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::ensureImmersivePresentation: content is already presented outside the page id=%" PRIu64, this, m_id.toUInt64());
         return completion(std::nullopt);
     }
 
@@ -1975,7 +2116,7 @@ void ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler
     if (m_modelRKEntity && !atTargetLimit)
         captureStateForReload();
 
-    setImmersivePresentation(true);
+    setPresentationMode(WebCore::ModelPresentationMode::Immersive);
 
     if (m_nodeID && m_currentModel && !m_trackedModels.isEmpty() && !atTargetLimit) {
         RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::ensureImmersivePresentation: reloading at %dMB id=%" PRIu64, this, targetLimit, m_id.toUInt64());
@@ -1991,7 +2132,7 @@ void ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler
         if (loaded)
             completion(protectedThis->layerHostingContextIdentifier().value());
         else {
-            protectedThis->setImmersivePresentation(false);
+            protectedThis->setPresentationMode(WebCore::ModelPresentationMode::Inline);
             completion(std::nullopt);
         }
     });
@@ -2005,7 +2146,7 @@ void ModelProcessModelPlayerProxy::exitImmersivePresentation(CompletionHandler<v
     if (m_modelRKEntity && !atTargetLimit)
         captureStateForReload();
 
-    setImmersivePresentation(false);
+    setPresentationMode(WebCore::ModelPresentationMode::Inline);
 
     if (m_nodeID && m_currentModel && !m_trackedModels.isEmpty() && !atTargetLimit) {
         RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::exitImmersivePresentation: reloading at %dMB id=%" PRIu64, this, targetLimit, m_id.toUInt64());
@@ -2018,22 +2159,6 @@ void ModelProcessModelPlayerProxy::exitImmersivePresentation(CompletionHandler<v
     }
 
     completion();
-}
-
-void ModelProcessModelPlayerProxy::setImmersivePresentation(bool immersivePresentation)
-{
-    if (immersivePresentation)
-        [m_layer setFrame:CGRectMake(0, 0, 0, 0)];
-    else {
-        auto width = m_layoutSize.width().toDouble();
-        auto height = m_layoutSize.height().toDouble();
-        [m_layer setFrame:CGRectMake(0, 0, width, height)];
-    }
-
-    m_immersivePresentation = immersivePresentation;
-    m_entityTransformToRestore = std::nullopt;
-    computeTransform(false);
-    updateTransform();
 }
 
 void ModelProcessModelPlayerProxy::ensureModelLoaded(CompletionHandler<void(bool)>&& completion)
