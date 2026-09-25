@@ -1,0 +1,3 @@
+
+PASS Reflection isn't impacted by overridden (get|set)Attribute(NS) methods
+

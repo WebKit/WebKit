@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-compatmode-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-compatmode-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-compatmode-03.html
@@ -25,3 +24,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-readyState.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/load-event-after-readystatechange-starts-load.html

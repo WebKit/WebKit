@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/.htaccess
@@ -353,6 +351,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-009.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-009.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-010.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-011.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-007.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-008.html

@@ -1,0 +1,4 @@
+ 
+
+PASS If there are multiple Content-Language HTTP headers, the UA will recognize the language declared in the first header.
+
