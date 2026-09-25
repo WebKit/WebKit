@@ -131,6 +131,7 @@
 [Legacy] StructureParam WebKit::NetworkSessionCreationParameters.proxyConfigData std::optional<Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>>
 [Legacy] StructureParam WebKit::ICCData.data Vector<uint8_t>
 [Legacy] StructureParam WebKit::IndexedColorSpace.table Vector<uint8_t>
+[Legacy] StructureParam WebCore::VideoDecoderConfig.description Vector<uint8_t>
 
 [UnsafeWrapper] std::optional<WebKit::CoreIPCSecTrustData::InfoType> {
     [NeedsReview] StructureParam WebKit::CoreIPCSecTrustData.info
@@ -145,7 +146,6 @@
     [Legacy] MessageParam LibWebRTCCodecs.CompletedEncoding data
     [Legacy] MessageParam LibWebRTCCodecs.SetEncodingConfiguration description
     [Legacy] MessageParam LibWebRTCCodecsProxy.DecodeFrame data
-    [Legacy] MessageParam LibWebRTCCodecsProxy.SetDecoderFormatDescription description
 
     [Legacy] MessageParam NetworkRTCProvider.SendToSocket data
     [Legacy] MessageParam NetworkSocketChannel.SendData data

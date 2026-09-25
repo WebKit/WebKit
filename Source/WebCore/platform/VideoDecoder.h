@@ -25,8 +25,7 @@
 
 #pragma once
 
-#include <WebCore/PlatformVideoColorSpace.h>
-#include <WebCore/ProcessIdentity.h>
+#include <WebCore/VideoDecoderConfig.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>
 
@@ -39,19 +38,10 @@ class VideoDecoder : public ThreadSafeRefCounted<VideoDecoder> {
 public:
     WEBCORE_EXPORT virtual ~VideoDecoder();
 
-    enum class HardwareAcceleration : bool { No, Yes };
-    enum class HardwareBuffer : bool { No, Yes };
-    enum class TreatNoOutputAsError : bool { No, Yes };
-    struct Config {
-        Vector<uint8_t> description;
-        uint64_t width { 0 };
-        uint64_t height { 0 };
-        std::optional<PlatformVideoColorSpace> colorSpace;
-        HardwareAcceleration decoding { HardwareAcceleration::No };
-        HardwareBuffer pixelBuffer { HardwareBuffer::No };
-        TreatNoOutputAsError noOutputAsError { TreatNoOutputAsError::Yes };
-        ProcessIdentity resourceOwner { };
-    };
+    using Config = VideoDecoderConfig;
+    using HardwareAcceleration = VideoDecoderConfig::HardwareAcceleration;
+    using HardwareBuffer = VideoDecoderConfig::HardwareBuffer;
+    using TreatNoOutputAsError = VideoDecoderConfig::TreatNoOutputAsError;
 
     struct EncodedFrame {
         Ref<SharedBuffer> data;

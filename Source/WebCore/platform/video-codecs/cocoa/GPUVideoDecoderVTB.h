@@ -54,7 +54,6 @@ protected:
 
 private:
     void flush() final;
-    void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) override;
     void colorSpaceOverrideChanged() final;
 
     virtual bool shouldOverrideColorSpaceAttachments() const { return false; }

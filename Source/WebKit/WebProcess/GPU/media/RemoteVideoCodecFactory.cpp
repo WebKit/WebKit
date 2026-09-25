@@ -147,14 +147,11 @@ void RemoteVideoCodecFactory::createDecoder(const String& codec, const WebCore::
         WebCore::VideoDecoder::createLocalDecoder(codec, config, WTF::move(createCallback), WTF::move(outputCallback));
         return;
     }
-    auto colorSpace = config.colorSpace;
-    libWebRTCCodecs->createDecoderAndWaitUntilReady(*type, codec, WTF::move(colorSpace), [width = config.width, height = config.height, description = Vector<uint8_t> { config.description }, createCallback = WTF::move(createCallback), outputCallback = WTF::move(outputCallback)](auto* internalDecoder) mutable {
+    libWebRTCCodecs->createDecoderAndWaitUntilReady(*type, codec, config, [createCallback = WTF::move(createCallback), outputCallback = WTF::move(outputCallback)](auto* internalDecoder) mutable {
         if (!internalDecoder) {
             createCallback(makeUnexpected("Decoder creation failed"_s));
             return;
         }
-        if (description.size())
-            protect(WebProcess::singleton().libWebRTCCodecs())->setDecoderFormatDescription(*internalDecoder, description.span(), width, height);
 
         auto callbacks = RemoteVideoDecoderCallbacks::create(WTF::move(outputCallback));
         createCallback(RemoteVideoDecoder::create(*internalDecoder, callbacks.copyRef()));

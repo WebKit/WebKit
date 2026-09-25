@@ -1581,6 +1581,7 @@
 		419BD1B928E599FE0089D7B7 /* BitrateMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BD1AB28E593800089D7B7 /* BitrateMode.h */; };
 		419BD1BA28E599FF0089D7B7 /* WebCodecsEncodedVideoChunkOutputCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BD1AD28E593810089D7B7 /* WebCodecsEncodedVideoChunkOutputCallback.h */; };
 		419BD1BF28E5C5C00089D7B7 /* VideoDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BD1BE28E5C5C00089D7B7 /* VideoDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5751B4A6428D599A8830B611 /* VideoDecoderConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = F6E764B3A552D5C8E280E702 /* VideoDecoderConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */; };
 		419E6EC92566D278002B5010 /* RTCPeerConnectionIceErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 419E6EC72566D214002B5010 /* RTCPeerConnectionIceErrorEvent.h */; };
 		419F0FD22A39F7D1002F5972 /* VideoEncoderActiveConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 412576A52A2E1B0E00A4F935 /* VideoEncoderActiveConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11517,6 +11518,7 @@
 		419BD1B128E599CC0089D7B7 /* WebCodecsVideoEncoderEncodeOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsVideoEncoderEncodeOptions.h; sourceTree = "<group>"; };
 		419BD1B228E599CD0089D7B7 /* WebCodecsVideoEncoderEncodeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCodecsVideoEncoderEncodeOptions.idl; sourceTree = "<group>"; };
 		419BD1BE28E5C5C00089D7B7 /* VideoDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoDecoder.h; sourceTree = "<group>"; };
+		F6E764B3A552D5C8E280E702 /* VideoDecoderConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoDecoderConfig.h; sourceTree = "<group>"; };
 		419BD1C328E5F4410089D7B7 /* VideoDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoDecoder.cpp; sourceTree = "<group>"; };
 		419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreBuiltinNames.h; sourceTree = "<group>"; };
 		419BEE3A2ABAD620008B070E /* WebCodecsAudioData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsAudioData.cpp; sourceTree = "<group>"; };
@@ -40252,6 +40254,7 @@
 				83C45B8D1DC2B67C008871BA /* ValidationBubble.h */,
 				419BD1C328E5F4410089D7B7 /* VideoDecoder.cpp */,
 				419BD1BE28E5C5C00089D7B7 /* VideoDecoder.h */,
+				F6E764B3A552D5C8E280E702 /* VideoDecoderConfig.h */,
 				41F898B328EAEAA20070549C /* VideoEncoder.cpp */,
 				41F898B228EAEAA20070549C /* VideoEncoder.h */,
 				412576A52A2E1B0E00A4F935 /* VideoEncoderActiveConfiguration.h */,
@@ -50281,6 +50284,7 @@
 				41DD3C2B2902C42F00369BEF /* VideoColorSpace.h in Headers */,
 				41DD3C2E2902C63100369BEF /* VideoColorSpaceInit.h in Headers */,
 				419BD1BF28E5C5C00089D7B7 /* VideoDecoder.h in Headers */,
+				5751B4A6428D599A8830B611 /* VideoDecoderConfig.h in Headers */,
 				41F898B428EAEAA30070549C /* VideoEncoder.h in Headers */,
 				419F0FD22A39F7D1002F5972 /* VideoEncoderActiveConfiguration.h in Headers */,
 				419F0FD32A39F7D3002F5972 /* VideoEncoderScalabilityMode.h in Headers */,

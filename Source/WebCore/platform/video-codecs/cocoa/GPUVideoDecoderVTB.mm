@@ -225,13 +225,6 @@ void GPUVideoDecoderVTB::flush()
         queue->flush(m_callback.get());
 }
 
-void GPUVideoDecoderVTB::setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height)
-{
-    assertIsCurrent(queue());
-
-    setFrameSize(width, height);
-}
-
 void GPUVideoDecoderVTB::setFrameSize(uint16_t width, uint16_t height)
 {
     assertIsCurrent(queue());

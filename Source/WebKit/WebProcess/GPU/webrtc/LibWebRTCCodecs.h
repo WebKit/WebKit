@@ -41,6 +41,7 @@
 #include <WebCore/HEVCUtilities.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoCodecType.h>
+#include <WebCore/VideoDecoder.h>
 #include <WebCore/VideoEncoder.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <map>
@@ -105,6 +106,7 @@ public:
         VideoDecoderIdentifier identifier;
         WebCore::VideoCodecType type;
         String codec;
+        WebCore::VideoDecoder::Config config;
         std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         DecoderCallback decoderCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock);
@@ -114,12 +116,11 @@ public:
         Vector<EncodedFrame> pendingFrames;
     };
 
-    Decoder* createDecoder(WebCore::VideoCodecType);
-    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder*)>&&);
+    Decoder* createDecoder(WebCore::VideoCodecType, const WebCore::VideoDecoder::Config&);
+    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, const WebCore::VideoDecoder::Config&, Function<void(Decoder*)>&&);
 
     int32_t releaseDecoder(Decoder&);
     Ref<GenericPromise> flushDecoder(Decoder&);
-    void setDecoderFormatDescription(Decoder&, std::span<const uint8_t>, uint16_t width, uint16_t height);
     int32_t decodeWebRTCFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height, std::optional<WebCore::PlatformVideoColorSpace>&& = std::nullopt);
     Ref<FramePromise> decodeFrame(Decoder&, int64_t timeStamp, Ref<WebCore::SharedBuffer>&&);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
@@ -251,7 +252,7 @@ private:
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
 
-    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder(*))>&&);
+    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, const WebCore::VideoDecoder::Config&, Function<void(Decoder(*))>&&);
     Encoder* createEncoderInternal(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);

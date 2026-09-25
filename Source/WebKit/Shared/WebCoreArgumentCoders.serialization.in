@@ -3943,6 +3943,21 @@ enum class WebCore::PlatformVideoChromaLocation : uint8_t {
     std::optional<WebCore::PlatformVideoChromaLocation> chromaLocation;
 };
 
+#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+headers: <WebCore/VideoDecoderConfig.h>
+struct WebCore::VideoDecoderConfig {
+    Vector<uint8_t> description;
+    uint64_t width;
+    uint64_t height;
+    std::optional<WebCore::PlatformVideoColorSpace> colorSpace;
+    bool useAnnexB;
+    [NotSerialized] WebCore::VideoDecoderConfig::HardwareAcceleration decoding;
+    [NotSerialized] WebCore::VideoDecoderConfig::HardwareBuffer pixelBuffer;
+    [NotSerialized] WebCore::VideoDecoderConfig::TreatNoOutputAsError noOutputAsError;
+    [NotSerialized] WebCore::ProcessIdentity resourceOwner;
+};
+#endif
+
 #if ENABLE(CONTENT_EXTENSIONS)
 
 [Nested] struct WebCore::ContentRuleListResults::Result {

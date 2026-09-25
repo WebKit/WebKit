@@ -38,9 +38,36 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBH265);
 
-GPUVideoDecoderVTBH265::GPUVideoDecoderVTBH265(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-    : GPUVideoDecoderVTB(callback, WTF::move(queue), WTF::move(colorSpaceOverride))
+GPUVideoDecoderVTBH265::GPUVideoDecoderVTBH265(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, VideoDecoder::Config&& config)
+    : GPUVideoDecoderVTB(callback, WTF::move(queue), WTF::move(config.colorSpace))
+    , m_isAnnexB(config.useAnnexB)
 {
+    setFrameSize(config.width, config.height);
+
+    if (config.description.isEmpty())
+        return;
+
+    auto parameterSets = parseHVCCParameterSets(config.description.span());
+    RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to correctly parse the hvcC data");
+
+    RefPtr<VideoInfo> videoInfo;
+    if (parameterSets)
+        videoInfo = createVideoInfoFromHVCC(*parameterSets);
+    if (!videoInfo) {
+        RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to create video info from hvcC data");
+        // FIXME: We likely want to error this code path.
+        videoInfo = VideoInfo::create({
+            {
+                .codecName = kCMVideoCodecType_HEVC
+            }, {
+                .size = { static_cast<float>(config.width), static_cast<float>(config.height) },
+                .displaySize = { static_cast<float>(config.width), static_cast<float>(config.height) },
+                .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(config.description.span()) } },
+            }
+        });
+    }
+
+    setVideoInfo(videoInfo.releaseNonNull(), parameterSets ? findHVCCMaxNumReorderPics(*parameterSets).value_or(0) : 0);
 }
 
 int32_t GPUVideoDecoderVTBH265::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
@@ -56,39 +83,6 @@ int32_t GPUVideoDecoderVTBH265::decodeFrame(int64_t timeStamp, std::span<const u
 
     auto lengthPrefixedData = convertHEVCAnnexBToLengthPrefixed(data, naluIndices);
     return decodeFrameInternal(timeStamp, lengthPrefixedData.span());
-}
-
-void GPUVideoDecoderVTBH265::setFormat(std::span<const uint8_t> data, uint16_t width, uint16_t height)
-{
-    // FIXME: We should provide this info at decoder construction time.
-    setFrameSize(width, height);
-
-    if (data.empty())
-        return;
-
-    // Receiving an explicit format description means the incoming frames are hvcC-style.
-    m_isAnnexB = false;
-
-    auto parameterSets = parseHVCCParameterSets(data);
-    RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to correctly parse the hvcC data");
-
-    RefPtr<VideoInfo> videoInfo;
-    if (parameterSets)
-        videoInfo = createVideoInfoFromHVCC(*parameterSets);
-    if (!videoInfo) {
-        RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to create video info from hvcC data");
-        videoInfo = VideoInfo::create({
-            {
-                .codecName = kCMVideoCodecType_HEVC
-            }, {
-                .size = { static_cast<float>(width), static_cast<float>(height) },
-                .displaySize = { static_cast<float>(width), static_cast<float>(height) },
-                .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(data) } },
-            }
-        });
-    }
-
-    setVideoInfo(videoInfo.releaseNonNull(), parameterSets ? findHVCCMaxNumReorderPics(*parameterSets).value_or(0) : 0);
 }
 
 } // namespace WebCore
