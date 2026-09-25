@@ -418,10 +418,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/rounded-overflow-visible-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/rounded-overflow-visible-clip-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/rounded-overflow-visible-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-dynamic-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-touch-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-touch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-wheel-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-wheel.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-not-propagated-from-body-quirks.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-marker-group-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-marker-group-hover-from-marker.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-marker-group-hover.html

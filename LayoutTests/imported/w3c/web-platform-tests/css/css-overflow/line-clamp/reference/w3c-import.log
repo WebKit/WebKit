@@ -123,8 +123,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-009-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-009-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-006-ref.html

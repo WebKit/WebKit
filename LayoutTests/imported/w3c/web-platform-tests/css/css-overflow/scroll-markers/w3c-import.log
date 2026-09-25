@@ -106,6 +106,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-appearance-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-appearance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-container-query-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-contents-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-contents-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-contents-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-counter-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-counter-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-counter-appearance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-disabled-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-disabled-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-disabled-rtl-expected.html
@@ -249,6 +255,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-keeps-active-in-view.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-layout-parent-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-layout-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-position-change-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-size-container-query-root.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-size-container-query.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-group-snap-aligns-to-active-ref.html

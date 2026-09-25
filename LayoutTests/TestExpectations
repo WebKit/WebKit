@@ -4202,6 +4202,24 @@ webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/
 webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-touch.html [ Skip ]
 webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-wheel.html  [ Skip ]
 
+# Tests that failed on the 2026-09-24 import of css-overflow
+imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-contents-appearance.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-buttons-counter-appearance.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-008.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-009.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-013.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-014.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-004.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-005.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-006.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-007.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-008.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-009.html [ ImageOnlyFailure ]
+webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-dynamic-change.html [ Skip ]
+webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-touch-viewport.html [ Skip ]
+webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-wheel-viewport.html [ Skip ]
+webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-not-propagated-from-body-quirks.html [ Skip ]
+
 # Tests that failed on the 2026-02-02 import of css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/clip-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/column-style-change-triggers-relayout.html [ ImageOnlyFailure ]
