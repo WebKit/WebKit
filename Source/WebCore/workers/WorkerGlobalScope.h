@@ -73,6 +73,7 @@ class WorkerSWClientConnection;
 class WorkerStorageConnection;
 class WorkerStorageConnection;
 class WorkerThread;
+struct SecurityPolicyViolationEventInit;
 struct WorkerParameters;
 
 enum class ViolationReportType : uint8_t;
@@ -180,6 +181,8 @@ public:
     String agentClusterID() const final { return m_agentClusterID; }
 
     void reportErrorToWorkerObject(const String&);
+
+    void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);
 
 protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);

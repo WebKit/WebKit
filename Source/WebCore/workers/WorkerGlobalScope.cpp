@@ -39,6 +39,8 @@
 #include "CryptoKeyData.h"
 #include "DOMTimer.h"
 #include "Document.h"
+#include "EventLoop.h"
+#include "EventNames.h"
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
 #include "FrameConsoleClient.h"
@@ -57,6 +59,7 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
+#include "SecurityPolicyViolationEvent.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -774,6 +777,13 @@ void WorkerGlobalScope::updateServiceWorkerClientData()
     ASSERT(type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker || type() == WebCore::WorkerGlobalScope::Type::SharedWorker);
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
     swClientConnection().registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
+}
+
+void WorkerGlobalScope::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
+{
+    eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }, event = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTF::move(eventInit), Event::IsTrusted::Yes)] {
+        protectedThis->dispatchEvent(event);
+    });
 }
 
 void WorkerGlobalScope::notifyReportObservers(Ref<Report>&& reports)
