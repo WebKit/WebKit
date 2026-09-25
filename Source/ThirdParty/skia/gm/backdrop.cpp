@@ -21,7 +21,6 @@
 #include "src/core/SkCanvasPriv.h"
 #include "src/core/SkMatrixPriv.h"
 
-#include <array>
 #include <initializer_list>
 
 // Make a noisy (with hard-edges) background, so we can see the effect of the blur
@@ -32,7 +31,7 @@ static sk_sp<SkShader> make_shader(SkScalar cx, SkScalar cy, SkScalar rad) {
         SkColors::kRed, SkColors::kRed, SkColors::kBlue, SkColors::kBlue, SkColors::kGreen, SkColors::kGreen,
     };
     constexpr int count = std::size(colors);
-    std::array<SkScalar, count> pos = {0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6};
+    SkScalar pos[count] = { 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6 };
     for (int i = 0; i < count; ++i) {
         pos[i] *= 1.0f/6;
     }

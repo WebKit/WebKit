@@ -49,7 +49,6 @@
 #include "tests/CtsEnforcement.h"
 #include "tests/Test.h"
 
-#include <array>
 #include <cstddef>
 #include <initializer_list>
 #include <memory>
@@ -1627,7 +1626,7 @@ DEF_TEST(ClipStack_ComplexClip, reporter) {
 
     enum ShapeType { kRect, kRRect, kConvex };
 
-    auto rects = std::to_array<SkRect>({kTL, kTR, kBL, kBR});
+    SkRect rects[] = { kTL, kTR, kBL, kBR };
     for (ShapeType type : { kRect, kRRect, kConvex }) {
         for (int opBits = 6; opBits < 16; ++opBits) {
             SkString name;

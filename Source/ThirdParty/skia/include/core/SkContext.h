@@ -11,10 +11,7 @@
 #include "include/core/SkRefCnt.h"
 #include "include/private/SkAPI.h"
 
-#include <memory>
-
 class SkContextPriv;
-class SkContextPrivConst;
 class SkResourceCache;
 class SkSharedContext;
 class SkStrikeCache;
@@ -37,14 +34,10 @@ public:
     ~SkContext();
 
     SkContextPriv priv();
-    SkContextPrivConst priv() const;
+    const SkContextPriv priv() const;
 
 private:
-    SkContext(const SkContextOptions&);
-
-    friend class SkContextPrivConst;
-    friend class SkContextPriv;
-    friend class SkContextCtorAccessor;
+    SkContext(sk_sp<SkSharedContext>);
 
     SkResourceCache* resourceCache() const;
     SkStrikeCache* fontCache() const;

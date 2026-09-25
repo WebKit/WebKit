@@ -48,9 +48,7 @@ public:
         }
         return false;
     }
-    ExecutionResult onExecute(GrOpFlushState*) override {
-        return ExecutionResult::RanAndSucceeded();
-    }
+    bool onExecute(GrOpFlushState*) override { return true; }
 
 #if defined(GPU_TEST_UTILS)
     const char* name() const final { return "Mock"; }

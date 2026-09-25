@@ -16,8 +16,6 @@
 
 #include "tools/ToolUtils.h"
 
-#include <array>
-
 class HardStopGradientBench_ScaleNumColors : public Benchmark {
 public:
     HardStopGradientBench_ScaleNumColors(SkTileMode tilemode, int count) {
@@ -51,11 +49,11 @@ public:
         };
 
         constexpr int kNumColorChoices = 4;
-        static constexpr std::array<SkColor4f, kNumColorChoices> color_choices = {
-                SkColors::kRed,
-                SkColors::kGreen,
-                SkColors::kBlue,
-                SkColors::kYellow,
+        SkColor4f color_choices[kNumColorChoices] = {
+            SkColors::kRed,
+            SkColors::kGreen,
+            SkColors::kBlue,
+            SkColors::kYellow,
         };
 
         // Alternate between different choices

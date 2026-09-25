@@ -3,7 +3,6 @@
 #ifndef SkPDFGraphicStackState_DEFINED
 #define SkPDFGraphicStackState_DEFINED
 
-#include <array>
 #include "include/core/SkColor.h"
 #include "include/core/SkMatrix.h"
 #include "include/core/SkScalar.h"
@@ -28,7 +27,7 @@ struct SkPDFGraphicStackState {
     };
     // Must use stack for matrix, and for clip, plus one for no matrix or clip.
     inline static constexpr int kMaxStackDepth = 2;
-    std::array<Entry, kMaxStackDepth + 1> fEntries;
+    Entry fEntries[kMaxStackDepth + 1];
     int fStackDepth = 0;
     SkDynamicMemoryWStream* fContentStream;
 

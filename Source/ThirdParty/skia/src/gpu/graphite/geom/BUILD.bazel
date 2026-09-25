@@ -9,8 +9,6 @@ licenses(["notice"])
 CORE_FILES = [
     "AnalyticBlurMask.cpp",
     "AnalyticBlurMask.h",
-    "AnalyticRRectBlurMask.cpp",
-    "AnalyticRRectBlurMask.h",
     "BoundsManager.h",
     "CoverageMaskShape.h",
     "EdgeAAQuad.h",
@@ -29,14 +27,6 @@ CORE_FILES = [
 split_srcs_and_hdrs(
     name = "core",
     files = CORE_FILES,
-)
-
-skia_filegroup(
-    name = "sparse_strips_hdrs",
-    srcs = [
-        "EndCaps.h",
-        "WideTiles.h",
-    ],
 )
 
 skia_filegroup(

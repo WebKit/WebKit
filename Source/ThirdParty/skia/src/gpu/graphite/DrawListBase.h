@@ -32,7 +32,6 @@
 namespace skgpu::graphite {
 
 class DrawPass;
-class DrawContext;
 class Geometry;
 class Renderer;
 class Recorder;
@@ -70,7 +69,6 @@ public:
 
     virtual std::unique_ptr<DrawPass> snapDrawPass(Recorder* recorder,
                                                    StorageContext* storageContext,
-                                                   DrawContext* drawContext,
                                                    sk_sp<TextureProxy> target,
                                                    const SkImageInfo& targetInfo,
                                                    const DstReadStrategy dstReadStrategy) = 0;

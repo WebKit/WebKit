@@ -8,7 +8,6 @@
 #ifndef SkHdrAgtmPriv_DEFINED
 #define SkHdrAgtmPriv_DEFINED
 
-#include <array>
 #include "include/core/SkColor.h"
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkImage.h"
@@ -62,10 +61,10 @@ struct Weighting {
     // The index into fAlternateImages for fWeight. If fWeight[i] is 0 then
     // fAlternateImageIndex[i] is not used and should be set to kInvalidIndex.
     static constexpr uint8_t kInvalidIndex = 255;
-    std::array<uint8_t, 2> fAlternateImageIndex = {kInvalidIndex, kInvalidIndex};
+    uint8_t fAlternateImageIndex[2] = {kInvalidIndex, kInvalidIndex};
 
     // The value of fWeight[i] is weight for the fAlternateImageIndex[i]-th alternate image.
-    std::array<float, 2> fWeight = {0.f, 0.f};
+    float fWeight[2] = {0.f, 0.f};
 };
 Weighting ComputeWeighting(const AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm,
                            float targetedHdrHeadroom);

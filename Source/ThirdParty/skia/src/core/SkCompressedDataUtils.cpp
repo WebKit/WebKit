@@ -20,7 +20,6 @@
 #include "src/core/SkMipmap.h"
 
 #include <algorithm>
-#include <array>
 #include <cstdint>
 
 using namespace skia_private;
@@ -44,7 +43,7 @@ static inline int extend_5To8bits(int b) {
 }
 
 static inline int extend_5plus3To8Bits(int base, int diff) {
-    static constexpr std::array<int, 8> kLookup = { 0, 1, 2, 3, -4, -3, -2, -1 };
+    static const int kLookup[8] = { 0, 1, 2, 3, -4, -3, -2, -1 };
 
     return extend_5To8bits((0x1f & base) + kLookup[0x7 & diff]);
 }
@@ -108,7 +107,7 @@ static bool decompress_etc1(SkISize dimensions, const uint8_t* srcData, SkBitmap
             bool flipped = SkToBool(high & kFlipBit);
             bool differential = SkToBool(high & kDiffBit);
 
-            std::array<IColor, 2> colors;
+            IColor colors[2];
 
             if (differential) {
                 colors[0].fR = extend_5To8bits(high >> 27);
@@ -128,7 +127,7 @@ static bool decompress_etc1(SkISize dimensions, const uint8_t* srcData, SkBitmap
 
             int tableIndex0 = (high >> 5) & 0x7;
             int tableIndex1 = (high >> 2) & 0x7;
-            std::array<const int *, 2> tables = {
+            const int* tables[2] = {
                 kETC1ModifierTables[tableIndex0],
                 kETC1ModifierTables[tableIndex1]
             };
@@ -194,7 +193,7 @@ static bool decompress_bc1(SkISize dimensions, const uint8_t* srcData,
     int numXBlocks = num_4x4_blocks(dimensions.width());
     int numYBlocks = num_4x4_blocks(dimensions.height());
 
-    std::array<SkPMColor, 4> colors;
+    SkPMColor colors[4];
 
     for (int y = 0; y < numYBlocks; ++y) {
         for (int x = 0; x < numXBlocks; ++x) {

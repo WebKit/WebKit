@@ -22,7 +22,6 @@
 #include "include/effects/SkImageFilters.h"
 #include "tools/ToolUtils.h"
 
-#include <array>
 #include <initializer_list>
 #include <utility>
 
@@ -33,13 +32,9 @@ static sk_sp<SkImage> make_image(SkCanvas* canvas, int direction) {
     SkPaint paint;
     paint.setAntiAlias(true);
 
-    const auto colors = std::to_array<SkColor>({
-            SK_ColorRED,
-            SK_ColorBLUE,
-            SK_ColorGREEN,
-            SK_ColorYELLOW,
-            SK_ColorBLACK,
-    });
+    const SkColor colors[] = {
+        SK_ColorRED, SK_ColorBLUE, SK_ColorGREEN, SK_ColorYELLOW, SK_ColorBLACK
+    };
 
     int width = 25;
     bool xDirection = (direction & 0x1) == 1;

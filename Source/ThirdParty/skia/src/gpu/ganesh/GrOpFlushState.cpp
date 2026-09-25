@@ -93,14 +93,10 @@ void GrOpFlushState::executeDrawsAndUploadsForMeshDrawOp(
     }
 }
 
-bool GrOpFlushState::preExecuteDraws() {
-    if (!fVertexPool.unmap() ||
-        !fIndexPool.unmap() ||
-        !fDrawIndirectPool.unmap()) {
-        fCurrDraw = fDraws.end();
-        fCurrUpload = fInlineUploads.end();
-        return false;
-    }
+void GrOpFlushState::preExecuteDraws() {
+    fVertexPool.unmap();
+    fIndexPool.unmap();
+    fDrawIndirectPool.unmap();
     for (auto& upload : fASAPUploads) {
         this->doUpload(upload);
     }
@@ -108,7 +104,6 @@ bool GrOpFlushState::preExecuteDraws() {
     fCurrDraw = fDraws.begin();
     fCurrUpload = fInlineUploads.begin();
     fGpu->willExecute();
-    return true;
 }
 
 void GrOpFlushState::reset() {

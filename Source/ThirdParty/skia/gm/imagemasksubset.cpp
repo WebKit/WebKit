@@ -20,8 +20,6 @@
 #include "tools/GpuToolUtils.h"
 #include "tools/ToolUtils.h"
 
-#include <array>
-
 #if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
@@ -62,14 +60,14 @@ private:
 };
 
 using MakerT = sk_sp<SkImage>(*)(SkCanvas*, const SkImageInfo&);
-static constexpr auto makers = std::to_array<MakerT>({
+const MakerT makers[] = {
         // SkImage_Raster
-        MakerT([](SkCanvas*, const SkImageInfo& info) -> sk_sp<SkImage> {
+        [](SkCanvas*, const SkImageInfo& info) -> sk_sp<SkImage> {
             return make_mask(SkSurfaces::Raster(info));
-        }),
+        },
 
         // SkImage_Ganesh
-        MakerT([](SkCanvas* c, const SkImageInfo& info) -> sk_sp<SkImage> {
+        [](SkCanvas* c, const SkImageInfo& info) -> sk_sp<SkImage> {
             sk_sp<SkSurface> surface;
 #if defined(SK_GANESH)
             if (auto rc = c->recordingContext()) {
@@ -82,13 +80,13 @@ static constexpr auto makers = std::to_array<MakerT>({
             }
 #endif
             return make_mask(surface ? surface : SkSurfaces::Raster(info));
-        }),
+        },
 
         // SkImage_Lazy
-        MakerT([](SkCanvas*, const SkImageInfo& info) -> sk_sp<SkImage> {
+        [](SkCanvas*, const SkImageInfo& info) -> sk_sp<SkImage> {
             return SkImages::DeferredFromGenerator(std::make_unique<MaskGenerator>(info));
-        }),
-});
+        },
+};
 
 }  // namespace
 

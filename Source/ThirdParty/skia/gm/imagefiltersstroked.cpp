@@ -19,8 +19,6 @@
 #include "include/core/SkTypes.h"
 #include "include/effects/SkImageFilters.h"
 
-#include <array>
-
 #define RESIZE_FACTOR_X SkIntToScalar(2)
 #define RESIZE_FACTOR_Y SkIntToScalar(5)
 
@@ -51,23 +49,21 @@ protected:
     }
 
     void onDraw(SkCanvas* canvas) override {
-        auto drawProc = std::to_array<void (*)(SkCanvas*, const SkRect&, const SkPaint&)>({
-                draw_line,
-                draw_rect,
-                draw_circle,
-        });
+        void (*drawProc[])(SkCanvas*, const SkRect&, const SkPaint&) = {
+            draw_line, draw_rect, draw_circle,
+        };
 
         canvas->clear(SK_ColorBLACK);
 
         SkMatrix resizeMatrix;
         resizeMatrix.setScale(RESIZE_FACTOR_X, RESIZE_FACTOR_Y);
 
-        auto filters = std::to_array<sk_sp<SkImageFilter>>({
-                SkImageFilters::Blur(5, 5, nullptr),
-                SkImageFilters::DropShadow(10, 10, 3, 3, SK_ColorGREEN, nullptr),
-                SkImageFilters::Offset(-16, 32, nullptr),
-                SkImageFilters::MatrixTransform(resizeMatrix, SkSamplingOptions(), nullptr),
-        });
+        sk_sp<SkImageFilter> filters[] = {
+            SkImageFilters::Blur(5, 5, nullptr),
+            SkImageFilters::DropShadow(10, 10, 3, 3, SK_ColorGREEN, nullptr),
+            SkImageFilters::Offset(-16, 32, nullptr),
+            SkImageFilters::MatrixTransform(resizeMatrix, SkSamplingOptions(), nullptr),
+        };
 
         SkRect r = SkRect::MakeWH(64, 64);
         SkScalar margin = 32;

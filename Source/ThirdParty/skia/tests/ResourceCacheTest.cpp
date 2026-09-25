@@ -52,7 +52,6 @@
 #include "tools/gpu/ContextType.h"
 #include "tools/gpu/ManagedBackendTexture.h"
 
-#include <array>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
@@ -1618,9 +1617,9 @@ static void test_free_texture_messages(skiatest::Reporter* reporter) {
     GrResourceCache* cache = mock.cache();
     GrGpu* gpu = mock.gpu();
 
-    std::array<GrBackendTexture, 3> backends;
-    std::array<sk_sp<GrTexture>, 3> wrapped;
-    std::array<int, 3> freed = { 0, 0, 0 };
+    GrBackendTexture backends[3];
+    sk_sp<GrTexture> wrapped[3];
+    int freed[3] = { 0, 0, 0 };
 
     auto releaseProc = [](void* ctx) {
         int* index = (int*) ctx;

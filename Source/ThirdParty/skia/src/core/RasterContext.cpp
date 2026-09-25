@@ -6,16 +6,15 @@
  */
 
 #include "include/core/RasterContext.h"
-
 #include "include/core/SkContext.h"
 #include "include/core/SkContextOptions.h"
-#include "src/core/SkContextPriv.h"
+#include "src/core/SkSharedContext.h"
 
 namespace SkContexts {
 
 // Creates a context for SkContext with only Software Rasterization
 std::unique_ptr<SkContext> MakeRaster(const SkContextOptions& options) {
-    return SkContextCtorAccessor::MakeContext(options);
+    return nullptr;
 }
 
 }  // namespace SkContexts

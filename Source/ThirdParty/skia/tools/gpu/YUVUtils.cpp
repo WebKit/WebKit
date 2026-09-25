@@ -35,8 +35,6 @@
 #include "src/core/SkAutoPixmapStorage.h"
 #endif
 
-#include <array>
-
 namespace {
 
 static SkPMColor convert_yuva_to_rgba(const float mtx[20], uint8_t yuva[4]) {
@@ -103,7 +101,7 @@ protected:
                     xy1.fX *= normX;
                     xy1.fY *= normY;
 
-                    std::array<uint8_t, 4> yuva = {0, 0, 0, 255};
+                    uint8_t yuva[4] = {0, 0, 0, 255};
 
                     for (auto c : {SkYUVAInfo::YUVAChannels::kY,
                                    SkYUVAInfo::YUVAChannels::kU,
@@ -118,7 +116,7 @@ protected:
                     }
 
                     // Making premul here.
-                    *fFlattened.getAddr32(x, y) = convert_yuva_to_rgba(mtx, yuva.data());
+                    *fFlattened.getAddr32(x, y) = convert_yuva_to_rgba(mtx, yuva);
                 }
             }
         }
@@ -337,7 +335,7 @@ bool LazyYUVImage::ensureYUVImage(GrRecordingContext* rContext, Type type) {
                 return false;
             }
             if (auto direct = rContext->asDirectContext()) {
-                std::array<sk_sp<sk_gpu_test::ManagedBackendTexture>, SkYUVAInfo::kMaxPlanes> mbets;
+                sk_sp<sk_gpu_test::ManagedBackendTexture> mbets[SkYUVAInfo::kMaxPlanes];
                 GrBackendTexture textures[SkYUVAInfo::kMaxPlanes];
                 for (int i = 0; i < fPixmaps.numPlanes(); ++i) {
                     mbets[i] = sk_gpu_test::ManagedBackendTexture::MakeFromPixmap(
@@ -359,7 +357,7 @@ bool LazyYUVImage::ensureYUVImage(GrRecordingContext* rContext, Type type) {
                     return false;
                 }
                 void* planeRelContext =
-                        sk_gpu_test::ManagedBackendTexture::MakeYUVAReleaseContext(mbets.data());
+                        sk_gpu_test::ManagedBackendTexture::MakeYUVAReleaseContext(mbets);
                 fYUVImage[idx] = SkImages::TextureFromYUVATextures(
                         direct,
                         yuvaTextures,

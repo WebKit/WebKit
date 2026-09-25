@@ -14,7 +14,7 @@
 #include <cfloat>
 
 DEF_TEST(ScaleToSides, reporter) {
-    auto interestingValues = std::to_array<double>({
+    double interestingValues[] = {
         // From sample app - PathFuzzer
         260.01662826538085938,
         63.61007690429687500,
@@ -44,7 +44,7 @@ DEF_TEST(ScaleToSides, reporter) {
         340282569745034499980078846904281071616.0,
         170141284872517249990039423452140535808.0,
         170141244307698042686698575557637963776.0,
-    });
+    };
 
     int numInterestingValues = (int)std::size(interestingValues);
 

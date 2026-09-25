@@ -26,7 +26,6 @@
 #include "tools/timer/TimeUtils.h"
 #include "tools/viewer/ClickHandlerSlide.h"
 
-#include <array>
 #include <stdlib.h>
 
 // http://code.google.com/p/skia/issues/detail?id=32
@@ -76,7 +75,7 @@ static void test_cubic2() {
 class PathSlide : public ClickHandlerSlide {
     SkScalar fPrevSecs;
     SkScalar fDStroke, fStroke, fMinStroke, fMaxStroke;
-    std::array<SkPath, 6> fPath;
+    SkPath fPath[6];
     bool fShowHairline;
 
 public:
@@ -137,11 +136,11 @@ public:
 
         canvas->translate(50, 50);
 
-        static constexpr auto gJoins = std::to_array<SkPaint::Join>({
+        static const SkPaint::Join gJoins[] = {
             SkPaint::kBevel_Join,
             SkPaint::kMiter_Join,
             SkPaint::kRound_Join
-        });
+        };
 
         for (size_t i = 0; i < std::size(gJoins); i++) {
             canvas->save();
@@ -188,7 +187,7 @@ class ArcToSlide : public ClickHandlerSlide {
     enum {
         N = 4
     };
-    std::array<SkPoint, N> fPts;
+    SkPoint fPts[N];
 
 public:
     ArcToSlide() : fDoFrame(false), fDoCorner(false), fDoConic(false) {
@@ -277,7 +276,7 @@ class FatStrokeSlide : public ClickHandlerSlide {
     enum {
         N = 4
     };
-    std::array<SkPoint, N> fPts;
+    SkPoint fPts[N];
 
 public:
     FatStrokeSlide()
@@ -449,8 +448,8 @@ public:
 
         {
             paint.setColor(SK_ColorRED);
-            std::array<SkScalar, 2> t;
-            int n = compute_parallel_to_base(fPts, t.data());
+            SkScalar t[2];
+            int n = compute_parallel_to_base(fPts, t);
             SkPoint loc;
             SkVector tan;
             for (int i = 0; i < n; ++i) {

@@ -77,7 +77,6 @@
 #include "tools/gpu/ManagedBackendTexture.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -343,16 +342,15 @@ static void make_bitmap_immutable(SkBitmap* bm) {
 }
 
 DEF_TEST(image_newfrombitmap, reporter) {
-    struct Rec {
+    const struct {
         void (*fMakeProc)(SkBitmap*);
         bool fExpectPeekSuccess;
         bool fExpectSharedID;
         bool fExpectLazy;
+    } rec[] = {
+        { make_bitmap_mutable,      true,   false, false },
+        { make_bitmap_immutable,    true,   true,  false },
     };
-    const auto rec = std::to_array<Rec>({
-            Rec{make_bitmap_mutable, true, false, false},
-            Rec{make_bitmap_immutable, true, true, false},
-    });
 
     for (size_t i = 0; i < std::size(rec); ++i) {
         SkBitmap bm;
@@ -1267,7 +1265,7 @@ DEF_GANESH_TEST_FOR_GL_CONTEXT(makeBackendTexture, reporter, ctxInfo, CtsEnforce
         bool result = SkImages::MakeBackendTextureFromImage(
                 context, std::move(image), &newBackend, &proc);
         if (result != testCase.fExpectation) {
-            static constexpr auto kFS = std::to_array<const char*>({"fail", "succeed"});
+            static const char *const kFS[] = { "fail", "succeed" };
             ERRORF(reporter, "This image was expected to %s but did not.",
             kFS[testCase.fExpectation]);
         }
@@ -1278,8 +1276,7 @@ DEF_GANESH_TEST_FOR_GL_CONTEXT(makeBackendTexture, reporter, ctxInfo, CtsEnforce
 
         bool tookDirectly = result && GrBackendTexture::TestingOnly_Equals(origBackend, newBackend);
         if (testCase.fCanTakeDirectly != tookDirectly) {
-            static constexpr auto kExpectedState =
-                    std::to_array<const char*>({"not expected", "expected"});
+            static const char *const kExpectedState[] = { "not expected", "expected" };
             ERRORF(reporter, "This backend texture was %s to be taken directly.",
             kExpectedState[testCase.fCanTakeDirectly]);
         }

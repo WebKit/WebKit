@@ -36,7 +36,6 @@
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #endif
 
-#include <array>
 #include <utility>
 
 static void draw_something(SkCanvas* canvas, const SkRect& bounds) {
@@ -105,12 +104,12 @@ static sk_sp<SkImage> make_encode_gen(GrRecordingContext* ctx,
     return SkImages::DeferredFromEncodedData(std::move(encoded));
 }
 
-static constexpr auto gProcs = std::to_array<ImageMakerProc>({
-        make_raster,
-        make_texture,
-        make_pict_gen,
-        make_encode_gen,
-});
+const ImageMakerProc gProcs[] = {
+    make_raster,
+    make_texture,
+    make_pict_gen,
+    make_encode_gen,
+};
 
 /*
  *  Exercise drawing pictures inside an image, showing that the image version is pixelated

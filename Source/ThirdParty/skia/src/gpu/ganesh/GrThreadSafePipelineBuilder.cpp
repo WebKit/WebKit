@@ -7,8 +7,6 @@
 
 #include "src/gpu/ganesh/GrThreadSafePipelineBuilder.h"
 
-#include <array>
-
 #if GR_GPU_STATS
 #if defined(GPU_TEST_UTILS)
 #include "include/core/SkString.h"
@@ -18,7 +16,7 @@ using namespace skia_private;
 using Stats = GrThreadSafePipelineBuilder::Stats;
 
 static const char* cache_result_to_str(int i) {
-    static constexpr std::array<const char*, Stats::kNumProgramCacheResults> kCacheResultStrings = {
+    const char* kCacheResultStrings[Stats::kNumProgramCacheResults] = {
         "hits",
         "misses",
         "partials"

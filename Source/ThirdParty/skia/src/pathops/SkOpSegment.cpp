@@ -16,7 +16,6 @@
 #include "src/pathops/SkPathWriter.h"
 
 #include <algorithm>
-#include <array>
 #include <cfloat>
 
 /*
@@ -32,11 +31,11 @@ intersection tests cannot.
 #define F (false)      // discard the edge
 #define T (true)       // keep the edge
 
-static constexpr std::array<std::array<bool, 2>, 2> kUnaryActiveEdge = {{
+static constexpr bool kUnaryActiveEdge[2][2] = {
 //  from=0  from=1
 //  to=0,1  to=0,1
     {F, T}, {T, F},
-}};
+};
 
 static constexpr bool kActiveEdge[kXOR_SkPathOp + 1][2][2][2][2] = {
 //                 miFrom=0                              miFrom=1

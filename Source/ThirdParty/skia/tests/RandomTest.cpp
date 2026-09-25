@@ -11,7 +11,6 @@
 #include "src/core/SkTSort.h"
 #include "tests/Test.h"
 
-#include <array>
 #include <cmath>
 #include <cstring>
 
@@ -63,20 +62,20 @@ static double normal_cdf(double z) {
 }
 
 static void test_random_byte(skiatest::Reporter* reporter, int shift) {
-    std::array<int, 256> bins;
-    memset(bins.data(), 0, sizeof(int)*256);
+    int bins[256];
+    memset(bins, 0, sizeof(int)*256);
 
     SkRandom rand;
     for (int i = 0; i < 256*10000; ++i) {
         bins[(rand.nextU() >> shift) & 0xff]++;
     }
 
-    REPORTER_ASSERT(reporter, chi_square_test(bins.data(), 10000));
+    REPORTER_ASSERT(reporter, chi_square_test(bins, 10000));
 }
 
 static void test_random_float(skiatest::Reporter* reporter) {
-    std::array<int, 256> bins;
-    memset(bins.data(), 0, sizeof(int)*256);
+    int bins[256];
+    memset(bins, 0, sizeof(int)*256);
 
     SkRandom rand;
     for (int i = 0; i < 256*10000; ++i) {
@@ -84,7 +83,7 @@ static void test_random_float(skiatest::Reporter* reporter) {
         REPORTER_ASSERT(reporter, 0.0f <= f && f < 1.0f);
         bins[(int)(f*256.f)]++;
     }
-    REPORTER_ASSERT(reporter, chi_square_test(bins.data(), 10000));
+    REPORTER_ASSERT(reporter, chi_square_test(bins, 10000));
 
     double p[32];
     for (int j = 0; j < 32; ++j) {
@@ -111,10 +110,10 @@ static double test_single_gorilla(skiatest::Reporter* reporter, int shift) {
     const double kStandardDeviation = 127.0;
     const int kN = (1 << kWordWidth);
     const int kNumEntries = kN >> 5;  // dividing by 32
-    std::array<unsigned int, kNumEntries> entries;
+    unsigned int entries[kNumEntries];
 
     SkRandom rand;
-    memset(entries.data(), 0, sizeof(unsigned int)*kNumEntries);
+    memset(entries, 0, sizeof(unsigned int)*kNumEntries);
     // pre-seed our string value
     int value = 0;
     for (int i = 0; i < kWordWidth-1; ++i) {
@@ -172,15 +171,15 @@ static void test_range(skiatest::Reporter* reporter) {
     (void) rand.nextRangeU(0, 0xffffffff);
 
     // check a case to see if it's uniform
-    std::array<int, 256> bins;
-    memset(bins.data(), 0, sizeof(int)*256);
+    int bins[256];
+    memset(bins, 0, sizeof(int)*256);
     for (int i = 0; i < 256*10000; ++i) {
         unsigned int u = rand.nextRangeU(17, 17+255);
         REPORTER_ASSERT(reporter, 17 <= u && u <= 17+255);
         bins[u - 17]++;
     }
 
-    REPORTER_ASSERT(reporter, chi_square_test(bins.data(), 10000));
+    REPORTER_ASSERT(reporter, chi_square_test(bins, 10000));
 }
 
 DEF_TEST(Random, reporter) {

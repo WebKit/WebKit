@@ -13,7 +13,6 @@
 #include "src/core/SkPointPriv.h"
 #include "tests/Test.h"
 
-#include <array>
 #include <cfloat>
 #include <cstdint>
 #include <cstring>
@@ -133,15 +132,14 @@ static void test_overflow(skiatest::Reporter* reporter) {
 DEF_TEST(Point, reporter) {
     test_casts(reporter);
 
-    struct GRec {
+    static const struct {
         SkScalar fX;
         SkScalar fY;
         SkScalar fLength;
+    } gRec[] = {
+        { SkIntToScalar(3), SkIntToScalar(4), SkIntToScalar(5) },
+        { 0.6f, 0.8f, SK_Scalar1 },
     };
-    static const auto gRec = std::to_array<GRec>({
-            GRec{SkIntToScalar(3), SkIntToScalar(4), SkIntToScalar(5)},
-            GRec{0.6f, 0.8f, SK_Scalar1},
-    });
 
     for (size_t i = 0; i < std::size(gRec); ++i) {
         test_length(reporter, gRec[i].fX, gRec[i].fY, gRec[i].fLength);
@@ -154,8 +152,7 @@ DEF_TEST(Point, reporter) {
 DEF_TEST(Point_setLengthFast, reporter) {
     // Scale a (1,1) point to a bunch of different lengths,
     // making sure the slow and fast paths are within 0.1%.
-    static constexpr auto tests =
-            std::to_array<float>({1.0f, 0.0f, 1.0e-37f, 3.4e38f, 42.0f, 0.00012f});
+    const float tests[] = { 1.0f, 0.0f, 1.0e-37f, 3.4e38f, 42.0f, 0.00012f };
 
     const SkPoint kOne = {1.0f, 1.0f};
     for (unsigned i = 0; i < std::size(tests); i++) {

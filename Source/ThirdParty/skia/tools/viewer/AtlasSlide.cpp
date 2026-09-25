@@ -18,8 +18,6 @@
 #include "tools/fonts/FontToolUtils.h"
 #include "tools/viewer/Slide.h"
 
-#include <array>
-
 typedef void (*DrawAtlasProc)(SkCanvas*, SkImage*, SkSpan<const SkRSXform>, SkSpan<const SkRect>,
                               SkSpan<const SkColor>, const SkRect*, const SkSamplingOptions&,
                               const SkPaint*);
@@ -142,8 +140,8 @@ class DrawAtlasDrawable : public SkDrawable {
     static constexpr size_t N = 256;
 
     sk_sp<SkImage> fAtlas;
-    std::array<Rec, N> fRec;
-    std::array<SkRect, N> fTex;
+    Rec         fRec[N];
+    SkRect      fTex[N];
     SkRect      fBounds;
     bool        fUseColors;
 
@@ -182,7 +180,7 @@ public:
 
 protected:
     void onDraw(SkCanvas* canvas) override {
-        std::array<SkRSXform, N> xform;
+        SkRSXform xform[N];
         SkColor colors[N];
 
         for (size_t i = 0; i < N; ++i) {

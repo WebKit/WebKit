@@ -378,13 +378,16 @@ public:
 
         fUTF8 = start;
         fUTF8Offset = utf8_offset;
-        fShaper->shape({ start, utf8_bytes },
+        fShaper->shape(start,
+                       utf8_bytes,
                        *font_iter,
                        *bidi_iter,
                        *scpt_iter,
                        *lang_iter,
-                       {},
-                       { .width = shape_width, .tracking = shape_track },
+                       nullptr,
+                       0,
+                       shape_width,
+                       shape_track,
                        this);
         fUTF8 = nullptr;
     }

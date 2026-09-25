@@ -360,9 +360,9 @@ private:
     const SkPoint* fLastDegenerateStrokePt = nullptr;
 
     // The queue is implemented as a roll-over array with a floating front index.
-    std::array<Verb, kQueueBufferCount> fVerbs;
-    std::array<const SkPoint*, kQueueBufferCount> fPts;
-    std::array<const float*, kQueueBufferCount> fW;
+    Verb fVerbs[kQueueBufferCount];
+    const SkPoint* fPts[kQueueBufferCount];
+    const float* fW[kQueueBufferCount];
     int fQueueFrontIdx = 0;
     int fQueueCount = 0;
 

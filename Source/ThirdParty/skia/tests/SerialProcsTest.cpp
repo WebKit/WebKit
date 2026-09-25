@@ -44,7 +44,6 @@
 #endif
 
 #include <algorithm>
-#include <array>
 #include <cstring>
 #include <functional>
 #include <iterator>
@@ -65,22 +64,20 @@ DEF_TEST(serial_procs_image, reporter) {
     auto src_img = ToolUtils::GetResourceAsImage("images/mandrill_128.png");
     const char magic_str[] = "magic signature";
 
-    const auto sprocs = std::to_array<SkSerialImageProc>({
-            SkSerialImageProc([](SkImage* img, void* ctx) -> sk_sp<const SkData> {
+    const SkSerialImageProc sprocs[] = {
+            [](SkImage* img, void* ctx) -> sk_sp<const SkData> {
 #if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
                 return SkPngRustEncoder::Encode(nullptr, img, SkPngRustEncoder::Options{});
 #else
                 return SkPngEncoder::Encode(nullptr, img, SkPngEncoder::Options{});
 #endif
-            }),
-            SkSerialImageProc([](SkImage* img, void* ctx) -> sk_sp<const SkData> {
+            },
+            [](SkImage* img, void* ctx) -> sk_sp<const SkData> {
                 return SkData::MakeWithCString(((State*)ctx)->fStr);
-            }),
-    });
-    const auto dprocs = std::to_array<SkDeserialImageFromDataProc>({
-            SkDeserialImageFromDataProc([](sk_sp<SkData> data,
-                                           std::optional<SkAlphaType> alphaType,
-                                           void*) -> sk_sp<SkImage> {
+            },
+    };
+    const SkDeserialImageFromDataProc dprocs[] = {
+            [](sk_sp<SkData> data, std::optional<SkAlphaType> alphaType, void*) -> sk_sp<SkImage> {
 #if defined(SK_CODEC_DECODES_PNG_WITH_RUST)
                 std::unique_ptr<SkStream> stream = SkMemoryStream::Make(data);
                 auto codec = SkPngRustDecoder::Decode(std::move(stream), nullptr, nullptr);
@@ -88,18 +85,16 @@ DEF_TEST(serial_procs_image, reporter) {
                 auto codec = SkPngDecoder::Decode(data, nullptr, nullptr);
 #endif
                 return std::get<0>(codec->getImage());
-            }),
-            SkDeserialImageFromDataProc([](sk_sp<SkData> data,
-                                           std::optional<SkAlphaType>,
-                                           void* ctx) -> sk_sp<SkImage> {
+            },
+            [](sk_sp<SkData> data, std::optional<SkAlphaType>, void* ctx) -> sk_sp<SkImage> {
                 State* state = (State*)ctx;
                 if (data->size() != strlen(state->fStr) + 1 ||
                     0 != memcmp(data->data(), state->fStr, data->size())) {
                     return nullptr;
                 }
                 return sk_ref_sp(state->fImg);
-            }),
-    });
+            },
+    };
 
     sk_sp<SkPicture> pic;
     {

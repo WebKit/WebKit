@@ -16,8 +16,6 @@
 #include "tools/Resources.h"
 #include "tools/viewer/ClickHandlerSlide.h"
 
-#include <array>
-
 struct VSphere {
     SkV2     fCenter;
     SkScalar fRadius;
@@ -433,21 +431,21 @@ DEF_SLIDE( return new Bump3DSlide; )
 #include "modules/skottie/include/Skottie.h"
 
 class SkottieCubeSlide : public CubeBaseSlide {
-    std::array<sk_sp<skottie::Animation>, 6> fAnim;
+    sk_sp<skottie::Animation> fAnim[6];
 
 public:
     SkottieCubeSlide() : CubeBaseSlide(kCanRunOnCPU) { fName = "skottie3d"; }
 
     void load(SkScalar w, SkScalar h) override {
-        static constexpr auto files = std::to_array<const char*>({
-                "skottie/skottie-chained-mattes.json",
-                "skottie/skottie-gradient-ramp.json",
-                "skottie/skottie_sample_2.json",
-                "skottie/skottie-3d-3planes.json",
-                "skottie/skottie-text-animator-4.json",
-                "skottie/skottie-motiontile-effect-phase.json",
+        const char* files[] = {
+            "skottie/skottie-chained-mattes.json",
+            "skottie/skottie-gradient-ramp.json",
+            "skottie/skottie_sample_2.json",
+            "skottie/skottie-3d-3planes.json",
+            "skottie/skottie-text-animator-4.json",
+            "skottie/skottie-motiontile-effect-phase.json",
 
-        });
+        };
         for (unsigned i = 0; i < std::size(files); ++i) {
             if (auto stream = GetResourceAsStream(files[i])) {
                 fAnim[i] = skottie::Animation::Make(stream.get());

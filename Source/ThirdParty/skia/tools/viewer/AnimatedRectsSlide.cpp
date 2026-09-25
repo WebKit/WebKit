@@ -15,8 +15,6 @@
 #include "tools/timer/TimeUtils.h"
 #include "tools/viewer/Slide.h"
 
-#include <array>
-
 // This slide draws a lot of overlapping rectangles which slide left.
 // It's adapted from the performance test at https://benchmarks.slaylines.io/
 static constexpr int kWidth = 1000;
@@ -81,7 +79,7 @@ private:
         float x, y, size, speed;
     };
 
-    std::array<AnimatedRect, kNumRects> fRect;
+    AnimatedRect fRect[kNumRects];
     SkRandom fRand;
     SkPaint fStrokePaint, fFillPaint;
     float fLastTime = 0.0f;

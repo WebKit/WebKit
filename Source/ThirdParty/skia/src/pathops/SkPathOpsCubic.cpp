@@ -19,7 +19,6 @@
 #include "src/pathops/SkPathOpsTypes.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 
 struct SkDLine;
@@ -158,8 +157,8 @@ bool SkDCubic::endsAreExtremaInXOrY() const {
 */
 bool SkDCubic::hullIntersects(const SkDPoint* pts, int ptCount, bool* isLinear) const {
     bool linear = true;
-    std::array<char, 4> hullOrder;
-    int hullCount = convexHull(hullOrder.data());
+    char hullOrder[4];
+    int hullCount = convexHull(hullOrder);
     int end1 = hullOrder[0];
     int hullIndex = 0;
     const SkDPoint* endPt[2];

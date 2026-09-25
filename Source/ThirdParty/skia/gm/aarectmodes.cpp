@@ -23,8 +23,6 @@
 #include "include/core/SkTypes.h"
 #include "src/core/SkColorPriv.h"
 
-#include <array>
-
 static void test4(SkCanvas* canvas) {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -72,20 +70,20 @@ static void test4(SkCanvas* canvas) {
     canvas->drawPath(path.detach(), paint);
 }
 
-constexpr auto gModes = std::to_array<SkBlendMode>({
-        SkBlendMode::kClear,
-        SkBlendMode::kSrc,
-        SkBlendMode::kDst,
-        SkBlendMode::kSrcOver,
-        SkBlendMode::kDstOver,
-        SkBlendMode::kSrcIn,
-        SkBlendMode::kDstIn,
-        SkBlendMode::kSrcOut,
-        SkBlendMode::kDstOut,
-        SkBlendMode::kSrcATop,
-        SkBlendMode::kDstATop,
-        SkBlendMode::kXor,
-});
+constexpr SkBlendMode gModes[] = {
+    SkBlendMode::kClear,
+    SkBlendMode::kSrc,
+    SkBlendMode::kDst,
+    SkBlendMode::kSrcOver,
+    SkBlendMode::kDstOver,
+    SkBlendMode::kSrcIn,
+    SkBlendMode::kDstIn,
+    SkBlendMode::kSrcOut,
+    SkBlendMode::kDstOut,
+    SkBlendMode::kSrcATop,
+    SkBlendMode::kDstATop,
+    SkBlendMode::kXor,
+};
 
 const int gWidth = 64;
 const int gHeight = 64;
@@ -135,7 +133,7 @@ DEF_SIMPLE_GM(aarectmodes, canvas, 640, 480) {
                 test4(canvas);
             }
             const SkRect bounds = SkRect::MakeWH(W, H);
-            constexpr auto gAlphaValue = std::to_array<SkAlpha>({0xFF, 0x88, 0x88});
+            constexpr SkAlpha gAlphaValue[] = { 0xFF, 0x88, 0x88 };
 
             canvas->translate(SkIntToScalar(4), SkIntToScalar(4));
 

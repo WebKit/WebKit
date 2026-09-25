@@ -9,7 +9,6 @@
 #include "src/core/SkRandom.h"
 #include "src/gpu/ganesh/GrMemoryPool.h"
 
-#include <array>
 #include <type_traits>
 
 namespace {
@@ -43,7 +42,7 @@ typedef void (*RunBenchProc)(GrMemoryPool*, int);
 template <typename T>
 static void run_stack(GrMemoryPool* pool, int loops) {
     static const int kMaxObjects = 4 * (1 << 10);
-    std::array<T*, kMaxObjects> objs;
+    T* objs[kMaxObjects];
     for (int i = 0; i < loops; ++i) {
         // Push N objects into the pool (or heap if pool is null)
         for (int j = 0; j < kMaxObjects; ++j) {
@@ -67,7 +66,7 @@ static void run_stack(GrMemoryPool* pool, int loops) {
 template <typename T>
 static void run_queue(GrMemoryPool* pool, int loops) {
     static const int kMaxObjects = 4 * (1 << 10);
-    std::array<T*, kMaxObjects> objs;
+    T* objs[kMaxObjects];
     for (int i = 0; i < loops; ++i) {
         // Push N objects into the pool (or heap if pool is null)
         for (int j = 0; j < kMaxObjects; ++j) {
@@ -91,7 +90,7 @@ static void run_queue(GrMemoryPool* pool, int loops) {
 template <typename T>
 static void run_pushpop(GrMemoryPool* pool, int loops) {
     static const int kMaxObjects = 4 * (1 << 10);
-    std::array<T*, kMaxObjects> objs;
+    T* objs[kMaxObjects];
     for (int i = 0; i < loops; ++i) {
         // Push N objects into the pool (or heap if pool is null)
         for (int j = 0; j < kMaxObjects; ++j) {
@@ -112,7 +111,7 @@ static void run_pushpop(GrMemoryPool* pool, int loops) {
 template <typename T>
 static void run_random(GrMemoryPool* pool, int loops) {
     static const int kMaxObjects = 4 * (1 << 10);
-    std::array<T*, kMaxObjects> objs;
+    T* objs[kMaxObjects];
     for (int i = 0; i < kMaxObjects; ++i) {
         objs[i] = nullptr;
     }

@@ -17,8 +17,6 @@
 
 #include "bench/gUniqueGlyphIDs.h"
 
-#include <array>
-
 #define gUniqueGlyphIDs_Sentinel    0xFFFF
 
 static int count_glyphs(const uint16_t start[]) {
@@ -69,14 +67,13 @@ static uint32_t hasher0(uint32_t value) {
     return value ^ (value >> 8);
 }
 
-struct HashTestCase {
+static const struct {
     const char* fName;
     HasherProc  fHasher;
+} gRec[] = {
+    { "hasher0",  hasher0 },
+    { "hasher2",  SkChecksum::Mix },
 };
-static constexpr auto gRec = std::to_array<HashTestCase>({
-        HashTestCase{"hasher0", hasher0},
-        HashTestCase{"hasher2", SkChecksum::Mix},
-});
 
 #define kMaxHashBits   12
 #define kMaxHashCount  (1 << kMaxHashBits)
@@ -153,7 +150,7 @@ DEF_BENCH( return new FontCacheBench(); )
 
 class FontPathBench : public Benchmark {
     SkFont fFont;
-    std::array<SkGlyphID, 100> fGlyphs;
+    SkGlyphID fGlyphs[100];
     SkString fName;
     const bool fOneAtATime;
 

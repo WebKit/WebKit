@@ -10,16 +10,14 @@
 #include "include/core/SkPathBuilder.h"
 #include "include/core/SkPathMeasure.h"
 
-#include <array>
-
 void inline ignoreResult(bool ) {}
 
 DEF_FUZZ(PathMeasure, fuzz) {
     uint8_t bits;
     fuzz->next(&bits);
-    std::array<SkScalar, 6> distance = {};
-    for (SkScalar& d : distance) {
-        fuzz->next(&d);
+    SkScalar distance[6];
+    for (auto index = 0; index < 6; ++index) {
+        fuzz->next(&distance[index]);
     }
     SkPath path = FuzzEvilPath(fuzz, SkPath::Verb::kDone_Verb);
     SkRect bounds = path.getBounds();

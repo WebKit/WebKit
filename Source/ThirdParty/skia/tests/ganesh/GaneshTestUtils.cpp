@@ -30,7 +30,6 @@
 #include "src/gpu/ganesh/SurfaceContext.h"
 #include "tests/Test.h"
 
-#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <utility>
@@ -123,7 +122,7 @@ static bool compare_colors(int x, int y,
                            const float rgbaB[],
                            const float tolRGBA[4],
                            std::function<ComparePixmapsErrorReporter>& error) {
-    std::array<float, 4> diffs;
+    float diffs[4];
     bool bad = false;
     for (int i = 0; i < 4; ++i) {
         diffs[i] = rgbaB[i] - rgbaA[i];
@@ -132,7 +131,7 @@ static bool compare_colors(int x, int y,
         }
     }
     if (bad) {
-        error(x, y, diffs.data());
+        error(x, y, diffs);
         return false;
     }
     return true;

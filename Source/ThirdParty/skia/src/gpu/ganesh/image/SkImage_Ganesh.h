@@ -103,7 +103,7 @@ public:
     void generatingSurfaceIsDeleted() override;
 
     // From SkImage_GaneshBase.h
-    GrDirectContext::FlushResult flush(GrDirectContext*, const GrFlushInfo&) const override;
+    GrSemaphoresSubmitted flush(GrDirectContext*, const GrFlushInfo&) const override;
 
     std::tuple<GrSurfaceProxyView, GrColorType> asView(GrRecordingContext*,
                                                        skgpu::Mipmapped,

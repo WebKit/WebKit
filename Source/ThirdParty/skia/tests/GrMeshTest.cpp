@@ -91,7 +91,8 @@ static constexpr int kImageWidth = kBoxCountY * kBoxSize;
 static constexpr int kImageHeight = kBoxCountX * kBoxSize;
 
 static constexpr int kIndexPatternRepeatCount = 3;
-constexpr std::array<uint16_t, 6> kIndexPattern = {0, 1, 2, 1, 2, 3};
+constexpr uint16_t kIndexPattern[6] = {0, 1, 2, 1, 2, 3};
+
 
 class DrawMeshHelper {
 public:
@@ -603,7 +604,7 @@ sk_sp<const GrBuffer> DrawMeshHelper::makeVertexBuffer(const T* data, int count)
 sk_sp<const GrBuffer> DrawMeshHelper::getIndexBuffer() {
     SKGPU_DEFINE_STATIC_UNIQUE_KEY(gIndexBufferKey);
     return fState->resourceProvider()->findOrCreatePatternedIndexBuffer(
-            kIndexPattern.data(), 6, kIndexPatternRepeatCount, 4, gIndexBufferKey);
+            kIndexPattern, 6, kIndexPatternRepeatCount, 4, gIndexBufferKey);
 }
 
 GrOpsRenderPass* DrawMeshHelper::bindPipeline(GrPrimitiveType primitiveType, bool isInstanced,

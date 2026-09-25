@@ -84,7 +84,6 @@ public:
     // For BindGroupEntries, using this method to get a null buffer pointer rather than simply using
     // nullptr allows for assigning a label (when enabled in Caps) for more clear debugging.
     const wgpu::Buffer& getOrCreateNullBuffer();
-    const wgpu::TextureView& getOrCreateNullTextureView();
 
 private:
     sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) override;
@@ -109,7 +108,6 @@ private:
     skia_private::THashMap<uint32_t, wgpu::RenderPipeline> fBlitWithDrawPipelines;
 
     wgpu::Buffer fNullBuffer;
-    wgpu::TextureView fNullTextureView;
 
     class IntrinsicBuffer;
     class IntrinsicConstantsManager;

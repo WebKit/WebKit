@@ -29,7 +29,6 @@
 #include "src/text/GlyphRun.h"
 
 #include <algorithm>
-#include <array>
 #include <atomic>
 #include <limits>
 #include <new>
@@ -197,12 +196,12 @@ enum SkTextBlob::GlyphPositioning : uint8_t {
 };
 
 unsigned SkTextBlob::ScalarsPerGlyph(GlyphPositioning pos) {
-    static constexpr auto gScalarsPerPositioning = std::to_array<uint8_t>({
+    const uint8_t gScalarsPerPositioning[] = {
         0,  // kDefault_Positioning
         1,  // kHorizontal_Positioning
         2,  // kFull_Positioning
         4,  // kRSXform_Positioning
-    });
+    };
     SkASSERT((unsigned)pos <= 3);
     return gScalarsPerPositioning[pos];
 }

@@ -190,7 +190,7 @@ func (b *TaskBuilder) cipdFromDEPS(pkgName string) {
 func (b *TaskBuilder) useIsolatedAssets() bool {
 	// Only do this on the RPIs for now. Other, faster machines shouldn't
 	// see much benefit and we don't need the extra complexity, for now.
-	if b.Os("ChromeOS") || b.MatchOs("Android", "iOS") {
+	if b.Os("ChromeOS", "iOS") || b.MatchOs("Android") {
 		return true
 	}
 	return false
@@ -260,7 +260,6 @@ func (b *TaskBuilder) shellsOutToBazel() bool {
 func (b *TaskBuilder) usesCMake() {
 	archToPkg := map[string]string{
 		"Ubuntu24.04": "cmake_linux",
-		"Ubuntu26.04": "cmake_linux",
 		"Mac":         "cmake_mac",
 		"Win":         "cmake_win",
 	}

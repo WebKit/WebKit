@@ -43,7 +43,7 @@ private:
         return ExpectedOutcome::kTargetUnchanged;
     }
 
-    ExecutionResult onExecute(GrOpFlushState*) override;
+    bool onExecute(GrOpFlushState*) override;
 
 #if defined(GPU_TEST_UTILS)
     const char* name() const final { return "Wait"; }

@@ -465,8 +465,7 @@ public:
     /**
      * Draw rrect with an optimized path for analytic blurs, if provided by the device.
      */
-    virtual bool drawBlurredRRect(const SkRRect&, const SkPaint&,
-                                  SkV2 localSigma, float deviceSigma) {
+    virtual bool drawBlurredRRect(const SkRRect&, const SkPaint&, float deviceSigma) {
         return false;
     }
 

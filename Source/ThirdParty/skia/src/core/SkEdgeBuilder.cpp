@@ -22,8 +22,6 @@
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkSafeMath.h"
 
-#include <array>
-
 SkEdgeBuilder::Combine SkBasicEdgeBuilder::combineVertical(const SkEdge* edge, SkEdge* last) {
     // We only consider edges that were originally lines to be vertical to avoid numerical issues
     // (crbug.com/1154864).
@@ -303,10 +301,10 @@ int SkEdgeBuilder::build(const SkPathRaw& raw, const SkIRect* iclip, bool canCul
     SkPathEdgeIter iter(raw);
     SkAutoConicToQuads quadder;
     constexpr float kConicTol = 0.25f;
-    std::array<SkPoint, 10> monoY;
-    std::array<SkPoint, 5> monoX;
+    SkPoint monoY[10];
+    SkPoint monoX[5];
     auto handle_quad = [this, &monoX](const SkPoint pts[3]) {
-        int n = SkChopQuadAtYExtrema(pts, monoX.data());
+        int n = SkChopQuadAtYExtrema(pts, monoX);
         for (int i = 0; i <= n; i++) {
             this->addQuad(&monoX[i * 2]);
         }
@@ -330,7 +328,7 @@ int SkEdgeBuilder::build(const SkPathRaw& raw, const SkIRect* iclip, bool canCul
                 }
             } break;
             case SkPathEdgeIter::Edge::kCubic: {
-                int n = SkChopCubicAtYExtrema(e.fPts, monoY.data());
+                int n = SkChopCubicAtYExtrema(e.fPts, monoY);
                 for (int i = 0; i <= n; i++) {
                     this->addCubic(&monoY[i * 3]);
                 }

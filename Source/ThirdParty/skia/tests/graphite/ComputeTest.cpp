@@ -944,8 +944,8 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_StorageTextureReadAndWrite
                                                       recorder->priv().resourceProvider(),
                                                       {kDim, kDim},
                                                       texInfo,
-                                                      skgpu::Budgeted::kNo,
-                                                      "ComputeTestSrcProxy");
+                                                      "ComputeTestSrcProxy",
+                                                      skgpu::Budgeted::kNo);
     MipLevel mipLevel;
     mipLevel.fPixels = srcPixels.addr();
     mipLevel.fRowBytes = srcPixels.rowBytes();

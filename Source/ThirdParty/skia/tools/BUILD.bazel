@@ -1,25 +1,11 @@
 load("//bazel:macros.bzl", "py_binary")
-load("//bazel:skia_rules.bzl", "skia_cc_binary", "skia_cc_library", "skia_objc_library")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_objc_library")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-skia_cc_binary(
-    name = "dump_capture",
-    testonly = True,
-    srcs = [
-        "dump_base.h",
-        "dump_capture.cpp",
-    ],
-    deps = [
-        "//:core",
-        "//src/core:core_priv",
-        "//tools/flags:cmd_flags",
-    ],
-)
 
 exports_files([
     "ToolUtils.h",
@@ -326,7 +312,6 @@ skia_cc_library(
     srcs = [
         "//include/codec:headers_to_compile",
         "//include/core:headers_to_compile",
-        "//include/cpu:headers_to_compile",
         "//include/docs:headers_to_compile",
         "//include/effects:headers_to_compile",
         "//include/encode:headers_to_compile",

@@ -5,7 +5,6 @@
  * found in the LICENSE file.
  */
 
-#include <array>
 #include "include/encode/SkICC.h"
 
 #include "include/core/SkColorSpace.h"
@@ -16,7 +15,6 @@
 #include "include/core/SkTypes.h"
 #include "include/private/SkFixed.h"
 #include "include/private/SkFloatingPoint.h"
-#include "include/private/SkHdrMetadata.h"
 #include "modules/skcms/skcms.h"
 #include "src/core/SkAutoMalloc.h"
 #include "src/core/SkEndian.h"
@@ -71,7 +69,7 @@ struct ICCHeader {
     // Preferred CMM type (ignored)
     uint32_t cmm_type = 0;
 
-    // Version 4.3 or 4.4 if CICP or HAGC is included.
+    // Version 4.3 or 4.4 if CICP is included.
     uint32_t version = SkEndian_SwapBE32(0x04300000);
 
     // Display device profile
@@ -333,20 +331,6 @@ sk_sp<SkData> write_cicp_tag(const skcms_CICP& cicp) {
     return s.detachAsData();
 }
 
-// Write a HAGC tag.
-sk_sp<SkData> write_hagc_tag(const skcms_HAGC& hagc) {
-    SkDynamicMemoryWStream s;
-    SkStreamPriv::WriteU32BE(&s, kTAG_HAGCType);  // Type signature
-    SkStreamPriv::WriteU32BE(&s, 0);              // Reserved
-    SkStreamPriv::WriteU32BE(&s, hagc.size);      // Size of payload
-    if (hagc.size > 0) {
-        SkASSERT_RELEASE(hagc.buffer);
-        s.write(hagc.buffer, hagc.size);
-    }
-    s.padToAlign4();
-    return s.detachAsData();
-}
-
 constexpr float kToneMapInputMax = 1000.f / 203.f;
 constexpr float kToneMapOutputMax = 1.f;
 
@@ -465,7 +449,7 @@ sk_sp<SkData> write_mAB_or_mBA_tag(uint32_t type,
 
     // The "B" curve is required.
     size_t b_curves_offset = offset;
-    std::array<sk_sp<SkData>, kNumChannels> b_curves_data;
+    sk_sp<SkData> b_curves_data[kNumChannels];
     SkASSERT(b_curves);
     for (size_t i = 0; i < kNumChannels; ++i) {
         b_curves_data[i] = write_trc_tag(b_curves[i]);
@@ -486,7 +470,7 @@ sk_sp<SkData> write_mAB_or_mBA_tag(uint32_t type,
 
     // The "A" curves.
     size_t a_curves_offset = 0;
-    std::array<sk_sp<SkData>, kNumChannels> a_curves_data;
+    sk_sp<SkData> a_curves_data[kNumChannels];
     if (a_curves) {
         SkASSERT(grid_points);
         SkASSERT(grid_16);
@@ -510,7 +494,7 @@ sk_sp<SkData> write_mAB_or_mBA_tag(uint32_t type,
 
     // The "M" curves.
     size_t m_curves_offset = 0;
-    std::array<sk_sp<SkData>, kNumChannels> m_curves_data;
+    sk_sp<SkData> m_curves_data[kNumChannels];
     if (m_curves) {
         SkASSERT(matrix);
         m_curves_offset = offset;
@@ -563,7 +547,6 @@ sk_sp<SkData> write_mAB_or_mBA_tag(uint32_t type,
 
 sk_sp<SkData> SkWriteICCProfile(const skcms_ICCProfile* profile, const char* desc) {
     ICCHeader header;
-    bool uses_4_4_features = false;
 
     std::vector<std::pair<uint32_t, sk_sp<SkData>>> tags;
 
@@ -599,14 +582,9 @@ sk_sp<SkData> SkWriteICCProfile(const skcms_ICCProfile* profile, const char* des
 
     // Compute CICP.
     if (profile->has_CICP) {
-        uses_4_4_features = true;
+        // The CICP tag is present in ICC 4.4, so update the header's version.
+        header.version = SkEndian_SwapBE32(0x04400000);
         tags.emplace_back(kTAG_cicp, write_cicp_tag(profile->CICP));
-    }
-
-    // Compute HAGC.
-    if (profile->has_HAGC) {
-        uses_4_4_features = true;
-        tags.emplace_back(kTAG_HAGC, write_hagc_tag(profile->HAGC));
     }
 
     // Compute A2B0.
@@ -664,8 +642,6 @@ sk_sp<SkData> SkWriteICCProfile(const skcms_ICCProfile* profile, const char* des
     size_t profile_size = kICCHeaderSize + tag_table_size + tag_data_size;
 
     // Write the header.
-    header.version = uses_4_4_features ? SkEndian_SwapBE32(0x04400000)
-                                       : SkEndian_SwapBE32(0x04300000);
     header.data_color_space = SkEndian_SwapBE32(profile->data_color_space);
     header.pcs = SkEndian_SwapBE32(profile->pcs);
     header.size = SkEndian_SwapBE32(profile_size);
@@ -706,17 +682,7 @@ sk_sp<SkData> SkWriteICCProfile(const skcms_ICCProfile* profile, const char* des
     return SkData::MakeFromMalloc(profile_data.release(), profile_size);
 }
 
-sk_sp<SkData> SkWriteICCProfile(const SkColorSpace* colorSpace,
-                                const skhdr::Metadata* hdrMetadata) {
-    if (!colorSpace) {
-        return nullptr;
-    }
-
-    skcms_TransferFunction fn;
-    skcms_Matrix3x3 toXYZD50;
-    colorSpace->transferFn(&fn);
-    colorSpace->toXYZD50(&toXYZD50);
-
+sk_sp<SkData> SkWriteICCProfile(const skcms_TransferFunction& fn, const skcms_Matrix3x3& toXYZD50) {
     skcms_ICCProfile profile;
     memset(&profile, 0, sizeof(profile));
     std::vector<uint16_t> trc_table;
@@ -854,21 +820,6 @@ sk_sp<SkData> SkWriteICCProfile(const SkColorSpace* colorSpace,
         SkASSERT(profile.CICP.transfer_characteristics);
     }
 
-    // Populate HAGC.
-    sk_sp<const SkData> agtm;
-    if (hdrMetadata) {
-        agtm = hdrMetadata->getSerializedAgtm();
-        if (agtm && !agtm->empty()) {
-            profile.has_HAGC = true;
-            profile.HAGC.size = static_cast<uint32_t>(agtm->size());
-            profile.HAGC.buffer = agtm->bytes();
-        }
-    }
-
     std::string description = get_desc_string(fn, toXYZD50);
     return SkWriteICCProfile(&profile, description.c_str());
-}
-
-sk_sp<SkData> SkWriteICCProfile(const skcms_TransferFunction& fn, const skcms_Matrix3x3& toXYZD50) {
-    return SkWriteICCProfile(SkColorSpace::MakeRGB(fn, toXYZD50).get(), nullptr);
 }

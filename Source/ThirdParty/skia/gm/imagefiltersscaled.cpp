@@ -29,7 +29,6 @@
 #include "include/effects/SkPerlinNoiseShader.h"
 #include "tools/ToolUtils.h"
 
-#include <array>
 #include <utility>
 
 #define RESIZE_FACTOR SkIntToScalar(4)
@@ -90,7 +89,7 @@ protected:
         SkMatrix resizeMatrix;
         resizeMatrix.setScale(RESIZE_FACTOR, RESIZE_FACTOR);
 
-        auto filters = std::to_array<sk_sp<SkImageFilter>>({
+        sk_sp<SkImageFilter> filters[] = {
                 SkImageFilters::Blur(SkIntToScalar(4), SkIntToScalar(4), nullptr),
                 SkImageFilters::DropShadow(5, 10, 3, 3, SK_ColorYELLOW, nullptr),
                 SkImageFilters::DisplacementMap(SkColorChannel::kR,
@@ -113,15 +112,15 @@ protected:
                                                surfaceScale,
                                                kd,
                                                nullptr),
-        });
+        };
 
-        auto scales = std::to_array<SkVector>({
-                SkVector::Make(SkScalarInvert(2), SkScalarInvert(2)),
-                SkVector::Make(SkIntToScalar(1), SkIntToScalar(1)),
-                SkVector::Make(SkIntToScalar(1), SkIntToScalar(2)),
-                SkVector::Make(SkIntToScalar(2), SkIntToScalar(1)),
-                SkVector::Make(SkIntToScalar(2), SkIntToScalar(2)),
-        });
+        SkVector scales[] = {
+            SkVector::Make(SkScalarInvert(2), SkScalarInvert(2)),
+            SkVector::Make(SkIntToScalar(1), SkIntToScalar(1)),
+            SkVector::Make(SkIntToScalar(1), SkIntToScalar(2)),
+            SkVector::Make(SkIntToScalar(2), SkIntToScalar(1)),
+            SkVector::Make(SkIntToScalar(2), SkIntToScalar(2)),
+        };
 
         SkRect r = SkRect::MakeWH(SkIntToScalar(64), SkIntToScalar(64));
         SkScalar margin = SkIntToScalar(16);

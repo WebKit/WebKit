@@ -27,7 +27,6 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
 #include <string.h>
 
 using namespace skia_private;
@@ -115,7 +114,7 @@ sk_sp<SkTextBlob> MakeFancyBlob(const SkPaint& paint, const SkFont& font, const 
 DEF_SIMPLE_GM(fancyblobunderline, canvas, 1480, 1380) {
     SkPaint paint;
     paint.setAntiAlias(true);
-    static constexpr auto fam = std::to_array<const char*>({"sans-serif", "serif", "monospace"});
+    const char* fam[] = { "sans-serif", "serif", "monospace" };
     const char test[] = "aAjJgGyY_|{-(~[,]qQ}pP}zZ";
     const SkPoint blobOffset = { 10, 80 };
 

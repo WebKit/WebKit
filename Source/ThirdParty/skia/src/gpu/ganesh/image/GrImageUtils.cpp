@@ -68,7 +68,6 @@
 #include "src/image/SkImage_Picture.h"
 #include "src/image/SkImage_Raster.h"
 
-#include <array>
 #include <string_view>
 #include <utility>
 
@@ -157,8 +156,8 @@ static GrSurfaceProxyView texture_proxy_view_from_planes(GrRecordingContext* ctx
         return {};
     }
 
-    std::array<GrSurfaceProxyView, SkYUVAInfo::kMaxPlanes> views = {};
-    std::array<GrColorType, SkYUVAInfo::kMaxPlanes> pixmapColorTypes = {};
+    GrSurfaceProxyView views[SkYUVAInfo::kMaxPlanes];
+    GrColorType pixmapColorTypes[SkYUVAInfo::kMaxPlanes];
     for (int i = 0; i < yuvaPixmaps.numPlanes(); ++i) {
         // If the sizes of the components are not all the same we choose to create exact-match
         // textures for the smaller ones rather than add a texture domain to the draw.
@@ -213,7 +212,7 @@ static GrSurfaceProxyView texture_proxy_view_from_planes(GrRecordingContext* ctx
         return {};
     }
 
-    GrYUVATextureProxies yuvaProxies(yuvaPixmaps.yuvaInfo(), views.data(), pixmapColorTypes.data());
+    GrYUVATextureProxies yuvaProxies(yuvaPixmaps.yuvaInfo(), views, pixmapColorTypes);
     SkAssertResult(yuvaProxies.isValid());
 
     std::unique_ptr<GrFragmentProcessor> fp = GrYUVtoRGBEffect::Make(

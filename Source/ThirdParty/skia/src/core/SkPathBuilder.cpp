@@ -27,7 +27,6 @@
 #include "src/core/SkVx.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -479,8 +478,8 @@ SkPathBuilder& SkPathBuilder::arcTo(const SkRect& oval, SkScalar startAngle, SkS
         return *this;
     }
 
-    std::array<SkConic, SkConic::kMaxConicsForArc> conics;
-    int count = build_arc_conics(oval, startV, stopV, dir, conics.data(), &singlePt);
+    SkConic conics[SkConic::kMaxConicsForArc];
+    int count = build_arc_conics(oval, startV, stopV, dir, conics, &singlePt);
     if (count) {
         this->incReserve(count * 2 + 1);
         const SkPoint& pt = conics[0].fPts[0];

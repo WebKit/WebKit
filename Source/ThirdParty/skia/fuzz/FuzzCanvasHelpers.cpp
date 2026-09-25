@@ -52,7 +52,6 @@
 #include "tools/flags/CommandLineFlags.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
 #include <iostream>
 #include <utility>
 
@@ -897,17 +896,17 @@ static SkTDArray<uint8_t> make_fuzz_text(Fuzz* fuzz, const SkFont& font, SkTextE
         }
         return array;
     }
-    static constexpr auto ranges = std::to_array<std::array<SkUnichar, 2>>({
+    static const SkUnichar ranges[][2] = {
         {0x0020, 0x007F},
         {0x00A1, 0x0250},
         {0x0400, 0x0500},
-    });
+    };
     int32_t count = 0;
     for (size_t i = 0; i < std::size(ranges); ++i) {
         count += (ranges[i][1] - ranges[i][0]);
     }
     constexpr int kMaxLength = kMaxGlyphCount;
-    std::array<SkUnichar, kMaxLength> buffer = {};
+    SkUnichar buffer[kMaxLength];
     int length;
     fuzz->nextRange(&length, 1, kMaxLength);
     for (int j = 0; j < length; ++j) {
@@ -944,9 +943,7 @@ static SkTDArray<uint8_t> make_fuzz_text(Fuzz* fuzz, const SkFont& font, SkTextE
             }
         } break;
         case SkTextEncoding::kUTF32:
-            memcpy(array.append(length * sizeof(SkUnichar)),
-                   buffer.data(),
-                   length * sizeof(SkUnichar));
+            memcpy(array.append(length * sizeof(SkUnichar)), buffer, length * sizeof(SkUnichar));
             break;
         default:
             SkASSERT(false);

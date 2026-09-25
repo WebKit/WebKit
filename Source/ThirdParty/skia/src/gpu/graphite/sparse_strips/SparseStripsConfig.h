@@ -10,8 +10,6 @@
 
 #include "include/core/SkColorType.h"
 
-#include <cstdint>
-
 namespace skgpu::graphite {
 
 // Tunable compile-time paramters that control various aspects of SparseStrips behavior
@@ -20,10 +18,6 @@ struct SparseStripConfig {
     static constexpr uint16_t kTileWidth  = 8;
     static constexpr uint16_t kTileHeight = 8;
     static_assert(kTileWidth == kTileHeight);
-
-    // The tile dimensions MUST match the hard coded constant in the fragment shader. If that value
-    // changes, this must be updated.
-    static_assert(kTileWidth == 8);
 
     // These control the AlphaAtlasManager
     static constexpr SkColorType kColorType       = SkColorType::kRGBA_8888_SkColorType;
@@ -34,29 +28,12 @@ struct SparseStripConfig {
     static constexpr int32_t kAtlasWidthBytes     = kAtlasWidth * kAtlasBytesPerTexel;
     static constexpr int32_t kInitialAtlasRows    = 1;
     static constexpr int32_t kMaxAtlasRows        = 8192;
-    static constexpr int32_t kMaxAtlasBytes       = kAtlasWidth * kMaxAtlasRows *
+    static constexpr int32_t kMaxCapBytes         = kAtlasWidth * kMaxAtlasRows *
                                                     kAtlasBytesPerTexel;
     static constexpr int32_t kMaxTexturePages     = 2;
-
     // The AlphaAtlasManager uses a flipflopping allocation system that will break if the page count
     // is increased beyond 2.
     static_assert(kMaxTexturePages == 2);
-    // To avoid uploading the texture width, and to avoid a costly divide and mod in the shader, we
-    // assume that the atlas width is always fixed.
-    static_assert(kAtlasWidth == 8192);
-
-    // The number of MSAA SubSamples in SparseStrips rendering. We currently only support 8.
-    static constexpr int32_t   kNumSubSamples     = 8;
-    static_assert(!((kNumSubSamples & (kNumSubSamples - 1))));
-
-    static constexpr int32_t kLutMaskWidth        = 64;
-    static constexpr int32_t kLutMaskHeight       = 64;
-    static constexpr int32_t kLutMaskWidthExcl    = kLutMaskWidth - 1;
-    static constexpr int32_t kLutMaskHeightExcl   = kLutMaskHeight - 1;
-    static constexpr float   kLutMaskWidthF       = static_cast<float>(kLutMaskWidth);
-    static constexpr float   kLutMaskHeightF      = static_cast<float>(kLutMaskHeight);
-
-    static constexpr float kStripEpsilon          = 1e-5f;
 };
 
 }  // namespace skgpu::graphite

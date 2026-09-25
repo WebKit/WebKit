@@ -9,12 +9,10 @@
 #include "include/core/SkCanvas.h"
 #include "src/core/SkRandom.h"
 
-#include <array>
-
 class QuickRejectBench : public Benchmark {
     enum { N = 1000000 };
     float fFloats[N];
-    std::array<int, N> fInts;
+    int   fInts  [N];
 
     const char* onGetName() override { return "quick_reject"; }
     bool isSuitableFor(Backend backend) override { return backend != Backend::kNonRendering; }

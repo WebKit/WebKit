@@ -10,7 +10,6 @@
 #include "include/core/SkPoint.h"
 #include "include/core/SkTypes.h"
 #include "include/private/SkFloatingPoint.h"
-#include "include/private/SkTo.h"
 #include "src/core/SkGeometry.h"
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkTSort.h"
@@ -20,7 +19,6 @@
 
 #include <algorithm>
 #include <array>
-#include <cstdint>
 
 void SkOpEdgeBuilder::init() {
     fOperand = false;
@@ -275,8 +273,8 @@ bool SkOpEdgeBuilder::walk() {
                     // Split complex cubics (such as self-intersecting curves or
                     // ones with difficult curvature) in two before proceeding.
                     // This can be required for intersection to succeed.
-                    std::array<SkScalar, 3> splitT;
-                    int breaks = SkDCubic::ComplexBreak(pointsPtr, splitT.data());
+                    SkScalar splitT[3];
+                    int breaks = SkDCubic::ComplexBreak(pointsPtr, splitT);
                     if (!breaks) {
                         fContourBuilder.addCubic(pointsPtr);
                         break;
@@ -288,9 +286,9 @@ bool SkOpEdgeBuilder::walk() {
                         SkPoint fReduced[4];
                         SkPath::Verb fVerb;
                         bool fCanAdd;
-                    }; std::array<Splitsville, 4> splits;
+                    } splits[4];
                     SkASSERT(std::size(splits) == std::size(splitT) + 1);
-                    SkTQSort(splitT.data(), splitT.data() + breaks);
+                    SkTQSort(splitT, splitT + breaks);
                     for (int index = 0; index <= breaks; ++index) {
                         Splitsville* split = &splits[index];
                         split->fT[0] = index ? splitT[index - 1] : 0;

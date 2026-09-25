@@ -18,8 +18,6 @@
 #include "include/core/SkTypes.h"
 #include "src/core/SkBlurMask.h"
 
-#include <array>
-
 class BlurCirclesGM : public skiagm::GM {
 public:
     BlurCirclesGM() { }
@@ -32,7 +30,7 @@ protected:
     SkISize getISize() override { return SkISize::Make(950, 950); }
 
     void onOnceBeforeDraw() override {
-        static constexpr std::array<float, kNumBlurs> blurRadii = {1.f, 5.f, 10.f, 20.f};
+        const float blurRadii[kNumBlurs] = {1.f, 5.f, 10.f, 20.f};
 
         for (int i = 0; i < kNumBlurs; ++i) {
             fBlurFilters[i] = SkMaskFilter::MakeBlur(
@@ -45,7 +43,7 @@ protected:
         canvas->scale(1.5f, 1.5f);
         canvas->translate(50,50);
 
-        static constexpr auto circleRadii = std::to_array<float>({5.f, 10.f, 25.f, 50.f});
+        const float circleRadii[] = {5.f, 10.f, 25.f, 50.f};
 
         for (size_t i = 0; i < kNumBlurs; ++i) {
             SkAutoCanvasRestore autoRestore(canvas, true);
@@ -68,7 +66,7 @@ protected:
 private:
     inline static constexpr int kNumBlurs = 4;
 
-    std::array<sk_sp<SkMaskFilter>, kNumBlurs> fBlurFilters;
+    sk_sp<SkMaskFilter> fBlurFilters[kNumBlurs];
 
     using INHERITED =         skiagm::GM;
 };

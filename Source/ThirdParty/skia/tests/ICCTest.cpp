@@ -14,7 +14,6 @@
 #include "tests/Test.h"
 #include "tools/Resources.h"
 
-#include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
@@ -33,13 +32,13 @@ DEF_TEST(AdobeRGB, r) {
 
 DEF_TEST(HDR_ICC, r) {
     constexpr size_t kTestCount = 3;
-    std::array<sk_sp<SkData>, kTestCount> profile = {
+    sk_sp<SkData> profile[kTestCount] = {
             SkWriteICCProfile(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020),
             SkWriteICCProfile(SkNamedTransferFn::kHLG, SkNamedGamut::kDisplayP3),
             SkWriteICCProfile(SkNamedTransferFn::kSRGB, SkNamedGamut::kSRGB),
     };
 
-    std::array<sk_sp<SkData>, kTestCount> dst_profile = {
+    sk_sp<SkData> dst_profile[kTestCount] = {
             SkWriteICCProfile(SkNamedTransferFn::kLinear, SkNamedGamut::kRec2020),
             SkWriteICCProfile(SkNamedTransferFn::kLinear, SkNamedGamut::kDisplayP3),
             SkWriteICCProfile(SkNamedTransferFn::kLinear, SkNamedGamut::kSRGB),
@@ -104,10 +103,10 @@ DEF_TEST(HDR_ICC, r) {
             },
     };
     // clang-format on
-    std::array<bool, kTestCount> cicp_expected = {true, true, false};
-    std::array<bool, kTestCount> a2b_expected = {true, true, false};
-    std::array<uint32_t, kTestCount> cicp_primaries_expected = {9, 12, 0};
-    std::array<uint32_t, kTestCount> cicp_trfn_expected = {16, 18, 0};
+    bool cicp_expected[kTestCount] = {true, true, false};
+    bool a2b_expected[kTestCount] = {true, true, false};
+    uint32_t cicp_primaries_expected[kTestCount] = {9, 12, 0};
+    uint32_t cicp_trfn_expected[kTestCount] = {16, 18, 0};
 
     for (size_t test = 0; test < kTestCount; ++test) {
         skcms_ICCProfile parsed;
@@ -130,12 +129,12 @@ DEF_TEST(HDR_ICC, r) {
                 r, skcms_Parse(dst_profile[test]->data(), dst_profile[test]->size(), &dst_parsed));
 
         for (size_t pixel = 0; pixel < kPixelCount; ++pixel) {
-            std::array<float, 3> dst_pixel_actual = {0.f, 0.f, 0.f};
+            float dst_pixel_actual[3]{0.f, 0.f, 0.f};
             bool xform_result = skcms_Transform(pixels[pixel],
                                                 skcms_PixelFormat_RGB_fff,
                                                 skcms_AlphaFormat_Opaque,
                                                 &parsed,
-                                                dst_pixel_actual.data(),
+                                                dst_pixel_actual,
                                                 skcms_PixelFormat_RGB_fff,
                                                 skcms_AlphaFormat_Opaque,
                                                 &dst_parsed,

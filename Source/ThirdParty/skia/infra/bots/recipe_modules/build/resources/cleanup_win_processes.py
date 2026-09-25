@@ -3,12 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# /// script
-# requires-python = '>=3.11,<3.12'
-# dependencies = [
-#   'psutil==5.8.0+chromium.3'
-# ]
-# ///
+# [VPYTHON:BEGIN]
+# wheel: <
+#  name: "infra/python/wheels/psutil/${vpython_platform}"
+#  version: "version:5.8.0.chromium.2"
+# >
+# [VPYTHON:END]
 
 import psutil
 for p in psutil.process_iter():

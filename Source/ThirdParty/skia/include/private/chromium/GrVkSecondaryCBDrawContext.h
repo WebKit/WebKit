@@ -11,7 +11,6 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurfaceProps.h"
 #include "include/core/SkTypes.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
 
 #include <memory>
 
@@ -73,7 +72,7 @@ public:
 
     // Records all the draws to the imported secondary command buffer and sets any dependent
     // offscreen draws to the GPU.
-    GrDirectContext::FlushResult flush();
+    void flush();
 
     /** Inserts a list of GPU semaphores that Skia will have the driver wait on before executing
         commands for this secondary CB. The wait semaphores will get added to the VkCommandBuffer

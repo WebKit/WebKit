@@ -31,7 +31,6 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
 #include <functional>
 
 static void makebm(SkBitmap* bm, SkColorType ct, int w, int h) {
@@ -59,10 +58,10 @@ static void setup(SkCanvas* canvas, SkPaint* paint, const SkBitmap& bm, SkFilter
     }
 }
 
-constexpr auto gColorTypes = std::to_array<SkColorType>({
-        kN32_SkColorType,
-        kRGB_565_SkColorType,
-});
+constexpr SkColorType gColorTypes[] = {
+    kN32_SkColorType,
+    kRGB_565_SkColorType,
+};
 
 class TilingGM : public skiagm::GM {
 public:
@@ -70,7 +69,7 @@ public:
             : fPowerOfTwoSize(powerOfTwoSize) {
     }
 
-    std::array<SkBitmap, std::size(gColorTypes)> fTexture;
+    SkBitmap    fTexture[std::size(gColorTypes)];
 
 protected:
 
@@ -104,18 +103,14 @@ protected:
 
         SkRect r = { 0, 0, SkIntToScalar(size*2), SkIntToScalar(size*2) };
 
-        static constexpr auto gConfigNames = std::to_array<const char*>({"8888", "565"});
+        const char* gConfigNames[] = { "8888", "565" };
 
-        static constexpr auto gFilters =
-                std::to_array<SkFilterMode>({SkFilterMode::kNearest, SkFilterMode::kLinear});
-        static constexpr auto gFilterNames = std::to_array<const char*>({"point", "bilinear"});
+        constexpr SkFilterMode gFilters[] = { SkFilterMode::kNearest, SkFilterMode::kLinear };
+        static const char* gFilterNames[] = { "point", "bilinear" };
 
-        static constexpr auto gModes = std::to_array<SkTileMode>({
-                SkTileMode::kClamp,
-                SkTileMode::kRepeat,
-                SkTileMode::kMirror,
-        });
-        static constexpr auto gModeNames = std::to_array<const char*>({"C", "R", "M"});
+        constexpr SkTileMode gModes[] = {
+            SkTileMode::kClamp, SkTileMode::kRepeat, SkTileMode::kMirror };
+        static const char* gModeNames[] = { "C", "R", "M" };
 
         SkScalar y = SkIntToScalar(24);
         SkScalar x = SkIntToScalar(10);
@@ -223,16 +218,12 @@ private:
         const SkScalar h = SkIntToScalar(gHeight);
         SkRect r = { -w, -h, w*2, h*2 };
 
-        static constexpr auto gModes = std::to_array<SkTileMode>({
-                SkTileMode::kClamp,
-                SkTileMode::kRepeat,
-                SkTileMode::kMirror,
-        });
-        static constexpr auto gModeNames = std::to_array<const char*>({
-                "Clamp",
-                "Repeat",
-                "Mirror",
-        });
+        constexpr SkTileMode gModes[] = {
+            SkTileMode::kClamp, SkTileMode::kRepeat, SkTileMode::kMirror
+        };
+        const char* gModeNames[] = {
+            "Clamp", "Repeat", "Mirror"
+        };
 
         SkScalar y = SkIntToScalar(24);
         SkScalar x = SkIntToScalar(66);

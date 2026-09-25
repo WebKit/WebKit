@@ -20,11 +20,12 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
-
 static void make_bm(SkBitmap* bm) {
-    const std::array<SkColor, 4> colors = {SK_ColorRED, SK_ColorGREEN, SK_ColorBLUE, SK_ColorWHITE};
-    std::array<SkPMColor, 4> colorsPM;
+    const SkColor colors[4] = {
+        SK_ColorRED, SK_ColorGREEN,
+        SK_ColorBLUE, SK_ColorWHITE
+    };
+    SkPMColor colorsPM[4];
     for (size_t i = 0; i < std::size(colors); ++i) {
         colorsPM[i] = SkPreMultiplyColor(colors[i]);
     }

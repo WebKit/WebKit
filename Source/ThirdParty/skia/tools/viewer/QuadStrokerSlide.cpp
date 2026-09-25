@@ -35,7 +35,6 @@
 #include "tools/fonts/FontToolUtils.h"
 #include "tools/viewer/ClickHandlerSlide.h"
 
-#include <array>
 #include <cfloat>
 
 using namespace skia_private;
@@ -119,7 +118,7 @@ class QuadStrokerSlide : public ClickHandlerSlide {
     enum {
         kCount = 18
     };
-    std::array<SkPoint, kCount> fPts;
+    SkPoint fPts[kCount];
     SkRect fWeightControl;
     SkRect fRadiusControl;
     SkRect fErrorControl;

@@ -292,8 +292,10 @@ bool SurfaceContext::readPixels(GrDirectContext* dContext, GrPixmap dst, SkIPoin
         pt.fY = flip ? srcSurface->height() - pt.fY - dst.height() : pt.fY;
     }
 
-    GrDirectContext::FlushResult result = dContext->priv().flushSurface(srcProxy.get());
-    if (!result.fSuccess) {
+    bool hasPendingTasks =
+            dContext->priv().drawingManager()->getLastRenderTask(srcProxy.get()) != nullptr;
+    GrSemaphoresSubmitted flushResult = dContext->priv().flushSurface(srcProxy.get());
+    if (flushResult == GrSemaphoresSubmitted::kNo && hasPendingTasks) {
         return false;
     }
     dContext->submit();
@@ -583,15 +585,18 @@ bool SurfaceContext::internalWritePixels(GrDirectContext* dContext,
     }
     pt.fY = flip ? dstSurface->height() - pt.fY - src[0].height() : pt.fY;
 
-    auto flushSurfaceAndCheckSuccess = [dContext](GrSurfaceProxy* dstProxy) {
-        GrDirectContext::FlushResult result = dContext->priv().flushSurface(dstProxy);
-        return result.fSuccess;
+    auto flushSurfaceAndCheckSuccess = [dContext](GrSurfaceProxy* dstProxy, bool expectsTasks) {
+        const bool hasPendingTasks =
+                dContext->priv().drawingManager()->getLastRenderTask(dstProxy) != nullptr;
+        SkASSERT(!expectsTasks || hasPendingTasks);
+        GrSemaphoresSubmitted flushResult = dContext->priv().flushSurface(dstProxy);
+        return flushResult == GrSemaphoresSubmitted::kYes || !hasPendingTasks;
     };
 
     // On platforms that prefer flushes over VRAM use (i.e., ANGLE) we're better off forcing a
     // complete flush here.
     if (!caps->preferVRAMUseOverFlushes()) {
-        if (!flushSurfaceAndCheckSuccess(dstProxy)) {
+        if (!flushSurfaceAndCheckSuccess(dstProxy, /*expectsTasks=*/false)) {
             return false;
         }
     }
@@ -611,7 +616,7 @@ bool SurfaceContext::internalWritePixels(GrDirectContext* dContext,
     if (!ownAllStorage) {
         // If any pixmap doesn't own its pixels then we must flush so that the pixels are pushed to
         // the GPU before we return.
-        if (!flushSurfaceAndCheckSuccess(dstProxy)) {
+        if (!flushSurfaceAndCheckSuccess(dstProxy, /*expectsTasks=*/true)) {
             return false;
         }
     }
@@ -682,11 +687,11 @@ void SurfaceContext::asyncRescaleAndReadPixels(GrDirectContext* dContext,
         x = y = 0;
     }
     auto srcCtx = tempFC ? tempFC.get() : this;
-    srcCtx->asyncReadPixels(dContext,
-                            SkIRect::MakePtSize({x, y}, info.dimensions()),
-                            info.colorType(),
-                            callback,
-                            callbackContext);
+    return srcCtx->asyncReadPixels(dContext,
+                                   SkIRect::MakePtSize({x, y}, info.dimensions()),
+                                   info.colorType(),
+                                   callback,
+                                   callbackContext);
 }
 
 // Shared between RGBA and YUVA readbacks.
@@ -747,7 +752,7 @@ struct SurfaceContext::AsyncReadPixelContext {
                 if (!transfer->fTransferBuffer) {
                     break; // Reached end of the planes being copied
                 }
-                if (!transfer->fTransferTask || !transfer->fTransferTask->executionSuccessful()) {
+                if (!transfer->fTransferTask || !transfer->fTransferTask->wasExecuted()) {
                     success = false;
                     break;
                 }
@@ -866,9 +871,7 @@ void SurfaceContext::asyncReadPixels(GrDirectContext* dContext,
         reinterpret_cast<AsyncReadPixelContext*>(c)->setFinished();
     };
 
-    // Here we ignore flushSurface's return and count on the callbacks to inform the
-    // user re failures.
-    (void) dContext->priv().flushSurface(
+    dContext->priv().flushSurface(
             this->asSurfaceProxy(), SkSurfaces::BackendSurfaceAccess::kNoAccess, flushInfo);
 }
 
@@ -1127,9 +1130,7 @@ void SurfaceContext::asyncRescaleAndReadPixelsYUV420(GrDirectContext* dContext,
         reinterpret_cast<AsyncReadPixelContext*>(c)->setFinished();
     };
 
-    // Here we ignore flushSurface's return and count on the callbacks to inform the
-    // user re failures.
-    (void) dContext->priv().flushSurface(
+    dContext->priv().flushSurface(
             this->asSurfaceProxy(), SkSurfaces::BackendSurfaceAccess::kNoAccess, flushInfo);
 }
 

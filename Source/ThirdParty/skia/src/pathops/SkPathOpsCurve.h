@@ -20,12 +20,10 @@
 #include "src/pathops/SkPathOpsQuad.h"
 #include "src/pathops/SkPathOpsTypes.h"
 
-#include <array>
-
 struct SkPathOpsBounds;
 
 struct SkOpCurve {
-    std::array<SkPoint, 4> fPts;
+    SkPoint fPts[4];
     SkScalar fWeight;
     SkDEBUGCODE(SkPath::Verb fVerb;)
 
@@ -131,13 +129,13 @@ static SkDPoint dcubic_xy_at_t(const SkPoint a[4], SkScalar , double t) {
     return cubic.ptAtT(t);
 }
 
-static const auto CurveDPointAtT = std::to_array<SkDPoint (*)(const SkPoint *, SkScalar, double)>({
+static SkDPoint (* const CurveDPointAtT[])(const SkPoint[], SkScalar , double ) = {
     nullptr,
     dline_xy_at_t,
     dquad_xy_at_t,
     dconic_xy_at_t,
     dcubic_xy_at_t
-});
+};
 
 static SkDPoint ddline_xy_at_t(const SkDCurve& c, double t) {
     return c.fLine.ptAtT(t);
@@ -155,13 +153,13 @@ static SkDPoint ddcubic_xy_at_t(const SkDCurve& c, double t) {
     return c.fCubic.ptAtT(t);
 }
 
-static const auto CurveDDPointAtT = std::to_array<SkDPoint (*)(const SkDCurve &, double)>({
+static SkDPoint (* const CurveDDPointAtT[])(const SkDCurve& , double ) = {
     nullptr,
     ddline_xy_at_t,
     ddquad_xy_at_t,
     ddconic_xy_at_t,
     ddcubic_xy_at_t
-});
+};
 
 static SkPoint fline_xy_at_t(const SkPoint a[2], SkScalar weight, double t) {
     return dline_xy_at_t(a, weight, t).asSkPoint();
@@ -179,13 +177,13 @@ static SkPoint fcubic_xy_at_t(const SkPoint a[4], SkScalar weight, double t) {
     return dcubic_xy_at_t(a, weight, t).asSkPoint();
 }
 
-static const auto CurvePointAtT = std::to_array<SkPoint (*)(const SkPoint *, SkScalar, double)>({
+static SkPoint (* const CurvePointAtT[])(const SkPoint[], SkScalar , double ) = {
     nullptr,
     fline_xy_at_t,
     fquad_xy_at_t,
     fconic_xy_at_t,
     fcubic_xy_at_t
-});
+};
 
 static SkDVector dline_dxdy_at_t(const SkPoint a[2], SkScalar , double ) {
     SkDLine line;
@@ -211,13 +209,13 @@ static SkDVector dcubic_dxdy_at_t(const SkPoint a[4], SkScalar , double t) {
     return cubic.dxdyAtT(t);
 }
 
-static const auto CurveDSlopeAtT = std::to_array<SkDVector (*)(const SkPoint *, SkScalar, double)>({
+static SkDVector (* const CurveDSlopeAtT[])(const SkPoint[], SkScalar , double ) = {
     nullptr,
     dline_dxdy_at_t,
     dquad_dxdy_at_t,
     dconic_dxdy_at_t,
     dcubic_dxdy_at_t
-});
+};
 
 static SkDVector ddline_dxdy_at_t(const SkDCurve& c, double ) {
     return c.fLine.fPts[1] - c.fLine.fPts[0];
@@ -235,13 +233,13 @@ static SkDVector ddcubic_dxdy_at_t(const SkDCurve& c, double t) {
     return c.fCubic.dxdyAtT(t);
 }
 
-static const auto CurveDDSlopeAtT = std::to_array<SkDVector (*)(const SkDCurve &, double)>({
+static SkDVector (* const CurveDDSlopeAtT[])(const SkDCurve& , double ) = {
     nullptr,
     ddline_dxdy_at_t,
     ddquad_dxdy_at_t,
     ddconic_dxdy_at_t,
     ddcubic_dxdy_at_t
-});
+};
 
 static SkVector fline_dxdy_at_t(const SkPoint a[2], SkScalar , double ) {
     return a[1] - a[0];
@@ -259,13 +257,13 @@ static SkVector fcubic_dxdy_at_t(const SkPoint a[4], SkScalar weight, double t) 
     return dcubic_dxdy_at_t(a, weight, t).asSkVector();
 }
 
-static const auto CurveSlopeAtT = std::to_array<SkVector (*)(const SkPoint *, SkScalar, double)>({
+static SkVector (* const CurveSlopeAtT[])(const SkPoint[], SkScalar , double ) = {
     nullptr,
     fline_dxdy_at_t,
     fquad_dxdy_at_t,
     fconic_dxdy_at_t,
     fcubic_dxdy_at_t
-});
+};
 
 static bool line_is_vertical(const SkPoint a[2], SkScalar , double startT, double endT) {
     SkDLine line;
@@ -296,13 +294,13 @@ static bool cubic_is_vertical(const SkPoint a[4], SkScalar , double startT, doub
             && AlmostEqualUlps(dst[2].fX, dst[3].fX);
 }
 
-static const auto CurveIsVertical = std::to_array<bool (*)(const SkPoint *, SkScalar, double, double)>({
+static bool (* const CurveIsVertical[])(const SkPoint[], SkScalar , double , double) = {
     nullptr,
     line_is_vertical,
     quad_is_vertical,
     conic_is_vertical,
     cubic_is_vertical
-});
+};
 
 static void line_intersect_ray(const SkPoint a[2], SkScalar , const SkDLine& ray,
         SkIntersections* i) {
@@ -332,13 +330,14 @@ static void cubic_intersect_ray(const SkPoint a[4], SkScalar , const SkDLine& ra
     i->intersectRay(cubic, ray);
 }
 
-static const auto CurveIntersectRay = std::to_array<void (*)(const SkPoint *, SkScalar, const SkDLine &, SkIntersections *)>({
+static void (* const CurveIntersectRay[])(const SkPoint[] , SkScalar , const SkDLine& ,
+        SkIntersections* ) = {
     nullptr,
     line_intersect_ray,
     quad_intersect_ray,
     conic_intersect_ray,
     cubic_intersect_ray
-});
+};
 
 static void dline_intersect_ray(const SkDCurve& c, const SkDLine& ray,  SkIntersections* i) {
     i->intersectRay(c.fLine, ray);
@@ -356,13 +355,13 @@ static void dcubic_intersect_ray(const SkDCurve& c, const SkDLine& ray, SkInters
     i->intersectRay(c.fCubic, ray);
 }
 
-static const auto CurveDIntersectRay = std::to_array<void (*)(const SkDCurve &, const SkDLine &, SkIntersections *)>({
+static void (* const CurveDIntersectRay[])(const SkDCurve& , const SkDLine& , SkIntersections* ) = {
     nullptr,
     dline_intersect_ray,
     dquad_intersect_ray,
     dconic_intersect_ray,
     dcubic_intersect_ray
-});
+};
 
 static int line_intercept_h(const SkPoint a[2], SkScalar , SkScalar y, double* roots) {
     if (a[0].fY == a[1].fY) {
@@ -412,7 +411,7 @@ static int cubic_intercept_v(const SkPoint a[3], SkScalar , SkScalar x, double* 
     return cubic.set(a).verticalIntersect(x, roots);
 }
 
-static const auto CurveIntercept = std::to_array<int (*)(const SkPoint *, SkScalar, SkScalar, double *)>({
+static int (* const CurveIntercept[])(const SkPoint[] , SkScalar , SkScalar , double* ) = {
     nullptr,
     nullptr,
     line_intercept_h,
@@ -423,6 +422,6 @@ static const auto CurveIntercept = std::to_array<int (*)(const SkPoint *, SkScal
     conic_intercept_v,
     cubic_intercept_h,
     cubic_intercept_v,
-});
+};
 
 #endif

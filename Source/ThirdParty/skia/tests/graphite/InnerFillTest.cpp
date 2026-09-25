@@ -141,8 +141,8 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(OptimizeForOpacity,
                                                Mipmapped::kNo,
                                                Protected::kNo,
                                                Renderable::kYes),
-            Budgeted::kYes,
-            "OptimizeForOpacityTarget");
+            "OptimizeForOpacityTarget",
+            Budgeted::kYes);
     sk_sp<DrawContext> drawContext = DrawContext::Make(
             caps, std::move(target), {16, 16}, targetInfo, {});
 

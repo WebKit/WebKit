@@ -240,26 +240,17 @@ def main():
   # environment entirely via vpython.
   os.environ['PYTHONPATH'] = engine_path
 
-  spec = 'vpython.toml'
+  spec = '.vpython3'
   debugger = os.environ.get('RECIPE_DEBUGGER', '')
   if debugger.startswith('pycharm'):
-    spec = 'pycharm.vpython.toml'
+    spec = '.pycharm.vpython3'
   elif debugger.startswith('vscode'):
-    spec = 'vscode.vpython.toml'
-
-  spec_path = os.path.join(engine_path, spec)
-  if not os.path.exists(spec_path):
-    spec = '.vpython3'
-    if debugger.startswith('pycharm'):
-      spec = '.pycharm.vpython3'
-    elif debugger.startswith('vscode'):
-      spec = '.vscode.vpython3'
-    spec_path = os.path.join(engine_path, spec)
+    spec = '.vscode.vpython3'
 
   argv = ([
       vpython,
       '-vpython-spec',
-      spec_path,
+      os.path.join(engine_path, spec),
       '-u',
       os.path.join(engine_path, 'recipe_engine', 'main.py'),
   ] + args)

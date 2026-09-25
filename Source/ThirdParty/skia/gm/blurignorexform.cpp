@@ -24,8 +24,6 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
-
 // This GM tests out the SkBlurMaskFilter's kIgnoreTransform flag. That flag causes the blur mask
 // filter to not apply the CTM to the blur's radius.
 class BlurIgnoreXformGM : public skiagm::GM {
@@ -133,7 +131,7 @@ private:
     } kMatrixScales[3];
 
     DrawType fDrawType;
-    std::array<sk_sp<SkMaskFilter>, kNumBlurs> fBlurFilters;
+    sk_sp<SkMaskFilter> fBlurFilters[kNumBlurs];
 
     using INHERITED =         skiagm::GM;
 };

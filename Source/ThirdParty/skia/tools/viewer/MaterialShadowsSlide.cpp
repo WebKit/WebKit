@@ -18,8 +18,6 @@
 #include "tools/timer/TimeUtils.h"
 #include "tools/viewer/Slide.h"
 
-#include <array>
-
 ////////////////////////////////////////////////////////////////////////////
 
 class MaterialShadowsSlide : public Slide {
@@ -64,7 +62,7 @@ public:
         const SkScalar kAmbientAlpha = 0.05f;
         const SkScalar kSpotAlpha = 0.35f;
 
-        static constexpr auto elevations = std::to_array<SkScalar>({1, 3, 6, 8, 12, 24});
+        const SkScalar elevations[] = { 1, 3, 6, 8, 12, 24 };
 
         SkPaint paint;
         paint.setAntiAlias(true);

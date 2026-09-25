@@ -42,7 +42,6 @@
 #include "src/gpu/ganesh/effects/GrYUVtoRGBEffect.h"
 #include "src/image/SkImage_Base.h"
 
-#include <array>
 #include <utility>
 
 enum class SkTileMode;
@@ -93,7 +92,7 @@ bool SkImage_GaneshYUVA::setupMipmapsForPlanes(GrRecordingContext* context) cons
         return true;
     }
     int n = fYUVAProxies.yuvaInfo().numPlanes();
-    std::array<sk_sp<GrSurfaceProxy>, 4> newProxies;
+    sk_sp<GrSurfaceProxy> newProxies[4];
     for (int i = 0; i < n; ++i) {
         auto* t = fYUVAProxies.proxy(i)->asTextureProxy();
         if (t->mipmapped() == skgpu::Mipmapped::kNo && (t->width() > 1 || t->height() > 1)) {
@@ -107,16 +106,16 @@ bool SkImage_GaneshYUVA::setupMipmapsForPlanes(GrRecordingContext* context) cons
             newProxies[i] = fYUVAProxies.refProxy(i);
         }
     }
-    fYUVAProxies = GrYUVATextureProxies(fYUVAProxies.yuvaInfo(), newProxies.data(),
-                                        fYUVAProxies.textureOrigin());
+    fYUVAProxies =
+            GrYUVATextureProxies(fYUVAProxies.yuvaInfo(), newProxies, fYUVAProxies.textureOrigin());
     SkASSERT(fYUVAProxies.isValid());
     return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-GrDirectContext::FlushResult SkImage_GaneshYUVA::flush(GrDirectContext* dContext,
-                                                       const GrFlushInfo& info) const {
+GrSemaphoresSubmitted SkImage_GaneshYUVA::flush(GrDirectContext* dContext,
+                                                const GrFlushInfo& info) const {
     if (!fContext->priv().matches(dContext) || dContext->abandoned()) {
         if (info.fSubmittedProc) {
             info.fSubmittedProc(info.fSubmittedContext, false);
@@ -124,16 +123,16 @@ GrDirectContext::FlushResult SkImage_GaneshYUVA::flush(GrDirectContext* dContext
         if (info.fFinishedProc) {
             info.fFinishedProc(info.fFinishedContext);
         }
-        return {false, GrSemaphoresSubmitted::kNo};
+        return GrSemaphoresSubmitted::kNo;
     }
 
-    std::array<GrSurfaceProxy *, SkYUVAInfo::kMaxPlanes> proxies = {};
+    GrSurfaceProxy* proxies[SkYUVAInfo::kMaxPlanes] = {};
     size_t numProxies = fYUVAProxies.numPlanes();
     for (size_t i = 0; i < numProxies; ++i) {
         proxies[i] = fYUVAProxies.proxy(i);
     }
     return dContext->priv().flushSurfaces(
-            {proxies.data(), numProxies}, SkSurfaces::BackendSurfaceAccess::kNoAccess, info);
+            {proxies, numProxies}, SkSurfaces::BackendSurfaceAccess::kNoAccess, info);
 }
 
 bool SkImage_GaneshYUVA::onHasMipmaps() const {

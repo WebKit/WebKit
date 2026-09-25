@@ -9,8 +9,6 @@
 #include "src/core/SkColorData.h"
 #include "src/core/SkRandom.h"
 
-#include <array>
-
 template <bool kFast, bool kScale>
 class FourByteInterpBench : public Benchmark {
 public:
@@ -76,9 +74,9 @@ public:
 private:
     SkString fName;
     static const int kInputs = 10;  // Arbitrary.
-    std::array<volatile unsigned int, kInputs> fSrcs;
-    std::array<volatile unsigned int, kInputs> fDsts;
-    std::array<unsigned int, 257> fScales;  // We need space for [0, 256].
+    volatile unsigned fSrcs[kInputs];
+    volatile unsigned fDsts[kInputs];
+    unsigned fScales[257];  // We need space for [0, 256].
 };
 
 #define COMMA ,

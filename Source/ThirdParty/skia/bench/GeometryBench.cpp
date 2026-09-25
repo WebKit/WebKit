@@ -6,14 +6,11 @@
  */
 
 #include "bench/Benchmark.h"
-#include "include/core/SkPath.h"
 #include "include/core/SkRRect.h"
 #include "include/core/SkRect.h"
 #include "src/core/SkGeometry.h"
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkRandom.h"
-
-#include <array>
 
 class GeometryBench : public Benchmark {
 public:
@@ -51,7 +48,7 @@ public:
     GeoRectBench(const char suffix[]) : GeometryBench(suffix) {}
 
 protected:
-    std::array<SkRect, 2048> fRects;
+    SkRect fRects[2048];
 
     void onDelayedSetup() override {
         const SkScalar min = -100;
@@ -250,6 +247,8 @@ protected:
     }
 };
 DEF_BENCH( return new ChopCubicAt; )
+
+#include "include/core/SkPath.h"
 
 class ConvexityBench : public Benchmark {
     SkPath fPath;

@@ -14,8 +14,6 @@
 #include "include/private/SkTArray.h"
 #include "src/core/SkRandom.h"
 
-#include <array>
-
 class PathOpsBench : public Benchmark {
     SkString    fName;
     SkPath      fPath1, fPath2;
@@ -154,12 +152,7 @@ class PathBuilderBench : public Benchmark {
 
 public:
     PathBuilderBench(MakeType mt, bool reserve) : fMakeType(mt), fUseReserve(reserve) {
-        static constexpr auto typenames = std::to_array<const char*>({
-                "path",
-                "snapshot",
-                "detach",
-                "arrays",
-        });
+        const char* typenames[] = { "path", "snapshot", "detach", "arrays" };
 
         fName.printf("makepath_%s_%s", typenames[(int)mt], reserve ? "reserve" : "noreserve");
     }

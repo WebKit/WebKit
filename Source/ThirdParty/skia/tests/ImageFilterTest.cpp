@@ -95,11 +95,10 @@
 #endif
 
 #include <algorithm>
-#include <array>
 #include <cstdint>
 #include <cstring>
-#include <limits>
 #include <utility>
+#include <limits>
 
 using namespace skia_private;
 
@@ -2225,7 +2224,7 @@ DEF_TEST(XfermodeImageFilterBounds, reporter) {
     sk_sp<SkImageFilter> background = SkImageFilters::Crop(SkRect::Make(background_rect), nullptr);
     sk_sp<SkImageFilter> foreground = SkImageFilters::Crop(SkRect::Make(foreground_rect), nullptr);
 
-    std::array<SkIRect, kSkBlendModeCount> expectedBounds;
+    SkIRect expectedBounds[kSkBlendModeCount];
     // Expect union of input rects by default.
     for (int i = 0; i < kSkBlendModeCount; ++i) {
         expectedBounds[i] = background_rect;

@@ -941,11 +941,10 @@ void VisitAndroidPrecompileSettings_Old(
           kCombo_RGBA_1D_4DS_16F,
           kWithAnalyticClip },
 
-        // 9: 100% (3/4) handles: 27 86 326
+        // 9: 100% (2/2) handles: 27 86
         { Builder().srcOver(),
           DrawTypeFlags::kAnalyticRRect,
-          kCombo_RGBA_1D_4DS,
-          kWithAnalyticClip },
+          kCombo_RGBA_1D_4DS },
 
         // 10: 75% (3/4) handles: 19 38 128
         { Builder().hwImg(kPremul).matrixCF().srcOver(),
@@ -985,7 +984,7 @@ void VisitAndroidPrecompileSettings_Old(
           kRRectAndNonAARect,
           kRGBA_1_D_SRGB },
 
-        // 17: 75% (4/4) handles: 17 34 35 325
+        // 17: 75% (3/4) handles: 17 34 35
         { Builder().hwImg(kSRGB).matrixCF().dither().srcOver(),
           kRRectAndNonAARect,
           kRGBA_1_D_SRGB,

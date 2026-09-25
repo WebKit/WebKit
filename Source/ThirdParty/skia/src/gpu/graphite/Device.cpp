@@ -87,7 +87,6 @@
 #include "src/gpu/graphite/TextureProxyView.h"
 #include "src/gpu/graphite/TextureUtils.h"
 #include "src/gpu/graphite/geom/AnalyticBlurMask.h"
-#include "src/gpu/graphite/geom/AnalyticRRectBlurMask.h"
 #include "src/gpu/graphite/geom/BoundsManager.h"
 #include "src/gpu/graphite/geom/CoverageMaskShape.h"
 #include "src/gpu/graphite/geom/EdgeAAQuad.h"
@@ -430,7 +429,7 @@ sk_sp<Device> Device::Make(Recorder* recorder,
 
     return Make(recorder,
                 TextureProxy::Make(caps, recorder->priv().resourceProvider(),
-                                   backingDimensions, textureInfo, budgeted, label),
+                                   backingDimensions, textureInfo, label, budgeted),
                 ii.dimensions(),
                 ii.colorInfo(),
                 props,
@@ -1038,12 +1037,14 @@ void Device::drawMesh(const SkMesh& mesh, sk_sp<SkBlender> blender, const SkPain
         drawMesh = std::move(result.mesh);
     }
 
-    SkBlender* primitiveBlender =
+
+    // TODO (nathanasanchez): Enable once MeshRenderStep is fully implemented.
+    [[maybe_unused]] SkBlender* primitiveBlender =
         (blender && SkMeshSpecificationPriv::HasColors(*drawMesh.spec())) ? blender.get() : nullptr;
-    this->drawGeometry(this->localToDeviceTransform(),
-                       Geometry(drawMesh),
-                       PaintParams(paint, primitiveBlender).makeWithMesh(mesh),
-                       DefaultFillStyle());
+    //this->drawGeometry(this->localToDeviceTransform(),
+    //                   Geometry(drawMesh),
+    //                   PaintParams(paint, primitiveBlender).makeWithMesh(mesh),
+    //                   DefaultFillStyle());
 }
 
 void Device::drawImageLattice(const SkImage* image, const SkCanvas::Lattice& lattice,
@@ -1750,11 +1751,6 @@ void Device::drawGeometry(const Transform& localToDevice,
     if (renderer && (renderer->useNonAAInnerFill() || renderer->coverage() == Coverage::kNone)) {
         keyGenFlags |= KeyGenFlags::kPreferFixedSrcBlend;
     }
-    // Disable sampling optimizations if we are drawing an SkMesh since the user can vary the
-    // sampled shader local coordinates so we can't expect this optimization to always work.
-    if (geometry.isMesh()) {
-        keyGenFlags |= KeyGenFlags::kDisableSamplingOptimization;
-    }
     KeyContext keyContext{fRecorder,
                           fDC.get(),
                           scopedDrawBuilder.builder(),
@@ -2099,8 +2095,6 @@ std::pair<const Renderer*, PathAtlas*> Device::chooseRenderer(const Transform& l
         }
     } else if (geometry.isAnalyticBlur()) {
         return {renderers->analyticBlur(), nullptr};
-    } else if (geometry.isAnalyticRRectBlur()) {
-        return {renderers->analyticRRectBlur(), nullptr};
     } else if (!geometry.isShape()) {
         // We must account for new Geometry types with specific Renderers
         return {nullptr, nullptr};
@@ -2479,40 +2473,15 @@ void Device::drawSlug(SkCanvas* canvas, const sktext::gpu::Slug* slug, const SkP
     slugImpl->subRuns()->draw(canvas, slugImpl->origin(), paint, slugImpl, this->atlasDelegate());
 }
 
-bool Device::drawBlurredRRect(const SkRRect& rrect, const SkPaint& paint,
-                              SkV2 localSigma, float deviceSigma) {
+bool Device::drawBlurredRRect(const SkRRect& rrect, const SkPaint& paint, float deviceSigma) {
     if (skgpu::BlurIsEffectivelyIdentity(deviceSigma)) {
         this->drawRRect(rrect, paint);
         return true;
     }
 
-    SkRRect rrectToBlur;
-    if (paint.isAntiAlias()) {
-        rrectToBlur = rrect;
-    } else {
-        // Snap the the rounded rectangle to pixel edges to match the behavior of
-        // Device::drawRRect() for non-AA blurs when the AnalyticBlurMask approach isn't supported.
-        rrectToBlur = SkRRect::MakeRectRadii(snap_rect_to_pixels(this->localToDeviceTransform(),
-                                                                 rrect.rect()).asSkRect(),
-                                             rrect.radii().data());
-    }
-
     std::optional<AnalyticBlurMask> analyticBlur = AnalyticBlurMask::Make(
-            this->recorder(), this->localToDeviceTransform(), deviceSigma, rrectToBlur);
+            this->recorder(), this->localToDeviceTransform(), deviceSigma, rrect);
     if (!analyticBlur) {
-#if !defined(SK_SUPPORT_LEGACY_GRAPHITE_RRECT_BLUR)
-        // Try using the analytic rrect blur specific mask.
-        std::optional<AnalyticRRectBlurMask> analyticRRectBlur = AnalyticRRectBlurMask::Make(
-                this->recorder(), this->localToDeviceTransform(), localSigma, rrectToBlur);
-        if (analyticRRectBlur) {
-            this->drawGeometry(this->localToDeviceTransform(),
-                               Geometry(*analyticRRectBlur),
-                               PaintParams(paint),
-                               SkStrokeRec(paint));
-            return true;
-        }
-#endif
-
         return false;
     }
 

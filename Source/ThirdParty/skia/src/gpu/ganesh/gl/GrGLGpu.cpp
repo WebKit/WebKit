@@ -3322,12 +3322,13 @@ bool GrGLGpu::createCopyProgram(GrTexture* srcTex) {
                                                    sizeof(vdata),
                                                    GrGpuBufferType::kVertex,
                                                    kStatic_GrAccessPattern);
-        if (!fCopyProgramArrayBuffer ||
-            !fCopyProgramArrayBuffer->updateData(
-                    vdata, /*offset=*/0, sizeof(vdata), /*preserve=*/false)) {
-            fCopyProgramArrayBuffer.reset();
-            return false;
+        if (fCopyProgramArrayBuffer) {
+            fCopyProgramArrayBuffer->updateData(
+                    vdata, /*offset=*/0, sizeof(vdata), /*preserve=*/false);
         }
+    }
+    if (!fCopyProgramArrayBuffer) {
+        return false;
     }
 
     SkASSERT(!fCopyPrograms[progIdx].fProgram);
@@ -3820,12 +3821,13 @@ bool GrGLGpu::onRegenerateMipMapLevels(GrTexture* texture) {
                                                      sizeof(vdata),
                                                      GrGpuBufferType::kVertex,
                                                      kStatic_GrAccessPattern);
-        if (!fMipmapProgramArrayBuffer ||
-            !fMipmapProgramArrayBuffer->updateData(vdata, /*offset=*/0,sizeof(vdata),
-                                                   /*preserve=*/false)) {
-            fMipmapProgramArrayBuffer.reset();
-            return false;
-        }
+        fMipmapProgramArrayBuffer->updateData(vdata, /*offset=*/0,
+
+                                              sizeof(vdata),
+                                              /*preserve=*/false);
+    }
+    if (!fMipmapProgramArrayBuffer) {
+        return false;
     }
 
     fHWVertexArrayState.setVertexArrayID(this, 0);

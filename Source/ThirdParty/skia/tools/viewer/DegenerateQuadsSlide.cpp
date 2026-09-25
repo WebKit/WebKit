@@ -7,8 +7,6 @@
 
 #include "include/core/SkTypes.h"
 
-#include <array>
-
 #if defined(SK_GANESH)
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPaint.h"
@@ -94,7 +92,7 @@ static SkScalar get_area_coverage(SkSpan<const bool> edgeAA, SkSpan<const SkPoin
     // Now account for the edge AA. If the pixel center is outside of a non-AA edge, turn of its
     // coverage. If the pixel only intersects non-AA edges, then set coverage to 1.
     bool needsNonAA = false;
-    std::array<SkScalar, 4> edgeD;
+    SkScalar edgeD[4];
     for (int i = 0; i < 4; ++i) {
         SkPoint e0 = corners[i];
         SkPoint e1 = corners[(i + 1) % 4];
@@ -206,13 +204,13 @@ static SkScalar get_framed_coverage(const SkPoint outer[4], const SkScalar outer
                                     const SkPoint inner[4], const SkScalar innerCoverages[4],
                                     const SkRect& geomDomain, const SkPoint& point) {
     // Triangles are ordered clock wise. Indices >= 4 refer to inner[i - 4]. Otherwise its outer[i].
-    static constexpr auto kFrameTris = std::to_array<int>({
-            0, 1, 4,   4, 1, 5,
-            1, 2, 5,   5, 2, 6,
-            2, 3, 6,   6, 3, 7,
-            3, 0, 7,   7, 0, 4,
-            4, 5, 7,   7, 5, 6
-    });
+    static const int kFrameTris[] = {
+        0, 1, 4,   4, 1, 5,
+        1, 2, 5,   5, 2, 6,
+        2, 3, 6,   6, 3, 7,
+        3, 0, 7,   7, 0, 4,
+        4, 5, 7,   7, 5, 6
+    };
     static const int kNumTris = 10;
 
     SkScalar bary[3];
@@ -287,20 +285,12 @@ public:
         bool valid = this->isValid();
 
         if (valid) {
-            std::array<SkPoint, 8> outsets;
-            std::array<SkPoint, 8> insets;
+            SkPoint outsets[8];
+            SkPoint insets[8];
             // Calculate inset and outset lines for edge-distance visualization
             for (int i = 0; i < 4; ++i) {
-                make_aa_line(fCorners[i],
-                             fCorners[(i + 1) % 4],
-                             fEdgeAA[i],
-                             true,
-                             outsets.data() + i * 2);
-                make_aa_line(fCorners[i],
-                             fCorners[(i + 1) % 4],
-                             fEdgeAA[i],
-                             false,
-                             insets.data() + i * 2);
+                make_aa_line(fCorners[i], fCorners[(i + 1) % 4], fEdgeAA[i], true, outsets + i * 2);
+                make_aa_line(fCorners[i], fCorners[(i + 1) % 4], fEdgeAA[i], false, insets + i * 2);
             }
 
             // Calculate inner and outer meshes for GPU visualization
@@ -418,7 +408,7 @@ private:
 
     const SkRect fOuterRect;
     std::array<SkPoint, 4> fCorners; // in toQuad() order TL, TR, BR, BL
-    std::array<bool, 4> fEdgeAA;     // T, R, B, L
+    bool fEdgeAA[4]; // T, R, B, L
     CoverageMode fCoverageMode;
 
     bool isValid() const {

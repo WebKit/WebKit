@@ -17,7 +17,6 @@
 #include "src/gpu/ganesh/GrDeferredUpload.h"
 #include "src/gpu/ganesh/GrSurfaceProxyView.h"
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -125,7 +124,7 @@ public:
                          const void* image,
                          GrAtlasLocator*);
 
-    const GrSurfaceProxyView* getViews() const { return fViews.data(); }
+    const GrSurfaceProxyView* getViews() const { return fViews; }
 
     uint64_t atlasGeneration() const { return fAtlasGeneration; }
 
@@ -257,8 +256,8 @@ private:
         GrPlotList fPlotList;
     };
     // proxies kept separate to make it easier to pass them up to client
-    std::array<GrSurfaceProxyView, GrPlotLocator::kMaxMultitexturePages> fViews;
-    std::array<Page, GrPlotLocator::kMaxMultitexturePages> fPages;
+    GrSurfaceProxyView fViews[GrPlotLocator::kMaxMultitexturePages];
+    Page fPages[GrPlotLocator::kMaxMultitexturePages];
     uint32_t fMaxPages;
 
     uint32_t fNumActivePages;

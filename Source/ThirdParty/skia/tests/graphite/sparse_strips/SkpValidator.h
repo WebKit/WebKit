@@ -22,8 +22,6 @@ class SkStream;
 
 namespace skgpu::graphite {
 
-class Recorder;
-
 class SkpValidator {
 public:
     struct ExtractedPath {
@@ -40,7 +38,6 @@ public:
     template <uint16_t kTileWidth, uint16_t kTileHeight>
     static bool ValidatePath(
             skiatest::Reporter* reporter,
-            Recorder* recorder,
             const SkPath& path,
             const char* testName,
             const SkTDArray<uint8_t>& maskLut,
@@ -49,7 +46,6 @@ public:
     template <uint16_t kTileWidth, uint16_t kTileHeight>
     static bool ValidateSkp(
             skiatest::Reporter* reporter,
-            Recorder* recorder,
             const char* filepath,
             const SkTDArray<uint8_t>& maskLut);
 };

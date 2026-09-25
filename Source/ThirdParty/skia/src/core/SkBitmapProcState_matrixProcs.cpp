@@ -18,7 +18,6 @@
 #include "src/core/SkBitmapProcState.h"
 #include "src/core/SkMemset.h"
 
-#include <array>
 #include <cstdint>
 #include <cstring>
 
@@ -288,18 +287,18 @@ static unsigned clamp(SkFixed fx, int max) {
     return SkTPin(fx >> 16, 0, max);
 }
 
-static constexpr auto ClampX_ClampY_Procs = std::to_array<SkBitmapProcState::MatrixProc>({
+static const SkBitmapProcState::MatrixProc ClampX_ClampY_Procs[] = {
     nofilter_scale <clamp, clamp, true>, filter_scale <clamp, clamp, extract_low_bits_clamp_clamp, true>,
     nofilter_affine<clamp, clamp>,       filter_affine<clamp, clamp, extract_low_bits_clamp_clamp>,
-});
-static constexpr auto RepeatX_RepeatY_Procs = std::to_array<SkBitmapProcState::MatrixProc>({
+};
+static const SkBitmapProcState::MatrixProc RepeatX_RepeatY_Procs[] = {
     nofilter_scale <repeat, repeat, false>, filter_scale <repeat, repeat, extract_low_bits_general, false>,
     nofilter_affine<repeat, repeat>,        filter_affine<repeat, repeat, extract_low_bits_general>
-});
-static constexpr auto MirrorX_MirrorY_Procs = std::to_array<SkBitmapProcState::MatrixProc>({
+};
+static const SkBitmapProcState::MatrixProc MirrorX_MirrorY_Procs[] = {
     nofilter_scale <mirror, mirror,  false>, filter_scale <mirror, mirror, extract_low_bits_general, false>,
     nofilter_affine<mirror, mirror>,         filter_affine<mirror, mirror, extract_low_bits_general>,
-});
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

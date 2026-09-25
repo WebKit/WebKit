@@ -13,7 +13,6 @@
 #include "src/gpu/graphite/InternalDrawTypeFlags.h"
 #include "src/gpu/graphite/UniformManager.h"
 #include "src/gpu/graphite/render/AnalyticBlurRenderStep.h"
-#include "src/gpu/graphite/render/AnalyticRRectBlurRenderStep.h"
 #include "src/gpu/graphite/render/AnalyticRRectRenderStep.h"
 #include "src/gpu/graphite/render/BitmapTextRenderStep.h"
 #include "src/gpu/graphite/render/CircularArcRenderStep.h"
@@ -33,11 +32,6 @@
 
 #ifdef SK_ENABLE_VELLO_SHADERS
 #include "src/gpu/graphite/compute/VelloRenderer.h"
-#endif
-
-#if defined(SK_ENABLE_SPARSE_STRIPS)
-#include "src/gpu/graphite/render/EndCapRenderStep.h"
-#include "src/gpu/graphite/render/WideTileRenderStep.h"
 #endif
 
 namespace skgpu::graphite {
@@ -179,9 +173,6 @@ RendererProvider::RendererProvider(const Caps* caps, StaticBufferManager* buffer
     initFromStep(&fAnalyticBlur,
                  std::make_unique<AnalyticBlurRenderStep>(layout),
                  DrawTypeFlags::kDropShadows);
-    initFromStep(&fAnalyticRRectBlur,
-                 std::make_unique<AnalyticRRectBlurRenderStep>(layout, bufferManager),
-                 DrawTypeFlags::kDropShadows);
 
     // vertices
     for (bool color : {false, true}) {
@@ -263,17 +254,6 @@ RendererProvider::RendererProvider(const Caps* caps, StaticBufferManager* buffer
 
     this->assumeOwnership(std::move(coverInverse));
     this->assumeOwnership(std::move(coverFill));
-
-#if defined(SK_ENABLE_SPARSE_STRIPS)
-    {
-        initFromStep(&fSparseStrips[0],
-                     std::make_unique<EndCapRenderStep>(layout),
-                     DrawTypeFlags::kSparseStrips);
-        initFromStep(&fSparseStrips[1],
-                     std::make_unique<WideTileRenderStep>(layout),
-                     DrawTypeFlags::kSparseStrips);
-    }
-#endif
 
 #ifdef SK_ENABLE_VELLO_SHADERS
     // Don't initialize Vello if the strategy wouldn't use it.

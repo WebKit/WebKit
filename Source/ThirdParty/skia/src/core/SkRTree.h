@@ -12,7 +12,6 @@
 #include "include/core/SkRect.h"
 #include "src/partition_alloc/raw_ptr_exclusion.h"
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <vector>
@@ -66,7 +65,7 @@ private:
     struct Node {
         uint16_t fNumChildren;
         uint16_t fLevel;
-        std::array<Branch, kMaxChildren> fChildren;
+        Branch fChildren[kMaxChildren];
     };
 
     void search(Node* root, const SkRect& query, std::vector<int>* results) const;

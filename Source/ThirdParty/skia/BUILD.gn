@@ -96,9 +96,6 @@ config("skia_private") {
       "SK_GAMMA_CONTRAST=0.0",
     ]
   }
-  if (skia_use_lcd_text_3x_filter) {
-    defines += [ "SK_USE_LCD_TEXT_3X_FILTER" ]
-  }
   if (is_skia_dev_build && !is_canvaskit) {
     defines += [
       "SK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1",
@@ -1523,7 +1520,6 @@ if (skia_use_fontations || skia_use_rust_png_decode ||
       "rust/icc/BUILD.bazel",
       "rust/icc/FFI.h",
       "rust/icc/FFI.rs",
-      "rust/icc/icc_parse.rs",
     ]
     _rust_outputs += [
       "$root_out_dir/librust_icc_ffi_rs.a",
@@ -2451,13 +2447,6 @@ if (skia_enable_tools) {
         testonly = true
         extra_configs = [ ":skia_private" ]
         launchscreen = "platform_tools/ios/app/LaunchScreen.storyboard"
-        if (target_name == "dm" || target_name == "nanobench") {
-          sources += [ "tools/ios_test_app_main.mm" ]
-          if (!defined(frameworks)) {
-            frameworks = []
-          }
-          frameworks += [ "UIKit.framework" ]
-        }
         data_sources = [ "resources" ]
         if ("True" == exec_script("//gn/checkdir.py",
                                   [ rebase_path("skps", root_build_dir) ],
@@ -3384,14 +3373,6 @@ if (skia_enable_tools) {
 
     test_app("dump_record") {
       sources = [ "tools/dump_record.cpp" ]
-      deps = [
-        ":flags",
-        ":skia",
-      ]
-    }
-
-    test_app("dump_capture") {
-      sources = [ "tools/dump_capture.cpp" ]
       deps = [
         ":flags",
         ":skia",

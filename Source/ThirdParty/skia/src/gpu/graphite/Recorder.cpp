@@ -7,6 +7,7 @@
 #include "include/gpu/graphite/Recorder.h"
 
 #include "include/core/SkBitmap.h"
+#include "include/core/SkCPURecorder.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkImage.h"
 #include "include/core/SkImageInfo.h"
@@ -189,10 +190,12 @@ Recorder::~Recorder() {
 
 BackendApi Recorder::backend() const { return fSharedContext->backend(); }
 
-skcpu::Recorder* Recorder::cpuRecorder() { return skcpu::Recorder::TODO(); }
+skcpu::Recorder* Recorder::cpuRecorder() {
+    return skcpu::Recorder::TODO();
+}
 
 std::unique_ptr<Recording> Recorder::snap() {
-    TRACE_EVENT0_ALWAYS("skia.gpu", "Snap Recording");
+    TRACE_EVENT0_ALWAYS("skia.gpu", TRACE_FUNC);
     ASSERT_SINGLE_OWNER
 
     if (fTargetProxyData) {
@@ -326,12 +329,6 @@ void Recorder::createCaptureBreakpoint(SkSurface* surface) {
         if (picture) {
             fCapturedPictures.push_back(std::move(picture));
         }
-    }
-}
-
-void Recorder::deregisterCaptureCanvas(SkCanvas* canvas) {
-    if (fSharedContext->captureManager()) {
-        fSharedContext->captureManager()->deregisterCaptureCanvas(canvas);
     }
 }
 

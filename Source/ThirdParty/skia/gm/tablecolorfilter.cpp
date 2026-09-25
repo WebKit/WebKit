@@ -25,7 +25,6 @@
 #include "include/effects/SkGradient.h"
 #include "include/effects/SkImageFilters.h"
 
-#include <array>
 #include <math.h>
 #include <utility>
 
@@ -125,14 +124,10 @@ protected:
         canvas->drawColor(0xFFDDDDDD);
         canvas->translate(20, 20);
 
-        static auto gColorFilterMakers = std::to_array<sk_sp<SkColorFilter> (*)()>({
-                make_null_cf,
-                make_cf0,
-                make_cf1,
-                make_cf2,
-                make_cf3,
-        });
-        static auto gBitmapMakers = std::to_array<void (*)(SkBitmap*)>({make_bm0, make_bm1});
+        static sk_sp<SkColorFilter> (*gColorFilterMakers[])() = {
+            make_null_cf, make_cf0, make_cf1, make_cf2, make_cf3
+        };
+        static void (*gBitmapMakers[])(SkBitmap*) = { make_bm0, make_bm1 };
 
         // This test will be done once for each bitmap with the results stacked vertically.
         // For a single bitmap the resulting image will be the following:
@@ -235,7 +230,7 @@ private:
         canvas->drawColor(0xFFDDDDDD);
 
         const int MODES = MODE_COUNT * COLOR_COUNT;
-        std::array<sk_sp<SkColorFilter>, MODES> filters;
+        sk_sp<SkColorFilter> filters[MODES];
         int index = 0;
         for (int i = 0; i < MODE_COUNT; ++i) {
             for (int j = 0; j < COLOR_COUNT; ++j) {

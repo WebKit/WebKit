@@ -12,7 +12,6 @@
 #include "include/private/SkAssert.h"
 #include "include/private/SkDebug.h"
 
-#include <array>
 #include <cstring>
 
 // in SkColorMatrix order (row-major)
@@ -775,7 +774,7 @@ static_assert(kYCgCo_12bit_Limited_SkYUVColorSpace  == 25, "");
 static_assert(kYCgCo_16bit_Full_SkYUVColorSpace     == 26, "");
 static_assert(kYCgCo_16bit_Limited_SkYUVColorSpace  == 27, "");
 
-static constexpr auto yuv_to_rgb_array = std::to_array<const float *>({
+const float* yuv_to_rgb_array[] = {
     JPEG_full_yuv_to_rgb,
     Rec601_limited_yuv_to_rgb,
     Rec709_full_yuv_to_rgb,
@@ -804,9 +803,9 @@ static constexpr auto yuv_to_rgb_array = std::to_array<const float *>({
     YCgCo_12bit_limited_yuv_to_rgb,
     YCgCo_16bit_full_yuv_to_rgb,
     YCgCo_16bit_limited_yuv_to_rgb,
-});
+};
 
-static constexpr auto rgb_to_yuv_array = std::to_array<const float *>({
+const float* rgb_to_yuv_array[] = {
     JPEG_full_rgb_to_yuv,
     Rec601_limited_rgb_to_yuv,
     Rec709_full_rgb_to_yuv,
@@ -835,7 +834,7 @@ static constexpr auto rgb_to_yuv_array = std::to_array<const float *>({
     YCgCo_12bit_limited_rgb_to_yuv,
     YCgCo_16bit_full_rgb_to_yuv,
     YCgCo_16bit_limited_rgb_to_yuv,
-});
+};
 
 constexpr size_t kSizeOfColorMatrix = 20 * sizeof(float);
 
@@ -910,24 +909,24 @@ struct YUVCoeff {
     Range   range;
 };
 
-static constexpr auto gCoeff = std::to_array<YUVCoeff>({
-    YUVCoeff{ 0.2990f, 0.1140f,  8, kFull    }, // kJPEG_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2990f, 0.1140f,  8, kLimited }, // kRec601_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.2126f, 0.0722f,  8, kFull    }, // kRec709_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2126f, 0.0722f,  8, kLimited }, // kRec709_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f,  8, kFull    }, // kBT2020_8bit_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f,  8, kLimited }, // kBT2020_8bit_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f, 10, kFull    }, // kBT2020_10bit_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f, 10, kLimited }, // kBT2020_10bit_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f, 12, kFull    }, // kBT2020_12bit_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f, 12, kLimited }, // kBT2020_12bit_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f, 16, kFull    }, // kBT2020_16bit_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2627f, 0.0593f, 16, kLimited }, // kBT2020_16bit_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.3000f, 0.1100f,  8, kFull    }, // kFCC_Full_SkYUVColorSpace
-    YUVCoeff{ 0.3000f, 0.1100f,  8, kLimited }, // kFCC_Limited_SkYUVColorSpace
-    YUVCoeff{ 0.2120f, 0.0870f,  8, kFull    }, // kSMPTE240_Full_SkYUVColorSpace
-    YUVCoeff{ 0.2120f, 0.0870f,  8, kLimited }, // kSMPTE240_Limited_SkYUVColorSpace
-});
+const YUVCoeff gCoeff[] = {
+    { 0.2990f, 0.1140f,  8, kFull    }, // kJPEG_Full_SkYUVColorSpace
+    { 0.2990f, 0.1140f,  8, kLimited }, // kRec601_Limited_SkYUVColorSpace
+    { 0.2126f, 0.0722f,  8, kFull    }, // kRec709_Full_SkYUVColorSpace
+    { 0.2126f, 0.0722f,  8, kLimited }, // kRec709_Limited_SkYUVColorSpace
+    { 0.2627f, 0.0593f,  8, kFull    }, // kBT2020_8bit_Full_SkYUVColorSpace
+    { 0.2627f, 0.0593f,  8, kLimited }, // kBT2020_8bit_Limited_SkYUVColorSpace
+    { 0.2627f, 0.0593f, 10, kFull    }, // kBT2020_10bit_Full_SkYUVColorSpace
+    { 0.2627f, 0.0593f, 10, kLimited }, // kBT2020_10bit_Limited_SkYUVColorSpace
+    { 0.2627f, 0.0593f, 12, kFull    }, // kBT2020_12bit_Full_SkYUVColorSpace
+    { 0.2627f, 0.0593f, 12, kLimited }, // kBT2020_12bit_Limited_SkYUVColorSpace
+    { 0.2627f, 0.0593f, 16, kFull    }, // kBT2020_16bit_Full_SkYUVColorSpace
+    { 0.2627f, 0.0593f, 16, kLimited }, // kBT2020_16bit_Limited_SkYUVColorSpace
+    { 0.3000f, 0.1100f,  8, kFull    }, // kFCC_Full_SkYUVColorSpace
+    { 0.3000f, 0.1100f,  8, kLimited }, // kFCC_Limited_SkYUVColorSpace
+    { 0.2120f, 0.0870f,  8, kFull    }, // kSMPTE240_Full_SkYUVColorSpace
+    { 0.2120f, 0.0870f,  8, kLimited }, // kSMPTE240_Limited_SkYUVColorSpace
+};
 }  // namespace
 
 static void make_rgb_to_yuv_matrix_ycbcr(float mx[20], const YUVCoeff& c) {
@@ -1088,7 +1087,7 @@ static void make_rgb_to_yuv_matrix(float mx[20], SkYUVColorSpace cs) {
 }
 
 static void dump(const float m[20], SkYUVColorSpace cs, bool rgb2yuv) {
-    static constexpr auto names = std::to_array<const char *>({
+    const char* names[] = {
         "JPEG_full",
         "Rec601_limited",
         "Rec709_full",
@@ -1117,10 +1116,10 @@ static void dump(const float m[20], SkYUVColorSpace cs, bool rgb2yuv) {
         "YCgCo_12bit_limited",
         "YCgCo_16bit_full",
         "YCgCo_16bit_limited",
-    });
-    static constexpr auto dirnames = std::to_array<const char *>({
+    };
+    const char* dirnames[] = {
         "yuv_to_rgb", "rgb_to_yuv",
-    });
+    };
     SkDebugf("constexpr float %s_%s[] = {\n", names[cs], dirnames[rgb2yuv]);
     SkDebugf("#if defined(SK_YUV_COLOR_SPACE_HIGH_PRECISION)\n");
     for (int i = 0; i < 4; ++i) {

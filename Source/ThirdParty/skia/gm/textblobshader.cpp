@@ -26,7 +26,6 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
 #include <math.h>
 #include <string.h>
 
@@ -74,7 +73,7 @@ private:
 
         const SkColor4f colors[] = {SkColors::kRed, SkColors::kGreen};
 
-        std::array<SkScalar, std::size(colors)> pos;
+        SkScalar pos[std::size(colors)];
         for (unsigned i = 0; i < std::size(pos); ++i) {
             pos[i] = (float)i / (std::size(pos) - 1);
         }

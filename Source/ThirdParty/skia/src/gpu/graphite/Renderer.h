@@ -56,7 +56,6 @@ enum class Coverage { kNone, kSingleChannel, kLCD };
         M1(CircularArc)                         \
         M1(AnalyticRRect)                       \
         M1(AnalyticBlur)                        \
-        M1(AnalyticRRectBlur)                   \
         M1(PerEdgeAAQuad)                       \
         M2(CoverBounds,      NonAAFill)         \
         M2(CoverBounds,      RegularCover)      \
@@ -80,9 +79,7 @@ enum class Coverage { kNone, kSingleChannel, kLCD };
         M2(Vertices,         PosColor)          \
         M2(Vertices,         PosTexCoords)      \
         M2(Vertices,         PosColorTexCoords) \
-        M1(Mesh)                                \
-        M1(EndCap)                              \
-        M1(WideTile)
+        M1(Mesh)
 
 /**
  * The actual technique for rasterizing a high-level draw recorded in a DrawList is handled by a
@@ -167,10 +164,6 @@ public:
     // 'half4 primitiveColor' variable (defined in the calling code).
     virtual std::string fragmentColorSkSL(const RootNodesInfo&) const { return ""; }
 
-    // Returns a pointer to the name of the local coordinates variable to use for
-    // shader sampling if non-null.
-    virtual const char* fragmentColorSkSLLocalCoordsVariable() const { return nullptr; }
-
     // Indicates whether this RenderStep's uniforms are referenced in its fragment shader code.
     // If not, its uniforms can be omitted from the fragment shader entirely.
     // By default, we assume that RenderSteps use their uniforms for emitting coverage or primitive
@@ -206,11 +199,10 @@ public:
 
     Coverage coverage() const { return RenderStep::GetCoverage(fFlags); }
 
-    PrimitiveType  primitiveType()    const { return fPrimitiveType;    }
-    size_t         staticDataStride() const { return fStaticDataStride; }
-    virtual size_t appendDataStride(const DrawParams& params) const { return fAppendDataStride; }
-
-    size_t storageUniformStride() const { return fStorageUniformStride;    }
+    PrimitiveType    primitiveType() const { return fPrimitiveType;          }
+    size_t        staticDataStride() const { return fStaticDataStride;       }
+    size_t        appendDataStride() const { return fAppendDataStride;       }
+    size_t    storageUniformStride() const { return fStorageUniformStride;    }
     size_t storageUniformAlignment() const { return fStorageUniformAlignment; }
 
     size_t numUniforms()          const { return fUniforms.size();        }
@@ -242,14 +234,14 @@ public:
                         ? DepthStencilFlags::kDepth : DepthStencilFlags::kNone);
     }
 
-    static const int kRenderStepIDVersion = 2;
+    static const int kRenderStepIDVersion = 1;
 
 #define ENUM1(BaseName) k##BaseName,
 #define ENUM2(BaseName, VariantName) k##BaseName##_##VariantName,
     enum class RenderStepID : uint32_t {
         SKGPU_RENDERSTEP_TYPES(ENUM1, ENUM2)
 
-        kLast = kWideTile,
+        kLast = kMesh,
     };
 #undef ENUM1
 #undef ENUM2

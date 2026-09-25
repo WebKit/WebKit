@@ -1,4 +1,3 @@
-// Pixel format implies that the texture is storage
 layout(binding=0, rgba32f) readonly texture2D t;
 void main()
 {

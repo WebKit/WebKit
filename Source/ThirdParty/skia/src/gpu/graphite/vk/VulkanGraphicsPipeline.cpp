@@ -501,7 +501,7 @@ static bool input_attachment_desc_set_layout(VkDescriptorSetLayout& outLayout,
     skia_private::STArray<1, DescriptorData> inputAttachmentDesc;
 
     if (!mockOnly) {
-        inputAttachmentDesc.push_back(VulkanGraphicsPipeline::GetInputAttachmentDescriptor());
+        inputAttachmentDesc.push_back(VulkanGraphicsPipeline::kInputAttachmentDescriptor);
     }
 
     // If mockOnly is true (meaning no input attachment descriptor is actually needed), then still
@@ -520,8 +520,8 @@ static bool uniform_desc_set_layout(VkDescriptorSetLayout& outLayout,
             VulkanGraphicsPipeline::kMaxNumUniformBuffers, DescriptorData> uniformDescriptors;
 
     DescriptorType uniformBufferType =
-            sharedContext->caps()->storageBufferSupport() ? DescriptorType::kStorageBufferDynamic
-                                                          : DescriptorType::kUniformBufferDynamic;
+            sharedContext->caps()->storageBufferSupport() ? DescriptorType::kStorageBuffer
+                                                          : DescriptorType::kUniformBuffer;
     if (hasCombinedUniforms) {
         uniformDescriptors.push_back({
                 uniformBufferType, /*count=*/1,
@@ -531,7 +531,7 @@ static bool uniform_desc_set_layout(VkDescriptorSetLayout& outLayout,
 
     if (SkToBool(storageStageFlags)) {
         uniformDescriptors.push_back({
-                DescriptorType::kStorageBufferDynamic,
+                DescriptorType::kStorageBuffer,
                 /*count=*/1,
                 VulkanGraphicsPipeline::kStorageBufferIndex,
                 storageStageFlags});
@@ -827,18 +827,11 @@ VulkanProgramInfo::~VulkanProgramInfo() {
     }
     if (fLayout != VK_NULL_HANDLE) {
         VULKAN_CALL(fSharedContext->interface(),
-                    DestroyPipelineLayout(fSharedContext->device(), fLayout, nullptr));
+                    DestroyPipelineLayout(fSharedContext->device(),
+                                          fLayout,
+                                          nullptr));
         fLayout = VK_NULL_HANDLE;
     }
-}
-
-const DescriptorData& VulkanGraphicsPipeline::GetInputAttachmentDescriptor() {
-    static const DescriptorData descriptor = {
-            DescriptorType::kInputAttachment,
-            /*count=*/1,
-            /*bindingIdx=*/0,  // We only expect to encounter one input attachment
-            PipelineStageFlags::kFragmentShader};
-    return descriptor;
 }
 
 sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
@@ -860,6 +853,12 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
 
     const RenderStep* step = sharedContext->rendererProvider()->lookup(pipelineDesc.renderStepID());
 
+    if (step->staticAttributes().size() + step->appendAttributes().size() >
+        sharedContext->vulkanCaps().maxVertexAttributes()) {
+        SKIA_LOG_W("Requested more than the supported number of vertex attributes");
+        return nullptr;
+    }
+
     skia_private::TArray<SamplerDesc> descContainer {};
     std::unique_ptr<ShaderInfo> shaderInfo =
             ShaderInfo::Make(sharedContext->caps(),
@@ -869,12 +868,6 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
                              step,
                              pipelineDesc.paintParamsID(),
                              &descContainer);
-
-    if (step->staticAttributes().size() + shaderInfo->appendAttributes().size() >
-        sharedContext->vulkanCaps().maxVertexAttributes()) {
-        SKIA_LOG_W("Requested more than the supported number of vertex attributes");
-        return nullptr;
-    }
 
     // Populate an array of sampler ptrs where a sampler's index within the array indicates their
     // binding index within the descriptor set. Initialize all values to nullptr, which represents a
@@ -982,7 +975,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
             step->primitiveType(),
             step->appendsVertices() ? VK_VERTEX_INPUT_RATE_VERTEX : VK_VERTEX_INPUT_RATE_INSTANCE,
             step->staticAttributes(),
-            shaderInfo->appendAttributes(),
+            step->appendAttributes(),
             vertexBindingDescriptions,
             vertexAttributeDescriptions,
             step->depthStencilSettings(),
@@ -999,7 +992,6 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
         pipelineInfo.fNativeFragmentShader = SkShaderUtils::SpirvAsHexStream(fsSPIRV.fBinary);
 #endif
 
-        bool hasPaintParamAttributes = !shaderInfo->appendAttributes().empty();
         pipeline = sk_sp<VulkanGraphicsPipeline>(
                 new VulkanGraphicsPipeline(sharedContext,
                                            pipelineInfo,
@@ -1013,8 +1005,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
                                            step->primitiveType(),
                                            step->depthStencilSettings(),
                                            std::move(vertexBindingDescriptions),
-                                           std::move(vertexAttributeDescriptions),
-                                           hasPaintParamAttributes));
+                                           std::move(vertexAttributeDescriptions)));
     }
 
     return pipeline;
@@ -1167,11 +1158,15 @@ std::unique_ptr<VulkanProgramInfo> VulkanGraphicsPipeline::CreateLoadMSAAProgram
 
     std::string vertShaderText;
     vertShaderText.append(
+            "layout(vulkan,  push_constant) uniform vertexUniformBuffer {"
+                "half4 uPosXform;"
+            "};"
+
             // MSAA Load Program VS
             "void main() {"
-                // Derive [0,1]x[0,1] coordinates from vertex ID and then scale to [-1,1] for NDC.
                 "float2 position = float2(sk_VertexID >> 1, sk_VertexID & 1);"
-                "sk_Position = float4(2 * position - 1, 0, 1);"
+                "sk_Position.xy = position * uPosXform.xy + uPosXform.zw;"
+                "sk_Position.zw = half2(0, 1);"
             "}");
 
     std::string fragShaderText;
@@ -1220,13 +1215,13 @@ std::unique_ptr<VulkanProgramInfo> VulkanGraphicsPipeline::CreateLoadMSAAProgram
     // references one input attachment texture (which does not require a sampler) and one vertex
     // attribute (NDC position)
     skia_private::TArray<DescriptorData> inputAttachmentDescriptors(1);
-    inputAttachmentDescriptors.push_back(VulkanGraphicsPipeline::GetInputAttachmentDescriptor());
+    inputAttachmentDescriptors.push_back(VulkanGraphicsPipeline::kInputAttachmentDescriptor);
     // This pipeline is used to read from the resolve attachment to a color attachment. We should
     // never require an immutable sampler for this, since that would imply that we are rendering to
     // a surface with an external format.
     if (!program->setLayout(setup_pipeline_layout(
                 sharedContext,
-                /*pushConstantSize=*/0,
+                /*pushConstantSize=*/32,
                 (VkShaderStageFlagBits)VK_SHADER_STAGE_VERTEX_BIT,
                 /*hasCombinedUniforms=*/false,
                 /*storageStageFlags=*/{},
@@ -1285,8 +1280,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::MakeLoadMSAAPipeline(
                                        PrimitiveType::kTriangleStrip,
                                        /*depthStencilSettings=*/{},
                                        /*vertexBindingDescriptions=*/{},
-                                       /*vertexAttributeDescriptions=*/{},
-                                       /*hasPaintParamAttributes=*/false));
+                                       /*vertexAttributeDescriptions=*/{}));
 }
 
 VulkanGraphicsPipeline::VulkanGraphicsPipeline(
@@ -1302,8 +1296,7 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(
         PrimitiveType primitiveType,
         const DepthStencilSettings& depthStencilSettings,
         VertexInputBindingDescriptions&& vertexBindingDescriptions,
-        VertexInputAttributeDescriptions&& vertexAttributeDescriptions,
-        bool hasPaintParamAttributes)
+        VertexInputAttributeDescriptions&& vertexAttributeDescriptions)
     : GraphicsPipeline(sharedContext, pipelineInfo, pipelineLabel)
     , fPipelineLayout(pipelineLayout)
     , fPipeline(pipeline)
@@ -1313,7 +1306,6 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(
     , fPrimitiveType(primitiveType)
     , fDepthStencilSettings(depthStencilSettings)
     , fRenderStepID(renderStepID)
-    , fHasPaintParamAttributes(hasPaintParamAttributes)
     , fVertexBindingDescriptions(std::move(vertexBindingDescriptions))
     , fVertexAttributeDescriptions(std::move(vertexAttributeDescriptions)) {
     // Update the newly-created underlying GPU object's label to match the Resource's
@@ -1471,9 +1463,7 @@ void VulkanGraphicsPipeline::updateDynamicState(const VulkanSharedContext* share
     }
     if (sharedContext->caps()->useVertexInputDynamicState()) {
         const bool vertexInputDirty =
-                previous == nullptr ||
-                previous->fRenderStepID != fRenderStepID ||
-                fHasPaintParamAttributes || previous->fHasPaintParamAttributes;
+                previous == nullptr || previous->fRenderStepID != fRenderStepID;
 
         if (vertexInputDirty) {
             VULKAN_CALL(sharedContext->interface(),

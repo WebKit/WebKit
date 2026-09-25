@@ -381,10 +381,9 @@ def compile_fn(api, checkout_root, out_dir):
 
   # Putting ninja on the path makes it easier for subcommands to find it
   # (e.g. when building Dawn via CMake+ninja)
-  # Prepend ninja_root so subcommands use Skia's hermetic ninja binary
-  # rather than wrappers in depot_tools.
+  # Importantly, this needs to go *after* depot_tools, so we append it
   existing_path = env.get('PATH', '%(PATH)s')
-  env['PATH'] = api.path.pathsep.join([str(ninja_root), existing_path])
+  env['PATH'] = api.path.pathsep.join([existing_path, str(ninja_root)])
 
   with api.context(cwd=skia_dir):
     with api.env(env):

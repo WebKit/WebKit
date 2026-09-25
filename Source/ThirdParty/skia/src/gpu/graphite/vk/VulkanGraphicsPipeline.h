@@ -105,7 +105,10 @@ public:
 
     // Define a static DescriptorData to represent input attachments which have the same values
     // across all pipelines (we currently only ever use one input attachment within a set).
-    static const DescriptorData& GetInputAttachmentDescriptor();
+    inline static const DescriptorData kInputAttachmentDescriptor = {
+            DescriptorType::kInputAttachment, /*count=*/1,
+            /*bindingIdx=*/0, // We only expect to encounter one input attachment
+            PipelineStageFlags::kFragmentShader};
 
     static sk_sp<VulkanGraphicsPipeline> Make(VulkanSharedContext*,
                                               const RuntimeEffectDictionary*,
@@ -165,8 +168,7 @@ private:
                            PrimitiveType primitiveType,
                            const DepthStencilSettings& depthStencilSettings,
                            VertexInputBindingDescriptions&& vertexBindingDescriptions,
-                           VertexInputAttributeDescriptions&& vertexAttributeDescriptions,
-                           bool hasPaintParamAttributes);
+                           VertexInputAttributeDescriptions&& vertexAttributeDescriptions);
 
     void freeGpuData() override;
 
@@ -207,7 +209,6 @@ private:
     PrimitiveType fPrimitiveType;
     DepthStencilSettings fDepthStencilSettings;
     RenderStep::RenderStepID fRenderStepID;
-    bool fHasPaintParamAttributes = false;
     // The Vulkan vertex attribute descriptions are cached to avoid recomputing them every time.
     VertexInputBindingDescriptions fVertexBindingDescriptions;
     VertexInputAttributeDescriptions fVertexAttributeDescriptions;

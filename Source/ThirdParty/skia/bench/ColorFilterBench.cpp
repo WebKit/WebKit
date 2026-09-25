@@ -17,7 +17,6 @@
 #include "tools/DecodeUtils.h"
 #include "tools/Resources.h"
 
-#include <array>
 #include <functional>
 
 static constexpr char kRuntimeNone_GPU_SRC[] = R"(
@@ -79,12 +78,12 @@ public:
     };
 
     FilteredRectBench(Type t) : fType(t) {
-        static constexpr auto kSuffix = std::to_array<const char*>({
+        static constexpr const char* kSuffix[] = {
                 "nofilter",
                 "colorfilter",
                 "imagefilter",
                 "runtimecolorfilter",
-        });
+        };
         fName.printf("filteredrect_%s", kSuffix[t]);
         fPaint.setColor(SK_ColorRED);
     }

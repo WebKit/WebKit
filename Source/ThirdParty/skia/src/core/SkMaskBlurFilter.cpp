@@ -17,9 +17,8 @@
 #include "src/core/SkGaussFilter.h"
 #include "src/core/SkVx.h"
 
-#include <array>
-#include <climits>
 #include <cmath>
+#include <climits>
 
 namespace {
 
@@ -332,8 +331,8 @@ static void store(uint8_t* to, const fp88& v, int width) {
     if (width == 8) {
         b.store(to);
     } else {
-        std::array<uint8_t, 8> buffer;
-        b.store(buffer.data());
+        uint8_t buffer[8];
+        b.store(buffer);
         for (int i = 0; i < width; i++) {
             to[i] = buffer[i];
         }

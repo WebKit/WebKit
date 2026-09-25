@@ -65,10 +65,11 @@ public:
 
     void onPrePrepare(GrRecordingContext*) override;
     /**
-     * Together these two functions flush all queued up draws to GrCommandBuffer.
+     * Together these two functions flush all queued up draws to GrCommandBuffer. The return value
+     * of onExecute() indicates whether any commands were actually issued to the GPU.
      */
     void onPrepare(GrOpFlushState* flushState) override;
-    ExecutionResult onExecute(GrOpFlushState* flushState) override;
+    bool onExecute(GrOpFlushState* flushState) override;
 
     void addSampledTexture(GrSurfaceProxy* proxy) {
         // This function takes a GrSurfaceProxy because all subsequent uses of the proxy do not

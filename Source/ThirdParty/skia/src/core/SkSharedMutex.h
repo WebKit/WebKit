@@ -14,8 +14,6 @@
 
 #ifdef SK_DEBUG
     #include "include/private/SkMutex.h"
-
-    #include <array>
     #include <memory>
 #endif  // SK_DEBUG
 
@@ -61,7 +59,7 @@ private:
     std::unique_ptr<ThreadIDSet> fWaitingShared;
     int fSharedQueueSelect{0};
     mutable SkMutex fMu;
-    std::array<SkSemaphore, 2> fSharedQueue;
+    SkSemaphore fSharedQueue[2];
     SkSemaphore fExclusiveQueue;
 #else
     std::atomic<int32_t> fQueueCounts;

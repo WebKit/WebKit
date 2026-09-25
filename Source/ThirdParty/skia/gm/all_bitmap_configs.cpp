@@ -28,7 +28,6 @@
 #include "tools/fonts/FontToolUtils.h"
 
 #include <string.h>
-#include <array>
 #include <initializer_list>
 
 static SkBitmap copy_bitmap(const SkBitmap& src, SkColorType colorType) {
@@ -62,7 +61,7 @@ static SkBitmap make_bitmap(SkColorType ct) {
             SkASSERT(false);
             return bm;
     }
-    std::array<uint8_t, 256> spectrum;
+    uint8_t spectrum[256];
     for (int y = 0; y < 256; ++y) {
         spectrum[y] = y;
     }

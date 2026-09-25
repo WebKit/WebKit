@@ -60,10 +60,7 @@ struct Range {
 };
 
 static constexpr int kNumOpPositions = 4;
-static constexpr auto kRanges = std::to_array<Range>({
-        Range{0, 4},
-        Range{1, 2},
-});
+static constexpr Range kRanges[] = {{0, 4,}, {1, 2}};
 static constexpr int kNumRanges = (int)std::size(kRanges);
 static constexpr int kNumRepeats = 2;
 static constexpr int kNumOps = kNumRepeats * kNumOpPositions * kNumRanges;
@@ -106,7 +103,7 @@ int64_t combinable_index(int a, int b) {
 static void init_combinable(int numGroups, Combinable* combinable, SkRandom* random) {
     SkScalar mergeProbability = random->nextUScalar1();
     std::fill_n(combinable->begin(), kNumCombinableValues, GrOp::CombineResult::kCannotCombine);
-    std::array<SkTDArray<int>, kNumOps> groups;
+    SkTDArray<int> groups[kNumOps];
     for (int i = 0; i < kNumOps; ++i) {
         auto& group = groups[random->nextULessThan(numGroups)];
         for (int g = 0; g < group.size(); ++g) {
@@ -236,7 +233,7 @@ DEF_GANESH_TEST(OpChainTest, reporter, /*ctxInfo*/, CtsEnforcement::kApiLevel_T)
     int result[result_width()];
     int validResult[result_width()];
 
-    std::array<int, kNumOps> permutation;
+    int permutation[kNumOps];
     for (int i = 0; i < kNumOps; ++i) {
         permutation[i] = i;
     }

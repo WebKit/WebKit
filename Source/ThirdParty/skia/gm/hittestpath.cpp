@@ -15,8 +15,6 @@
 #include "include/core/SkTypes.h"
 #include "src/core/SkRandom.h"
 
-#include <array>
-
 static void test_hittest(SkCanvas* canvas, const SkPath& path) {
     SkPaint paint;
     SkRect r = path.getBounds();
@@ -50,7 +48,7 @@ DEF_SIMPLE_GM_CAN_FAIL(hittestpath, canvas, errorMsg, 700, 460) {
     int scale = 300;
     for (int i = 0; i < 4; ++i) {
         // get the random values deterministically
-        std::array<SkScalar, 12> randoms;
+        SkScalar randoms[12];
         for (int index = 0; index < (int) std::size(randoms); ++index) {
             randoms[index] = rand.nextUScalar1();
         }

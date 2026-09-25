@@ -96,8 +96,7 @@ KeyContext KeyContext::forRuntimeEffect(const SkRuntimeEffect* effect, int child
 }
 
 KeyContext KeyContext::forMeshSpecChild() const {
-    return this->withExtraFlags(kRuntimeEffectChildDefaultFlags |
-                                KeyGenFlags::kDisableSamplingOptimization);
+    return this->withExtraFlags(kRuntimeEffectChildDefaultFlags);
 }
 
 } // namespace skgpu::graphite

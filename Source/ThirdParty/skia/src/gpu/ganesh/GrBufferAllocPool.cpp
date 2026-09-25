@@ -120,10 +120,9 @@ void GrBufferAllocPool::reset() {
     VALIDATE();
 }
 
-bool GrBufferAllocPool::unmap() {
+void GrBufferAllocPool::unmap() {
     VALIDATE();
 
-    bool success = true;
     if (fBufferPtr) {
         BufferBlock& block = fBlocks.back();
         GrBuffer* buffer = block.fBuffer.get();
@@ -132,13 +131,12 @@ bool GrBufferAllocPool::unmap() {
                 UNMAP_BUFFER(block);
             } else {
                 size_t flushSize = block.fBuffer->size() - block.fBytesFree;
-                success = this->flushCpuData(fBlocks.back(), flushSize);
+                this->flushCpuData(fBlocks.back(), flushSize);
             }
         }
         fBufferPtr = nullptr;
     }
     VALIDATE();
-    return success;
 }
 
 #ifdef SK_DEBUG
@@ -340,11 +338,7 @@ bool GrBufferAllocPool::createBlock(size_t requestSize) {
             if (static_cast<GrGpuBuffer*>(buffer)->isMapped()) {
                 UNMAP_BUFFER(prev);
             } else {
-                if (!this->flushCpuData(prev, prev.fBuffer->size() - prev.fBytesFree)) {
-                    fBufferPtr = nullptr;
-                    this->destroyBlock();
-                    return false;
-                }
+                this->flushCpuData(prev, prev.fBuffer->size() - prev.fBytesFree);
             }
         }
         fBufferPtr = nullptr;
@@ -396,7 +390,7 @@ void GrBufferAllocPool::resetCpuData(size_t newSize) {
                                         : GrCpuBuffer::Make(newSize);
 }
 
-bool GrBufferAllocPool::flushCpuData(const BufferBlock& block, size_t flushSize) {
+void GrBufferAllocPool::flushCpuData(const BufferBlock& block, size_t flushSize) {
     SkASSERT(block.fBuffer.get());
     SkASSERT(!block.fBuffer.get()->isCpuBuffer());
     GrGpuBuffer* buffer = static_cast<GrGpuBuffer*>(block.fBuffer.get());
@@ -411,12 +405,11 @@ bool GrBufferAllocPool::flushCpuData(const BufferBlock& block, size_t flushSize)
         if (data) {
             memcpy(data, fBufferPtr, flushSize);
             UNMAP_BUFFER(block);
-            return true;
+            return;
         }
     }
-    bool result = buffer->updateData(fBufferPtr, /*offset=*/0, flushSize, /*preserve=*/false);
+    buffer->updateData(fBufferPtr, /*offset=*/0, flushSize, /*preserve=*/false);
     VALIDATE(true);
-    return result;
 }
 
 sk_sp<GrBuffer> GrBufferAllocPool::getBuffer(size_t size) {

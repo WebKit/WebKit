@@ -90,14 +90,14 @@ public:
      * GrContext will detect when it must perform a resolve before reading pixels back from the
      * surface or using it as a texture.
      */
-    [[nodiscard]] GrDirectContext::FlushResult flushSurfaces(
+    GrSemaphoresSubmitted flushSurfaces(
             SkSpan<GrSurfaceProxy*>,
             SkSurfaces::BackendSurfaceAccess = SkSurfaces::BackendSurfaceAccess::kNoAccess,
             const GrFlushInfo& = {},
             const skgpu::MutableTextureState* newState = nullptr);
 
     /** Version of above that flushes for a single proxy. Null is allowed. */
-    [[nodiscard]] GrDirectContext::FlushResult flushSurface(
+    GrSemaphoresSubmitted flushSurface(
             GrSurfaceProxy* proxy,
             SkSurfaces::BackendSurfaceAccess access = SkSurfaces::BackendSurfaceAccess::kNoAccess,
             const GrFlushInfo& info = {},

@@ -28,7 +28,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 		{Var: "skia_codec_shared",
 			Rules: []string{
 				"//src/codec:any_decoder",
-				"//src/codec:hdr_metadata",
 				"//include/codec:any_codec_hdrs",
 			},
 		},
@@ -190,7 +189,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 		{Var: "skia_core_public",
 			Rules: []string{
 				"//include/core:core_hdrs",
-				"//include/cpu:core_hdrs",
 			}},
 		{Var: "skia_core_sources",
 			Rules: []string{
@@ -376,9 +374,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 			}},
 		{Var: "skia_graphite_sparse_strips_sources",
 			Rules: []string{
-				"//src/gpu/graphite/geom:sparse_strips_hdrs",
-				"//src/gpu/graphite/render:sparse_strips_hdrs",
-				"//src/gpu/graphite/render:sparse_strips_srcs",
 				"//src/gpu/graphite/sparse_strips:sparse_strips_hdrs",
 				"//src/gpu/graphite/sparse_strips:sparse_strips_srcs",
 			}},

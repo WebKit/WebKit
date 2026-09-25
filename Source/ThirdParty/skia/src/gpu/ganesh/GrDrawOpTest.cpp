@@ -49,12 +49,12 @@ const GrUserStencilSettings* GrGetRandomStencil(SkRandom* random, GrContext_Base
             0x77ff>()
     );
 
-    static const auto kStencilSettings = std::to_array<const GrUserStencilSettings*>({
+    static const GrUserStencilSettings* kStencilSettings[] = {
             &GrUserStencilSettings::kUnused,
             &kReads,
             &kWrites,
             &kReadsAndWrites,
-    });
+    };
     return kStencilSettings[random->nextULessThan(std::size(kStencilSettings))];
 }
 

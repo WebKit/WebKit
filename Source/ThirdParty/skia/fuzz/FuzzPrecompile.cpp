@@ -317,8 +317,8 @@ sk_sp<DrawContext> get_precompile_draw_context(
                                                     resourceProvider,
                                                     drawSize,
                                                     texInfo,
-                                                    skgpu::Budgeted::kYes,
-                                                    "PrecompileTarget");
+                                                    "PrecompileTarget",
+                                                    skgpu::Budgeted::kYes);
     sk_sp<DrawContext> precompileDrawContext = DrawContext::Make(caps,
                                                                  std::move(target),
                                                                  drawSize,

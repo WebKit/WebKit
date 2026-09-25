@@ -13,7 +13,6 @@
 #include "include/core/SkTypes.h"
 #include "include/private/SkTArray.h"
 
-#include <array>
 #include <atomic>
 
 class GrThreadSafePipelineBuilder : public SkRefCnt {
@@ -76,10 +75,10 @@ public:
         std::atomic<int> fShaderCompilations{0};
 
         std::atomic<int> fNumInlineCompilationFailures{0};
-        std::array<std::atomic<int>, kNumProgramCacheResults> fInlineProgramCacheStats = {};
+        std::atomic<int> fInlineProgramCacheStats[kNumProgramCacheResults]{};
 
         std::atomic<int> fNumPreCompilationFailures{0};
-        std::array<std::atomic<int>, kNumProgramCacheResults> fPreProgramCacheStats = {};
+        std::atomic<int> fPreProgramCacheStats[kNumProgramCacheResults]{};
 
         std::atomic<int> fNumCompilationFailures{0};
         std::atomic<int> fNumPartialCompilationSuccesses{0};

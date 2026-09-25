@@ -11,11 +11,7 @@
 #include "include/core/SkPath.h"
 #include "include/core/SkPathBuilder.h"
 #include "include/private/SkTDArray.h"
-#include "include/private/SkTo.h"
 #include "src/core/SkRandom.h"
-
-#include <array>
-#include <cstdint>
 
 /**
  * This is a conversion of samplecode/SampleChart.cpp into a bench. It sure would be nice to be able
@@ -128,12 +124,12 @@ protected:
             for (int i = 0; i < kNumGraphs; ++i) {
                 SkScalar y = (kNumGraphs - i) * (height - ySpread) / (kNumGraphs + 1);
                 fData[i].reset();
-                gen_data(y, ySpread, dataPointCount, &random, &fData[i]);
+                gen_data(y, ySpread, dataPointCount, &random, fData + i);
             }
         }
 
         SkRandom colorRand;
-        std::array<SkColor, kNumGraphs> colors;
+        SkColor colors[kNumGraphs];
         for (int i = 0; i < kNumGraphs; ++i) {
             colors[i] = colorRand.nextU() | 0xff000000;
         }
@@ -171,7 +167,7 @@ protected:
                 plotPaint.setColor(colors[i]);
                 canvas->drawPath(plotPath, plotPaint);
 
-                prevData = &fData[i];
+                prevData = fData + i;
             }
 
             fShift += kShiftPerFrame;
@@ -186,7 +182,7 @@ private:
     };
     int                 fShift;
     SkISize             fSize;
-    std::array<SkTDArray<SkScalar>, kNumGraphs> fData;
+    SkTDArray<SkScalar> fData[kNumGraphs];
     bool                fAA;
 
     using INHERITED = Benchmark;

@@ -26,7 +26,6 @@
 #include "tools/flags/CommandLineFlags.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <initializer_list>
@@ -73,14 +72,9 @@ DEF_TEST(FontMgr_Font, reporter) {
  *  if we request the alias name multiple times.
  */
 DEF_TEST(FontMgr_AliasNames, reporter) {
-    static constexpr auto inNames = std::to_array<const char*>({
-            "sans",
-            "sans-serif",
-            "serif",
-            "monospace",
-            "times",
-            "helvetica",
-    });
+    const char* inNames[] = {
+        "sans", "sans-serif", "serif", "monospace", "times", "helvetica"
+    };
 
     for (size_t i = 0; i < std::size(inNames); ++i) {
         sk_sp<SkTypeface> first(ToolUtils::CreateTestTypeface(inNames[i], SkFontStyle()));

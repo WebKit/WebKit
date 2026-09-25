@@ -128,8 +128,7 @@ public:
                                const ShaderCodeDictionary*,
                                const RuntimeEffectDictionary*,
                                SkArenaAlloc*,
-                               int availableVaryings,
-                               bool canLiftCoords) const;
+                               int availableVaryings) const;
 
     // Converts the key to a structured list of snippet information for debugging or labeling
     // purposes.

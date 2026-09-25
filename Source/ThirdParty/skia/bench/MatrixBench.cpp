@@ -10,8 +10,6 @@
 #include "src/core/SkMatrixUtils.h"
 #include "src/core/SkRandom.h"
 
-#include <array>
-
 class MatrixBench : public Benchmark {
     SkString    fName;
 public:
@@ -96,7 +94,7 @@ protected:
         }
     }
 private:
-    std::array<SkMatrix, 10> fMatrix;
+    SkMatrix fMatrix[10];
     SkRandom fRandom;
     using INHERITED = MatrixBench;
 };
@@ -241,7 +239,7 @@ public:
     const Use      fUse;
 
     enum { N = 32 };
-    std::array<SkPoint, N> fDst;
+    SkPoint fDst[N];
 
     SkString fName;
 
@@ -304,7 +302,7 @@ public:
                         fM.mapPoints({&fDst[j], 1}, {&src, 1});
                         src.fX += 1;
                     }
-                    this->handle(fDst.data());
+                    this->handle(fDst);
                 }
                 break;
             case Use::kSingle:
@@ -314,7 +312,7 @@ public:
                         fDst[j] = fM.mapPoint(src);
                         src.fX += 1;
                     }
-                    this->handle(fDst.data());
+                    this->handle(fDst);
                 }
                 break;
             case Use::kAffine:
@@ -324,7 +322,7 @@ public:
                         fDst[j] = fM.mapPointAffine(src);
                         src.fX += 1;
                     }
-                    this->handle(fDst.data());
+                    this->handle(fDst);
                 }
                 break;
         }

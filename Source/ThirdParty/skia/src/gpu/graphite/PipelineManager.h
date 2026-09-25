@@ -49,7 +49,7 @@ public:
             const RenderPassDesc&,
             SkEnumBitMask<PipelineCreationFlags>);
 
-    sk_sp<GraphicsPipeline> resolveHandle(const GraphicsPipelineHandle&);
+    sk_sp<GraphicsPipeline> resolveHandle(SharedContext*, const GraphicsPipelineHandle&);
 
     // Wait for any in-flight tasks to complete. Additionally, disable the addition of any
     // more threaded tasks.
@@ -73,8 +73,7 @@ private:
     enum class Priority { kHigh = 0, kLow = 1 };
 
     sk_sp<PipelineCreationTask> findOrCreateTask(
-            SharedContext*,
-            sk_sp<const RuntimeEffectDictionary>,
+            sk_sp<const RuntimeEffectDictionary> runtimeDict,
             const UniqueKey& pipelineKey,
             const GraphicsPipelineDesc&,
             const RenderPassDesc&,
@@ -101,10 +100,11 @@ private:
     std::unique_ptr<SkTaskGroup> fTaskGroup SK_GUARDED_BY(fSpinLock);
 
     void signalCompleted(PipelineCreationTask*);
-    void potentiallyWaitOn(PipelineCreationTask*);
+    void potentiallyWaitOn(SharedContext*, PipelineCreationTask*);
 
-    // Returns true if compilation occurred; false otherwise.
-    static bool InlineCompile(PipelineCreationTask*);
+    static void InlineCompile(SharedContext* sharedContext,
+                              PipelineManager* pipelineManager,
+                              PipelineCreationTask* task);
 
     // We have the mutex and condition_variable here to limit the number of
     // mutexes/semaphores we need for synchronizing access to the pipelines.

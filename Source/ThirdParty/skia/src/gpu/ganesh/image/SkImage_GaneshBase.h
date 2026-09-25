@@ -10,7 +10,6 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSamplingOptions.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/private/chromium/SkImageChromium.h"
 #include "include/private/gpu/ganesh/GrImageContext.h"
@@ -75,7 +74,7 @@ public:
                       int srcY,
                       CachingHint) const override;
 
-    virtual GrDirectContext::FlushResult flush(GrDirectContext*, const GrFlushInfo&) const = 0;
+    virtual GrSemaphoresSubmitted flush(GrDirectContext*, const GrFlushInfo&) const = 0;
 
     static bool ValidateBackendTexture(const GrCaps*,
                                        const GrBackendTexture& tex,

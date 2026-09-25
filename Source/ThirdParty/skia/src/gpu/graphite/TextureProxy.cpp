@@ -21,14 +21,14 @@ namespace skgpu::graphite {
 
 TextureProxy::TextureProxy(SkISize dimensions,
                            const TextureInfo& info,
-                           skgpu::Budgeted budgeted,
-                           std::string_view label)
+                           std::string_view label,
+                           skgpu::Budgeted budgeted)
         : SkPixelStorage(SkPixelStorage::Type::kTextureProxy)
         , fDimensions(dimensions)
         , fInfo(info)
+        , fLabel(label)
         , fBudgeted(budgeted)
-        , fVolatile(Volatile::kNo)
-        , fLabel(label) {
+        , fVolatile(Volatile::kNo) {
     SkASSERT(fInfo.isValid());
 }
 
@@ -36,9 +36,9 @@ TextureProxy::TextureProxy(sk_sp<Texture> texture)
         : SkPixelStorage(SkPixelStorage::Type::kTextureProxy)
         , fDimensions(texture->dimensions())
         , fInfo(texture->textureInfo())
+        , fLabel(texture->getLabel())
         , fBudgeted(texture->budgeted())
         , fVolatile(Volatile::kNo)
-        , fLabel(texture->getLabel())
         , fTexture(std::move(texture)) {
     SkASSERT(fInfo.isValid());
 }
@@ -159,25 +159,20 @@ const Texture* TextureProxy::texture() const {
     return fTexture.get();
 }
 
-namespace {
-bool texture_info_and_size_are_valid(
-        SkISize dimensions, const TextureInfo& textureInfo, int maxTextureSize) {
-    return dimensions.width() >= 1  && dimensions.height() >= 1 &&
-           dimensions.width() <= maxTextureSize  && dimensions.height() <= maxTextureSize &&
-           textureInfo.isValid();
-}
-} // anonymous namespace
 sk_sp<TextureProxy> TextureProxy::Make(const Caps* caps,
                                        ResourceProvider* resourceProvider,
                                        SkISize dimensions,
                                        const TextureInfo& textureInfo,
-                                       skgpu::Budgeted budgeted,
-                                       std::string_view label) {
-    if (!texture_info_and_size_are_valid(dimensions, textureInfo, caps->maxTextureSize())) {
+                                       std::string_view label,
+                                       skgpu::Budgeted budgeted) {
+    if (dimensions.width() < 1 || dimensions.height() < 1 ||
+        dimensions.width() > caps->maxTextureSize() ||
+        dimensions.height() > caps->maxTextureSize() ||
+        !textureInfo.isValid()) {
         return nullptr;
     }
 
-    sk_sp<TextureProxy> proxy {new TextureProxy(dimensions, textureInfo, budgeted, label)};
+    sk_sp<TextureProxy> proxy {new TextureProxy(dimensions, textureInfo, label, budgeted)};
     if (budgeted == Budgeted::kNo) {
         // Instantiate immediately to avoid races later on if the client starts to use the wrapping
         // object on multiple threads.
@@ -194,7 +189,10 @@ sk_sp<TextureProxy> TextureProxy::MakeLazy(const Caps* caps,
                                            skgpu::Budgeted budgeted,
                                            Volatile isVolatile,
                                            LazyInstantiateCallback&& callback) {
-    if (!texture_info_and_size_are_valid(dimensions, textureInfo, caps->maxTextureSize())) {
+    SkASSERT(textureInfo.isValid());
+    if (dimensions.width() < 1 || dimensions.height() < 1 ||
+        dimensions.width() > caps->maxTextureSize() ||
+        dimensions.height() > caps->maxTextureSize()) {
         return nullptr;
     }
 

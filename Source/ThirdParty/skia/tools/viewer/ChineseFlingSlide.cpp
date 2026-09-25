@@ -19,8 +19,6 @@
 #include "tools/timer/TimeUtils.h"
 #include "tools/viewer/Slide.h"
 
-#include <array>
-
 #if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrDirectContext.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
@@ -50,7 +48,7 @@ class ChineseFlingSlide : public Slide {
 
     sk_sp<SkTypeface>    fTypeface;
     SkFontMetrics        fMetrics;
-    std::array<sk_sp<SkTextBlob>, kNumBlobs> fBlobs;
+    sk_sp<SkTextBlob>    fBlobs[kNumBlobs];
     SkRandom             fRand;
     int                  fIndex = 0;
 
@@ -117,7 +115,7 @@ class ChineseZoomSlide : public Slide {
     bool                 fAfterFirstFrame = false;
     sk_sp<SkTypeface>    fTypeface;
     SkFontMetrics        fMetrics;
-    std::array<sk_sp<SkTextBlob>, kNumBlobs> fBlobs;
+    sk_sp<SkTextBlob>    fBlobs[kNumBlobs];
     SkRandom             fRand;
     SkScalar             fScale = 15;
     SkScalar             fTranslate = 0;
@@ -239,7 +237,7 @@ class ChineseScrollSlide : public Slide {
     static constexpr int kDefaultScrollUnitsPerSecondLog2 = 7;
 
     sk_sp<SkTypeface> fTypeface;
-    std::array<sk_sp<SkTextBlob>, kNumBlobs> fBlobs;
+    sk_sp<SkTextBlob> fBlobs[kNumBlobs];
     float             fVerticalPeriod;
     SkRandom          fRand;
     float             fTranslate = 0;

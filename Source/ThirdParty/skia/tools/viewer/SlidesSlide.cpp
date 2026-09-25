@@ -17,8 +17,6 @@
 #include "tools/EncodeUtils.h"
 #include "tools/viewer/ClickHandlerSlide.h"
 
-#include <array>
-
 #define BG_COLOR    0xFFDDDDDD
 
 typedef void (*SlideProc)(SkCanvas*);
@@ -64,9 +62,9 @@ static void dash_pe(SkPaint* paint) {
     compose_pe(paint);
 }
 
-static constexpr auto gXY = std::to_array<int>({
-    4, 0, 0, -4, 8, -4, 12, 0, 8, 4, 0, 4
-});
+static const int gXY[] = {
+4, 0, 0, -4, 8, -4, 12, 0, 8, 4, 0, 4
+};
 
 static void one_d_pe(SkPaint* paint) {
     SkPathBuilder builder;
@@ -84,9 +82,7 @@ static void one_d_pe(SkPaint* paint) {
 }
 
 typedef void (*PE_Proc)(SkPaint*);
-static constexpr auto gPE = std::to_array<PE_Proc>({
-    hair_pe, hair2_pe, stroke_pe, dash_pe, one_d_pe
-});
+static const PE_Proc gPE[] = { hair_pe, hair2_pe, stroke_pe, dash_pe, one_d_pe };
 
 static void fill_pe(SkPaint* paint) {
     paint->setStyle(SkPaint::kFill_Style);
@@ -110,7 +106,7 @@ static void tile_pe(SkPaint* paint) {
     paint->setPathEffect(MakeTileEffect());
 }
 
-static constexpr auto gPE2 = std::to_array<PE_Proc>({ fill_pe, discrete_pe, tile_pe });
+static const PE_Proc gPE2[] = { fill_pe, discrete_pe, tile_pe };
 
 static void patheffect_slide(SkCanvas* canvas) {
     SkPaint paint;
@@ -175,13 +171,13 @@ static const SkScalar gPos2[] = {
     0, SK_Scalar1/8, SK_Scalar1/2, SK_Scalar1*7/8, SK_Scalar1
 };
 
-static const auto gGradData = std::to_array<GradData>({
-    GradData{ 2, gColors, nullptr },
-    GradData{ 2, gColors, gPos0 },
-    GradData{ 2, gColors, gPos1 },
-    GradData{ 5, gColors, nullptr },
-    GradData{ 5, gColors, gPos2 }
-});
+static const GradData gGradData[] = {
+    { 2, gColors, nullptr },
+    { 2, gColors, gPos0 },
+    { 2, gColors, gPos1 },
+    { 5, gColors, nullptr },
+    { 5, gColors, gPos2 }
+};
 
 static sk_sp<SkShader> MakeLinear(const SkPoint pts[2], const GradData& data, SkTileMode tm) {
     return SkShaders::LinearGradient(pts, data.grad(tm));
@@ -213,9 +209,9 @@ static sk_sp<SkShader> Make2Conical(const SkPoint pts[2], const GradData& data, 
 }
 
 typedef sk_sp<SkShader> (*GradMaker)(const SkPoint pts[2], const GradData&, SkTileMode);
-static constexpr auto gGradMakers = std::to_array<GradMaker>({
+static const GradMaker gGradMakers[] = {
     MakeLinear, MakeRadial, MakeSweep, Make2Conical
-});
+};
 
 static void gradient_slide(SkCanvas* canvas) {
     SkPoint pts[2] = {
@@ -356,7 +352,7 @@ static void make_strip(Rec* rec, int texWidth, int texHeight) {
 }
 
 static void mesh_slide(SkCanvas* canvas) {
-    std::array<Rec, 3> fRecs;
+    Rec fRecs[3];
     SkIPoint    size;
 
     auto fShader0 = make_shader0(&size);
@@ -399,11 +395,11 @@ static void mesh_slide(SkCanvas* canvas) {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-static constexpr auto gProc = std::to_array<SlideProc>({
+static const SlideProc gProc[] = {
     patheffect_slide,
     gradient_slide,
     mesh_slide,
-});
+};
 
 class SlidesSlide : public ClickHandlerSlide {
     int fIndex;

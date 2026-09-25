@@ -25,7 +25,6 @@
 #include "src/core/SkPathEnums.h"
 #include "src/core/SkPathRaw.h"
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
@@ -83,9 +82,9 @@ public:
      *  opposite.
      */
     static SkPathFirstDirection OppositeFirstDirection(SkPathFirstDirection dir) {
-        static constexpr auto gOppositeDir = std::to_array<SkPathFirstDirection>({
+        static const SkPathFirstDirection gOppositeDir[] = {
             SkPathFirstDirection::kCCW, SkPathFirstDirection::kCW, SkPathFirstDirection::kUnknown,
-        });
+        };
         return gOppositeDir[(unsigned)dir];
     }
 
@@ -246,7 +245,7 @@ public:
 
     // Returns number of valid points for each SkPath::Iter verb
     static int PtsInIter(unsigned verb) {
-        static constexpr auto gPtsInVerb = std::to_array<uint8_t>({
+        static const uint8_t gPtsInVerb[] = {
             1,  // kMove    pts[0]
             2,  // kLine    pts[0..1]
             3,  // kQuad    pts[0..2]
@@ -254,7 +253,7 @@ public:
             4,  // kCubic   pts[0..3]
             0,  // kClose
             0   // kDone
-        });
+        };
 
         SkASSERT(verb < std::size(gPtsInVerb));
         return gPtsInVerb[verb];
@@ -265,7 +264,7 @@ public:
     // Returns number of valid points for each verb, not including the "starter"
     // point that the Iterator adds for line/quad/conic/cubic
     static int PtsInVerb(unsigned verb) {
-        static constexpr auto gPtsInVerb = std::to_array<uint8_t>({
+        static const uint8_t gPtsInVerb[] = {
             1,  // kMove    pts[0]
             1,  // kLine    pts[0..1]
             2,  // kQuad    pts[0..2]
@@ -273,7 +272,7 @@ public:
             3,  // kCubic   pts[0..3]
             0,  // kClose
             0   // kDone
-        });
+        };
 
         SkASSERT(verb < std::size(gPtsInVerb));
         return gPtsInVerb[verb];

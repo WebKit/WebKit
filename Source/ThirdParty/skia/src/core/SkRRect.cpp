@@ -642,7 +642,7 @@ bool SkRRect::transform(const SkMatrix& matrix, SkRRect* dst) const {
 
     dst->scaleRadii();
 
-    if (!SkRRectPriv::AreRectAndRadiiValid(dst->fRect, dst->fRadii)) {
+    if (!AreRectAndRadiiValid(dst->fRect, dst->fRadii)) {
         return false;
     }
 
@@ -754,32 +754,16 @@ void SkRRect::dump(bool asHex) const { SkDebugf("%s\n", this->dumpToString(asHex
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static bool are_radii_predicates_valid(SkScalar radiusFromMin,
-                                       SkScalar radiusFromMax,
-                                       SkScalar minCoord,
-                                       SkScalar maxCoord) {
-    if (minCoord > maxCoord || radiusFromMin < 0 || radiusFromMax < 0) {
-        return false;
-    }
-    const SkScalar limit = maxCoord - minCoord;
-    const SkScalar sum = radiusFromMin + radiusFromMax;
-    // Check both lengths (sum <= limit) and absolute coordinates (min + r1 <= max - r2)
-    // because floating-point rounding can cause one to pass while the other fails. Testing both
-    // ensures the corner curves never overlap regardless of how algorithms compute edge spans.
-    if (sum <= limit && minCoord + radiusFromMin <= maxCoord - radiusFromMax) {
-        return true;
-    }
-    // Accept either floats that are within an absolute tolerance of each other (for small numbers)
-    // or within a few ULPs (Units in the Last Place, i.e. the step between adjacent
-    // representable floats, for large numbers) to be robust against floating-point imprecision
-    // when translated. See https://skia-review.git.corp.google.com/c/skia/+/1279236.
-    const SkFloatingPoint<float, 4> fpSum(sum);
-    const SkFloatingPoint<float, 4> fpLimit(limit);
-    return SkScalarNearlyEqual(sum, limit) || fpSum.AlmostEquals(fpLimit);
+/**
+ *  We need all combinations of predicates to be true to have a "safe" radius value.
+ */
+static bool are_radius_check_predicates_valid(SkScalar rad, SkScalar min, SkScalar max) {
+    return (min <= max) && (rad <= max - min) && (min + rad <= max) && (max - rad >= min) &&
+           rad >= 0;
 }
 
 bool SkRRect::isValid() const {
-    if (!SkRRectPriv::AreRectAndRadiiValid(fRect, fRadii)) {
+    if (!AreRectAndRadiiValid(fRect, fRadii)) {
         return false;
     }
 
@@ -861,28 +845,18 @@ bool SkRRect::isValid() const {
     return true;
 }
 
-bool SkRRectPriv::AreRectAndRadiiValid(const SkRect& rect, const SkVector radii[4]) {
+bool SkRRect::AreRectAndRadiiValid(const SkRect& rect, const SkVector radii[4]) {
     if (!rect.isFinite() || !rect.isSorted()) {
         return false;
     }
-    return are_radii_predicates_valid(radii[SkRRect::kUpperLeft_Corner].fX,
-                                      radii[SkRRect::kUpperRight_Corner].fX,
-                                      rect.fLeft,
-                                      rect.fRight) &&
-           are_radii_predicates_valid(radii[SkRRect::kLowerLeft_Corner].fX,
-                                      radii[SkRRect::kLowerRight_Corner].fX,
-                                      rect.fLeft,
-                                      rect.fRight) &&
-           are_radii_predicates_valid(radii[SkRRect::kUpperLeft_Corner].fY,
-                                      radii[SkRRect::kLowerLeft_Corner].fY,
-                                      rect.fTop,
-                                      rect.fBottom) &&
-           are_radii_predicates_valid(radii[SkRRect::kUpperRight_Corner].fY,
-                                      radii[SkRRect::kLowerRight_Corner].fY,
-                                      rect.fTop,
-                                      rect.fBottom);
+    for (int i = 0; i < 4; ++i) {
+        if (!are_radius_check_predicates_valid(radii[i].fX, rect.fLeft, rect.fRight) ||
+            !are_radius_check_predicates_valid(radii[i].fY, rect.fTop, rect.fBottom)) {
+            return false;
+        }
+    }
+    return true;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 
 SkRect SkRRectPriv::InnerBounds(const SkRRect& rr) {
@@ -1049,7 +1023,7 @@ SkRRect SkRRectPriv::ConservativeIntersect(const SkRRect& a, const SkRRect& b) {
     // If the radii are scaled, the combination of radii from two adjacent corners doesn't fit.
     // Normally for a regularly constructed SkRRect, we want this scaling, but in this case it means
     // the intersection shape is definitively not a round rect.
-    if (!SkRRectPriv::AreRectAndRadiiValid(intersection.fRect, intersection.fRadii) ||
+    if (!SkRRect::AreRectAndRadiiValid(intersection.fRect, intersection.fRadii) ||
         intersection.scaleRadii()) {
         return SkRRect::MakeEmpty();
     }

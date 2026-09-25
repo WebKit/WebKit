@@ -69,10 +69,7 @@ void MtlCaps::initGPUFamily(id<MTLDevice> device) {
 
 void MtlCaps::initCaps(const id<MTLDevice> device) {
 #if defined(GPU_TEST_UTILS)
-    const char* name = [[device name] UTF8String];
-    if (name) {
-        this->setDeviceName(name);
-    }
+    this->setDeviceName([[device name] UTF8String]);
 #endif
 
     if (this->isMac() || fGPUFamily >= MTLGPUFamilyApple3) {

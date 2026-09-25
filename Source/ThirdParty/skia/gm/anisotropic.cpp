@@ -19,8 +19,6 @@
 #include "include/core/SkSurface.h"
 #include "include/gpu/GpuTypes.h"
 
-#include <array>
-
 #if defined(SK_GANESH)
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #endif
@@ -103,17 +101,7 @@ protected:
     }
 
     void onDraw(SkCanvas* canvas) override {
-        auto gScales = std::to_array<SkScalar>({
-                0.9f,
-                0.8f,
-                0.75f,
-                0.6f,
-                0.5f,
-                0.4f,
-                0.25f,
-                0.2f,
-                0.1f,
-        });
+        SkScalar gScales[] = { 0.9f, 0.8f, 0.75f, 0.6f, 0.5f, 0.4f, 0.25f, 0.2f, 0.1f };
 
         SkASSERT(kNumVertImages-1 == (int)std::size(gScales)/2);
 
@@ -228,12 +216,7 @@ protected:
         }
 
         static constexpr float kScales[] = {1.f, 0.5f, 0.25f, 0.125f};
-        auto kColors = std::to_array<SkColor>({
-                0xFFF0F0F0,
-                SK_ColorBLUE,
-                SK_ColorGREEN,
-                SK_ColorRED,
-        });
+        SkColor kColors[] = {0xFFF0F0F0, SK_ColorBLUE, SK_ColorGREEN, SK_ColorRED};
         static const SkSamplingOptions kSampling = SkSamplingOptions::Aniso(16);
 
         for (bool shader : {false, true}) {

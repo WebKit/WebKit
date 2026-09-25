@@ -12,7 +12,6 @@
 #include "src/core/SkRandom.h"
 #include "tools/viewer/Slide.h"
 
-#include <array>
 #include <iterator>
 
 SkScalar get_anim_sin(double secs, SkScalar amplitude, SkScalar periodInSec, SkScalar phaseInSec) {
@@ -33,12 +32,12 @@ public:
     AnimBlurSlide() { fName ="AnimBlur"; }
 
     void draw(SkCanvas* canvas) override {
-        static const auto gStyles = std::to_array<SkBlurStyle>({
-                kNormal_SkBlurStyle,
-                kInner_SkBlurStyle,
-                kSolid_SkBlurStyle,
-                kOuter_SkBlurStyle,
-        });
+        static const SkBlurStyle gStyles[] = {
+            kNormal_SkBlurStyle,
+            kInner_SkBlurStyle,
+            kSolid_SkBlurStyle,
+            kOuter_SkBlurStyle,
+        };
         SkRandom random;
 
         for (size_t i = 0; i < std::size(gStyles); ++i) {

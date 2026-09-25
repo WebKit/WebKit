@@ -314,7 +314,11 @@ CGColorSpaceRef SkCreateCGColorSpace(const SkColorSpace* space) {
     }
 
     // Create an SkData with the ICC profile.
-    sk_sp<SkData> iccData = SkWriteICCProfile(space);
+    skcms_TransferFunction fn;
+    skcms_Matrix3x3 to_xyzd50;
+    space->transferFn(&fn);
+    space->toXYZD50(&to_xyzd50);
+    sk_sp<SkData> iccData = SkWriteICCProfile(fn, to_xyzd50);
     if (!iccData) {
         return cgSRGB;
     }

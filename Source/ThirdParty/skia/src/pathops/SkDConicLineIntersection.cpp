@@ -19,7 +19,6 @@
 #include "src/pathops/SkPathOpsTypes.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 
 class LineConicIntersections {
@@ -138,11 +137,11 @@ public:
     int intersectRay(double roots[2]) {
         double adj = (*fLine)[1].fX - (*fLine)[0].fX;
         double opp = (*fLine)[1].fY - (*fLine)[0].fY;
-        std::array<double, 3> r;
+        double r[3];
         for (int n = 0; n < 3; ++n) {
             r[n] = (fConic[n].fY - (*fLine)[0].fY) * adj - (fConic[n].fX - (*fLine)[0].fX) * opp;
         }
-        return this->validT(r.data(), 0, roots);
+        return this->validT(r, 0, roots);
     }
 
     int validT(double r[3], double axisIntercept, double roots[2]) {

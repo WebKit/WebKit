@@ -12,8 +12,6 @@
 #include "include/core/SkString.h"
 #include "include/core/SkTileMode.h"
 
-#include <array>
-
 static void create_gradient(SkBitmap* bm) {
     SkASSERT(1 == bm->width());
     const int height = bm->height();
@@ -43,8 +41,7 @@ public:
             , fDoScale{doScale} {
         fName.printf("constXTile_");
 
-        static constexpr std::array<const char*, kSkTileModeCount> gTileModeStr = {
-                "C", "R", "M", "D"};
+        static const char* gTileModeStr[kSkTileModeCount] = { "C", "R", "M", "D" };
         fName.append(gTileModeStr[(unsigned)xTile]);
         fName.append(gTileModeStr[(unsigned)yTile]);
 

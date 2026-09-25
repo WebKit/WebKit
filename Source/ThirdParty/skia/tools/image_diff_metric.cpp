@@ -12,7 +12,6 @@
 #include "include/core/SkPixmap.h"
 #include "include/core/SkSize.h"
 
-#include <array>
 #include <cmath>
 #include <cstdio>
 
@@ -22,7 +21,7 @@ int main(int argc, char** argv) {
         fprintf(stderr, usage, argv[0]);
         return 1;
     }
-    std::array<SkBitmap, 2> bm;
+    SkBitmap bm[2];
     for (int i = 0; i < 2; ++i) {
         const char* path = argv[i + 1];
         if (std::unique_ptr<SkCodec> codec =

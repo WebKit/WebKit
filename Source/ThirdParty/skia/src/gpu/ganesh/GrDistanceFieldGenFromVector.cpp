@@ -25,7 +25,6 @@
 #include "src/gpu/ganesh/geometry/GrPathUtils.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 
 using namespace skia_private;
@@ -133,7 +132,7 @@ public:
                  fMat[3] * src.fX + fMat[4] * src.fY + fMat[5] };
     }
 private:
-    std::array<double, 6> fMat;
+    double fMat[6];
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -217,7 +216,7 @@ public:
     static_assert(0 == kLine && 1 == kQuad);
 
     // line uses 2 pts, quad uses 3 pts
-    std::array<SkPoint, 3> fPts;
+    SkPoint fPts[3];
 
     DPoint  fP0T, fP2T;
     DAffineMatrix fXformMatrix;  // transforms the segment into canonical space

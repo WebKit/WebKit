@@ -110,12 +110,9 @@ public:
         canvas->drawColor(SK_ColorWHITE);
         canvas->translate(SkIntToScalar(20), SkIntToScalar(20));
 
-        static constexpr auto gProc = std::to_array<CanvasProc>({
-                show_text,
-                show_thick,
-                show_hair,
-                show_fill,
-        });
+        static const CanvasProc gProc[] = {
+            show_text, show_thick, show_hair, show_fill
+        };
 
         SkRect r = { 0, 0, SkIntToScalar(W), SkIntToScalar(H) };
         r.inset(SK_Scalar1 / 4, SK_Scalar1 / 4);
@@ -215,8 +212,6 @@ struct SkHalfPlane {
 };
 
 #include "src/core/SkEdgeClipper.h"
-
-#include <array>
 
 static SkPath clip(const SkPath& path, SkPoint p0, SkPoint p1) {
     SkMatrix mx, inv;

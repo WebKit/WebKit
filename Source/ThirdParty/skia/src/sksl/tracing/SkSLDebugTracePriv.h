@@ -14,7 +14,6 @@
 #include "src/sksl/ir/SkSLType.h"
 #include "src/sksl/tracing/SkSLTraceHook.h"
 
-#include <array>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -33,7 +32,7 @@ struct TraceInfo {
         kScope, /** data: scope delta, (unused) */
     };
     Op op;
-    std::array<int32_t, 2> data;
+    int32_t data[2];
 };
 
 struct SlotDebugInfo {

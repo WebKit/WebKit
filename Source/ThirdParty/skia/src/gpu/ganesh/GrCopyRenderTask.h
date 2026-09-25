@@ -51,7 +51,7 @@ private:
     bool onIsUsed(GrSurfaceProxy* proxy) const override { return proxy == fSrc.get(); }
     void gatherProxyIntervals(GrResourceAllocator*) const override;
     ExpectedOutcome onMakeClosed(GrRecordingContext*, SkIRect* targetUpdateBounds) override;
-    ExecutionResult onExecute(GrOpFlushState*) override;
+    bool onExecute(GrOpFlushState*) override;
 
 #if defined(GPU_TEST_UTILS)
     const char* name() const final { return "Copy"; }

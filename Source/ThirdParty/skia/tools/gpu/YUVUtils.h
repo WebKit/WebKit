@@ -17,7 +17,6 @@
 #include "include/gpu/ganesh/GrBackendSurface.h"
 #endif
 
-#include <array>
 #include <tuple>
 
 class SkData;
@@ -74,7 +73,7 @@ private:
     sk_sp<SkColorSpace> fColorSpace;
 
     // Memoized SkImages formed with planes, one for each Type.
-    std::array<sk_sp<SkImage>, 4> fYUVImage;
+    sk_sp<SkImage> fYUVImage[4];
 
     LazyYUVImage() = default;
 

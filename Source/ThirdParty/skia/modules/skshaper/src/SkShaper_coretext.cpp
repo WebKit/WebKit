@@ -31,7 +31,7 @@
 
 using namespace skia_private;
 
-class SkShaper_CoreText final : public SkShaper {
+class SkShaper_CoreText : public SkShaper {
 public:
     explicit SkShaper_CoreText(SkShapers::CT::LineBreakMode lbm) : fLineBreakMode(lbm) {}
 
@@ -50,7 +50,7 @@ private:
                LanguageRunIterator&,
                SkScalar width,
                RunHandler*) const override;
-#endif  // !defined(SK_DISABLE_LEGACY_SKSHAPER_FUNCTIONS)
+#endif
 
     void shape(const char* utf8, size_t utf8Bytes,
                FontRunIterator&,
@@ -61,13 +61,14 @@ private:
                SkScalar width,
                RunHandler*) const override;
 
-    void shape(SkSpan<const char> utf8,
+    void shape(const char* utf8, size_t utf8Bytes,
                FontRunIterator&,
                BiDiRunIterator&,
                ScriptRunIterator&,
                LanguageRunIterator&,
-               SkSpan<const Feature>,
-               const Options&,
+               const Feature*, size_t featureSize,
+               SkScalar width,
+               float textTracking,
                RunHandler*) const override;
 
     const SkShapers::CT::LineBreakMode fLineBreakMode;
@@ -267,7 +268,7 @@ void SkShaper_CoreText::shape(const char* utf8,
     TrivialLanguageRunIterator lang{nullptr, 0};
     return this->shape(utf8, utf8Bytes, *fontRuns, bidi, script, lang, nullptr, 0, width, handler);
 }
-#endif  // !defined(SK_DISABLE_LEGACY_SKSHAPER_FUNCTIONS)
+#endif
 
 void SkShaper_CoreText::shape(const char* utf8,
                               size_t utf8Bytes,
@@ -278,17 +279,20 @@ void SkShaper_CoreText::shape(const char* utf8,
                               const Feature* features, size_t featuresSize,
                               SkScalar width,
                               RunHandler* handler) const {
-    return this->shape({utf8, utf8Bytes}, fontRuns, bidi, script, lang, {features, featuresSize},
-                       { .width = width}, handler);
+    return this->shape(utf8, utf8Bytes, fontRuns, bidi, script, lang, features, featuresSize,
+                       width, /*textTracking=*/0, handler);
 }
 
-void SkShaper_CoreText::shape(SkSpan<const char> utf8,
+void SkShaper_CoreText::shape(const char* utf8,
+                              size_t utf8Bytes,
                               FontRunIterator& fontRuns,
                               BiDiRunIterator&,
                               ScriptRunIterator&,
                               LanguageRunIterator&,
-                              SkSpan<const Feature>,
-                              const Options& opts,
+                              const Feature*,
+                              size_t,
+                              SkScalar width,
+                              float textTracking,
                               RunHandler* handler) const {
     SkFont font;
     if (!fontRuns.atEnd()) {
@@ -297,11 +301,11 @@ void SkShaper_CoreText::shape(SkSpan<const char> utf8,
     }
 
     SkUniqueCFRef<CFStringRef> textString(
-            CFStringCreateWithBytes(kCFAllocatorDefault, (const uint8_t*)utf8.data(), utf8.size(),
+            CFStringCreateWithBytes(kCFAllocatorDefault, (const uint8_t*)utf8, utf8Bytes,
                                     kCFStringEncodingUTF8, false));
 
     UTF16ToUTF8IndicesMap utf8IndicesMap;
-    if (!utf8IndicesMap.setUTF8(utf8.data(), utf8.size())) {
+    if (!utf8IndicesMap.setUTF8(utf8, utf8Bytes)) {
         return;
     }
 
@@ -315,9 +319,9 @@ void SkShaper_CoreText::shape(SkSpan<const char> utf8,
                                       &kCFTypeDictionaryKeyCallBacks,
                                       &kCFTypeDictionaryValueCallBacks));
     CFDictionaryAddValue(attr.get(), kCTFontAttributeName, ctfont.get());
-    if (opts.tracking) {
+    if (textTracking != 0) {
         // Tracking is specified in em units, while CoreText expects absolute values.
-        dict_add_double(attr.get(), kCTTracking_AttributeName, opts.tracking * font.getSize());
+        dict_add_double(attr.get(), kCTTracking_AttributeName, textTracking * font.getSize());
     }
     if ((false)) {
         // trying to see what these affect
@@ -336,7 +340,7 @@ void SkShaper_CoreText::shape(SkSpan<const char> utf8,
     std::vector<SkFont> fontStorage;
     std::vector<SkShaper::RunHandler::RunInfo> infos;
 
-    LineBreakIter iter(textString.get(), typesetter.get(), opts.width, fLineBreakMode);
+    LineBreakIter iter(textString.get(), typesetter.get(), width, fLineBreakMode);
     while (SkUniqueCFRef<CTLineRef> line = iter.nextLine()) {
         CFArrayRef run_array = CTLineGetGlyphRuns(line.get());
         CFIndex runCount = CFArrayGetCount(run_array);

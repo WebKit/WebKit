@@ -19,8 +19,6 @@
 #include "src/gpu/ganesh/SkGr.h"
 #include "src/gpu/ganesh/SurfaceDrawContext.h"
 
-#include <array>
-
 // Benchmarks that exercise the bulk image and solid color quad APIs, under a variety of patterns:
 enum class ImageMode {
     kShared, // 1. One shared image referenced by every rectangle
@@ -64,9 +62,9 @@ public:
     }
 
 protected:
-    std::array<SkRect, kRectCount> fRects;
+    SkRect         fRects[kRectCount];
     sk_sp<SkImage> fImages[kImageCount > 0 ? kImageCount : 1];
-    std::array<SkColor4f, kRectCount> fColors;
+    SkColor4f      fColors[kRectCount];
     SkString       fName;
 
     void computeName()  {

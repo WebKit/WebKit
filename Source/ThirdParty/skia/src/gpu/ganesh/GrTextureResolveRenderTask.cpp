@@ -90,7 +90,7 @@ void GrTextureResolveRenderTask::gatherProxyIntervals(GrResourceAllocator* alloc
     alloc->incOps();
 }
 
-GrRenderTask::ExecutionResult GrTextureResolveRenderTask::onExecute(GrOpFlushState* flushState) {
+bool GrTextureResolveRenderTask::onExecute(GrOpFlushState* flushState) {
     // Resolve all msaa back-to-back, before regenerating mipmaps.
     SkASSERT(fResolves.size() == this->numTargets());
     for (int i = 0; i < fResolves.size(); ++i) {
@@ -112,14 +112,12 @@ GrRenderTask::ExecutionResult GrTextureResolveRenderTask::onExecute(GrOpFlushSta
             GrTexture* texture = this->target(i)->peekTexture();
             if (texture && (!texture->mipmapsAreDirty() ||
                             flushState->gpu()->regenerateMipMapLevels(texture))) {
-                // If mipmap regeneration fails we do not count it as an error but
-                // will downgrade the sampling later on.
                 resolve.fFlags &= ~GrSurfaceProxy::ResolveFlags::kMipMaps;
             }
         }
     }
 
-    return ExecutionResult::RanAndSucceeded();
+    return true;
 }
 
 void GrTextureResolveRenderTask::endFlush(GrDrawingManager* drawingMgr) {

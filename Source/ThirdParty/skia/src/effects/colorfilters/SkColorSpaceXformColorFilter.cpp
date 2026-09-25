@@ -21,7 +21,6 @@
 #include "src/core/SkWriteBuffer.h"
 #include "src/effects/colorfilters/SkColorFilterBase.h"
 
-#include <array>
 #include <cstdint>
 #include <utility>
 
@@ -65,7 +64,7 @@ sk_sp<SkFlattenable> SkColorSpaceXformColorFilter::LegacyGammaOnlyCreateProc(SkR
 }
 
 sk_sp<SkFlattenable> SkColorSpaceXformColorFilter::CreateProc(SkReadBuffer& buffer) {
-    std::array<sk_sp<SkColorSpace>, 2> colorSpaces;
+    sk_sp<SkColorSpace> colorSpaces[2];
     for (int i = 0; i < 2; ++i) {
         auto data = buffer.readByteArrayAsData();
         if (!buffer.validate(data != nullptr)) {

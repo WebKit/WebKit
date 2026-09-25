@@ -22,7 +22,6 @@
 #include "src/core/SkRandom.h"
 #include "tests/Test.h"
 
-#include <array>
 #include <cstring>
 #include <initializer_list>
 #include <string>
@@ -281,15 +280,9 @@ static void test_matrix_min_max_scale(skiatest::Reporter* reporter) {
     success = perspY.getMinMaxScales(scales);
     REPORTER_ASSERT(reporter, !success && -5 == scales[0] && -5  == scales[1]);
 
-    auto baseMats = std::to_array<SkMatrix>({
-            scale,
-            rot90Scale,
-            rotate,
-            translate,
-            perspX,
-            perspY,
-    });
-    std::array<SkMatrix, 2 * std::size(baseMats)> mats;
+    SkMatrix baseMats[] = {scale, rot90Scale, rotate,
+                           translate, perspX, perspY};
+    SkMatrix mats[2*std::size(baseMats)];
     for (size_t i = 0; i < std::size(baseMats); ++i) {
         mats[i] = baseMats[i];
         bool invertible = mats[i].invert(&mats[i + std::size(baseMats)]);
@@ -323,7 +316,7 @@ static void test_matrix_min_max_scale(skiatest::Reporter* reporter) {
         static const SkScalar gVectorScaleTol = (105 * SK_Scalar1) / 100;
         static const SkScalar gCloseScaleTol = (97 * SK_Scalar1) / 100;
         SkScalar max = 0, min = SK_ScalarMax;
-        std::array<SkVector, 1000> vectors;
+        SkVector vectors[1000];
         for (size_t i = 0; i < std::size(vectors); ++i) {
             vectors[i].fX = rand.nextSScalar1();
             vectors[i].fY = rand.nextSScalar1();
@@ -703,7 +696,7 @@ static void test_matrix_homogeneous(skiatest::Reporter* reporter) {
         randTriples[i].fZ = rand.nextRangeF(-3000.f, 3000.f);
     }
 
-    std::array<SkMatrix, kMatrixCount> mats;
+    SkMatrix mats[kMatrixCount];
     for (int i = 0; i < kMatrixCount; ++i) {
         for (int j = 0; j < 9; ++j) {
             mats[i].set(j, rand.nextRangeF(-3000.f, 3000.f));
@@ -722,7 +715,7 @@ static void test_matrix_homogeneous(skiatest::Reporter* reporter) {
     // zero matrix
     {
     mat.setAll(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f);
-    std::array<SkPoint3, kTripleCount> dst;
+    SkPoint3 dst[kTripleCount];
     mat.mapHomogeneousPoints(dst, randTriples);
     for (int i = 0; i < kTripleCount; ++i) {
         REPORTER_ASSERT(reporter, point3_array_nearly_equal_relative(&dst[i], &zeros, 1));
@@ -825,10 +818,10 @@ static bool check_decompScale(const SkMatrix& original) {
         { -1.0f,  2.0f }
     };
 
-    std::array<SkPoint, kNumPoints> v1;
+    SkPoint v1[kNumPoints];
     original.mapPoints(v1, testPts);
 
-    std::array<SkPoint, kNumPoints> v2;
+    SkPoint v2[kNumPoints];
     SkMatrix scaleMat = SkMatrix::Scale(scale.width(), scale.height());
 
     // Note, we intend the decomposition to be applied in the order scale and then remainder but,
@@ -947,29 +940,28 @@ DEF_TEST(Matrix, reporter) {
 
     // rectStaysRect test
     {
-        struct RectStaysRectSamples {
+        static const struct {
             SkScalar    m00, m01, m10, m11;
             bool        mStaysRect;
+        }
+        gRectStaysRectSamples[] = {
+            { 0, 0, 0, 0, false },
+            { 0, 0, 0, 1, false },
+            { 0, 0, 1, 0, false },
+            { 0, 0, 1, 1, false },
+            { 0, 1, 0, 0, false },
+            { 0, 1, 0, 1, false },
+            { 0, 1, 1, 0, true },
+            { 0, 1, 1, 1, false },
+            { 1, 0, 0, 0, false },
+            { 1, 0, 0, 1, true },
+            { 1, 0, 1, 0, false },
+            { 1, 0, 1, 1, false },
+            { 1, 1, 0, 0, false },
+            { 1, 1, 0, 1, false },
+            { 1, 1, 1, 0, false },
+            { 1, 1, 1, 1, false }
         };
-        static const auto gRectStaysRectSamples =
-                std::to_array<RectStaysRectSamples>({
-                        RectStaysRectSamples{0, 0, 0, 0, false},
-                        RectStaysRectSamples{0, 0, 0, 1, false},
-                        RectStaysRectSamples{0, 0, 1, 0, false},
-                        RectStaysRectSamples{0, 0, 1, 1, false},
-                        RectStaysRectSamples{0, 1, 0, 0, false},
-                        RectStaysRectSamples{0, 1, 0, 1, false},
-                        RectStaysRectSamples{0, 1, 1, 0, true},
-                        RectStaysRectSamples{0, 1, 1, 1, false},
-                        RectStaysRectSamples{1, 0, 0, 0, false},
-                        RectStaysRectSamples{1, 0, 0, 1, true},
-                        RectStaysRectSamples{1, 0, 1, 0, false},
-                        RectStaysRectSamples{1, 0, 1, 1, false},
-                        RectStaysRectSamples{1, 1, 0, 0, false},
-                        RectStaysRectSamples{1, 1, 0, 1, false},
-                        RectStaysRectSamples{1, 1, 1, 0, false},
-                        RectStaysRectSamples{1, 1, 1, 1, false},
-                });
 
         for (size_t i = 0; i < std::size(gRectStaysRectSamples); i++) {
             SkMatrix    m;

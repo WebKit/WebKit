@@ -177,25 +177,11 @@ public:
         if (fCanMapVB) {
             fVertexBuffer->unmap();
         } else {
-            if (fVertexBuffer->updateData(fVertices,
-                                          /*offset=*/0,
-                                          /*size=*/actualCount*fLockStride,
-                                          /*preserve=*/false)) {
-                sk_free(fVertices);
-            } else {
-                // If we fail the upload, the most likely issue is GPU memory pressure. Instead of
-                // discarding the triangulation work, shrink the fVertices allocation and use it to
-                // create CPU-backed VertexData. This stores the CPU vertices in the thread-safe
-                // cache so that subsequent draws can attempt to instantiate the GPU buffer in
-                // createNonAAMesh().
-                fVertexBuffer.reset();
-                fVertices = sk_realloc_throw(fVertices, actualCount * fLockStride);
-                fVertexData =
-                        GrThreadSafeCache::MakeVertexData(fVertices, actualCount, fLockStride);
-                fVertices = nullptr;
-                fLockStride = 0;
-                return;
-            }
+            fVertexBuffer->updateData(fVertices,
+                                      /*offset=*/0,
+                                      /*size=*/actualCount*fLockStride,
+                                      /*preserve=*/false);
+            sk_free(fVertices);
         }
 
         fVertexData = GrThreadSafeCache::MakeVertexData(std::move(fVertexBuffer),
@@ -397,10 +383,7 @@ private:
                 sk_make_sp<UniqueKeyInvalidator>(key, target->contextUniqueID()));
         }
 
-        // If buffer upload failed in unlock(), fMesh remains null and the draw is skipped.
-        if (fVertexData->gpuBuffer()) {
-            fMesh = CreateMesh(target, fVertexData->refGpuBuffer(), 0, fVertexData->numVertices());
-        }
+        fMesh = CreateMesh(target, fVertexData->refGpuBuffer(), 0, fVertexData->numVertices());
     }
 
     void createAAMesh(GrMeshDrawTarget* target) {

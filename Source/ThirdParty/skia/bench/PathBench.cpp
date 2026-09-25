@@ -25,8 +25,6 @@
 #include "src/core/SkMatrixPriv.h"
 #include "src/core/SkPathData.h"
 
-#include <array>
-
 using namespace skia_private;
 
 enum Flags {
@@ -470,7 +468,7 @@ enum class BenchPathType {
     kBuilder,
     kData,
 };
-static constexpr auto gBenchPathTypeNames = std::to_array<const char*>({"path", "builder", "data"});
+const char* gBenchPathTypeNames[] = { "path", "builder", "data" };
 
 class PathTransformBench : public Benchmark {
 public:
@@ -685,6 +683,7 @@ protected:
 private:
     using INHERITED = Benchmark;
 };
+
 
 // Chrome creates its own round rects with each corner possibly being different.
 // In its "zero radius" incarnation it creates degenerate round rects.
@@ -1019,7 +1018,7 @@ protected:
     enum {
         CONICS = 100
     };
-    std::array<SkConic, CONICS> fConics;
+    SkConic fConics[CONICS];
 
 private:
     using INHERITED = Benchmark;

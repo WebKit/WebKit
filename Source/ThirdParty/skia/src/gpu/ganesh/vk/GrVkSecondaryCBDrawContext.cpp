@@ -106,16 +106,13 @@ SkCanvas* GrVkSecondaryCBDrawContext::getCanvas() {
     return fCachedCanvas.get();
 }
 
-GrDirectContext::FlushResult GrVkSecondaryCBDrawContext::flush() {
+void GrVkSecondaryCBDrawContext::flush() {
     auto dContext = GrAsDirectContext(fDevice->recordingContext());
 
     if (dContext) {
-        GrDirectContext::FlushResult result = dContext->priv().flushSurface(fDevice->targetProxy());
-        result.fSuccess &= dContext->submit();
-        return result;
+        dContext->priv().flushSurface(fDevice->targetProxy());
+        dContext->submit();
     }
-
-    return {/* fSuccess= */ false, GrSemaphoresSubmitted::kNo };
 }
 
 bool GrVkSecondaryCBDrawContext::wait(int numSemaphores,

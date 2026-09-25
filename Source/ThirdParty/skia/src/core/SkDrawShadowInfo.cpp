@@ -13,8 +13,6 @@
 #include "include/private/SkTo.h"
 #include "include/utils/SkShadowUtils.h"
 
-#include <array>
-
 namespace SkDrawShadowMetrics {
 
 static SkScalar compute_z(SkScalar x, SkScalar y, const SkPoint3& params) {
@@ -54,7 +52,7 @@ bool GetSpotShadowTransform(const SkPoint3& lightPos, SkScalar lightRadius,
         SkPoint pts[4];
         ctm.mapRectToQuad(pts, pathBounds);
 
-        std::array<SkPoint3, 4> pts3D;
+        SkPoint3 pts3D[4];
         SkScalar z = heightFunc(pathBounds.fLeft, pathBounds.fTop);
         pts3D[0].set(pts[0].fX, pts[0].fY, z);
         z = heightFunc(pathBounds.fRight, pathBounds.fTop);

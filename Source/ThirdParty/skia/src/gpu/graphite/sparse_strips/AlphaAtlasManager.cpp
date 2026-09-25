@@ -12,20 +12,14 @@
 #include "src/gpu/graphite/TextureInfoPriv.h"
 #include "src/gpu/graphite/task/UploadTask.h"
 
-#include <algorithm>
-#include <cstring>
-
 namespace skgpu::graphite {
 
 AlphaAtlasManager::AlphaAtlasManager(Recorder* recorder)
         : fRecorder(recorder)
-        , fNullBufferUsedBytes(0)
         , fActiveSlot(0)
-        , fLastGpuSlot(0)
-        , fLastRetiredSlot(kInvalidSlot)
         , fNextPageRowCount(SparseStripConfig::kInitialAtlasRows) {}
 
-bool AlphaAtlasManager::createPageInSlot(int32_t slot, int32_t minRequiredBytes) {
+bool AlphaAtlasManager::createPageInSlot(int slot, int32_t minRequiredBytes) {
     SkASSERT(slot < SparseStripConfig::kMaxTexturePages);
     SkASSERT(!fPages[slot].isValid());
 
@@ -33,9 +27,6 @@ bool AlphaAtlasManager::createPageInSlot(int32_t slot, int32_t minRequiredBytes)
     if (minRequiredBytes > 0) {
         int32_t neededRows = (minRequiredBytes + SparseStripConfig::kAtlasWidthBytes - 1) /
                              SparseStripConfig::kAtlasWidthBytes;
-        if (neededRows > SparseStripConfig::kMaxAtlasRows) {
-            return false;
-        }
         rows = std::max(rows, neededRows);
     }
     rows = std::min(rows, SparseStripConfig::kMaxAtlasRows);
@@ -51,8 +42,8 @@ bool AlphaAtlasManager::createPageInSlot(int32_t slot, int32_t minRequiredBytes)
                                fRecorder->priv().resourceProvider(),
                                SkISize::Make(SparseStripConfig::kAtlasWidth, rows),
                                info,
-                               Budgeted::kYes,
-                               "AlphaAtlas");
+                               "AlphaAtlas",
+                               Budgeted::kYes);
 
     if (!proxy) {
         return false;
@@ -65,136 +56,69 @@ bool AlphaAtlasManager::createPageInSlot(int32_t slot, int32_t minRequiredBytes)
     page.fUsedBytes = 0;
     page.fUploadedRows = 0;
     page.fAlphaBuffer.clear();
-    page.fAlphaBuffer.reserve(page.fCapacityBytes);
 
     // Double row count for the next created page, clamped to max atlas rows
     fNextPageRowCount = std::min(SparseStripConfig::kMaxAtlasRows, rows * 2);
     return true;
 }
 
-uint8_t* AlphaAtlasManager::requestAlphaSpace(int32_t numBytes) {
-    if (numBytes <= 0 || numBytes > SparseStripConfig::kMaxAtlasBytes) {
-        return nullptr;
-    }
-
-    // 0. If already on the nullbuffer slot, append directly to it.
-    if (fActiveSlot == kNullSlot) {
-        return fNullBuffer.append(numBytes);
+std::optional<AlphaAtlasManager::AlphaAllocation> AlphaAtlasManager::requestAlphaSpace(
+        int32_t numBytes) {
+    if (numBytes <= 0 || numBytes > SparseStripConfig::kMaxCapBytes) {
+        return std::nullopt;
     }
 
     // 1. Ensure current active slot has a valid page allocated
-    SkASSERT(fActiveSlot >= 0 && fActiveSlot < SparseStripConfig::kMaxTexturePages);
     if (!fPages[fActiveSlot].isValid()) {
         if (!this->createPageInSlot(fActiveSlot, numBytes)) {
-            return nullptr;
+            return std::nullopt;
         }
     }
 
-    // 2. If the active page is already full, proactively flip to the other slot
-    if (fPages[fActiveSlot].fUsedBytes >= fPages[fActiveSlot].fCapacityBytes) {
-        int32_t nextSlot = fActiveSlot ^ 1;
-        // Both pages are in use, transition to null buffer.
-        if (fPages[nextSlot].isValid()) {
-            fActiveSlot = kNullSlot;
-            return fNullBuffer.append(numBytes);
-        }
-        if (!this->createPageInSlot(nextSlot, numBytes)) {
-            return nullptr;
-        }
-        fActiveSlot = nextSlot;
+    TexturePage* activePage = &fPages[fActiveSlot];
+
+    // 2. Check if the active slot has enough remaining room.
+    // An endcap's alphas must be atomic to a single texture page (never split across pages).
+    if (activePage->fUsedBytes + numBytes <= activePage->fCapacityBytes) {
+        int32_t alphaIdx = activePage->fUsedBytes;
+        activePage->fUsedBytes += numBytes;
+        uint8_t* ptr = activePage->fAlphaBuffer.append(numBytes);
+        return AlphaAllocation{ptr, alphaIdx, static_cast<uint16_t>(fActiveSlot)};
     }
 
-    TexturePage& activePage = fPages[fActiveSlot];
-    fLastGpuSlot = fActiveSlot;
-    return activePage.fAlphaBuffer.append(numBytes);
-}
+    // 3. Current active slot does not have enough room.
+    // Flip-flop to the other slot: nextSlot = fActiveSlot ^ 1
+    int nextSlot = fActiveSlot ^ 1;
 
-std::optional<std::pair<int32_t, uint16_t>> AlphaAtlasManager::finalizeRun() {
-    // Case 0: We are already on the nullbuffer
-    if (fActiveSlot == kNullSlot) {
-        SkASSERT(fNullBuffer.size() > fNullBufferUsedBytes);
-        int32_t runStartIdx = fNullBufferUsedBytes;
-        fNullBufferUsedBytes = fNullBuffer.size();
-        return std::make_pair(runStartIdx, kNullSlot);
-    }
-
-    TexturePage& activePage = fPages[fActiveSlot];
-    if (!activePage.isValid()) {
-        return std::nullopt;
-    }
-
-    SkASSERT(activePage.fAlphaBuffer.size() > activePage.fUsedBytes);
-    int32_t runBytes = activePage.fAlphaBuffer.size() - activePage.fUsedBytes;
-
-    // Case 1: Run completely fits in active page (no straddle)
-    int32_t runStartIdx = activePage.fUsedBytes;
-    if (activePage.fAlphaBuffer.size() <= activePage.fCapacityBytes) {
-        activePage.fUsedBytes = activePage.fAlphaBuffer.size();
-        return std::make_pair(runStartIdx, static_cast<uint16_t>(fActiveSlot));
-    }
-
-    // Case 2: Run straddled the page boundary!
-    int32_t nextSlot = fActiveSlot ^ 1;
+    // If nextSlot is already in use, both slots are full for this batch!
     if (fPages[nextSlot].isValid()) {
-        // Both GPU slots are full! Switch to null buffer.
-        // Currently this only occurs when all atlas pages have been exhausted, so fNullBuffer is
-        // guaranteed to be empty at this point, making offset 0 (below) valid. If fNullBuffer is
-        // ever reused or shared across draws in the future, this should return the appended run's
-        // actual start offset (runStartIdx in fNullBuffer) instead.
-        SkASSERT(fNullBuffer.empty());
-
-        uint8_t* dst = fNullBuffer.append(runBytes);
-        std::memcpy(dst,
-                    activePage.fAlphaBuffer.data() + runStartIdx,
-                    runBytes);
-
-        // Trim overrun from activePage back to its committed size
-        activePage.fAlphaBuffer.resize(activePage.fUsedBytes);
-
-        // Switch active slot to kNullSlot
-        fActiveSlot = kNullSlot;
-        fNullBufferUsedBytes = fNullBuffer.size();
-
-        return std::make_pair(0, kNullSlot);
-    }
-
-    if (!this->createPageInSlot(nextSlot, runBytes)) {
         return std::nullopt;
     }
 
-    TexturePage& newPage = fPages[nextSlot];
+    if (!this->createPageInSlot(nextSlot, numBytes)) {
+        return std::nullopt;
+    }
 
-    // Append runBytes to newPage and copy the overrun data
-    uint8_t* dst = newPage.fAlphaBuffer.append(runBytes);
-    std::memcpy(dst,
-                activePage.fAlphaBuffer.data() + runStartIdx,
-                runBytes);
-
-    // Trim overrun from activePage back to its committed size
-    activePage.fAlphaBuffer.resize(activePage.fUsedBytes);
-
-    // Switch active slot to nextSlot
     fActiveSlot = nextSlot;
-    newPage.fUsedBytes = runBytes;
+    activePage = &fPages[fActiveSlot];
 
-    return std::make_pair(0, static_cast<uint16_t>(fActiveSlot));
+    int32_t alphaIdx = 0;
+    activePage->fUsedBytes = numBytes;
+    uint8_t* ptr = activePage->fAlphaBuffer.append(numBytes);
+    return AlphaAllocation{ptr, alphaIdx, static_cast<uint16_t>(fActiveSlot)};
 }
 
 void AlphaAtlasManager::recordUploads(DrawContext* dc) {
-    for (int32_t i = 0; i < SparseStripConfig::kMaxTexturePages; ++i) {
+    for (int i = 0; i < SparseStripConfig::kMaxTexturePages; ++i) {
         TexturePage& page = fPages[i];
-        if (!page.isValid()) {
-            continue;
-        }
-        int32_t startRow = page.fUploadedRows;
-        int32_t totalUsedRows =
-                (page.fUsedBytes + SparseStripConfig::kAtlasWidthBytes - 1) /
-                SparseStripConfig::kAtlasWidthBytes;
-        int32_t pendingRows = totalUsedRows - startRow;
-        if (pendingRows > 0) {
+        if (page.isValid() && !page.fAlphaBuffer.empty()) {
             SkASSERT(page.fTexture);
 
-            int32_t paddedSize = totalUsedRows * SparseStripConfig::kAtlasWidthBytes;
+            // Compute how many rows are in the pending buffer and pad buffer to full rows
+            int32_t pendingRows =
+                    (page.fAlphaBuffer.size() + SparseStripConfig::kAtlasWidthBytes - 1) /
+                    SparseStripConfig::kAtlasWidthBytes;
+            int32_t paddedSize = pendingRows * SparseStripConfig::kAtlasWidthBytes;
             if (page.fAlphaBuffer.size() < paddedSize) {
                 int32_t diff = paddedSize - page.fAlphaBuffer.size();
                 uint8_t* ptr = page.fAlphaBuffer.append(diff);
@@ -202,9 +126,9 @@ void AlphaAtlasManager::recordUploads(DrawContext* dc) {
             }
 
             MipLevel level;
-            level.fPixels =
-                    page.fAlphaBuffer.data() + (startRow * SparseStripConfig::kAtlasWidthBytes);
+            level.fPixels = page.fAlphaBuffer.data();
             level.fRowBytes = SparseStripConfig::kAtlasWidthBytes;
+            int32_t startRow = page.fUploadedRows;
             SkIRect dstRect =
                     SkIRect::MakeXYWH(0, startRow, SparseStripConfig::kAtlasWidth, pendingRows);
 
@@ -226,134 +150,24 @@ void AlphaAtlasManager::recordUploads(DrawContext* dc) {
                 dc->recordUpload(fRecorder, source, nullptr);
             }
 
-            page.fUploadedRows = totalUsedRows;
-            page.fUsedBytes = paddedSize;
+            page.fUploadedRows += pendingRows;
+            page.fUsedBytes = page.fUploadedRows * SparseStripConfig::kAtlasWidthBytes;
+            page.fAlphaBuffer.clear();
         }
     }
 
-    // At flush time, retire the older GPU slot if both were valid.
-    if (fPages[0].isValid() && fPages[1].isValid()) {
-        // If we're on the null texture, the active slot is instead the last gpu slot.
-        int32_t activeGpuSlot =
-                (fActiveSlot < SparseStripConfig::kMaxTexturePages) ? fActiveSlot : fLastGpuSlot;
-        int32_t oldSlot = activeGpuSlot ^ 1;
-        SkASSERT(fPages[oldSlot].isValid());
+    // At flush time, retire the older slot (fActiveSlot ^ 1).
+    // Graphite's resource management keeps it alive for any pending GPU tasks.
+    int oldSlot = fActiveSlot ^ 1;
+    if (fPages[oldSlot].isValid()) {
         fPages[oldSlot].reset();
-        fLastRetiredSlot = oldSlot;
-    }
-}
-
-bool AlphaAtlasManager::resolveNullCaps(EndCaps* ends) {
-    SkASSERT(ends && ends->hasNullCaps() && fNullBuffer.size() > 0);
-    int32_t firstNull = ends->firstNullCapIndex();
-    auto& caps = ends->caps();
-    SkASSERT(firstNull >= 0 && firstNull < caps.size());
-
-    // Use the slot that was freed at flush time
-    if (fLastRetiredSlot == kInvalidSlot) {
-        return false;
-    }
-    SkASSERT(!fPages[fLastRetiredSlot].isValid());
-    int32_t currentSlot = fLastRetiredSlot;
-
-    // Allocate currentSlot up to max capacity
-    int32_t nullBytes = fNullBuffer.size() - caps[firstNull].fAlphaIndex;
-    if (!this->createPageInSlot(currentSlot,
-                                std::min(nullBytes, SparseStripConfig::kMaxAtlasBytes))) {
-        return false;
-    }
-    fLastRetiredSlot = kInvalidSlot;
-
-    // Copy the data from the null buffer into the new texture pages.
-    int32_t nextNull = firstNull;
-    int32_t roundStartCap = firstNull;
-    for (; nextNull < caps.size(); ++nextNull) {
-        int32_t alphaIndex = caps[nextNull].fAlphaIndex;
-        int32_t capBytes = caps[nextNull].fWidth * SparseStripConfig::kTileHeight;
-        SkASSERT(capBytes > 0);
-
-        // If the run exceeds the current slot, try to instantiate the other page
-        if (fPages[currentSlot].fUsedBytes + capBytes > fPages[currentSlot].fCapacityBytes) {
-            int32_t otherSlot = currentSlot ^ 1;
-            if (!fPages[otherSlot].isValid() || fPages[otherSlot].fUsedBytes == 0) {
-                if (fPages[otherSlot].isValid()) {
-                    fPages[otherSlot].reset();
-                }
-                int32_t remainingBytes = fNullBuffer.size() - alphaIndex;
-                if (!this->createPageInSlot(
-                            otherSlot,
-                            std::min(remainingBytes, SparseStripConfig::kMaxAtlasBytes))) {
-                    break;
-                }
-                if (fPages[otherSlot].fUsedBytes + capBytes >
-                    fPages[otherSlot].fCapacityBytes) {
-                    fPages[otherSlot].reset();
-                    break;
-                }
-                currentSlot = otherSlot;
-            } else {
-                // Both slots have been filled for this round
-                break;
-            }
-        }
-
-        TexturePage& page = fPages[currentSlot];
-        uint8_t* dst = page.fAlphaBuffer.append(capBytes);
-        std::memcpy(dst, fNullBuffer.data() + alphaIndex, capBytes);
-
-        caps[nextNull].fTexPage = static_cast<uint16_t>(currentSlot);
-        caps[nextNull].fAlphaIndex = page.fUsedBytes;
-        page.fUsedBytes += capBytes;
-    }
-
-    if (nextNull == roundStartCap) {
-        // Made zero progress
-        return false;
-    }
-
-    ends->setDrawStartIndex(roundStartCap);
-    if (nextNull == caps.size()) {
-        // We're done, no more rounds of flushing are necessary.
-        ends->clearNullCaps();
-        fNullBuffer.clear();
-        fNullBufferUsedBytes = 0;
-    } else {
-        ends->setFirstNullCapIndex(nextNull);
-    }
-
-    this->populateProxies(ends);
-
-    fActiveSlot = currentSlot;
-    fLastGpuSlot = currentSlot;
-    return true;
-}
-
-void AlphaAtlasManager::populateProxies(EndCaps* ends) const {
-    int32_t startSlot = 0;
-    while (startSlot < SparseStripConfig::kMaxTexturePages && !fPages[startSlot].isValid()) {
-        startSlot++;
-    }
-    SkASSERT(startSlot < SparseStripConfig::kMaxTexturePages);
-
-    sk_sp<TextureProxy> lastValid = fPages[startSlot].fTexture;
-    for (int32_t i = 0; i < SparseStripConfig::kMaxTexturePages; ++i) {
-        int32_t slot = (startSlot + i) % SparseStripConfig::kMaxTexturePages;
-        if (fPages[slot].isValid()) {
-            lastValid = fPages[slot].fTexture;
-        }
-        ends->setProxy(slot, lastValid);
     }
 }
 
 void AlphaAtlasManager::freeGpuResources() {
-    for (int32_t i = 0; i < SparseStripConfig::kMaxTexturePages; ++i) {
-        fPages[i].reset();
-    }
-    fNullBuffer.clear();
-    fNullBufferUsedBytes = 0;
+    fPages[0].reset();
+    fPages[1].reset();
     fActiveSlot = 0;
-    fLastGpuSlot = 0;
-    fLastRetiredSlot = kInvalidSlot;
     fNextPageRowCount = SparseStripConfig::kInitialAtlasRows;
 }
 

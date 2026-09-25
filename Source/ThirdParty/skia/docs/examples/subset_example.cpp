@@ -1,14 +1,11 @@
 // Copyright 2020 Google LLC
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 #include "tools/fiddle/examples.h"
-
-#include <array>
-
 REG_FIDDLE(subset_example, 512, 512, false, 3) {
 void draw(SkCanvas* canvas) {
     canvas->drawColor(SK_ColorWHITE);
     const int N = 8;
-    std::array<int, N * N> shuffle;
+    int shuffle[N * N];
     for (int i = 0; i < (N * N); ++i) {
         shuffle[i] = i;
     }

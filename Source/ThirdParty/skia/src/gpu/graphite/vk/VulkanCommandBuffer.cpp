@@ -651,9 +651,10 @@ bool VulkanCommandBuffer::onAddRenderPass(const RenderPassDesc& rpDesc,
                                       VK_ACCESS_SHADER_READ_BIT,
                                       VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     }
+    this->setViewport(viewport);
 
     if (!this->beginRenderPass(
-                rpDesc, viewport, colorTexture, resolveTexture, depthStencilTexture)) {
+                rpDesc, colorTexture, resolveTexture, depthStencilTexture)) {
         return false;
     }
 
@@ -702,7 +703,7 @@ bool VulkanCommandBuffer::updateAndBindInputAttachment(const VulkanTexture& text
                                                        VkPipelineLayout piplineLayout) {
     // Fetch a descriptor set that contains one input attachment (we do not support using more than
     // one per set at this time).
-    STArray<1, DescriptorData> inputDesc = {VulkanGraphicsPipeline::GetInputAttachmentDescriptor()};
+    STArray<1, DescriptorData> inputDesc = {VulkanGraphicsPipeline::kInputAttachmentDescriptor};
     sk_sp<VulkanDescriptorSet> set = fResourceProvider->findOrCreateDescriptorSet(
             {&inputDesc.front(), (size_t)inputDesc.size()});
     if (!set) {
@@ -751,7 +752,8 @@ bool VulkanCommandBuffer::updateAndBindInputAttachment(const VulkanTexture& text
 
 bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& rpDesc,
                                               VulkanTexture& resolveTexture,
-                                              SkIRect renderArea) {
+                                              SkISize dstDimensions,
+                                              const SkIRect nativeDrawBounds) {
     sk_sp<VulkanGraphicsPipeline> loadPipeline =
             fResourceProvider->findOrCreateLoadMSAAPipeline(rpDesc);
     if (!loadPipeline) {
@@ -759,19 +761,36 @@ bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& rpDesc,
         return false;
     }
 
-    // We need to load the entire render area since that is what will be resolved at the end.
-    // This may be a slightly different "viewport" than what will be used for actual rendering since
-    // it will have been rounded to the device's preferred granularity.
-    this->setViewport(renderArea);
-    this->setScissor(renderArea);
+    // Update and bind uniform descriptor set
+    int w = nativeDrawBounds.width();
+    int h = nativeDrawBounds.height();
 
-    // Bind the special load pipeline, which does not require any uniform or push constant state.
+    // dst rect edges in NDC (-1 to 1)
+    int dw = dstDimensions.width();
+    int dh = dstDimensions.height();
+    float dx0 = 2.f * nativeDrawBounds.fLeft / dw - 1.f;
+    float dx1 = 2.f * (nativeDrawBounds.fLeft + w) / dw - 1.f;
+    float dy0 = 2.f * nativeDrawBounds.fTop / dh - 1.f;
+    float dy1 = 2.f * (nativeDrawBounds.fTop + h) / dh - 1.f;
+    float uniData[] = {dx1 - dx0, dy1 - dy0, dx0, dy0};  // posXform
+    SkASSERT(sizeof(uniData) == VulkanResourceProvider::kLoadMSAAPushConstantSize);
+
     this->bindGraphicsPipeline(loadPipeline.get());
+
+    PushConstantInfo loadMsaaPushConstantInfo;
+    loadMsaaPushConstantInfo.fOffset = 0;
+    loadMsaaPushConstantInfo.fSize = VulkanResourceProvider::kLoadMSAAPushConstantSize;
+    loadMsaaPushConstantInfo.fShaderStageFlagBits =
+            VulkanResourceProvider::kLoadMSAAPushConstantStageFlags;
+    loadMsaaPushConstantInfo.fValues = uniData;
+    this->pushConstants(loadMsaaPushConstantInfo, loadPipeline->layout());
 
     // Make sure we do not attempt to bind uniform or texture/sampler descriptors because we do
     // not use them for loading MSAA from resolve.
     fBindUniformBuffers = false;
     fBindTextureSamplers = false;
+
+    this->setScissor(SkIRect::MakeXYWH(0, 0, dstDimensions.width(), dstDimensions.height()));
 
     if (!this->updateAndBindInputAttachment(
             resolveTexture,
@@ -897,10 +916,10 @@ void gather_clear_values(const RenderPassDesc& rpDesc,
 // The RenderArea bounds we pass into BeginRenderPass must have a start x value that is a multiple
 // of the granularity. The width must also be a multiple of the granularity or equal to the width
 // of the entire attachment. Similar requirements apply to the y and height components.
-SkIRect get_render_area(const SkIRect& srcBounds,
-                        const VkExtent2D& granularity,
-                        int maxWidth,
-                        int maxHeight) {
+VkRect2D get_render_area(const SkIRect& srcBounds,
+                         const VkExtent2D& granularity,
+                         int maxWidth,
+                         int maxHeight) {
     SkIRect dstBounds;
     // Adjust Width
     if (granularity.width == 0 || granularity.width == 1) {
@@ -939,7 +958,10 @@ SkIRect get_render_area(const SkIRect& srcBounds,
         }
     }
 
-    return dstBounds;
+    VkRect2D renderArea;
+    renderArea.offset = { dstBounds.fLeft , dstBounds.fTop };
+    renderArea.extent = { (uint32_t)dstBounds.width(), (uint32_t)dstBounds.height() };
+    return renderArea;
 }
 
 void populate_write_info(VulkanDescriptorSet* set,
@@ -969,7 +991,6 @@ void populate_write_info(VulkanDescriptorSet* set,
 } // anonymous namespace
 
 bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& rpDesc,
-                                          SkIRect viewport,
                                           const Texture* colorTexture,
                                           const Texture* resolveTexture,
                                           const Texture* depthStencilTexture) {
@@ -1025,13 +1046,24 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& rpDesc,
     this->submitPipelineBarriers();
     this->trackResource(vulkanRenderPass);
 
+    int frameBufferWidth = 0;
+    int frameBufferHeight = 0;
+    if (colorTexture) {
+        frameBufferWidth = colorTexture->dimensions().width();
+        frameBufferHeight = colorTexture->dimensions().height();
+    } else if (depthStencilTexture) {
+        frameBufferWidth = depthStencilTexture->dimensions().width();
+        frameBufferHeight = depthStencilTexture->dimensions().height();
+    }
     sk_sp<VulkanFramebuffer> framebuffer =
             fResourceProvider->findOrCreateFramebuffer(fSharedContext,
                                                        fTargetTexture,
                                                        vulkanResolveTexture,
                                                        vulkanDepthStencilTexture,
                                                        rpDesc,
-                                                       *vulkanRenderPass);
+                                                       *vulkanRenderPass,
+                                                       frameBufferWidth,
+                                                       frameBufferHeight);
     if (!framebuffer) {
         SKIA_LOG_W("Could not find or create Vulkan Framebuffer");
         return false;
@@ -1040,19 +1072,18 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& rpDesc,
     bool useFullBounds = loadMSAAFromResolve &&
                          fSharedContext->vulkanCaps().mustLoadFullImageForMSAA();
 
-    SkISize framebufferDims = framebuffer->dimensions();
-    SkIRect renderArea = get_render_area(useFullBounds ? SkIRect::MakeSize(framebufferDims)
-                                                       : fRenderAreaBounds,
-                                         vulkanRenderPass->granularity(),
-                                         framebufferDims.width(),
-                                         framebufferDims.height());
+    VkRect2D renderArea = get_render_area(useFullBounds ? SkIRect::MakeWH(frameBufferWidth,
+                                                                          frameBufferHeight)
+                                                        : fRenderAreaBounds,
+                                          vulkanRenderPass->granularity(),
+                                          frameBufferWidth,
+                                          frameBufferHeight);
 
     VkRenderPassBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     beginInfo.renderPass = vulkanRenderPass->renderPass();
     beginInfo.framebuffer = framebuffer->framebuffer();
-    beginInfo.renderArea.offset = {renderArea.fLeft, renderArea.fTop};
-    beginInfo.renderArea.extent = { (uint32_t) renderArea.width(), (uint32_t) renderArea.height()};
+    beginInfo.renderArea = renderArea;
     beginInfo.clearValueCount = clearValues.size();
     beginInfo.pClearValues = clearValues.begin();
 
@@ -1066,17 +1097,19 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& rpDesc,
                                    VK_SUBPASS_CONTENTS_INLINE));
     fActiveRenderPass = true;
 
+    SkIRect nativeBounds = SkIRect::MakeXYWH(renderArea.offset.x,
+                                             renderArea.offset.y,
+                                             renderArea.extent.width,
+                                             renderArea.extent.height);
+
     if (loadMSAAFromResolve && !this->loadMSAAFromResolve(rpDesc,
                                                           *vulkanResolveTexture,
-                                                          renderArea)) {
+                                                          fTargetTexture->dimensions(),
+                                                          nativeBounds)) {
         SKIA_LOG_E("Failed to load MSAA from resolve");
         this->endRenderPass();
         return false;
     }
-
-    // loadMSAAFromResolve() will have manipulated the viewport, so now that that is done, set it
-    // to what the draw passes expect.
-    this->setViewport(viewport);
 
     // Once we have an active render pass, the command buffer should hold on to a frame buffer ref.
     this->trackResource(std::move(framebuffer));
@@ -1364,12 +1397,12 @@ void VulkanCommandBuffer::bindUniformBuffers() {
     auto vulkanBuffer = static_cast<const VulkanBuffer*>(combinedUboInfo.fBuffer);
 
     DescriptorType uniformBufferType =
-            fSharedContext->caps()->storageBufferSupport() ? DescriptorType::kStorageBufferDynamic
-                                                           : DescriptorType::kUniformBufferDynamic;
+            fSharedContext->caps()->storageBufferSupport() ? DescriptorType::kStorageBuffer
+                                                           : DescriptorType::kUniformBuffer;
 
     // If we determine that we should use storage buffers, we expect that the actual VkBuffer
     // supports that usage.
-    SkASSERT(uniformBufferType != DescriptorType::kStorageBufferDynamic ||
+    SkASSERT(uniformBufferType != DescriptorType::kStorageBuffer ||
              vulkanBuffer->bufferUsageFlags() | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 
     // We expect to have up to 2 descriptors within this set. Fill out DescriptorData (for
@@ -1387,7 +1420,7 @@ void VulkanCommandBuffer::bindUniformBuffers() {
 
     if (fActiveGraphicsPipeline->usesStorageBuffer()) {
         SkASSERT(fSharedContext->caps()->storageBufferSupport());
-        uniformDescriptorData.push_back({DescriptorType::kStorageBufferDynamic,
+        uniformDescriptorData.push_back({DescriptorType::kStorageBuffer,
                                          /*count=*/1,
                                          Pipeline::kStorageBufferIndex,
                                          fActiveGraphicsPipeline->storageBufferStages()});

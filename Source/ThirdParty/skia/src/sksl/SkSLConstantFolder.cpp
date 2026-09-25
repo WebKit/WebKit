@@ -27,7 +27,6 @@
 #include "src/sksl/ir/SkSLVariable.h"
 #include "src/sksl/ir/SkSLVariableReference.h"
 
-#include <array>
 #include <cstdint>
 #include <float.h>
 #include <limits>
@@ -122,14 +121,14 @@ static std::unique_ptr<Expression> simplify_matrix_multiplication(const Context&
     SkASSERT(componentType.matches(right.type().componentType()));
 
     // Fetch the left matrix.
-    std::array<std::array<double, 4>, 4> leftVals;
+    double leftVals[4][4];
     for (int c = 0; c < leftColumns; ++c) {
         for (int r = 0; r < leftRows; ++r) {
             leftVals[c][r] = *left.getConstantValue((c * leftRows) + r);
         }
     }
     // Fetch the right matrix.
-    std::array<std::array<double, 4>, 4> rightVals;
+    double rightVals[4][4];
     for (int c = 0; c < rightColumns; ++c) {
         for (int r = 0; r < rightRows; ++r) {
             rightVals[c][r] = *right.getConstantValue((c * rightRows) + r);

@@ -33,8 +33,6 @@ namespace skgpu::graphite {
 
 class GraphicsPipeline;
 
-using AttachmentSizePolicy = Caps::AttachmentSizePolicy;
-
 namespace {
 
 // Get the required MSAA size for the render pass.
@@ -44,15 +42,13 @@ std::pair<SkISize, SkIPoint> get_msaa_size_and_resolve_offset(const SkISize& tar
                                                               const SkIRect& drawBounds,
                                                               const Caps& caps,
                                                               LoadOp loadOp) {
-    if (caps.attachmentSizePolicy() != AttachmentSizePolicy::kExact) {
+    if (caps.differentResolveAttachmentSizeSupport()) {
         // If possible, use approx size that can fit all draws. This reduces the MSAA texture size
-        // and also reuses the textures better. When there is MSAA, we can do this for both kApprox
-        // and kMSAARenderArea policies (even if in some cases we can make kMSAARenderArea smaller).
+        // and also reuses the textures better.
         // Note: we don't do this if loadOp=Clear because it's supposed to update the whole target
         // texture.
         auto smallEnoughBounds = drawBounds;
-        if (caps.attachmentSizePolicy() == AttachmentSizePolicy::kMSAARenderArea &&
-            loadOp != LoadOp::kClear &&
+        if (loadOp != LoadOp::kClear && !smallEnoughBounds.isEmpty() &&
             smallEnoughBounds.intersect(SkIRect::MakeSize(targetSize))) {
             SkIPoint resolveOffset = smallEnoughBounds.topLeft();
             return {GetApproxSize(smallEnoughBounds.size()), resolveOffset};
@@ -177,8 +173,6 @@ Task::Status RenderPassTask::addCommands(Context* context,
                                          ReplayTargetData replayData) {
     // TBD: Expose the surfaces that will need to be attached within the renderpass?
 
-    const Caps* caps = context->priv().caps();
-
     // Instantiate the target
     SkASSERT(fTarget && fTarget->isInstantiated());
     SkASSERT(!fDstCopy || fDstCopy->isInstantiated());
@@ -200,30 +194,21 @@ Task::Status RenderPassTask::addCommands(Context* context,
     ResourceProvider* resourceProvider = context->priv().resourceProvider();
     sk_sp<Texture> colorAttachment;
     sk_sp<Texture> resolveAttachment;
-    SkIRect renderTargetBounds = SkIRect::MakeSize(fTarget->dimensions());
     SkIPoint resolveOffset = SkIPoint::Make(0, 0);
     if (fRenderPassDesc.fColorResolveAttachment.fFormat != TextureFormat::kUnsupported) {
         // We always make color msaa attachments shareable. Between any render pass we discard
         // the values of the MSAA texture. Thus it is safe to be used by multiple different render
         // passes without worry of stomping on each other's data. CommandBuffer::addRenderPass is
         // responsible for loading this attachment with the resolve target's original contents.
-        TextureInfo colorInfo = caps->getDefaultAttachmentTextureInfo(
+        TextureInfo colorInfo = context->priv().caps()->getDefaultAttachmentTextureInfo(
                 fRenderPassDesc.fColorAttachment, fTarget->isProtected(), Discardable::kYes);
 
         SkISize msaaSize;
         std::tie(msaaSize, resolveOffset) =
                 get_msaa_size_and_resolve_offset(fTarget->dimensions(),
                                                  drawBounds.makeOffset(replayTranslation),
-                                                 *caps,
+                                                 *context->priv().caps(),
                                                  fRenderPassDesc.fColorAttachment.fLoadOp);
-
-        // Update the render target bounds to the possibly smaller MSAA attachment when using the
-        // MSAARenderArea strategy. For kExact, there's no change in the renderTargetArea and when
-        // it's kApprox, we want to keep the renderTargetArea matching the resolve target's size.
-        if (caps->attachmentSizePolicy() == AttachmentSizePolicy::kMSAARenderArea) {
-            renderTargetBounds = SkIRect::MakeSize(msaaSize);
-        }
-
         colorAttachment = resourceProvider->findOrCreateShareableTexture(
                 msaaSize, colorInfo, "DiscardableMSAAAttachment");
         if (!colorAttachment) {
@@ -237,22 +222,15 @@ Task::Status RenderPassTask::addCommands(Context* context,
 
     sk_sp<Texture> depthStencilAttachment;
     if (fRenderPassDesc.fDepthStencilAttachment.fFormat != TextureFormat::kUnsupported) {
-        SkASSERT(!caps->avoidDepthMode());
+        SkASSERT(!context->priv().caps()->avoidDepthMode());
         // We always make depth and stencil attachments shareable. Between any render pass the
         // values are reset. Thus it is safe to be used by multiple different render passes without
         // worry of stomping on each other's data.
-        TextureInfo dsInfo = caps->getDefaultAttachmentTextureInfo(
+        TextureInfo dsInfo = context->priv().caps()->getDefaultAttachmentTextureInfo(
                 fRenderPassDesc.fDepthStencilAttachment, fTarget->isProtected(), Discardable::kYes);
-
-        SkISize dimensions = caps->getDepthAttachmentDimensions(
+        SkISize dimensions = context->priv().caps()->getDepthAttachmentDimensions(
                 colorAttachment->textureInfo(), colorAttachment->dimensions());
-        // Only adjust the depth dimensions when the policy is kApprox. When there is MSAA,
-        // the color attachment dimensions have already been adjusted by the policy so the call to
-        // GetApproxSize is a no-op. When there is no MSAA, the kMSAARenderArea policy behaves the
-        // same as kExact.
-        if (caps->attachmentSizePolicy() == AttachmentSizePolicy::kApprox) {
-            dimensions = GetApproxSize(dimensions);
-        }
+
         depthStencilAttachment = resourceProvider->findOrCreateShareableTexture(
                 dimensions, dsInfo, "DepthStencilAttachment");
         if (!depthStencilAttachment) {
@@ -267,6 +245,7 @@ Task::Status RenderPassTask::addCommands(Context* context,
     // Note: if the MSAA texture is allocated smaller than the target texture, we need to apply an
     // additional translation (-resolveOffset) so that the draws' bounds' top left corner
     // will be at (0, 0) on the MSAA texture
+    const SkIRect renderTargetBounds = SkIRect::MakeSize(colorAttachment->dimensions());
     if (!commandBuffer->setReplayTranslationAndClip(
                 replayTranslation - resolveOffset, replayClip, renderTargetBounds)) {
         return Status::kSuccess;
@@ -309,10 +288,6 @@ bool RenderPassTask::visitProxies(const std::function<bool(const TextureProxy*)>
             if (!visitor(proxy.get())) {
                 return false;
             }
-        }
-
-        if (pass->storageFallbackTexture() && !visitor(pass->storageFallbackTexture())) {
-            return false;
         }
 
         if (fDstCopy && !visitor(fDstCopy.get())) {

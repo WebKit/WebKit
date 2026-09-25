@@ -23,7 +23,6 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
 #include <utility>
 
 #define WIDTH 600
@@ -53,19 +52,38 @@ protected:
         canvas->clear(SK_ColorBLACK);
         SkPaint paint;
 
-        const auto gModes = std::to_array<SkBlendMode>({
-                SkBlendMode::kClear,      SkBlendMode::kSrc,        SkBlendMode::kDst,
-                SkBlendMode::kSrcOver,    SkBlendMode::kDstOver,    SkBlendMode::kSrcIn,
-                SkBlendMode::kDstIn,      SkBlendMode::kSrcOut,     SkBlendMode::kDstOut,
-                SkBlendMode::kSrcATop,    SkBlendMode::kDstATop,    SkBlendMode::kXor,
+        const SkBlendMode gModes[] = {
+            SkBlendMode::kClear,
+            SkBlendMode::kSrc,
+            SkBlendMode::kDst,
+            SkBlendMode::kSrcOver,
+            SkBlendMode::kDstOver,
+            SkBlendMode::kSrcIn,
+            SkBlendMode::kDstIn,
+            SkBlendMode::kSrcOut,
+            SkBlendMode::kDstOut,
+            SkBlendMode::kSrcATop,
+            SkBlendMode::kDstATop,
+            SkBlendMode::kXor,
 
-                SkBlendMode::kPlus,       SkBlendMode::kModulate,   SkBlendMode::kScreen,
-                SkBlendMode::kOverlay,    SkBlendMode::kDarken,     SkBlendMode::kLighten,
-                SkBlendMode::kColorDodge, SkBlendMode::kColorBurn,  SkBlendMode::kHardLight,
-                SkBlendMode::kSoftLight,  SkBlendMode::kDifference, SkBlendMode::kExclusion,
-                SkBlendMode::kMultiply,   SkBlendMode::kHue,        SkBlendMode::kSaturation,
-                SkBlendMode::kColor,      SkBlendMode::kLuminosity,
-        });
+            SkBlendMode::kPlus,
+            SkBlendMode::kModulate,
+            SkBlendMode::kScreen,
+            SkBlendMode::kOverlay,
+            SkBlendMode::kDarken,
+            SkBlendMode::kLighten,
+            SkBlendMode::kColorDodge,
+            SkBlendMode::kColorBurn,
+            SkBlendMode::kHardLight,
+            SkBlendMode::kSoftLight,
+            SkBlendMode::kDifference,
+            SkBlendMode::kExclusion,
+            SkBlendMode::kMultiply,
+            SkBlendMode::kHue,
+            SkBlendMode::kSaturation,
+            SkBlendMode::kColor,
+            SkBlendMode::kLuminosity,
+        };
 
         int x = 0, y = 0;
         sk_sp<SkImageFilter> background(SkImageFilters::Image(fCheckerboard,
@@ -122,14 +140,12 @@ protected:
         }
         // Test cropping
         constexpr size_t nbSamples = 3;
-        const std::array<SkBlendMode, nbSamples> sampledModes = {
-                SkBlendMode::kOverlay, SkBlendMode::kSrcOver, SkBlendMode::kPlus
+        const SkBlendMode sampledModes[nbSamples] = {
+            SkBlendMode::kOverlay, SkBlendMode::kSrcOver, SkBlendMode::kPlus
         };
-        std::array<std::array<int, 4>, nbSamples> offsets = {{
-                 { 10,  10, -16, -16},
-                 { 10,  10,  10,  10},
-                 {-10, -10,  -6,  -6},
-        }};
+        int offsets[nbSamples][4] = {{ 10,  10, -16, -16},
+                                     { 10,  10,  10,  10},
+                                     {-10, -10,  -6,  -6}};
         for (size_t i = 0; i < nbSamples; ++i) {
             SkIRect cropRect = SkIRect::MakeXYWH(offsets[i][0],
                                                  offsets[i][1],

@@ -77,7 +77,6 @@ skia_cc_library(
     deps = [
         "//:core",
         "//modules/skcms",
-        "//src/codec:hdr_metadata",
         "//src/core:core_priv",
     ],
 )

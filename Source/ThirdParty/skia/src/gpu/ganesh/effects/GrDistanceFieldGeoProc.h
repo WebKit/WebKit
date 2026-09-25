@@ -18,7 +18,6 @@
 #include "src/gpu/ganesh/GrProcessorUnitTest.h"
 #include "src/gpu/ganesh/GrSamplerState.h"
 
-#include <array>
 #include <cstdint>
 #include <memory>
 
@@ -129,7 +128,7 @@ private:
 
     const TextureSampler& onTextureSampler(int i) const override { return fTextureSamplers[i]; }
 
-    std::array<TextureSampler, kMaxTextures> fTextureSamplers;
+    TextureSampler   fTextureSamplers[kMaxTextures];
     SkISize          fAtlasDimensions;  // dimensions for all textures used with fTextureSamplers[].
     SkMatrix         fLocalMatrix;
     Attribute        fInPosition;
@@ -189,7 +188,7 @@ private:
     const TextureSampler& onTextureSampler(int i) const override { return fTextureSamplers[i]; }
 
     SkMatrix         fLocalMatrix;
-    std::array<TextureSampler, kMaxTextures> fTextureSamplers;
+    TextureSampler   fTextureSamplers[kMaxTextures];
     SkISize          fAtlasDimensions;  // dimensions for all textures used with fTextureSamplers[].
     Attribute        fInPosition;
     Attribute        fInColor;
@@ -260,7 +259,7 @@ private:
 
     const TextureSampler& onTextureSampler(int i) const override { return fTextureSamplers[i]; }
 
-    std::array<TextureSampler, kMaxTextures> fTextureSamplers;
+    TextureSampler   fTextureSamplers[kMaxTextures];
     SkISize          fAtlasDimensions;  // dimensions for all textures used with fTextureSamplers[].
     const SkMatrix   fLocalMatrix;
     DistanceAdjust   fDistanceAdjust;

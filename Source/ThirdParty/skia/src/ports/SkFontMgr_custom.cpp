@@ -19,7 +19,6 @@
 #include "src/core/SkFontDescriptor.h"
 #include "src/ports/SkFontMgr_custom.h"
 
-#include <array>
 #include <limits>
 #include <memory>
 
@@ -134,9 +133,9 @@ SkFontMgr_Custom::SkFontMgr_Custom(const SystemFontLoader& loader)
     loader.loadSystemFonts(fScanner.get(), &fFamilies);
 
     // Try to pick a default font.
-    static constexpr auto defaultNames = std::to_array<const char*>({
-            "Arial", "Verdana", "Times New Roman", "Droid Sans", "DejaVu Serif", nullptr,
-    });
+    static const char* defaultNames[] = {
+        "Arial", "Verdana", "Times New Roman", "Droid Sans", "DejaVu Serif", nullptr
+    };
     for (size_t i = 0; i < std::size(defaultNames); ++i) {
         sk_sp<SkFontStyleSet> set(this->onMatchFamily(defaultNames[i]));
         if (nullptr == set) {

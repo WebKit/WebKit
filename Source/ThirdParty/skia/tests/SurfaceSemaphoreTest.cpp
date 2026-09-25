@@ -282,9 +282,9 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(EmptySurfaceSemaphoreTest,
     GrFlushInfo flushInfo;
     flushInfo.fNumSemaphores = 1;
     flushInfo.fSignalSemaphores = &semaphore;
-    GrDirectContext::FlushResult result =
+    GrSemaphoresSubmitted submitted =
             ctx->flush(mainSurface.get(), SkSurfaces::BackendSurfaceAccess::kNoAccess, flushInfo);
-    REPORTER_ASSERT(reporter, GrSemaphoresSubmitted::kYes == result.fSubmitted);
+    REPORTER_ASSERT(reporter, GrSemaphoresSubmitted::kYes == submitted);
     ctx->submit();
 
 #ifdef SK_VULKAN

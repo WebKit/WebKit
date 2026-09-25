@@ -295,16 +295,9 @@ public:
 
     int findOrCreateMeshSnippet(const SkMeshSpecification* spec) SK_EXCLUDES(fSpinLock);
 
-    static SkSLType UniformTypeToSkSLType(const SkRuntimeEffect::Uniform& u);
-
-    static SkSpan<const Uniform> ConvertRuntimeEffectUniforms(
-            SkSpan<const SkRuntimeEffect::Uniform> uniforms,
-            SkArenaAlloc* arena);
-
-    static std::string GenerateMeshVSPreamble(const ShaderInfo& shaderInfo, const ShaderNode* node);
-    static std::string GenerateMeshFSPreamble(const ShaderInfo& shaderInfo, const ShaderNode* node);
-
 private:
+    const char* addTextToArena(std::string_view text);
+
     SkSpan<const Uniform> convertUniforms(const SkRuntimeEffect* effect);
     ShaderSnippet convertRuntimeEffect(const SkRuntimeEffect* effect, const char* name);
     ShaderSnippet convertMeshShader(const SkMeshSpecification* spec);

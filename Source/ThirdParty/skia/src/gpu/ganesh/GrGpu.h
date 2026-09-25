@@ -15,7 +15,6 @@
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
 #include "include/gpu/ganesh/GrBackendSurface.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
@@ -415,11 +414,11 @@ public:
     // Provides a hook for post-flush actions (e.g. Vulkan command buffer submits). This will also
     // insert any numSemaphore semaphores on the gpu and set the backendSemaphores to match the
     // inserted semaphores.
-    GrDirectContext::FlushResult executeFlushInfo(SkSpan<GrSurfaceProxy*>,
-                                                  SkSurfaces::BackendSurfaceAccess access,
-                                                  const GrFlushInfo&,
-                                                  std::optional<GrTimerQuery> timerQuery,
-                                                  const skgpu::MutableTextureState* newState);
+    void executeFlushInfo(SkSpan<GrSurfaceProxy*>,
+                          SkSurfaces::BackendSurfaceAccess access,
+                          const GrFlushInfo&,
+                          std::optional<GrTimerQuery> timerQuery,
+                          const skgpu::MutableTextureState* newState);
 
     // Called before render tasks are executed during a flush.
     virtual void willExecute() {}

@@ -27,15 +27,13 @@
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
 
-#include <array>
-
-static constexpr auto gSamplings = std::to_array<SkSamplingOptions>({
-        SkSamplingOptions(SkFilterMode::kNearest),
-        SkSamplingOptions(SkFilterMode::kLinear),
-        SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear),
-        SkSamplingOptions(SkCubicResampler::Mitchell()),
-        SkSamplingOptions::Aniso(16),
-});
+const SkSamplingOptions gSamplings[] = {
+    SkSamplingOptions(SkFilterMode::kNearest),
+    SkSamplingOptions(SkFilterMode::kLinear),
+    SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear),
+    SkSamplingOptions(SkCubicResampler::Mitchell()),
+    SkSamplingOptions::Aniso(16),
+};
 
 static void makebm(SkBitmap* bm, SkColorType ct, int w, int h) {
     bm->allocPixels(SkImageInfo::Make(w, h, ct, kPremul_SkAlphaType));
@@ -57,10 +55,10 @@ static void setup(SkPaint* paint, const SkBitmap& bm, const SkSamplingOptions& s
     paint->setShader(bm.makeShader(tmx, tmy, sampling));
 }
 
-constexpr auto gColorTypes = std::to_array<SkColorType>({
-        kN32_SkColorType,
-        kRGB_565_SkColorType,
-});
+constexpr SkColorType gColorTypes[] = {
+    kN32_SkColorType,
+    kRGB_565_SkColorType,
+};
 
 class ScaledTilingGM : public skiagm::GM {
 public:
@@ -68,7 +66,7 @@ public:
             : fPowerOfTwoSize(powerOfTwoSize) {
     }
 
-    std::array<SkBitmap, std::size(gColorTypes)> fTexture;
+    SkBitmap    fTexture[std::size(gColorTypes)];
 
 protected:
     static constexpr int kPOTSize = 4;
@@ -101,22 +99,13 @@ protected:
 
         SkRect r = { 0, 0, SkIntToScalar(size*2), SkIntToScalar(size*2) };
 
-        static constexpr auto gColorTypeNames = std::to_array<const char*>({"8888", "565"});
+        const char* gColorTypeNames[] = { "8888", "565" };
 
-        static constexpr auto gFilterNames = std::to_array<const char*>({
-                "Nearest",
-                "Linear",
-                "Trilinear",
-                "Mitchell",
-                "Aniso",
-        });
+        const char* gFilterNames[] = { "Nearest", "Linear", "Trilinear", "Mitchell", "Aniso" };
 
-        static constexpr auto gModes = std::to_array<SkTileMode>({
-                SkTileMode::kClamp,
-                SkTileMode::kRepeat,
-                SkTileMode::kMirror,
-        });
-        static constexpr auto gModeNames = std::to_array<const char*>({"C", "R", "M"});
+        constexpr SkTileMode gModes[] = {
+            SkTileMode::kClamp, SkTileMode::kRepeat, SkTileMode::kMirror };
+        const char* gModeNames[] = { "C", "R", "M" };
 
         SkScalar y = SkIntToScalar(24);
         SkScalar x = SkIntToScalar(10)/scale;
@@ -221,16 +210,12 @@ private:
         const SkScalar h = SkIntToScalar(gHeight);
         SkRect r = { -w, -h, w*2, h*2 };
 
-        static constexpr auto gModes = std::to_array<SkTileMode>({
-                SkTileMode::kClamp,
-                SkTileMode::kRepeat,
-                SkTileMode::kMirror,
-        });
-        static constexpr auto gModeNames = std::to_array<const char*>({
-                "Clamp",
-                "Repeat",
-                "Mirror",
-        });
+        constexpr SkTileMode gModes[] = {
+            SkTileMode::kClamp, SkTileMode::kRepeat, SkTileMode::kMirror
+        };
+        const char* gModeNames[] = {
+            "Clamp", "Repeat", "Mirror"
+        };
 
         SkScalar y = SkIntToScalar(24);
         SkScalar x = SkIntToScalar(66);

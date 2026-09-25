@@ -1,4 +1,4 @@
-Texture2D<float4> aTexture : register(t1, space0);
+RWTexture2D<unorm float4> aTexture : register(u1, space0);
 Texture2D<float4> aSampledTexture : register(t2, space0);
 SamplerState _aSampledTexture_sampler : register(s2, space0);
 Texture2D<float4> aSecondSampledTexture : register(t3, space0);
@@ -17,24 +17,24 @@ struct SPIRV_Cross_Output
     float4 sk_FragColor : SV_Target0;
 };
 
-float4 helpers_helper_h4ZT_aSampledTexture(Texture2D<float4> _26)
+float4 helpers_helper_h4ZT_aSampledTexture(RWTexture2D<unorm float4> _27)
 {
     return aSampledTexture.Sample(_aSampledTexture_sampler, c);
 }
 
-float4 helper_h4TZ_aSampledTexture(Texture2D<float4> _36)
+float4 helper_h4TZ_aSampledTexture(RWTexture2D<unorm float4> _37)
 {
-    return helpers_helper_h4ZT_aSampledTexture(_36);
+    return helpers_helper_h4ZT_aSampledTexture(_37);
 }
 
-float4 helpers_helper_h4ZT_aSecondSampledTexture(Texture2D<float4> _31)
+float4 helpers_helper_h4ZT_aSecondSampledTexture(RWTexture2D<unorm float4> _32)
 {
     return aSecondSampledTexture.Sample(_aSecondSampledTexture_sampler, c);
 }
 
-float4 helper_h4TZ_aSecondSampledTexture(Texture2D<float4> _39)
+float4 helper_h4TZ_aSecondSampledTexture(RWTexture2D<unorm float4> _40)
 {
-    return helpers_helper_h4ZT_aSecondSampledTexture(_39);
+    return helpers_helper_h4ZT_aSecondSampledTexture(_40);
 }
 
 void frag_main()

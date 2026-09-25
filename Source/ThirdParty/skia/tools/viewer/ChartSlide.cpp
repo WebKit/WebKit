@@ -9,12 +9,8 @@
 #include "include/core/SkPaint.h"
 #include "include/core/SkPathBuilder.h"
 #include "include/private/SkTDArray.h"
-#include "include/private/SkTo.h"
 #include "src/core/SkRandom.h"
 #include "tools/viewer/Slide.h"
-
-#include <array>
-#include <cstdint>
 
 // Generates y values for the chart plots.
 static void gen_data(SkScalar yAvg, SkScalar ySpread, int count, SkTDArray<SkScalar>* dataPts) {
@@ -89,7 +85,7 @@ class ChartSlide : public Slide {
     inline static constexpr int kShiftPerFrame = 1;
     int                 fShift = 0;
     SkISize             fSize = {-1, -1};
-    std::array<SkTDArray<SkScalar>, kNumGraphs> fData;
+    SkTDArray<SkScalar> fData[kNumGraphs];
 
 public:
     ChartSlide() { fName = "Chart"; }
@@ -111,14 +107,14 @@ public:
             for (int i = 0; i < kNumGraphs; ++i) {
                 SkScalar y = (kNumGraphs - i) * (height - ySpread) / (kNumGraphs + 1);
                 fData[i].reset();
-                gen_data(y, ySpread, dataPointCount, &fData[i]);
+                gen_data(y, ySpread, dataPointCount, fData + i);
             }
         }
 
         canvas->clear(0xFFE0F0E0);
 
         static SkRandom colorRand;
-        static std::array<SkColor, kNumGraphs> gColors = { 0x0 };
+        static SkColor gColors[kNumGraphs] = { 0x0 };
         if (0 == gColors[0]) {
             for (int i = 0; i < kNumGraphs; ++i) {
                 gColors[i] = colorRand.nextU() | 0xff000000;
@@ -156,7 +152,7 @@ public:
             plotPaint.setColor(gColors[i]);
             canvas->drawPath(plotPath.detach(), plotPaint);
 
-            prevData = &fData[i];
+            prevData = fData + i;
         }
 
         fShift += kShiftPerFrame;

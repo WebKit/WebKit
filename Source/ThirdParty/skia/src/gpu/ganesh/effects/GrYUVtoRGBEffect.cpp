@@ -71,7 +71,7 @@ std::unique_ptr<GrFragmentProcessor> GrYUVtoRGBEffect::Make(const GrYUVATextureP
     }
 
     bool snap[2] = {false, false};
-    std::array<std::unique_ptr<GrFragmentProcessor>, SkYUVAInfo::kMaxPlanes> planeFPs;
+    std::unique_ptr<GrFragmentProcessor> planeFPs[SkYUVAInfo::kMaxPlanes];
     for (int i = 0; i < numPlanes; ++i) {
         bool useSubset = SkToBool(subset);
         GrSurfaceProxyView view = yuvaProxies.makeView(i);
@@ -208,7 +208,7 @@ std::unique_ptr<GrFragmentProcessor> GrYUVtoRGBEffect::Make(const GrYUVATextureP
         }
     }
     std::unique_ptr<GrFragmentProcessor> fp(
-            new GrYUVtoRGBEffect(planeFPs.data(),
+            new GrYUVtoRGBEffect(planeFPs,
                                  numPlanes,
                                  yuvaProxies.yuvaLocations(),
                                  snap,

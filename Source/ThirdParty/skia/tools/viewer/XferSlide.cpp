@@ -20,9 +20,7 @@
 #include "tools/fonts/FontToolUtils.h"
 #include "tools/viewer/ClickHandlerSlide.h"
 
-#include <array>
-
-static constexpr auto gModes = std::to_array<SkBlendMode>({
+const SkBlendMode gModes[] = {
     SkBlendMode::kSrcOver,
     SkBlendMode::kSrc,
     SkBlendMode::kSrcIn,
@@ -32,7 +30,7 @@ static constexpr auto gModes = std::to_array<SkBlendMode>({
     SkBlendMode::kDstIn,
     SkBlendMode::kDstOut,
     SkBlendMode::kDstATop,
-});
+};
 const int N_Modes = std::size(gModes);
 
 static SkRandom gRand;
@@ -110,8 +108,8 @@ protected:
 class XferSlide : public ClickHandlerSlide {
 public:
     XferSlide() {
-        const auto colors = std::to_array<SkColor4f>({
-                SkColors::kRed, SkColors::kGreen, SkColors::kBlue, SkColors::kBlack});
+        const SkColor4f colors[] = {
+                SkColors::kRed, SkColors::kGreen, SkColors::kBlue, SkColors::kBlack };
         for (int i = 0; i < N; ++i) {
             fDrs[i].reset(new CircDrawable(200, colors[i]));
             fDrs[i]->fLoc.set(100.f + i * 100, 100.f + i * 100);
@@ -183,9 +181,9 @@ private:
         N = 4
     };
 
-    std::array<SkRect, N_Modes> fModeRect;
-    std::array<ModeButton, N_Modes> fModeButtons;
-    std::array<sk_sp<CircDrawable>, N> fDrs;
+    SkRect        fModeRect[N_Modes];
+    ModeButton    fModeButtons[N_Modes];
+    sk_sp<CircDrawable> fDrs[N];
     CircDrawable* fSelected;
 
     void addButtons() {

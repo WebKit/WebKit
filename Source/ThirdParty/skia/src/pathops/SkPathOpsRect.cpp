@@ -11,15 +11,13 @@
 #include "src/pathops/SkPathOpsQuad.h"
 #include "src/pathops/SkPathOpsTCurve.h"
 
-#include <array>
-
 void SkDRect::setBounds(const SkDQuad& curve, const SkDQuad& sub, double startT, double endT) {
     set(sub[0]);
     add(sub[2]);
-    std::array<double, 2> tValues;
+    double tValues[2];
     int roots = 0;
     if (!sub.monotonicInX()) {
-        roots = SkDQuad::FindExtrema(&sub[0].fX, tValues.data());
+        roots = SkDQuad::FindExtrema(&sub[0].fX, tValues);
     }
     if (!sub.monotonicInY()) {
         roots += SkDQuad::FindExtrema(&sub[0].fY, &tValues[roots]);

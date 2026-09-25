@@ -22,8 +22,6 @@
 #include "include/private/SkMalloc.h"
 #include "tools/ToolUtils.h"
 
-#include <array>
-
 #if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrDirectContext.h"
 #endif
@@ -120,12 +118,12 @@ protected:
         sk_sp<SkImage> image = make_image(canvas, xDivs + 1, yDivs + 1, padLeft, padTop,
                                           padRight, padBottom);
 
-        const auto size = std::to_array<SkSize>({
-                SkSize{  50,  50, },  // shrink in both axes
-                SkSize{  50, 200, },  // shrink in X
-                SkSize{ 200,  50, },  // shrink in Y
-                SkSize{ 200, 200, },
-        });
+        const SkSize size[] = {
+            {  50,  50, }, // shrink in both axes
+            {  50, 200, }, // shrink in X
+            { 200,  50, }, // shrink in Y
+            { 200, 200, },
+        };
 
         canvas->drawImage(image, 10, 10);
 
@@ -171,9 +169,9 @@ protected:
 
         // Provide hints about 3 solid color rects. These colors match
         // what was already in the bitmap.
-        std::array<int, 3> fixedColorX = {2, 4, 1};
-        std::array<int, 3> fixedColorY = {1, 1, 2};
-        std::array<SkColor, 3> fixedColor = {SK_ColorBLACK, SK_ColorBLACK, SK_ColorBLACK};
+        int fixedColorX[3] = {2, 4, 1};
+        int fixedColorY[3] = {1, 1, 2};
+        SkColor fixedColor[3] = {SK_ColorBLACK, SK_ColorBLACK, SK_ColorBLACK};
         const SkImageInfo info = SkImageInfo::Make(1, 1, kBGRA_8888_SkColorType,
                                                    kUnpremul_SkAlphaType);
         for (int rectNum = 0; rectNum < 3; rectNum++) {

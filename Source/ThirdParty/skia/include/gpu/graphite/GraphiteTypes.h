@@ -308,9 +308,7 @@ enum DrawTypeFlags : uint16_t {
 
     kDrawMesh         = 1 << 13,
 
-    kSparseStrips     = 1 << 14,
-
-    kLast             = kSparseStrips,
+    kLast = kDrawMesh,
 };
 
 } // namespace skgpu::graphite

@@ -1565,11 +1565,8 @@ void run_program(const Op* program, const void** contexts, SKCMS_MAYBE_UNUSED pt
                 size_t src_bpp, size_t dst_bpp) {
 #if SKCMS_HAS_MUSTTAIL
     // Convert the program into an array of tailcall stages.
-    StageFn stages[SKCMS_MAX_PROGRAM_OPS];
+    StageFn stages[32];
     assert(programSize <= ARRAY_COUNT(stages));
-    if (programSize > ARRAY_COUNT(stages)) {
-        return;
-    }
 
     static constexpr StageFn kStageFns[] = {
 #define M(name) &Exec_##name,

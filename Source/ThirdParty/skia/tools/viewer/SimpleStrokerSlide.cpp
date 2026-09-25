@@ -14,7 +14,6 @@
 
 #include "src/core/SkGeometry.h"
 
-#include <array>
 #include <vector>
 
 namespace {
@@ -355,7 +354,7 @@ class SimpleStrokerSlide : public ClickHandlerSlide {
     inline static constexpr int kN = 3;
 
 public:
-    std::array<SkPoint, kN> fPts;
+    SkPoint fPts[kN];
 
     SimpleStrokerSlide() : fShowSkiaStroke(true), fShowHidden(true), fShowSkeleton(true) {
         fPts[0] = {500, 200};

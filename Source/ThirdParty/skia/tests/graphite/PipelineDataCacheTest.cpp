@@ -41,14 +41,14 @@ DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(PipelineDataCacheTest, reporter, context,
                                                     resourceProvider,
                                                     SkISize::Make(32, 32),
                                                     info,
-                                                    skgpu::Budgeted::kYes,
-                                                    "TestDataProxyA");
+                                                    "TestDataProxyA",
+                                                    skgpu::Budgeted::kYes);
     sk_sp<TextureProxy> proxyB = TextureProxy::Make(caps,
                                                     resourceProvider,
                                                     SkISize::Make(32, 32),
                                                     info,
-                                                    skgpu::Budgeted::kYes,
-                                                    "TestDataProxyB");
+                                                    "TestDataProxyB",
+                                                    skgpu::Budgeted::kYes);
     REPORTER_ASSERT(reporter, proxyA && proxyB);
 
     // Block A: Add a new, unique set of uniforms and textures for a render step

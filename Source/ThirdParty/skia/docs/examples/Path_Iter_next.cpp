@@ -1,9 +1,6 @@
 // Copyright 2019 Google LLC
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 #include "tools/fiddle/examples.h"
-
-#include <array>
-
 REG_FIDDLE(Path_Iter_next, 256, 256, true, 0) {
 void draw(SkCanvas* canvas) {
     SkPath path = SkPathBuilder()
@@ -17,8 +14,7 @@ void draw(SkCanvas* canvas) {
                   .detach();
 
     SkPath::Iter iter(path, false);
-    static constexpr auto verbStr =
-            std::to_array<const char*>({"Move", "Line", "Quad", "Conic", "Cubic", "Close", "Done"});
+    const char* verbStr[] =  { "Move", "Line", "Quad", "Conic", "Cubic", "Close", "Done" };
     while (auto rec = iter.next()) {
         SkDebugf("k%s_Verb ", verbStr[(int)rec->fVerb]);
         for (SkPoint p : rec->fPoints) {
