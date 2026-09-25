@@ -155,6 +155,7 @@ enum class PseudoId : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class RubyAlign : uint8_t;
 enum class RubyOverhang : bool;
+enum class ScrollAxisLock : uint8_t;
 enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
 enum class StyleAppearance : uint8_t;

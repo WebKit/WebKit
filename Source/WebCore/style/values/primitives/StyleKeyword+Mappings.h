@@ -865,6 +865,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE ScrollAxisLock
+#define FOR_EACH(CASE) CASE(None) CASE(Auto)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 constexpr CSSValueID toCSSValueID(BreakBetween e)
 {
     switch (e) {

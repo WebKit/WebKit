@@ -274,6 +274,7 @@ PASS row-gap
 PASS rx
 PASS ry
 PASS scale
+PASS scroll-axis-lock
 PASS scroll-behavior
 PASS scroll-margin-block-end
 PASS scroll-margin-block-start
