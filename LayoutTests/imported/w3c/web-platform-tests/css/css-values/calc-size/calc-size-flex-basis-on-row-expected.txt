@@ -8,18 +8,18 @@ PASS resolved value for width resulting from flex-basis: content
 PASS resolved value for width resulting from flex-basis: auto
 PASS resolved value for width resulting from flex-basis: calc-size(any, 357px)
 PASS resolved value for width resulting from flex-basis: calc-size(any, 31%)
-FAIL resolved value for width resulting from flex-basis: calc-size(max-content, 31%) assert_equals: resulting width is correct expected "155px" but got "600px"
-FAIL resolved value for width resulting from flex-basis: calc-size(fit-content, 172px) assert_equals: resulting width is correct expected "172px" but got "500px"
+PASS resolved value for width resulting from flex-basis: calc-size(max-content, 31%)
+PASS resolved value for width resulting from flex-basis: calc-size(fit-content, 172px)
 PASS resolved value for width resulting from flex-basis: calc-size(37px, 193px)
 PASS resolved value for width resulting from flex-basis: calc-size(83px, size * 3)
-FAIL resolved value for width resulting from flex-basis: calc-size(min-content, size / 2) assert_equals: resulting width is correct expected "200px" but got "400px"
-FAIL resolved value for width resulting from flex-basis: calc-size(max-content, size * 1.2) assert_equals: resulting width is correct expected "720px" but got "600px"
-FAIL resolved value for width resulting from flex-basis: calc-size(fit-content, size / 4 + 30px) assert_equals: resulting width is correct expected "155px" but got "500px"
-FAIL resolved value for width resulting from flex-basis: calc-size(stretch, size / 2 - 10%) assert_equals: resulting width is correct expected "200px" but got "500px"
+PASS resolved value for width resulting from flex-basis: calc-size(min-content, size / 2)
+PASS resolved value for width resulting from flex-basis: calc-size(max-content, size * 1.2)
+PASS resolved value for width resulting from flex-basis: calc-size(fit-content, size / 4 + 30px)
+PASS resolved value for width resulting from flex-basis: calc-size(stretch, size / 2 - 10%)
 PASS resolved value for width resulting from flex-basis: calc-size(30px, 15em)
 PASS resolved value for width resulting from flex-basis: calc-size(calc-size(any, 30px), 15em)
 PASS resolved value for width resulting from flex-basis: calc-size(calc-size(2in, 30px), 15em)
-FAIL resolved value for width resulting from flex-basis: calc-size(calc-size(min-content, 30px), 15em) assert_equals: resulting width is correct expected "300px" but got "400px"
+PASS resolved value for width resulting from flex-basis: calc-size(calc-size(min-content, 30px), 15em)
 PASS resolved value for width resulting from flex-basis: calc-size(calc-size(min-content, size), size)
 PASS resolved value for width resulting from flex-basis: calc-size(auto, size)
 FAIL resolved value for width resulting from flex-basis: calc-size(auto, size * 1.6 + 23px) assert_equals: resulting width is correct expected "223px" but got "125px"
