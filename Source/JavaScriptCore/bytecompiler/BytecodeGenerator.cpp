@@ -3477,6 +3477,21 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitNewArrayByReversingArguments(RegisterID* dst, CallArguments& callArguments)
+{
+    unsigned length = callArguments.argumentCountIncludingThis() - 1;
+    RefPtr<RegisterID> temporary = newTemporary();
+    for (unsigned index = 0; index < length / 2; ++index) {
+        RegisterID* low = callArguments.argumentRegister(index);
+        RegisterID* high = callArguments.argumentRegister(length - 1 - index);
+        move(temporary.get(), low);
+        move(low, high);
+        move(high, temporary.get());
+    }
+    OpNewArray::emit(this, dst, length ? callArguments.argumentRegister(length - 1) : VirtualRegister { 0 }, length, ArrayWithUndecided);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitNewArrayWithSpread(RegisterID* dst, ElementNode* elements)
 {
     BitVector bitVector;
