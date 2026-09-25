@@ -1,0 +1,11 @@
+Drag me
+Zone A Zone B
+
+PASS dragstart should be cancelable
+PASS drag should be cancelable
+PASS dragenter should be cancelable
+PASS dragover should be cancelable
+PASS dragleave should not be cancelable
+PASS drop should be cancelable
+FAIL dragend should not be cancelable assert_true: dragend fired expected true got false
+
