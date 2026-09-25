@@ -114,16 +114,16 @@ void QualifiedServerTrustFetch::didFinishLoading(const NetworkLoadMetrics&)
 {
     WebCore::CertificateInfo qualifiedServerTrust;
     if (m_debugEnabledForTesting) {
-        // FIXME: Once implementation of SecQWACTLSBindingVerify is available,
+        // FIXME: Once implementation of SecTrustCreateAndVerifyQWACTLSBinding is available,
         // use SecTrustSetAnchorCertificates to evaluate without verifying the root trust
         // to get a real 2-QWAC CertificateInfo instead of reusing the TLS trust.
         qualifiedServerTrust = m_serverTrust;
     }
 
-#if PLATFORM(COCOA) && defined(SEC_TRUST_HAS_QWAC_BINDING_VERIFY)
-    else if (canLoad_Security_SecQWACTLSBindingVerify()) {
-        if (RetainPtr trust = adoptCF(softLink_Security_SecQWACTLSBindingVerify(m_buffer.takeBuffer()->makeContiguous()->createCFData().get(), m_serverTrust.trust(), nullptr)))
-            qualifiedServerTrust = WebCore::CertificateInfo(adoptCF(trust));
+#if PLATFORM(COCOA)
+    else if (canLoad_Security_SecTrustCreateAndVerifyQWACTLSBinding()) {
+        if (RetainPtr trust = adoptCF(softLink_Security_SecTrustCreateAndVerifyQWACTLSBinding(m_buffer.takeBuffer()->makeContiguous()->createCFData().get(), m_serverTrust.trust(), nullptr)))
+            qualifiedServerTrust = WebCore::CertificateInfo(WTF::move(trust));
     }
 #endif
 

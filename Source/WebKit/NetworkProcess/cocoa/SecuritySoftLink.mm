@@ -30,7 +30,5 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, Security)
 
-// FIXME: Use a compile guard instead of soft linking once systems that have rdar://182590431 exist.
-#ifdef SEC_TRUST_HAS_QWAC_BINDING_VERIFY
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Security, SecQWACTLSBindingVerify, SecTrustRef, (CFDataRef data, SecTrustRef trust, CFErrorRef* error), (data, trust, error));
-#endif
+// FIXME: Use a compile guard instead of soft linking once systems that have rdar://187125588 exist.
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Security, SecTrustCreateAndVerifyQWACTLSBinding, SecTrustRef, (CFDataRef data, SecTrustRef trust, CFErrorRef* error), (data, trust, error));

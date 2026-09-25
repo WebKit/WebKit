@@ -122,9 +122,7 @@ CFDataRef SecKeyCopySubjectPublicKeyInfo(SecKeyRef);
 
 OSStatus SecCodeValidateFileResource(SecStaticCodeRef, CFStringRef, CFDataRef, SecCSFlags);
 
-#ifdef SEC_TRUST_HAS_QWAC_BINDING_VERIFY
-CF_RETURNS_RETAINED SecTrustRef SecQWACTLSBindingVerify(CFDataRef, SecTrustRef, CFErrorRef* CF_RETURNS_RETAINED);
-#endif
+CF_RETURNS_RETAINED SecTrustRef SecTrustCreateAndVerifyQWACTLSBinding(CFDataRef, SecTrustRef, CFErrorRef* CF_RETURNS_RETAINED);
 
 WTF_EXTERN_C_END
 

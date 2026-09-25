@@ -328,9 +328,8 @@ selectors = [
 [[staging]]
 request = "rdar://166719636"
 symbols = [
-    "SecQWACTLSBindingVerify"
+    "SecTrustCreateAndVerifyQWACTLSBinding"
 ]
-requires = ["SEC_TRUST_HAS_QWAC_BINDING_VERIFY"]
 
 [[not-web-essential]]
 request = "rdar://185838347"
