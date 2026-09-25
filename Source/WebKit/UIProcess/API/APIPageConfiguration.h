@@ -47,6 +47,8 @@
 
 #if PLATFORM(COCOA)
 #include "ClassStructPtr.h"
+#include <wtf/RetainPtr.h>
+OBJC_CLASS NSDictionary;
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -474,6 +476,11 @@ public:
     void setBackgroundTextExtractionEnabled(bool enabled) { m_data.backgroundTextExtractionEnabled = enabled; }
     bool backgroundTextExtractionEnabled() const { return m_data.backgroundTextExtractionEnabled; }
 
+#if PLATFORM(COCOA)
+    void setHeadlessBrowsingContext(RetainPtr<NSDictionary>&& context) { m_data.headlessBrowsingContext = WTF::move(context); }
+    NSDictionary *headlessBrowsingContext() const { return m_data.headlessBrowsingContext.get(); }
+#endif
+
     WebKit::BrowsingContextGroup* preferredBrowsingContextGroup() const;
 
 #if PLATFORM(VISION)
@@ -594,6 +601,7 @@ private:
 
 #if PLATFORM(COCOA)
         RetainPtr<ClassStructPtr> attachmentFileWrapperClass;
+        RetainPtr<NSDictionary> headlessBrowsingContext;
         std::optional<WTF::Vector<WTF::String>> additionalSupportedImageTypes;
         bool clientNavigationsRunAtForegroundPriority { true };
         uintptr_t mediaTypesRequiringUserActionForPlayback { defaultMediaTypesRequiringUserActionForPlayback() };

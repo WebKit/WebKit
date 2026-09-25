@@ -2257,6 +2257,8 @@ public:
 
     bool isPopup() const { return m_isPopup; }
 
+    bool backgroundTextExtractionEnabled() const { return m_backgroundTextExtractionEnabled; }
+
     RefPtr<WebCore::Element> focusedElement() const { return m_focusedElement; }
 
 private:

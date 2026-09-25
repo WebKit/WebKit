@@ -298,7 +298,8 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
-    if (requestOptions.mediation != MediationRequirement::Conditional && !document.hasFocus()) {
+    bool documentFocusRequired = !m_client || !m_client->shouldBypassDocumentFocusRequirement();
+    if (requestOptions.mediation != MediationRequirement::Conditional && documentFocusRequired && !document.hasFocus()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }

@@ -220,6 +220,13 @@ public:
     {
         completionHandler(std::nullopt);
     }
+
+    virtual void willPerformPublicKeyCredentialRequest(const WTF::String& /* relyingParty */, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        completionHandler(true);
+    }
+
+    virtual void didFinishPublicKeyCredentialRequest(const WTF::String& /* relyingParty */, bool /* succeeded */) { }
 #endif
 
     virtual void didAttachLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorUIProxy&) { }

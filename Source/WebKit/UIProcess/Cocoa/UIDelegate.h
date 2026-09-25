@@ -185,6 +185,8 @@ private:
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
         void requestWebAuthenticationConditonalMediationRegistration(const WTF::String&, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&&) final;
+        void willPerformPublicKeyCredentialRequest(const WTF::String&, CompletionHandler<void(bool)>&&) final;
+        void didFinishPublicKeyCredentialRequest(const WTF::String&, bool) final;
 #endif
         void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
 #if ENABLE(APPLE_PAY)
@@ -319,6 +321,8 @@ private:
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler : 1;
         bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler : 1;
+        bool webViewWillPerformPublicKeyCredentialRequestForRelyingPartyCompletionHandler : 1;
+        bool webViewDidFinishPublicKeyCredentialRequestForRelyingPartySucceeded : 1;
 #endif
 #if ENABLE(APPLE_PAY)
         bool webViewDidCompleteApplePayPayment : 1;
