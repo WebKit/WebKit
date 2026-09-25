@@ -63,6 +63,7 @@ String MainFrameData::description() const
         ts.dumpProperty("pageScaleFactor"_s, pageScaleFactor);
 
 #if PLATFORM(MAC)
+    ts.dumpProperty("viewSize"_s, viewSize);
     ts.dumpProperty("pageScalingLayer"_s, pageScalingLayerID);
     ts.dumpProperty("scrolledContentsLayerID"_s, scrolledContentsLayerID);
     ts.dumpProperty("mainFrameClipLayerID"_s, mainFrameClipLayerID);

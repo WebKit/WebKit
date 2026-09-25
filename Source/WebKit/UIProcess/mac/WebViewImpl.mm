@@ -334,9 +334,12 @@ static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem"
 - (instancetype)initWithView:(NSView *)view impl:(WebKit::WebViewImpl&)impl;
 - (void)startObserving:(NSWindow *)window;
 - (void)stopObserving;
+- (void)webViewImplWillBeDestroyed;
 - (void)enableObservingFontPanel;
 - (void)startObservingFontPanel;
 - (void)startObservingLookupDismissalIfNeeded;
+- (BOOL)beginLiveResizeIfNeeded;
+- (BOOL)endLiveResizeIfNeeded;
 @end
 
 @implementation WKWindowVisibilityObserver {
@@ -346,6 +349,7 @@ static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem"
     BOOL _didRegisterForLookupPopoverCloseNotifications;
     BOOL _shouldObserveFontPanel;
     BOOL _isObservingFontPanel;
+    BOOL _isInLiveResize;
 }
 
 - (instancetype)initWithView:(NSView *)view impl:(WebKit::WebViewImpl&)impl
@@ -402,6 +406,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidDeminiaturize:) name:NSWindowDidDeminiaturizeNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidMove:) name:NSWindowDidMoveNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidResize:) name:NSWindowDidResizeNotification object:window];
+    [defaultNotificationCenter addObserver:self selector:@selector(_windowWillStartLiveResize:) name:NSWindowWillStartLiveResizeNotification object:window];
+    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidEndLiveResize:) name:NSWindowDidEndLiveResizeNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowWillBeginSheet:) name:NSWindowWillBeginSheetNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeBackingProperties:) name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:) name:NSWindowDidChangeScreenNotification object:window];
@@ -411,6 +417,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidEnterFullScreen:) name:NSWindowDidEnterFullScreenNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowWillEnterOrExitFullScreen:) name:NSWindowWillExitFullScreenNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidExitFullScreen:) name:NSWindowDidExitFullScreenNotification object:window];
+
+    if (window.inLiveResize) {
+        if (CheckedPtr impl = _impl.get())
+            impl->viewWillStartLiveResize();
+    }
 
     [defaultNotificationCenter addObserver:self selector:@selector(_screenDidChangeColorSpace:) name:NSScreenColorSpaceDidChangeNotification object:nil];
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
@@ -435,6 +446,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     RELEASE_ASSERT(isMainRunLoop());
 
+    if (_isInLiveResize) {
+        if (CheckedPtr impl = _impl.get())
+            impl->viewDidEndLiveResize();
+        else
+            _isInLiveResize = NO;
+    }
+
     if (_isObservingFontPanel) {
         ASSERT(_shouldObserveFontPanel);
         _isObservingFontPanel = NO;
@@ -456,6 +474,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter removeObserver:self name:NSWindowDidDeminiaturizeNotification object:window.get()];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidMoveNotification object:window.get()];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidResizeNotification object:window.get()];
+    [defaultNotificationCenter removeObserver:self name:NSWindowWillStartLiveResizeNotification object:window.get()];
+    [defaultNotificationCenter removeObserver:self name:NSWindowDidEndLiveResizeNotification object:window.get()];
     [defaultNotificationCenter removeObserver:self name:NSWindowWillBeginSheetNotification object:window.get()];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window.get()];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeScreenNotification object:window.get()];
@@ -475,6 +495,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     objc_setAssociatedObject(window.get(), _impl.get(), nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
+}
+
+- (void)webViewImplWillBeDestroyed
+{
+    _isInLiveResize = NO;
+    [self stopObserving];
+    _impl = nullptr;
 }
 
 - (void)enableObservingFontPanel
@@ -552,6 +579,34 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     if (CheckedPtr impl = _impl.get())
         impl->windowDidResize();
+}
+
+- (void)_windowWillStartLiveResize:(NSNotification *)notification
+{
+    if (CheckedPtr impl = _impl.get())
+        impl->viewWillStartLiveResize();
+}
+
+- (void)_windowDidEndLiveResize:(NSNotification *)notification
+{
+    if (CheckedPtr impl = _impl.get())
+        impl->viewDidEndLiveResize();
+}
+
+- (BOOL)beginLiveResizeIfNeeded
+{
+    if (_isInLiveResize)
+        return NO;
+    _isInLiveResize = YES;
+    return YES;
+}
+
+- (BOOL)endLiveResizeIfNeeded
+{
+    if (!_isInLiveResize)
+        return NO;
+    _isInLiveResize = NO;
+    return YES;
 }
 
 - (void)_windowWillBeginSheet:(NSNotification *)notification
@@ -1482,7 +1537,7 @@ WebViewImpl::~WebViewImpl()
 #endif
 #endif
 
-    [m_windowVisibilityObserver stopObserving];
+    [m_windowVisibilityObserver webViewImplWillBeDestroyed];
     m_targetWindowForMovePreparation = nil;
 
     m_page->close();
@@ -1794,6 +1849,9 @@ bool WebViewImpl::isFocused() const
 
 void WebViewImpl::viewWillStartLiveResize()
 {
+    if (![m_windowVisibilityObserver beginLiveResizeIfNeeded])
+        return;
+
     m_page->viewWillStartLiveResize();
 
     [m_layoutStrategy willStartLiveResize];
@@ -1801,6 +1859,9 @@ void WebViewImpl::viewWillStartLiveResize()
 
 void WebViewImpl::viewDidEndLiveResize()
 {
+    if (![m_windowVisibilityObserver endLiveResizeIfNeeded])
+        return;
+
     m_page->viewWillEndLiveResize();
 
     [m_layoutStrategy didEndLiveResize];
