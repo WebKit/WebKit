@@ -767,7 +767,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         if (isSpinUpButtonPartPressed(renderer))
             states.add(ControlStyle::State::SpinUp);
     }
-    if (isFocused(renderer) && renderer.style().outlineStyle() == OutlineStyle::Auto)
+    if (appearsFocused(renderer) && renderer.style().outlineStyle() == OutlineStyle::Auto)
         states.add(ControlStyle::State::Focused);
     if (isEnabled(renderer))
         states.add(ControlStyle::State::Enabled);
@@ -1231,11 +1231,17 @@ bool RenderTheme::isEnabled(const RenderElement& renderer) const
     return element && !element->isDisabledFormControl();
 }
 
-bool RenderTheme::isFocused(const RenderElement& renderer) const
+enum class FocusState : uint8_t {
+    NotFocused,
+    FocusedAndInactive,
+    FocusedAndActive
+};
+
+static FocusState determineFocusState(const RenderElement& renderer)
 {
     RefPtr element = renderer.element();
     if (!element)
-        return false;
+        return FocusState::NotFocused;
 
     // FIXME: This should be part of RenderTheme::extractControlStyleForRenderer().
     RefPtr delegate = element;
@@ -1244,7 +1250,24 @@ bool RenderTheme::isFocused(const RenderElement& renderer) const
 
     Ref document = delegate->document();
     RefPtr frame = document->frame();
-    return delegate == document->focusedElement() && frame && protect(frame->selection())->isFocusedAndActive();
+    if (delegate == document->focusedElement()) {
+        const auto selectionIsFocusedAndActive = frame && protect(frame->selection())->isFocusedAndActive();
+        return selectionIsFocusedAndActive ? FocusState::FocusedAndActive : FocusState::FocusedAndInactive;
+    }
+
+    return FocusState::NotFocused;
+}
+
+bool RenderTheme::isFocused(const RenderElement& renderer) const
+{
+    const auto focusState = determineFocusState(renderer);
+    return focusState == FocusState::FocusedAndActive || focusState == FocusState::FocusedAndInactive;
+}
+
+bool RenderTheme::appearsFocused(const RenderElement& renderer) const
+{
+    const auto focusState = determineFocusState(renderer);
+    return focusState == FocusState::FocusedAndActive;
 }
 
 bool RenderTheme::isPressed(const RenderElement& renderer) const

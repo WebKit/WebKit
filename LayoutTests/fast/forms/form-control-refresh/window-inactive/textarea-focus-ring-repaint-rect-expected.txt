@@ -1,0 +1,13 @@
+PASS: The repaint rects when the window went inactive were the same as the repaint rects when the window went active.
+
+Inactive (should be 1):
+(repaint rects
+(rect 5 13 173 38)
+)
+
+Active (should be 1):
+(repaint rects
+(rect 5 13 173 38)
+)
+
+
