@@ -1,0 +1,6 @@
+
+
+
+PASS An error image with alt text and height:100% fills its definite grid area
+PASS An error image with alt text does not transfer its inline size through an aspect ratio
+

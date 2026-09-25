@@ -1,4 +1,4 @@
 
-FAIL display:block img should be 200px high assert_equals: expected 200 but got 100
-FAIL display:inline-block img should be 200px high assert_equals: expected 200 but got 100
+PASS display:block img should be 200px high
+PASS display:inline-block img should be 200px high
 
