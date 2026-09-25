@@ -1,0 +1,9 @@
+
+FAIL DOMParser parses application/xml with BOM before XML declaration assert_equals: Should not contain parsererror: This page contains the following errors:error on line 1 at column 6: XML declaration allowed only at the start of the document
+Below is a rendering of the page up to the first error. expected null but got Element node <parsererror style="display: block; white-space: pre; bor...
+PASS DOMParser parses application/xml with BOM without XML declaration
+FAIL DOMParser parses text/xml with BOM before XML declaration assert_equals: Should not contain parsererror: This page contains the following errors:error on line 1 at column 6: XML declaration allowed only at the start of the document
+Below is a rendering of the page up to the first error. expected null but got Element node <parsererror style="display: block; white-space: pre; bor...
+PASS DOMParser parses text/xml with BOM without XML declaration
+PASS DOMParser parses image/svg+xml with BOM
+

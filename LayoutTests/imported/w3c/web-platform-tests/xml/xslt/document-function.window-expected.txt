@@ -1,4 +1,5 @@
 
 PASS xsl:document function disabled in transformToFragment
 PASS xsl:document function disabled in transformToDocument
+PASS document() with invalid xml:base target node returns an empty node-set
 

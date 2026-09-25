@@ -1,0 +1,7 @@
+
+PASS DOMParser parses application/xml with BOM before XML declaration
+PASS DOMParser parses application/xml with BOM without XML declaration
+PASS DOMParser parses text/xml with BOM before XML declaration
+PASS DOMParser parses text/xml with BOM without XML declaration
+PASS DOMParser parses image/svg+xml with BOM
+

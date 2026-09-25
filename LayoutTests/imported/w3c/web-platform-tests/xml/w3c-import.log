@@ -10,9 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/xml/attlist-defaults.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/eol-normalization.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/onreadystatechange-crash-on-stop.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/xml/retain_redundant_xmlns.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/retain_undeclared_xmlns.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xml-bom.html
 /LayoutTests/imported/w3c/web-platform-tests/xml/xml-doc-innerHTML-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/xml/xml-prolog-accepted-versions.html

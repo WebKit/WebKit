@@ -1,0 +1,29 @@
+
+PASS ATTLIST CDATA default value is applied when attribute is omitted
+PASS ATTLIST CDATA with #FIXED default value is applied
+PASS Explicit attribute value overrides ATTLIST CDATA default value
+PASS ATTLIST CDATA default value expands general and character entity references
+PASS ATTLIST Enumeration (foo | bar) default value is applied when omitted
+PASS ATTLIST multi-choice Enumeration default value is applied
+PASS ATTLIST Enumeration with #FIXED default value is applied
+PASS Explicit attribute value overrides ATTLIST Enumeration default value
+PASS ATTLIST Enumeration containing numeric/Nmtoken values applies default value
+PASS ATTLIST Enumeration with whitespace in parentheses applies default value
+PASS ATTLIST NOTATION enumeration with declared notations applies default value
+PASS ATTLIST NOTATION enumeration with #FIXED default value is applied
+PASS ATTLIST NOTATION single-choice enumeration with PUBLIC notation applies default value
+PASS Explicit attribute value overrides ATTLIST NOTATION default value
+PASS ATTLIST NOTATION enumeration applies default value in non-validating processor without explicit NOTATION declarations
+PASS ATTLIST NMTOKEN default value is applied
+PASS ATTLIST NMTOKEN with #FIXED default value is applied
+PASS ATTLIST NMTOKENS list default value is applied
+PASS ATTLIST IDREF default value is applied
+PASS ATTLIST IDREF with #FIXED default value is applied
+PASS ATTLIST IDREFS list default value is applied
+PASS ATTLIST ENTITY default value is applied
+PASS ATTLIST ENTITY with #FIXED default value is applied
+PASS ATTLIST ENTITIES list default value is applied
+PASS Single ATTLIST declaration with mixed attribute types applies all defaults
+PASS First attribute declaration takes precedence for duplicate attribute declarations
+PASS Multiple elements with distinct default attribute types in the same DTD internal subset
+
