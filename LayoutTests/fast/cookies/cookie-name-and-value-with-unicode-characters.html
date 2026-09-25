@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Cookie Name and Value With Unicode Characters</title>
+<script src="../../resources/js-test.js"></script>
+</head>
+
+<body>
+<script>
+    description('This test checks that cookie names and values containing Unicode characters outside the Latin-1 range round-trip through document.cookie without being truncated or dropped. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork');
+
+    debug("Cookie value with non-Latin-1 characters followed by more ASCII text");
+    document.cookie = 'unicodeValue=start日本語end';
+    shouldBeTrue("document.cookie.indexOf('unicodeValue=start日本語end') != -1");
+
+    debug("Cookie name containing a non-Latin-1 character");
+    document.cookie = '☕coffee=black';
+    shouldBeTrue("document.cookie.indexOf('☕coffee=black') != -1");
+
+    debug("Cookie value with a character outside the Basic Multilingual Plane");
+    document.cookie = 'cookieEmoji=before🍪after';
+    shouldBeTrue("document.cookie.indexOf('cookieEmoji=before🍪after') != -1");
+
+    debug("Cookie value with a lone surrogate is replaced with U+FFFD");
+    document.cookie = 'surrogateValue=start\uD800end';
+    shouldBeTrue("document.cookie.indexOf('surrogateValue=start�end') != -1");
+</script>
+</body>
+</html>

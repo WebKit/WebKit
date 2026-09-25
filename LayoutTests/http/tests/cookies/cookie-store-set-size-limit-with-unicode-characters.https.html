@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('This test checks that cookieStore.set() measures the 4096-byte name/value size limit using the real encoded byte length of multi-byte Unicode characters, accepting cookies within the limit and rejecting cookies that exceed it. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork');
+jsTestIsAsync = true;
+
+onload = async () => {
+    // 1000 copies of "日", a character that is 3 bytes in UTF-8. The real encoded size of
+    // the name/value pair is just over 3000 bytes, well under the 4096 byte limit.
+    const multiByteValue = "日".repeat(1000);
+
+    try {
+        await cookieStore.set('multiByteWithinLimit', multiByteValue);
+        testPassed('cookieStore.set() accepted a multi-byte cookie within the real byte size limit');
+    } catch (e) {
+        testFailed('cookieStore.set() unexpectedly rejected a cookie within the byte size limit: ' + e);
+    }
+
+    const readBack = await cookieStore.get('multiByteWithinLimit');
+    if (readBack && readBack.value === multiByteValue)
+        testPassed('cookieStore.get() returned the multi-byte value unchanged');
+    else
+        testFailed('cookieStore.get() did not return the expected multi-byte value, got: ' + (readBack ? readBack.value : readBack));
+
+    await cookieStore.delete('multiByteWithinLimit');
+
+    // A purely ASCII value whose length alone exceeds the 4096 byte limit should still be
+    // rejected, confirming the size limit is still enforced.
+    const oversizedAsciiValue = 'a'.repeat(4096);
+    try {
+        await cookieStore.set('oversizedAscii', oversizedAsciiValue);
+        testFailed('cookieStore.set() unexpectedly accepted a cookie exceeding the real byte size limit');
+    } catch (e) {
+        testPassed('cookieStore.set() rejected a cookie exceeding the real byte size limit');
+    }
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

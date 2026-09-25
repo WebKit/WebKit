@@ -213,6 +213,35 @@ unsigned Cookie::hash() const
         httpOnly, secure, session, comment, commentURL, ports, sameSite);
 }
 
+namespace CookieUtil {
+
+String cookieStringForScript(String&& storedValue)
+{
+    // ASCII round-trips through UTF-8 as itself, so there's nothing to decode.
+    if (!storedValue.is8Bit() || storedValue.containsOnlyASCII())
+        return WTF::move(storedValue);
+    return String::fromUTF8ReplacingInvalidSequences(storedValue.span8());
+}
+
+String cookieStringForScript(const String& storedValue)
+{
+    return cookieStringForScript(String { storedValue });
+}
+
+String cookieStringForStorage(const String& scriptValue)
+{
+    // ASCII round-trips through UTF-8 as itself, so there's nothing to encode.
+    if (scriptValue.containsOnlyASCII())
+        return scriptValue;
+
+    // Encode the string as UTF-8 and create an ISO-Latin-1 string of those bytes. Constructing a
+    // string with the UTF-8 bytes reinterpreted as Latin-1 is the way to get CFNetwork to preserve
+    // those UTF-8 bytes when parsing/storing the cookie.
+    return String(byteCast<Latin1Character>(scriptValue.utf8().span()));
+}
+
+} // namespace CookieUtil
+
 NS_ASSUME_NONNULL_END
 
 } // namespace WebCore

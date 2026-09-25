@@ -635,10 +635,6 @@ imported/w3c/web-platform-tests/cookiestore/serviceworker_oncookiechange_eventha
 imported/w3c/web-platform-tests/cookiestore/change_eventhandler_for_already_expired.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/cookiestore/change_eventhandler_for_no_change.https.window.html [ Skip ]
 
-# Cookie Store API tests that are flaky: rdar://157301019
-imported/w3c/web-platform-tests/cookiestore/change_eventhandler_for_document_cookie.https.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookiestore/change_eventhandler_for_http_cookie_and_set_cookie_headers.https.window.html [ Pass Failure ]
-
 webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.dynamic.html [ ImageOnlyFailure ]
 webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.html [ ImageOnlyFailure ]
 webkit.org/b/285993 imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit.disconnected.canvas.html [ ImageOnlyFailure ]

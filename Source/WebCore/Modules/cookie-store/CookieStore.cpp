@@ -279,7 +279,7 @@ void CookieStore::getShared(GetType getType, CookieStoreGetOptions&& options, Re
     }
 
     if (!options.name.isNull())
-        options.name = normalize(options.name);
+        options.name = CookieUtil::cookieStringForStorage(normalize(options.name));
 
     m_promises.add(++m_nextPromiseIdentifier, WTF::move(promise));
     auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier, getType](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
@@ -390,6 +390,13 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the cookie name and value must not be greater than "_s, maximumNameValuePairSize, " bytes"_s) });
         return;
     }
+
+    // Encode for storage now that the spec-defined checks above, which operate on the
+    // unencoded name/value, are done. On Cocoa this reinterprets the UTF-8 bytes as Latin-1
+    // so CFNetwork preserves them; elsewhere it is a no-op. ASCII text is unaffected either
+    // way, so the "__Host-"/"__Http-" prefix checks below remain valid post-encoding.
+    cookie.name = CookieUtil::cookieStringForStorage(cookie.name);
+    cookie.value = CookieUtil::cookieStringForStorage(cookie.value);
 
     // FIXME: This should be further down.
     if (!options.domain.isNull() && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
@@ -524,7 +531,7 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
     }
 
     CookieInit initOptions;
-    initOptions.name = normalize(options.name);
+    initOptions.name = WTF::move(options.name);
     initOptions.value = emptyString();
     initOptions.domain = WTF::move(options.domain);
     initOptions.path = WTF::move(options.path);

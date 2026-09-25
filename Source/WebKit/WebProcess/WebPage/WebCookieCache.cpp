@@ -59,9 +59,9 @@ static String cookiesToString(const Vector<WebCore::Cookie>& cookies)
             continue;
         if (!cookiesBuilder.isEmpty())
             cookiesBuilder.append("; "_s);
-        cookiesBuilder.append(cookie.name);
+        cookiesBuilder.append(WebCore::CookieUtil::cookieStringForScript(cookie.name));
         cookiesBuilder.append('=');
-        cookiesBuilder.append(cookie.value);
+        cookiesBuilder.append(WebCore::CookieUtil::cookieStringForScript(cookie.value));
     }
     return cookiesBuilder.toString();
 }

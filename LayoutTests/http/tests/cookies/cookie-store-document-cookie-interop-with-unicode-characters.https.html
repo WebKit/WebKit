@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('This test checks that cookies with Unicode names/values are decoded consistently whether they are set via document.cookie and read via cookieStore.get(), or set via cookieStore.set() and read via document.cookie. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork');
+jsTestIsAsync = true;
+
+onload = async () => {
+    document.cookie = 'documentCookieSet=日本語🍪value';
+    let item = await cookieStore.get('documentCookieSet');
+    if (item && item.value === '日本語🍪value')
+        testPassed('cookieStore.get() decoded a cookie set via document.cookie the same way document.cookie did');
+    else
+        testFailed('cookieStore.get() returned an unexpected value for a cookie set via document.cookie: ' + (item ? item.value : item));
+    await cookieStore.delete('documentCookieSet');
+
+    await cookieStore.set('cookieStoreSet', '日本語🍪value');
+    if (document.cookie.indexOf('cookieStoreSet=日本語🍪value') != -1)
+        testPassed('document.cookie decoded a cookie set via cookieStore.set() the same way cookieStore.get() did');
+    else
+        testFailed('document.cookie did not contain the expected value for a cookie set via cookieStore.set(): ' + document.cookie);
+    await cookieStore.delete('cookieStoreSet');
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>
