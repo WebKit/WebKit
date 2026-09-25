@@ -151,7 +151,6 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     }
 
     // Transform path by animatedLocalTransform.
-    AffineTransform oldCTM = context.getCTM();
     context.concatCTM(animatedLocalTransform);
     if (transform)
         context.concatCTM(*transform);
@@ -171,7 +170,6 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     }
 
     context.clipPath(clipPath, clipRule);
-    context.setCTM(oldCTM);
     return result;
 }
 
