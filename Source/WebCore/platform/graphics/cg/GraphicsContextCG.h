@@ -136,17 +136,17 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void didUpdateState(GraphicsContextState&) final;
-
     virtual bool canUseShadowBlur() const;
 
     FloatRect roundToDevicePixels(const FloatRect&) const;
 
-    // Returns the platform context for draws.
+    // Returns the platform context for draws. Any pending GraphicsContextState changes are
+    // applied first, since a draw must observe the current state.
     CGContextRef contextForDraw()
     {
         ASSERT(m_cgContext);
         m_hasDrawn = true;
+        updatePlatformContextStateIfNeeded();
         return m_cgContext.get();
     }
 
@@ -159,6 +159,13 @@ public:
 #endif
 
 private:
+    void updatePlatformContextStateIfNeeded()
+    {
+        if (m_state.changes())
+            updatePlatformContextState();
+    }
+    void updatePlatformContextState();
+
     void setCGDropShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
     void clearCGDropShadow();
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
@@ -167,7 +174,9 @@ private:
 #endif
     void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
-    // Returns the platform context for purposes of context state change, not draws.
+    // Returns the platform context for purposes of context state change, not draws. Pending
+    // GraphicsContextState changes are not applied, so this must not be used by anything that
+    // observes the state.
     CGContextRef NODELETE contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
