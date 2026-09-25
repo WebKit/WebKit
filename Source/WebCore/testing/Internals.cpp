@@ -223,6 +223,9 @@
 #include "SVGSVGElement.h"
 #include "SWClientConnection.h"
 #include "ScriptController.h"
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include "ScriptDisallowedScope.h"
+#endif // RC_REMOVE_SEC_ACCEL_3
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollTimeline.h"
@@ -8253,6 +8256,9 @@ String Internals::dumpStyleResolvers()
 
     dumpResolver("document resolver"_s, document->styleScope().resolver());
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (auto& shadowRoot : document->inDocumentShadowRoots()) {
         auto name = shadowRoot.mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)"_s : "shadow root resolver (author)"_s;
         dumpResolver(name, const_cast<ShadowRoot&>(shadowRoot).styleScope().resolver());

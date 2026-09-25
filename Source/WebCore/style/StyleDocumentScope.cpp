@@ -118,6 +118,9 @@ void DocumentScope::addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&& rule)
 
 void DocumentScope::releaseMemory()
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().releaseMemory();
 
@@ -176,6 +179,9 @@ auto DocumentScope::collectResolverScopes() -> ResolverScopes
     if (RefPtr resolver = resolverIfExists())
         resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { this });
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (Ref shadowRoot : m_document->inDocumentShadowRoots()) {
         auto& scope = const_cast<ShadowRoot&>(shadowRoot.get()).styleScope();
 
@@ -222,6 +228,9 @@ void DocumentScope::didChangeStyleSheetEnvironment()
 
     m_sharedShadowTreeResolvers.clear();
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
 
@@ -236,6 +245,9 @@ void DocumentScope::didChangeExtensionStyleSheets()
     // Extension stylesheets may mutate in the middle of a style update when resource loading triggers
     // content extension processing. In this case we schedule an asyncronous full stylesheet update.
     // FIXME: We should defer all resource loading after style resolution completes.
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::FullForExtensionStyleSheets);
 

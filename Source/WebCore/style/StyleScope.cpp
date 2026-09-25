@@ -718,6 +718,9 @@ void Scope::flushPendingDescendantUpdates()
 {
     ASSERT(m_hasDescendantWithPendingUpdate);
     ASSERT(!m_shadowRoot);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().flushPendingUpdate();
     m_hasDescendantWithPendingUpdate = false;
@@ -781,6 +784,9 @@ void Scope::didChangeViewportSize()
         if (!m_document->hasStyleWithViewportUnits())
             return;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
         for (Ref descendantShadowRoot : m_document->inDocumentShadowRoots()) {
             if (descendantShadowRoot->mode() == ShadowRootMode::UserAgent)
                 continue;
@@ -813,6 +819,9 @@ void Scope::didChangeViewportSize()
 void Scope::invalidateMatchedDeclarationsCache()
 {
     if (!m_shadowRoot) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
         for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
             const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().invalidateMatchedDeclarationsCache();
     }
