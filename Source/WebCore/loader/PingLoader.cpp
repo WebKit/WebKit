@@ -243,6 +243,7 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, Shou
     }
 
     CachedResourceRequest cachedResourceRequest { ResourceRequest { request }, options };
+    cachedResourceRequest.setInitiatorType("ping"_s);
     std::ignore = protect(protect(frame.document())->cachedResourceLoader())->requestPingResource(WTF::move(cachedResourceRequest));
 }
 
