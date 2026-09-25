@@ -1,0 +1,6 @@
+Double click on the input with the left mouse button.
+
+
+
+PASS dblclick event on a text input
+

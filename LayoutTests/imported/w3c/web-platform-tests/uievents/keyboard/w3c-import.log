@@ -10,12 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/README.md
+/LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/key.css
 /LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/key.js
+/LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/keyboardevent-composed.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/keyboardevent-legacy.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/keydown-input-events.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/keypress-not-fired-for-modifier-shortcuts.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys.html

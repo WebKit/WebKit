@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-on-body.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-on-div.html
@@ -24,4 +23,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mousemove-between.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-out.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-multiple-sources-deadlock.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scrolling.html

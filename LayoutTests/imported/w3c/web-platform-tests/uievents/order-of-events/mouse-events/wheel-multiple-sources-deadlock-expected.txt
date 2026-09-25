@@ -1,0 +1,3 @@
+
+FAIL Simultaneous wheel events in different directions should not deadlock. assert_approx_equals: Vertical delta from wheel1 must be processed. expected 50 +/- 0.1 but got 0
+

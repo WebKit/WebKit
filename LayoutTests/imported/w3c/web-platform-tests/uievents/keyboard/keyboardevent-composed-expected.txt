@@ -1,0 +1,6 @@
+Target
+
+PASS keydown event must be composed
+PASS keypress event must be composed
+PASS keyup event must be composed
+

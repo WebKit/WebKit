@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/dispatchEvent.click.checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/stopImmediatePropagation.effect.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/stopPropagation.deferred.effect.html

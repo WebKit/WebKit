@@ -1,0 +1,9 @@
+
+PASS getModifierState true
+PASS getModifierState false
+PASS getModifierState Control true
+PASS getModifierState Control false
+PASS getModifierState Alt true
+PASS getModifierState Alt false
+PASS getModifierState invalid modifier
+

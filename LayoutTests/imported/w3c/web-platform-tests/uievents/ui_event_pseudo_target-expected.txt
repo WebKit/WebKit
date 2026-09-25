@@ -1,0 +1,4 @@
+
+FAIL pseudoTarget on UIEvent.prototype assert_true: UIEvent.prototype should expose pseudoTarget expected true got false
+FAIL MouseEvent inherits pseudoTarget assert_true: MouseEvent.prototype should inherit pseudoTarget expected true got false
+

@@ -1,0 +1,3 @@
+
+PASS KeyboardEvent constructor should initialize legacy keyCode and charCode
+

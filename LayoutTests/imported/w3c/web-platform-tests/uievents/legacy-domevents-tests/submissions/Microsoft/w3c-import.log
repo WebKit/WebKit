@@ -10,21 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/CompositionEvent.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.attrChange.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.attrName.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.newValue.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.prevValue.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.relatedNode.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMCharacterDataModified.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMNodeInserted.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMNodeRemoved.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMSubtreeModified.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/Event.defaultPrevented.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/Event.eventPhase.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/Event.stopPropagation.html
@@ -34,9 +22,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MouseEvent.button.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MouseEvent.image.map.area.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MouseEvent.preventDefault.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MutationEvent.hasFeature.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MutationEvent.initMutationEvent.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MutationEvent.relatedNode.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/ProcessingInstruction.DOMCharacterDataModified.fail.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/ProcessingInstruction.DOMCharacterDataModified.xml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.hasFeature.html
@@ -47,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.paste.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.script.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/UIEvent.load.stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.Capture.Bubble.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.ctrlKey.zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.deltaMode.html

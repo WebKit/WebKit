@@ -10,11 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/README.md
+/LayoutTests/imported/w3c/web-platform-tests/uievents/getModifierState.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/uievents/ui_event_pseudo_target.html

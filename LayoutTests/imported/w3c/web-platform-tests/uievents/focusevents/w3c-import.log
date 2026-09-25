@@ -12,7 +12,4 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/support/16kb.js
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/support/InvalidBitMap.png
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/support/iepreview.png
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/support/style01.css
+/LayoutTests/imported/w3c/web-platform-tests/uievents/focusevents/blur-relatedTarget.html

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/WEB_FEATURES.yml
@@ -26,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_buttons_back_forward.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseenter-mouseleave-on-drag.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mousemove-action-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mousemove_after_mouseover_target_removed.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html
