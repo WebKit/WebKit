@@ -21,8 +21,10 @@
 #include "SVGImageForContainer.h"
 
 #include "AffineTransform.h"
+#include "DisplayList.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "NativeImage.h"
 
@@ -36,14 +38,22 @@ SVGImageForContainer::SVGImageForContainer(SVGImage* image, SVGImage::ContainerC
 
 FloatSize SVGImageForContainer::size(ImageOrientation) const
 {
-    FloatSize scaledContainerSize(m_containerContext.containerSize);
-    scaledContainerSize.scale(m_containerContext.containerZoom);
-    return FloatSize(roundedIntSize(scaledContainerSize));
+    return m_containerContext.zoomedContainerSize();
 }
 
 ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    return protect(m_image)->drawForContainer(context, m_containerContext, dstRect, srcRect, options);
+    RefPtr<SVGImage> image = m_image.get();
+    if (!image)
+        return ImageDrawResult::DidNothing;
+
+    if (!m_displayList && image->displayListCacheEnabled())
+        m_displayList = image->recordContentForContainer(m_containerContext, context.colorSpace());
+
+    if (!m_displayList)
+        return image->drawForContainer(context, m_containerContext, dstRect, srcRect, options);
+
+    return image->drawRecordedContentForContainer(context, m_containerContext, protect(*m_displayList), dstRect, srcRect, options);
 }
 
 void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,

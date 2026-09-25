@@ -32,6 +32,7 @@
 #include "CommonVM.h"
 #include "ContainerNodeInlines.h"
 #include "DOMParser.h"
+#include "DisplayListRecorderImpl.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
@@ -172,6 +173,11 @@ bool SVGImage::renderingTaintsOrigin() const
     return false;
 }
 
+bool SVGImage::displayListCacheEnabled() const
+{
+    return m_page && m_page->settings().svgImageDisplayListCacheEnabled();
+}
+
 void SVGImage::setContainerSize(const FloatSize& size)
 {
     RefPtr rootElement = this->rootElement();
@@ -234,9 +240,15 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     ImageObserverDisableScope imageObserverDisabler(*this);
 
+    prepareForContainer(containerContext);
+
+    return drawInternal(context, dstRect, adjustedSourceRectForContainer(containerContext, srcRect), options, nullptr);
+}
+
+FloatRect SVGImage::adjustedSourceRectForContainer(const ContainerContext& containerContext, const FloatRect& srcRect)
+{
     auto containerSize = containerContext.containerSize;
-    IntSize roundedContainerSize = roundedIntSize(containerSize);
-    setContainerSize(roundedContainerSize);
+    auto roundedContainerSize = roundedIntSize(containerSize);
 
     FloatRect scaledSrc = srcRect;
     scaledSrc.scale(1 / containerContext.containerZoom);
@@ -246,16 +258,39 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
+    return scaledSrc;
+}
+
+void SVGImage::prepareForContainer(const ContainerContext& containerContext)
+{
+    setContainerSize(containerContext.roundedContainerSize());
     applyLinkParameters(containerContext.linkParameters);
     protect(frameView())->scrollToFragment(containerContext.initialFragmentURL);
+}
 
-    return draw(context, dstRect, scaledSrc, options);
+RefPtr<const DisplayList::DisplayList> SVGImage::recordContentForContainer(const ContainerContext& containerContext, const ColorSpace& colorSpace)
+{
+    if (!m_page)
+        return nullptr;
+
+    // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
+    ImageObserverDisableScope imageObserverDisabler(*this);
+
+    prepareForContainer(containerContext);
+
+    DisplayList::RecorderImpl recorder(GraphicsContextState::initialIndeterminate(), { { }, containerContext.zoomedContainerSize() }, AffineTransform(), colorSpace);
+    recorder.scale({ containerContext.containerZoom, containerContext.containerZoom });
+    paintFrameView(recorder, { { }, containerContext.roundedContainerSize() });
+    return recorder.takeDisplayList();
+}
+
+ImageDrawResult SVGImage::drawRecordedContentForContainer(GraphicsContext& context, const ContainerContext&, const DisplayList::DisplayList& displayList, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    return drawInternal(context, dstRect, srcRect, options, &displayList);
 }
 
 void SVGImage::applyLinkParameters(const Style::LinkParameters& parameters)
 {
-    // FIXME: webkit.org/b/322833 - the resource document holds one container's parameters at a time,
-    // so this restyles it once per draw in the container.
     if (m_appliedLinkParameters == parameters)
         return;
 
@@ -340,13 +375,35 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const Container
     context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
+void SVGImage::paintFrameView(GraphicsContext& context, const FloatRect& srcRect)
+{
+    RefPtr view = frameView();
+    ASSERT(view);
+
+    view->resize(containerSize());
+
+    {
+        ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
+        if (view->needsLayout())
+            view->layoutContext().layout();
+    }
+
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(view->useDarkAppearance());
+#endif
+
+    view->paint(context, intersection(context.clipBounds(), enclosingIntRect(srcRect)));
+}
+
 ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    return drawInternal(context, dstRect, srcRect, options, nullptr);
+}
+
+ImageDrawResult SVGImage::drawInternal(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const DisplayList::DisplayList* cachedDisplayList)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
-
-    RefPtr view = frameView();
-    ASSERT(view);
 
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
@@ -383,19 +440,10 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
         context.concatCTM(orientationTransform);
     }
 
-    view->resize(containerSize());
-
-    {
-        ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
-        if (view->needsLayout())
-            view->layoutContext().layout();
-    }
-
-#if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(view->useDarkAppearance());
-#endif
-
-    view->paint(context, intersection(context.clipBounds(), enclosingIntRect(srcRect)));
+    if (cachedDisplayList)
+        context.drawDisplayList(*cachedDisplayList);
+    else
+        paintFrameView(context, srcRect);
 
     if (compositingRequiresTransparencyLayer)
         context.endTransparencyLayer();
@@ -581,6 +629,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setLayerBasedSVGEngineEnabled(parentSettings->layerBasedSVGEngineEnabled());
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
+                m_page->settings().setSVGImageDisplayListCacheEnabled(parentSettings->svgImageDisplayListCacheEnabled());
                 m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);

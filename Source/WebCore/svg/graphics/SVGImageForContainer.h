@@ -35,6 +35,10 @@
 
 namespace WebCore {
 
+namespace DisplayList {
+class DisplayList;
+}
+
 class SVGImageForContainer final : public Image {
 public:
     static Ref<SVGImageForContainer> create(SVGImage* image, SVGImage::ContainerContext&& containerContext)
@@ -69,6 +73,8 @@ private:
 
     WeakPtr<SVGImage> m_image;
     const SVGImage::ContainerContext m_containerContext;
+
+    RefPtr<const DisplayList::DisplayList> m_displayList;
 };
 
 } // namespace WebCore
