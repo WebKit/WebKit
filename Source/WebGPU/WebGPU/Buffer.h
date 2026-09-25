@@ -31,6 +31,7 @@
 #import <Metal/Metal.h>
 #import <WebGPU/WGPUBufferImpl.h>
 #import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
 #import <utility>
 #import <wtf/CanBorrow.h>
@@ -41,7 +42,6 @@
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/SwiftCXXThunk.h>
 #import <wtf/TZoneMalloc.h>
@@ -49,14 +49,14 @@
 
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandBuffer;
 class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpubuffer
-class Buffer : public WGPUBufferImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Buffer>, public CanBorrow, public TrackedResource {
+class Buffer final : public WebGPU::Buffer, public WGPUBufferImpl, public CanBorrow, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(Buffer);
 public:
     enum class State : uint8_t;
@@ -81,10 +81,10 @@ public:
     void bufferCopy(std::span<const uint8_t>, size_t offset);
     void mapAsync(WGPUMapMode, size_t offset, size_t, CompletionHandler<void(WGPUMapAsyncStatus)>&& callback);
     void unmap();
-    void setLabel(String&&);
+    void setLabel(String&&) final;
     void generateAValidationError(String&&);
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
     enum class State : uint8_t {
@@ -180,14 +180,14 @@ private:
     HashMap<uint64_t, bool, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_didReadOOB;
 } SWIFT_SHARED_REFERENCE(refBuffer, derefBuffer) SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refBuffer(WebGPU::Buffer* obj)
+inline void refBuffer(WebGPU::Metal::Buffer* obj)
 {
     obj->ref();
 }
 
-inline void derefBuffer(WebGPU::Buffer* obj)
+inline void derefBuffer(WebGPU::Metal::Buffer* obj)
 {
     obj->deref();
 }

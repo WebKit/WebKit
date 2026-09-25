@@ -29,10 +29,10 @@
 #import "CallGraph.h"
 #import "WGSL.h"
 #import <variant>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -47,13 +47,13 @@ class Function;
 struct Type;
 }
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Device;
 class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpushadermodule
-class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule> {
+class ShaderModule final : public WebGPU::ShaderModule, public WGPUShaderModuleImpl {
     WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 
     using CheckResult = Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
@@ -70,9 +70,9 @@ public:
     ~ShaderModule();
 
     void getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool isValid() const { return std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult); }
+    bool isValid() const final { return std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label, NSError **, WGSL::DeviceState&&);
@@ -154,4 +154,4 @@ private:
     HashMap<String, ShaderModuleState> m_usageInformationPerEntryPoint;
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

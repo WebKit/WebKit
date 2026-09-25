@@ -30,7 +30,7 @@
 #import "CommandEncoder.h"
 #import <wtf/TZoneMallocInlines.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureView);
 
@@ -198,21 +198,21 @@ id<MTLRasterizationRateMap> TextureView::rasterizationMapForSlice(uint32_t slice
     return apiParentTexture().rasterizationMapForSlice(slice);
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuTextureViewAddRef(WGPUTextureView textureView)
 {
-    WebGPU::fromAPI(textureView).ref();
+    WebGPU::Metal::fromAPI(textureView).ref();
 }
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
-    WebGPU::fromAPI(textureView).deref();
+    WebGPU::Metal::fromAPI(textureView).deref();
 }
 
 void wgpuTextureViewSetLabel(WGPUTextureView textureView, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(textureView))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(textureView))->setLabel(WebGPU::Metal::fromAPI(label));
 }

@@ -28,7 +28,7 @@
 #import <wtf/Function.h>
 #import <wtf/Scope.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroup;
 class Device;
@@ -76,4 +76,4 @@ bool dumpMetalReproCaseRenderPSO(String&& vertexShaderSource, String&& vertexFun
 void clearMetalPSORepro();
 #endif
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

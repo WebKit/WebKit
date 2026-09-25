@@ -76,7 +76,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_rasterization_rate
 #endif
 
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 XRProjectionLayer::XRProjectionLayer(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale, Device& device)
     : m_sharedEvent(std::make_pair(nil, 0))
@@ -196,21 +196,21 @@ Ref<XRProjectionLayer> XRBinding::createXRProjectionLayer(WGPUTextureFormat colo
     return XRProjectionLayer::create(colorFormat, optionalDepthStencilFormat, flags, scale, m_device);
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuXRProjectionLayerAddRef(WGPUXRProjectionLayer projectionLayer)
 {
-    WebGPU::fromAPI(projectionLayer).ref();
+    WebGPU::Metal::fromAPI(projectionLayer).ref();
 }
 
 void wgpuXRProjectionLayerRelease(WGPUXRProjectionLayer projectionLayer)
 {
-    WebGPU::fromAPI(projectionLayer).deref();
+    WebGPU::Metal::fromAPI(projectionLayer).deref();
 }
 
 void wgpuXRProjectionLayerStartFrame(WGPUXRProjectionLayer layer, size_t frameIndex, WTF::MachSendRight&& colorBuffer, WTF::MachSendRight&& depthBuffer, WTF::MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples)
 {
-    WebGPU::fromAPI(layer).startFrame(frameIndex, WTF::move(colorBuffer), WTF::move(depthBuffer), WTF::move(completionSyncEvent), reusableTextureIndex, screenWidth, screenHeight, WTF::move(horizontalSamplesLeft), WTF::move(horizontalSamplesRight), WTF::move(verticalSamples));
+    WebGPU::Metal::fromAPI(layer).startFrame(frameIndex, WTF::move(colorBuffer), WTF::move(depthBuffer), WTF::move(completionSyncEvent), reusableTextureIndex, screenWidth, screenHeight, WTF::move(horizontalSamplesLeft), WTF::move(horizontalSamplesRight), WTF::move(verticalSamples));
 }

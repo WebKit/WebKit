@@ -42,7 +42,7 @@
 #import <wtf/StringPrintStream.h>
 #import <wtf/TZoneMallocInlines.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 struct ShaderModuleParameters {
     String wgslCode;
@@ -135,7 +135,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGS
     wgslPipelineLayouts.reserveCapacity(suppliedHints.hintCount);
     for (const auto& hint : hintsSpan(suppliedHints)) {
         auto hintKey = fromAPI(hint.entryPoint);
-        Ref layout = WebGPU::fromAPI(hint.layout);
+        Ref layout = WebGPU::Metal::fromAPI(hint.layout);
         hints.add(hintKey, layout);
         WGSL::PipelineLayout* convertedPipelineLayout = nullptr;
         if (layout->numberOfBindGroupLayouts()) {
@@ -177,7 +177,7 @@ static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& feat
     return result;
 }
 
-static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WGPUShaderModuleDescriptor &descriptor, std::optional<ShaderModuleParameters> &shaderModuleParameters)
+static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Metal::Device &object, Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WGPUShaderModuleDescriptor &descriptor, std::optional<ShaderModuleParameters> &shaderModuleParameters)
 {
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
         if (shaderModuleParameters->hints && descriptor.hintCount) {
@@ -1087,22 +1087,22 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
             wgslEntry.binding = entry.value.binding;
             wgslEntry.visibility = wgslEntry.visibility.fromRaw(entry.value.visibility);
             wgslEntry.bindingMember = convertBindingLayout(entry.value.bindingLayout);
-            wgslEntry.vertexArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Vertex];
-            wgslEntry.vertexArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Vertex];
+            wgslEntry.vertexArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::Metal::ShaderStage::Vertex];
+            wgslEntry.vertexArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::Metal::ShaderStage::Vertex];
             if (entry.value.vertexDynamicOffset) {
                 RELEASE_ASSERT(!(entry.value.vertexDynamicOffset.value() % sizeof(uint32_t)));
                 wgslEntry.vertexBufferDynamicOffset = (vertexOffset + *entry.value.vertexDynamicOffset) / sizeof(uint32_t);
                 maxVertexOffset = std::max<size_t>(maxVertexOffset, *entry.value.vertexDynamicOffset + sizeof(uint32_t) + vertexOffset);
             }
-            wgslEntry.fragmentArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Fragment];
-            wgslEntry.fragmentArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Fragment];
+            wgslEntry.fragmentArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::Metal::ShaderStage::Fragment];
+            wgslEntry.fragmentArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::Metal::ShaderStage::Fragment];
             if (entry.value.fragmentDynamicOffset) {
                 RELEASE_ASSERT(!(entry.value.fragmentDynamicOffset.value() % sizeof(uint32_t)));
                 wgslEntry.fragmentBufferDynamicOffset = (fragmentOffset + *entry.value.fragmentDynamicOffset) / sizeof(uint32_t) + RenderBundleEncoder::startIndexForFragmentDynamicOffsets;
                 maxFragmentOffset = std::max<size_t>(maxFragmentOffset, *entry.value.fragmentDynamicOffset + sizeof(uint32_t) + fragmentOffset);
             }
-            wgslEntry.computeArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Compute];
-            wgslEntry.computeArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Compute];
+            wgslEntry.computeArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::Metal::ShaderStage::Compute];
+            wgslEntry.computeArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::Metal::ShaderStage::Compute];
             if (entry.value.computeDynamicOffset) {
                 RELEASE_ASSERT(!(entry.value.computeDynamicOffset.value() % sizeof(uint32_t)));
                 wgslEntry.computeBufferDynamicOffset = (computeOffset + *entry.value.computeDynamicOffset) / sizeof(uint32_t);
@@ -1161,37 +1161,37 @@ const String& ShaderModule::defaultComputeEntryPoint() const
     return m_defaultComputeEntryPoint;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
 {
-    WebGPU::fromAPI(shaderModule).ref();
+    WebGPU::Metal::fromAPI(shaderModule).ref();
 }
 
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
-    WebGPU::fromAPI(shaderModule).deref();
+    WebGPU::Metal::fromAPI(shaderModule).deref();
 }
 
 void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
 {
-    protect(WebGPU::fromAPI(shaderModule))->getCompilationInfo([callback, userdata](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    protect(WebGPU::Metal::fromAPI(shaderModule))->getCompilationInfo([callback, userdata](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo, userdata);
     });
 }
 
 void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
 {
-    protect(WebGPU::fromAPI(shaderModule))->getCompilationInfo([callback = WebGPU::fromAPI(WTF::move(callback))](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    protect(WebGPU::Metal::fromAPI(shaderModule))->getCompilationInfo([callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo);
     });
 }
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(shaderModule))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(shaderModule))->setLabel(WebGPU::Metal::fromAPI(label));
 }
 
 String wgpuAdapterFeatureName(WGPUFeatureName feature)

@@ -26,21 +26,21 @@
 #pragma once
 
 #import <utility>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUXRProjectionLayerImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 
-class XRProjectionLayer : public RefCountedAndCanMakeWeakPtr<XRProjectionLayer>, public WGPUXRProjectionLayerImpl {
+class XRProjectionLayer final : public WebGPU::XRProjectionLayer, public WGPUXRProjectionLayerImpl {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRProjectionLayer);
 public:
     static Ref<XRProjectionLayer> create(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale, Device& device)
@@ -54,9 +54,9 @@ public:
 
     ~XRProjectionLayer();
 
-    void NODELETE setLabel(String&&);
+    void NODELETE setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
     void NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples);
 
     id<MTLTexture> NODELETE colorTexture() const;
@@ -89,4 +89,4 @@ private:
     const Ref<Device> m_device;
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

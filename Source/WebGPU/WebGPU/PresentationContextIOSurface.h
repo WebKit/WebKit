@@ -32,7 +32,7 @@
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Device;
 class Instance;
@@ -55,7 +55,7 @@ public:
 
     bool isPresentationContextIOSurface() const override { return true; }
 
-    bool isValid() override { return true; }
+    bool isValid() const final { return true; }
 private:
     PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance&);
 
@@ -90,6 +90,6 @@ private:
     WGPUCompositeAlphaMode m_alphaMode { WGPUCompositeAlphaMode_Premultiplied };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(PresentationContextIOSurface, isPresentationContextIOSurface());

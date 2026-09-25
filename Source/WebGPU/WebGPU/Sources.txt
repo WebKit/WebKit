@@ -48,6 +48,7 @@ Sampler.mm
 ShaderModule.mm
 Texture.mm
 TextureView.mm
+WebGPUCppBridge.mm
 XRBinding.mm
 XRProjectionLayer.mm
 XRSubImage.mm

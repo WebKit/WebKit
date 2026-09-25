@@ -28,12 +28,12 @@
 #import "BindableResource.h"
 #import <Metal/Metal.h>
 #import <WebGPU/WGPUTextureImpl.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/Seconds.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
@@ -41,14 +41,14 @@
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gputexture
-class Texture : public RefCountedAndCanMakeWeakPtr<Texture>, public WGPUTextureImpl, public TrackedResource {
+class Texture final : public WebGPU::Texture, public WGPUTextureImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(Texture);
 public:
     static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
@@ -64,9 +64,9 @@ public:
 
     Ref<TextureView> createView(const WGPUTextureViewDescriptor&);
     void destroy();
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
 
     static uint32_t NODELETE texelBlockWidth(WGPUTextureFormat); // Texels
     static uint32_t NODELETE texelBlockHeight(WGPUTextureFormat); // Texels
@@ -182,7 +182,7 @@ private:
     using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
-    Vector<WeakPtr<TextureView>> m_textureViews;
+    Vector<ThreadSafeWeakPtr<TextureView>> m_textureViews;
     bool m_destroyed { false };
     bool m_canvasBacking { false };
     mutable Lock m_gpuFrameCostLock;
@@ -193,14 +193,14 @@ private:
     uint64_t m_sharedEventSignalValue { 0 };
 } SWIFT_SHARED_REFERENCE(refTexture, derefTexture) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refTexture(WebGPU::Texture* obj)
+inline void refTexture(WebGPU::Metal::Texture* obj)
 {
     obj->ref();
 }
 
-inline void derefTexture(WebGPU::Texture* obj)
+inline void derefTexture(WebGPU::Metal::Texture* obj)
 {
     obj->deref();
 }

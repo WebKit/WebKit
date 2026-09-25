@@ -48,6 +48,7 @@
 #import "ShaderModule.h"
 #import "Texture.h"
 #import "TextureView.h"
+#import "WebGPUCppConversions.h"
 #import "XRBinding.h"
 #import "XRProjectionLayer.h"
 #import "XRSubImage.h"
@@ -56,7 +57,7 @@
 #import <wtf/SwiftBridging.h>
 #import <wtf/text/WTFString.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 // FIXME: It would be cool if we didn't have to list all these overloads, but instead could do something like bridge_cast() in WTF.
 
@@ -347,4 +348,4 @@ inline T* releaseToAPI(RefPtr<T>&& pointer)
     return nullptr;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

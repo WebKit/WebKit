@@ -27,11 +27,11 @@
 
 #import "BindableResource.h"
 #import "ShaderStage.h"
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -39,7 +39,7 @@
 struct WGPUBindGroupImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroupLayout;
 class Device;
@@ -53,7 +53,7 @@ struct ExternalTextureIndices {
 };
 
 // https://gpuweb.github.io/gpuweb/#gpubindgroup
-class BindGroup : public RefCountedAndCanMakeWeakPtr<BindGroup>, public WGPUBindGroupImpl {
+class BindGroup final : public WebGPU::BindGroup, public WGPUBindGroupImpl {
     WTF_MAKE_TZONE_ALLOCATED(BindGroup);
 public:
     template <typename T>
@@ -80,9 +80,9 @@ public:
 
     ~BindGroup();
 
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
 
     id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
@@ -127,4 +127,4 @@ private:
     uint32_t m_uniqueIdentifier { 0 };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

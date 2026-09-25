@@ -34,7 +34,7 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 Ref<ExternalTexture> Device::createExternalTexture(const WGPUExternalTextureDescriptor& descriptor)
 {
@@ -120,31 +120,31 @@ size_t ExternalTexture::openCommandEncoderCount() const
     return CommandEncoder::computeSize(m_commandEncoders, m_device.get());
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuExternalTextureAddRef(WGPUExternalTexture externalTexture)
 {
-    WebGPU::fromAPI(externalTexture).ref();
+    WebGPU::Metal::fromAPI(externalTexture).ref();
 }
 
 void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture)
 {
-    WebGPU::fromAPI(externalTexture).deref();
+    WebGPU::Metal::fromAPI(externalTexture).deref();
 }
 
 void wgpuExternalTextureDestroy(WGPUExternalTexture externalTexture)
 {
-    protect(WebGPU::fromAPI(externalTexture))->destroy();
+    protect(WebGPU::Metal::fromAPI(externalTexture))->destroy();
 }
 
 void wgpuExternalTextureUndestroy(WGPUExternalTexture externalTexture)
 {
-    protect(WebGPU::fromAPI(externalTexture))->undestroy();
+    protect(WebGPU::Metal::fromAPI(externalTexture))->undestroy();
 }
 
 void wgpuExternalTextureUpdate(WGPUExternalTexture externalTexture, CVPixelBufferRef pixelBuffer)
 {
-    protect(WebGPU::fromAPI(externalTexture))->update(pixelBuffer);
+    protect(WebGPU::Metal::fromAPI(externalTexture))->update(pixelBuffer);
 }

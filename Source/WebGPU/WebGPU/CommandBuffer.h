@@ -27,9 +27,9 @@
 
 #import <Metal/Metal.h>
 #import <atomic>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
@@ -39,13 +39,13 @@
 struct WGPUCommandBufferImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandbuffer
-class CommandBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CommandBuffer>, public WGPUCommandBufferImpl {
+class CommandBuffer final : public WebGPU::CommandBuffer, public WGPUCommandBufferImpl {
     WTF_MAKE_TZONE_ALLOCATED(CommandBuffer);
 public:
     static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, Device& device, id<MTLSharedEvent> sharedEvent, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&& onCommitHandlers, CommandEncoder& commandEncoder)
@@ -59,9 +59,9 @@ public:
 
     ~CommandBuffer();
 
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool isValid() const { return m_commandBuffer; }
+    bool isValid() const final { return m_commandBuffer; }
 
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
@@ -100,14 +100,14 @@ private:
     std::atomic<double> m_gpuExecutionDurationSeconds { 0 };
 } SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refCommandBuffer(WebGPU::CommandBuffer* obj)
+inline void refCommandBuffer(WebGPU::Metal::CommandBuffer* obj)
 {
     obj->ref();
 }
 
-inline void derefCommandBuffer(WebGPU::CommandBuffer* obj)
+inline void derefCommandBuffer(WebGPU::Metal::CommandBuffer* obj)
 {
     obj->deref();
 }

@@ -26,7 +26,7 @@
 #pragma once
 
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 enum class ShaderStage {
     Vertex = 0,
@@ -46,4 +46,4 @@ static inline constexpr ShaderStage shaderStage(WGPUShaderStage stage)
     return ShaderStage::Undefined;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

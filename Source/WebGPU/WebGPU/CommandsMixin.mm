@@ -31,7 +31,7 @@
 #import "PipelineLayout.h"
 #import "RenderPipeline.h"
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 bool CommandsMixin::prepareTheEncoderState() const
 {
@@ -78,4 +78,4 @@ bool CommandsMixin::computedSizeOverflows(const Buffer& buffer, uint64_t offset,
     return false;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

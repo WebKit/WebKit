@@ -34,7 +34,7 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextIOSurface);
 
@@ -99,11 +99,8 @@ RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint
         return nullptr;
 
     auto& renderBuffer = m_renderBuffers[bufferIndex];
-    WeakPtr texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
+    RefPtr texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
     if (!texture || !texture->waitForCommandBufferCompletion())
-        return nullptr;
-
-    if (!texture.get())
         return nullptr;
 
     id<MTLTexture> mtlTexture = texture->texture();
@@ -508,6 +505,6 @@ TextureView* PresentationContextIOSurface::getCurrentTextureView()
     return nullptr;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs

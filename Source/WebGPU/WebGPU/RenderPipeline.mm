@@ -44,7 +44,7 @@
 - (void)setSampleMask:(NSUInteger)mask;
 @end
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 static MTLBlendOperation NODELETE blendOperation(WGPUBlendOperation operation)
 {
@@ -632,7 +632,7 @@ static bool NODELETE matchesFormat(const ShaderModule::VertexStageIn& stageIn, u
     return formatType(it->value) == formatType(format);
 }
 
-static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, const WGPULimits& limits, const ShaderModule::VertexStageIn& stageIn, RenderPipeline::RequiredBufferIndicesContainer& requiredBufferIndices, NSString** error, ShaderModule::VertexStageIn& outShaderLocations)
+static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, const Limits& limits, const ShaderModule::VertexStageIn& stageIn, RenderPipeline::RequiredBufferIndicesContainer& requiredBufferIndices, NSString** error, ShaderModule::VertexStageIn& outShaderLocations)
 {
     MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor new];
     Checked<uint32_t> totalAttributeCount = 0;
@@ -1060,7 +1060,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
 Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries)
 {
     Vector<WGPUBindGroupLayout> bindGroupLayouts;
-    Vector<Ref<WebGPU::BindGroupLayout>> bindGroupLayoutsRefs;
+    Vector<Ref<WebGPU::Metal::BindGroupLayout>> bindGroupLayoutsRefs;
     bindGroupLayoutsRefs.reserveInitialCapacity(bindGroupEntries.size());
     bindGroupLayouts.reserveInitialCapacity(bindGroupEntries.size());
     for (auto& entries : bindGroupEntries) {
@@ -1108,14 +1108,14 @@ static bool writesStencil(const WGPURenderPipelineDescriptor& descriptor)
     return false;
 }
 
-static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Device &object, bool isAsync, NSString* error)
+static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Metal::Device &object, bool isAsync, NSString* error)
 {
     if (!isAsync)
         object.generateAValidationError(error);
     return std::make_pair(RenderPipeline::createInvalid(object), error);
 }
 
-static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Device &object, bool isAsync, String&& error)
+static std::pair<Ref<RenderPipeline>, NSString*> returnInvalidRenderPipeline(WebGPU::Metal::Device &object, bool isAsync, String&& error)
 {
     return returnInvalidRenderPipeline(object, isAsync, error.createNSString().get());
 }
@@ -1415,7 +1415,7 @@ static uint32_t NODELETE componentsForDataType(MTLDataType dataType)
     }
 }
 
-static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &device, const WGPURenderPipelineDescriptor& descriptor, const ShaderModule::VertexOutputs* vertexOutputs, uint32_t vertexClipDistancesCount, const ShaderModule::FragmentInputs* fragmentInputs, const ShaderModule::FragmentOutputs* fragmentOutputs, const ShaderModule* fragmentModule, auto* fragmentDescriptor)
+static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Metal::Device &device, const WGPURenderPipelineDescriptor& descriptor, const ShaderModule::VertexOutputs* vertexOutputs, uint32_t vertexClipDistancesCount, const ShaderModule::FragmentInputs* fragmentInputs, const ShaderModule::FragmentOutputs* fragmentOutputs, const ShaderModule* fragmentModule, auto* fragmentDescriptor)
 {
     if (!vertexOutputs)
         return @"vertex shader has no outputs";
@@ -1567,7 +1567,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
         if (!isValidToUseWithDevice(*pipelineLayout, *this))
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s));
     } else if (descriptor.layout) {
-        Ref layout = WebGPU::fromAPI(descriptor.layout);
+        Ref layout = WebGPU::Metal::fromAPI(descriptor.layout);
         if (!isValidToUseWithDevice(layout.get(), *this))
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s));
 
@@ -1584,7 +1584,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
     std::optional<PreparedLibrary> preparedFragmentLibrary;
     ShaderModule::VertexStageIn shaderLocations;
     {
-        Ref vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
+        Ref vertexModule = WebGPU::Metal::fromAPI(descriptor.vertex.module);
         if (!vertexModule->isValid() || !vertexModule->ast())
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s));
         if (&vertexModule->device() != this)
@@ -1621,7 +1621,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 
-        fragmentModule = protect(WebGPU::fromAPI(fragmentDescriptor.module)).ptr();
+        fragmentModule = protect(WebGPU::Metal::fromAPI(fragmentDescriptor.module)).ptr();
         if (!fragmentModule->isValid() || !fragmentModule->ast())
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s));
 
@@ -2022,10 +2022,10 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
     return true;
 }
 
-NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURenderPassDescriptor& descriptor, const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
+NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
 {
     if (!m_hasFragment) {
-        if (descriptor.colorAttachmentCount)
+        if (colorAttachmentViews.size())
             return @"No fragment shader but render pass has color attachments";
     } else {
         for (size_t i = 0, maxCount = std::max<size_t>(m_colorTargetFormats.size(), colorAttachmentViews.size()); i < maxCount; ++i) {
@@ -2044,14 +2044,14 @@ NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURend
     }
 
     if (!m_depthStencilFormat) {
-        if (!descriptor.depthStencilAttachment)
+        if (!depthStencilView)
             return nil;
 
         return @"depthStencil is missing but render pass has a depth stencil attachment";
     }
 
-    if (descriptor.depthStencilAttachment) {
-        if (!depthStencilView || !*depthStencilView)
+    if (depthStencilView) {
+        if (!*depthStencilView)
             return @"depthStencilAttachment exists but no depthStencilView";
         auto& texture = *depthStencilView;
         if (texture.format() != *m_depthStencilFormat)
@@ -2156,26 +2156,26 @@ id<MTLRenderPipelineState> RenderPipeline::icbRenderPipelineState() const
     return m_renderPipelineState;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuRenderPipelineAddRef(WGPURenderPipeline renderPipeline)
 {
-    WebGPU::fromAPI(renderPipeline).ref();
+    WebGPU::Metal::fromAPI(renderPipeline).ref();
 }
 
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {
-    WebGPU::fromAPI(renderPipeline).deref();
+    WebGPU::Metal::fromAPI(renderPipeline).deref();
 }
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(renderPipeline))->getBindGroupLayout(groupIndex));
+    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(renderPipeline))->getBindGroupLayout(groupIndex));
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, WGPUStringView label)
 {
-    WebGPU::fromAPI(renderPipeline).setLabel(WebGPU::fromAPI(label));
+    WebGPU::Metal::fromAPI(renderPipeline).setLabel(WebGPU::Metal::fromAPI(label));
 }

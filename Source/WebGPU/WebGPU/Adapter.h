@@ -28,12 +28,12 @@
 #import "HardwareCapabilities.h"
 #import <Metal/Metal.h>
 #import <bmalloc/CompactAllocationMode.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/Assertions.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
@@ -42,13 +42,13 @@
 struct WGPUAdapterImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Device;
 class Instance;
 
 // https://gpuweb.github.io/gpuweb/#gpuadapter
-class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
+class Adapter final : public WebGPU::Adapter, public WGPUAdapterImpl {
     WTF_MAKE_TZONE_ALLOCATED(Adapter);
 public:
     static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, bool xrCompatible, HardwareCapabilities&& capabilities)
@@ -68,7 +68,8 @@ public:
     bool hasFeature(WGPUFeatureName);
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
 
-    bool isValid() const { return m_device; }
+    void setLabel(String&&) final { }
+    bool isValid() const final { return m_device; }
     void makeInvalid() { m_device = nil; }
     bool NODELETE isXRCompatible() const;
 
@@ -87,4 +88,4 @@ private:
     bool m_xrCompatible { false };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
