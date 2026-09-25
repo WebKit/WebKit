@@ -82,10 +82,17 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
             if (!useCaptivePortal && !useEnhancedSecurity)
                 return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent" };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
             if (useEnhancedSecurity)
                 return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.EnhancedSecurity" };
 
             return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.CaptivePortal" };
+#else
+            if (useCaptivePortal)
+                return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.CaptivePortal" };
+
+            return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.EnhancedSecurity" };
+#endif // RC_REMOVE_SEC_ACCEL_3
         }
         NSString *webContentAppex = nil;
 

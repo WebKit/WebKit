@@ -32,10 +32,12 @@
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Vector.h>
 
@@ -925,6 +927,7 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOpts
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRestrictionModeNone)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -943,6 +946,26 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRest
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
+#else
+TEST(EnhancedSecurity, SystemLockdownModeWithSecurityRestrictionModeNone)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsOut)
 {
@@ -964,6 +987,7 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsO
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeCompatibilitySet)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -982,6 +1006,195 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeComp
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
+#else
+TEST(EnhancedSecurity, SystemLockdownModeWithMaximizeCompatibilitySet)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+
+static RetainPtr<WKWebView> loadSimplePageWithConfiguration(WKWebViewConfiguration *configuration)
+{
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+    return webView;
+}
+
+static const char* processVariant(WKWebView *webView)
+{
+    EXPECT_NE([webView _webProcessIdentifier], 0);
+    return [webView _webContentProcessVariantForFrame:nil].UTF8String;
+}
+
+TEST(EnhancedSecurityPrecedence, TestingHookEnablesSystemLockdownMode)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+    EXPECT_TRUE([WKProcessPool _lockdownModeEnabledGloballyForTesting]);
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, MaximizeCompatibilityReadsBackAsLockdownUnderSystemLockdownMode)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    preferences.get().securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    EXPECT_EQ(WKSecurityRestrictionModeLockdown, preferences.get().securityRestrictionMode);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, NoneReadsBackAsLockdownUnderSystemLockdownMode)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    preferences.get().securityRestrictionMode = WKSecurityRestrictionModeNone;
+    EXPECT_EQ(WKSecurityRestrictionModeLockdown, preferences.get().securityRestrictionMode);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithNoRequest)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_FALSE(isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithLockdownOptOutFallsBackToEnhancedSecurity)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.lockdownModeEnabled = NO;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithLockdownOptOutAndRequestedNone)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+    configuration.get().defaultWebpagePreferences.lockdownModeEnabled = NO;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeBeatsRequestedMaximizeCompatibility)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_FALSE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeBeatsRequestedNone)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithRequestedLockdown)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeLockdown;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, SystemLockdownModeBeatsForcedEnhancedSecurity)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ForceEnhancedSecurity"])
+            [configuration.get().preferences _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurityPrecedence, RequestedMaximizeCompatibilityWithoutSystemLockdownMode)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_FALSE(isJITEnabled(webView.get()));
+    EXPECT_STREQ("security", processVariant(webView.get()));
+}
+
+TEST(EnhancedSecurityPrecedence, RequestedNoneWithoutSystemLockdownMode)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_FALSE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_TRUE(isJITEnabled(webView.get()));
+    EXPECT_STREQ("standard", processVariant(webView.get()));
+}
+
+TEST(EnhancedSecurityPrecedence, RequestedLockdownWithoutSystemLockdownMode)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeLockdown;
+    RetainPtr webView = loadSimplePageWithConfiguration(configuration.get());
+    EXPECT_FALSE(isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+}
+
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 #endif
 
