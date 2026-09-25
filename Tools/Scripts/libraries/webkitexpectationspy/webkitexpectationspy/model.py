@@ -35,6 +35,7 @@ class ExpectationsModel:
         self._wildcard_expectations = []
         self._all_expectations = []
         self._seen_patterns = {}
+        self._file_order = {}
 
     def add_expectation(self, expectation):
         warning = None
@@ -52,6 +53,7 @@ class ExpectationsModel:
                 )
 
         self._seen_patterns[key] = (expectation.filename, expectation.line_number)
+        self._file_order.setdefault(expectation.filename, len(self._file_order))
         self._all_expectations.append(expectation)
 
         is_wildcard = (
@@ -69,26 +71,32 @@ class ExpectationsModel:
         return warning
 
     def get_expectation(self, test_name, current_config=None,
-                        current_version=None, version_order=None):
+                        current_version=None, version_order=None, version_name_map=None):
+        """Return the matching expectation that takes precedence, or None.
+
+        A later file overrides an earlier one. Within a file, the longest test pattern wins,
+        then the line constraining the most configuration categories, then the later line.
+        """
         if current_config is None:
             current_config = set()
 
-        if test_name in self._exact_expectations:
-            for exp in self._exact_expectations[test_name]:
-                if exp.matches_configuration(current_config, current_version, version_order):
-                    return exp
+        candidates = list(self._exact_expectations.get(test_name, []))
+        candidates.extend(exp for exp in self._wildcard_expectations if self._matches_test(exp, test_name))
+        matching = [
+            exp for exp in candidates
+            if exp.matches_configuration(current_config, current_version, version_order, version_name_map)
+        ]
+        if not matching:
+            return None
+        return max(matching, key=self._precedence)
 
-        best_match = None
-        best_prefix_len = -1
-        for exp in self._wildcard_expectations:
-            if self._matches_test(exp, test_name):
-                if exp.matches_configuration(current_config, current_version, version_order):
-                    prefix_len = len(exp.test_pattern)
-                    if prefix_len > best_prefix_len:
-                        best_match = exp
-                        best_prefix_len = prefix_len
-
-        return best_match
+    def _precedence(self, expectation):
+        return (
+            self._file_order.get(expectation.filename, -1),
+            len(expectation.test_pattern.rstrip('*/')),
+            expectation.specificity,
+            expectation.line_number or 0,
+        )
 
     def _matches_test(self, expectation, test_name):
         if self._suite:
@@ -96,36 +104,36 @@ class ExpectationsModel:
         return expectation.matches_test(test_name)
 
     def get_expectation_or_pass(self, test_name, current_config=None,
-                                current_version=None, version_order=None):
-        exp = self.get_expectation(test_name, current_config, current_version, version_order)
+                                current_version=None, version_order=None, version_name_map=None):
+        exp = self.get_expectation(test_name, current_config, current_version, version_order, version_name_map)
         if exp:
             return exp
         return Expectation(test_name, expected={ResultStatus.PASS})
 
     def get_skipped_tests(self, all_tests, current_config=None,
-                          current_version=None, version_order=None):
+                          current_version=None, version_order=None, version_name_map=None):
         skipped = set()
         for test in all_tests:
-            exp = self.get_expectation(test, current_config, current_version, version_order)
+            exp = self.get_expectation(test, current_config, current_version, version_order, version_name_map)
             if exp and exp.skip:
                 skipped.add(test)
         return skipped
 
     def get_slow_tests(self, all_tests, current_config=None,
-                       current_version=None, version_order=None):
+                       current_version=None, version_order=None, version_name_map=None):
         slow_tests = {}
         for test in all_tests:
-            exp = self.get_expectation(test, current_config, current_version, version_order)
+            exp = self.get_expectation(test, current_config, current_version, version_order, version_name_map)
             if exp and exp.slow:
                 timeout = exp.modifiers.slow
                 slow_tests[test] = None if (timeout is not None and timeout < 0) else timeout
         return slow_tests
 
     def get_wontfix_tests(self, all_tests, current_config=None,
-                          current_version=None, version_order=None):
+                          current_version=None, version_order=None, version_name_map=None):
         wontfix = set()
         for test in all_tests:
-            exp = self.get_expectation(test, current_config, current_version, version_order)
+            exp = self.get_expectation(test, current_config, current_version, version_order, version_name_map)
             if exp and exp.is_wontfix():
                 wontfix.add(test)
         return wontfix
@@ -138,3 +146,4 @@ class ExpectationsModel:
         self._wildcard_expectations.clear()
         self._all_expectations.clear()
         self._seen_patterns.clear()
+        self._file_order.clear()
