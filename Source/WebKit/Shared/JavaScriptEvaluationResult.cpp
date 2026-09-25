@@ -285,8 +285,8 @@ bool JavaScriptEvaluationResult::JSExtractor::processContainersWithoutRecursion(
             map.reserveInitialCapacity(length);
 
             for (size_t i = 0; i < length; i++) {
-                JSRetainPtr<JSStringRef> key = JSPropertyNameArrayGetNameAtIndex(names, i);
-                SUPPRESS_UNCOUNTED_ARG JSValueRef keyJSValue = JSValueMakeString(context, key.get());
+                RefPtr key = JSPropertyNameArrayGetNameAtIndex(names, i);
+                JSValueRef keyJSValue = JSValueMakeString(context, key.get());
                 JSValueRef exception { nullptr };
                 SUPPRESS_UNCOUNTED_ARG JSValueRef valueJSValue = JSObjectGetPropertyForKey(context, object, keyJSValue, &exception);
                 if (exception)
@@ -304,7 +304,7 @@ bool JavaScriptEvaluationResult::JSExtractor::processContainersWithoutRecursion(
             break;
         case PendingContainer::ContainerType::Array: {
             JSValueRef exception { nullptr };
-            SUPPRESS_UNCOUNTED_ARG JSValueRef lengthPropertyName = JSValueMakeString(context, createJSString("length"_s).get());
+            JSValueRef lengthPropertyName = JSValueMakeString(context, createJSString("length"_s).get());
             JSValueRef lengthValue = JSObjectGetPropertyForKey(context, object, lengthPropertyName, &exception);
             if (exception)
                 return false;
@@ -512,13 +512,13 @@ Protected<JSValueRef> JavaScriptEvaluationResult::toJS(JSGlobalContextRef contex
                 continue;
             ASSERT(JSValueIsString(context, key.get()));
             JSValueRef exception { nullptr };
-            SUPPRESS_UNCOUNTED_ARG auto keyString = adopt(JSValueToStringCopy(context, key.get(), &exception));
+            RefPtr keyString = adoptRef(JSValueToStringCopy(context, key.get(), &exception));
             if (!keyString || exception)
                 continue;
             Protected<JSValueRef> value = instantiatedJSObjects.get(valueIdentifier);
             if (!value)
                 continue;
-            SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, dictionary.get(), keyString.get(), value.get(), 0, 0);
+            JSObjectSetProperty(context, dictionary.get(), keyString.get(), value.get(), 0, 0);
         }
     }
 

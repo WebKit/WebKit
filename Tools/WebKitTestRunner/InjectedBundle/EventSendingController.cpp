@@ -130,7 +130,7 @@ static JSClassRef getMenuItemClass()
 
 #endif
 
-static WKEventModifiers parseModifier(const JSRetainPtr<JSStringRef>& modifier)
+static WKEventModifiers parseModifier(const RefPtr<OpaqueJSString>& modifier)
 {
     if (JSStringIsEqualToUTF8CString(modifier.get(), "ctrlKey"))
         return kWKEventModifiersControlKey;

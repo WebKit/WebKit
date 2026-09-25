@@ -31,12 +31,12 @@
 
 namespace WTR {
 
-JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef)
+RefPtr<OpaqueJSString> TestRunner::pathToLocalResource(JSStringRef)
 {
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+RefPtr<OpaqueJSString> TestRunner::inspectorTestStubURL()
 {
     wchar_t exePath[MAX_PATH];
     if (::GetModuleFileName(nullptr, exePath, MAX_PATH)) {
@@ -53,7 +53,7 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
         DWORD fileURILength = INTERNET_MAX_PATH_LENGTH;
         UrlCreateFromPathW(stubPath, fileURI, &fileURILength, 0);
 
-        return JSStringCreateWithCharacters(fileURI, fileURILength);
+        return adoptRef(JSStringCreateWithCharacters(fileURI, fileURILength));
     }
 
     return nullptr;

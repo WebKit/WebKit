@@ -48,13 +48,13 @@ public:
     // Attribute getters.
     bool isValid() const override;
     bool isEqual(AccessibilityUIElement*) override;
-    JSRetainPtr<JSStringRef> role() override;
-    JSRetainPtr<JSStringRef> title() override;
-    JSRetainPtr<JSStringRef> description() override;
-    JSRetainPtr<JSStringRef> debugDescription() final;
-    JSRetainPtr<JSStringRef> rawRoleForTesting() final;
-    JSRetainPtr<JSStringRef> stringValue() override;
-    JSRetainPtr<JSStringRef> domIdentifier() const override;
+    RefPtr<OpaqueJSString> role() override;
+    RefPtr<OpaqueJSString> title() override;
+    RefPtr<OpaqueJSString> description() override;
+    RefPtr<OpaqueJSString> debugDescription() final;
+    RefPtr<OpaqueJSString> rawRoleForTesting() final;
+    RefPtr<OpaqueJSString> stringValue() override;
+    RefPtr<OpaqueJSString> domIdentifier() const override;
     RefPtr<AccessibilityUIElement> parentElement() final;
     bool isIgnored() const override;
     unsigned childrenCount() override;
@@ -72,7 +72,7 @@ public:
     void showMenu() override;
 
     // Helpers.
-    JSRetainPtr<JSStringRef> getStringAttribute(const char* attributeName) const;
+    RefPtr<OpaqueJSString> getStringAttribute(const char* attributeName) const;
     double getNumberAttribute(const char* attributeName) const;
     Vector<RefPtr<AccessibilityUIElement>> getChildren() const;
     Vector<RefPtr<AccessibilityUIElement>> getChildrenInRange(unsigned location, unsigned length) const;

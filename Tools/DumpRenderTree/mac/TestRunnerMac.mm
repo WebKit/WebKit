@@ -208,18 +208,18 @@ void TestRunner::clearBackForwardList()
     [backForwardList goToItem:item.get()];
 }
 
-JSRetainPtr<JSStringRef> TestRunner::copyDecodedHostName(JSStringRef name)
+RefPtr<OpaqueJSString> TestRunner::copyDecodedHostName(JSStringRef name)
 {
     auto nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (__bridge NSString *)nameCF.get();
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_decodeHostName]));
+    return adoptRef(JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_decodeHostName]));
 }
 
-JSRetainPtr<JSStringRef> TestRunner::copyEncodedHostName(JSStringRef name)
+RefPtr<OpaqueJSString> TestRunner::copyEncodedHostName(JSStringRef name)
 {
     auto nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (__bridge NSString *)nameCF.get();
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_encodeHostName]));
+    return adoptRef(JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_encodeHostName]));
 }
 
 void TestRunner::display()
@@ -306,7 +306,7 @@ static inline std::string resourceRootAbsolutePath(const std::string& testURL, c
     return testURL.substr(0, indexOfSeparatorAfterDirectoryName(expectedRootName, testURL));
 }
 
-JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
+RefPtr<OpaqueJSString> TestRunner::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
 {
     // The passed in path will be an absolute path to the resource starting
     // with "/tmp" or "/tmp/LayoutTests", optionally starting with the explicit file:// protocol.
@@ -334,7 +334,7 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSContextRef context, J
         ASSERT(absolutePathToLocalResource[0] == '/');
         absolutePathToLocalResource = std::string("file://") + absolutePathToLocalResource;
     }
-    return adopt(JSStringCreateWithUTF8CString(absolutePathToLocalResource.c_str()));
+    return adoptRef(JSStringCreateWithUTF8CString(absolutePathToLocalResource.c_str()));
 }
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
@@ -345,7 +345,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     NSURL *nsurl = [NSURL URLWithString:urlNS relativeToURL:[[[mainFrame dataSource] response] URL]];
     NSString *nsurlString = [nsurl absoluteString];
 
-    JSRetainPtr absoluteURL = createJSString(String { nsurlString });
+    RefPtr absoluteURL = createJSString(String { nsurlString });
     DRT::WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
 }
 
@@ -608,7 +608,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
         if (!JSValueIsString(context, value))
             continue;
 
-        auto optionName = adopt(JSValueToStringCopy(context, value, nullptr));
+        RefPtr optionName = adoptRef(JSValueToStringCopy(context, value, nullptr));
 
         if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
             options |= WebFindOptionsCaseInsensitive;
@@ -725,7 +725,7 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
     [[[mainFrame webView] inspector] evaluateInFrontend:nil script:scriptNS];
 }
 
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+RefPtr<OpaqueJSString> TestRunner::inspectorTestStubURL()
 {
 #if PLATFORM(IOS_FAMILY)
     return nullptr;
@@ -739,7 +739,7 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
         return nullptr;
 
     CFStringRef urlString = CFURLGetString(url.get());
-    return adopt(JSStringCreateWithCFString(urlString));
+    return adoptRef(JSStringCreateWithCFString(urlString));
 #endif
 }
 

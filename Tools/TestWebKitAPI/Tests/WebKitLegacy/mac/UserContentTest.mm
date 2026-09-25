@@ -31,7 +31,6 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/mac/TestBrowsingContextLoadDelegate.h"
-#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKSerializedScriptValue.h>
 #import <WebKit/WKUserContentControllerPrivate.h>

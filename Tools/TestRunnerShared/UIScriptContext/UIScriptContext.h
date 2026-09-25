@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -115,7 +116,7 @@ private:
         JSValueRef callback { nullptr };
     };
     HashMap<unsigned, Task> m_callbacks;
-    HashMap<unsigned, JSStringRef> m_uiScriptResultsPendingCompletion;
+    HashMap<unsigned, RefPtr<OpaqueJSString>> m_uiScriptResultsPendingCompletion;
 
     UIScriptContextDelegate& m_delegate;
     RefPtr<UIScriptController> m_controller;

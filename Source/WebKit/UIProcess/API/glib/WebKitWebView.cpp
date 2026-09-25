@@ -77,7 +77,6 @@
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageMessages.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatSize.h>

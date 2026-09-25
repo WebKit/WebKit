@@ -147,8 +147,7 @@ JSValueRef WebExtensionAPITest::addTest(JSContextRef context, JSValueRef testFun
     if (!JSValueIsObject(context, testFunctionRef))
         return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "Error creating a new test."_s).createNSString().get() inContext:toJSContext(context)].JSValueRef;
 
-    // Static analysis doesn't recognize JSRetainPtr.
-    SUPPRESS_UNCOUNTED_ARG JSValueRef testName = JSObjectGetProperty(context, JSValueToObject(context, testFunctionRef, nullptr), toJSString("name"_s).get(), nullptr);
+    JSValueRef testName = JSObjectGetProperty(context, JSValueToObject(context, testFunctionRef, nullptr), toJSString("name"_s).get(), nullptr);
     if (toString(context, testName).isEmpty())
         return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "The supplied test function must be named."_s).createNSString().get() inContext:toJSContext(context)].JSValueRef;
 

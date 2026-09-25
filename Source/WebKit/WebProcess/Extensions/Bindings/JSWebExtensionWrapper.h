@@ -116,7 +116,7 @@ enum class ValuePolicy : bool {
 RefPtr<WebFrame> toWebFrame(JSContextRef);
 RefPtr<WebPage> toWebPage(JSContextRef);
 
-inline JSRetainPtr<JSStringRef> toJSString(const String& string)
+inline RefPtr<OpaqueJSString> toJSString(const String& string)
 {
     return createJSString(string);
 }

@@ -48,8 +48,7 @@ namespace WebKit {
 
 static inline JSValueRef makeErrorValue(JSGlobalContextRef contextRef, const String& errorMessage)
 {
-    // This is a safer cpp false positive (rdar://163760990).
-    SUPPRESS_UNCOUNTED_ARG auto argument = JSValueMakeString(contextRef, toJSString(errorMessage).get());
+    auto argument = JSValueMakeString(contextRef, toJSString(errorMessage).get());
     return JSObjectMakeError(contextRef, 1, &argument, 0);
 }
 
@@ -72,13 +71,12 @@ JSValueRef WebExtensionAPIRuntimeBase::reportError(String errorMessage, JSGlobal
 
     if (!m_lastErrorAccessed) {
         // Log the error to the console if it wasn't checked in the callback.
-        JSRetainPtr consoleString = toJSString("console"_s);
-        JSRetainPtr errorString = toJSString("error"_s);
+        RefPtr consoleString = toJSString("console"_s);
+        RefPtr errorString = toJSString("error"_s);
         JSObjectRef globalObject = JSContextGetGlobalObject(contextRef);
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG JSObjectRef consoleObject = JSValueToObject(contextRef, JSObjectGetProperty(contextRef, globalObject, consoleString.get(), nullptr), nullptr);
+        JSObjectRef consoleObject = JSValueToObject(contextRef, JSObjectGetProperty(contextRef, globalObject, consoleString.get(), nullptr), nullptr);
         if (consoleObject) {
-            SUPPRESS_UNCOUNTED_ARG JSValueRef consoleErrorFunction = JSObjectGetProperty(contextRef, consoleObject, errorString.get(), nullptr);
+            JSValueRef consoleErrorFunction = JSObjectGetProperty(contextRef, consoleObject, errorString.get(), nullptr);
 
             callObjectWithArguments<1>(consoleErrorFunction, contextRef, { makeErrorValue(contextRef, errorMessage) });
 
@@ -182,8 +180,7 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
 #endif
 
     auto globalContext = callback->globalContext();
-    // This is a safer cpp false positive (rdar://163760990).
-    SUPPRESS_UNCOUNTED_ARG callback->call(fromObject(callback->globalContext(), {
+    callback->call(fromObject(callback->globalContext(), {
         { "os"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(osValue).get())) },
         { "arch"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(archValue).get())) }
     }));

@@ -102,22 +102,22 @@ JSValueRef toWebAPI(JSContextRef context, const WebExtensionMessageSenderParamet
     JSObjectRef result = JSObjectMake(context, 0, 0);
 
     if (parameters.extensionUniqueIdentifier)
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(idKey).get(), toJSValueRef(context, parameters.extensionUniqueIdentifier.value()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(idKey).get(), toJSValueRef(context, parameters.extensionUniqueIdentifier.value()), 0, nullptr);
 
     if (parameters.tabParameters)
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(tabKey).get(), toJSValueRef(context, toWebAPI(parameters.tabParameters.value())), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(tabKey).get(), toJSValueRef(context, toWebAPI(parameters.tabParameters.value())), 0, nullptr);
 
     // The frame identifier is only included when tab is included.
     if (parameters.frameIdentifier && parameters.tabParameters)
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(frameIdKey).get(), JSValueMakeNumber(context, toWebAPI(parameters.frameIdentifier.value())), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(frameIdKey).get(), JSValueMakeNumber(context, toWebAPI(parameters.frameIdentifier.value())), 0, nullptr);
 
     if (parameters.url.isValid()) {
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(urlKey).get(), toJSValueRef(context, parameters.url.string()), 0, nullptr);
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(originKey).get(), toJSValueRef(context, WebCore::SecurityOrigin::create(parameters.url)->toString()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(urlKey).get(), toJSValueRef(context, parameters.url.string()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(originKey).get(), toJSValueRef(context, WebCore::SecurityOrigin::create(parameters.url)->toString()), 0, nullptr);
     }
 
     if (parameters.documentIdentifier)
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(documentIdKey).get(), toJSValueRef(context, parameters.documentIdentifier->toString()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(documentIdKey).get(), toJSValueRef(context, parameters.documentIdentifier->toString()), 0, nullptr);
 
     return result;
 }

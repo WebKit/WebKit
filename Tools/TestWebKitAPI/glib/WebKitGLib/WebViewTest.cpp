@@ -21,7 +21,6 @@
 #include "config.h"
 #include "WebViewTest.h"
 
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKitWebViewInternal.h>
 #include <wtf/URL.h>
 

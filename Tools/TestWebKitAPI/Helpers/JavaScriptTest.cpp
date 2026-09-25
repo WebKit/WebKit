@@ -32,7 +32,6 @@
 #include "Helpers/PlatformUtilities.h"
 #include "Helpers/Test.h"
 #include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefCPP.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
@@ -46,7 +45,7 @@ struct JavaScriptCallbackContext {
     JavaScriptCallbackContext() : didFinish(false) { }
 
     bool didFinish;
-    JSRetainPtr<JSStringRef> actualString;
+    RefPtr<OpaqueJSString> actualString;
 };
 
 static void javaScriptCallback(WKTypeRef result, WKErrorRef error, void* ctx)
@@ -59,7 +58,7 @@ static void javaScriptCallback(WKTypeRef result, WKErrorRef error, void* ctx)
     else if (WKBooleanGetTypeID() == WKGetTypeID(result))
         context->actualString = createJSString(WKBooleanGetValue((WKBooleanRef)result) ? "true"_s : "false"_s);
     else if (WKStringGetTypeID() == WKGetTypeID(result))
-        context->actualString = adopt(WKStringCopyJSString((WKStringRef)result));
+        context->actualString = adoptRef(WKStringCopyJSString((WKStringRef)result));
     else if (WKDoubleGetTypeID() == WKGetTypeID(result)) {
         double value = WKDoubleGetValue((WKDoubleRef)result);
         String s = makeString(value);

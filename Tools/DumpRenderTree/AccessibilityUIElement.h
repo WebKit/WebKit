@@ -27,7 +27,7 @@
 
 #include "AccessibilityTextMarker.h"
 #include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
@@ -94,13 +94,13 @@ public:
     void removeSelection();
 
     // Methods - platform-independent implementations
-    JSRetainPtr<JSStringRef> allAttributes();
-    JSRetainPtr<JSStringRef> attributesOfLinkedUIElements();
+    RefPtr<OpaqueJSString> allAttributes();
+    RefPtr<OpaqueJSString> attributesOfLinkedUIElements();
     AccessibilityUIElement linkedUIElementAtIndex(unsigned);
 
-    JSRetainPtr<JSStringRef> attributesOfDocumentLinks();
-    JSRetainPtr<JSStringRef> attributesOfChildren();
-    JSRetainPtr<JSStringRef> parameterizedAttributeNames();
+    RefPtr<OpaqueJSString> attributesOfDocumentLinks();
+    RefPtr<OpaqueJSString> attributesOfChildren();
+    RefPtr<OpaqueJSString> parameterizedAttributeNames();
     void increment();
     void decrement();
     void showMenu();
@@ -108,14 +108,14 @@ public:
     void dismiss();
 
     // Attributes - platform-independent implementations
-    JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);
+    RefPtr<OpaqueJSString> stringAttributeValue(JSStringRef attribute);
     double numberAttributeValue(JSStringRef attribute);
     void uiElementArrayAttributeValue(JSStringRef attribute, Vector<AccessibilityUIElement>& elements) const;
     AccessibilityUIElement uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
 #if PLATFORM(MAC)
     bool boolAttributeValue(NSString *attribute) const;
-    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
+    RefPtr<OpaqueJSString> stringAttributeValue(NSString *attribute) const;
     double numberAttributeValue(NSString *attribute) const;
 #endif
     void setBoolAttributeValue(JSStringRef attribute, bool value);
@@ -124,20 +124,20 @@ public:
     bool isPressActionSupported();
     bool isIncrementActionSupported();
     bool isDecrementActionSupported();
-    JSRetainPtr<JSStringRef> role();
-    JSRetainPtr<JSStringRef> subrole();
-    JSRetainPtr<JSStringRef> roleDescription();
-    JSRetainPtr<JSStringRef> computedRoleString();
-    JSRetainPtr<JSStringRef> title();
-    JSRetainPtr<JSStringRef> description();
-    JSRetainPtr<JSStringRef> language();
-    JSRetainPtr<JSStringRef> stringValue();
-    JSRetainPtr<JSStringRef> accessibilityValue() const;
+    RefPtr<OpaqueJSString> role();
+    RefPtr<OpaqueJSString> subrole();
+    RefPtr<OpaqueJSString> roleDescription();
+    RefPtr<OpaqueJSString> computedRoleString();
+    RefPtr<OpaqueJSString> title();
+    RefPtr<OpaqueJSString> description();
+    RefPtr<OpaqueJSString> language();
+    RefPtr<OpaqueJSString> stringValue();
+    RefPtr<OpaqueJSString> accessibilityValue() const;
     void setValue(JSStringRef);
-    JSRetainPtr<JSStringRef> helpText() const;
-    JSRetainPtr<JSStringRef> liveRegionRelevant() const;
-    JSRetainPtr<JSStringRef> liveRegionStatus() const;
-    JSRetainPtr<JSStringRef> orientation() const;
+    RefPtr<OpaqueJSString> helpText() const;
+    RefPtr<OpaqueJSString> liveRegionRelevant() const;
+    RefPtr<OpaqueJSString> liveRegionStatus() const;
+    RefPtr<OpaqueJSString> orientation() const;
     double pageX();
     double pageY();
     double x();
@@ -147,11 +147,11 @@ public:
     double intValue() const;
     double minValue();
     double maxValue();
-    JSRetainPtr<JSStringRef> pathDescription() const;
-    JSRetainPtr<JSStringRef> valueDescription();
+    RefPtr<OpaqueJSString> pathDescription() const;
+    RefPtr<OpaqueJSString> valueDescription();
     int insertionPointLineNumber();
-    JSRetainPtr<JSStringRef> selectedTextRange();
-    JSRetainPtr<JSStringRef> textInputMarkedRange() const;
+    RefPtr<OpaqueJSString> selectedTextRange();
+    RefPtr<OpaqueJSString> textInputMarkedRange() const;
     bool isAtomicLiveRegion() const;
     bool isBusy() const;
     bool isEnabled();
@@ -181,27 +181,27 @@ public:
     bool isMultiLine() const;
     bool isIndeterminate() const;
     bool hasPopup() const;
-    JSRetainPtr<JSStringRef> popupValue() const;
+    RefPtr<OpaqueJSString> popupValue() const;
     int hierarchicalLevel() const;
     double clickPointX();
     double clickPointY();
-    JSRetainPtr<JSStringRef> url();
-    JSRetainPtr<JSStringRef> classList() const;
-    JSRetainPtr<JSStringRef> domIdentifier() const;
+    RefPtr<OpaqueJSString> url();
+    RefPtr<OpaqueJSString> classList() const;
+    RefPtr<OpaqueJSString> domIdentifier() const;
 
     // CSS3-speech properties.
-    JSRetainPtr<JSStringRef> speakAs();
+    RefPtr<OpaqueJSString> speakAs();
 
     // Table-specific attributes
-    JSRetainPtr<JSStringRef> attributesOfColumnHeaders();
-    JSRetainPtr<JSStringRef> attributesOfRowHeaders();
-    JSRetainPtr<JSStringRef> attributesOfColumns();
-    JSRetainPtr<JSStringRef> attributesOfRows();
-    JSRetainPtr<JSStringRef> attributesOfVisibleCells();
-    JSRetainPtr<JSStringRef> attributesOfHeader();
+    RefPtr<OpaqueJSString> attributesOfColumnHeaders();
+    RefPtr<OpaqueJSString> attributesOfRowHeaders();
+    RefPtr<OpaqueJSString> attributesOfColumns();
+    RefPtr<OpaqueJSString> attributesOfRows();
+    RefPtr<OpaqueJSString> attributesOfVisibleCells();
+    RefPtr<OpaqueJSString> attributesOfHeader();
     int indexInTable();
-    JSRetainPtr<JSStringRef> rowIndexRange();
-    JSRetainPtr<JSStringRef> columnIndexRange();
+    RefPtr<OpaqueJSString> rowIndexRange();
+    RefPtr<OpaqueJSString> columnIndexRange();
     int rowCount();
     int columnCount();
     void rowHeaders(Vector<AccessibilityUIElement>& elements) const;
@@ -220,32 +220,32 @@ public:
     AccessibilityUIElement ariaControlsElementAtIndex(unsigned);
 
 #if PLATFORM(COCOA)
-    JSRetainPtr<JSStringRef> customContent() const;
+    RefPtr<OpaqueJSString> customContent() const;
 #endif
 
     // Drag and drop
     bool isGrabbed() const;
     // A space concatentated string of all the drop effects.
-    JSRetainPtr<JSStringRef> ariaDropEffects() const;
+    RefPtr<OpaqueJSString> ariaDropEffects() const;
 
     // Parameterized attributes
     int lineForIndex(int);
-    JSRetainPtr<JSStringRef> rangeForLine(int);
-    JSRetainPtr<JSStringRef> rangeForPosition(int x, int y);
-    JSRetainPtr<JSStringRef> boundsForRange(unsigned location, unsigned length);
+    RefPtr<OpaqueJSString> rangeForLine(int);
+    RefPtr<OpaqueJSString> rangeForPosition(int x, int y);
+    RefPtr<OpaqueJSString> boundsForRange(unsigned location, unsigned length);
     void setSelectedTextRange(unsigned location, unsigned length);
-    JSRetainPtr<JSStringRef> stringForRange(unsigned location, unsigned length);
-    JSRetainPtr<JSStringRef> attributedStringForRange(unsigned location, unsigned length);
+    RefPtr<OpaqueJSString> stringForRange(unsigned location, unsigned length);
+    RefPtr<OpaqueJSString> attributedStringForRange(unsigned location, unsigned length);
     bool attributedStringRangeIsMisspelled(unsigned location, unsigned length);
     unsigned uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     AccessibilityUIElement uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
-    JSRetainPtr<JSStringRef> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
+    RefPtr<OpaqueJSString> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
 #if PLATFORM(MAC)
     JSValueRef searchTextWithCriteria(JSContextRef, JSValueRef searchStrings, JSStringRef StartFrom, JSStringRef direction);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    JSRetainPtr<JSStringRef> stringForSelection();
+    RefPtr<OpaqueJSString> stringForSelection();
     void increaseTextSelection();
     void decreaseTextSelection();
     AccessibilityUIElement linkedElement();
@@ -257,7 +257,7 @@ public:
 
     bool hasTextEntryTrait();
     AccessibilityUIElement fieldsetAncestorElement();
-    JSRetainPtr<JSStringRef> attributedStringForElement();
+    RefPtr<OpaqueJSString> attributedStringForElement();
 
     bool isDeletion();
     bool isInsertion();
@@ -304,19 +304,19 @@ public:
     bool insertText(JSStringRef);
     AccessibilityTextMarkerRange textInputMarkedTextMarkerRange() const;
 
-    JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
-    JSRetainPtr<JSStringRef> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);
-    JSRetainPtr<JSStringRef> attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck);
+    RefPtr<OpaqueJSString> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
+    RefPtr<OpaqueJSString> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);
+    RefPtr<OpaqueJSString> attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     int indexForTextMarker(AccessibilityTextMarker*);
     bool isTextMarkerValid(AccessibilityTextMarker*);
     bool isTextMarkerNull(AccessibilityTextMarker*);
     AccessibilityTextMarker textMarkerForIndex(int);
-    JSRetainPtr<JSStringRef> textMarkerDebugDescription(AccessibilityTextMarker*);
-    JSRetainPtr<JSStringRef> textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*);
-    JSRetainPtr<JSStringRef> textMarkerDescription(AccessibilityTextMarker*);
-    JSRetainPtr<JSStringRef> textMarkerRangeDescription(AccessibilityTextMarkerRange*);
+    RefPtr<OpaqueJSString> textMarkerDebugDescription(AccessibilityTextMarker*);
+    RefPtr<OpaqueJSString> textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*);
+    RefPtr<OpaqueJSString> textMarkerDescription(AccessibilityTextMarker*);
+    RefPtr<OpaqueJSString> textMarkerRangeDescription(AccessibilityTextMarkerRange*);
 
     void scrollToMakeVisible();
     void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
@@ -329,8 +329,8 @@ public:
     void removeNotificationListener();
 
 #if PLATFORM(IOS_FAMILY)
-    JSRetainPtr<JSStringRef> traits();
-    JSRetainPtr<JSStringRef> identifier();
+    RefPtr<OpaqueJSString> traits();
+    RefPtr<OpaqueJSString> identifier();
     int elementTextPosition();
     int elementTextLength();
     AccessibilityUIElement headerElementAtIndex(unsigned);
@@ -346,16 +346,16 @@ public:
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(COCOA)
-    JSRetainPtr<JSStringRef> embeddedImageDescription() const;
+    RefPtr<OpaqueJSString> embeddedImageDescription() const;
 #endif
 
 #if PLATFORM(MAC)
     // Returns an ordered list of supported actions for an element.
-    JSRetainPtr<JSStringRef> supportedActions();
+    RefPtr<OpaqueJSString> supportedActions();
 
     // A general description of the elements making up multiscript pre/post objects.
-    JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
-    JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
+    RefPtr<OpaqueJSString> mathPostscriptsDescription() const;
+    RefPtr<OpaqueJSString> mathPrescriptsDescription() const;
 #endif
 
     static JSClassRef getJSClass();

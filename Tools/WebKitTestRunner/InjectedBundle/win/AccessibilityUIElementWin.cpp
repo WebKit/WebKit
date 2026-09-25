@@ -185,49 +185,49 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::disclosedByRow()
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfLinkedUIElements()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfLinkedUIElements()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfDocumentLinks()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfDocumentLinks()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfChildren()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfChildren()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::allAttributes()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::allAttributes()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringAttributeValue(JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::stringAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::currentStateValue() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::currentStateValue() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::sortDirection() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::sortDirection() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringDescriptionOfAttributeValue(JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::stringDescriptionOfAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
@@ -287,49 +287,49 @@ bool AccessibilityUIElementWin::isAttributeSupported(JSStringRef attribute)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::parameterizedAttributeNames()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::parameterizedAttributeNames()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::role()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::role()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::subrole()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::subrole()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::roleDescription()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::roleDescription()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::computedRoleString()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::computedRoleString()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::title()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::title()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::description()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::description()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::orientation() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::orientation() const
 {
     notImplemented();
     return nullptr;
@@ -341,31 +341,31 @@ bool AccessibilityUIElementWin::isAtomicLiveRegion() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::liveRegionRelevant() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::liveRegionRelevant() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::liveRegionStatus() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::liveRegionStatus() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringValue()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::stringValue()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::language()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::language()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::helpText() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::helpText() const
 {
     notImplemented();
     return nullptr;
@@ -437,7 +437,7 @@ double AccessibilityUIElementWin::maxValue()
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::valueDescription()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::valueDescription()
 {
     notImplemented();
     return nullptr;
@@ -527,7 +527,7 @@ int AccessibilityUIElementWin::hierarchicalLevel() const
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::speakAs()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::speakAs()
 {
     notImplemented();
     return nullptr;
@@ -539,7 +539,7 @@ bool AccessibilityUIElementWin::isGrabbed() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::ariaDropEffects() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::ariaDropEffects() const
 {
     notImplemented();
     return nullptr;
@@ -551,31 +551,31 @@ int AccessibilityUIElementWin::lineForIndex(int)
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rangeForLine(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::rangeForLine(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rangeForPosition(int, int)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::rangeForPosition(int, int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::boundsForRange(unsigned, unsigned)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::boundsForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringForRange(unsigned, unsigned)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::stringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForRange(unsigned, unsigned)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributedStringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
@@ -605,43 +605,43 @@ JSValueRef AccessibilityUIElementWin::uiElementsForSearchPredicate(JSContextRef,
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfColumnHeaders()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfColumnHeaders()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfRowHeaders()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfRowHeaders()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfColumns()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfColumns()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfRows()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfRows()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfVisibleCells()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfVisibleCells()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfHeader()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributesOfHeader()
 {
     notImplemented();
     return nullptr;
@@ -665,13 +665,13 @@ int AccessibilityUIElementWin::indexInTable()
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rowIndexRange()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::rowIndexRange()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::columnIndexRange()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::columnIndexRange()
 {
     notImplemented();
     return nullptr;
@@ -695,7 +695,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::verticalScrollbar() co
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::selectedTextRange()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::selectedTextRange()
 {
     notImplemented();
     return nullptr;
@@ -713,7 +713,7 @@ bool AccessibilityUIElementWin::setSelectedTextRange(unsigned, unsigned)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::textInputMarkedRange() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::textInputMarkedRange() const
 {
     notImplemented();
     return nullptr;
@@ -759,13 +759,13 @@ void AccessibilityUIElementWin::clearSelectedChildren() const
     notImplemented();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::accessibilityValue() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::accessibilityValue() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::url()
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::url()
 {
     notImplemented();
     return nullptr;
@@ -843,7 +843,7 @@ bool AccessibilityUIElementWin::hasPopup() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::popupValue() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::popupValue() const
 {
     notImplemented();
     return nullptr;
@@ -899,13 +899,13 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::nextTextMarker(Access
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return nullptr;
@@ -953,19 +953,19 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::accessibilityElementFo
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
 {
     notImplemented();
     return nullptr;
@@ -1028,61 +1028,61 @@ void AccessibilityUIElementWin::scrollToMakeVisibleWithSubFocus(int, int, int, i
     notImplemented();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::supportedActions() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::supportedActions() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::pathDescription() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::pathDescription() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::pathAsBounds() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::pathAsBounds() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::mathPostscriptsDescription() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::mathPostscriptsDescription() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::mathPrescriptsDescription() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::mathPrescriptsDescription() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::classList() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::classList() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::characterAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::characterAtOffset(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::wordAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::wordAtOffset(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::lineAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::lineAtOffset(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::sentenceAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::sentenceAtOffset(int)
 {
     notImplemented();
     return nullptr;
@@ -1100,7 +1100,7 @@ bool AccessibilityUIElementWin::insertText(JSStringRef)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::domIdentifier() const
+RefPtr<OpaqueJSString> AccessibilityUIElementWin::domIdentifier() const
 {
     notImplemented();
     return nullptr;

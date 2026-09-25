@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebProcessTest.h"
 #include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <fcntl.h>
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>

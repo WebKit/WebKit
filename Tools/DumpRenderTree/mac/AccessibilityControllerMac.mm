@@ -166,7 +166,7 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
     return [mainFrame enhancedAccessibilityEnabled];
 }
 
-JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
+RefPtr<OpaqueJSString> AccessibilityController::platformName() const
 {
     return WTR::createJSString("mac");
 }

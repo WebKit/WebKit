@@ -341,8 +341,7 @@ void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *option
 
     NSString *regexString = objectForKey<NSString>(options, regexKey);
     if (![WKContentRuleList _supportsRegularExpression:regexString]) {
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG callback->call(fromObject(callback->globalContext(), {
+        callback->call(fromObject(callback->globalContext(), {
             { "isSupported"_s, Protected(callback->globalContext(), JSValueMakeBoolean(callback->globalContext(), false)) },
             { "reason"_s, Protected(callback->globalContext(), JSValueMakeString(callback->globalContext(), toJSString("syntaxError"_s).get())) }
         }));

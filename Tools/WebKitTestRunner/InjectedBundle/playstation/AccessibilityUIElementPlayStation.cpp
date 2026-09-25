@@ -180,49 +180,49 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::disclosedByRow
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfLinkedUIElements()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfLinkedUIElements()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfDocumentLinks()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfDocumentLinks()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfChildren()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfChildren()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::allAttributes()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::allAttributes()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringAttributeValue(JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::stringAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::currentStateValue() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::currentStateValue() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::sortDirection() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::sortDirection() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringDescriptionOfAttributeValue(JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::stringDescriptionOfAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
@@ -282,49 +282,49 @@ bool AccessibilityUIElementPlayStation::isAttributeSupported(JSStringRef attribu
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::parameterizedAttributeNames()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::parameterizedAttributeNames()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::role()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::role()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::subrole()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::subrole()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::roleDescription()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::roleDescription()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::computedRoleString()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::computedRoleString()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::title()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::title()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::description()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::description()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::orientation() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::orientation() const
 {
     notImplemented();
     return nullptr;
@@ -336,31 +336,31 @@ bool AccessibilityUIElementPlayStation::isAtomicLiveRegion() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::liveRegionRelevant() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::liveRegionRelevant() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::liveRegionStatus() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::liveRegionStatus() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringValue()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::stringValue()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::language()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::language()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::helpText() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::helpText() const
 {
     notImplemented();
     return nullptr;
@@ -432,7 +432,7 @@ double AccessibilityUIElementPlayStation::maxValue()
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::valueDescription()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::valueDescription()
 {
     notImplemented();
     return nullptr;
@@ -522,7 +522,7 @@ int AccessibilityUIElementPlayStation::hierarchicalLevel() const
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::speakAs()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::speakAs()
 {
     notImplemented();
     return nullptr;
@@ -534,7 +534,7 @@ bool AccessibilityUIElementPlayStation::isGrabbed() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::ariaDropEffects() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::ariaDropEffects() const
 {
     notImplemented();
     return nullptr;
@@ -546,31 +546,31 @@ int AccessibilityUIElementPlayStation::lineForIndex(int)
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rangeForLine(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::rangeForLine(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rangeForPosition(int, int)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::rangeForPosition(int, int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::boundsForRange(unsigned, unsigned)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::boundsForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringForRange(unsigned, unsigned)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::stringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForRange(unsigned, unsigned)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributedStringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
@@ -600,43 +600,43 @@ JSValueRef AccessibilityUIElementPlayStation::uiElementsForSearchPredicate(JSCon
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfColumnHeaders()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfColumnHeaders()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfRowHeaders()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfRowHeaders()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfColumns()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfColumns()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfRows()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfRows()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfVisibleCells()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfVisibleCells()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfHeader()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributesOfHeader()
 {
     notImplemented();
     return nullptr;
@@ -660,13 +660,13 @@ int AccessibilityUIElementPlayStation::indexInTable()
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rowIndexRange()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::rowIndexRange()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::columnIndexRange()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::columnIndexRange()
 {
     notImplemented();
     return nullptr;
@@ -690,7 +690,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::verticalScroll
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::selectedTextRange()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::selectedTextRange()
 {
     notImplemented();
     return nullptr;
@@ -708,7 +708,7 @@ bool AccessibilityUIElementPlayStation::setSelectedTextRange(unsigned, unsigned)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::textInputMarkedRange() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::textInputMarkedRange() const
 {
     notImplemented();
     return nullptr;
@@ -754,13 +754,13 @@ void AccessibilityUIElementPlayStation::clearSelectedChildren() const
     notImplemented();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::accessibilityValue() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::accessibilityValue() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::url()
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::url()
 {
     notImplemented();
     return nullptr;
@@ -838,7 +838,7 @@ bool AccessibilityUIElementPlayStation::hasPopup() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::popupValue() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::popupValue() const
 {
     notImplemented();
     return nullptr;
@@ -894,13 +894,13 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::nextTextMarke
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return nullptr;
@@ -948,19 +948,19 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::accessibilityE
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
 {
     notImplemented();
     return nullptr;
@@ -1023,61 +1023,61 @@ void AccessibilityUIElementPlayStation::scrollToMakeVisibleWithSubFocus(int, int
     notImplemented();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::supportedActions() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::supportedActions() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::pathDescription() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::pathDescription() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::pathAsBounds() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::pathAsBounds() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::mathPostscriptsDescription() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::mathPostscriptsDescription() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::mathPrescriptsDescription() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::mathPrescriptsDescription() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::classList() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::classList() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::characterAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::characterAtOffset(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::wordAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::wordAtOffset(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::lineAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::lineAtOffset(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::sentenceAtOffset(int)
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::sentenceAtOffset(int)
 {
     notImplemented();
     return nullptr;
@@ -1095,7 +1095,7 @@ bool AccessibilityUIElementPlayStation::insertText(JSStringRef)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::domIdentifier() const
+RefPtr<OpaqueJSString> AccessibilityUIElementPlayStation::domIdentifier() const
 {
     notImplemented();
     return nullptr;

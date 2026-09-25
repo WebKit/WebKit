@@ -247,7 +247,7 @@ sub _generateImplementationFile
 EOF
 
     push(@contents, <<EOF);
-#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <wtf/GetPtr.h>
 #include <wtf/MathExtras.h>
 
@@ -533,7 +533,7 @@ sub _platformType
 
     return "bool" if $type->name eq "boolean";
     return "JSValueRef" if $type->name eq "object";
-    return "JSRetainPtr<JSStringRef>" if $$self{codeGenerator}->IsStringType($type);
+    return "RefPtr<OpaqueJSString>" if $$self{codeGenerator}->IsStringType($type);
     return $self->_nativeNumericType($type) if $$self{codeGenerator}->IsPrimitiveType($type);
     return _implementationClassName($type);
 }
@@ -565,7 +565,7 @@ sub _platformTypeVariableDeclaration
 
     my %nonPointerTypes = (
         "bool" => 1,
-        "JSRetainPtr<JSStringRef>" => 1,
+        "RefPtr<OpaqueJSString>" => 1,
         "JSValueRef" => 1,
     );
 

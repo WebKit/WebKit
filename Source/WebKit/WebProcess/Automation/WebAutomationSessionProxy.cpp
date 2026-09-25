@@ -44,7 +44,6 @@
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefPrivate.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <JavaScriptCore/SourceTaintedOrigin.h>
@@ -194,7 +193,7 @@ static JSValueRef isValidNodeIdentifier(JSContextRef context, JSObjectRef functi
     if (argumentCount != 1)
         return JSValueMakeUndefined(context);
 
-    auto nodeIdentifier = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    RefPtr nodeIdentifier = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     return JSValueMakeBoolean(context, isValidNodeHandle(nodeIdentifier->string()));
 }
 
@@ -282,7 +281,7 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
     if (argumentCount != 1)
         return JSValueMakeUndefined(context);
 
-    auto script = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    RefPtr script = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     return JSEvaluateScript(context, script.get(), nullptr, nullptr, 0, exception);
 }
 
@@ -323,7 +322,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     WebAutomationSessionProxy::JSCallbackIdentifier callbackID(rawCallbackID);
 
     if (JSValueIsString(context, arguments[2])) {
-        auto result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
+        RefPtr result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
         automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), { });
     } else if (JSValueIsObject(context, arguments[2])) {
         JSObjectRef error = JSValueToObject(context, arguments[2], exception);

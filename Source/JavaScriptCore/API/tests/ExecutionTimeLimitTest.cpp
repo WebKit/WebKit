@@ -113,7 +113,7 @@ static void testResetAfterTimeout(bool& failed)
 {
     JSValueRef v = nullptr;
     JSValueRef exception = nullptr;
-    JSRetainPtr script = createJSString("100"_s);
+    RefPtr script = createJSString("100"_s);
     v = JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
     if (exception) {
         printf("FAIL: Watchdog timeout was not reset.\n");
@@ -177,7 +177,7 @@ int testExecutionTimeLimit()
 
         JSValueRef exception = nullptr;
 
-        JSRetainPtr currentCPUTimeStr = createJSString("currentCPUTime"_s);
+        RefPtr currentCPUTimeStr = createJSString("currentCPUTime"_s);
         JSObjectRef currentCPUTimeFunction = JSObjectMakeFunctionWithCallback(context, currentCPUTimeStr.get(), currentCPUTimeAsJSFunctionCallback);
         JSObjectSetProperty(context, globalObject, currentCPUTimeStr.get(), currentCPUTimeFunction, kJSPropertyAttributeNone, nullptr);
 
@@ -191,7 +191,7 @@ int testExecutionTimeLimit()
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 #endif
 
-            JSRetainPtr script = createJSString("function foo() { while (true) { } } foo();"_s);
+            RefPtr script = createJSString("function foo() { while (true) { } } foo();"_s);
             exception = nullptr;
             JSValueRef* exn = &exception;
             shouldTerminateCallbackWasCalled = false;
@@ -223,7 +223,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -263,7 +263,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "var startTime = currentCPUTime();"
                 "function recurse(i) {"
                     "'use strict';"
@@ -303,7 +303,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "try {"
@@ -346,7 +346,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -387,7 +387,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -428,7 +428,7 @@ int testExecutionTimeLimit()
             Seconds timeAfterExtendedDeadline = 600_ms + tierAdjustment;
             Seconds maxBusyLoopTime = 750_ms + tierAdjustment;
 
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -473,7 +473,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            JSRetainPtr script = createJSString(makeString(
+            RefPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -488,7 +488,7 @@ int testExecutionTimeLimit()
 
             // We have to do this since blocks can only capture things as const.
             JSGlobalContextRef& contextRef = context;
-            JSRetainPtr<JSStringRef>& scriptRef = script;
+            RefPtr<OpaqueJSString>& scriptRef = script;
             JSValueRef& exceptionRef = exception;
 
             Lock syncLock;

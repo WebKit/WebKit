@@ -203,7 +203,7 @@ static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context,
     AccessibilityUIElement* startElement = nullptr;
     bool isDirectionNext = true;
     JSValueRef searchKey = nullptr;
-    JSRetainPtr<JSStringRef> searchText;
+    RefPtr<OpaqueJSString> searchText;
     bool visibleOnly = false;
     bool immediateDescendantsOnly = false;
     if (argumentCount >= 5 && argumentCount <= 6) {
@@ -215,7 +215,7 @@ static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context,
         searchKey = arguments[2];
 
         if (JSValueIsString(context, arguments[3]))
-            searchText = adopt(JSValueToStringCopy(context, arguments[3], exception));
+            searchText = adoptRef(JSValueToStringCopy(context, arguments[3], exception));
 
         visibleOnly = JSValueToBoolean(context, arguments[4]);
 
@@ -231,7 +231,7 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
     AccessibilityUIElement* startElement = nullptr;
     bool isDirectionNext = true;
     JSValueRef searchKey = nullptr;
-    JSRetainPtr<JSStringRef> searchText = nullptr;
+    RefPtr<OpaqueJSString> searchText;
     bool visibleOnly = false;
     bool immediateDescendantsOnly = false;
     if (argumentCount >= 5 && argumentCount <= 6) {
@@ -243,7 +243,7 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
         searchKey = arguments[2];
 
         if (JSValueIsString(context, arguments[3]))
-            searchText = adopt(JSValueToStringCopy(context, arguments[3], exception));
+            searchText = adoptRef(JSValueToStringCopy(context, arguments[3], exception));
 
         visibleOnly = JSValueToBoolean(context, arguments[4]);
 
@@ -259,20 +259,16 @@ static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectR
     if (argumentCount < 2 || argumentCount > 4)
         return JSValueMakeUndefined(context);
 
-    auto ambiguityResolution = adopt(JSValueToStringCopy(context, arguments[0], exception));
+    RefPtr ambiguityResolution = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     JSValueRef searchStrings = arguments[1];
-    JSStringRef replacementString = nullptr;
+    RefPtr<OpaqueJSString> replacementString;
     if (argumentCount == 3)
-        replacementString = JSValueToStringCopy(context, arguments[2], exception);
-    JSStringRef activityString = nullptr;
+        replacementString = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
+    RefPtr<OpaqueJSString> activityString;
     if (argumentCount == 4)
-        activityString = JSValueToStringCopy(context, arguments[3], exception);
+        activityString = adoptRef(JSValueToStringCopy(context, arguments[3], exception));
 
-    auto result = toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString, activityString);
-    if (replacementString)
-        JSStringRelease(replacementString);
-    if (activityString)
-        JSStringRelease(activityString);
+    auto result = toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString.get(), activityString.get());
     return JSValueMakeString(context, result.get());
 }
 
@@ -283,12 +279,12 @@ static JSValueRef searchTextWithCriteriaCallback(JSContextRef context, JSObjectR
         return JSValueMakeUndefined(context);
 
     JSValueRef searchStrings = arguments[0];
-    JSRetainPtr<JSStringRef> startFrom;
+    RefPtr<OpaqueJSString> startFrom;
     if (argumentCount > 1)
-        startFrom = adopt(JSValueToStringCopy(context, arguments[1], exception));
-    JSRetainPtr<JSStringRef> direction;
+        startFrom = adoptRef(JSValueToStringCopy(context, arguments[1], exception));
+    RefPtr<OpaqueJSString> direction;
     if (argumentCount > 2)
-        direction = adopt(JSValueToStringCopy(context, arguments[2], exception));
+        direction = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
 
     return toAXElement(thisObject)->searchTextWithCriteria(context, searchStrings, startFrom.get(), direction.get());
 }
@@ -474,10 +470,10 @@ static JSValueRef isEqualCallback(JSContextRef context, JSObjectRef function, JS
 
 static JSValueRef setValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueText = 0;
+    RefPtr<OpaqueJSString> valueText;
     if (argumentCount == 1) {
         if (JSValueIsString(context, arguments[0]))
-            valueText = adopt(JSValueToStringCopy(context, arguments[0], exception));
+            valueText = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     }
 
     toAXElement(thisObject)->setValue(valueText.get());
@@ -528,24 +524,18 @@ static JSValueRef elementAtPointCallback(JSContextRef context, JSObjectRef funct
 
 static JSValueRef isAttributeSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = 0;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
-    JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->isAttributeSupported(attribute));
-    if (attribute)
-        JSStringRelease(attribute);
-    return result;
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isAttributeSupported(attribute.get()));
 }
 
 static JSValueRef isAttributeSettableCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = 0;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
-    JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->isAttributeSettable(attribute));
-    if (attribute)
-        JSStringRelease(attribute);
-    return result;
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isAttributeSettable(attribute.get()));
 }
 
 static JSValueRef isPressActionSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -565,44 +555,35 @@ static JSValueRef isDecrementActionSupportedCallback(JSContextRef context, JSObj
 
 static JSValueRef boolAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = 0;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
-    bool val = toAXElement(thisObject)->boolAttributeValue(attribute);
-    JSValueRef result = JSValueMakeBoolean(context, val);
-    if (attribute)
-        JSStringRelease(attribute);
-    return result;
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->boolAttributeValue(attribute.get()));
 }
 
 static JSValueRef setBoolAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = nullptr;
+    RefPtr<OpaqueJSString> attribute;
     bool value = false;
     if (argumentCount == 2) {
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
         value = JSValueToBoolean(context, arguments[1]);
     }
-    toAXElement(thisObject)->setBoolAttributeValue(attribute, value);
-    if (attribute)
-        JSStringRelease(attribute);
+    toAXElement(thisObject)->setBoolAttributeValue(attribute.get(), value);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = 0;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
-    auto stringAttributeValue = toAXElement(thisObject)->stringAttributeValue(attribute);
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    auto stringAttributeValue = toAXElement(thisObject)->stringAttributeValue(attribute.get());
     // FIXME: extract the `string ? JSValueMakeString : JSValueMakeNull` logic into e.g. `makeValue` function like in WKTR's JSBasics.cpp
     // and investigate where else to use it instead of plain `JSValueMakeString` (WKTR's JSAccessibilityUIElement.cpp might be good reference for that,
     // to ensure consistency of accessibility text expectation files and tests across WKRT and DRT)
     // https://bugs.webkit.org/show_bug.cgi?id=296858
-    JSValueRef result = stringAttributeValue ? JSValueMakeString(context, stringAttributeValue.get()) : JSValueMakeNull(context);
-    if (attribute)
-        JSStringRelease(attribute);
-    return result;
+    return stringAttributeValue ? JSValueMakeString(context, stringAttributeValue.get()) : JSValueMakeNull(context);
 }
 
 static JSValueRef columnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -629,7 +610,7 @@ static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSO
     if (argumentCount != 1)
         return JSValueMakeUndefined(context);
 
-    auto attribute = adopt(JSValueToStringCopy(context, arguments[0], exception));
+    RefPtr attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
 
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->uiElementArrayAttributeValue(attribute.get(), elements);
@@ -638,23 +619,19 @@ static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSO
 
 static JSValueRef uiElementAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attribute;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 1)
-        attribute = adopt(JSValueToStringCopy(context, arguments[0], exception));
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
 
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementAttributeValue(attribute.get()));
 }
 
 static JSValueRef numberAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = 0;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
-    double val = toAXElement(thisObject)->numberAttributeValue(attribute);
-    JSValueRef result = JSValueMakeNumber(context, val);
-    if (attribute)
-        JSStringRelease(attribute);
-    return result;
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
+    return JSValueMakeNumber(context, toAXElement(thisObject)->numberAttributeValue(attribute.get()));
 }
 
 static JSValueRef cellForColumnAndRowCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -831,7 +808,7 @@ static JSValueRef replaceTextInRangeCallback(JSContextRef context, JSObjectRef f
     if (argumentCount < 3)
         return JSValueMakeUndefined(context);
 
-    auto text = adopt(JSValueToStringCopy(context, arguments[0], exception));
+    RefPtr text = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     int position = JSValueToNumber(context, arguments[1], exception);
     int length = JSValueToNumber(context, arguments[2], exception);
 
@@ -843,7 +820,7 @@ static JSValueRef insertTextCallback(JSContextRef context, JSObjectRef function,
     if (!argumentCount)
         return JSValueMakeUndefined(context);
 
-    auto text = adopt(JSValueToStringCopy(context, arguments[0], exception));
+    RefPtr text = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     return JSValueMakeBoolean(context, toAXElement(thisObject)->insertText(text.get()));
 }
 
@@ -855,17 +832,13 @@ static JSValueRef textInputMarkedTextMarkerRangeCallback(JSContextRef context, J
 static JSValueRef attributedStringForTextMarkerRangeContainsAttributeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityTextMarkerRange* markerRange = 0;
-    JSStringRef attribute = 0;
+    RefPtr<OpaqueJSString> attribute;
     if (argumentCount == 2) {
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
+        attribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
         markerRange = toTextMarkerRange(JSValueToObject(context, arguments[1], exception));
     }
 
-    JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->attributedStringForTextMarkerRangeContainsAttribute(attribute, markerRange));
-    if (attribute)
-        JSStringRelease(attribute);
-
-    return result;
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->attributedStringForTextMarkerRangeContainsAttribute(attribute.get(), markerRange));
 }
 
 static JSValueRef indexForTextMarkerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1651,19 +1624,16 @@ static JSValueRef hasTextEntryTraitCallback(JSContextRef context, JSObjectRef th
 
 static JSValueRef textMarkerRangeMatchesTextNearMarkersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef searchText = nullptr;
+    RefPtr<OpaqueJSString> searchText;
     AccessibilityTextMarker* startMarker = nullptr;
     AccessibilityTextMarker* endMarker = nullptr;
     if (argumentCount == 3) {
-        searchText = JSValueToStringCopy(context, arguments[0], exception);
+        searchText = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
         startMarker = toTextMarker(JSValueToObject(context, arguments[1], exception));
         endMarker = toTextMarker(JSValueToObject(context, arguments[2], exception));
     }
 
-    JSValueRef result = AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->textMarkerRangeMatchesTextNearMarkers(searchText, startMarker, endMarker));
-    if (searchText)
-        JSStringRelease(searchText);
-    return result;
+    return AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->textMarkerRangeMatchesTextNearMarkers(searchText.get(), startMarker, endMarker));
 }
 
 static JSValueRef getIsInsertionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -1726,8 +1696,8 @@ static JSValueRef getEmbeddedImageDescription(JSContextRef context, JSObjectRef 
 
 // Unsupported methods on various platforms.
 #if !PLATFORM(MAC)
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line) { return 0; }
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
+RefPtr<OpaqueJSString> AccessibilityUIElement::rangeForLine(int line) { return nullptr; }
+RefPtr<OpaqueJSString> AccessibilityUIElement::rangeForPosition(int, int) { return nullptr; }
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement*) const { }
 void AccessibilityUIElement::setSelectedChildAtIndex(unsigned) const { }
 void AccessibilityUIElement::removeSelectionAtIndex(unsigned) const { }
@@ -1737,8 +1707,8 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 #endif
 
 #if !PLATFORM(COCOA)
-JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs() { return nullptr; }
-JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const { return 0; }
+RefPtr<OpaqueJSString> AccessibilityUIElement::speakAs() { return nullptr; }
+RefPtr<OpaqueJSString> AccessibilityUIElement::pathDescription() const { return nullptr; }
 void AccessibilityUIElement::setValue(JSStringRef) { }
 void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<AccessibilityUIElement>&) const { }
 #endif
@@ -1839,17 +1809,17 @@ AccessibilityTextMarker AccessibilityUIElement::nextTextMarker(AccessibilityText
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
-{
-    return 0;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck)
+RefPtr<OpaqueJSString> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    return nullptr;
+}
+
+RefPtr<OpaqueJSString> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck)
 {
     return nullptr;
 }
@@ -1955,12 +1925,12 @@ AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeMatchesTextN
 
 #if PLATFORM(IOS_FAMILY) || !SUPPORTS_AX_TEXTMARKERS
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::textMarkerDebugDescription(AccessibilityTextMarker*)
+RefPtr<OpaqueJSString> AccessibilityUIElement::textMarkerDebugDescription(AccessibilityTextMarker*)
 {
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*)
+RefPtr<OpaqueJSString> AccessibilityUIElement::textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*)
 {
     return nullptr;
 }

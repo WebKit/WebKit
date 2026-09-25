@@ -505,9 +505,9 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
     });
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerMac::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool isVertical) const
+RefPtr<OpaqueJSString> UIScriptControllerMac::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool isVertical) const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarStateForScrollingNodeID:scrollingNodeID processID:processID isVertical:isVertical]));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarStateForScrollingNodeID:scrollingNodeID processID:processID isVertical:isVertical]));
 }
 
 void UIScriptControllerMac::setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue)

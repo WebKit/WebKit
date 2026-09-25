@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <atomic>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>

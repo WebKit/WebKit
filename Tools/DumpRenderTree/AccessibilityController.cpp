@@ -102,14 +102,11 @@ static JSValueRef getElementAtPointCallback(JSContextRef context, JSObjectRef fu
 
 static JSValueRef getAccessibleElementByIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef idAttribute = 0;
+    RefPtr<OpaqueJSString> idAttribute;
     if (argumentCount == 1)
-        idAttribute = JSValueToStringCopy(context, arguments[0], exception);
+        idAttribute = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSValueRef result = AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->accessibleElementById(idAttribute));
-    if (idAttribute)
-        JSStringRelease(idAttribute);
-    return result;
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->accessibleElementById(idAttribute.get()));
 }
 
 static JSValueRef addNotificationListenerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -147,8 +144,8 @@ static JSValueRef getEnhancedAccessibilityEnabledCallback(JSContextRef context, 
 static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> platformName(controller->platformName());
-    if (!platformName.get())
+    RefPtr platformName = controller->platformName();
+    if (!platformName)
         return JSValueMakeUndefined(context);
     return JSValueMakeString(context, platformName.get());
 }

@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRefCPP.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -44,7 +43,7 @@ TEST(WebKitLegacy, DOMNodeFromJSObject)
     WebScriptWorld *isolatedWorld = [WebScriptWorld world];
     JSGlobalContextRef context = [[webView mainFrame] _globalContextForScriptWorld:isolatedWorld];
 
-    JSRetainPtr script = createJSString("document.body"_s);
+    RefPtr script = createJSString("document.body"_s);
 
     JSValueRef value = JSEvaluateScript(context, script.get(), 0, 0, 0, 0);
     JSObjectRef jsBody = JSValueToObject(context, value, 0);

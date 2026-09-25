@@ -36,13 +36,13 @@
 #import "JSContextRefInternal.h"
 #import "JSGlobalObject.h"
 #import "JSModuleLoader.h"
-#import "JSRetainPtr.h"
 #import "JSScriptInternal.h"
 #import "JSValueInternal.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSWrapperMap.h"
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
+#import "OpaqueJSString.h"
 #import "StrongInlines.h"
 #import "TopExceptionScope.h"
 #import <wtf/RetainPtr.h>
@@ -259,13 +259,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 - (NSString *)name
 {
-    // FIXME: This looks like a static analysis false positive (rdar://145661220).
-    SUPPRESS_UNCOUNTED_ARG auto name = adopt(JSGlobalContextCopyName(m_context));
+    RefPtr name = adoptRef(JSGlobalContextCopyName(m_context));
     if (!name)
         return nil;
 
-    // FIXME: This looks like a static analysis false positive (rdar://145661220).
-    SUPPRESS_UNCOUNTED_ARG return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name.get())).bridgingAutorelease();
+    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name.get())).bridgingAutorelease();
 }
 
 - (void)setName:(NSString *)name

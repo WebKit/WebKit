@@ -32,8 +32,8 @@
 #include "StringFunctions.h"
 #include "WPTFunctions.h"
 #include "WebCoreTestSupport.h"
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <cmath>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKArray.h>
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundleBackForwardList.h>
@@ -777,7 +777,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
 
             auto blockedURL = sanitizeExternalURL(urlString.get());
             auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
-            auto scriptRef = adopt(JSStringCreateWithUTF8CString(script.utf8().legacyCStringPointer()));
+            RefPtr scriptRef = adoptRef(JSStringCreateWithUTF8CString(script.utf8().legacyCStringPointer()));
             JSEvaluateScript(jsContext, scriptRef.get(), 0, 0, 0, 0);
             return nullptr;
         }

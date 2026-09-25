@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <initializer_list>
 #include <optional>
@@ -37,8 +37,8 @@ std::optional<double> toOptionalDouble(JSContextRef, JSValueRef);
 
 bool isValidValue(JSContextRef, JSValueRef);
 
-JSRetainPtr<JSStringRef> createJSString(const char* = "");
-JSRetainPtr<JSStringRef> createJSString(JSContextRef, JSValueRef);
+RefPtr<OpaqueJSString> createJSString(const char* = "");
+RefPtr<OpaqueJSString> createJSString(JSContextRef, JSValueRef);
 
 JSValueRef makeValue(JSContextRef, const char*);
 JSValueRef makeValue(JSContextRef, std::optional<bool>);
@@ -47,7 +47,7 @@ JSValueRef makeValue(JSContextRef, JSStringRef);
 JSValueRef property(JSContextRef, JSObjectRef, const char* name);
 bool booleanProperty(JSContextRef, JSObjectRef, const char* name, bool defaultValue = false);
 double numericProperty(JSContextRef, JSObjectRef, const char* name);
-JSRetainPtr<JSStringRef> stringProperty(JSContextRef, JSObjectRef, const char* name);
+RefPtr<OpaqueJSString> stringProperty(JSContextRef, JSObjectRef, const char* name);
 unsigned arrayLength(JSContextRef, JSObjectRef);
 JSObjectRef objectProperty(JSContextRef, JSObjectRef, const char* name);
 JSObjectRef objectProperty(JSContextRef, JSObjectRef, std::initializer_list<const char*> names);

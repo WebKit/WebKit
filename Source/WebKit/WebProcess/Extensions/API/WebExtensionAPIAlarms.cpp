@@ -48,12 +48,11 @@ static inline JSValueRef toWebAPI(JSContextRef context, const WebExtensionAlarmP
 {
     JSObjectRef result = JSObjectMake(context, 0, 0);
 
-    // Static analysis doesn't recognize JSRetainPtr.
-    SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(nameKey).get(), toJSValueRef(context, alarm.name), 0, nullptr);
-    SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(scheduledTimeKey).get(), JSValueMakeNumber(context, floor(alarm.nextScheduledTime.approximate<WallTime>().secondsSinceEpoch().milliseconds())), 0, nullptr);
+    JSObjectSetProperty(context, result, toJSString(nameKey).get(), toJSValueRef(context, alarm.name), 0, nullptr);
+    JSObjectSetProperty(context, result, toJSString(scheduledTimeKey).get(), JSValueMakeNumber(context, floor(alarm.nextScheduledTime.approximate<WallTime>().secondsSinceEpoch().milliseconds())), 0, nullptr);
 
     if (alarm.repeatInterval)
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, toJSString(periodInMinutesKey).get(), JSValueMakeNumber(context, alarm.repeatInterval.minutes()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(periodInMinutesKey).get(), JSValueMakeNumber(context, alarm.repeatInterval.minutes()), 0, nullptr);
 
     return result;
 }

@@ -72,8 +72,7 @@ JSValueRef WebExtensionAPITest::invokeMethod(JSContextRef context, JSValueRef va
     if (!thisObject || (exception && *exception))
         return JSValueMakeUndefined(context);
 
-    // This is a safer cpp false positive (rdar://163760990).
-    SUPPRESS_UNCOUNTED_ARG JSValueRef function = JSObjectGetProperty(context, thisObject, toJSString(method).get(), exception);
+    JSValueRef function = JSObjectGetProperty(context, thisObject, toJSString(method).get(), exception);
     if (!function || (exception && *exception))
         return JSValueMakeUndefined(context);
 
@@ -305,9 +304,8 @@ void WebExtensionAPITest::assertThrows(JSContextRef context, JSValueRef function
     if (JSValueIsObject(context, exceptionValue)) {
         JSObjectRef object = JSValueToObject(context, exceptionValue, nullptr);
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG if (JSObjectHasProperty(context, object, toJSString("message"_s).get()))
-            SUPPRESS_UNCOUNTED_ARG exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_s).get(), 0);
+        if (JSObjectHasProperty(context, object, toJSString("message"_s).get()))
+            exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_s).get(), 0);
     }
 
     // Clear the exception since it was caught.
@@ -341,9 +339,8 @@ JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef func
     if (JSValueIsObject(context, exceptionValue)) {
         JSObjectRef object = JSValueToObject(context, exceptionValue, nullptr);
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG if (JSObjectHasProperty(context, object, toJSString("message"_s).get()))
-            SUPPRESS_UNCOUNTED_ARG exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_s).get(), 0);
+        if (JSObjectHasProperty(context, object, toJSString("message"_s).get()))
+            exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_s).get(), 0);
     }
 
     // Clear the exception since it was caught.
@@ -375,8 +372,7 @@ JSValueRef WebExtensionAPITest::runTests(JSContextRef context, Vector<Protected<
     for (Protected<JSValueRef> testFunction : testFunctions)
         invokeMethod<1>(context, testResultPromises, "push"_s, { addTest(context, testFunction.get(), "test.runTests()"_s) });
 
-    // This is a safer cpp false positive (rdar://163760990).
-    SUPPRESS_UNCOUNTED_ARG return invokeMethod<1>(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), toJSString("Promise"_s).get(), nullptr), "all"_s, { testResultPromises });
+    return invokeMethod<1>(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), toJSString("Promise"_s).get(), nullptr), "all"_s, { testResultPromises });
 }
 
 void WebExtensionAPITest::recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, String& outExceptionString)

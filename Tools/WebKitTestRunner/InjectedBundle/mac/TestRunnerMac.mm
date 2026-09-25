@@ -35,12 +35,12 @@ void TestRunner::platformInitialize()
 {
 }
 
-JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
+RefPtr<OpaqueJSString> TestRunner::pathToLocalResource(JSStringRef url)
 {
     return url; // Do nothing on Cocoa.
 }
 
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+RefPtr<OpaqueJSString> TestRunner::inspectorTestStubURL()
 {
 #if PLATFORM(IOS_FAMILY)
     return nullptr;
@@ -49,7 +49,7 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
     if (!inspectorBundle)
         return nullptr;
     auto resourceURL = adoptCF(CFBundleCopyResourceURL(inspectorBundle, CFSTR("TestStub"), CFSTR("html"), NULL));
-    return resourceURL ? adopt(JSStringCreateWithCFString(CFURLGetString(resourceURL.get()))) : nullptr;
+    return resourceURL ? adoptRef(JSStringCreateWithCFString(CFURLGetString(resourceURL.get()))) : nullptr;
 #endif
 }
 

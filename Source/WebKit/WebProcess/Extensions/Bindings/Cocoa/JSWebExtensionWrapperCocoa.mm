@@ -37,7 +37,6 @@
 #import "WebFrame.h"
 #import "WebPage.h"
 #import <JavaScriptCore/JSObjectRef.h>
-#import <JavaScriptCore/OpaqueJSString.h>
 
 #import "JSWebExtensionWrappable.h"
 #import "WebExtensionAPIRuntime.h"
@@ -105,11 +104,10 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:propertyNameCount];
 
     for (size_t i = 0; i < propertyNameCount; ++i) {
-        JSRetainPtr propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNames, i);
+        RefPtr propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNames, i);
         if (!propertyName)
             continue;
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG JSValueRef item = JSObjectGetProperty(context, object, propertyName.get(), 0);
+        JSValueRef item = JSObjectGetProperty(context, object, propertyName.get(), 0);
 
         // Chrome does not include null values in dictionaries for web extensions.
         if (nullPolicy == NullValuePolicy::NotAllowed && JSValueIsNull(context, item))

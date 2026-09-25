@@ -105,8 +105,7 @@ void WebExtensionAPIAction::getTitle(NSDictionary *details, Ref<WebExtensionCall
             return;
         }
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
+        callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
     }, extensionContext().identifier());
 }
 
@@ -165,8 +164,7 @@ void WebExtensionAPIAction::getBadgeText(NSDictionary *details, Ref<WebExtension
             return;
         }
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
+        callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
     }, extensionContext().identifier());
 }
 
@@ -615,8 +613,7 @@ void WebExtensionAPIAction::getPopup(NSDictionary *details, Ref<WebExtensionCall
             return;
         }
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
+        callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
     }, extensionContext().identifier());
 }
 

@@ -29,7 +29,6 @@
 // way JSStringRefCF.h bridges it to CFString. Unlike its siblings this header is C++ only,
 // so it is not wrapped in extern "C".
 
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <wtf/StdLibExtras.h>
@@ -48,34 +47,32 @@ inline UTF8CString utf8CString(JSStringRef string)
 }
 
 // Counterparts to JSStringCreateWithUTF8CString(), taking the encoding in the type and
-// returning an owning JSRetainPtr so that the reference cannot be leaked. Like that function
+// returning an owning RefPtr so that the reference cannot be leaked. Like that function
 // these never return null: a string that cannot be represented becomes an empty JSString.
 //
 // A JSString stores a String, so the characters are handed straight over rather than transcoded,
 // and an rvalue is moved into place. Reaching one from UTF-8 has to decode, which is the same
 // cost JSStringCreateWithUTF8CString() pays.
-inline JSRetainPtr<JSStringRef> createJSString(String&& string)
+inline RefPtr<OpaqueJSString> createJSString(String&& string)
 {
-    // adopt() consumes the +1 that leakRef() hands over, but the checker does not know it the way
-    // it knows adoptRef(), so JSRetainPtr.h is itself listed in UncountedCallArgsCheckerExpectations.
     if (RefPtr result = OpaqueJSString::tryCreate(WTF::move(string)))
-        SUPPRESS_UNCOUNTED_ARG return adopt(result.leakRef());
-    SUPPRESS_UNCOUNTED_ARG return adopt(&OpaqueJSString::create().leakRef());
+        return result;
+    return OpaqueJSString::create();
 }
 
-inline JSRetainPtr<JSStringRef> createJSString(const String& string)
+inline RefPtr<OpaqueJSString> createJSString(const String& string)
 {
     return createJSString(String { string });
 }
 
 // Required rather than merely convenient: ASCIILiteral converts implicitly to both String and
 // UTF8CString, so without this overload the call would be ambiguous.
-inline JSRetainPtr<JSStringRef> createJSString(ASCIILiteral literal)
+inline RefPtr<OpaqueJSString> createJSString(ASCIILiteral literal)
 {
     return createJSString(String { literal });
 }
 
-inline JSRetainPtr<JSStringRef> createJSString(const UTF8CString& string)
+inline RefPtr<OpaqueJSString> createJSString(const UTF8CString& string)
 {
     return createJSString(String { string });
 }

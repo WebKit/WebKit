@@ -30,7 +30,6 @@
 
 #import "DictionaryFunctions.h"
 #import "InjectedBundle.h"
-#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSValueRef.h>
 #import <JavaScriptCore/OpaqueJSString.h>
@@ -262,7 +261,7 @@ bool AccessibilityUIElementClientMac::isValid() const
     return m_elementToken;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::getStringAttribute(const char* attributeName) const
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::getStringAttribute(const char* attributeName) const
 {
     if (!isValid())
         return nullptr;
@@ -271,10 +270,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::getStringAttribute(con
     if (!value)
         return nullptr;
 
-    return JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::tryCreate(toWTFString(value.get())).leakRef());
+    return OpaqueJSString::tryCreate(toWTFString(value.get()));
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::role()
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::role()
 {
     if (!isValid())
         return nullptr;
@@ -285,35 +284,35 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::role()
 
     String roleString = toWTFString(value.get());
     String result = makeString("AXRole: "_s, roleString);
-    return JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::tryCreate(result).leakRef());
+    return OpaqueJSString::tryCreate(result);
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::title()
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::title()
 {
     return getStringAttribute("AXTitle");
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::description()
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::description()
 {
     return getStringAttribute("AXDescription");
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::debugDescription()
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::debugDescription()
 {
     return getStringAttribute("_AXDebugDescription");
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::rawRoleForTesting()
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::rawRoleForTesting()
 {
     return getStringAttribute("_AXRawRoleForTesting");
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::stringValue()
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::stringValue()
 {
     return getStringAttribute("AXValue");
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementClientMac::domIdentifier() const
+RefPtr<OpaqueJSString> AccessibilityUIElementClientMac::domIdentifier() const
 {
     return getStringAttribute("AXDOMIdentifier");
 }
@@ -470,7 +469,7 @@ JSValueRef AccessibilityUIElementClientMac::uiElementsForSearchPredicate(JSConte
     WTR::setValue(dictionary, "immediateDescendantsOnly", immediateDescendantsOnly);
 
     if (searchKey && JSValueIsString(context, searchKey)) {
-        JSRetainPtr<JSStringRef> jsStr(Adopt, JSValueToStringCopy(context, searchKey, nullptr));
+        RefPtr jsStr = adoptRef(JSValueToStringCopy(context, searchKey, nullptr));
         WTR::setValue(dictionary, "searchKey", jsStr.get());
     }
 

@@ -30,7 +30,6 @@
 #import "InjectedBundleTest.h"
 
 #import "Helpers/PlatformUtilities.h"
-#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRefCPP.h>
 #import <WebKit/WKBundleFrame.h>
 #import <WebKit/WKBundlePage.h>
@@ -65,10 +64,10 @@ public:
 
         auto mainFrame = WKBundlePageGetMainFrame(m_page);
         auto scriptContext = WKBundleFrameGetJavaScriptContext(mainFrame);
-        JSRetainPtr script = createJSString("window.getComputedStyle(document.body).getPropertyValue('color')"_s);
+        RefPtr script = createJSString("window.getComputedStyle(document.body).getPropertyValue('color')"_s);
 
         auto result = JSEvaluateScript(scriptContext, script.get(), nullptr, nullptr, 0, nullptr);
-        auto resultString = adopt(JSValueToStringCopy(scriptContext, result, nullptr));
+        RefPtr resultString = adoptRef(JSValueToStringCopy(scriptContext, result, nullptr));
 
         auto computedColor = utf8CString(resultString.get());
 

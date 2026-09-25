@@ -31,7 +31,7 @@
 
 #import "AccessibilityTextMarkerRange.h"
 #import "AccessibilityUIElement.h"
-#import <JavaScriptCore/JSRetainPtr.h>
+#import <JavaScriptCore/JSStringRefPtr.h>
 
 // If an unsupported attribute is passed in, it will raise an accessibility exception. These are usually caught by the Accessibility Runtime to inform
 // the AX client app of the error. However, DRT is the AX client app, so it must catch these exceptions.
@@ -44,7 +44,7 @@
 
 @interface NSString (JSStringRefAdditions)
 + (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
-- (JSRetainPtr<JSStringRef>)createJSStringRef;
+- (RefPtr<OpaqueJSString>)createJSStringRef;
 @end
 
 namespace WTR {

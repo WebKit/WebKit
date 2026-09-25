@@ -53,9 +53,9 @@
     return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef)).bridgingAutorelease();
 }
 
-- (JSRetainPtr<JSStringRef>)createJSStringRef
+- (RefPtr<OpaqueJSString>)createJSStringRef
 {
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
+    return adoptRef(JSStringCreateWithCFString((__bridge CFStringRef)self));
 }
 
 @end

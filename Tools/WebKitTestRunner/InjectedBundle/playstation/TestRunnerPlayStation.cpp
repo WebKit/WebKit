@@ -28,14 +28,14 @@
 
 namespace WTR {
 
-JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef)
+RefPtr<OpaqueJSString> TestRunner::pathToLocalResource(JSStringRef)
 {
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+RefPtr<OpaqueJSString> TestRunner::inspectorTestStubURL()
 {
-    return JSStringCreateWithUTF8CString("");
+    return adoptRef(JSStringCreateWithUTF8CString(""));
 }
 
 void TestRunner::platformInitialize()

@@ -52,11 +52,9 @@
 #include <JavaScriptCore/JSClassRef.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <JavaScriptCore/JavaScript.h>
-#include <JavaScriptCore/OpaqueJSString.h>
 #include <JavaScriptCore/TopExceptionScope.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/JSDOMGlobalObject.h>

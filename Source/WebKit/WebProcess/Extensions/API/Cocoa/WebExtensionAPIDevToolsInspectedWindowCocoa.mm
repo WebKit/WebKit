@@ -80,7 +80,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPage
         if (!result.value()) {
             // If an error occurred, element 0 will be undefined, and element 1 will contain an object giving details about the error.
             String valueKey = result.value().error() ? result.value().error()->message : emptyString();
-            SUPPRESS_UNCOUNTED_ARG auto valueData = JSValueMakeString(globalContext, toJSString(valueKey).get());
+            auto valueData = JSValueMakeString(globalContext, toJSString(valueKey).get());
             SUPPRESS_UNCOUNTED_ARG auto resultObject = fromObject(globalContext, {
                 { "isExceptionKey"_s, Protected(globalContext, JSValueMakeBoolean(globalContext, true)) },
                 { "valueKey"_s, Protected(globalContext, valueData) }

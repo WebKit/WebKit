@@ -26,7 +26,8 @@
 #pragma once
 
 #include "JSWrappable.h"
-#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
+#include <JavaScriptCore/JavaScript.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,23 +65,23 @@ struct TextExtractionTestOptions {
     bool includeURLs { false };
     bool includeSelectOptions { false };
     bool shortenURLs { false };
-    JSRetainPtr<JSStringRef> nodeIdentifierInclusion;
+    RefPtr<OpaqueJSString> nodeIdentifierInclusion;
     JSValueRef eventListenerCategories { nullptr };
     bool includeAccessibilityAttributes { false };
     bool includeTextInAutoFilledControls { false };
     bool includeOffscreenPasswordFields { false };
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
-    JSRetainPtr<JSStringRef> outputFormat;
+    RefPtr<OpaqueJSString> outputFormat;
     JSValueRef dataDetectorTypes { nullptr };
-    JSRetainPtr<JSStringRef> wordLimitPolicy;
+    RefPtr<OpaqueJSString> wordLimitPolicy;
 };
 
 TextExtractionTestOptions* toTextExtractionTestOptions(JSContextRef, JSValueRef);
 
 struct TextExtractionInteractionOptions {
-    JSRetainPtr<JSStringRef> nodeIdentifier;
-    JSRetainPtr<JSStringRef> text;
+    RefPtr<OpaqueJSString> nodeIdentifier;
+    RefPtr<OpaqueJSString> text;
     std::optional<std::pair<double, double>> location;
     std::optional<std::pair<double, double>> scrollDelta;
     bool replaceAll { false };
@@ -204,14 +205,14 @@ public:
 
     virtual JSObjectRef adjustedContentInset() const { notImplemented(); return nullptr; }
 
-    virtual JSRetainPtr<JSStringRef> scrollingTreeAsText() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> scrollingTreeIncludingNodeIDsAsText() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> uiViewTreeAsText() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> caLayerTreeAsText() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> caLayerTreeAsTextForLayerWithID(unsigned long long) const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> uiViewTreeAsTextForViewWithLayerID(unsigned long long) const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> scrollingTreeAsText() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> scrollingTreeIncludingNodeIDsAsText() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> uiViewTreeAsText() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> caLayerTreeAsText() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> caLayerTreeAsTextForLayerWithID(unsigned long long) const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> uiViewTreeAsTextForViewWithLayerID(unsigned long long) const { notImplemented(); return nullptr; }
 
-    virtual JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long, unsigned long long, bool) const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> scrollbarStateForScrollingNodeID(unsigned long long, unsigned long long, bool) const { notImplemented(); return nullptr; }
 
     virtual void setAlwaysBounceVertical(bool) { notImplemented(); }
     virtual void setAlwaysBounceHorizontal(bool) { notImplemented(); }
@@ -262,7 +263,7 @@ public:
         return false;
     }
 
-    virtual JSRetainPtr<JSStringRef> selectionCaretBackgroundColor() const
+    virtual RefPtr<OpaqueJSString> selectionCaretBackgroundColor() const
     {
         notImplemented();
         return { };
@@ -324,9 +325,9 @@ public:
     virtual void dismissFormAccessoryView() { notImplemented(); }
     virtual void selectFormAccessoryPickerRow(long) { notImplemented(); }
     virtual bool selectFormAccessoryHasCheckedItemAtRow(long) const { return false; }
-    virtual JSRetainPtr<JSStringRef> textContentType() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> selectFormPopoverTitle() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> formInputLabel() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> textContentType() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> selectFormPopoverTitle() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> formInputLabel() const { notImplemented(); return nullptr; }
     virtual void setTimePickerValue(long, long) { notImplemented(); }
     virtual double timePickerValueHour() const { notImplemented(); return -1; }
     virtual double timePickerValueMinute() const { notImplemented(); return -1; }
@@ -358,7 +359,7 @@ public:
     virtual void simulateAccessibilitySettingsChangeNotification(JSValueRef) { notImplemented(); }
     virtual void simulateAvailableSpeechVoicesDidChangeOnBackgroundThread(JSValueRef) { notImplemented(); }
     virtual void retrieveSpeakSelectionContent(JSValueRef) { notImplemented(); }
-    virtual JSRetainPtr<JSStringRef> accessibilitySpeakSelectionContent() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> accessibilitySpeakSelectionContent() const { notImplemented(); return nullptr; }
     virtual JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const { notImplemented(); return nullptr; }
 
     // Swipe
@@ -400,8 +401,8 @@ public:
 
     // Undo/Redo
 
-    virtual JSRetainPtr<JSStringRef> lastUndoLabel() const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> firstRedoLabel() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> lastUndoLabel() const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> firstRedoLabel() const { notImplemented(); return nullptr; }
 
     // Attachment Elements
 
@@ -485,15 +486,15 @@ public:
     virtual void adjustVisibilityForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
     virtual void resetVisibilityAdjustments(JSValueRef) { notImplemented(); }
 
-    virtual JSRetainPtr<JSStringRef> frontmostViewAtPoint(int, int) { notImplemented(); return { }; }
+    virtual RefPtr<OpaqueJSString> frontmostViewAtPoint(int, int) { notImplemented(); return { }; }
 
     virtual bool didCallEnsurePositionInformationIsUpToDateSinceLastCheck() const { notImplemented(); return false; }
     virtual void clearEnsurePositionInformationIsUpToDateTracking() { notImplemented(); }
 
 #if ENABLE(THREADED_ANIMATIONS)
     // Animations
-    virtual JSRetainPtr<JSStringRef> animationStackForLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> progressBasedTimelinesForScrollingNodeID(unsigned long long, unsigned long long) const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> animationStackForLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
+    virtual RefPtr<OpaqueJSString> progressBasedTimelinesForScrollingNodeID(unsigned long long, unsigned long long) const { notImplemented(); return nullptr; }
 #endif
     virtual bool displayLinkWantsHighFrameRate() const { notImplemented(); return false; };
 

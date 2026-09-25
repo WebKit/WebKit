@@ -5,7 +5,6 @@ API/JSCallbackObjectFunctions.h
 API/JSClassRef.cpp
 API/JSContextRef.cpp
 API/JSObjectRef.cpp
-API/JSRetainPtr.h
 API/JSScript.mm
 API/JSTypedArray.cpp
 API/JSWrapperMap.mm

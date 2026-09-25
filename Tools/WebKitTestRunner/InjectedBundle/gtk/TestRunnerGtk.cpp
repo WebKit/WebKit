@@ -39,22 +39,22 @@ void TestRunner::platformInitialize()
 {
 }
 
-JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
+RefPtr<OpaqueJSString> TestRunner::pathToLocalResource(JSStringRef url)
 {
     auto urlString = utf8CString(url);
 
     if (!g_str_has_prefix(urlString.legacyCStringPointer(), "file:///tmp/LayoutTests/"))
-        return JSStringRetain(url);
+        return url;
 
     const gchar* layoutTestsSuffix = urlString.legacyCStringPointer() + strlen("file:///tmp/");
     GUniquePtr<gchar> testPath(g_build_filename(FileSystem::webkitTopLevelDirectory().legacyCStringPointer(), layoutTestsSuffix, nullptr));
     GUniquePtr<gchar> testURI(g_filename_to_uri(testPath.get(), 0, 0));
-    return JSStringCreateWithUTF8CString(testURI.get());
+    return adoptRef(JSStringCreateWithUTF8CString(testURI.get()));
 }
 
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+RefPtr<OpaqueJSString> TestRunner::inspectorTestStubURL()
 {
-    return JSStringCreateWithUTF8CString("resource:///org/webkit/inspector/UserInterface/TestStub.html");
+    return adoptRef(JSStringCreateWithUTF8CString("resource:///org/webkit/inspector/UserInterface/TestStub.html"));
 }
 
 } // namespace WTR

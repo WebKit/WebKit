@@ -149,7 +149,7 @@ static RefPtr<AccessibilityUIElement> findElementByIdRecursive(AccessibilityUIEl
     if (!element || !element->isValid())
         return nullptr;
 
-    if (JSRetainPtr<JSStringRef> domId = element->domIdentifier()) {
+    if (RefPtr domId = element->domIdentifier()) {
         if (toWTFString(domId.get()) == targetId)
             return element;
     }
@@ -193,7 +193,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityController::platformName()
+RefPtr<OpaqueJSString> AccessibilityController::platformName()
 {
     return WTR::createJSString("mac");
 }

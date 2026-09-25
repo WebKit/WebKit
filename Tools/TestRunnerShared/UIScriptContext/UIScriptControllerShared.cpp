@@ -29,9 +29,7 @@
 #include "JSBasics.h"
 #include "JSUIScriptController.h"
 #include "UIScriptContext.h"
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSValueRef.h>
-#include <JavaScriptCore/OpaqueJSString.h>
 
 namespace WTR {
 

@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 
 class WorkQueueItem {
 public:
@@ -48,8 +48,8 @@ public:
 private:
     virtual bool invoke() const;
 
-    JSRetainPtr<JSStringRef> m_url;
-    JSRetainPtr<JSStringRef> m_target;
+    RefPtr<OpaqueJSString> m_url;
+    RefPtr<OpaqueJSString> m_target;
 };
 
 class LoadHTMLStringItem : public WorkQueueItem {
@@ -70,9 +70,9 @@ public:
 private:
     virtual bool invoke() const;
 
-    JSRetainPtr<JSStringRef> m_content;
-    JSRetainPtr<JSStringRef> m_baseURL;
-    JSRetainPtr<JSStringRef> m_unreachableURL;
+    RefPtr<OpaqueJSString> m_content;
+    RefPtr<OpaqueJSString> m_baseURL;
+    RefPtr<OpaqueJSString> m_unreachableURL;
 };
 
 class ReloadItem : public WorkQueueItem {
@@ -91,7 +91,7 @@ protected:
     virtual bool invoke() const;
 
 private:
-    JSRetainPtr<JSStringRef> m_script;
+    RefPtr<OpaqueJSString> m_script;
 };
 
 class LoadingScriptItem : public ScriptItem {

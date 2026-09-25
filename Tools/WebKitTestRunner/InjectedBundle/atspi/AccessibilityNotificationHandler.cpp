@@ -60,10 +60,10 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
         ALLOW_DEPRECATED_DECLARATIONS_END
         JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
 
-        JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(notificationName));
+        RefPtr jsNotificationEventName = adoptRef(JSStringCreateWithUTF8CString(notificationName));
         JSValueRef jsParameter = WTF::switchOn(parameter,
             [&](String& stringValue) -> JSValueRef {
-                JSRetainPtr<JSStringRef> jsStringValue(Adopt, OpaqueJSString::tryCreate(stringValue).get());
+                RefPtr jsStringValue = OpaqueJSString::tryCreate(stringValue);
                 return JSValueMakeString(jsContext, jsStringValue.get());
             },
             [&](bool& boolValue) -> JSValueRef {

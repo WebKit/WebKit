@@ -2,7 +2,6 @@ API/JSCallbackConstructor.h
 API/JSCallbackObject.h
 API/JSClassRef.h
 API/JSObjectRef.h
-API/JSRetainPtr.h
 bytecode/InlineCacheHandler.h
 bytecode/PropertyInlineCacheClearingWatchpoint.h
 bytecode/SharedJITStubSet.h

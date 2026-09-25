@@ -55,7 +55,7 @@ void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackI
 {
     m_currentScriptCallbackID = scriptCallbackID;
 
-    JSRetainPtr stringRef = ::createJSString(script);
+    RefPtr stringRef = ::createJSString(script);
 
     JSValueRef exception = nullptr;
     JSValueRef result = JSEvaluateScript(m_context.get(), stringRef.get(), 0, 0, 1, &exception);
@@ -161,7 +161,7 @@ void UIScriptContext::requestUIScriptCompletion(JSStringRef result)
         return;
 
     // This request for the UI script to complete is not fulfilled until the last non-persistent task for the parent callback is finished.
-    m_uiScriptResultsPendingCompletion.add(m_currentScriptCallbackID, result ? JSStringRetain(result) : nullptr);
+    m_uiScriptResultsPendingCompletion.add(m_currentScriptCallbackID, RefPtr { result });
 }
 
 void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
@@ -169,10 +169,8 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
     if (!currentParentCallbackIsPendingCompletion() || currentParentCallbackHasOutstandingAsyncTasks())
         return;
 
-    JSStringRef result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
-    String scriptResult({ reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(result)), JSStringGetLength(result) });
-    if (result)
-        JSStringRelease(result);
+    RefPtr result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
+    String scriptResult({ reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(result.get())), JSStringGetLength(result.get()) });
 
     m_delegate.uiScriptDidComplete(scriptResult, m_currentScriptCallbackID);
     

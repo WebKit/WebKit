@@ -28,6 +28,7 @@
 #include "AccessibilityUIElement.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
@@ -65,7 +66,7 @@ public:
     void enableEnhancedAccessibility(bool);
     bool enhancedAccessibilityEnabled();
 
-    JSRetainPtr<JSStringRef> platformName() const;
+    RefPtr<OpaqueJSString> platformName() const;
 
 #if PLATFORM(WIN)
     // Helper methods so this class can add the listeners on behalf of AccessibilityUIElement.

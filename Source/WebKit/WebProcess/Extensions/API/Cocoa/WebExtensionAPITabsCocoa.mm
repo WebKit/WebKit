@@ -918,13 +918,11 @@ void WebExtensionAPITabs::detectLanguage(WebPageProxyIdentifier webPageProxyIden
         }
 
         if (result.value().isEmpty()) {
-            // This is a safer cpp false positive (rdar://163760990).
-            SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(unknownLanguageValue).get()));
+            callback->call(JSValueMakeString(callback->globalContext(), toJSString(unknownLanguageValue).get()));
             return;
         }
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
+        callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value()).get()));
     }, extensionContext().identifier());
 }
 
@@ -967,13 +965,11 @@ void WebExtensionAPITabs::captureVisibleTab(WebPageProxyIdentifier webPageProxyI
         }
 
         if (result.value().isEmpty()) {
-            // This is a safer cpp false positive (rdar://163760990).
-            SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(emptyDataURLValue).get()));
+            callback->call(JSValueMakeString(callback->globalContext(), toJSString(emptyDataURLValue).get()));
             return;
         }
 
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value().string()).get()));
+        callback->call(JSValueMakeString(callback->globalContext(), toJSString(result.value().string()).get()));
     }, extensionContext().identifier());
 }
 

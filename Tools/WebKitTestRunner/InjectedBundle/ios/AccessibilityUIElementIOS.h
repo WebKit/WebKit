@@ -46,7 +46,7 @@ public:
     bool isValid() const override;
     bool isEqual(AccessibilityUIElement* otherElement) override;
 
-    JSRetainPtr<JSStringRef> domIdentifier() const override;
+    RefPtr<OpaqueJSString> domIdentifier() const override;
     RefPtr<AccessibilityUIElement> headerElementAtIndex(unsigned) override;
     RefPtr<AccessibilityUIElement> linkedElement() override;
     void getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement>>&);
@@ -72,25 +72,25 @@ public:
     RefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const override;
     unsigned selectedChildrenCount() const override;
 
-    JSRetainPtr<JSStringRef> allAttributes() override;
-    JSRetainPtr<JSStringRef> attributesOfLinkedUIElements() override;
+    RefPtr<OpaqueJSString> allAttributes() override;
+    RefPtr<OpaqueJSString> attributesOfLinkedUIElements() override;
     RefPtr<AccessibilityUIElement> titleUIElement() override;
     RefPtr<AccessibilityUIElement> parentElement() override;
 
-    JSRetainPtr<JSStringRef> attributesOfChildren() override;
-    JSRetainPtr<JSStringRef> parameterizedAttributeNames() override;
+    RefPtr<OpaqueJSString> attributesOfChildren() override;
+    RefPtr<OpaqueJSString> parameterizedAttributeNames() override;
 
-    JSRetainPtr<JSStringRef> role() override;
-    JSRetainPtr<JSStringRef> subrole() override;
-    JSRetainPtr<JSStringRef> roleDescription() override;
-    JSRetainPtr<JSStringRef> computedRoleString() override;
-    JSRetainPtr<JSStringRef> title() override;
-    JSRetainPtr<JSStringRef> description() override;
-    JSRetainPtr<JSStringRef> language() override;
-    JSRetainPtr<JSStringRef> stringValue() override;
-    JSRetainPtr<JSStringRef> accessibilityValue() const override;
-    JSRetainPtr<JSStringRef> helpText() const override;
-    JSRetainPtr<JSStringRef> orientation() const override;
+    RefPtr<OpaqueJSString> role() override;
+    RefPtr<OpaqueJSString> subrole() override;
+    RefPtr<OpaqueJSString> roleDescription() override;
+    RefPtr<OpaqueJSString> computedRoleString() override;
+    RefPtr<OpaqueJSString> title() override;
+    RefPtr<OpaqueJSString> description() override;
+    RefPtr<OpaqueJSString> language() override;
+    RefPtr<OpaqueJSString> stringValue() override;
+    RefPtr<OpaqueJSString> accessibilityValue() const override;
+    RefPtr<OpaqueJSString> helpText() const override;
+    RefPtr<OpaqueJSString> orientation() const override;
     double x() override;
     double y() override;
     double width() override;
@@ -98,9 +98,9 @@ public:
     double intValue() const override;
     double minValue() override;
     double maxValue() override;
-    JSRetainPtr<JSStringRef> valueDescription() override;
+    RefPtr<OpaqueJSString> valueDescription() override;
     int insertionPointLineNumber() override;
-    JSRetainPtr<JSStringRef> selectedTextRange() override;
+    RefPtr<OpaqueJSString> selectedTextRange() override;
     bool isEnabled() override;
     bool isRequired() const override;
 
@@ -125,22 +125,22 @@ public:
     bool isSingleLine() const override;
     bool isMultiLine() const override;
     bool hasPopup() const override;
-    JSRetainPtr<JSStringRef> popupValue() const override;
+    RefPtr<OpaqueJSString> popupValue() const override;
     int hierarchicalLevel() const override;
     double clickPointX() override;
     double clickPointY() override;
-    JSRetainPtr<JSStringRef> documentEncoding();
-    JSRetainPtr<JSStringRef> documentURI();
-    JSRetainPtr<JSStringRef> url() override;
+    RefPtr<OpaqueJSString> documentEncoding();
+    RefPtr<OpaqueJSString> documentURI();
+    RefPtr<OpaqueJSString> url() override;
 
-    JSRetainPtr<JSStringRef> classList() const override;
+    RefPtr<OpaqueJSString> classList() const override;
 
     // Additional platform-specific methods
-    JSRetainPtr<JSStringRef> identifier() override;
-    JSRetainPtr<JSStringRef> traits() override;
+    RefPtr<OpaqueJSString> identifier() override;
+    RefPtr<OpaqueJSString> traits() override;
     int elementTextPosition() override;
     int elementTextLength() override;
-    JSRetainPtr<JSStringRef> stringForSelection() override;
+    RefPtr<OpaqueJSString> stringForSelection() override;
     void increaseTextSelection() override;
     void decreaseTextSelection() override;
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement() override;
@@ -162,15 +162,15 @@ public:
 
     void assistiveTechnologySimulatedFocus() override;
 
-    JSRetainPtr<JSStringRef> customContent() const override;
-    JSRetainPtr<JSStringRef> brailleLabel() const override;
-    JSRetainPtr<JSStringRef> brailleRoleDescription() const override;
+    RefPtr<OpaqueJSString> customContent() const override;
+    RefPtr<OpaqueJSString> brailleLabel() const override;
+    RefPtr<OpaqueJSString> brailleRoleDescription() const override;
 
-    JSRetainPtr<JSStringRef> embeddedImageDescription() const override;
-    JSRetainPtr<JSStringRef> imageDataSize() const override;
-    JSRetainPtr<JSStringRef> imageDataForParameters(int resizeWidth, int resizeHeight) const override;
-    JSRetainPtr<JSStringRef> imageDataForParametersWithFormat(int resizeWidth, int resizeHeight, JSStringRef format) const override;
-    JSRetainPtr<JSStringRef> imageDataForSubrect(int resizeWidth, int resizeHeight, int left, int top, int width, int height) const override;
+    RefPtr<OpaqueJSString> embeddedImageDescription() const override;
+    RefPtr<OpaqueJSString> imageDataSize() const override;
+    RefPtr<OpaqueJSString> imageDataForParameters(int resizeWidth, int resizeHeight) const override;
+    RefPtr<OpaqueJSString> imageDataForParametersWithFormat(int resizeWidth, int resizeHeight, JSStringRef format) const override;
+    RefPtr<OpaqueJSString> imageDataForSubrect(int resizeWidth, int resizeHeight, int left, int top, int width, int height) const override;
     JSValueRef imageOverlayElements(JSContextRef) override;
 
     bool hasDocumentRoleAncestor() const;
@@ -185,8 +185,8 @@ public:
     JSValueRef selectedChildren(JSContextRef) override;
 
     // Attribute methods
-    JSRetainPtr<JSStringRef> stringDescriptionOfAttributeValue(JSStringRef attribute) override;
-    JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute) override;
+    RefPtr<OpaqueJSString> stringDescriptionOfAttributeValue(JSStringRef attribute) override;
+    RefPtr<OpaqueJSString> stringAttributeValue(JSStringRef attribute) override;
     double numberAttributeValue(JSStringRef attribute) override;
     JSValueRef uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute) override;
     RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const override;
@@ -202,9 +202,9 @@ public:
     RefPtr<AccessibilityUIElement> disclosedByRow() override;
 
     // Other methods
-    JSRetainPtr<JSStringRef> attributesOfDocumentLinks() override;
-    JSRetainPtr<JSStringRef> liveRegionRelevant() const override;
-    JSRetainPtr<JSStringRef> liveRegionStatus() const override;
+    RefPtr<OpaqueJSString> attributesOfDocumentLinks() override;
+    RefPtr<OpaqueJSString> liveRegionRelevant() const override;
+    RefPtr<OpaqueJSString> liveRegionStatus() const override;
     double pageX() override;
     double pageY() override;
 
@@ -224,42 +224,42 @@ public:
     RefPtr<AccessibilityUIElement> focusedElement() const override;
 
     // ARIA
-    JSRetainPtr<JSStringRef> currentStateValue() const override;
-    JSRetainPtr<JSStringRef> sortDirection() const override;
-    JSRetainPtr<JSStringRef> speakAs() override;
-    JSRetainPtr<JSStringRef> ariaDropEffects() const override;
+    RefPtr<OpaqueJSString> currentStateValue() const override;
+    RefPtr<OpaqueJSString> sortDirection() const override;
+    RefPtr<OpaqueJSString> speakAs() override;
+    RefPtr<OpaqueJSString> ariaDropEffects() const override;
 
     // Text/Range methods
-    JSRetainPtr<JSStringRef> lineRectsAndText() const override;
+    RefPtr<OpaqueJSString> lineRectsAndText() const override;
     int lineForIndex(int) override;
-    JSRetainPtr<JSStringRef> rangeForLine(int) override;
-    JSRetainPtr<JSStringRef> rangeForPosition(int x, int y) override;
-    JSRetainPtr<JSStringRef> boundsForRange(unsigned location, unsigned length) override;
-    JSRetainPtr<JSStringRef> stringForRange(unsigned location, unsigned length) override;
-    JSRetainPtr<JSStringRef> attributedStringForRange(unsigned location, unsigned length) override;
-    JSRetainPtr<JSStringRef> attributedStringForElement() override;
+    RefPtr<OpaqueJSString> rangeForLine(int) override;
+    RefPtr<OpaqueJSString> rangeForPosition(int x, int y) override;
+    RefPtr<OpaqueJSString> boundsForRange(unsigned location, unsigned length) override;
+    RefPtr<OpaqueJSString> stringForRange(unsigned location, unsigned length) override;
+    RefPtr<OpaqueJSString> attributedStringForRange(unsigned location, unsigned length) override;
+    RefPtr<OpaqueJSString> attributedStringForElement() override;
     bool attributedStringRangeIsMisspelled(unsigned location, unsigned length) override;
 
     // Search methods
     unsigned uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly) override;
     RefPtr<AccessibilityUIElement> uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly) override;
     JSValueRef uiElementsForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly, unsigned resultsLimit) override;
-    JSRetainPtr<JSStringRef> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity) override;
+    RefPtr<OpaqueJSString> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity) override;
 
     // Table attribute methods
-    JSRetainPtr<JSStringRef> attributesOfColumnHeaders() override;
-    JSRetainPtr<JSStringRef> attributesOfRowHeaders() override;
-    JSRetainPtr<JSStringRef> attributesOfColumns() override;
-    JSRetainPtr<JSStringRef> attributesOfRows() override;
-    JSRetainPtr<JSStringRef> attributesOfVisibleCells() override;
-    JSRetainPtr<JSStringRef> attributesOfHeader() override;
+    RefPtr<OpaqueJSString> attributesOfColumnHeaders() override;
+    RefPtr<OpaqueJSString> attributesOfRowHeaders() override;
+    RefPtr<OpaqueJSString> attributesOfColumns() override;
+    RefPtr<OpaqueJSString> attributesOfRows() override;
+    RefPtr<OpaqueJSString> attributesOfVisibleCells() override;
+    RefPtr<OpaqueJSString> attributesOfHeader() override;
 
     // Table cell methods
     int rowCount() override;
     int columnCount() override;
     int indexInTable() override;
-    JSRetainPtr<JSStringRef> rowIndexRange() override;
-    JSRetainPtr<JSStringRef> columnIndexRange() override;
+    RefPtr<OpaqueJSString> rowIndexRange() override;
+    RefPtr<OpaqueJSString> columnIndexRange() override;
     RefPtr<AccessibilityUIElement> cellForColumnAndRow(unsigned col, unsigned row) override;
 
     // Scrollbar methods
@@ -275,7 +275,7 @@ public:
     RefPtr<AccessibilityTextMarkerRange> intersectionWithSelectionRange() override;
     bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*) override;
     bool setSelectedTextRange(unsigned location, unsigned length) override;
-    JSRetainPtr<JSStringRef> textInputMarkedRange() const override;
+    RefPtr<OpaqueJSString> textInputMarkedRange() const override;
 
     // Action methods
     void increment() override;
@@ -296,18 +296,18 @@ public:
     bool removeNotificationListener() override;
 
     // Date/time
-    JSRetainPtr<JSStringRef> dateTimeValue() const override;
+    RefPtr<OpaqueJSString> dateTimeValue() const override;
 
     // Math
-    JSRetainPtr<JSStringRef> mathPostscriptsDescription() const override;
-    JSRetainPtr<JSStringRef> mathPrescriptsDescription() const override;
+    RefPtr<OpaqueJSString> mathPostscriptsDescription() const override;
+    RefPtr<OpaqueJSString> mathPrescriptsDescription() const override;
 
     // Path
-    JSRetainPtr<JSStringRef> pathDescription() const override;
-    JSRetainPtr<JSStringRef> pathAsBounds() const override;
+    RefPtr<OpaqueJSString> pathDescription() const override;
+    RefPtr<OpaqueJSString> pathAsBounds() const override;
 
     // Supported actions
-    JSRetainPtr<JSStringRef> supportedActions() const override;
+    RefPtr<OpaqueJSString> supportedActions() const override;
 
     // Insertion/deletion
     bool isInsertion() const override;
@@ -329,7 +329,7 @@ public:
     bool isTextMarkerValid(AccessibilityTextMarker*) override;
     RefPtr<AccessibilityTextMarker> previousTextMarker(AccessibilityTextMarker*) override;
     RefPtr<AccessibilityTextMarker> nextTextMarker(AccessibilityTextMarker*) override;
-    JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*) override;
+    RefPtr<OpaqueJSString> stringForTextMarkerRange(AccessibilityTextMarkerRange*) override;
     int textMarkerRangeLength(AccessibilityTextMarkerRange*) override;
     RefPtr<AccessibilityTextMarker> startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*) override;
     RefPtr<AccessibilityTextMarker> endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*) override;
@@ -340,10 +340,10 @@ public:
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*) override;
     RefPtr<AccessibilityTextMarkerRange> intersectTextMarkerRanges(AccessibilityTextMarkerRange*, AccessibilityTextMarkerRange*) override;
     int indexForTextMarker(AccessibilityTextMarker*) override;
-    JSRetainPtr<JSStringRef> rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef) override;
-    JSRetainPtr<JSStringRef> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*) override;
-    JSRetainPtr<JSStringRef> attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*) override;
-    JSRetainPtr<JSStringRef> attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool) override;
+    RefPtr<OpaqueJSString> rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef) override;
+    RefPtr<OpaqueJSString> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*) override;
+    RefPtr<OpaqueJSString> attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*) override;
+    RefPtr<OpaqueJSString> attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool) override;
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*) override;
     RefPtr<AccessibilityTextMarkerRange> lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) override;
     RefPtr<AccessibilityTextMarkerRange> leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*) override;

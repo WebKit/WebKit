@@ -30,7 +30,8 @@
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
 #include "JSCallbackObject.h"
-#include "JSRetainPtr.h"
+#include "JSStringRef.h"
+#include "OpaqueJSString.h"
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -264,7 +265,7 @@ static void getPropertyNames(JSContextRef callerContext, JSObjectRef object, JSP
             GUniquePtr<char*> properties(enumeratePropertiesFunction(jscClass, context.get(), instance));
             if (properties) {
                 for (auto* name : span(properties)) {
-                    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+                    RefPtr propertyName = adoptRef(JSStringCreateWithUTF8CString(name));
                     JSPropertyNameAccumulatorAddName(propertyNames, propertyName.get());
                 }
             }

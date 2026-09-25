@@ -28,7 +28,7 @@
 #include "JSCContextPrivate.h"
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
-#include "JSRetainPtr.h"
+#include "JSStringRef.h"
 #include "JSTypedArray.h"
 #include "LiteralParser.h"
 #include "MarkedVector.h"
@@ -349,7 +349,7 @@ JSCValue* jsc_value_new_string(JSCContext* context, const char* string)
 
     JSValueRef jsStringValue;
     if (string) {
-        JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithUTF8CString(string));
+        RefPtr jsString = adoptRef(JSStringCreateWithUTF8CString(string));
         jsStringValue = JSValueMakeString(jscContextGetJSContext(context), jsString.get());
     } else
         jsStringValue = JSValueMakeString(jscContextGetJSContext(context), nullptr);
@@ -373,7 +373,7 @@ JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
         return jsc_value_new_string(context, nullptr);
 
     auto string = String::fromUTF8(span(bytes));
-    JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::tryCreate(WTF::move(string)).leakRef());
+    RefPtr jsString = OpaqueJSString::tryCreate(WTF::move(string));
     return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
 
@@ -408,7 +408,7 @@ char* jsc_value_to_string(JSCValue* value)
 
     JSCValuePrivate* priv = value->priv;
     JSValueRef exception = nullptr;
-    JSRetainPtr<JSStringRef> jsString(Adopt, JSValueToStringCopy(jscContextGetJSContext(priv->context.get()), priv->jsValue, &exception));
+    RefPtr jsString = adoptRef(JSValueToStringCopy(jscContextGetJSContext(priv->context.get()), priv->jsValue, &exception));
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return nullptr;
 
@@ -440,7 +440,7 @@ GBytes* jsc_value_to_string_as_bytes(JSCValue* value)
 
     JSCValuePrivate* priv = value->priv;
     JSValueRef exception = nullptr;
-    JSRetainPtr<JSStringRef> jsString(Adopt, JSValueToStringCopy(jscContextGetJSContext(priv->context.get()), priv->jsValue, &exception));
+    RefPtr jsString = adoptRef(JSValueToStringCopy(jscContextGetJSContext(priv->context.get()), priv->jsValue, &exception));
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return nullptr;
 
@@ -684,7 +684,7 @@ void jsc_value_object_set_property(JSCValue* value, const char* name, JSCValue* 
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return;
 
-    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+    RefPtr propertyName = adoptRef(JSStringCreateWithUTF8CString(name));
     JSObjectSetProperty(jsContext, object, propertyName.get(), property->priv->jsValue, kJSPropertyAttributeNone, &exception);
     jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
 }
@@ -710,7 +710,7 @@ JSCValue* jsc_value_object_get_property(JSCValue* value, const char* name)
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+    RefPtr propertyName = adoptRef(JSStringCreateWithUTF8CString(name));
     JSValueRef result = JSObjectGetProperty(jsContext, object, propertyName.get(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
@@ -790,7 +790,7 @@ gboolean jsc_value_object_has_property(JSCValue* value, const char* name)
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return FALSE;
 
-    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+    RefPtr propertyName = adoptRef(JSStringCreateWithUTF8CString(name));
     return JSObjectHasProperty(jsContext, object, propertyName.get());
 }
 
@@ -816,7 +816,7 @@ gboolean jsc_value_object_delete_property(JSCValue* value, const char* name)
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return FALSE;
 
-    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+    RefPtr propertyName = adoptRef(JSStringCreateWithUTF8CString(name));
     gboolean result = JSObjectDeleteProperty(jsContext, object, propertyName.get(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return FALSE;
@@ -956,7 +956,7 @@ JSCValue* jsc_value_object_invoke_method(JSCValue* value, const char* name, GTyp
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    JSRetainPtr<JSStringRef> methodName(Adopt, JSStringCreateWithUTF8CString(name));
+    RefPtr methodName = adoptRef(JSStringCreateWithUTF8CString(name));
     JSValueRef functionValue = JSObjectGetProperty(jsContext, object, methodName.get(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
@@ -1004,7 +1004,7 @@ JSCValue* jsc_value_object_invoke_methodv(JSCValue* value, const char* name, uns
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    JSRetainPtr<JSStringRef> methodName(Adopt, JSStringCreateWithUTF8CString(name));
+    RefPtr methodName = adoptRef(JSStringCreateWithUTF8CString(name));
     JSValueRef functionValue = JSObjectGetProperty(jsContext, object, methodName.get(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
@@ -2123,7 +2123,7 @@ char* jsc_value_to_json(JSCValue* value, unsigned indent)
 
     JSCValuePrivate* priv = value->priv;
     JSValueRef exception = nullptr;
-    JSRetainPtr<JSStringRef> jsJSON(Adopt, JSValueCreateJSONString(jscContextGetJSContext(priv->context.get()), priv->jsValue, indent, &exception));
+    RefPtr jsJSON = adoptRef(JSValueCreateJSONString(jscContextGetJSContext(priv->context.get()), priv->jsValue, indent, &exception));
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return nullptr;
 

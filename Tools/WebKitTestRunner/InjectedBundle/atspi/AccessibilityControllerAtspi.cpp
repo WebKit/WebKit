@@ -73,9 +73,9 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityController::platformName()
+RefPtr<OpaqueJSString> AccessibilityController::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atspi"));
+    RefPtr platformName = adoptRef(JSStringCreateWithUTF8CString("atspi"));
     return platformName;
 }
 

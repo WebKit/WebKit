@@ -44,9 +44,9 @@
     return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef)).bridgingAutorelease();
 }
 
-- (JSRetainPtr<JSStringRef>)createJSStringRef
+- (RefPtr<OpaqueJSString>)createJSStringRef
 {
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
+    return adoptRef(JSStringCreateWithCFString((__bridge CFStringRef)self));
 }
 
 NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
@@ -62,7 +62,7 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
     if (searchKey) {
         id searchKeyParameter = nil;
         if (JSValueIsString(context, searchKey)) {
-            auto searchKeyString = adopt(JSValueToStringCopy(context, searchKey, nullptr));
+            RefPtr searchKeyString = adoptRef(JSValueToStringCopy(context, searchKey, nullptr));
             if (searchKeyString)
                 searchKeyParameter = [NSString stringWithJSStringRef:searchKeyString.get()];
         } else if (JSValueIsObject(context, searchKey)) {
@@ -70,12 +70,11 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
             unsigned searchKeyArrayLength = WTR::arrayLength(context, searchKeyArray);
             for (unsigned i = 0; i < searchKeyArrayLength; ++i) {
                 JSValueRef searchKeyValue = JSObjectGetPropertyAtIndex(context, searchKeyArray, i, nullptr);
-                JSStringRef searchKeyString = JSValueToStringCopy(context, searchKeyValue, nullptr);
+                RefPtr searchKeyString = adoptRef(JSValueToStringCopy(context, searchKeyValue, nullptr));
                 if (searchKeyString) {
                     if (!searchKeyParameter)
                         searchKeyParameter = [NSMutableArray array];
-                    [searchKeyParameter addObject:[NSString stringWithJSStringRef:searchKeyString]];
-                    JSStringRelease(searchKeyString);
+                    [searchKeyParameter addObject:[NSString stringWithJSStringRef:searchKeyString.get()]];
                 }
             }
         }

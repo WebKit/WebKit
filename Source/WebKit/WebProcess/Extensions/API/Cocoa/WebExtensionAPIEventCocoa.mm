@@ -66,10 +66,8 @@ void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argumen
     // Copy the listeners since call() can trigger a mutation of the listeners.
     auto listenersCopy = m_listeners;
 
-    for (RefPtr listener : listenersCopy) {
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG listener->call(!argument.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument).get()) : JSValueMakeUndefined(listener->globalContext()));
-    }
+    for (RefPtr listener : listenersCopy)
+        listener->call(!argument.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument).get()) : JSValueMakeUndefined(listener->globalContext()));
 }
 
 void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argument1, const String& argument2)
@@ -81,8 +79,7 @@ void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argumen
     auto listenersCopy = m_listeners;
 
     for (RefPtr listener : listenersCopy) {
-        // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG listener->call(
+        listener->call(
             toJSValueRef(listener->globalContext(), argument1),
             !argument2.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument2).get()) : JSValueMakeUndefined(listener->globalContext())
         );

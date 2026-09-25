@@ -24,7 +24,7 @@
 #include "JSCContextPrivate.h"
 #include "JSCExceptionPrivate.h"
 #include "JSCInlines.h"
-#include "JSRetainPtr.h"
+#include "JSStringRefPtr.h"
 #include "StrongInlines.h"
 #include <glib/gprintf.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -179,7 +179,7 @@ JSCException* jsc_exception_new_with_name(JSCContext* context, const char* name,
     auto* jsContext = jscContextGetJSContext(context);
     JSValueRef jsMessage = nullptr;
     if (message) {
-        JSRetainPtr<JSStringRef> jsMessageString(Adopt, JSStringCreateWithUTF8CString(message));
+        RefPtr jsMessageString = adoptRef(JSStringCreateWithUTF8CString(message));
         jsMessage = JSValueMakeString(jsContext, jsMessageString.get());
     }
 

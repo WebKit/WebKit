@@ -337,9 +337,9 @@ void UIScriptControllerIOS::retrieveSpeakSelectionContent(JSValueRef callback)
     }).get()];
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::accessibilitySpeakSelectionContent() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::accessibilitySpeakSelectionContent() const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)webView().accessibilitySpeakSelectionContent));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)webView().accessibilitySpeakSelectionContent));
 }
 
 void UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
@@ -781,19 +781,19 @@ void UIScriptControllerIOS::dismissFilePicker(JSValueRef callback)
     }).get()];
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectFormPopoverTitle() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::selectFormPopoverTitle() const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)webView().selectFormPopoverTitle));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)webView().selectFormPopoverTitle));
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::textContentType() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::textContentType() const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)(webView().textContentTypeForTesting ?: @"")));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)(webView().textContentTypeForTesting ?: @"")));
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::formInputLabel() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::formInputLabel() const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)webView().formInputLabel));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)webView().formInputLabel));
 }
 
 void UIScriptControllerIOS::selectFormAccessoryPickerRow(long rowIndex)
@@ -1168,19 +1168,19 @@ JSObjectRef UIScriptControllerIOS::inputViewBoundsInWebView() const
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(boundsInWebView) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollingTreeAsText() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::scrollingTreeAsText() const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::uiViewTreeAsText() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::uiViewTreeAsText() const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsText]));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsText]));
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::uiViewTreeAsTextForViewWithLayerID(unsigned long long layerID) const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::uiViewTreeAsTextForViewWithLayerID(unsigned long long layerID) const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsTextForViewWithLayerID:layerID]));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsTextForViewWithLayerID:layerID]));
 }
 
 bool UIScriptControllerIOS::mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height)
@@ -1619,7 +1619,7 @@ bool UIScriptControllerIOS::isAnimatingDragCancel() const
     return webView()._animatingDragCancel;
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::selectionCaretBackgroundColor() const
 {
     UIColor *backgroundColor = nil;
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
@@ -1631,7 +1631,7 @@ JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() 
         return nil;
 
     auto serialization = WebCoreTestSupport::serializationForCSS(backgroundColor).createCFString();
-    return adopt(JSStringCreateWithCFString(serialization.get()));
+    return adoptRef(JSStringCreateWithCFString(serialization.get()));
 }
 
 JSObjectRef UIScriptControllerIOS::tapHighlightViewRect() const
@@ -1842,15 +1842,15 @@ UITextSelectionDisplayInteraction *UIScriptControllerIOS::textSelectionDisplayIn
 #endif
 
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool isVertical) const
+RefPtr<OpaqueJSString> UIScriptControllerIOS::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool isVertical) const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarState:scrollingNodeID processID:processID isVertical:isVertical]));
+    return adoptRef(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarState:scrollingNodeID processID:processID isVertical:isVertical]));
 }
 
-JSRetainPtr<JSStringRef> UIScriptControllerIOS::frontmostViewAtPoint(int x, int y)
+RefPtr<OpaqueJSString> UIScriptControllerIOS::frontmostViewAtPoint(int x, int y)
 {
     if (RetainPtr view = [platformContentView() _wtr_frontmostViewAtPoint:CGPointMake(x, y)])
-        return adopt(JSStringCreateWithUTF8CString(class_getName([view class])));
+        return adoptRef(JSStringCreateWithUTF8CString(class_getName([view class])));
 
     return nil;
 }

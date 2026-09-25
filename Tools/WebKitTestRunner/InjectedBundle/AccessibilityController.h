@@ -27,7 +27,7 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <wtf/Condition.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Platform.h>
@@ -67,7 +67,7 @@ public:
     void setClientAccessibilityMode(bool);
     bool clientAccessibilityModeEnabled() const { return m_enableClientAccessibilityMode; }
 
-    JSRetainPtr<JSStringRef> platformName();
+    RefPtr<OpaqueJSString> platformName();
 
     // Controller Methods - platform-independent implementations.
     Ref<AccessibilityUIElement> rootElement(JSContextRef);

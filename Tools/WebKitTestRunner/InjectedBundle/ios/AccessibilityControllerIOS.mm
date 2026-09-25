@@ -73,7 +73,7 @@ bool AccessibilityController::removeNotificationListener()
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityController::platformName()
+RefPtr<OpaqueJSString> AccessibilityController::platformName()
 {
     return WTR::createJSString("ios");
 }

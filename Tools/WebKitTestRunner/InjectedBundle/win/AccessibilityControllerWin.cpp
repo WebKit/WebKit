@@ -42,7 +42,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityController::platformName()
+RefPtr<OpaqueJSString> AccessibilityController::platformName()
 {
     notImplemented();
     return nullptr;

@@ -53,14 +53,14 @@ JSValueRef makeValue(JSContextRef context, JSStringRef string)
     return string ? JSValueMakeString(context, string) : JSValueMakeNull(context);
 }
 
-JSRetainPtr<JSStringRef> createJSString(const char* string)
+RefPtr<OpaqueJSString> createJSString(const char* string)
 {
-    return adopt(JSStringCreateWithUTF8CString(string));
+    return adoptRef(JSStringCreateWithUTF8CString(string));
 }
 
-JSRetainPtr<JSStringRef> createJSString(JSContextRef context, JSValueRef value)
+RefPtr<OpaqueJSString> createJSString(JSContextRef context, JSValueRef value)
 {
-    auto string = adopt(value ? JSValueToStringCopy(context, value, nullptr) : nullptr);
+    RefPtr string = adoptRef(value ? JSValueToStringCopy(context, value, nullptr) : nullptr);
     return string ? string : createJSString("");
 }
 
@@ -74,7 +74,7 @@ JSValueRef property(JSContextRef context, JSObjectRef object, const char* name)
     return object ? JSObjectGetProperty(context, object, createJSString(name).get(), nullptr) : nullptr;
 }
 
-JSRetainPtr<JSStringRef> stringProperty(JSContextRef context, JSObjectRef object, const char* name)
+RefPtr<OpaqueJSString> stringProperty(JSContextRef context, JSObjectRef object, const char* name)
 {
     return createJSString(context, property(context, object, name));
 }

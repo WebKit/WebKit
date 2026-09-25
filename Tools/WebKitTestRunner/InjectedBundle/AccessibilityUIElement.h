@@ -32,7 +32,7 @@
 #include "JSWrappable.h"
 
 #include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefPtr.h>
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 #include <wtf/Platform.h>
@@ -77,7 +77,7 @@ public:
     static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
 
     virtual bool isEqual(AccessibilityUIElement* otherElement);
-    virtual JSRetainPtr<JSStringRef> domIdentifier() const;
+    virtual RefPtr<OpaqueJSString> domIdentifier() const;
 
     virtual RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     virtual RefPtr<AccessibilityUIElement> elementAtPointWithRemoteElement(int x, int y);
@@ -97,13 +97,13 @@ public:
     virtual void removeSelection();
 
     // Methods - platform-independent implementations
-    virtual JSRetainPtr<JSStringRef> allAttributes();
-    virtual JSRetainPtr<JSStringRef> attributesOfLinkedUIElements();
+    virtual RefPtr<OpaqueJSString> allAttributes();
+    virtual RefPtr<OpaqueJSString> attributesOfLinkedUIElements();
     virtual RefPtr<AccessibilityUIElement> linkedUIElementAtIndex(unsigned);
 
-    virtual JSRetainPtr<JSStringRef> attributesOfDocumentLinks();
-    virtual JSRetainPtr<JSStringRef> attributesOfChildren();
-    virtual JSRetainPtr<JSStringRef> parameterizedAttributeNames();
+    virtual RefPtr<OpaqueJSString> attributesOfDocumentLinks();
+    virtual RefPtr<OpaqueJSString> attributesOfChildren();
+    virtual RefPtr<OpaqueJSString> parameterizedAttributeNames();
     virtual void increment();
     virtual void decrement();
     virtual void showMenu();
@@ -116,13 +116,13 @@ public:
     virtual RefPtr<AccessibilityUIElement> focusableAncestor();
     virtual RefPtr<AccessibilityUIElement> editableAncestor();
     virtual RefPtr<AccessibilityUIElement> highestEditableAncestor();
-    virtual JSRetainPtr<JSStringRef> selectedText();
+    virtual RefPtr<OpaqueJSString> selectedText();
 
-    virtual JSRetainPtr<JSStringRef> dateTimeValue() const;
+    virtual RefPtr<OpaqueJSString> dateTimeValue() const;
 
     // Attributes - platform-independent implementations
-    virtual JSRetainPtr<JSStringRef> stringDescriptionOfAttributeValue(JSStringRef attribute);
-    virtual JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);
+    virtual RefPtr<OpaqueJSString> stringDescriptionOfAttributeValue(JSStringRef attribute);
+    virtual RefPtr<OpaqueJSString> stringAttributeValue(JSStringRef attribute);
     virtual double numberAttributeValue(JSStringRef attribute);
     virtual JSValueRef uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute);
     virtual RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
@@ -135,41 +135,41 @@ public:
     virtual bool isIncrementActionSupported();
     virtual bool isDecrementActionSupported();
     virtual void setValue(JSStringRef);
-    virtual JSRetainPtr<JSStringRef> role();
-    virtual JSRetainPtr<JSStringRef> subrole();
-    virtual JSRetainPtr<JSStringRef> roleDescription();
-    virtual JSRetainPtr<JSStringRef> computedRoleString();
-    virtual JSRetainPtr<JSStringRef> title();
-    virtual JSRetainPtr<JSStringRef> description();
-    virtual JSRetainPtr<JSStringRef> debugDescription() { return nullptr; }
-    virtual JSRetainPtr<JSStringRef> rawRoleForTesting() { return nullptr; }
-    virtual JSRetainPtr<JSStringRef> language();
-    virtual JSRetainPtr<JSStringRef> stringValue();
-    virtual JSRetainPtr<JSStringRef> dateValue();
-    virtual JSRetainPtr<JSStringRef> accessibilityValue() const;
-    virtual JSRetainPtr<JSStringRef> helpText() const;
-    virtual JSRetainPtr<JSStringRef> orientation() const;
-    virtual JSRetainPtr<JSStringRef> liveRegionRelevant() const;
-    virtual JSRetainPtr<JSStringRef> liveRegionStatus() const;
+    virtual RefPtr<OpaqueJSString> role();
+    virtual RefPtr<OpaqueJSString> subrole();
+    virtual RefPtr<OpaqueJSString> roleDescription();
+    virtual RefPtr<OpaqueJSString> computedRoleString();
+    virtual RefPtr<OpaqueJSString> title();
+    virtual RefPtr<OpaqueJSString> description();
+    virtual RefPtr<OpaqueJSString> debugDescription() { return nullptr; }
+    virtual RefPtr<OpaqueJSString> rawRoleForTesting() { return nullptr; }
+    virtual RefPtr<OpaqueJSString> language();
+    virtual RefPtr<OpaqueJSString> stringValue();
+    virtual RefPtr<OpaqueJSString> dateValue();
+    virtual RefPtr<OpaqueJSString> accessibilityValue() const;
+    virtual RefPtr<OpaqueJSString> helpText() const;
+    virtual RefPtr<OpaqueJSString> orientation() const;
+    virtual RefPtr<OpaqueJSString> liveRegionRelevant() const;
+    virtual RefPtr<OpaqueJSString> liveRegionStatus() const;
     virtual double pageX();
     virtual double pageY();
     virtual double x();
     virtual double y();
     virtual double width();
     virtual double height();
-    virtual JSRetainPtr<JSStringRef> lineRectsAndText() const;
-    virtual JSRetainPtr<JSStringRef> brailleLabel() const;
-    virtual JSRetainPtr<JSStringRef> brailleRoleDescription() const;
+    virtual RefPtr<OpaqueJSString> lineRectsAndText() const;
+    virtual RefPtr<OpaqueJSString> brailleLabel() const;
+    virtual RefPtr<OpaqueJSString> brailleRoleDescription() const;
 
     virtual double intValue() const;
     virtual double minValue();
     virtual double maxValue();
-    virtual JSRetainPtr<JSStringRef> valueDescription();
+    virtual RefPtr<OpaqueJSString> valueDescription();
     virtual unsigned numberOfCharacters() const;
     virtual int insertionPointLineNumber();
-    virtual JSRetainPtr<JSStringRef> selectedTextRange();
+    virtual RefPtr<OpaqueJSString> selectedTextRange();
     virtual RefPtr<AccessibilityTextMarkerRange> intersectionWithSelectionRange();
-    virtual JSRetainPtr<JSStringRef> textInputMarkedRange() const;
+    virtual RefPtr<OpaqueJSString> textInputMarkedRange() const;
     virtual bool isAtomicLiveRegion() const;
     virtual bool isBusy() const;
     virtual bool isEnabled();
@@ -195,8 +195,8 @@ public:
     virtual bool isExpanded() const;
     virtual bool supportsExpanded() const;
     virtual bool isChecked() const;
-    virtual JSRetainPtr<JSStringRef> currentStateValue() const;
-    virtual JSRetainPtr<JSStringRef> sortDirection() const;
+    virtual RefPtr<OpaqueJSString> currentStateValue() const;
+    virtual RefPtr<OpaqueJSString> sortDirection() const;
     virtual bool isIndeterminate() const;
     virtual bool isVisible() const;
     virtual bool isOnScreen() const;
@@ -206,42 +206,42 @@ public:
     virtual bool isSingleLine() const;
     virtual bool isMultiLine() const;
     virtual bool hasPopup() const;
-    virtual JSRetainPtr<JSStringRef> popupValue() const;
+    virtual RefPtr<OpaqueJSString> popupValue() const;
     virtual int hierarchicalLevel() const;
     virtual double clickPointX();
     virtual double clickPointY();
-    virtual JSRetainPtr<JSStringRef> url();
-    virtual JSRetainPtr<JSStringRef> classList() const;
-    virtual JSRetainPtr<JSStringRef> embeddedImageDescription() const;
-    virtual JSRetainPtr<JSStringRef> imageDataSize() const;
-    virtual JSRetainPtr<JSStringRef> imageDataForParameters(int resizeWidth, int resizeHeight) const;
-    virtual JSRetainPtr<JSStringRef> imageDataForParametersWithFormat(int resizeWidth, int resizeHeight, JSStringRef format) const;
-    virtual JSRetainPtr<JSStringRef> imageDataForSubrect(int resizeWidth, int resizeHeight, int left, int top, int width, int height) const;
+    virtual RefPtr<OpaqueJSString> url();
+    virtual RefPtr<OpaqueJSString> classList() const;
+    virtual RefPtr<OpaqueJSString> embeddedImageDescription() const;
+    virtual RefPtr<OpaqueJSString> imageDataSize() const;
+    virtual RefPtr<OpaqueJSString> imageDataForParameters(int resizeWidth, int resizeHeight) const;
+    virtual RefPtr<OpaqueJSString> imageDataForParametersWithFormat(int resizeWidth, int resizeHeight, JSStringRef format) const;
+    virtual RefPtr<OpaqueJSString> imageDataForSubrect(int resizeWidth, int resizeHeight, int left, int top, int width, int height) const;
     virtual JSValueRef imageOverlayElements(JSContextRef);
 
     // CSS3-speech properties.
-    virtual JSRetainPtr<JSStringRef> speakAs();
+    virtual RefPtr<OpaqueJSString> speakAs();
 
     // Table-specific attributes
-    virtual JSRetainPtr<JSStringRef> attributesOfColumnHeaders();
-    virtual JSRetainPtr<JSStringRef> attributesOfRowHeaders();
-    virtual JSRetainPtr<JSStringRef> attributesOfColumns();
+    virtual RefPtr<OpaqueJSString> attributesOfColumnHeaders();
+    virtual RefPtr<OpaqueJSString> attributesOfRowHeaders();
+    virtual RefPtr<OpaqueJSString> attributesOfColumns();
     virtual JSValueRef columns(JSContextRef);
-    virtual JSRetainPtr<JSStringRef> attributesOfRows();
-    virtual JSRetainPtr<JSStringRef> attributesOfVisibleCells();
-    virtual JSRetainPtr<JSStringRef> attributesOfHeader();
+    virtual RefPtr<OpaqueJSString> attributesOfRows();
+    virtual RefPtr<OpaqueJSString> attributesOfVisibleCells();
+    virtual RefPtr<OpaqueJSString> attributesOfHeader();
     virtual bool isInCell() const;
     virtual bool isInTable() const;
     virtual bool isInList() const;
     virtual bool isInLandmark() const;
     virtual int indexInTable();
-    virtual JSRetainPtr<JSStringRef> rowIndexRange();
-    virtual JSRetainPtr<JSStringRef> columnIndexRange();
+    virtual RefPtr<OpaqueJSString> rowIndexRange();
+    virtual RefPtr<OpaqueJSString> columnIndexRange();
     virtual int rowCount();
     virtual int columnCount();
     virtual JSValueRef rowHeaders(JSContextRef);
     virtual JSValueRef columnHeaders(JSContextRef);
-    virtual JSRetainPtr<JSStringRef> customContent() const;
+    virtual RefPtr<OpaqueJSString> customContent() const;
     virtual JSValueRef selectedCells(JSContextRef);
 
     // Tree/Outline specific attributes
@@ -273,32 +273,32 @@ public:
     // Drag and drop
     virtual bool isGrabbed() const;
     // A space concatentated string of all the drop effects.
-    virtual JSRetainPtr<JSStringRef> ariaDropEffects() const;
+    virtual RefPtr<OpaqueJSString> ariaDropEffects() const;
 
     // Parameterized attributes
     virtual int lineForIndex(int);
-    virtual JSRetainPtr<JSStringRef> rangeForLine(int);
-    virtual JSRetainPtr<JSStringRef> rangeForPosition(int x, int y);
-    virtual JSRetainPtr<JSStringRef> boundsForRange(unsigned location, unsigned length);
-    virtual JSRetainPtr<JSStringRef> boundsForRangeWithPagePosition(unsigned location, unsigned length);
+    virtual RefPtr<OpaqueJSString> rangeForLine(int);
+    virtual RefPtr<OpaqueJSString> rangeForPosition(int x, int y);
+    virtual RefPtr<OpaqueJSString> boundsForRange(unsigned location, unsigned length);
+    virtual RefPtr<OpaqueJSString> boundsForRangeWithPagePosition(unsigned location, unsigned length);
     virtual bool setSelectedTextRange(unsigned location, unsigned length);
-    virtual JSRetainPtr<JSStringRef> stringForRange(unsigned location, unsigned length);
-    virtual JSRetainPtr<JSStringRef> attributedStringForRange(unsigned location, unsigned length);
-    virtual JSRetainPtr<JSStringRef> attributedStringForElement();
+    virtual RefPtr<OpaqueJSString> stringForRange(unsigned location, unsigned length);
+    virtual RefPtr<OpaqueJSString> attributedStringForRange(unsigned location, unsigned length);
+    virtual RefPtr<OpaqueJSString> attributedStringForElement();
 
     virtual bool attributedStringRangeIsMisspelled(unsigned location, unsigned length);
     virtual unsigned uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     virtual RefPtr<AccessibilityUIElement> uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     virtual JSValueRef uiElementsForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly, unsigned resultsLimit);
-    virtual JSRetainPtr<JSStringRef> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
+    virtual RefPtr<OpaqueJSString> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
     virtual JSValueRef searchTextWithCriteria(JSContextRef, JSValueRef searchStrings, JSStringRef startFrom, JSStringRef direction);
     virtual JSValueRef performTextOperation(JSContextRef, JSStringRef operationType, JSValueRef markerRanges, JSValueRef replacementStrings, bool shouldSmartReplace);
 
     // Text-specific
-    virtual JSRetainPtr<JSStringRef> characterAtOffset(int offset);
-    virtual JSRetainPtr<JSStringRef> wordAtOffset(int offset);
-    virtual JSRetainPtr<JSStringRef> lineAtOffset(int offset);
-    virtual JSRetainPtr<JSStringRef> sentenceAtOffset(int offset);
+    virtual RefPtr<OpaqueJSString> characterAtOffset(int offset);
+    virtual RefPtr<OpaqueJSString> wordAtOffset(int offset);
+    virtual RefPtr<OpaqueJSString> lineAtOffset(int offset);
+    virtual RefPtr<OpaqueJSString> sentenceAtOffset(int offset);
 
     // Table-specific
     virtual RefPtr<AccessibilityUIElement> cellForColumnAndRow(unsigned column, unsigned row);
@@ -340,11 +340,11 @@ public:
     virtual RefPtr<AccessibilityTextMarker> nextTextMarker(AccessibilityTextMarker*);
     virtual RefPtr<AccessibilityUIElement> accessibilityElementForTextMarker(AccessibilityTextMarker*);
     virtual RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForLine(long);
-    virtual JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
-    virtual JSRetainPtr<JSStringRef> rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef);
-    virtual JSRetainPtr<JSStringRef> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);
-    virtual JSRetainPtr<JSStringRef> attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*);
-    virtual JSRetainPtr<JSStringRef> attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool);
+    virtual RefPtr<OpaqueJSString> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
+    virtual RefPtr<OpaqueJSString> rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef);
+    virtual RefPtr<OpaqueJSString> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);
+    virtual RefPtr<OpaqueJSString> attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*);
+    virtual RefPtr<OpaqueJSString> attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool);
     virtual int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     virtual bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     virtual int indexForTextMarker(AccessibilityTextMarker*);
@@ -367,19 +367,19 @@ public:
     virtual RefPtr<AccessibilityTextMarker> nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     virtual RefPtr<AccessibilityTextMarker> previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*);
     virtual RefPtr<AccessibilityTextMarkerRange> textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
-    virtual JSRetainPtr<JSStringRef> textMarkerDebugDescription(AccessibilityTextMarker*);
-    virtual JSRetainPtr<JSStringRef> textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*);
-    virtual JSRetainPtr<JSStringRef> textMarkerDescription(AccessibilityTextMarker*);
-    virtual JSRetainPtr<JSStringRef> textMarkerRangeDescription(AccessibilityTextMarkerRange*);
+    virtual RefPtr<OpaqueJSString> textMarkerDebugDescription(AccessibilityTextMarker*);
+    virtual RefPtr<OpaqueJSString> textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*);
+    virtual RefPtr<OpaqueJSString> textMarkerDescription(AccessibilityTextMarker*);
+    virtual RefPtr<OpaqueJSString> textMarkerRangeDescription(AccessibilityTextMarkerRange*);
 
     // Returns an ordered list of supported actions for an element.
-    virtual JSRetainPtr<JSStringRef> supportedActions() const;
-    virtual JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
-    virtual JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
+    virtual RefPtr<OpaqueJSString> supportedActions() const;
+    virtual RefPtr<OpaqueJSString> mathPostscriptsDescription() const;
+    virtual RefPtr<OpaqueJSString> mathPrescriptsDescription() const;
     virtual JSValueRef mathRootRadicand(JSContextRef);
 
-    virtual JSRetainPtr<JSStringRef> pathDescription() const;
-    virtual JSRetainPtr<JSStringRef> pathAsBounds() const;
+    virtual RefPtr<OpaqueJSString> pathDescription() const;
+    virtual RefPtr<OpaqueJSString> pathAsBounds() const;
 
     // Notifications
     // Function callback should take one argument, the name of the notification.
@@ -387,11 +387,11 @@ public:
     // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
     virtual bool removeNotificationListener();
 
-    virtual JSRetainPtr<JSStringRef> identifier();
-    virtual JSRetainPtr<JSStringRef> traits();
+    virtual RefPtr<OpaqueJSString> identifier();
+    virtual RefPtr<OpaqueJSString> traits();
     virtual int elementTextPosition();
     virtual int elementTextLength();
-    virtual JSRetainPtr<JSStringRef> stringForSelection();
+    virtual RefPtr<OpaqueJSString> stringForSelection();
     virtual void increaseTextSelection();
     virtual void decreaseTextSelection();
     virtual RefPtr<AccessibilityUIElement> linkedElement();
