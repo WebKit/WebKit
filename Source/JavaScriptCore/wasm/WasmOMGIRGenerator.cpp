@@ -2716,7 +2716,7 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
 
 inline B3::Kind OMGIRGenerator::memoryKind(B3::Opcode memoryOp, uint8_t memoryIndex)
 {
-    if (memoryIndex || useSignalingMemory0() || m_info.memory(0).isShared())
+    if (memoryIndex || useSignalingMemory0() || m_info.memory(0).isShared() || m_info.memory(0).maximum())
         return trapping(memoryOp);
     return memoryOp;
 }
