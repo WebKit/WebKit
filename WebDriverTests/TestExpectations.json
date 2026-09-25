@@ -963,7 +963,7 @@
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             },
             "test_sequence_of_keydown_printable_keys_sends_events": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320476"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             },
             "test_sequence_of_keydown_printable_characters_sends_events": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
@@ -1010,9 +1010,6 @@
 
     "imported/w3c/webdriver/tests/classic/release_actions/sequence.py": {
         "subtests": {
-            "test_release_char_sequence_sends_keyup_events_in_reverse": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320476"}}
-            },
             "test_release_mouse_sequence_resets_dblclick_state": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
