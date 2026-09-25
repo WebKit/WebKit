@@ -96,7 +96,7 @@ struct LineLayoutResult {
     enum class InflowContentType : uint8_t { Inline, Block };
     std::optional<InflowContentType> inflowContentType() const
     {
-        if (contentfulInlineContentEnding.has_value())
+        if (contentfulInlineContentEnding.has_value() || blockEllipsis)
             return InflowContentType::Inline;
         if (!runs.isEmpty() && runs.last().isBlock())
             return InflowContentType::Block;
@@ -113,6 +113,7 @@ struct LineLayoutResult {
     InlineLayoutUnit trimmedTrailingWhitespaceWidth { 0.f }; // only used for line-break: after-white-space currently
     InlineLayoutUnit firstLineStartTrim { 0.f }; // This is how much text-box-trim: start adjusts the first line box. We only need it to adjust the initial letter float position (which will not be needed once we drop the float behavior)
     std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
+    std::optional<BlockOverflowEllipsis> blockEllipsis { };
 };
 
 }

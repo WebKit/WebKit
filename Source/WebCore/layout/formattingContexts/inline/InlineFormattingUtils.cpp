@@ -36,10 +36,12 @@
 #include "InlineQuirks.h"
 #include "LayoutBoxInlines.h"
 #include "LayoutElementBox.h"
+#include "LayoutIntegrationUtils.h"
 #include "RenderObjectDocument.h"
 #include "RubyFormattingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TextUtil.h"
 #include <ranges>
 
 namespace WebCore {
@@ -297,6 +299,10 @@ InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(c
     }
     if (lineContentEnd == *previousLineContentEnd && (!lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty())) {
         // Couldn't manage to put any content on line due to floats.
+        return lineContentEnd;
+    }
+    if (lineContentEnd == *previousLineContentEnd && lineLayoutResult.blockEllipsis) {
+        // The block ellipsis displaced the entire content of this line. The next line is past the clamp point and does not get an ellipsis, so it makes progress.
         return lineContentEnd;
     }
     if (lineContentEnd == layoutRangeEnd) {
@@ -656,6 +662,36 @@ bool InlineFormattingUtils::shouldDiscardRemainingContentInBlockDirection() cons
         return false;
     ASSERT(!lineClamp->isLegacy);
     return lineClamp->maximumLines == inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks();
+}
+
+std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine() const
+{
+    auto& inlineLayoutState = formattingContext().layoutState();
+    auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp();
+    // Legacy line clamp truncates the clamped line's content after line breaking instead (see InlineDisplayLineBuilder::placeTrailingEllipsisIfNeeded).
+    if (!lineClamp || lineClamp->isLegacy)
+        return { };
+    // Clamping is eager: the line that reaches the limit gets the ellipsis even when no content follows it.
+    if (inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks() + 1 != lineClamp->maximumLines)
+        return { };
+
+    CheckedRef root = formattingContext().root();
+    CheckedRef styleForTruncation = root->isAnonymous() ? IntegrationUtils::firstNonAnonymousAncestorStyle(root) : root->style();
+    auto ellipsisText = WTF::switchOn(styleForTruncation->blockEllipsis(),
+        [&](const CSS::Keyword::NoEllipsis&) -> AtomString {
+            return nullAtom();
+        },
+        [&](const CSS::Keyword::Ellipsis&) -> AtomString {
+            return TextUtil::ellipsisTextInInlineDirection(root->writingMode().isHorizontal());
+        },
+        [&](const Style::String& string) -> AtomString {
+            return AtomString { string.value };
+        }
+    );
+    if (ellipsisText.isEmpty())
+        return { };
+    // The ellipsis is not part of ::first-line, and it is painted with the root style too (see EllipsisBoxPainter).
+    return BlockOverflowEllipsis { ellipsisText, std::max(0.f, root->style().fontCascade().width(ellipsisText.string())) };
 }
 
 }

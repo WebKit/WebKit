@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/LayoutUnits.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 namespace Layout {
@@ -51,6 +52,11 @@ enum class LineEndingTruncationPolicy : uint8_t {
     NoTruncation,
     WhenContentOverflowsInInlineDirection,
     WhenContentOverflowsInBlockDirection
+};
+
+struct BlockOverflowEllipsis {
+    AtomString text;
+    InlineLayoutUnit logicalWidth { 0.f };
 };
 
 struct ExpansionInfo {

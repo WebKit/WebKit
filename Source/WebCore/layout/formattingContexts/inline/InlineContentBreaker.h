@@ -157,6 +157,7 @@ public:
         bool hasFullyTrimmableTrailingContent { false };
         bool hasContent { false };
         bool hasWrapOpportunityAtPreviousPosition { false };
+        bool hasBlockEllipsis { false };
     };
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
     void setHyphenationDisabled(bool hyphenationIsDisabled) { m_hyphenationIsDisabled = hyphenationIsDisabled; }

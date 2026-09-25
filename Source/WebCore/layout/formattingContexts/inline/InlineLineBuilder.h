@@ -76,7 +76,7 @@ private:
     void commitCandidateContent(LineCandidate&, std::optional<InlineContentBreaker::Result::PartialTrailingContent>);
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
-    void initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate);
+    void initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<BlockOverflowEllipsis>&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate);
     void createLineSpanningInlineBoxes(const InlineItemRange& needsLayoutRange);
     UniqueRef<LineContent> placeInlineAndFloatContent(const InlineItemRange&);
     struct InitialLetterOffsets {
@@ -109,6 +109,8 @@ private:
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
     TextSpacingContext m_textSpacingContext { };
+    std::optional<BlockOverflowEllipsis> m_blockEllipsis;
+    bool m_blockEllipsisContentOnly { false };
 };
 
 }

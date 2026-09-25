@@ -38,6 +38,7 @@ namespace Layout {
 struct LineInput {
     InlineItemRange needsLayoutRange;
     InlineRect initialLogicalRect;
+    std::optional<BlockOverflowEllipsis> blockEllipsis { };
 };
 
 using WrapOpportunityList = Vector<const InlineItem*, 32>;
