@@ -640,4 +640,9 @@ IntRect FrameView::contentsToMainFrameView(const IntRect& rect) const
     return convertToRootViewAcrossIsolatedFrames(contentsToView(rect));
 }
 
+IntPoint FrameView::contentsToMainFrameView(const IntPoint& point) const
+{
+    return roundedIntPoint(convertToRootViewAcrossIsolatedFrames(FloatPoint { contentsToView(point) }));
+}
+
 }

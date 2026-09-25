@@ -13126,24 +13126,12 @@ void WebPageProxy::Internals::failedToShowPopupMenu()
 }
 #endif
 
-void WebPageProxy::showPopupMenuFromFrame(IPC::Connection& connection, FrameIdentifier frameID, const IntRect& rect, uint64_t textDirection, Vector<WebPopupItem>&& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
+void WebPageProxy::showPopupMenuFromFrame(IPC::Connection& connection, FrameIdentifier frameID, const IntRect& rectInMainFrameView, uint64_t textDirection, Vector<WebPopupItem>&& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
-        return;
-
-    convertRectToMainFrameCoordinates(rect, frame->rootFrame()->frameID(), [weakThis = WeakPtr { *this }, frameID, textDirection, selectedIndex, data, items = WTF::move(items), connection = protect(connection)] (std::optional<FloatRect> convertedRect) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect)
-            return;
-        protectedThis->showPopupMenu(connection, frameID, IntRect(*convertedRect), textDirection, items, selectedIndex, data);
-    });
-}
-
-void WebPageProxy::showPopupMenu(IPC::Connection& connection, FrameIdentifier frameID, const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
-{
-    // FIXME: Move all IPC callers of this to WebPageProxy::showPopupMenuFromFrame and move the message check to there before converting coordinates.
     MESSAGE_CHECK_BASE(selectedIndex == -1 || static_cast<uint32_t>(selectedIndex) < items.size(), connection);
+
+    if (!WebFrameProxy::webFrame(frameID))
+        return;
 
     if (RefPtr activePopupMenu = std::exchange(m_activePopupMenu, nullptr)) {
         activePopupMenu->hidePopupMenu();
@@ -13171,7 +13159,7 @@ void WebPageProxy::showPopupMenu(IPC::Connection& connection, FrameIdentifier fr
 
     // Showing a popup menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref protectedThis { *this };
-    activePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
+    activePopupMenu->showPopupMenu(rectInMainFrameView, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
 }
 
 void WebPageProxy::hidePopupMenu()

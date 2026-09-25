@@ -107,13 +107,15 @@ void WebPopupMenu::show(const IntRect& rect, LocalFrameView& view, int selectedI
 
     page->setActivePopupMenu(this);
 
-    // Move to page coordinates
-    IntRect pageCoordinates(view.contentsToWindow(rect.location()), rect.size());
+    // Move to main frame view coordinates. This converts across process boundaries when Site Isolation is
+    // enabled, so the UI process can use the rect as-is. Only the location is converted, so the popup keeps
+    // the element's untransformed size.
+    IntRect rectInMainFrameView(view.contentsToMainFrameView(rect.location()), rect.size());
 
     PlatformPopupMenuData platformData;
-    setUpPlatformData(pageCoordinates, platformData);
+    setUpPlatformData(rectInMainFrameView, platformData);
 
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowPopupMenuFromFrame(view.frame().frameID(), pageCoordinates, static_cast<uint64_t>(popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowPopupMenuFromFrame(view.frame().frameID(), rectInMainFrameView, static_cast<uint64_t>(popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), page->identifier());
 }
 
 void WebPopupMenu::hide()

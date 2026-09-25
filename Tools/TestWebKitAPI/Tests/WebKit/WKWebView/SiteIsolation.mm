@@ -11507,6 +11507,106 @@ TEST(SiteIsolation, SelectElementPopupAfterFocusChangesDuringTracking)
     }));
 }
 
+static void scrollFrameAndWait(TestWKWebView *webView, WKFrameInfo *frame, int scrollY)
+{
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollY] inFrame:frame];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:frame] intValue] == scrollY;
+    }));
+    [webView waitForNextPresentationUpdate];
+}
+
+// In every test below, the <select> ends up at (150, 150) with size 100x30 in main frame view coordinates.
+static NSRect selectPopupMenuRectInCrossSiteIframe(ASCIILiteral mainframeHTML, ASCIILiteral subframeHTML, int mainFrameScrollY = 0, int subframeScrollY = 0)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webViewBinding, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    RetainPtr webView = webViewBinding;
+
+    // WebPopupMenuProxyMac anchors the menu to a temporary subview of the web view whose frame is the rect
+    // it received from the web process. Record that rect instead of running AppKit's modal menu tracking.
+    __block bool done = false;
+    __block NSRect popupRect = NSZeroRect;
+    RetainPtr menuProto = adoptNS([NSMenu new]);
+    InstanceMethodSwizzler popUpSwizzler {
+        [[menuProto _menuImpl] class],
+        NSSelectorFromString(@"popUpMenu:atLocation:width:forView:withSelectedItem:withFont:withFlags:withOptions:"),
+        imp_implementationWithBlock(^(id, NSMenu *, NSPoint, CGFloat, NSView *view, NSInteger, NSFont *, NSUInteger, NSDictionary *) {
+            popupRect = view.frame;
+            done = true;
+        })
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    if (mainFrameScrollY)
+        scrollFrameAndWait(webView.get(), nil, mainFrameScrollY);
+    if (subframeScrollY)
+        scrollFrameAndWait(webView.get(), [webView firstChildFrame], subframeScrollY);
+    [webView waitForNextPresentationUpdate];
+
+    // Click the center of the <select>. Window coordinates have a bottom-left origin.
+    [webView sendClickAtPoint:NSMakePoint(200, 600 - 165)];
+    Util::run(&done);
+
+    return popupRect;
+}
+
+static constexpr ASCIILiteral selectPopupMenuMainframeHTML =
+    "<body style='margin: 0'>"
+    "<iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe>"
+    "</body>"_s;
+
+static constexpr ASCIILiteral selectPopupMenuTallMainframeHTML =
+    "<body style='margin: 0; height: 2000px'>"
+    "<iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe>"
+    "</body>"_s;
+
+static constexpr ASCIILiteral selectPopupMenuSubframeHTML =
+    "<body style='margin: 0'>"
+    "<select style='appearance: none; position: absolute; left: 50px; top: 50px; width: 100px; height: 30px; margin: 0; padding: 0; border: none; box-sizing: border-box;'>"
+    "<option>Alpha</option>"
+    "<option>Bravo</option>"
+    "</select>"
+    "</body>"_s;
+
+static constexpr ASCIILiteral selectPopupMenuTallSubframeHTML =
+    "<body style='margin: 0; height: 2000px'>"
+    "<select style='appearance: none; position: absolute; left: 50px; top: 550px; width: 100px; height: 30px; margin: 0; padding: 0; border: none; box-sizing: border-box;'>"
+    "<option>Alpha</option>"
+    "<option>Bravo</option>"
+    "</select>"
+    "</body>"_s;
+
+TEST(SiteIsolation, SelectPopupMenuLocationInCrossSiteIframe)
+{
+    auto rect = selectPopupMenuRectInCrossSiteIframe(selectPopupMenuMainframeHTML, selectPopupMenuSubframeHTML);
+    EXPECT_EQ(rect, NSMakeRect(150, 150, 100, 30));
+}
+
+TEST(SiteIsolation, SelectPopupMenuLocationInScrolledCrossSiteIframe)
+{
+    auto rect = selectPopupMenuRectInCrossSiteIframe(selectPopupMenuMainframeHTML, selectPopupMenuTallSubframeHTML, 0, 500);
+    EXPECT_EQ(rect, NSMakeRect(150, 150, 100, 30));
+}
+
+TEST(SiteIsolation, SelectPopupMenuLocationInCrossSiteIframeWithScrolledMainFrame)
+{
+    auto rect = selectPopupMenuRectInCrossSiteIframe(selectPopupMenuTallMainframeHTML, selectPopupMenuSubframeHTML, 400, 0);
+    EXPECT_EQ(rect, NSMakeRect(150, 150, 100, 30));
+}
+
+TEST(SiteIsolation, SelectPopupMenuLocationInScrolledCrossSiteIframeWithScrolledMainFrame)
+{
+    auto rect = selectPopupMenuRectInCrossSiteIframe(selectPopupMenuTallMainframeHTML, selectPopupMenuTallSubframeHTML, 400, 500);
+    EXPECT_EQ(rect, NSMakeRect(150, 150, 100, 30));
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)
