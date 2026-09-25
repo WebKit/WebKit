@@ -718,6 +718,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 #define WEBKIT_APPLY_JSC_OPTION_FROM_SHARED_PREFERENCE(jscOption, preferenceField) JSC::Options::jscOption() = jscOptions.preferenceField;
         FOR_EACH_JSC_OPTION_SHARED_PREFERENCE(WEBKIT_APPLY_JSC_OPTION_FROM_SHARED_PREFERENCE)
 #undef WEBKIT_APPLY_JSC_OPTION_FROM_SHARED_PREFERENCE
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        if (parameters.crossOriginMode == WebCore::CrossOriginMode::Isolated)
+            JSC::Options::useSharedArrayBuffer() = true;
+#endif
         JSC::Options::notifyOptionsChanged();
     }
 
