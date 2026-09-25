@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>A VideoFrame from an image element uses the element's orientation, a coded size in image pixels, and a display size in CSS pixels</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<!-- Both images are stored at 100x50. -->
+<img id="oriented" src="../images/resources/exif-orientation-6-ru.jpg">
+<img id="notOriented" style="image-orientation: none" src="../images/resources/exif-orientation-6-ru.jpg">
+<img id="dense" srcset="../images/resources/exif-orientation-1-ul.jpg 2x">
+<script>
+const loaded = new Promise(resolve => window.addEventListener("load", resolve));
+
+function frameSizes(id)
+{
+    const frame = new VideoFrame(document.getElementById(id), { timestamp: 0 });
+    const sizes = { codedWidth: frame.codedWidth, codedHeight: frame.codedHeight, displayWidth: frame.displayWidth, displayHeight: frame.displayHeight };
+    frame.close();
+    return sizes;
+}
+
+promise_test(async () => {
+    await loaded;
+    assert_object_equals(frameSizes("oriented"), { codedWidth: 50, codedHeight: 100, displayWidth: 50, displayHeight: 100 });
+}, "oriented");
+
+promise_test(async () => {
+    await loaded;
+    assert_object_equals(frameSizes("notOriented"), { codedWidth: 100, codedHeight: 50, displayWidth: 100, displayHeight: 50 });
+}, "notOriented");
+
+promise_test(async () => {
+    await loaded;
+    assert_object_equals(frameSizes("dense"), { codedWidth: 100, codedHeight: 50, displayWidth: 50, displayHeight: 25 });
+}, "dense");
+</script>

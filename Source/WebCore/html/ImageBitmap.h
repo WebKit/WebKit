@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AlphaPremultiplication.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/IDLTypes.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageTypes.h>
@@ -48,7 +49,6 @@ class CachedImage;
 class CanvasBase;
 class CSSStyleImageValue;
 class ColorSpace;
-class FloatSize;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -61,7 +61,6 @@ class IntSize;
 class OffscreenCanvas;
 #endif
 class PendingImageBitmap;
-class RenderElement;
 class ScriptExecutionContext;
 class SerializedImageBuffer;
 class SVGImageElement;
@@ -174,7 +173,7 @@ private:
 
     static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createCompletionHandler(ScriptExecutionContext&, Ref<SVGImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createCompletionHandler(ScriptExecutionContext&, CachedImage*, RenderElement*, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, CachedImage*, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #if ENABLE(VIDEO)
     static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLVideoElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #endif

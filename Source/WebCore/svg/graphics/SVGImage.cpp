@@ -326,9 +326,25 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpac
     ImageObserverDisableScope imageObserverDisabler(*this);
     setContainerSize(size);
 
-    imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
+    auto imageRect = FloatRect { { }, size };
+    imageBuffer->context().drawImage(*this, imageRect, imageRect);
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+}
+
+RefPtr<NativeImage> SVGImage::nativeImage(ConcreteObjectSize concreteObjectSize, const ColorSpace& colorSpace)
+{
+    return nativeImage(concreteObjectSize.size(), colorSpace);
+}
+
+RefPtr<NativeImage> SVGImage::currentNativeImage(ConcreteObjectSize concreteObjectSize)
+{
+    return nativeImage(concreteObjectSize);
+}
+
+RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSize concreteObjectSize, ImageOrientation)
+{
+    return nativeImage(concreteObjectSize);
 }
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& srcRect,

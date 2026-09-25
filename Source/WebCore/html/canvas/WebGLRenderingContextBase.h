@@ -161,6 +161,8 @@ class OffscreenCanvas;
 
 template<typename> class ExceptionOr;
 
+struct SizedImage;
+
 using WebGLCanvas = Variant<
       Ref<HTMLCanvasElement>
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -594,7 +596,7 @@ protected:
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GCGLenum);
 
-    RefPtr<NativeImage> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, ASCIILiteral functionName);
+    RefPtr<NativeImage> drawImageIntoBuffer(const SizedImage&, int width, int height, int deviceScaleFactor, ASCIILiteral functionName);
 
 #if ENABLE(VIDEO)
     RefPtr<NativeImage> videoFrameToNativeImage(HTMLVideoElement&, ASCIILiteral functionName);

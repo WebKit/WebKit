@@ -1,0 +1,6 @@
+
+PASS Dimensions of its own need no box
+PASS A viewBox and nothing else, never inserted, is rejected
+PASS The same in a 'display: none' element is rejected
+PASS The same with width and height attributes is rejected
+

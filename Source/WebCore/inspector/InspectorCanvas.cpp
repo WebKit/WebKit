@@ -36,6 +36,7 @@
 #include "ColorSerialization.h"
 #include "DOMMatrix2DInit.h"
 #include "DOMPointInit.h"
+#include "DefaultSizing.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatPoint.h"
@@ -886,12 +887,8 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&](const Ref<HTMLImageElement>& imageElement) {
             String dataURL = "data:,"_s;
 
-            if (RefPtr cachedImage = imageElement->cachedImage()) {
-                RefPtr<Image> image = cachedImage->image();
-                if (image && image != &Image::nullImage()) {
-                    dataURL = encodeDataURL(image->currentNativeImage(), "image/png"_s);
-                }
-            }
+            if (RefPtr image = imageElement->sourceImage())
+                dataURL = encodeDataURL(image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions())), "image/png"_s);
 
             index = indexForData(dataURL);
         },
@@ -958,9 +955,8 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             String dataURL = "data:,"_s;
 
             if (RefPtr cachedImage = cssImageValue->image()) {
-                RefPtr image = cachedImage->image();
-                if (image && image != &Image::nullImage())
-                    dataURL = encodeDataURL(image->currentNativeImage(), "image/png"_s);
+                if (RefPtr image = cachedImage->image())
+                    dataURL = encodeDataURL(image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions())), "image/png"_s);
             }
 
             index = indexForData(dataURL);
