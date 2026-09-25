@@ -30,6 +30,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "WKWebViewFindStringFindDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKInputDelegate.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -291,5 +292,36 @@ TEST(WKWebViewFindString, MatchIndexResetsWhenSearchStringChanges)
     Util::run(&isDone);
     EXPECT_EQ(0, [findDelegate matchIndex]);
 }
+
+#if PLATFORM(MAC)
+
+TEST(WKWebViewFindString, FindOverlaySessionNonSiteIsolatedParity)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<p>Hello world</p>"];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    isDone = false;
+    [webView _findString:@"Hello world" options:_WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowOverlay maxCount:100];
+    Util::run(&isDone);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    isDone = false;
+    [webView _findString:@"Missing string" options:_WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowOverlay maxCount:100];
+    Util::run(&isDone);
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    isDone = false;
+    [webView _findString:@"Hello world" options:_WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowOverlay maxCount:100];
+    Util::run(&isDone);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView _hideFindUI];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

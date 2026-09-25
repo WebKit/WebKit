@@ -364,6 +364,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return NO;
 }
 
+- (BOOL)_findOverlayShouldBeVisibleForTesting
+{
+    return _page && _page->findOverlayShouldBeVisibleForTesting();
+}
+
 - (NSString *)_scrollingTreeAsText
 {
     CheckedPtr coordinator = _page->scrollingCoordinatorProxy();

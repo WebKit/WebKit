@@ -82,6 +82,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "EnhancedSecurity.h"
 #include "EventDispatcherMessages.h"
+#include "FindOverlaySession.h"
 #include "FindStringCallbackAggregator.h"
 #include "FindTextMatchesCallbackAggregator.h"
 #include "FocusedElementInformation.h"
@@ -4719,6 +4720,9 @@ void WebPageProxy::handleMouseEvent(Ref<NativeWebMouseEvent>&& event)
     if (!m_mainFrame)
         return;
 
+    if (event->type() == WebEventType::MouseDown)
+        internals().findOverlaySession = nullptr;
+
     recordUIProcessUserActivation(event);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -7554,7 +7558,15 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
+    RefPtr<FindOverlaySession> findOverlaySession;
+    if (options.contains(FindOptions::ShowOverlay)) {
+        findOverlaySession = FindOverlaySession::create(string, options);
+        internals().findOverlaySession = findOverlaySession;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, findOverlaySession, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
+        if (findOverlaySession)
+            findOverlaySession->didSettle({ }, matches.size());
         if (matches.isEmpty())
             m_findClient->didFailToFindString(this, string);
         else
@@ -7564,9 +7576,12 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
+    Ref findOverlaySession = FindOverlaySession::create(string, options);
+    internals().findOverlaySession = findOverlaySession.ptr();
+
     auto sendAndAggregateFindStringMessage = [&]<typename M>(M&& message, CompletionHandler<void(bool)>&& completionHandler)
     {
-        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, WTF::move(completionHandler));
+        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, findOverlaySession, string, options, maxMatchCount, WTF::move(completionHandler));
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
             webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t matchCount, int32_t, bool didWrap) {
                 callbackAggregator->foundString(frameID, matchCount, didWrap);
@@ -7580,11 +7595,12 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
 #endif
 
     if (!protect(browsingContextGroup())->hasRemotePages(*this)) {
-        auto completionHandler = [protectedThis = Ref { *this }, string, callbackFunction = WTF::move(callbackFunction)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
-            if (!frameID)
-                protectedThis->findClient().didFailToFindString(protectedThis.ptr(), string);
-            else
-                protectedThis->findClient().didFindString(protectedThis.ptr(), string, matchRects, matchCount, matchIndex, didWrap);
+        auto completionHandler = [protectedThis = Ref { *this }, findOverlaySession, callbackFunction = WTF::move(callbackFunction)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+            HashMap<FrameIdentifier, FindOverlayFrameResult> frameResults;
+            if (frameID)
+                frameResults.set(*frameID, FindOverlayFrameResult { matchCount, didWrap });
+            findOverlaySession->didSettle(WTF::move(frameResults), frameID ? matchCount : 0);
+            findOverlaySession->deliverResult(protectedThis, frameID, matchRects, matchCount, matchIndex, didWrap);
             callbackFunction(frameID.has_value());
         };
         sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), WTF::move(completionHandler));
@@ -7701,7 +7717,14 @@ void WebPageProxy::indicateFindMatch(int32_t matchIndex)
 
 void WebPageProxy::hideFindUI()
 {
+    internals().findOverlaySession = nullptr;
     send(Messages::WebPage::HideFindUI());
+}
+
+bool WebPageProxy::findOverlayShouldBeVisibleForTesting() const
+{
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    return findOverlaySession && findOverlaySession->overlayShouldBeVisible();
 }
 
 void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
@@ -7743,7 +7766,15 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
         CompletionHandler<void(uint32_t)> m_completionHandler;
     };
 
-    Ref callbackAggregator = CountStringMatchesCallbackAggregator::create(maxMatchCount, [protectedThis = Ref { *this }, string](uint32_t matchCount) {
+    RefPtr<FindOverlaySession> findOverlaySession;
+    if (options.contains(FindOptions::ShowOverlay)) {
+        findOverlaySession = FindOverlaySession::create(string, options);
+        internals().findOverlaySession = findOverlaySession;
+    }
+
+    Ref callbackAggregator = CountStringMatchesCallbackAggregator::create(maxMatchCount, [protectedThis = Ref { *this }, findOverlaySession, string](uint32_t matchCount) {
+        if (findOverlaySession)
+            findOverlaySession->didSettle({ }, matchCount);
         protectedThis->m_findClient->didCountStringMatches(protectedThis.ptr(), string, matchCount);
     });
 
@@ -8505,6 +8536,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_pageLoadTiming = nullptr;
         m_pageLoadTimingPendingCommit = makeUnique<WebPageLoadTiming>(timestamp);
         m_generatePageLoadTimingTimer.stop();
+        internals().findOverlaySession = nullptr;
 
         purgeQueuedModalDialogs();
     }
@@ -14404,6 +14436,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
+    internals().findOverlaySession = nullptr;
     m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
 

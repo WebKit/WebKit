@@ -122,6 +122,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 - (void)_getRenderTreeAsStringWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(NSString * NS_NULLABLE_RESULT, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
+
+@property (nonatomic, readonly) BOOL _findOverlayShouldBeVisibleForTesting;
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 @property (nonatomic, readonly) NSString *_scrollingTreeIncludingNodeIDsAsText;
 @property (nonatomic, readonly) double _rubberbandHyperbolicCoefficientForTesting;

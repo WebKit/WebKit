@@ -4950,6 +4950,139 @@ TEST(SiteIsolation, CountStringMatchesOverflowSaturates)
 }
 
 #if PLATFORM(MAC)
+
+static HTTPServer findOverlaySessionServer()
+{
+    return HTTPServer({
+        { "/mainframe"_s, { "<p>background content</p><iframe src='https://webkit.org/subframe'></iframe>"_s } },
+        { "/second"_s, { "<p>second page</p>"_s } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } },
+        { "/subframe2"_s, { "<body onload='alert(\"subframe2 loaded\")'><p>Hello world again</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> findOverlaySessionWebView(HTTPServer& server, RetainPtr<WKWebViewFindStringFindDelegate>& findDelegate)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static constexpr auto findOverlaySessionFindOptions = _WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowOverlay;
+
+static void findStringAndWait(TestWKWebView *webView, NSString *string)
+{
+    isDone = false;
+    [webView _findString:string options:findOverlaySessionFindOptions maxCount:100];
+    Util::run(&isDone);
+}
+
+TEST(SiteIsolation, FindOverlaySessionVisibleWhenOnlyCrossSiteIframeMatches)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByFailedFind)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    findStringAndWait(webView.get(), @"Missing string");
+    EXPECT_TRUE([findDelegate didFail]);
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByHideFindUI)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView _hideFindUI];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByClick)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView mouseDownAtPoint:NSMakePoint(400, 300) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(400, 300)];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByMainFrameNavigation)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionSurvivesSubframeNavigation)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView evaluateJavaScript:@"document.querySelector('iframe').src = 'https://webkit.org/subframe2'" completionHandler:nil];
+    EXPECT_WK_STREQ("subframe2 loaded", [webView _test_waitForAlert]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionStaleSettleDoesNotResurrect)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    isDone = false;
+    [webView _findString:@"Hello world" options:findOverlaySessionFindOptions maxCount:100];
+    [webView _findString:@"Missing string" options:findOverlaySessionFindOptions maxCount:100];
+    Util::waitFor([&] {
+        return [findDelegate didFail] && [[findDelegate findString] isEqualToString:@"Missing string"];
+    });
+
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(MAC)
 TEST(SiteIsolation, ProcessDisplayNames)
 {
     HTTPServer server({
