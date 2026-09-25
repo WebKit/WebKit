@@ -27,7 +27,8 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
-#include "FloatPolygon3D.h"
+#include "FloatPoint3D.h"
+#include "Polygon4D.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPath.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -38,7 +39,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-class FloatPlane3D;
 class SkiaCompositingLayer;
 
 class SkiaCompositingLayer3DRenderingContext {
@@ -51,7 +51,7 @@ public:
     struct Layer {
         enum class IsSplit : bool { No, Yes };
 
-        Layer(Ref<SkiaCompositingLayer>&& layer, FloatPolygon3D&& layerGeometry, IsSplit layerIsSplit = IsSplit::No)
+        Layer(Ref<SkiaCompositingLayer>&& layer, Polygon4D&& layerGeometry, IsSplit layerIsSplit = IsSplit::No)
             : compositingLayer(WTF::move(layer))
             , geometry(WTF::move(layerGeometry))
             , isSplit(layerIsSplit)
@@ -66,7 +66,7 @@ public:
         Layer& operator=(Layer&&) = default;
 
         Ref<SkiaCompositingLayer> compositingLayer;
-        FloatPolygon3D geometry;
+        Polygon4D geometry;
         IsSplit isSplit { IsSplit::No };
         BoundingBox boundingBox;
     };
@@ -97,11 +97,11 @@ private:
 
     using SweepAndPrunePairs = HashSet<std::pair<size_t, size_t>>;
 
-    static BoundingBox computeBoundingBox(const FloatPolygon3D&);
+    static BoundingBox computeBoundingBox(const Polygon4D&);
     static SweepAndPrunePairs sweepAndPrune(const Vector<Layer>&);
     static void buildTree(LayerNode&, Deque<Layer>&);
     static void traverseTree(LayerNode&, const std::function<void(LayerNode&)>&);
-    static LayerPosition classifyLayer(const Layer&, const FloatPlane3D&);
+    static LayerPosition classifyLayer(const Layer&, const Point4D& plane);
 };
 
 } // namespace WebCore

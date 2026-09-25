@@ -243,7 +243,7 @@ private:
     TransformationMatrix replicaTransform() const;
     TransformationMatrix combinedTransform(const PaintContext&) const;
     sk_sp<SkImage> maskImage();
-    FloatPolygon3D geometryFor3DRenderingContext() const;
+    Polygon4D geometryFor3DRenderingContext() const;
     FloatRect transformedFlattenedBounds() const;
     void collect3DRenderingContextLayers(Vector<SkiaCompositingLayer3DRenderingContext::Layer>&);
     void recursiveCleanUpAfterPaint();

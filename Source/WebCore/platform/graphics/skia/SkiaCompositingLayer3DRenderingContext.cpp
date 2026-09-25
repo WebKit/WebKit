@@ -28,27 +28,28 @@
 #include "SkiaCompositingLayer3DRenderingContext.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
-#include "FloatPlane3D.h"
-#include "FloatPolygon3D.h"
-#include "FloatQuad.h"
-#include "GeometryUtilities.h"
+#include "Polygon4D.h"
 #include "SkiaCompositingLayer.h"
+#include <limits>
 #include <numeric>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkM44.h>
 #include <skia/core/SkPathBuilder.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-static inline FloatQuad projectPolygonToZYPlane(const FloatPolygon3D& polygon)
+using PolygonZY = Vector<FloatPoint, 5>;
+
+static inline PolygonZY projectPolygonToZYPlane(const Polygon4D& polygon)
 {
-    auto p1 = polygon.vertexAt(0);
-    auto p2 = polygon.vertexAt(1);
-    auto p3 = polygon.vertexAt(2);
-    auto p4 = polygon.vertexAt(3);
-    return { { p1.z(), p1.y() }, { p2.z(), p2.y() }, { p3.z(), p3.y() }, { p4.z(), p4.y() } };
+    PolygonZY projected;
+    projected.reserveInitialCapacity(polygon.numberOfVertices());
+    for (unsigned i = 0; i < polygon.numberOfVertices(); ++i) {
+        const auto& vertex = polygon.vertexAt(i);
+        projected.append({ static_cast<float>(vertex.z), static_cast<float>(vertex.y) });
+    }
+    return projected;
 }
 
 // Given two points defining an edge, returns the perpendicular axis (normalized)
@@ -64,48 +65,38 @@ static inline FloatPoint edgeNormal(const FloatPoint& p1, const FloatPoint& p2)
 }
 
 // Project a convex polygon onto an axis and return min/max scalar values
-static inline std::pair<float, float> projectQuadOnAxis(const FloatQuad& quad, const FloatPoint& axis)
+static inline std::pair<float, float> projectPolygonOnAxis(const PolygonZY& polygon, const FloatPoint& axis)
 {
-    float p1 = quad.p1().dot(axis);
-    float p2 = quad.p2().dot(axis);
-    float p3 = quad.p3().dot(axis);
-    float p4 = quad.p4().dot(axis);
-
-    float min = min4(p1, p2, p3, p4);
-    float max = max4(p1, p2, p3, p4);
-
+    float min = std::numeric_limits<float>::max();
+    float max = std::numeric_limits<float>::lowest();
+    for (const auto& vertex : polygon) {
+        float distance = vertex.dot(axis);
+        min = std::min(min, distance);
+        max = std::max(max, distance);
+    }
     return { min, max };
 }
 
 // Intersection check using Separating Axis Theorem
 // For more information:
 // https://en.wikipedia.org/wiki/Hyperplane_separation_theorem
-static inline bool quadsIntersect(const FloatQuad& quadA, const FloatQuad& quadB)
+static inline bool polygonsIntersect(const PolygonZY& polygonA, const PolygonZY& polygonB)
 {
-    std::array<FloatPoint, 8> axes;
+    auto hasSeparatingAxis = [&](const PolygonZY& polygon) {
+        for (size_t i = 0; i < polygon.size(); ++i) {
+            auto axis = edgeNormal(polygon[i], polygon[(i + 1) % polygon.size()]);
 
-    // QuadA edges: (1->2), (2->3), (3->4), (4->0)
-    axes[0] = edgeNormal(quadA.p1(), quadA.p2());
-    axes[1] = edgeNormal(quadA.p2(), quadA.p3());
-    axes[2] = edgeNormal(quadA.p3(), quadA.p4());
-    axes[3] = edgeNormal(quadA.p4(), quadA.p1());
+            auto [minA, maxA] = projectPolygonOnAxis(polygonA, axis);
+            auto [minB, maxB] = projectPolygonOnAxis(polygonB, axis);
 
-    // QuadB edges: (1->2), (2->3), (3->4), (4->0)
-    axes[4] = edgeNormal(quadB.p1(), quadB.p2());
-    axes[5] = edgeNormal(quadB.p2(), quadB.p3());
-    axes[6] = edgeNormal(quadB.p3(), quadB.p4());
-    axes[7] = edgeNormal(quadB.p4(), quadB.p1());
+            // Check if two intervals [minA, maxA] and [minB, maxB] do not overlap
+            if (maxA < minB || maxB < minA)
+                return true;
+        }
+        return false;
+    };
 
-    for (auto& axis : axes) {
-        auto [minA, maxA] = projectQuadOnAxis(quadA, axis);
-        auto [minB, maxB] = projectQuadOnAxis(quadB, axis);
-
-        // Check if two intervals [minA, maxA] and [minB, maxB] do not overlap
-        if (maxA < minB || maxB < minA)
-            return false; // Separating axis found
-    }
-
-    return true; // No separating axis found
+    return !hasSeparatingAxis(polygonA) && !hasSeparatingAxis(polygonB);
 }
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SkiaCompositingLayer3DRenderingContext::LayerNode);
@@ -126,9 +117,9 @@ void SkiaCompositingLayer3DRenderingContext::paint(Vector<Layer>&& layers, const
     // order is either ambiguous or overlapping, necessitating the use of a BSP tree for proper ordering.
     bool hasIntersections = false;
     for (const auto& p : potentialIntersections) {
-        auto quadA = projectPolygonToZYPlane(layers[p.first].geometry);
-        auto quadB = projectPolygonToZYPlane(layers[p.second].geometry);
-        if (quadsIntersect(quadA, quadB)) {
+        auto polygonA = projectPolygonToZYPlane(layers[p.first].geometry);
+        auto polygonB = projectPolygonToZYPlane(layers[p.second].geometry);
+        if (polygonsIntersect(polygonA, polygonB)) {
             hasIntersections = true;
             break;
         }
@@ -158,21 +149,32 @@ void SkiaCompositingLayer3DRenderingContext::paint(Vector<Layer>&& layers, const
         if (layer.isSplit == Layer::IsSplit::No)
             return std::nullopt;
 
-        auto toLayerTransform = layer.compositingLayer->toSurfaceTransform().inverse();
         unsigned numVertices = layer.geometry.numberOfVertices();
-        if (!toLayerTransform || numVertices < 3)
-            return std::nullopt;
+
+        // minimumW matches Skia's perspective clip threshold (kW0PlaneDistance in SkPathPriv.h). A vertex
+        // below it lies on the camera plane, so instead of dividing, it is moved 2^20 pixels along the
+        // direction of its x and y. That is beyond any canvas, and small enough to stay precise in float.
+        static constexpr double minimumW = 1.0 / (1 << 14);
+        static constexpr double beyondAnyCanvas = 1 << 20;
+        auto project = [&](unsigned index) {
+            const auto& vertex = layer.geometry.vertexAt(index);
+            if (vertex.w > minimumW)
+                return SkPoint::Make(vertex.x / vertex.w, vertex.y / vertex.w);
+
+            const double length = std::hypot(vertex.x, vertex.y);
+            if (!length)
+                return SkPoint::Make(0, 0);
+
+            return SkPoint::Make(vertex.x / length * beyondAnyCanvas, vertex.y / length * beyondAnyCanvas);
+        };
 
         SkPathBuilder builder;
-        auto v = toLayerTransform->mapPoint(layer.geometry.vertexAt(0));
-        builder.moveTo(v.x(), v.y());
-        for (unsigned i = 1; i < numVertices; ++i) {
-            v = toLayerTransform->mapPoint(layer.geometry.vertexAt(i));
-            builder.lineTo(v.x(), v.y());
-        }
+        builder.moveTo(project(0));
+        for (unsigned i = 1; i < numVertices; ++i)
+            builder.lineTo(project(i));
         builder.close();
 
-        return builder.detach().makeTransform(SkM44(layer.compositingLayer->toSurfaceTransform()).asM33());
+        return builder.detach();
     };
 
     // Paint in BSP order, building SkPath clip paths for split layers.
@@ -182,13 +184,20 @@ void SkiaCompositingLayer3DRenderingContext::paint(Vector<Layer>&& layers, const
     });
 }
 
-SkiaCompositingLayer3DRenderingContext::BoundingBox SkiaCompositingLayer3DRenderingContext::computeBoundingBox(const FloatPolygon3D& polygon)
+SkiaCompositingLayer3DRenderingContext::BoundingBox SkiaCompositingLayer3DRenderingContext::computeBoundingBox(const Polygon4D& polygon)
 {
-    auto minCorner = polygon.vertexAt(0);
-    auto maxCorner = polygon.vertexAt(0);
+    ASSERT(polygon.numberOfVertices() >= 3);
+
+    auto corner = [&](unsigned index) {
+        const auto& vertex = polygon.vertexAt(index);
+        return FloatPoint3D(vertex.x, vertex.y, vertex.z);
+    };
+
+    auto minCorner = corner(0);
+    auto maxCorner = minCorner;
 
     for (unsigned i = 1; i < polygon.numberOfVertices(); i++) {
-        auto point = polygon.vertexAt(i);
+        auto point = corner(i);
         minCorner.setX(std::min(minCorner.x(), point.x()));
         minCorner.setY(std::min(minCorner.y(), point.y()));
         minCorner.setZ(std::min(minCorner.z(), point.z()));
@@ -249,8 +258,7 @@ void SkiaCompositingLayer3DRenderingContext::buildTree(LayerNode& root, Deque<La
     if (layers.isEmpty())
         return;
 
-    auto& rootGeometry = root.firstLayer().geometry;
-    FloatPlane3D rootPlane(rootGeometry.normal(), rootGeometry.vertexAt(0));
+    const auto& rootPlane = root.firstLayer().geometry.plane();
 
     Deque<Layer> backList, frontList;
     for (auto& layer : layers) {
@@ -287,15 +295,14 @@ void SkiaCompositingLayer3DRenderingContext::buildTree(LayerNode& root, Deque<La
 
 void SkiaCompositingLayer3DRenderingContext::traverseTree(LayerNode& node, const std::function<void(LayerNode&)>& processNode)
 {
-    auto& geometry = node.firstLayer().geometry;
-    FloatPlane3D plane(geometry.normal(), geometry.vertexAt(0));
+    const auto& plane = node.firstLayer().geometry.plane();
 
     auto* frontNode = node.frontNode.get();
     auto* backNode = node.backNode.get();
 
     // if polygon is facing away from camera then swap nodes to reverse
     // the traversal order
-    if (plane.normal().z() < 0)
+    if (plane.z < 0)
         std::swap(frontNode, backNode);
 
     if (backNode)
@@ -307,19 +314,18 @@ void SkiaCompositingLayer3DRenderingContext::traverseTree(LayerNode& node, const
         traverseTree(*frontNode, processNode);
 }
 
-SkiaCompositingLayer3DRenderingContext::LayerPosition SkiaCompositingLayer3DRenderingContext::classifyLayer(const Layer& layer, const FloatPlane3D& plane)
+SkiaCompositingLayer3DRenderingContext::LayerPosition SkiaCompositingLayer3DRenderingContext::classifyLayer(const Layer& layer, const Point4D& plane)
 {
-    const float epsilon = 0.05f; // Tolerance for intersection check
-
     int inFrontCount = 0;
     int behindCount = 0;
     for (unsigned i = 0; i < layer.geometry.numberOfVertices(); ++i) {
         const auto& vertex = layer.geometry.vertexAt(i);
-        float distance = plane.distanceToPoint(vertex);
+        double distance = signedDistanceToPlane(plane, vertex);
+        const double tolerance = Polygon4D::planeTolerance * vertex.w;
 
-        if (distance > epsilon)
+        if (distance > tolerance)
             inFrontCount++;
-        else if (distance < -epsilon)
+        else if (distance < -tolerance)
             behindCount++;
     }
 
