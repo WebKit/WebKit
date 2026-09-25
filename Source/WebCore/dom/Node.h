@@ -458,7 +458,7 @@ public:
     ALWAYS_INLINE bool isShadowIncludingInclusiveAncestorOf(const Node& other) const { return this == &other || other.isShadowIncludingDescendantOf(*this); }
     ALWAYS_INLINE bool isShadowIncludingInclusiveAncestorOf(const Node* other) const { return other && isShadowIncludingInclusiveAncestorOf(*other); }
 
-    bool NODELETE isComposedTreeDescendantOf(const Node&) const;
+    WEBCORE_EXPORT bool NODELETE isComposedTreeDescendantOf(const Node&) const;
     ALWAYS_INLINE bool isComposedTreeInclusiveDescendantOf(const Node& other) const { return this == &other || isComposedTreeDescendantOf(other); }
     ALWAYS_INLINE bool isComposedTreeInclusiveAncestorOf(const Node& other) const { return other.isComposedTreeInclusiveDescendantOf(*this); }
     ALWAYS_INLINE bool isComposedTreeInclusiveAncestorOf(const Node* other) const { return other && isComposedTreeInclusiveAncestorOf(*other); }
