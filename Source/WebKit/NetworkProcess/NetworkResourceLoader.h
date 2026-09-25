@@ -217,7 +217,11 @@ private:
     void retrieveCacheEntryInternal(std::unique_ptr<NetworkCache::Entry>&&, WebCore::ResourceRequest&&);
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
+#else
+    void validateCacheEntry(WebCore::ResourceRequest&&, std::unique_ptr<NetworkCache::Entry>);
+#endif
     void dispatchWillSendRequestForCacheEntry(WebCore::ResourceRequest&&, std::unique_ptr<NetworkCache::Entry>&&);
 
     bool shouldInterruptLoadForXFrameOptions(const String&, const URL&);
@@ -324,6 +328,9 @@ private:
     RefPtr<NetworkCache::Cache> m_cache;
     WebCore::SharedBufferBuilder m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    WebCore::ResourceRequest m_requestForCacheEntryValidation;
+#endif
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForMaxAgeCapValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
