@@ -81,7 +81,8 @@ std::optional<WebCore::GeolocationPositionData> core(WebGeolocationPosition *pos
 
 - (void)dealloc
 {
-    [_internal release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_internal release];
     [super dealloc];
 }
 

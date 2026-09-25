@@ -35,7 +35,7 @@ namespace WebCore {
 
 unsigned short ObjCNodeFilterCondition::acceptNode(Node& node) const
 {
-    return [m_filter.get() acceptNode:kit(&node)];
+    return [m_filter.get() acceptNode:protect(kit(&node))];
 }
 
 } // namespace WebCore

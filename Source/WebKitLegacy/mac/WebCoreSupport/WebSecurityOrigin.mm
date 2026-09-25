@@ -108,7 +108,8 @@
     if (_private)
         reinterpret_cast<WebCore::SecurityOrigin*>(_private)->deref();
     if (_databaseQuotaManager)
-        [(NSObject *)_databaseQuotaManager release];
+        // Retaining the member just to release it would be pointless.
+        SUPPRESS_UNRETAINED_ARG [(NSObject *)_databaseQuotaManager release];
     [super dealloc];
 }
 

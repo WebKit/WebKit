@@ -209,7 +209,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
         return;
 
     _playbackModel->setMediaElement(videoElement);
-    self.playerView.playerController = (AVPlayerController*)_playbackInterface->playerController();
+    self.playerView.playerController = RetainPtr { (AVPlayerController*)_playbackInterface->playerController() };
 }
 
 - (void)enterFullscreen:(NSScreen *)screen

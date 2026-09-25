@@ -1095,7 +1095,7 @@ static NSControlStateValue NODELETE kit(TriState state)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
 
     if (flagsChangedEventMonitor) {
-        [NSEvent removeMonitor:flagsChangedEventMonitor];
+        [NSEvent removeMonitor:protect(flagsChangedEventMonitor)];
         flagsChangedEventMonitor = nil;
     }
 #endif
@@ -1565,7 +1565,7 @@ static NSControlStateValue NODELETE kit(TriState state)
     _private->savedSubviews = self._subviewsIvar;
     // We need to keep the layer-hosting view in the subviews, otherwise the layers flash.
     if (_private->layerHostingView) {
-        NSMutableArray* newSubviews = [[NSMutableArray alloc] initWithObjects:_private->layerHostingView, nil];
+        NSMutableArray* newSubviews = [[NSMutableArray alloc] initWithObjects:protect(_private->layerHostingView).get(), nil];
         self._subviewsIvar = newSubviews;
     } else
         self._subviewsIvar = nil;
@@ -1576,13 +1576,14 @@ static NSControlStateValue NODELETE kit(TriState state)
  - (void)_restoreSubviews
  {
 #if PLATFORM(MAC)
+    RetainPtr savedSubviews = _private->savedSubviews;
     ASSERT(_private->subviewsSetAside);
     if (_private->layerHostingView) {
         [self._subviewsIvar release];
-        self._subviewsIvar = _private->savedSubviews;
+        self._subviewsIvar = savedSubviews;
     } else {
         ASSERT(self._subviewsIvar == nil);
-        self._subviewsIvar = _private->savedSubviews;
+        self._subviewsIvar = savedSubviews;
     }
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
@@ -2006,7 +2007,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()]];
     } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()] && _private->promisedDragTIFFDataSource) {
         if (RefPtr image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:(__bridge NSData *)image->adapter().tiffRepresentation() forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
+            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation()) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }
@@ -2285,7 +2286,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 #endif
 
-    [_private clear];
+    [protect(_private) clear];
 }
 
 #if PLATFORM(MAC)
@@ -2615,7 +2616,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // this view can be removed from it's superview, even though
     // it could be needed later, so close if needed.
     [self close];
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_private release];
     _private = nil;
 
     [super dealloc];
@@ -2897,9 +2899,9 @@ IGNORE_WARNINGS_END
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
-            [menuItem setTitle:panelShowing
+            [menuItem setTitle:protect(panelShowing
                 ? UI_STRING_INTERNAL("Hide Spelling and Grammar", "menu item title")
-                : UI_STRING_INTERNAL("Show Spelling and Grammar", "menu item title")];
+                : UI_STRING_INTERNAL("Show Spelling and Grammar", "menu item title"))];
         }
         return [self _canEdit];
     }
@@ -2938,9 +2940,9 @@ IGNORE_WARNINGS_END
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             // Take control of the title of the menu item instead of just checking/unchecking it because
             // a check would be ambiguous.
-            [menuItem setTitle:(frame->editor().selectionHasStyle(WebCore::CSSPropertyDirection, "rtl"_s) != TriState::False)
+            [menuItem setTitle:protect((frame->editor().selectionHasStyle(WebCore::CSSPropertyDirection, "rtl"_s) != TriState::False)
                 ? UI_STRING_INTERNAL("Left to Right", "Left to Right context menu item")
-                : UI_STRING_INTERNAL("Right to Left", "Right to Left context menu item")];
+                : UI_STRING_INTERNAL("Right to Left", "Right to Left context menu item"))];
         }
         return [self _canEdit];
     } 
@@ -3000,9 +3002,9 @@ IGNORE_WARNINGS_END
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible];
-            [menuItem setTitle:panelShowing
+            [menuItem setTitle:protect(panelShowing
                 ? UI_STRING_INTERNAL("Hide Substitutions", "menu item title")
-                : UI_STRING_INTERNAL("Show Substitutions", "menu item title")];
+                : UI_STRING_INTERNAL("Show Substitutions", "menu item title"))];
         }
         return [self _canEdit];
     }
@@ -3256,7 +3258,7 @@ IGNORE_WARNINGS_END
             }];
         }
     } else {
-        [NSEvent removeMonitor:_private->flagsChangedEventMonitor];
+        [NSEvent removeMonitor:protect(_private->flagsChangedEventMonitor)];
         _private->flagsChangedEventMonitor = nil;
 #endif
     }
@@ -3710,7 +3712,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Web
     _private->handlingMouseDownEvent = YES;
     page->contextMenuController().clearContextMenu();
     coreFrame->eventHandler().mouseDown(event, [[self _webView] _pressureEvent]);
-    BOOL handledEvent = coreFrame->eventHandler().sendContextMenuEvent(WebCore::PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], page->chrome().platformPageClient()));
+    BOOL handledEvent = coreFrame->eventHandler().sendContextMenuEvent(WebCore::PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], protect(page->chrome().platformPageClient())));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -4108,7 +4110,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if ([hitHTMLView.get() _isSelectionEvent:event]) {
 #if ENABLE(DRAG_SUPPORT)
                 if (RefPtr page = coreFrame->page())
-                    result = coreFrame->eventHandler().eventMayStartDrag(WebCore::PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], page->chrome().platformPageClient()));
+                    result = coreFrame->eventHandler().eventMayStartDrag(WebCore::PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], protect(page->chrome().platformPageClient())));
 #endif
             } else if ([hitHTMLView.get() _isScrollBarEvent:event])
                 result = true;
@@ -4135,7 +4137,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(DRAG_SUPPORT)
             if (RefPtr coreFrame = core([hitHTMLView.get() _frame])) {
                 if (RefPtr page = coreFrame->page())
-                    result = coreFrame->eventHandler().eventMayStartDrag(WebCore::PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], page->chrome().platformPageClient()));
+                    result = coreFrame->eventHandler().eventMayStartDrag(WebCore::PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], protect(page->chrome().platformPageClient())));
             }
 #endif
             [hitHTMLView.get() _setMouseDownEvent:nil];
@@ -6130,6 +6132,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)attachRootLayer:(CALayer *)layer
 {
+    RetainPtr layerHostingView = _private->layerHostingView;
     if (!_private->layerHostingView) {
         auto hostingView = adoptNS([[WebLayerHostingFlippedView alloc] initWithFrame:[self bounds]]);
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
@@ -6143,16 +6146,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([self layer]) {
         // If we are in a layer-backed view, we need to manually initialize the geometry for our layer.
-        [viewLayer setBounds:NSRectToCGRect([_private->layerHostingView bounds])];
+        [viewLayer setBounds:NSRectToCGRect([layerHostingView bounds])];
         [viewLayer setAnchorPoint:CGPointMake(0, [self isFlipped] ? 1 : 0)];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CGPoint layerPosition = NSPointToCGPoint([self convertPointToBase:[_private->layerHostingView frame].origin]);
+        CGPoint layerPosition = NSPointToCGPoint([self convertPointToBase:[layerHostingView frame].origin]);
 ALLOW_DEPRECATED_DECLARATIONS_END
         [viewLayer setPosition:layerPosition];
     }
     
-    [_private->layerHostingView setLayer:viewLayer];
-    [_private->layerHostingView setWantsLayer:YES];
+    [layerHostingView setLayer:viewLayer];
+    [layerHostingView setWantsLayer:YES];
     
     // Parent our root layer in the container layer
     [viewLayer addSublayer:layer];
@@ -6167,9 +6170,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)detachRootLayer
 {
     if (_private->layerHostingView) {
-        [_private->layerHostingView setLayer:nil];
-        [_private->layerHostingView setWantsLayer:NO];
-        [_private->layerHostingView removeFromSuperview];
+        RetainPtr layerHostingView = _private->layerHostingView;
+        [layerHostingView setLayer:nil];
+        [layerHostingView setWantsLayer:NO];
+        [layerHostingView removeFromSuperview];
         _private->layerHostingView = nil;
     }
 }
@@ -7173,15 +7177,15 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 {
     self = [super init];
     _lastResponderInChain = chain;
-    while (NSResponder *next = [_lastResponderInChain nextResponder])
+    while (NSResponder *next = [protect(_lastResponderInChain) nextResponder])
         _lastResponderInChain = next;
-    [_lastResponderInChain setNextResponder:self];
+    [protect(_lastResponderInChain) setNextResponder:self];
     return self;
 }
 
 - (void)detach
 {
-    [_lastResponderInChain setNextResponder:nil];
+    [protect(_lastResponderInChain) setNextResponder:nil];
     _lastResponderInChain = nil;
 }
 

@@ -94,7 +94,8 @@
 
 - (void)dealloc
 {
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_private release];
     [super dealloc];
 }
 

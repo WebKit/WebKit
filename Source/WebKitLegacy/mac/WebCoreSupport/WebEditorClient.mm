@@ -205,41 +205,42 @@ WebEditorClient::~WebEditorClient() = default;
 
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
 {
-    return [m_webView isContinuousSpellCheckingEnabled];
+    return [protect(m_webView) isContinuousSpellCheckingEnabled];
 }
 
 void WebEditorClient::toggleContinuousSpellChecking()
 {
-    [m_webView toggleContinuousSpellChecking:nil];
+    [protect(m_webView) toggleContinuousSpellChecking:nil];
 }
 
 #if !PLATFORM(IOS_FAMILY)
 
 bool WebEditorClient::isGrammarCheckingEnabled()
 {
-    return [m_webView isGrammarCheckingEnabled];
+    return [protect(m_webView) isGrammarCheckingEnabled];
 }
 
 void WebEditorClient::toggleGrammarChecking()
 {
-    [m_webView toggleGrammarChecking:nil];
+    [protect(m_webView) toggleGrammarChecking:nil];
 }
 
 int WebEditorClient::spellCheckerDocumentTag()
 {
-    return [m_webView spellCheckerDocumentTag];
+    return [protect(m_webView) spellCheckerDocumentTag];
 }
 
 #endif
 
 bool WebEditorClient::shouldDeleteRange(const std::optional<WebCore::SimpleRange>& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldDeleteDOMRange:kit(range)];
+    RetainPtr webView = m_webView;
+    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:protect(kit(range))];
 }
 
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
-    RefPtr page = [m_webView page].get();
+    RefPtr page = [protect(m_webView) page].get();
     if (!page)
         return false;
     return page->settings().smartInsertDeleteEnabled();
@@ -247,7 +248,7 @@ bool WebEditorClient::smartInsertDeleteEnabled()
 
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 {
-    RefPtr page = [m_webView page].get();
+    RefPtr page = [protect(m_webView) page].get();
     if (!page)
         return false;
     return page->settings().selectTrailingWhitespaceEnabled();
@@ -255,9 +256,10 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 
 bool WebEditorClient::shouldApplyStyle(const WebCore::StyleProperties& style, const std::optional<WebCore::SimpleRange>& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldApplyStyle:kit(&style.mutableCopy()->ensureCSSStyleProperties())
-        toElementsInDOMRange:kit(range)];
+    RetainPtr webView = m_webView;
+    return [[webView _editingDelegateForwarder] webView:webView
+        shouldApplyStyle:protect(kit(&style.mutableCopy()->ensureCSSStyleProperties()))
+        toElementsInDOMRange:protect(kit(range))];
 }
 
 static void updateFontPanel(WebView *webView)
@@ -273,40 +275,43 @@ static void updateFontPanel(WebView *webView)
 
 void WebEditorClient::didApplyStyle()
 {
-    updateFontPanel(m_webView);
+    updateFontPanel(protect(m_webView));
 }
 
 bool WebEditorClient::shouldMoveRangeAfterDelete(const WebCore::SimpleRange& range, const WebCore::SimpleRange& rangeToBeReplaced)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldMoveRangeAfterDelete:kit(range) replacingRange:kit(rangeToBeReplaced)];
+    RetainPtr webView = m_webView;
+    return [[webView _editingDelegateForwarder] webView:webView
+        shouldMoveRangeAfterDelete:protect(kit(range)) replacingRange:protect(kit(rangeToBeReplaced))];
 }
 
 bool WebEditorClient::shouldBeginEditing(const WebCore::SimpleRange& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldBeginEditingInDOMRange:kit(range)];
+    RetainPtr webView = m_webView;
+    return [[webView _editingDelegateForwarder] webView:webView shouldBeginEditingInDOMRange:protect(kit(range))];
 }
 
 bool WebEditorClient::shouldEndEditing(const WebCore::SimpleRange& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldEndEditingInDOMRange:kit(range)];
+    RetainPtr webView = m_webView;
+    return [[webView _editingDelegateForwarder] webView:webView shouldEndEditingInDOMRange:protect(kit(range))];
 }
 
 bool WebEditorClient::shouldInsertText(const String& text, const std::optional<WebCore::SimpleRange>& range, WebCore::EditorInsertAction action)
 {
     RetainPtr webView = m_webView;
-    return [[webView.get() _editingDelegateForwarder] webView:webView.get() shouldInsertText:text.createNSString().get() replacingDOMRange:kit(range) givenAction:kit(action)];
+    return [[webView.get() _editingDelegateForwarder] webView:webView.get() shouldInsertText:text.createNSString().get() replacingDOMRange:protect(kit(range)) givenAction:kit(action)];
 }
 
 bool WebEditorClient::shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity selectionAffinity, bool stillSelecting)
 {
-    return [m_webView _shouldChangeSelectedDOMRange:kit(fromRange) toDOMRange:kit(toRange) affinity:kit(selectionAffinity) stillSelecting:stillSelecting];
+    return [protect(m_webView) _shouldChangeSelectedDOMRange:protect(kit(fromRange)) toDOMRange:protect(kit(toRange)) affinity:kit(selectionAffinity) stillSelecting:stillSelecting];
 }
 
 void WebEditorClient::didBeginEditing()
 {
 #if !PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:m_webView];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:protect(m_webView)];
 #else
     WebThreadPostNotification(WebViewDidBeginEditingNotification, m_webView, nil);
 #endif
@@ -333,9 +338,10 @@ void WebEditorClient::stopDelayingAndCoalescingContentChangeNotifications()
 
 void WebEditorClient::respondToChangedContents()
 {
-    updateFontPanel(m_webView);
+    RetainPtr webView = m_webView;
+    updateFontPanel(webView);
 #if !PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:m_webView];    
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:webView];
 #else
     if (m_delayingContentChangeNotifications) {
         m_hasDelayedContentChangeNotification = true;
@@ -347,18 +353,19 @@ void WebEditorClient::respondToChangedContents()
 
 void WebEditorClient::respondToChangedSelection(WebCore::LocalFrame* frame)
 {
+    RetainPtr webView = m_webView;
     if (!frame || frame->editor().isGettingDictionaryPopupInfo())
         return;
 
-    NSView<WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+    RetainPtr<NSView<WebDocumentView>> documentView = [[protect(kit(frame)) frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)documentView _selectionChanged];
-        [m_webView updateTouchBar];
-        m_lastEditorStateWasContentEditable = [(WebHTMLView *)documentView _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
+        [webView updateTouchBar];
+        m_lastEditorStateWasContentEditable = [(WebHTMLView *)documentView.get() _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:m_webView];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:webView];
 #else
     // Selection can be changed while deallocating down the WebView / Frame / Editor.  Do not post in that case because it's already too late
     // for the NSInvocation to retain the WebView.
@@ -401,7 +408,7 @@ void WebEditorClient::canceledComposition()
 void WebEditorClient::didEndEditing()
 {
 #if !PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:protect(m_webView)];
 #else
     WebThreadPostNotification(WebViewDidEndEditingNotification, m_webView, nil);
 #endif
@@ -410,7 +417,8 @@ void WebEditorClient::didEndEditing()
 void WebEditorClient::didWriteSelectionToPasteboard()
 {
 #if !PLATFORM(IOS_FAMILY)
-    [[m_webView _editingDelegateForwarder] webView:m_webView didWriteSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+    RetainPtr webView = m_webView;
+    [[webView _editingDelegateForwarder] webView:webView didWriteSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 #endif
 }
 
@@ -480,7 +488,7 @@ void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
 {
 #if !PLATFORM(IOS_FAMILY)
     RetainPtr<NSPasteboard> pasteboard = pasteboardName.isEmpty() ? nil : [NSPasteboard pasteboardWithName:pasteboardName.createNSString().get()];
-    [m_webView _setInsertionPasteboard:pasteboard.get()];
+    [protect(m_webView) _setInsertionPasteboard:pasteboard.get()];
 #endif
 }
 
@@ -488,17 +496,17 @@ void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
 
 void WebEditorClient::uppercaseWord()
 {
-    [m_webView uppercaseWord:nil];
+    [protect(m_webView) uppercaseWord:nil];
 }
 
 void WebEditorClient::lowercaseWord()
 {
-    [m_webView lowercaseWord:nil];
+    [protect(m_webView) lowercaseWord:nil];
 }
 
 void WebEditorClient::capitalizeWord()
 {
-    [m_webView capitalizeWord:nil];
+    [protect(m_webView) capitalizeWord:nil];
 }
 
 bool WebEditorClient::canApplyCaseTransformations(const String&)
@@ -544,57 +552,57 @@ bool WebEditorClient::substitutionsPanelIsShowing()
 
 void WebEditorClient::toggleSmartInsertDelete()
 {
-    [m_webView toggleSmartInsertDelete:nil];
+    [protect(m_webView) toggleSmartInsertDelete:nil];
 }
 
 bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 {
-    return [m_webView isAutomaticQuoteSubstitutionEnabled];
+    return [protect(m_webView) isAutomaticQuoteSubstitutionEnabled];
 }
 
 void WebEditorClient::toggleAutomaticQuoteSubstitution()
 {
-    [m_webView toggleAutomaticQuoteSubstitution:nil];
+    [protect(m_webView) toggleAutomaticQuoteSubstitution:nil];
 }
 
 bool WebEditorClient::isAutomaticLinkDetectionEnabled()
 {
-    return [m_webView isAutomaticLinkDetectionEnabled];
+    return [protect(m_webView) isAutomaticLinkDetectionEnabled];
 }
 
 void WebEditorClient::toggleAutomaticLinkDetection()
 {
-    [m_webView toggleAutomaticLinkDetection:nil];
+    [protect(m_webView) toggleAutomaticLinkDetection:nil];
 }
 
 bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 {
-    return [m_webView isAutomaticDashSubstitutionEnabled];
+    return [protect(m_webView) isAutomaticDashSubstitutionEnabled];
 }
 
 void WebEditorClient::toggleAutomaticDashSubstitution()
 {
-    [m_webView toggleAutomaticDashSubstitution:nil];
+    [protect(m_webView) toggleAutomaticDashSubstitution:nil];
 }
 
 bool WebEditorClient::isAutomaticTextReplacementEnabled()
 {
-    return [m_webView isAutomaticTextReplacementEnabled];
+    return [protect(m_webView) isAutomaticTextReplacementEnabled];
 }
 
 void WebEditorClient::toggleAutomaticTextReplacement()
 {
-    [m_webView toggleAutomaticTextReplacement:nil];
+    [protect(m_webView) toggleAutomaticTextReplacement:nil];
 }
 
 bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
 {
-    return [m_webView isAutomaticSpellingCorrectionEnabled];
+    return [protect(m_webView) isAutomaticSpellingCorrectionEnabled];
 }
 
 void WebEditorClient::toggleAutomaticSpellingCorrection()
 {
-    [m_webView toggleAutomaticSpellingCorrection:nil];
+    [protect(m_webView) toggleAutomaticSpellingCorrection:nil];
 }
 
 bool WebEditorClient::isSmartListsEnabled()
@@ -610,12 +618,13 @@ void WebEditorClient::toggleSmartLists()
 
 bool WebEditorClient::shouldInsertNode(WebCore::Node& node, const std::optional<WebCore::SimpleRange>& replacingRange, WebCore::EditorInsertAction givenAction)
 { 
-    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldInsertNode:kit(&node) replacingDOMRange:kit(replacingRange) givenAction:(WebViewInsertAction)givenAction];
+    RetainPtr webView = m_webView;
+    return [[webView _editingDelegateForwarder] webView:webView shouldInsertNode:protect(kit(&node)) replacingDOMRange:protect(kit(replacingRange)) givenAction:(WebViewInsertAction)givenAction];
 }
 
 void WebEditorClient::registerUndoOrRedoStep(WebCore::UndoStep& step, bool isRedo)
 {
-    NSUndoManager *undoManager = [m_webView undoManager];
+    RetainPtr undoManager = [protect(m_webView) undoManager];
 
 #if PLATFORM(IOS_FAMILY)
     // While we are undoing, we shouldn't be asked to register another Undo operation, we shouldn't even be touching the DOM.
@@ -639,17 +648,18 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
     if (m_lastEditorStateWasContentEditable == EditorStateIsContentEditable::Unset)
         return;
 
-    RefPtr frame = core([m_webView _selectedOrMainFrame]);
+    RetainPtr webView = m_webView;
+    RefPtr frame = core([webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
-    NSView<WebDocumentView> *documentView = [[kit(frame.get()) frameView] documentView];
+    RetainPtr<NSView<WebDocumentView>> documentView = [[protect(kit(frame.get())) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return;
 
-    EditorStateIsContentEditable editorStateIsContentEditable = [(WebHTMLView *)documentView _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
+    EditorStateIsContentEditable editorStateIsContentEditable = [(WebHTMLView *)documentView.get() _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     if (m_lastEditorStateWasContentEditable != editorStateIsContentEditable)
-        [m_webView updateTouchBar];
+        [webView updateTouchBar];
 }
 
 void WebEditorClient::registerUndoStep(WebCore::UndoStep& command)
@@ -668,7 +678,7 @@ void WebEditorClient::clearUndoRedoOperations()
         // workaround for <rdar://problem/4645507> NSUndoManager dies
         // with uncaught exception when undo items cleared while
         // groups are open
-        NSUndoManager *undoManager = [m_webView undoManager];
+        RetainPtr undoManager = [protect(m_webView) undoManager];
         int groupingLevel = [undoManager groupingLevel];
         for (int i = 0; i < groupingLevel; ++i)
             [undoManager endUndoGrouping];
@@ -694,35 +704,35 @@ bool WebEditorClient::canPaste(WebCore::LocalFrame*, bool defaultValue) const
 
 bool WebEditorClient::canUndo() const
 {
-    return [[m_webView undoManager] canUndo];
+    return [[protect(m_webView) undoManager] canUndo];
 }
 
 bool WebEditorClient::canRedo() const
 {
-    return [[m_webView undoManager] canRedo];
+    return [[protect(m_webView) undoManager] canRedo];
 }
 
 void WebEditorClient::undo()
 {
     if (canUndo())
-        [[m_webView undoManager] undo];
+        [[protect(m_webView) undoManager] undo];
 }
 
 void WebEditorClient::redo()
 {
     if (canRedo())
-        [[m_webView undoManager] redo];    
+        [[protect(m_webView) undoManager] redo];
 }
 
 void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent& event)
 {
     RefPtr frame = downcast<WebCore::Node>(event.target())->document().frame();
 #if !PLATFORM(IOS_FAMILY)
-    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
+    RetainPtr webHTMLView = (WebHTMLView *)[[protect(kit(frame.get())) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:&event savingCommands:NO])
         event.setDefaultHandled();
 #else
-    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
+    RetainPtr webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
     if ([webHTMLView _handleEditingKeyEvent:&event])
         event.setDefaultHandled();
 #endif
@@ -733,7 +743,7 @@ void WebEditorClient::handleInputMethodKeydown(WebCore::KeyboardEvent& event)
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
     RefPtr frame = downcast<WebCore::Node>(event.target())->document().frame();
-    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
+    RetainPtr webHTMLView = (WebHTMLView *)[[protect(kit(frame.get())) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:&event savingCommands:YES])
         event.setDefaultHandled();
 #else
@@ -760,7 +770,7 @@ void WebEditorClient::textFieldDidBeginEditing(WebCore::Element& element)
         return;
 
     FormDelegateLog(inputElement.get());
-    CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement.get(), kit(protect(element.document().frame())));
+    CallFormDelegate(protect(m_webView), @selector(textFieldDidBeginEditing:inFrame:), inputElement.get(), protect(kit(protect(element.document().frame()))));
 }
 
 void WebEditorClient::textFieldDidEndEditing(WebCore::Element& element)
@@ -770,7 +780,7 @@ void WebEditorClient::textFieldDidEndEditing(WebCore::Element& element)
         return;
 
     FormDelegateLog(inputElement.get());
-    CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement.get(), kit(protect(element.document().frame())));
+    CallFormDelegate(protect(m_webView), @selector(textFieldDidEndEditing:inFrame:), inputElement.get(), protect(kit(protect(element.document().frame()))));
 }
 
 void WebEditorClient::textDidChangeInTextField(WebCore::Element& element)
@@ -785,7 +795,7 @@ void WebEditorClient::textDidChangeInTextField(WebCore::Element& element)
 #endif
 
     FormDelegateLog(inputElement.get());
-    CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement.get(), kit(protect(element.document().frame())));
+    CallFormDelegate(protect(m_webView), @selector(textDidChangeInTextField:inFrame:), inputElement.get(), protect(kit(protect(element.document().frame()))));
 }
 
 static SEL selectorForKeyEvent(WebCore::KeyboardEvent* event)
@@ -821,7 +831,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(WebCore::Element& element, Web
 
     FormDelegateLog(inputElement.get());
     if (SEL commandSelector = selectorForKeyEvent(event))
-        return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), commandSelector, kit(protect(element.document().frame())));
+        return CallFormDelegateReturningBoolean(NO, protect(m_webView), @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), commandSelector, protect(kit(protect(element.document().frame()))));
     return NO;
 }
 
@@ -833,7 +843,7 @@ void WebEditorClient::textWillBeDeletedInTextField(WebCore::Element& element)
 
     FormDelegateLog(inputElement.get());
     // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
-    CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), @selector(deleteBackward:), kit(protect(element.document().frame())));
+    CallFormDelegateReturningBoolean(NO, protect(m_webView), @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), @selector(deleteBackward:), protect(kit(protect(element.document().frame()))));
 }
 
 void WebEditorClient::textDidChangeInTextArea(WebCore::Element& element)
@@ -843,7 +853,7 @@ void WebEditorClient::textDidChangeInTextArea(WebCore::Element& element)
         return;
 
     FormDelegateLog(textAreaElement.get());
-    CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement.get(), kit(protect(element.document().frame())));
+    CallFormDelegate(protect(m_webView), @selector(textDidChangeInTextArea:inFrame:), textAreaElement.get(), protect(kit(protect(element.document().frame()))));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1133,13 +1143,14 @@ void WebEditorClient::setInputMethodState(WebCore::Element*)
 
 void WebEditorClient::requestCandidatesForSelection(const WebCore::VisibleSelection& selection)
 {
-    if (![m_webView shouldRequestCandidates])
+    RetainPtr webView = m_webView;
+    if (![webView shouldRequestCandidates])
         return;
 
     if (!selection.toNormalizedRange())
         return;
 
-    RefPtr frame = core([m_webView _selectedOrMainFrame]);
+    RefPtr frame = core([webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1167,13 +1178,14 @@ void WebEditorClient::requestCandidatesForSelection(const WebCore::VisibleSelect
 
 void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
 {
-    if (![m_webView shouldRequestCandidates])
+    RetainPtr webView = m_webView;
+    if (![webView shouldRequestCandidates])
         return;
 
     if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
         return;
 
-    RefPtr frame = core([m_webView _selectedOrMainFrame]);
+    RefPtr frame = core([webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1195,12 +1207,13 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
             rectForSelectionCandidates = frame->view()->contentsToWindow(frame->selection().absoluteCaretBounds());
     }
 
-    [m_webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:m_webView completionHandler:nil];
+    [webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:webView completionHandler:nil];
 }
 
 void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(const WebCore::TextCheckingResult& acceptedCandidate)
 {
-    RefPtr frame = core([m_webView _selectedOrMainFrame]);
+    RetainPtr webView = m_webView;
+    RefPtr frame = core([webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1208,7 +1221,7 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(const WebCore::TextC
     if (selection != m_lastSelectionForRequestedCandidates)
         return;
 
-    NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
+    NSView <WebDocumentView> *view = [[[webView selectedFrame] frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
         unsigned replacementLength = acceptedCandidate.replacement.length();
         if (replacementLength > 0) {

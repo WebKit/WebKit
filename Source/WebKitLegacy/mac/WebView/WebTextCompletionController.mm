@@ -62,9 +62,10 @@
 
 - (void)dealloc
 {
-    [_popupWindow release];
-    [_completions release];
-    [_originalString release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_popupWindow release];
+    SUPPRESS_UNRETAINED_ARG [_completions release];
+    SUPPRESS_UNRETAINED_ARG [_originalString release];
     
     [super dealloc];
 }
@@ -73,7 +74,7 @@
 {
     // FIXME: 3769654 - We should preserve case of string being inserted, even in prefix (but then also be
     // able to revert that).  Mimic NSText.
-    WebFrame *frame = [_htmlView _frame];
+    RetainPtr frame = [protect(_htmlView) _frame];
     NSString *newText = [match substringFromIndex:prefixLength];
     [frame _replaceSelectionWithText:newText selectReplacement:YES smartReplace:NO];
 }
@@ -90,49 +91,54 @@
     [column setEditable:NO];
     
     _tableView = [[NSTableView alloc] initWithFrame:tableFrame];
-    [_tableView setAutoresizingMask:NSViewWidthSizable];
-    [_tableView addTableColumn:column.get()];
-    [_tableView setGridStyleMask:NSTableViewGridNone];
-    [_tableView setCornerView:nil];
-    [_tableView setHeaderView:nil];
-    [_tableView setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
-    [_tableView setDelegate:self];
-    [_tableView setDataSource:self];
-    [_tableView setTarget:self];
-    [_tableView setDoubleAction:@selector(tableAction:)];
+    RetainPtr tableView = _tableView;
+    [tableView setAutoresizingMask:NSViewWidthSizable];
+    [tableView addTableColumn:column.get()];
+    [tableView setGridStyleMask:NSTableViewGridNone];
+    [tableView setCornerView:nil];
+    [tableView setHeaderView:nil];
+    [tableView setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
+    [tableView setDelegate:self];
+    [tableView setDataSource:self];
+    [tableView setTarget:self];
+    [tableView setDoubleAction:@selector(tableAction:)];
     
     auto scrollView = adoptNS([[NSScrollView alloc] initWithFrame:scrollFrame]);
     [scrollView setBorderType:NSNoBorder];
     [scrollView setHasVerticalScroller:YES];
     [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [scrollView setDocumentView:_tableView];
-    [_tableView release];
+    [scrollView setDocumentView:tableView];
+    [tableView release];
     
     _popupWindow = [[NSWindow alloc] initWithContentRect:scrollFrame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
-    [_popupWindow setAlphaValue:0.88f];
-    [_popupWindow setContentView:scrollView.get()];
-    [_popupWindow setHasShadow:YES];
-    [_popupWindow _setForceActiveControls:YES];
-    [_popupWindow setReleasedWhenClosed:NO];
+    RetainPtr popupWindow = _popupWindow;
+    [popupWindow setAlphaValue:0.88f];
+    [popupWindow setContentView:scrollView.get()];
+    [popupWindow setHasShadow:YES];
+    [popupWindow _setForceActiveControls:YES];
+    [popupWindow setReleasedWhenClosed:NO];
 }
 
 // mostly lifted from NSTextView_KeyBinding.m
 - (void)_placePopupWindow:(NSPoint)topLeft
 {
-    NSUInteger numberToShow = [_completions count];
+    RetainPtr completions = _completions;
+    NSUInteger numberToShow = [completions count];
     if (numberToShow > 20)
         numberToShow = 20;
 
     NSRect windowFrame;
     NSPoint wordStart = topLeft;
-    windowFrame.origin = [[_view window] convertPointToScreen:[_htmlView convertPoint:wordStart toView:nil]];
-    windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
+    RetainPtr view = _view;
+    windowFrame.origin = [[view window] convertPointToScreen:[protect(_htmlView) convertPoint:wordStart toView:nil]];
+    RetainPtr tableView = _tableView;
+    windowFrame.size.height = numberToShow * [tableView rowHeight] + (numberToShow + 1) * [tableView intercellSpacing].height;
     windowFrame.origin.y -= windowFrame.size.height;
     NSDictionary *attributes = @{ NSFontAttributeName: [NSFont systemFontOfSize:12.0f] };
     CGFloat maxWidth = 0;
     int maxIndex = -1;
     for (NSUInteger i = 0; i < numberToShow; i++) {
-        float width = ceilf([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
+        float width = ceilf([[completions objectAtIndex:i] sizeWithAttributes:attributes].width);
         if (width > maxWidth) {
             maxWidth = width;
             maxIndex = i;
@@ -147,15 +153,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         maxWidth += 5.0f;
         windowFrame.size.width = std::max(maxWidth, windowFrame.size.width);
     }
-    [_popupWindow setFrame:windowFrame display:NO];
+    RetainPtr popupWindow = _popupWindow;
+    [popupWindow setFrame:windowFrame display:NO];
     
-    [_tableView reloadData];
-    [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
-    [_tableView scrollRowToVisible:0];
+    [tableView reloadData];
+    [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+    [tableView scrollRowToVisible:0];
     [self _reflectSelection];
-    [_popupWindow setLevel:NSPopUpMenuWindowLevel];
-    [_popupWindow orderFront:nil];    
-    [[_view window] addChildWindow:_popupWindow ordered:NSWindowAbove];
+    [popupWindow setLevel:NSPopUpMenuWindowLevel];
+    [popupWindow orderFront:nil];
+    [[view window] addChildWindow:popupWindow ordered:NSWindowAbove];
 }
 
 - (void)doCompletion
@@ -168,8 +175,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         // Get preceeding word stem
-        WebFrame *frame = [_htmlView _frame];
-        RetainPtr selection = kit(core(frame)->selection().selection().toNormalizedRange());
+        RetainPtr frame = [protect(_htmlView) _frame];
+        RetainPtr selection = kit(core(frame.get())->selection().selection().toNormalizedRange());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:WebCore::FrameSelection::Alteration::Extend
             direction:WebCore::SelectionDirection::Backward granularity:WebCore::TextGranularity::WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
@@ -182,21 +189,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
         NSString *prefixStr = [frame _stringForRange:prefix];
         NSString *trimmedPrefix = [prefixStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        if ([trimmedPrefix length] == 0) {
+        if (![trimmedPrefix length]) {
             NSBeep();
             return;
         }
         prefixLength = [prefixStr length];
 
         // Lookup matches
-        [_completions release];
-        _completions = [checker completionsForPartialWordRange:NSMakeRange(0, [prefixStr length]) inString:prefixStr language:nil inSpellDocumentWithTag:[_view spellCheckerDocumentTag]];
-        [_completions retain];
+        SUPPRESS_UNRETAINED_ARG [_completions release];
+        _completions = [checker completionsForPartialWordRange:NSMakeRange(0, [prefixStr length]) inString:prefixStr language:nil inSpellDocumentWithTag:[protect(_view) spellCheckerDocumentTag]];
+        RetainPtr completions = _completions;
+        [completions retain];
     
-        if (!_completions || [_completions count] == 0) {
+        if (!completions || ![completions count]) {
             NSBeep();
-        } else if ([_completions count] == 1) {
-            [self _insertMatch:[_completions objectAtIndex:0]];
+        } else if ([completions count] == 1) {
+            [self _insertMatch:[completions objectAtIndex:0]];
         } else {
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
             _originalString = [[frame _stringForRange:selection.get()] retain];
@@ -215,24 +223,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)endRevertingChange:(BOOL)revertChange moveLeft:(BOOL)goLeft
 {
+    RetainPtr originalString = _originalString;
+    RetainPtr htmlView = _htmlView;
     if (_popupWindow) {
         // tear down UI
-        [[_view window] removeChildWindow:_popupWindow];
-        [_popupWindow orderOut:self];
+        RetainPtr popupWindow = _popupWindow;
+        [[protect(_view) window] removeChildWindow:popupWindow];
+        [popupWindow orderOut:self];
         // Must autorelease because event tracking code may be on the stack touching UI
-        [_popupWindow autorelease];
+        [popupWindow autorelease];
         _popupWindow = nil;
 
         if (revertChange) {
-            WebFrame *frame = [_htmlView _frame];
-            [frame _replaceSelectionWithText:_originalString selectReplacement:YES smartReplace:NO];
-        } else if ([_htmlView _hasSelection]) {
+            WebFrame *frame = [htmlView _frame];
+            [frame _replaceSelectionWithText:originalString selectReplacement:YES smartReplace:NO];
+        } else if ([htmlView _hasSelection]) {
             if (goLeft)
-                [_htmlView moveBackward:nil];
+                [htmlView moveBackward:nil];
             else
-                [_htmlView moveForward:nil];
+                [htmlView moveForward:nil];
         }
-        [_originalString release];
+        [originalString release];
         _originalString = nil;
     }
     // else there is no state to abort if the window was not up
@@ -247,6 +258,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // The features for the various keys mimic NSTextView.
 - (BOOL)filterKeyDown:(NSEvent *)event
 {
+    RetainPtr tableView = _tableView;
     if (!_popupWindow)
         return NO;
     NSString *string = [event charactersIgnoringModifiers];
@@ -254,18 +266,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return NO;
     unichar c = [string characterAtIndex:0];
     if (c == NSUpArrowFunctionKey) {
-        int selectedRow = [_tableView selectedRow];
+        int selectedRow = [tableView selectedRow];
         if (0 < selectedRow) {
-            [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow - 1] byExtendingSelection:NO];
-            [_tableView scrollRowToVisible:selectedRow - 1];
+            [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow - 1] byExtendingSelection:NO];
+            [tableView scrollRowToVisible:selectedRow - 1];
         }
         return YES;
     }
     if (c == NSDownArrowFunctionKey) {
-        int selectedRow = [_tableView selectedRow];
-        if (selectedRow < (int)[_completions count] - 1) {
-            [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow + 1] byExtendingSelection:NO];
-            [_tableView scrollRowToVisible:selectedRow + 1];
+        int selectedRow = [tableView selectedRow];
+        if (selectedRow < (int)[protect(_completions) count] - 1) {
+            [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow + 1] byExtendingSelection:NO];
+            [tableView scrollRowToVisible:selectedRow + 1];
         }
         return YES;
     }
@@ -294,10 +306,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_reflectSelection
 {
-    int selectedRow = [_tableView selectedRow];
+    int selectedRow = [protect(_tableView) selectedRow];
     ASSERT(selectedRow >= 0);
     ASSERT(selectedRow < (int)[_completions count]);
-    [self _insertMatch:[_completions objectAtIndex:selectedRow]];
+    [self _insertMatch:[protect(_completions) objectAtIndex:selectedRow]];
 }
 
 - (void)tableAction:(id)sender
@@ -308,12 +320,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [_completions count];
+    return [protect(_completions) count];
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    return [_completions objectAtIndex:row];
+    return [protect(_completions) objectAtIndex:row];
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification

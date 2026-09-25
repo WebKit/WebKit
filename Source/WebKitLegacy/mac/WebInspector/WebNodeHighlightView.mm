@@ -80,7 +80,8 @@
 
 - (void)detachFromWebNodeHighlight
 {
-    [_webNodeHighlight release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_webNodeHighlight release];
     _webNodeHighlight = nil;
 }
 
@@ -98,7 +99,7 @@
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
         WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
-        if (CheckedPtr controller = [_webNodeHighlight inspectorController].get())
+        if (CheckedPtr controller = [protect(_webNodeHighlight) inspectorController].get())
             controller->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }

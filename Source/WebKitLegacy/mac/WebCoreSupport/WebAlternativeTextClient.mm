@@ -46,7 +46,7 @@ WebAlternativeTextClient::~WebAlternativeTextClient()
 #if USE(AUTOCORRECTION_PANEL)
 void WebAlternativeTextClient::showCorrectionAlternative(WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-    m_correctionPanel.show(m_webView, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+    m_correctionPanel.show(protect(m_webView), type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
 void WebAlternativeTextClient::dismissAlternative(WebCore::ReasonForDismissingAlternativeText reason)
@@ -76,21 +76,21 @@ static inline NSCorrectionResponse NODELETE toCorrectionResponse(WebCore::Autoco
 
 void WebAlternativeTextClient::recordAutocorrectionResponse(WebCore::AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    CorrectionPanel::recordAutocorrectionResponse([m_webView spellCheckerDocumentTag], toCorrectionResponse(response), replacedString, replacementString);
+    CorrectionPanel::recordAutocorrectionResponse([protect(m_webView) spellCheckerDocumentTag], toCorrectionResponse(response), replacedString, replacementString);
 }
 #endif
 
 void WebAlternativeTextClient::removeDictationAlternatives(WebCore::DictationContext dictationContext)
 {
-    [m_webView _removeDictationAlternatives:dictationContext];
+    [protect(m_webView) _removeDictationAlternatives:dictationContext];
 }
 
 void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
 {
-    [m_webView _showDictationAlternativeUI:boundingBoxOfDictatedText forDictationContext:dictationContext];
+    [protect(m_webView) _showDictationAlternativeUI:boundingBoxOfDictatedText forDictationContext:dictationContext];
 }
 
 Vector<String> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
-    return [m_webView _dictationAlternatives:dictationContext];
+    return [protect(m_webView) _dictationAlternatives:dictationContext];
 }

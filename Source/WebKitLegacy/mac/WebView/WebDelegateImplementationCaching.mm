@@ -1000,7 +1000,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 id CallUIDelegate(WebView *self, SEL selector)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector);
 #endif
@@ -1009,7 +1009,7 @@ id CallUIDelegate(WebView *self, SEL selector)
 id CallUIDelegate(WebView *self, SEL selector, id object)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector, object);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector, object);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector, object);
 #endif
@@ -1018,7 +1018,7 @@ id CallUIDelegate(WebView *self, SEL selector, id object)
 id CallUIDelegate(WebView *self, SEL selector, id object, BOOL boolean)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector, object, boolean);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector, object, boolean);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector, object, boolean);
 #endif
@@ -1027,7 +1027,7 @@ id CallUIDelegate(WebView *self, SEL selector, id object, BOOL boolean)
 id CallUIDelegate(WebView *self, SEL selector, NSRect rect)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector, rect);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector, rect);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector, rect);
 #endif
@@ -1036,7 +1036,7 @@ id CallUIDelegate(WebView *self, SEL selector, NSRect rect)
 id CallUIDelegate(WebView *self, SEL selector, id object1, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector, object1, object2);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector, object1, object2);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector, object1, object2);
 #endif
@@ -1045,7 +1045,7 @@ id CallUIDelegate(WebView *self, SEL selector, id object1, id object2)
 id CallUIDelegate(WebView *self, SEL selector, id object1, id object2, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector, object1, object2, object3);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector, object1, object2, object3);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector, object1, object2, object3);
 #endif
@@ -1054,7 +1054,7 @@ id CallUIDelegate(WebView *self, SEL selector, id object1, id object2, id object
 id CallUIDelegate(WebView *self, SEL selector, id object, NSUInteger integer)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(self, self->_private->UIDelegate, selector, object, integer);
+    return CallDelegate(self, protect(self->_private->UIDelegate), selector, object, integer);
 #else
     return CallDelegate(self, [self _UIDelegateForSelector:selector], selector, object, integer);
 #endif
@@ -1063,7 +1063,7 @@ id CallUIDelegate(WebView *self, SEL selector, id object, NSUInteger integer)
 float CallUIDelegateReturningFloat(WebView *self, SEL selector)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegateReturningFloat(self, self->_private->UIDelegate, selector);
+    return CallDelegateReturningFloat(self, protect(self->_private->UIDelegate), selector);
 #else
     return CallDelegateReturningFloat(self, [self _UIDelegateForSelector:selector], selector);
 #endif
@@ -1072,7 +1072,7 @@ float CallUIDelegateReturningFloat(WebView *self, SEL selector)
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector);
+    return CallDelegateReturningBoolean(result, self, protect(self->_private->UIDelegate), selector);
 #else
     return CallDelegateReturningBoolean(result, self, [self _UIDelegateForSelector:selector], selector);
 #endif
@@ -1081,7 +1081,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector)
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object);
+    return CallDelegateReturningBoolean(result, self, protect(self->_private->UIDelegate), selector, object);
 #else
     return CallDelegateReturningBoolean(result, self, [self _UIDelegateForSelector:selector], selector, object);
 #endif
@@ -1090,7 +1090,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object, BOOL boolean)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object, boolean);
+    return CallDelegateReturningBoolean(result, self, protect(self->_private->UIDelegate), selector, object, boolean);
 #else
     return CallDelegateReturningBoolean(result, self, [self _UIDelegateForSelector:selector], selector, object, boolean);
 #endif
@@ -1099,7 +1099,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object, BOOL boolean, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object, boolean, object2);
+    return CallDelegateReturningBoolean(result, self, protect(self->_private->UIDelegate), selector, object, boolean, object2);
 #else
     return CallDelegateReturningBoolean(result, self, [self _UIDelegateForSelector:selector], selector, object, boolean, object2);
 #endif
@@ -1108,7 +1108,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object1, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object1, object2);
+    return CallDelegateReturningBoolean(result, self, protect(self->_private->UIDelegate), selector, object1, object2);
 #else
     return CallDelegateReturningBoolean(result, self, [self _UIDelegateForSelector:selector], selector, object1, object2);
 #endif
@@ -1124,7 +1124,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector);
 #endif
@@ -1133,7 +1133,7 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector)
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, NSUInteger integer)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, integer);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector, integer);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector, integer);
 #endif
@@ -1142,7 +1142,7 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, NSUInt
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector, object);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector, object);
 #endif
@@ -1151,7 +1151,7 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id obj
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, object2);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector, object1, object2);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector, object1, object2);
 #endif
@@ -1160,7 +1160,7 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id obj
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, object2, object3);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector, object1, object2, object3);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector, object1, object2, object3);
 #endif
@@ -1169,7 +1169,7 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id obj
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3, id object4)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, object2, object3, object4);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector, object1, object2, object3, object4);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector, object1, object2, object3, object4);
 #endif
@@ -1178,7 +1178,7 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id obj
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSTimeInterval interval, id object2, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, interval, object2, object3);
+    return CallDelegate(implementation, self, protect(self->_private->frameLoadDelegate), selector, object1, interval, object2, object3);
 #else
     return CallDelegate(implementation, self, [self _frameLoadDelegateForwarder], selector, object1, interval, object2, object3);
 #endif
@@ -1208,7 +1208,7 @@ BOOL CallFrameLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebV
 id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2);
+    return CallDelegate(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2);
 #else
     return CallDelegate(implementation, self, [self _resourceLoadDelegateForwarder], selector, object1, object2);
 #endif
@@ -1217,7 +1217,7 @@ id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id 
 id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, object3);
+    return CallDelegate(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2, object3);
 #else
     return CallDelegate(implementation, self, [self _resourceLoadDelegateForwarder], selector, object1, object2, object3);
 #endif
@@ -1226,7 +1226,7 @@ id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id 
 id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3, id object4)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, object3, object4);
+    return CallDelegate(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2, object3, object4);
 #else
     return CallDelegate(implementation, self, [self _resourceLoadDelegateForwarder], selector, object1, object2, object3, object4);
 #endif
@@ -1235,7 +1235,7 @@ id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id 
 id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, integer, object2);
+    return CallDelegate(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, integer, object2);
 #else
     return CallDelegate(implementation, self, [self _resourceLoadDelegateForwarder], selector, object1, integer, object2);
 #endif
@@ -1244,7 +1244,7 @@ id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id 
 id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, NSInteger integer, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, integer, object3);
+    return CallDelegate(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2, integer, object3);
 #else
     return CallDelegate(implementation, self, [self _resourceLoadDelegateForwarder], selector, object1, object2, integer, object3);
 #endif
@@ -1285,7 +1285,7 @@ id CallFrameLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selec
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1)
 {
     @try {
-        return wtfObjCMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1);
+        return wtfObjCMsgSend<BOOL>(protect(self->_private->resourceProgressDelegate), selector, self, object1);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1295,7 +1295,7 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
     @try {
-        return wtfObjCMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1, object2);
+        return wtfObjCMsgSend<BOOL>(protect(self->_private->resourceProgressDelegate), selector, self, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1305,7 +1305,7 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
     @try {
-        return wtfObjCMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
+        return wtfObjCMsgSend<BOOL>(protect(self->_private->resourceProgressDelegate), selector, self, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1315,7 +1315,7 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, NSInteger integer, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, object2, integer, object3);
+    return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, object2, integer, object3);
 #else
     return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, object2, integer, object3);
 #endif
@@ -1324,7 +1324,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer1, id object2, NSInteger integer2, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, object2, integer2, object3);
+    return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer1, object2, integer2, object3);
 #else
     return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, object2, integer2, object3);
 #endif
@@ -1333,7 +1333,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer, id object2, id object3, id object4)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer, object2, object3, object4);
+    return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer, object2, object3, object4);
 #else
     return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer, object2, object3, object4);
 #endif
@@ -1342,7 +1342,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer1, int integer2, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, integer2, object2);
+    return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer1, integer2, object2);
 #else
     return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, integer2, object2);
 #endif
@@ -1350,22 +1350,22 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 
 id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, BOOL boolean, NSInteger integer1, int integer2, id object2)
 {
-    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, boolean, integer1, integer2, object2);
+    return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, boolean, integer1, integer2, object2);
 }
 
 id CallHistoryDelegate(IMP implementation, WebView *self, SEL selector)
 {
-    return CallDelegate(implementation, self, self->_private->historyDelegate, selector);
+    return CallDelegate(implementation, self, protect(self->_private->historyDelegate), selector);
 }
 
 id CallHistoryDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
-    return CallDelegate(implementation, self, self->_private->historyDelegate, selector, object1, object2);
+    return CallDelegate(implementation, self, protect(self->_private->historyDelegate), selector, object1, object2);
 }
 
 id CallHistoryDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
-    return CallDelegate(implementation, self, self->_private->historyDelegate, selector, object1, object2, object3);
+    return CallDelegate(implementation, self, protect(self->_private->historyDelegate), selector, object1, object2, object3);
 }
 
 // The form delegate needs to have it's own implementation, because the first argument is never the WebView

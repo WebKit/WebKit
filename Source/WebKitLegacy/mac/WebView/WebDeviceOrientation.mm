@@ -83,7 +83,8 @@ static std::optional<double> NODELETE convert(bool canProvide, double value)
 
 - (void)dealloc
 {
-    [m_internal release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [m_internal release];
     [super dealloc];
 }
 

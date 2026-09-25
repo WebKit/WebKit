@@ -60,7 +60,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-    [invocation setTarget:target];
+    [invocation setTarget:protect(target)];
     [invocation performSelectorOnMainThread:@selector(_webkit_invokeAndHandleException:) withObject:self waitUntilDone:YES];
     if (exception) {
         auto exceptionToThrow = std::exchange(exception, nil);
@@ -76,7 +76,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
 {
-    return [target methodSignatureForSelector:selector];
+    return [protect(target) methodSignatureForSelector:selector];
 }
 
 - (void)handleException:(id)passedException

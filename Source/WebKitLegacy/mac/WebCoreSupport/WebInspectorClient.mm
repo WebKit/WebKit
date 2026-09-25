@@ -885,15 +885,15 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
     if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([[_inspectedWebView.get() inspector] isDebuggingJavaScript])
-            [menuItem setTitle:UI_STRING_INTERNAL("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
+            [menuItem setTitle:protect(UI_STRING_INTERNAL("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item"))];
         else
-            [menuItem setTitle:UI_STRING_INTERNAL("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
+            [menuItem setTitle:protect(UI_STRING_INTERNAL("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item"))];
     } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([[_inspectedWebView.get() inspector] isProfilingJavaScript])
-            [menuItem setTitle:UI_STRING_INTERNAL("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
+            [menuItem setTitle:protect(UI_STRING_INTERNAL("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item"))];
         else
-            [menuItem setTitle:UI_STRING_INTERNAL("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
+            [menuItem setTitle:protect(UI_STRING_INTERNAL("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item"))];
     }
 
     return YES;

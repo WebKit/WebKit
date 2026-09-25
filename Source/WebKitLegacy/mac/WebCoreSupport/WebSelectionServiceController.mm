@@ -46,7 +46,8 @@ WebSelectionServiceController::WebSelectionServiceController(WebView *webView)
 
 void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& /*telephoneNumbers*/, const WebCore::IntPoint& point)
 {
-    RefPtr page = [m_webView page].get();
+    RetainPtr webView = m_webView;
+    RefPtr page = [webView page].get();
     if (!page)
         return;
 
@@ -65,7 +66,7 @@ void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSe
 
     auto menu = adoptNS([[m_sharingServicePickerController menu] copy]);
     [menu setShowsStateColumn:YES];
-    [menu popUpMenuPositioningItem:nil atLocation:[m_webView convertPoint:point toView:nil] inView:m_webView];
+    [menu popUpMenuPositioningItem:nil atLocation:[webView convertPoint:point toView:nil] inView:webView.get()];
 }
 
 static bool hasCompatibleServicesForItems(NSArray *items)

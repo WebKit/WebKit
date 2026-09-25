@@ -87,33 +87,34 @@
 
 - (void)dealloc
 {
-    [m_internal release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [m_internal release];
     [super dealloc];
 }
 
 - (void)setOrientation:(WebDeviceOrientation*)orientation
 {
-    [m_internal setOrientation:orientation];
+    [protect(m_internal) setOrientation:orientation];
 }
 
 - (void)startUpdating
 {
-    [m_internal startUpdating];
+    [protect(m_internal) startUpdating];
 }
 
 - (void)stopUpdating
 {
-    [m_internal stopUpdating];
+    [protect(m_internal) stopUpdating];
 }
 
 - (WebDeviceOrientation*)lastOrientation
 {
-    return [m_internal lastOrientation];
+    return [protect(m_internal) lastOrientation];
 }
 
 - (void)setController:(WebCore::DeviceOrientationController*)controller
 {
-   [m_internal setController:controller];
+    [protect(m_internal) setController:controller];
 }
 
 @end

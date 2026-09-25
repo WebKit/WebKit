@@ -82,7 +82,6 @@ mac/DOM/DOMWheelEvent.mm
 mac/DOM/ObjCEventListener.h
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebNSViewExtras.m
-[ Mac ] mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 [ Mac ] mac/WebCoreSupport/WebDragClient.mm
 mac/WebCoreSupport/WebEditorClient.mm

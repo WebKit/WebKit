@@ -52,7 +52,8 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)dealloc
 {
-    [_frontend release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_frontend release];
     [super dealloc];
 }
 
@@ -76,34 +77,35 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 - (void)showConsole:(id)sender
 {
     [self showWindow];
-    [_frontend showConsole];
+    [protect(_frontend) showConsole];
 }
 
 - (BOOL)isDebuggingJavaScript
 {
-    return _frontend && [_frontend isDebuggingEnabled];
+    return _frontend && [protect(_frontend) isDebuggingEnabled];
 }
 
 - (void)toggleDebuggingJavaScript:(id)sender
 {
+    RetainPtr frontend = _frontend;
     [self showWindow];
 
     if ([self isDebuggingJavaScript])
-        [_frontend setDebuggingEnabled:false];
+        [frontend setDebuggingEnabled:false];
     else
-        [_frontend setDebuggingEnabled:true];
+        [frontend setDebuggingEnabled:true];
 }
 
 - (void)startDebuggingJavaScript:(id)sender
 {
     if (_frontend)
-        [_frontend setDebuggingEnabled:true];
+        [protect(_frontend) setDebuggingEnabled:true];
 }
 
 - (void)stopDebuggingJavaScript:(id)sender
 {
     if (_frontend)
-        [_frontend setDebuggingEnabled:false];
+        [protect(_frontend) setDebuggingEnabled:false];
 }
 
 - (BOOL)isProfilingJavaScript
@@ -140,13 +142,13 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (BOOL)isTimelineProfilingEnabled
 {
-    return _frontend && [_frontend isTimelineProfilingEnabled];
+    return _frontend && [protect(_frontend) isTimelineProfilingEnabled];
 }
 
 - (void)setTimelineProfilingEnabled:(BOOL)enabled
 {
     if (_frontend)
-        [_frontend setTimelineProfilingEnabled:enabled];
+        [protect(_frontend) setTimelineProfilingEnabled:enabled];
 }
 
 - (BOOL)isOpen
@@ -156,17 +158,17 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)close:(id)sender 
 {
-    [_frontend close];
+    [protect(_frontend) close];
 }
 
 - (void)attach:(id)sender
 {
-    [_frontend attach];
+    [protect(_frontend) attach];
 }
 
 - (void)detach:(id)sender
 {
-    [_frontend detach];
+    [protect(_frontend) detach];
 }
 
 - (void)evaluateInFrontend:(id)sender script:(NSString *)script
@@ -182,7 +184,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)releaseFrontend
 {
-    [_frontend release];
+    SUPPRESS_UNRETAINED_ARG [_frontend release];
     _frontend = nil;
 }
 @end

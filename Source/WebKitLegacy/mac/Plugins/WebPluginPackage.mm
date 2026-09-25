@@ -63,7 +63,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
     }
     
 #if !PLATFORM(IOS_FAMILY)
-    NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[nsBundle executablePath]];
+    RetainPtr executableFile = [NSFileHandle fileHandleForReadingAtPath:[protect(nsBundle) executablePath]];
     NSData *data = [executableFile readDataOfLength:512];
     [executableFile closeFile];
     if (![self isNativeLibraryData:data]) {
@@ -82,14 +82,15 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 - (void)dealloc
 {
-    [nsBundle release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [nsBundle release];
 
     [super dealloc];
 }
 
 - (Class)viewFactory
 {
-    return [nsBundle principalClass];
+    return [protect(nsBundle) principalClass];
 }
 
 - (BOOL)load
@@ -99,8 +100,9 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 #endif
     
     // Load the bundle
-    if (![nsBundle isLoaded]) {
-        if (![nsBundle load])
+    RetainPtr bundle = nsBundle;
+    if (![bundle isLoaded]) {
+        if (![bundle load])
             return NO;
     }
     

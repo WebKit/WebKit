@@ -131,7 +131,7 @@ void WebDocumentLoaderMac::retainDataSource()
     if (m_isDataSourceRetained || !m_dataSource)
         return;
     m_isDataSourceRetained = true;
-    CFRetain(m_dataSource);
+    CFRetain(protect(m_dataSource));
 }
 
 void WebDocumentLoaderMac::releaseDataSource()
@@ -140,7 +140,7 @@ void WebDocumentLoaderMac::releaseDataSource()
         return;
     ASSERT(m_dataSource);
     m_isDataSourceRetained = false;
-    CFRelease(m_dataSource);
+    CFRelease(protect(m_dataSource));
 }
 
 void WebDocumentLoaderMac::detachDataSource()

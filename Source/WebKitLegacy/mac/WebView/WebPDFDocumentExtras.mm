@@ -144,6 +144,6 @@ bool pdfDocumentContainsPrintScript(CGPDFDocumentRef pdfDocument)
 #if !PLATFORM(IOS_FAMILY)
 bool pdfDocumentContainsPrintScript(PDFDocument *document)
 {
-    return pdfDocumentContainsPrintScript([document documentRef]);
+    return pdfDocumentContainsPrintScript(protect([document documentRef]));
 }
 #endif

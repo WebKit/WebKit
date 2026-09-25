@@ -73,12 +73,6 @@
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
-#if PLATFORM(MAC)
-template<> struct WTF::CFTypeTrait<DDResultRef> {
-    static inline CFTypeID typeID(void) { return DDResultGetCFTypeID(); }
-};
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;

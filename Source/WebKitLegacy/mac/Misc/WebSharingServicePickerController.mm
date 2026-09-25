@@ -53,12 +53,12 @@ void WebSharingServicePickerClient::sharingServicePickerWillBeDestroyed(WebShari
 
 WebCore::Page* WebSharingServicePickerClient::pageForSharingServicePicker(WebSharingServicePickerController &)
 {
-    return [m_webView page];
+    return [protect(m_webView) page];
 }
 
 RetainPtr<NSWindow> WebSharingServicePickerClient::windowForSharingServicePicker(WebSharingServicePickerController &)
 {
-    return [m_webView window];
+    return [protect(m_webView) window];
 }
 
 WebCore::FloatRect WebSharingServicePickerClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)

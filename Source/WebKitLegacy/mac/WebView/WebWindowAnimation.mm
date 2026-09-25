@@ -168,7 +168,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     [super setCurrentProgress:progress];
 
     NSRect currentRect = [self currentFrame];
-    setScaledFrameForWindow(_window, currentRect, _realFrame);
+    setScaledFrameForWindow(protect(_window), currentRect, _realFrame);
     [_subAnimation setCurrentProgress:progress];
 }
 
@@ -260,7 +260,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     ASSERT(_window);
     [super setCurrentProgress:progress];
 
-    CGSSetWindowAlpha(mainWindowServerConnectionID(), _window.windowNumber, self.currentAlpha);
+    CGSSetWindowAlpha(mainWindowServerConnectionID(), [protect(_window) windowNumber], self.currentAlpha);
 }
 
 - (void)setWindow:(NSWindow*)window

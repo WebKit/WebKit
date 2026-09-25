@@ -93,7 +93,7 @@ int pluginDatabaseClientCount = 0;
 
 - (void)_windowVisibilityChanged:(NSNotification *)notification
 {
-    [_view _windowVisibilityChanged:notification];
+    [protect(_view) _windowVisibilityChanged:notification];
 }
 
 @end

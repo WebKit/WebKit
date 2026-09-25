@@ -30,7 +30,7 @@ static String defaultSearchFieldRecentSearchesStorageDirectory()
     if (!appName)
         appName = [[NSProcessInfo processInfo] processName];
 
-    return [[NSHomeDirectory() stringByAppendingPathComponent:@"Library/WebKit"] stringByAppendingPathComponent:appName];
+    return [[protect(NSHomeDirectory()) stringByAppendingPathComponent:@"Library/WebKit"] stringByAppendingPathComponent:appName];
 }
 
 SearchPopupMenuMac::SearchPopupMenuMac(WebCore::PopupMenuClient* client)

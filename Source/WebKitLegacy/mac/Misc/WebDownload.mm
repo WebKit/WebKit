@@ -214,7 +214,7 @@ static void callOnDelegateThreadAndWait(Callable&& work)
 {
     if (_webInternal == nil) {
         _webInternal = [[WebDownloadInternal alloc] init];
-        [_webInternal setRealDelegate:delegate];
+        [protect(_webInternal) setRealDelegate:delegate];
     } else {
         ASSERT(_webInternal == delegate);
     }
@@ -235,7 +235,8 @@ static void callOnDelegateThreadAndWait(Callable&& work)
 
 - (void)dealloc
 {
-    [_webInternal release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_webInternal release];
     [super dealloc];
 }
 
@@ -244,7 +245,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [self _setRealDelegate:delegate];
-    return [super initWithRequest:request delegate:_webInternal];
+    return [super initWithRequest:request delegate:protect(_webInternal)];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -256,7 +257,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 IGNORE_WARNINGS_END
 {
     [self _setRealDelegate:delegate];
-    return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
+    return [super _initWithLoadingConnection:connection request:request response:response delegate:protect(_webInternal) proxy:proxy];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -266,7 +267,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 IGNORE_WARNINGS_END
 {
     [self _setRealDelegate:delegate];
-    return [super _initWithRequest:request delegate:_webInternal directory:directory];
+    return [super _initWithRequest:request delegate:protect(_webInternal) directory:directory];
 }
 
 @end

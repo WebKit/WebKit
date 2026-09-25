@@ -40,7 +40,7 @@ AtomString DOMCustomXPathNSResolver::lookupNamespaceURI(const AtomString& prefix
     NSString *namespaceURI = nil;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    namespaceURI = [m_customResolver lookupNamespaceURI:prefix.createNSString().get()];
+    namespaceURI = [protect(m_customResolver) lookupNamespaceURI:prefix.createNSString().get()];
     END_BLOCK_OBJC_EXCEPTIONS
     
     return namespaceURI;

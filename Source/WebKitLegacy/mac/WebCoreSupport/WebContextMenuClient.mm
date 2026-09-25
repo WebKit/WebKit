@@ -90,17 +90,17 @@ WebContextMenuClient::~WebContextMenuClient()
 
 void WebContextMenuClient::downloadURL(const URL& url)
 {
-    [m_webView _downloadURL:url.createNSURL().get()];
+    [protect(m_webView) _downloadURL:url.createNSURL().get()];
 }
 
 void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame*)
 {
-    [m_webView _searchWithGoogleFromMenu:nil];
+    [protect(m_webView) _searchWithGoogleFromMenu:nil];
 }
 
 void WebContextMenuClient::lookUpInDictionary(WebCore::LocalFrame* frame)
 {
-    WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
+    RetainPtr htmlView = (WebHTMLView*)[[protect(kit(frame)) frameView] documentView];
     if(![htmlView isKindOfClass:[WebHTMLView class]])
         return;
     [htmlView _lookUpInDictionaryFromMenu:nil];
@@ -145,7 +145,7 @@ bool WebContextMenuClient::clientFloatRectForNode(WebCore::Node& node, WebCore::
 
 void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMenuInfo& info)
 {
-    [m_webView _handleContextMenuTranslation:info];
+    [protect(m_webView) _handleContextMenuTranslation:info];
 }
 
 #endif
@@ -159,7 +159,7 @@ void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingService
 
 WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
 {
-    RefPtr page = [m_webView page].get();
+    RefPtr page = [protect(m_webView) page].get();
     if (!page)
         return NSZeroRect;
 
@@ -187,7 +187,7 @@ WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePicke
 
 RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
 {
-    auto page = [m_webView page];
+    auto page = [protect(m_webView) page];
     if (!page)
         return nil;
 
@@ -238,7 +238,7 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
 {
     isServicesMenu = false;
 
-    RefPtr page = [m_webView page].get();
+    RefPtr page = [protect(m_webView) page].get();
     if (!page)
         return nil;
 
@@ -264,7 +264,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void WebContextMenuClient::showContextMenu()
 {
-    auto page = [m_webView page];
+    auto page = [protect(m_webView) page];
     if (!page)
         return;
     RefPtr frame = page->contextMenuController().hitTestResult().innerNodeFrame();

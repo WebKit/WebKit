@@ -125,15 +125,16 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
 
 - (NSString *)_web_stringByAbbreviatingWithTildeInPath
 {
+    RetainPtr homeDirectory = NSHomeDirectory();
     // Handles home directories that have symlinks in their paths as well as what stringByAbbreviatingWithTildeInPath handles.
     // This works around Radar bug 2774250.
 
-    NSString *resolvedHomeDirectory = [NSHomeDirectory() stringByResolvingSymlinksInPath];
+    NSString *resolvedHomeDirectory = [homeDirectory stringByResolvingSymlinksInPath];
     NSString *path;
 
     if ([self hasPrefix:resolvedHomeDirectory]) {
         NSString *relativePath = [self substringFromIndex:[resolvedHomeDirectory length]];
-        path = [NSHomeDirectory() stringByAppendingPathComponent:relativePath];
+        path = [homeDirectory stringByAppendingPathComponent:relativePath];
     } else {
         path = self;
     }

@@ -93,14 +93,16 @@
     int styleMask = NSWindowStyleMaskBorderless;
     NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
     _highlightWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
-    [_highlightWindow setBackgroundColor:[NSColor clearColor]];
-    [_highlightWindow setOpaque:NO];
-    [_highlightWindow setIgnoresMouseEvents:YES];
-    [_highlightWindow setReleasedWhenClosed:NO];
+    RetainPtr highlightWindow = _highlightWindow;
+    [highlightWindow setBackgroundColor:[NSColor clearColor]];
+    [highlightWindow setOpaque:NO];
+    [highlightWindow setIgnoresMouseEvents:YES];
+    [highlightWindow setReleasedWhenClosed:NO];
 
     _highlightView = [[WebNodeHighlightView alloc] initWithWebNodeHighlight:self];
-    [_highlightWindow setContentView:_highlightView];
-    [_highlightView release];
+    RetainPtr highlightView = _highlightView;
+    [highlightWindow setContentView:highlightView];
+    [highlightView release];
 #else
     ASSERT([_targetView isKindOfClass:[WebView class]]);
     WebView *webView = (WebView *)targetView;
@@ -135,10 +137,11 @@
 #if !PLATFORM(IOS_FAMILY)
     ASSERT(_highlightWindow);
 
-    if (!_highlightWindow || !_targetView || ![_targetView window])
+    RetainPtr targetView = _targetView;
+    if (!_highlightWindow || !_targetView || ![targetView window])
         return;
 
-    [[_targetView window] addChildWindow:_highlightWindow ordered:NSWindowAbove];
+    [[targetView window] addChildWindow:protect(_highlightWindow) ordered:NSWindowAbove];
 
     // Observe both frame-changed and bounds-changed notifications because either one could leave
     // the highlight incorrectly positioned with respect to the target view. We need to do this for
@@ -157,8 +160,9 @@
     [self setNeedsDisplay];
 #endif
 
-    if (_delegate && [_delegate respondsToSelector:@selector(didAttachWebNodeHighlight:)])
-        [_delegate didAttachWebNodeHighlight:self];
+    RetainPtr delegate = _delegate;
+    if (_delegate && [delegate respondsToSelector:@selector(didAttachWebNodeHighlight:)])
+        [delegate didAttachWebNodeHighlight:self];
 }
 
 - (id)delegate
@@ -177,18 +181,20 @@
         return;
     }
 
-    if (_delegate && [_delegate respondsToSelector:@selector(willDetachWebNodeHighlight:)])
-        [_delegate willDetachWebNodeHighlight:self];
+    RetainPtr delegate = _delegate;
+    if (_delegate && [delegate respondsToSelector:@selector(willDetachWebNodeHighlight:)])
+        [delegate willDetachWebNodeHighlight:self];
 
 #if !PLATFORM(IOS_FAMILY)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
     [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
 
-    [[_highlightWindow parentWindow] removeChildWindow:_highlightWindow];
-    [_highlightWindow close];
+    RetainPtr highlightWindow = _highlightWindow;
+    [[highlightWindow parentWindow] removeChildWindow:highlightWindow];
+    [highlightWindow close];
 
-    [_highlightWindow release];
+    [highlightWindow release];
     _highlightWindow = nil;
 #else
     [_highlightLayer removeFromSuperlayer];
@@ -196,12 +202,13 @@
     _highlightLayer = nil;
 #endif
 
-    [_targetView release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_targetView release];
     _targetView = nil;
 
     // We didn't retain _highlightView, but we do need to tell it to forget about us, so it doesn't
     // try to send our delegate messages after we've been dealloc'ed, e.g.
-    [_highlightView detachFromWebNodeHighlight];
+    [protect(_highlightView) detachFromWebNodeHighlight];
 #if PLATFORM(IOS_FAMILY)
     // iOS did retain the highlightView, and we should release it here.
     [_highlightView release];
@@ -226,16 +233,17 @@
     ASSERT(_targetView);
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[_targetView window] disableScreenUpdatesUntilFlush];
+    [[protect(_targetView) window] disableScreenUpdatesUntilFlush];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Mark the whole highlight view as needing display since we don't know what areas
     // need updated, since the highlight can be larger than the element to show margins.
-    [_highlightView setNeedsDisplay:YES];
+    RetainPtr highlightView = _highlightView;
+    [highlightView setNeedsDisplay:YES];
 
     // Redraw highlight view immediately so it updates in sync with the target view.
     // This is especially visible when resizing the window, scrolling or with DHTML.
-    [_highlightView displayIfNeeded];
+    [highlightView displayIfNeeded];
 }
 #else
 - (void)setNeedsDisplay
@@ -266,8 +274,9 @@
     ASSERT(_targetView);
     ASSERT([_targetView window]);
 
-    NSRect highlightWindowFrame = [_targetView convertRect:[_targetView visibleRect] toView:nil];
-    highlightWindowFrame.origin = [[_targetView window] convertPointToScreen:highlightWindowFrame.origin];
+    RetainPtr targetView = _targetView;
+    NSRect highlightWindowFrame = [targetView convertRect:[targetView visibleRect] toView:nil];
+    highlightWindowFrame.origin = [[targetView window] convertPointToScreen:highlightWindowFrame.origin];
 
     return highlightWindowFrame;
 }
@@ -280,15 +289,16 @@
     
     // Until that bug is fixed, bail out to avoid worse problems where the highlight
     // moves to a nonsense location.
-    if (![_targetView window])
+    RetainPtr targetView = _targetView;
+    if (![targetView window])
         return;
 
     // Disable screen updates so the highlight moves in sync with the view.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[_targetView window] disableScreenUpdatesUntilFlush];
+    [[targetView window] disableScreenUpdatesUntilFlush];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [_highlightWindow setFrame:[self _computeHighlightWindowFrame] display:YES];
+    [protect(_highlightWindow) setFrame:[self _computeHighlightWindowFrame] display:YES];
 }
 
 @end

@@ -119,15 +119,16 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (void) dealloc
 {
-    [_userInfo release];
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_userInfo release];
+    SUPPRESS_UNRETAINED_ARG [_private release];
     [super dealloc];
 }
 
 - (void)setUserInfo:(id)userInfo
 {
     if (userInfo != _userInfo) {
-        [_userInfo release];
+        SUPPRESS_UNRETAINED_ARG [_userInfo release];
         _userInfo = [userInfo retain];
     }
 }

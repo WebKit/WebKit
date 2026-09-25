@@ -143,7 +143,7 @@ enum {
 // Note that the WebVew is not retained.
 - (WebView *)_webView
 {
-    return [_private->webFrame webView];
+    return [protect(_private->webFrame) webView];
 }
 
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view
@@ -388,7 +388,8 @@ enum {
     if (_private && _private->includedInWebKitStatistics)
         --WebFrameViewCount;
     
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_private release];
     _private = nil;
     
     [super dealloc];

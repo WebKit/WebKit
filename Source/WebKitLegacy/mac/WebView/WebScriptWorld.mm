@@ -80,7 +80,8 @@ static WorldMap& NODELETE allWorlds()
     ASSERT(allWorlds().contains(*_private->world));
     allWorlds().remove(protect(*_private->world));
 
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_private release];
     _private = nil;
     [super dealloc];
 }

@@ -60,7 +60,7 @@ void WebValidationMessageClient::showValidationMessage(const WebCore::Element& a
 
     m_currentAnchor = &anchor;
     m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
-    [m_view showFormValidationMessage:message.createNSString().get() withAnchorRect:m_currentAnchorRect];
+    [protect(m_view) showFormValidationMessage:message.createNSString().get() withAnchorRect:m_currentAnchorRect];
 }
 
 void WebValidationMessageClient::hideValidationMessage(const WebCore::Element& anchor)
@@ -70,7 +70,7 @@ void WebValidationMessageClient::hideValidationMessage(const WebCore::Element& a
 
     m_currentAnchor = nullptr;
     m_currentAnchorRect = { };
-    [m_view hideFormValidationMessage];
+    [protect(m_view) hideFormValidationMessage];
 }
 
 void WebValidationMessageClient::hideAnyValidationMessage()
@@ -80,7 +80,7 @@ void WebValidationMessageClient::hideAnyValidationMessage()
 
     m_currentAnchor = nullptr;
     m_currentAnchorRect = { };
-    [m_view hideFormValidationMessage];
+    [protect(m_view) hideFormValidationMessage];
 }
 
 bool WebValidationMessageClient::isValidationMessageVisible(const WebCore::Element& anchor)

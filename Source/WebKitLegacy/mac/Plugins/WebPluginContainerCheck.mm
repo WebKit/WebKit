@@ -85,20 +85,21 @@
 
 - (void)_continueWithPolicy:(WebCore::PolicyAction)policy
 {
+    RetainPtr resultObject = _resultObject;
     if (_contextInfo)
-        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == WebCore::PolicyAction::Use), _contextInfo);
+        wtfObjCMsgSend<void>(resultObject, _resultSelector, (policy == WebCore::PolicyAction::Use), protect(_contextInfo));
     else     
-        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == WebCore::PolicyAction::Use));
+        wtfObjCMsgSend<void>(resultObject, _resultSelector, (policy == WebCore::PolicyAction::Use));
 
     // this will call indirectly call cancel
-    [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];
+    [protect(_controller) _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];
 }
 
 - (BOOL)_isForbiddenFileLoad
 {
-    RefPtr coreFrame = core([_controller webFrame]);
+    RefPtr coreFrame = core([protect(_controller) webFrame]);
     ASSERT(coreFrame);
-    if (!protect(protect(coreFrame->document())->securityOrigin())->canDisplay([_request URL], WebCore::OriginAccessPatternsForWebProcess::singleton())) {
+    if (!protect(protect(coreFrame->document())->securityOrigin())->canDisplay([protect(_request) URL], WebCore::OriginAccessPatternsForWebProcess::singleton())) {
         [self _continueWithPolicy:WebCore::PolicyAction::Ignore];
         return YES;
     }
@@ -117,16 +118,20 @@
 
 - (void)_askPolicyDelegate
 {
-    WebView *webView = [_controller webView];
+    RetainPtr target = _target;
+    RetainPtr request = _request;
+    RetainPtr listener = _listener;
+    RetainPtr controller = _controller;
+    WebView *webView = [controller webView];
 
     WebFrame *targetFrame;
-    if ([_target length] > 0) {
-        targetFrame = [[_controller webFrame] findFrameNamed:_target];
+    if ([target length] > 0) {
+        targetFrame = [[controller webFrame] findFrameNamed:target];
     } else {
-        targetFrame = [_controller webFrame];
+        targetFrame = [controller webFrame];
     }
 
-    NSDictionary *action = [self _actionInformationWithURL:[_request URL]];
+    NSDictionary *action = [self _actionInformationWithURL:[request URL]];
 
     _listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueWithPolicy:)];
 
@@ -134,16 +139,16 @@
         // would open new window
         [[webView _policyDelegateForwarder] webView:webView
                      decidePolicyForNewWindowAction:action
-                                            request:_request
-                                       newFrameName:_target
-                                   decisionListener:_listener];
+                                            request:request
+                                       newFrameName:target
+                                   decisionListener:listener];
     } else {
         // would target existing frame
         [[webView _policyDelegateForwarder] webView:webView
                     decidePolicyForNavigationAction:action
-                                            request:_request
+                                            request:request
                                               frame:targetFrame
-                                   decisionListener:_listener];        
+                                   decisionListener:listener];
     }
 }
 
@@ -163,22 +168,24 @@
     if (_done)
         return;
 
-    [_request release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_request release];
     _request = nil;
     
-    [_target release];
+    SUPPRESS_UNRETAINED_ARG [_target release];
     _target = nil;
 
-    [_listener _invalidate];
-    [_listener release];
+    RetainPtr listener = _listener;
+    [listener _invalidate];
+    [listener release];
     _listener = nil;
 
-    [_resultObject autorelease];
+    SUPPRESS_UNRETAINED_ARG [_resultObject autorelease];
     _resultObject = nil;
 
     _controller = nil;
     
-    [_contextInfo release];
+    SUPPRESS_UNRETAINED_ARG [_contextInfo release];
     _contextInfo = nil;
 
     _done = YES;

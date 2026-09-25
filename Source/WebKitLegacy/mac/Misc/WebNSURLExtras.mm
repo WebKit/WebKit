@@ -72,7 +72,7 @@
 
 - (NSString *)_web_originalDataAsString
 {
-    return adoptNS([[NSString alloc] initWithData:WTF::originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
+    return adoptNS([[NSString alloc] initWithData:protect(WTF::originalURLData(self)) encoding:NSISOLatin1StringEncoding]).autorelease();
 }
 
 - (NSString *)_web_userVisibleString
@@ -84,13 +84,13 @@
 {
     if (!CFURLGetBaseURL(bridge_cast(self)))
         return !CFURLGetBytes(bridge_cast(self), nullptr, 0);
-    return ![WTF::originalURLData(self) length];
+    return ![protect(WTF::originalURLData(self)) length];
 }
 
 - (const char*)_web_URLCString
 {
     NSMutableData *data = [NSMutableData data];
-    [data appendData:WTF::originalURLData(self)];
+    [data appendData:protect(WTF::originalURLData(self))];
     [data appendBytes:"\0" length:1];
     return (const char*)[data bytes];
  }

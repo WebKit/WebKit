@@ -293,7 +293,7 @@ static bool bumperCarBackForwardHackNeeded()
         }   
         [result appendFormat:@"%2d) ", i];
         int currPos = [result length];
-        [result appendString:[kit(const_cast<WebCore::HistoryItem*>(entries[i].ptr())) description]];
+        [result appendString:[protect(kit(const_cast<WebCore::HistoryItem*>(entries[i].ptr()))) description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
         NSRange replRange = { static_cast<NSUInteger>(currPos), [result length] - currPos };
@@ -309,12 +309,12 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (void)setPageCacheSize:(NSUInteger)size
 {
-    [core(self)->webView() setUsesPageCache:size != 0];
+    [protect(core(self)->webView()) setUsesPageCache:!!size];
 }
 
 - (NSUInteger)pageCacheSize
 {
-    return [core(self)->webView() usesPageCache] ? WebCore::BackForwardCache::singleton().maxSize() : 0;
+    return [protect(core(self)->webView()) usesPageCache] ? WebCore::BackForwardCache::singleton().maxSize() : 0;
 }
 
 - (int)backListCount
@@ -329,7 +329,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    if (RefPtr mainFrame = core([core(self)->webView() mainFrame]))
+    if (RefPtr mainFrame = core([protect(core(self)->webView()) mainFrame]))
         return retainPtr(kit(protect(core(self))->itemAtIndex(index, mainFrame->frameID()).get())).autorelease();
     ASSERT_NOT_REACHED();
     return nullptr;

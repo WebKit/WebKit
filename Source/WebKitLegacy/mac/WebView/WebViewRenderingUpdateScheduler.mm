@@ -134,7 +134,7 @@ void WebViewRenderingUpdateScheduler::renderingUpdateRunLoopObserverCallback()
 void WebViewRenderingUpdateScheduler::postRenderingUpdateCallback()
 {
     @autoreleasepool {
-        [m_webView _didCompleteRenderingFrame];
+        [protect(m_webView) _didCompleteRenderingFrame];
         m_postRenderingUpdateRunLoopObserver->invalidate();
     }
 }
@@ -178,11 +178,12 @@ void WebViewRenderingUpdateScheduler::postRenderingUpdateCallback()
 void WebViewRenderingUpdateScheduler::updateRendering()
 {
     @autoreleasepool {
+        RetainPtr webView = m_webView;
 #if PLATFORM(MAC)
-        NSWindow *window = [m_webView window];
+        NSWindow *window = [webView window];
 #endif // PLATFORM(MAC)
 
-        [m_webView _updateRendering];
+        [webView _updateRendering];
 
 #if PLATFORM(MAC)
         // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.

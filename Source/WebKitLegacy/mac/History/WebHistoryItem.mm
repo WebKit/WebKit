@@ -100,7 +100,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 using HistoryItemMap = HashMap<WeakRef<WebCore::HistoryItem>, WebHistoryItem*>;
 
-static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
+SUPPRESS_NODELETE static inline WebCoreHistoryItem* NODELETE core(WebHistoryItemPrivate* itemPrivate)
 {
     return itemPrivate->_historyItem.get();
 }
@@ -149,7 +149,8 @@ void WKNotifyHistoryItemChanged()
         return;
 
     historyItemWrappers().remove(protect(*_private->_historyItem));
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_private release];
 
     [super dealloc];
 }
@@ -419,7 +420,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
         for (int i = children.size() - 1; i >= 0; i--)
-            [childDicts addObject:[kit(const_cast<WebCore::HistoryItem*>(children[i].ptr())) dictionaryRepresentation]];
+            [childDicts addObject:[protect(kit(const_cast<WebCore::HistoryItem*>(children[i].ptr()))) dictionaryRepresentation]];
         [dict setObject: childDicts forKey:childrenKey];
     }
 

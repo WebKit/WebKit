@@ -58,9 +58,10 @@
 
 - (void)highlight
 {
+    RetainPtr inspectedWebView = _inspectedWebView;
 #if !PLATFORM(IOS_FAMILY)
     // The scrollview's content view stays around between page navigations, so target it.
-    NSView *view = [[[[[_inspectedWebView mainFrame] frameView] documentView] enclosingScrollView] contentView];
+    NSView *view = [[[[[inspectedWebView mainFrame] frameView] documentView] enclosingScrollView] contentView];
 #else
     NSView *view = _inspectedWebView;
 #endif
@@ -68,23 +69,26 @@
         return; // Skip the highlight if we have no window (e.g. hidden tab).
     
     if (!_currentHighlight) {
-        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:&[_inspectedWebView page]->inspectorController()];
-        [_currentHighlight setDelegate:self];
-        [_currentHighlight attach];
+        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:&[inspectedWebView page]->inspectorController()];
+        RetainPtr currentHighlight = _currentHighlight;
+        [currentHighlight setDelegate:self];
+        [currentHighlight attach];
     } else {
+        RetainPtr currentHighlight = _currentHighlight;
 #if !PLATFORM(IOS_FAMILY)
-        [[_currentHighlight highlightView] setNeedsDisplay:YES];
+        [[currentHighlight highlightView] setNeedsDisplay:YES];
 #else
-        [_currentHighlight setNeedsDisplay];
+        [currentHighlight setNeedsDisplay];
 #endif
     }
 }
 
 - (void)hideHighlight
 {
-    [_currentHighlight detach];
-    [_currentHighlight setDelegate:nil];
-    [_currentHighlight release];
+    RetainPtr currentHighlight = _currentHighlight;
+    [currentHighlight detach];
+    [currentHighlight setDelegate:nil];
+    [currentHighlight release];
     _currentHighlight = nil;
 }
 
@@ -93,12 +97,12 @@
 
 - (void)didAttachWebNodeHighlight:(WebNodeHighlight *)highlight
 {
-    [_inspectedWebView setCurrentNodeHighlight:highlight];
+    [protect(_inspectedWebView) setCurrentNodeHighlight:highlight];
 }
 
 - (void)willDetachWebNodeHighlight:(WebNodeHighlight *)highlight
 {
-    [_inspectedWebView setCurrentNodeHighlight:nil];
+    [protect(_inspectedWebView) setCurrentNodeHighlight:nil];
 }
     
 @end

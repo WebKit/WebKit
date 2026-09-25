@@ -148,8 +148,9 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
 
 - (void)dealloc
 {
-    [_views release];
-    [_checksInProgress release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_views release];
+    SUPPRESS_UNRETAINED_ARG [_checksInProgress release];
     [super dealloc];
 }
 
@@ -211,15 +212,16 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
 
 - (void)startAllPlugins
 {
+    RetainPtr views = _views;
     if (_started)
         return;
     
-    if ([_views count] > 0)
+    if ([views count] > 0)
         LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
     
-    int count = [_views count];
+    int count = [views count];
     for (int i = 0; i < count; i++) {
-        id aView = [_views objectAtIndex:i];
+        id aView = [views objectAtIndex:i];
         if ([aView respondsToSelector:@selector(webPlugInStart)]) {
             JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
             [aView webPlugInStart];
@@ -236,13 +238,14 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
     if (!_started)
         return;
 
-    if ([_views count] > 0) {
+    RetainPtr views = _views;
+    if ([views count] > 0) {
         LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
     }
     
-    int viewsCount = [_views count];
+    int viewsCount = [views count];
     for (int i = 0; i < viewsCount; i++)
-        [self stopOnePlugin:[_views objectAtIndex:i]];
+        [self stopOnePlugin:[views objectAtIndex:i]];
 
     _started = NO;
 }
@@ -278,15 +281,17 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
 
 - (void)addPlugin:(NSView *)view
 {
+    RetainPtr views = _views;
+    RetainPtr documentView = _documentView;
     if (!_documentView) {
         LOG_ERROR("can't add a plug-in to a defunct WebPluginController");
         return;
     }
     
-    if (![_views containsObject:view]) {
-        [_views addObject:view];
+    if (![views containsObject:view]) {
+        [views addObject:view];
 #if !PLATFORM(IOS_FAMILY)
-        [[_documentView _webView] addPluginInstanceView:view];
+        [[documentView _webView] addPluginInstanceView:view];
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -324,7 +329,7 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
             
             if ([view respondsToSelector:@selector(setContainingWindow:)]) {
                 JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
-                [view setContainingWindow:[_documentView window]];
+                [view setContainingWindow:[documentView window]];
             }
         }
     }
@@ -332,23 +337,24 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
 
 - (void)destroyPlugin:(NSView *)view
 {
-    if ([_views containsObject:view]) {
+    RetainPtr views = _views;
+    if ([views containsObject:view]) {
         if (_started)
             [self stopOnePlugin:view];
         [self destroyOnePlugin:view];
         
         [pluginViews() removeObject:view];
 #if !PLATFORM(IOS_FAMILY)
-        [[_documentView _webView] removePluginInstanceView:view];
+        [[protect(_documentView) _webView] removePluginInstanceView:view];
 #endif
-        [_views removeObject:view];
+        [views removeObject:view];
     }
 }
 
 - (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
 {
     [checkIdentifier cancel];
-    [_checksInProgress removeObject:checkIdentifier];
+    [protect(_checksInProgress) removeObject:checkIdentifier];
 }
 
 static void cancelOutstandingCheck(const void *item, void *context)
@@ -359,39 +365,40 @@ static void cancelOutstandingCheck(const void *item, void *context)
 - (void)_cancelOutstandingChecks
 {
     if (_checksInProgress) {
-        CFSetApplyFunction((__bridge CFSetRef)_checksInProgress, cancelOutstandingCheck, NULL);
-        [_checksInProgress release];
+        CFSetApplyFunction(protect((__bridge CFSetRef)_checksInProgress), cancelOutstandingCheck, NULL);
+        SUPPRESS_UNRETAINED_ARG [_checksInProgress release];
         _checksInProgress = nil;
     }
 }
 
 - (void)destroyAllPlugins
 {    
+    RetainPtr views = _views;
     [self stopAllPlugins];
 
-    if ([_views count] > 0) {
+    if ([views count] > 0) {
         LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
     }
 
     [self _cancelOutstandingChecks];
     
-    int viewsCount = [_views count];
+    int viewsCount = [views count];
     for (int i = 0; i < viewsCount; i++) {
-        id aView = [_views objectAtIndex:i];
+        id aView = [views objectAtIndex:i];
         [self destroyOnePlugin:aView];
 
         [pluginViews() removeObject:aView];
 #if !PLATFORM(IOS_FAMILY)
-        [[_documentView _webView] removePluginInstanceView:aView];
+        [[protect(_documentView) _webView] removePluginInstanceView:aView];
 #endif
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
+    [views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
 #else
     [_views makeObjectsPerformSelector:@selector(removeFromSuperview)];
 #endif
-    [_views release];
+    [views release];
     _views = nil;
 
     _documentView = nil;
@@ -407,7 +414,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 - (id)_webPluginContainerCheckIfAllowedToLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target resultObject:(id)obj selector:(SEL)selector
 {
     WebPluginContainerCheck *check = [WebPluginContainerCheck checkWithRequest:request target:target resultObject:obj selector:selector controller:self contextInfo:nil];
-    [_checksInProgress addObject:check];
+    [protect(_checksInProgress) addObject:check];
     [check start];
 
     return check;
@@ -423,7 +430,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
         LOG_ERROR("could not load URL %@ because plug-in has already been destroyed", request);
         return;
     }
-    WebFrame *frame = [_dataSource webFrame];
+    RetainPtr frame = [protect(_dataSource) webFrame];
     if (!frame) {
         LOG_ERROR("could not load URL %@ because plug-in has already been stopped", request);
         return;
@@ -469,8 +476,8 @@ static void cancelOutstandingCheck(const void *item, void *context)
     if (!message)
         message = @"";
 
-    WebView *v = [_dataSource _webView];
-    [[v _UIDelegateForwarder] webView:v setStatusText:message];
+    RetainPtr v = [protect(_dataSource) _webView];
+    [[v _UIDelegateForwarder] webView:v.get() setStatusText:message];
 }
 
 // For compatibility only.
@@ -497,7 +504,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 
 - (WebFrame *)webFrame
 {
-    return [_dataSource webFrame];
+    return [protect(_dataSource) webFrame];
 }
 
 - (WebView *)webView
@@ -524,7 +531,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
                                                           MIMEType:[response MIMEType]]);
-        protect([_dataSource _documentLoader].get())->cancelMainResourceLoad(error.get());
+        protect([protect(_dataSource) _documentLoader].get())->cancelMainResourceLoad(error.get());
     }        
 }
 
@@ -631,7 +638,7 @@ IGNORE_WARNINGS_END
         IMP originalMethod = method_setImplementation(methodToPatch, reinterpret_cast<IMP>(WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_));
         original_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_ = reinterpret_cast<alertDidEndIMP>(originalMethod);
 
-        methodToPatch = class_getInstanceMethod(objc_getRequiredClass("NSAlert"), @selector(beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo:));
+        methodToPatch = class_getInstanceMethod(protect(objc_getRequiredClass("NSAlert")), @selector(beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo:));
         originalMethod = method_setImplementation(methodToPatch, reinterpret_cast<IMP>(WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_));
         original_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_ = reinterpret_cast<beginSheetModalForWindowIMP>(originalMethod);
 

@@ -275,7 +275,7 @@ Vector<Vector<String>> vectorForDictationPhrasesArray(NSArray *dictationPhrases)
 
 @implementation WebFrame (WebInternal)
 
-WebCore::LocalFrame* core(WebFrame *frame)
+SUPPRESS_NODELETE WebCore::LocalFrame* core(WebFrame *frame)
 {
     return frame ? frame->_private->coreFrame : 0;
 }
@@ -292,7 +292,7 @@ WebFrame *kit(WebCore::LocalFrame* frame)
     return static_cast<WebFrameLoaderClient&>(frameLoaderClient).webFrame();
 }
 
-WebCore::Page* core(WebView *webView)
+SUPPRESS_NODELETE WebCore::Page* core(WebView *webView)
 {
     return [webView page];
 }
@@ -437,7 +437,7 @@ static NSURL *createUniqueWebDataURL();
         ++WebFrameCount;
 
     if (fv) {
-        [_private setWebFrameView:fv];
+        [protect(_private) setWebFrameView:fv];
         [fv _setWebFrame:self];
     }
 
@@ -566,7 +566,7 @@ static NSURL *createUniqueWebDataURL();
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
-        if ([kit(frame) _hasSelection]) {
+        if ([protect(kit(frame)) _hasSelection]) {
             if (found)
                 return NO;
             found = YES;
@@ -595,7 +595,7 @@ static NSURL *createUniqueWebDataURL();
     // We rely on WebDocumentSelection protocol implementors to call this method when they become first 
     // responder. It would be nicer to just notice first responder changes here instead, but there's no 
     // notification sent when the first responder changes in general (Radar 2573089).
-    WebFrame *frameWithSelection = [[getWebView(self) mainFrame] _findFrameWithSelection];
+    RetainPtr frameWithSelection = [[protect(getWebView(self)) mainFrame] _findFrameWithSelection];
     if (frameWithSelection != self)
         [frameWithSelection _clearSelection];
 
@@ -991,7 +991,7 @@ static NSURL *createUniqueWebDataURL();
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
-    WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
+    WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [protect(view->platformWidget()) window])),
         WebCore::MouseButton::Left, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
@@ -2063,7 +2063,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     auto& frameLoader = _private->coreFrame->loader();
     RefPtr documentLoader = frameLoader.documentLoader();
     if (documentLoader && !documentLoader->mainDocumentError().isNull())
-        [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
+        [result setObject:protect((NSError *)documentLoader->mainDocumentError()) forKey:WebFrameMainDocumentError];
         
     if (frameLoader.subframeLoader().containsPlugins())
         [result setObject:@YES forKey:WebFrameHasPlugins];
@@ -2407,7 +2407,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_private && _private->includedInWebKitStatistics)
         --WebFrameCount;
 
-    [_private release];
+    // Retaining the member just to release it would be pointless.
+    SUPPRESS_UNRETAINED_ARG [_private release];
 
     [super dealloc];
 }
@@ -2608,7 +2609,7 @@ static NSURL *createUniqueWebDataURL()
         return @[];
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree().childCount()];
     for (RefPtr child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
-        [children addObject:kit(dynamicDowncast<WebCore::LocalFrame>(child.get()))];
+        [children addObject:protect(kit(dynamicDowncast<WebCore::LocalFrame>(child.get())))];
     return children;
 }
 
