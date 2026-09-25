@@ -33,6 +33,7 @@
 #include <WebCore/RepaintRectCalculation.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/EnumSet.h>
+#include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -48,6 +49,7 @@ class ControlPart;
 class Cursor;
 class Document;
 class FloatQuad;
+class Frame;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -99,6 +101,8 @@ class ComputedStyle;
 class PseudoElementRequest;
 enum class MarginTrimSide : uint8_t;
 }
+
+using ClipRectAdjuster = ScopedLambda<std::optional<LayoutRect>(const Frame&, const LayoutRect& clipRect)>;
 
 enum class Affinity : bool;
 enum class HitTestSource : bool;
@@ -1003,6 +1007,14 @@ public:
     // rather than an empty rect if the rect is completely clipped out in container space.
     virtual std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
     virtual std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+
+    LayoutRect localBoundsForIntersection() const;
+
+    // The local intersection rect mapped out to *this* element's frame's contents coordinates, with clips and scrolls applied.
+    std::optional<LayoutRect> computeClippedRectInContentCoordinates(const LayoutRect& localRect) const;
+
+    // The local intersection rect mapped out to the root frame's contents coordinates, with clips and scrolls applied.
+    std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates(const LayoutRect& localRect, const ClipRectAdjuster&) const;
 
     WEBCORE_EXPORT bool hasEmptyVisibleRectRespectingParentFrames() const;
 

@@ -118,7 +118,6 @@ inline auto RenderObject::visibleRectContextForRepaint() -> VisibleRectContext
             VisibleRectContext::Option::ApplyContainerClip,
             VisibleRectContext::Option::ApplyCompositedContainerScrolls
         },
-        .scrollMargin = { },
     };
 }
 
@@ -133,7 +132,6 @@ inline auto RenderObject::visibleRectContextForSpatialNavigation() -> VisibleRec
             VisibleRectContext::Option::ApplyCompositedContainerScrolls,
             VisibleRectContext::Option::ApplyCompositedClips
         },
-        .scrollMargin = { },
     };
 }
 
@@ -149,7 +147,6 @@ inline auto RenderObject::visibleRectContextForRenderTreeAsText() -> VisibleRect
             VisibleRectContext::Option::ApplyCompositedClips,
             VisibleRectContext::Option::CalculateAccurateRepaintRect
         },
-        .scrollMargin = { },
     };
 }
 
