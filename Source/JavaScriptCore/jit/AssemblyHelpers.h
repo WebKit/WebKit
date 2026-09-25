@@ -189,6 +189,22 @@ public:
     void loadProperty(GPRReg objectGPR, GPRReg offsetGPR, GPRReg resultGPR);
     void storeProperty(GPRReg valueGPR, GPRReg objectGPR, GPRReg offsetGPR, GPRReg scratchGPR);
 
+    // srcDest = (srcDest & mask) * entrySize: the byte offset of slot (index & mask) in a table of fixed-size
+    // entries. mask must be of the form 2^n - 1. For a power-of-two entrySize the mask and the shift are a single
+    // UBFIZ on arm64.
+    template<uint32_t mask, size_t entrySize>
+    void maskAndScaleIndex32(GPRReg srcDest)
+    {
+        static_assert(mask && !(mask & (static_cast<uint64_t>(mask) + 1)), "mask must be 2^n - 1");
+        if constexpr (hasOneBitSet(entrySize)) {
+            static_assert(std::popcount(mask) + getLSBSet(entrySize) <= 32);
+            insertUnsignedBitfieldInZero32(srcDest, TrustedImm32(getLSBSet(entrySize)), TrustedImm32(std::popcount(mask)), srcDest);
+        } else {
+            and32(TrustedImm32(mask), srcDest);
+            mul32(TrustedImm32(entrySize), srcDest, srcDest);
+        }
+    }
+
     JumpList loadMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
     JumpList loadMegamorphicGetterSetter(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
     template<uint32_t primaryMask, ptrdiff_t primaryEntriesOffset, uint32_t secondaryMask, ptrdiff_t secondaryEntriesOffset>

@@ -6099,11 +6099,7 @@ void SpeculativeJIT::compile(Node* node)
         load32(Address(implGPR, UniquedStringImpl::flagsOffset()), hashGPR);
         load32(Address(objectGPR, JSCell::structureIDOffset()), structureIDGPR);
         addUnsignedRightShift32(structureIDGPR, hashGPR, TrustedImm32(StringImpl::s_flagCount), hashGPR);
-        and32(TrustedImm32(HasOwnPropertyCache::mask), hashGPR);
-        if (hasOneBitSet(sizeof(HasOwnPropertyCache::Entry))) // is a power of 2
-            lshift32(TrustedImm32(getLSBSet(sizeof(HasOwnPropertyCache::Entry))), hashGPR);
-        else
-            mul32(TrustedImm32(sizeof(HasOwnPropertyCache::Entry)), hashGPR, hashGPR);
+        maskAndScaleIndex32<HasOwnPropertyCache::mask, sizeof(HasOwnPropertyCache::Entry)>(hashGPR);
         ASSERT(vm().hasOwnPropertyCache());
         move(TrustedImmPtr(vm().hasOwnPropertyCache()), tempGPR);
         slowPath.append(branchPtr(NotEqual,

@@ -5419,6 +5419,47 @@ public:
         add32(src1, scratchRegister(), dest);
     }
 
+    // dest = (src >> lsb) & ((1 << width) - 1), which is arm64's UBFX.
+    void extractUnsignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        ASSERT(width.m_value > 0 && lsb.m_value >= 0 && lsb.m_value + width.m_value <= 32);
+        urshift32(src, lsb, dest);
+        if (width.m_value < 32)
+            and32(TrustedImm32((1u << width.m_value) - 1), dest);
+    }
+
+    void extractUnsignedBitfield64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        ASSERT(width.m_value > 0 && lsb.m_value >= 0 && lsb.m_value + width.m_value <= 64);
+        urshift64(src, lsb, dest);
+        if (width.m_value < 64)
+            and64(TrustedImm64((1ull << width.m_value) - 1), dest);
+    }
+
+    // dest = (src & ((1 << width) - 1)) << lsb, which is arm64's UBFIZ.
+    void insertUnsignedBitfieldInZero32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        ASSERT(width.m_value > 0 && lsb.m_value >= 0 && lsb.m_value + width.m_value <= 32);
+        if (width.m_value == 32)
+            zeroExtend32ToWord(src, dest);
+        else
+            and32(TrustedImm32((1u << width.m_value) - 1), src, dest);
+        if (lsb.m_value)
+            lshift32(TrustedImm32(lsb.m_value), dest);
+    }
+
+    void insertUnsignedBitfieldInZero64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        ASSERT(width.m_value > 0 && lsb.m_value >= 0 && lsb.m_value + width.m_value <= 64);
+        if (width.m_value == 64)
+            move(src, dest);
+        else if (width.m_value == 32)
+            zeroExtend32ToWord(src, dest);
+        else
+            and64(TrustedImm64((1ull << width.m_value) - 1), src, dest);
+        lshift64(TrustedImm32(lsb.m_value), dest);
+    }
+
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value) [[unlikely]]

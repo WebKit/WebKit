@@ -454,11 +454,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::findMegamorphicCacheEntry(VM& vm, GPR
         addUnsignedRightShift32(scratch3GPR, scratch2GPR, TrustedImm32(StringImpl::s_flagCount), scratch3GPR);
     }
 
-    and32(TrustedImm32(primaryMask), scratch3GPR);
-    if (hasOneBitSet(sizeof(Entry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(Entry))), scratch3GPR);
-    else
-        mul32(TrustedImm32(sizeof(Entry)), scratch3GPR, scratch3GPR);
+    maskAndScaleIndex32<primaryMask, sizeof(Entry)>(scratch3GPR);
     auto& cache = vm.ensureMegamorphicCache();
     move(TrustedImmPtr(&cache), scratch2GPR);
     addPtr(scratch2GPR, scratch3GPR);
@@ -488,11 +484,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::findMegamorphicCacheEntry(VM& vm, GPR
     else
         add32(uidGPR, scratch1GPR, scratch3GPR);
     addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift3), scratch3GPR);
-    and32(TrustedImm32(secondaryMask), scratch3GPR);
-    if constexpr (hasOneBitSet(sizeof(Entry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(Entry))), scratch3GPR);
-    else
-        mul32(TrustedImm32(sizeof(Entry)), scratch3GPR, scratch3GPR);
+    maskAndScaleIndex32<secondaryMask, sizeof(Entry)>(scratch3GPR);
     addPtr(TrustedImmPtr(std::bit_cast<uint8_t*>(&cache) + secondaryEntriesOffset), scratch3GPR);
 
     slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, Entry::offsetOfStructureID())));
@@ -581,11 +573,7 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
         addUnsignedRightShift32(scratch3GPR, scratch2GPR, TrustedImm32(StringImpl::s_flagCount), scratch3GPR);
     }
 
-    and32(TrustedImm32(MegamorphicCache::storeCachePrimaryMask), scratch3GPR);
-    if (hasOneBitSet(sizeof(MegamorphicCache::StoreEntry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::StoreEntry))), scratch3GPR);
-    else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::StoreEntry)), scratch3GPR, scratch3GPR);
+    maskAndScaleIndex32<MegamorphicCache::storeCachePrimaryMask, sizeof(MegamorphicCache::StoreEntry)>(scratch3GPR);
     auto& cache = vm.ensureMegamorphicCache();
     move(TrustedImmPtr(&cache), scratch2GPR);
     addPtr(scratch2GPR, scratch3GPR);
@@ -623,11 +611,7 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
     else
         add32(uidGPR, scratch1GPR, scratch3GPR);
     addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift5), scratch3GPR);
-    and32(TrustedImm32(MegamorphicCache::storeCacheSecondaryMask), scratch3GPR);
-    if constexpr (hasOneBitSet(sizeof(MegamorphicCache::StoreEntry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::StoreEntry))), scratch3GPR);
-    else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::StoreEntry)), scratch3GPR, scratch3GPR);
+    maskAndScaleIndex32<MegamorphicCache::storeCacheSecondaryMask, sizeof(MegamorphicCache::StoreEntry)>(scratch3GPR);
     addPtr(TrustedImmPtr(std::bit_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfStoreCacheSecondaryEntries()), scratch3GPR);
 
     slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfOldStructureID())));
@@ -675,11 +659,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
         addUnsignedRightShift32(scratch3GPR, scratch2GPR, TrustedImm32(StringImpl::s_flagCount), scratch3GPR);
     }
 
-    and32(TrustedImm32(MegamorphicCache::hasCachePrimaryMask), scratch3GPR);
-    if (hasOneBitSet(sizeof(MegamorphicCache::HasEntry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::HasEntry))), scratch3GPR);
-    else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::HasEntry)), scratch3GPR, scratch3GPR);
+    maskAndScaleIndex32<MegamorphicCache::hasCachePrimaryMask, sizeof(MegamorphicCache::HasEntry)>(scratch3GPR);
     auto& cache = vm.ensureMegamorphicCache();
     move(TrustedImmPtr(&cache), scratch2GPR);
     addPtr(scratch2GPR, scratch3GPR);
@@ -711,11 +691,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
     else
         add32(uidGPR, scratch1GPR, scratch3GPR);
     addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift7), scratch3GPR);
-    and32(TrustedImm32(MegamorphicCache::hasCacheSecondaryMask), scratch3GPR);
-    if constexpr (hasOneBitSet(sizeof(MegamorphicCache::HasEntry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::HasEntry))), scratch3GPR);
-    else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::HasEntry)), scratch3GPR, scratch3GPR);
+    maskAndScaleIndex32<MegamorphicCache::hasCacheSecondaryMask, sizeof(MegamorphicCache::HasEntry)>(scratch3GPR);
     addPtr(TrustedImmPtr(std::bit_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfHasCacheSecondaryEntries()), scratch3GPR);
 
     slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfStructureID())));
