@@ -779,8 +779,7 @@ void WebFrameProxy::getFrameTree(CompletionHandler<void(std::optional<FrameTreeN
         void addChildFrameData(size_t index, FrameTreeNodeData&& data) { m_childFrameData[index] = WTF::move(data); }
         ~FrameInfoCallbackAggregator()
         {
-            // FIXME: We currently have to drop child frames that are currently not subframes of this frame
-            // (e.g. they are in the back/forward cache). They really should not be part of m_childFrames.
+            // Drop child frames whose process did not reply.
             auto nonEmptyChildFrameData = WTF::compactMap(WTF::move(m_childFrameData), [](std::optional<FrameTreeNodeData>&& data) {
                 return std::forward<decltype(data)>(data);
             });
@@ -807,21 +806,11 @@ void WebFrameProxy::getFrameTree(CompletionHandler<void(std::optional<FrameTreeN
             aggregator->setCurrentFrameData(WTF::move(*info));
     });
 
-    RefPtr page = this->page();
-    bool isSiteIsolationEnabled = page && protect(page->preferences())->siteIsolationEnabled();
     size_t index = 0;
     for (Ref childFrame : m_childFrames) {
-        childFrame->getFrameTree([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (std::optional<FrameTreeNodeData>&& data) {
+        childFrame->getFrameTree([aggregator, index = index++] (std::optional<FrameTreeNodeData>&& data) {
             if (!data)
                 return;
-
-            // FIXME: m_childFrames currently contains iframes that are in the back/forward cache, not currently
-            // connected to this parent frame. They should really not be part of m_childFrames anymore.
-            // FIXME: With site isolation enabled, remote frames currently don't have a parentFrameID so we temporarily
-            // ignore this check.
-            if (data->info.parentFrameID != frameID && !isSiteIsolationEnabled)
-                return;
-
             aggregator->addChildFrameData(index, WTF::move(*data));
         });
     }

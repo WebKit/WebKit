@@ -39,17 +39,22 @@ Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData)
     return adoptRef(*new FrameInfo(WTF::move(frameInfoData)));
 }
 
-static WebCore::CertificateInfo certificateInfoFromFrameID(WebCore::FrameIdentifier frameID)
+auto FrameInfo::stateSnapshot(WebCore::FrameIdentifier frameID) -> StateSnapshot
 {
     RefPtr frame = WebKit::WebFrameProxy::webFrame(frameID);
     if (!frame)
         return { };
-    return frame->certificateInfo();
+    RefPtr parent = frame->parentFrame();
+    return StateSnapshot {
+        frame->certificateInfo(),
+        parent ? std::optional(parent->frameID()) : std::nullopt,
+        frame->title()
+    };
 }
 
 FrameInfo::FrameInfo(WebKit::FrameInfoData&& data)
     : m_data(WTF::move(data))
-    , m_certificateInfo(certificateInfoFromFrameID(m_data.frameID)) { }
+    , m_stateSnapshot(stateSnapshot(m_data.frameID)) { }
 
 FrameInfo::~FrameInfo() = default;
 
@@ -60,21 +65,9 @@ Ref<FrameHandle> FrameInfo::handle() const
 
 RefPtr<FrameHandle> FrameInfo::parentFrameHandle() const
 {
-    if (!m_data.parentFrameID)
+    if (!m_stateSnapshot.parentFrameID)
         return nullptr;
-    return FrameHandle::create(*m_data.parentFrameID);
-}
-
-WTF::String FrameInfo::title() const
-{
-    auto* page = this->page();
-    if (!page)
-        return { };
-
-    if (auto* frame = WebKit::WebFrameProxy::webFrame(m_data.frameID); frame && frame->page() == page)
-        return frame->title();
-
-    return { };
+    return FrameHandle::create(*m_stateSnapshot.parentFrameID);
 }
 
 const WebKit::WebPageProxy* FrameInfo::page() const

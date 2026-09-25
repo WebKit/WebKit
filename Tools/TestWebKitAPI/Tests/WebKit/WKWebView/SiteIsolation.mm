@@ -1889,21 +1889,30 @@ TEST(SiteIsolation, PostMessageToIFrameWithOpaqueOrigin)
 TEST(SiteIsolation, QueryFramesStateAfterNavigating)
 {
     HTTPServer server({
-        { "/page1.html"_s, { "<iframe src='subframe1.html'></iframe><iframe src='subframe2.html'></iframe><iframe src='subframe3.html'></iframe>"_s } },
         { "/page2.html"_s, { "<iframe src='subframe4.html'></iframe>"_s } },
         { "/subframe1.html"_s, { "SubFrame1"_s } },
         { "/subframe2.html"_s, { "SubFrame2"_s } },
         { "/subframe3.html"_s, { "SubFrame3"_s } },
         { "/subframe4.html"_s, { "SubFrame4"_s } }
     }, HTTPServer::Protocol::Http);
-    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
-    enableSiteIsolation(configuration.get());
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
-    EXPECT_EQ(3u, [webView mainFrame].childFrames.count);
+    server.addResponse("/page1.html"_s, { makeString("<iframe src='subframe1.html'></iframe><iframe src='subframe2.html'></iframe><iframe src='http://localhost:"_s, server.port(), "/subframe3.html'></iframe>"_s) });
 
-    [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
-    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+    auto runTest = [&] (bool withSiteIsolation) {
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        if (withSiteIsolation)
+            enableSiteIsolation(configuration.get());
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
+        EXPECT_EQ(3u, [webView mainFrame].childFrames.count);
+
+        [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
+        EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+
+        [webView synchronouslyGoBack];
+        EXPECT_EQ(3u, [webView mainFrame].childFrames.count);
+    };
+    runTest(true);
+    runTest(false);
 }
 
 TEST(SiteIsolation, QueryFramesStateAfterGoingBackToCachedPageWithIframe)
@@ -1913,23 +1922,39 @@ TEST(SiteIsolation, QueryFramesStateAfterGoingBackToCachedPageWithIframe)
         { "/page2.html"_s, { ""_s } },
         { "/subframe.html"_s, { "SubFrame"_s } }
     }, HTTPServer::Protocol::Http);
-    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
-    enableSiteIsolation(configuration.get());
-    setFeatureEnabled(configuration.get(), @"MultiProcessBackForwardCacheEnabled", true);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
-    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
-    RetainPtr<WKFrameInfo> childFrame = [webView mainFrame].childFrames.firstObject.info;
-    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker = true"];
-    [webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker = true" inFrame:childFrame.get()];
 
-    [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
-    EXPECT_EQ(0u, [webView mainFrame].childFrames.count);
+    auto runTest = [&] (bool withSiteIsolation) {
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        if (withSiteIsolation) {
+            enableSiteIsolation(configuration.get());
+            setFeatureEnabled(configuration.get(), @"MultiProcessBackForwardCacheEnabled", true);
+        }
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
+        EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+        RetainPtr<WKFrameInfo> childFrame = [webView mainFrame].childFrames.firstObject.info;
+        [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker = true"];
+        [webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker = true" inFrame:childFrame.get()];
 
-    [webView synchronouslyGoBack];
-    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
-    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false"] boolValue]);
-    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker ? true : false" inFrame:[webView mainFrame].childFrames.firstObject.info] boolValue]);
+        [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
+        EXPECT_EQ(0u, [webView mainFrame].childFrames.count);
+
+        [webView synchronouslyGoBack];
+        EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+        EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false"] boolValue]);
+        EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker ? true : false" inFrame:[webView mainFrame].childFrames.firstObject.info] boolValue]);
+
+        [webView synchronouslyGoForward];
+        EXPECT_EQ(0u, [webView mainFrame].childFrames.count);
+
+        [webView evaluateJavaScript:@"history.back()" completionHandler:nil];
+        [webView _test_waitForDidFinishNavigation];
+        EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
+        EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false"] boolValue]);
+        EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker ? true : false" inFrame:[webView mainFrame].childFrames.firstObject.info] boolValue]);
+    };
+    runTest(true);
+    runTest(false);
 }
 
 TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)

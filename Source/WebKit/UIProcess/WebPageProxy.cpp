@@ -17542,7 +17542,9 @@ void WebPageProxy::didPerformImmediateActionHitTest(IPC::Connection& connection,
             performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, FloatPoint(result.remoteUserInputEventData->transformedPoint));
             return;
         }
-        if (auto parentFrameID = result.frameInfo->parentFrameID) {
+        RefPtr frame = WebFrameProxy::webFrame(result.frameInfo->frameID);
+        RefPtr parentFrame = frame ? frame->parentFrame() : nullptr;
+        if (auto parentFrameID = parentFrame ? std::optional(parentFrame->frameID()) : std::nullopt) {
             sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, userData, result = WTF::move(result), contentPreventsDefault] (IPC::Connection* connection, WebCore::DictionaryPopupInfo popupInfo) mutable {
                 result.dictionaryPopupInfo = popupInfo;
                 if (!connection)
@@ -20150,11 +20152,10 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
     // Frame processes need to be fetched before child frames are removed.
     auto iframeProcesses = activeRemoteFrameProcesses();
 
-    // Children are stored in the cache entry; if restore is implemented they
-    // would be reattached at restore time. Until then they are released when
-    // the entry is discarded.
-    if (protect(preferences())->siteIsolationEnabled() && protect(preferences())->multiProcessBackForwardCacheEnabled())
-        entry->setCachedChildren(mainFrame->takeChildFrames());
+    // WebCore detaches the cached page's subframes from the main frame's FrameTree, so do the same here.
+    // They are stored in the cache entry, reattached in didCommitLoadForFrame when the page is restored,
+    // and released when the entry is discarded.
+    entry->setCachedChildren(mainFrame->takeChildFrames());
 
     if (iframeProcesses.isEmpty())
         return completionHandler(true);
@@ -20206,6 +20207,12 @@ void WebPageProxy::didTakeBackForwardItemForRestoration(BackForwardItemIdentifie
         // chain). They must never reach this handler with their SPP intact.
         ASSERT_NOT_REACHED();
         return;
+    }
+
+    Ref entry = *item->backForwardCacheEntry();
+    if (entry->hasCachedChildren()) {
+        auto [cachedChildren, _] = entry->takeForRestoration();
+        internals().pendingBackForwardCachedChildren.set(itemID, WTF::move(cachedChildren));
     }
     protect(backForwardCache())->removeEntry(*item);
 }
