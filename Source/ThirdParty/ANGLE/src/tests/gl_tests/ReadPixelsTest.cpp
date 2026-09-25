@@ -365,6 +365,50 @@ class ReadPixelsPBOTest : public ReadPixelsPBONVTest
 
         ASSERT_GL_NO_ERROR();
     }
+
+    // Re-specifies an attached texture with |pixels|, then reads it back into the PBO and
+    // compares. The texture is read from an attachment that is not the draw buffer, because the
+    // framebuffer only releases its own reference to the attachment's image in that case.
+    void testReadFromRespecifiedAttachment(GLenum internalFormat, const GLColor pixels[2])
+    {
+        constexpr GLsizei kWidth  = 2;
+        constexpr GLsizei kHeight = 1;
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, kWidth, kHeight, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+
+        // Draw to the texture first, so that the backend creates a render target for it.
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        const GLfloat clearColor[4] = {1.0f, 0.0f, 0.0f, 1.0f};
+        glClearBufferfv(GL_COLOR, 0, clearColor);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture, 0);
+        glReadBuffer(GL_COLOR_ATTACHMENT1);
+        ASSERT_GL_NO_ERROR();
+
+        // Re-specify the attachment with the same format and size, and give it new contents.
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, kWidth, kHeight, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, pixels);
+        ASSERT_GL_NO_ERROR();
+
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+        glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        constexpr GLsizeiptr kReadSize = kWidth * kHeight * sizeof(GLColor);
+        void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kReadSize, GL_MAP_READ_BIT);
+        ASSERT_NE(nullptr, mappedPtr);
+        const GLColor *readColors = static_cast<const GLColor *>(mappedPtr);
+        EXPECT_EQ(pixels[0], readColors[0]);
+        ANGLE_UNSAFE_TODO(EXPECT_EQ(pixels[1], readColors[1]));
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        EXPECT_GL_NO_ERROR();
+    }
 };
 
 // Test basic usage of PBOs.
@@ -819,6 +863,27 @@ TEST_P(ReadPixelsPBOTest, PackLargeRowLength)
 
     EXPECT_EQ(kExpectedColor, actualColorRow0);
     EXPECT_EQ(kExpectedColor, actualColorRow1);
+}
+
+// Read from a color attachment whose texture was re-specified after it was attached. The read
+// must return the contents given to the re-specified image.
+TEST_P(ReadPixelsPBOTest, ReadFromRespecifiedAttachment)
+{
+    // GL_RGBA/GL_UNSIGNED_BYTE differs from the attachment format, which makes the Metal backend
+    // read through a compute shader. GL_RGBA4 keeps 4 bits per channel, so only use values that
+    // survive the round trip.
+    constexpr GLColor kPixels[2] = {GLColor(0x33, 0x66, 0x99, 0xFF),
+                                    GLColor(0xCC, 0x00, 0xFF, 0x88)};
+    testReadFromRespecifiedAttachment(GL_RGBA4, kPixels);
+}
+
+// As above, with a read format that matches the attachment format. The Metal backend reads
+// through a blit instead of a compute shader in that case.
+TEST_P(ReadPixelsPBOTest, ReadFromRespecifiedAttachmentWithMatchingFormat)
+{
+    constexpr GLColor kPixels[2] = {GLColor(0x12, 0x34, 0x56, 0x78),
+                                    GLColor(0x9A, 0xBC, 0xDE, 0xF0)};
+    testReadFromRespecifiedAttachment(GL_RGBA8, kPixels);
 }
 
 class ReadPixelsPBODrawTest : public ReadPixelsPBOTest
