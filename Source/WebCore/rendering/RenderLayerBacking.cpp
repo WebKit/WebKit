@@ -2521,14 +2521,12 @@ bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&
     if (!m_ancestorClippingStack && clippingData.isEmpty())
         return false;
 
-    RefPtr scrollingCoordinator = m_owningLayer.page().scrollingCoordinator();
-
     if (m_ancestorClippingStack && clippingData.isEmpty()) {
-        m_ancestorClippingStack->clear(scrollingCoordinator);
+        m_ancestorClippingStack->clear(compositor());
         m_ancestorClippingStack = nullptr;
         
         if (m_overflowControlsHostLayerAncestorClippingStack) {
-            m_overflowControlsHostLayerAncestorClippingStack->clear(scrollingCoordinator);
+            m_overflowControlsHostLayerAncestorClippingStack->clear(compositor());
             m_overflowControlsHostLayerAncestorClippingStack = nullptr;
         }
         return true;
@@ -2545,20 +2543,19 @@ bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&
         return false;
     }
     
-    m_ancestorClippingStack->updateWithClipData(scrollingCoordinator, Vector { clippingData });
+    m_ancestorClippingStack->updateWithClipData(compositor(), Vector { clippingData });
     LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
     if (m_overflowControlsHostLayerAncestorClippingStack)
-        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTF::move(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(compositor(), WTF::move(clippingData));
     return true;
 }
 
 void RenderLayerBacking::ensureOverflowControlsHostLayerAncestorClippingStack(const RenderLayer* compositedAncestor)
 {
-    RefPtr scrollingCoordinator = m_owningLayer.page().scrollingCoordinator();
     auto clippingData = m_ancestorClippingStack->compositedClipData();
 
     if (m_overflowControlsHostLayerAncestorClippingStack)
-        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTF::move(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(compositor(), WTF::move(clippingData));
     else
         m_overflowControlsHostLayerAncestorClippingStack = makeUnique<LayerAncestorClippingStack>(WTF::move(clippingData));
 
@@ -2706,13 +2703,11 @@ bool RenderLayerBacking::updateAncestorClipping(bool needsAncestorClip, const Re
             layersChanged = true;
         }
     } else if (m_ancestorClippingStack) {
-        RefPtr scrollingCoordinator = m_owningLayer.page().scrollingCoordinator();
-
-        m_ancestorClippingStack->clear(scrollingCoordinator);
+        m_ancestorClippingStack->clear(compositor());
         m_ancestorClippingStack = nullptr;
         
         if (m_overflowControlsHostLayerAncestorClippingStack) {
-            m_overflowControlsHostLayerAncestorClippingStack->clear(scrollingCoordinator);
+            m_overflowControlsHostLayerAncestorClippingStack->clear(compositor());
             m_overflowControlsHostLayerAncestorClippingStack = nullptr;
         }
         
@@ -3314,7 +3309,7 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
     }
 
     if (roles.contains(ScrollCoordinationRole::ScrollingProxy) && m_ancestorClippingStack) {
-        m_ancestorClippingStack->detachFromScrollingCoordinator(*scrollingCoordinator);
+        m_ancestorClippingStack->detachFromScrollingCoordinator(compositor());
         LOG_WITH_STREAM(Compositing, stream << "Detaching nodes in ancestor clipping stack");
     }
 

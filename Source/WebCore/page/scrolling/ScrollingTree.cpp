@@ -550,8 +550,8 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
 
             parent->appendChild(*node);
         } else {
-            // FIXME: Use WeakPtr in m_nodeMap.
-            m_nodeMap.remove(nodeID);
+            removeNode(nodeID, state.frameHostingNode.get());
+            return true;
         }
     }
 

@@ -1,0 +1,103 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    #scroller {
+        width: 400px;
+        height: 300px;
+        overflow-y: auto;
+    }
+
+    /* Compositing #trigger puts the first composited stacking context ahead of #wrapper in paint order.
+       Everything later in #scroller then overlaps, so #wrapper composites for overlap. Only #card is
+       dirtied by this, not the stacking context that #wrapper is in. */
+    #card {
+        position: relative;
+        isolation: isolate;
+        height: 50px;
+    }
+
+    #trigger {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+    }
+
+    #wrapper {
+        isolation: isolate;
+    }
+
+    /* Clipped by #scroller, so it has an overflow scroll proxy node, until #wrapper becomes its
+       compositing ancestor and it no longer needs an ancestor clip. */
+    #clipped {
+        position: relative;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    /* Composited to clip its composited descendants, but not a stacking context, and not dirtied
+       when #clipped's proxy node goes away. */
+    #intermediate {
+        position: relative;
+        overflow: hidden;
+    }
+
+    #inner-scroller {
+        overflow-x: auto;
+    }
+
+    /* Paints in #clipped, not in #inner-scroller, but refers to #inner-scroller's node. */
+    #composited {
+        position: relative;
+        will-change: transform;
+        width: 100px;
+        height: 20px;
+    }
+
+    .wide {
+        width: 1000px;
+        height: 20px;
+    }
+
+    .tall {
+        height: 1000px;
+    }
+</style>
+<script src="../../resources/js-test.js"></script>
+<script>
+    description("Tests that an overflow scrolling node whose parent node is destroyed is reattached, even when a clean composited layer lies between it and the layer that owned that parent.");
+    jsTestIsAsync = true;
+
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                document.getElementById('trigger').style.willChange = 'transform';
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        shouldBeTrue("window.internals?.scrollingStateTreeAsText().indexOf('unparented node count') == -1");
+                        finishJSTest();
+                    });
+                });
+            });
+        });
+    }, false);
+</script>
+</head>
+<body>
+    <div id="scroller">
+        <div id="card"><div id="trigger"></div></div>
+        <div id="wrapper">
+            <div id="clipped">
+                <div id="intermediate">
+                    <div id="inner-scroller">
+                        <div id="composited"></div>
+                        <div class="wide"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tall"></div>
+    </div>
+</body>
+</html>
