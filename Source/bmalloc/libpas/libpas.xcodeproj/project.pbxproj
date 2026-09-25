@@ -139,6 +139,7 @@
 		0F516EE324560FF5004E2B8D /* pas_internal_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F516EE224560FF5004E2B8D /* pas_internal_config.h */; };
 		0F516EE724561A60004E2B8D /* iso_heap_innards.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F516EE624561A60004E2B8D /* iso_heap_innards.h */; };
 		0F5193E7266AE5D400483A2C /* JITHeapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */; };
+		41719039A510406CA6A420E9 /* JSMarkedBlockHeapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F5709971A7C4F6790653C26 /* JSMarkedBlockHeapTests.cpp */; };
 		0F529DDF2455460C00385A8C /* iso_heap_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F529DDE2455460C00385A8C /* iso_heap_ref.h */; };
 		0F53180F22C95294003F7B6A /* pas_found_index.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F53180E22C95293003F7B6A /* pas_found_index.h */; };
 		0F53181122C954ED003F7B6A /* BitvectorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F53181022C954ED003F7B6A /* BitvectorTests.cpp */; };
@@ -153,6 +154,12 @@
 		0F59A39B266844A300A38657 /* jit_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F59A399266844A300A38657 /* jit_heap_config.c */; };
 		0F59A39C266844A300A38657 /* pas_basic_heap_config_enumerator_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F59A39A266844A300A38657 /* pas_basic_heap_config_enumerator_data.c */; };
 		0F59A39E2668470E00A38657 /* jit_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F59A39D2668470E00A38657 /* jit_heap.c */; };
+		C6FB8E4D8EC2444580965577 /* js_marked_block_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4784EAE1A95C46A1B593EF2F /* js_marked_block_heap.c */; };
+		44CD8EA8CE694DA496885DA2 /* js_marked_block_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F3661794B5149BAB15645BC /* js_marked_block_heap.h */; };
+		7EEED3CD63E7424D9B74B276 /* js_marked_block_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E35904D904B6CA547E252 /* js_marked_block_heap_config.c */; };
+		309A77C4DFCE44EBA1D97E3E /* js_marked_block_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ED989B7EE654A1AB96CD0AC /* js_marked_block_heap_config.h */; };
+		93E99CC5F0CD4ED5BC74D1A3 /* js_marked_block_heap_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AA38F19B96F4F46B0AFE72F /* js_marked_block_heap_inlines.h */; };
+		CED480C293CA4E6098F04985 /* js_marked_block_heap_innards.h in Headers */ = {isa = PBXBuildFile; fileRef = F479D506C4F3496CAF72A9C3 /* js_marked_block_heap_innards.h */; };
 		0F5B6083235E572000CAE629 /* pas_bootstrap_heap_page_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F5B6081235E572000CAE629 /* pas_bootstrap_heap_page_provider.c */; };
 		0F5B6084235E572000CAE629 /* pas_bootstrap_heap_page_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B6082235E572000CAE629 /* pas_bootstrap_heap_page_provider.h */; };
 		0F5B6091235E88EF00CAE629 /* pas_reserved_memory_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F5B608F235E88EE00CAE629 /* pas_reserved_memory_provider.c */; };
@@ -242,8 +249,8 @@
 		AA00000003000000000000AA /* bmalloc_heap_flex_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000004000000000000AA /* bmalloc_heap_flex_internal.h */; };
 		AA00000005000000000000AA /* bmalloc_heap_iso.c in Sources */ = {isa = PBXBuildFile; fileRef = AA00000006000000000000AA /* bmalloc_heap_iso.c */; };
 		BB00000001000000000000BB /* bmalloc_heap_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = BB00000002000000000000BB /* bmalloc_heap_utils.c */; };
-		8D9924B2E61245CA83DCD073 /* bmalloc_prefault_supply.c in Sources */ = {isa = PBXBuildFile; fileRef = C43178A6ED524EC5A633719F /* bmalloc_prefault_supply.c */; };
-		49D6D953FB44436894E0BD1B /* bmalloc_prefault_supply.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACBCCD621BF4BC5A2674F5C /* bmalloc_prefault_supply.h */; };
+		8D9924B2E61245CA83DCD073 /* js_marked_block_heap_prefault_supply.c in Sources */ = {isa = PBXBuildFile; fileRef = C43178A6ED524EC5A633719F /* js_marked_block_heap_prefault_supply.c */; };
+		49D6D953FB44436894E0BD1B /* js_marked_block_heap_prefault_supply.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACBCCD621BF4BC5A2674F5C /* js_marked_block_heap_prefault_supply.h */; };
 		AA00000007000000000000AA /* bmalloc_heap_iso_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000008000000000000AA /* bmalloc_heap_iso_internal.h */; };
 		0F8A806625EECC1D00790B4A /* bmalloc_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F8A805F25EECC1C00790B4A /* bmalloc_heap.c */; };
 		0F8A806725EECC1D00790B4A /* bmalloc_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8A806025EECC1C00790B4A /* bmalloc_heap.h */; };
@@ -874,6 +881,7 @@
 		0F516EE224560FF5004E2B8D /* pas_internal_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_internal_config.h; sourceTree = "<group>"; };
 		0F516EE624561A60004E2B8D /* iso_heap_innards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iso_heap_innards.h; sourceTree = "<group>"; };
 		0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITHeapTests.cpp; sourceTree = "<group>"; };
+		1F5709971A7C4F6790653C26 /* JSMarkedBlockHeapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMarkedBlockHeapTests.cpp; sourceTree = "<group>"; };
 		0F529DDE2455460C00385A8C /* iso_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iso_heap_ref.h; sourceTree = "<group>"; };
 		0F53180E22C95293003F7B6A /* pas_found_index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_found_index.h; sourceTree = "<group>"; };
 		0F53181022C954ED003F7B6A /* BitvectorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitvectorTests.cpp; sourceTree = "<group>"; };
@@ -888,6 +896,12 @@
 		0F59A399266844A300A38657 /* jit_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jit_heap_config.c; sourceTree = "<group>"; };
 		0F59A39A266844A300A38657 /* pas_basic_heap_config_enumerator_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_basic_heap_config_enumerator_data.c; sourceTree = "<group>"; };
 		0F59A39D2668470E00A38657 /* jit_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jit_heap.c; sourceTree = "<group>"; };
+		4784EAE1A95C46A1B593EF2F /* js_marked_block_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = js_marked_block_heap.c; sourceTree = "<group>"; };
+		9F3661794B5149BAB15645BC /* js_marked_block_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = js_marked_block_heap.h; sourceTree = "<group>"; };
+		4B5E35904D904B6CA547E252 /* js_marked_block_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = js_marked_block_heap_config.c; sourceTree = "<group>"; };
+		9ED989B7EE654A1AB96CD0AC /* js_marked_block_heap_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = js_marked_block_heap_config.h; sourceTree = "<group>"; };
+		5AA38F19B96F4F46B0AFE72F /* js_marked_block_heap_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = js_marked_block_heap_inlines.h; sourceTree = "<group>"; };
+		F479D506C4F3496CAF72A9C3 /* js_marked_block_heap_innards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = js_marked_block_heap_innards.h; sourceTree = "<group>"; };
 		0F5B6081235E572000CAE629 /* pas_bootstrap_heap_page_provider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bootstrap_heap_page_provider.c; sourceTree = "<group>"; };
 		0F5B6082235E572000CAE629 /* pas_bootstrap_heap_page_provider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bootstrap_heap_page_provider.h; sourceTree = "<group>"; };
 		0F5B608F235E88EE00CAE629 /* pas_reserved_memory_provider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_reserved_memory_provider.c; sourceTree = "<group>"; };
@@ -984,8 +998,8 @@
 		AA00000004000000000000AA /* bmalloc_heap_flex_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_heap_flex_internal.h; sourceTree = "<group>"; };
 		0F8A806325EECC1D00790B4A /* bmalloc_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_heap_ref.h; sourceTree = "<group>"; };
 		BB00000002000000000000BB /* bmalloc_heap_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_heap_utils.c; sourceTree = "<group>"; };
-		C43178A6ED524EC5A633719F /* bmalloc_prefault_supply.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_prefault_supply.c; sourceTree = "<group>"; };
-		1ACBCCD621BF4BC5A2674F5C /* bmalloc_prefault_supply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_prefault_supply.h; sourceTree = "<group>"; };
+		C43178A6ED524EC5A633719F /* js_marked_block_heap_prefault_supply.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = js_marked_block_heap_prefault_supply.c; sourceTree = "<group>"; };
+		1ACBCCD621BF4BC5A2674F5C /* js_marked_block_heap_prefault_supply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = js_marked_block_heap_prefault_supply.h; sourceTree = "<group>"; };
 		BB00000006000000000000BB /* bmalloc_heap_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_heap_utils.h; sourceTree = "<group>"; };
 		0F8A806425EECC1D00790B4A /* bmalloc_heap_innards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_heap_innards.h; sourceTree = "<group>"; };
 		AA00000006000000000000AA /* bmalloc_heap_iso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_heap_iso.c; sourceTree = "<group>"; };
@@ -1488,6 +1502,7 @@
 				0FD48B6623B589910026C46D /* IsoHeapPartialAndBaselineTests.cpp */,
 				0F5B6093235E919900CAE629 /* IsoHeapReservedMemoryTests.cpp */,
 				0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */,
+				1F5709971A7C4F6790653C26 /* JSMarkedBlockHeapTests.cpp */,
 				0FC64190213745FA0040CE5E /* LargeFreeHeapTests.cpp */,
 				0FEB6666231C87BC009C001B /* LargeSharingPoolDump.cpp */,
 				0FEB6667231C87BC009C001B /* LargeSharingPoolDump.h */,
@@ -1530,8 +1545,6 @@
 				0F8A806325EECC1D00790B4A /* bmalloc_heap_ref.h */,
 				BB00000002000000000000BB /* bmalloc_heap_utils.c */,
 				BB00000006000000000000BB /* bmalloc_heap_utils.h */,
-				C43178A6ED524EC5A633719F /* bmalloc_prefault_supply.c */,
-				1ACBCCD621BF4BC5A2674F5C /* bmalloc_prefault_supply.h */,
 				2C11E8902728A893002162D0 /* bmalloc_type.c */,
 				2C11E88C2728A783002162D0 /* bmalloc_type.h */,
 				0F8A80FE25F6A79500790B4A /* hotbit_heap.c */,
@@ -1556,6 +1569,14 @@
 				0F59A399266844A300A38657 /* jit_heap_config.c */,
 				0F59A3902667F00E00A38657 /* jit_heap_config.h */,
 				0F59A3972668317400A38657 /* jit_heap_config_root_data.h */,
+				4784EAE1A95C46A1B593EF2F /* js_marked_block_heap.c */,
+				9F3661794B5149BAB15645BC /* js_marked_block_heap.h */,
+				4B5E35904D904B6CA547E252 /* js_marked_block_heap_config.c */,
+				9ED989B7EE654A1AB96CD0AC /* js_marked_block_heap_config.h */,
+				5AA38F19B96F4F46B0AFE72F /* js_marked_block_heap_inlines.h */,
+				F479D506C4F3496CAF72A9C3 /* js_marked_block_heap_innards.h */,
+				C43178A6ED524EC5A633719F /* js_marked_block_heap_prefault_supply.c */,
+				1ACBCCD621BF4BC5A2674F5C /* js_marked_block_heap_prefault_supply.h */,
 				0FBD67D625BD363A00A490D2 /* minalign32_heap.c */,
 				0FBD67D825BD363A00A490D2 /* minalign32_heap.h */,
 				0FBD67D725BD363A00A490D2 /* minalign32_heap_config.c */,
@@ -2160,7 +2181,6 @@
 				AA00000007000000000000AA /* bmalloc_heap_iso_internal.h in Headers */,
 				0F8A806A25EECC1D00790B4A /* bmalloc_heap_ref.h in Headers */,
 				BB00000005000000000000BB /* bmalloc_heap_utils.h in Headers */,
-				49D6D953FB44436894E0BD1B /* bmalloc_prefault_supply.h in Headers */,
 				2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */,
 				0F8A810525F6A79500790B4A /* hotbit_heap.h in Headers */,
 				0F8A810325F6A79500790B4A /* hotbit_heap_config.h in Headers */,
@@ -2176,6 +2196,11 @@
 				0F59A3932667F00E00A38657 /* jit_heap.h in Headers */,
 				0F59A3942667F00E00A38657 /* jit_heap_config.h in Headers */,
 				0F59A3982668317400A38657 /* jit_heap_config_root_data.h in Headers */,
+				44CD8EA8CE694DA496885DA2 /* js_marked_block_heap.h in Headers */,
+				309A77C4DFCE44EBA1D97E3E /* js_marked_block_heap_config.h in Headers */,
+				93E99CC5F0CD4ED5BC74D1A3 /* js_marked_block_heap_inlines.h in Headers */,
+				CED480C293CA4E6098F04985 /* js_marked_block_heap_innards.h in Headers */,
+				49D6D953FB44436894E0BD1B /* js_marked_block_heap_prefault_supply.h in Headers */,
 				0FBD67DC25BD363A00A490D2 /* minalign32_heap.h in Headers */,
 				0FBD67DD25BD363A00A490D2 /* minalign32_heap_config.h in Headers */,
 				0FBD67F125BE078700A490D2 /* pagesize64k_heap.h in Headers */,
@@ -2808,6 +2833,7 @@
 				0FD48B6723B589910026C46D /* IsoHeapPartialAndBaselineTests.cpp in Sources */,
 				0F5B6094235E919900CAE629 /* IsoHeapReservedMemoryTests.cpp in Sources */,
 				0F5193E7266AE5D400483A2C /* JITHeapTests.cpp in Sources */,
+				41719039A510406CA6A420E9 /* JSMarkedBlockHeapTests.cpp in Sources */,
 				0FC64191213745FA0040CE5E /* LargeFreeHeapTests.cpp in Sources */,
 				0FEB6668231C87BC009C001B /* LargeSharingPoolDump.cpp in Sources */,
 				0FEB666A231DA86F009C001B /* LargeSharingPoolTests.cpp in Sources */,
@@ -2839,7 +2865,6 @@
 				AA00000001000000000000AA /* bmalloc_heap_flex.c in Sources */,
 				AA00000005000000000000AA /* bmalloc_heap_iso.c in Sources */,
 				BB00000001000000000000BB /* bmalloc_heap_utils.c in Sources */,
-				8D9924B2E61245CA83DCD073 /* bmalloc_prefault_supply.c in Sources */,
 				2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */,
 				0F8A810425F6A79500790B4A /* hotbit_heap.c in Sources */,
 				0F8A810125F6A79500790B4A /* hotbit_heap_config.c in Sources */,
@@ -2849,6 +2874,9 @@
 				0F5E5CEC23BEF36000AA0B6F /* iso_test_heap_config.c in Sources */,
 				0F59A39E2668470E00A38657 /* jit_heap.c in Sources */,
 				0F59A39B266844A300A38657 /* jit_heap_config.c in Sources */,
+				C6FB8E4D8EC2444580965577 /* js_marked_block_heap.c in Sources */,
+				7EEED3CD63E7424D9B74B276 /* js_marked_block_heap_config.c in Sources */,
+				8D9924B2E61245CA83DCD073 /* js_marked_block_heap_prefault_supply.c in Sources */,
 				0FBD67DA25BD363A00A490D2 /* minalign32_heap.c in Sources */,
 				0FBD67DB25BD363A00A490D2 /* minalign32_heap_config.c in Sources */,
 				0FBD67F325BE078700A490D2 /* pagesize64k_heap.c in Sources */,
