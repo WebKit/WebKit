@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<meta charset="utf-8">
+<title>requestIdleCallback: timeout must be honored for a callback in the list of runnable idle callbacks</title>
+<link rel="help" href="https://w3c.github.io/requestidlecallback/#dfn-invoke-idle-callback-timeout-algorithm">
+<meta name="timeout" content="long">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+function busyWait(milliseconds) {
+    const end = performance.now() + milliseconds;
+    while (performance.now() < end) { }
+}
+
+async_test(t => {
+    const order = [];
+
+    // This callback runs well past the idle deadline, so the callbacks requested below are
+    // moved into the list of runnable idle callbacks by the same "start an idle period" run,
+    // but are left there un-invoked when the idle period ends.
+    requestIdleCallback(t.step_func(() => {
+        order.push("first");
+        busyWait(200);
+    }));
+
+    // Long callbacks sitting ahead of the timed-out one in the list of runnable idle callbacks.
+    for (let i = 0; i < 3; ++i) {
+        requestIdleCallback(t.step_func(() => {
+            order.push("filler");
+            busyWait(45);
+        }));
+    }
+
+    // This timeout expires while "first" is still running. The invoke idle callback timeout
+    // algorithm has to find the entry in the list of runnable idle callbacks as well as in the
+    // list of idle request callbacks, so this callback must run ahead of the filler callbacks.
+    requestIdleCallback(t.step_func_done(deadline => {
+        order.push("timed out");
+        assert_true(deadline.didTimeout, "didTimeout must be true when the callback ran because its timeout expired");
+        assert_equals(deadline.timeRemaining(), 0, "timeRemaining() must be 0 when the callback ran because its timeout expired");
+        assert_array_equals(order, ["first", "timed out"], "the timed-out callback must run before the idle callbacks queued ahead of it");
+    }), { timeout: 10 });
+}, "A requestIdleCallback timeout is honored for a callback already moved to the list of runnable idle callbacks");
+</script>
+</body>

@@ -141,16 +141,26 @@ void IdleCallbackController::invokeIdleCallbackTimeout(unsigned identifier)
     if (!m_document)
         return;
 
-    auto it = m_idleRequestCallbacks.findIf([identifier](auto& request) {
-        return request.identifier == identifier;
-    });
+    // The request may already have been moved to m_runnableIdleCallbacks by startIdlePeriod
+    // without having been invoked yet, so both lists have to be searched.
+    auto takeCallback = [identifier](Deque<IdleRequest>& requests) -> RefPtr<IdleRequestCallback> {
+        auto it = requests.findIf([identifier](auto& request) {
+            return request.identifier == identifier;
+        });
+        if (it == requests.end())
+            return nullptr;
+        RefPtr callback = WTF::move(it->callback);
+        requests.remove(it);
+        return callback;
+    };
 
-    if (it == m_idleRequestCallbacks.end())
+    RefPtr callback = takeCallback(m_idleRequestCallbacks);
+    if (!callback)
+        callback = takeCallback(m_runnableIdleCallbacks);
+    if (!callback)
         return;
 
     auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::Yes);
-    auto callback = WTF::move(it->callback);
-    m_idleRequestCallbacks.remove(it);
     callback->invoke(idleDeadline.get());
 }
 
