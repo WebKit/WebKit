@@ -116,6 +116,7 @@ bool GraphicsContextGLAndroid::enableRequiredWebXRExtensionsImpl()
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,
         "GL_OES_EGL_image_external"_s,
+        "GL_EXT_discard_framebuffer"_s
     });
 }
 #endif // ENABLE(WEBXR)
