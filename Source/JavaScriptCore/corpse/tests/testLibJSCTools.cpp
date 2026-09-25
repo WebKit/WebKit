@@ -72,6 +72,7 @@ bool parseUint64(std::string_view text, uint64_t& out)
 void runCorpseSuite()
 {
     JSCToolsTest::testByteParser();
+    JSCToolsTest::testDiagnostics();
     JSCToolsTest::testExportsTrie();
     JSCToolsTest::testAddress();
     JSCToolsTest::testProcess();

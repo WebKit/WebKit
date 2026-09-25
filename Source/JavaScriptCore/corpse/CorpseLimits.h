@@ -30,54 +30,33 @@
 
 #if ENABLE(MYA)
 
-#include <JavaScriptCore/CorpseAddress.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <string>
-#include <string_view>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 namespace Corpse {
 
-class Memory;
-class Snapshot;
-
-// A symbol looked up in a corpse by name. The lookup happens on construction.
+// Sizes and counts read out of a corpse are used to bound loops and to size
+// allocations, so they are checked against these limits first. Each one is a
+// sanity check on a single value: it says the struct we read was not what we
+// thought it was, in which case the addresses in it are not worth chasing. They
+// are not a bound on the work a lookup can do, because the per-image limits
+// multiply by the image count. maxTotalBytesRead below is that bound.
 //
-// Only regular and absolute exports are read out of an image's trie. A re-export is
-// skipped rather than followed, so a name that one image re-exports resolves in the
-// image that defines it, as long as that image is loaded in the corpse. A
-// thread-local is not found at all.
-//
-// A re-export may also rename, and then no image exports the name at all: memcpy
-// exists only as libsystem_c's re-export of __platform_memmove from
-// libsystem_platform, so a lookup of memcpy finds nothing while a lookup of
-// __platform_memmove succeeds.
-class Symbol {
-    WTF_MAKE_TZONE_ALLOCATED(Symbol);
-public:
-    Symbol(Snapshot&, const char* name);
+// The values sit above what was empirically measured: across every Mach-O image
+// installed on a sample system the largest load commands were 7.4 KB and the
+// largest exports trie 2.1 MB, and a process that dlopens every framework on the
+// system reaches about 2,800 images.
+constexpr size_t maxLoadCommandsSize = 128 * KB; // About 17× the measured maximum.
+constexpr size_t maxExportsTrieSize = 16 * MB; // About 8× the measured maximum.
+constexpr uint32_t maxImageCount = 16 * 1024; // About 6× the measured maximum.
 
-    const std::string& name() const { return m_name; }
-
-    Address address() const { return m_address; } // Null means not found.
-    bool isValid() const { return static_cast<bool>(m_address); }
-
-private:
-    Address lookUpName(Snapshot&);
-#if OS(DARWIN)
-    Address resolveInImage(Memory&, Address loadAddress, std::string_view name);
-    bool hasReadBudget(size_t length);
-#endif
-
-    std::string m_name;
-    Address m_address;
-
-#if OS(DARWIN)
-    // What this lookup may still copy out of the corpse. Set when the search starts.
-    size_t m_readBudget { 0 };
-#endif
-};
+// A lookup that finds nothing will read every image's load commands and exports
+// trie, which measured 101 MB for the ~2,800 image process above and 0.4 MB for
+// a small one. This caps the total for one lookup, so a corpse claiming many
+// large images cannot turn a single symbol lookup into unbounded mapping.
+constexpr size_t maxTotalBytesRead = 256 * MB; // About 2.5× the measured maximum.
 
 } // namespace Corpse
 } // namespace JSC

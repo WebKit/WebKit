@@ -94,25 +94,20 @@ const char* Thread::runStateDescription() const
     }
 }
 
-Vector<Thread> Thread::collect(const Snapshot& snapshot)
+Vector<Thread> Thread::platformCollect(const Snapshot& snapshot)
 {
     Vector<Thread> result;
-
-    if (!snapshot.isValid()) {
-        Error::report("Cannot read threads from an invalid snapshot");
-        return result;
-    }
     mach_port_t task = snapshot.corpsePort();
+    Process* process = snapshot.process();
 
     thread_act_array_t threads = nullptr;
     mach_msg_type_number_t threadCount = 0;
     kern_return_t kr = task_threads(task, &threads, &threadCount);
     if (kr != KERN_SUCCESS) {
-        pid_t pid = snapshot.process()->pid();
-        Error::report("Could not read the thread list for pid %d: %s (0x%x)",
-            static_cast<int>(pid), mach_error_string(kr), kr);
+        CORPSE_REPORT("Could not read the thread list: %s (0x%x)", mach_error_string(kr), kr);
         return result;
     }
+    Diagnostics::count(DiagnosticCounter::ThreadsListed, threadCount);
 
     result.reserveCapacity(threadCount);
 
@@ -120,15 +115,11 @@ Vector<Thread> Thread::collect(const Snapshot& snapshot)
     // threads' stack pointers belong to Rosetta's runtime rather than to the program.
     // Those addresses do land in real mappings, so reporting the region around one
     // would name a plausible but wrong stack; report no stack instead.
-    Process* process = snapshot.process();
     bool isTranslated = process->isTranslated();
     if (isTranslated) {
-        Error::report("Thread stacks for pid %d are not available: the process runs"
-            " under Rosetta translation, whose thread state does not describe the program",
-            static_cast<int>(process->pid()));
+        CORPSE_REPORT("Thread stacks are not available: the process runs under Rosetta"
+            " translation, whose thread state does not describe the program");
     }
-
-    unsigned unreadableStates = 0;
     for (mach_msg_type_number_t i = 0; i < threadCount; ++i) {
         Thread thread;
 
@@ -159,23 +150,15 @@ Vector<Thread> Thread::collect(const Snapshot& snapshot)
         // The stack is the region the stack pointer points into.
         if (!isTranslated) {
             if (auto stackPointer = readStackPointer(threads[i])) {
+                Diagnostics::count(DiagnosticCounter::ThreadStatesRead);
                 thread.m_stackPointer = *stackPointer;
                 if (auto region = Region::findContaining(task, thread.m_stackPointer))
                     thread.m_stackRegion = *region;
             } else
-                ++unreadableStates;
+                Diagnostics::count(DiagnosticCounter::UnreadableThreadStates);
         }
 
         result.append(thread);
-    }
-
-    // Failing to read the thread state leaves a thread with no stack, which on its
-    // own looks the same as a thread that has none. Say which it was.
-    if (unreadableStates) {
-        Error::report("Could not read the thread state of %u of %u threads in pid %d:"
-            " this build cannot read the target's architecture",
-            unreadableStates, static_cast<unsigned>(threadCount),
-            static_cast<int>(process->pid()));
     }
 
     // task_threads hands us a right to each thread plus the array itself.
@@ -186,13 +169,31 @@ Vector<Thread> Thread::collect(const Snapshot& snapshot)
 
     return result;
 }
+
 #else
 
 const char* Thread::runStateDescription() const { return "unknown"; }
 
-Vector<Thread> Thread::collect(const Snapshot&) { return { }; }
+Vector<Thread> Thread::platformCollect(const Snapshot&) { return { }; }
 
 #endif // OS(DARWIN)
+
+Vector<Thread> Thread::collect(const Snapshot& snapshot)
+{
+    if (!snapshot.isValid()) {
+        CORPSE_REPORT("Cannot read threads from an invalid snapshot");
+        return { };
+    }
+    CORPSE_DIAGNOSTICS(diagnostics, "listing the threads of pid %d", static_cast<int>(snapshot.process()->pid()));
+    Vector<Thread> threads = platformCollect(snapshot);
+
+    if (uint64_t unreadableStates = diagnostics.value(DiagnosticCounter::UnreadableThreadStates)) {
+        CORPSE_REPORT("Could not read the thread state of %llu of %llu threads:"
+            " this build cannot read the target's architecture",
+            static_cast<unsigned long long>(unreadableStates), static_cast<unsigned long long>(diagnostics.value(DiagnosticCounter::ThreadsListed)));
+    }
+    return threads;
+}
 
 } // namespace Corpse
 } // namespace JSC
