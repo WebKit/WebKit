@@ -33,7 +33,7 @@ enum class OverflowPolicy : uint8_t { CrashOnOverflow, RecordOverflow, AssertNoO
 
 static constexpr bool shouldCrashOnOverflow(OverflowPolicy policy)
 {
-#ifdef ASSERT_ENABLED
+#if ASSERT_ENABLED
     if (policy == OverflowPolicy::AssertNoOverflow)
         return true;
 #endif
