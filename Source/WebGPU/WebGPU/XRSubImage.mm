@@ -36,6 +36,35 @@
 
 namespace WebGPU::Metal {
 
+// A texture for an XR layer texture. The texture allows views in viewFormat. An unknown format
+// makes an invalid texture.
+static Ref<Texture> createXRTexture(id<MTLTexture> texture, ASCIILiteral label, WGPUTextureFormat format, WGPUTextureFormat viewFormat, Device& device)
+{
+    auto apiFormat = fromAPI(format);
+    if (!apiFormat)
+        return Texture::createInvalid(device);
+
+    Vector<WebGPU::TextureFormat> viewFormats;
+    if (auto apiViewFormat = fromAPI(viewFormat))
+        viewFormats.append(*apiViewFormat);
+
+    WebGPU::TextureDescriptor descriptor {
+        .label = label,
+        .usage = WebGPU::TextureUsage::RenderAttachment,
+        .dimension = WebGPU::TextureDimension::_2d,
+        .size = {
+            .width = static_cast<uint32_t>(texture.width),
+            .height = static_cast<uint32_t>(texture.height),
+            .depthOrArrayLayers = static_cast<uint32_t>(texture.arrayLength),
+        },
+        .format = *apiFormat,
+        .mipLevelCount = 1,
+        .sampleCount = static_cast<uint32_t>(texture.sampleCount),
+        .viewFormats = singleElementSpan(*apiFormat),
+    };
+    return Texture::create(texture, descriptor, WTF::move(viewFormats), device);
+}
+
 XRSubImage::XRSubImage(bool, Device& device)
     : m_device(device)
 {
@@ -86,22 +115,7 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
         if (colorFormat != targetColorFormat)
             colorTexture = [colorTexture newTextureViewWithPixelFormat:Texture::pixelFormat(colorFormat)];
 
-        WGPUTextureDescriptor colorTextureDescriptor = {
-            .label = toAPI("color texture"_s),
-            .usage = WGPUTextureUsage_RenderAttachment,
-            .dimension = WGPUTextureDimension_2D,
-            .size = {
-                .width = static_cast<uint32_t>(colorTexture.width),
-                .height = static_cast<uint32_t>(colorTexture.height),
-                .depthOrArrayLayers = static_cast<uint32_t>(colorTexture.arrayLength),
-            },
-            .format = targetColorFormat,
-            .mipLevelCount = 1,
-            .sampleCount = static_cast<uint32_t>(colorTexture.sampleCount),
-            .viewFormatCount = 1,
-            .viewFormats = &targetColorFormat,
-        };
-        Ref newTexture = Texture::create(colorTexture, colorTextureDescriptor, { colorFormat }, *device);
+        Ref newTexture = createXRTexture(colorTexture, "color texture"_s, targetColorFormat, colorFormat, *device);
         newTexture->updateCompletionEvent(sharedEvent);
         newTexture->setRasterizationRateMaps(projectionLayer.rasterizationRateMaps());
         m_colorTextures.set(currentTextureIndex, WTF::move(newTexture));
@@ -115,22 +129,7 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
             depthTexture = [depthTexture newTextureViewWithPixelFormat:Texture::pixelFormat(depthFormat)];
         }
 
-        WGPUTextureDescriptor depthTextureDescriptor = {
-            .label = toAPI("depth texture"_s),
-            .usage = WGPUTextureUsage_RenderAttachment,
-            .dimension = WGPUTextureDimension_2D,
-            .size = {
-                .width = static_cast<uint32_t>(depthTexture.width),
-                .height = static_cast<uint32_t>(depthTexture.height),
-                .depthOrArrayLayers = static_cast<uint32_t>(depthTexture.arrayLength),
-            },
-            .format = depthFormat,
-            .mipLevelCount = 1,
-            .sampleCount = static_cast<uint32_t>(depthTexture.sampleCount),
-            .viewFormatCount = 1,
-            .viewFormats = &depthFormat,
-        };
-        m_depthTextures.set(currentTextureIndex, Texture::create(depthTexture, depthTextureDescriptor, { depthFormat }, *device));
+        m_depthTextures.set(currentTextureIndex, createXRTexture(depthTexture, "depth texture"_s, depthFormat, depthFormat, *device));
     }
 }
 

@@ -27,15 +27,74 @@
 
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
+#import <WebGPU/WebGPUCppBridge.h>
 #import <WebGPU/WebGPUExt.h>
 #import <optional>
+#import <type_traits>
+#import <wtf/IndexedRange.h>
 #import <wtf/OptionSet.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
-// Conversions between the enums and flags of the WebGPU C API (webgpu.h) and the WebGPU C++ API.
-// fromAPI() returns std::nullopt for C API values that have no C++ API equivalent, such as the
-// _Undefined values and unknown bits.
+// Conversions between the WebGPU C API (webgpu.h) and the WebGPU C++ API: enums, flags, strings and
+// descriptors. fromAPI() returns std::nullopt for C API values that have no C++ API equivalent, such
+// as the _Undefined values and unknown bits, and for descriptors that contain such a value.
+// The descriptor conversions are the conversions of the C API entry points, so they do not depend
+// on the implementation.
+//
+// C++ API descriptors borrow their arrays as spans. A descriptor conversion that has to convert the
+// elements of an array takes a caller-owned XDescriptorStorage, stores the converted elements in it
+// and returns a descriptor whose spans point into it. The storage has to outlive every use of the
+// descriptor, and it must not be modified while the descriptor is in use.
+//
+// Handles in descriptors resolve to the C++ API objects through the transition bridge
+// (WebGPUCppBridge.h), so the conversions do not depend on the implementation that created them.
 
 namespace WebGPU::Metal {
+
+inline String fromAPI(WGPUStringView string)
+{
+    if (!string.data)
+        return { };
+    if (string.length == WGPU_STRLEN)
+        return String::fromUTF8(string.data);
+    return String::fromUTF8(unsafeMakeSpan(string.data, string.length));
+}
+
+// Associates a chainable extension struct with its sType tag. Specialize for each struct
+// that findChainedStruct() is used with.
+template<typename T> struct ChainedStructSType;
+
+template<> struct ChainedStructSType<WGPUShaderSourceWGSL> {
+    static constexpr WGPUSType value = WGPUSType_ShaderSourceWGSL;
+};
+
+template<> struct ChainedStructSType<WGPUInstanceCocoaDescriptor> {
+    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor);
+};
+
+template<> struct ChainedStructSType<WGPUSurfaceDescriptorCocoaCustomSurface> {
+    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking);
+};
+
+// Walks a descriptor's nextInChain looking for one particular extension struct. Every
+// chainable struct starts with its WGPUChainedStruct, so the match can be cast to it.
+template<typename T>
+inline const T* findChainedStruct(const WGPUChainedStruct* chain)
+{
+    static_assert(std::is_same_v<decltype(T::chain), WGPUChainedStruct>);
+    for (; chain; chain = chain->next) {
+        if (chain->sType == ChainedStructSType<T>::value)
+            return reinterpret_cast<const T*>(chain);
+    }
+    return nullptr;
+}
+
+inline String fromAPI(const char* string)
+{
+    return String::fromUTF8(string);
+}
 
 constexpr std::optional<WebGPU::AddressMode> fromAPI(WGPUAddressMode value)
 {
@@ -792,6 +851,12 @@ constexpr WGPUStorageTextureAccess toAPI(WebGPU::StorageTextureAccess value)
         return WGPUStorageTextureAccess_ReadWrite;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+// std::nullopt is WGPULoadOp_Undefined.
+constexpr WGPULoadOp toAPI(std::optional<WebGPU::LoadOp> value)
+{
+    return value ? toAPI(*value) : WGPULoadOp_Undefined;
 }
 
 constexpr std::optional<WebGPU::StoreOp> fromAPI(WGPUStoreOp value)
@@ -1795,5 +1860,1088 @@ constexpr WGPUTextureUsage toAPI(OptionSet<WebGPU::TextureUsage> value)
         result |= WGPUTextureUsage_Invalid;
     return result;
 }
+
+constexpr WebGPU::Extent3D fromAPI(const WGPUExtent3D& extent)
+{
+    return { .width = extent.width, .height = extent.height, .depthOrArrayLayers = extent.depthOrArrayLayers };
+}
+
+constexpr WGPUExtent3D toAPI(const WebGPU::Extent3D& extent)
+{
+    return { .width = extent.width, .height = extent.height, .depthOrArrayLayers = extent.depthOrArrayLayers };
+}
+
+constexpr WebGPU::Origin3D fromAPI(const WGPUOrigin3D& origin)
+{
+    return { .x = origin.x, .y = origin.y, .z = origin.z };
+}
+
+// WGPU_COPY_STRIDE_UNDEFINED is std::nullopt.
+constexpr WebGPU::TexelCopyBufferLayout fromAPI(const WGPUTexelCopyBufferLayout& layout)
+{
+    auto stride = [](uint32_t value) {
+        return value == WGPU_COPY_STRIDE_UNDEFINED ? std::nullopt : std::optional { value };
+    };
+    return { .offset = layout.offset, .bytesPerRow = stride(layout.bytesPerRow), .rowsPerImage = stride(layout.rowsPerImage) };
+}
+
+inline std::optional<WebGPU::TexelCopyBufferInfo> fromAPI(const WGPUTexelCopyBufferInfo& info)
+{
+    if (!info.buffer)
+        return std::nullopt;
+    return WebGPU::TexelCopyBufferInfo { .layout = fromAPI(info.layout), .buffer = WebGPU::fromAPI(info.buffer) };
+}
+
+inline std::optional<WebGPU::TexelCopyTextureInfo> fromAPI(const WGPUTexelCopyTextureInfo& info)
+{
+    auto aspect = fromAPI(info.aspect);
+    if (!info.texture || !aspect)
+        return std::nullopt;
+    return WebGPU::TexelCopyTextureInfo {
+        .texture = WebGPU::fromAPI(info.texture),
+        .mipLevel = info.mipLevel,
+        .origin = fromAPI(info.origin),
+        .aspect = *aspect,
+    };
+}
+
+inline std::optional<WebGPU::BufferDescriptor> fromAPI(const WGPUBufferDescriptor& descriptor)
+{
+    auto usage = bufferUsageFromAPI(descriptor.usage);
+    if (!usage)
+        return std::nullopt;
+
+    return WebGPU::BufferDescriptor {
+        .label = fromAPI(descriptor.label),
+        .usage = *usage,
+        .size = descriptor.size,
+        .mappedAtCreation = !!descriptor.mappedAtCreation,
+    };
+}
+
+// The size argument of wgpuBufferMapAsync() and wgpuBufferGetMappedRange(). WGPU_WHOLE_MAP_SIZE
+// means the rest of the buffer after the offset.
+constexpr std::optional<uint64_t> mapSizeFromAPI(size_t size)
+{
+    if (size == WGPU_WHOLE_MAP_SIZE)
+        return std::nullopt;
+    return size;
+}
+
+inline std::optional<WebGPU::QuerySetDescriptor> fromAPI(const WGPUQuerySetDescriptor& descriptor)
+{
+    auto type = fromAPI(descriptor.type);
+    if (!type)
+        return std::nullopt;
+
+    return WebGPU::QuerySetDescriptor {
+        .label = fromAPI(descriptor.label),
+        .type = *type,
+        .count = descriptor.count,
+    };
+}
+
+inline std::optional<WebGPU::SamplerDescriptor> fromAPI(const WGPUSamplerDescriptor& descriptor)
+{
+    auto addressModeU = fromAPI(descriptor.addressModeU);
+    auto addressModeV = fromAPI(descriptor.addressModeV);
+    auto addressModeW = fromAPI(descriptor.addressModeW);
+    auto magFilter = fromAPI(descriptor.magFilter);
+    auto minFilter = fromAPI(descriptor.minFilter);
+    auto mipmapFilter = fromAPI(descriptor.mipmapFilter);
+    if (!addressModeU || !addressModeV || !addressModeW || !magFilter || !minFilter || !mipmapFilter)
+        return std::nullopt;
+
+    // WGPUCompareFunction_Undefined means that the sampler is not a comparison sampler.
+    std::optional<WebGPU::CompareFunction> compare;
+    if (descriptor.compare != WGPUCompareFunction_Undefined) {
+        compare = fromAPI(descriptor.compare);
+        if (!compare)
+            return std::nullopt;
+    }
+
+    return WebGPU::SamplerDescriptor {
+        .label = fromAPI(descriptor.label),
+        .addressModeU = *addressModeU,
+        .addressModeV = *addressModeV,
+        .addressModeW = *addressModeW,
+        .magFilter = *magFilter,
+        .minFilter = *minFilter,
+        .mipmapFilter = *mipmapFilter,
+        .lodMinClamp = descriptor.lodMinClamp,
+        .lodMaxClamp = descriptor.lodMaxClamp,
+        .compare = compare,
+        .maxAnisotropy = descriptor.maxAnisotropy,
+    };
+}
+
+struct TextureDescriptorStorage {
+    Vector<WebGPU::TextureFormat> viewFormats;
+};
+
+inline std::optional<WebGPU::TextureDescriptor> fromAPI(const WGPUTextureDescriptor& descriptor, TextureDescriptorStorage& storage LIFETIME_BOUND)
+{
+    auto usage = textureUsageFromAPI(descriptor.usage);
+    auto dimension = fromAPI(descriptor.dimension);
+    auto format = fromAPI(descriptor.format);
+    if (!usage || !dimension || !format)
+        return std::nullopt;
+
+    storage.viewFormats.clear();
+    for (auto viewFormat : unsafeMakeSpan(descriptor.viewFormats, descriptor.viewFormatCount)) {
+        auto apiViewFormat = fromAPI(viewFormat);
+        if (!apiViewFormat)
+            return std::nullopt;
+        storage.viewFormats.append(*apiViewFormat);
+    }
+
+    return WebGPU::TextureDescriptor {
+        .label = fromAPI(descriptor.label),
+        .usage = *usage,
+        .dimension = *dimension,
+        .size = fromAPI(descriptor.size),
+        .format = *format,
+        .mipLevelCount = descriptor.mipLevelCount,
+        .sampleCount = descriptor.sampleCount,
+        .viewFormats = storage.viewFormats.span(),
+    };
+}
+
+inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureViewDescriptor& descriptor)
+{
+    // WGPUTextureFormat_Undefined, WGPUTextureViewDimension_Undefined, WGPU_MIP_LEVEL_COUNT_UNDEFINED
+    // and WGPU_ARRAY_LAYER_COUNT_UNDEFINED mean that the value comes from the texture.
+    std::optional<WebGPU::TextureFormat> format;
+    if (descriptor.format != WGPUTextureFormat_Undefined) {
+        format = fromAPI(descriptor.format);
+        if (!format)
+            return std::nullopt;
+    }
+
+    std::optional<WebGPU::TextureViewDimension> dimension;
+    if (descriptor.dimension != WGPUTextureViewDimension_Undefined) {
+        dimension = fromAPI(descriptor.dimension);
+        if (!dimension)
+            return std::nullopt;
+    }
+
+    auto aspect = fromAPI(descriptor.aspect);
+    auto usage = textureUsageFromAPI(descriptor.usage);
+    if (!aspect || !usage)
+        return std::nullopt;
+
+    return WebGPU::TextureViewDescriptor {
+        .label = fromAPI(descriptor.label),
+        .format = format,
+        .dimension = dimension,
+        .baseMipLevel = descriptor.baseMipLevel,
+        .mipLevelCount = descriptor.mipLevelCount == WGPU_MIP_LEVEL_COUNT_UNDEFINED ? std::nullopt : std::optional<uint32_t> { descriptor.mipLevelCount },
+        .baseArrayLayer = descriptor.baseArrayLayer,
+        .arrayLayerCount = descriptor.arrayLayerCount == WGPU_ARRAY_LAYER_COUNT_UNDEFINED ? std::nullopt : std::optional<uint32_t> { descriptor.arrayLayerCount },
+        .aspect = *aspect,
+        .usage = *usage,
+    };
+}
+
+inline std::optional<WebGPU::BindGroupLayoutEntry> fromAPI(const WGPUBindGroupLayoutEntry& entry)
+{
+    auto visibility = shaderStageFromAPI(entry.visibility);
+    if (!visibility)
+        return std::nullopt;
+
+    WebGPU::BindGroupLayoutEntry result {
+        .binding = entry.binding,
+        .visibility = *visibility,
+        .buffer = std::nullopt,
+        .sampler = std::nullopt,
+        .texture = std::nullopt,
+        .storageTexture = std::nullopt,
+        .externalTexture = std::nullopt,
+    };
+
+    // A binding layout is present when its members are not _Undefined. An external texture binding
+    // layout is a texture binding layout with WGPUTextureSampleType_ExternalTexture.
+    // entry.metalBinding and entry.buffer.bufferSizeForBinding are only used by the layouts that
+    // the implementation generates, so they are not converted.
+    if (entry.buffer.type != WGPUBufferBindingType_Undefined) {
+        auto type = fromAPI(entry.buffer.type);
+        if (!type)
+            return std::nullopt;
+        result.buffer = WebGPU::BufferBindingLayout {
+            .type = *type,
+            .hasDynamicOffset = !!entry.buffer.hasDynamicOffset,
+            .minBindingSize = entry.buffer.minBindingSize,
+        };
+    }
+
+    if (entry.sampler.type != WGPUSamplerBindingType_Undefined) {
+        auto type = fromAPI(entry.sampler.type);
+        if (!type)
+            return std::nullopt;
+        result.sampler = WebGPU::SamplerBindingLayout { .type = *type };
+    }
+
+    if (entry.texture.sampleType == WGPUTextureSampleType_ExternalTexture)
+        result.externalTexture = WebGPU::ExternalTextureBindingLayout { };
+    else if (entry.texture.sampleType != WGPUTextureSampleType_Undefined && entry.texture.viewDimension != WGPUTextureViewDimension_Undefined) {
+        auto sampleType = fromAPI(entry.texture.sampleType);
+        auto viewDimension = fromAPI(entry.texture.viewDimension);
+        if (!sampleType || !viewDimension)
+            return std::nullopt;
+        result.texture = WebGPU::TextureBindingLayout {
+            .sampleType = *sampleType,
+            .viewDimension = *viewDimension,
+            .multisampled = !!entry.texture.multisampled,
+        };
+    }
+
+    if (entry.storageTexture.access != WGPUStorageTextureAccess_Undefined && entry.storageTexture.format != WGPUTextureFormat_Undefined && entry.storageTexture.viewDimension != WGPUTextureViewDimension_Undefined) {
+        auto access = fromAPI(entry.storageTexture.access);
+        auto format = fromAPI(entry.storageTexture.format);
+        auto viewDimension = fromAPI(entry.storageTexture.viewDimension);
+        if (!access || !format || !viewDimension)
+            return std::nullopt;
+        result.storageTexture = WebGPU::StorageTextureBindingLayout {
+            .access = *access,
+            .format = *format,
+            .viewDimension = *viewDimension,
+        };
+    }
+
+    return result;
+}
+
+struct BindGroupLayoutDescriptorStorage {
+    Vector<WebGPU::BindGroupLayoutEntry> entries;
+};
+
+inline std::optional<WebGPU::BindGroupLayoutDescriptor> fromAPI(const WGPUBindGroupLayoutDescriptor& descriptor, BindGroupLayoutDescriptorStorage& storage LIFETIME_BOUND)
+{
+    storage.entries.clear();
+    for (auto& entry : unsafeMakeSpan(descriptor.entries, descriptor.entryCount)) {
+        auto apiEntry = fromAPI(entry);
+        if (!apiEntry)
+            return std::nullopt;
+        storage.entries.append(WTF::move(*apiEntry));
+    }
+
+    return WebGPU::BindGroupLayoutDescriptor {
+        .label = fromAPI(descriptor.label),
+        .entries = storage.entries.span(),
+    };
+}
+
+struct PipelineLayoutDescriptorStorage {
+    Vector<Ref<WebGPU::BindGroupLayout>> bindGroupLayouts;
+};
+
+inline std::optional<WebGPU::PipelineLayoutDescriptor> fromAPI(const WGPUPipelineLayoutDescriptor& descriptor, PipelineLayoutDescriptorStorage& storage LIFETIME_BOUND)
+{
+    // A null bindGroupLayouts is a layout that the pipeline generates from its shaders.
+    std::optional<std::span<const Ref<WebGPU::BindGroupLayout>>> bindGroupLayouts;
+    storage.bindGroupLayouts.clear();
+    if (descriptor.bindGroupLayouts) {
+        for (auto bindGroupLayout : unsafeMakeSpan(descriptor.bindGroupLayouts, descriptor.bindGroupLayoutCount)) {
+            if (!bindGroupLayout)
+                return std::nullopt;
+            storage.bindGroupLayouts.append(WebGPU::fromAPI(bindGroupLayout));
+        }
+        bindGroupLayouts = storage.bindGroupLayouts.span();
+    }
+
+    return WebGPU::PipelineLayoutDescriptor {
+        .label = fromAPI(descriptor.label),
+        .bindGroupLayouts = bindGroupLayouts,
+    };
+}
+
+inline std::optional<WebGPU::BindGroupEntry> fromAPI(const WGPUBindGroupEntry& entry)
+{
+    // Exactly one of the resource handles has to be set.
+    if (!!entry.buffer + !!entry.sampler + !!entry.texture + !!entry.textureView + !!entry.externalTexture != 1)
+        return std::nullopt;
+
+    auto resource = [&]() -> WebGPU::BindingResource {
+        if (entry.buffer) {
+            return WebGPU::BufferBinding {
+                .buffer = WebGPU::fromAPI(entry.buffer),
+                .offset = entry.offset,
+                .size = entry.size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional<uint64_t> { entry.size },
+            };
+        }
+        if (entry.sampler)
+            return Ref { WebGPU::fromAPI(entry.sampler) };
+        if (entry.texture)
+            return Ref { WebGPU::fromAPI(entry.texture) };
+        if (entry.textureView)
+            return Ref { WebGPU::fromAPI(entry.textureView) };
+        return Ref { WebGPU::fromAPI(entry.externalTexture) };
+    }();
+
+    return WebGPU::BindGroupEntry {
+        .binding = entry.binding,
+        .resource = WTF::move(resource),
+    };
+}
+
+struct ShaderModuleDescriptorStorage {
+    Vector<WebGPU::ShaderModuleCompilationHint> hints;
+};
+
+struct BindGroupDescriptorStorage {
+    Vector<WebGPU::BindGroupEntry> entries;
+};
+
+inline std::optional<WebGPU::BindGroupDescriptor> fromAPI(const WGPUBindGroupDescriptor& descriptor, BindGroupDescriptorStorage& storage LIFETIME_BOUND)
+{
+    if (!descriptor.layout)
+        return std::nullopt;
+
+    storage.entries.clear();
+    for (auto& entry : unsafeMakeSpan(descriptor.entries, descriptor.entryCount)) {
+        auto apiEntry = fromAPI(entry);
+        if (!apiEntry)
+            return std::nullopt;
+        storage.entries.append(WTF::move(*apiEntry));
+    }
+
+    return WebGPU::BindGroupDescriptor {
+        .label = fromAPI(descriptor.label),
+        .layout = WebGPU::fromAPI(descriptor.layout),
+        .entries = storage.entries.span(),
+    };
+}
+
+inline std::optional<WebGPU::ShaderModuleDescriptor> fromAPI(const WGPUShaderModuleDescriptor& descriptor, ShaderModuleDescriptorStorage& storage LIFETIME_BOUND)
+{
+    // WGSL is the only shader source.
+    auto* wgsl = findChainedStruct<WGPUShaderSourceWGSL>(descriptor.nextInChain);
+    if (!wgsl)
+        return std::nullopt;
+
+    auto code = fromAPI(wgsl->code);
+    if (code.isNull())
+        return std::nullopt;
+
+    storage.hints.clear();
+    for (auto& hint : unsafeMakeSpan(descriptor.hints, descriptor.hintCount)) {
+        if (!hint.layout)
+            return std::nullopt;
+        storage.hints.append({
+            .entryPoint = fromAPI(hint.entryPoint),
+            .layout = WebGPU::fromAPI(hint.layout),
+        });
+    }
+
+    return WebGPU::ShaderModuleDescriptor {
+        .label = fromAPI(descriptor.label),
+        .code = WTF::move(code),
+        .hints = storage.hints.span(),
+    };
+}
+
+inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compilationInfo)
+{
+    return compilationInfo.messages.map([](auto& message) {
+        return WGPUCompilationMessage {
+            .message = message.message,
+            .type = toAPI(message.type),
+            .lineNum = message.lineNum,
+            .linePos = message.linePos,
+            .offset = message.offset,
+            .length = message.length,
+            .utf16LinePos = message.linePos,
+            .utf16Offset = message.offset,
+            .utf16Length = message.length,
+        };
+    });
+}
+
+// A null entry point is the only entry point of the module for the stage. A non-null one names
+// an entry point even if it does not convert to a string.
+inline String entryPointFromAPI(const char* entryPoint)
+{
+    if (!entryPoint)
+        return { };
+    auto result = fromAPI(entryPoint);
+    return result.isNull() ? emptyString() : result;
+}
+
+inline std::optional<WebGPU::ProgrammableStage> programmableStageFromAPI(WGPUShaderModule module, const char* entryPoint, std::span<const WGPUConstantEntry> constants, Vector<WebGPU::ConstantEntry>& constantsStorage LIFETIME_BOUND)
+{
+    if (!module)
+        return std::nullopt;
+
+    constantsStorage = WTF::map(constants, [](auto& constant) {
+        return WebGPU::ConstantEntry { .key = fromAPI(constant.key), .value = constant.value };
+    });
+    return WebGPU::ProgrammableStage {
+        .module = WebGPU::fromAPI(module),
+        .entryPoint = entryPointFromAPI(entryPoint),
+        .constants = constantsStorage.span(),
+    };
+}
+
+struct ComputePipelineDescriptorStorage {
+    Vector<WebGPU::ConstantEntry> constants;
+};
+
+inline std::optional<WebGPU::ComputePipelineDescriptor> fromAPI(const WGPUComputePipelineDescriptor& descriptor, ComputePipelineDescriptorStorage& storage LIFETIME_BOUND)
+{
+    auto compute = programmableStageFromAPI(descriptor.compute.module, descriptor.compute.entryPoint, unsafeMakeSpan(descriptor.compute.constants, descriptor.compute.constantCount), storage.constants);
+    if (!compute)
+        return std::nullopt;
+
+    return WebGPU::ComputePipelineDescriptor {
+        .label = fromAPI(descriptor.label),
+        .layout = descriptor.layout ? RefPtr { &WebGPU::fromAPI(descriptor.layout) } : nullptr,
+        .compute = WTF::move(*compute),
+    };
+}
+
+inline std::optional<WebGPU::BlendComponent> fromAPI(const WGPUBlendComponent& component)
+{
+    auto operation = fromAPI(component.operation);
+    auto srcFactor = fromAPI(component.srcFactor);
+    auto dstFactor = fromAPI(component.dstFactor);
+    if (!operation || !srcFactor || !dstFactor)
+        return std::nullopt;
+    return WebGPU::BlendComponent { .operation = *operation, .srcFactor = *srcFactor, .dstFactor = *dstFactor };
+}
+
+// WGPUCompareFunction_Undefined in a stencil face state is WebGPU::CompareFunction::Always, the default.
+inline std::optional<WebGPU::StencilFaceState> fromAPI(const WGPUStencilFaceState& state)
+{
+    auto compare = state.compare == WGPUCompareFunction_Undefined ? std::optional { WebGPU::CompareFunction::Always } : fromAPI(state.compare);
+    auto failOp = fromAPI(state.failOp);
+    auto depthFailOp = fromAPI(state.depthFailOp);
+    auto passOp = fromAPI(state.passOp);
+    if (!compare || !failOp || !depthFailOp || !passOp)
+        return std::nullopt;
+    return WebGPU::StencilFaceState { .compare = *compare, .failOp = *failOp, .depthFailOp = *depthFailOp, .passOp = *passOp };
+}
+
+inline std::optional<WebGPU::DepthStencilState> fromAPI(const WGPUDepthStencilState& state)
+{
+    auto format = fromAPI(state.format);
+    auto stencilFront = fromAPI(state.stencilFront);
+    auto stencilBack = fromAPI(state.stencilBack);
+    if (!format || !stencilFront || !stencilBack)
+        return std::nullopt;
+
+    std::optional<bool> depthWriteEnabled;
+    switch (state.depthWriteEnabled) {
+    case WGPUOptionalBool_False:
+        depthWriteEnabled = false;
+        break;
+    case WGPUOptionalBool_True:
+        depthWriteEnabled = true;
+        break;
+    case WGPUOptionalBool_Undefined:
+        break;
+    default:
+        return std::nullopt;
+    }
+
+    std::optional<WebGPU::CompareFunction> depthCompare;
+    if (state.depthCompare != WGPUCompareFunction_Undefined) {
+        depthCompare = fromAPI(state.depthCompare);
+        if (!depthCompare)
+            return std::nullopt;
+    }
+
+    return WebGPU::DepthStencilState {
+        .format = *format,
+        .depthWriteEnabled = depthWriteEnabled,
+        .depthCompare = depthCompare,
+        .stencilFront = *stencilFront,
+        .stencilBack = *stencilBack,
+        .stencilReadMask = state.stencilReadMask,
+        .stencilWriteMask = state.stencilWriteMask,
+        .depthBias = state.depthBias,
+        .depthBiasSlopeScale = state.depthBiasSlopeScale,
+        .depthBiasClamp = state.depthBiasClamp,
+    };
+}
+
+struct RenderPipelineDescriptorStorage {
+    Vector<WebGPU::ConstantEntry> vertexConstants;
+    Vector<Vector<WebGPU::VertexAttribute>> vertexAttributes;
+    Vector<std::optional<WebGPU::VertexBufferLayout>> vertexBuffers;
+    Vector<WebGPU::ConstantEntry> fragmentConstants;
+    Vector<std::optional<WebGPU::ColorTargetState>> fragmentTargets;
+};
+
+inline std::optional<WebGPU::RenderPipelineDescriptor> fromAPI(const WGPURenderPipelineDescriptor& descriptor, RenderPipelineDescriptorStorage& storage LIFETIME_BOUND)
+{
+    auto vertexStage = programmableStageFromAPI(descriptor.vertex.module, descriptor.vertex.entryPoint, unsafeMakeSpan(descriptor.vertex.constants, descriptor.vertex.constantCount), storage.vertexConstants);
+    if (!vertexStage)
+        return std::nullopt;
+
+    // A vertex buffer layout with WGPU_COPY_STRIDE_UNDEFINED as its stride is an empty slot.
+    auto buffers = unsafeMakeSpan(descriptor.vertex.buffers, descriptor.vertex.bufferCount);
+    storage.vertexAttributes.clear();
+    storage.vertexBuffers.clear();
+    for (auto& buffer : buffers) {
+        Vector<WebGPU::VertexAttribute> attributes;
+        for (auto& attribute : unsafeMakeSpan(buffer.attributes, buffer.attributeCount)) {
+            auto format = fromAPI(attribute.format);
+            if (!format)
+                return std::nullopt;
+            attributes.append({ .format = *format, .offset = attribute.offset, .shaderLocation = attribute.shaderLocation });
+        }
+        storage.vertexAttributes.append(WTF::move(attributes));
+    }
+    for (auto [i, buffer] : indexedRange(buffers)) {
+        if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED) {
+            storage.vertexBuffers.append(std::nullopt);
+            continue;
+        }
+        auto stepMode = fromAPI(buffer.stepMode);
+        if (!stepMode)
+            return std::nullopt;
+        storage.vertexBuffers.append(WebGPU::VertexBufferLayout {
+            .arrayStride = buffer.arrayStride,
+            .stepMode = *stepMode,
+            .attributes = storage.vertexAttributes[i].span(),
+        });
+    }
+
+    auto topology = fromAPI(descriptor.primitive.topology);
+    auto frontFace = fromAPI(descriptor.primitive.frontFace);
+    auto cullMode = fromAPI(descriptor.primitive.cullMode);
+    if (!topology || !frontFace || !cullMode)
+        return std::nullopt;
+    std::optional<WebGPU::IndexFormat> stripIndexFormat;
+    if (descriptor.primitive.stripIndexFormat != WGPUIndexFormat_Undefined) {
+        stripIndexFormat = fromAPI(descriptor.primitive.stripIndexFormat);
+        if (!stripIndexFormat)
+            return std::nullopt;
+    }
+
+    std::optional<WebGPU::DepthStencilState> depthStencil;
+    if (descriptor.depthStencil) {
+        depthStencil = fromAPI(*descriptor.depthStencil);
+        if (!depthStencil)
+            return std::nullopt;
+    }
+
+    std::optional<WebGPU::FragmentState> fragment;
+    if (auto* fragmentState = descriptor.fragment) {
+        auto fragmentStage = programmableStageFromAPI(fragmentState->module, fragmentState->entryPoint, unsafeMakeSpan(fragmentState->constants, fragmentState->constantCount), storage.fragmentConstants);
+        if (!fragmentStage)
+            return std::nullopt;
+
+        // A color target with WGPUTextureFormat_Undefined as its format is an empty slot.
+        storage.fragmentTargets.clear();
+        for (auto& target : unsafeMakeSpan(fragmentState->targets, fragmentState->targetCount)) {
+            if (target.format == WGPUTextureFormat_Undefined) {
+                storage.fragmentTargets.append(std::nullopt);
+                continue;
+            }
+            auto format = fromAPI(target.format);
+            auto writeMask = colorWriteFromAPI(target.writeMask);
+            if (!format || !writeMask)
+                return std::nullopt;
+            std::optional<WebGPU::BlendState> blend;
+            if (target.blend) {
+                auto color = fromAPI(target.blend->color);
+                auto alpha = fromAPI(target.blend->alpha);
+                if (!color || !alpha)
+                    return std::nullopt;
+                blend = WebGPU::BlendState { .color = *color, .alpha = *alpha };
+            }
+            storage.fragmentTargets.append(WebGPU::ColorTargetState { .format = *format, .blend = blend, .writeMask = *writeMask });
+        }
+        fragment = WebGPU::FragmentState {
+            .stage = WTF::move(*fragmentStage),
+            .targets = storage.fragmentTargets.span(),
+        };
+    }
+
+    return WebGPU::RenderPipelineDescriptor {
+        .label = fromAPI(descriptor.label),
+        .layout = descriptor.layout ? RefPtr { &WebGPU::fromAPI(descriptor.layout) } : nullptr,
+        .vertex = {
+            .stage = WTF::move(*vertexStage),
+            .buffers = storage.vertexBuffers.span(),
+        },
+        .primitive = {
+            .topology = *topology,
+            .stripIndexFormat = stripIndexFormat,
+            .frontFace = *frontFace,
+            .cullMode = *cullMode,
+            .unclippedDepth = !!descriptor.primitive.unclippedDepth,
+        },
+        .depthStencil = WTF::move(depthStencil),
+        .multisample = {
+            .count = descriptor.multisample.count,
+            .mask = descriptor.multisample.mask,
+            .alphaToCoverageEnabled = !!descriptor.multisample.alphaToCoverageEnabled,
+        },
+        .fragment = WTF::move(fragment),
+    };
+}
+
+// std::nullopt is WGPUStoreOp_Undefined.
+constexpr WGPUStoreOp toAPI(std::optional<WebGPU::StoreOp> value)
+{
+    return value ? toAPI(*value) : WGPUStoreOp_Undefined;
+}
+
+constexpr WebGPU::Color fromAPI(const WGPUColor& color)
+{
+    return { .r = color.r, .g = color.g, .b = color.b, .a = color.a };
+}
+
+// WGPU_QUERY_SET_INDEX_UNDEFINED is std::nullopt.
+inline std::optional<WebGPU::PassTimestampWrites> fromAPI(const WGPUPassTimestampWrites& timestampWrites)
+{
+    if (!timestampWrites.querySet)
+        return std::nullopt;
+    auto writeIndex = [](uint32_t value) {
+        return value == WGPU_QUERY_SET_INDEX_UNDEFINED ? std::nullopt : std::optional { value };
+    };
+    return WebGPU::PassTimestampWrites {
+        .querySet = WebGPU::fromAPI(timestampWrites.querySet),
+        .beginningOfPassWriteIndex = writeIndex(timestampWrites.beginningOfPassWriteIndex),
+        .endOfPassWriteIndex = writeIndex(timestampWrites.endOfPassWriteIndex),
+    };
+}
+
+inline std::optional<WebGPU::ComputePassDescriptor> fromAPI(const WGPUComputePassDescriptor& descriptor)
+{
+    std::optional<WebGPU::PassTimestampWrites> timestampWrites;
+    if (auto* wgpuTimestampWrites = descriptor.timestampWrites) {
+        timestampWrites = fromAPI(*wgpuTimestampWrites);
+        if (!timestampWrites)
+            return std::nullopt;
+    }
+    return WebGPU::ComputePassDescriptor {
+        .label = descriptor.label,
+        .timestampWrites = WTF::move(timestampWrites),
+    };
+}
+
+// A view takes precedence over a texture. Neither is std::nullopt.
+inline std::optional<WebGPU::RenderPassAttachmentView> renderPassAttachmentViewFromAPI(WGPUTextureView view, WGPUTexture texture)
+{
+    if (view)
+        return WebGPU::RenderPassAttachmentView { Ref { WebGPU::fromAPI(view) } };
+    if (texture)
+        return WebGPU::RenderPassAttachmentView { Ref { WebGPU::fromAPI(texture) } };
+    return std::nullopt;
+}
+
+// _Undefined is std::nullopt.
+template<typename T>
+inline std::optional<std::optional<T>> optionalOpFromAPI(auto value, auto undefinedValue)
+{
+    if (value == undefinedValue)
+        return std::optional<T> { };
+    auto result = fromAPI(value);
+    if (!result)
+        return std::nullopt;
+    return std::optional<T> { *result };
+}
+
+struct RenderPassDescriptorStorage {
+    Vector<std::optional<WebGPU::RenderPassColorAttachment>> colorAttachments;
+};
+
+inline std::optional<WebGPU::RenderPassDescriptor> fromAPI(const WGPURenderPassDescriptor& descriptor, RenderPassDescriptorStorage& storage LIFETIME_BOUND)
+{
+    // A color attachment without a view and a texture is an empty slot.
+    storage.colorAttachments.clear();
+    for (auto& attachment : unsafeMakeSpan(descriptor.colorAttachments, descriptor.colorAttachmentCount)) {
+        auto view = renderPassAttachmentViewFromAPI(attachment.view, attachment.texture);
+        if (!view) {
+            storage.colorAttachments.append(std::nullopt);
+            continue;
+        }
+        auto loadOp = fromAPI(attachment.loadOp);
+        auto storeOp = fromAPI(attachment.storeOp);
+        if (!loadOp || !storeOp)
+            return std::nullopt;
+        storage.colorAttachments.append(WebGPU::RenderPassColorAttachment {
+            .view = WTF::move(*view),
+            .depthSlice = attachment.depthSlice == WGPU_DEPTH_SLICE_UNDEFINED ? std::nullopt : std::optional { attachment.depthSlice },
+            .resolveTarget = renderPassAttachmentViewFromAPI(attachment.resolveTarget, attachment.resolveTexture),
+            .clearValue = fromAPI(attachment.clearValue),
+            .loadOp = *loadOp,
+            .storeOp = *storeOp,
+        });
+    }
+
+    std::optional<WebGPU::RenderPassDepthStencilAttachment> depthStencilAttachment;
+    if (auto* attachment = descriptor.depthStencilAttachment) {
+        auto view = renderPassAttachmentViewFromAPI(attachment->view, attachment->texture);
+        auto depthLoadOp = optionalOpFromAPI<WebGPU::LoadOp>(attachment->depthLoadOp, WGPULoadOp_Undefined);
+        auto depthStoreOp = optionalOpFromAPI<WebGPU::StoreOp>(attachment->depthStoreOp, WGPUStoreOp_Undefined);
+        auto stencilLoadOp = optionalOpFromAPI<WebGPU::LoadOp>(attachment->stencilLoadOp, WGPULoadOp_Undefined);
+        auto stencilStoreOp = optionalOpFromAPI<WebGPU::StoreOp>(attachment->stencilStoreOp, WGPUStoreOp_Undefined);
+        if (!view || !depthLoadOp || !depthStoreOp || !stencilLoadOp || !stencilStoreOp)
+            return std::nullopt;
+        depthStencilAttachment = WebGPU::RenderPassDepthStencilAttachment {
+            .view = WTF::move(*view),
+            .depthClearValue = attachment->depthClearValue,
+            .depthLoadOp = *depthLoadOp,
+            .depthStoreOp = *depthStoreOp,
+            .depthReadOnly = !!attachment->depthReadOnly,
+            .stencilClearValue = attachment->stencilClearValue,
+            .stencilLoadOp = *stencilLoadOp,
+            .stencilStoreOp = *stencilStoreOp,
+            .stencilReadOnly = !!attachment->stencilReadOnly,
+        };
+    }
+
+    std::optional<WebGPU::PassTimestampWrites> timestampWrites;
+    if (auto* wgpuTimestampWrites = descriptor.timestampWrites) {
+        timestampWrites = fromAPI(*wgpuTimestampWrites);
+        if (!timestampWrites)
+            return std::nullopt;
+    }
+
+    return WebGPU::RenderPassDescriptor {
+        .label = fromAPI(descriptor.label),
+        .colorAttachments = storage.colorAttachments.span(),
+        .depthStencilAttachment = WTF::move(depthStencilAttachment),
+        .occlusionQuerySet = descriptor.occlusionQuerySet ? RefPtr { &WebGPU::fromAPI(descriptor.occlusionQuerySet) } : nullptr,
+        .timestampWrites = WTF::move(timestampWrites),
+        .maxDrawCount = descriptor.maxDrawCount,
+    };
+}
+
+struct RenderBundleEncoderDescriptorStorage {
+    Vector<std::optional<WebGPU::TextureFormat>> colorFormats;
+};
+
+// WGPUTextureFormat_Undefined is std::nullopt: an empty color format slot, or no depth stencil format.
+inline std::optional<WebGPU::RenderBundleEncoderDescriptor> fromAPI(const WGPURenderBundleEncoderDescriptor& descriptor, RenderBundleEncoderDescriptorStorage& storage LIFETIME_BOUND)
+{
+    auto optionalFormat = [](WGPUTextureFormat format) -> std::optional<std::optional<WebGPU::TextureFormat>> {
+        if (format == WGPUTextureFormat_Undefined)
+            return std::optional<WebGPU::TextureFormat> { };
+        auto result = fromAPI(format);
+        if (!result)
+            return std::nullopt;
+        return std::optional<WebGPU::TextureFormat> { *result };
+    };
+
+    storage.colorFormats.clear();
+    for (auto format : unsafeMakeSpan(descriptor.colorFormats, descriptor.colorFormatCount)) {
+        auto colorFormat = optionalFormat(format);
+        if (!colorFormat)
+            return std::nullopt;
+        storage.colorFormats.append(*colorFormat);
+    }
+    auto depthStencilFormat = optionalFormat(descriptor.depthStencilFormat);
+    if (!depthStencilFormat)
+        return std::nullopt;
+
+    return WebGPU::RenderBundleEncoderDescriptor {
+        .label = fromAPI(descriptor.label),
+        .colorFormats = storage.colorFormats.span(),
+        .depthStencilFormat = *depthStencilFormat,
+        .sampleCount = descriptor.sampleCount,
+        .depthReadOnly = !!descriptor.depthReadOnly,
+        .stencilReadOnly = !!descriptor.stencilReadOnly,
+    };
+}
+
+constexpr WebGPU::Limits fromAPI(const WGPULimits& limits)
+{
+    return {
+        .maxTextureDimension1D = limits.maxTextureDimension1D,
+        .maxTextureDimension2D = limits.maxTextureDimension2D,
+        .maxTextureDimension3D = limits.maxTextureDimension3D,
+        .maxTextureArrayLayers = limits.maxTextureArrayLayers,
+        .maxBindGroups = limits.maxBindGroups,
+        .maxBindGroupsPlusVertexBuffers = limits.maxBindGroupsPlusVertexBuffers,
+        .maxBindingsPerBindGroup = limits.maxBindingsPerBindGroup,
+        .maxDynamicUniformBuffersPerPipelineLayout = limits.maxDynamicUniformBuffersPerPipelineLayout,
+        .maxDynamicStorageBuffersPerPipelineLayout = limits.maxDynamicStorageBuffersPerPipelineLayout,
+        .maxSampledTexturesPerShaderStage = limits.maxSampledTexturesPerShaderStage,
+        .maxSamplersPerShaderStage = limits.maxSamplersPerShaderStage,
+        .maxStorageBuffersPerShaderStage = limits.maxStorageBuffersPerShaderStage,
+        .maxStorageTexturesPerShaderStage = limits.maxStorageTexturesPerShaderStage,
+        .maxUniformBuffersPerShaderStage = limits.maxUniformBuffersPerShaderStage,
+        .maxUniformBufferBindingSize = limits.maxUniformBufferBindingSize,
+        .maxStorageBufferBindingSize = limits.maxStorageBufferBindingSize,
+        .minUniformBufferOffsetAlignment = limits.minUniformBufferOffsetAlignment,
+        .minStorageBufferOffsetAlignment = limits.minStorageBufferOffsetAlignment,
+        .maxVertexBuffers = limits.maxVertexBuffers,
+        .maxBufferSize = limits.maxBufferSize,
+        .maxVertexAttributes = limits.maxVertexAttributes,
+        .maxVertexBufferArrayStride = limits.maxVertexBufferArrayStride,
+        .maxInterStageShaderVariables = limits.maxInterStageShaderVariables,
+        .maxColorAttachments = limits.maxColorAttachments,
+        .maxColorAttachmentBytesPerSample = limits.maxColorAttachmentBytesPerSample,
+        .maxComputeWorkgroupStorageSize = limits.maxComputeWorkgroupStorageSize,
+        .maxComputeInvocationsPerWorkgroup = limits.maxComputeInvocationsPerWorkgroup,
+        .maxComputeWorkgroupSizeX = limits.maxComputeWorkgroupSizeX,
+        .maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
+        .maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
+        .maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
+        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersInFragmentStage,
+        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesInFragmentStage,
+        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersInVertexStage,
+        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesInVertexStage,
+    };
+}
+
+constexpr WGPULimits toAPI(const WebGPU::Limits& limits)
+{
+    return {
+        .maxTextureDimension1D = limits.maxTextureDimension1D,
+        .maxTextureDimension2D = limits.maxTextureDimension2D,
+        .maxTextureDimension3D = limits.maxTextureDimension3D,
+        .maxTextureArrayLayers = limits.maxTextureArrayLayers,
+        .maxBindGroups = limits.maxBindGroups,
+        .maxBindGroupsPlusVertexBuffers = limits.maxBindGroupsPlusVertexBuffers,
+        .maxBindingsPerBindGroup = limits.maxBindingsPerBindGroup,
+        .maxDynamicUniformBuffersPerPipelineLayout = limits.maxDynamicUniformBuffersPerPipelineLayout,
+        .maxDynamicStorageBuffersPerPipelineLayout = limits.maxDynamicStorageBuffersPerPipelineLayout,
+        .maxSampledTexturesPerShaderStage = limits.maxSampledTexturesPerShaderStage,
+        .maxSamplersPerShaderStage = limits.maxSamplersPerShaderStage,
+        .maxStorageBuffersPerShaderStage = limits.maxStorageBuffersPerShaderStage,
+        .maxStorageTexturesPerShaderStage = limits.maxStorageTexturesPerShaderStage,
+        .maxUniformBuffersPerShaderStage = limits.maxUniformBuffersPerShaderStage,
+        .maxUniformBufferBindingSize = limits.maxUniformBufferBindingSize,
+        .maxStorageBufferBindingSize = limits.maxStorageBufferBindingSize,
+        .minUniformBufferOffsetAlignment = limits.minUniformBufferOffsetAlignment,
+        .minStorageBufferOffsetAlignment = limits.minStorageBufferOffsetAlignment,
+        .maxVertexBuffers = limits.maxVertexBuffers,
+        .maxBufferSize = limits.maxBufferSize,
+        .maxVertexAttributes = limits.maxVertexAttributes,
+        .maxVertexBufferArrayStride = limits.maxVertexBufferArrayStride,
+        .maxInterStageShaderVariables = limits.maxInterStageShaderVariables,
+        .maxColorAttachments = limits.maxColorAttachments,
+        .maxColorAttachmentBytesPerSample = limits.maxColorAttachmentBytesPerSample,
+        .maxComputeWorkgroupStorageSize = limits.maxComputeWorkgroupStorageSize,
+        .maxComputeInvocationsPerWorkgroup = limits.maxComputeInvocationsPerWorkgroup,
+        .maxComputeWorkgroupSizeX = limits.maxComputeWorkgroupSizeX,
+        .maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
+        .maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
+        .maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
+        .maxStorageBuffersInFragmentStage = limits.maxStorageBuffersInFragmentStage,
+        .maxStorageTexturesInFragmentStage = limits.maxStorageTexturesInFragmentStage,
+        .maxStorageBuffersInVertexStage = limits.maxStorageBuffersInVertexStage,
+        .maxStorageTexturesInVertexStage = limits.maxStorageTexturesInVertexStage,
+    };
+}
+
+// WGPUPowerPreference_Undefined is std::nullopt.
+inline std::optional<WebGPU::RequestAdapterOptions> fromAPI(const WGPURequestAdapterOptions& options)
+{
+    std::optional<WebGPU::PowerPreference> powerPreference;
+    if (options.powerPreference != WGPUPowerPreference_Undefined) {
+        powerPreference = fromAPI(options.powerPreference);
+        if (!powerPreference)
+            return std::nullopt;
+    }
+    return WebGPU::RequestAdapterOptions {
+        .powerPreference = powerPreference,
+        .forceFallbackAdapter = !!options.forceFallbackAdapter,
+        .xrCompatible = !!options.xrCompatible,
+    };
+}
+
+struct DeviceDescriptorStorage {
+    Vector<WebGPU::FeatureName> requiredFeatures;
+};
+
+inline std::optional<WebGPU::DeviceDescriptor> fromAPI(const WGPUDeviceDescriptor& descriptor, DeviceDescriptorStorage& storage LIFETIME_BOUND)
+{
+    storage.requiredFeatures.clear();
+    for (auto feature : unsafeMakeSpan(descriptor.requiredFeatures, descriptor.requiredFeatureCount)) {
+        auto apiFeature = fromAPI(feature);
+        if (!apiFeature)
+            return std::nullopt;
+        storage.requiredFeatures.append(*apiFeature);
+    }
+    return WebGPU::DeviceDescriptor {
+        .label = fromAPI(descriptor.label),
+        .requiredFeatures = storage.requiredFeatures.span(),
+        .requiredLimits = descriptor.requiredLimits ? std::optional { fromAPI(descriptor.requiredLimits->limits) } : std::nullopt,
+    };
+}
+
+// The features of the C API that have a C++ API equivalent.
+inline Vector<WebGPU::FeatureName> featuresFromAPI(std::span<const WGPUFeatureName> features)
+{
+    Vector<WebGPU::FeatureName> result;
+    for (auto feature : features) {
+        if (auto apiFeature = fromAPI(feature))
+            result.append(*apiFeature);
+    }
+    return result;
+}
+
+inline WGPUErrorType toAPI(const std::optional<WebGPU::Error>& error)
+{
+    if (!error)
+        return WGPUErrorType_NoError;
+    switch (error->type) {
+    case WebGPU::ErrorType::Validation:
+        return WGPUErrorType_Validation;
+    case WebGPU::ErrorType::OutOfMemory:
+        return WGPUErrorType_OutOfMemory;
+    case WebGPU::ErrorType::Internal:
+        return WGPUErrorType_Internal;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+constexpr WebGPU::PredefinedColorSpace fromAPI(WGPUColorSpace value)
+{
+    switch (value) {
+    case WGPUColorSpace::SRGB:
+        return WebGPU::PredefinedColorSpace::SRGB;
+    case WGPUColorSpace::SRGBLinear:
+        return WebGPU::PredefinedColorSpace::SRGBLinear;
+    case WGPUColorSpace::DisplayP3:
+        return WebGPU::PredefinedColorSpace::DisplayP3;
+    case WGPUColorSpace::DisplayP3Linear:
+        return WebGPU::PredefinedColorSpace::DisplayP3Linear;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+constexpr WGPUColorSpace toAPI(WebGPU::PredefinedColorSpace value)
+{
+    switch (value) {
+    case WebGPU::PredefinedColorSpace::SRGB:
+        return WGPUColorSpace::SRGB;
+    case WebGPU::PredefinedColorSpace::SRGBLinear:
+        return WGPUColorSpace::SRGBLinear;
+    case WebGPU::PredefinedColorSpace::DisplayP3:
+        return WGPUColorSpace::DisplayP3;
+    case WebGPU::PredefinedColorSpace::DisplayP3Linear:
+        return WGPUColorSpace::DisplayP3Linear;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+constexpr std::optional<WebGPU::VideoFrameRotation> fromAPI(WGPUVideoFrameRotation value)
+{
+    switch (value) {
+    case WGPUVideoFrameRotation_None:
+        return WebGPU::VideoFrameRotation::None;
+    case WGPUVideoFrameRotation_Right:
+        return WebGPU::VideoFrameRotation::Right;
+    case WGPUVideoFrameRotation_UpsideDown:
+        return WebGPU::VideoFrameRotation::UpsideDown;
+    case WGPUVideoFrameRotation_Left:
+        return WebGPU::VideoFrameRotation::Left;
+    }
+    return std::nullopt;
+}
+
+constexpr WGPUVideoFrameRotation toAPI(WebGPU::VideoFrameRotation value)
+{
+    switch (value) {
+    case WebGPU::VideoFrameRotation::None:
+        return WGPUVideoFrameRotation_None;
+    case WebGPU::VideoFrameRotation::Right:
+        return WGPUVideoFrameRotation_Right;
+    case WebGPU::VideoFrameRotation::UpsideDown:
+        return WGPUVideoFrameRotation_UpsideDown;
+    case WebGPU::VideoFrameRotation::Left:
+        return WGPUVideoFrameRotation_Left;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+struct CanvasConfigurationStorage {
+    Vector<WebGPU::TextureFormat> viewFormats;
+};
+
+// The device of the swap chain is the device of the configuration. The label and the present mode of
+// the swap chain descriptor have no C++ API equivalent.
+inline std::optional<WebGPU::CanvasConfiguration> fromAPI(WGPUDevice device, const WGPUSwapChainDescriptor& descriptor, CanvasConfigurationStorage& storage LIFETIME_BOUND)
+{
+    auto format = fromAPI(descriptor.format);
+    auto usage = textureUsageFromAPI(descriptor.usage);
+    auto toneMappingMode = fromAPI(descriptor.toneMappingMode);
+    auto compositingAlphaMode = fromAPI(descriptor.compositeAlphaMode);
+    if (!format || !usage || !toneMappingMode || !compositingAlphaMode)
+        return std::nullopt;
+
+    storage.viewFormats.clear();
+    for (auto viewFormat : descriptor.viewFormats) {
+        auto apiViewFormat = fromAPI(viewFormat);
+        if (!apiViewFormat)
+            return std::nullopt;
+        storage.viewFormats.append(*apiViewFormat);
+    }
+
+    return WebGPU::CanvasConfiguration {
+        .device = WebGPU::fromAPI(device),
+        .format = *format,
+        .usage = *usage,
+        .viewFormats = storage.viewFormats.span(),
+        .colorSpace = fromAPI(descriptor.colorSpace),
+        .toneMappingMode = *toneMappingMode,
+        .compositingAlphaMode = *compositingAlphaMode,
+        .reportValidationErrors = !!descriptor.reportValidationErrors,
+        .width = descriptor.width,
+        .height = descriptor.height,
+    };
+}
+
+inline std::optional<WebGPU::ImageCopyTextureTagged> fromAPI(const WGPUImageCopyTextureTagged& destination)
+{
+    auto aspect = fromAPI(destination.aspect);
+    if (!destination.texture || !aspect)
+        return std::nullopt;
+    return WebGPU::ImageCopyTextureTagged {
+        .texture = WebGPU::fromAPI(destination.texture),
+        .mipLevel = destination.mipLevel,
+        .origin = fromAPI(destination.origin),
+        .aspect = *aspect,
+        .colorSpace = fromAPI(destination.colorSpace),
+        .premultipliedAlpha = !!destination.premultipliedAlpha,
+    };
+}
+
+#if PLATFORM(COCOA)
+inline WebGPU::ExternalTextureDescriptor fromAPI(const WGPUExternalTextureDescriptor& descriptor)
+{
+    return {
+        .label = fromAPI(descriptor.label),
+        .pixelBuffer = descriptor.pixelBuffer,
+        .colorSpace = fromAPI(descriptor.colorSpace),
+        .visibleSize = { .width = descriptor.visibleWidth, .height = descriptor.visibleHeight },
+    };
+}
+
+// WGPUTextureFormat_Undefined, for a video frame source, is std::nullopt.
+inline std::optional<WebGPU::ImageCopyExternalImage> fromAPI(const WGPUImageCopyExternalImage& source)
+{
+    std::optional<WebGPU::TextureFormat> sourceFormat;
+    if (source.sourceFormat != WGPUTextureFormat_Undefined) {
+        sourceFormat = fromAPI(source.sourceFormat);
+        if (!sourceFormat)
+            return std::nullopt;
+    }
+    auto pixelBufferRotation = fromAPI(source.pixelBufferRotation);
+    if (!pixelBufferRotation)
+        return std::nullopt;
+    return WebGPU::ImageCopyExternalImage {
+        .source = source.source,
+        .sourceFormat = sourceFormat,
+        .sourceSize = { .width = source.sourceWidth, .height = source.sourceHeight },
+        .pixelBuffer = source.pixelBuffer,
+        .pixelBufferRotation = *pixelBufferRotation,
+        .pixelBufferIsMirrored = !!source.pixelBufferIsMirrored,
+        .origin = { .x = source.originX, .y = source.originY },
+        .flipY = !!source.flipY,
+        .hasAlpha = !!source.hasAlpha,
+        .premultipliedAlpha = !!source.premultipliedAlpha,
+        .colorSpace = fromAPI(source.colorSpace),
+    };
+}
+#endif
 
 } // namespace WebGPU::Metal

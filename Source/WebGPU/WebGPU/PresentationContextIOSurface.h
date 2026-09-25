@@ -44,7 +44,7 @@ public:
 
     virtual ~PresentationContextIOSurface();
 
-    void configure(Device&, const WGPUSwapChainDescriptor&) override;
+    void configure(const WebGPU::CanvasConfiguration&) override;
     void unconfigure() override;
 
     void present(uint32_t) override;

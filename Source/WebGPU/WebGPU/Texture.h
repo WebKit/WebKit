@@ -46,12 +46,14 @@ namespace WebGPU::Metal {
 class CommandEncoder;
 class Device;
 class TextureView;
+struct ResolvedTextureViewDescriptor;
 
 // https://gpuweb.github.io/gpuweb/#gputexture
 class Texture final : public WebGPU::Texture, public WGPUTextureImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(Texture);
 public:
-    static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
+    // The texture allows views in the given view formats, not in descriptor.viewFormats.
+    static Ref<Texture> create(id<MTLTexture> texture, const WebGPU::TextureDescriptor& descriptor, Vector<WebGPU::TextureFormat>&& viewFormats, Device& device)
     {
         return adoptRef(*new Texture(texture, descriptor, WTF::move(viewFormats), device));
     }
@@ -62,7 +64,8 @@ public:
 
     ~Texture();
 
-    Ref<TextureView> createView(const WGPUTextureViewDescriptor&);
+    // std::nullopt is a descriptor with all members at their defaults.
+    Ref<TextureView> createView(const std::optional<WebGPU::TextureViewDescriptor>&);
     void destroy();
     void setLabel(String&&) final;
 
@@ -80,13 +83,13 @@ public:
     static bool NODELETE containsStencilAspect(WGPUTextureFormat);
     static bool NODELETE isDepthOrStencilFormat(WGPUTextureFormat);
     static WGPUTextureFormat NODELETE aspectSpecificFormat(WGPUTextureFormat, WGPUTextureAspect);
-    static NSString* errorValidatingImageCopyTexture(const WGPUTexelCopyTextureInfo&, const WGPUExtent3D&);
-    static NSString* errorValidatingTextureCopyRange(const WGPUTexelCopyTextureInfo&, const WGPUExtent3D&);
+    static NSString* errorValidatingImageCopyTexture(const WebGPU::TexelCopyTextureInfo&, const WebGPU::Extent3D&);
+    static NSString* errorValidatingTextureCopyRange(const WebGPU::TexelCopyTextureInfo&, const WebGPU::Extent3D&);
     static bool NODELETE refersToSingleAspect(WGPUTextureFormat, WGPUTextureAspect);
     static bool NODELETE isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
     static bool NODELETE isValidDepthStencilCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
-    static NSString* errorValidatingLinearTextureData(const WGPUTexelCopyBufferLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
-    static MTLTextureUsage NODELETE usage(WGPUTextureUsage, WGPUTextureFormat);
+    static NSString* errorValidatingLinearTextureData(const WebGPU::TexelCopyBufferLayout&, uint64_t, WGPUTextureFormat, const WebGPU::Extent3D&);
+    static MTLTextureUsage NODELETE usage(OptionSet<WebGPU::TextureUsage>, WGPUTextureFormat);
     static MTLPixelFormat NODELETE pixelFormat(WGPUTextureFormat);
     static WGPUTextureFormat NODELETE textureFormat(MTLPixelFormat);
     static std::optional<MTLPixelFormat> NODELETE depthOnlyAspectMetalFormat(WGPUTextureFormat);
@@ -116,9 +119,9 @@ public:
     uint32_t depthOrArrayLayers() const { return m_depthOrArrayLayers; }
     uint32_t mipLevelCount() const { return m_mipLevelCount; }
     uint32_t sampleCount() const { return m_sampleCount; }
-    WGPUTextureDimension dimension() const { return m_dimension; }
-    WGPUTextureFormat format() const { return m_format; }
-    WGPUTextureUsage usage() const { return m_usage; }
+    WGPUTextureDimension NODELETE dimension() const;
+    WGPUTextureFormat NODELETE format() const;
+    OptionSet<WebGPU::TextureUsage> usage() const { return m_usage; }
 
     Device& device() const { return m_device; }
 
@@ -152,18 +155,18 @@ public:
     uint32_t baseArrayLayer() const { return 0; }
     uint32_t baseMipLevel() const { return 0; }
     uint32_t parentRelativeSlice() const { return 0; }
-    bool is2DTexture() const { return dimension() == WGPUTextureDimension_2D; }
+    bool is2DTexture() const { return m_dimension == WebGPU::TextureDimension::_2d; }
     bool is2DArrayTexture() const { return is2DTexture() && arrayLayerCount() > 1; }
-    bool is3DTexture() const { return dimension() == WGPUTextureDimension_3D; }
+    bool is3DTexture() const { return m_dimension == WebGPU::TextureDimension::_3d; }
     id<MTLTexture> parentTexture() const { return texture(); }
     const Texture& apiParentTexture() const { return *this; }
 
 private:
-    Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
+    Texture(id<MTLTexture>, const WebGPU::TextureDescriptor&, Vector<WebGPU::TextureFormat>&& viewFormats, Device&);
     Texture(Device&);
 
-    std::optional<WGPUTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
-    NSString* errorValidatingTextureViewCreation(const WGPUTextureViewDescriptor&) const;
+    std::optional<ResolvedTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WebGPU::TextureViewDescriptor&) const;
+    NSString* errorValidatingTextureViewCreation(const ResolvedTextureViewDescriptor&) const;
 
     id<MTLTexture> m_texture { nil };
 
@@ -172,11 +175,11 @@ private:
     const uint32_t m_depthOrArrayLayers { 0 };
     const uint32_t m_mipLevelCount { 0 };
     const uint32_t m_sampleCount { 0 };
-    const WGPUTextureDimension m_dimension { WGPUTextureDimension_2D };
-    const WGPUTextureFormat m_format { WGPUTextureFormat_Undefined };
-    const WGPUTextureUsage m_usage { WGPUTextureUsage_None };
+    const WebGPU::TextureDimension m_dimension { WebGPU::TextureDimension::_2d };
+    const std::optional<WebGPU::TextureFormat> m_format; // std::nullopt only for invalid textures.
+    const OptionSet<WebGPU::TextureUsage> m_usage;
 
-    const Vector<WGPUTextureFormat> m_viewFormats;
+    const Vector<WebGPU::TextureFormat> m_viewFormats;
 
     const Ref<Device> m_device;
     using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;

@@ -28,4 +28,4 @@
 // This is an empty file. In Xcode, it's copied by a build rule which ensures that it is rebuilt
 // whenever the build system's internal map of headers is rebuilt. This in turn rebuilds the
 // module, working around rdar://173516139.
-// (Touch to force rebuild of in EWS in case of incremental builds)
+// (Touch to force rebuild of in EWS in case of incremental builds.)

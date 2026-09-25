@@ -35,7 +35,7 @@
 
 namespace WebGPU::Metal {
 
-static bool NODELETE validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
+static bool NODELETE validateCreateSampler(Device& device, const WebGPU::SamplerDescriptor& descriptor)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpusamplerdescriptor
 
@@ -52,80 +52,74 @@ static bool NODELETE validateCreateSampler(Device& device, const WGPUSamplerDesc
         return false;
 
     if (descriptor.maxAnisotropy > 1) {
-        if (descriptor.magFilter != WGPUFilterMode_Linear
-            || descriptor.minFilter != WGPUFilterMode_Linear
-            || descriptor.mipmapFilter != WGPUMipmapFilterMode_Linear)
+        if (descriptor.magFilter != WebGPU::FilterMode::Linear
+            || descriptor.minFilter != WebGPU::FilterMode::Linear
+            || descriptor.mipmapFilter != WebGPU::MipmapFilterMode::Linear)
             return false;
     }
 
     return true;
 }
 
-static MTLSamplerAddressMode NODELETE addressMode(WGPUAddressMode addressMode)
+static MTLSamplerAddressMode NODELETE addressMode(WebGPU::AddressMode addressMode)
 {
     switch (addressMode) {
-    case WGPUAddressMode_Repeat:
+    case WebGPU::AddressMode::Repeat:
         return MTLSamplerAddressModeRepeat;
-    case WGPUAddressMode_MirrorRepeat:
+    case WebGPU::AddressMode::MirrorRepeat:
         return MTLSamplerAddressModeMirrorRepeat;
-    case WGPUAddressMode_ClampToEdge:
-        return MTLSamplerAddressModeClampToEdge;
-    case WGPUAddressMode_Force32:
-        ASSERT_NOT_REACHED();
+    case WebGPU::AddressMode::ClampToEdge:
         return MTLSamplerAddressModeClampToEdge;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-static MTLSamplerMinMagFilter NODELETE minMagFilter(WGPUFilterMode filterMode)
+static MTLSamplerMinMagFilter NODELETE minMagFilter(WebGPU::FilterMode filterMode)
 {
     switch (filterMode) {
-    case WGPUFilterMode_Nearest:
+    case WebGPU::FilterMode::Nearest:
         return MTLSamplerMinMagFilterNearest;
-    case WGPUFilterMode_Linear:
+    case WebGPU::FilterMode::Linear:
         return MTLSamplerMinMagFilterLinear;
-    case WGPUFilterMode_Force32:
-        ASSERT_NOT_REACHED();
-        return MTLSamplerMinMagFilterNearest;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-static MTLSamplerMipFilter NODELETE mipFilter(WGPUMipmapFilterMode filterMode)
+static MTLSamplerMipFilter NODELETE mipFilter(WebGPU::MipmapFilterMode filterMode)
 {
     switch (filterMode) {
-    case WGPUMipmapFilterMode_Nearest:
+    case WebGPU::MipmapFilterMode::Nearest:
         return MTLSamplerMipFilterNearest;
-    case WGPUMipmapFilterMode_Linear:
+    case WebGPU::MipmapFilterMode::Linear:
         return MTLSamplerMipFilterLinear;
-    case WGPUMipmapFilterMode_Force32:
-        ASSERT_NOT_REACHED();
-        return MTLSamplerMipFilterNearest;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-static MTLCompareFunction NODELETE compareFunction(WGPUCompareFunction compareFunction)
+static MTLCompareFunction NODELETE compareFunction(std::optional<WebGPU::CompareFunction> compareFunction)
 {
-    switch (compareFunction) {
-    case WGPUCompareFunction_Never:
-        return MTLCompareFunctionNever;
-    case WGPUCompareFunction_Less:
-        return MTLCompareFunctionLess;
-    case WGPUCompareFunction_LessEqual:
-        return MTLCompareFunctionLessEqual;
-    case WGPUCompareFunction_Greater:
-        return MTLCompareFunctionGreater;
-    case WGPUCompareFunction_GreaterEqual:
-        return MTLCompareFunctionGreaterEqual;
-    case WGPUCompareFunction_Equal:
-        return MTLCompareFunctionEqual;
-    case WGPUCompareFunction_NotEqual:
-        return MTLCompareFunctionNotEqual;
-    case WGPUCompareFunction_Undefined:
-    case WGPUCompareFunction_Always:
+    if (!compareFunction)
         return MTLCompareFunctionAlways;
-    case WGPUCompareFunction_Force32:
-        ASSERT_NOT_REACHED();
+
+    switch (*compareFunction) {
+    case WebGPU::CompareFunction::Never:
+        return MTLCompareFunctionNever;
+    case WebGPU::CompareFunction::Less:
+        return MTLCompareFunctionLess;
+    case WebGPU::CompareFunction::LessEqual:
+        return MTLCompareFunctionLessEqual;
+    case WebGPU::CompareFunction::Greater:
+        return MTLCompareFunctionGreater;
+    case WebGPU::CompareFunction::GreaterEqual:
+        return MTLCompareFunctionGreaterEqual;
+    case WebGPU::CompareFunction::Equal:
+        return MTLCompareFunctionEqual;
+    case WebGPU::CompareFunction::NotEqual:
+        return MTLCompareFunctionNotEqual;
+    case WebGPU::CompareFunction::Always:
         return MTLCompareFunctionAlways;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static uint32_t miscHash(MTLSamplerDescriptor* descriptor)
@@ -174,7 +168,7 @@ static Sampler::UniqueSamplerIdentifier computeDescriptorHash(MTLSamplerDescript
     return std::array<uint32_t, 4> { miscHash(descriptor), floatToUint32(descriptor.lodMinClamp), floatToUint32(descriptor.lodMaxClamp), floatToUint32(descriptor.maxAnisotropy) };
 }
 
-static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSamplerDescriptor &descriptor)
+static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WebGPU::SamplerDescriptor& descriptor)
 {
     MTLSamplerDescriptor *samplerDescriptor = [MTLSamplerDescriptor new];
 
@@ -192,7 +186,7 @@ static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSampl
     // https://developer.apple.com/documentation/metal/mtlsamplerdescriptor/1516164-maxanisotropy?language=objc
     // "Values must be between 1 and 16, inclusive."
     samplerDescriptor.maxAnisotropy = std::min<uint16_t>(descriptor.maxAnisotropy, 16);
-    samplerDescriptor.label = fromAPI(descriptor.label).createNSString().get();
+    samplerDescriptor.label = descriptor.label.createNSString().get();
 
     return samplerDescriptor;
 }
@@ -221,7 +215,7 @@ static NSUInteger samplerStateHardLimit(id<MTLDevice> device)
 // Most programs allocate one or two Samplers and that's it. But extreme test cases, at least,
 // can churn through more. We want to be robust in the face of the hard limit Metal puts on the
 // number of MTLSamplerStates that can be live at the same time.
-static id<MTLSamplerState> tryCacheSamplerState(const Sampler::UniqueSamplerIdentifier& samplerIdentifier, id<MTLDevice> device, const WGPUSamplerDescriptor& descriptor)
+static id<MTLSamplerState> tryCacheSamplerState(const Sampler::UniqueSamplerIdentifier& samplerIdentifier, id<MTLDevice> device, const WebGPU::SamplerDescriptor& descriptor)
 {
     Locker locker { samplerStatesLock };
     auto& samplerStates = WebGPU::Metal::samplerStates();
@@ -275,7 +269,7 @@ static void uncacheSamplerState(const Sampler::UniqueSamplerIdentifier& samplerI
         samplerStates.remove(it);
 }
 
-Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
+Ref<Sampler> Device::createSampler(const WebGPU::SamplerDescriptor& descriptor)
 {
     if (!isValid())
         return Sampler::createInvalid(*this);
@@ -293,9 +287,9 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Sampler);
 
-Sampler::Sampler(UniqueSamplerIdentifier&& samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
+Sampler::Sampler(UniqueSamplerIdentifier&& samplerIdentifier, const WebGPU::SamplerDescriptor& descriptor, Device& device)
     : m_samplerIdentifier(samplerIdentifier)
-    , m_label(fromAPI(descriptor.label).utf8())
+    , m_label(descriptor.label)
     , m_addressModeU(descriptor.addressModeU)
     , m_addressModeV(descriptor.addressModeV)
     , m_addressModeW(descriptor.addressModeW)
@@ -324,7 +318,7 @@ Sampler::~Sampler()
 
 void Sampler::setLabel(String&& label)
 {
-    m_label = label.utf8();
+    m_label = WTF::move(label);
 }
 
 bool Sampler::isValid() const
@@ -344,8 +338,8 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
     if (!device)
         return nil;
 
-    WGPUSamplerDescriptor descriptor {
-        .label = toAPI(m_label),
+    WebGPU::SamplerDescriptor descriptor {
+        .label = m_label,
         .addressModeU = m_addressModeU,
         .addressModeV = m_addressModeV,
         .addressModeW = m_addressModeW,

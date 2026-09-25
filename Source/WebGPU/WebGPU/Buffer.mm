@@ -58,7 +58,7 @@ static inline auto span(id<MTLBuffer> buffer, uint64_t byteOffset)
     return unsafeMakeSpan(static_cast<T*>(static_cast<void*>(byteSpan.data())), (byteOffset < buffer.length) ? (buffer.length - byteOffset) / sizeof(T) : 0);
 }
 
-static bool NODELETE validateDescriptor(const Device& device, const WGPUBufferDescriptor& descriptor)
+static bool NODELETE validateDescriptor(const Device& device, const WebGPU::BufferDescriptor& descriptor)
 {
     UNUSED_PARAM(device);
 
@@ -69,13 +69,13 @@ static bool NODELETE validateDescriptor(const Device& device, const WGPUBufferDe
 
     // FIXME: "If any of the bits of descriptor’s usage aren’t present in this device’s [[allowed buffer usages]] return false."
 
-    if ((descriptor.usage & WGPUBufferUsage_MapRead) && (descriptor.usage & WGPUBufferUsage_MapWrite))
+    if (descriptor.usage.containsAll({ WebGPU::BufferUsage::MapRead, WebGPU::BufferUsage::MapWrite }))
         return false;
 
     return true;
 }
 
-static bool NODELETE validateCreateBuffer(const Device& device, const WGPUBufferDescriptor& descriptor)
+static bool NODELETE validateCreateBuffer(const Device& device, const WebGPU::BufferDescriptor& descriptor)
 {
     if (!device.isValid())
         return false;
@@ -83,18 +83,15 @@ static bool NODELETE validateCreateBuffer(const Device& device, const WGPUBuffer
     if (!validateDescriptor(device, descriptor))
         return false;
 
+    // The C API conversion already rejected unknown usage bits.
     auto usage = descriptor.usage;
-    if (!usage)
+    if (usage.isEmpty())
         return false;
 
-    constexpr auto allUsages = (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc | WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index | WGPUBufferUsage_Vertex | WGPUBufferUsage_Uniform | WGPUBufferUsage_Storage | WGPUBufferUsage_Indirect | WGPUBufferUsage_QueryResolve);
-    if (!(usage & allUsages) || usage > allUsages)
+    if (usage.contains(WebGPU::BufferUsage::MapRead) && !usage.containsOnly({ WebGPU::BufferUsage::CopyDestination, WebGPU::BufferUsage::MapRead }))
         return false;
 
-    if ((usage & WGPUBufferUsage_MapRead) && (usage & ~WGPUBufferUsage_CopyDst & ~WGPUBufferUsage_MapRead))
-        return false;
-
-    if ((usage & WGPUBufferUsage_MapWrite) && (usage & ~WGPUBufferUsage_CopySrc & ~WGPUBufferUsage_MapWrite))
+    if (usage.contains(WebGPU::BufferUsage::MapWrite) && !usage.containsOnly({ WebGPU::BufferUsage::CopySource, WebGPU::BufferUsage::MapWrite }))
         return false;
 
     if (descriptor.mappedAtCreation && (descriptor.size % 4))
@@ -106,13 +103,13 @@ static bool NODELETE validateCreateBuffer(const Device& device, const WGPUBuffer
     return true;
 }
 
-static MTLStorageMode NODELETE storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsage usage, bool mappedAtCreation)
+static MTLStorageMode NODELETE storageMode(bool deviceHasUnifiedMemory, OptionSet<WebGPU::BufferUsage> usage, bool mappedAtCreation)
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (usage & (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_Index))
+    if (usage.containsAny({ WebGPU::BufferUsage::MapRead, WebGPU::BufferUsage::MapWrite, WebGPU::BufferUsage::Index }))
         return MTLStorageModeManaged;
     if (mappedAtCreation)
         return MTLStorageModeManaged;
@@ -138,7 +135,7 @@ id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, bool skipAttribution) 
     return safeCreateBuffer(length, MTLStorageModeShared, skipAttribution);
 }
 
-Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
+Ref<Buffer> Device::createBuffer(const WebGPU::BufferDescriptor& descriptor)
 {
     if (!isValid())
         return Buffer::createInvalid(*this);
@@ -161,7 +158,7 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
         return Buffer::createInvalid(*this);
     }
 
-    buffer.label = fromAPI(descriptor.label).createNSString().get();
+    buffer.label = descriptor.label.createNSString().get();
 
     auto initialMapState = Buffer::State::Unmapped;
     auto initialMappingRange = Buffer::MappingRange {
@@ -183,7 +180,7 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Buffer);
 
-Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsage usage, State initialState, MappingRange initialMappingRange, Device& device)
+Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, OptionSet<WebGPU::BufferUsage> usage, State initialState, MappingRange initialMappingRange, Device& device)
     : m_buffer(buffer)
     , m_initialSize(initialSize)
     , m_usage(usage)
@@ -281,7 +278,7 @@ bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
     return true;
 }
 
-static size_t NODELETE computeRangeSize(uint64_t size, size_t offset)
+static uint64_t NODELETE computeRangeSize(uint64_t size, uint64_t offset)
 {
     auto result = checkedDifference<uint64_t>(size, offset);
     if (result.hasOverflowed())
@@ -289,20 +286,36 @@ static size_t NODELETE computeRangeSize(uint64_t size, size_t offset)
     return result.value();
 }
 
-std::span<uint8_t> Buffer::getMappedRange(size_t offset, size_t size)
+// The offset and size of a mapped range as size_t. std::nullopt when either does not fit in size_t
+// (32-bit platforms): no buffer is that large, so such a range is out of bounds.
+static std::optional<std::pair<size_t, size_t>> NODELETE mappedRangeOffsetAndSize(uint64_t bufferSize, uint64_t offset, std::optional<uint64_t> size)
 {
+    uint64_t rangeSize = size ? *size : computeRangeSize(bufferSize, offset);
+    if (!isInBounds<size_t>(offset) || !isInBounds<size_t>(rangeSize))
+        return std::nullopt;
+    return std::pair { static_cast<size_t>(offset), static_cast<size_t>(rangeSize) };
+}
+
+void Buffer::getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>& callback)
+{
+    callback(getMappedRangeSpan(offset, size));
+}
+
+std::span<uint8_t> Buffer::getMappedRangeSpan(uint64_t apiOffset, std::optional<uint64_t> size)
+{
+    // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
+    auto offsetAndSize = mappedRangeOffsetAndSize(currentSize(), apiOffset, size);
+    if (!offsetAndSize)
+        return std::span<uint8_t> { };
+    auto [offset, rangeSize] = *offsetAndSize;
+
 #if ENABLE(WEBGPU_SWIFT)
     if (isWebGPUSwiftEnabled())
-        return bufferGetMappedRange(this, offset, size);
+        return bufferGetMappedRange(this, offset, rangeSize);
 #endif
 
-    // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
     if (!isValid())
         return std::span<uint8_t> { };
-
-    auto rangeSize = size;
-    if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = computeRangeSize(this->currentSize(), offset);
 
     if (!validateGetMappedRange(offset, rangeSize))
         return std::span<uint8_t> { };
@@ -320,7 +333,7 @@ std::span<uint8_t> Buffer::getBufferContents()
     return span<uint8_t>(m_buffer);
 }
 
-void Buffer::bufferCopy(std::span<const uint8_t> data, size_t offset)
+void Buffer::copyFrom(std::span<const uint8_t> data, size_t offset)
 {
 #if ENABLE(WEBGPU_SWIFT)
     bufferCopyFrom(this, data, offset);
@@ -330,7 +343,7 @@ void Buffer::bufferCopy(std::span<const uint8_t> data, size_t offset)
 #endif
 }
 
-NSString *Buffer::errorValidatingMapAsync(WGPUMapMode mode, size_t offset, size_t rangeSize) const
+NSString *Buffer::errorValidatingMapAsync(OptionSet<WebGPU::MapMode> mode, size_t offset, size_t rangeSize) const
 {
 #define ERROR_STRING(x) (@"GPUBuffer.mapAsync: " x)
     if (!isValid())
@@ -349,34 +362,31 @@ NSString *Buffer::errorValidatingMapAsync(WGPUMapMode mode, size_t offset, size_
     if (m_state != State::Unmapped)
         return ERROR_STRING(@"state != Unmapped");
 
-    auto readWriteModeFlags = mode & (WGPUMapMode_Read | WGPUMapMode_Write);
-    if (readWriteModeFlags != WGPUMapMode_Read && readWriteModeFlags != WGPUMapMode_Write)
+    if (mode != WebGPU::MapMode::Read && mode != WebGPU::MapMode::Write)
         return ERROR_STRING(@"readWriteModeFlags != Read && readWriteModeFlags != Write");
 
-    if ((mode & WGPUMapMode_Read) && !(m_usage & WGPUBufferUsage_MapRead))
+    if (mode.contains(WebGPU::MapMode::Read) && !m_usage.contains(WebGPU::BufferUsage::MapRead))
         return ERROR_STRING(@"(mode & Read) && !(usage & Read)");
 
-    if ((mode & WGPUMapMode_Write) && !(m_usage & WGPUBufferUsage_MapWrite))
+    if (mode.contains(WebGPU::MapMode::Write) && !m_usage.contains(WebGPU::BufferUsage::MapWrite))
         return ERROR_STRING(@"(mode & Write) && !(usage & Write)");
 
 #undef ERROR_STRING
     return nil;
 }
 
-void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHandler<void(WGPUMapAsyncStatus)>&& callback)
+void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapasync
 
-    auto rangeSize = size;
-    if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = computeRangeSize(currentSize(), offset);
+    auto offsetAndSize = mappedRangeOffsetAndSize(currentSize(), apiOffset, size);
 
     Ref device = m_device;
 
-    if (NSString* error = errorValidatingMapAsync(mode, offset, rangeSize)) {
+    if (NSString* error = offsetAndSize ? errorValidatingMapAsync(mode, offsetAndSize->first, offsetAndSize->second) : @"GPUBuffer.mapAsync: offset and rangeSize overflowed") {
         device->generateAValidationError(error);
 
-        callback(WGPUMapAsyncStatus_ValidationError);
+        callback(false);
         return;
     }
 
@@ -385,7 +395,7 @@ void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHa
 
     m_mapMode = mode;
 
-    device->getQueue()->onSubmittedWorkDone([protectedThis = protect(*this), offset, rangeSize, callback = WTF::move(callback)](WGPUQueueWorkDoneStatus status) mutable {
+    device->getQueue()->onSubmittedWorkDone([protectedThis = protect(*this), offset = offsetAndSize->first, rangeSize = offsetAndSize->second, callback = WTF::move(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->setState(State::Mapped);
 
@@ -394,24 +404,8 @@ void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHa
             protectedThis->m_mappedRanges = MappedRanges();
         }
 
-        switch (status) {
-        case WGPUQueueWorkDoneStatus_Success:
-            callback(WGPUMapAsyncStatus_Success);
-            return;
-        case WGPUQueueWorkDoneStatus_Error:
-            callback(WGPUMapAsyncStatus_ValidationError);
-            return;
-        case WGPUQueueWorkDoneStatus_Unknown:
-            callback(WGPUMapAsyncStatus_Unknown);
-            return;
-        case WGPUQueueWorkDoneStatus_DeviceLost:
-            callback(WGPUMapAsyncStatus_DeviceLost);
-            return;
-        case WGPUQueueWorkDoneStatus_Force32:
-            ASSERT_NOT_REACHED();
-            callback(WGPUMapAsyncStatus_ValidationError);
-            return;
-        }
+        ASSERT(status != WGPUQueueWorkDoneStatus_Force32);
+        callback(status == WGPUQueueWorkDoneStatus_Success);
     });
 }
 
@@ -607,7 +601,7 @@ bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortI
 
 void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 {
-    if (!(m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index)))
+    if (!m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
         return;
 
     if (auto currentSize = computeSize(m_skippedValidationCommandEncoders, m_device.get())) {
@@ -675,7 +669,7 @@ WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 
 std::span<uint8_t> wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return protect(WebGPU::Metal::fromAPI(buffer))->getMappedRange(offset, size);
+    return protect(WebGPU::Metal::fromAPI(buffer))->getMappedRangeSpan(offset, WebGPU::Metal::mapSizeFromAPI(size));
 }
 
 std::span<uint8_t> wgpuBufferGetBufferContents(WGPUBuffer buffer)
@@ -693,17 +687,29 @@ uint64_t wgpuBufferGetCurrentSize(WGPUBuffer buffer)
     return protect(WebGPU::Metal::fromAPI(buffer))->currentSize();
 }
 
+// mapAsync() validates only the Read and Write bits of the mode, as in the WebGPU specification, so the
+// conversion drops unknown bits instead of failing.
+static OptionSet<WebGPU::MapMode> mapModeFromAPIIgnoringUnknownBits(WGPUMapMode mode)
+{
+    return *WebGPU::Metal::mapModeFromAPI(mode & (WGPUMapMode_Read | WGPUMapMode_Write));
+}
+
+static WGPUMapAsyncStatus mapAsyncStatusToAPI(bool success)
+{
+    return success ? WGPUMapAsyncStatus_Success : WGPUMapAsyncStatus_ValidationError;
+}
+
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
-    protect(WebGPU::Metal::fromAPI(buffer))->mapAsync(mode, offset, size, [callback, userdata](WGPUMapAsyncStatus status) {
-        callback(status, userdata);
+    protect(WebGPU::Metal::fromAPI(buffer))->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::Metal::mapSizeFromAPI(size), [callback, userdata](bool success) {
+        callback(mapAsyncStatusToAPI(success), userdata);
     });
 }
 
 void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
 {
-    protect(WebGPU::Metal::fromAPI(buffer))->mapAsync(mode, offset, size, [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPUMapAsyncStatus status) {
-        callback(status);
+    protect(WebGPU::Metal::fromAPI(buffer))->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::Metal::mapSizeFromAPI(size), [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](bool success) {
+        callback(mapAsyncStatusToAPI(success));
     });
 }
 
@@ -724,13 +730,13 @@ void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
 
 WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
 {
-    return WebGPU::Metal::fromAPI(buffer).usage();
+    return WebGPU::Metal::toAPI(WebGPU::Metal::fromAPI(buffer).usage());
 }
 
 void wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
 {
 #if ENABLE(WEBGPU_SWIFT)
-    protect(WebGPU::Metal::fromAPI(buffer))->bufferCopy(data, offset);
+    protect(WebGPU::Metal::fromAPI(buffer))->copyFrom(data, offset);
 #else
     UNUSED_PARAM(buffer);
     UNUSED_PARAM(data);

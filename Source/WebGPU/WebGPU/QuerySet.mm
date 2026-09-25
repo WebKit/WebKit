@@ -39,7 +39,7 @@ Lock QuerySet::querySetLock;
 __attribute__((no_destroy)) std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> QuerySet::m_counterSampleBuffers;
 __attribute__((no_destroy)) std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> QuerySet::m_counterSampleBufferFreeRanges;
 
-Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
+Ref<QuerySet> Device::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor)
 {
     QuerySet::createContainersIfNeeded();
 
@@ -50,24 +50,20 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::createInvalid(*this);
     }
 
-    auto label = descriptor.label;
-    auto type = descriptor.type;
-
-    switch (type) {
-    case WGPUQueryType_Timestamp: {
+    switch (descriptor.type) {
+    case WebGPU::QueryType::Timestamp: {
         auto querySetWithOffset = QuerySet::counterSampleBufferWithOffsetForDevice(count, *this);
         if (!querySetWithOffset.buffer)
             return QuerySet::createInvalid(*this);
 
-        return QuerySet::create(WTF::move(querySetWithOffset), count, type, *this);
-    } case WGPUQueryType_Occlusion: {
+        return QuerySet::create(WTF::move(querySetWithOffset), count, WGPUQueryType_Timestamp, *this);
+    } case WebGPU::QueryType::Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
-        buffer.label = fromAPI(label).createNSString().get();
-        return QuerySet::create(buffer, count, type, *this);
+        buffer.label = descriptor.label.createNSString().get();
+        return QuerySet::create(buffer, count, WGPUQueryType_Occlusion, *this);
     }
-    case WGPUQueryType_Force32:
-        return QuerySet::createInvalid(*this);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(QuerySet);

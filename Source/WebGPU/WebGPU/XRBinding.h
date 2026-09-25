@@ -59,7 +59,7 @@ public:
     void NODELETE setLabel(String&&) final;
 
     bool NODELETE isValid() const final;
-    Ref<XRProjectionLayer> createXRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsage, double);
+    Ref<XRProjectionLayer> createProjectionLayer(const WebGPU::XRProjectionLayerDescriptor&);
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&);
     Device& device() { return m_device; }
 
