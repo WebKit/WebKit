@@ -326,13 +326,13 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     Vector<String> cachePartitions { cookiePartitionIdentifier(origin.topOrigin.toURL()) };
     if (origin.topOrigin == origin.clientOrigin)
         cachePartitions.append({ });
-    auto domain = origin.clientOrigin.host();
+    RegistrableDomain domain { origin.clientOrigin };
 
     deleteCookiesMatching([&domain, &cachePartitions](auto *cookie) {
         bool partitionMatched = std::ranges::any_of(cachePartitions, [&cookie](auto& cachePartition) {
             return equalIgnoringNullity(cachePartition, String(cookie._storagePartition));
         });
-        return partitionMatched && domain == String(cookie.domain);
+        return partitionMatched && RegistrableDomain::uncheckedCreateFromHost(cookie.domain) == domain;
     }, WTF::move(completionHandler));
 }
 
