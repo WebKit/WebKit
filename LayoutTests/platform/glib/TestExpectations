@@ -1747,6 +1747,9 @@ webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-4.html [ ImageOnlyFa
 fast/text/otsvg-spacing.html [ ImageOnlyFailure ]
 fast/text/otsvg-spacing-canvas.html [ ImageOnlyFailure ]
 
+# currentColor in gradient stops resolves to black; fixed upstream in skia CL 1355816.
+webkit.org/b/323792 fast/text/otsvg-currentcolor-gradient-stops.html [ ImageOnlyFailure ]
+
 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 
 # system-ui support
