@@ -984,7 +984,8 @@ private:
     // Notifications APIs
     bool isNotificationsMessageAllowed(IPC::Decoder&);
 
-    void notificationsCreate(const WebExtensionNotificationParameters&, CompletionHandler<void()>&&);
+    void notificationsCreate(const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void notificationsUpdate(const String& identifier, const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

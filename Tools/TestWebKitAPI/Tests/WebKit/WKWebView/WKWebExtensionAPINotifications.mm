@@ -80,6 +80,7 @@ TEST_F(WKWebExtensionAPINotifications, APIsAvailableWhenPermissionGranted)
     auto *script = @[
         @"browser.test.assertFalse(browser.notifications === undefined)",
         @"browser.test.assertFalse(browser.notifications.create === undefined)",
+        @"browser.test.assertFalse(browser.notifications.update === undefined)",
         @"browser.test.notifyPass()",
     ];
 
@@ -204,6 +205,105 @@ TEST_F(WKWebExtensionAPINotifications, CreateGeneratesIdentifierWhenOmitted)
     EXPECT_NOT_NULL(presentedNotification.get());
     EXPECT_GT([presentedNotification.get().identifier length], 0UL);
     EXPECT_NS_EQUAL(presentedNotification.get().identifier, resolvedIdentifier);
+}
+
+TEST_F(WKWebExtensionAPINotifications, CreateRejectsWhenBrowserReportsError)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' }), /notifications\\.create/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(notificationsManifest, @{ @"background.js": Util::constructScript(script) }, notificationsConfig);
+}
+
+TEST_F(WKWebExtensionAPINotifications, UpdateReturnsFalseForUnknownIdentifier)
+{
+    auto *script = @[
+        @"const wasUpdated = await browser.notifications.update('does-not-exist', { message: 'M' })",
+        @"browser.test.assertFalse(wasUpdated, 'update() should resolve false when no notification matches')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    __block bool updateDelegateCalled = false;
+    manager.get().internalDelegate.updateNotification = ^(_WKWebExtensionNotification *) {
+        updateDelegateCalled = true;
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_FALSE(updateDelegateCalled);
+}
+
+TEST_F(WKWebExtensionAPINotifications, UpdateDoesNotRequireCreateKeys)
+{
+    auto *script = @[
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"await browser.notifications.update('note', {})",
+        @"await browser.notifications.update('note', { title: 'Only title' })",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+    manager.get().internalDelegate.updateNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPINotifications, UpdateMergesSuppliedFieldsAndRePresentsThroughDelegate)
+{
+    auto *script = @[
+        @"await browser.notifications.create('note', {",
+        @"  type: 'basic',",
+        @"  title: 'Original Title',",
+        @"  message: 'Original body',",
+        @"  contextMessage: 'Original subtitle',",
+        @"  buttons: [ { title: 'Only' } ],",
+        @"})",
+        @"const wasUpdated = await browser.notifications.update('note', { message: 'New body' })",
+        @"browser.test.assertTrue(wasUpdated, 'update() should resolve true for an existing notification')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    RetainPtr<_WKWebExtensionNotification> updatedNotification;
+    auto *updatedNotificationPtr = &updatedNotification;
+    manager.get().internalDelegate.updateNotification = ^(_WKWebExtensionNotification *notification) {
+        *updatedNotificationPtr = notification;
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NOT_NULL(updatedNotification.get());
+    EXPECT_EQ(updatedNotification.get().webExtensionContext, manager.get().context);
+    EXPECT_NS_EQUAL(updatedNotification.get().identifier, @"note");
+    EXPECT_NS_EQUAL(updatedNotification.get().title, @"Original Title");
+    EXPECT_NS_EQUAL(updatedNotification.get().body, @"New body");
+    EXPECT_NS_EQUAL(updatedNotification.get().subtitle, @"Original subtitle");
+    EXPECT_EQ(updatedNotification.get().buttons.count, 1UL);
+    EXPECT_NS_EQUAL(updatedNotification.get().buttons.firstObject.title, @"Only");
+}
+
+TEST_F(WKWebExtensionAPINotifications, UpdateRejectsWhenBrowserReportsError)
+{
+    auto *script = @[
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"await browser.test.assertRejects(browser.notifications.update('note', { message: 'New body' }), /notifications\\.update/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager loadAndRun];
 }
 
 } // namespace TestWebKitAPI
