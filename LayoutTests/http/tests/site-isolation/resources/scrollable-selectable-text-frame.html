@@ -11,6 +11,9 @@ document.getElementById("content").innerHTML = markup;
 document.addEventListener("selectionchange", () => {
     window.top.postMessage("selection:" + getSelection().toString(), "*");
 });
+document.addEventListener("scroll", () => {
+    window.top.postMessage("scrollY:" + document.scrollingElement.scrollTop, "*");
+});
 
 // Scroll the frame by a known amount before signaling readiness so the parent can verify that
 // hit-testing accounts for the subframe's scroll offset. The amount is configurable via the

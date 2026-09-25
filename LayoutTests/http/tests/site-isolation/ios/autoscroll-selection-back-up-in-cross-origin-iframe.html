@@ -1,0 +1,71 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Dragging a selection end grabber below a cross-origin iframe should autoscroll it down, and then dragging the same grabber above the iframe's top edge without lifting should autoscroll it back up.");
+jsTestIsAsync = true;
+
+// The iframe is offset by (50, 100) in the main frame, is 300px tall, and its document starts scrolled
+// down by 120px, so a long-press at viewport y=(100+20) lands on contents y=(20+120)=140, i.e. "token3".
+// The main frame itself is not scrollable, so the only thing that can scroll is the iframe's document.
+const iframeLeft = 50;
+const iframeTop = 100;
+const iframeHeight = 300;
+const initialScrollY = 120;
+
+let reportedSelection = "";
+let reportedScrollY = initialScrollY;
+let maximumScrollY = initialScrollY;
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+    else if (typeof event.data === "string" && event.data.startsWith("scrollY:")) {
+        reportedScrollY = parseInt(event.data.substring("scrollY:".length));
+        maximumScrollY = Math.max(maximumScrollY, reportedScrollY);
+    }
+});
+
+async function selectWord() {
+    for (let attempt = 0; attempt < 20 && !reportedSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(iframeLeft + 30, iframeTop + 20);
+        for (let frame = 0; frame < 10 && !reportedSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+}
+
+let initialSelection = "";
+let finalScrollY = 0;
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await selectWord();
+    await UIHelper.waitForSelectionToAppear();
+    initialSelection = reportedSelection;
+    shouldBeEqualToString("initialSelection", "token3");
+
+    // Drag the end grabber below the iframe's bottom edge and hold it there so the iframe autoscrolls
+    // down, then, without lifting, drag it above the iframe's top edge and hold it there so the iframe
+    // autoscrolls back up.
+    const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(grabber.x, grabber.y)
+        .wait(0.5)
+        .move(grabber.x, iframeTop + iframeHeight + 60, 0.5)
+        .wait(2)
+        .move(grabber.x, 5, 0.5)
+        .wait(2)
+        .end()
+        .takeResult());
+
+    for (let frame = 0; frame < 10; ++frame)
+        await UIHelper.animationFrame();
+
+    finalScrollY = reportedScrollY;
+    shouldBeTrue("maximumScrollY > initialScrollY");
+    shouldBeTrue("finalScrollY < maximumScrollY");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 50px; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/scrollable-selectable-text-frame.html?scrollTop=120"></iframe>

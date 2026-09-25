@@ -3170,7 +3170,7 @@ void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWin
     if (!renderer)
         return completionHandler(false);
 
-    completionHandler(frame->eventHandler().startSelectionAutoscroll(renderer.get(), positionInWindow));
+    completionHandler(frame->eventHandler().startSelectionAutoscroll(renderer.get(), mainFrameCoordinatesToRootView(roundedIntPoint(positionInWindow))));
 }
 
 void WebPage::cancelAutoscroll()

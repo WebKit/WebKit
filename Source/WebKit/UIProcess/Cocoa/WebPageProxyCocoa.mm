@@ -2340,19 +2340,19 @@ void WebPageProxy::startAutoscrollAtPosition(const WebCore::FloatPoint& position
     if (m_autoscrollState == AutoscrollState::Inactive)
         m_autoscrollState = AutoscrollState::Pending;
 
-    protect(m_legacyMainFrameProcess)->sendWithAsyncReply(Messages::WebPage::StartAutoscrollAtPosition(positionInWindow), [weakThis = WeakPtr { *this }](bool didStartAutoscrolling) {
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::StartAutoscrollAtPosition(positionInWindow), Messages::WebPage::StartAutoscrollAtPosition::Reply { [weakThis = WeakPtr { *this }](bool didStartAutoscrolling) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->m_autoscrollState == AutoscrollState::Inactive)
             return;
 
         protectedThis->m_autoscrollState = didStartAutoscrolling ? AutoscrollState::Active : AutoscrollState::Inactive;
-    }, webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebPageProxy::cancelAutoscroll()
 {
     m_autoscrollState = AutoscrollState::Inactive;
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::CancelAutoscroll(), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::CancelAutoscroll());
 }
 
 #if ENABLE(TWO_PHASE_CLICKS)

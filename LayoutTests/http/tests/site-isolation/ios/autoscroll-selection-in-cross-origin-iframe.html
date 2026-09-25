@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Dragging a selection end grabber below the bottom edge of a cross-origin iframe and holding it there should autoscroll the iframe's content, the same way it would for an in-process iframe.");
+jsTestIsAsync = true;
+
+// The iframe is offset by (50, 100) in the main frame, is 300px tall, and its document starts scrolled
+// down by 120px, so a long-press at viewport y=(100+20) lands on contents y=(20+120)=140, i.e. "token3".
+// The main frame itself is not scrollable, so the only thing that can scroll is the iframe's document.
+const iframeLeft = 50;
+const iframeTop = 100;
+const iframeHeight = 300;
+const initialScrollY = 120;
+
+let reportedSelection = "";
+let reportedScrollY = initialScrollY;
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+    else if (typeof event.data === "string" && event.data.startsWith("scrollY:"))
+        reportedScrollY = parseInt(event.data.substring("scrollY:".length));
+});
+
+async function selectWord() {
+    for (let attempt = 0; attempt < 20 && !reportedSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(iframeLeft + 30, iframeTop + 20);
+        for (let frame = 0; frame < 10 && !reportedSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+}
+
+let initialSelection = "";
+let finalScrollY = 0;
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await selectWord();
+    await UIHelper.waitForSelectionToAppear();
+    initialSelection = reportedSelection;
+    shouldBeEqualToString("initialSelection", "token3");
+
+    // Drag the end grabber to a point below the iframe's bottom edge and hold it there, giving
+    // UIKit's text autoscrolling time to repeatedly ask the iframe's process to autoscroll.
+    const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    const targetY = iframeTop + iframeHeight + 60;
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(grabber.x, grabber.y)
+        .wait(0.5)
+        .move(grabber.x, targetY, 0.5)
+        .wait(2)
+        .end()
+        .takeResult());
+
+    for (let frame = 0; frame < 10 && reportedScrollY <= initialScrollY; ++frame)
+        await UIHelper.animationFrame();
+
+    finalScrollY = reportedScrollY;
+    shouldBeTrue("finalScrollY > initialScrollY");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 50px; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/scrollable-selectable-text-frame.html?scrollTop=120"></iframe>
