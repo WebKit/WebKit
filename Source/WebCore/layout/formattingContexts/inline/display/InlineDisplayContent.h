@@ -47,6 +47,7 @@ struct Content {
     std::optional<Line::Ellipsis> NODELETE lineEllipsis(size_t) const;
     void setLineEllipsis(size_t line, Line::Ellipsis&&);
     void setEllipsisOnTrailingLine(Line::Ellipsis&&);
+    bool hasLineEllipsisInBlockDirection(size_t lineIndex) const;
 
     void moveLineInBlockDirection(size_t, float offset);
     void shrinkLineInBlockDirection(size_t, float delta);

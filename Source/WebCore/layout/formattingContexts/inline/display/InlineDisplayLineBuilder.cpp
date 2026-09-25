@@ -206,10 +206,14 @@ static float truncateTextContentWithMismatchingDirection(InlineDisplay::Box& dis
     return TextUtil::width(inlineTextBox, displayBox.style().fontCascade(), visibleStartPosition, textContent.end(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
-static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float availableWidthForContent, bool canFullyTruncate)
+static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float availableWidthForContent, bool canFullyTruncate, bool isModernLineClamp)
 {
     if (displayBox.isText()) {
         if (!availableWidthForContent && canFullyTruncate) {
+            displayBox.setIsFullyTruncated();
+            return { };
+        }
+        if (isModernLineClamp && displayBox.style().textWrapMode() == TextWrapMode::NoWrap) {
             displayBox.setIsFullyTruncated();
             return { };
         }
@@ -242,7 +246,7 @@ static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float 
     return contentWidth;
 }
 
-static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes, size_t startIndex, size_t endIndex, float lineBoxVisualLeft, float lineBoxVisualRight, float ellipsisWidth, const Style::ComputedStyle& rootStyle, LineEndingTruncationPolicy lineEndingTruncationPolicy)
+static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes, size_t startIndex, size_t endIndex, float lineBoxVisualLeft, float lineBoxVisualRight, float ellipsisWidth, const Style::ComputedStyle& rootStyle, LineEndingTruncationPolicy lineEndingTruncationPolicy, bool isModernLineClamp)
 {
     ASSERT(endIndex && startIndex <= endIndex);
     // We gotta truncate some runs.
@@ -270,7 +274,7 @@ static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes
             if (displayBox.isInlineBox())
                 continue;
             if (right(displayBox) > visualRightForContentEnd) {
-                auto visibleWidth = truncate(displayBox, width(displayBox), std::max(0.f, visualRightForContentEnd - left(displayBox)), !isFirstContentRun);
+                auto visibleWidth = truncate(displayBox, width(displayBox), std::max(0.f, visualRightForContentEnd - left(displayBox)), !isFirstContentRun, isModernLineClamp);
                 auto truncatePosition = left(displayBox) + visibleWidth;
                 truncateRight = truncateRight.value_or(truncatePosition);
             }
@@ -291,7 +295,7 @@ static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes
         if (displayBox.isInlineBox())
             continue;
         if (left(displayBox) < visualLeftForContentEnd) {
-            auto visibleWidth = truncate(displayBox, width(displayBox), std::max(0.f, right(displayBox) - visualLeftForContentEnd), !isFirstContentRun);
+            auto visibleWidth = truncate(displayBox, width(displayBox), std::max(0.f, right(displayBox) - visualLeftForContentEnd), !isFirstContentRun, isModernLineClamp);
             auto truncatePosition = right(displayBox) - visibleWidth;
             truncateLeft = truncateLeft.value_or(truncatePosition);
         }
@@ -302,7 +306,7 @@ static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes
     return truncateLeft.value_or(left(boxes.front())) - ellipsisWidth;
 }
 
-static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, String ellipsisText, const InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes)
+static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, String ellipsisText, const InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes, bool isModernLineClamp)
 {
     ASSERT(lineEndingTruncationPolicy != LineEndingTruncationPolicy::NoTruncation);
     if (displayBoxes.empty())
@@ -349,7 +353,7 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
     } else {
         auto lineBoxVisualLeft = rootStyle->writingMode().isHorizontal() ? displayLine.left() : displayLine.top();
         auto lineBoxVisualRight = std::max(rootStyle->writingMode().isHorizontal() ? displayLine.right() : displayLine.bottom(), lineBoxVisualLeft);
-        ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, 0, displayBoxes.size() - 1, lineBoxVisualLeft, lineBoxVisualRight, ellipsisWidth, rootStyle, lineEndingTruncationPolicy);
+        ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, 0, displayBoxes.size() - 1, lineBoxVisualLeft, lineBoxVisualRight, ellipsisWidth, rootStyle, lineEndingTruncationPolicy, isModernLineClamp);
     }
 
     if (rootStyle->writingMode().isHorizontal())
@@ -395,7 +399,7 @@ static inline void makeRoomForLinkBoxOnClampedLineIfNeeded(auto& content, auto c
     };
     auto endIndex = insertionPosition - 1;
     auto ellispsisPosition = clampedLine.right() - linkContentWidth - legacyMatchingLinkBoxOffset;
-    auto ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, startIndex(), endIndex, clampedLine.left(), ellispsisPosition, ellipsisBoxRect.width(), rootStyle, LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection);
+    auto ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, startIndex(), endIndex, clampedLine.left(), ellispsisPosition, ellipsisBoxRect.width(), rootStyle, LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection, false);
     ellipsisBoxRect.setX(ellipsisStart);
 
     content.setLineEllipsis(clampedLineIndex, { InlineDisplay::Line::Ellipsis::Type::Block,
@@ -494,7 +498,7 @@ void InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(con
     clampedLine.setHasContentAfterEllipsisBox();
 }
 
-std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes, bool isLegacyLineClamp)
+std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes, LineClampType lineClampType)
 {
     if (truncationPolicy == LineEndingTruncationPolicy::NoTruncation || !displayBoxes.size())
         return { };
@@ -516,7 +520,7 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyElli
                 }
             );
         }
-        if (isLegacyLineClamp) {
+        if (lineClampType == LineClampType::Legacy) {
             // Legacy line clamp always uses ...
             return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
         }
@@ -536,7 +540,7 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyElli
     if (ellipsisText.isEmpty())
         return { };
 
-    auto ellipsisRect = trailingEllipsisVisualRectAfterTruncation(truncationPolicy, ellipsisText, displayLine, displayBoxes);
+    auto ellipsisRect = trailingEllipsisVisualRectAfterTruncation(truncationPolicy, ellipsisText, displayLine, displayBoxes, lineClampType == LineClampType::Modern);
     if (!ellipsisRect)
         return { };
 
