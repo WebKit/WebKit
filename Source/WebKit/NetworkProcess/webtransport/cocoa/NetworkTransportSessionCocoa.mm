@@ -444,9 +444,16 @@ void NetworkTransportSession::sendDatagram(std::optional<WebCore::WebTransportSe
         }).iterator->value += data.size();
     }
     ASSERT(m_datagramConnection);
-    nw_connection_send(m_datagramConnection.get(), makeDispatchData(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTF::move(completionHandler)] (nw_error_t error) mutable {
+
+    if (!m_datagramContext && m_datagramOutgoingMaxAge) {
+        m_datagramContext = adoptNS(nw_content_context_create("WebTransportDatagramSend"));
+        nw_content_context_set_expiration_milliseconds(m_datagramContext.get(), *m_datagramOutgoingMaxAge);
+    }
+
+    nw_connection_send(m_datagramConnection.get(), makeDispatchData(Vector(data)).get(), m_datagramContext ? m_datagramContext.get() : NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTF::move(completionHandler)] (nw_error_t error) mutable {
         if (error) {
-            if (nw_error_get_error_domain(error) == nw_error_domain_posix && nw_error_get_error_code(error) == ECANCELED)
+            auto posixErrorCode = nw_error_get_error_domain(error) == nw_error_domain_posix ? nw_error_get_error_code(error) : 0;
+            if (posixErrorCode == ECANCELED || posixErrorCode == ETIME || posixErrorCode == ETIMEDOUT)
                 completionHandler(std::nullopt);
             else
                 completionHandler(WebCore::Exception(WebCore::ExceptionCode::NetworkError));
@@ -630,6 +637,12 @@ void NetworkTransportSession::exportKeyingMaterial(std::span<const uint8_t> labe
         return request;
     };
     completionHandler(vectorFromData(data.get()));
+}
+
+void NetworkTransportSession::datagramOutgoingMaxAgeUpdated(std::optional<double> maxAge)
+{
+    m_datagramOutgoingMaxAge = maxAge;
+    m_datagramContext = nullptr;
 }
 
 }
