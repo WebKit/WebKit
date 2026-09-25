@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "HeapSnapshot.h"
+#include "HeapSnapshotInlines.h"
 
 #include <numeric>
 #include <wtf/DataLog.h>
@@ -64,8 +65,8 @@ void HeapSnapshot::sweepCell(JSCell* cell)
             if (cell == node.cell) {
                 // Cells should always have 0 as low bits.
                 // Mark this cell for removal by setting the low bit.
-                ASSERT(!(reinterpret_cast<intptr_t>(node.cell) & CellToSweepTag));
-                node.cell = reinterpret_cast<JSCell*>(reinterpret_cast<intptr_t>(node.cell) | CellToSweepTag);
+                ASSERT(!hasCellToSweepTag(node));
+                setCellToSweepTag(node);
                 m_hasCellsToSweep = true;
                 return;
             }
@@ -86,7 +87,7 @@ void HeapSnapshot::shrinkToFit()
         m_filter.reset();
         m_nodes.removeAllMatching(
             [&] (const HeapSnapshotNode& node) -> bool {
-                bool willRemoveCell = std::bit_cast<intptr_t>(node.cell) & CellToSweepTag;
+                bool willRemoveCell = hasCellToSweepTag(node);
                 if (!willRemoveCell)
                     m_filter.add(std::bit_cast<uintptr_t>(node.cell));
                 return willRemoveCell;
@@ -120,7 +121,7 @@ void HeapSnapshot::finalize()
     JSCell* previousCell = nullptr;
     for (auto& node : m_nodes) {
         ASSERT(node.cell);
-        ASSERT(!(reinterpret_cast<intptr_t>(node.cell) & CellToSweepTag));
+        ASSERT(!hasCellToSweepTag(node));
         if (node.cell == previousCell) {
             dataLog("Seeing same cell twice: ", RawPointer(previousCell), "\n");
             ASSERT(node.cell != previousCell);
@@ -174,7 +175,7 @@ std::optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned o
     }
 
     for (auto& node : m_nodes) {
-        if (node.identifier == objectIdentifier)
+        if (node.identifier == objectIdentifier && !hasCellToSweepTag(node))
             return std::optional<HeapSnapshotNode>(node);
     }
 
