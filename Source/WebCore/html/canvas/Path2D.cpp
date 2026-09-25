@@ -31,6 +31,7 @@
 #include "AffineTransform.h"
 #include "DOMMatrix2DInit.h"
 #include "DOMMatrixReadOnly.h"
+#include "SVGPathUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -38,6 +39,20 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Path2D);
 
 Path2D::~Path2D() = default;
+
+Ref<Path2D> Path2D::create(std::optional<PathInit>&& path)
+{
+    if (!path)
+        return adoptRef(*new Path2D);
+
+    return WTF::switchOn(WTF::move(*path),
+        [](Ref<Path2D>&& other) {
+            return create(other->path());
+        },
+        [](String&& pathData) {
+            return create(buildPathFromString(pathData));
+        });
+}
 
 ExceptionOr<void> Path2D::addPath(Path2D& path, DOMMatrix2DInit&& matrixInit)
 {
