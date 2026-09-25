@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,6 +239,93 @@ std::optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtual
         return '=';
     default:
         return charCodeForVirtualKey(key);
+    }
+}
+
+// The WebDriver key table (https://w3c.github.io/webdriver/#keyboard-actions) assigns each key a
+// DOM 'key', 'code' and location. Most can be inferred from a platform key code, but the keypad's
+// navigation keys are indistinguishable from the primary ones on iOS, which supplies no key code at
+// all, and several keys have no equivalent on Apple keyboards. State those explicitly so that both
+// platforms report the same thing. Keys absent from this table keep their derived values.
+std::optional<WebAutomationSession::KeyIdentity> WebAutomationSession::keyIdentityForVirtualKey(Inspector::Protocol::Automation::VirtualKey key)
+{
+    using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
+
+    switch (key) {
+    // Keys with no equivalent on Apple keyboards, so no key code can carry their identity.
+    case VirtualKey::Insert:
+        return { { "Insert"_s, "Insert"_s, false } };
+    case VirtualKey::Pause:
+        return { { "Pause"_s, "Pause"_s, false } };
+    case VirtualKey::Cancel:
+        return { { "Cancel"_s, emptyString(), false } };
+    case VirtualKey::Clear:
+        return { { "Clear"_s, emptyString(), false } };
+    case VirtualKey::Semicolon:
+        return { { ";"_s, emptyString(), false } };
+
+    // The keypad's "right hand" navigation keys.
+    case VirtualKey::PageUpRight:
+        return { { "PageUp"_s, "Numpad9"_s, true } };
+    case VirtualKey::PageDownRight:
+        return { { "PageDown"_s, "Numpad3"_s, true } };
+    case VirtualKey::EndRight:
+        return { { "End"_s, "Numpad1"_s, true } };
+    case VirtualKey::HomeRight:
+        return { { "Home"_s, "Numpad7"_s, true } };
+    case VirtualKey::LeftArrowRight:
+        return { { "ArrowLeft"_s, "Numpad4"_s, true } };
+    case VirtualKey::UpArrowRight:
+        return { { "ArrowUp"_s, "Numpad8"_s, true } };
+    case VirtualKey::RightArrowRight:
+        return { { "ArrowRight"_s, "Numpad6"_s, true } };
+    case VirtualKey::DownArrowRight:
+        return { { "ArrowDown"_s, "Numpad2"_s, true } };
+    case VirtualKey::InsertRight:
+        return { { "Insert"_s, "Numpad0"_s, true } };
+    case VirtualKey::DeleteRight:
+        return { { "Delete"_s, "NumpadDecimal"_s, true } };
+
+    // The rest of the keypad.
+    case VirtualKey::NumberPad0:
+        return { { "0"_s, "Numpad0"_s, true } };
+    case VirtualKey::NumberPad1:
+        return { { "1"_s, "Numpad1"_s, true } };
+    case VirtualKey::NumberPad2:
+        return { { "2"_s, "Numpad2"_s, true } };
+    case VirtualKey::NumberPad3:
+        return { { "3"_s, "Numpad3"_s, true } };
+    case VirtualKey::NumberPad4:
+        return { { "4"_s, "Numpad4"_s, true } };
+    case VirtualKey::NumberPad5:
+        return { { "5"_s, "Numpad5"_s, true } };
+    case VirtualKey::NumberPad6:
+        return { { "6"_s, "Numpad6"_s, true } };
+    case VirtualKey::NumberPad7:
+        return { { "7"_s, "Numpad7"_s, true } };
+    case VirtualKey::NumberPad8:
+        return { { "8"_s, "Numpad8"_s, true } };
+    case VirtualKey::NumberPad9:
+        return { { "9"_s, "Numpad9"_s, true } };
+    case VirtualKey::NumberPadMultiply:
+        return { { "*"_s, "NumpadMultiply"_s, true } };
+    case VirtualKey::NumberPadAdd:
+        return { { "+"_s, "NumpadAdd"_s, true } };
+    case VirtualKey::NumberPadSubtract:
+        return { { "-"_s, "NumpadSubtract"_s, true } };
+    case VirtualKey::NumberPadSeparator:
+        return { { ","_s, "NumpadComma"_s, true } };
+    case VirtualKey::NumberPadDecimal:
+        return { { "."_s, "NumpadDecimal"_s, true } };
+    case VirtualKey::NumberPadDivide:
+        return { { "/"_s, "NumpadDivide"_s, true } };
+    case VirtualKey::Equals:
+        return { { "="_s, "NumpadEqual"_s, true } };
+
+    default:
+        // Everything else, including the modifiers, keeps the identity derived from the platform
+        // event. Modifier location (left vs. right) is not expressible here.
+        return std::nullopt;
     }
 }
 

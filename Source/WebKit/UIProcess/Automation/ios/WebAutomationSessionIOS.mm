@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "WKWebView.h"
 #import "WebAutomationSessionMacros.h"
+#import "WebIOSEventFactory.h"
 #import "WebPageProxy.h"
 #import "_WKTouchEventGenerator.h"
 #import <WebCore/KeyEventCodesIOS.h>
@@ -153,6 +154,16 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
         [eventsToBeSent addObject:adoptNS([[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters.get() charactersIgnoringModifiers:unmodifiedCharacters.get() modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey]).get()];
         break;
     }
+    }
+
+    // iOS supplies no key code for virtual keys, so the DOM 'key', 'code' and keypad location
+    // cannot be inferred from the event. Where the WebDriver key table states them, attach them so
+    // the web process reports those values instead of the derived ones.
+    if (auto* virtualKey = std::get_if<VirtualKey>(&key)) {
+        if (auto identity = keyIdentityForVirtualKey(*virtualKey)) {
+            for (::WebEvent *event in eventsToBeSent.get())
+                WebIOSEventFactory::setAutomationKeyIdentity(event, identity->key, identity->code, identity->isKeypad);
+        }
     }
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
