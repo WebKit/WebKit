@@ -489,6 +489,7 @@ public:
     }
 
     void setHasMouseDeviceForTesting(bool);
+    void setHasFakePaymentUIForTesting(bool);
     void exitImmersive();
 
 private:

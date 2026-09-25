@@ -1572,6 +1572,11 @@ void TestRunner::setHasMouseDeviceForTesting(bool hasMouseDevice)
     postSynchronousPageMessage("SetHasMouseDeviceForTesting", hasMouseDevice);
 }
 
+void TestRunner::setHasFakePaymentUIForTesting(bool hasFakePaymentUI)
+{
+    postSynchronousPageMessage("SetHasFakePaymentUIForTesting", hasFakePaymentUI);
+}
+
 void TestRunner::exitImmersive()
 {
     postSynchronousPageMessage("ExitImmersive");

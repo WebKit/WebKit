@@ -1307,6 +1307,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetHasFakePaymentUIForTesting")) {
+        TestController::singleton().setHasFakePaymentUIForTesting(booleanValue(messageBody));
+        return nullptr;
+    }
+
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (WKStringIsEqualToUTF8CString(messageName, "ExitImmersive")) {
         TestController::singleton().exitImmersive();

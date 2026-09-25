@@ -82,6 +82,18 @@ private:
 };
 #endif
 
+#if PLATFORM(MAC) && ENABLE(APPLE_PAY)
+class FakePaymentUIForTesting {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FakePaymentUIForTesting);
+    WTF_MAKE_NONCOPYABLE(FakePaymentUIForTesting);
+public:
+    FakePaymentUIForTesting();
+private:
+    std::unique_ptr<ClassMethodSwizzler> m_requestViewControllerSwizzler;
+    std::unique_ptr<InstanceMethodSwizzler> m_beginSheetSwizzler;
+};
+#endif
+
 class AsyncTask {
 public:
     AsyncTask(WTF::Function<void ()>&& task, WTF::Seconds timeout)
@@ -486,9 +498,14 @@ public:
     bool useWorkQueue() const { return m_useWorkQueue; }
 
     void setHasMouseDeviceForTesting(bool);
+    void setHasFakePaymentUIForTesting(bool);
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     std::unique_ptr<FakeMouseDevice> m_fakeMouseDevice;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(APPLE_PAY)
+    std::unique_ptr<FakePaymentUIForTesting> m_fakePaymentUI;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)

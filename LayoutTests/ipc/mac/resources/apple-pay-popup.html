@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+(async () => {
+    if (!window.opener)
+        return;
+
+    if (!window.IPC)
+        return;
+
+    const { sendShowPaymentUI } = await import("./apple-pay-ipc.js");
+
+    sendShowPaymentUI();
+
+    window.opener.postMessage("popup-ready", "*");
+})();
+</script>
+</body>
+</html>

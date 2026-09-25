@@ -5396,4 +5396,10 @@ void TestController::setHasMouseDeviceForTesting(bool)
 }
 #endif
 
+#if !PLATFORM(MAC)
+void TestController::setHasFakePaymentUIForTesting(bool)
+{
+}
+#endif
+
 } // namespace WTR
