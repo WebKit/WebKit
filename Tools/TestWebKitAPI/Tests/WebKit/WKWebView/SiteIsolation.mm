@@ -5912,6 +5912,111 @@ TEST(SiteIsolation, CrossSiteIframeBackForwardEntryThenMainFrameBackTraversesWit
     testCrossSiteIframeBackForwardEntryThenMainFrameBack(false);
 }
 
+TEST(SiteIsolation, NestedCrossSiteIframeBackForwardEntryThenMainFrameBackTraverses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/nest'></iframe>"_s } },
+        { "/nest"_s, { "<iframe src='https://a.com/original'></iframe>"_s } },
+        { "/original"_s, { "<script>alert('original')</script>"_s } },
+        { "/navigated"_s, { "<script>alert('navigated')</script>"_s } },
+        { "/page2"_s, { "<script>alert('page2')</script><p>page2</p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    // Without this, goBack resurrects the suspended page instead of rebuilding the frame tree.
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().processPool = processPoolWithBackForwardCacheDisabled().get();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ("original", [webView _test_waitForAlert]);
+
+    RetainPtr<_WKFrameTreeNode> nestedChildFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+    [webView evaluateJavaScript:@"location.href = 'https://a.com/navigated'" inFrame:[nestedChildFrame info] completionHandler:nil];
+    EXPECT_WK_STREQ("navigated", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://a.com/navigated", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[nestedChildFrame info]]);
+
+    [webView evaluateJavaScript:@"location.href = 'https://example.com/page2'" completionHandler:nil];
+    EXPECT_WK_STREQ("page2", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://example.com/page2", [webView objectByEvaluatingJavaScript:@"location.href"]);
+
+    // Poll rather than wait for an alert, so a regression fails fast instead of hanging.
+    [webView goBack];
+    RetainPtr<NSString> mainURL;
+    for (int i = 0; i < 50; i++) {
+        mainURL = [webView objectByEvaluatingJavaScript:@"location.href"];
+        if ([mainURL isEqualToString:@"https://example.com/example"])
+            break;
+        Util::runFor(0.1_s);
+    }
+    EXPECT_WK_STREQ("https://example.com/example", mainURL.get());
+
+    RetainPtr<NSString> nestedChildURL;
+    for (int i = 0; i < 50; i++) {
+        nestedChildFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+        nestedChildURL = [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[nestedChildFrame info]];
+        if ([nestedChildURL isEqualToString:@"https://a.com/navigated"])
+            break;
+        Util::runFor(0.1_s);
+    }
+    EXPECT_WK_STREQ("https://a.com/navigated", nestedChildURL.get());
+}
+
+static void testNestedIframeBackForwardAfterSessionRestore(NSString *navigationURL, SessionRestoreMethod restoreMethod)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/nest'></iframe>"_s } },
+        { "/nest"_s, { "<iframe src='https://a.com/source'></iframe>"_s } },
+        { "/source"_s, { "<script> alert('source'); </script>"_s } },
+        { "/destination"_s, { "<script> alert('destination'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "source");
+
+    RetainPtr<_WKFrameTreeNode> nestedChildFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"location.href = '%@'", navigationURL] inFrame:[nestedChildFrame info] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
+
+    switch (restoreMethod) {
+    case SessionRestoreMethod::None:
+        break;
+    case SessionRestoreMethod::InPlace:
+        [webView _restoreSessionState:[webView _sessionState] andNavigate:NO];
+        break;
+    case SessionRestoreMethod::NewWebView: {
+        RetainPtr sessionState = [webView _sessionState];
+        auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+        [newWebView _restoreSessionState:sessionState.get() andNavigate:YES];
+        EXPECT_WK_STREQ([newWebView _test_waitForAlert], "destination");
+        webView = WTF::move(newWebView);
+        navigationDelegate = WTF::move(newNavigationDelegate);
+        break;
+    }
+    }
+
+    nestedChildFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+
+    [webView goBack];
+    EXPECT_WK_STREQ("source", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://a.com/source", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[nestedChildFrame info]]);
+
+    [webView goForward];
+    EXPECT_WK_STREQ("destination", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ(navigationURL, [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[nestedChildFrame info]]);
+
+    [webView goBack];
+    EXPECT_WK_STREQ("source", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://a.com/source", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[nestedChildFrame info]]);
+}
+
+TEST(SiteIsolation, NestedIframeCrossOriginBackForwardAfterSessionRestore)
+{
+    testNestedIframeBackForwardAfterSessionRestore(@"https://apple.com/destination", SessionRestoreMethod::InPlace);
+}
+
+TEST(SiteIsolation, NestedIframeCrossOriginBackForwardAfterSessionRestoreToNewWebView)
+{
+    testNestedIframeBackForwardAfterSessionRestore(@"https://apple.com/destination", SessionRestoreMethod::NewWebView);
+}
+
 TEST(SiteIsolation, CancelledChildAsyncBackForwardNotifiesParent)
 {
     HTTPServer server({
@@ -6366,6 +6471,40 @@ TEST(SiteIsolation, GoBackToCrossSiteIframeAfterPersistedSessionRestore)
     [newWebView goBack];
     EXPECT_WK_STREQ("source", [newWebView _test_waitForAlert]);
     EXPECT_WK_STREQ("https://webkit.org/source", [newWebView objectByEvaluatingJavaScript:@"location.href" inFrame:childFrame.get()]);
+
+    [newWebView goForward];
+    EXPECT_WK_STREQ("destination", [newWebView _test_waitForAlert]);
+}
+
+TEST(SiteIsolation, GoBackToNestedCrossSiteIframeAfterPersistedSessionRestore)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/nest'></iframe>"_s } },
+        { "/nest"_s, { "<iframe src='https://a.com/source'></iframe>"_s } },
+        { "/source"_s, { "<script> alert('source'); </script>"_s } },
+        { "/destination"_s, { "<script> alert('destination'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "source");
+
+    RetainPtr<_WKFrameTreeNode> nestedChildFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/destination'" inFrame:[nestedChildFrame info] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
+
+    RetainPtr sessionState = [webView _sessionState];
+    RetainPtr persistedSessionState = adoptNS([[_WKSessionState alloc] initWithData:[sessionState data]]);
+
+    auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [newWebView _restoreSessionState:persistedSessionState.get() andNavigate:YES];
+    EXPECT_WK_STREQ([newWebView _test_waitForAlert], "destination");
+
+    nestedChildFrame = [newWebView mainFrame].childFrames.firstObject.childFrames.firstObject;
+
+    [newWebView goBack];
+    EXPECT_WK_STREQ("source", [newWebView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://a.com/source", [newWebView objectByEvaluatingJavaScript:@"location.href" inFrame:[nestedChildFrame info]]);
 
     [newWebView goForward];
     EXPECT_WK_STREQ("destination", [newWebView _test_waitForAlert]);
