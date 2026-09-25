@@ -85,8 +85,8 @@ public:
     // to return the remaining width on a given line (and the height of a single line).
     virtual LayoutUnit offsetLeft() const;
     virtual LayoutUnit offsetTop() const;
-    virtual LayoutUnit offsetWidth() const = 0;
-    virtual LayoutUnit offsetHeight() const = 0;
+    virtual LayoutUnit offsetWidth() const { return borderBoxRectInContainer().width(); }
+    virtual LayoutUnit offsetHeight() const { return borderBoxRectInContainer().height(); }
 
     void updateFromStyle() override;
 
