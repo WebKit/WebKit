@@ -1827,9 +1827,9 @@ public:
     void performDragOperation(WebCore::DragData&, const String& dragStorageName, SandboxExtensionHandle&&, Vector<SandboxExtensionHandle>&&);
 
     void didPerformDragControllerAction(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const WebCore::IntRect& insertionRect, const WebCore::IntRect& editableElementRect);
-    void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation>, const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
+    void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation>);
     void didStartDrag(const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
-    void dragCancelled();
+    void dragCancelled(const std::optional<WebCore::FrameIdentifier>& = std::nullopt);
     void setDragCaretRect(const WebCore::IntRect&);
 #if PLATFORM(COCOA)
     void propagateDragAndDrop(DragEventForwardingData&&, const String&, WebCore::DragData&&);
@@ -3128,6 +3128,10 @@ private:
 
     void updateMouseEventTargetAfterWindowAndViewFramesChanged(const WebCore::FloatRect&);
 
+#if ENABLE(DRAG_SUPPORT)
+    void dragEndedInFrame(const std::optional<WebCore::FrameIdentifier>&, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>)>&&);
+#endif
+
     bool canCreateFrame(WebCore::FrameIdentifier) const;
     Ref<WebPageProxy> downloadOriginatingPage(const API::Navigation*);
     Ref<WebPageProxy> navigationOriginatingPage(const FrameInfoData&);
@@ -4147,6 +4151,7 @@ private:
     std::optional<WebCore::DragOperation> m_currentDragOperation;
     bool m_currentDragIsOverFileInput { false };
     unsigned m_currentDragNumberOfFilesToBeAccepted { 0 };
+    std::optional<WebCore::FrameIdentifier> m_dragSourceFrameID;
 #endif
 
     bool m_mainFrameHasHorizontalScrollbar { false };

@@ -11217,6 +11217,75 @@ TEST(SiteIsolation, DragSourceEndedAtCoordinateTransformationNested)
     }
 }
 
+TEST(SiteIsolation, DragSourceEndedOutsideRemoteFrame)
+{
+    static constexpr ASCIILiteral mainframeHTML = "<script>"
+    "    window.events = [];"
+    "    addEventListener('message', function(event) {"
+    "        window.events.push(event.data);"
+    "    });"
+    "</script>"
+    "<iframe width='300' height='300' style='position: absolute; top: 200px; left: 200px; border: 2px solid red;' src='https://domain2.com/subframe'></iframe>"_s;
+
+    static constexpr ASCIILiteral subframeHTML = "<body style='margin: 0; padding: 0; width: 100%; height: 100vh; background-color: lightblue;'>"
+    "<div id='draggable' draggable='true' style='width: 100px; height: 100px; background-color: blue; position: absolute; top: 50px; left: 50px;'>Drag me</div>"
+    "<script>"
+    "    const draggable = document.getElementById('draggable');"
+    "    draggable.addEventListener('dragstart', (event) => {"
+    "        parent.postMessage('dragstart', '*');"
+    "    });"
+    "    draggable.addEventListener('dragend', (event) => {"
+    "        parent.postMessage('dragend:' + event.clientX + ',' + event.clientY, '*');"
+    "    });"
+    "</script>"
+    "</body>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Drop in the main frame, outside the iframe, twice. The main frame's process handles the end of the
+    // drag, so the iframe's process has to be told separately to dispatch dragend and reset its drag state.
+    RetainPtr<NSArray<NSString *>> events;
+    for (unsigned i = 0; i < 2; ++i) {
+        [simulator runFrom:CGPointMake(300, 300) to:CGPointMake(100, 100)];
+        bool receivedDragEnd = Util::waitFor([&] {
+            events = [webView objectByEvaluatingJavaScript:@"window.events"];
+            return [events count] >= 2 * (i + 1);
+        });
+        if (!receivedDragEnd)
+            break;
+    }
+
+    ASSERT_EQ(4U, [events count]);
+    for (unsigned i = 0; i < 2; ++i) {
+        EXPECT_WK_STREQ("dragstart", [events objectAtIndex:2 * i]);
+        NSString *dragEndEvent = [events objectAtIndex:2 * i + 1];
+        EXPECT_TRUE([dragEndEvent hasPrefix:@"dragend:"]) << [dragEndEvent UTF8String];
+        RetainPtr components = [[dragEndEvent substringFromIndex:[@"dragend:" length]] componentsSeparatedByString:@","];
+        if ([components count] == 2) {
+            // (100, 100) in the main frame is (-102, -102) in the iframe, which is offset by 200px plus its 2px border.
+            int x = [components.get()[0] intValue];
+            int y = [components.get()[1] intValue];
+            EXPECT_TRUE(x >= -107 && x <= -97) << "Expected dragend x coordinate around -102, got " << x;
+            EXPECT_TRUE(y >= -107 && y <= -97) << "Expected dragend y coordinate around -102, got " << y;
+        }
+    }
+}
+
 TEST(SiteIsolation, DragImageLocation)
 {
     static constexpr ASCIILiteral mainframeHTML = "<iframe width='300' height='300' style='position: absolute; top: 200px; left: 200px; border: 2px solid red;' src='https://domain2.com/subframe'></iframe>"_s;

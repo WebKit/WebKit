@@ -133,6 +133,14 @@ webkit_add_swift_options(
     ${WEBKIT_SWIFT_MACRO_FLAGS}
 )
 
+webkit_add_swift_options(
+    "-module-cache-path ${CMAKE_BINARY_DIR}/SwiftModuleCache"
+    # Needed because WebKit's modules are marked [system].
+    -track-system-dependencies
+)
+set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
+
 if (APPLE)
     webkit_add_swift_options(
         ${WEBKIT_SWIFT_EXPERIMENTAL_FEATURE_FLAGS}
@@ -141,12 +149,7 @@ if (APPLE)
 
     webkit_add_swift_options(
         -explicit-module-build
-        "-module-cache-path ${CMAKE_BINARY_DIR}/SwiftModuleCache"
-        # Needed because WebKit's modules are marked [system].
-        -track-system-dependencies
     )
-    set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY
-        ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
 
     webkit_add_swift_options(
         # Needed for compatibility with modules in the (internal) SDK:
@@ -164,5 +167,12 @@ if (APPLE)
     # FIXME: Consider building with -wmo in release / performance builds.
     webkit_add_swift_options(
         -enable-batch-mode
+    )
+else ()
+    webkit_add_swift_options(
+        # Implicitly built modules are reused from the module cache without checking
+        # whether the headers of a [system] module have changed, so the clang importer
+        # could otherwise see stale class layouts after a header like WebPageProxy.h changes.
+        "-Xcc -fmodules-validate-system-headers"
     )
 endif ()
