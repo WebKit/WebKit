@@ -152,8 +152,7 @@ static bool shouldUseBackForwardCache(const std::string& pathOrURL)
 
 static bool shouldDisableMutationEvents(const std::string& pathOrURL)
 {
-    return pathContains(pathOrURL, "html/syntax/parsing/")
-        || pathContains(pathOrURL, "html/semantics/forms/the-select-element/");
+    return isWebPlatformTestURL(URL { { }, String::fromUTF8(pathOrURL.c_str()) });
 }
 
 static bool shouldEnableTouchEventRegions(const std::string& pathOrURL)

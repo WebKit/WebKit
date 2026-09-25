@@ -203,12 +203,8 @@ PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "MediaStreamT
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "MediaStreamTrackEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "MouseScrollEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "MouseScrollEvents"
-FAIL Should throw NOT_SUPPORTED_ERR for non-legacy event interface "MutationEvent" assert_throws_dom: function "function () {
-      var evt = document.createEvent(eventInterface);
-    }" did not throw
-FAIL Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "MutationEvents" assert_throws_dom: function "function () {
-        var evt = document.createEvent(eventInterface + "s");
-      }" did not throw
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "MutationEvent"
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "MutationEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "NotificationEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "NotificationEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "NotifyPaintEvent"
