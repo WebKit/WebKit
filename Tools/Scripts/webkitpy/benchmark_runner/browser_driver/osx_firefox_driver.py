@@ -34,16 +34,6 @@ class OSXFirefoxDriverBase(OSXBrowserDriver):
         args_with_url.append(url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
-    def launch_driver(self, url, options, browser_build_path):
-        from selenium import webdriver
-        from selenium.webdriver.firefox.options import Options
-        firefox_options = Options()
-        self._set_firefox_binary_location(options, browser_build_path)
-        driver_executable = self.webdriver_binary_path
-        driver = webdriver.Firefox(firefox_options=firefox_options, executable_path=driver_executable)
-        self._launch_webdriver(url=url, driver=driver)
-        return driver
-
     def _setup_temporary_profile_directory(self):
         self._profile_directory = os.path.join(tempfile.mkdtemp(), 'firefox_profile')
         shutil.copytree(test_profile_directory, self._profile_directory)
@@ -52,9 +42,6 @@ class OSXFirefoxDriverBase(OSXBrowserDriver):
         if self._profile_directory and os.path.exists(self._profile_directory):
             shutil.rmtree(os.path.dirname(self._profile_directory))
 
-    def _set_firefox_binary_location(self, options, browser_build_path):
-        pass
-
 
 class OSXFirefoxDriver(OSXFirefoxDriverBase):
     process_name = 'firefox'
@@ -62,23 +49,9 @@ class OSXFirefoxDriver(OSXFirefoxDriverBase):
     app_name = 'Firefox.app'
     bundle_id = 'org.mozilla.firefox'
 
-    def _set_firefox_binary_location(self, options, browser_build_path):
-        if not browser_build_path:
-            return
-        app_path = os.path.join(browser_build_path, self.app_name)
-        binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
-        options.binary_location = binary_path
-
 
 class OSXFirefoxNightlyDriver(OSXFirefoxDriverBase):
     process_name = 'firefox'
     browser_name = 'firefox-nightly'
     app_name = 'FirefoxNightly.app'
     bundle_id = 'org.mozilla.firefox'
-
-    def _set_firefox_binary_location(self, options, browser_build_path):
-        if not browser_build_path:
-            browser_build_path = '/Applications/'
-        app_path = os.path.join(browser_build_path, self.app_name)
-        binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
-        options.binary_location = binary_path

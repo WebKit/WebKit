@@ -60,6 +60,3 @@ class ManualBrowserDriver(BrowserDriver):
     def launch_url(self, url, options, browser_build_path, browser_path):
         url = url.replace('0.0.0.0', self._ip_default_route)
         self._print_action_msg(f'Open URL {url}')
-
-    def launch_driver(self, *args, **kwargs):
-        raise ValueError(f"Browser {self.browser_name} can't use webdriver. Please use --driver webserver")

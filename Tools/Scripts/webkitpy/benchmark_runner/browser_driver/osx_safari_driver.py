@@ -104,12 +104,6 @@ class OSXSafariDriver(OSXBrowserDriver):
 
         subprocess.Popen(['open', '-a', safari_app_path, url], env=env)
 
-    def launch_driver(self, url, options, browser_build_path):
-        from selenium import webdriver
-        driver = webdriver.Safari(quiet=False)
-        self._launch_webdriver(url=url, driver=driver)
-        return driver
-
     def close_browsers(self):
         super(OSXSafariDriver, self).close_browsers()
         if self._safari_process and self._safari_process.returncode:

@@ -1,7 +1,6 @@
 import logging
 
 from abc import ABCMeta, abstractmethod
-from webkitpy.benchmark_runner.utils import get_driver_binary_path
 from contextlib import contextmanager
 
 _log = logging.getLogger(__name__)
@@ -29,10 +28,6 @@ class BrowserDriver:
 
     @abstractmethod
     def launch_url(self, url, options, browser_build_path=None, browser_path=None):
-        pass
-
-    @abstractmethod
-    def launch_webdriver(self, url, driver):
         pass
 
     @abstractmethod
@@ -66,10 +61,6 @@ class BrowserDriver:
     def profile(self, output_path, profile_filename, profiling_interval, trace_type='profile', timeout=300):
         _log.error('The --profile option was specified, but an empty context was called. This run will not be profiled.')
         yield
-
-    @property
-    def webdriver_binary_path(self):
-        return get_driver_binary_path(self.browser_name)
 
     @property
     def pgo_profile_output_directories(self):
