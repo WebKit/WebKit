@@ -25,25 +25,26 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
-
-#include "GPUVideoDecoderVTB.h"
-#include <wtf/TZoneMalloc.h>
+#include <WebCore/PlatformVideoColorSpace.h>
+#include <WebCore/ProcessIdentity.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUVideoDecoderVTBH265 final : public GPUVideoDecoderVTB {
-    WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBH265);
-public:
-    GPUVideoDecoderVTBH265(GPUVideoDecoderCallback, Ref<WorkQueue>&&, VideoDecoder::Config&&);
-    ~GPUVideoDecoderVTBH265() = default;
+struct VideoDecoderConfig {
+    enum class HardwareAcceleration : bool { No, Yes };
+    enum class HardwareBuffer : bool { No, Yes };
+    enum class TreatNoOutputAsError : bool { No, Yes };
 
-private:
-    int32_t decodeFrame(int64_t, std::span<const uint8_t>) final;
-
-    const bool m_isAnnexB { true };
+    Vector<uint8_t> description;
+    uint64_t width { 0 };
+    uint64_t height { 0 };
+    std::optional<PlatformVideoColorSpace> colorSpace;
+    bool useAnnexB { false };
+    HardwareAcceleration decoding { HardwareAcceleration::No };
+    HardwareBuffer pixelBuffer { HardwareBuffer::No };
+    TreatNoOutputAsError noOutputAsError { TreatNoOutputAsError::Yes };
+    ProcessIdentity resourceOwner { };
 };
 
 }
-
-#endif // USE(LIBWEBRTC)

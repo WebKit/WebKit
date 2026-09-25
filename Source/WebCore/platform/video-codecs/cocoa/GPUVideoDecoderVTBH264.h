@@ -32,14 +32,16 @@
 
 namespace WebCore {
 
-class GPUVideoDecoderVTBH265 final : public GPUVideoDecoderVTB {
-    WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBH265);
+class GPUVideoDecoderVTBH264 final : public GPUVideoDecoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBH264);
 public:
-    GPUVideoDecoderVTBH265(GPUVideoDecoderCallback, Ref<WorkQueue>&&, VideoDecoder::Config&&);
-    ~GPUVideoDecoderVTBH265() = default;
+    GPUVideoDecoderVTBH264(GPUVideoDecoderCallback, Ref<WorkQueue>&&, VideoDecoder::Config&&);
+    ~GPUVideoDecoderVTBH264() = default;
 
 private:
     int32_t decodeFrame(int64_t, std::span<const uint8_t>) final;
+
+    bool shouldOverrideColorSpaceAttachments() const { return true; }
 
     const bool m_isAnnexB { true };
 };

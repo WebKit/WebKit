@@ -132,6 +132,7 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
         .width = config.codedWidth.value_or(0),
         .height = config.codedHeight.value_or(0),
         .colorSpace = config.colorSpace,
+        .useAnnexB = description.isEmpty(),
         .decoding = config.hardwareAcceleration == HardwareAcceleration::PreferSoftware ? VideoDecoder::HardwareAcceleration::No : VideoDecoder::HardwareAcceleration::Yes
     };
 }

@@ -25,20 +25,21 @@
  */
 
 #import "config.h"
-#import "GPUVideoDecoderVTBH265.h"
+#import "GPUVideoDecoderVTBH264.h"
 
 #if USE(LIBWEBRTC)
 
 #import "CMUtilities.h"
-#import "HEVCUtilitiesCocoa.h"
+#import "H264Utilities.h"
+#import "H264UtilitiesCocoa.h"
 #import "Logging.h"
 #import "TrackInfo.h"
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBH265);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBH264);
 
-GPUVideoDecoderVTBH265::GPUVideoDecoderVTBH265(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, VideoDecoder::Config&& config)
+GPUVideoDecoderVTBH264::GPUVideoDecoderVTBH264(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, VideoDecoder::Config&& config)
     : GPUVideoDecoderVTB(callback, WTF::move(queue), WTF::move(config.colorSpace))
     , m_isAnnexB(config.useAnnexB)
 {
@@ -47,41 +48,36 @@ GPUVideoDecoderVTBH265::GPUVideoDecoderVTBH265(GPUVideoDecoderCallback callback,
     if (config.description.isEmpty())
         return;
 
-    auto parameterSets = parseHVCCParameterSets(config.description.span());
-    RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to correctly parse the hvcC data");
-
-    RefPtr<VideoInfo> videoInfo;
-    if (parameterSets)
-        videoInfo = createVideoInfoFromHVCC(*parameterSets);
+    RefPtr<VideoInfo> videoInfo = createVideoInfoFromAVCC(config.description.span());
     if (!videoInfo) {
-        RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to create video info from hvcC data");
+        RELEASE_LOG_ERROR(WebRTC, "GPUVideoDecoderVTBH264: use default video info");
         // FIXME: We likely want to error this code path.
         videoInfo = VideoInfo::create({
             {
-                .codecName = kCMVideoCodecType_HEVC
+                .codecName = kCMVideoCodecType_H264
             }, {
                 .size = { static_cast<float>(config.width), static_cast<float>(config.height) },
                 .displaySize = { static_cast<float>(config.width), static_cast<float>(config.height) },
-                .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(config.description.span()) } },
+                .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_H264), SharedBuffer::create(config.description.span()) } },
             }
         });
     }
 
-    setVideoInfo(videoInfo.releaseNonNull(), parameterSets ? findHVCCMaxNumReorderPics(*parameterSets).value_or(0) : 0);
+    setVideoInfo(videoInfo.releaseNonNull(), findAVCCMaxNumReorderFrames(config.description.span()).value_or(0));
 }
 
-int32_t GPUVideoDecoderVTBH265::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
+int32_t GPUVideoDecoderVTBH264::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
 {
     if (!m_isAnnexB)
         return decodeFrameInternal(timeStamp, data);
 
     auto naluIndices = findNaluIndices(data);
 
-    // FIXME: Skip rebuilding the VideoInfo when the VPS/SPS/PPS triplet is unchanged from the previous one.
-    if (RefPtr videoInfo = createVideoInfoFromHEVCAnnexBStream(data, naluIndices))
-        setVideoInfo(videoInfo.releaseNonNull(), findHEVCAnnexBMaxNumReorderPics(data, naluIndices).value_or(0));
+    // FIXME: Skip rebuilding the VideoInfo when the SPS/PPS pair is unchanged from the previous one.
+    if (RefPtr videoInfo = createVideoInfoFromAVCAnnexBStream(data, naluIndices))
+        setVideoInfo(videoInfo.releaseNonNull(), findH264AnnexBMaxNumReorderFrames(data, naluIndices).value_or(0));
 
-    auto lengthPrefixedData = convertHEVCAnnexBToLengthPrefixed(data, naluIndices);
+    auto lengthPrefixedData = convertAVCAnnexBToLengthPrefixed(data, naluIndices);
     return decodeFrameInternal(timeStamp, lengthPrefixedData.span());
 }
 

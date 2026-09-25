@@ -40,5 +40,6 @@ struct NaluIndex {
 
 WEBCORE_EXPORT Vector<NaluIndex> findNaluIndices(std::span<const uint8_t>);
 WEBCORE_EXPORT Vector<uint8_t> parseRbsp(std::span<const uint8_t>);
+WEBCORE_EXPORT Vector<uint8_t> annexBToLengthPrefixed(std::span<const uint8_t>, std::span<const NaluIndex>);
 
 }

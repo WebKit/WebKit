@@ -2402,6 +2402,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/UserAgent.h
     platform/UserInterfaceLayoutDirection.h
     platform/ValidationBubble.h
+    platform/VideoDecoderConfig.h
     platform/VideoDecoder.h
     platform/VideoEncoder.h
     platform/VideoEncoderActiveConfiguration.h

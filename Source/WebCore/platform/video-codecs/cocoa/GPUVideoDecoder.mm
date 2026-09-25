@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #import "GPUVideoDecoderVTBAV1.h"
+#import "GPUVideoDecoderVTBH264.h"
 #import "GPUVideoDecoderVTBH265.h"
 #import "GPUVideoDecoderVTBVP9.h"
 #import <WebCore/CMUtilities.h>
@@ -46,10 +47,12 @@ namespace WebCore {
 class GPULocalVideoDecoder final : public GPUVideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GPULocalVideoDecoder);
 public:
-    GPULocalVideoDecoder(webrtc::LocalDecoder decoder, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-        : GPUVideoDecoder(WTF::move(colorSpaceOverride))
+    GPULocalVideoDecoder(webrtc::LocalDecoder decoder, const VideoDecoder::Config& config)
+        : GPUVideoDecoder(std::optional<PlatformVideoColorSpace> { config.colorSpace })
         , m_decoder(decoder)
     {
+        if (!config.description.isEmpty())
+            webrtc::setDecodingFormat(m_decoder, config.description.span().data(), config.description.size(), config.width, config.height);
     }
 
     ~GPULocalVideoDecoder()
@@ -59,22 +62,21 @@ public:
 
 private:
     void flush() final { webrtc::flushLocalDecoder(m_decoder); }
-    void setFormat(std::span<const uint8_t> data, uint16_t width, uint16_t height) final { webrtc::setDecodingFormat(m_decoder, data.data(), data.size(), width, height); }
     int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t> data) final { return webrtc::decodeFrame(m_decoder, timeStamp, data.data(), data.size()); }
     void setFrameSize(uint16_t width, uint16_t height) final { webrtc::setDecoderFrameSize(m_decoder, width, height); }
 
     webrtc::LocalDecoder m_decoder;
 };
 
-std::unique_ptr<GPUVideoDecoder> GPUVideoDecoder::create(VideoCodecType decoderType, bool useWebCoreDecoder, GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+std::unique_ptr<GPUVideoDecoder> GPUVideoDecoder::create(VideoCodecType decoderType, bool useWebCoreDecoder, GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, VideoDecoder::Config&& config)
 {
     if (!useWebCoreDecoder) {
         // FIXME: Deprecate this code path.
         switch (decoderType) {
         case VideoCodecType::H264:
-            return makeUnique<GPULocalVideoDecoder>(webrtc::createLocalH264Decoder(callback), WTF::move(colorSpaceOverride));
+            return makeUnique<GPULocalVideoDecoder>(webrtc::createLocalH264Decoder(callback), config);
         case VideoCodecType::H265:
-            return makeUnique<GPULocalVideoDecoder>(webrtc::createLocalH265Decoder(callback), WTF::move(colorSpaceOverride));
+            return makeUnique<GPULocalVideoDecoder>(webrtc::createLocalH265Decoder(callback), config);
         default:
             break;
         }
@@ -82,14 +84,13 @@ std::unique_ptr<GPUVideoDecoder> GPUVideoDecoder::create(VideoCodecType decoderT
 
     switch (decoderType) {
     case VideoCodecType::H264:
-        // FIXME: Support H264 decoding in WebCore.
-        return makeUnique<GPULocalVideoDecoder>(webrtc::createLocalH264Decoder(callback), WTF::move(colorSpaceOverride));
+        return makeUnique<GPUVideoDecoderVTBH264>(callback, WTF::move(queue), WTF::move(config));
     case VideoCodecType::H265:
-        return makeUnique<GPUVideoDecoderVTBH265>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
+        return makeUnique<GPUVideoDecoderVTBH265>(callback, WTF::move(queue), WTF::move(config));
     case VideoCodecType::VP9:
-        return makeUnique<GPUVideoDecoderVTBVP9>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
+        return makeUnique<GPUVideoDecoderVTBVP9>(callback, WTF::move(queue), WTF::move(config.colorSpace));
     case VideoCodecType::AV1:
-        return makeUnique<GPUVideoDecoderVTBAV1>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
+        return makeUnique<GPUVideoDecoderVTBAV1>(callback, WTF::move(queue), WTF::move(config.colorSpace));
     }
     ASSERT_NOT_REACHED();
     return nullptr;

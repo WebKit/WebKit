@@ -165,9 +165,9 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     };
 }
 
-std::unique_ptr<WebCore::GPUVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
+std::unique_ptr<WebCore::GPUVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging, WebCore::VideoDecoder::Config&& config)
 {
-    return GPUVideoDecoder::create(codecType, m_sharedPreferencesForWebProcess.webRTCWebCoreVideoCodecsEnabled, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), Ref { workQueue() }, WTF::move(colorSpaceOverride));
+    return GPUVideoDecoder::create(codecType, m_sharedPreferencesForWebProcess.webRTCWebCoreVideoCodecsEnabled, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), Ref { workQueue() }, WTF::move(config));
 }
 
 static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
@@ -197,7 +197,7 @@ static bool validateCodecString(WebCore::VideoCodecType codecType, const String&
     return true;
 }
 
-void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, WebCore::VideoDecoder::Config&& config, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
 
@@ -208,7 +208,7 @@ void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebC
         return;
     }
 
-    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride));
+    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging, WTF::move(config));
     if (!decoder) {
         callback(false);
         return;
@@ -253,13 +253,6 @@ void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier, Compl
         decoder.webrtcDecoder->flush();
         // FIXME: It would be nice to ASSERT that when executing callback, the decoding task deque is empty.
         queue->dispatch(WTF::move(completionHandler));
-    });
-}
-
-void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, std::span<const uint8_t> data, uint16_t width, uint16_t height)
-{
-    doDecoderTask(identifier, [&](auto& decoder) {
-        decoder.webrtcDecoder->setFormat(data, width, height);
     });
 }
 
