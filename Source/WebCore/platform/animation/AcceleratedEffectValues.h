@@ -27,6 +27,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
+#include <WebCore/AcceleratedEffectClipPath.h>
 #include <WebCore/AcceleratedEffectOffsetAnchor.h>
 #include <WebCore/AcceleratedEffectOffsetDistance.h>
 #include <WebCore/AcceleratedEffectOffsetPath.h>
@@ -66,13 +67,14 @@ struct AcceleratedEffectValues {
     AcceleratedEffectOffsetPosition offsetPosition { };
     AcceleratedEffectOffsetAnchor offsetAnchor { };
     AcceleratedEffectOffsetRotate offsetRotate { };
+    AcceleratedEffectClipPath clipPath { };
     FilterOperations filter { };
     FilterOperations backdropFilter { };
 
     AcceleratedEffectValues() = default;
     // FIXME: It is a layering violation to use `StyleComputedStyle` and `RenderLayerModelObject` here, as they are defined in the rendering directory.
     AcceleratedEffectValues(const Style::ComputedStyle&, const IntRect&, const RenderLayerModelObject*);
-    AcceleratedEffectValues(AcceleratedEffectOpacity opacity, std::optional<TransformOperationData>&& transformOperationData, AcceleratedEffectTransformOrigin transformOrigin, AcceleratedEffectTransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, AcceleratedEffectOffsetPath&& offsetPath, AcceleratedEffectOffsetDistance offsetDistance, AcceleratedEffectOffsetPosition offsetPosition, AcceleratedEffectOffsetAnchor offsetAnchor, AcceleratedEffectOffsetRotate offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
+    AcceleratedEffectValues(AcceleratedEffectOpacity opacity, std::optional<TransformOperationData>&& transformOperationData, AcceleratedEffectTransformOrigin transformOrigin, AcceleratedEffectTransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, AcceleratedEffectOffsetPath&& offsetPath, AcceleratedEffectOffsetDistance offsetDistance, AcceleratedEffectOffsetPosition offsetPosition, AcceleratedEffectOffsetAnchor offsetAnchor, AcceleratedEffectOffsetRotate offsetRotate, AcceleratedEffectClipPath&& clipPath, FilterOperations&& filter, FilterOperations&& backdropFilter)
         : opacity(opacity)
         , transformOperationData(WTF::move(transformOperationData))
         , transformOrigin(transformOrigin)
@@ -86,6 +88,7 @@ struct AcceleratedEffectValues {
         , offsetPosition(offsetPosition)
         , offsetAnchor(offsetAnchor)
         , offsetRotate(offsetRotate)
+        , clipPath(WTF::move(clipPath))
         , filter(WTF::move(filter))
         , backdropFilter(WTF::move(backdropFilter))
     {

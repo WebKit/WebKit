@@ -257,6 +257,10 @@ bool isAccelerated(const AnimatableCSSProperty& property, const Settings& settin
 {
     return WTF::switchOn(property,
         [&](CSSPropertyID propertyId) {
+#if PLATFORM(IOS_FAMILY)
+            if (propertyId == CSSPropertyClipPath)
+                return settings.acceleratedClipPathAnimationEnabled();
+#endif
             return CSSProperty::animationIsAccelerated(propertyId, settings);
         },
         [](const AtomString&) {

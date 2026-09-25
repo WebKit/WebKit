@@ -35,6 +35,7 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderLayerModelObject.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleClipPath.h"
 #include "StyleOffsetAnchor.h"
 #include "StyleOffsetDistance.h"
 #include "StyleOffsetPath.h"
@@ -60,6 +61,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     auto clonedOffsetPosition = offsetPosition;
     auto clonedOffsetAnchor = offsetAnchor;
     auto clonedOffsetRotate = offsetRotate;
+    auto clonedClipPath = clipPath;
     auto clonedFilter = filter.clone();
     auto clonedBackdropFilter = backdropFilter.clone();
 
@@ -77,6 +79,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         WTF::move(clonedOffsetPosition),
         WTF::move(clonedOffsetAnchor),
         WTF::move(clonedOffsetRotate),
+        WTF::move(clonedClipPath),
         WTF::move(clonedFilter),
         WTF::move(clonedBackdropFilter)
     };
@@ -123,6 +126,11 @@ AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& sty
     translate = Style::toPlatform(style.translate(), borderBoxSize, zoom);
     scale = Style::toPlatform(style.scale(), borderBoxSize, zoom);
     rotate = Style::toPlatform(style.rotate(), borderBoxSize, zoom);
+    if (!style.clipPath().isNone()) {
+        auto evaluatedClipPath = Style::evaluate<AcceleratedEffectClipPath>(style.clipPath(), *transformOperationData, zoom);
+        if (auto path = tryPath(evaluatedClipPath, *transformOperationData))
+            clipPath = WTF::move(evaluatedClipPath);
+    }
 
     if (transformOperationData && transformOperationData->motionPathData && !style.offsetPath().isNone()) {
         auto evaluatedOffsetPath = Style::evaluate<AcceleratedEffectOffsetPath>(style.offsetPath(), *transformOperationData, zoom);
