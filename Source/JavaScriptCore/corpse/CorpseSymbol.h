@@ -40,6 +40,7 @@
 namespace JSC {
 namespace Corpse {
 
+class Memory;
 class Snapshot;
 
 // A symbol looked up in a corpse by name. The lookup happens on construction.
@@ -56,7 +57,7 @@ class Snapshot;
 class Symbol {
     WTF_MAKE_TZONE_ALLOCATED(Symbol);
 public:
-    Symbol(const Snapshot&, const char* name);
+    Symbol(Snapshot&, const char* name);
 
     const std::string& name() const { return m_name; }
 
@@ -64,8 +65,8 @@ public:
     bool isValid() const { return static_cast<bool>(m_address); }
 
 private:
-    Address lookUpName(const Snapshot&);
-    Address resolveInImage(mach_port_t, Address loadAddress, std::string_view name);
+    Address lookUpName(Snapshot&);
+    Address resolveInImage(Memory&, Address loadAddress, std::string_view name);
     bool hasReadBudget(size_t length);
 
 #if CORPSE_SYMBOL_LOOKUP_DIAGNOSTICS
