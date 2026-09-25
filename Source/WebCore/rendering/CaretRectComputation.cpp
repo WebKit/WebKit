@@ -134,10 +134,10 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
 {
     CheckedRef root = lineBox->formattingContextRoot();
     auto writingMode = root->writingMode();
-    auto lineSelectionRect = LineSelection::logicalRect(*lineBox);
+    auto lineContentRect = FloatRect { FloatPoint { lineBox->contentLogicalLeft(), lineBox->contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { lineBox->contentLogicalRight(), lineBox->contentLogicalBottomAdjustedForFollowingLineBox() } };
 
-    int height = lineSelectionRect.height();
-    int top = lineSelectionRect.y();
+    int height = lineContentRect.height();
+    int top = lineContentRect.y();
 
     // Distribute the caret's width to either side of the offset.
     float left = logicalLeftPosition;
@@ -146,8 +146,8 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
     int caretWidthRightOfOffset = caretWidth() - caretWidthLeftOfOffset;
     left = roundf(left);
 
-    float lineLeft = lineSelectionRect.x();
-    float lineRight = lineSelectionRect.maxX();
+    float lineLeft = lineContentRect.x();
+    float lineRight = lineContentRect.maxX();
 
     bool rightAligned = false;
     switch (root->style().textAlign()) {

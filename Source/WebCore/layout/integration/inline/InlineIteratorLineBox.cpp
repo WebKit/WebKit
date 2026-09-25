@@ -29,6 +29,7 @@
 
 #include "InlineIteratorBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LineSelection.h"
 #include "RenderBlockFlow.h"
 #include "RenderObjectDocument.h"
 #include "RenderView.h"
@@ -109,6 +110,28 @@ LineBoxIterator LineBox::next() const
 LineBoxIterator LineBox::previous() const
 {
     return LineBoxIterator(*this).traversePrevious();
+}
+
+FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSelection) const
+{
+    ASSERT(hasEllipsis());
+
+    auto visualRect = WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.ellipsisVisualRectIgnoringBlockDirection();
+    });
+
+    // FIXME: Add pixel snapping here.
+    if (adjustedForSelection == AdjustedForSelection::No) {
+        formattingContextRoot().flipForWritingMode(visualRect);
+        return visualRect;
+    }
+    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { LineSelection::logicalTop(*this) });
+    auto selectionBottom = LineSelection::logicalBottom(*this);
+
+    visualRect.setY(selectionTop);
+    visualRect.setHeight(selectionBottom - selectionTop);
+    formattingContextRoot().flipForWritingMode(visualRect);
+    return visualRect;
 }
 
 LeafBoxIterator LineBox::lineLeftmostLeafBox() const
