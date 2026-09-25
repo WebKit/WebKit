@@ -42,8 +42,6 @@ private:
     int32_t decodeFrame(int64_t, std::span<const uint8_t>) final;
     void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) final;
 
-    bool shouldOverrideColorSpaceAttachments() const { return true; }
-
     bool m_isAnnexB { true };
 };
 

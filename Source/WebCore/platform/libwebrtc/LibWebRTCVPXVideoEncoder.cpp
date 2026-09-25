@@ -281,8 +281,8 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
     if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true)) {
         if (isRGBVideoPixelFormat(*pixelFormat)) {
             // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
-            colorSpace = { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = false };
-            buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
+            colorSpace = srgbColorSpace();
+            buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
         }
     }
 

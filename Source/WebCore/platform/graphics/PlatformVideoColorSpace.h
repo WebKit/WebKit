@@ -48,6 +48,17 @@ struct PlatformVideoColorSpace {
     friend bool operator==(const PlatformVideoColorSpace&, const PlatformVideoColorSpace&) = default;
 };
 
+// https://w3c.github.io/webcodecs/#srgb-color-space
+inline PlatformVideoColorSpace srgbColorSpace()
+{
+    return {
+        .primaries = PlatformVideoColorPrimaries::Bt709,
+        .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
+        .matrix = PlatformVideoMatrixCoefficients::Bt709,
+        .fullRange = true
+    };
+}
+
 void overrideVideoColorSpaceAsNeeded(PlatformVideoColorSpace&, const std::optional<PlatformVideoColorSpace>&);
 
 WEBCORE_EXPORT bool usesITUR2100TF(const PlatformVideoColorSpace&);
