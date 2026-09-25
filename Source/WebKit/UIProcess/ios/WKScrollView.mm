@@ -462,10 +462,15 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 {
     UIEdgeInsets systemContentInset = [super _systemContentInset];
 
-    // Internal clients who use setObscuredInsets include the keyboard height in their
-    // manually overridden insets, so we don't need to re-add it here.
-    if ([_internalDelegate.get() _haveSetObscuredInsets])
+    // A client-provided bottom obscured inset and UIKit's keyboard system inset may
+    // describe overlapping regions along the bottom edge. Avoid counting their
+    // intersection twice when computing the effective scroll extent.
+    if ([_internalDelegate.get() _haveSetObscuredInsets]) {
+        auto obscuredInsets = [_internalDelegate.get() _computedObscuredInset];
+        CGFloat keyboardOverlapAlreadyCoveredByObscuredInset = std::min(systemContentInset.bottom, std::min(_keyboardBottomInsetAdjustment, obscuredInsets.bottom));
+        systemContentInset.bottom -= keyboardOverlapAlreadyCoveredByObscuredInset;
         return systemContentInset;
+    }
 
     // Match the inverse of the condition that UIScrollView uses to decide whether
     // to include keyboard insets in the systemContentInset. We always want
