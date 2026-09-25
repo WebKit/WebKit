@@ -1322,6 +1322,20 @@ CSSWhiteSpaceTrimEnabled:
   humanReadableDescription: "Enable the property white-space-trim, defined in CSS Text 4"
   defaultValue: true
 
+CSSUnprefixedBoxDecorationBreakEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Unprefixed box-decoration-break"
+  humanReadableDescription: "Enable unprefixed box-decoration-break CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSWordBreakAutoPhraseEnabled:
   type: bool
   status: preview
