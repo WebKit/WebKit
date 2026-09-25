@@ -31,6 +31,7 @@
 #include <span>
 #include <stdint.h>
 #include <string_view>
+#include <sys/types.h>
 #include <wtf/DataLog.h>
 #include <wtf/Function.h>
 #include <wtf/HexNumber.h>
@@ -72,6 +73,7 @@ bool linuxSkip(const char* name, const char* why);
 
 void testAddress();
 void testByteParser();
+void testDiagnostics();
 void testExportsTrie();
 void testProcess();
 void testSymbol();
@@ -108,7 +110,21 @@ public:
 private:
     const char* m_name;
     MonotonicTime m_start;
+    unsigned m_reportsAtStart { 0 };
     bool m_shouldRun;
+};
+
+class ExpectedErrors {
+public:
+    explicit ExpectedErrors(unsigned count = 1);
+    ~ExpectedErrors();
+
+    ExpectedErrors(const ExpectedErrors&) = delete;
+    ExpectedErrors& operator=(const ExpectedErrors&) = delete;
+
+private:
+    unsigned m_count;
+    unsigned m_reportsAtStart;
 };
 
 Seconds totalSuiteTime();
@@ -153,7 +169,8 @@ Seconds totalSuiteTime();
 #if ENABLE(MYA) && OS(DARWIN)
 
 // The number of names in this task's Mach port name space. Used to show that a
-// sequence of operations leaves no port behind.
+// sequence of operations leaves no port behind, so it fails the test unless this
+// is the task's only thread.
 unsigned machPortNameCount();
 
 // The number of send rights this task holds for `port`, or 0 if it holds no name for
@@ -222,6 +239,18 @@ private:
 
 // create() an object, then analyze() it in and out of process.
 void analyzeInAndOutOfProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// create() an object in a separate process only, then analyze() it there. Returns
+// false, having logged why, if the target could not be snapshotted.
+[[nodiscard]] bool analyzeInSeparateProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// analyzeInSeparateProcess, with the target started by a path relative to its own
+// working directory, while this process is in another.
+void analyzeInSeparateProcessStartedByRelativePath(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// create() an object in a separate process, snapshot it, and analyze() the
+// snapshot only after that process has exited.
+void analyzeAfterTargetExits(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
 
 // The main function for a copy of this process launched as `--target <offset>`: runs the
 // create function at `offset` into this executable and holds its object.

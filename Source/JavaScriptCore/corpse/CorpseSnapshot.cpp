@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,37 +60,40 @@ const Vector<Thread>& Snapshot::threads()
 
 Address Snapshot::symbol(const char* name)
 {
-    if (!name || !*name)
+    if (!name || !*name) {
+        CORPSE_REPORT("A symbol lookup needs a name");
         return { };
+    }
 
     auto entry = m_symbols.ensure<StringViewHashTranslator>(StringView::fromLatin1(name), [&] {
         return WTF::makeUnique<Symbol>(*this, name);
     });
 
-    return entry.iterator->value->address();
+    Address address = entry.iterator->value->address();
+    if (!address && !entry.isNewEntry) {
+        if (!isValid())
+            CORPSE_REPORT("Cannot look up '%s' in an invalid snapshot", name);
+        else
+            CORPSE_REPORT("No symbol '%s' in pid %d, as an earlier lookup found", name, static_cast<int>(process()->pid()));
+    }
+    return address;
 }
 
 #if OS(DARWIN)
 
-// Returns a null handle if the snapshot could not be taken, having reported why.
-static OwnedTaskHandle takeSnapshot(Process* process)
+static OwnedTaskHandle platformTakeSnapshot(Process& process)
 {
-    if (!process || !process->isAttached()) {
-        Error::report("Could not snapshot: No process attached");
-        return { };
-    }
-
     mach_port_t corpsePort = MACH_PORT_NULL;
-    kern_return_t kr = task_generate_corpse(process->taskPort(), &corpsePort);
+    kern_return_t kr = task_generate_corpse(process.taskPort(), &corpsePort);
     if (kr == KERN_SUCCESS)
         return OwnedTaskHandle::adopt(corpsePort);
 
-    if (!process->holdsLiveTask()) {
+    if (!process.holdsLiveTask()) {
         Error::report("Could not snapshot PID %d: the process has terminated",
-            static_cast<int>(process->pid()));
+            static_cast<int>(process.pid()));
     } else {
         Error::report("Could not snapshot PID %d: %s (0x%x)",
-            static_cast<int>(process->pid()), mach_error_string(kr), kr);
+            static_cast<int>(process.pid()), mach_error_string(kr), kr);
     }
     return { };
 }
@@ -97,16 +101,22 @@ static OwnedTaskHandle takeSnapshot(Process* process)
 #else
 
 // There is no corpse on Linux yet: the snapshot reads the live process.
-static OwnedTaskHandle takeSnapshot(Process* process)
+static OwnedTaskHandle platformTakeSnapshot(Process& process)
 {
-    if (!process || !process->isAttached()) {
-        Error::report("Could not snapshot: No process attached");
-        return { };
-    }
-    return OwnedTaskHandle::adopt(process->taskPort());
+    return OwnedTaskHandle::adopt(process.taskPort());
 }
 
 #endif // OS(DARWIN)
+
+// Returns a null handle if the snapshot could not be taken, having reported why.
+static OwnedTaskHandle takeSnapshot(Process* process)
+{
+    if (!process || !process->isAttached()) {
+        CORPSE_REPORT("Could not snapshot: No process attached");
+        return { };
+    }
+    return platformTakeSnapshot(*process);
+}
 
 Snapshot::Snapshot(RefPtr<Process> process)
     : m_process(WTF::move(process))

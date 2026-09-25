@@ -64,6 +64,7 @@ public:
 
 private:
     static Vector<Thread> collect(const Snapshot&);
+    static Vector<Thread> platformCollect(const Snapshot&);
 
     uint64_t m_id { 0 };
     std::string m_name;

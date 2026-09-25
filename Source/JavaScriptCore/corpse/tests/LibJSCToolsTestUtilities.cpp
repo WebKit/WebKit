@@ -31,15 +31,19 @@
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(MYA)
+#include <JavaScriptCore/CorpseError.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_vm.h>
 #endif
+#include <algorithm>
 #include <array>
 #include <dlfcn.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <optional>
 #include <pthread.h>
 #include <signal.h>
 #include <spawn.h>
@@ -67,6 +71,17 @@ bool verbose = false;
 
 static Seconds s_totalSuiteTime;
 
+static thread_local unsigned s_expectedReports = 0;
+
+static unsigned reportCount()
+{
+#if ENABLE(MYA)
+    return JSC::Corpse::Error::reportCount();
+#else
+    return 0;
+#endif
+}
+
 SuiteTracer::SuiteTracer(const char* name)
     : m_name(name)
     , m_shouldRun(!suiteFilter || std::string_view(name).contains(std::string_view(suiteFilter)))
@@ -75,12 +90,17 @@ SuiteTracer::SuiteTracer(const char* name)
         return;
     dataLogLn("--- ", m_name);
     m_start = MonotonicTime::now();
+    m_reportsAtStart = reportCount();
+    s_expectedReports = 0;
 }
 
 SuiteTracer::~SuiteTracer()
 {
     if (!m_shouldRun)
         return;
+
+    unsigned reported = reportCount() - m_reportsAtStart;
+    TEST_ASSERT_EQ(reported, s_expectedReports, "the library reported only the errors the suite asked for");
 
     Seconds elapsed = MonotonicTime::now() - m_start;
     s_totalSuiteTime += elapsed;
@@ -96,6 +116,20 @@ SuiteTracer::~SuiteTracer()
 Seconds totalSuiteTime()
 {
     return s_totalSuiteTime;
+}
+
+ExpectedErrors::ExpectedErrors(unsigned count)
+    : m_count(count)
+    , m_reportsAtStart(reportCount())
+{
+    dataLogLn("    (the next ", count, count == 1 ? " error is one" : " errors are ones", " this test asks for)");
+}
+
+ExpectedErrors::~ExpectedErrors()
+{
+    unsigned reported = reportCount() - m_reportsAtStart;
+    TEST_ASSERT_EQ(reported, m_count, "the library reported exactly the errors this test asked for");
+    s_expectedReports += reported;
 }
 
 void skipSuite(const char* name, const char* why)
@@ -119,8 +153,20 @@ bool linuxSkip(const char* name, const char* why)
 
 #if ENABLE(MYA) && OS(DARWIN)
 
+static unsigned threadCount()
+{
+    thread_act_array_t threads = nullptr;
+    mach_msg_type_number_t count = 0;
+    RELEASE_ASSERT(task_threads(mach_task_self(), &threads, &count) == KERN_SUCCESS);
+    for (thread_act_t thread : unsafeMakeSpan(threads, count))
+        mach_port_deallocate(mach_task_self(), thread);
+    mach_vm_deallocate(mach_task_self(), reinterpret_cast<mach_vm_address_t>(threads), count * sizeof(thread_act_t));
+    return count;
+}
+
 unsigned machPortNameCount()
 {
+    TEST_ASSERT_EQ(threadCount(), 1u, "no other thread can change the port name space while it is counted");
     mach_port_name_array_t names = nullptr;
     mach_msg_type_number_t nameCount = 0;
     mach_port_type_array_t types = nullptr;
@@ -279,6 +325,12 @@ static uintptr_t executableBase()
     return reinterpret_cast<uintptr_t>(info.dli_fbase);
 }
 
+static void reportTargetObject(JSC::Corpse::Address object)
+{
+    uint64_t address = object.toTargetVMAddress();
+    RELEASE_ASSERT(write(STDOUT_FILENO, &address, sizeof(address)) == sizeof(address));
+}
+
 int runCorpseTarget(const char* offsetText)
 {
     auto offset = WTF::parseInteger<uint64_t>(StringView::fromLatin1(offsetText), 16);
@@ -289,9 +341,7 @@ int runCorpseTarget(const char* offsetText)
     }
     // Warning: do not ever move this into a production binary!
     auto create = tagCodePtr<CreateTargetObject, CFunctionPtrTag>(std::bit_cast<void*>(base + *offset));
-    uint64_t address = create().toTargetVMAddress();
-    if (write(STDOUT_FILENO, &address, sizeof(address)) != sizeof(address))
-        return 1;
+    reportTargetObject(create());
 
     // The analysis kills this process when it is done with the object.
     while (true)
@@ -312,46 +362,160 @@ static std::unique_ptr<JSC::Corpse::Snapshot> takeSnapshot(pid_t pid)
     return snapshot;
 }
 
-static void spawnAndAnalyze(const char* executable, char* const* arguments, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
+static bool readAll(int fd, std::span<uint8_t> destination)
 {
+    while (!destination.empty()) {
+        ssize_t length = read(fd, destination.data(), destination.size());
+        if (length < 0 && errno == EINTR)
+            continue;
+        if (length <= 0)
+            return false;
+        destination = destination.subspan(static_cast<size_t>(length));
+    }
+    return true;
+}
+
+enum class TargetAfterSnapshot : bool { KeepsRunning, Exits };
+
+// Returns false, having logged why, if the target could not be snapshotted.
+static bool spawnAndAnalyze(const char* executable, const char* workingDirectory, char* const* arguments, TargetAfterSnapshot after, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
+{
+    // Every end is close-on-exec, so that no other spawned program keeps one open.
     std::array<int, 2> addressPipe { -1, -1 };
-    bool opened = !pipe(addressPipe.data());
-    TEST_ASSERT(opened, "a pipe from the target opens");
-    auto closePipe = makeScopeExit([&] {
+    auto closePipes = makeScopeExit([&] {
         for (int fd : addressPipe) {
             if (fd >= 0)
                 close(fd);
         }
     });
-    if (!opened)
-        return;
+    auto openPipe = [](std::array<int, 2>& ends) {
+        if (pipe(ends.data()))
+            return false;
+        return std::ranges::all_of(ends, [](int fd) {
+            return fcntl(fd, F_SETFD, FD_CLOEXEC) != -1;
+        });
+    };
+    if (!openPipe(addressPipe)) {
+        dataLogLn("    a pipe from the target could not be opened: ", safeStrerror(errno));
+        return false;
+    }
 
     posix_spawn_file_actions_t actions;
     posix_spawn_file_actions_init(&actions);
     posix_spawn_file_actions_adddup2(&actions, addressPipe[1], STDOUT_FILENO);
-    posix_spawn_file_actions_addclose(&actions, addressPipe[0]);
-    posix_spawn_file_actions_addclose(&actions, addressPipe[1]);
+    if (workingDirectory) {
+#if OS(DARWIN)
+        posix_spawn_file_actions_addchdir(&actions, workingDirectory);
+#else
+        posix_spawn_file_actions_addchdir_np(&actions, workingDirectory);
+#endif
+    }
     pid_t child = 0;
     int error = posix_spawn(&child, executable, &actions, nullptr, arguments, environ);
     posix_spawn_file_actions_destroy(&actions);
-    TEST_ASSERT(!error, "the target process launches");
     if (error) {
         dataLogLn("    posix_spawn ", executable, ": ", safeStrerror(error));
-        return;
+        return false;
     }
+    // Only the target holds the write end, so the read below ends if the target dies.
+    close(std::exchange(addressPipe[1], -1));
     auto killChild = makeScopeExit([&] {
         kill(child, SIGKILL);
         while (waitpid(child, nullptr, 0) < 0 && errno == EINTR) { }
     });
 
     uint64_t address = 0;
-    bool reported = read(addressPipe[0], &address, sizeof(address)) == sizeof(address);
-    TEST_ASSERT(reported, "the target reports the address of its object");
-    if (!reported)
-        return;
+    if (!readAll(addressPipe[0], asMutableByteSpan(address))) {
+        dataLogLn("    the target did not report the address of its object");
+        return false;
+    }
 
-    if (auto snapshot = takeSnapshot(child))
-        analyze(*snapshot, JSC::Corpse::Address { address });
+    if (linuxSkip("analysis of a separate process", "attaching to another process is not implemented on Linux yet"))
+        return true;
+    auto snapshot = takeSnapshot(child);
+    if (!snapshot)
+        return false;
+    if (after == TargetAfterSnapshot::Exits) {
+        kill(child, SIGKILL);
+        while (waitpid(child, nullptr, 0) < 0 && errno == EINTR) { }
+    }
+    analyze(*snapshot, JSC::Corpse::Address { address });
+    return true;
+}
+
+static std::optional<UTF8CString> createOffsetText(CreateTargetObject create)
+{
+    uintptr_t createAddress = reinterpret_cast<uintptr_t>(removeCodePtrTag(create));
+    Dl_info info;
+    bool inThisExecutable = dladdr(std::bit_cast<void*>(createAddress), &info) && reinterpret_cast<uintptr_t>(info.dli_fbase) == executableBase();
+    TEST_ASSERT(inThisExecutable, "the target's create function is in this executable");
+    if (!inThisExecutable)
+        return std::nullopt;
+    return makeString(hex(createAddress - executableBase())).utf8();
+}
+
+static UTF8CString thisExecutablePath()
+{
+    UTF8CString executablePath = JSC::Corpse::Process::create(getpid())->executablePath();
+    TEST_ASSERT(!executablePath.isNull(), "this process's executable path is readable");
+    return executablePath;
+}
+
+static bool analyzeOutOfProcess(const char* executablePath, const char* workingDirectory, CreateTargetObject create, TargetAfterSnapshot after, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
+{
+    auto offsetText = createOffsetText(create);
+    if (!offsetText)
+        return false;
+    char* const arguments[] = {
+        const_cast<char*>(executablePath),
+        const_cast<char*>("--target"),
+        const_cast<char*>(offsetText->legacyCStringPointer()),
+        nullptr
+    };
+    return spawnAndAnalyze(executablePath, workingDirectory, arguments, after, analyze);
+}
+
+bool analyzeInSeparateProcess(CreateTargetObject create, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
+{
+    UTF8CString executablePath = thisExecutablePath();
+    return !executablePath.isNull() && analyzeOutOfProcess(executablePath.legacyCStringPointer(), nullptr, create, TargetAfterSnapshot::KeepsRunning, analyze);
+}
+
+void analyzeInSeparateProcessStartedByRelativePath(CreateTargetObject create, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
+{
+    UTF8CString executablePath = thisExecutablePath();
+    if (executablePath.isNull())
+        return;
+    std::string_view path { executablePath.legacyCStringPointer() };
+    size_t slash = path.rfind('/');
+    TEST_ASSERT(slash != std::string_view::npos, "this process's executable path is absolute");
+    if (slash == std::string_view::npos)
+        return;
+    std::string directory { path.substr(0, slash) };
+    std::string relativePath = "./" + std::string { path.substr(slash + 1) };
+    // From the root, the relative path names nothing for this process.
+    int originalDirectory = open(".", O_RDONLY | O_CLOEXEC);
+    bool movedToRoot = originalDirectory >= 0 && !chdir("/");
+    TEST_ASSERT(movedToRoot, "this process can leave its working directory");
+    auto restoreDirectory = makeScopeExit([&] {
+        if (originalDirectory < 0)
+            return;
+        RELEASE_ASSERT(!fchdir(originalDirectory));
+        close(originalDirectory);
+    });
+    if (!movedToRoot)
+        return;
+    bool analyzed = analyzeOutOfProcess(relativePath.c_str(), directory.c_str(), create, TargetAfterSnapshot::KeepsRunning, analyze);
+    TEST_ASSERT(analyzed, "a target started by a relative path is snapshotted");
+}
+
+void analyzeAfterTargetExits(CreateTargetObject create, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
+{
+    UTF8CString executablePath = thisExecutablePath();
+    if (executablePath.isNull())
+        return;
+    bool analyzed = analyzeOutOfProcess(executablePath.legacyCStringPointer(), nullptr, create, TargetAfterSnapshot::Exits, analyze);
+    TEST_ASSERT(analyzed, "a target that exits after its snapshot is snapshotted");
 }
 
 void analyzeInAndOutOfProcess(CreateTargetObject create, NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address)>& analyze)
@@ -361,30 +525,7 @@ void analyzeInAndOutOfProcess(CreateTargetObject create, NOESCAPE const Function
         if (auto snapshot = takeSnapshot(getpid()))
             analyze(*snapshot, object);
     }
-
-    if (linuxSkip("analysis of a separate process", "attaching to another process is not implemented on Linux yet"))
-        return;
-
-    uintptr_t createAddress = reinterpret_cast<uintptr_t>(removeCodePtrTag(create));
-    Dl_info info;
-    bool inThisExecutable = dladdr(std::bit_cast<void*>(createAddress), &info) && reinterpret_cast<uintptr_t>(info.dli_fbase) == executableBase();
-    TEST_ASSERT(inThisExecutable, "the target's create function is in this executable");
-    if (!inThisExecutable)
-        return;
-
-    UTF8CString executablePath = JSC::Corpse::Process::create(getpid())->executablePath();
-    TEST_ASSERT(!executablePath.isNull(), "this process's executable path is readable");
-    if (executablePath.isNull())
-        return;
-
-    CString offsetText = makeString(hex(createAddress - executableBase())).utf8();
-    char* const arguments[] = {
-        const_cast<char*>(executablePath.legacyCStringPointer()),
-        const_cast<char*>("--target"),
-        const_cast<char*>(offsetText.legacyCStringPointer()),
-        nullptr
-    };
-    spawnAndAnalyze(executablePath.legacyCStringPointer(), arguments, analyze);
+    TEST_ASSERT(analyzeInSeparateProcess(create, analyze), "a target in a separate process is snapshotted");
 }
 
 #endif // ENABLE(MYA)
