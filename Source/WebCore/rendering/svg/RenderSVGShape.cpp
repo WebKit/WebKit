@@ -126,8 +126,8 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
     if (!strokeWidth())
         return false;
 
-    auto approximateStrokeBoundingBox = this->approximateStrokeBoundingBox();
-    if (approximateStrokeBoundingBox.isEmpty() || !approximateStrokeBoundingBox.contains(point))
+    auto hitTestStrokeBoundingBox = this->hitTestStrokeBoundingBox();
+    if (hitTestStrokeBoundingBox.isEmpty() || !hitTestStrokeBoundingBox.contains(point))
         return false;
 
     auto paintServerResult = SVGPaintServerHandling::requestPaintServer<SVGPaintServerHandling::Operation::Stroke>(*this, style());
@@ -401,6 +401,18 @@ FloatRect RenderSVGShape::calculateApproximateStrokeBoundingBox() const
         return *m_strokeBoundingBox;
 
     return SVGRenderSupport::calculateApproximateStrokeBoundingBox(*this);
+}
+
+FloatRect RenderSVGShape::hitTestStrokeBoundingBox() const
+{
+    if (!style().stroke().isNone())
+        return approximateStrokeBoundingBox();
+    if (m_shapeType == ShapeType::Empty)
+        return { };
+    // The approximate stroke bounding box is also the repaint rect, so it leaves out an unpainted stroke.
+    if (!m_hitTestStrokeBoundingBox)
+        m_hitTestStrokeBoundingBox = SVGRenderSupport::calculateApproximateStrokeBoundingBox(*this, StrokeBoundingBoxPurpose::HitTesting);
+    return *m_hitTestStrokeBoundingBox;
 }
 
 float RenderSVGShape::strokeWidth() const

@@ -5804,6 +5804,9 @@
     "imported/w3c/web-platform-tests/svg/interact/scripted/module-02.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/svg/interact/scripted/pointer-events-fill-stroke-hittest.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noopener-policy.html": [
         "slow"
     ],

@@ -46,6 +46,8 @@ namespace Style {
 class ComputedStyle;
 }
 
+enum class StrokeBoundingBoxPurpose : bool { Painting, HitTesting };
+
 // SVGRendererSupport is a helper class sharing code between all SVG renderers.
 class SVGRenderSupport {
 public:
@@ -94,7 +96,7 @@ public:
     static const RenderElement* pushMappingToContainer(const RenderElement&, const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&);
     static LayoutRepainter::CheckForRepaint checkForSVGRepaintDuringLayout(const RenderElement&);
 
-    static FloatRect calculateApproximateStrokeBoundingBox(const RenderElement&);
+    static FloatRect calculateApproximateStrokeBoundingBox(const RenderElement&, StrokeBoundingBoxPurpose = StrokeBoundingBoxPurpose::Painting);
 
     static void NODELETE updateAncestorNonScalingStrokeCounts(RenderElement&, int delta);
 

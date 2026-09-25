@@ -55,6 +55,7 @@ void RenderSVGEllipse::updateShapeFromElement()
     m_fillBoundingBox = FloatRect();
     m_strokeBoundingBox = std::nullopt;
     m_approximateStrokeBoundingBox = std::nullopt;
+    m_hitTestStrokeBoundingBox = std::nullopt;
     m_center = FloatPoint();
     m_radii = FloatSize();
 
