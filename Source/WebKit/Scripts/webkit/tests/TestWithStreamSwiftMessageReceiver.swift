@@ -24,7 +24,7 @@
 
 import WebKit_Internal
 
-final class TestWithStreamSwiftWeakRef {
+final class TestWithStreamSwiftWeakRef: @unchecked Sendable {
     private weak var target: TestWithStreamSwift?
     init(target: TestWithStreamSwift) {
         self.target = target
@@ -37,12 +37,27 @@ final class TestWithStreamSwiftWeakRef {
 
     @used
     func dispatchSendString(
+        connection: sending IPC.StreamServerConnection,
+        url: sending WTF.String
+    ) {
+        MainActor.assumeIsolated {
+            guard let target else {
+                return
+            }
+            Self.runSendString(
+                target: target,
+                connection: connection,
+                url: url
+            )
+        }
+    }
+
+    @MainActor
+    private static func runSendString(
+        target: TestWithStreamSwift,
         connection: IPC.StreamServerConnection,
         url: WTF.String
     ) {
-        guard let target else {
-            return
-        }
         do {
             try mayThrowInvalidMessage(
                 target.sendString(
@@ -51,29 +66,48 @@ final class TestWithStreamSwiftWeakRef {
                 )
             )
         } catch {
-            markMessageInvalid(error, on: connection)
+            markMessageInvalid(error, on: connection, message: .TestWithStreamSwift_SendString)
         }
     }
 
     @used
     func dispatchSendStringSync(
-        connection: IPC.StreamServerConnection,
-        url: WTF.String,
-        completionHandler: CompletionHandlers.TestWithStreamSwift.SendStringSyncCompletionHandler
+        connection: sending IPC.StreamServerConnection,
+        url: sending WTF.String,
+        completionHandler: sending CompletionHandlers.TestWithStreamSwift.SendStringSyncCompletionHandler
     ) {
-        guard let target else {
-            return
-        }
-        do {
-            try mayThrowInvalidMessage(
-                target.sendStringSync(
+        MainActor.assumeIsolated {
+            guard let target else {
+                return
+            }
+            Task.immediate {
+                await Self.runSendStringSync(
+                    target: target,
                     connection: connection,
                     url: url,
                     completionHandler: completionHandler
                 )
+            }
+        }
+    }
+
+    @MainActor
+    private static func runSendStringSync(
+        target: TestWithStreamSwift,
+        connection: IPC.StreamServerConnection,
+        url: WTF.String,
+        completionHandler: CompletionHandlers.TestWithStreamSwift.SendStringSyncCompletionHandler
+    ) async {
+        do {
+            let reply = try await mayThrowInvalidMessage(
+                target.sendStringSync(
+                    connection: connection,
+                    url: url
+                )
             )
+            completionHandler.pointee(reply)
         } catch {
-            markMessageInvalid(error, on: connection)
+            markMessageInvalid(error, on: connection, message: .TestWithStreamSwift_SendStringSync)
             CompletionHandlers.TestWithStreamSwift.completeWithDefaultReply(completionHandler)
         }
     }

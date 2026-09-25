@@ -619,6 +619,10 @@ public:
     void markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
     void markCurrentlyDispatchedMessageAsInvalid(const String& error);
 
+    // Reports a failed message check whether or not the message is still being dispatched, so it
+    // works for a handler which deferred past its own dispatch.
+    void markMessageAsInvalid(MessageName, const String& error);
+
     static void logFailedMessageCheck(const String& reason, const String& function, const String& file, unsigned line);
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
