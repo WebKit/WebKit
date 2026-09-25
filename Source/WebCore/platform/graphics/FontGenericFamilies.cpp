@@ -194,6 +194,8 @@ const String* FontGenericFamilies::fontFamily(FamilyNamesIndex family, UScriptCo
     case FamilyNamesIndex::StandardFamily:
         return &standardFontFamily(script);
     case FamilyNamesIndex::SystemUiFamily:
+    case FamilyNamesIndex::KaiFamily:
+    case FamilyNamesIndex::FangsongFamily:
         return nullptr;
     }
 

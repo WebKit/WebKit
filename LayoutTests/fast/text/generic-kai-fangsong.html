@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Script-specific generic font families</title>
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#generic-font-family-syntax">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="target"></div>
+<script>
+const target = document.getElementById("target");
+for (const family of ["kai", "fangsong"]) {
+    const generic = `generic(${family})`;
+    test(() => {
+        target.style.fontFamily = `GENERIC( ${family.toUpperCase()} )`;
+        assert_equals(target.style.fontFamily, generic);
+        assert_equals(getComputedStyle(target).fontFamily, generic);
+        target.style.fontFamily = `serif, ${generic}, monospace`;
+        assert_equals(getComputedStyle(target).fontFamily, `serif, ${generic}, monospace`);
+    }, `${generic} parses and serializes in specified and computed style`);
+
+    test(() => {
+        target.style.font = `italic 20px ${generic}, serif`;
+        assert_equals(target.style.fontFamily, `${generic}, serif`);
+        assert_equals(getComputedStyle(target).fontFamily, `${generic}, serif`);
+        assert_equals(target.style.font, `italic 20px ${generic}, serif`);
+    }, `${generic} works in the font shorthand`);
+
+    test(() => {
+        target.style.fontFamily = family;
+        assert_equals(getComputedStyle(target).fontFamily, family);
+        target.style.fontFamily = `"${generic}"`;
+        assert_equals(getComputedStyle(target).fontFamily, `"${generic}"`);
+        const face = new FontFace(family, 'local("Ahem")');
+        assert_equals(face.family, family);
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(`@font-face { font-family: ${generic}; src: local("Ahem"); }`);
+        assert_equals(sheet.cssRules[0].style.fontFamily, "");
+    }, `${family} remains a family name and ${generic} is not a font-face family`);
+
+    for (const context of [document.createElement("canvas").getContext("2d"), new OffscreenCanvas(1, 1).getContext("2d")]) {
+        test(() => {
+            context.font = `20px ${generic}, monospace`;
+            assert_equals(context.font, `20px ${generic}, monospace`);
+            const width = context.measureText("Latin abc 123").width;
+            context.font = "20px monospace";
+            assert_equals(width, context.measureText("Latin abc 123").width);
+        }, `${generic} works in ${context.canvas instanceof OffscreenCanvas ? "OffscreenCanvas" : "Canvas"} and falls back for Latin`);
+    }
+
+    promise_test(async t => {
+        const face = new FontFace(generic, 'local("Ahem")');
+        document.fonts.add(face);
+        t.add_cleanup(() => { document.fonts.delete(face); });
+        assert_true(document.fonts.check(`20px ${generic}`));
+        assert_array_equals(await document.fonts.load(`20px ${generic}`), []);
+        assert_equals(face.status, "unloaded");
+    }, `${generic} works in the Font Loading API without matching a named web font`);
+
+    promise_test(async t => {
+        const face = new FontFace(generic, 'url("../../resources/Ahem.ttf")');
+        await face.load();
+        document.fonts.add(face);
+        t.add_cleanup(() => { document.fonts.delete(face); });
+        const element = document.createElement("span");
+        element.textContent = "00000";
+        element.style.fontSize = "20px";
+        document.body.append(element);
+        t.add_cleanup(() => element.remove());
+        element.style.fontFamily = generic;
+        const genericWidth = element.getBoundingClientRect().width;
+        element.style.fontFamily = `"${generic}"`;
+        assert_equals(element.getBoundingClientRect().width, 100, "Quoted family selects Ahem");
+        element.style.fontFamily = generic;
+        assert_equals(element.getBoundingClientRect().width, genericWidth, "Switching back selects the generic");
+    }, `${generic} does not share cached fonts with the quoted family name`);
+
+    promise_test(async t => {
+        const candidates = family === "kai" ? ["Kaiti SC", "Kaiti TC", "KaiTi", "DFKai-SB", "STKaiti", "BiauKaiTC", "BiauKaiHK"] : ["STFangsong", "FangSong"];
+        let reference;
+        for (const candidate of candidates) {
+            const face = new FontFace("GenericReference", `local("${candidate}")`);
+            try {
+                await face.load();
+                reference = face;
+                break;
+            } catch { }
+        }
+        // A script-specific generic need not match an installed font.
+        if (!reference)
+            return;
+        document.fonts.add(reference);
+        t.add_cleanup(() => { document.fonts.delete(reference); });
+        const canvas = document.createElement("canvas");
+        canvas.lang = "zh-Hans";
+        const context = canvas.getContext("2d");
+        function pixels(font) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.font = `48px ${font}`;
+            context.fillText("中文仿宋", 0, 60);
+            return context.getImageData(0, 0, canvas.width, canvas.height).data;
+        }
+        const expected = pixels("GenericReference");
+        const actual = pixels(generic);
+        assert_true(actual.every((value, index) => value === expected[index]), "Chinese glyphs match the installed font");
+    }, `${generic} renders with an installed font of the requested style`);
+}
+
+for (const value of ['generic()', 'generic(serif)', 'generic("kai")', 'generic(kai fangsong)', 'generic(kai, fangsong)', 'generic(kai) serif', 'generic(kai),', 'generic(unknown)', 'generic(kai 1)']) {
+    test(() => {
+        assert_false(CSS.supports("font-family", value));
+        assert_false(CSS.supports("font", `20px ${value}`));
+    }, `${value} is invalid`);
+}
+</script>

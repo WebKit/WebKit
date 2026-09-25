@@ -70,6 +70,7 @@ public:
 
     FontRanges() = default;
     explicit FontRanges(RefPtr<Font>&&);
+    FontRanges(RefPtr<Font>&&, std::initializer_list<std::pair<char32_t, char32_t>>);
     ~FontRanges();
 
     FontRanges(const FontRanges&) = default;

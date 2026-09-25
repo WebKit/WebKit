@@ -15298,7 +15298,7 @@
             }
         },
         "<generic-family>": {
-            "grammar": "serif | sans-serif | cursive | fantasy | monospace | system-ui | emoji | math | fangsong | ui-serif | ui-sans-serif | ui-monospace | ui-rounded",
+            "grammar": "serif | sans-serif | cursive | fantasy | monospace | system-ui | emoji | math | generic( [ kai | fangsong ] ) | ui-serif | ui-sans-serif | ui-monospace | ui-rounded",
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#generic-font-families"

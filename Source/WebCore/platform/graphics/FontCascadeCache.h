@@ -29,8 +29,8 @@
 
 #pragma once
 
+#include <WebCore/FontCascadeDescription.h>
 #include <WebCore/FontCascadeFonts.h>
-#include <WebCore/FontDescription.h>
 #include <WebCore/FontTaggedSettings.h>
 #include <array>
 #include <wtf/HashMap.h>
@@ -202,17 +202,20 @@ template<> struct HashTraits<WebCore::FontDescriptionKey> : SimpleClassHashTrait
 
 namespace WebCore {
 
-// This class holds the name of a font family, and defines hashing and == of this name to
+// This class holds a font family, and defines hashing and == of its name to
 // use the rules for font family names instead of using straight string comparison.
 class FontFamilyName {
 public:
     FontFamilyName();
     FontFamilyName(const AtomString&);
+    FontFamilyName(const FontFamily&);
     const AtomString& NODELETE string() const;
     friend void add(Hasher&, const FontFamilyName&);
+    friend bool operator==(const FontFamilyName&, const FontFamilyName&);
 
 private:
     AtomString m_name;
+    FontFamilyKind m_kind { FontFamilyKind::Generic };
 };
 
 bool NODELETE operator==(const FontFamilyName&, const FontFamilyName&);

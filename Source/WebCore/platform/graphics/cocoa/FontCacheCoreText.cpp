@@ -643,6 +643,26 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
 }
 
 #if PLATFORM(MAC)
+static bool isFontFromSystemLibrary(CTFontRef font)
+{
+    RetainPtr url = adoptCF(checked_cf_cast<CFURLRef>(CTFontCopyAttribute(font, kCTFontURLAttribute)));
+    return url && URL(url.get()).fileSystemPath().startsWith("/System/Library/"_s);
+}
+
+RefPtr<Font> fontForSystemFontFamily(const FontDescription& description, const String& family)
+{
+    // CoreText treats process-registered system assets as user-installed fonts.
+    // Verify the backing file after lookup instead of relying on that attribute.
+    auto descriptionForLookup = description;
+    descriptionForLookup.setShouldAllowUserInstalledFonts(AllowUserInstalledFonts::Yes);
+    RefPtr font = protect(FontCache::forCurrentThread())->fontForFamily(descriptionForLookup, family);
+    if (!font)
+        return nullptr;
+    if (!isFontFromSystemLibrary(font->platformData().ctFont()))
+        return nullptr;
+    return font;
+}
+
 bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
 {
     if (family.isEmpty())
@@ -765,6 +785,10 @@ static inline bool isArabicCharacter(char16_t character)
 #if ASSERT_ENABLED
 static bool isUserInstalledFont(CTFontRef font)
 {
+#if PLATFORM(MAC)
+    if (isFontFromSystemLibrary(font))
+        return false;
+#endif
     return adoptCF(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)) == kCFBooleanTrue;
 }
 #endif

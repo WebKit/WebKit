@@ -418,6 +418,8 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
     for (auto& familyRaw : font->family) {
         auto familyAtom = WTF::switchOn(familyRaw,
             [&](CSSValueID familyKeyword) -> AtomString {
+                if (familyKeyword == CSSValueKai || familyKeyword == CSSValueFangsong)
+                    return nullAtom();
                 if (familyKeyword == CSSValueWebkitBody)
                     return AtomString { context.settingsValues().fontGenericFamilies.standardFontFamily() };
                 return *familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
