@@ -94,6 +94,9 @@ PAS_API extern double pas_scavenger_period_in_milliseconds; /* How long to sleep
                                                                scavenges. */
 PAS_API extern uint64_t pas_scavenger_max_epoch_delta; /* How much to subtract from the current epoch
                                                           to compute the max epoch. */
+PAS_API extern uint64_t pas_scavenger_recommit_retention_epoch_delta; /* How much to add to the use
+                                                                         epoch of a directory that had to
+                                                                         recommit a decommitted page. */
 
 #if PAS_OS(DARWIN)
 /* It's legal to set this anytime. */

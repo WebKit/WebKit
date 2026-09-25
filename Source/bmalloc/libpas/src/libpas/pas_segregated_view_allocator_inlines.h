@@ -192,6 +192,9 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                 if (did_lock_lock)
                     pas_lock_unlock(&exclusive->commit_lock);
 
+                if (pas_segregated_directory_is_doing_sharing(size_directory_base))
+                    pas_segregated_directory_note_recommit(size_directory_base);
+
                 if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT) {
                     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
                     pas_debug_spectrum_add(
