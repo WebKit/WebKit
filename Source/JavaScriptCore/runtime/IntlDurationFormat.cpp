@@ -503,7 +503,8 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
 
         // 3.l. If value is not 0 or display is not "auto", then
         value = purifyNaN(value);
-        if (value || unitData.display() != IntlDurationFormat::Display::Auto || style == IntlDurationFormat::UnitStyle::TwoDigit || style ==  IntlDurationFormat::UnitStyle::Numeric) {
+        bool isZero = totalNanosecondsValue ? !totalNanosecondsValue.value() : !value;
+        if (!isZero || unitData.display() != IntlDurationFormat::Display::Auto || style == IntlDurationFormat::UnitStyle::TwoDigit || style ==  IntlDurationFormat::UnitStyle::Numeric) {
             auto formatToString = [&](UFormattedNumber* formattedNumber) -> String {
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
