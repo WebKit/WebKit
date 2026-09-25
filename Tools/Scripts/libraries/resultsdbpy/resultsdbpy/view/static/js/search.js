@@ -203,8 +203,12 @@ function SearchBar(callback, suites) {
                         callback(pairs, false);
                     }
                     closeSearch();
-                } else if (event.keyCode == 0x1B /* DOM_VK_ESCAPE */)
+                } else if (event.keyCode == 0x1B /* DOM_VK_ESCAPE */) {
+                    currentDispatch = Date.now();
                     candidatesRef.setState({candidates: {}});
+                    event.preventDefault();
+                    element.blur();
+                }
             });
             element.onpaste = (event) => {
                 let ignoring = false;
