@@ -2896,6 +2896,20 @@ sub shouldRemoveCMakeCache(@)
     # are probably arguments specifying build targets. Changing those should
     # not trigger a reconfiguration of the build.
     my (@buildArgs) = grep(/^-/, sort(@_, @originalArgv));
+
+    # Remove arguments which control settings persisted by
+    # set-webkit-configuration.
+    my %configurationArgument = map { $_ => 1 } qw(--debug --release --profile --profiling --testing
+                                                   --release-and-assert --ra --cmake --xcode);
+    if (isAppleCocoaWebKit() && isCMakeBuild()) {
+        # cmakeCocoaConfigurationName() names the directory after a sanitizer and
+        # after a forced optimization level as well.
+        $configurationArgument{"--asan"} = 1;
+        $configurationArgument{"--tsan"} = 1;
+        @buildArgs = grep { !/^--force-opt(?:imization-level)?(?:=|$)/ } @buildArgs;
+    }
+    @buildArgs = grep { !$configurationArgument{$_} } @buildArgs;
+
     push @buildArgs, parse_line('\s+', 0, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
 
     # We check this first, because we always want to create this file for a fresh build.
