@@ -150,6 +150,8 @@ WebAutomationSessionProxy::~WebAutomationSessionProxy()
     WebProcess::singleton().removeMessageReceiver(Messages::WebAutomationSessionProxy::messageReceiverName());
 #if ENABLE(WEBDRIVER_BIDI)
     AutomationInstrumentation::clearClient();
+    while (!m_sandboxWorlds.isEmpty())
+        clearSandboxWorldsForFrame(m_sandboxWorlds.begin()->key);
 #endif
 }
 
@@ -379,9 +381,8 @@ void WebAutomationSessionProxy::setScriptObject(JSGlobalContextRef context, JSOb
     globalObject->methodTable()->put(globalObject, globalObject, scriptObjectID, toJS(globalObject, object), slot);
 }
 
-JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
+JSObjectRef WebAutomationSessionProxy::scriptObjectForContext(WebFrame& frame, JSGlobalContextRef context)
 {
-    JSGlobalContextRef context = frame.jsContext();
     if (auto* scriptObject = this->scriptObject(context))
         return scriptObject;
 
@@ -405,11 +406,40 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     return scriptObject;
 }
 
+JSGlobalContextRef WebAutomationSessionProxy::jsContextForSandbox(WebFrame& frame, const std::optional<String>& sandboxName)
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    if (sandboxName && !sandboxName->isEmpty()) {
+        auto frameID = frame.frameID();
+        auto result = m_sandboxWorlds.add(frameID, HashMap<String, Ref<DOMWrapperWorld>> { });
+        auto& worldsForFrame = result.iterator->value;
+        auto it = worldsForFrame.find(*sandboxName);
+        if (it == worldsForFrame.end()) {
+            auto world = WebCore::ScriptController::createWorld(*sandboxName, WebCore::ScriptController::WorldType::User);
+            it = worldsForFrame.set(*sandboxName, WTF::move(world)).iterator;
+        }
+        return frame.jsContextForWorld(it->value.get());
+    }
+#else
+    UNUSED_PARAM(sandboxName);
+#endif
+    return frame.jsContext();
+}
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSessionProxy::clearSandboxWorldsForFrame(WebCore::FrameIdentifier frameID)
+{
+    auto worldsForFrame = m_sandboxWorlds.take(frameID);
+    for (auto& world : worldsForFrame.values())
+        world->clearWrappers();
+}
+#endif
+
 std::expected<Ref<WebCore::Element>, String> WebAutomationSessionProxy::elementForNodeHandle(WebFrame& frame, const String& nodeHandle)
 {
-    // Don't use scriptObjectForFrame() since a missing script object means every
+    // Don't use scriptObjectForContext() since a missing script object means every
     // reference this frame issued belongs to a previous document. Using
-    // scriptObjectForFrame() would make a new script object if it can't find one,
+    // scriptObjectForContext() would make a new script object if it can't find one,
     // preventing us from returning fast.
     JSGlobalContextRef context = frame.jsContext();
     auto* scriptObject = this->scriptObject(context);
@@ -526,6 +556,10 @@ void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameId
     auto map = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
     for (auto& callback : map.values())
         callback(String(errorMessage), String(errorType));
+
+#if ENABLE(WEBDRIVER_BIDI)
+    clearSandboxWorldsForFrame(frameID);
+#endif
 }
 
 void WebAutomationSessionProxy::cancelPendingEvaluateJavaScriptCallbacks()
@@ -543,7 +577,7 @@ void WebAutomationSessionProxy::cancelPendingEvaluateJavaScriptCallbacks()
     }
 }
 
-void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, std::optional<String> sandboxName, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
@@ -558,12 +592,12 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
     if (!coreLocalFrame->isMainFrame())
         ensureObserverForFrame(*frame);
 
-    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    JSGlobalContextRef context = jsContextForSandbox(*frame, sandboxName);
+    JSObjectRef scriptObject = scriptObjectForContext(*frame, context);
     ASSERT(scriptObject);
 
     auto frameID = frame->frameID();
     JSValueRef exception = nullptr;
-    JSGlobalContextRef context = frame->jsContext();
     auto callbackID = JSCallbackIdentifier::generate();
 
     auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
@@ -614,7 +648,7 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIden
         callback(String(result), String(errorType));
 }
 
-void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, std::optional<String> sandboxName, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
@@ -630,12 +664,12 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
     if (!coreLocalFrame->isMainFrame())
         ensureObserverForFrame(*frame);
 
-    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    JSGlobalContextRef context = jsContextForSandbox(*frame, sandboxName);
+    JSObjectRef scriptObject = scriptObjectForContext(*frame, context);
     ASSERT(scriptObject);
 
     auto frameID = frame->frameID();
     JSValueRef exception = nullptr;
-    JSGlobalContextRef context = frame->jsContext();
     auto callbackID = JSCallbackIdentifier::generate();
 
     auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
