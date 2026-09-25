@@ -74,20 +74,6 @@ static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(std::spa
     return nextNonWhiteSpacePosition == startPosition ? std::nullopt : std::make_optional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
 }
 
-static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBreakIteratorFactory& lineBreakIteratorFactory, const Style::ComputedStyle& style)
-{
-    auto textLength = lineBreakIteratorFactory.stringView().length();
-    auto startPositionForNextBreakablePosition = startPosition;
-    while (startPositionForNextBreakablePosition < textLength) {
-        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIteratorFactory, startPositionForNextBreakablePosition, style);
-        // Oftentimes the next breakable position comes back as the start position (most notably hyphens).
-        if (nextBreakablePosition != startPosition)
-            return nextBreakablePosition - startPosition;
-        ++startPositionForNextBreakablePosition;
-    }
-    return textLength - startPosition;
-}
-
 static inline bool NODELETE isTextOrLineBreak(const Box& layoutBox)
 {
     return layoutBox.isInFlow() && (layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity()));
@@ -1178,11 +1164,11 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
         if (style->hyphens() == Hyphens::None) {
             // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
             do {
-                endPosition += moveToNextBreakablePosition(endPosition, lineBreakIteratorFactory, style);
+                endPosition += TextUtil::moveToNextBreakablePosition(endPosition, lineBreakIteratorFactory, style);
                 ASSERT(startPosition < endPosition);
             } while (endPosition < contentLength && text[endPosition - 1] == softHyphen);
         } else {
-            endPosition += moveToNextBreakablePosition(startPosition, lineBreakIteratorFactory, style);
+            endPosition += TextUtil::moveToNextBreakablePosition(startPosition, lineBreakIteratorFactory, style);
             ASSERT(startPosition < endPosition);
             hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
         }

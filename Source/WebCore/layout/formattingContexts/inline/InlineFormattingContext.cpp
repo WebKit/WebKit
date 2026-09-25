@@ -470,7 +470,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
         auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
         CheckedRef styleForTruncation = root().isAnonymous() ? IntegrationUtils::firstNonAnonymousAncestorStyle(root()) : root().style();
         auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(styleForTruncation, numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed, lineLayoutResult.hasContentfulInFlowContent());
-        ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes.mutableSpan(), isLegacyLineClamp);
+        ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes.mutableSpan(), lineClamp && !lineClamp->isLegacy);
         if (ellipsis) {
             displayLine.setHasEllipsis();
             auto lineHasLegacyLineClamp = isLegacyLineClamp && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;

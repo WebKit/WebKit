@@ -91,6 +91,7 @@ public:
     };
     static WordBreakLeft breakWord(const InlineTextBox&, size_t start, size_t length, InlineLayoutUnit width, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft, const FontCascade&);
     static WordBreakLeft breakWord(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    static WordBreakLeft breakOnLastPossibleSoftWrapOpportunity(const InlineTextBox&,  size_t start, size_t length, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
 
     static bool mayBreakInBetween(const InlineTextItem& previousInlineItem, const InlineTextItem& nextInlineItem);
     // FIXME: Remove when computeInlineIntrinsicLogicalWidths is all IFC.
@@ -128,6 +129,8 @@ public:
     static bool hasPositionDependentContentWidth(StringView);
 
     static char32_t NODELETE lastBaseCharacterFromText(StringView);
+
+    static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBreakIteratorFactory&, const Style::ComputedStyle&);
 };
 
 } // namespace Layout
