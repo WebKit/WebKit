@@ -30,6 +30,7 @@
 #include <WebCore/WritingMode.h>
 #include <array>
 #include <concepts>
+#include <wtf/SwiftAccessors.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -99,6 +100,11 @@ public:
     const T& right() const LIFETIME_BOUND { return at(BoxSide::Right); }
     const T& bottom() const LIFETIME_BOUND { return at(BoxSide::Bottom); }
     const T& left() const LIFETIME_BOUND { return at(BoxSide::Left); }
+
+    SWIFT_COPYING_ACCESSOR(top, T)
+    SWIFT_COPYING_ACCESSOR(right, T)
+    SWIFT_COPYING_ACCESSOR(bottom, T)
+    SWIFT_COPYING_ACCESSOR(left, T)
 
     void setAt(BoxSide side, const T& v) { at(side) = v; }
     void setTop(const T& top) { setAt(BoxSide::Top, top); }
