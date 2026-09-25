@@ -46,13 +46,13 @@ static GLuint createProgram(QOpenGLFunctions* gl)
 {
     static constexpr auto vertexShaderSource = R"(
         attribute vec2 position;
-        attribute vec2 texCoord;
         varying vec2 vTexCoord;
+        uniform mat4 u_matrix;
 
         void main()
         {
-            vTexCoord = texCoord;
-            gl_Position = vec4(position, 0.0, 1.0);
+            vTexCoord = position;
+            gl_Position = u_matrix * vec4(position, 0.0, 1.0);
         }
     )";
 
@@ -120,20 +120,20 @@ bool WPEQtUnderlayBlitter::initialize()
     }
 
     m_positionLocation = m_gl->glGetAttribLocation(m_program, "position");
-    m_texCoordLocation = m_gl->glGetAttribLocation(m_program, "texCoord");
+    m_matrixLocation = m_gl->glGetUniformLocation(m_program, "u_matrix");
     m_textureLocation = m_gl->glGetUniformLocation(m_program, "u_texture");
     m_opacityLocation = m_gl->glGetUniformLocation(m_program, "u_opacity");
-    if (m_positionLocation < 0 || m_texCoordLocation < 0 || m_textureLocation < 0 || m_opacityLocation < 0) {
-        qWarning("WPEQtUnderlayBlitter::initialize: failed to resolve shader locations (position=%d, texCoord=%d, texture=%d, opacity=%d)", m_positionLocation, m_texCoordLocation, m_textureLocation, m_opacityLocation);
+    if (m_positionLocation < 0 || m_matrixLocation < 0 || m_textureLocation < 0 || m_opacityLocation < 0) {
+        qWarning("WPEQtUnderlayBlitter::initialize: failed to resolve shader locations (position=%d, matrix=%d, texture=%d, opacity=%d)", m_positionLocation, m_matrixLocation, m_textureLocation, m_opacityLocation);
         invalidate();
         return false;
     }
 
     static constexpr GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f, 1.0f,
-        1.0f, -1.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, 0.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 0.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
     };
 
     m_gl->glGenBuffers(1, &m_vertexBuffer);
@@ -166,11 +166,8 @@ bool WPEQtUnderlayBlitter::importEGLImage(EGLImage image)
     return true;
 }
 
-bool WPEQtUnderlayBlitter::draw(int viewportX, int viewportY, int viewportWidth, int viewportHeight, float opacity)
+bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity)
 {
-    if (viewportWidth <= 0 || viewportHeight <= 0)
-        return false;
-
     if (!initialize() || !m_texture)
         return false;
 
@@ -188,9 +185,6 @@ bool WPEQtUnderlayBlitter::draw(int viewportX, int viewportY, int viewportWidth,
     GLint prevArrayBuffer = 0;
     m_gl->glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &prevArrayBuffer);
 
-    GLint prevViewport[4] = { 0, 0, 0, 0 };
-    m_gl->glGetIntegerv(GL_VIEWPORT, prevViewport);
-
     GLboolean wasBlendEnabled = m_gl->glIsEnabled(GL_BLEND);
     GLint prevBlendSrcRGB = GL_ONE;
     GLint prevBlendDstRGB = GL_ZERO;
@@ -201,29 +195,25 @@ bool WPEQtUnderlayBlitter::draw(int viewportX, int viewportY, int viewportWidth,
     m_gl->glGetIntegerv(GL_BLEND_SRC_ALPHA, &prevBlendSrcAlpha);
     m_gl->glGetIntegerv(GL_BLEND_DST_ALPHA, &prevBlendDstAlpha);
 
-    m_gl->glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
     // Composite WPE frames.
     m_gl->glEnable(GL_BLEND);
     m_gl->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     m_gl->glUseProgram(m_program);
+    m_gl->glUniformMatrix4fv(m_matrixLocation, 1, GL_FALSE, matrix.constData());
     m_gl->glUniform1f(m_opacityLocation, opacity);
     m_gl->glActiveTexture(GL_TEXTURE0);
     m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     m_gl->glUniform1i(m_textureLocation, 0);
     m_gl->glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
     m_gl->glEnableVertexAttribArray(m_positionLocation);
-    m_gl->glEnableVertexAttribArray(m_texCoordLocation);
-    m_gl->glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
-    m_gl->glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), reinterpret_cast<const void*>(2 * sizeof(GLfloat)));
+    m_gl->glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
     m_gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    m_gl->glDisableVertexAttribArray(m_texCoordLocation);
     m_gl->glDisableVertexAttribArray(m_positionLocation);
     m_gl->glBindBuffer(GL_ARRAY_BUFFER, prevArrayBuffer);
     m_gl->glBindTexture(GL_TEXTURE_2D, prevTexture2D);
     m_gl->glActiveTexture(prevActiveTexture);
     m_gl->glUseProgram(prevProgram);
-    m_gl->glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
     m_gl->glBlendFuncSeparate(prevBlendSrcRGB, prevBlendDstRGB, prevBlendSrcAlpha, prevBlendDstAlpha);
     if (wasBlendEnabled)
         m_gl->glEnable(GL_BLEND);
@@ -250,7 +240,7 @@ void WPEQtUnderlayBlitter::invalidate()
     m_importedImage = EGL_NO_IMAGE_KHR;
     m_program = 0;
     m_positionLocation = -1;
-    m_texCoordLocation = -1;
+    m_matrixLocation = -1;
     m_textureLocation = -1;
     m_opacityLocation = -1;
     m_imageTargetTexture2DOES = nullptr;
