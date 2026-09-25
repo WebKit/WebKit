@@ -46,8 +46,11 @@ namespace WGSL {
 
 namespace Metal {
 
-#define DECLARE_FORWARD_PROGRESS "volatile uint32_t __wgslEnsureForwardProgress = 0; if (!__wgslEnsureForwardProgress)"
-#define CHECK_FORWARD_PROGRESS "if (++__wgslEnsureForwardProgress == 4294967295u) break;"
+#define DECLARE_FORWARD_PROGRESS_VOLATILE_ACCESS "uint32_t __wgslEnsureForwardProgress = 0;"_s
+#define CHECK_FORWARD_PROGRESS_VOLATILE_ACCESS "if (__wgslEnsureForwardProgress == 4294967295u) break;"_s
+#define DECLARE_FORWARD_PROGRESS_VOLATILE_COUNTER "volatile uint32_t __wgslEnsureForwardProgress = 0; if (!__wgslEnsureForwardProgress)"_s
+#define CHECK_FORWARD_PROGRESS_VOLATILE_COUNTER "if (++__wgslEnsureForwardProgress == 4294967295u) break;"_s
+#define DECLARE_OPAQUE_SCOPE "volatile uint32_t __wgslEnsureSwitchClauseScope = 0; if (!__wgslEnsureSwitchClauseScope)"
 
 #define STRINGIFY_(...) #__VA_ARGS__##_s
 #define STRINGIFY(...) STRINGIFY_(__VA_ARGS__)
@@ -339,6 +342,16 @@ public:
     HelperGenerator& NODELETE helperGenerator() { return m_helperGenerator; }
     unsigned NODELETE metalAppleGPUFamily() const { return m_deviceState.appleGPUFamily; }
     bool NODELETE shaderValidationEnabled() const { return m_deviceState.shaderValidationEnabled; }
+
+    ASCIILiteral NODELETE declareForwardProgress() const
+    {
+        return metalAppleGPUFamily() < 9 ? DECLARE_FORWARD_PROGRESS_VOLATILE_ACCESS : DECLARE_FORWARD_PROGRESS_VOLATILE_COUNTER;
+    }
+
+    ASCIILiteral NODELETE checkForwardProgress() const
+    {
+        return metalAppleGPUFamily() < 9 ? CHECK_FORWARD_PROGRESS_VOLATILE_ACCESS : CHECK_FORWARD_PROGRESS_VOLATILE_COUNTER;
+    }
 
 private:
     void emitNecessaryHelpers();
@@ -3287,7 +3300,7 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
     if (statement.isInternallyGenerated())
         m_body.append("for ("_s);
     else
-        m_body.append("{ " DECLARE_FORWARD_PROGRESS " for ("_s);
+        m_body.append("{ "_s, declareForwardProgress(), " for ("_s);
 
     if (auto* initializer = statement.maybeInitializer())
         visit(*initializer);
@@ -3305,7 +3318,7 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
     if (statement.isInternallyGenerated())
         m_body.append(')');
     else
-        m_body.append(") { " CHECK_FORWARD_PROGRESS " "_s);
+        m_body.append(") { "_s, checkForwardProgress(), " "_s);
     visit(statement.body());
     if (!statement.isInternallyGenerated()) {
         m_body.append('}');
@@ -3315,7 +3328,7 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 {
-    m_body.append("{ " DECLARE_FORWARD_PROGRESS " while (true) { " CHECK_FORWARD_PROGRESS " \n"_s);
+    m_body.append("{ "_s, declareForwardProgress(), " while (true) { "_s, checkForwardProgress(), " \n"_s);
     {
         if (statement.containsSwitch())
             m_body.append("bool __continuing = false;\n"_s, m_indent);
@@ -3358,9 +3371,9 @@ void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
 
 void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 {
-    m_body.append("{ " DECLARE_FORWARD_PROGRESS " while ("_s);
+    m_body.append("{ "_s, declareForwardProgress(), " while ("_s);
     visit(statement.test());
-    m_body.append(") { " CHECK_FORWARD_PROGRESS " "_s);
+    m_body.append(") { "_s, checkForwardProgress(), " "_s);
     visit(statement.body());
     m_body.append('}');
     m_body.append('}');
@@ -3376,10 +3389,10 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
         }
         if (isDefault)
             m_body.append('\n', m_indent, "default:"_s);
-        // rdar://154262212: the forward-progress workaround is only needed when
+        // rdar://154262212: the opaque-scope workaround is only needed when
         // shader validation is enabled; emit it selectively based on DeviceState.
         if (shaderValidationEnabled())
-            m_body.append("\n{ " DECLARE_FORWARD_PROGRESS "\n"_s);
+            m_body.append("\n{ " DECLARE_OPAQUE_SCOPE "\n"_s);
         else
             m_body.append(' ');
         visit(clause.body);
@@ -3586,8 +3599,11 @@ void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule
     functionDefinitionWriter.write();
 }
 
-#undef DECLARE_FORWARD_PROGRESS
-#undef CHECK_FORWARD_PROGRESS
+#undef DECLARE_FORWARD_PROGRESS_VOLATILE_ACCESS
+#undef CHECK_FORWARD_PROGRESS_VOLATILE_ACCESS
+#undef DECLARE_FORWARD_PROGRESS_VOLATILE_COUNTER
+#undef CHECK_FORWARD_PROGRESS_VOLATILE_COUNTER
+#undef DECLARE_OPAQUE_SCOPE
 
 } // namespace Metal
 } // namespace WGSL

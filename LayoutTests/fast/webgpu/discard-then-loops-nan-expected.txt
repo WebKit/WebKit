@@ -1,0 +1,10 @@
+A fragment shader with two discards, the second nested inside an if, followed by a branch containing a dozen small loops. Every texel of the colour attachment must either keep the clear value, because the fragment was discarded, or hold the finite colour the shader returns. The iteration cap WGSL wraps around each loop to keep a shader from hanging the GPU used to be a volatile local; declared inside conditional control flow, after the fragment had already reached discard_fragment(), that miscompiled and the fragment's colour came out of uninitialized data, so NaN and Inf landed in the attachment for fragments that were never discarded. Both the number of loops and their being nested in a branch after the discards matter, so the shape below is kept exactly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS nonFinite is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

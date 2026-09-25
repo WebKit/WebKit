@@ -1319,6 +1319,9 @@ fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
 # skipped outside of macOS Sequoia due to crash in failed allocation
 [ Sonoma ] fast/webgpu/nocrash/fuzz-279086.html [ Skip ]
 
+# skipped on macOS Sequoia, where WebGPU is not supported
+[ Sequoia ] fast/webgpu/discard-then-loops-nan.html [ Skip ]
+
 # Skipped: many_query_sets:65536 and many_slots exhaust GPU memory, which Queue.mm turns into a crash.
 http/tests/webgpu/webgpu/api/operation/command_buffer/queries/timestampQuery.html [ Skip Slow ]
 
