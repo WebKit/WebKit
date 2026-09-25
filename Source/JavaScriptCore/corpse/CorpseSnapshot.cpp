@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,14 +60,23 @@ const Vector<Thread>& Snapshot::threads()
 
 Address Snapshot::symbol(const char* name)
 {
-    if (!name || !*name)
+    if (!name || !*name) {
+        CORPSE_REPORT("A symbol lookup needs a name");
         return { };
+    }
 
     auto entry = m_symbols.ensure<StringViewHashTranslator>(StringView::fromLatin1(name), [&] {
         return WTF::makeUnique<Symbol>(*this, name);
     });
 
-    return entry.iterator->value->address();
+    Address address = entry.iterator->value->address();
+    if (!address && !entry.isNewEntry) {
+        if (!isValid())
+            CORPSE_REPORT("Cannot look up '%s' in an invalid snapshot", name);
+        else
+            CORPSE_REPORT("No symbol '%s' in pid %d, as an earlier lookup found", name, static_cast<int>(process()->pid()));
+    }
+    return address;
 }
 
 #if OS(DARWIN)
@@ -75,7 +85,7 @@ Address Snapshot::symbol(const char* name)
 static OwnedTaskHandle takeSnapshot(Process* process)
 {
     if (!process || !process->isAttached()) {
-        Error::report("Could not snapshot: No process attached");
+        CORPSE_REPORT("Could not snapshot: No process attached");
         return { };
     }
 
@@ -100,7 +110,7 @@ static OwnedTaskHandle takeSnapshot(Process* process)
 static OwnedTaskHandle takeSnapshot(Process* process)
 {
     if (!process || !process->isAttached()) {
-        Error::report("Could not snapshot: No process attached");
+        CORPSE_REPORT("Could not snapshot: No process attached");
         return { };
     }
     return OwnedTaskHandle::adopt(process->taskPort());

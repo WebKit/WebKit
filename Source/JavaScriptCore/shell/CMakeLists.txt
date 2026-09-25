@@ -112,6 +112,7 @@ if (DEVELOPER_MODE)
         set(testLibJSCTools_SOURCES
             ../corpse/tests/CorpseAddressTest.cpp
             ../corpse/tests/CorpseByteParserTest.cpp
+            ../corpse/tests/CorpseDiagnosticsTest.cpp
             ../corpse/tests/CorpseExportsTrieTest.cpp
             ../corpse/tests/CorpseMemoryTest.cpp
             ../corpse/tests/CorpseProcessTest.cpp

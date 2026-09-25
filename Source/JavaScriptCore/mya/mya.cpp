@@ -31,6 +31,7 @@
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseClient.h>
+#include <JavaScriptCore/CorpseError.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseRegion.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
@@ -714,10 +715,8 @@ private:
 
         CString name = UTF8CString { byteCast<char8_t>(std::span { token }) };
         Address address = snapshot->symbol(name.legacyCStringPointer());
-        if (!address) {
-            SAFE_FPRINTF(stderr, "mya: No symbol '%s' in snapshot #%u\n", name, snapshot->id());
+        if (!address)
             return;
-        }
         if (hex)
             SAFE_PRINTF("&%s = 0x%llx\n", name, static_cast<unsigned long long>(address.toTargetVMAddress()));
         else
@@ -1268,6 +1267,7 @@ private:
         Lexer lex(line);
         if (lex.atEnd())
             return; // Blank line: not a command, not an error.
+        CORPSE_DIAGNOSTICS(diagnostics, "running the command '%s'", line);
 
         // History replay ("!!" / "!<n>") is expanded before command dispatch.
         if (lex.consumeChar('!'))
