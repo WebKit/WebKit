@@ -43,6 +43,7 @@ class CSSStyleDeclaration;
 class CookieStore;
 class Crypto;
 class CustomElementRegistry;
+class DOMRect;
 class DOMSelection;
 class DOMWrapperWorld;
 class Document;
@@ -84,6 +85,7 @@ class DeviceMotionController;
 class DeviceOrientationController;
 #endif
 
+struct DOMRectInit;
 struct IdleRequestOptions;
 struct ImageBitmapOptions;
 struct MessageWithMessagePorts;
@@ -197,6 +199,7 @@ public:
     ExceptionOr<RefPtr<WebKitPoint>> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
     ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
     ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, const String& selectors);
+    ExceptionOr<Ref<DOMRect>> convertRectToMainFrameCoordinates(const DOMRectInit&);
     ExceptionOr<void> scrollBy(const ScrollToOptions&) const;
     ExceptionOr<void> scrollBy(double x, double y) const;
     ExceptionOr<void> scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt) const;

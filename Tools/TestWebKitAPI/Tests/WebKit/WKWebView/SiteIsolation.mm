@@ -46,6 +46,7 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/SQLiteDatabase.h>
 #import <WebCore/SQLiteStatement.h>
+#import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -61,6 +62,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKJSHandle.h>
@@ -4059,6 +4061,63 @@ TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframeWithScrolled
     );
 }
 #endif
+
+TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0; min-height: 1000px'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    worldConfiguration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+
+    EXPECT_WK_STREQ("undefined", [webView objectByEvaluatingJavaScript:@"typeof window.convertRectToMainFrameCoordinates" inFrame:childFrameInfo.get()]);
+    EXPECT_WK_STREQ("undefined", [webView objectByEvaluatingJavaScript:@"typeof window.convertRectToMainFrameCoordinates" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.defaultClientWorld]);
+    EXPECT_WK_STREQ("function", [webView objectByEvaluatingJavaScript:@"typeof window.convertRectToMainFrameCoordinates" inFrame:childFrameInfo.get() inContentWorld:autofillWorld.get()]);
+
+    auto convertRect = [&] {
+        NSArray *result = [webView objectByEvaluatingJavaScript:@"(() => { let r = window.convertRectToMainFrameCoordinates({ x: 20, y: 530, width: 10, height: 15 }); return [r.x, r.y, r.width, r.height]; })()" inFrame:childFrameInfo.get() inContentWorld:autofillWorld.get()];
+        EXPECT_EQ(result.count, 4u);
+        return CGRectMake([result[0] doubleValue], [result[1] doubleValue], [result[2] doubleValue], [result[3] doubleValue]);
+    };
+
+    // Unscrolled, the rect is offset only by the iframe's position in the main frame.
+    // The iframe's position is synced asynchronously from the main frame's process after layout.
+    CGRect rect;
+    EXPECT_TRUE(Util::waitFor([&] {
+        rect = convertRect();
+        return rect.origin.x == 120;
+    }));
+    EXPECT_EQ(rect.origin.x, 120);
+    EXPECT_EQ(rect.origin.y, 630);
+    EXPECT_EQ(rect.size.width, 10);
+    EXPECT_EQ(rect.size.height, 15);
+
+    // Scrolling the iframe moves its contents up relative to the main frame.
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo.get()] intValue] == 500;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    rect = convertRect();
+    EXPECT_EQ(rect.origin.x, 120);
+    EXPECT_EQ(rect.origin.y, 130);
+    EXPECT_EQ(rect.size.width, 10);
+    EXPECT_EQ(rect.size.height, 15);
+}
 
 TEST(SiteIsolation, SetFocusedFrame)
 {

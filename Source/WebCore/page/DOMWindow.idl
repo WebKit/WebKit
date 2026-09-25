@@ -124,6 +124,7 @@
     // Internal operations, not exposed to the Web.
     [EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);
     [EnabledForWorld=shadowRootIsAlwaysOpen] Element? matchingElementInFlatTree(Node scope, DOMString selectors);
+    [EnabledForWorld=allowAutofill] DOMRect convertRectToMainFrameCoordinates(optional DOMRectInit rect = {});
 };
 
 DOMWindow includes AnimationFrameProvider;

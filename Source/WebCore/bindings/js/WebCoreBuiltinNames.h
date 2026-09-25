@@ -618,6 +618,7 @@ namespace WebCore {
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(convertRectToMainFrameCoordinates) \
     macro(cookieStore) \
     macro(createAbortSignal) \
     macro(createImageBitmap) \

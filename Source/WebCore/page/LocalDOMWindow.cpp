@@ -47,6 +47,7 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "Crypto.h"
 #include "CustomElementRegistry.h"
+#include "DOMRect.h"
 #include "DOMSelection.h"
 #include "DOMStringList.h"
 #include "DOMTimer.h"
@@ -730,6 +731,20 @@ ExceptionOr<RefPtr<Element>> LocalDOMWindow::matchingElementInFlatTree(Node& sco
     }
 
     return RefPtr<Element> { nullptr };
+}
+
+ExceptionOr<Ref<DOMRect>> LocalDOMWindow::convertRectToMainFrameCoordinates(const DOMRectInit& rect)
+{
+    RefPtr document = this->document();
+    if (!document)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    RefPtr view = document->view();
+    if (!view)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    auto contentsRect = enclosingIntRect(FloatRect(rect.x, rect.y, rect.width, rect.height));
+    return DOMRect::create(view->contentsToMainFrameView(contentsRect));
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
