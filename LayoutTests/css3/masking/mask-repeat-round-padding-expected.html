@@ -14,7 +14,9 @@
                 border: 50px solid blue;
                 padding: 50px;
                 -webkit-mask-image: url(resources/circle.png);
-                -webkit-mask-size: 90px 83px;
+                /* The 900x500 padding box fits round(900/93) = 10 tiles across and
+                   round(500/87) = 6 tiles down, so the rounded tile is 90 x 500/6. */
+                -webkit-mask-size: 90px 83.333333px;
                 -webkit-mask-repeat: repeat;
                 -webkit-mask-origin: padding-box;
                 -webkit-mask-clip: padding-box;
