@@ -1473,15 +1473,12 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
             return new (m_parserArena) BytecodeIntrinsicNode(BytecodeIntrinsicNode::Type::Function, location, intrinsic->entry(), intrinsic->identifier(), args, divot, divotStart, divotEnd);
     }
 
-    if (func->isOptionalChain()) {
+    if (isOptionalCall && func->isOptionalChain()) {
         OptionalChainNode* optionalChain = static_cast<OptionalChainNode*>(func);
         if (optionalChain->expr()->isLocation()) {
             ASSERT(!optionalChain->expr()->isResolveNode());
-            // We must take care to preserve our `this` value in cases like `a?.b?.()` and `(a?.b)()`, respectively.
-            if (isOptionalCall)
-                return makeFunctionCallNode(location, optionalChain->expr(), previousBaseWasSuper, args, divotStart, divot, divotEnd, callOrApplyChildDepth, isOptionalCall);  
-            optionalChain->setExpr(makeFunctionCallNode(location, optionalChain->expr(), previousBaseWasSuper, args, divotStart, divot, divotEnd, callOrApplyChildDepth, isOptionalCall));
-            return optionalChain;
+            // We must take care to preserve our `this` value in cases like `a?.b?.()`.
+            return makeFunctionCallNode(location, optionalChain->expr(), previousBaseWasSuper, args, divotStart, divot, divotEnd, callOrApplyChildDepth, isOptionalCall);
         }
     }
 

@@ -1399,6 +1399,18 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
         return ret;
     }
 
+    OptionalChainNode* optionalChain = m_expr->isOptionalChain() ? static_cast<OptionalChainNode*>(m_expr) : nullptr;
+    if (optionalChain && optionalChain->expr()->isLocation()) {
+        ASSERT(!isOptionalCall());
+        RefPtr<RegisterID> func = generator.tempDestination(dst);
+        RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
+        CallArguments callArguments(generator, m_args);
+        optionalChain->emitCallee(generator, func.get(), callArguments.thisRegister());
+        RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+        generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
+        return ret;
+    }
+
     RefPtr<RegisterID> func = nullptr;
     if (m_args && m_args->hasAssignments())
         func = generator.newTemporary();
@@ -3597,6 +3609,46 @@ RegisterID* OptionalChainNode::emitBytecode(BytecodeGenerator& generator, Regist
         generator.popOptionalChainTarget(finalDest.get(), m_expr->isDeleteNode());
 
     return finalDest.unsafeGet();
+}
+
+void OptionalChainNode::emitCallee(BytecodeGenerator& generator, RegisterID* function, RegisterID* thisRegister)
+{
+    ASSERT(m_isOutermost);
+
+    generator.pushOptionalChainTarget();
+    if (m_expr->isBracketAccessorNode()) {
+        BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(m_expr);
+        ASSERT(!bracket->base()->isSuperNode());
+        generator.emitNode(thisRegister, bracket->base());
+        if (bracket->base()->isOptionalChainBase())
+            generator.emitOptionalCheck(thisRegister);
+
+        if (isNonIndexStringElement(*bracket->subscript())) {
+            generator.emitExpressionInfo(bracket->divot(), bracket->divotStart(), bracket->divotEnd());
+            generator.emitGetById(function, thisRegister, static_cast<StringNode*>(bracket->subscript())->value());
+        } else {
+            RefPtr<RegisterID> property = generator.emitNodeForProperty(bracket->subscript());
+            generator.emitExpressionInfo(bracket->divot(), bracket->divotStart(), bracket->divotEnd());
+            generator.emitGetByVal(function, thisRegister, property.get());
+        }
+    } else {
+        ASSERT(m_expr->isDotAccessorNode());
+        DotAccessorNode* dot = static_cast<DotAccessorNode*>(m_expr);
+        ASSERT(!dot->base()->isSuperNode());
+        generator.emitNode(thisRegister, dot->base());
+        if (dot->base()->isOptionalChainBase())
+            generator.emitOptionalCheck(thisRegister);
+
+        generator.emitExpressionInfo(dot->divot(), dot->divotStart(), dot->divotEnd());
+        dot->emitGetPropertyValue(generator, function, thisRegister);
+    }
+
+    Ref<Label> endLabel = generator.newLabel();
+    generator.emitJump(endLabel.get());
+    generator.popOptionalChainTarget();
+    generator.emitLoad(function, jsUndefined());
+    generator.emitLoad(thisRegister, jsUndefined());
+    generator.emitLabel(endLabel.get());
 }
 
 void OptionalChainNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, Label& trueTarget, Label& falseTarget, FallThroughMode fallThroughMode)
