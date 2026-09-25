@@ -2091,6 +2091,8 @@
 		E32F7141281B3C6600AFD21D /* UnifiedSource2-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F713C281B3C6600AFD21D /* UnifiedSource2-c.c */; };
 		E32FEA2C27448F3700FF41C1 /* JSONAtomStringCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */; };
 		E32FEA2D27448F3700FF41C1 /* JSONAtomStringCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2EF0EBDB0D94C479AA789EC /* JSONTransitionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CBEB11FC13DD4509BEA4E279 /* JSONTransitionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		585D005110BD4197B8D4D484 /* JSONTransitionCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B7A38E78C154E5C8C9EE995 /* JSONTransitionCacheInlines.h */; };
 		E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3344A942E75522F004F63F5 /* B3Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = E3344A912E75522F004F63F5 /* B3Operations.h */; };
 		E334CBB521FD96A9000EB178 /* RegExpGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6163,6 +6165,8 @@
 		E32F713C281B3C6600AFD21D /* UnifiedSource2-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource2-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource2-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAtomStringCacheInlines.h; sourceTree = "<group>"; };
 		E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAtomStringCache.h; sourceTree = "<group>"; };
+		CBEB11FC13DD4509BEA4E279 /* JSONTransitionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONTransitionCache.h; sourceTree = "<group>"; };
+		3B7A38E78C154E5C8C9EE995 /* JSONTransitionCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONTransitionCacheInlines.h; sourceTree = "<group>"; };
 		E3305FB020B0F78700CEB82B /* InByVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByVariant.cpp; sourceTree = "<group>"; };
 		E3305FB120B0F78800CEB82B /* InByVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByVariant.h; sourceTree = "<group>"; };
 		E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImpl.h; sourceTree = "<group>"; };
@@ -9418,6 +9422,8 @@
 				A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */,
 				A7F9935D0FD7325100A0B2D0 /* JSONObject.h */,
 				276B38782A71D11700252F4E /* JSONObjectInlines.h */,
+				CBEB11FC13DD4509BEA4E279 /* JSONTransitionCache.h */,
+				3B7A38E78C154E5C8C9EE995 /* JSONTransitionCacheInlines.h */,
 				FF27D0E42BE2AEDB00397A8C /* JSOrderedHashTable.cpp */,
 				FFCC9A402BDD7C4700C75345 /* JSOrderedHashTable.h */,
 				FFB951132C043CA800349750 /* JSOrderedHashTableHelper.h */,
@@ -12483,6 +12489,8 @@
 				E32FEA2C27448F3700FF41C1 /* JSONAtomStringCacheInlines.h in Headers */,
 				A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */,
 				276B387B2A71D11800252F4E /* JSONObjectInlines.h in Headers */,
+				C2EF0EBDB0D94C479AA789EC /* JSONTransitionCache.h in Headers */,
+				585D005110BD4197B8D4D484 /* JSONTransitionCacheInlines.h in Headers */,
 				FFCC9A412BDD7C4700C75345 /* JSOrderedHashTable.h in Headers */,
 				FFB951142C043CA800349750 /* JSOrderedHashTableHelper.h in Headers */,
 				23D7A3E22F3D0F4C00A27B88 /* JSPIContext.h in Headers */,

@@ -82,6 +82,7 @@
 #include "JSMicrotask.h"
 #include "JSMicrotaskDispatcher.h"
 #include "JSModuleLoaderInlines.h"
+#include "JSONTransitionCacheInlines.h"
 #include "JSPromise.h"
 #include "JSPromiseCombinatorsContextInlines.h"
 #include "JSPromiseCombinatorsGlobalContext.h"
@@ -1907,6 +1908,7 @@ void VM::beginMarking()
 void VM::reconcileWeakReferencesAtGCEnd()
 {
     m_syncResumeCallCache->reconcileWeakReferencesAtGCEnd(*this);
+    jsonTransitionCache.reconcileAtGCEnd();
 }
 
 void VM::clearMicrotaskCallCaches()
@@ -1921,6 +1923,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
         microtaskQueue->visitAggregate(visitor);
     });
     numericStrings.visitAggregate(visitor);
+    jsonTransitionCache.visitAggregate(visitor);
     m_builtinExecutables->visitAggregate(visitor);
     m_regExpCache->visitAggregate(visitor);
 

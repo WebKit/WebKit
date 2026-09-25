@@ -41,6 +41,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/Interpreter.h>
 #include <JavaScriptCore/JSDateMath.h>
 #include <JavaScriptCore/JSONAtomStringCache.h>
+#include <JavaScriptCore/JSONTransitionCache.h>
 #include <JavaScriptCore/KeyAtomStringCache.h>
 #include <JavaScriptCore/NativeFunction.h>
 #include <JavaScriptCore/NumericStrings.h>
@@ -629,6 +630,7 @@ public:
     Ref<StringImpl> lastAtomizedIdentifierStringImpl { *StringImpl::empty() };
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
+    JSONTransitionCache jsonTransitionCache;
     KeyAtomStringCache keyAtomStringCache;
     Vector<unsigned> stringSplitIndice;
     StringReplaceCache stringReplaceCache;

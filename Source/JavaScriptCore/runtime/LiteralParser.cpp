@@ -31,6 +31,7 @@
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSONAtomStringCacheInlines.h"
+#include "JSONTransitionCacheInlines.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
 #include "SourceCharacters.h"
@@ -1429,8 +1430,10 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursivelyEntry(VM& vm)
     if (!Options::useRecursiveJSONParse()) [[unlikely]]
         return parse(vm, StartParseExpression, nullptr);
     TokenType type = m_lexer.currentToken()->type;
-    if (type == TokLBrace || type == TokLBracket)
+    if (type == TokLBrace || type == TokLBracket) {
+        JSONTransitionCache::ParsingScope parsingScope(vm.jsonTransitionCache);
         return parseRecursively<ParserMode::StrictJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
+    }
     return parsePrimitiveValue(vm);
 }
 
@@ -1634,14 +1637,33 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                             return ExistingProperty { transition, transition->transitionOffset() };
                     }
                 } else if (!originalStructure->isDictionary()) {
+                    bool isCacheable = false;
+                    if constexpr (parserMode == StrictJSON) {
+                        auto token = m_lexer.currentToken();
+                        if (token->type == TokString && token->stringIs8Bit) {
+                            isCacheable = true;
+                            if (Structure* transition = vm.jsonTransitionCache.get(originalStructure, token->string8())) {
+#if ASSERT_ENABLED
+                                PropertyOffset expectedOffset = 0;
+                                RefPtr expectedName = AtomStringImpl::lookUp(token->string8());
+                                ASSERT(expectedName);
+                                ASSERT(Structure::addPropertyTransitionToExistingStructure(originalStructure, expectedName.get(), 0, expectedOffset) == transition);
+                                ASSERT(expectedOffset == transition->transitionOffset());
+#endif
+                                return ExistingProperty { transition, transition->transitionOffset() };
+                            }
+                        }
+                    }
                     // This check avoids refcount churn in the common case of a cached Identifier.
                     if (SUPPRESS_UNCOUNTED_LOCAL AtomStringImpl* ident = existingIdentifier(vm, m_lexer.currentToken())) {
                         PropertyOffset offset = 0;
                         Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(originalStructure, ident, 0, offset);
                         if (newStructure) [[likely]] {
-                            if constexpr (parserMode == StrictJSON)
+                            if constexpr (parserMode == StrictJSON) {
+                                if (isCacheable)
+                                    vm.jsonTransitionCache.add(originalStructure, newStructure, m_lexer.currentToken()->string8());
                                 return ExistingProperty { newStructure, offset };
-                            else if (newStructure->transitionPropertyName() != vm.propertyNames->underscoreProto && m_visitedUnderscoreProto.isEmpty())
+                            } else if (newStructure->transitionPropertyName() != vm.propertyNames->underscoreProto && m_visitedUnderscoreProto.isEmpty())
                                 return ExistingProperty { newStructure, offset };
                         }
                         return Identifier::fromString(vm, ident);
