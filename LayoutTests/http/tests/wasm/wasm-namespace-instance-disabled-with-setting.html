@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebAssemblyESMIntegrationEnabled=false ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("WebAssembly.namespaceInstance is hidden when WebAssemblyESMIntegrationEnabled is off.");
+shouldBeEqualToString("typeof WebAssembly.namespaceInstance", "undefined");
+</script>
+</body>
+</html>
