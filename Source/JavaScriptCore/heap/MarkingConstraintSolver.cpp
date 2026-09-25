@@ -27,6 +27,7 @@
 #include "MarkingConstraintSolver.h"
 
 #include "Collector.h"
+#include "CollectorInlines.h"
 #include "JSCInlines.h"
 #include "MarkingConstraintSet.h"
 

@@ -814,6 +814,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/CellState.h
     heap/CollectionScope.h
     heap/Collector.h
+    heap/CollectorInlines.h
     heap/CollectorPhase.h
     heap/CompleteSubspace.h
     heap/CompleteSubspaceInlines.h

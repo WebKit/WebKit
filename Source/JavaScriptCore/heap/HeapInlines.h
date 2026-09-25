@@ -235,15 +235,6 @@ inline bool Heap::isInPhase(CollectorPhase phase) const
     return m_collector->m_currentPhase == phase;
 }
 
-template<typename Func>
-void Collector::forEachSlotVisitor(const Func& func)
-{
-    func(*m_collectorSlotVisitor);
-    func(*m_heap.m_mutatorSlotVisitor);
-    for (auto& visitor : m_parallelSlotVisitors)
-        func(*visitor);
-}
-
 namespace GCClient {
 
 ALWAYS_INLINE VM& Heap::vm() const

@@ -519,6 +519,7 @@ heap/CellAttributes.cpp
 heap/CellContainer.cpp
 heap/CodeBlockSet.cpp
 heap/CollectionScope.cpp
+heap/Collector.cpp
 heap/CollectorPhase.cpp
 heap/CompleteSubspace.cpp
 heap/ConservativeRoots.cpp
