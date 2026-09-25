@@ -103,6 +103,21 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull(), WTF::move(context));
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, Ref<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
+    : ImageBufferShareableBitmapBackendBase(parameters)
+    , m_bitmap(WTF::move(bitmap))
+    , m_context(WTF::move(context))
+{
+    // ShareableBitmap ensures that the coordinate space in the context that we're adopting
+    // has a top-left origin, so we don't ever need to flip here, so we don't call setupContext().
+    // However, ShareableBitmap does not have a notion of scale, so we must apply the device
+    // scale factor to the context ourselves.
+    m_context->applyDeviceScaleFactor(resolutionScale());
+}
+
+ImageBufferShareableBitmapBackend::~ImageBufferShareableBitmapBackend() = default;
+#else
 ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, Ref<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
     : ImageBufferShareableBitmapBackendBase(parameters)
     , m_bitmap(WTF::move(bitmap))
@@ -136,6 +151,7 @@ void ImageBufferShareableBitmapBackend::releaseGraphicsContext()
 {
     m_context = nullptr;
 }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 bool ImageBufferShareableBitmapBackend::canMapBackingStore() const
 {

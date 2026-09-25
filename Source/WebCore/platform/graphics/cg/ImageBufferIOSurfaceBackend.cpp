@@ -224,10 +224,12 @@ void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
     m_platformContext = nullptr;
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
 bool ImageBufferIOSurfaceBackend::hasGraphicsContext() const
 {
     return !!m_context;
 }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 bool ImageBufferIOSurfaceBackend::setVolatile()
 {

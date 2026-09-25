@@ -65,7 +65,9 @@ private:
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
     bool isInUse() const final;
     void releaseGraphicsContext() final;
+#ifndef RC_REMOVE_SEC_ACCEL_3
     bool hasGraphicsContext() const final { return !!m_context; }
+#endif // RC_REMOVE_SEC_ACCEL_3
     bool setVolatile() final;
     WebCore::SetNonVolatileResult setNonVolatile() final;
     WebCore::VolatilityState volatilityState() const final;

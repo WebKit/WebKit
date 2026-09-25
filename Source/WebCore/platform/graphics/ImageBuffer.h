@@ -237,7 +237,9 @@ public:
 
     WEBCORE_EXPORT bool isInUse() const;
     WEBCORE_EXPORT virtual void releaseGraphicsContext();
+#ifndef RC_REMOVE_SEC_ACCEL_3
     WEBCORE_EXPORT virtual bool hasGraphicsContext() const;
+#endif // RC_REMOVE_SEC_ACCEL_3
     WEBCORE_EXPORT bool setVolatile();
     WEBCORE_EXPORT SetNonVolatileResult setNonVolatile();
     WEBCORE_EXPORT VolatilityState volatilityState() const;

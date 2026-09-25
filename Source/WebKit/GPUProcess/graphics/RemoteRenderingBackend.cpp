@@ -191,9 +191,11 @@ void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier 
     MESSAGE_CHECK(imageBuffer->hasOneRef(), "ImageBuffer in use");
     // Avoid leaking cross-RemoteRenderingBackend state through context by releasing the context.
     imageBuffer->releaseGraphicsContext();
+#ifndef RC_REMOVE_SEC_ACCEL_3
     // A backend that cannot release its context still holds that state, which the adopting
     // RemoteRenderingBackend would then touch from its own work queue thread.
     MESSAGE_CHECK(!imageBuffer->hasGraphicsContext(), "ImageBuffer cannot release its GraphicsContext");
+#endif // RC_REMOVE_SEC_ACCEL_3
     bool success = m_sharedResourceCache->addSerializedImageBuffer(serializedIdentifier, WTF::move(imageBuffer));
     MESSAGE_CHECK(success, "Duplicate SerializedImageBuffer");
 }
