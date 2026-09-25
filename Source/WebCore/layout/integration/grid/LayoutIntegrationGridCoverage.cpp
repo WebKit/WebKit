@@ -287,9 +287,7 @@ static bool gridItemHasValidHeight(const Style::PreferredSize& height)
 
 static bool isUnsupportedGridTrackSize(const Style::GridTrackSize& trackSize)
 {
-    // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
-    // MaxTrackBreadth to the same value we only need to check one.
-    return !trackSize.isBreadth();
+    return trackSize.isFitContent();
 }
 
 static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackList)
