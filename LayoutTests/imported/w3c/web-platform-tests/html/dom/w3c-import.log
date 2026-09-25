@@ -10,14 +10,17 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/access-key-label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-attribute-reflection-enumerated.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-attribute-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-attribute-reflection.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-element-reflection-disconnected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-element-reflection-labelledby.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-element-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-aria-enumerated.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-embedded.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms-weekmonth.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms.js
@@ -29,9 +32,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-tabular.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-text.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/historical.html
-/LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness-shadowrealm.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/new-harness.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/original-harness.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-embedded.html
@@ -42,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-misc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-obsolete.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-original.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-overridden-methods.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-sections.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-tabular.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-text.html

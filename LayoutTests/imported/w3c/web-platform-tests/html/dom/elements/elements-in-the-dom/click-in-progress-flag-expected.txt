@@ -1,0 +1,3 @@
+
+PASS elements respect 'click in progress' flag
+

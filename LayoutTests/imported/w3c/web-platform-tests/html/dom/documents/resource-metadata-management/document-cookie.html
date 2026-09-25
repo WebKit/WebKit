@@ -9,9 +9,9 @@
 <script>
 
 const TEST_CASES = [
-  {value: "", expected: "", test: "Empty value"},
-  {value: "a=b", expected: "a=b", test: "A simple cookie"},
-  {value: "b=A\0Z", expected: "", test: "A null char"},
+  {value: "", expected: "", name: "Empty value"},
+  {value: "a=b", expected: "a=b", name: "A simple cookie"},
+  {value: "b=A\0Z", expected: "", name: "A null char"},
 ];
 
 test(function(){
@@ -26,7 +26,7 @@ for (const i in TEST_CASES) {
 
     // Cleanup
     if (document.cookie.includes("=")) {
-      document.cookie = document.cookie.split("=")[0] + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+      document.cookie = document.cookie.split("=")[0] + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       assert_equals(document.cookie, "");
     }
   }, t.name);
