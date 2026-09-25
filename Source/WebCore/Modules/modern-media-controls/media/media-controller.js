@@ -112,7 +112,8 @@ class MediaController
 
         window.addEventListener("keydown", this);
 
-        new MutationObserver(this._updateControlsAvailability.bind(this)).observe(this.media, { attributes: true, attributeFilter: ["controls"] });
+        this._controlsAttributeObserver = new MutationObserver(this._updateControlsAvailability.bind(this));
+        this._controlsAttributeObserver.observe(this.media, { attributes: true, attributeFilter: ["controls"] });
     }
 
     // Public
@@ -357,6 +358,7 @@ class MediaController
 
     deinitialize()
     {
+        this._controlsAttributeObserver.disconnect();
         this.shadowRoot.removeChild(this.container);
         window.removeEventListener("keydown", this);
         if (this.controls)
@@ -374,6 +376,7 @@ class MediaController
         window.addEventListener("keydown", this);
         if (this.controls)
             this.controls.reenable();
+        this._controlsAttributeObserver.observe(this.media, { attributes: true, attributeFilter: ["controls"] });
         return true;
     }
 
