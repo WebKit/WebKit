@@ -38,8 +38,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBAV1);
 
-GPUVideoDecoderVTBAV1::GPUVideoDecoderVTBAV1(GPUVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-    : GPUVideoDecoderVTB(callback, WTF::move(colorSpaceOverride))
+GPUVideoDecoderVTBAV1::GPUVideoDecoderVTBAV1(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : GPUVideoDecoderVTB(callback, WTF::move(queue), WTF::move(colorSpaceOverride))
 {
 }
 

@@ -37,7 +37,7 @@ namespace WebCore {
 class GPUVideoDecoderVTBAV1 final : public GPUVideoDecoderVTB {
     WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBAV1);
 public:
-    explicit GPUVideoDecoderVTBAV1(GPUVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
+    GPUVideoDecoderVTBAV1(GPUVideoDecoderCallback, Ref<WorkQueue>&&, std::optional<PlatformVideoColorSpace>&&);
     ~GPUVideoDecoderVTBAV1();
 
 private:

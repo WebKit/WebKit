@@ -36,7 +36,7 @@ namespace WebCore {
 class GPUVideoDecoderVTBVP9 final : public GPUVideoDecoderVTB {
     WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBVP9);
 public:
-    explicit GPUVideoDecoderVTBVP9(GPUVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
+    GPUVideoDecoderVTBVP9(GPUVideoDecoderCallback, Ref<WorkQueue>&&, std::optional<PlatformVideoColorSpace>&&);
     ~GPUVideoDecoderVTBVP9() = default;
 
 private:

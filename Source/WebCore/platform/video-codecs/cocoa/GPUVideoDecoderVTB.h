@@ -41,14 +41,16 @@ public:
     ~GPUVideoDecoderVTB();
 
 protected:
-    GPUVideoDecoderVTB(GPUVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
+    GPUVideoDecoderVTB(GPUVideoDecoderCallback, Ref<WorkQueue>&&, std::optional<PlatformVideoColorSpace>&&);
 
     int32_t decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data);
     void setVideoInfo(Ref<VideoInfo>&&, uint8_t reorderSize = 0);
 
-    uint16_t width() const { return m_width; }
-    uint16_t height() const { return m_height; }
+    uint16_t width() const WTF_REQUIRES_CAPABILITY(queue()) { return m_width; }
+    uint16_t height() const WTF_REQUIRES_CAPABILITY(queue()) { return m_height; }
     void setFrameSize(uint16_t width, uint16_t height) final;
+
+    WorkQueue& queue() const { return m_workQueue; }
 
 private:
     void flush() final;
@@ -57,14 +59,16 @@ private:
 
     void updateFormat(const VideoInfo&);
 
-    BlockPtr<void(CVPixelBufferRef, int64_t, int64_t, bool)> m_callback;
-    RefPtr<VideoInfo> m_videoInfo;
-    RetainPtr<CMVideoFormatDescriptionRef> m_format;
-    RefPtr<VideoDecoderVTBSession> m_decoder;
-    RefPtr<GPUVideoDecoderVTBQueue> m_queue;
-    uint16_t m_width { 0 };
-    uint16_t m_height { 0 };
-    uint8_t m_reorderSize { 0 };
+    const Ref<WorkQueue> m_workQueue;
+    const BlockPtr<void(CVPixelBufferRef, int64_t, int64_t, bool)> m_callback;
+
+    RefPtr<VideoInfo> m_videoInfo WTF_GUARDED_BY_CAPABILITY(queue());
+    RetainPtr<CMVideoFormatDescriptionRef> m_format WTF_GUARDED_BY_CAPABILITY(queue());
+    RefPtr<VideoDecoderVTBSession> m_decoder WTF_GUARDED_BY_CAPABILITY(queue());
+    RefPtr<GPUVideoDecoderVTBQueue> m_queue WTF_GUARDED_BY_CAPABILITY(queue());
+    uint16_t m_width WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
+    uint16_t m_height WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
+    uint8_t m_reorderSize WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
 };
 
 }

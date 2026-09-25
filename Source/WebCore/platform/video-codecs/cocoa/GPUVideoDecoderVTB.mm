@@ -108,10 +108,12 @@ private:
     MediaReorderQueue<Buffer, BufferComparator> m_queue WTF_GUARDED_BY_LOCK(m_lock);
 };
 
-GPUVideoDecoderVTB::GPUVideoDecoderVTB(GPUVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+GPUVideoDecoderVTB::GPUVideoDecoderVTB(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
     : GPUVideoDecoder(WTF::move(colorSpaceOverride))
+    , m_workQueue(WTF::move(queue))
     , m_callback(makeBlockPtr(callback))
 {
+    assertIsCurrent(this->queue());
 }
 
 GPUVideoDecoderVTB::~GPUVideoDecoderVTB() = default;
@@ -145,6 +147,8 @@ static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVi
 
 int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data)
 {
+    assertIsCurrent(queue());
+
     if (!m_format)
         return 0;
 
@@ -166,6 +170,8 @@ int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<con
 
 void GPUVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo, uint8_t reorderSize)
 {
+    assertIsCurrent(queue());
+
     updateFormat(videoInfo);
     m_videoInfo = WTF::move(videoInfo);
     m_reorderSize = reorderSize;
@@ -175,12 +181,16 @@ void GPUVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo, uint8_t reorde
 
 void GPUVideoDecoderVTB::colorSpaceOverrideChanged()
 {
+    assertIsCurrent(queue());
+
     if (RefPtr videoInfo = m_videoInfo)
         updateFormat(*videoInfo);
 }
 
 void GPUVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
 {
+    assertIsCurrent(queue());
+
     auto colorSpaceOverride = this->colorSpaceOverride();
     if (!colorSpaceOverride) {
         m_format = createFormatDescriptionFromTrackInfo(videoInfo);
@@ -195,6 +205,8 @@ void GPUVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
 
 void GPUVideoDecoderVTB::flush()
 {
+    assertIsCurrent(queue());
+
     if (RefPtr decoder = m_decoder)
         decoder->flush();
     if (RefPtr queue = m_queue)
@@ -203,11 +215,15 @@ void GPUVideoDecoderVTB::flush()
 
 void GPUVideoDecoderVTB::setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height)
 {
+    assertIsCurrent(queue());
+
     setFrameSize(width, height);
 }
 
 void GPUVideoDecoderVTB::setFrameSize(uint16_t width, uint16_t height)
 {
+    assertIsCurrent(queue());
+
     m_width = width;
     m_height = height;
 }

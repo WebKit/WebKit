@@ -59,13 +59,15 @@ static RefPtr<VideoInfo> createVP9VideoInfoFromData(std::span<const uint8_t> dat
     return createVideoInfoFromVPCodecConfigurationRecord(*parsedRecord);
 }
 
-GPUVideoDecoderVTBVP9::GPUVideoDecoderVTBVP9(GPUVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-    : GPUVideoDecoderVTB(callback, WTF::move(colorSpaceOverride))
+GPUVideoDecoderVTBVP9::GPUVideoDecoderVTBVP9(GPUVideoDecoderCallback callback, Ref<WorkQueue>&& queue, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : GPUVideoDecoderVTB(callback, WTF::move(queue), WTF::move(colorSpaceOverride))
 {
 }
 
 int32_t GPUVideoDecoderVTBVP9::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
 {
+    assertIsCurrent(queue());
+
     if (RefPtr videoInfo = createVP9VideoInfoFromData(data, width(), height()))
         setVideoInfo(videoInfo.releaseNonNull());
 
