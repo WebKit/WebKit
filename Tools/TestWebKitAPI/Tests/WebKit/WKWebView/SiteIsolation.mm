@@ -11252,6 +11252,68 @@ TEST(SiteIsolation, DragImageLocation)
     EXPECT_EQ([simulator initialDragImageLocationInView], NSMakePoint(252, 252));
 }
 
+static NSPoint selectionDragImageLocationInSubframe(bool siteIsolationEnabled, unsigned mainFrameScrollY, unsigned subframeScrollY)
+{
+    // The iframe and the editable text are offset by the scroll amounts so that they appear at the same place in the view after scrolling.
+    auto mainframeHTML = makeString("<body style='margin: 0; height: 3000px;'><iframe width='300' height='300' style='position: absolute; top: "_s, 200 + mainFrameScrollY, "px; left: 200px; border: 2px solid red;' src='https://domain2.com/subframe'></iframe></body>"_s);
+    auto subframeHTML = makeString("<body style='margin: 0; height: 3000px;'>"
+        "<div id='editor' contenteditable style='position: absolute; top: "_s, 50 + subframeScrollY, "px; left: 50px; font-size: 24px; line-height: 30px;'>Hello world</div>"
+        "</body>"_s);
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    if (siteIsolationEnabled)
+        enableSiteIsolation(configuration.get());
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"scrollTo(0, %u); true", mainFrameScrollY]];
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"scrollTo(0, %u); getSelection().selectAllChildren(document.getElementById('editor')); true", subframeScrollY] inFrame:[webView firstChildFrame]];
+    [webView waitForNextPresentationUpdate];
+
+    // The iframe's content box starts at (202, 202), so "Hello world" starts at (252, 252) in the view.
+    [simulator runFrom:CGPointMake(280, 267) to:CGPointMake(380, 367)];
+    return [simulator initialDragImageLocationInView];
+}
+
+static void testSelectionDragImageLocation(unsigned mainFrameScrollY, unsigned subframeScrollY)
+{
+    auto expected = selectionDragImageLocationInSubframe(false, mainFrameScrollY, subframeScrollY);
+    auto actual = selectionDragImageLocationInSubframe(true, mainFrameScrollY, subframeScrollY);
+    EXPECT_GT(expected.x, 250);
+    EXPECT_GT(expected.y, 250);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(SiteIsolation, SelectionDragImageLocation)
+{
+    testSelectionDragImageLocation(0, 0);
+}
+
+TEST(SiteIsolation, SelectionDragImageLocationInScrolledMainFrame)
+{
+    testSelectionDragImageLocation(500, 0);
+}
+
+TEST(SiteIsolation, SelectionDragImageLocationInScrolledSubframe)
+{
+    testSelectionDragImageLocation(0, 500);
+}
+
+TEST(SiteIsolation, SelectionDragImageLocationInScrolledMainFrameAndSubframe)
+{
+    testSelectionDragImageLocation(500, 500);
+}
+
 TEST(SiteIsolation, MouseClickAfterIncompleteDragging)
 {
     static constexpr ASCIILiteral mainframeHTML = "<body><iframe id='testFrame' width='300' height='300' style='position: absolute; top: 100px; left: 100px;' src='https://domain2.com/subframe'></iframe></body>"_s;

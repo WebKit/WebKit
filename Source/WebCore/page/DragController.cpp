@@ -1414,8 +1414,8 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     item.containsSelection = frame.selection().contains(eventPos);
     item.rootFrameID = rootFrameID;
 
-    auto eventPositionInRootViewCoordinates = frameView->contentsToRootView(eventPos);
-    auto dragLocationInRootViewCoordinates = frameView->contentsToRootView(dragLoc);
+    auto eventPositionInRootViewCoordinates = roundedIntPoint(frameView->contentsToMainFrameView(FloatPoint { eventPos }));
+    auto dragLocationInRootViewCoordinates = roundedIntPoint(frameView->contentsToMainFrameView(FloatPoint { dragLoc }));
     item.eventPositionInContentCoordinates = mainFrameView->rootViewToContents(eventPositionInRootViewCoordinates);
     item.eventPositionInRootViewCoordinates = eventPositionInRootViewCoordinates;
     item.dragLocationInContentCoordinates = mainFrameView->rootViewToContents(dragLocationInRootViewCoordinates);
