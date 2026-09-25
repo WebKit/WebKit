@@ -3289,6 +3289,7 @@ private:
     bool m_isAppNapEnabled { true };
 
     Markable<WebCore::NavigationIdentifier> m_pendingNavigationID;
+    std::optional<WebCore::RegistrableDomain> m_pendingUnpartitionedStorageSite;
 
     bool m_shouldConsiderEnhancedSecurityForInsecureResponseForCurrentNavigation { false };
     bool m_mainFrameProgressCompleted { false };

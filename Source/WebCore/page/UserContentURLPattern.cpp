@@ -26,6 +26,8 @@
 #include "config.h"
 #include "UserContentURLPattern.h"
 
+#include "PublicSuffixStore.h"
+#include "RegistrableDomain.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
@@ -87,6 +89,27 @@ UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host,
     }
 
     m_error = Error::None;
+}
+
+std::optional<RegistrableDomain> UserContentURLPattern::siteMatchedByPatterns(const Vector<UserContentURLPattern>& patterns)
+{
+    std::optional<RegistrableDomain> site;
+    for (auto& pattern : patterns) {
+        if (!pattern.isValid())
+            continue;
+
+        if (pattern.matchAllHosts() || (pattern.matchSubdomains() && PublicSuffixStore::singleton().isPublicSuffix(pattern.host())))
+            return std::nullopt;
+
+        if (pattern.host().isEmpty())
+            continue;
+
+        auto patternSite = RegistrableDomain::uncheckedCreateFromHost(pattern.host());
+        if (site && *site != patternSite)
+            return std::nullopt;
+        site = WTF::move(patternSite);
+    }
+    return site;
 }
 
 bool UserContentURLPattern::operator==(const UserContentURLPattern& other) const

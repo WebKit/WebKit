@@ -864,6 +864,7 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
 
+    document->updateHasUnpartitionedStorageAccess(protect(m_documentLoader).get());
     updateFirstPartyForCookies();
     document->initContentSecurityPolicy();
 
@@ -1304,8 +1305,13 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
 {
     Ref frame = m_frame.get();
     for (RefPtr<Frame> descendantFrame = frame.ptr(); descendantFrame; descendantFrame = descendantFrame->tree().traverseNext(frame.ptr())) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendantFrame))
-            protect(localFrame->document())->setFirstPartyForCookies(url);
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendantFrame);
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
+        if (!document)
+            continue;
+        document->setFirstPartyForCookies(document->hasUnpartitionedStorageAccess() ? protect(document->securityOrigin())->toURL() : url);
     }
 
     RegistrableDomain registrableDomain(url);
@@ -1313,11 +1319,16 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
         RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendantFrame);
         if (!localFrame)
             continue;
-        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(protect(localFrame->document())->url())) {
+        RefPtr document = localFrame->document();
+        if (!document)
+            continue;
+        if (document->hasUnpartitionedStorageAccess())
+            document->setSiteForCookies(protect(document->securityOrigin())->toURL());
+        else if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(document->url())) {
             if (RefPtr parent = dynamicDowncast<LocalFrame>(localFrame->tree().parent()))
-                protect(localFrame->document())->setSiteForCookies(parent->document()->siteForCookies());
-        } else if (registrableDomain.matches(protect(localFrame->document())->url()))
-            protect(localFrame->document())->setSiteForCookies(url);
+                document->setSiteForCookies(parent->document()->siteForCookies());
+        } else if (registrableDomain.matches(document->url()))
+            document->setSiteForCookies(url);
     }
 }
 
@@ -3559,6 +3570,15 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     updateRequestAndAddExtraFields(protect(m_frame), request, mainResource, loadType, shouldUpdate, isServiceWorkerNavigationLoad, willOpenInNewWindow, initiator);
 }
 
+URL FrameLoader::partitionedFirstPartyForCookiesForSubframeNavigation(const Document& document)
+{
+    if (document.hasUnpartitionedStorageAccess()) {
+        if (RefPtr page = document.page())
+            return page->mainFrameURL();
+    }
+    return document.firstPartyForCookies();
+}
+
 void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, IsServiceWorkerNavigationLoad isServiceWorkerNavigationLoad, WillOpenInNewWindow willOpenInNewWindow, Document* initiator)
 {
     ASSERT(isServiceWorkerNavigationLoad == IsServiceWorkerNavigationLoad::No || mainResource != IsMainResource::Yes);
@@ -3577,7 +3597,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         if (isMainFrameMainResource)
             request.setFirstPartyForCookies(request.url());
         else if (document)
-            request.setFirstPartyForCookies(document->firstPartyForCookies());
+            request.setFirstPartyForCookies(isMainResource ? partitionedFirstPartyForCookiesForSubframeNavigation(*document) : document->firstPartyForCookies());
     }
 
     RefPtr page = targetFrame.page();
@@ -3585,7 +3605,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         RefPtr updatedInitiator = initiator;
         if (!updatedInitiator && document) {
             updatedInitiator = document.get();
-            if (isMainResource) {
+            if (isMainResource && !document->hasUnpartitionedStorageAccess()) {
                 RefPtr ownerFrame = dynamicDowncast<LocalFrame>(localFrame->tree().parent());
                 if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument()) {
                     if (RefPtr localOpener = dynamicDowncast<LocalFrame>(localFrame->opener()))

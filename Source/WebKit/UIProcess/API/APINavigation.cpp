@@ -106,6 +106,7 @@ void Navigation::setCurrentRequest(ResourceRequest&& request)
     m_currentRequest = WTF::move(request);
     m_hasStorageForCurrentSite = false;
     m_isEnhancedSecurityLinkForCurrentSite = false;
+    m_unpartitionedStorageSite = std::nullopt;
 }
 
 void Navigation::upgradeCurrentInsecureRequest()

@@ -655,6 +655,26 @@ void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceR
     });
 }
 
+void DocumentLoader::updateRequestForUnpartitionedStorageAccess(ResourceRequest& request, bool isRedirect) const
+{
+    bool wasUnpartitioned = request.isTopSite();
+    bool isUnpartitioned = hasUnpartitionedStorageAccess(request.url());
+    if (isUnpartitioned)
+        request.setFirstPartyForCookies(request.url());
+
+    if (wasUnpartitioned == isUnpartitioned)
+        return;
+
+    request.setIsTopSite(isUnpartitioned);
+    if (!isUnpartitioned) {
+        if (RefPtr frame = m_frame.get(); frame && frame->document())
+            request.setFirstPartyForCookies(FrameLoader::partitionedFirstPartyForCookiesForSubframeNavigation(*protect(frame->document())));
+    }
+
+    if (isRedirect)
+        request.setIsSameSite(false);
+}
+
 void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
@@ -738,6 +758,10 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     // URL of the main frame which doesn't change when we redirect.
     if (frame->isMainFrame())
         newRequest.setFirstPartyForCookies(newRequest.url());
+    else if (didReceiveRedirectResponse)
+        m_unpartitionedStorageSite = std::nullopt;
+    else
+        updateRequestForUnpartitionedStorageAccess(newRequest, isContinuingLoadAfterProvisionalLoadStarted());
 
     FrameLoader::addSameSiteInfoToRequestIfNeeded(newRequest, document.get());
 
@@ -793,6 +817,11 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             stopLoadingForPolicyChange(navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess ? LoadWillContinueInAnotherProcess::Yes : LoadWillContinueInAnotherProcess::No);
             break;
         case NavigationPolicyDecision::ContinueLoad:
+            if (!frame->isMainFrame()) {
+                updateRequestForUnpartitionedStorageAccess(request, true);
+                setRequest(ResourceRequest { request });
+            }
+
             // The client may have updated the User-Agent (via webView.customUserAgent,
             // WKWebpagePreferences._customUserAgent, an Inspector override, or a quirk
             // triggered by the redirect target URL) during the policy callback. The
