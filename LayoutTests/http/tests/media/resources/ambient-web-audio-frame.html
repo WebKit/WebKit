@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Cross-site helper frame for audio-session-category-cross-site-pause-resume.html.
+//
+// This frame starts a WebAudio graph, which makes this process choose the
+// AmbientSound audio session category.
+//
+// Under Site Isolation this frame is cross-site relative to its opener, so it runs in
+// its own process. When the two processes' categories are reconciled, this frame's
+// AmbientSound has to lose to the main frame's MediaPlayback. rdar://180062104 was the
+// case where nothing asserted MediaPlayback and this AmbientSound won, leaving the
+// shared session in a category that produces no audible playback.
+window.addEventListener('load', async () => {
+    let category = 'no-internals';
+    if (window.internals) {
+        internals.settings.setShouldManageAudioSessionCategory(true);
+        category = internals.audioSessionCategory();
+    }
+
+    let state = 'no-audiocontext';
+    try {
+        const context = new AudioContext();
+        const gain = context.createGain();
+        gain.gain.value = 0;
+        gain.connect(context.destination);
+        const oscillator = context.createOscillator();
+        oscillator.connect(gain);
+        oscillator.start();
+        await context.resume();
+        state = context.state;
+        if (window.internals)
+            category = internals.audioSessionCategory();
+    } catch (error) {
+        state = `error: ${error.name}`;
+    }
+
+    parent.postMessage({ state, category }, '*');
+});
+</script>
+</body>
+</html>
