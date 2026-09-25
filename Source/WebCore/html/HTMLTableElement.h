@@ -94,6 +94,7 @@ private:
 
     bool m_borderAttr { false }; // Sets a precise border width and creates an outset border for the table and for its cells.
     bool m_frameAttr { false }; // Implies a thin border width if no border is set and then a certain set of solid/hidden borders based off the value.
+    bool m_borderColorAttr { false }; // Makes the borders of the table's cells inherit the table's border-color; border-color is otherwise not inherited.
     TableRules m_rulesAttr { TableRules::Unset }; // Implies a thin border width, a collapsing border model, and all borders on the table becoming set to hidden (if frame/border are present, to none otherwise).
     unsigned short m_padding { 1 };
     mutable RefPtr<const MutableStyleProperties> m_sharedCellStyle;
