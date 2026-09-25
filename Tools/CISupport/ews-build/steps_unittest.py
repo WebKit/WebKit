@@ -12820,6 +12820,37 @@ index 8a2d2375b8d2..f7ebc3b11b94 100644
         self.expect_property('user_removed_tests', ['WebCore/inspector/agents/worker/WorkerAuditAgent.h/NoUncountedMemberChecker'])
         return rc
 
+    def test_expectations_file_removed(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+
+        commit_diff = '''
+diff --git a/Source/WebCore/SaferCPPExpectations/NoUncountedMemberCheckerExpectations b/Source/WebCore/SaferCPPExpectations/NoUncountedMemberCheckerExpectations
+deleted file mode 100644
+index 8a2d2375b8d2..000000000000
+--- a/Source/WebCore/SaferCPPExpectations/NoUncountedMemberCheckerExpectations
++++ /dev/null
+@@ -1,3 +0,0 @@
+-inspector/InspectorStyleSheet.cpp
+-loader/appcache/ApplicationCacheStorage.cpp
+'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'diff', 'HEAD~1', '--', '*Expectations'])
+            .log('stdio', stdout=commit_diff)
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found modified expectations')
+        rc = self.run_step()
+        self.expect_property('user_added_tests', [])
+        self.expect_property('user_removed_tests', [
+            'WebCore/inspector/InspectorStyleSheet.cpp/NoUncountedMemberChecker',
+            'WebCore/loader/appcache/ApplicationCacheStorage.cpp/NoUncountedMemberChecker',
+        ])
+        return rc
+
     @expectedFailure
     def test_unmodified(self):
         self.configureStep()
