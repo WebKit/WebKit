@@ -286,6 +286,7 @@ public:
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
     void NODELETE setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
+    void tryReplaceEncodedDataForTesting(HTMLImageElement&);
     void setHasHDRContentForTesting(HTMLImageElement&);
 
 #if ENABLE(WEB_CODECS)

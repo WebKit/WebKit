@@ -130,12 +130,32 @@ IntSize BitmapImageDescriptor::sourceSize(ImageOrientation orientation) const
         size = decoder->size();
     else
 #endif
-        size = primaryImageFrameMetadata(m_size, CachedFlag::Size, &ImageFrame::size, SubsamplingLevel::Default);
+        size = primaryFrameSourceSize();
 
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = this->orientation();
 
     return orientation.usesWidthAsHeight() ? size.transposedSize() : size;
+}
+
+// The primary ImageFrame's size is the size it was decoded at, which can be a smaller size for drawing.
+IntSize BitmapImageDescriptor::primaryFrameSourceSize() const
+{
+    if (m_cachedFlags.contains(CachedFlag::Size))
+        return m_size;
+
+    RefPtr decoder = m_source->decoderIfExists();
+    // Not isSizeAvailable(): the cached status goes stale when a decoder learns its size asynchronously.
+    if (!decoder || !decoder->isSizeAvailable())
+        return { };
+
+    auto size = decoder->frameSizeAtIndex(primaryFrameIndex(), SubsamplingLevel::Default);
+    if (size.isEmpty())
+        return size;
+
+    m_size = size;
+    m_cachedFlags.add(CachedFlag::Size);
+    return m_size;
 }
 
 FloatSize BitmapImageDescriptor::density() const

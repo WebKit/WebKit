@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    #thumbnail {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+</head>
+<body>
+<script>
+description("An image's natural size should stay its real size after its encoded data is replaced, even if its only decoded frame was decoded at a smaller size for drawing.");
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.clearMemoryCache();
+    internals.settings.setWebkitImageReadyEventEnabled(true);
+}
+
+var thumbnail = new Image();
+var fullSize;
+
+thumbnail.onload = () => {
+    thumbnail.id = "thumbnail";
+    if (window.internals)
+        internals.setAsyncDecodingEnabledForTesting(thumbnail, true);
+
+    // Painting the 20x20 thumbnail asynchronously decodes the 400x400 image at a size for drawing.
+    thumbnail.addEventListener("webkitImageFrameReady", () => {
+        if (window.internals)
+            internals.tryReplaceEncodedDataForTesting(thumbnail);
+
+        fullSize = new Image();
+        fullSize.onload = () => {
+            shouldBe("thumbnail.naturalWidth", "400");
+            shouldBe("thumbnail.naturalHeight", "400");
+            shouldBe("fullSize.naturalWidth", "400");
+            shouldBe("fullSize.naturalHeight", "400");
+            finishJSTest();
+        };
+        fullSize.src = thumbnail.src;
+    }, { once: true });
+
+    document.body.appendChild(thumbnail);
+};
+thumbnail.src = "resources/green-400x400.png";
+</script>
+</body>
+</html>

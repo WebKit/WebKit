@@ -243,6 +243,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SharedBuffer.h"
 #include "ShouldPartitionCookie.h"
 #include "SocketProvider.h"
 #include "SourceBuffer.h"
@@ -1366,6 +1367,25 @@ void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& eleme
 {
     if (auto* cachedImage = element.cachedImage())
         cachedImage->setForceUpdateImageDataEnabledForTesting(enabled);
+}
+
+// Stands in for the disk cache handing the memory cache a file-backed copy of a resource's body.
+void Internals::tryReplaceEncodedDataForTesting(HTMLImageElement& element)
+{
+#if ENABLE(SHAREABLE_RESOURCE)
+    RefPtr cachedImage = element.cachedImage();
+    if (!cachedImage)
+        return;
+
+    RefPtr data = cachedImage->resourceBuffer();
+    if (!data)
+        return;
+
+    auto bytes = data->copyData();
+    cachedImage->tryReplaceEncodedData(SharedBuffer::create(bytes.span()));
+#else
+    UNUSED_PARAM(element);
+#endif
 }
 
 void Internals::setHasHDRContentForTesting(HTMLImageElement& element)

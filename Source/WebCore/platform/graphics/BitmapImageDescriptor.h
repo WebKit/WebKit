@@ -113,6 +113,8 @@ private:
     template<typename MetadataType>
     MetadataType primaryNativeImageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (NativeImage::*functor)() const) const;
 
+    IntSize primaryFrameSourceSize() const;
+
     mutable OptionSet<CachedFlag> m_cachedFlags;
 
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
