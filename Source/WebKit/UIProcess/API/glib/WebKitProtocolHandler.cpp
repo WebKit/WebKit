@@ -65,6 +65,7 @@
 #include "WPEUtilities.h"
 #if ENABLE(WPE_PLATFORM)
 #include "DisplayVBlankMonitorWPE.h"
+#include "WebKitSettingsPrivate.h"
 #include <wpe/wpe-platform.h>
 #endif
 #endif
@@ -125,7 +126,13 @@ static inline ASCIILiteral webkitPortName()
 static ASCIILiteral hardwareAccelerationPolicy(WebKitURISchemeRequest* request)
 {
 #if PLATFORM(WPE)
+#if ENABLE(WPE_PLATFORM)
+    auto* webView = webkit_uri_scheme_request_get_web_view(request);
+    ASSERT(webView);
+    return webkitSettingsGetPreferences(webkit_web_view_get_settings(webView))->hardwareAccelerationEnabled() ? "always"_s : "never"_s;
+#else
     return "always"_s;
+#endif
 #elif PLATFORM(GTK)
     auto* webView = webkit_uri_scheme_request_get_web_view(request);
     ASSERT(webView);
