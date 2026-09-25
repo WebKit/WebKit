@@ -1,5 +1,7 @@
+//@ skip if $architecture == "arm64" && $hostOS == "linux"
 //@ slow!
 // https://bugs.webkit.org/show_bug.cgi?id=247454
+// https://bugs.webkit.org/show_bug.cgi?id=325270
 import * as assert from "../assert.js";
 import { compile, instantiate } from "../gc/wast-wrapper.js";
 
