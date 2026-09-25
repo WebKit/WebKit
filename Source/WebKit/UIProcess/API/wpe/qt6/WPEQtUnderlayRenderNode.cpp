@@ -145,10 +145,13 @@ void WPEQtUnderlayRenderNode::render(const RenderState* state)
     if (!gl)
         return;
 
+    const auto scissorRect = state->scissorEnabled() ? std::optional<QRect>(state->scissorRect()) : std::nullopt;
+    const auto stencilValue = state->stencilEnabled() ? std::optional<int>(state->stencilValue()) : std::nullopt;
+
     QMatrix4x4 itemToClip = *state->projectionMatrix() * (matrix() ? *matrix() : QMatrix4x4());
     itemToClip.translate(m_rect.x(), m_rect.y());
     itemToClip.scale(m_rect.width(), m_rect.height());
-    if (!m_blitter.draw(itemToClip, float(inheritedOpacity())))
+    if (!m_blitter.draw(itemToClip, float(inheritedOpacity()), scissorRect, stencilValue))
         return;
 
     m_releaseFence = wpeQtUnderlayCreateReleaseFence(gl);

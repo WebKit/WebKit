@@ -45,6 +45,7 @@ public:
     void setView(WPEQtView*, WPEViewQtQuick*);
     void setRect(const QRectF& rect) { m_rect = rect; }
     QRectF rect() const override { return m_rect; }
+    StateFlags changedStates() const override { return ScissorState; }
     RenderingFlags flags() const override { return BoundedRectRendering; }
     void render(const RenderState*) override;
     void releaseResources() override;
