@@ -61,6 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-appearance.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-document-open.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-active-ancestors.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-4.html

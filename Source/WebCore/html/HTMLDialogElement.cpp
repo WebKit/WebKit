@@ -264,7 +264,7 @@ void HTMLDialogElement::close(const String& result, Element* source)
 
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
         RefPtr focusedElement = document().focusedElement();
-        bool focusIsInsideDialog = focusedElement == this || (focusedElement && focusedElement->isComposedTreeDescendantOf(*this));
+        bool focusIsInsideDialog = focusedElement && focusedElement->isComposedTreeInclusiveDescendantOf(*this);
         if (wasModal || focusIsInsideDialog) {
             FocusOptions options;
             options.preventScroll = true;

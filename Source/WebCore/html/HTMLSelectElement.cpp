@@ -420,6 +420,19 @@ SelectPopoverElement* HTMLSelectElement::pickerPopoverElement() const
     return m_popover;
 }
 
+static constexpr double pickerOpeningPressMovementThreshold = 5;
+
+bool HTMLSelectElement::consumePickerOpeningPress(const MouseEvent& event)
+{
+    auto location = m_pickerOpeningMouseLocation;
+    m_pickerOpeningMouseLocation = { };
+    if (!location)
+        return false;
+    auto dx = event.absoluteLocation().x() - location->x();
+    auto dy = event.absoluteLocation().y() - location->y();
+    return dx * dx + dy * dy <= pickerOpeningPressMovementThreshold * pickerOpeningPressMovementThreshold;
+}
+
 void HTMLSelectElement::hidePickerPopoverElement()
 {
     RefPtr popover = m_popover;
@@ -1869,6 +1882,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             return;
         }
         if (m_popupIsVisible) {
+            m_pickerOpeningMouseLocation = { };
             if (!usesBaseAppearancePicker()) {
 #if !PLATFORM(IOS_FAMILY)
                 hidePopup();
@@ -1876,8 +1890,11 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 hidePickerPopoverElement();
             } else if (!isClickInsidePopover(protect(m_popover), event))
                 hidePickerPopoverElement();
-        } else
+        } else {
+            if (usesBaseAppearancePicker())
+                m_pickerOpeningMouseLocation = mouseEvent->absoluteLocation();
             openPickerForUserInteraction(false);
+        }
 
         event.setDefaultHandled();
         return;
@@ -2311,6 +2328,9 @@ void HTMLSelectElement::hidePopup()
 
 void HTMLSelectElement::setPopupIsVisible(bool visible)
 {
+    if (!visible)
+        m_pickerOpeningMouseLocation = { };
+
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, visible);
     m_popupIsVisible = visible;
 }

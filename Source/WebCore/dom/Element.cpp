@@ -4734,8 +4734,8 @@ void Element::addToTopLayer()
     setEventTargetFlag(EventTargetFlag::IsInTopLayer);
 
     // User-action pseudo-classes should not propagate past top layer boundaries.
-    bool clearHover = document->hoveredElement() && contains(document->hoveredElement());
-    bool clearActive = document->activatedElement() && contains(document->activatedElement());
+    bool clearHover = isComposedTreeInclusiveAncestorOf(document->hoveredElement());
+    bool clearActive = isComposedTreeInclusiveAncestorOf(document->activatedElement());
     bool clearFocusWithin = hasFocusWithin();
     if (clearHover || clearActive || clearFocusWithin)
         propagateUserActionPseudoClassesToAncestors(*this, false, clearHover, clearActive, clearFocusWithin);
@@ -4775,8 +4775,8 @@ void Element::removeFromTopLayer()
 
     // User-action pseudo-classes should now propagate past this element since it is
     // no longer a top layer boundary.
-    bool setHover = document().hoveredElement() && contains(document().hoveredElement());
-    bool setActive = document().activatedElement() && contains(document().activatedElement());
+    bool setHover = isComposedTreeInclusiveAncestorOf(document().hoveredElement());
+    bool setActive = isComposedTreeInclusiveAncestorOf(document().activatedElement());
     bool setFocusWithin = hasFocusWithin();
     if (setHover || setActive || setFocusWithin)
         propagateUserActionPseudoClassesToAncestors(*this, true, setHover, setActive, setFocusWithin);

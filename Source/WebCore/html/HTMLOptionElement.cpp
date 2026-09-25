@@ -352,6 +352,13 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
             return HTMLElement::defaultEventHandler(event);
         }
 
+        int keyCode = keyboardEvent->keyCode();
+        if ((keyCode == '\r' || keyCode == ' ') && !keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey()) {
+            select->pickOrToggleOption(*this);
+            keyboardEvent->setDefaultHandled();
+            return;
+        }
+
         int currentIndex = select->optionToListIndex(index());
         int listIndex = select->computeNavigationIndex(keyIdentifier, currentIndex, select->pickerNavigationKeyIdentifiers());
         if (listIndex >= 0) {
@@ -371,13 +378,6 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
         if (!keyboardEvent)
             return HTMLElement::defaultEventHandler(event);
 
-        int keyCode = keyboardEvent->keyCode();
-        if (keyCode == '\r' || keyCode == ' ') {
-            select->pickOrToggleOption(*this);
-            keyboardEvent->setDefaultHandled();
-            return;
-        }
-
         if (!keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey() && u_isprint(keyboardEvent->charCode())) {
             int listIndex = select->typeAheadMatchIndex(*keyboardEvent);
             if (listIndex >= 0)
@@ -387,10 +387,17 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
         }
     }
 
-    if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames.mousedownEvent && mouseEvent->button() == MouseButton::Left) {
-        select->pickOrToggleOption(*this);
-        event.setDefaultHandled();
-        return;
+    if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->button() == MouseButton::Left) {
+        if (event.type() == eventNames.mousedownEvent) {
+            select->clearPickerOpeningMouseLocation();
+            event.setDefaultHandled();
+            return;
+        }
+        if (event.type() == eventNames.mouseupEvent && !select->consumePickerOpeningPress(*mouseEvent)) {
+            select->pickOrToggleOption(*this);
+            event.setDefaultHandled();
+            return;
+        }
     }
 
     HTMLElement::defaultEventHandler(event);

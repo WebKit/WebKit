@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/DoublePoint.h>
 #include <WebCore/HTMLFormControlElement.h>
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/PopupMenuClient.h>
@@ -41,6 +42,7 @@
 namespace WebCore {
 
 class HTMLOptionsCollection;
+class MouseEvent;
 class SelectPopoverElement;
 class ShadowRoot;
 
@@ -207,6 +209,8 @@ public:
     SelectPopoverElement* NODELETE pickerPopoverElement() const;
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
+    void clearPickerOpeningMouseLocation() { m_pickerOpeningMouseLocation = { }; }
+    bool consumePickerOpeningPress(const MouseEvent&);
     enum class PickerCloseReason : bool { Appearance, PickerSupport };
     void queuePickerClose(PickerCloseReason);
 
@@ -342,6 +346,7 @@ private:
     RefPtr<PopupMenu> m_popup;
 #endif
     std::optional<FloatPoint> m_lastPopupLocationForTesting;
+    std::optional<DoublePoint> m_pickerOpeningMouseLocation;
     bool m_popupIsVisible { false };
     bool m_wasBaseAppearance { false };
     bool m_buttonTextNeedsUpdate { false };

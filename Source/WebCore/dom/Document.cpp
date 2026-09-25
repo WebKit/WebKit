@@ -6504,9 +6504,9 @@ void Document::hoveredElementDidDetach(Element& element)
     if (!m_hoveredElement || &element != m_hoveredElement)
         return;
 
-    m_hoveredElement = element.parentElement();
+    m_hoveredElement = element.parentElementInComposedTree();
     while (m_hoveredElement && !m_hoveredElement->renderer())
-        m_hoveredElement = m_hoveredElement->parentElement();
+        m_hoveredElement = m_hoveredElement->parentElementInComposedTree();
     if (RefPtr frame = this->frame())
         frame->eventHandler().scheduleHoverStateUpdate();
 }
@@ -6516,9 +6516,9 @@ void Document::elementInActiveChainDidDetach(Element& element)
     if (!m_activeElement || &element != m_activeElement)
         return;
 
-    m_activeElement = element.parentElement();
+    m_activeElement = element.parentElementInComposedTree();
     while (m_activeElement && !m_activeElement->renderer())
-        m_activeElement = m_activeElement->parentElement();
+        m_activeElement = m_activeElement->parentElementInComposedTree();
 }
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
@@ -9970,13 +9970,29 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     m_hoveredElement = newHoveredElement;
 
+    auto isInForeignTopLayer = [](Element* candidate) {
+        for (RefPtr element = candidate; element; element = element->parentElementInComposedTree()) {
+            if (element->isInTopLayer())
+                return !element->isInActiveChain();
+        }
+        return false;
+    };
+    bool clearMustBeInActiveChain = mustBeInActiveChain;
+    bool setMustBeInActiveChain = mustBeInActiveChain;
+    if (mustBeInActiveChain && hasTopLayerElement()) {
+        clearMustBeInActiveChain = !isInForeignTopLayer(oldHoveredElement.get());
+        setMustBeInActiveChain = !isInForeignTopLayer(newHoveredElement.get());
+    }
+
     RefPtr commonAncestor = findNearestCommonComposedAncestorForHover(oldHoveredElement.get(), newHoveredElement.get());
+    if (commonAncestor && !commonAncestor->hovered())
+        commonAncestor = nullptr;
 
     if (oldHoveredElement != newHoveredElement) {
         for (CheckedPtr element = oldHoveredElement.get(); element; element = element->parentElementInComposedTree()) {
             if (element.get() == commonAncestor.get())
                 break;
-            if (mustBeInActiveChain && !element->isInActiveChain())
+            if (clearMustBeInActiveChain && !element->isInActiveChain())
                 continue;
             elementsToClearHover.append(*element);
             if (element->isInTopLayer())
@@ -9992,7 +10008,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     bool sawCommonAncestor = false;
     for (RefPtr element = newHoveredElement; element; element = element->parentElementInComposedTree()) {
         bool atTopLayerBoundary = element->isInTopLayer();
-        if (mustBeInActiveChain && !element->isInActiveChain()) {
+        if (setMustBeInActiveChain && !element->isInActiveChain()) {
             if (atTopLayerBoundary)
                 break;
             continue;

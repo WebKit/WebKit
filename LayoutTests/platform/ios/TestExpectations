@@ -3745,6 +3745,9 @@ imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-18c.xml [ Sk
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-63.xml [ Skip ]
 imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-thickness.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-hover-after-picking.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-option-hover-while-dragging.optional.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-active-ancestors.html [ Skip ]
 
 # :active simulation not working on iOS
 imported/w3c/web-platform-tests/css/selectors/active-after-relayouts.html [ Skip ]

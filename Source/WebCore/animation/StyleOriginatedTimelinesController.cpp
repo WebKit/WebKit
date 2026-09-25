@@ -181,7 +181,7 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(
         RefPtr elementForTimeline = originatingElementIncludingTimelineScope(timeline);
         if (!elementForTimeline)
             continue;
-        if (elementForTimeline == targetElement.ptr() || targetElement->isComposedTreeDescendantOf(*elementForTimeline))
+        if (targetElement->isComposedTreeInclusiveDescendantOf(*elementForTimeline))
             timelinesInTargetHierarchy.append(timeline);
         else
             timelinesOutsideTargetHierarchy.append(timeline);

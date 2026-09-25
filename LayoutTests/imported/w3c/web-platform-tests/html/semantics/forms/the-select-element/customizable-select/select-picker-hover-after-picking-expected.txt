@@ -1,0 +1,5 @@
+
+sibling
+
+PASS Hover still applies after picking an option hides the picker.
+
