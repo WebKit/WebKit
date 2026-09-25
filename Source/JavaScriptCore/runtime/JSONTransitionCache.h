@@ -77,8 +77,8 @@ public:
 
     JSONTransitionCache() = default;
 
-    ALWAYS_INLINE Structure* get(Structure* from, std::span<const Latin1Character> name);
-    ALWAYS_INLINE void add(Structure* from, Structure* to, std::span<const Latin1Character> name);
+    template<typename CharacterType> ALWAYS_INLINE Structure* get(Structure* from, std::span<const CharacterType> name);
+    template<typename CharacterType> ALWAYS_INLINE void add(Structure* from, Structure* to, std::span<const CharacterType> name);
 
     template<typename Visitor> void visitAggregate(Visitor&);
 
@@ -92,10 +92,10 @@ public:
 
 private:
     static ALWAYS_INLINE uint64_t key(StructureID, unsigned length, Latin1Character first, Latin1Character last);
-    static ALWAYS_INLINE uint64_t key(StructureID, std::span<const Latin1Character> name);
+    template<typename CharacterType> static ALWAYS_INLINE uint64_t key(StructureID, std::span<const CharacterType> name);
     static ALWAYS_INLINE unsigned primaryIndex(uint64_t key);
     static ALWAYS_INLINE unsigned secondaryIndex(uint64_t key);
-    static ALWAYS_INLINE Structure* transitionIfMatches(const Entry&, StructureID from, std::span<const Latin1Character> name);
+    template<typename CharacterType> static ALWAYS_INLINE Structure* transitionIfMatches(const Entry&, StructureID from, std::span<const CharacterType> name);
 
     std::array<Entry, primarySize> m_primary { };
     std::array<Entry, secondarySize> m_secondary { };

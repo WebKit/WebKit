@@ -39,11 +39,12 @@ ALWAYS_INLINE uint64_t JSONTransitionCache::key(StructureID structureID, unsigne
     return (structureID.bits() >> 4) | (nameKey << 28);
 }
 
-ALWAYS_INLINE uint64_t JSONTransitionCache::key(StructureID structureID, std::span<const Latin1Character> name)
+template<typename CharacterType>
+ALWAYS_INLINE uint64_t JSONTransitionCache::key(StructureID structureID, std::span<const CharacterType> name)
 {
     if (name.empty())
         return key(structureID, 0, 0, 0);
-    return key(structureID, name.size(), name.front(), name.back());
+    return key(structureID, name.size(), static_cast<Latin1Character>(name.front()), static_cast<Latin1Character>(name.back()));
 }
 
 ALWAYS_INLINE unsigned JSONTransitionCache::primaryIndex(uint64_t key)
@@ -57,7 +58,8 @@ ALWAYS_INLINE unsigned JSONTransitionCache::secondaryIndex(uint64_t key)
 }
 static_assert(hasOneBitSet(JSONTransitionCache::primarySize) && hasOneBitSet(JSONTransitionCache::secondarySize));
 
-ALWAYS_INLINE Structure* JSONTransitionCache::transitionIfMatches(const Entry& entry, StructureID from, std::span<const Latin1Character> name)
+template<typename CharacterType>
+ALWAYS_INLINE Structure* JSONTransitionCache::transitionIfMatches(const Entry& entry, StructureID from, std::span<const CharacterType> name)
 {
     if (entry.from.value() != from)
         return nullptr;
@@ -68,7 +70,8 @@ ALWAYS_INLINE Structure* JSONTransitionCache::transitionIfMatches(const Entry& e
     return to;
 }
 
-ALWAYS_INLINE Structure* JSONTransitionCache::get(Structure* from, std::span<const Latin1Character> name)
+template<typename CharacterType>
+ALWAYS_INLINE Structure* JSONTransitionCache::get(Structure* from, std::span<const CharacterType> name)
 {
     StructureID fromID = StructureID::encode(from);
     uint64_t key = this->key(fromID, name);
@@ -77,7 +80,8 @@ ALWAYS_INLINE Structure* JSONTransitionCache::get(Structure* from, std::span<con
     return transitionIfMatches(m_secondary[secondaryIndex(key)], fromID, name);
 }
 
-ALWAYS_INLINE void JSONTransitionCache::add(Structure* from, Structure* to, std::span<const Latin1Character> name)
+template<typename CharacterType>
+ALWAYS_INLINE void JSONTransitionCache::add(Structure* from, Structure* to, std::span<const CharacterType> name)
 {
     // Pinning a Structure clears its transition property name and previous Structure, but only Structures
     // created by other kinds of transitions are pinned, and only as they are created.
@@ -89,7 +93,7 @@ ALWAYS_INLINE void JSONTransitionCache::add(Structure* from, Structure* to, std:
     ASSERT(to->transitionPropertyName() && WTF::equal(to->transitionPropertyName(), name));
     auto& entry = m_primary[primaryIndex(key(StructureID::encode(from), name))];
     if (StructureID evictedFrom = entry.from.value()) {
-        // Keys of cached names were Latin-1 spans, so every character fits in a Latin1Character.
+        // Keys truncate the first and last characters to Latin1Character, however wide the name is.
         auto* evictedName = entry.to.unvalidatedGet()->transitionPropertyName();
         ASSERT(evictedName);
         unsigned length = evictedName->length();
