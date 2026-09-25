@@ -1657,6 +1657,7 @@
 		41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F898B428EAEAA30070549C /* VideoEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F898B228EAEAA20070549C /* VideoEncoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F898F628ED702A0070549C /* AvcEncoderConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F898F428ED6F970070549C /* AvcEncoderConfig.h */; };
+		F4D47E983CE143537A2F7169 /* HevcEncoderConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = EF78F90EF1848BCB14D62726 /* HevcEncoderConfig.h */; };
 		41FABD2D1F4DFE4A006A6C97 /* DOMCacheEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD2B1F4DFE42006A6C97 /* DOMCacheEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41FCCC3B2746675600892AD6 /* CoreAudioCaptureSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F3BB5831E709EE400C701F2 /* CoreAudioCaptureSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41FCD6B923CE015500C62567 /* SampleBufferDisplayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 414598BE23C8AAB8002B9CC8 /* SampleBufferDisplayLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11750,6 +11751,8 @@
 		41F898B328EAEAA20070549C /* VideoEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoEncoder.cpp; sourceTree = "<group>"; };
 		41F898F428ED6F970070549C /* AvcEncoderConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AvcEncoderConfig.h; sourceTree = "<group>"; };
 		41F898F528ED6F970070549C /* AvcEncoderConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AvcEncoderConfig.idl; sourceTree = "<group>"; };
+		EF78F90EF1848BCB14D62726 /* HevcEncoderConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HevcEncoderConfig.h; sourceTree = "<group>"; };
+		BBD1E789B04A2FE4D47FDC26 /* HevcEncoderConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HevcEncoderConfig.idl; sourceTree = "<group>"; };
 		41FABD2B1F4DFE42006A6C97 /* DOMCacheEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCacheEngine.h; sourceTree = "<group>"; };
 		41FABD2E1F4E0251006A6C97 /* DOMCacheEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCacheEngine.cpp; sourceTree = "<group>"; };
 		41FB278D1F34C28200795487 /* WindowOrWorkerGlobalScopeCaches.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowOrWorkerGlobalScopeCaches.h; sourceTree = "<group>"; };
@@ -40339,6 +40342,8 @@
 				9ACB2F072AA5E901006E9556 /* FlacEncoderConfig.idl */,
 				4110A21628E3440E00321D09 /* HardwareAcceleration.h */,
 				4110A20828E3440A00321D09 /* HardwareAcceleration.idl */,
+				EF78F90EF1848BCB14D62726 /* HevcEncoderConfig.h */,
+				BBD1E789B04A2FE4D47FDC26 /* HevcEncoderConfig.idl */,
 				419BD1A728E5937B0089D7B7 /* LatencyMode.h */,
 				419BD1AA28E5937F0089D7B7 /* LatencyMode.idl */,
 				9ACB2F042AA5E900006E9556 /* OpusEncoderConfig.h */,
@@ -46267,6 +46272,7 @@
 				463EF33E293941E200069115 /* HashMapStylePropertyMapReadOnly.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				E4ED3ECC2768A51D00F17AC8 /* HasSelectorFilter.h in Headers */,
+				F4D47E983CE143537A2F7169 /* HevcEncoderConfig.h in Headers */,
 				CDA595932146DEC300A84185 /* HEVCUtilities.h in Headers */,
 				CDA595982146DF7800A84185 /* HEVCUtilitiesCocoa.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
