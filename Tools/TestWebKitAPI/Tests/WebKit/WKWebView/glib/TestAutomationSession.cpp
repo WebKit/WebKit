@@ -21,6 +21,7 @@
 
 #include "TestMain.h"
 #include <gio/gio.h>
+#include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/SocketConnection.h>
 #include <wtf/text/StringBuilder.h>
@@ -76,6 +77,18 @@ public:
     {
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
+#if ENABLE(WEBDRIVER_BIDI)
+        auto automationMessageValue = JSON::Value::parseJSON(String::fromUTF8(message));
+        auto automationMessage = automationMessageValue ? automationMessageValue->asObject() : nullptr;
+        if (automationMessage && automationMessage->getString("method"_s) == "Automation.bidiMessageSent"_s) {
+            if (auto parameters = automationMessage->getObject("params"_s)) {
+                auto bidiMessageValue = JSON::Value::parseJSON(parameters->getString("message"_s));
+                auto bidiMessage = bidiMessageValue ? bidiMessageValue->asObject() : nullptr;
+                if (bidiMessage && bidiMessage->getInteger("id"_s))
+                    m_bidiResponse = WTF::move(bidiMessage);
+            }
+        }
+#endif
         m_message = message;
         g_main_loop_quit(m_mainLoop.get());
     }
@@ -90,6 +103,69 @@ public:
         messageBuilder.append('}');
         m_connection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().legacyCStringPointer()));
     }
+
+    String browsingContextHandleFromLastResponse() const
+    {
+        auto responseValue = JSON::Value::parseJSON(String::fromUTF8(m_message.data()));
+        g_assert_true(!!responseValue);
+        auto response = responseValue->asObject();
+        g_assert_true(!!response);
+        auto result = response->getObject("result"_s);
+        g_assert_true(!!result);
+        auto browsingContext = result->getString("handle"_s);
+        g_assert_false(browsingContext.isEmpty());
+        return browsingContext;
+    }
+
+    Ref<JSON::Object> sendAutomationCommandAndWait(const String& command, Ref<JSON::Object>&& parameters)
+    {
+        m_message = { };
+        sendCommandToBackend(command, parameters->toJSONString());
+        g_main_loop_run(m_mainLoop.get());
+
+        auto responseValue = JSON::Value::parseJSON(String::fromUTF8(m_message.data()));
+        g_assert_true(!!responseValue);
+        auto response = responseValue->asObject();
+        g_assert_true(!!response);
+        return response.releaseNonNull();
+    }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    Ref<JSON::Object> sendBidiCommandAndWait(int commandIdentifier, const String& method, Ref<JSON::Object>&& parameters)
+    {
+        auto command = JSON::Object::create();
+        command->setInteger("id"_s, commandIdentifier);
+        command->setString("method"_s, method);
+        command->setObject("params"_s, WTF::move(parameters));
+
+        auto automationParameters = JSON::Object::create();
+        automationParameters->setString("message"_s, command->toJSONString());
+
+        m_bidiResponse = nullptr;
+        sendCommandToBackend("processBidiMessage"_s, automationParameters->toJSONString());
+
+        struct WaitState {
+            GMainLoop* mainLoop;
+            bool timedOut { false };
+        } waitState { m_mainLoop.get() };
+        auto timeoutID = g_timeout_add_seconds(10, [](gpointer userData) -> gboolean {
+            auto& waitState = *static_cast<WaitState*>(userData);
+            waitState.timedOut = true;
+            g_main_loop_quit(waitState.mainLoop);
+            return G_SOURCE_REMOVE;
+        }, &waitState);
+
+        while (!m_bidiResponse && !waitState.timedOut)
+            g_main_loop_run(m_mainLoop.get());
+
+        if (!waitState.timedOut)
+            g_source_remove(timeoutID);
+        g_assert_false(waitState.timedOut);
+        g_assert_true(!!m_bidiResponse);
+        g_assert_true(m_bidiResponse->getInteger("id"_s).value_or(-1) == commandIdentifier);
+        return m_bidiResponse.releaseNonNull();
+    }
+#endif
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
     {
@@ -249,6 +325,9 @@ public:
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
     CString m_message;
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr<JSON::Object> m_bidiResponse;
+#endif
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
@@ -290,9 +369,147 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
             const char* message;
             g_variant_get(parameters, "(tt&s)", &connectionID, &targetID, &message);
             test.receivedMessage(connectionID, targetID, message);
-        }}
+        } }
     }
 };
+
+static void verifyClassicHandleProperty(AutomationTest& test, const String& browsingContext, const String& handlePropertyValue)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, browsingContext);
+    parameters->setString("function"_s, "function(value) { return value.handle; }"_s);
+    auto arguments = JSON::Array::create();
+    auto argument = JSON::Object::create();
+    argument->setString("handle"_s, handlePropertyValue);
+    arguments->pushString(argument->toJSONString());
+    parameters->setArray("arguments"_s, WTF::move(arguments));
+
+    auto response = test.sendAutomationCommandAndWait("evaluateJavaScriptFunction"_s, WTF::move(parameters));
+    auto commandResult = response->getObject("result"_s);
+    g_assert_true(!!commandResult);
+    auto resultValue = JSON::Value::parseJSON(commandResult->getString("result"_s));
+    g_assert_true(!!resultValue);
+    g_assert_true(resultValue->asString() == handlePropertyValue);
+}
+
+#if ENABLE(WEBDRIVER_BIDI)
+static Ref<JSON::Object> objectLocalValueWithHandlePropertyAndNestedReference(const String& handle)
+{
+    auto handleValue = JSON::Object::create();
+    handleValue->setString("type"_s, "string"_s);
+    handleValue->setString("value"_s, handle);
+
+    auto handleProperty = JSON::Array::create();
+    handleProperty->pushString("handle"_s);
+    handleProperty->pushObject(WTF::move(handleValue));
+
+    auto remoteReference = JSON::Object::create();
+    remoteReference->setString("handle"_s, handle);
+
+    auto nestedProperty = JSON::Array::create();
+    nestedProperty->pushString("nested"_s);
+    nestedProperty->pushObject(WTF::move(remoteReference));
+
+    auto properties = JSON::Array::create();
+    properties->pushArray(WTF::move(handleProperty));
+    properties->pushArray(WTF::move(nestedProperty));
+
+    auto localValue = JSON::Object::create();
+    localValue->setString("type"_s, "object"_s);
+    localValue->setArray("value"_s, WTF::move(properties));
+    return localValue;
+}
+
+static Ref<JSON::Object> browsingContextTarget(const String& browsingContext)
+{
+    auto target = JSON::Object::create();
+    target->setString("context"_s, browsingContext);
+    return target;
+}
+
+static void verifyExceptionOwnership(AutomationTest& test, const String& browsingContext, int commandIdentifier, const String& resultOwnership, bool expectsHandle)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("expression"_s, "throw { marker: 42 }"_s);
+    parameters->setBoolean("awaitPromise"_s, false);
+    parameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    parameters->setString("resultOwnership"_s, resultOwnership);
+
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "script.evaluate"_s, WTF::move(parameters));
+    g_assert_true(response->getString("type"_s) == "success"_s);
+    auto result = response->getObject("result"_s);
+    g_assert_true(!!result);
+    g_assert_true(result->getString("type"_s) == "exception"_s);
+    auto exceptionDetails = result->getObject("exceptionDetails"_s);
+    g_assert_true(!!exceptionDetails);
+    auto exception = exceptionDetails->getObject("exception"_s);
+    g_assert_true(!!exception);
+    if (expectsHandle)
+        g_assert_false(exception->getString("handle"_s).isEmpty());
+    else
+        g_assert_true(exception->getString("handle"_s).isEmpty());
+}
+
+static void verifyDisownHandleLifecycle(AutomationTest& test, const String& browsingContext)
+{
+    auto evaluateParameters = JSON::Object::create();
+    evaluateParameters->setString("expression"_s, "({ marker: 42 })"_s);
+    evaluateParameters->setBoolean("awaitPromise"_s, false);
+    evaluateParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    evaluateParameters->setString("resultOwnership"_s, "root"_s);
+
+    auto evaluateResponse = test.sendBidiCommandAndWait(100, "script.evaluate"_s, WTF::move(evaluateParameters));
+    g_assert_true(evaluateResponse->getString("type"_s) == "success"_s);
+    auto evaluateResult = evaluateResponse->getObject("result"_s);
+    g_assert_true(!!evaluateResult);
+    auto remoteValue = evaluateResult->getObject("result"_s);
+    g_assert_true(!!remoteValue);
+    auto handle = remoteValue->getString("handle"_s);
+    g_assert_false(handle.isEmpty());
+
+    verifyClassicHandleProperty(test, browsingContext, handle);
+
+    auto callFunctionParameters = JSON::Object::create();
+    callFunctionParameters->setString("functionDeclaration"_s, "(value, directReference) => typeof value.handle === 'string' && value.nested === directReference && directReference.marker"_s);
+    callFunctionParameters->setBoolean("awaitPromise"_s, false);
+    callFunctionParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    auto arguments = JSON::Array::create();
+    arguments->pushObject(objectLocalValueWithHandlePropertyAndNestedReference(handle));
+    arguments->pushObject(remoteValue.copyRef().releaseNonNull());
+    callFunctionParameters->setArray("arguments"_s, WTF::move(arguments));
+
+    auto callFunctionResponse = test.sendBidiCommandAndWait(101, "script.callFunction"_s, WTF::move(callFunctionParameters));
+    g_assert_true(callFunctionResponse->getString("type"_s) == "success"_s);
+    auto callFunctionResult = callFunctionResponse->getObject("result"_s);
+    g_assert_true(!!callFunctionResult);
+    auto callFunctionRemoteValue = callFunctionResult->getObject("result"_s);
+    g_assert_true(!!callFunctionRemoteValue);
+    g_assert_true(callFunctionRemoteValue->getString("type"_s) == "number"_s);
+    auto marker = callFunctionRemoteValue->getDouble("value"_s);
+    g_assert_true(marker && *marker == 42);
+
+    auto disownParameters = JSON::Object::create();
+    auto handles = JSON::Array::create();
+    handles->pushString(handle);
+    disownParameters->setArray("handles"_s, WTF::move(handles));
+    disownParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    auto disownResponse = test.sendBidiCommandAndWait(102, "script.disown"_s, WTF::move(disownParameters));
+    g_assert_true(disownResponse->getString("type"_s) == "success"_s);
+
+    auto releasedHandleParameters = JSON::Object::create();
+    releasedHandleParameters->setString("functionDeclaration"_s, "(value) => value.nested.marker"_s);
+    releasedHandleParameters->setBoolean("awaitPromise"_s, false);
+    releasedHandleParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    auto releasedHandleArguments = JSON::Array::create();
+    releasedHandleArguments->pushObject(objectLocalValueWithHandlePropertyAndNestedReference(handle));
+    releasedHandleParameters->setArray("arguments"_s, WTF::move(releasedHandleArguments));
+
+    auto releasedHandleResponse = test.sendBidiCommandAndWait(103, "script.callFunction"_s, WTF::move(releasedHandleParameters));
+    g_assert_true(releasedHandleResponse->getString("type"_s) == "error"_s);
+    g_assert_true(releasedHandleResponse->getString("error"_s) == "no such handle"_s);
+    g_assert_true(releasedHandleResponse->getString("message"_s).contains(handle));
+}
+#endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
@@ -348,6 +565,13 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+    auto browsingContext = test->browsingContextHandleFromLastResponse();
+    verifyClassicHandleProperty(*test, browsingContext, "ordinary-value"_s);
+#if ENABLE(WEBDRIVER_BIDI)
+    verifyDisownHandleLifecycle(*test, browsingContext);
+    verifyExceptionOwnership(*test, browsingContext, 104, "root"_s, true);
+    verifyExceptionOwnership(*test, browsingContext, 105, "none"_s, false);
+#endif
 
     auto newWebViewInWindow = test->createWebView(
         "is-controlled-by-automation", TRUE,

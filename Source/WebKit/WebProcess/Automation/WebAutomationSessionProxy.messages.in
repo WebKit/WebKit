@@ -25,8 +25,11 @@
     DispatchedTo=WebContent
 ]
 messages -> WebAutomationSessionProxy {
-    EvaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout) -> (String result, String errorType)
-    EvaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout) -> (String result, String errorType)
+    EvaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, bool usesBidiValueSemantics) -> (String result, String errorType)
+#if ENABLE(WEBDRIVER_BIDI)
+    EvaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, String includeShadowTree, bool resultOwnershipRoot, std::optional<double> callbackTimeout) -> (String result, String errorType)
+    ReleaseBidiHandles(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, Vector<String> handles) -> (String errorType)
+#endif
 
     ResolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal) -> (std::optional<String> errorType, std::optional<WebCore::FrameIdentifier> frameID)
     ResolveChildFrameWithNodeHandle(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> errorType, std::optional<WebCore::FrameIdentifier> frameID)

@@ -81,7 +81,7 @@ public:
 
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, const String& result, const String& errorType);
 
-    void cancelPendingEvaluateJavaScriptCallbacks();
+    void endAutomationSession();
 
     bool isKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
     void addKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
@@ -96,13 +96,19 @@ private:
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
 
     void ensureObserverForFrame(WebFrame&);
+#if ENABLE(WEBDRIVER_BIDI)
+    void endSessionInInjectedScripts();
+#endif
 
     // Implemented in generated WebAutomationSessionProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
-    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
+    void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, bool usesBidiValueSemantics, CompletionHandler<void(String&&, String&&)>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    void releaseBidiHandles(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, Vector<String>&&, CompletionHandler<void(String&&)>&&);
+    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool resultOwnershipRoot, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
+#endif
     void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithName(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& name, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
@@ -143,6 +149,7 @@ private:
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
+    HashSet<WebCore::FrameIdentifier> m_framesWithInjectedScriptObject;
 #endif
 };
 
