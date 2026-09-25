@@ -227,7 +227,10 @@ public:
 
     const String& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
     void setDataConnectionServiceType(String&& type) { m_dataConnectionServiceType = WTF::move(type); }
-    
+
+    const String& ipAddressSpaceOverridesForTesting() const LIFETIME_BOUND { return m_ipAddressSpaceOverridesForTesting; }
+    void setIPAddressSpaceOverridesForTesting(String&& overrides) { m_ipAddressSpaceOverridesForTesting = WTF::move(overrides); }
+
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     void setSuppressesConnectionTerminationOnSystemChange(bool suppresses) { m_suppressesConnectionTerminationOnSystemChange = suppresses; }
 
@@ -345,6 +348,7 @@ private:
     String m_sourceApplicationSecondaryIdentifier;
     String m_boundInterfaceIdentifier;
     String m_dataConnectionServiceType;
+    String m_ipAddressSpaceOverridesForTesting;
     URL m_httpProxy;
     URL m_httpsProxy;
     bool m_deviceManagementRestrictionsEnabled { false };

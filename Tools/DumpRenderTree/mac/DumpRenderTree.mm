@@ -1011,6 +1011,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"world-leaks", no_argument, &checkForWorldLeaks, NO},
         {"webcore-logging", required_argument, nullptr, 'w'},
         {"localhost-alias", required_argument, nullptr, 'l'},
+        { "ip-address-space-overrides", required_argument, nullptr, 'i' },
         {nullptr, 0, nullptr, 0}
     };
 

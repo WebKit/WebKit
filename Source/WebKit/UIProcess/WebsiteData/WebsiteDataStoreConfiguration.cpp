@@ -161,6 +161,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_allowsCellularAccess = this->m_allowsCellularAccess;
     copy->m_legacyTLSEnabled = this->m_legacyTLSEnabled;
     copy->m_dataConnectionServiceType = this->m_dataConnectionServiceType;
+    copy->m_ipAddressSpaceOverridesForTesting = this->m_ipAddressSpaceOverridesForTesting;
     copy->m_testingSessionEnabled = this->m_testingSessionEnabled;
     copy->m_testSpeedMultiplier = this->m_testSpeedMultiplier;
     copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;

@@ -54,6 +54,11 @@ void WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(WKWebsiteDataStoreC
     protect(WebKit::toImpl(configuration))->setNetworkCacheDirectory(protect(WebKit::toImpl(directory))->string());
 }
 
+void WKWebsiteDataStoreConfigurationSetIPAddressSpaceOverridesForTesting(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef overrides)
+{
+    protect(WebKit::toImpl(configuration))->setIPAddressSpaceOverridesForTesting(protect(WebKit::toImpl(overrides))->string());
+}
+
 WKStringRef WKWebsiteDataStoreConfigurationCopyIndexedDBDatabaseDirectory(WKWebsiteDataStoreConfigurationRef configuration)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->indexedDBDatabaseDirectory());

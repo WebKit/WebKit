@@ -87,6 +87,7 @@ struct NetworkSessionCreationParameters {
     String networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
     String dataConnectionServiceType;
+    String ipAddressSpaceOverridesForTesting;
     bool fastServerTrustEvaluationEnabled { false };
     bool networkCacheSpeculativeValidationEnabled { false };
     bool shouldUseTestingNetworkSession { false };

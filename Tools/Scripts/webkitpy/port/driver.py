@@ -597,6 +597,11 @@ class Driver(object):
             cmd.append('--localhost-alias')
             cmd.append(alias)
 
+        ip_address_space_overrides = self._port.ip_address_space_overrides()
+        if ip_address_space_overrides:
+            cmd.append('--ip-address-space-overrides')
+            cmd.append(ip_address_space_overrides)
+
         if not self._port.get_option('enable_all_experimental_features'):
             cmd.append('--no-enable-all-experimental-features')
 
