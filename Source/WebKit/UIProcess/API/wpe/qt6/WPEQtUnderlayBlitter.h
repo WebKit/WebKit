@@ -26,6 +26,8 @@
 #pragma once
 
 #include <epoxy/egl.h> // NOLINT(build/include_order) -- epoxy must precede Qt OpenGL headers.
+
+#include <QMatrix4x4>
 #include <QOpenGLFunctions>
 
 class WPEQtUnderlayBlitter final {
@@ -40,7 +42,7 @@ public:
     bool initialize();
     void invalidate();
     bool importEGLImage(EGLImage);
-    bool draw(int viewportX, int viewportY, int viewportWidth, int viewportHeight, float opacity);
+    bool draw(const QMatrix4x4& matrix, float opacity);
     bool isInitialized() const { return m_program; }
 
 private:
@@ -50,8 +52,8 @@ private:
     GLuint m_vertexBuffer { 0 };
     EGLImage m_importedImage { EGL_NO_IMAGE_KHR };
     GLint m_positionLocation { -1 };
-    GLint m_texCoordLocation { -1 };
     GLint m_textureLocation { -1 };
     GLint m_opacityLocation { -1 };
+    GLint m_matrixLocation { -1 };
     PFNGLEGLIMAGETARGETTEXTURE2DOESPROC m_imageTargetTexture2DOES { nullptr };
 };
