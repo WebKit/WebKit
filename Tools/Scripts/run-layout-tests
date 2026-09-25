@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,14 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Entry point for running WebKit's tests.
-
-Today this is a wrapper around webkitpy/layout_tests/run_layout_tests.py, and is
-equivalent to run-layout-tests. It will become a dispatcher that infers which
-harness each test argument belongs to (layout tests, API tests, ...) and runs
-each of them; run-layout-tests is the layout-test-only entry point that will
-keep today's behavior.
-"""
+"""Wrapper around webkitpy/layout_tests/run_layout_tests.py"""
 import sys
 
 from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk, maybe_use_container_sdk_root_dir

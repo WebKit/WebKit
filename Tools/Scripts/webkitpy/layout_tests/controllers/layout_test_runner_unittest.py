@@ -31,7 +31,7 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests import run_layout_tests
 from webkitpy.layout_tests.controllers.layout_test_runner import (
     LayoutTestRunner,
     Sharder,
@@ -75,8 +75,8 @@ class FakePrinter(object):
 
 class LayoutTestRunnerTests(unittest.TestCase):
     def _runner(self, port=None):
-        # FIXME: we shouldn't have to use run_webkit_tests.py to get the options we need.
-        options = run_webkit_tests.parse_args(['--platform', 'test-mac-snowleopard'])[0]
+        # FIXME: we shouldn't have to use run_layout_tests.py to get the options we need.
+        options = run_layout_tests.parse_args(['--platform', 'test-mac-snowleopard'])[0]
         options.child_processes = '1'
 
         host = MockHost()

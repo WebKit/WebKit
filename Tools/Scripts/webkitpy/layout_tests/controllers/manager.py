@@ -77,7 +77,7 @@ TestExpectations = test_expectations.TestExpectations
 class Manager(object):
     """Test execution manager
 
-    This class has the main entry points for run-webkit-tests; the ..run_webkit_tests module almost
+    This class has the main entry points for run-layout-tests; the ..run_layout_tests module almost
     exclusively just handles CLI options. It orchestrates collecting the tests (through
     LayoutTestFinder), running them (LayoutTestRunner), and then displaying the results
     (TestResultWriter/Printer).
