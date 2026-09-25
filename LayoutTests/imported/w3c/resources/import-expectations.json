@@ -19,6 +19,7 @@
     "web-platform-tests/appmanifest": "skip",
     "web-platform-tests/attribution-reporting": "skip",
     "web-platform-tests/audio-output": "import",
+    "web-platform-tests/audio-session": "import",
     "web-platform-tests/autoplay-policy-detection": "skip",
     "web-platform-tests/avif": "skip",
     "web-platform-tests/background-fetch": "import",
