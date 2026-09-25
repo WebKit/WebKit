@@ -55,6 +55,11 @@ ExceptionOr<void> WebCodecsEncodedVideoChunk::copyTo(BufferSource&& source)
     return { };
 }
 
+VideoDecoder::EncodedFrame WebCodecsEncodedVideoChunk::encodedFrame() const
+{
+    return { .data = buffer(), .isKeyFrame = type() == WebCodecsEncodedVideoChunkType::Key, .timestamp = timestamp(), .duration = duration() };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_CODECS)

@@ -54,8 +54,6 @@ public:
         bool isKeyFrame { false };
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
-
-        WEBCORE_EXPORT ~EncodedData();
     };
     struct DecodedData {
         Ref<PlatformRawAudioData> data;

@@ -217,10 +217,10 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
         m_isKeyChunkRequired = false;
     }
 
-    queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, chunk = WTF::move(chunk)]() mutable {
+    queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, data = chunk->encodedFrame()] mutable {
         incrementCodecOperationCount();
         Ref internalDecoder = *m_internalDecoder;
-        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->decode({ chunk->buffer(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->decode(WTF::move(data)), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

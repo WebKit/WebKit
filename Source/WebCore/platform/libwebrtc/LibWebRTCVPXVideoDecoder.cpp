@@ -77,7 +77,7 @@ public:
     static Ref<LibWebRTCVPXInternalVideoDecoder> create(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoDecoder(type, config, WTF::move(outputCallback))); }
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
-    Ref<VideoDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    Ref<VideoDecoder::DecodePromise> decode(VideoDecoder::EncodedFrame&&);
     void close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&);
@@ -119,8 +119,8 @@ LibWebRTCVPXVideoDecoder::~LibWebRTCVPXVideoDecoder() = default;
 
 Ref<VideoDecoder::DecodePromise> LibWebRTCVPXVideoDecoder::decode(EncodedFrame&& frame)
 {
-    return invokeAsync(vpxDecoderQueueSingleton(), [data = WTF::move(frame.data), isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
-        return decoder->decode(data->span(), isKeyFrame, timestamp, duration);
+    return invokeAsync(vpxDecoderQueueSingleton(), [frame = WTF::move(frame), decoder = m_internalDecoder] mutable {
+        return decoder->decode(WTF::move(frame));
     });
 }
 
@@ -140,12 +140,15 @@ void LibWebRTCVPXVideoDecoder::close()
 }
 
 
-Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(std::span<const uint8_t> data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
+Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoDecoder::EncodedFrame&& frame)
 {
     assertIsCurrent(vpxDecoderQueueSingleton());
 
-    m_timestamp = timestamp;
-    m_duration = duration;
+    m_timestamp = frame.timestamp;
+    m_duration = frame.duration;
+
+    Ref frameData = WTF::move(frame.data);
+    auto data = frameData->span();
 
     if (isVPx()) {
         if (auto record = vpCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data))
@@ -155,7 +158,7 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(std::s
 
     webrtc::EncodedImage image;
     image.SetEncodedData(webrtc::WebKitEncodedImageBufferWrapper::create(const_cast<uint8_t*>(data.data()), data.size()));
-    image._frameType = isKeyFrame ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
+    image._frameType = frame.isKeyFrame ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
 
     auto error = m_internalDecoder->Decode(image, false, 0);
 

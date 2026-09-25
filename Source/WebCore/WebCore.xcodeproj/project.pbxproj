@@ -4149,7 +4149,7 @@
 		9A7EB29F2EC20AE500A10F7E /* LibWebRTCVideoFrameUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A7EB29E2EC20AE400A10F7E /* LibWebRTCVideoFrameUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A87D9E02A82925400EE7A8A /* AudioSampleFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9DF2A82925400EE7A8A /* AudioSampleFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A87D9E22A82933500EE7A8A /* PlatformRawAudioData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E12A82933500EE7A8A /* PlatformRawAudioData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9A87D9E42A8293E100EE7A8A /* AudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E32A8293E100EE7A8A /* AudioDecoder.h */; };
+		9A87D9E42A8293E100EE7A8A /* AudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E32A8293E100EE7A8A /* AudioDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A87D9E62A8294BE00EE7A8A /* WebCodecsAudioDecoderSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E52A8294BE00EE7A8A /* WebCodecsAudioDecoderSupport.h */; };
 		9A87D9E82A82951B00EE7A8A /* WebCodecsAudioData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E72A82951A00EE7A8A /* WebCodecsAudioData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A87D9EA2A82955300EE7A8A /* WebCodecsAudioDataAlgorithms.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87D9E92A82955200EE7A8A /* WebCodecsAudioDataAlgorithms.h */; };

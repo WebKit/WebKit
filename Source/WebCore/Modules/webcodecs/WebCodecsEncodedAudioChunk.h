@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include <WebCore/AudioDecoder.h>
 #include <WebCore/BufferSource.h>
 #include <WebCore/WebCodecsEncodedAudioChunkData.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -75,6 +76,8 @@ public:
     size_t byteLength() const { return m_storage->data().buffer->size(); }
 
     ExceptionOr<void> copyTo(BufferSource&&);
+
+    AudioDecoder::EncodedData encodedData() const;
 
     Ref<SharedBuffer> buffer() const { return m_storage->buffer(); }
     const WebCodecsEncodedAudioChunkStorage& storage() const LIFETIME_BOUND { return m_storage.get(); }

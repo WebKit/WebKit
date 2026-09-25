@@ -35,8 +35,6 @@
 #include "VideoDecoderGStreamer.h"
 #endif
 
-#include "SharedBuffer.h"
-
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -121,8 +119,6 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config& con
 
     callback(makeUnexpected("Not supported"_s));
 }
-
-VideoDecoder::EncodedFrame::~EncodedFrame() = default;
 
 VideoDecoder::VideoDecoder() = default;
 VideoDecoder::~VideoDecoder() = default;

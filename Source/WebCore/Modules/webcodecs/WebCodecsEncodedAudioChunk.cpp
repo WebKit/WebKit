@@ -56,6 +56,11 @@ ExceptionOr<void> WebCodecsEncodedAudioChunk::copyTo(BufferSource&& source)
     return { };
 }
 
+AudioDecoder::EncodedData WebCodecsEncodedAudioChunk::encodedData() const
+{
+    return { .data = buffer(), .isKeyFrame = type() == WebCodecsEncodedAudioChunkType::Key, .timestamp = timestamp(), .duration = duration() };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_CODECS)

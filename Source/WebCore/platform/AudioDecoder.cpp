@@ -38,8 +38,6 @@
 #include "GStreamerRegistryScanner.h"
 #endif
 
-#include "SharedBuffer.h"
-
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,8 +85,6 @@ Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, c
     return CreatePromise::createAndReject("Not supported"_s));
 #endif
 }
-
-AudioDecoder::EncodedData::~EncodedData() = default;
 
 AudioDecoder::AudioDecoder() = default;
 AudioDecoder::~AudioDecoder() = default;
