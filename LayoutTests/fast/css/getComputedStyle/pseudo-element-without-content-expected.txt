@@ -1,0 +1,36 @@
+getComputedStyle() returns the matched style for ::before and ::after when none of the matching rules set 'content'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Rules without 'content'
+PASS getComputedStyle(target, '::before').color is "rgb(255, 0, 0)"
+PASS getComputedStyle(target, '::after').color is "rgb(0, 128, 0)"
+PASS getComputedStyle(target, '::before').content is "none"
+
+Universal rule without 'content'
+PASS getComputedStyle(target, '::before').boxSizing is "border-box"
+PASS getComputedStyle(plain, '::before').boxSizing is "border-box"
+PASS getComputedStyle(plain, '::after').boxSizing is "content-box"
+
+Switching between rules without 'content'
+PASS getComputedStyle(toggle, '::before').color is "rgb(1, 2, 3)"
+PASS getComputedStyle(toggle, '::before').color is "rgb(4, 5, 6)"
+PASS getComputedStyle(toggle, '::before').color is "rgb(1, 2, 3)"
+
+Adding 'content' to a pseudo-element that was previously skipped
+PASS getComputedStyle(toggle, '::before').content is "\"x\""
+PASS getComputedStyle(toggle, '::before').color is "rgb(1, 2, 3)"
+PASS getComputedStyle(toggle, '::before').content is "none"
+PASS getComputedStyle(toggle, '::before').color is "rgb(4, 5, 6)"
+
+Inherited values
+PASS getComputedStyle(child, '::before').color is "rgb(7, 8, 9)"
+PASS getComputedStyle(child, '::before').color is "rgb(10, 11, 12)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+target
+plain
+toggle
+child
