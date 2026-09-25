@@ -286,15 +286,16 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const Style::C
     return { };
 }
 
-InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveOrNewlyPlacedFloat, InlineItemPosition layoutRangeEnd)
+InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(const LineLayoutResult& lineLayoutResult, std::optional<InlineItemPosition> previousLineContentEnd, InlineItemPosition layoutRangeEnd)
 {
+    auto lineContentEnd = lineLayoutResult.inlineItemRange.end;
     if (!previousLineContentEnd)
         return lineContentEnd;
     if (previousLineContentEnd->index < lineContentEnd.index || (previousLineContentEnd->index == lineContentEnd.index && previousLineContentEnd->offset < lineContentEnd.offset)) {
         // Either full or partial advancing.
         return lineContentEnd;
     }
-    if (lineContentEnd == *previousLineContentEnd && lineHasIntrusiveOrNewlyPlacedFloat) {
+    if (lineContentEnd == *previousLineContentEnd && (!lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty())) {
         // Couldn't manage to put any content on line due to floats.
         return lineContentEnd;
     }
