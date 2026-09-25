@@ -3175,6 +3175,16 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String&
     return measureTextInternal(textRun);
 }
 
+static std::pair<float, float> emHeightAscentAndDescent(const FontCascade& font)
+{
+    auto& fontMetrics = font.metricsOfPrimaryFont();
+    auto ascent = fontMetrics.ascent();
+    auto height = ascent + fontMetrics.descent();
+    auto emHeight = font.fontDescription().computedSize();
+    auto emHeightAscent = height > 0 ? emHeight * ascent / height : emHeight;
+    return { emHeightAscent, emHeight - emHeightAscent };
+}
+
 Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun& textRun)
 {
     Ref<TextMetrics> metrics = TextMetrics::create();
@@ -3192,18 +3202,17 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     metrics->setWidth(fontWidth);
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
-    auto ascent = fontMetrics.ascent();
-    auto descent = fontMetrics.descent();
+    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(font.fontCascade());
 
     metrics->setActualBoundingBoxAscent(glyphOverflow.top - offset.y());
     metrics->setActualBoundingBoxDescent(glyphOverflow.bottom + offset.y());
     metrics->setFontBoundingBoxAscent(fontMetrics.intAscent() - offset.y());
     metrics->setFontBoundingBoxDescent(fontMetrics.intDescent() + offset.y());
-    metrics->setEmHeightAscent(ascent - offset.y());
-    metrics->setEmHeightDescent(descent + offset.y());
-    metrics->setHangingBaseline(ascent - offset.y());
+    metrics->setEmHeightAscent(emHeightAscent - offset.y());
+    metrics->setEmHeightDescent(emHeightDescent + offset.y());
+    metrics->setHangingBaseline(emHeightAscent - offset.y());
     metrics->setAlphabeticBaseline(-offset.y());
-    metrics->setIdeographicBaseline(-descent - offset.y());
+    metrics->setIdeographicBaseline(-emHeightDescent - offset.y());
 
     metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
     metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
@@ -3221,20 +3230,20 @@ void CanvasRenderingContext2DBase::updateStateTransform(const AffineTransform& t
 
 FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)
 {
-    auto& fontMetrics = fontProxy()->metricsOfPrimaryFont();
+    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(fontProxy()->fontCascade());
     FloatPoint offset;
 
     switch (state().textBaseline) {
     case TopTextBaseline:
     case HangingTextBaseline:
-        offset.setY(fontMetrics.intAscent());
+        offset.setY(emHeightAscent);
         break;
     case BottomTextBaseline:
     case IdeographicTextBaseline:
-        offset.setY(-fontMetrics.intDescent());
+        offset.setY(-emHeightDescent);
         break;
     case MiddleTextBaseline:
-        offset.setY(fontMetrics.intHeight() / 2 - fontMetrics.intDescent());
+        offset.setY((emHeightAscent - emHeightDescent) / 2);
         break;
     case AlphabeticTextBaseline:
     default:
