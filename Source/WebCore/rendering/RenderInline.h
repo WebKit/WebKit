@@ -53,7 +53,7 @@ private:
 
     void paint(PaintInfo&, const LayoutPoint&) override { ASSERT_NOT_REACHED(); }
 
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
     LayoutUnit offsetWidth() const final { return borderBoxRectInContainer().width(); }
     LayoutUnit offsetHeight() const final { return borderBoxRectInContainer().height(); }
