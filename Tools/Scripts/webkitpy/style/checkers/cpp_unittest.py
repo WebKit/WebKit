@@ -2335,6 +2335,36 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('while (  foo) {', 'Extra space after ( in while'
                          '  [whitespace/parens] [5]')
 
+    def test_raw_string_contents_are_not_checked(self):
+        # The text inside a raw string literal is data, not C++, so C++ rules must not
+        # be applied to it. https://bugs.webkit.org/show_bug.cgi?id=321583
+        self.assert_multi_line_lint(
+            'static const char* script = R"js(function f() {\n'
+            '    if(!window.x) { return; }\n'
+            '    window.y = 1;  // two spaces before this comment\n'
+            '    window.z = (window.a==window.b);\n'
+            '    var p = NULL;\n'
+            '})js";\n',
+            '',
+            'foo.cpp')
+
+        # A literal opening and closing on one line, contents likewise ignored.
+        self.assert_multi_line_lint(
+            'static const char* script = R"js(if(x) { })js";\n',
+            '',
+            'foo.cpp')
+
+        # The same code outside a literal is still reported, so the rules are not
+        # simply switched off.
+        self.assert_multi_line_lint(
+            'void f(bool b)\n'
+            '{\n'
+            '    if (!b) { return; }\n'
+            '}\n',
+            'More than one command on the same line in if'
+            '  [whitespace/parens] [4]',
+            'foo.cpp')
+
     def test_spacing_for_fncall(self):
         self.assert_lint('if (foo) {', '')
         self.assert_lint('for (foo;bar;baz) {', '')
@@ -3468,6 +3498,45 @@ class CleansedLinesTest(unittest.TestCase):
                           collapse('StringReplace(body, "\\\\", "\\\\\\\\");'))
         self.assertEqual('\'\' ""',
                           collapse('\'"\' "foo"'))
+
+    def test_cleanse_raw_strings(self):
+        cleanse = cpp_style.cleanse_raw_strings
+
+        # A literal opening and closing on one line, with and without a delimiter.
+        self.assertEqual(['const char* a = "";'], cleanse(['const char* a = R"(xyz)";']))
+        self.assertEqual(['const char* a = "";'], cleanse(['const char* a = R"js(xyz)js";']))
+
+        # Encoding prefixes.
+        self.assertEqual(['auto a = "";'], cleanse(['auto a = LR"(xyz)";']))
+        self.assertEqual(['auto a = "";'], cleanse(['auto a = u8R"js(xyz)js";']))
+
+        # Two literals on one line.
+        self.assertEqual(['f("", "");'], cleanse(['f(R"({)", R"js(})js");']))
+
+        # A literal spanning lines. One line of output per line of input, so line
+        # numbers still match, the contents are gone, and the indentation of the
+        # closing line is kept.
+        self.assertEqual(['    static const char* a = ""',
+                          '""',
+                          '    "";'],
+                         cleanse(['    static const char* a = R"js(function f() {',
+                                  '        if (x) { return "}"; }',
+                                  '    })js";']))
+
+        # Contents that look like C++ are not treated as C++.
+        self.assertEqual(['auto a = ""', '""', '"";'],
+                         cleanse(['auto a = R"(NULL',
+                                  '\tif(x) { }  // comment',
+                                  ')";']))
+
+        # An opener inside a // comment is not an opener.
+        self.assertEqual(['// see R"js( for details'], cleanse(['// see R"js( for details']))
+
+        # Ordinary strings are left alone. Collapsing those is collapse_strings' job.
+        self.assertEqual(['const char* a = "xyz";'], cleanse(['const char* a = "xyz";']))
+
+        # Text before and after the literal is kept.
+        self.assertEqual(['f("", 1);'], cleanse(['f(R"js(a)js", 1);']))
 
 
 class OrderOfIncludesTest(CppStyleTestBase):
