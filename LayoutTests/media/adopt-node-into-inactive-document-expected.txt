@@ -1,0 +1,31 @@
+Test that inserting a media element into a document with no browsing context does not create controls, and that discarding the media element's original document afterwards does not crash.
+
+
+* A media element with controls in the frame's active document has a populated user agent shadow tree.
+EXPECTED (internals.shadowRoot(movedElement).childNodes.length > '0') OK
+
+* document.implementation.createHTMLDocument() creates a document with no browsing context, so it is never active.
+EXPECTED (inactiveDocument.defaultView == 'null') OK
+
+* Moving the media element into the inactive document keeps its existing controls.
+EXPECTED (movedElement.ownerDocument === inactiveDocument == 'true') OK
+EXPECTED (internals.shadowRoot(movedElement).childNodes.length > '0') OK
+
+* A media element with controls that is only ever inserted into the inactive document does not create controls at all.
+EXPECTED (neverInsertedElement.ownerDocument === inactiveDocument == 'true') OK
+EXPECTED (internals.shadowRoot(neverInsertedElement) == 'null') OK
+
+* Discarding the original document does not cause anything unusual to happen.
+EXPECTED (movedElement.controls == 'true') OK
+EXPECTED (movedElement.currentTime == '0') OK
+EXPECTED (internals.shadowRoot(movedElement).childNodes.length > '0') OK
+EXPECTED (neverInsertedElement.controls == 'true') OK
+EXPECTED (internals.shadowRoot(neverInsertedElement) == 'null') OK
+
+* Moving both media elements into this active document creates their controls.
+EXPECTED (movedElement.ownerDocument === document == 'true') OK
+EXPECTED (internals.shadowRoot(movedElement).childNodes.length > '0') OK
+EXPECTED (neverInsertedElement.ownerDocument === document == 'true') OK
+EXPECTED (internals.shadowRoot(neverInsertedElement).childNodes.length > '0') OK
+END OF TEST
+
