@@ -630,6 +630,9 @@ void WebFrame::removeFromTree()
     if (RefPtr client = localFrameLoaderClient())
         client->removeStorageAccess();
 
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*coreFrame))
+        localFrame->loader().closeURL();
+
     // Instrumentation is added in createSubframe()/createProvisionalFrame() and normally removed in
     // detachedFromParent2(). This removal path (a remote parent removing the frame ->
     // frameWasRemovedInAnotherProcess -> removeFromTree) skips detachedFromParent2(), so tear the

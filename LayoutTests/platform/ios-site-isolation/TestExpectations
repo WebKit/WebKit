@@ -238,7 +238,6 @@ imported/w3c/web-platform-tests/css/css-font-loading/nonexistent-file-url.html [
 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/track-sizing/auto-repeat/row-auto-repeat-009.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-viewport/zoom/zoom-iframe-dynamic.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/basic/keepalive.any.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-frame.sub.html [ Failure ]
 imported/w3c/web-platform-tests/FileAPI/url/url-in-tags-revoke.window.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-replace-with-cross-origin-redirect.sub.html [ Failure ]
