@@ -41,8 +41,10 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "IdentifierTypes.h"
+#include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
+#include <pal/SessionID.h>
 #endif
 
 namespace WebCore {
@@ -120,6 +122,8 @@ private:
     void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
+    void addPreloadScript(PreloadScriptIdentifier, String functionDeclaration, Vector<String> serializedArguments, std::optional<Vector<WebPageProxyIdentifier>> targetTopLevelBrowsingContextIdentifiers, bool targetsDefaultUserContext, std::optional<Vector<PAL::SessionID>> targetNonDefaultUserContextStorageSessionIdentifiers, CompletionHandler<void()>&&);
+    void removePreloadScript(PreloadScriptIdentifier, CompletionHandler<void()>&&);
     void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
@@ -142,6 +146,19 @@ private:
     // the UI-process copy.
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
+    struct PreloadScriptRegistration {
+        PreloadScriptIdentifier identifier;
+        String functionDeclaration;
+        Vector<String> serializedArguments;
+        std::optional<Vector<WebPageProxyIdentifier>> targetTopLevelBrowsingContextIdentifiers;
+        bool targetsDefaultUserContext { false };
+        std::optional<Vector<PAL::SessionID>> targetNonDefaultUserContextStorageSessionIdentifiers;
+    };
+
+    void runPreloadScriptsForFrame(WebFrame&);
+    void runPreloadScript(WebFrame&, const String& functionDeclaration, const Vector<String>& serializedArguments);
+
+    Vector<PreloadScriptRegistration> m_preloadScriptRegistrations;
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
 #endif
 };

@@ -1117,8 +1117,12 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     setMediaAccessibilityPreferences(process);
 #endif
 
-    if (m_automationSession)
-        process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
+    if (RefPtr automationSession = m_automationSession) {
+        process.send(Messages::WebProcess::EnsureAutomationSessionProxy(automationSession->sessionIdentifier()), 0);
+#if ENABLE(WEBDRIVER_BIDI)
+        automationSession->synchronizePreloadScriptRegistrationsWithProcess(process);
+#endif
+    }
 
     ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
 
@@ -1924,6 +1928,10 @@ void WebProcessPool::setAutomationSession(RefPtr<WebAutomationSession>&& automat
         automationSession->setProcessPool(this);
 
         sendToAllProcesses(Messages::WebProcess::EnsureAutomationSessionProxy(automationSession->sessionIdentifier()));
+#if ENABLE(WEBDRIVER_BIDI)
+        for (Ref process : borrow(processes()).get())
+            automationSession->synchronizePreloadScriptRegistrationsWithProcess(process);
+#endif
     } else
         sendToAllProcesses(Messages::WebProcess::DestroyAutomationSessionProxy());
 #endif

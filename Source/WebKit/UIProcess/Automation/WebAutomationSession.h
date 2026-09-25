@@ -97,6 +97,7 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPageInspectorController;
 class WebProcessPool;
+class WebProcessProxy;
 
 #if ENABLE(REMOTE_INSPECTOR)
 class InspectorPassthroughChannel;
@@ -189,6 +190,7 @@ public:
     void mouseEventsFlushedForPage(const WebPageProxy&);
     void wheelEventsFlushedForPage(const WebPageProxy&);
 #if ENABLE(WEBDRIVER_BIDI)
+    void synchronizePreloadScriptRegistrationsWithProcess(WebProcessProxy&) const;
     void didCreatePage(WebPageProxy&);
     void navigationStartedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationCommittedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);

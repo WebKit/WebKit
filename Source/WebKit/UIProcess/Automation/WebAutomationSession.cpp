@@ -1190,6 +1190,11 @@ void WebAutomationSession::wheelEventsFlushedForPage(const WebPageProxy& page)
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::synchronizePreloadScriptRegistrationsWithProcess(WebProcessProxy& process) const
+{
+    m_bidiProcessor->scriptAgent().synchronizePreloadScriptRegistrationsWithProcess(process);
+}
+
 void WebAutomationSession::didCreatePage(WebPageProxy& page)
 {
     m_bidiProcessor->browserAgent().didCreatePage(page);
@@ -1209,11 +1214,6 @@ void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& fram
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationCommitted, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().navigationCommitted(frameHandle, navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
     });
-
-    if (RefPtr page = frame.page()) {
-        auto pageHandle = handleForWebPageProxy(*page);
-        m_bidiProcessor->scriptAgent().executePreloadScriptsForContext(pageHandle, frame.isMainFrame() ? emptyString() : frameHandle);
-    }
 }
 
 void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)

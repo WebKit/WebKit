@@ -35,25 +35,22 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
+#include <pal/SessionID.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/ObjectIdentifier.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-enum PreloadScriptIdentifierType { };
-using PreloadScriptIdentifier = ObjectIdentifier<PreloadScriptIdentifierType>;
-
 class WebAutomationSession;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessProxy;
 struct FrameTreeNodeData;
 struct FrameInfoData;
 
@@ -93,18 +90,19 @@ public:
     // Access active realms for realm destruction without WebFrameProxy.
     const HashMap<RealmIdentifier, RealmInfo>& activeRealms() const { return m_activeRealms; }
 
-    void executePreloadScriptsForContext(const String& browsingContext, const String& frameHandle);
+    void synchronizePreloadScriptRegistrationsWithProcess(WebProcessProxy&) const;
 
 private:
-    struct AllContextsTag { };
-
     struct PreloadScriptInfo {
         String functionDeclaration;
-        RefPtr<JSON::Array> arguments;
-        Variant<AllContextsTag, Vector<String>> contexts;
+        Vector<String> serializedArguments;
+        std::optional<Vector<WebPageProxyIdentifier>> targetTopLevelBrowsingContextIdentifiers;
         String sandbox;
-        std::optional<Vector<String>> userContexts;
+        bool targetsDefaultUserContext { false };
+        std::optional<Vector<PAL::SessionID>> targetNonDefaultUserContextStorageSessionIdentifiers;
     };
+
+    static void sendPreloadScriptRegistrationToProcess(WebProcessProxy&, PreloadScriptIdentifier, const PreloadScriptInfo&, CompletionHandler<void()>&&);
 
     void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
 
