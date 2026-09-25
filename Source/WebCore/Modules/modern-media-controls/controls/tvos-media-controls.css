@@ -76,7 +76,7 @@
 }
 
 .media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > .primary,
-.media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > .secondary {
+.media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > .track > .secondary {
     display: initial;
 }
 
