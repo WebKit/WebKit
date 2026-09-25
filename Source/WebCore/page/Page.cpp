@@ -2281,12 +2281,10 @@ void Page::syncLocalFrameInfoToRemote()
         if (!frameView)
             return;
 
-        frame.loader().client().broadcastFrameViewportInfoToOtherProcesses({
-            frameView->layoutViewportRect(),
-            frameView->scrollPosition()
-        });
-
+        auto layoutViewportRect = frameView->layoutViewportRect();
+        bool hasOnScreenRemoteDescendant = false;
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
+
         auto windowClipRectInContentCoordinates = [&frameView, rect = std::optional<LayoutRect> { }]() mutable {
             if (!rect)
                 rect = LayoutRect { frameView->windowToContents(frameView->windowClipRect()) };
@@ -2315,6 +2313,15 @@ void Page::syncLocalFrameInfoToRemote()
             };
 
             auto visibleRectInParent = frameView->visibleRectOfChild(*child.get());
+
+            if (visibleRectInParent) {
+                auto onScreenRectInParent = *visibleRectInParent;
+
+                // Use edgeInclusiveIntersect instead of intersects with layoutViewportRect to match
+                // how IntersectionObserver performs intersections.
+                if (onScreenRectInParent.edgeInclusiveIntersect(layoutViewportRect))
+                    hasOnScreenRemoteDescendant = true;
+            }
 
             auto onScreenRectInChildView = [&] {
                 if (!visibleRectInParent)
@@ -2358,6 +2365,11 @@ void Page::syncLocalFrameInfoToRemote()
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));
         }
+
+        frame.loader().client().broadcastFrameViewportInfoToOtherProcessesIfNeeded({
+            layoutViewportRect,
+            frameView->scrollPosition()
+        }, hasOnScreenRemoteDescendant);
 
         if (childrenFrameLayoutInfo.isEmpty()) {
             ASSERT(!frame.tree().containsRemoteFrame());

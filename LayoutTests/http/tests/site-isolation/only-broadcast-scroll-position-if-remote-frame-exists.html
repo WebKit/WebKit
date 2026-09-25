@@ -49,6 +49,9 @@ function addIframe(url)
 {
     return new Promise(resolve => {
         const iframe = document.createElement("iframe");
+        // Force the iframe to stay on screen through all the scrolls below so that the logic that
+        // suppresses sending FrameViewportInfo in Page::syncLocalFrameInfoToRemote doesn't apply.
+        iframe.style.cssText = "position: absolute; left: 0; top: 0; width: 100px; height: 2000px; border: none";
         iframe.onload = () => resolve(iframe);
         iframe.src = url;
         document.body.appendChild(iframe);

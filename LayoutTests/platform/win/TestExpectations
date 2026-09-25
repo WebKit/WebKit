@@ -1108,6 +1108,7 @@ http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
+http/wpt/site-isolation/intersection-observer [ Skip ]
 
 # Requires Site Isolation (SiteIsolationEnabled, a WebKit2-only feature), which
 # the Windows port does not yet support (see the http/tests/site-isolation skip

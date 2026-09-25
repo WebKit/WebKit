@@ -55,27 +55,32 @@ promise_test(async t => {
     await new Promise(resolve => window.addEventListener("load", resolve));
     t.add_cleanup(() => window.scrollTo(0, 0));
 
-    // We expect one FrameViewportInfo message to be sent, as this contains the scroll position. No
-    // FrameGeometry messages should be sent, since the iframe is out of the viewport.
-    assert_equals(await countBroadcastsFor(() => window.scrollTo(0, 100)), 1,
-        "a scroll that leaves FrameGeometry alone should only broadcast FrameViewportInfo");
-
-    // All the scroll position changes should coalesce in to one rendering update step that sends
-    // the last scroll position in one FrameViewportInfo message. No FrameGeometry messages should
-    // be sent, since the iframe is out of the viewport.
-    assert_equals(await countBroadcastsFor(() => {
-        window.scrollTo(0, 200);
-        window.scrollTo(0, 300);
-        window.scrollTo(0, 400);
-    }), 1, "several scrolls within one event loop tick should be coalesced into one FrameViewportInfo update");
+    assert_equals(await countBroadcastsFor(() => window.scrollTo(0, 100)), 0,
+        "a scroll with every cross-site frame off screen should broadcast nothing");
 
     // This scroll should send both a FrameViewportInfo and FrameGeometry message, since the iframe
     // is now in the viewport.
     assert_equals(await countBroadcastsFor(() => window.scrollTo(0, 950)), 2,
         "a scroll that brings an iframe into the viewport should broadcast both FrameViewportInfo and FrameGeometry");
 
+    // All the scroll position and frame geometry changes should coalesce in to one rendering step
+    // that sends both a FrameViewportInfo and a FrameGeometry message.
+    assert_equals(await countBroadcastsFor(() => {
+        window.scrollTo(0, 975);
+        window.scrollTo(0, 1000);
+        window.scrollTo(0, 1025);
+    }), 2, "several scrolls within one event loop tick should be coalesced in to one FrameViewportInfo and one FrameGeometry message");
+
+    // This scrolls the frame out of the viewport, but we should still broadcast both messages so
+    // that IntersectionObserver and throttling logic runs once after the frame moves offscreen.
+    assert_equals(await countBroadcastsFor(() => window.scrollTo(0, 1200)), 2,
+        "the scroll that takes the last cross-site frame off screen should still broadcast both FrameViewportInfo and FrameGeometry");
+
+    assert_equals(await countBroadcastsFor(() => window.scrollTo(0, 1300)), 0,
+        "subsequent scrolls while remote frame is offscreen should broadcast nothing.");
+
     assert_equals(await countBroadcastsFor(() => { }), 0,
         "an idle rendering update should broadcast nothing");
-}, "Scrolling broadcasts the viewport info once per rendering update and leaves the geometry alone");
+}, "Scrolling broadcasts are suppressed when all remote frames are offscreen for consecutive updates");
 
 </script>

@@ -10840,6 +10840,64 @@ TEST(SiteIsolation, HitTestingInContentWorld)
     runTest(false);
 }
 
+TEST(SiteIsolation, HitTestingInScrolledCrossOriginIframe)
+{
+    auto runTest = [] (int iframeTop) {
+        HTTPServer server({
+            { "/example"_s, { makeString(
+                "<body style='margin: 0; height: 2000px'><iframe style='position: absolute; left: 10px; top: "_s, iframeTop,
+                "px; width: 200px; height: 200px; border: none' src='https://webkit.org/iframe'></iframe></body>"_s) } },
+            { "/iframe"_s, { "<body style='margin: 0'>"
+                "<div id=first style='height: 200px'></div>"
+                "<div id=second style='height: 200px'></div>"
+                "<div id=third style='height: 200px'></div>"
+                "</body>"_s } },
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        RetainPtr configuration = server.httpsProxyConfiguration();
+        enableSiteIsolation(configuration.get());
+
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [webView _test_waitForDidFinishNavigationWhileIgnoringSSLErrors];
+
+        auto hitElementID = [&] {
+            __block bool done { false };
+            __block RetainPtr<_WKJSHandle> node;
+            [webView _hitTestAtPoint:CGPointMake(110, iframeTop + 100) inFrameCoordinateSpace:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(_WKJSHandle *result, NSError *) {
+                node = result;
+                done = true;
+            }];
+            Util::run(&done);
+            if (!node)
+                return RetainPtr<NSString> { @"(none)" };
+            return RetainPtr<NSString> { [webView objectByCallingAsyncFunction:@"return n.id" withArguments:@{ @"n" : node.get() } inFrame:node.get().frame inContentWorld:WKContentWorld.pageWorld] };
+        };
+
+        RetainPtr childFrame = [webView firstChildFrame];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [hitElementID() isEqualToString:@"first"];
+        })) << "iframeTop=" << iframeTop;
+
+        // Ensure that hit testing in scrolled cross-origin frames still works even after enabling FrameViewportInfo update throttling.
+        for (auto [scrollY, expectedID] : { std::pair { 200, @"second" }, std::pair { 400, @"third" } }) {
+            RetainPtr script = [NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollY];
+            [webView objectByEvaluatingJavaScript:script.get() inFrame:childFrame.get()];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrame.get()] intValue] == scrollY;
+            }));
+            [webView waitForNextPresentationUpdate];
+
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [hitElementID() isEqualToString:expectedID];
+            })) << "iframeTop=" << iframeTop << " scrollY=" << scrollY;
+        }
+    };
+
+    for (int iframeTop : { 20, 600 })
+        runTest(iframeTop);
+}
+
 TEST(SiteIsolation, WKFrameInfo_isSameFrame)
 {
     HTTPServer server({

@@ -53,7 +53,8 @@ WEBCORE_EXPORT bool operator==(const FrameGeometrySyncData&, const FrameGeometry
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FrameGeometrySyncData&);
 
-// Unlike FrameGeometrySyncData, the data in this struct does change while scrolling.
+// Unlike FrameGeometrySyncData, the data in this struct does change while scrolling. However, we
+// suppress broadcasting this if all remote frames are offscreen for consecutive rendering updates.
 struct FrameViewportInfo {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(FrameViewportInfo, WEBCORE_EXPORT);
 

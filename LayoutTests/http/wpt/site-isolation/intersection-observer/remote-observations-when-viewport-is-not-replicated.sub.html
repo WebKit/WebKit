@@ -1,0 +1,58 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+
+<iframe style="position: absolute; left: 0; top: 1000px; width: 200px; height: 200px; border: none"
+    src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/intersection-observer/resources/report-target-intersection-frame.html"></iframe>
+<div style="height: 20000px"></div>
+
+<script>
+
+let latestReport = null;
+window.addEventListener("message", event => latestReport = JSON.parse(event.data));
+
+async function settle()
+{
+    for (let i = 0; i < 20; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+}
+
+async function scrollToAndSettle(y)
+{
+    window.scrollTo(0, y);
+    await settle();
+}
+
+promise_test(async t => {
+    t.add_cleanup(() => window.scrollTo(0, 0));
+
+    while (!latestReport)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await settle();
+
+    assert_false(latestReport.isIntersecting,
+        "a target in a cross-site frame below the fold must not be intersecting");
+
+    await scrollToAndSettle(400);
+    assert_true(latestReport.isIntersecting,
+        "the target's top edge intersects the bottom viewport and should be counted as intersecting");
+
+    await scrollToAndSettle(1000);
+    assert_true(latestReport.isIntersecting, "the frame is fully within the viewport");
+
+    await scrollToAndSettle(1200);
+    assert_true(latestReport.isIntersecting,
+        "the target's bottom edge intersects the top of the viewport and should be counted as intersecting");
+
+    await scrollToAndSettle(2000);
+    assert_false(latestReport.isIntersecting,
+        "the target is fully offscreen and should be counted as not intersecting");
+
+    await scrollToAndSettle(15000);
+    assert_false(latestReport.isIntersecting,
+        "the target continues to be offscreen and should count as not intersecting even if viewport replication IPC is stopped");
+}, "Remote intersection observations stay correct once the viewport stops being replicated");
+
+</script>

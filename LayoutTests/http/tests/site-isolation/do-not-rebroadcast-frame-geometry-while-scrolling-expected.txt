@@ -1,4 +1,4 @@
 
 
-PASS Scrolling broadcasts the viewport info once per rendering update and leaves the geometry alone
+PASS Scrolling broadcasts are suppressed when all remote frames are offscreen for consecutive updates
 

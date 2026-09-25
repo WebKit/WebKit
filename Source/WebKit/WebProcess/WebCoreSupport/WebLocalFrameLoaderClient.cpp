@@ -1090,6 +1090,21 @@ void WebLocalFrameLoaderClient::clearLastBroadcastFrameTreeSyncData()
 {
     m_lastBroadcastFrameGeometry = std::nullopt;
     m_lastBroadcastFrameViewportInfo = std::nullopt;
+    m_lastAllRemoteDescendantsWereOffscreen = false;
+}
+
+void WebLocalFrameLoaderClient::broadcastFrameViewportInfoToOtherProcessesIfNeeded(const FrameViewportInfo& viewportInfo, bool hasOnScreenRemoteDescendant)
+{
+    if (m_localFrame->isMainFrame()) {
+        bool allRemoteDescendantsAreOffscreen = !hasOnScreenRemoteDescendant;
+        bool lastAllRemoteDescendantsWereOffscreen = m_lastAllRemoteDescendantsWereOffscreen;
+        m_lastAllRemoteDescendantsWereOffscreen = allRemoteDescendantsAreOffscreen;
+
+        if (allRemoteDescendantsAreOffscreen && lastAllRemoteDescendantsWereOffscreen)
+            return;
+    }
+
+    broadcastFrameViewportInfoToOtherProcesses(viewportInfo);
 }
 
 void WebLocalFrameLoaderClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
