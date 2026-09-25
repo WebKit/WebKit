@@ -166,7 +166,7 @@ bool WPEQtUnderlayBlitter::importEGLImage(EGLImage image)
     return true;
 }
 
-bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity)
+bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity, std::optional<QRect> scissorRect, std::optional<int> stencilValue)
 {
     if (!initialize() || !m_texture)
         return false;
@@ -185,6 +185,10 @@ bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity)
     GLint prevArrayBuffer = 0;
     m_gl->glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &prevArrayBuffer);
 
+    GLboolean wasScissorEnabled = m_gl->glIsEnabled(GL_SCISSOR_TEST);
+    GLint prevScissorBox[4] = { 0, 0, 0, 0 };
+    m_gl->glGetIntegerv(GL_SCISSOR_BOX, prevScissorBox);
+
     GLboolean wasBlendEnabled = m_gl->glIsEnabled(GL_BLEND);
     GLint prevBlendSrcRGB = GL_ONE;
     GLint prevBlendDstRGB = GL_ZERO;
@@ -194,6 +198,22 @@ bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity)
     m_gl->glGetIntegerv(GL_BLEND_DST_RGB, &prevBlendDstRGB);
     m_gl->glGetIntegerv(GL_BLEND_SRC_ALPHA, &prevBlendSrcAlpha);
     m_gl->glGetIntegerv(GL_BLEND_DST_ALPHA, &prevBlendDstAlpha);
+
+    if (scissorRect) {
+        m_gl->glEnable(GL_SCISSOR_TEST);
+        m_gl->glScissor(scissorRect->x(), scissorRect->y(), scissorRect->width(), scissorRect->height());
+    } else
+        m_gl->glDisable(GL_SCISSOR_TEST);
+
+    // Stencil state is not saved and restored: Qt 6 reapplies pipeline state,
+    // including stencil, after render-node commands, which is also why it ignores
+    // StencilState in changedStates(). GL_KEEP leaves the stencil buffer unchanged.
+    if (stencilValue) {
+        m_gl->glEnable(GL_STENCIL_TEST);
+        m_gl->glStencilFunc(GL_EQUAL, *stencilValue, 0xFF);
+        m_gl->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    } else
+        m_gl->glDisable(GL_STENCIL_TEST);
 
     // Composite WPE frames.
     m_gl->glEnable(GL_BLEND);
@@ -219,6 +239,12 @@ bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity)
         m_gl->glEnable(GL_BLEND);
     else
         m_gl->glDisable(GL_BLEND);
+
+    m_gl->glScissor(prevScissorBox[0], prevScissorBox[1], prevScissorBox[2], prevScissorBox[3]);
+    if (wasScissorEnabled)
+        m_gl->glEnable(GL_SCISSOR_TEST);
+    else
+        m_gl->glDisable(GL_SCISSOR_TEST);
 
     return true;
 }
