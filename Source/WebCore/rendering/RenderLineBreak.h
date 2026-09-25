@@ -71,7 +71,6 @@ private:
     LayoutRect firstFragmentBorderBoxRect() const final { return linesBoundingBox(); }
     LayoutRect borderBoxRectInContainer() const final { return linesBoundingBox(); }
     LayoutRect visualOverflowRect() const final { return linesBoundingBox(); }
-    LayoutRect frameRectForStickyPositioning() const final { ASSERT_NOT_REACHED(); return { }; }
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final { return { }; }
 
     void NODELETE updateFromStyle() final;

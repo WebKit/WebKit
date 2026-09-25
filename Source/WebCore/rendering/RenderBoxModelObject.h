@@ -250,8 +250,6 @@ protected:
     virtual RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
 
 private:
-    virtual LayoutRect frameRectForStickyPositioning() const = 0;
-
     RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
 };
 

@@ -604,7 +604,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     constraints.setContainingBlockRect(containerRectRelativeToScrollingAncestor);
 
     // Now compute the sticky box rect, also relative to the scrolling ancestor.
-    LayoutRect stickyBoxRect = frameRectForStickyPositioning();
+    auto stickyBoxRect = borderBoxRectInContainer();
 
     // Ideally, it would be possible to call this->localToContainerQuad to determine the frame
     // rectangle in the coordinate system of the scrolling ancestor, but localToContainerQuad

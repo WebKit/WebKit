@@ -710,7 +710,6 @@ private:
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void computeIntrinsicLogicalWidthContributions();
 
-    LayoutRect frameRectForStickyPositioning() const override { return borderBoxRectInContainer(); }
 
     RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const final;
     
