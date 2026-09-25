@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// The mock microphone starts at 44100Hz and only supports the discrete sample rates
+// 8000, 16000, 32000, 44100, 48000 and 96000.
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    const track = stream.getAudioTracks()[0];
+    assert_equals(track.getSettings().sampleRate, 44100, "initial sample rate");
+
+    await track.applyConstraints({ sampleRate: { min: 16000, max: 48000 } });
+    assert_equals(track.getSettings().sampleRate, 44100, "'min' and 'max' set, current value satisfies both and there is no 'ideal', so it should not change");
+
+    await track.applyConstraints({ sampleRate: { max: 32000 } });
+    assert_equals(track.getSettings().sampleRate, 32000, "'max' only set, current value exceeds it, so the largest supported value that satisfies it should be used");
+
+    await track.applyConstraints({ sampleRate: { min: 44100 } });
+    assert_equals(track.getSettings().sampleRate, 44100, "'min' only set, current value is below it, so the smallest supported value that satisfies it should be used");
+
+    await track.applyConstraints({ sampleRate: { max: 96000 } });
+    assert_equals(track.getSettings().sampleRate, 44100, "'max' only set, current value satisfies it and there is no 'ideal', so it should not change");
+
+    await track.applyConstraints({ sampleRate: { min: 48000, max: 96000 } });
+    assert_equals(track.getSettings().sampleRate, 48000, "'min' and 'max' set, current value is below 'min', so it should be clamped up to a supported value");
+
+    await track.applyConstraints({ sampleRate: { min: 8000, max: 32000 } });
+    assert_equals(track.getSettings().sampleRate, 32000, "'min' and 'max' set, current value is above 'max', so it should be clamped down to a supported value");
+
+    await track.applyConstraints({ sampleRate: { exact: 44100 } });
+    assert_equals(track.getSettings().sampleRate, 44100, "'exact' set to a supported value");
+}, "applyConstraints with sample rate min/max range constraints on a microphone track");
+</script>
+</body>
+</html>

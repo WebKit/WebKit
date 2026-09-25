@@ -290,39 +290,66 @@ public:
 
     std::optional<ValueType> valueForDiscreteCapabilityValues(ValueType current, const Vector<ValueType>& discreteCapabilityValues) const
     {
-        std::optional<ValueType> value;
-        std::optional<ValueType> min;
-        std::optional<ValueType> max;
+        if (discreteCapabilityValues.isEmpty())
+            return { };
 
         if (m_exact) {
             ASSERT(discreteCapabilityValues.contains(m_exact.value()));
             return m_exact.value();
         }
 
-        if (m_min) {
-            auto index = discreteCapabilityValues.findIf([&](ValueType value) { return m_min.value() >= value; });
-            if (index != notFound) {
-                min = value = discreteCapabilityValues[index];
+        std::optional<ValueType> value;
+        std::optional<ValueType> min;
+        std::optional<ValueType> max;
 
-                // If there is no ideal, don't change if minimum is smaller than current.
-                if (!m_ideal && *value < current)
-                    value = current;
+        if (m_min) {
+            // The smallest supported value that satisfies the min constraint.
+            for (auto& discreteValue : discreteCapabilityValues) {
+                if (discreteValue >= m_min.value() && (!min || discreteValue < *min))
+                    min = discreteValue;
             }
+
+            // No supported value satisfies the constraint, leave the setting alone.
+            if (!min)
+                return { };
+
+            value = *min;
+
+            // If there is no ideal, don't change if minimum is smaller than current.
+            if (!m_ideal && *value < current)
+                value = current;
         }
 
-        if (m_max && m_max.value() >= discreteCapabilityValues[0]) {
+        if (m_max) {
+            // The largest supported value that satisfies the max constraint.
             for (auto& discreteValue : discreteCapabilityValues) {
-                if (m_max.value() <= discreteValue)
-                    max = value = discreteValue;
+                if (discreteValue <= m_max.value() && (!max || discreteValue > *max))
+                    max = discreteValue;
+            }
+
+            // No supported value satisfies the constraint, leave the setting alone.
+            if (!max)
+                return { };
+
+            if (m_min) {
+                ASSERT(value);
+                if (*value > *max)
+                    value = *max;
+            } else {
+                value = *max;
+
+                // If there is no ideal, don't change if maximum is larger than current, as long as current is a valid value for this capability.
+                if (!m_ideal && current < *value && discreteCapabilityValues.contains(current))
+                    value = current;
             }
         }
 
         if (m_ideal && discreteCapabilityValues.contains(m_ideal.value())) {
             value = m_ideal.value();
             if (max)
-                value = std::min(max.value(), *value);
+                value = std::min(*max, *value);
             if (min)
-                value = std::max(min.value(), *value);
+                value = std::max(*min, *value);
         }
 
         return value;
