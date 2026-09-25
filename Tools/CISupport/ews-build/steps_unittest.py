@@ -12820,6 +12820,112 @@ index 8a2d2375b8d2..f7ebc3b11b94 100644
         self.expect_property('user_removed_tests', ['WebCore/inspector/agents/worker/WorkerAuditAgent.h/NoUncountedMemberChecker'])
         return rc
 
+    def test_retag_to_other_platform_on_macos(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+        self.setProperty('platform', 'mac')
+
+        commit_diff = '''
+diff --git a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+--- a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
++++ b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+-Modules/cache/DOMCache.cpp
++[ macOS ] Modules/cache/DOMCache.cpp
+-workers/WorkerOrWorkletThread.cpp
++[ macOS ] workers/WorkerOrWorkletThread.cpp
+'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'diff', 'HEAD~1', '--', '*Expectations'])
+            .log('stdio', stdout=commit_diff)
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='No modified expectations')
+        rc = self.run_step()
+        self.expect_property('user_added_tests', [])
+        self.expect_property('user_removed_tests', [])
+        return rc
+
+    def test_retag_to_other_platform_on_ios(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+        self.setProperty('platform', 'ios')
+
+        commit_diff = '''
+diff --git a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+--- a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
++++ b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+-Modules/cache/DOMCache.cpp
++[ macOS ] Modules/cache/DOMCache.cpp
+-workers/WorkerOrWorkletThread.cpp
++[ macOS ] workers/WorkerOrWorkletThread.cpp
+'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'diff', 'HEAD~1', '--', '*Expectations'])
+            .log('stdio', stdout=commit_diff)
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found modified expectations')
+        rc = self.run_step()
+        self.expect_property('user_added_tests', [])
+        self.expect_property('user_removed_tests', ['WebCore/Modules/cache/DOMCache.cpp/UncountedLambdaCapturesChecker', 'WebCore/workers/WorkerOrWorkletThread.cpp/UncountedLambdaCapturesChecker'])
+        return rc
+
+    def test_tagged_removal(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+        self.setProperty('platform', 'mac')
+
+        commit_diff = '''
+diff --git a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+--- a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
++++ b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+-[ Mac ] testing/MockMediaSessionCoordinator.cpp
+'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'diff', 'HEAD~1', '--', '*Expectations'])
+            .log('stdio', stdout=commit_diff)
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found modified expectations')
+        rc = self.run_step()
+        self.expect_property('user_added_tests', [])
+        self.expect_property('user_removed_tests', ['WebCore/testing/MockMediaSessionCoordinator.cpp/UncountedLambdaCapturesChecker'])
+        return rc
+
+    def test_other_platform_tag_ignored(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+        self.setProperty('platform', 'mac')
+
+        commit_diff = '''
+diff --git a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+--- a/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
++++ b/Source/WebCore/SaferCPPExpectations/UncountedLambdaCapturesCheckerExpectations
+-[ iOS ] loader/ios/LegacyPreviewLoader.mm
+'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'diff', 'HEAD~1', '--', '*Expectations'])
+            .log('stdio', stdout=commit_diff)
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='No modified expectations')
+        rc = self.run_step()
+        self.expect_property('user_added_tests', [])
+        self.expect_property('user_removed_tests', [])
+        return rc
+
     @expectedFailure
     def test_unmodified(self):
         self.configureStep()
