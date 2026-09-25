@@ -25,8 +25,11 @@ import io
 import logging
 import sys
 
-from webkitcorepy import log, mocks
+from webkitcorepy import mocks
+
 from webkitcorepy.string_utils import StringIO
+
+log = logging.getLogger('webkitcorepy')
 
 
 class LoggerCapture(object):
@@ -172,7 +175,7 @@ class OutputDuplicate(mocks.ContextStack):
         super(OutputDuplicate, self).__init__(cls=OutputDuplicate)
 
         self.output = StringIO()
-        self.loggers = [logging.getLogger()] or loggers
+        self.loggers = loggers or [logging.getLogger()]
 
         self._handler_stack = []
         self._streams_stack = []

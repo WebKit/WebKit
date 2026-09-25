@@ -74,7 +74,7 @@ def join(list, conjunction='and'):
 
 
 def split(string, conjunctions=None):
-    conjunctions = ['and', 'or']
+    conjunctions = conjunctions or ['and', 'or']
     if not string:
         return []
 

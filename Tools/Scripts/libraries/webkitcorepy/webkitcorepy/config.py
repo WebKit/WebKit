@@ -98,7 +98,7 @@ class Config(dict[str, 'Config.Values']):
 
         result = jsone.render(value, context=context)
         if isinstance(result, Mapping):
-            return Config(**result)
+            return Config(result)
         return result
 
     @classmethod

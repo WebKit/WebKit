@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import operator
 import sys
 import unittest
 
@@ -222,6 +223,20 @@ class VersionTestCase(unittest.TestCase):
         self.assertGreaterEqual(Version(1, 2, 3), None)
         self.assertLess(None, Version(1, 2, 3))
         self.assertLessEqual(None, Version(1, 2, 3))
+
+    def test_compare_versions_to_padded_tuple(self) -> None:
+        self.assertEqual(Version(1, 2), (1, 2, 0, 0, 0))
+        self.assertTrue(Version(1, 2) < (1, 3, 0, 0, 0))
+        self.assertTrue(Version(1, 2) >= (1, 2, 0, 0, 0))
+
+    def test_equality_with_non_iterable(self) -> None:
+        self.assertFalse(Version(1, 2, 3) == 5)
+        self.assertTrue(Version(1, 2, 3) != 5)
+
+    def test_ordering_against_non_iterable(self) -> None:
+        for operation in [operator.lt, operator.le, operator.gt, operator.ge]:
+            with self.assertRaisesRegex(TypeError, 'not supported between instances'):
+                operation(Version(1, 2, 3), 5)
 
     def test_matches(self):
         version = Version(1, 2, 3)

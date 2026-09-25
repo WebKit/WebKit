@@ -24,6 +24,8 @@ import time
 import threading
 import unittest
 
+from unittest.mock import patch
+
 from webkitcorepy import OutputCapture, Timeout, mocks
 
 
@@ -51,6 +53,16 @@ class TimeoutTests(unittest.TestCase):
             self.assertEqual(threading.current_thread().ident, tmp.data.thread_id)
             self.assertTrue(time.time() + 1 >= tmp.data.alarm_time)
         self.assertEqual(None, tmp.data)
+
+    def test_timeout_data_compared_to_foreign_type(self) -> None:
+        data = Timeout.Data(alarm_time=time.time(), handler=None)
+        with self.assertRaises(ValueError) as context:
+            data.__lt__('not-timeout-data')
+        self.assertIn("<class 'str'>", str(context.exception))
+
+    def test_check_without_current_timeout(self) -> None:
+        with patch.object(Timeout, 'difference', return_value=0):
+            self.assertIsNone(Timeout.check())
 
     def test_difference(self):
         with mocks.Time:

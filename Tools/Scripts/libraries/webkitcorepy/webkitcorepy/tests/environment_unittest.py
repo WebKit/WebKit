@@ -22,6 +22,8 @@
 
 import os
 
+from unittest import mock
+
 from webkitcorepy import testing, Environment
 
 
@@ -93,3 +95,13 @@ class TestEnvironment(testing.PathTestCase):
             self.assertFalse(os.path.isfile(os.path.join(self.path, 'KEY_C')))
         finally:
             Environment._instance = None
+
+    def test_secure_without_path(self) -> None:
+        extra_path = os.path.join(self.path, 'KEY')
+        with open(extra_path, 'w') as file:
+            file.write('value')
+
+        with mock.patch('os.listdir') as listdir:
+            Environment().secure(extra_path)
+            listdir.assert_not_called()
+            self.assertFalse(os.path.isfile(extra_path))

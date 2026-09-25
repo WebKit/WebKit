@@ -28,7 +28,9 @@ import queue as Queue
 import signal
 import sys
 
-from webkitcorepy import OutputCapture, Timeout, log
+from webkitcorepy import OutputCapture, Timeout
+
+log = logging.getLogger('webkitcorepy')
 
 
 class _Message(object):
@@ -226,10 +228,6 @@ class _DummyQueue(object):
 
 
 class _Process(object):
-    name = None
-    working = False
-    queue = None
-    stop_repeat = False
     name = None
     working = False
     queue = None

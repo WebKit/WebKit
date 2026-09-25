@@ -89,7 +89,7 @@ class Editor(object):
         return cls(
             name='vi',
             path=path,
-            command=[path],
+            command=[path] if path else None,
         )
 
     @classmethod
@@ -98,7 +98,7 @@ class Editor(object):
         return cls(
             name='open',
             path=path,
-            command=[path, '-t'],
+            command=[path, '-t'] if path else None,
             wait=['--wait-apps'],
         )
 
@@ -134,15 +134,15 @@ class Editor(object):
     def __init__(self, name, path, command=None, wait=None):
         self.name = name
         self.path = path
-        self.command = command or [self.path]
-        self.wait = self.command + (wait or [])
+        self.command = list(command) if command else ([path] if path else [])
+        self.wait = self.command + list(wait or [])
 
     @hybridmethod
     def open(context, file, block=False):
         if isinstance(context, type):
             context = context.preferred()
 
-        if not os.path.isfile(context.path):
+        if not context.path or not os.path.isfile(context.path):
             return False
         return not run((context.wait if block else context.command) + [file], capture_output=True).returncode
 

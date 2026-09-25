@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import io
 import subprocess
@@ -27,8 +28,11 @@ import signal
 import sys
 import time
 
-from webkitcorepy import log, string_utils, TimeoutExpired
+from webkitcorepy import string_utils, TimeoutExpired
+
 from webkitcorepy.mocks import Subprocess
+
+log = logging.getLogger('webkitcorepy')
 
 # This file is mocked version of the subprocess.Popen object. This object differs slightly between Python 2 and 3.
 # This object is not a complete mock of subprocess.Popen, but it does enable thorough testing of code which uses Popen,

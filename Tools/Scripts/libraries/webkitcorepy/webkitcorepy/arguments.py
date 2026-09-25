@@ -23,7 +23,8 @@
 import argparse
 import logging
 
-from webkitcorepy import log
+
+log = logging.getLogger('webkitcorepy')
 
 
 class NoAction(argparse.Action):
@@ -32,9 +33,9 @@ class NoAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, not any((
-            option_string.startswith('--no-'),
-            option_string.startswith('--un'),
-            option_string.startswith('--skip-'),
+            option_string.startswith('--no-') if option_string else False,
+            option_string.startswith('--un') if option_string else False,
+            option_string.startswith('--skip-') if option_string else False,
         )))
 
 

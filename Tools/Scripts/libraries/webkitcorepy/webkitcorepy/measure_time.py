@@ -20,9 +20,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import time
 
-from webkitcorepy import log
+
+log = logging.getLogger('webkitcorepy')
 
 
 class MeasureTime(object):
