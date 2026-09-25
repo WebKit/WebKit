@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<title>testdriver-vendor.js: element origin inside a subframe</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<div id="log"></div>
+<iframe id="frame" style="position: absolute; left: 200px; top: 200px; width: 150px; height: 150px; border: none"
+    srcdoc="<body style='margin: 0'><div id='target' style='width: 100px; height: 100px; background: green'></div>"></iframe>
+<script>
+promise_test(async () => {
+    const frame = document.getElementById("frame");
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    const target = frame.contentDocument.getElementById("target");
+    assert_true(!!frame.contentWindow.internals, "internals is available in the subframe");
+
+    let clickedTarget = null;
+    frame.contentWindow.addEventListener("click", event => clickedTarget = event.target, true);
+
+    // The origin's frame-local center is (50, 50), which lands outside the <iframe> in the
+    // top window unless it is shifted into root-view coordinates.
+    await new test_driver.Actions()
+        .pointerMove(0, 0, { origin: target })
+        .pointerDown()
+        .pointerUp()
+        .send();
+
+    assert_equals(clickedTarget, target, "click landed on the element used as the action origin");
+}, "an element origin inside a subframe is shifted into root-view coordinates");
+</script>
