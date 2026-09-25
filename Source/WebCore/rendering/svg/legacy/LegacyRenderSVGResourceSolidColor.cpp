@@ -32,6 +32,10 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceSolidColor);
@@ -54,7 +58,11 @@ auto LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, c
             context->setAlpha(Style::evaluate<float>(style.fillOpacity()));
         else
             context->setAlpha(1);
-        context->setFillColor(colorResolver.colorApplyingColorFilter(m_color));
+        auto fillColor = colorResolver.colorApplyingColorFilter(m_color);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        fillColor = AXCustomColorModeController::adjustedSVGPaintColor(renderer, style, AXCustomColorModeController::SVGPaintTarget::Fill, fillColor, m_color);
+#endif
+        context->setFillColor(fillColor);
         if (isRenderingMask)
             context->setFillRule(style.clipRule());
         else
@@ -66,7 +74,11 @@ auto LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, c
         // When rendering the mask for a LegacyRenderSVGResourceClipper, the stroke code path is never hit.
         ASSERT(!isRenderingMask);
         context->setAlpha(Style::evaluate<float>(style.strokeOpacity()));
-        context->setStrokeColor(colorResolver.colorApplyingColorFilter(m_color));
+        auto strokeColor = colorResolver.colorApplyingColorFilter(m_color);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        strokeColor = AXCustomColorModeController::adjustedSVGPaintColor(renderer, style, AXCustomColorModeController::SVGPaintTarget::Stroke, strokeColor, m_color);
+#endif
+        context->setStrokeColor(strokeColor);
 
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
 

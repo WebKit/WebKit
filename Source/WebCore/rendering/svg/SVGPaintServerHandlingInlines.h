@@ -31,6 +31,10 @@
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 template<SVGPaintServerHandling::Operation op>
@@ -134,7 +138,11 @@ inline void SVGPaintServerHandling::prepareFillOperation(const RenderLayerModelO
     }
 
     Style::ColorResolver colorResolver { style };
-    m_context.setFillColor(colorResolver.colorApplyingColorFilter(fillColor));
+    auto paintColor = colorResolver.colorApplyingColorFilter(fillColor);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    paintColor = AXCustomColorModeController::adjustedSVGPaintColor(renderer, style, AXCustomColorModeController::SVGPaintTarget::Fill, paintColor, fillColor);
+#endif
+    m_context.setFillColor(paintColor);
 }
 
 inline void SVGPaintServerHandling::prepareStrokeOperation(const RenderLayerModelObject& renderer, const Style::ComputedStyle& style, const Color& strokeColor) const
@@ -142,7 +150,11 @@ inline void SVGPaintServerHandling::prepareStrokeOperation(const RenderLayerMode
     m_context.setAlpha(Style::evaluate<float>(style.strokeOpacity()));
 
     Style::ColorResolver colorResolver { style };
-    m_context.setStrokeColor(colorResolver.colorApplyingColorFilter(strokeColor));
+    auto paintColor = colorResolver.colorApplyingColorFilter(strokeColor);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    paintColor = AXCustomColorModeController::adjustedSVGPaintColor(renderer, style, AXCustomColorModeController::SVGPaintTarget::Stroke, paintColor, strokeColor);
+#endif
+    m_context.setStrokeColor(paintColor);
     SVGRenderSupport::applyStrokeStyleToContext(m_context, style, renderer);
 }
 

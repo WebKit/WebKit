@@ -77,6 +77,10 @@
 #include "LocalDefaultSystemAppearance.h"
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 SVGImage::SVGImage(ImageObserver* observer)
@@ -603,6 +607,9 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
                 m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+                m_page->settings().setAxCustomColorModeEnabled(AXCustomColorModeController::shouldAdjustSVGImages(m_page));
+#endif
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
