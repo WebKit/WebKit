@@ -71,6 +71,9 @@ private:
     Lock m_adapterLock;
     GRefPtr<GstAdapter> m_adapter WTF_GUARDED_BY_LOCK(m_adapterLock);
     Vector<uint8_t> m_audioBuffer;
+
+    Lock m_pullLock;
+    Condition m_pullCondition WTF_GUARDED_BY_LOCK(m_pullLock);
 };
 
 } // namespace WebCore
