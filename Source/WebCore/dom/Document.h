@@ -1330,6 +1330,8 @@ public:
     TransformSource* transformSource() const LIFETIME_BOUND { return m_transformSource.get(); }
 #endif
 
+    void logXMLExternalEntityDeprecationWarningIfNeeded();
+
     void incDOMTreeVersion() { m_domTreeVersion = ++s_globalTreeVersion; }
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
@@ -2840,6 +2842,7 @@ private:
     bool m_hasPendingXSLTransforms : 1 { false };
     bool m_hasLoggedXSLTDeprecationWarning : 1 { false };
 #endif
+    bool m_hasLoggedXMLExternalEntityDeprecationWarning : 1 { false };
 #if ENABLE(MEDIA_STREAM)
     bool m_hasHadCaptureMediaStreamTrack : 1 { false };
 #endif
