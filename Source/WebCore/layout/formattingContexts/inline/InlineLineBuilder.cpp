@@ -1846,6 +1846,16 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
         // If the second 'X' overflows the line, the trailing whitespace gets trimmed which introduces a stray inline box
         // on the first line ('X <span>' and 'X</span>' first and second line respectively).
         // In such cases we need to revert the content on the line to a previous wrapping opportunity to keep such content together.
+        if (m_blockEllipsis && !m_line.hasContent()) {
+            // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut"
+            // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+            // Everything placed on the line so far (inline box starts, floats, out-of-flow boxes) moves to the next line together with the content.
+            auto& leadingInlineItem = candidateRuns.first().inlineItem;
+            auto isPartialLeadingItem = m_partialLeadingTextItem && &*m_partialLeadingTextItem == &leadingInlineItem;
+            auto placedInlineItemEnd = isPartialLeadingItem ? layoutRange.startIndex() : static_cast<size_t>(&leadingInlineItem - m_inlineItemList.data());
+            revertLineToStart(layoutRange, placedInlineItemEnd);
+            return { InlineContentBreaker::IsEndOfLine::Yes, { 0, true } };
+        }
         auto needsRevert = m_line.trimmableTrailingWidth() && !m_line.runs().isEmpty() && m_line.runs().last().isInlineBoxStart();
         if (needsRevert && m_wrapOpportunityList.size() > 1) {
             m_wrapOpportunityList.removeLast();
@@ -1894,6 +1904,14 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
     return { InlineContentBreaker::IsEndOfLine::No };
 }
 
+bool LineBuilder::unplaceFloatBox(const Box& floatBox)
+{
+    m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+        return placedFloatItem.layoutBox() == &floatBox;
+    });
+    return layoutState().placedFloats().remove(floatBox);
+}
+
 size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRange, const InlineItem& lastInlineItemToAdd)
 {
     ASSERT(!m_wrapOpportunityList.isEmpty());
@@ -1926,12 +1944,6 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     auto result = processLineBreakingResult(lineCandidate, layoutRange, { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::Yes, { }, { } });
 
     // Remove floats that are outside of this "rebuild" range to ensure we don't add them twice.
-    auto unplaceFloatBox = [&](const Box& floatBox) -> bool {
-        m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
-            return placedFloatItem.layoutBox() == &floatBox;
-        });
-        return layoutState().placedFloats().remove(floatBox);
-    };
     for (auto index = endOfCandidateContent; index < layoutRange.endIndex(); ++index) {
         auto& inlineItem = m_inlineItemList[index];
         if (inlineItem.isFloat() && unplaceFloatBox(inlineItem.layoutBox()))
@@ -1939,6 +1951,19 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     }
 
     return result.committedCount.value + numberOfFloatsInRange;
+}
+
+void LineBuilder::revertLineToStart(const InlineItemRange& layoutRange, size_t placedInlineItemEnd)
+{
+    ASSERT(!m_line.hasContent());
+    // Floats placed on this line move to the next line with the rest of the content (suspended floats are taken care of by the caller).
+    for (auto index = layoutRange.startIndex(); index < placedInlineItemEnd; ++index) {
+        auto& inlineItem = m_inlineItemList[index];
+        if (inlineItem.isFloat())
+            unplaceFloatBox(inlineItem.layoutBox());
+    }
+    // Inline boxes spanning over from the previous line stay, as they are open on this line too.
+    m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
 }
 
 size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange)

@@ -75,7 +75,9 @@ private:
 
     void commitCandidateContent(LineCandidate&, std::optional<InlineContentBreaker::Result::PartialTrailingContent>);
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
+    bool unplaceFloatBox(const Box&);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
+    void revertLineToStart(const InlineItemRange& layoutRange, size_t placedInlineItemEnd);
     void initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<BlockOverflowEllipsis>&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate);
     void createLineSpanningInlineBoxes(const InlineItemRange& needsLayoutRange);
     UniqueRef<LineContent> placeInlineAndFloatContent(const InlineItemRange&);

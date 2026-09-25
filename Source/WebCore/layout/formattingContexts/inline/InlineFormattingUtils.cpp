@@ -119,8 +119,13 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
         // This does not match other browser engines. see webkit.org/b/256390.
         return true;
     }
-    if (inlineLevelBox.isInlineBox())
+    if (inlineLevelBox.isInlineBox()) {
+        // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+        // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut styled according to the root inline box"
+        if (lineBox.hasBlockEllipsisContentOnly())
+            return inlineLevelBox.isRootInlineBox();
         return formattingContext().layoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
+    }
     if (inlineLevelBox.isAtomicInlineBox())
         return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
