@@ -1304,11 +1304,29 @@ final class WebBackForwardList {
         }
     }
 
+    // Not a message check: a subframe process may name the main frame, which it does not host, and a
+    // frame can be destroyed while a synchronous request naming it is in flight.
+    private func frameOnPage(_ frameID: WebCore.FrameIdentifier) -> WebKit.WebFrameProxy? {
+        guard let webPageProxy = page.get(), let frame = webFrameForFrameID(frameID), let framePage = frame.page() else {
+            return nil
+        }
+        // We can't use == here due to rdar://162357139
+        guard contentsMatch(framePage.identifier(), webPageProxy.identifier()) else {
+            return nil
+        }
+        return frame
+    }
+
     func backForwardAllItems(
         connection: IPC.Connection,
         frameID: WebCore.FrameIdentifier,
         completionHandler: CompletionHandlers.WebBackForwardList.BackForwardAllItemsCompletionHandler
     ) {
+        guard frameOnPage(frameID) != nil else {
+            completionHandler.pointee(consuming: WebKit.VectorRefFrameState(array: []))
+            return
+        }
+
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
@@ -1334,12 +1352,19 @@ final class WebBackForwardList {
     ) throws(InvalidMessage) -> WebKit.RefPtrFrameState {
         try messageCheck { delta != Int32.min }
 
-        // FIXME: This should verify that the web process requesting the item hosts the specified frame.
+        guard let frame = frameOnPage(frameID) else {
+            return WebKit.RefPtrFrameState()
+        }
+
         let delta = Int(delta)
         guard let item = itemAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
             return WebKit.RefPtrFrameState()
         }
         guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
+            // Entries can lack the main frame's current ID (after session restore or a process swap).
+            guard frame.isMainFrame() else {
+                return WebKit.RefPtrFrameState()
+            }
             return WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr())
         }
         return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren().ptr())

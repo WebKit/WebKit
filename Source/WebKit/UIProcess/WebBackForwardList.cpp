@@ -935,8 +935,22 @@ void WebBackForwardList::backForwardGoToItemShared(IPC::Connection& connection, 
     goToItem(*item);
 }
 
+// Not a message check: a subframe process may name the main frame, which it does not host, and a
+// frame can be destroyed while a synchronous request naming it is in flight.
+static RefPtr<WebFrameProxy> frameOnPage(FrameIdentifier frameID, WebPageProxy& page)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != &page)
+        return nullptr;
+    return frame;
+}
+
 void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
 {
+    RefPtr page = m_page.get();
+    if (!page || !frameOnPage(frameID, *page))
+        return completionHandler({ });
+
     auto frameItems = WTF::compactMap(entries(), [frameID](const auto& item) -> RefPtr<WebBackForwardListFrameItem> {
         return item->mainFrameItem().childItemForFrameID(frameID);
     });
@@ -950,13 +964,26 @@ void WebBackForwardList::backForwardItemAtIndexForWebContent(IPC::Connection& co
 {
     MESSAGE_CHECK_COMPLETION_BASE(delta != std::numeric_limits<int32_t>::min(), connection, completionHandler(nullptr));
 
-    // FIXME: This should verify that the web process requesting the item hosts the specified frame.
-    if (RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No)) {
-        if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
-            return completionHandler(frameItem->copyFrameStateWithChildren());
-        completionHandler(item->copyMainFrameStateWithChildren());
-    } else
-        completionHandler(nullptr);
+    RefPtr page = m_page.get();
+    if (!page)
+        return completionHandler(nullptr);
+
+    RefPtr frame = frameOnPage(frameID, *page);
+    if (!frame)
+        return completionHandler(nullptr);
+
+    RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
+    if (!item)
+        return completionHandler(nullptr);
+
+    if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
+        return completionHandler(frameItem->copyFrameStateWithChildren());
+
+    // Entries can lack the main frame's current ID (after session restore or a process swap).
+    if (!frame->isMainFrame())
+        return completionHandler(nullptr);
+
+    completionHandler(item->copyMainFrameStateWithChildren());
 }
 
 void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&& completionHandler)

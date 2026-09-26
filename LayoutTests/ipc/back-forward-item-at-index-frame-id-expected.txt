@@ -1,0 +1,13 @@
+
+
+PASS BackForwardItemAtIndexForWebContent serves the main frame
+PASS BackForwardAllItems serves the main frame
+PASS BackForwardItemAtIndexForWebContent serves a subframe its own state
+PASS BackForwardAllItems serves a subframe its own state
+PASS BackForwardItemAtIndexForWebContent returns nothing for a subframe missing from the entry
+PASS BackForwardItemAtIndexForWebContent returns nothing for a frameID naming no frame
+PASS BackForwardAllItems returns nothing for a frameID naming no frame
+PASS BackForwardItemAtIndexForWebContent returns nothing for another page's main frame
+PASS BackForwardAllItems returns nothing for another page's main frame
+PASS Rejecting a frameID is not a message check
+

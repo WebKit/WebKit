@@ -1,0 +1,70 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const MAIN_SENTINEL = "SITE-ISOLATION-BFLIST-SENTINEL";
+
+function parseReply(reply)
+{
+    if (!(reply instanceof ArrayBuffer))
+        throw new Error("No reply");
+    const bytes = new Uint8Array(reply);
+    return {
+        nonEmpty: !!bytes[0],
+        hasMainFrameState: new TextDecoder("latin1").decode(bytes).includes(MAIN_SENTINEL),
+    };
+}
+
+const setupPromise = (async () => {
+    history.pushState(null, "", "#" + MAIN_SENTINEL);
+    const iframe = document.createElement("iframe");
+    const iframeLoaded = new Promise(resolve => iframe.onload = resolve);
+    iframe.src = "http://localhost:8000/site-isolation/history/resources/back-forward-item-at-index-frame-id-probe.html";
+    document.body.appendChild(iframe);
+    await iframeLoaded;
+
+    if (!window.IPC)
+        return null;
+
+    const remote = await new Promise(resolve => {
+        window.onmessage = event => resolve(event.data);
+        iframe.contentWindow.postMessage(IPC.frameID[0].toString(), "*");
+    });
+    if (remote.error)
+        throw new Error(remote.error);
+    return remote;
+})();
+
+function backForwardTest(name, body)
+{
+    promise_test(async () => {
+        const remote = await setupPromise;
+        if (remote)
+            body(remote);
+    }, name);
+}
+
+backForwardTest("BackForwardItemAtIndexForWebContent serves a cross-site subframe process naming the main frame", remote => {
+    assert_true(parseReply(remote.itemAtIndexForMainFrame).hasMainFrameState);
+});
+
+backForwardTest("BackForwardAllItems serves a cross-site subframe process naming the main frame", remote => {
+    assert_true(parseReply(remote.allItemsForMainFrame).hasMainFrameState);
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent serves a cross-site subframe its own state", remote => {
+    const result = parseReply(remote.itemAtIndexForOwnFrame);
+    assert_true(result.nonEmpty, "subframe state was returned");
+    assert_false(result.hasMainFrameState, "main frame state was not returned");
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent returns nothing for a cross-site subframe missing from the entry", remote => {
+    assert_false(parseReply(remote.itemAtIndexForOwnFrameInPreviousEntry).nonEmpty);
+});
+
+backForwardTest("None of these requests is a message check", remote => {
+    assert_equals(remote.invalidMessage, "");
+});
+</script>
