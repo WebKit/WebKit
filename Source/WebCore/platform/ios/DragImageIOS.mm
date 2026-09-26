@@ -201,7 +201,7 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
     UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
-        context.drawImage(image, FloatPoint());
+        context.drawBitmapImage(image, FloatPoint());
     }];
 
     return finalImage.CGImage;

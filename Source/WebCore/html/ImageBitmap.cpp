@@ -513,7 +513,7 @@ static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext& sc
         if (!buffer)
             return nullptr;
         Ref channelBitmap = BitmapImage::create(channelImage.releaseNonNull());
-        buffer->context().drawImage(channelBitmap.get(), FloatRect { FloatPoint(), outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+        buffer->context().drawBitmapImage(channelBitmap.get(), FloatRect { FloatPoint(), outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
         // Buffer is opaque so unpremultiplied is free
         return buffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, { { }, outputIntSize });
@@ -942,7 +942,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    bitmapData->context().drawBitmapImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     const bool originClean = existingImageBitmap->originClean();
     bool forciblyPremultiplyAlpha = false;
@@ -1126,7 +1126,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
             return;
         }
         FloatRect destRect(FloatPoint(), outputSize);
-        bitmapData->context().drawImage(image, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+        bitmapData->context().drawBitmapImage(image, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);

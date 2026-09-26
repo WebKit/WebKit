@@ -562,8 +562,8 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     if (shouldDisplayBrokenImageIcon() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
         // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
         auto brokenImageAndImageScaleFactor = protect(cachedImage())->brokenImage(deviceScaleFactor);
-        image = brokenImageAndImageScaleFactor.first.get();
-        FloatSize imageSize = image->size();
+        RefPtr brokenImage = brokenImageAndImageScaleFactor.first.get();
+        FloatSize imageSize = brokenImage->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
 
         // Center the error image, accounting for border and padding.
@@ -575,7 +575,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
             centerY = 0;
         imageOffset = LayoutSize(borderWidths.left() + padding.left() + centerX + missingImageBorderWidth, borderWidths.top() + padding.top() + centerY + missingImageBorderWidth);
 
-        context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
+        context.drawBitmapImage(*brokenImage, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
         errorPictureDrawn = true;
     }
 
