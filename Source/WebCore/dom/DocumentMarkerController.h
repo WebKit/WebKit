@@ -105,7 +105,8 @@ public:
     void invalidateRectsForMarkersInNode(Node&);
 
     WeakPtr<DocumentMarker> markerContainingPoint(const LayoutPoint&, DocumentMarkerType);
-    WEBCORE_EXPORT Vector<FloatRect> renderedRectsForMarkers(DocumentMarkerType);
+    enum class ShouldClip : bool { No, Yes };
+    WEBCORE_EXPORT Vector<FloatRect> renderedRectsForMarkers(DocumentMarkerType, ShouldClip = ShouldClip::Yes);
 
     template<IterationDirection = IterationDirection::Forwards>
     WEBCORE_EXPORT void forEach(const SimpleRange&, OptionSet<DocumentMarkerType>, Function<bool(Node&, RenderedDocumentMarker&)>&&);

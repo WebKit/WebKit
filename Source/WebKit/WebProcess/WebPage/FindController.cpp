@@ -44,6 +44,7 @@
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
@@ -59,7 +60,9 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/Range.h>
+#include <WebCore/RemoteFrame.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/RenderWidget.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 #include <wtf/Forward.h>
@@ -816,6 +819,70 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 
     return rects;
 }
+
+#if PLATFORM(COCOA)
+
+std::optional<RemoteLayerTreeTransaction::FindOverlayRootData> FindController::overlayDataForRoot(LocalFrame& rootFrame)
+{
+    if (!m_findPageOverlay)
+        return std::nullopt;
+
+#if ENABLE(PDF_PLUGIN)
+    if (rootFrame.isMainFrame() && mainFramePlugIn())
+        return std::nullopt;
+#endif
+
+    RefPtr rootView = rootFrame.view();
+    if (!rootView)
+        return std::nullopt;
+
+    static constexpr size_t maximumFindOverlayRectCount = 8192;
+
+    RemoteLayerTreeTransaction::FindOverlayRootData data;
+    for (RefPtr<Frame> frame = &rootFrame; frame; ) {
+        // A RemoteFrame subtree belongs to another local root's payload, so
+        // record the cutout and skip past it rather than descending into it.
+        if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame.get())) {
+            frame = frame->tree().traverseNextSkippingChildren(&rootFrame);
+
+            CheckedPtr ownerRenderer = remoteFrame->ownerRenderer();
+            RefPtr ownerElement = remoteFrame->ownerElement();
+            RefPtr ownerView = ownerElement ? ownerElement->document().view() : nullptr;
+            if (!ownerRenderer || !ownerView)
+                continue;
+
+            FloatRect childFrameRect { rootView->windowToContents(ownerView->contentsToWindow(ownerRenderer->absoluteContentQuad().enclosingBoundingBox())) };
+            if (childFrameRect.isEmpty() || data.childRemoteFrameRects.size() >= maximumFindOverlayRectCount)
+                continue;
+
+            data.childRemoteFrameRects.append({ remoteFrame->frameID(), childFrameRect });
+            continue;
+        }
+
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        frame = frame->tree().traverseNext(&rootFrame);
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
+        if (!document)
+            continue;
+
+        auto shouldClip = localFrame.get() == &rootFrame ? DocumentMarkerController::ShouldClip::No : DocumentMarkerController::ShouldClip::Yes;
+        for (FloatRect rect : protect(document->markers())->renderedRectsForMarkers(DocumentMarkerType::TextMatch, shouldClip)) {
+            if (localFrame.get() != &rootFrame)
+                rect = rootView->windowToContents(protect(localFrame->view())->contentsToWindow(enclosingIntRect(rect)));
+
+            if (rect.isEmpty() || data.matchRectsInRootContentsCoordinates.size() >= maximumFindOverlayRectCount)
+                continue;
+
+            data.matchRectsInRootContentsCoordinates.append(rect);
+        }
+    }
+
+    return data;
+}
+
+#endif // PLATFORM(COCOA)
 
 void FindController::willMoveToPage(PageOverlay&, Page* page)
 {

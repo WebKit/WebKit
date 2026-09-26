@@ -28,6 +28,7 @@
 
 #import "DrawingArea.h"
 #import "EditorState.h"
+#import "FindController.h"
 #import "GPUProcessConnection.h"
 #import "InsertTextOptions.h"
 #import "InteractionInformationAtPosition.h"
@@ -2399,6 +2400,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, 
     layerTransaction.setScrollGeometryContentSize(frameView->scrollGeometryContentSize());
     layerTransaction.setScrollOrigin(frameView->scrollOrigin());
     layerTransaction.setScrollPosition(frameView->scrollPosition());
+    layerTransaction.setFindOverlayData(findController().overlayDataForRoot(*localRootFrame));
 
     m_pendingThemeColorChange = false;
     m_pendingPageExtendedBackgroundColorChange = false;

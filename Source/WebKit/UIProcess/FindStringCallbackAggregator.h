@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FindOverlaySession.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
@@ -38,29 +39,25 @@ enum class FindOptions : uint16_t;
 
 class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
 public:
-    static Ref<FindStringCallbackAggregator> create(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+    static Ref<FindStringCallbackAggregator> create(WebPageProxy&, FindOverlaySession&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
     void foundString(std::optional<WebCore::FrameIdentifier>, uint32_t matchCount, bool didWrap);
     ~FindStringCallbackAggregator();
 
 private:
-    FindStringCallbackAggregator(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+    FindStringCallbackAggregator(WebPageProxy&, FindOverlaySession&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
 
     RefPtr<WebFrameProxy> incrementFrame(WebFrameProxy&);
     bool shouldTargetFrame(WebFrameProxy&, WebFrameProxy& focusedFrame, bool didWrap);
     uint32_t globalIndexOffsetForFrame(const WebFrameProxy&);
 
-    struct FrameMatchResult {
-        uint32_t matchCount { 0 };
-        bool didWrap { false };
-    };
-
     WeakPtr<WebPageProxy> m_page;
+    const Ref<FindOverlaySession> m_session;
     String m_string;
     OptionSet<FindOptions> m_options;
     unsigned m_maxMatchCount;
     uint32_t m_matchCount { 0 };
     CompletionHandler<void(bool)> m_completionHandler;
-    HashMap<WebCore::FrameIdentifier, FrameMatchResult> m_matches;
+    HashMap<WebCore::FrameIdentifier, FindOverlayFrameResult> m_matches;
 };
 
 } // namespace WebKit

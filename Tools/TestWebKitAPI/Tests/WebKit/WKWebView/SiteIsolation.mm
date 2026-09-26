@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/PDFTestHelpers.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -65,6 +66,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameHandle.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKJSHandle.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -4975,6 +4977,464 @@ TEST(SiteIsolation, CountStringMatchesOverflowSaturates)
 
     EXPECT_EQ(static_cast<uint32_t>(kWKMoreThanMaximumMatchCount), [findDelegate matchesCount]);
 }
+
+#if PLATFORM(MAC)
+
+static HTTPServer findOverlaySessionServer()
+{
+    return HTTPServer({
+        { "/mainframe"_s, { "<p>background content</p><iframe src='https://webkit.org/subframe'></iframe>"_s } },
+        { "/second"_s, { "<p>second page</p>"_s } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } },
+        { "/subframe2"_s, { "<body onload='alert(\"subframe2 loaded\")'><p>Hello world again</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> findOverlaySessionWebView(HTTPServer& server, RetainPtr<WKWebViewFindStringFindDelegate>& findDelegate)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static constexpr auto findOverlaySessionFindOptions = _WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowOverlay;
+
+static void findStringAndWait(TestWKWebView *webView, NSString *string)
+{
+    isDone = false;
+    [webView _findString:string options:findOverlaySessionFindOptions maxCount:100];
+    Util::run(&isDone);
+}
+
+TEST(SiteIsolation, FindOverlaySessionVisibleWhenOnlyCrossSiteIframeMatches)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByFailedFind)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    findStringAndWait(webView.get(), @"Missing string");
+    EXPECT_TRUE([findDelegate didFail]);
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByHideFindUI)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView _hideFindUI];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByClick)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView mouseDownAtPoint:NSMakePoint(400, 300) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(400, 300)];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionInvalidatedByMainFrameNavigation)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionSurvivesSubframeNavigation)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    [webView evaluateJavaScript:@"document.querySelector('iframe').src = 'https://webkit.org/subframe2'" completionHandler:nil];
+    EXPECT_WK_STREQ("subframe2 loaded", [webView _test_waitForAlert]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+TEST(SiteIsolation, FindOverlaySessionStaleSettleDoesNotResurrect)
+{
+    auto server = findOverlaySessionServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlaySessionWebView(server, findDelegate);
+
+    isDone = false;
+    [webView _findString:@"Hello world" options:findOverlaySessionFindOptions maxCount:100];
+    [webView _findString:@"Missing string" options:findOverlaySessionFindOptions maxCount:100];
+    Util::waitFor([&] {
+        return [findDelegate didFail] && [[findDelegate findString] isEqualToString:@"Missing string"];
+    });
+
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+}
+
+static HTTPServer findOverlayRectsServer()
+{
+    return HTTPServer({
+        { "/rects-main"_s, { "<body style='margin:0'><p id='m' style='position:absolute;left:20px;top:40px;margin:0'>Hello world</p><iframe style='position:absolute;left:100px;top:200px;width:400px;height:300px;border:none' src='https://webkit.org/rects-frame'></iframe><div style='position:absolute;top:3000px'>tail</div></body>"_s } },
+        { "/rects-frame"_s, { "<body style='margin:0'><p style='position:absolute;left:10px;top:30px;margin:0'>Hello world</p><div style='position:absolute;top:2000px'>tail</div></body>"_s } },
+        { "/rects-main-nested"_s, { "<body style='margin:0'><p style='position:absolute;left:20px;top:40px;margin:0'>Hello world</p><iframe style='position:absolute;left:100px;top:200px;width:400px;height:300px;border:none' src='https://webkit.org/rects-frame-nested'></iframe></body>"_s } },
+        { "/rects-frame-nested"_s, { "<body style='margin:0'><p style='position:absolute;left:10px;top:30px;margin:0'>Hello world</p><iframe style='position:absolute;left:50px;top:100px;width:200px;height:150px;border:none' src='/rects-nested'></iframe></body>"_s } },
+        { "/rects-nested"_s, { "<body style='margin:0'><p style='position:absolute;left:5px;top:10px;margin:0'>Hello world</p></body>"_s } },
+        { "/rects-main-two"_s, { "<body style='margin:0'><p style='position:absolute;left:20px;top:40px;margin:0'>Hello world</p><iframe style='position:absolute;left:100px;top:200px;width:300px;height:150px;border:none' src='https://webkit.org/rects-frame'></iframe><iframe style='position:absolute;left:450px;top:200px;width:300px;height:150px;border:none' src='https://webkit.org/rects-frame-empty'></iframe></body>"_s } },
+        { "/rects-frame-empty"_s, { "<body style='margin:0'><p style='position:absolute;left:10px;top:30px;margin:0'>nothing to see</p></body>"_s } },
+        { "/rects-main-aba"_s, { "<body style='margin:0'><p style='position:absolute;left:20px;top:40px;margin:0'>Hello world</p><iframe style='position:absolute;left:100px;top:200px;width:400px;height:300px;border:none' src='https://webkit.org/rects-frame-aba'></iframe></body>"_s } },
+        { "/rects-frame-aba"_s, { "<body style='margin:0'><p style='position:absolute;left:10px;top:30px;margin:0'>Hello world</p><iframe style='position:absolute;left:50px;top:100px;width:200px;height:150px;border:none' src='https://example.com/rects-inner-aba'></iframe></body>"_s } },
+        { "/rects-inner-aba"_s, { "<body style='margin:0'><p style='position:absolute;left:5px;top:10px;margin:0'>Hello world</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> findOverlayRectsWebView(HTTPServer& server, NSString *url, RetainPtr<WKWebViewFindStringFindDelegate>& findDelegate)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static NSArray<NSValue *> *findMatchRectsForFrame(TestWKWebView *webView, uint64_t frameID)
+{
+    return [webView _findMatchRectsByFrameForTesting][@(frameID)];
+}
+
+// A root's payload arrives on its own process's commit, so waiting for a
+// presentation update on the view does not guarantee a subframe entry exists
+// yet; poll until the expected entry appears.
+static bool waitForFindMatchRectCount(TestWKWebView *webView, uint64_t frameID, NSUInteger expectedCount)
+{
+    return Util::waitFor([&] {
+        return findMatchRectsForFrame(webView, frameID).count == expectedCount;
+    });
+}
+
+static bool rectsAreApproximatelyEqual(NSRect a, NSRect b)
+{
+    auto nearlyEqual = [](CGFloat x, CGFloat y) {
+        return std::abs(x - y) <= 1;
+    };
+    return nearlyEqual(NSMinX(a), NSMinX(b)) && nearlyEqual(NSMinY(a), NSMinY(b)) && nearlyEqual(NSWidth(a), NSWidth(b)) && nearlyEqual(NSHeight(a), NSHeight(b));
+}
+
+TEST(SiteIsolation, FindOverlayRectsCrossSiteIframeRectsArrive)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+    EXPECT_EQ(0u, [webView _findMatchRectsByFrameForTesting].count);
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 1));
+    EXPECT_EQ(2u, [webView _findMatchRectsByFrameForTesting].count);
+}
+
+TEST(SiteIsolation, FindOverlayRectsAreRootContentsRelative)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+    uint64_t childFrameID = [childFrameInfo _handle].frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 1));
+
+    NSRect mainRectBeforeScroll = findMatchRectsForFrame(webView.get(), mainFrameID).firstObject.rectValue;
+    NSRect childRectBeforeScroll = findMatchRectsForFrame(webView.get(), childFrameID).firstObject.rectValue;
+
+    // The payload is deliberately unclipped, so rects must survive the match
+    // scrolling fully out of view: holes must exist for content the scrolling
+    // thread reveals between commits. Scrolling the parent by 500 puts the
+    // iframe entirely offscreen; scrolling the iframe by 300 puts its match
+    // outside the iframe's viewport.
+    EXPECT_EQ(500, [[webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500); window.scrollY"] intValue]);
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(rectsAreApproximatelyEqual(mainRectBeforeScroll, findMatchRectsForFrame(webView.get(), mainFrameID).firstObject.rectValue));
+    EXPECT_TRUE(rectsAreApproximatelyEqual(childRectBeforeScroll, findMatchRectsForFrame(webView.get(), childFrameID).firstObject.rectValue));
+
+    EXPECT_EQ(300, [[webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 300); window.scrollY" inFrame:childFrameInfo.get()] intValue]);
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(rectsAreApproximatelyEqual(childRectBeforeScroll, findMatchRectsForFrame(webView.get(), childFrameID).firstObject.rectValue));
+}
+
+TEST(SiteIsolation, FindOverlayRectsNestedLocalFrameConvertsToRootSpace)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main-nested", findDelegate);
+
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 2));
+
+    RetainPtr childRects = [findMatchRectsForFrame(webView.get(), childFrameID) sortedArrayUsingComparator:^(NSValue *a, NSValue *b) {
+        return a.rectValue.origin.y < b.rectValue.origin.y ? NSOrderedAscending : NSOrderedDescending;
+    }];
+    NSRect ownRect = [childRects firstObject].rectValue;
+    NSRect nestedRect = [childRects lastObject].rectValue;
+
+    // The nested same-site frame sits at (50, 100) inside the child root and
+    // positions its match at (5, 10); the child root's own match is at (10, 30).
+    EXPECT_EQ(45, std::round(NSMinX(nestedRect) - NSMinX(ownRect)));
+    EXPECT_EQ(80, std::round(NSMinY(nestedRect) - NSMinY(ownRect)));
+}
+
+TEST(SiteIsolation, FindOverlayRectsCutoutsMatchIframeBox)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return [webView _findCutoutRectsByFrameForTesting][@(mainFrameID)].count == 1;
+    }));
+
+    NSRect cutoutRect = [webView _findCutoutRectsByFrameForTesting][@(mainFrameID)].firstObject.rectValue;
+    EXPECT_TRUE(rectsAreApproximatelyEqual(NSMakeRect(100, 200, 400, 300), cutoutRect));
+    EXPECT_TRUE([[webView _findCutoutChildFrameIDsByFrameForTesting][@(mainFrameID)] isEqualToArray:@[ @(childFrameID) ]]);
+}
+
+TEST(SiteIsolation, FindOverlayRectsAtomicWithLayout)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    NSRect rectBeforeMove = findMatchRectsForFrame(webView.get(), mainFrameID).firstObject.rectValue;
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('m').style.top = '340px'"];
+    [webView waitForNextPresentationUpdate];
+
+    NSRect rectAfterMove = findMatchRectsForFrame(webView.get(), mainFrameID).firstObject.rectValue;
+    EXPECT_EQ(300, std::round(NSMinY(rectAfterMove) - NSMinY(rectBeforeMove)));
+    EXPECT_EQ(NSMinX(rectBeforeMove), NSMinX(rectAfterMove));
+}
+
+TEST(SiteIsolation, FindOverlayRectsClearedOnHideFindUI)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 1));
+
+    [webView _hideFindUI];
+    EXPECT_EQ(0u, [webView _findMatchRectsByFrameForTesting].count);
+    EXPECT_EQ(0u, [webView _findCutoutRectsByFrameForTesting].count);
+}
+
+// A zero-match root still publishes a payload (with no rects) when another
+// root in its process has matches, because the find overlay is per-WebPage.
+// The absent-vs-present-with-empty-rects distinction is what lets a veil
+// consumer dim such a root instead of leaving it undimmed.
+TEST(SiteIsolation, FindOverlayRectsZeroMatchRootPublishesEmptyRects)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main-two", findDelegate);
+
+    RetainPtr mainFrameNode = [webView mainFrame];
+    uint64_t mainFrameID = [mainFrameNode info]._handle.frameID;
+    ASSERT_EQ(2u, [mainFrameNode childFrames].count);
+    uint64_t matchingChildFrameID = [mainFrameNode childFrames][0].info._handle.frameID;
+    uint64_t emptyChildFrameID = [mainFrameNode childFrames][1].info._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        RetainPtr matchRects = [webView _findMatchRectsByFrameForTesting];
+        NSArray<NSValue *> *emptyChildRects = [matchRects objectForKey:@(emptyChildFrameID)];
+        return [matchRects count] == 3 && emptyChildRects && !emptyChildRects.count;
+    }));
+
+    EXPECT_EQ(1u, findMatchRectsForFrame(webView.get(), mainFrameID).count);
+    EXPECT_EQ(1u, findMatchRectsForFrame(webView.get(), matchingChildFrameID).count);
+    EXPECT_EQ(2u, [[webView _findCutoutRectsByFrameForTesting] objectForKey:@(mainFrameID)].count);
+    RetainPtr cutoutChildFrameIDs = [NSSet setWithArray:[webView _findCutoutChildFrameIDsByFrameForTesting][@(mainFrameID)]];
+    RetainPtr expectedChildFrameIDs = [NSSet setWithArray:(@[ @(matchingChildFrameID), @(emptyChildFrameID) ])];
+    EXPECT_TRUE([cutoutChildFrameIDs isEqualToSet:expectedChildFrameIDs.get()]);
+}
+
+// With A-embeds-B-embeds-A, the inner example.com frame is a separate local
+// root in the main frame's process; its matches must ride its own payload
+// entry, never the main root's, and each cutout belongs to the root whose
+// subtree directly contains the remote frame.
+TEST(SiteIsolation, FindOverlayRectsNestedRemoteSubtreeNotDoubleReported)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main-aba", findDelegate);
+
+    _WKFrameTreeNode *mainFrameNode = [webView mainFrame];
+    uint64_t mainFrameID = mainFrameNode.info._handle.frameID;
+    ASSERT_EQ(1u, mainFrameNode.childFrames.count);
+    _WKFrameTreeNode *childFrameNode = mainFrameNode.childFrames.firstObject;
+    uint64_t childFrameID = childFrameNode.info._handle.frameID;
+    ASSERT_EQ(1u, childFrameNode.childFrames.count);
+    uint64_t innerFrameID = childFrameNode.childFrames.firstObject.info._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), innerFrameID, 1));
+    EXPECT_EQ(3u, [webView _findMatchRectsByFrameForTesting].count);
+
+    RetainPtr cutoutRects = [webView _findCutoutRectsByFrameForTesting];
+    EXPECT_EQ(1u, [cutoutRects objectForKey:@(mainFrameID)].count);
+    EXPECT_EQ(1u, [cutoutRects objectForKey:@(childFrameID)].count);
+    EXPECT_EQ(0u, [cutoutRects objectForKey:@(innerFrameID)].count);
+
+    RetainPtr cutoutChildFrameIDs = [webView _findCutoutChildFrameIDsByFrameForTesting];
+    EXPECT_TRUE([[cutoutChildFrameIDs objectForKey:@(mainFrameID)] isEqualToArray:@[ @(childFrameID) ]]);
+    EXPECT_TRUE([[cutoutChildFrameIDs objectForKey:@(childFrameID)] isEqualToArray:@[ @(innerFrameID) ]]);
+}
+
+// Each root's rects are in that root's committed contents space, so they line
+// up with the content they annotate no matter where page scale is applied: the
+// main root bakes page scale into its absolute coordinates, while a child
+// remote root stays unscaled and inherits scale from the parent's hosting
+// layer transform.
+TEST(SiteIsolation, FindOverlayRectsFollowEachRootsCommittedSpaceUnderPageScale)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 1));
+    NSRect mainRectBeforeScale = findMatchRectsForFrame(webView.get(), mainFrameID).firstObject.rectValue;
+    NSRect childRectBeforeScale = findMatchRectsForFrame(webView.get(), childFrameID).firstObject.rectValue;
+    NSRect cutoutRectBeforeScale = [webView _findCutoutRectsByFrameForTesting][@(mainFrameID)].firstObject.rectValue;
+
+    [webView setAllowsMagnification:YES];
+    [webView setMagnification:2];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    auto scaledByTwo = [](NSRect rect) {
+        return NSMakeRect(NSMinX(rect) * 2, NSMinY(rect) * 2, NSWidth(rect) * 2, NSHeight(rect) * 2);
+    };
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return rectsAreApproximatelyEqual(scaledByTwo(mainRectBeforeScale), findMatchRectsForFrame(webView.get(), mainFrameID).firstObject.rectValue);
+    }));
+    EXPECT_TRUE(rectsAreApproximatelyEqual(scaledByTwo(cutoutRectBeforeScale), [webView _findCutoutRectsByFrameForTesting][@(mainFrameID)].firstObject.rectValue));
+    EXPECT_TRUE(rectsAreApproximatelyEqual(childRectBeforeScale, findMatchRectsForFrame(webView.get(), childFrameID).firstObject.rectValue));
+}
+
+// A cross-site subframe navigation mid-find replaces the root's document with
+// one whose process has no live find; that process still commits the root, and
+// the known-root-with-absent-payload commit must erase the stale geometry.
+TEST(SiteIsolation, FindOverlayRectsStaleRootGeometryErasedBySubframeNavigation)
+{
+    auto server = findOverlayRectsServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/rects-main", findDelegate);
+
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+
+    findStringAndWait(webView.get(), @"Hello world");
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), mainFrameID, 1));
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 1));
+
+    [webView evaluateJavaScript:@"document.querySelector('iframe').src = 'https://apple.com/rects-frame-empty'" completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return ![webView _findMatchRectsByFrameForTesting][@(childFrameID)];
+    }));
+    EXPECT_EQ(1u, findMatchRectsForFrame(webView.get(), mainFrameID).count);
+}
+
+#if ENABLE(UNIFIED_PDF)
+
+TEST(SiteIsolation, FindOverlayRectsNoPayloadForPDF)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    findStringAndWait(webView.get(), @"555");
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_GT([findDelegate matchesCount], 0u);
+
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(0u, [webView _findMatchRectsByFrameForTesting].count);
+    EXPECT_EQ(0u, [webView _findCutoutRectsByFrameForTesting].count);
+}
+
+#endif // ENABLE(UNIFIED_PDF)
+
+#endif // PLATFORM(MAC)
 
 #if PLATFORM(MAC)
 TEST(SiteIsolation, ProcessDisplayNames)

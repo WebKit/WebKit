@@ -264,7 +264,7 @@ void DocumentMarkerController::updateRectsForInvalidatedMarkersOfType(DocumentMa
     }
 }
 
-Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarkerType type)
+Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarkerType type, ShouldClip shouldClip)
 {
     Vector<FloatRect> result;
 
@@ -281,9 +281,9 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
 
     updateRectsForInvalidatedMarkersOfType(type);
 
-    bool isSubframe = !frame->isMainFrame();
+    bool shouldClipToFrameVisibleRect = shouldClip == ShouldClip::Yes && !frame->isMainFrame();
     IntRect subframeClipRect;
-    if (isSubframe)
+    if (shouldClipToFrameVisibleRect)
         subframeClipRect = frameView->windowToContents(frameView->windowClipRect());
 
     for (auto& nodeMarkers : m_markers) {
@@ -304,7 +304,7 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
             }
 
             // Clip subframe document markers by their frame.
-            if (isSubframe) {
+            if (shouldClipToFrameVisibleRect) {
                 for (auto& rect : renderedRects)
                     rect.intersect(subframeClipRect);
             }
