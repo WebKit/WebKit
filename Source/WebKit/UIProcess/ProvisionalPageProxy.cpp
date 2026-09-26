@@ -309,6 +309,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 
     RefPtr mainFrame = m_mainFrame;
     auto creationParameters = page->creationParametersForProvisionalPage(process, *drawingArea, mainFrame->frameID());
+    creationParameters.browsingContextGroupIdentifier = m_browsingContextGroup->identifier();
     if (preferences->siteIsolationEnabled() && !isRestoringFromBFCache) {
         creationParameters.remotePageParameters = RemotePageParameters {
             m_request.url(),
