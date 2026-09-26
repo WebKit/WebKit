@@ -25,6 +25,8 @@
                 "TimeStamp",
                 "Time",
                 "TimeEnd",
+                "PerformanceMark",
+                "PerformanceMeasure",
                 "FunctionCall",
                 "ProbeSample",
                 "ConsoleProfile",
@@ -75,7 +77,8 @@
             "name": "start",
             "description": "Starts capturing instrumentation events.",
             "parameters": [
-                { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
+                { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
+                { "name": "objectGroup", "optional": true, "type": "string", "description": "Object group used to retain wrapped <code>performance.measure()</code> <code>detail</code> values for this recording, released by the frontend when the recording is discarded." }
             ]
         },
         {

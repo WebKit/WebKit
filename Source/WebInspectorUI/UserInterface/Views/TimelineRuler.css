@@ -167,7 +167,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
     color: hsl(240, 100%, 50%);
 }
 
-.timeline-ruler > .markers > .marker.timestamp {
+.timeline-ruler > .markers > .marker:is(.timestamp, .performance-mark) {
     color: hsl(119, 100%, 21%);
 }
 

@@ -36,6 +36,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._readonly = false;
         this._imported = false;
         this._instruments = instruments || [];
+        this._objectGroup = "timeline-recording-" + identifier;
 
         this._startTime = NaN;
         this._endTime = NaN;
@@ -150,6 +151,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     get displayName() { return this._displayName; }
     get identifier() { return this._identifier; }
+    get objectGroup() { return this._objectGroup; }
     get timelines() { return this._timelines; }
     get instruments() { return this._instruments; }
     get capturing() { return this._capturing; }
@@ -183,6 +185,14 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         for (let instrument of this._instruments)
             instrument.stopInstrumentation(initiatedByBackend);
+    }
+
+    close()
+    {
+        for (let target of WI.targets) {
+            if (target.hasDomain("Runtime"))
+                target.RuntimeAgent.releaseObjectGroup(this._objectGroup);
+        }
     }
 
     capturingStarted(startTime)
@@ -333,7 +343,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             || record.type === WI.TimelineRecord.Type.CPU
             || record.type === WI.TimelineRecord.Type.Memory
             || record.type === WI.TimelineRecord.Type.HeapAllocations
-            || record.type === WI.TimelineRecord.Type.Screenshots)
+            || record.type === WI.TimelineRecord.Type.Screenshots
+            || record.type === WI.TimelineRecord.Type.UserTiming)
             return;
 
         if (!WI.TimelineRecording.sourceCodeTimelinesSupported())
