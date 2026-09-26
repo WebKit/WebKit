@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("resources/worker-debugger-pause.js");
+
+function test()
+{
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker Target");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    const generateJSCompletions = () => new Promise((resolve, reject) => {
+        let mockCompletionController = {
+            mode: WI.CodeMirrorCompletionController.Mode.FullConsoleCommandLineAPI,
+            updateCompletions: resolve,
+        };
+
+        WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+        WI.javaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded(mockCompletionController, [], "", "", "", true);
+    });
+
+    let suite = InspectorTest.createAsyncSuite("Worker.JavaScriptRuntimeCompletions");
+
+    suite.addTestCase({
+        name: "Worker.JavaScriptRuntimeCompletions.Paused",
+        description: "Test JavaScript completions while paused in a Worker.",
+        async test() {
+            let pausePromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let triggerPromise = InspectorTest.evaluateInPage(`worker.postMessage("triggerDebuggerStatement")`);
+            await pausePromise;
+
+            let activeCallFrame = WI.debuggerManager.activeCallFrame;
+            InspectorTest.expectEqual(activeCallFrame.target, workerTarget, "The active call frame should belong to the Worker.");
+
+            let {result, wasThrown} = await workerTarget.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: activeCallFrame.id, expression: "({test: true})", objectGroup: "completion"});
+            InspectorTest.expectFalse(wasThrown, "Creating a Worker completion object should not throw.");
+            InspectorTest.expectThat(result.objectId, "The Worker completion object should have an object identifier.");
+
+            let completions = await generateJSCompletions();
+            InspectorTest.expectTrue(completions.includes("getEventListeners"), "Worker completions should include Worker Command Line API functions.");
+            InspectorTest.expectFalse(["$", "$$", "$0", "$x"].some((completion) => completions.includes(completion)), "Worker completions should not include page-only Command Line API functions.");
+
+            let completionObjectWasReleased = false;
+            try {
+                await workerTarget.RuntimeAgent.callFunctionOn.invoke({objectId: result.objectId, functionDeclaration: "function() { }"});
+            } catch (error) {
+                completionObjectWasReleased = error.message.includes("Could not find object with given id");
+            }
+            InspectorTest.expectTrue(completionObjectWasReleased, "The Worker completion object group should be released after the request finishes.");
+
+            await WI.debuggerManager.resume();
+            await triggerPromise;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests JavaScript code completions while paused in a Worker.</p>
+</body>
+</html>
+
