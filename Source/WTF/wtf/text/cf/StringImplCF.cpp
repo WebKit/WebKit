@@ -42,7 +42,7 @@ namespace StringWrapperCFAllocator {
     }
 
     struct StringImplWrapper {
-        RefPtr<StringImpl> m_stringImpl;
+        const RefPtr<StringImpl> m_stringImpl;
     };
 
     static const void* NODELETE retain(const void* info)

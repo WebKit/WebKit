@@ -1324,7 +1324,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_durationFormatter) {
-        m_durationFormatter = adoptNS([NSDateComponentsFormatter new]);
+        lazyInitialize(m_durationFormatter, adoptNS([NSDateComponentsFormatter new]));
         m_durationFormatter.get().unitsStyle = NSDateComponentsFormatterUnitsStyleFull;
         m_durationFormatter.get().allowedUnits = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
         m_durationFormatter.get().formattingContext = NSFormattingContextStandalone;

@@ -299,7 +299,7 @@ public:
     }
 
 private:
-    RetainPtr<CTFontRef> m_ctFont;
+    const RetainPtr<CTFontRef> m_ctFont;
     std::span<const CGGlyph> m_glyphs;
     std::span<const CGSize> m_advances;
     CGAffineTransform m_textMatrix;

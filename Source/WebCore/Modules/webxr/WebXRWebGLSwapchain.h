@@ -109,9 +109,9 @@ protected:
     void signalEndFrame(GraphicsContextGL&, PlatformXR::DeviceLayer&);
 
     PlatformXR::LayerHandle m_handle;
-    RefPtr<WebGLRenderingContextBase> m_context;
+    const RefPtr<WebGLRenderingContextBase> m_context;
 
-    RefPtr<WebGLFramebuffer> m_framebufferForClearing;
+    const RefPtr<WebGLFramebuffer> m_framebufferForClearing;
 
     size_t m_currentImageIndex { 0 };
     IntSize m_texSize;

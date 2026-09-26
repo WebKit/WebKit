@@ -91,7 +91,7 @@ MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& devi
         return;
 
     device->setIsMockDevice(true);
-    m_capturer = adoptRef(*new GStreamerAudioCapturer(WTF::move(*device)));
+    lazyInitialize(m_capturer, adoptRef(*new GStreamerAudioCapturer(WTF::move(*device))));
     m_capturer->addObserver(*this);
     m_capturer->setupPipeline();
     m_capturer->setSinkAudioCallback([this](auto&& sample, auto&& presentationTime) {

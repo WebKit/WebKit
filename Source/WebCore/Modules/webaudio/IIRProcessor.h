@@ -58,7 +58,7 @@ private:
     Vector<double> m_feedback;
     bool m_isFilterStable;
 
-    std::unique_ptr<IIRDSPKernel> m_responseKernel;
+    const std::unique_ptr<IIRDSPKernel> m_responseKernel;
 };
 
 } // namespace WebCore

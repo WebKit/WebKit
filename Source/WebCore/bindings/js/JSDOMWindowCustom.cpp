@@ -209,7 +209,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
         return jsDOMWindowGetOwnPropertySlotRestrictedAccess(thisObject, window.get(), *lexicalGlobalObject, propertyName, slot, errorMessage);
 
     if (!thisObject->m_windowCloseWatchpoints) [[unlikely]]
-        thisObject->m_windowCloseWatchpoints = WatchpointSet::create(window->frame() ? IsWatched : IsInvalidated);
+        lazyInitialize(thisObject->m_windowCloseWatchpoints, WatchpointSet::create(window->frame() ? IsWatched : IsInvalidated));
     // We use m_windowCloseWatchpoints to clear any inline caches once the frame is cleared.
     // This is sound because DOMWindow can be associated with at most one frame in its lifetime.
     if (thisObject->m_windowCloseWatchpoints->isStillValid())

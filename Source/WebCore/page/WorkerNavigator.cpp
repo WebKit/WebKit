@@ -77,7 +77,7 @@ GPU* WorkerNavigator::gpu()
         if (!gpu)
             return nullptr;
 
-        m_gpuForWebGPU = GPU::create(*gpu);
+        lazyInitialize(m_gpuForWebGPU, GPU::create(*gpu));
     }
 
     return m_gpuForWebGPU.get();

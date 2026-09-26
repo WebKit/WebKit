@@ -84,7 +84,7 @@ private:
     const Ref<webrtc::VideoTrackInterface> m_videoTrack;
 
     double m_currentFrameRate { -1 };
-    std::unique_ptr<FrameRateMonitor> m_frameRateMonitor;
+    const std::unique_ptr<FrameRateMonitor> m_frameRateMonitor;
 #if !RELEASE_LOG_DISABLED
     bool m_enableFrameRatedMonitoringLogging { false };
     mutable RefPtr<const Logger> m_logger;

@@ -295,7 +295,7 @@ private:
     RefPtr<Document> m_document;
     using SearchResults = HashMap<String, Vector<RefPtr<Node>>>;
     SearchResults m_searchResults;
-    std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
+    const std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<Node> m_mousedOverNode;
     RefPtr<Node> m_inspectedNode;

@@ -59,7 +59,7 @@ private:
     ASCIILiteral logClassName() const final { return "InbandWebVTTTextTrack"_s; }
 #endif
 
-    std::unique_ptr<WebVTTParser> m_webVTTParser;
+    const std::unique_ptr<WebVTTParser> m_webVTTParser;
 };
 
 } // namespace WebCore

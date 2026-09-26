@@ -49,7 +49,7 @@ public:
 
     void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
-    bool hasObservationTargets() const { return m_observer && protect(m_observer)->hasObservationTargets(); }
+    bool hasObservationTargets() const { return m_observer && m_observer->hasObservationTargets(); }
 
     DidUpdateAnyContentRelevancy updateRelevancyOfContentVisibilityElements(OptionSet<ContentRelevancy>) const;
     HadInitialVisibleContentVisibilityDetermination determineInitialVisibleContentVisibility() const;
@@ -65,7 +65,7 @@ private:
 
     IntersectionObserver* intersectionObserver(Document&);
 
-    RefPtr<IntersectionObserver> m_observer;
+    const RefPtr<IntersectionObserver> m_observer;
 
     WeakHashMap<Element, ViewportProximity, WeakPtrImplWithEventTargetData> m_elementViewportProximities;
 };

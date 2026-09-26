@@ -54,7 +54,7 @@ private:
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(CVPixelBufferRef, webrtc::VideoRotation);
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height);
 
-    std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
+    const std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
 
 #if !RELEASE_LOG_DISABLED
     size_t m_numberOfFrames { 0 };

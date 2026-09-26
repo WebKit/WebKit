@@ -66,7 +66,7 @@ private:
 
     WebCoreAVCFResourceLoader(MediaPlayerPrivateAVFoundationCF* parent, AVCFAssetResourceLoadingRequestRef);
     MediaPlayerPrivateAVFoundationCF* m_parent;
-    RetainPtr<AVCFAssetResourceLoadingRequestRef> m_avRequest;
+    const RetainPtr<AVCFAssetResourceLoadingRequestRef> m_avRequest;
     CachedResourceHandle<CachedRawResource> m_resource;
 };
 

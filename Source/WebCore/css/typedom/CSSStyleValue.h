@@ -225,7 +225,7 @@ protected:
     CSSStyleValue() = default;
 
     std::optional<AssociatedProperty> m_associatedProperty;
-    RefPtr<CSSValue> m_propertyValue;
+    const RefPtr<CSSValue> m_propertyValue;
 };
 
 } // namespace WebCore

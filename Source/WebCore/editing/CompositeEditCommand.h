@@ -231,7 +231,7 @@ protected:
 private:
     bool isCompositeEditCommand() const override { return true; }
 
-    RefPtr<EditCommandComposition> m_composition;
+    const RefPtr<EditCommandComposition> m_composition;
 };
 
 } // namespace WebCore

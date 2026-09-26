@@ -93,7 +93,7 @@ private:
     Document& document() const { return m_document; }
 
 #if ENABLE(THREADED_ANIMATIONS)
-    std::unique_ptr<AcceleratedEffectStackUpdater> m_acceleratedEffectStackUpdater;
+    const std::unique_ptr<AcceleratedEffectStackUpdater> m_acceleratedEffectStackUpdater;
 #endif
 
     Timer m_cachedCurrentTimeClearanceTimer;

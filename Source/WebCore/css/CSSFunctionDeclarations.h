@@ -50,7 +50,7 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::FunctionDeclarations; }
 
     Ref<StyleRuleFunctionDeclarations> m_styleRule;
-    RefPtr<CSSFunctionDescriptors> m_descriptorsCSSOMWrapper;
+    const RefPtr<CSSFunctionDescriptors> m_descriptorsCSSOMWrapper;
 };
 
 } // namespace WebCore

@@ -132,12 +132,12 @@ private:
     VisibleSelection m_visibleSelectionForInsertedText;
     Position m_startOfInsertedContent;
     Position m_endOfInsertedContent;
-    RefPtr<EditingStyle> m_insertionStyle;
+    const RefPtr<EditingStyle> m_insertionStyle;
     bool m_selectReplacement;
     bool m_smartReplace;
     bool m_matchStyle;
     const RefPtr<DocumentFragment> m_documentFragment;
-    std::unique_ptr<ReplacementFragment> m_replacementFragment;
+    const std::unique_ptr<ReplacementFragment> m_replacementFragment;
     String m_documentFragmentHTMLMarkup;
     String m_documentFragmentPlainText;
     bool m_preventNesting;

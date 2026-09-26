@@ -67,7 +67,7 @@ private:
     void setFullURL(const URL& fullURL) final { setHref(fullURL.string()); }
 
     URL m_url;
-    RefPtr<URLSearchParams> m_searchParams;
+    const RefPtr<URLSearchParams> m_searchParams;
 };
 
 } // namespace WebCore

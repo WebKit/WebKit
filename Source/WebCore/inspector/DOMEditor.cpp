@@ -92,7 +92,7 @@ private:
     ExceptionOr<void> perform() final
     {
         if (m_node->parentNode()) {
-            m_removeChildAction = makeUnique<RemoveChildAction>(protect(*m_node->parentNode()), m_node);
+            lazyInitialize(m_removeChildAction, makeUnique<RemoveChildAction>(protect(*m_node->parentNode()), m_node));
             auto result = m_removeChildAction->perform();
             if (result.hasException())
                 return result.releaseException();
@@ -123,7 +123,7 @@ private:
     const Ref<ContainerNode> m_parentNode;
     const Ref<Node> m_node;
     const RefPtr<Node> m_anchorNode;
-    std::unique_ptr<RemoveChildAction> m_removeChildAction;
+    const std::unique_ptr<RemoveChildAction> m_removeChildAction;
 };
 
 class DOMEditor::RemoveAttributeAction final : public InspectorHistory::Action {

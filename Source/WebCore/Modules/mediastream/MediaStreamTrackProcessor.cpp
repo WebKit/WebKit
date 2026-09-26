@@ -95,7 +95,7 @@ ExceptionOr<Ref<ReadableStream>> MediaStreamTrackProcessor::readable(JSC::JSGlob
             m_readableStreamSource->setAsCancelled();
             return readableOrException.releaseException();
         }
-        m_readable = readableOrException.releaseReturnValue();
+        lazyInitialize(m_readable, readableOrException.releaseReturnValue());
         if (!m_isTrackEnded)
             Ref { *m_videoFrameObserverWrapper }->start();
     }
@@ -182,14 +182,14 @@ void MediaStreamTrackProcessor::VideoFrameObserver::start()
 {
     assertIsMainThread();
     m_isStarted = true;
-    protect(m_realtimeVideoSource)->addVideoFrameObserver(*this);
+    m_realtimeVideoSource->addVideoFrameObserver(*this);
 }
 
 MediaStreamTrackProcessor::VideoFrameObserver::~VideoFrameObserver()
 {
     assertIsMainThread();
     if (m_isStarted)
-        protect(m_realtimeVideoSource)->removeVideoFrameObserver(*this);
+        m_realtimeVideoSource->removeVideoFrameObserver(*this);
 }
 
 RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeVideoFrame(ScriptExecutionContext& context)

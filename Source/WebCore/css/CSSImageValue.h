@@ -90,7 +90,7 @@ private:
     CSS::URL m_location;
     AtomString m_initiatorType;
     std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
-    RefPtr<CSSImageValue> m_unresolvedValue;
+    const RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };
 };
 

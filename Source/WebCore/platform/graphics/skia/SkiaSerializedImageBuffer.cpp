@@ -43,7 +43,7 @@ SkiaSerializedImageBuffer::SkiaSerializedImageBuffer(ImageBuffer& imageBuffer)
 {
     // Non accelerated ImageBuffer can be transferred to other threads.
     if (imageBuffer.renderingMode() != RenderingMode::Accelerated) {
-        m_imageBuffer = imageBuffer;
+        lazyInitialize(m_imageBuffer, Ref { imageBuffer });
         return;
     }
 

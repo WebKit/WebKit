@@ -177,7 +177,7 @@ private:
     RunLoop::Timer m_timer;
     UserActivity m_userActivity;
 
-    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
+    const std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 };
 
 } // namespace WebCore

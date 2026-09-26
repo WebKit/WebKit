@@ -109,8 +109,8 @@ private:
     void tiledBackingUsageChanged(const GraphicsLayer*, bool) override;
 
     WeakRef<Page> m_page;
-    RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
-    RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
+    const RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
+    const RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
 
     // Per-local-root-frame document overlay root layers, for overlays scoped to a specific frame
     // (see PageOverlay::setAssociatedFrame). The main frame keeps using m_documentOverlayRootLayer.

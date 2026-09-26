@@ -45,7 +45,7 @@ private:
 
     ClientOrigin m_origin;
     Vector<FileSystemHandleGlobalIdentifier> m_globalIdentifiers;
-    RefPtr<FileSystemStorageConnection> m_connection;
+    const RefPtr<FileSystemStorageConnection> m_connection;
 };
 
 } // namespace WebCore

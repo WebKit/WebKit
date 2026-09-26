@@ -69,7 +69,7 @@ private:
     bool ensureCNNQuirkScript();
 
     CheckedRef<Document> m_document;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
+    const RefPtr<DOMWrapperWorld> m_isolatedWorld;
     bool m_haveParsedMediaControlsScript { false };
     bool m_haveParsedYouTubeQuirkScript { false };
     bool m_haveParsedCNNQuirkScript { false };

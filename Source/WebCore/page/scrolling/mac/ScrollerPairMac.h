@@ -136,7 +136,7 @@ private:
     std::optional<FloatPoint> m_lastScrollOffset;
 
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
-    RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
+    const RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
 
     ScrollbarWidth m_scrollbarWidth { ScrollbarWidth::Auto };
     std::atomic<bool> m_usingPresentationValues { false };

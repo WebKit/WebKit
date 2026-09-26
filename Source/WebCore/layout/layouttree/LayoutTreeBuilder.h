@@ -50,7 +50,7 @@ public:
     const ElementBox& root() const { return *m_root; }
 
 private:
-    std::unique_ptr<ElementBox> m_root;
+    const std::unique_ptr<ElementBox> m_root;
 };
 
 class TreeBuilder {

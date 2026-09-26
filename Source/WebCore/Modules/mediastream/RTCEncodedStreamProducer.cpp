@@ -131,9 +131,9 @@ void RTCEncodedStreamProducer::enqueueFrame(Ref<RTCRtpTransformableFrame>&& fram
 #if !RELEASE_LOG_DISABLED
     if (m_enableAdditionalLogging && m_isVideo) {
         if (!m_readableFrameRateMonitor) {
-            m_readableFrameRateMonitor = makeUnique<FrameRateMonitor>([identifier = m_identifier](auto info) {
+            lazyInitialize(m_readableFrameRateMonitor, makeUnique<FrameRateMonitor>([identifier = m_identifier](auto info) {
                 RELEASE_LOG(WebRTC, "RTCEncodedStreamProducer readable %" PRIu64 ", frame at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", identifier.toUInt64(), info.frameTime.secondsSinceEpoch().value(), info.lastFrameTime.secondsSinceEpoch().value(), info.observedFrameRate, ((info.frameTime - info.lastFrameTime) * 1000).value(), info.frameCount);
-            });
+            }));
         }
         m_readableFrameRateMonitor->update();
     }

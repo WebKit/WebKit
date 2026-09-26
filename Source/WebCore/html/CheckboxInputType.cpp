@@ -194,12 +194,12 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
 
         m_switchPointerTrackingTouchIdentifier = touch->identifier();
         if (!m_switchHeldTimer) {
-            m_switchHeldTimer = makeUnique<Timer>([protectedThis = Ref { *this }, touch] {
+            lazyInitialize(m_switchHeldTimer, makeUnique<Timer>([protectedThis = Ref { *this }, touch] {
                 if (!protectedThis->isSwitch() || !protectedThis->element() || !protectedThis->element()->renderer())
                     return;
                 protectedThis->startSwitchPointerTracking({ static_cast<float>(touch->pageX()), static_cast<float>(touch->pageY()) });
                 protectedThis->setIsSwitchHeld(true);
-            });
+            }));
         }
         constexpr Seconds switchHeldDelay = 200_ms;
         m_switchHeldTimer->startOneShot(switchHeldDelay);
@@ -391,7 +391,7 @@ void CheckboxInputType::performSwitchAnimation(SwitchAnimationType type)
     if (!m_switchAnimationTimer) {
         if (!(duration > 0_s && updateInterval > 0_s))
             return;
-        m_switchAnimationTimer = makeUnique<Timer>(*this, &CheckboxInputType::switchAnimationTimerFired);
+        lazyInitialize(m_switchAnimationTimer, makeUnique<Timer>(*this, &CheckboxInputType::switchAnimationTimerFired));
     }
     ASSERT(duration > 0_s);
     ASSERT(updateInterval > 0_s);

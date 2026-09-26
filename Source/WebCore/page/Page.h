@@ -1539,7 +1539,7 @@ private:
     const UniqueRef<PointerLockController> m_pointerLockController;
 #endif
     const UniqueRef<ElementTargetingController> m_elementTargetingController;
-    RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
+    const RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
     const UniqueRef<CryptoClient> m_cryptoClient;
@@ -1657,14 +1657,14 @@ private:
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
 
-    std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
+    const std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
     SingleThreadWeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
 
     bool m_isCountingRelevantRepaintedObjects { false };
 #ifndef NDEBUG
     bool m_isPainting { false };
 #endif
-    std::unique_ptr<AlternativeTextClient> m_alternativeTextClient;
+    const std::unique_ptr<AlternativeTextClient> m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended { false };
 
@@ -1758,13 +1758,13 @@ private:
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     const UniqueRef<ServicesOverlayController> m_servicesOverlayController;
 #endif
-    std::unique_ptr<ImageOverlayController> m_imageOverlayController;
+    const std::unique_ptr<ImageOverlayController> m_imageOverlayController;
 
 #if ENABLE(IMAGE_ANALYSIS)
     RefPtr<ImageAnalysisQueue> m_imageAnalysisQueue;
 #endif
 
-    std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
+    const std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
     const UniqueRef<PageOverlayController> m_pageOverlayController;
 
 #if ENABLE(APPLE_PAY)
@@ -1787,11 +1787,11 @@ private:
     std::unique_ptr<ViewportArguments> m_overrideViewportArguments;
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-    RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
+    const RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    std::unique_ptr<DeviceOrientationAndMotionAccessController> m_deviceOrientationAndMotionAccessController;
+    const std::unique_ptr<DeviceOrientationAndMotionAccessController> m_deviceOrientationAndMotionAccessController;
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -1841,7 +1841,7 @@ private:
     WeakPtr<KeyboardScrollingAnimator> m_currentKeyboardScrollingAnimator;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
+    const std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
 #endif
 
     bool m_isWaitingForLoadToFinish { false };
@@ -1922,7 +1922,7 @@ private:
 
     using MediaSessionManagerFactory = Function<RefPtr<MediaSessionManagerInterface> (PageIdentifier)>;
     std::optional<MediaSessionManagerFactory> m_mediaSessionManagerFactory;
-    RefPtr<MediaSessionManagerInterface> m_mediaSessionManager;
+    const RefPtr<MediaSessionManagerInterface> m_mediaSessionManager;
 
 #if ENABLE(MODEL_ELEMENT)
     bool m_modelLoadDelaysDisabledForTesting { false };

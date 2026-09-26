@@ -303,10 +303,10 @@ private:
 
     bool shouldUsePrintingLayout() const;
 
-    std::unique_ptr<ImageQualityController> m_imageQualityController;
+    const std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;
     bool m_pageLogicalHeightChanged { false };
-    std::unique_ptr<RenderLayerCompositor> m_compositor;
+    const std::unique_ptr<RenderLayerCompositor> m_compositor;
 
     bool m_hasQuotesNeedingUpdate { false };
 

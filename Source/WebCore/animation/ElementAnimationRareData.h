@@ -64,7 +64,7 @@ public:
     void setHasPropertiesOverridenAfterAnimation(bool value) { m_hasPropertiesOverridenAfterAnimation = value; }
 
 private:
-    std::unique_ptr<KeyframeEffectStack> m_keyframeEffectStack;
+    const std::unique_ptr<KeyframeEffectStack> m_keyframeEffectStack;
     std::unique_ptr<const Style::ComputedStyle> m_lastStyleChangeEventStyle;
     AnimationCollection m_animations;
     CSSAnimationCollection m_animationsCreatedByMarkup;

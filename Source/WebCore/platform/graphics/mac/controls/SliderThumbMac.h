@@ -47,7 +47,7 @@ private:
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
-    RetainPtr<NSSliderCell> m_sliderCell;
+    const RetainPtr<NSSliderCell> m_sliderCell;
 };
 
 } // namespace WebCore

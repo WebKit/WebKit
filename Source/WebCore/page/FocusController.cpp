@@ -188,8 +188,8 @@ private:
     explicit FocusNavigationScope(HTMLSlotElement&, SlotKind);
     explicit FocusNavigationScope(Element&);
 
-    RefPtr<ContainerNode> m_treeScopeRootNode;
-    RefPtr<HTMLSlotElement> m_slotElement;
+    const RefPtr<ContainerNode> m_treeScopeRootNode;
+    const RefPtr<HTMLSlotElement> m_slotElement;
     SlotKind m_slotKind { SlotKind::Assigned };
 };
 
@@ -271,7 +271,7 @@ Node* FocusNavigationScope::previousSiblingInScope(const Node& node) const
 Node* FocusNavigationScope::firstNodeInScope() const
 {
     if (m_slotElement) [[unlikely]] {
-        auto* assignedNodes = protect(m_slotElement)->assignedNodes();
+        auto* assignedNodes = m_slotElement->assignedNodes();
         if (m_slotKind == SlotKind::Assigned) {
             ASSERT(assignedNodes);
             return assignedNodes->first().get();
@@ -289,7 +289,7 @@ Node* FocusNavigationScope::firstNodeInScope() const
 Node* FocusNavigationScope::lastNodeInScope() const
 {
     if (m_slotElement) [[unlikely]] {
-        auto* assignedNodes = protect(m_slotElement)->assignedNodes();
+        auto* assignedNodes = m_slotElement->assignedNodes();
         if (m_slotKind == SlotKind::Assigned) {
             ASSERT(assignedNodes);
             return assignedNodes->last().get();

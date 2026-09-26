@@ -46,7 +46,7 @@ private:
     bool tryEnsureBuffer();
 
     RefPtr<NativeImage> m_image;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    const std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 
 } // namespace WebCore

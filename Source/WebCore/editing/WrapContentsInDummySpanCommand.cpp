@@ -52,7 +52,7 @@ void WrapContentsInDummySpanCommand::executeApply()
 
 void WrapContentsInDummySpanCommand::doApply()
 {
-    m_dummySpan = createStyleSpanElement(document());
+    lazyInitialize(m_dummySpan, createStyleSpanElement(document()));
     
     executeApply();
 }
@@ -88,7 +88,7 @@ void WrapContentsInDummySpanCommand::doReapply()
 void WrapContentsInDummySpanCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(m_element.ptr(), nodes);
-    addNodeAndDescendants(protect(m_dummySpan).get(), nodes);
+    addNodeAndDescendants(m_dummySpan.get(), nodes);
 }
 #endif
 

@@ -56,7 +56,7 @@ public:
 private:
     explicit NavigationDestination(const URL&, RefPtr<NavigationHistoryEntry>&&, bool isSameDocument);
 
-    RefPtr<NavigationHistoryEntry> m_entry;
+    const RefPtr<NavigationHistoryEntry> m_entry;
     URL m_url;
     bool m_isSameDocument;
     RefPtr<SerializedScriptValue> m_stateObject;

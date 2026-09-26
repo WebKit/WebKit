@@ -735,7 +735,7 @@ protected:
     // Our overflow information.
     std::unique_ptr<RenderOverflow> m_overflow;
 
-    std::unique_ptr<RenderBoxOverridingSizes> m_overridingSizes;
+    const std::unique_ptr<RenderBoxOverridingSizes> m_overridingSizes;
 
 private:
     RenderBoxOverridingSizes& ensureOverridingSizes();

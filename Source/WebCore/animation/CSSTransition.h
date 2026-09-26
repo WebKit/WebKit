@@ -70,8 +70,8 @@ private:
 
     AnimatableCSSProperty m_property;
     MonotonicTime m_generationTime;
-    std::unique_ptr<Style::ComputedStyle> m_targetStyle;
-    std::unique_ptr<Style::ComputedStyle> m_reversingAdjustedStartStyle;
+    const std::unique_ptr<Style::ComputedStyle> m_targetStyle;
+    const std::unique_ptr<Style::ComputedStyle> m_reversingAdjustedStartStyle;
     double m_reversingShorteningFactor;
 
     Style::Transition m_backingStyleTransition;

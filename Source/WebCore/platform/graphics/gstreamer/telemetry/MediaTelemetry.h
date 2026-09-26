@@ -110,7 +110,7 @@ public:
 private:
     MediaTelemetryReport() { }
 
-    std::unique_ptr<MediaTelemetryReportPrivateMembers> m_privateMembers;
+    const std::unique_ptr<MediaTelemetryReportPrivateMembers> m_privateMembers;
     String m_name;
 };
 

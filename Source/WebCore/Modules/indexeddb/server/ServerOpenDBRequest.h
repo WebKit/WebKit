@@ -71,7 +71,7 @@ private:
 
     bool m_notifiedConnectionsOfVersionChange { false };
     HashSet<IDBDatabaseConnectionIdentifier> m_connectionsPendingVersionChangeEvent;
-    RefPtr<UniqueIDBDatabaseTransaction> m_versionChangeTransaction;
+    const RefPtr<UniqueIDBDatabaseTransaction> m_versionChangeTransaction;
 };
 
 } // namespace IDBServer

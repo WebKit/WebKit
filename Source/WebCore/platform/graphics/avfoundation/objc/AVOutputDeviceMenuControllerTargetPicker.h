@@ -57,7 +57,7 @@ private:
     AVOutputDeviceMenuController *devicePicker();
 
     RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
-    RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
+    const RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
     bool m_showingMenu { false };
 };
 

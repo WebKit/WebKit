@@ -1548,7 +1548,7 @@ LayoutUnit RenderBox::maxContentLogicalWidthContribution() const
 RenderBoxOverridingSizes& RenderBox::ensureOverridingSizes()
 {
     if (!m_overridingSizes)
-        m_overridingSizes = makeUnique<RenderBoxOverridingSizes>();
+        lazyInitialize(m_overridingSizes, makeUnique<RenderBoxOverridingSizes>());
     return *m_overridingSizes;
 }
 

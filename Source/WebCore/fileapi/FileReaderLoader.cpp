@@ -375,14 +375,13 @@ void FileReaderLoader::convertToText()
         auto encoding = m_encoding;
         if (!encoding.isValid())
             encoding = extractCharsetFromMediaType(m_dataType);
-        m_decoder = TextResourceDecoder::create("text/plain"_s, encoding.isValid() ? encoding : PAL::UTF8Encoding());
+        lazyInitialize(m_decoder, TextResourceDecoder::create("text/plain"_s, encoding.isValid() ? encoding : PAL::UTF8Encoding()));
     }
-    Ref decoder = *m_decoder;
     Ref rawData = *m_rawData;
     if (isCompleted())
-        m_stringResult = decoder->decodeAndFlush(rawData->span().first(m_bytesLoaded));
+        m_stringResult = m_decoder->decodeAndFlush(rawData->span().first(m_bytesLoaded));
     else
-        m_stringResult = decoder->decode(rawData->span().first(m_bytesLoaded));
+        m_stringResult = m_decoder->decode(rawData->span().first(m_bytesLoaded));
 }
 
 void FileReaderLoader::convertToDataURL()

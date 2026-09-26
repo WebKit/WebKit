@@ -87,7 +87,7 @@ void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
     Ref document = m_parentElement->document();
     Ref embedShadowElement = YouTubeEmbedShadowElement::create(document);
 
-    m_embedShadowElement = embedShadowElement.copyRef();
+    lazyInitialize(m_embedShadowElement, embedShadowElement.copyRef());
 
     root.appendChild(embedShadowElement);
 

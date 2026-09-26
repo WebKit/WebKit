@@ -122,7 +122,7 @@ bool WindowEventLoop::isContextThread() const
 MicrotaskQueue& WindowEventLoop::microtaskQueue()
 {
     if (!m_microtaskQueue)
-        m_microtaskQueue = MicrotaskQueue::create(commonVM(), *this);
+        lazyInitialize(m_microtaskQueue, MicrotaskQueue::create(commonVM(), *this));
     return *m_microtaskQueue;
 }
 
@@ -307,7 +307,7 @@ CustomElementQueue& WindowEventLoop::backupElementQueue()
         });
     }
     if (!m_customElementQueue)
-        m_customElementQueue = makeUnique<CustomElementQueue>();
+        lazyInitialize(m_customElementQueue, makeUnique<CustomElementQueue>());
     return *m_customElementQueue;
 }
 

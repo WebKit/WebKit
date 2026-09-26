@@ -230,7 +230,7 @@ private:
     bool m_isAttached { false };
     std::optional<ReadyState> m_readyStateBeforeDetached;
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-    RefPtr<MediaSourceHandle> m_handle;
+    const RefPtr<MediaSourceHandle> m_handle;
 #endif
 
 #if !RELEASE_LOG_DISABLED

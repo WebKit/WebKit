@@ -241,8 +241,8 @@ private:
 
     const CSSParserContext& m_context;
 
-    RefPtr<StyleSheetContents> m_styleSheet;
-    std::unique_ptr<CSSTokenizer> m_tokenizer;
+    const RefPtr<StyleSheetContents> m_styleSheet;
+    const std::unique_ptr<CSSTokenizer> m_tokenizer;
 
     // For the inspector
     WeakPtr<CSSParserObserverWrapper> m_observerWrapper;

@@ -1665,7 +1665,7 @@ void HTMLModelElement::updateStageMode()
 
 #if ENABLE(TOUCH_EVENTS)
     if (!m_eventListener)
-        m_eventListener = HTMLModelElementEventListener::create();
+        lazyInitialize(m_eventListener, HTMLModelElementEventListener::create());
 
     if (mode == WebCore::StageModeOperation::Orbit) {
         addEventListener(eventNames().touchstartEvent, *m_eventListener, { });
@@ -1811,7 +1811,7 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
 void HTMLModelElement::environmentMapRequestResource()
 {
     if (!m_environmentMapLoader)
-        m_environmentMapLoader = EnvironmentMapLoader::create();
+        lazyInitialize(m_environmentMapLoader, EnvironmentMapLoader::create());
 
     RefPtr loader = m_environmentMapLoader;
     loader->load(*this, m_environmentMapURL, [weakThis = WeakPtr { *this }, url = m_environmentMapURL](RefPtr<SharedBuffer>&& data) {

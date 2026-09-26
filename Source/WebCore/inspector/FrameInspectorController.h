@@ -118,7 +118,7 @@ private:
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const Ref<WTF::Stopwatch> m_executionStopwatch;
-    std::unique_ptr<FrameDebugger> m_debugger;
+    const std::unique_ptr<FrameDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
 
     bool m_didCreateConsoleAgent { false };

@@ -110,7 +110,7 @@ void PushSubscription::unsubscribe(ScriptExecutionContext& scriptExecutionContex
             return;
         }
 
-        protect(m_pushSubscriptionOwner)->unsubscribeFromPushService(pushSubscriptionIdentifier, WTF::move(promise));
+        m_pushSubscriptionOwner->unsubscribeFromPushService(pushSubscriptionIdentifier, WTF::move(promise));
     });
 }
 

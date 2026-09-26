@@ -60,7 +60,7 @@ private:
     int m_windowBits;
     ContextTakeOverMode m_contextTakeOverMode;
     Vector<uint8_t> m_buffer;
-    std::unique_ptr<z_stream> m_stream;
+    const std::unique_ptr<z_stream> m_stream;
 };
 
 class WebSocketInflater {
@@ -79,7 +79,7 @@ public:
 private:
     int m_windowBits;
     Vector<uint8_t> m_buffer;
-    std::unique_ptr<z_stream> m_stream;
+    const std::unique_ptr<z_stream> m_stream;
 };
 
 } // namespace WebCore

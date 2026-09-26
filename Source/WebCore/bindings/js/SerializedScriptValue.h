@@ -154,7 +154,7 @@ private:
 
     WEBCORE_EXPORT explicit SerializedScriptValue(Internals&&);
 
-    std::unique_ptr<Internals> m_internals;
+    const std::unique_ptr<Internals> m_internals;
 };
 
 }

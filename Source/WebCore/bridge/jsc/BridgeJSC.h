@@ -128,7 +128,7 @@ protected:
     virtual void virtualEnd() { }
     WEBCORE_EXPORT virtual RuntimeObject* newRuntimeObject(JSGlobalObject*);
 
-    RefPtr<RootObject> m_rootObject;
+    const RefPtr<RootObject> m_rootObject;
 
 private:
     Weak<RuntimeObject> m_runtimeObject;
@@ -145,7 +145,7 @@ public:
     virtual unsigned int getLength() const = 0;
 
 protected:
-    RefPtr<RootObject> m_rootObject;
+    const RefPtr<RootObject> m_rootObject;
 };
 
 const char* signatureForParameters(const ArgList&);

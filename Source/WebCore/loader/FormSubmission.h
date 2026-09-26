@@ -124,7 +124,7 @@ private:
     URL m_action;
     AtomString m_target;
     String m_contentType;
-    RefPtr<FormState> m_formState;
+    const RefPtr<FormState> m_formState;
     const RefPtr<FormData> m_formData;
     String m_boundary;
     LockHistory m_lockHistory;

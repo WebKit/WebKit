@@ -63,10 +63,10 @@ private:
     AVOutputContext * outputContextInternal();
     bool hasActiveRoute() const;
 
-    RetainPtr<AVRouteDetector> m_routeDetector;
+    const RetainPtr<AVRouteDetector> m_routeDetector;
     RetainPtr<AVRoutePickerView> m_routePickerView;
     RetainPtr<AVOutputContext> m_outputContext;
-    RetainPtr<WebAVRoutePickerViewHelper> m_routePickerViewDelegate;
+    const RetainPtr<WebAVRoutePickerViewHelper> m_routePickerViewDelegate;
     bool m_hadActiveRoute { false };
     bool m_ignoreNextMultipleRoutesDetectedDidChangeNotification { false };
 };

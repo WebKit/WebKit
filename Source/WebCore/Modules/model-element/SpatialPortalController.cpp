@@ -588,7 +588,7 @@ void SpatialPortalController::startEnvironmentMapLoad()
         return;
 
     if (!m_environmentMapLoader)
-        m_environmentMapLoader = EnvironmentMapLoader::create();
+        lazyInitialize(m_environmentMapLoader, EnvironmentMapLoader::create());
 
     RefPtr loader = m_environmentMapLoader;
     loader->load(*element, m_environmentMapURL, [weakThis = WeakPtr { *this }, url = m_environmentMapURL](RefPtr<SharedBuffer>&& data) {
@@ -653,7 +653,7 @@ void SpatialPortalController::updateGestureHandling()
 #if ENABLE(TOUCH_EVENTS)
     if (RefPtr element = m_portalElement.get()) {
         if (!m_eventListener)
-            m_eventListener = SpatialPortalEventListener::create();
+            lazyInitialize(m_eventListener, SpatialPortalEventListener::create());
 
         if (shouldHandleGesture) {
             element->addEventListener(eventNames().touchstartEvent, *m_eventListener, { });

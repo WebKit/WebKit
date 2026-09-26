@@ -438,7 +438,7 @@ void TextTrack::removeCuesNotInTimeRanges(const PlatformTimeRanges& buffered)
 VTTRegionList& TextTrack::ensureVTTRegionList()
 {
     if (!m_regions)
-        m_regions = VTTRegionList::create();
+        lazyInitialize(m_regions, VTTRegionList::create());
 
     return *m_regions;
 }

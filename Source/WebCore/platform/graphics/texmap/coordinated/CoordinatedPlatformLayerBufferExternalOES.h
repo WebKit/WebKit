@@ -45,7 +45,7 @@ private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
     unsigned m_textureID { 0 };
-    RefPtr<BitmapTexture> m_texture;
+    const RefPtr<BitmapTexture> m_texture;
 };
 
 } // namespace WebCore

@@ -71,7 +71,7 @@ IIRProcessor::IIRProcessor(float sampleRate, unsigned numberOfChannels, const Ve
         m_feedback[0] = 1;
     }
 
-    m_responseKernel = makeUnique<IIRDSPKernel>(*this);
+    lazyInitialize(m_responseKernel, makeUnique<IIRDSPKernel>(*this));
 }
 
 IIRProcessor::~IIRProcessor()

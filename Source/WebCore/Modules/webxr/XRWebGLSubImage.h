@@ -66,12 +66,12 @@ private:
 
     bool isXRWebGLSubImage() const final { return true; }
 
-    Ref<WebXRViewport> m_viewport;
+    const Ref<WebXRViewport> m_viewport;
 
-    Ref<WebGLTexture> m_colorTexture;
+    const Ref<WebGLTexture> m_colorTexture;
     IntSize m_colorTextureSize;
 
-    RefPtr<WebGLTexture> m_depthStencilTexture;
+    const RefPtr<WebGLTexture> m_depthStencilTexture;
     std::optional<IntSize> m_depthStencilTextureSize;
 
     std::optional<uint32_t> m_imageIndex;

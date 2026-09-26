@@ -733,7 +733,7 @@ VideoTrackList& SourceBuffer::videoTracks()
 {
     if (!m_videoTracks) {
         Ref videoTracks = VideoTrackList::create(protect(scriptExecutionContext()).get());
-        m_videoTracks = videoTracks.copyRef();
+        lazyInitialize(m_videoTracks, videoTracks.copyRef());
         videoTracks->setOpaqueRootObserver(m_opaqueRootProvider);
     }
     return *m_videoTracks;
@@ -743,7 +743,7 @@ AudioTrackList& SourceBuffer::audioTracks()
 {
     if (!m_audioTracks) {
         Ref audioTracks = AudioTrackList::create(protect(scriptExecutionContext()).get());
-        m_audioTracks = audioTracks.copyRef();
+        lazyInitialize(m_audioTracks, audioTracks.copyRef());
         audioTracks->setOpaqueRootObserver(m_opaqueRootProvider);
     }
     return *m_audioTracks;
@@ -753,7 +753,7 @@ TextTrackList& SourceBuffer::textTracks()
 {
     if (!m_textTracks) {
         Ref textTracks = TextTrackList::create(protect(scriptExecutionContext()).get());
-        m_textTracks = textTracks.copyRef();
+        lazyInitialize(m_textTracks, textTracks.copyRef());
         textTracks->setOpaqueRootObserver(m_opaqueRootProvider);
     }
     return *m_textTracks;

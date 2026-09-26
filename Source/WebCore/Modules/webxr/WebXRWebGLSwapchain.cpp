@@ -47,7 +47,7 @@ WebXRWebGLSwapchain::WebXRWebGLSwapchain(WebGLRenderingContextBase& context, Swa
     , m_imageCount(imageCount)
 {
     if (clearOnAccess)
-        m_framebufferForClearing = m_context->createFramebuffer();
+        lazyInitialize(m_framebufferForClearing, m_context->createFramebuffer());
 }
 
 void WebXRWebGLSwapchain::clearAttachmentRegion(GraphicsContextGL& gl, const IntRect& viewport, NOESCAPE const BindAttachmentFunction& bindAttachment)

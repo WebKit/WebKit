@@ -163,7 +163,7 @@ private:
     void setSearchFieldSize(Style::ComputedStyle&) const;
 
 
-    RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
+    const RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 };
 
 } // namespace WebCore

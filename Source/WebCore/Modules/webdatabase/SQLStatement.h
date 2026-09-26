@@ -73,7 +73,7 @@ private:
     SQLCallbackWrapper<SQLStatementErrorCallback> m_statementErrorCallbackWrapper;
 
     RefPtr<SQLError> m_error;
-    RefPtr<SQLResultSet> m_resultSet;
+    const RefPtr<SQLResultSet> m_resultSet;
 
     int m_permissions;
 };

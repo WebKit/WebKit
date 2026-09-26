@@ -109,13 +109,13 @@ private:
 
     void waitForUpload() const;
 
-    Ref<BitmapTexture> m_atlasTexture;
+    const Ref<BitmapTexture> m_atlasTexture;
     GrBackendTexture m_backendTexture;
-    Ref<AtlasUploadCondition> m_uploadCondition;
+    const Ref<AtlasUploadCondition> m_uploadCondition;
     std::unique_ptr<GLFence> m_uploadFence;
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
     ImageToRectMap m_imageToRect;
-    Ref<const SkiaImageAtlasLayout> m_layout;
+    const Ref<const SkiaImageAtlasLayout> m_layout;
     IntSize m_size;
 };
 

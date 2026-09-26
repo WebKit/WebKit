@@ -291,7 +291,7 @@ private:
 
     RefPtr<AXCoreObject> m_coreObject;
     OptionSet<Interface> m_interfaces;
-    RefPtr<AccessibilityRootAtspi> m_root;
+    const RefPtr<AccessibilityRootAtspi> m_root;
     std::optional<RefPtr<AccessibilityObjectAtspi>> m_parent;
     bool m_isRegistered { false };
     String m_path;

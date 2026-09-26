@@ -48,7 +48,7 @@ public:
 private:
     static ASCIILiteral supplementName();
 
-    RefPtr<WebXRSystem> m_xr;
+    const RefPtr<WebXRSystem> m_xr;
 };
 
 } // namespace WebCore

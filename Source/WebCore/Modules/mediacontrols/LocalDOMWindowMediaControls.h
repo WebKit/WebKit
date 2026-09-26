@@ -54,7 +54,7 @@ private:
 
     Ref<MediaControlsUtils> ensureUtils(Document&);
 
-    RefPtr<MediaControlsUtils> m_utils;
+    const RefPtr<MediaControlsUtils> m_utils;
 };
 
 } // namespace WebCore

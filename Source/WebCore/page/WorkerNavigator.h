@@ -60,7 +60,7 @@ private:
     String m_userAgent;
     bool m_isOnline;
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    RefPtr<GPU> m_gpuForWebGPU;
+    const RefPtr<GPU> m_gpuForWebGPU;
 #endif
 };
 

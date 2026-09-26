@@ -105,7 +105,7 @@ private:
 
     std::optional<bool> m_lastPausedStateIfSuspended;
     ModelPlayerAnimationState m_animationState;
-    std::unique_ptr<ModelPlayerTransformState> m_transformState;
+    const std::unique_ptr<ModelPlayerTransformState> m_transformState;
     ModelPlayerIdentifier m_id;
 };
 

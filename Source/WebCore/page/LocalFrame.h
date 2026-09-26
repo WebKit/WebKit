@@ -412,7 +412,7 @@ private:
     UniqueRef<ScriptController> m_script;
 
 #if ENABLE(DATA_DETECTION)
-    std::unique_ptr<DataDetectionResultsStorage> m_dataDetectionResults;
+    const std::unique_ptr<DataDetectionResultsStorage> m_dataDetectionResults;
 #endif
 #if PLATFORM(IOS_FAMILY)
     void setTimersPausedInternal(bool);
@@ -439,7 +439,7 @@ private:
     SandboxFlags m_sandboxFlags;
     ReferrerPolicy m_parentFrameOrOpenerReferrerPolicy;
     const UniqueRef<EventHandler> m_eventHandler;
-    std::unique_ptr<HashSet<RegistrableDomain>> m_storageAccessExceptionDomains;
+    const std::unique_ptr<HashSet<RegistrableDomain>> m_storageAccessExceptionDomains;
 
     const UniqueRef<FrameInspectorController> m_inspectorController;
     const UniqueRef<FrameConsoleClient> m_consoleClient;

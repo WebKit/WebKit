@@ -77,8 +77,8 @@ private:
     bool tryReuseCachedAtlases(SkiaRecordingResult&, unsigned fingerprint);
 
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
-    RefPtr<WorkerPool> m_paintingWorkerPool;
-    RefPtr<WorkQueue> m_uploadWorkQueue;
+    const RefPtr<WorkerPool> m_paintingWorkerPool;
+    const RefPtr<WorkQueue> m_uploadWorkQueue;
     unsigned m_cachedImageFingerprint { 0 };
     Vector<Ref<SkiaGPUAtlas>> m_cachedGPUAtlases;
 };

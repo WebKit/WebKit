@@ -141,7 +141,7 @@ private:
     IntSize m_allocatedSize;
     OptionSet<BufferFlag> m_flags;
     uint64_t m_modifier { 0 };
-    RefPtr<DMABufBuffer> m_dmaBuf;
+    const RefPtr<DMABufBuffer> m_dmaBuf;
 
     // Owned for the lifetime of the buffer. gbm_bo_map() requires it; even on the
     // dma-buf-mmap strategy we keep it so ownership doesn't depend on the strategy.

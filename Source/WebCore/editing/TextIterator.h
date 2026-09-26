@@ -158,9 +158,9 @@ private:
     BitStack m_fullyClippedStack;
 
     // The range.
-    RefPtr<Node> m_startContainer;
+    const RefPtr<Node> m_startContainer;
     int m_startOffset { 0 };
-    RefPtr<Node> m_endContainer;
+    const RefPtr<Node> m_endContainer;
     int m_endOffset { 0 };
     RefPtr<Node> m_pastEndNode;
 
@@ -236,9 +236,9 @@ private:
     BitStack m_fullyClippedStack;
 
     // The range.
-    RefPtr<Node> m_startContainer;
+    const RefPtr<Node> m_startContainer;
     int m_startOffset { 0 };
-    RefPtr<Node> m_endContainer;
+    const RefPtr<Node> m_endContainer;
     int m_endOffset { 0 };
     
     // The current text and its position, in the form to be returned from the iterator.

@@ -84,7 +84,7 @@ private:
     bool m_hasCancelEventListener { false };
     bool m_hasCloseEventListener { false };
     bool m_enabled { true };
-    RefPtr<AbortSignal> m_signal;
+    const RefPtr<AbortSignal> m_signal;
     uint32_t m_signalAlgorithm { };
 };
 

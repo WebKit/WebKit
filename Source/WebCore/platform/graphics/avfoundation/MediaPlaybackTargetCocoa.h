@@ -57,7 +57,7 @@ private:
     String routeName() const final;
     bool hasActiveRoute() const final;
 
-    RetainPtr<AVOutputContext> m_outputContext;
+    const RetainPtr<AVOutputContext> m_outputContext;
 };
 
 } // namespace WebCore

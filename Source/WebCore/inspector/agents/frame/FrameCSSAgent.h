@@ -116,8 +116,8 @@ private:
     InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
     Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet*, Document*);
 
-    UniqueRef<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
-    Ref<Inspector::CSSBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::CSSBackendDispatcher> m_backendDispatcher;
     WeakRef<LocalFrame> m_inspectedFrame;
 
     HashMap<Inspector::Protocol::CSS::StyleSheetId, Ref<InspectorStyleSheet>> m_idToInspectorStyleSheet;

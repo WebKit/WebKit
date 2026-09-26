@@ -430,7 +430,7 @@ public:
         const Ref<SharedBuffer> fontFaceData;
         String itemInCollection;
 #if PLATFORM(WIN) && USE(CAIRO)
-        Ref<FontMemoryResource> m_fontResource;
+        const Ref<FontMemoryResource> m_fontResource;
 #endif
     };
 

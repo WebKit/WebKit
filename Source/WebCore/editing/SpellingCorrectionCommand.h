@@ -47,7 +47,7 @@ private:
 
     SimpleRange m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;
-    RefPtr<DocumentFragment> m_correctionFragment;
+    const RefPtr<DocumentFragment> m_correctionFragment;
     String m_corrected;
     String m_correction;
 };

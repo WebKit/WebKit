@@ -201,7 +201,7 @@ private:
 #endif
 
     WeakRef<HTMLMediaElement> m_mediaElement;
-    RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
+    const RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
     RefPtr<TextTrack> m_previouslySelectedTextTrack;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

@@ -103,7 +103,7 @@ private:
     WEBCORE_EXPORT void didOpen(bool) final;
     WEBCORE_EXPORT void didGetSize(long long) final;
 
-    RefPtr<BlobData> m_blobData;
+    const RefPtr<BlobData> m_blobData;
     // For Async or Sync loading.
     Variant<std::unique_ptr<AsyncFileStream>, std::unique_ptr<FileStream>> m_stream;
     std::optional<HTTPRange> m_range;

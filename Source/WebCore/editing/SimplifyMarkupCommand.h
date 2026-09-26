@@ -42,8 +42,8 @@ private:
     void doApply() override;
     int pruneSubsequentAncestorsToRemove(Vector<Ref<Node>>& nodesToRemove, size_t startNodeIndex);
 
-    RefPtr<Node> m_firstNode;
-    RefPtr<Node> m_nodeAfterLast;
+    const RefPtr<Node> m_firstNode;
+    const RefPtr<Node> m_nodeAfterLast;
 };
 
 } // namespace WebCore

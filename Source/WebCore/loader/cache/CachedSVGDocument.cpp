@@ -45,7 +45,7 @@ CachedSVGDocument::~CachedSVGDocument() = default;
 
 void CachedSVGDocument::setEncoding(const String& chs)
 {
-    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 ASCIILiteral CachedSVGDocument::encoding() const
@@ -58,7 +58,7 @@ void CachedSVGDocument::finishLoading(const FragmentedSharedBuffer* data, const 
     if (data) {
         // We don't need to create a new frame because the new document belongs to the parent UseElement.
         Ref document = SVGDocument::create(nullptr, m_settings.copyRef(), response().url());
-        document->setMarkupUnsafe(protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span()), { ParserContentPolicy::AllowDeclarativeShadowRoots });
+        document->setMarkupUnsafe(m_decoder->decodeAndFlush(data->makeContiguous()->span()), { ParserContentPolicy::AllowDeclarativeShadowRoots });
         m_document = WTF::move(document);
     }
     CachedResource::finishLoading(data, metrics);

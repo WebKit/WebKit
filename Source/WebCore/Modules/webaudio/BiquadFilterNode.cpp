@@ -59,7 +59,7 @@ BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context)
     : AudioBasicProcessorNode(context, NodeTypeBiquadFilter)
 {
     // Initially setup as lowpass filter.
-    m_processor = makeUnique<BiquadProcessor>(context, context.sampleRate(), 1, false);
+    lazyInitialize(m_processor, makeUnique<BiquadProcessor>(context, context.sampleRate(), 1, false));
 
     // Initialize so that AudioParams can be processed.
     initialize();

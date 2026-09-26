@@ -87,7 +87,7 @@ private:
 
     FontFeatureSettings m_fontFaceFeatures;
     FontPaletteValues m_fontPaletteValues;
-    RefPtr<FontFeatureValues> m_fontFeatureValues;
+    const RefPtr<FontFeatureValues> m_fontFeatureValues;
     float m_sizeAdjust;
     FontMetricsOverrides m_metricsOverrides;
 };

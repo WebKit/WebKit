@@ -48,7 +48,7 @@ public:
 private:
     static RetainPtr<VTPixelBufferConformerRef> createPixelConformer(CFDictionaryRef attributes);
 
-    RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;
+    const RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;
 };
 
 }

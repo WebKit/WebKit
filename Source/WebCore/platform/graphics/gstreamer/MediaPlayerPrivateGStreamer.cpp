@@ -199,7 +199,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer& player)
     m_isPlayerShuttingDown.store(false);
 
     if (player.isGStreamerHolePunchingEnabled()) {
-        m_quirksManagerForTesting = GStreamerQuirksManager::createForTesting();
+        lazyInitialize(m_quirksManagerForTesting, GStreamerQuirksManager::createForTesting());
         m_quirksManagerForTesting->setHolePunchEnabledForTesting(true);
     }
 
@@ -1117,7 +1117,7 @@ void MediaPlayerPrivateGStreamer::simulateAudioInterruption()
 void MediaPlayerPrivateGStreamer::ensureAudioSourceProvider()
 {
     if (!m_audioSourceProvider)
-        m_audioSourceProvider = AudioSourceProviderGStreamer::create();
+        lazyInitialize(m_audioSourceProvider, AudioSourceProviderGStreamer::create());
 }
 
 AudioSourceProvider* MediaPlayerPrivateGStreamer::audioSourceProvider()

@@ -125,7 +125,7 @@ private:
     Vector<PendingFontFaceRule> m_stagingArea;
 
     WeakPtr<ScriptExecutionContext> m_context;
-    RefPtr<FontFaceSet> m_fontFaceSet;
+    const RefPtr<FontFaceSet> m_fontFaceSet;
     const Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
 

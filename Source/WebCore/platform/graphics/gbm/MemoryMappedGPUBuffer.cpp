@@ -322,8 +322,7 @@ bool MemoryMappedGPUBuffer::createDMABufFromGBMBufferObject(struct gbm_bo* bo)
 
     attributes->modifier = m_modifier;
 
-    ASSERT(!m_dmaBuf);
-    m_dmaBuf = DMABufBuffer::create(WTF::move(*attributes));
+    lazyInitialize(m_dmaBuf, DMABufBuffer::create(WTF::move(*attributes)));
     return true;
 }
 

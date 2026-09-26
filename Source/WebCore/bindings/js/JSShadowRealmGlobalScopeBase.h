@@ -64,7 +64,7 @@ protected:
     static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 
 private:
-    RefPtr<ShadowRealmGlobalScope> m_wrapped;
+    const RefPtr<ShadowRealmGlobalScope> m_wrapped;
 };
 
 inline JSDOMGlobalObject* JSShadowRealmGlobalScopeBase::incubatingRealm()

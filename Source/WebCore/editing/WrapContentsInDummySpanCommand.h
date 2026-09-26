@@ -51,7 +51,7 @@ private:
 #endif
 
     const Ref<Element> m_element;
-    RefPtr<HTMLElement> m_dummySpan;
+    const RefPtr<HTMLElement> m_dummySpan;
 };
 
 } // namespace WebCore

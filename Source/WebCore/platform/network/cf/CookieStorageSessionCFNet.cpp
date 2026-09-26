@@ -73,7 +73,7 @@ CookieStorageSession::CookieStorageSession(PAL::SessionID sessionID, RetainPtr<C
     , m_platformSession(WTF::move(platformSession))
 {
     ASSERT(processMayUseCookieAPI() || !platformCookieStorage || m_isInMemoryCookieStore);
-    m_platformCookieStorage = platformCookieStorage ? WTF::move(platformCookieStorage) : cookieStorage();
+    lazyInitialize(m_platformCookieStorage, platformCookieStorage ? WTF::move(platformCookieStorage) : cookieStorage());
 }
 
 RetainPtr<CFHTTPCookieStorageRef> CookieStorageSession::cookieStorage() const

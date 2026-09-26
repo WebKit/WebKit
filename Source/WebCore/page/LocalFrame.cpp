@@ -1354,7 +1354,7 @@ void LocalFrame::dispatchLoadEventToParent()
 DataDetectionResultsStorage& LocalFrame::dataDetectionResults()
 {
     if (!m_dataDetectionResults)
-        m_dataDetectionResults = makeUnique<DataDetectionResultsStorage>();
+        lazyInitialize(m_dataDetectionResults, makeUnique<DataDetectionResultsStorage>());
     return *m_dataDetectionResults;
 }
 
@@ -1380,7 +1380,7 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
 void LocalFrame::storageAccessExceptionReceivedForDomain(const RegistrableDomain& domain)
 {
     if (!m_storageAccessExceptionDomains)
-        m_storageAccessExceptionDomains = makeUnique<HashSet<RegistrableDomain>>();
+        lazyInitialize(m_storageAccessExceptionDomains, makeUnique<HashSet<RegistrableDomain>>());
     m_storageAccessExceptionDomains->add(domain);
 }
 

@@ -44,23 +44,26 @@ ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinat
     if (sourceImageRect.isEmpty())
         return;
 
+    RefPtr<ImageBuffer> sourceImage;
     if (m_filter)
-        m_sourceImage = destinationContext.createScaledImageBuffer(m_sourceImageRect, m_filter->filterScale(), colorSpace, m_filter->renderingMode());
+        sourceImage = destinationContext.createScaledImageBuffer(m_sourceImageRect, m_filter->filterScale(), colorSpace, m_filter->renderingMode());
     else
-        m_sourceImage = destinationContext.createAlignedImageBuffer(m_sourceImageRect, colorSpace);
+        sourceImage = destinationContext.createAlignedImageBuffer(m_sourceImageRect, colorSpace);
 
-    if (!m_sourceImage) {
+    if (!sourceImage) {
         m_filter = nullptr;
         return;
     }
 
+    lazyInitialize(m_sourceImage, sourceImage.releaseNonNull());
+
     auto state = destinationContext.state();
-    protect(m_sourceImage)->context().mergeAllChanges(state);
+    m_sourceImage->context().mergeAllChanges(state);
 }
 
 GraphicsContext* ImageBufferContextSwitcher::drawingContext(GraphicsContext& context) const
 {
-    return m_sourceImage ? &protect(m_sourceImage)->context() : &context;
+    return m_sourceImage ? &m_sourceImage->context() : &context;
 }
 
 void ImageBufferContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect&, NOESCAPE const Function<void(GraphicsContext&)>&)
@@ -84,7 +87,7 @@ void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destination
 {
     if (!m_filter) {
         if (m_sourceImage)
-            destinationContext.drawImageBuffer(*protect(m_sourceImage), m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });
+            destinationContext.drawImageBuffer(*m_sourceImage, m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });
         return;
     }
 

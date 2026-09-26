@@ -73,7 +73,7 @@ private:
     CSSPositionTryRule(StyleRulePositionTry&, CSSStyleSheet*);
 
     Ref<StyleRulePositionTry> m_positionTryRule;
-    RefPtr<CSSPositionTryDescriptors> m_propertiesCSSOMWrapper;
+    const RefPtr<CSSPositionTryDescriptors> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

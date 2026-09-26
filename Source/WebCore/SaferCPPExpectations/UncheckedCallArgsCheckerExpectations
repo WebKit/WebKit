@@ -1,5 +1,5 @@
 Modules/mediacapabilities/MediaCapabilities.cpp
-Modules/push-api/PushDatabase.cpp
+[ macOS ] Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/PushSubscription.cpp
 Modules/webaudio/IIRFilterNode.cpp
@@ -39,7 +39,7 @@ contentextensions/ContentExtensionsBackend.cpp
 css/CSSStyleProperties.cpp
 css/CSSStyleSheet.cpp
 css/SelectorCheckerTestFunctions.h
-css/StyleAttributeMutationScope.h
+[ macOS ] css/StyleAttributeMutationScope.h
 dom/Attr.cpp
 dom/CollectionIndexCacheInlines.h
 dom/ComposedTreeIterator.h
@@ -67,7 +67,7 @@ dom/Position.cpp
 dom/Range.cpp
 dom/ScriptElement.cpp
 dom/ShadowRoot.cpp
-dom/TreeScope.cpp
+[ macOS ] dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
@@ -93,7 +93,7 @@ inspector/PageDebugger.cpp
 inspector/WorkerDebugger.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorCanvasAgent.cpp
-inspector/agents/InspectorDOMAgent.cpp
+[ macOS ] inspector/agents/InspectorDOMAgent.cpp
 inspector/agents/InspectorLayerTreeAgent.cpp
 inspector/agents/InspectorPageAgent.cpp
 inspector/agents/WebHeapAgent.cpp
@@ -270,7 +270,7 @@ rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
 rendering/RenderImage.cpp
-rendering/RenderImage.h
+[ macOS ] rendering/RenderImage.h
 rendering/RenderImageResource.cpp
 rendering/RenderIterator.h
 rendering/RenderLayer.cpp
@@ -390,8 +390,8 @@ rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 rendering/updating/RenderTreeUpdaterViewTransition.cpp
 style/AnchorPositionEvaluator.cpp
 style/AttributeChangeInvalidation.cpp
-style/ChildChangeInvalidation.cpp
-style/ChildChangeInvalidation.h
+[ macOS ] style/ChildChangeInvalidation.cpp
+[ macOS ] style/ChildChangeInvalidation.h
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/InlineTextBoxStyle.cpp

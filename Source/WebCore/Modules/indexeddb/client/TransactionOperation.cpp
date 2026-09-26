@@ -57,7 +57,7 @@ TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBReque
         m_cursorIdentifier = cursor->info().identifier();
 
     request.setTransactionOperationID(m_operationID);
-    m_idbRequest = request;
+    lazyInitialize(m_idbRequest, Ref { request });
 }
 
 void TransactionOperation::transitionToComplete(const IDBResultData& data, RefPtr<TransactionOperation>&& lastRef)

@@ -89,7 +89,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     bool m_enableAdditionalLogging { false };
     RTCEncodedStreamProducerIdentifier m_identifier;
-    std::unique_ptr<FrameRateMonitor> m_readableFrameRateMonitor;
+    const std::unique_ptr<FrameRateMonitor> m_readableFrameRateMonitor;
 #endif
 };
 

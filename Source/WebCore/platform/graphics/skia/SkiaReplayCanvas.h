@@ -84,7 +84,7 @@ private:
     void onDrawVerticesObject(const SkVertices*, SkBlendMode, const SkPaint&) override;
 #endif
 
-    Ref<SkiaRecordingResult> m_recording;
+    const Ref<SkiaRecordingResult> m_recording;
 #if !USE(TEXTURE_MAPPER)
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
 #endif

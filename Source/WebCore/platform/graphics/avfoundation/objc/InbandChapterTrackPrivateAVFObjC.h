@@ -71,7 +71,7 @@ private:
     };
 
     Vector<ChapterData> m_processedChapters;
-    RetainPtr<NSLocale> m_locale;
+    const RetainPtr<NSLocale> m_locale;
     mutable String m_language;
     const TrackID m_id;
     int m_index { 0 };

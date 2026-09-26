@@ -45,7 +45,7 @@ private:
     void reset() final;
     void close() final;
 
-    Ref<GStreamerInternalVideoDecoder> m_internalDecoder;
+    const Ref<GStreamerInternalVideoDecoder> m_internalDecoder;
 };
 
 }

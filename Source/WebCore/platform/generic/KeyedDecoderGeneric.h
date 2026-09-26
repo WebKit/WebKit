@@ -61,7 +61,7 @@ private:
     template<typename T> [[nodiscard]]
     bool decodeSimpleValue(const String& key, T& result);
 
-    std::unique_ptr<Dictionary> m_rootDictionary;
+    const std::unique_ptr<Dictionary> m_rootDictionary;
     Vector<Dictionary*, 16> m_dictionaryStack;
     Vector<Array*, 16> m_arrayStack;
     Vector<size_t, 16> m_arrayIndexStack;

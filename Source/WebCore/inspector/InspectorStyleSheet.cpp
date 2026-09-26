@@ -1215,7 +1215,7 @@ ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& i
     if (!rule)
         return Exception { ExceptionCode::NotFoundError };
 
-    if (!isValidRuleHeaderText(newHeaderText, rule->styleRuleType(), protect(protect(m_pageStyleSheet)->ownerDocument()), rule->nestedContext()))
+    if (!isValidRuleHeaderText(newHeaderText, rule->styleRuleType(), protect(m_pageStyleSheet->ownerDocument()), rule->nestedContext()))
         return Exception { ExceptionCode::SyntaxError };
 
     RefPtr styleSheet = rule->parentStyleSheet();
@@ -1735,7 +1735,7 @@ InspectorCSSId InspectorStyleSheet::ruleOrStyleId(StyleDeclarationOrCSSRule rule
 
 Document* InspectorStyleSheet::ownerDocument() const
 {
-    return protect(m_pageStyleSheet)->ownerDocument();
+    return m_pageStyleSheet->ownerDocument();
 }
 
 RefPtr<CSSRuleSourceData> InspectorStyleSheet::ruleSourceDataFor(CSSStyleDeclaration* style) const
@@ -1912,7 +1912,7 @@ bool InspectorStyleSheet::styleSheetTextFromCSSRuleSerialization(String* result)
 
     StringBuilder text;
     for (unsigned i = 0, length = m_pageStyleSheet->length(); i < length; ++i) {
-        text.append(protect(protect(m_pageStyleSheet)->item(i))->cssText());
+        text.append(protect(m_pageStyleSheet->item(i))->cssText());
         text.append('\n');
     }
     *result = text.toString();

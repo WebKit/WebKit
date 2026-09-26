@@ -68,10 +68,10 @@ private:
 
     void setUserPreferredCamera(CompletionHandler<void()>&&);
 
-    RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
+    const RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
     Vector<CaptureDevice> m_devices;
-    RetainPtr<NSMutableArray> m_avCaptureDevices;
-    RetainPtr<NSArray> m_avCaptureDeviceTypes;
+    const RetainPtr<NSMutableArray> m_avCaptureDevices;
+    const RetainPtr<NSArray> m_avCaptureDeviceTypes;
     bool m_isInitialized { false };
 
     const Ref<WorkQueue> m_dispatchQueue;

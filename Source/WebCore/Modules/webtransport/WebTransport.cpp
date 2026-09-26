@@ -208,7 +208,7 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
         // Fill under a response guard so forbidden response header names are dropped.
         // https://fetch.spec.whatwg.org/#forbidden-response-header-name
         responseHeaders->filterAndFill(headerMap, FetchHeaders::Guard::Response);
-        strongThis->m_responseHeaders = WTF::move(responseHeaders);
+        lazyInitialize(strongThis->m_responseHeaders, WTF::move(responseHeaders));
         strongThis->m_state = State::Connected;
         protect(strongThis->m_ready.second)->resolve();
     });

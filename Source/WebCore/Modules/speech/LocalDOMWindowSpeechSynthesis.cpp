@@ -76,7 +76,7 @@ SpeechSynthesis* LocalDOMWindowSpeechSynthesis::speechSynthesis()
 {
     if (!m_speechSynthesis && frame()) {
         if (RefPtr document = frame()->document())
-            m_speechSynthesis = SpeechSynthesis::create(*document);
+            lazyInitialize(m_speechSynthesis, SpeechSynthesis::create(*document));
     }
     return m_speechSynthesis.get();
 }

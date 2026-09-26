@@ -214,7 +214,7 @@ private:
         ~CanBeAcceleratedMutationScope();
 
     private:
-        RefPtr<KeyframeEffect> m_effect;
+        const RefPtr<KeyframeEffect> m_effect;
         bool m_couldOriginallyPreventAcceleration;
 #if ENABLE(THREADED_ANIMATIONS)
         bool m_couldOriginallyBeAccelerated;
@@ -265,8 +265,8 @@ private:
         ~StackMembershipMutationScope();
 
     private:
-        RefPtr<KeyframeEffect> m_effect;
-        RefPtr<Element> m_originalTarget;
+        const RefPtr<KeyframeEffect> m_effect;
+        const RefPtr<Element> m_originalTarget;
         std::optional<Style::PseudoElementIdentifier> m_originalPseudoElementIdentifier;
     };
 

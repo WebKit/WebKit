@@ -118,7 +118,7 @@ private:
     mutable Lock m_keyRequestLock;
     RetainPtr<AVContentKeyRequest> m_keyRequest WTF_GUARDED_BY_LOCK(m_keyRequestLock);
     RefPtr<Uint8Array> m_identifier;
-    RefPtr<SharedBuffer> m_sourceBufferInitData;
+    const RefPtr<SharedBuffer> m_sourceBufferInitData;
     RefPtr<SharedBuffer> m_initData;
     RetainPtr<NSData> m_expiredSession;
     Vector<int> m_protocolVersions;

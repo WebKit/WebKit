@@ -101,7 +101,7 @@ bool CachedSVGFont::ensureCustomFontData()
         if (!m_externalSVGFontElement || !firstFontFace())
             return false;
         if (auto convertedFont = convertSVGToOTFFont(Ref { *m_externalSVGFontElement }))
-            m_convertedFont = SharedBuffer::create(WTF::move(convertedFont.value()));
+            lazyInitialize(m_convertedFont, SharedBuffer::create(WTF::move(convertedFont.value())));
         else {
             m_externalSVGDocument = nullptr;
             m_externalSVGFontElement = nullptr;

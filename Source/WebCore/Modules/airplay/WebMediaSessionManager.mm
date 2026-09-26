@@ -153,7 +153,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMediaSessionLogger);
 WebMediaSessionLogger& WebMediaSessionManager::logger()
 {
     if (!m_logger)
-        m_logger = WebMediaSessionLogger::create(*this);
+        lazyInitialize(m_logger, WebMediaSessionLogger::create(*this));
 
     return *m_logger;
 }
@@ -194,7 +194,7 @@ FloatRect WebMediaSessionManager::mockMediaPlaybackTargetPickerRect()
 MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
 {
     if (!m_pickerOverride)
-        m_pickerOverride = makeUnique<MediaPlaybackTargetPickerMock>(*this);
+        lazyInitialize(m_pickerOverride, makeUnique<MediaPlaybackTargetPickerMock>(*this));
 
     return *m_pickerOverride.get();
 }

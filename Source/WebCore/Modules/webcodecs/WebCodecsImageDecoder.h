@@ -122,7 +122,7 @@ private:
     ExceptionOr<void> closeDecoder(const Exception&);
 
     String m_type;
-    UniqueRef<CompletedPromise> m_completedPromise;
+    const UniqueRef<CompletedPromise> m_completedPromise;
     mutable Ref<WebCodecsImageTrackList> m_tracks;
 
     RefPtr<ImageDecoder> m_internalDecoder;

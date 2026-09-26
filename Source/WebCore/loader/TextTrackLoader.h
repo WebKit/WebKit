@@ -93,7 +93,7 @@ private:
     enum State { Idle, Loading, Finished, Failed };
 
     WeakPtr<TextTrackLoaderClient> m_client;
-    std::unique_ptr<WebVTTParser> m_cueParser;
+    const std::unique_ptr<WebVTTParser> m_cueParser;
     CachedResourceHandle<CachedTextTrack> m_resource;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Timer m_cueLoadTimer;

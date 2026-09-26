@@ -79,7 +79,7 @@ private:
     bool isCaptureSource() const final { return true; }
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
-    RefPtr<GStreamerVideoCapturer> m_capturer;
+    const RefPtr<GStreamerVideoCapturer> m_capturer;
     CaptureDevice::DeviceType m_deviceType;
 
     std::optional<VideoPreset> m_currentPreset;

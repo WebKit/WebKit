@@ -198,19 +198,19 @@ void ApplyStyleCommand::doApply()
     switch (m_propertyLevel) {
     case ApplyStylePropertyLevel::Default: {
         // Apply the block-centric properties of the style.
-        auto blockStyle = protect(m_style)->extractAndRemoveBlockProperties();
+        auto blockStyle = m_style->extractAndRemoveBlockProperties();
         if (!blockStyle->isEmpty())
             applyBlockStyle(blockStyle);
         // Apply any remaining styles to the inline elements.
         if (!m_style->isEmpty() || m_styledInlineElement || m_isInlineElementToRemoveFunction) {
             applyRelativeFontStyleChange(m_style.get());
-            applyInlineStyle(protect(*m_style));
+            applyInlineStyle(*m_style);
         }
         break;
     }
     case ApplyStylePropertyLevel::ForceBlock:
         // Force all properties to be applied as block styles.
-        applyBlockStyle(protect(*m_style));
+        applyBlockStyle(*m_style);
         break;
     }
 }
@@ -1508,7 +1508,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
         surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), supTag));
 
     if (m_styledInlineElement && addStyledElement == AddStyledElement::Yes)
-        surroundNodeRangeWithElement(*startNode, *endNode, protect(m_styledInlineElement)->cloneElementWithoutChildren(document(), nullptr));
+        surroundNodeRangeWithElement(*startNode, *endNode, m_styledInlineElement->cloneElementWithoutChildren(document(), nullptr));
 }
 
 float ApplyStyleCommand::computedFontSize(Node* node)

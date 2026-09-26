@@ -88,7 +88,7 @@ private:
     const CheckedRef<MemoryIDBBackingStore> m_backingStore;
     IDBTransactionInfo m_info;
 
-    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
+    const std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
     bool m_inProgress { true };
     bool m_isAborting { false };

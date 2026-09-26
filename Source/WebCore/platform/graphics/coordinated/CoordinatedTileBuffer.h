@@ -174,7 +174,7 @@ private:
     void completePainting() final;
 
 #if USE(TEXTURE_MAPPER)
-    Ref<BitmapTexture> m_texture;
+    const Ref<BitmapTexture> m_texture;
     std::unique_ptr<GLFence> m_fence;
 #else
     GrSurfaceCharacterization m_characterization;

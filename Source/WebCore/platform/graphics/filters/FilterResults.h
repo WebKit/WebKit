@@ -58,7 +58,7 @@ private:
     using FilterEffectSet = HashSet<Ref<FilterEffect>>;
     HashMap<Ref<FilterImage>, FilterEffectSet> m_resultReferences;
 
-    std::unique_ptr<ImageBufferAllocator> m_allocator;
+    const std::unique_ptr<ImageBufferAllocator> m_allocator;
 };
 
 using FilterResultsCreator = Function<std::unique_ptr<FilterResults>()>;

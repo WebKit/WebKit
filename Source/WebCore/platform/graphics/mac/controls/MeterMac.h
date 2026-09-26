@@ -48,7 +48,7 @@ private:
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
-    RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
+    const RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
 };
 
 } // namespace WebCore

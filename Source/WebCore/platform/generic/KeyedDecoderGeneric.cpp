@@ -90,10 +90,10 @@ std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> dat
 }
 
 KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
+    : m_rootDictionary(makeUnique<Dictionary>())
 {
     WTF::Persistence::Decoder decoder(data);
 
-    m_rootDictionary = makeUnique<Dictionary>();
     m_dictionaryStack.append(m_rootDictionary.get());
 
     bool ok = true;

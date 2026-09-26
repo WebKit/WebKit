@@ -571,7 +571,7 @@ bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& frameD
     if (frameDamage) {
         // Only the layer paint() is called on needs the table, so only the root ever allocates one.
         if (!m_layerRectTracker)
-            m_layerRectTracker = makeUnique<LayerRectTracker>();
+            lazyInitialize(m_layerRectTracker, makeUnique<LayerRectTracker>());
         m_layerRectTracker->advanceToNextFrame();
 
         PaintContext collectContext;

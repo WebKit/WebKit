@@ -195,7 +195,7 @@ bool SQLStatement::execute(Database& db)
     if (!statement->isReadOnly())
         resultSet->setRowsAffected(database->lastChanges());
 
-    m_resultSet = WTF::move(resultSet);
+    lazyInitialize(m_resultSet, WTF::move(resultSet));
     return true;
 }
 

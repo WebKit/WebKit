@@ -122,7 +122,7 @@ private:
     String m_trackKind;
     const Ref<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
-    RefPtr<RTCDTMFSender> m_dtmfSender;
+    const RefPtr<RTCDTMFSender> m_dtmfSender;
     std::unique_ptr<RTCRtpTransform> m_transform;
     const RefPtr<RTCEncodedStreamProducer> m_encodedStreamProducer;
 #if !RELEASE_LOG_DISABLED

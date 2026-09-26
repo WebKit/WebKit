@@ -188,12 +188,12 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_imagesByUsemap;
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
-    std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    const std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 
-    std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
-    RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
+    const std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
+    const RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
 
-    std::unique_ptr<SVGResourcesMap> m_svgResourcesMap;
+    const std::unique_ptr<SVGResourcesMap> m_svgResourcesMap;
 };
 
 TreeScope* NODELETE commonTreeScope(Node*, Node*);

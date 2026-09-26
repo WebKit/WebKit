@@ -101,7 +101,7 @@ bool DocumentMediaElement::setupAndCallCNNQuirkJS(NOESCAPE const JSSetupFunction
 DOMWrapperWorld& DocumentMediaElement::ensureIsolatedWorld()
 {
     if (!m_isolatedWorld) {
-        m_isolatedWorld = DOMWrapperWorld::create(Ref { commonVM() }, DOMWrapperWorld::Type::Internal, "Media Controls (Document)"_s);
+        lazyInitialize(m_isolatedWorld, DOMWrapperWorld::create(Ref { commonVM() }, DOMWrapperWorld::Type::Internal, "Media Controls (Document)"_s));
         m_isolatedWorld->setIsMediaControls();
     }
     return *m_isolatedWorld;

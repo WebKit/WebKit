@@ -136,7 +136,7 @@ void TreeScope::deref() const
 IdTargetObserverRegistry& TreeScope::ensureIdTargetObserverRegistry()
 {
     if (!m_idTargetObserverRegistry)
-        m_idTargetObserverRegistry = makeUnique<IdTargetObserverRegistry>();
+        lazyInitialize(m_idTargetObserverRegistry, makeUnique<IdTargetObserverRegistry>());
     return *m_idTargetObserverRegistry;
 }
 
@@ -633,14 +633,14 @@ TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
 RadioButtonGroups& TreeScope::radioButtonGroups()
 {
     if (!m_radioButtonGroups)
-        m_radioButtonGroups = makeUnique<RadioButtonGroups>();
+        lazyInitialize(m_radioButtonGroups, makeUnique<RadioButtonGroups>());
     return *m_radioButtonGroups;
 }
 
 CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
 {
     if (!m_adoptedStyleSheets) [[unlikely]]
-        m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(m_rootNode.get());
+        lazyInitialize(m_adoptedStyleSheets, CSSStyleSheetObservableArray::create(m_rootNode.get()));
     return *m_adoptedStyleSheets;
 }
 
@@ -664,7 +664,7 @@ ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&& 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
 {
     if (!m_svgResourcesMap)
-        const_cast<TreeScope&>(*this).m_svgResourcesMap = makeUnique<SVGResourcesMap>();
+        lazyInitialize(m_svgResourcesMap, makeUnique<SVGResourcesMap>());
     return *m_svgResourcesMap;
 }
 

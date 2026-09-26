@@ -175,7 +175,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
         return { };
 
     if (!m_avCaptureDevices)
-        m_avCaptureDevices = adoptNS([[NSMutableArray alloc] init]);
+        lazyInitialize(m_avCaptureDevices, adoptNS([[NSMutableArray alloc] init]));
 
     updateCachedAVCaptureDevices();
 

@@ -46,7 +46,7 @@ ElementAnimationRareData::~ElementAnimationRareData()
 KeyframeEffectStack& ElementAnimationRareData::ensureKeyframeEffectStack()
 {
     if (!m_keyframeEffectStack)
-        m_keyframeEffectStack = makeUnique<KeyframeEffectStack>();
+        lazyInitialize(m_keyframeEffectStack, makeUnique<KeyframeEffectStack>());
     return *m_keyframeEffectStack.get();
 }
 

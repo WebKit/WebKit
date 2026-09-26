@@ -405,7 +405,7 @@ private:
     CaptureDevice m_device;
 
 #if PLATFORM(COCOA)
-    std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
+    const std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
     std::atomic<bool> m_canUseIOSurface { false };
 #endif
 

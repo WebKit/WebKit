@@ -435,7 +435,7 @@ private:
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
-    std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
+    const std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
     friend class WebCoreAVFResourceLoader;
     mutable Lock m_resourceLoaderMapLock;
@@ -447,13 +447,13 @@ private:
 
     Vector<Ref<AudioTrackPrivateAVFObjC>> m_audioTracks;
     Vector<Ref<VideoTrackPrivateAVFObjC>> m_videoTracks;
-    RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
-    RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
+    const RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
+    const RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
 
     ThreadSafeWeakPtr<InbandTextTrackPrivateAVF> m_currentTextTrack;
 
 #if ENABLE(DATACUE_VALUE)
-    RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
+    const RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
 #endif
 
     MemoryCompactRobinHoodHashMap<String, Ref<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;

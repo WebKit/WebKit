@@ -216,7 +216,7 @@ void ShadowRoot::moveShadowRootToNewDocument(Document& oldDocument, Document& ne
 StyleSheetList& ShadowRoot::styleSheets()
 {
     if (!m_styleSheetList)
-        m_styleSheetList = StyleSheetList::create(*this);
+        lazyInitialize(m_styleSheetList, StyleSheetList::create(*this));
     return *m_styleSheetList;
 }
 
@@ -341,9 +341,9 @@ void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& s
     ASSERT(&slot.rootNode() == this);
     if (!m_slotAssignment) {
         if (m_slotAssignmentMode == SlotAssignmentMode::Named)
-            m_slotAssignment = makeUnique<NamedSlotAssignment>();
+            lazyInitialize(m_slotAssignment, makeUnique<NamedSlotAssignment>());
         else
-            m_slotAssignment = makeUnique<ManualSlotAssignment>();
+            lazyInitialize(m_slotAssignment, makeUnique<ManualSlotAssignment>());
     }
 
     return m_slotAssignment->addSlotElementByName(name, slot, *this);

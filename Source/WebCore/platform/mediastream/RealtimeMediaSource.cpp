@@ -349,7 +349,7 @@ void RealtimeMediaSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrame
             return videoFrame;
 
         if (!m_rotationSession)
-            m_rotationSession = makeUnique<ImageRotationSessionVT>(m_canUseIOSurface ? ImageRotationSessionVT::ShouldUseIOSurface::Yes : ImageRotationSessionVT::ShouldUseIOSurface::No);
+            lazyInitialize(m_rotationSession, makeUnique<ImageRotationSessionVT>(m_canUseIOSurface ? ImageRotationSessionVT::ShouldUseIOSurface::Yes : ImageRotationSessionVT::ShouldUseIOSurface::No));
 
         RefPtr rotatedVideoFrame = m_rotationSession->applyRotation(videoFrame);
         if (!rotatedVideoFrame)

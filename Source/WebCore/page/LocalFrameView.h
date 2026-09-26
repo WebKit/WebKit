@@ -1012,7 +1012,7 @@ private:
     LocalFrameViewLayoutContext m_layoutContext;
 
     HashSet<SingleThreadWeakRef<Widget>> m_widgetsInRenderTree;
-    std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
+    const std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
     std::unique_ptr<SingleThreadWeakKeyHashSet<RenderElement>> m_slowRepaintObjects;
 
     HashMap<ScrollingNodeID, WeakPtr<ScrollableArea>> m_scrollingNodeIDToPluginScrollableAreaMap;
@@ -1092,10 +1092,10 @@ private:
 
     IntSize m_scrollGeometryContentSize;
 
-    std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
-    std::unique_ptr<ScrollableAreaSet> m_scrollableAreasForAnimatedScroll;
-    std::unique_ptr<ScrollableAreaSet> m_anchoringScrollableAreas;
-    std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
+    const std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
+    const std::unique_ptr<ScrollableAreaSet> m_scrollableAreasForAnimatedScroll;
+    const std::unique_ptr<ScrollableAreaSet> m_anchoringScrollableAreas;
+    const std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
     mutable std::optional<bool> m_hasAnchorPositionedViewportConstrainedObjects;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
@@ -1111,7 +1111,7 @@ private:
     SelectionRevealMode m_selectionRevealModeForFocusedElement { SelectionRevealMode::DoNotReveal };
     ScrollableAreaSet m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate;
 
-    std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
+    const std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
 
     std::optional<UserScrollType> m_lastUserScrollType;
     bool m_wasEverScrolledExplicitlyByUser { false };

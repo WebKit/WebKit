@@ -67,12 +67,12 @@ private:
     const WaveShaperProcessor* waveShaperProcessor() const { return downcast<WaveShaperProcessor>(processor()); }
 
     // Oversampling.
-    std::unique_ptr<AudioFloatArray> m_tempBuffer;
-    std::unique_ptr<AudioFloatArray> m_tempBuffer2;
-    std::unique_ptr<UpSampler> m_upSampler;
-    std::unique_ptr<DownSampler> m_downSampler;
-    std::unique_ptr<UpSampler> m_upSampler2;
-    std::unique_ptr<DownSampler> m_downSampler2;
+    const std::unique_ptr<AudioFloatArray> m_tempBuffer;
+    const std::unique_ptr<AudioFloatArray> m_tempBuffer2;
+    const std::unique_ptr<UpSampler> m_upSampler;
+    const std::unique_ptr<DownSampler> m_downSampler;
+    const std::unique_ptr<UpSampler> m_upSampler2;
+    const std::unique_ptr<DownSampler> m_downSampler2;
 };
 
 } // namespace WebCore

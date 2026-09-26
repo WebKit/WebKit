@@ -138,7 +138,7 @@ private:
     uint64_t m_fetchedRecordsSize { 0 };
     IDBKeyData m_currentKeyForUniqueness;
 
-    std::unique_ptr<SQLiteStatement> m_preIndexStatement;
+    const std::unique_ptr<SQLiteStatement> m_preIndexStatement;
     std::unique_ptr<SQLiteStatement> m_statement;
     std::unique_ptr<SQLiteStatement> m_cachedObjectStoreStatement;
 

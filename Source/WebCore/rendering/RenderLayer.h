@@ -1564,7 +1564,7 @@ private:
         SingleThreadWeakPtr<RenderSVGHiddenContainer> enclosingHiddenOrResourceContainer;
         Vector<SVGPaintOrderLayerItem> childrenInDOMOrder;
     };
-    std::unique_ptr<SVGData> m_svgData;
+    const std::unique_ptr<SVGData> m_svgData;
 
     PaintFrequencyTracker m_paintFrequencyTracker;
 };

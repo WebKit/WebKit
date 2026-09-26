@@ -102,7 +102,7 @@ private:
     WorkQueue& workQueue() { return m_processingQueue.get(); }
 
 private:
-    RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
+    const RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     RetainPtr<PlatformLayer> m_rootLayer;
     RenderPolicy m_renderPolicy { RenderPolicy::TimingInfo };

@@ -148,7 +148,7 @@ void FrameInspectorController::createLazyAgents()
         return;
 
     // Create debugger before agents that depend on it.
-    m_debugger = makeUnique<FrameDebugger>(*frame);
+    lazyInitialize(m_debugger, makeUnique<FrameDebugger>(*frame));
 
     if (CheckedPtr scriptProfilerAgent = m_instrumentingAgents->persistentScriptProfilerAgent())
         scriptProfilerAgent->installProfilingClientIfTracking(*m_debugger);

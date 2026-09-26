@@ -247,7 +247,7 @@ protected:
 
 private:
     GlobalWindowIdentifier m_identifier;
-    RefPtr<Location> m_location;
+    const RefPtr<Location> m_location;
     const DOMWindowType m_type;
 };
 

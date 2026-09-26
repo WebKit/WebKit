@@ -78,7 +78,7 @@ CSSStyleRule::~CSSStyleRule()
 CSSStyleProperties& CSSStyleRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(protect(m_styleRule)->mutableProperties()), protect(*this));
+        lazyInitialize(m_propertiesCSSOMWrapper, StyleRuleCSSStyleProperties::create(protect(protect(m_styleRule)->mutableProperties()), protect(*this)));
     return *m_propertiesCSSOMWrapper;
 }
 
@@ -226,7 +226,7 @@ void CSSStyleRule::reattach(StyleRuleBase& rule)
         m_styleRule = downcast<StyleRule>(rule);
         
     if (m_propertiesCSSOMWrapper)
-        protect(m_propertiesCSSOMWrapper)->reattach(protect(protect(m_styleRule)->mutableProperties()));
+        m_propertiesCSSOMWrapper->reattach(protect(protect(m_styleRule)->mutableProperties()));
 }
 
 ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigned index)

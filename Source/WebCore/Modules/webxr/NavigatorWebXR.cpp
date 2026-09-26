@@ -40,7 +40,7 @@ WebXRSystem& NavigatorWebXR::xr(Navigator& navigatorObject)
 {
     auto& navigator = NavigatorWebXR::from(navigatorObject);
     if (!navigator.m_xr)
-        navigator.m_xr = WebXRSystem::create(navigatorObject);
+        lazyInitialize(navigator.m_xr, WebXRSystem::create(navigatorObject));
     return *navigator.m_xr;
 }
 

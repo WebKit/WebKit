@@ -325,7 +325,7 @@ private:
     MediaTime m_lastSeekTime;
     SeekState m_seekState { SeekCompleted };
     std::optional<GenericPromise::AutoRejectProducer> m_seekPromise;
-    RetainPtr<id> m_timeJumpedObserver;
+    const RetainPtr<id> m_timeJumpedObserver;
     bool m_isSynchronizerSeeking { false };
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };

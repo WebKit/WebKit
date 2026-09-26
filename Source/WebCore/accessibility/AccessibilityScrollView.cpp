@@ -354,7 +354,7 @@ void AccessibilityScrollView::addLocalFrameChild()
         if (RefPtr localFrame = downcast<AXLocalFrame>(cache->create(AccessibilityRole::LocalFrame))) {
             localFrame->setLocalFrameView(localFrameView.get());
             localFrame->setWrapperFrom(*frameRoot);
-            m_localFrame = WTF::move(localFrame);
+            lazyInitialize(m_localFrame, localFrame.releaseNonNull());
         }
     }
 

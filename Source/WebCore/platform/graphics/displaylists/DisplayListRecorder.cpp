@@ -78,7 +78,7 @@ bool Recorder::decomposeDrawGlyphsIfNeeded(const Font& font, std::span<const Gly
 #if USE(CORE_TEXT)
     if (m_drawGlyphsMode == DrawGlyphsMode::Deconstruct) {
         if (!m_drawGlyphsRecorder)
-            m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale, DrawGlyphsRecorder::DeriveFontFromContext::No);
+            lazyInitialize(m_drawGlyphsRecorder, makeUnique<DrawGlyphsRecorder>(*this, m_initialScale, DrawGlyphsRecorder::DeriveFontFromContext::No));
         m_drawGlyphsRecorder->drawGlyphs(font, glyphs, advances, localAnchor, smoothingMode);
         return true;
     }

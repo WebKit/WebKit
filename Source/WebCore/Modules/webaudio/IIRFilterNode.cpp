@@ -117,7 +117,7 @@ ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& sc
 IIRFilterNode::IIRFilterNode(BaseAudioContext& context, const Vector<double>& feedforward, const Vector<double>& feedback, bool isFilterStable)
     : AudioBasicProcessorNode(context, NodeTypeIIRFilter)
 {
-    m_processor = makeUnique<IIRProcessor>(context.sampleRate(), 1, feedforward, feedback, isFilterStable);
+    lazyInitialize(m_processor, makeUnique<IIRProcessor>(context.sampleRate(), 1, feedforward, feedback, isFilterStable));
 
     initialize();
 }

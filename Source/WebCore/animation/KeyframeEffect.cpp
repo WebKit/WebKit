@@ -3246,11 +3246,10 @@ bool KeyframeEffect::preventsAnimationReadiness() const
 #if ENABLE(THREADED_ANIMATIONS)
 KeyframeEffect::StackMembershipMutationScope::StackMembershipMutationScope(KeyframeEffect& effect)
     : m_effect(&effect)
+    , m_originalTarget(effect.m_target)
 {
-    if (effect.m_target) {
-        m_originalTarget = effect.m_target;
+    if (effect.m_target)
         m_originalPseudoElementIdentifier = effect.m_pseudoElementIdentifier;
-    }
 }
 
 KeyframeEffect::StackMembershipMutationScope::~StackMembershipMutationScope()

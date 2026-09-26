@@ -69,7 +69,7 @@ private:
         return m_font->isInterstitial();
     }
 
-    RefPtr<Font> m_font;
+    const RefPtr<Font> m_font;
 };
 
 FontRanges::FontRanges(RefPtr<Font>&& font)

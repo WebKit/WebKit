@@ -42,7 +42,7 @@ public:
 private:
     CoreAudioCaptureSourceFactoryIOS();
 
-    RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
+    const RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
 };
 
 } // namespace WebCore

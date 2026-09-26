@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    RefPtr<LocalFrame> m_frame;
+    const RefPtr<LocalFrame> m_frame;
 
     static unsigned s_globalNavigationDisableCount;
 };

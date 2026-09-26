@@ -111,7 +111,7 @@ IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Docum
         auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options), includeObscuredInsets);
         if (observer.hasException())
             return nullptr;
-        m_observer = observer.releaseReturnValue();
+        lazyInitialize(m_observer, observer.releaseReturnValue());
     }
     return m_observer.get();
 }
@@ -205,8 +205,8 @@ HadInitialVisibleContentVisibilityDetermination ContentVisibilityDocumentState::
     auto hadInitialVisibleContentVisibilityDetermination = HadInitialVisibleContentVisibilityDetermination::No;
     if (!elementsToCheck.isEmpty()) {
         Ref document = elementsToCheck.first()->document();
-        if (protect(m_observer)->updateObservations(*protect(document->frame())) == IntersectionObserver::NeedNotify::Yes)
-            protect(m_observer)->notify();
+        if (m_observer->updateObservations(*protect(document->frame())) == IntersectionObserver::NeedNotify::Yes)
+            m_observer->notify();
 
         for (auto& element : elementsToCheck) {
             checkRelevancyOfContentVisibilityElement(element, { ContentRelevancy::OnScreen });

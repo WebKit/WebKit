@@ -85,7 +85,7 @@ protected:
     void finishCreation(JSC::VM&, JSWindowProxy*);
     void initStaticGlobals(JSC::VM&);
 
-    RefPtr<JSC::WatchpointSet> m_windowCloseWatchpoints;
+    const RefPtr<JSC::WatchpointSet> m_windowCloseWatchpoints;
 
     static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 

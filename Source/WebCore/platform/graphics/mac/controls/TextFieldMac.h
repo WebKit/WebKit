@@ -44,7 +44,7 @@ private:
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
-    RetainPtr<NSTextFieldCell> m_textFieldCell;
+    const RetainPtr<NSTextFieldCell> m_textFieldCell;
 };
 
 } // namespace WebCore

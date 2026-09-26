@@ -76,14 +76,14 @@ SkiaPaintingEngine::SkiaPaintingEngine(sk_sp<GrContextThreadSafeProxy>&& threadS
 #if USE(TEXTURE_MAPPER)
     if (canPerformAcceleratedRendering()) {
         if (auto numberOfGPUThreads = numberOfGPUPaintingThreads())
-            m_paintingWorkerPool = WorkerPool::create("SkiaGPUWorker"_s, numberOfGPUThreads);
+            lazyInitialize(m_paintingWorkerPool, WorkerPool::create("SkiaGPUWorker"_s, numberOfGPUThreads));
 
         return;
     }
 #endif
 
     if (auto numberOfCPUThreads = numberOfCPUPaintingThreads())
-        m_paintingWorkerPool = WorkerPool::create("SkiaCPUWorker"_s, numberOfCPUThreads);
+        lazyInitialize(m_paintingWorkerPool, WorkerPool::create("SkiaCPUWorker"_s, numberOfCPUThreads));
 }
 
 SkiaPaintingEngine::~SkiaPaintingEngine() = default;
@@ -164,7 +164,7 @@ RefPtr<SkiaGPUAtlas> SkiaPaintingEngine::createAtlas(const SkiaImageAtlasLayout&
 
     // DMA-buf path: create atlas without uploading, dispatch pixel writes to worker.
     if (!m_uploadWorkQueue)
-        m_uploadWorkQueue = WorkQueue::create("AtlasUpload"_s);
+        lazyInitialize(m_uploadWorkQueue, WorkQueue::create("AtlasUpload"_s));
     uploadCondition.addPending();
     m_uploadWorkQueue->dispatch([atlas = Ref { *atlas }]() mutable {
         atlas->uploadImages();

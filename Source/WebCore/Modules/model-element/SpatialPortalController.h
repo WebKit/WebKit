@@ -188,7 +188,7 @@ private:
     RefPtr<IntersectionObserver> m_intersectionObserver;
     RefPtr<PortalVisibilityChangeClient> m_visibilityChangeClient;
 #if ENABLE(TOUCH_EVENTS)
-    RefPtr<SpatialPortalEventListener> m_eventListener;
+    const RefPtr<SpatialPortalEventListener> m_eventListener;
 #endif
     std::optional<LayoutSize> m_lastPushedContentSize;
     std::optional<TransformationMatrix> m_resolvedPortalTransform;
@@ -197,7 +197,7 @@ private:
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     URL m_environmentMapURL;
     RefPtr<SharedBuffer> m_environmentMapData;
-    RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
+    const RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
     EnvironmentMapKind m_environmentMapKind { EnvironmentMapKind::Default };
     bool m_environmentMapFailed { false };
 #endif

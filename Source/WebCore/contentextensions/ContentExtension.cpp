@@ -110,10 +110,10 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
     css.append(ContentExtensionsBackend::displayNoneCSSRule());
     css.append('}');
 
-    m_globalDisplayNoneStyleSheet = StyleSheetContents::create(contentExtensionCSSParserContext());
-    m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);
-    if (!protect(m_globalDisplayNoneStyleSheet)->parseString(css.toString()))
-        m_globalDisplayNoneStyleSheet = nullptr;
+    Ref styleSheet = StyleSheetContents::create(contentExtensionCSSParserContext());
+    styleSheet->setIsUserStyleSheet(true);
+    if (styleSheet->parseString(css.toString()))
+        lazyInitialize(m_globalDisplayNoneStyleSheet, WTF::move(styleSheet));
 
     // These actions don't need to be applied individually any more. They will all be applied to every page as a precompiled style sheet.
     m_universalActions.removeAllMatching(inGlobalDisplayNoneStyleSheet);

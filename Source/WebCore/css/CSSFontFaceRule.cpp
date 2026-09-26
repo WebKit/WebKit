@@ -47,7 +47,7 @@ CSSFontFaceRule::~CSSFontFaceRule()
 CSSFontFaceDescriptors& CSSFontFaceRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = CSSFontFaceDescriptors::create(protect(m_fontFaceRule)->mutableProperties(), *this);
+        lazyInitialize(m_propertiesCSSOMWrapper, CSSFontFaceDescriptors::create(protect(m_fontFaceRule)->mutableProperties(), *this));
     return *m_propertiesCSSOMWrapper;
 }
 
@@ -73,7 +73,7 @@ void CSSFontFaceRule::reattach(StyleRuleBase& rule)
 {
     m_fontFaceRule = downcast<StyleRuleFontFace>(rule);
     if (m_propertiesCSSOMWrapper)
-        protect(m_propertiesCSSOMWrapper)->reattach(protect(protect(m_fontFaceRule)->mutableProperties()));
+        m_propertiesCSSOMWrapper->reattach(protect(protect(m_fontFaceRule)->mutableProperties()));
 }
 
 } // namespace WebCore

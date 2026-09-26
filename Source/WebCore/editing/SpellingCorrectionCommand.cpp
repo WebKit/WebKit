@@ -99,7 +99,7 @@ Ref<SpellingCorrectionCommand> SpellingCorrectionCommand::create(const SimpleRan
 
 bool SpellingCorrectionCommand::willApplyCommand()
 {
-    m_correctionFragment = createFragmentFromText(m_rangeToBeCorrected, m_correction);
+    lazyInitialize(m_correctionFragment, createFragmentFromText(m_rangeToBeCorrected, m_correction));
     return CompositeEditCommand::willApplyCommand();
 }
 
@@ -137,7 +137,7 @@ Vector<Ref<StaticRange>> SpellingCorrectionCommand::targetRanges() const
 RefPtr<DataTransfer> SpellingCorrectionCommand::inputEventDataTransfer() const
 {
     if (!isEditingTextAreaOrTextInput())
-        return DataTransfer::createForInputEvent(m_correction, serializeFragment(*protect(m_correctionFragment), SerializedNodes::SubtreeIncludingNode));
+        return DataTransfer::createForInputEvent(m_correction, serializeFragment(*m_correctionFragment, SerializedNodes::SubtreeIncludingNode));
 
     return CompositeEditCommand::inputEventDataTransfer();
 }

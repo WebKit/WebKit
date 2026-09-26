@@ -53,7 +53,7 @@ void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 
 void CachedXSLStyleSheet::setEncoding(const String& chs)
 {
-    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 ASCIILiteral CachedXSLStyleSheet::encoding() const
@@ -66,7 +66,7 @@ void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     if (data) {
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_sheet = protect(m_decoder)->decodeAndFlush(contiguousData->span());
+        m_sheet = m_decoder->decodeAndFlush(contiguousData->span());
         m_data = WTF::move(contiguousData);
     } else {
         m_data = nullptr;

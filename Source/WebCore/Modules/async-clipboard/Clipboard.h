@@ -103,7 +103,7 @@ private:
         Vector<std::optional<PasteboardCustomData>> m_dataToWrite;
         RefPtr<DeferredPromise> m_promise;
         unsigned m_pendingItemCount;
-        std::unique_ptr<Pasteboard> m_pasteboard;
+        const std::unique_ptr<Pasteboard> m_pasteboard;
         int64_t m_changeCountAtStart { 0 };
     };
 

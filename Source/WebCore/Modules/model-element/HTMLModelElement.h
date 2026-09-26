@@ -378,7 +378,7 @@ private:
     RefPtr<Model> m_model;
     UniqueRef<ReadyPromise> m_readyPromise;
 #if ENABLE(TOUCH_EVENTS)
-    RefPtr<HTMLModelElementEventListener> m_eventListener;
+    const RefPtr<HTMLModelElementEventListener> m_eventListener;
 #endif
     bool m_dataComplete { false };
     bool m_isDragging { false };
@@ -416,7 +416,7 @@ private:
     EnvironmentMapKind m_environmentMapKind { EnvironmentMapKind::Default };
     bool m_environmentMapFailed { false };
 
-    RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
+    const RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
     UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif
 
@@ -432,7 +432,7 @@ private:
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
     using ScreenPropertiesChangedObserver = Observer<void(uint32_t)>;
-    RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
+    const RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
     float m_currentEDRHeadroom { 1.f };
     bool m_suppressEDR { false };
 #endif

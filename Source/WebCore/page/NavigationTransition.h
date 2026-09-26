@@ -61,8 +61,8 @@ private:
     const Ref<NavigationDestination> m_destination;
     const Ref<DeferredPromise> m_committed;
     const Ref<DeferredPromise> m_finished;
-    RefPtr<DOMPromise> m_committedDOMPromise;
-    RefPtr<DOMPromise> m_finishedDOMPromise;
+    const RefPtr<DOMPromise> m_committedDOMPromise;
+    const RefPtr<DOMPromise> m_finishedDOMPromise;
 };
 
 } // namespace WebCore

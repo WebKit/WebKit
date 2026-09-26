@@ -64,7 +64,7 @@ private:
     }
 
     String m_message;
-    RefPtr<WebGPU::ValidationError> m_backing;
+    const RefPtr<WebGPU::ValidationError> m_backing;
 };
 
 }

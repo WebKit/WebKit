@@ -60,7 +60,7 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
 {
     ASSERT(is<Document>(scriptExecutionContext()));
     if (!m_webVTTParser)
-        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), protect(downcast<Document>(*scriptExecutionContext())));
+        lazyInitialize(m_webVTTParser, makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), protect(downcast<Document>(*scriptExecutionContext()))));
     return *m_webVTTParser;
 }
 

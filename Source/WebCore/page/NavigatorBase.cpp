@@ -154,7 +154,7 @@ Vector<String> NavigatorBase::languages()
 StorageManager& NavigatorBase::storage()
 {
     if (!m_storageManager)
-        m_storageManager = StorageManager::create(*this);
+        lazyInitialize(m_storageManager, StorageManager::create(*this));
 
     return *m_storageManager;
 }
@@ -162,7 +162,7 @@ StorageManager& NavigatorBase::storage()
 WebLockManager& NavigatorBase::locks()
 {
     if (!m_webLockManager)
-        m_webLockManager = WebLockManager::create(*this);
+        lazyInitialize(m_webLockManager, WebLockManager::create(*this));
 
     return *m_webLockManager;
 }
@@ -171,7 +171,7 @@ ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     ASSERT(!scriptExecutionContext() || scriptExecutionContext()->settingsValues().serviceWorkersEnabled);
     if (!m_serviceWorkerContainer)
-        m_serviceWorkerContainer = ServiceWorkerContainer::create(protect(scriptExecutionContext()).get(), *this).moveToUniquePtr();
+        lazyInitialize(m_serviceWorkerContainer, ServiceWorkerContainer::create(protect(scriptExecutionContext()).get(), *this).moveToUniquePtr());
     return *m_serviceWorkerContainer;
 }
 

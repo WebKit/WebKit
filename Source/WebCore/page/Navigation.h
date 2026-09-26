@@ -105,8 +105,8 @@ private:
     JSValueInWrappedObject m_info;
     RefPtr<SerializedScriptValue> m_serializedState;
     RefPtr<NavigationHistoryEntry> m_committedToEntry;
-    Ref<DeferredPromise> m_committedPromise;
-    Ref<DeferredPromise> m_finishedPromise;
+    const Ref<DeferredPromise> m_committedPromise;
+    const Ref<DeferredPromise> m_finishedPromise;
     Identifier m_identifier;
 };
 

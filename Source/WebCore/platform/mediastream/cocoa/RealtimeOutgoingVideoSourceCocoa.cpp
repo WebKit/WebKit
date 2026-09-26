@@ -125,7 +125,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     RefPtr<VideoFrame> rotatedVideoFrame;
     if (isApplyingRotation) {
         if (!m_rotationSession)
-            m_rotationSession = makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::ShouldUseIOSurface::No);
+            lazyInitialize(m_rotationSession, makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::ShouldUseIOSurface::No));
         rotatedVideoFrame = m_rotationSession->applyRotation(videoFrame);
     }
     RetainPtr<CVPixelBufferRef> convertedBuffer = rotatedVideoFrame ? rotatedVideoFrame->pixelBuffer() : videoFrame.pixelBuffer();

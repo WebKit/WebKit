@@ -50,7 +50,7 @@ private:
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
 
     String m_sheet;
-    RefPtr<TextResourceDecoder> m_decoder;
+    const RefPtr<TextResourceDecoder> m_decoder;
 };
 
 } // namespace WebCore

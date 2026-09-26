@@ -61,7 +61,7 @@ private:
     const Ref<CompiledContentExtension> m_compiledExtension;
     URL m_extensionBaseURL;
 
-    RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;
+    const RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;
     void compileGlobalDisplayNoneStyleSheet();
 
     void populateTopURLActionCacheIfNeeded(const URL& topURL) const;

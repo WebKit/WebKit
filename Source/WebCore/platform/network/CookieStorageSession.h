@@ -126,8 +126,8 @@ private:
     const PAL::SessionID m_sessionID;
     const bool m_isInMemoryCookieStore { false };
 #if PLATFORM(COCOA)
-    RetainPtr<CFURLStorageSessionRef> m_platformSession;
-    RetainPtr<CFHTTPCookieStorageRef> m_platformCookieStorage;
+    const RetainPtr<CFURLStorageSessionRef> m_platformSession;
+    const RetainPtr<CFHTTPCookieStorageRef> m_platformCookieStorage;
 #endif
     CredentialStorage m_credentialStorage;
 

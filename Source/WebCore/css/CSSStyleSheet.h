@@ -136,10 +136,10 @@ public:
         ~RuleMutationScope();
 
     private:
-        RefPtr<CSSStyleSheet> m_styleSheet;
+        const RefPtr<CSSStyleSheet> m_styleSheet;
         RuleMutationType m_mutationType;
         ContentsClonedForMutation m_contentsClonedForMutation;
-        RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;
+        const RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;
         String m_modifiedKeyframesRuleName;
     };
 

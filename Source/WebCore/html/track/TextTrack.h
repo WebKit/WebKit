@@ -177,7 +177,7 @@ private:
 #endif
 
     VTTRegionList& ensureVTTRegionList();
-    RefPtr<VTTRegionList> m_regions;
+    const RefPtr<VTTRegionList> m_regions;
 
     TextTrackCueList& ensureTextTrackCueList();
     Kind convertKind(const AtomString&);

@@ -326,7 +326,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
     }
 
     if (!m_audioDecoder)
-        m_audioDecoder = makeUnique<AsyncAudioDecoder>();
+        WTF::lazyInitialize(m_audioDecoder, makeUnique<AsyncAudioDecoder>());
 
     audioData->pin();
 
@@ -984,21 +984,21 @@ PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
     switch (type) {
     case OscillatorType::Square:
         if (!m_cachedPeriodicWaveSquare)
-            m_cachedPeriodicWaveSquare = PeriodicWave::createSquare(sampleRate());
+            WTF::lazyInitialize(m_cachedPeriodicWaveSquare, PeriodicWave::createSquare(sampleRate()));
         return *m_cachedPeriodicWaveSquare;
     case OscillatorType::Sawtooth:
         if (!m_cachedPeriodicWaveSawtooth)
-            m_cachedPeriodicWaveSawtooth = PeriodicWave::createSawtooth(sampleRate());
+            WTF::lazyInitialize(m_cachedPeriodicWaveSawtooth, PeriodicWave::createSawtooth(sampleRate()));
         return *m_cachedPeriodicWaveSawtooth;
     case OscillatorType::Triangle:
         if (!m_cachedPeriodicWaveTriangle)
-            m_cachedPeriodicWaveTriangle = PeriodicWave::createTriangle(sampleRate());
+            WTF::lazyInitialize(m_cachedPeriodicWaveTriangle, PeriodicWave::createTriangle(sampleRate()));
         return *m_cachedPeriodicWaveTriangle;
     case OscillatorType::Custom:
         RELEASE_ASSERT_NOT_REACHED();
     case OscillatorType::Sine:
         if (!m_cachedPeriodicWaveSine)
-            m_cachedPeriodicWaveSine = PeriodicWave::createSine(sampleRate());
+            WTF::lazyInitialize(m_cachedPeriodicWaveSine, PeriodicWave::createSine(sampleRate()));
         return *m_cachedPeriodicWaveSine;
     }
     RELEASE_ASSERT_NOT_REACHED();

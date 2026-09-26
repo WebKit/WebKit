@@ -231,9 +231,9 @@ private:
 
     RefPtr<SharedBuffer> m_pendingAppendData;
 
-    RefPtr<VideoTrackList> m_videoTracks;
-    RefPtr<AudioTrackList> m_audioTracks;
-    RefPtr<TextTrackList> m_textTracks;
+    const RefPtr<VideoTrackList> m_videoTracks;
+    const RefPtr<AudioTrackList> m_audioTracks;
+    const RefPtr<TextTrackList> m_textTracks;
 
     Vector<AtomString> m_videoCodecs;
     Vector<AtomString> m_audioCodecs;

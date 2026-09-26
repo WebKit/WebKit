@@ -89,7 +89,7 @@ private:
 
     const Ref<RTCEncodedStreamProducer> m_streamProducer;
 
-    RefPtr<RTCRtpTransformBackend> m_backend;
+    const RefPtr<RTCRtpTransformBackend> m_backend;
     RefPtr<PendingActivity<RTCRtpScriptTransformer>> m_pendingActivity;
 
     bool m_isSender { false };

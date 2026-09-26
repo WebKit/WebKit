@@ -106,9 +106,9 @@ private:
     bool m_isSwitchHeld { false };
     Seconds m_switchAnimationVisuallyOnStartTime { 0_s };
     Seconds m_switchAnimationHeldStartTime { 0_s };
-    std::unique_ptr<Timer> m_switchAnimationTimer;
+    const std::unique_ptr<Timer> m_switchAnimationTimer;
 #if ENABLE(IOS_TOUCH_EVENTS)
-    std::unique_ptr<Timer> m_switchHeldTimer;
+    const std::unique_ptr<Timer> m_switchHeldTimer;
     std::optional<unsigned> m_switchPointerTrackingTouchIdentifier { std::nullopt };
 #endif
 };

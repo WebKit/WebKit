@@ -59,7 +59,7 @@ private:
     bool canResizeVideoFrames() const final { return true; }
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
 
-    RefPtr<GStreamerVideoCapturer> m_capturer;
+    const RefPtr<GStreamerVideoCapturer> m_capturer;
 };
 
 } // namespace WebCore

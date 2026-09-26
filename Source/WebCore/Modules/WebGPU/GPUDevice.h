@@ -197,7 +197,7 @@ private:
     const UniqueRef<LostPromise> m_lostPromise;
     const Ref<WebGPU::Device> m_backing;
     const Ref<GPUQueue> m_queue;
-    RefPtr<GPUPipelineLayout> m_autoPipelineLayout;
+    const RefPtr<GPUPipelineLayout> m_autoPipelineLayout;
     WeakHashSet<GPUBuffer> m_buffersToUnmap;
     WeakHashSet<GPUBuffer> m_buffers;
     WeakHashSet<GPUTexture> m_textures;

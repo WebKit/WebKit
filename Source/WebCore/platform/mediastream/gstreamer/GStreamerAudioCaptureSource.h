@@ -71,7 +71,7 @@ private:
     bool isCaptureSource() const final { return true; }
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
-    RefPtr<GStreamerAudioCapturer> m_capturer;
+    const RefPtr<GStreamerAudioCapturer> m_capturer;
 };
 
 } // namespace WebCore

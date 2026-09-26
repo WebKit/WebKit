@@ -76,7 +76,7 @@ private:
 
     Ref<StyleRule> m_styleRule;
     const Ref<DeclaredStylePropertyMap> m_styleMap;
-    RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
+    const RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     const std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;

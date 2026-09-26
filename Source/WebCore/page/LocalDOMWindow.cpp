@@ -3136,7 +3136,7 @@ void LocalDOMWindow::eventListenersDidChange()
 CookieStore& LocalDOMWindow::cookieStore()
 {
     if (!m_cookieStore)
-        m_cookieStore = CookieStore::create(protect(document()).get());
+        lazyInitialize(m_cookieStore, CookieStore::create(protect(document()).get()));
     return *m_cookieStore;
 }
 

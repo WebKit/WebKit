@@ -43,7 +43,7 @@ constexpr double maximumAllowedDelayTime = 180;
 inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
     : AudioBasicProcessorNode(context, NodeTypeDelay)
 {
-    m_processor = makeUnique<DelayProcessor>(context, context.sampleRate(), 1, maxDelayTime);
+    lazyInitialize(m_processor, makeUnique<DelayProcessor>(context, context.sampleRate(), 1, maxDelayTime));
 
     // Initialize so that AudioParams can be processed.
     initialize();

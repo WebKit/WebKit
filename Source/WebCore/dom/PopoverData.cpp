@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PopoverData);
 Ref<ToggleEventTask> PopoverData::ensureToggleEventTask(Element& element)
 {
     if (!m_toggleEventTask)
-        m_toggleEventTask = ToggleEventTask::create(element);
+        lazyInitialize(m_toggleEventTask, ToggleEventTask::create(element));
 
     return *m_toggleEventTask;
 }

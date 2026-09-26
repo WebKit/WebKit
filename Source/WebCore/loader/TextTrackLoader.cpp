@@ -99,7 +99,7 @@ void TextTrackLoader::processNewCueData(CachedResource& resource)
         RefPtr document = m_document;
         if (!document)
             return;
-        m_cueParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), *document);
+        lazyInitialize(m_cueParser, makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), *document));
     }
 
     while (m_parseOffset < buffer->size()) {

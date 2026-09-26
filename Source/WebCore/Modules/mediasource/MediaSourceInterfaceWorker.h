@@ -59,7 +59,7 @@ private:
     explicit MediaSourceInterfaceWorker(Ref<MediaSourceHandle>&&);
 
     const Ref<MediaSourceHandle> m_handle;
-    RefPtr<MediaSourcePrivateClient> m_client;
+    const RefPtr<MediaSourcePrivateClient> m_client;
 };
 
 } // namespace WebCore

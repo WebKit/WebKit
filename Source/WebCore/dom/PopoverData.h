@@ -105,7 +105,7 @@ private:
     PopoverState m_popoverState { PopoverState::None };
     PopoverVisibilityState m_visibilityState { PopoverVisibilityState::Hidden };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
-    RefPtr<ToggleEventTask> m_toggleEventTask;
+    const RefPtr<ToggleEventTask> m_toggleEventTask;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_invoker;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_hintStackParent;
     bool m_isHidingOrShowingPopover = false;

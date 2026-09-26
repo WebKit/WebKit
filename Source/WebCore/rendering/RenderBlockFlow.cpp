@@ -4577,7 +4577,7 @@ RenderBlockFlowRareData& RenderBlockFlow::ensureRareBlockFlowData()
 void RenderBlockFlow::materializeRareBlockFlowData()
 {
     ASSERT(!hasRareBlockFlowData());
-    m_rareBlockFlowData = makeUnique<RenderBlockFlowRareData>(*this);
+    lazyInitialize(m_rareBlockFlowData, makeUnique<RenderBlockFlowRareData>(*this));
 }
 
 static inline bool isVisibleRenderText(const RenderObject& renderer)

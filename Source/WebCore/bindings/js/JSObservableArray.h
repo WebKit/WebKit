@@ -96,7 +96,7 @@ private:
 
     static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
-    RefPtr<ObservableArray> m_array;
+    const RefPtr<ObservableArray> m_array;
 };
 
 } // namespace JSC

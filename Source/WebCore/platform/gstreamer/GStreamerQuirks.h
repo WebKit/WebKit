@@ -131,7 +131,7 @@ class GStreamerQuirksManager : public RefCounted<GStreamerQuirksManager> {
 public:
     static GStreamerQuirksManager& singleton();
 
-    static RefPtr<GStreamerQuirksManager> createForTesting()
+    static Ref<GStreamerQuirksManager> createForTesting()
     {
         return adoptRef(*new GStreamerQuirksManager(true, false));
     }

@@ -182,16 +182,16 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
                 if (RefPtr fontElement = dynamicDowncast<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
                     ASSERT(!m_inDocumentCustomPlatformData);
                     if (auto otfFont = convertSVGToOTFFont(*fontElement))
-                        m_generatedOTFBuffer = SharedBuffer::create(WTF::move(otfFont.value()));
+                        lazyInitialize(m_generatedOTFBuffer, SharedBuffer::create(WTF::move(otfFont.value())));
                     if (m_generatedOTFBuffer) {
-                        m_inDocumentCustomPlatformData = loadCustomFont(protect(*m_generatedOTFBuffer), trustedTypes);
+                        m_inDocumentCustomPlatformData = loadCustomFont(*m_generatedOTFBuffer, trustedTypes);
                         success = static_cast<bool>(m_inDocumentCustomPlatformData);
                     }
                 }
             }
         } else if (m_immediateSource) {
             ASSERT(!m_immediateFontCustomPlatformData);
-            auto buffer = SharedBuffer::create(protect(*m_immediateSource)->span());
+            auto buffer = SharedBuffer::create(m_immediateSource->span());
             m_immediateFontCustomPlatformData = loadCustomFont(buffer.get(), trustedTypes);
             success = static_cast<bool>(m_immediateFontCustomPlatformData);
         } else {

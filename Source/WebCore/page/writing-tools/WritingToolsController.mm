@@ -75,7 +75,7 @@ WritingToolsController::EditingScope::EditingScope(Document& document)
 
 WritingToolsController::EditingScope::~EditingScope()
 {
-    protect(m_document)->editor().setSuppressEditingForWritingTools(m_editingWasSuppressed);
+    m_document->editor().setSuppressEditingForWritingTools(m_editingWasSuppressed);
 }
 
 #pragma mark - Overloaded TextIterator-based static functions.

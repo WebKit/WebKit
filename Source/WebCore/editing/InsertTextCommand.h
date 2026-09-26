@@ -89,7 +89,7 @@ private:
     AllowPasswordEcho m_allowPasswordEcho { AllowPasswordEcho::Yes };
     bool m_selectInsertedText;
     RebalanceType m_rebalanceType;
-    RefPtr<TextInsertionMarkerSupplier> m_markerSupplier;
+    const RefPtr<TextInsertionMarkerSupplier> m_markerSupplier;
     RefPtr<EditingStyle> m_styleToPreserveForSmartList;
     std::optional<SmartListUndoData> m_smartListUndoData;
 };

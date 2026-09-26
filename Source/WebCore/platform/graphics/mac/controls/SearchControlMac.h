@@ -41,7 +41,7 @@ public:
 protected:
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    RetainPtr<NSSearchFieldCell> m_searchFieldCell;
+    const RetainPtr<NSSearchFieldCell> m_searchFieldCell;
 };
 
 } // namespace WebCore

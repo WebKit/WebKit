@@ -373,7 +373,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_renderer(renderer)
 {
     if (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled())
-        m_svgData = makeUnique<SVGData>();
+        lazyInitialize(m_svgData, makeUnique<SVGData>());
 
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
     setIsCSSStackingContext(shouldBeCSSStackingContext());

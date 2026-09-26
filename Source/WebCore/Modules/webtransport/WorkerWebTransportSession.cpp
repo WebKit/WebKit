@@ -55,7 +55,7 @@ WorkerWebTransportSession::WorkerWebTransportSession(ScriptExecutionContextIdent
 void WorkerWebTransportSession::attachSession(Ref<WebTransportSession>&& session)
 {
     ASSERT(!m_session);
-    m_session = WTF::move(session);
+    lazyInitialize(m_session, WTF::move(session));
 }
 
 void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span, bool withFin, std::optional<Exception>&& exception)

@@ -90,7 +90,7 @@ String CSSStyleValue::toString() const
 void CSSStyleValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     if (m_propertyValue)
-        builder.append(protect(m_propertyValue)->cssText(CSS::defaultSerializationContext()));
+        builder.append(m_propertyValue->cssText(CSS::defaultSerializationContext()));
 }
 
 RefPtr<CSSValue> CSSStyleValue::toCSSValueWithProperty(CSSPropertyID propertyID) const

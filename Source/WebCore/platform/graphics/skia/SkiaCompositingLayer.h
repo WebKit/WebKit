@@ -372,7 +372,7 @@ private:
 #if ENABLE(DAMAGE_TRACKING)
     bool m_damagePropagationEnabled { false };
     std::optional<Damage> m_layerDamage;
-    std::unique_ptr<LayerRectTracker> m_layerRectTracker;
+    const std::unique_ptr<LayerRectTracker> m_layerRectTracker;
     uint64_t m_layerRectID { 0 };
     bool m_groupPropertyChanged { false };
 #endif

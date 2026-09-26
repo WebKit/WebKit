@@ -50,7 +50,7 @@ private:
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
-    RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
+    const RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
 };
 
 } // namespace WebCore

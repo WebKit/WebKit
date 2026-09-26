@@ -163,7 +163,7 @@ void LocalFrameViewLayoutContext::setSubtreeScrollbarChangesState(std::optional<
 UpdateScrollInfoAfterLayoutTransaction& LocalFrameViewLayoutContext::updateScrollInfoAfterLayoutTransaction()
 {
     if (!m_updateScrollInfoAfterLayoutTransaction)
-        m_updateScrollInfoAfterLayoutTransaction = makeUnique<UpdateScrollInfoAfterLayoutTransaction>();
+        lazyInitialize(m_updateScrollInfoAfterLayoutTransaction, makeUnique<UpdateScrollInfoAfterLayoutTransaction>());
     return *m_updateScrollInfoAfterLayoutTransaction;
 }
 

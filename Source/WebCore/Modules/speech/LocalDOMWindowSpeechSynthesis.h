@@ -51,7 +51,7 @@ private:
     static ASCIILiteral supplementName() { return "LocalDOMWindowSpeechSynthesis"_s; }
     bool isLocalDOMWindowSpeechSynthesis() const final { return true; }
     
-    RefPtr<SpeechSynthesis> m_speechSynthesis;
+    const RefPtr<SpeechSynthesis> m_speechSynthesis;
 };
 
 } // namespace WebCore

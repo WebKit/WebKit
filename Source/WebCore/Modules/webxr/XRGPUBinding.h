@@ -94,8 +94,8 @@ private:
 
     ExceptionOr<Ref<XRGPUSubImage>> getSubImage(XRProjectionLayer&, XREye);
 
-    RefPtr<WebGPU::XRBinding> m_backing;
-    RefPtr<WebXRSession> m_session;
+    const RefPtr<WebGPU::XRBinding> m_backing;
+    const RefPtr<WebXRSession> m_session;
     std::optional<XRGPUProjectionLayerInit> m_init;
     const Ref<GPUDevice> m_device;
 };

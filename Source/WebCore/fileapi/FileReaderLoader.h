@@ -124,7 +124,7 @@ private:
     String m_stringResult;
 
     // The decoder used to decode the text data.
-    RefPtr<TextResourceDecoder> m_decoder;
+    const RefPtr<TextResourceDecoder> m_decoder;
 
     bool m_variableLength;
     unsigned m_bytesLoaded;

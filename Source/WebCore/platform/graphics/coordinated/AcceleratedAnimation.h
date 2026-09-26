@@ -77,8 +77,8 @@ private:
 
     String m_name;
     GraphicsLayerKeyframeValueList m_keyframes;
-    Ref<TimingFunction> m_timingFunction;
-    RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
+    const Ref<TimingFunction> m_timingFunction;
+    const RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
     double m_iterationCount { 0 };
     double m_duration { 0 };
     GraphicsLayerAnimation::Direction m_direction { GraphicsLayerAnimation::Direction::Normal };

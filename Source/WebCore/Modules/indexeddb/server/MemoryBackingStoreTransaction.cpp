@@ -53,7 +53,7 @@ MemoryBackingStoreTransaction::MemoryBackingStoreTransaction(MemoryIDBBackingSto
         IDBDatabaseInfo info;
         auto error = m_backingStore->getOrEstablishDatabaseInfo(info);
         if (error.isNull())
-            m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(info);
+            lazyInitialize(m_originalDatabaseInfo, makeUnique<IDBDatabaseInfo>(info));
     }
 }
 

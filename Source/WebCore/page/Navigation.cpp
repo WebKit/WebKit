@@ -115,10 +115,10 @@ void NavigationAPIMethodTracker::commitTo(NavigationHistoryEntry& entry, Navigat
     if (navigationType != NavigationNavigationType::Traverse && m_serializedState)
         entry.setState(WTF::move(m_serializedState));
 
-    protect(m_committedPromise)->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
+    m_committedPromise->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
 
     if (m_state == State::FinishedBeforeCommit) {
-        protect(m_finishedPromise)->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
+        m_finishedPromise->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
         m_state = State::Settled;
     } else
         m_state = State::Committed;
@@ -138,7 +138,7 @@ void NavigationAPIMethodTracker::resolveFinished()
     }
 
     ASSERT(m_state == State::Committed);
-    protect(m_finishedPromise)->resolve<IDLInterface<NavigationHistoryEntry>>(*committedToEntry);
+    m_finishedPromise->resolve<IDLInterface<NavigationHistoryEntry>>(*committedToEntry);
     m_state = State::Settled;
 }
 
@@ -151,8 +151,8 @@ void NavigationAPIMethodTracker::rejectFinished(const Exception& exception, JSC:
     // Only reject the committed promise if it hasn't been fulfilled yet. If the navigation was committed
     // before being aborted, the committed promise stays fulfilled while only the finished promise rejects.
     if (m_state != State::Committed)
-        protect(m_committedPromise)->reject(exception, RejectAsHandled::No, exceptionObject);
-    protect(m_finishedPromise)->reject(exception, RejectAsHandled::Yes, exceptionObject);
+        m_committedPromise->reject(exception, RejectAsHandled::No, exceptionObject);
+    m_finishedPromise->reject(exception, RejectAsHandled::Yes, exceptionObject);
     m_state = State::Settled;
 }
 
@@ -162,8 +162,8 @@ void NavigationAPIMethodTracker::rejectFinished(JSC::JSValue error)
         return;
 
     if (m_state != State::Committed)
-        protect(m_committedPromise)->reject<IDLAny>(error, RejectAsHandled::No);
-    protect(m_finishedPromise)->reject<IDLAny>(error, RejectAsHandled::Yes);
+        m_committedPromise->reject<IDLAny>(error, RejectAsHandled::No);
+    m_finishedPromise->reject<IDLAny>(error, RejectAsHandled::Yes);
     m_state = State::Settled;
 }
 

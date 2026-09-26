@@ -106,8 +106,8 @@ private:
     static ExceptionOr<XRLayerSwapchains> createColorAndDepthSwapchains(WebGLRenderingContextBase&, PlatformXR::LayerHandle, GCGLenum colorFormat, std::optional<GCGLenum> depthFormat, IntSize, bool clearOnAccess, size_t numImages, uint32_t arrayLength, GCGLenum colorTextureType);
     static std::unique_ptr<WebXRWebGLSwapchain> createDepthSwapchain(WebGLRenderingContextBase&, GCGLenum depthFormat, IntSize, bool clearOnAccess, size_t imageCount, uint32_t arrayLength, GCGLenum textureType);
 
-    std::unique_ptr<WebXRWebGLSwapchain> m_colorSwapchain;
-    std::unique_ptr<WebXRWebGLSwapchain> m_depthSwapchain;
+    const std::unique_ptr<WebXRWebGLSwapchain> m_colorSwapchain;
+    const std::unique_ptr<WebXRWebGLSwapchain> m_depthSwapchain;
     uint32_t m_colorTextureArrayLength { 1 };
 #if !PLATFORM(COCOA)
     bool m_shouldSkipFrame { true };

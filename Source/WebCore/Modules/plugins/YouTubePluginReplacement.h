@@ -59,7 +59,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     WeakPtr<HTMLPlugInElement, WeakPtrImplWithEventTargetData> m_parentElement;
-    RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
+    const RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
     HashMap<AtomString, AtomString> m_attributes;
 };
 

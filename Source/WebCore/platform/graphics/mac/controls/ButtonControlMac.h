@@ -41,7 +41,7 @@ public:
 protected:
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    RetainPtr<NSButtonCell> m_buttonCell;
+    const RetainPtr<NSButtonCell> m_buttonCell;
 };
 
 } // namespace WebCore

@@ -116,7 +116,7 @@ String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, U
 URLSearchParams& DOMURL::searchParams()
 {
     if (!m_searchParams)
-        m_searchParams = URLSearchParams::create(search(), this);
+        lazyInitialize(m_searchParams, URLSearchParams::create(search(), this));
     return *m_searchParams;
 }
 

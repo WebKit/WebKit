@@ -81,7 +81,7 @@ public:
     }
 
     PendingInterceptRequest() = default;
-    RefPtr<WebCore::ResourceLoader> m_loader;
+    const RefPtr<WebCore::ResourceLoader> m_loader;
     Function<void(const WebCore::ResourceRequest&)> m_completionCallback;
 };
 

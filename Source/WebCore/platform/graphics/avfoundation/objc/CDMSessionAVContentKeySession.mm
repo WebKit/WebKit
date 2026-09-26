@@ -492,7 +492,7 @@ void CDMSessionAVContentKeySession::setInitData(SharedBuffer& initData)
 {
     if (m_sourceBufferInitData)
         return;
-    m_sourceBufferInitData = &initData;
+    lazyInitialize(m_sourceBufferInitData, Ref { initData });
 }
 
 String CDMSessionAVContentKeySession::storagePath() const

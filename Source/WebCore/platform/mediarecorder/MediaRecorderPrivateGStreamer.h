@@ -119,7 +119,7 @@ private:
     void resumeRecording(CompletionHandler<void()>&&) final;
     String mimeType() const final;
 
-    Ref<MediaRecorderPrivateBackend> m_recorder;
+    const Ref<MediaRecorderPrivateBackend> m_recorder;
 };
 
 } // namespace WebCore

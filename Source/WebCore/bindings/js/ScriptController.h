@@ -205,7 +205,7 @@ private:
     RefPtr<JSC::Bindings::RootObject> m_cacheableBindingRootObject;
     RootObjectMap m_rootObjects;
 #if PLATFORM(COCOA)
-    RetainPtr<WebScriptObject> m_windowScriptObject;
+    const RetainPtr<WebScriptObject> m_windowScriptObject;
 #endif
 
 };

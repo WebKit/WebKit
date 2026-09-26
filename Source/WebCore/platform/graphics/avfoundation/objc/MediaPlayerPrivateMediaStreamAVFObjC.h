@@ -297,7 +297,7 @@ private:
     bool canShowWhileLocked() const final;
 #endif
 
-    RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
+    const RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
     Lock m_currentVideoFrameLock;
     RefPtr<VideoFrame> m_currentVideoFrame WTF_GUARDED_BY_LOCK(m_currentVideoFrameLock);

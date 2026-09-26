@@ -64,9 +64,9 @@ private:
 
     JSValueInWrappedObject m_state;
     JSValueInWrappedObject m_cachedState;
-    RefPtr<SerializedScriptValue> m_serializedState;
+    const RefPtr<SerializedScriptValue> m_serializedState;
     bool m_hasUAVisualTransition { false };
-    RefPtr<History> m_history;
+    const RefPtr<History> m_history;
 };
 
 } // namespace WebCore

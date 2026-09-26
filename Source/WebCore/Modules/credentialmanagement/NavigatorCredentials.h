@@ -53,7 +53,7 @@ private:
     static ASCIILiteral supplementName() { return "NavigatorCredentials"_s; }
     bool isNavigatorCredentials() const final { return true; }
 
-    RefPtr<CredentialsContainer> m_credentialsContainer;
+    const RefPtr<CredentialsContainer> m_credentialsContainer;
 };
 
 } // namespace WebCore

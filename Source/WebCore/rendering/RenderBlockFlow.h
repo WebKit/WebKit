@@ -564,7 +564,7 @@ public:
 
 protected:
     std::unique_ptr<FloatingObjects> m_floatingObjects;
-    std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
+    const std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
 
 private:
     // m_inlineContentCache must be declared before m_lineLayout.

@@ -181,7 +181,7 @@ public:
     void check(const RegistrableDomain& registrableDomain, CompletionHandler<void(bool)>&& completionHandler)
     {
         m_completionHandler = WTF::move(completionHandler);
-        m_provider = makeUnique<CoreLocationGeolocationProvider>(registrableDomain, *this, CoreLocationGeolocationProvider::Mode::AuthorizationOnly);
+        lazyInitialize(m_provider, makeUnique<CoreLocationGeolocationProvider>(registrableDomain, *this, CoreLocationGeolocationProvider::Mode::AuthorizationOnly));
     }
 
 private:
@@ -207,7 +207,7 @@ private:
     }
     void resetGeolocation(const String&) final { }
 
-    std::unique_ptr<CoreLocationGeolocationProvider> m_provider;
+    const std::unique_ptr<CoreLocationGeolocationProvider> m_provider;
     CompletionHandler<void(bool)> m_completionHandler;
 };
 

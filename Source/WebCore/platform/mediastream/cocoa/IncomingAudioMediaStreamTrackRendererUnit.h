@@ -112,7 +112,7 @@ private:
     size_t m_sampleCount { 0 };
 
 #if !RELEASE_LOG_DISABLED
-    RefPtr<const Logger> m_logger;
+    const RefPtr<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

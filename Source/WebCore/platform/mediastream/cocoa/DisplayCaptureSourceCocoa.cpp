@@ -257,7 +257,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
         return;
 
     if (!m_imageTransferSession)
-        m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
+        lazyInitialize(m_imageTransferSession, ImageTransferSessionVT::create(preferedPixelBufferFormat()));
 
     auto elapsedTime = this->elapsedTime();
     auto sampleTime = MediaTime::createWithDouble((elapsedTime + 100_ms).seconds());

@@ -143,7 +143,7 @@ private:
     HTMLInputStream m_input;
 
     HTMLTokenizer m_tokenizer;
-    std::unique_ptr<HTMLScriptRunner> m_scriptRunner;
+    const std::unique_ptr<HTMLScriptRunner> m_scriptRunner;
     const UniqueRef<HTMLTreeBuilder> m_treeBuilder;
     std::unique_ptr<HTMLPreloadScanner> m_preloadScanner;
     std::unique_ptr<HTMLPreloadScanner> m_insertionPreloadScanner;

@@ -913,7 +913,7 @@ bool RenderView::usesCompositing() const
 RenderLayerCompositor& RenderView::compositor()
 {
     if (!m_compositor)
-        m_compositor = makeUnique<RenderLayerCompositor>(*this);
+        lazyInitialize(m_compositor, makeUnique<RenderLayerCompositor>(*this));
 
     return *m_compositor;
 }
@@ -927,7 +927,7 @@ void RenderView::setIsInWindow(bool isInWindow)
 ImageQualityController& RenderView::imageQualityController()
 {
     if (!m_imageQualityController)
-        m_imageQualityController = makeUnique<ImageQualityController>(*this);
+        lazyInitialize(m_imageQualityController, makeUnique<ImageQualityController>(*this));
     return *m_imageQualityController;
 }
 

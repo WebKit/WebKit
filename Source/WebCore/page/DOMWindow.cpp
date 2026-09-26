@@ -101,7 +101,7 @@ ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(
 Location& DOMWindow::location()
 {
     if (!m_location)
-        m_location = Location::create(*this);
+        lazyInitialize(m_location, Location::create(*this));
     return *m_location;
 }
 

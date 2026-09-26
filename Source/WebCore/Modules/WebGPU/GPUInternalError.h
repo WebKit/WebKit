@@ -64,7 +64,7 @@ private:
     }
 
     String m_message;
-    RefPtr<WebGPU::InternalError> m_backing;
+    const RefPtr<WebGPU::InternalError> m_backing;
 };
 
 }

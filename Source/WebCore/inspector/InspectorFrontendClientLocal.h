@@ -153,7 +153,7 @@ private:
     WeakPtr<Page> m_frontendPage;
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
-    std::unique_ptr<InspectorFrontendClientLocal::Settings> m_settings;
+    const std::unique_ptr<InspectorFrontendClientLocal::Settings> m_settings;
     DockSide m_dockSide;
     const Ref<InspectorBackendDispatchTask> m_dispatchTask;
     const Ref<InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;

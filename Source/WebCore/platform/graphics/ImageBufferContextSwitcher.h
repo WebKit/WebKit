@@ -49,7 +49,7 @@ private:
     void beginDrawSourceImage(GraphicsContext&, float = 1.f) override { }
     void endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&) override;
 
-    RefPtr<ImageBuffer> m_sourceImage;
+    const RefPtr<ImageBuffer> m_sourceImage;
     FloatRect m_sourceImageRect;
 
     FilterResults* m_results { nullptr };

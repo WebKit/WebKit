@@ -98,7 +98,7 @@ private:
     Function<void()> m_crashCallback;
 
 #if USE(LIBWEBRTC)
-    RefPtr<LibWebRTCAudioModule> m_audioModule;
+    const RefPtr<LibWebRTCAudioModule> m_audioModule;
 #endif
 
 #if !RELEASE_LOG_DISABLED

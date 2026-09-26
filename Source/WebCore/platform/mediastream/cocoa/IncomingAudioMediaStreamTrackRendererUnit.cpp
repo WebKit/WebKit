@@ -87,7 +87,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
     ASSERT(isMainThread());
 #if !RELEASE_LOG_DISABLED
         if (!m_logger)
-            m_logger = source->logger();
+            lazyInitialize(m_logger, Ref { source->logger() });
 #endif
 
     ASSERT(source->outputDescription());

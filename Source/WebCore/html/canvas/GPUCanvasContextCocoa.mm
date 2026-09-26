@@ -193,23 +193,20 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
     , m_presentationContext(WTF::move(presentationContext))
     , m_width(getCanvasWidth(htmlOrOffscreenCanvas()))
     , m_height(getCanvasHeight(htmlOrOffscreenCanvas()))
-#if HAVE(SUPPORT_HDR_DISPLAY)
-    , m_screenPropertiesChangedObserver(ScreenPropertiesChangedObserver::create([weakThis = WeakPtr { *this }](PlatformDisplayID displayID) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
-        Ref screen = PlatformScreen::singleton();
-        if (auto* screenData = screen->screenData(displayID))
-            protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
-    }))
-#endif // HAVE(SUPPORT_HDR_DISPLAY)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (document)
-        document->addScreenPropertiesChangedObserver(protect(*m_screenPropertiesChangedObserver));
-    else
-        m_screenPropertiesChangedObserver = nullptr;
+    if (document) {
+        lazyInitialize(m_screenPropertiesChangedObserver, ScreenPropertiesChangedObserver::create([weakThis = WeakPtr { *this }](PlatformDisplayID displayID) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            Ref screen = PlatformScreen::singleton();
+            if (auto* screenData = screen->screenData(displayID))
+                protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
+        }));
+        document->addScreenPropertiesChangedObserver(*m_screenPropertiesChangedObserver);
+    }
 #else
     UNUSED_PARAM(document);
 #endif

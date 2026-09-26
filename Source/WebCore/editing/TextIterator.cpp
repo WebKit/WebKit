@@ -367,14 +367,14 @@ static Node* NODELETE firstNode(const BoundaryPoint& point)
 
 TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehaviors behaviors)
     : m_behaviors(behaviors)
+    , m_startContainer(range.start.container.ptr())
+    , m_endContainer(range.end.container.ptr())
 {
     ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages));
 
     protect(range.start.document())->updateLayoutIgnorePendingStylesheets();
 
-    m_startContainer = range.start.container.ptr();
     m_startOffset = range.start.offset;
-    m_endContainer = range.end.container.ptr();
     m_endOffset = range.end.offset;
 
     m_currentNode = firstNode(range.start);
@@ -1436,9 +1436,9 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const SimpleRan
     m_handledNode = false;
     m_handledChildren = endOffset == 0;
 
-    m_startContainer = WTF::move(startNode);
+    lazyInitialize(m_startContainer, startNode.releaseNonNull());
     m_startOffset = startOffset;
-    m_endContainer = endNode;
+    lazyInitialize(m_endContainer, Ref { *endNode });
     m_endOffset = endOffset;
     
     m_positionNode = WTF::move(endNode);

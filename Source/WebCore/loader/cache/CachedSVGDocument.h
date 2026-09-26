@@ -46,7 +46,7 @@ private:
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) override;
 
     RefPtr<SVGDocument> m_document;
-    RefPtr<TextResourceDecoder> m_decoder;
+    const RefPtr<TextResourceDecoder> m_decoder;
     const Ref<const Settings> m_settings;
 };
 

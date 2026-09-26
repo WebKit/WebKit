@@ -59,7 +59,7 @@ private:
     CoordinatedImageBackingStore(Ref<NativeImage>&&, const sk_sp<GrContextThreadSafeProxy>&);
 #endif
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    const std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
     uint64_t m_uniqueID { 0 };
 };
 

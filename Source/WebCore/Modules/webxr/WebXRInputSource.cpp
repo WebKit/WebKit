@@ -97,7 +97,7 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::FrameData::Inp
         // If the XRInputSource belongs to an XRSession that has not been requested
         // with the "hand-tracking" feature descriptor, hand MUST be null.
         if (!m_hand && session->isHandTrackingEnabled())
-            m_hand = WebXRHand::create(*this);
+            lazyInitialize(m_hand, WebXRHand::create(*this));
 
         if (m_hand)
             m_hand->updateFromInputSource(source);

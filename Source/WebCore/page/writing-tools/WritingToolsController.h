@@ -175,7 +175,7 @@ private:
         ~EditingScope();
 
     private:
-        RefPtr<Document> m_document;
+        const RefPtr<Document> m_document;
         bool m_editingWasSuppressed;
     };
 

@@ -44,7 +44,7 @@ private:
     RefPtr<ImageBuffer> sinkIntoImageBuffer() override;
     size_t memoryCost() const override;
 
-    RefPtr<ImageBuffer> m_imageBuffer;
+    const RefPtr<ImageBuffer> m_imageBuffer;
     FloatSize m_logicalSize;
     float m_resolutionScale { 1 };
     ColorSpace m_colorSpace { ColorSpace::SRGB() };

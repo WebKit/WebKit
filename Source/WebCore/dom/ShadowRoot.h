@@ -182,10 +182,10 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;
     Node* m_shadowIncludingRoot { nullptr };
-    RefPtr<StyleSheetList> m_styleSheetList;
+    const RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;
-    std::unique_ptr<SlotAssignment> m_slotAssignment;
+    const std::unique_ptr<SlotAssignment> m_slotAssignment;
     mutable std::optional<PartMappings> m_partMappings;
 
     AtomString m_referenceTarget;

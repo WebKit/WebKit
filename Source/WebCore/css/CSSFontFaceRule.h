@@ -46,7 +46,7 @@ private:
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFace> m_fontFaceRule;
-    RefPtr<CSSFontFaceDescriptors> m_propertiesCSSOMWrapper;
+    const RefPtr<CSSFontFaceDescriptors> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

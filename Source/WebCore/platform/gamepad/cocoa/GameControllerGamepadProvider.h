@@ -91,7 +91,7 @@ private:
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
     WeakHashSet<PlatformGamepad> m_invisibleGamepads;
 
-    RetainPtr<NSObject> m_connectObserver;
+    const RetainPtr<NSObject> m_connectObserver;
     RetainPtr<NSObject> m_disconnectObserver;
 
     RunLoop::Timer m_inputNotificationTimer;

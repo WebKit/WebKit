@@ -366,7 +366,7 @@ protected:
     void tearDown(bool clearMediaPlayer);
 
     URL m_url;
-    Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
+    const Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
     mutable MediaTime m_cachedPosition;
@@ -639,7 +639,7 @@ private:
     std::optional<TrackID> m_requestedTextStreamId;
 
 #if ENABLE(WEB_AUDIO)
-    RefPtr<AudioSourceProviderGStreamer> m_audioSourceProvider;
+    const RefPtr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif
     GRefPtr<GstElement> m_downloadBuffer;
 
@@ -696,9 +696,9 @@ private:
     Lock m_codecsLock;
     TrackIDHashMap<String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
 
-    Ref<PlatformMediaResourceLoader> m_loader;
+    const Ref<PlatformMediaResourceLoader> m_loader;
 
-    RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
+    const RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
     HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
 
     std::optional<VideoFrameGStreamer::Info> m_videoInfo;

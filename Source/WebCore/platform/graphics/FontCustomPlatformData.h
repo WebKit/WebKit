@@ -110,7 +110,7 @@ public:
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
 #elif USE(CAIRO)
-    RefPtr<cairo_font_face_t> m_fontFace;
+    const RefPtr<cairo_font_face_t> m_fontFace;
 #elif USE(SKIA)
     sk_sp<SkTypeface> m_typeface;
     mutable HashMap<unsigned, sk_sp<SkTypeface>> m_variationTypefacesCache;

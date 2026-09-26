@@ -306,7 +306,7 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
 
     CheckedPtr database = m_transaction->sqliteDatabase();
     if (!m_preIndexStatement) {
-        m_preIndexStatement = database->prepareStatementSlow(buildPreIndexStatement(isDirectionNext()));
+        lazyInitialize(m_preIndexStatement, database->prepareStatementSlow(buildPreIndexStatement(isDirectionNext())));
         if (!m_preIndexStatement) {
             LOG_ERROR("Could not prepare pre statement - '%s'", database->lastErrorMsg());
             return false;

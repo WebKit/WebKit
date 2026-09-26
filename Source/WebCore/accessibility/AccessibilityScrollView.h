@@ -136,7 +136,7 @@ private:
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    RefPtr<AXLocalFrame> m_localFrame;
+    const RefPtr<AXLocalFrame> m_localFrame;
     InheritedFrameState m_inheritedFrameState;
 #endif
     RefPtr<AXRemoteFrame> m_remoteFrame;

@@ -87,7 +87,7 @@ TextTrackCue* TextTrackCueList::getCueById(const String& id) const
 TextTrackCueList& TextTrackCueList::activeCues()
 {
     if (!m_activeCues)
-        m_activeCues = create();
+        lazyInitialize(m_activeCues, create());
 
     Vector<Ref<TextTrackCue>> activeCuesVector;
     for (auto& cue : m_vector) {

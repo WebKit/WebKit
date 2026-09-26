@@ -47,7 +47,7 @@ public:
 private:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
-    RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButtonCell;
+    const RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButtonCell;
 };
 
 } // namespace WebCore

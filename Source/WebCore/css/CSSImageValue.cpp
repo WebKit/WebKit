@@ -88,7 +88,7 @@ Ref<CSSImageValue> CSSImageValue::copyForComputedStyle(const CSS::URL& resolvedU
     auto result = create(resolvedURL);
     result->m_cachedImage = m_cachedImage;
     result->m_initiatorType = m_initiatorType;
-    result->m_unresolvedValue = const_cast<CSSImageValue*>(this);
+    lazyInitialize(result->m_unresolvedValue, Ref { const_cast<CSSImageValue&>(*this) });
     return result;
 }
 
@@ -115,7 +115,7 @@ RefPtr<Style::Image> CSSImageValue::createStyleImage(const Style::BuilderState& 
     auto result = create(WTF::move(newLocation));
     result->m_cachedImage = m_cachedImage;
     result->m_initiatorType = m_initiatorType;
-    result->m_unresolvedValue = const_cast<CSSImageValue*>(this);
+    lazyInitialize(result->m_unresolvedValue, Ref { const_cast<CSSImageValue&>(*this) });
     return Style::CachedImage::create(WTF::move(styleLocation), WTF::move(result));
 }
 

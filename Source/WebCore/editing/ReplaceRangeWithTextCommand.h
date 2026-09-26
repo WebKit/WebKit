@@ -48,7 +48,7 @@ private:
     Vector<Ref<StaticRange>> targetRanges() const final;
 
     SimpleRange m_rangeToBeReplaced;
-    RefPtr<DocumentFragment> m_textFragment;
+    const RefPtr<DocumentFragment> m_textFragment;
     String m_text;
 };
 

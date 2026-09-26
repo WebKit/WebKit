@@ -59,7 +59,7 @@ private:
     MediaKeySystemAccess(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
 
     String m_keySystem;
-    std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
+    const std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
     const Ref<CDM> m_implementation;
 };
 

@@ -94,7 +94,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
         return;
 
     if (!m_imageTransferSession) {
-        m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
+        lazyInitialize(m_imageTransferSession, ImageTransferSessionVT::create(preferedPixelBufferFormat()));
         m_imageTransferSession->setMaximumBufferPoolSize(10);
     }
 

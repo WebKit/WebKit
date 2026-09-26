@@ -67,8 +67,8 @@ void PageOverlayController::createRootLayersIfNeeded()
     ASSERT(!m_documentOverlayRootLayer);
     ASSERT(!m_viewOverlayRootLayer);
 
-    m_documentOverlayRootLayer = GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this);
-    m_viewOverlayRootLayer = GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this);
+    lazyInitialize(m_documentOverlayRootLayer, GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this));
+    lazyInitialize(m_viewOverlayRootLayer, GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this));
     protect(documentOverlayRootLayer())->setName(MAKE_STATIC_STRING_IMPL("Document overlay Container"));
     protect(viewOverlayRootLayer())->setName(MAKE_STATIC_STRING_IMPL("View overlay container"));
 }

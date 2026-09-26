@@ -1511,10 +1511,10 @@ Ref<SourceBufferList> MediaSource::activeSourceBuffers() const
 Ref<MediaSourceHandle> MediaSource::handle()
 {
     if (!m_handle) {
-        m_handle = MediaSourceHandle::create(*this, [weakClient = ThreadSafeWeakPtr { m_client.get() }](MediaSourceHandle::TaskType&& task, bool forceRunInWorker) {
+        lazyInitialize(m_handle, MediaSourceHandle::create(*this, [weakClient = ThreadSafeWeakPtr { m_client.get() }](MediaSourceHandle::TaskType&& task, bool forceRunInWorker) {
             if (RefPtr protectedClient = weakClient.get())
                 protectedClient->ensureWeakOnDispatcher(WTF::move(task), forceRunInWorker);
-        }, detachable());
+        }, detachable()));
     }
     return *m_handle;
 }

@@ -69,7 +69,7 @@ private:
     StorageConnection& storageConnection() final
     {
         if (!m_connection)
-            m_connection = DummyStorageConnection::create();
+            lazyInitialize(m_connection, DummyStorageConnection::create());
 
         return *m_connection;
     }
@@ -89,7 +89,7 @@ private:
         m_mediaKeysStorageDirectory = directory;
     }
 
-    RefPtr<DummyStorageConnection> m_connection;
+    const RefPtr<DummyStorageConnection> m_connection;
     String m_mediaKeysStorageDirectory;
 };
 

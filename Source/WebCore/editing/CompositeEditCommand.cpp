@@ -473,7 +473,7 @@ Ref<EditCommandComposition> CompositeEditCommand::ensureComposition()
     while (RefPtr parent = command->parent())
         command = parent.releaseNonNull();
     if (!command->m_composition)
-        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection(), editingAction());
+        lazyInitialize(command->m_composition, EditCommandComposition::create(document(), startingSelection(), endingSelection(), editingAction()));
     return *command->m_composition;
 }
 

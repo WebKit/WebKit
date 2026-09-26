@@ -162,8 +162,8 @@ private:
     void handleUnexpectedRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
 
     WeakPtr<CDMInstanceClient> m_client;
-    RetainPtr<AVContentKeySession> m_session;
-    RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
+    const RetainPtr<AVContentKeySession> m_session;
+    const RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageURL;
@@ -275,7 +275,7 @@ private:
 
     const Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
     const RetainPtr<WebAVContentKeyGrouping> m_group;
-    RetainPtr<AVContentKeySession> m_session;
+    const RetainPtr<AVContentKeySession> m_session;
     std::optional<Request> m_currentRequest;
     const RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     Vector<RetainPtr<NSData>> m_expiredSessions;

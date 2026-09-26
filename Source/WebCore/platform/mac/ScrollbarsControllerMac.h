@@ -120,8 +120,8 @@ private:
     Timer m_initialScrollbarPaintTimer;
     Timer m_sendContentAreaScrolledTimer;
 
-    RetainPtr<ScrollerImpPair> m_scrollerImpPair;
-    RetainPtr<WebScrollerImpPairDelegate> m_scrollerImpPairDelegate;
+    const RetainPtr<ScrollerImpPair> m_scrollerImpPair;
+    const RetainPtr<WebScrollerImpPairDelegate> m_scrollerImpPairDelegate;
     RetainPtr<WebScrollerImpDelegate> m_horizontalScrollerImpDelegate;
     RetainPtr<WebScrollerImpDelegate> m_verticalScrollerImpDelegate;
 

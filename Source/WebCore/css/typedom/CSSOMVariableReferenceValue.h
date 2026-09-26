@@ -52,7 +52,7 @@ private:
         , m_fallback(WTF::move(fallback)) { }
     
     String m_variable;
-    RefPtr<CSSUnparsedValue> m_fallback;
+    const RefPtr<CSSUnparsedValue> m_fallback;
 };
 
 } // namespace WebCore

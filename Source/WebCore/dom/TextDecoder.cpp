@@ -59,7 +59,7 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource> input, Decod
         data = input->span();
 
     if (!m_codec) {
-        m_codec = newTextCodec(m_textEncoding);
+        lazyInitialize(m_codec, newTextCodec(m_textEncoding));
         if (!m_options.ignoreBOM)
             m_codec->stripByteOrderMark();
     }

@@ -105,10 +105,10 @@ private:
     NodeList& addedNodes() override { return lazilyInitializeEmptyNodeList(m_addedNodes); }
     NodeList& removedNodes() override { return lazilyInitializeEmptyNodeList(m_removedNodes); }
 
-    static NodeList& lazilyInitializeEmptyNodeList(RefPtr<NodeList>& nodeList)
+    static NodeList& lazilyInitializeEmptyNodeList(const RefPtr<NodeList>& nodeList)
     {
         if (!nodeList)
-            nodeList = StaticNodeList::create();
+            lazyInitialize(nodeList, StaticNodeList::create());
         return *nodeList;
     }
 
@@ -119,8 +119,8 @@ private:
 
     const Ref<Node> m_target;
     String m_oldValue;
-    RefPtr<NodeList> m_addedNodes;
-    RefPtr<NodeList> m_removedNodes;
+    const RefPtr<NodeList> m_addedNodes;
+    const RefPtr<NodeList> m_removedNodes;
 };
 
 class AttributesRecord final : public RecordWithEmptyNodeLists {

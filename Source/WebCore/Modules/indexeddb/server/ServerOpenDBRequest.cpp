@@ -79,7 +79,7 @@ void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(IDBDatabaseC
 
 void ServerOpenDBRequest::setVersionChangeTransaction(UniqueIDBDatabaseTransaction& transaction)
 {
-    m_versionChangeTransaction = &transaction;
+    lazyInitialize(m_versionChangeTransaction, Ref { transaction });
 }
 
 void ServerOpenDBRequest::didDeleteDatabase(const IDBResultData& result)

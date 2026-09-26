@@ -42,7 +42,7 @@ CSSNestedDeclarations::~CSSNestedDeclarations() = default;
 CSSStyleProperties& CSSNestedDeclarations::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(m_styleRule)->mutableProperties(), *this);
+        lazyInitialize(m_propertiesCSSOMWrapper, StyleRuleCSSStyleProperties::create(protect(m_styleRule)->mutableProperties(), *this));
     return *m_propertiesCSSOMWrapper;
 }
 
@@ -56,7 +56,7 @@ void CSSNestedDeclarations::reattach(StyleRuleBase& rule)
     m_styleRule = downcast<StyleRuleNestedDeclarations>(rule);
 
     if (m_propertiesCSSOMWrapper)
-        protect(m_propertiesCSSOMWrapper)->reattach(protect(m_styleRule)->mutableProperties());
+        m_propertiesCSSOMWrapper->reattach(protect(m_styleRule)->mutableProperties());
 }
 
 } // namespace WebCore

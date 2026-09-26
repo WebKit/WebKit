@@ -55,7 +55,7 @@ WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransport& transport, 
 WebTransportSendStreamSink::~WebTransportSendStreamSink()
 {
     if (m_abortSignal && m_abortAlgorithmIdentifier)
-        protect(m_abortSignal)->removeAlgorithm(*m_abortAlgorithmIdentifier);
+        m_abortSignal->removeAlgorithm(*m_abortAlgorithmIdentifier);
 }
 
 void WebTransportSendStreamSink::start(std::unique_ptr<WritableStreamDefaultController>&& controller)
@@ -69,7 +69,7 @@ void WebTransportSendStreamSink::start(std::unique_ptr<WritableStreamDefaultCont
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->cancel(reason);
         });
-        m_abortSignal = WTF::move(signal);
+        lazyInitialize(m_abortSignal, signal.releaseNonNull());
     }
 }
 

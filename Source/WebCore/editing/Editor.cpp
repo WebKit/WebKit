@@ -2460,18 +2460,18 @@ public:
         : m_document(WTF::move(document))
         , m_typingGestureIndicator(*m_document->frame())
     {
-        protect(protect(m_document)->editor())->setIgnoreSelectionChanges(true);
+        protect(m_document->editor())->setIgnoreSelectionChanges(true);
     }
 
     ~SetCompositionScope()
     {
-        Ref editor = protect(m_document)->editor();
+        Ref editor = m_document->editor();
         editor->setIgnoreSelectionChanges(false);
         if (CheckedPtr editorClient = editor->client())
             editorClient->didUpdateComposition();
     }
 
-    RefPtr<Document> m_document;
+    const RefPtr<Document> m_document;
     UserTypingGestureIndicator m_typingGestureIndicator;
 };
 

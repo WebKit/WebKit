@@ -294,7 +294,7 @@ public:
     }
 
 private:
-    RefPtr<IDBTransaction> m_transaction;
+    const RefPtr<IDBTransaction> m_transaction;
 };
 
 #if !ASSERT_ENABLED

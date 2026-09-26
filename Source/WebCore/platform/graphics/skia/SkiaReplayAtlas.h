@@ -61,7 +61,7 @@ public:
     std::optional<SkRect> rectForImage(const SkImage&) const;
 
 private:
-    Ref<const SkiaGPUAtlas> m_gpuAtlas;
+    const Ref<const SkiaGPUAtlas> m_gpuAtlas;
     sk_sp<SkImage> m_atlasImage;
 };
 

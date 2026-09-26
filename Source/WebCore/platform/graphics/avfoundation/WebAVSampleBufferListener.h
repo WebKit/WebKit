@@ -59,7 +59,7 @@ public:
     void stopObservingAudioRenderer(AVSampleBufferAudioRenderer *);
 private:
     explicit WebAVSampleBufferListener(WebAVSampleBufferListenerClient&);
-    RetainPtr<WebAVSampleBufferListenerPrivate> m_private;
+    const RetainPtr<WebAVSampleBufferListenerPrivate> m_private;
 };
 
 } // namespace WebCore

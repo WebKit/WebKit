@@ -153,7 +153,7 @@ private:
     std::optional<uint16_t> m_anticipatedConcurrentIncomingUnidirectionalStreams;
     std::optional<uint16_t> m_anticipatedConcurrentIncomingBidirectionalStreams;
     String m_protocol;
-    RefPtr<FetchHeaders> m_responseHeaders;
+    const RefPtr<FetchHeaders> m_responseHeaders;
     const PromiseAndWrapper m_closed;
     const PromiseAndWrapper m_draining;
     const Ref<WebTransportDatagramDuplexStream> m_datagrams;

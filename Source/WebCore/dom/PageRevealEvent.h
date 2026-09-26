@@ -46,7 +46,7 @@ public:
 private:
     PageRevealEvent(const AtomString& type, Init&&, IsTrusted);
 
-    RefPtr<ViewTransition> m_viewTransition;
+    const RefPtr<ViewTransition> m_viewTransition;
 };
 
 } // namespace WebCore

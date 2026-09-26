@@ -76,7 +76,7 @@ private:
 
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final;
 
-    std::unique_ptr<PaintRenderingContext2D> m_context;
+    const std::unique_ptr<PaintRenderingContext2D> m_context;
 };
 
 } // namespace WebCore

@@ -314,9 +314,9 @@ class CDMInstanceProxy : public CDMInstance, public CanMakeWeakPtr<CDMInstancePr
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMInstanceProxy);
 public:
     explicit CDMInstanceProxy(const String& keySystem)
+        : m_cdmProxy(CDMProxyFactory::createCDMProxyForKeySystem(keySystem))
     {
         ASSERT(isMainThread());
-        m_cdmProxy = CDMProxyFactory::createCDMProxyForKeySystem(keySystem);
         if (m_cdmProxy)
             m_cdmProxy->setInstance(this);
     }
@@ -340,7 +340,7 @@ public:
     void stoppedWaitingForKey();
 
 private:
-    RefPtr<CDMProxy> m_cdmProxy;
+    const RefPtr<CDMProxy> m_cdmProxy;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
 
     std::atomic<int> m_numDecryptorsWaitingForKey { 0 };

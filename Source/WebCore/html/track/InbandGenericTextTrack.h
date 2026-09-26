@@ -85,7 +85,7 @@ private:
 #endif
 
     GenericTextTrackCueMap m_cueMap;
-    std::unique_ptr<WebVTTParser> m_webVTTParser;
+    const std::unique_ptr<WebVTTParser> m_webVTTParser;
 };
 
 } // namespace WebCore

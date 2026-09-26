@@ -387,7 +387,7 @@ GPU* Navigator::gpu()
         if (!gpu)
             return nullptr;
 
-        m_gpuForWebGPU = GPU::create(*gpu);
+        lazyInitialize(m_gpuForWebGPU, GPU::create(*gpu));
     }
 #endif
 

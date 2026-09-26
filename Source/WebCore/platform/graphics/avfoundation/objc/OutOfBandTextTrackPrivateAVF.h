@@ -59,7 +59,7 @@ protected:
 
     bool isOutOfBandTextTrackPrivateAVF() const final { return true; }
     
-    RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
+    const RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
 };
     
 }

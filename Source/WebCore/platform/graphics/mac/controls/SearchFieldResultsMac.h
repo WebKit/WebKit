@@ -42,7 +42,7 @@ private:
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
-    RetainPtr<NSMenu> m_searchMenuTemplate;
+    const RetainPtr<NSMenu> m_searchMenuTemplate;
 };
 
 } // namespace WebCore

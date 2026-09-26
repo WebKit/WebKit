@@ -174,7 +174,7 @@ private:
         Vector<FontSetCache::Font> m_fallbackList;
 
     };
-    UniqueRef<FontSet> m_fontSet;
+    const UniqueRef<FontSet> m_fontSet;
 };
 
 SkiaSystemFallbackFontCache::SkiaSystemFallbackFontCache() = default;

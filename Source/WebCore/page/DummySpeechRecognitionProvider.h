@@ -51,11 +51,11 @@ public:
     SpeechRecognitionConnection& speechRecognitionConnection()
     {
         if (!m_connection)
-            m_connection = DummySpeechRecognitionConnection::create();
+            lazyInitialize(m_connection, DummySpeechRecognitionConnection::create());
         return *m_connection;
     }
 private:
-    RefPtr<DummySpeechRecognitionConnection> m_connection;
+    const RefPtr<DummySpeechRecognitionConnection> m_connection;
 };
 
 } // namespace WebCore

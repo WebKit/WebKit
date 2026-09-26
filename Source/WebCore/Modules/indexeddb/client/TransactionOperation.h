@@ -130,7 +130,7 @@ private:
     IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
 
     const Ref<Thread> m_originThread { Thread::currentSingleton() };
-    RefPtr<IDBRequest> m_idbRequest;
+    const RefPtr<IDBRequest> m_idbRequest;
     bool m_nextRequestCanGoToServer { true };
     bool m_didComplete { false };
 

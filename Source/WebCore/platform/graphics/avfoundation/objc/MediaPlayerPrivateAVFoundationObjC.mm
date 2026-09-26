@@ -2609,7 +2609,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
     Vector<String> characteristics = player->preferredAudioCharacteristics();
     if (!m_audibleGroup) {
         if (RetainPtr<AVMediaSelectionGroup> group = safeMediaSelectionGroupForAudibleMedia())
-            m_audibleGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group.get(), characteristics);
+            lazyInitialize(m_audibleGroup, MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group.get(), characteristics));
     }
 
     if (m_audibleGroup)
@@ -2635,7 +2635,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 
     if (!m_visualGroup) {
         if (RetainPtr<AVMediaSelectionGroup> group = safeMediaSelectionGroupForVisualMedia())
-            m_visualGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group.get(), Vector<String>());
+            lazyInitialize(m_visualGroup, MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group.get(), Vector<String>()));
     }
 
     if (m_visualGroup)
@@ -2845,7 +2845,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(NOESCAPE UpdateCompleti
 
     if (!m_pixelBufferConformer) {
         NSDictionary *attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
+        lazyInitialize(m_pixelBufferConformer, makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes));
     }
 
     MonotonicTime start = MonotonicTime::now();
@@ -3232,7 +3232,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
         return;
 
     Ref metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind::Metadata, m_currentTextTrackID++, InbandTextTrackPrivate::CueFormat::Data);
-    m_metadataTrack = metadataTrack.copyRef();
+    lazyInitialize(m_metadataTrack, metadataTrack.copyRef());
     metadataTrack->setInBandMetadataTrackDispatchType("com.apple.streaming"_s);
     if (auto player = this->player())
         player->addTextTrack(metadataTrack);

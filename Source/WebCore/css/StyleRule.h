@@ -283,7 +283,7 @@ private:
     StyleRuleFontFeatureValues(const StyleRuleFontFeatureValues&) = default;
 
     Vector<AtomString> m_fontFamilies;
-    Ref<FontFeatureValues> m_value;
+    const Ref<FontFeatureValues> m_value;
 };
 
 class StyleRulePage final : public StyleRuleBase {

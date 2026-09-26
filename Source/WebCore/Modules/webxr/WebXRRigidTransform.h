@@ -64,7 +64,7 @@ private:
     Ref<DOMPointReadOnly> m_orientation;
     TransformationMatrix m_rawTransform;
     RefPtr<Float32Array> m_matrix;
-    RefPtr<WebXRRigidTransform> m_inverse;
+    const RefPtr<WebXRRigidTransform> m_inverse;
     WeakPtr<WebXRRigidTransform> m_parentInverse;
     JSValueInWrappedObject m_cachedMatrix;
 };

@@ -411,7 +411,7 @@ bool AnimationTimelinesController::isPendingTimelineAttachment(const WebAnimatio
 void AnimationTimelinesController::scheduleAcceleratedEffectStackUpdateForTarget(const Styleable& target)
 {
     if (!m_acceleratedEffectStackUpdater)
-        m_acceleratedEffectStackUpdater = makeUnique<AcceleratedEffectStackUpdater>();
+        lazyInitialize(m_acceleratedEffectStackUpdater, makeUnique<AcceleratedEffectStackUpdater>());
     m_acceleratedEffectStackUpdater->scheduleUpdateForTarget(target);
 
     if (RefPtr documentTimeline = m_document->existingTimeline())

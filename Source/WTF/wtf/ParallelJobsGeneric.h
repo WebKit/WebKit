@@ -70,7 +70,7 @@ public:
         mutable Lock m_lock;
         Condition m_threadCondition;
 
-        RefPtr<Thread> m_thread;
+        const RefPtr<Thread> m_thread;
         bool m_running { false };
         ParallelEnvironment* m_parent WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
 

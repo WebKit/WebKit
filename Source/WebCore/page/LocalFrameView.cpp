@@ -232,7 +232,7 @@ LocalFrameView::LocalFrameView(LocalFrame& frame)
 #endif
 
     if (m_frame->document() && m_frame->document()->settings().cssScrollAnchoringEnabled())
-        m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
+        lazyInitialize(m_scrollAnchoringController, WTF::makeUnique<ScrollAnchoringController>(*this));
 }
 
 Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame)
@@ -1547,7 +1547,7 @@ RenderReplaced* LocalFrameView::embeddedSVGRoot() const
 void LocalFrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>>();
+        lazyInitialize(m_embeddedObjectsToUpdate, makeUnique<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>>());
 
     Ref element = embeddedObject.frameOwnerElement();
     if (auto* embedOrObject = dynamicDowncast<HTMLPlugInElement>(element.ptr()))
@@ -1779,7 +1779,7 @@ bool LocalFrameView::hasViewportConstrainedObjects() const
 void LocalFrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (!m_viewportConstrainedObjects)
-        m_viewportConstrainedObjects = makeUnique<SingleThreadWeakHashSet<RenderLayerModelObject>>();
+        lazyInitialize(m_viewportConstrainedObjects, makeUnique<SingleThreadWeakHashSet<RenderLayerModelObject>>());
 
     if (!m_viewportConstrainedObjects->contains(object)) {
         m_viewportConstrainedObjects->add(object);
@@ -4929,7 +4929,7 @@ void LocalFrameView::performPostLayoutTasks()
 void LocalFrameView::addScrollableAreaForScrollAnchoring(ScrollableArea& scrollableArea)
 {
     if (!m_anchoringScrollableAreas)
-        m_anchoringScrollableAreas = makeUnique<ScrollableAreaSet>();
+        lazyInitialize(m_anchoringScrollableAreas, makeUnique<ScrollableAreaSet>());
 
     m_anchoringScrollableAreas->add(scrollableArea);
 }
@@ -6538,7 +6538,7 @@ unsigned LocalFrameView::renderLayerPositionUpdateCount()
 void LocalFrameView::addScrollableAreaForAnimatedScroll(ScrollableArea* scrollableArea)
 {
     if (!m_scrollableAreasForAnimatedScroll)
-        m_scrollableAreasForAnimatedScroll = makeUnique<ScrollableAreaSet>();
+        lazyInitialize(m_scrollableAreasForAnimatedScroll, makeUnique<ScrollableAreaSet>());
     
     m_scrollableAreasForAnimatedScroll->add(*scrollableArea);
 }
@@ -6552,7 +6552,7 @@ void LocalFrameView::removeScrollableAreaForAnimatedScroll(ScrollableArea* scrol
 bool LocalFrameView::addScrollableArea(ScrollableArea* scrollableArea)
 {
     if (!m_scrollableAreas)
-        m_scrollableAreas = makeUnique<ScrollableAreaSet>();
+        lazyInitialize(m_scrollableAreas, makeUnique<ScrollableAreaSet>());
     
     if (m_scrollableAreas->add(*scrollableArea).isNewEntry) {
         scrollableAreaSetChanged();

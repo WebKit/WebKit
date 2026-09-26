@@ -257,7 +257,7 @@ private:
 
     WeakRef<Inspector::IdentifierRegistry> m_identifierRegistry;
     String m_id;
-    RefPtr<CSSStyleSheet> m_pageStyleSheet;
+    const RefPtr<CSSStyleSheet> m_pageStyleSheet;
     Inspector::Protocol::CSS::StyleSheetOrigin m_origin;
     String m_documentURL;
     ParsedStyleSheet* m_parsedStyleSheet;

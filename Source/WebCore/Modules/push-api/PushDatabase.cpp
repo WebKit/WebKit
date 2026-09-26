@@ -295,7 +295,7 @@ private:
     {
     }
 
-    UniqueRef<SQLiteDatabase> m_db;
+    const UniqueRef<SQLiteDatabase> m_db;
     HashMap<ASCIILiteral, UniqueRef<SQLiteStatement>> m_statements;
 };
 

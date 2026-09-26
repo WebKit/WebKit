@@ -166,7 +166,7 @@ private:
     Markable<ScriptExecutionContextIdentifier> m_preparationTimeDocumentIdentifier;
 
     MonotonicTime m_creationTime;
-    RefPtr<UserGestureToken> m_userGestureToken;
+    const RefPtr<UserGestureToken> m_userGestureToken;
 
     // https://w3c.github.io/trusted-types/dist/spec/#slots-with-trusted-values
     String m_trustedScriptText { emptyString() };

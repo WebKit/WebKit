@@ -204,13 +204,13 @@ private:
     WeakPtr<Navigator> m_navigator;
     const Ref<PlatformMediaSession> m_platformSession;
     RefPtr<MediaMetadata> m_metadata;
-    RefPtr<MediaMetadata> m_defaultMetadata;
+    const RefPtr<MediaMetadata> m_defaultMetadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };
     std::optional<MediaPositionState> m_positionState;
     std::optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, Ref<MediaSessionActionHandler>, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers WTF_GUARDED_BY_LOCK(m_actionHandlersLock);
-    RefPtr<const Logger> m_logger;
+    const RefPtr<const Logger> m_logger;
     uint64_t m_logIdentifier { 0 };
 
     WeakHashSet<MediaSessionObserver> m_observers;

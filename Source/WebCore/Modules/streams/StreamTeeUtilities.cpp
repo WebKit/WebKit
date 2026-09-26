@@ -127,12 +127,12 @@ public:
 
     void resolveCancelPromise()
     {
-        Ref { m_cancelDeferredPromise }->resolve();
+        m_cancelDeferredPromise->resolve();
     }
 
     void rejectCancelPromise(JSC::JSValue value)
     {
-        Ref { m_cancelDeferredPromise }->rejectWithCallback([&](auto&) {
+        m_cancelDeferredPromise->rejectWithCallback([&](auto&) {
             return value;
         });
     }
@@ -208,8 +208,8 @@ private:
     bool m_readAgainForBranch2 = false;
     bool m_canceled1 = false;
     bool m_canceled2 = false;
-    Ref<DeferredPromise> m_cancelDeferredPromise;
-    Ref<DOMPromise> m_cancelPromise;
+    const Ref<DeferredPromise> m_cancelDeferredPromise;
+    const Ref<DOMPromise> m_cancelPromise;
     WeakPtr<ReadableStream> m_branch1;
     WeakPtr<ReadableStream> m_branch2;
     JSValueInWrappedObject m_branch1Reason;

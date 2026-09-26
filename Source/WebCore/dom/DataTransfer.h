@@ -140,7 +140,7 @@ private:
 
     String m_originIdentifier;
     StoreMode m_storeMode;
-    std::unique_ptr<Pasteboard> m_pasteboard;
+    const std::unique_ptr<Pasteboard> m_pasteboard;
     const std::unique_ptr<DataTransferItemList> m_itemList;
 
     mutable RefPtr<FileList> m_fileList;

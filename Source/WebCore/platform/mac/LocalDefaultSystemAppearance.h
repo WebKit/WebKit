@@ -49,7 +49,7 @@ public:
     bool usingDarkAppearance() const { return m_usingDarkAppearance; }
 
 private:
-    RetainPtr<NSAppearance> m_savedSystemAppearance;
+    const RetainPtr<NSAppearance> m_savedSystemAppearance;
     bool m_usingDarkAppearance { false };
 };
     

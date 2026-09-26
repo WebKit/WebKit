@@ -481,12 +481,12 @@ private:
         static uint64_t videoCounter = 0;
         String elementName;
         if (track.isAudio()) {
-            m_audioTrack = AudioTrackPrivateMediaStream::create(track);
+            lazyInitialize(m_audioTrack, AudioTrackPrivateMediaStream::create(track));
             elementName = makeString(namePrefix, "audiosrc"_s, audioCounter);
             audioCounter++;
         } else {
             RELEASE_ASSERT(m_isVideoTrack);
-            m_videoTrack = VideoTrackPrivateMediaStream::create(track);
+            lazyInitialize(m_videoTrack, VideoTrackPrivateMediaStream::create(track));
             elementName = makeString(namePrefix, "videosrc"_s, videoCounter);
             videoCounter++;
         }
@@ -521,7 +521,7 @@ private:
         // RealtimeMediaSource::source() is usable only from the main thread, so keep track of
         // capture sources separately.
         if (m_track->source().isCaptureSource())
-            m_trackSource = &(m_track->source());
+            lazyInitialize(m_trackSource, Ref { m_track->source() });
 
         GRefPtr pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
         m_upstreamQueryPadProbeHandle = PadProbeHandle<InternalSource>::create(*this, WTF::move(pad), GST_PAD_PROBE_TYPE_QUERY_UPSTREAM, [](const auto& self, const auto&, auto info) -> GstPadProbeReturn {
@@ -650,7 +650,7 @@ private:
 
     GThreadSafeWeakPtr<GstElement> m_parent { nullptr };
     RefPtr<MediaStreamTrackPrivate> m_track;
-    RefPtr<RealtimeMediaSource> m_trackSource;
+    const RefPtr<RealtimeMediaSource> m_trackSource;
     GRefPtr<GstElement> m_src;
     bool m_hasPushedInitialTags { false };
     bool m_hasPushedInitialSample { false };
@@ -658,8 +658,8 @@ private:
     bool m_needsDiscont { false };
     String m_padName;
     bool m_isObserving { false };
-    RefPtr<AudioTrackPrivateMediaStream> m_audioTrack;
-    RefPtr<VideoTrackPrivateMediaStream> m_videoTrack;
+    const RefPtr<AudioTrackPrivateMediaStream> m_audioTrack;
+    const RefPtr<VideoTrackPrivateMediaStream> m_videoTrack;
     IntSize m_configuredSize;
     IntSize m_lastKnownSize;
     GRefPtr<GstCaps> m_blackFrameCaps;

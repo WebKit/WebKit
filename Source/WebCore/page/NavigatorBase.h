@@ -79,15 +79,15 @@ protected:
     explicit NavigatorBase(ScriptExecutionContext*);
 
 private:
-    RefPtr<StorageManager> m_storageManager;
-    RefPtr<WebLockManager> m_webLockManager;
+    const RefPtr<StorageManager> m_storageManager;
+    const RefPtr<WebLockManager> m_webLockManager;
 
 public:
     ServiceWorkerContainer& serviceWorker();
     ExceptionOr<ServiceWorkerContainer&> serviceWorker(ScriptExecutionContext&);
 
 private:
-    std::unique_ptr<ServiceWorkerContainer> m_serviceWorkerContainer;
+    const std::unique_ptr<ServiceWorkerContainer> m_serviceWorkerContainer;
 };
 
 WebCoreOpaqueRoot NODELETE root(NavigatorBase*);

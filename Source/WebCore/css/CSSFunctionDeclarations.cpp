@@ -47,7 +47,7 @@ CSSFunctionDescriptors& CSSFunctionDeclarations::style()
     if (!m_descriptorsCSSOMWrapper) {
         Ref styleRule = m_styleRule;
         Ref properties = styleRule->mutableProperties();
-        m_descriptorsCSSOMWrapper = CSSFunctionDescriptors::create(properties, *this);
+        lazyInitialize(m_descriptorsCSSOMWrapper, CSSFunctionDescriptors::create(properties, *this));
     }
     return *m_descriptorsCSSOMWrapper;
 }

@@ -1190,8 +1190,8 @@ void ReplaceSelectionCommand::doApply()
         m_matchStyle = false;
     
     if (m_matchStyle) {
-        m_insertionStyle = EditingStyle::create(selection.start());
-        protect(m_insertionStyle)->mergeTypingStyle(document());
+        lazyInitialize(m_insertionStyle, EditingStyle::create(selection.start()));
+        m_insertionStyle->mergeTypingStyle(document());
     }
 
     VisiblePosition visibleStart = selection.visibleStart();
@@ -1894,7 +1894,7 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
 ReplacementFragment* ReplaceSelectionCommand::ensureReplacementFragment()
 {
     if (!m_replacementFragment)
-        m_replacementFragment = makeUnique<ReplacementFragment>(protect(m_documentFragment), endingSelection());
+        lazyInitialize(m_replacementFragment, makeUnique<ReplacementFragment>(protect(m_documentFragment), endingSelection()));
     return m_replacementFragment.get();
 }
 

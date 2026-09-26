@@ -382,7 +382,7 @@ private:
 
     MonotonicTime m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
     PAL::SessionID m_sessionID;
-    RefPtr<const CookieJar> m_cookieJar;
+    const RefPtr<const CookieJar> m_cookieJar;
     WallTime m_responseTimestamp { WallTime::now() };
     Markable<ResourceLoaderIdentifier> m_identifierForLoadWithoutResourceLoader;
 
@@ -405,7 +405,7 @@ private:
 
     String m_fragmentIdentifierForRequest;
 
-    RefPtr<SecurityOrigin> m_origin;
+    const RefPtr<SecurityOrigin> m_origin;
     AtomString m_initiatorType;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;

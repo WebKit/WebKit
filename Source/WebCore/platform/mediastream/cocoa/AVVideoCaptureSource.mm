@@ -344,7 +344,7 @@ void AVVideoCaptureSource::updateVerifyCapturingTimer()
         return;
 
     if (!m_verifyCapturingTimer)
-        m_verifyCapturingTimer = makeUnique<Timer>(*this, &AVVideoCaptureSource::verifyIsCapturing);
+        lazyInitialize(m_verifyCapturingTimer, makeUnique<Timer>(*this, &AVVideoCaptureSource::verifyIsCapturing));
     m_verifyCapturingTimer->startRepeating(verifyCaptureInterval);
     m_framesCount = 0;
     m_lastFramesCount = 0;
@@ -395,7 +395,7 @@ void AVVideoCaptureSource::startProducingData()
     m_shouldCallNotifyMutedChange = false;
 
     if (!m_startupTimer)
-        m_startupTimer = makeUnique<Timer>(*this, &AVVideoCaptureSource::startupTimerFired);
+        lazyInitialize(m_startupTimer, makeUnique<Timer>(*this, &AVVideoCaptureSource::startupTimerFired));
 
     static constexpr Seconds startupTimerInterval = 1_s;
     m_startupTimer->startOneShot(startupTimerInterval);

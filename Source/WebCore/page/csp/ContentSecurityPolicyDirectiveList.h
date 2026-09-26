@@ -119,7 +119,7 @@ private:
     const ContentSecurityPolicySourceListDirective* hashReportDirectiveForScript() const LIFETIME_BOUND;
 
     template <class CSPDirectiveType>
-    void setCSPDirective(ParsedDirective&&, std::unique_ptr<CSPDirectiveType>&);
+    void setCSPDirective(ParsedDirective&&, const std::unique_ptr<CSPDirectiveType>&);
 
     ContentSecurityPolicySourceListDirective* operativeDirective(ContentSecurityPolicySourceListDirective*, const String&) const;
     ContentSecurityPolicySourceListDirective* operativeDirectiveScript(ContentSecurityPolicySourceListDirective*, const String&) const;
@@ -143,30 +143,30 @@ private:
     bool m_requireTrustedTypesForScript { false };
     bool m_trustedEvalEnabled { false };
 
-    std::unique_ptr<ContentSecurityPolicyMediaListDirective> m_pluginTypes;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_baseURI;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_connectSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_childSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_defaultSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_fontSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_formAction;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameAncestors;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_imgSrc;
+    const std::unique_ptr<ContentSecurityPolicyMediaListDirective> m_pluginTypes;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_baseURI;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_connectSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_childSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_defaultSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_fontSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_formAction;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameAncestors;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_imgSrc;
 #if ENABLE(APPLICATION_MANIFEST)
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_manifestSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_manifestSrc;
 #endif
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_mediaSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_objectSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_prefetchSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrc;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrcElem;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrcAttr;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrcElem;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrcAttr;
-    std::unique_ptr<ContentSecurityPolicyTrustedTypesDirective> m_trustedTypes;
-    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_workerSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_mediaSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_objectSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_prefetchSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrc;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrcElem;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrcAttr;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrcElem;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrcAttr;
+    const std::unique_ptr<ContentSecurityPolicyTrustedTypesDirective> m_trustedTypes;
+    const std::unique_ptr<ContentSecurityPolicySourceListDirective> m_workerSrc;
 
     Vector<String> m_reportToTokens;
     Vector<String> m_reportURIs;

@@ -176,7 +176,7 @@ private:
     bool m_isCapturingWithDefaultMicrophone { false };
     bool m_isProducingMicrophoneSamples { true };
     Function<void()> m_voiceActivityCallback;
-    std::unique_ptr<Timer> m_voiceActivityThrottleTimer;
+    const std::unique_ptr<Timer> m_voiceActivityThrottleTimer;
 };
 
 } // namespace WebCore

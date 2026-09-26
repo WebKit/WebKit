@@ -45,7 +45,7 @@ NavigatorCredentials::~NavigatorCredentials() = default;
 CredentialsContainer* NavigatorCredentials::credentials(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
 {
     if (!m_credentialsContainer)
-        m_credentialsContainer = CredentialsContainer::create(WTF::move(document));
+        lazyInitialize(m_credentialsContainer, CredentialsContainer::create(WTF::move(document)));
 
     return m_credentialsContainer.get();
 }

@@ -83,7 +83,7 @@ DOMPromise& NavigationTransition::committed()
 {
     if (!m_committedDOMPromise) {
         auto& promise = *downcast<JSC::JSPromise>(m_committed->promise());
-        m_committedDOMPromise = DOMPromise::create(*m_committed->globalObject(), promise);
+        lazyInitialize(m_committedDOMPromise, DOMPromise::create(*m_committed->globalObject(), promise));
     }
 
     return *m_committedDOMPromise;
@@ -93,7 +93,7 @@ DOMPromise& NavigationTransition::finished()
 {
     if (!m_finishedDOMPromise) {
         auto& promise = *downcast<JSC::JSPromise>(m_finished->promise());
-        m_finishedDOMPromise = DOMPromise::create(*m_finished->globalObject(), promise);
+        lazyInitialize(m_finishedDOMPromise, DOMPromise::create(*m_finished->globalObject(), promise));
     }
 
     return *m_finishedDOMPromise;

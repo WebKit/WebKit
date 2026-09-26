@@ -69,7 +69,7 @@ RefPtr<MediaControlsUtils> LocalDOMWindowMediaControls::utils(Document& document
 Ref<MediaControlsUtils> LocalDOMWindowMediaControls::ensureUtils(Document& document)
 {
     if (!m_utils)
-        m_utils = MediaControlsUtils::create(document);
+        lazyInitialize(m_utils, MediaControlsUtils::create(document));
     return *m_utils;
 }
 

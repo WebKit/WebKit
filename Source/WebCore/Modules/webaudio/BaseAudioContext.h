@@ -374,7 +374,7 @@ private:
 
     mutable RecursiveLock m_graphLock;
 
-    std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
+    const std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
 
     AudioIOPosition m_outputPosition;
 
@@ -382,10 +382,10 @@ private:
 
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.
-    RefPtr<PeriodicWave> m_cachedPeriodicWaveSine;
-    RefPtr<PeriodicWave> m_cachedPeriodicWaveSquare;
-    RefPtr<PeriodicWave> m_cachedPeriodicWaveSawtooth;
-    RefPtr<PeriodicWave> m_cachedPeriodicWaveTriangle;
+    const RefPtr<PeriodicWave> m_cachedPeriodicWaveSine;
+    const RefPtr<PeriodicWave> m_cachedPeriodicWaveSquare;
+    const RefPtr<PeriodicWave> m_cachedPeriodicWaveSawtooth;
+    const RefPtr<PeriodicWave> m_cachedPeriodicWaveTriangle;
 
     State m_state { State::Suspended };
     bool m_isDeletionScheduled { false };

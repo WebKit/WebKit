@@ -67,7 +67,7 @@ private:
     StringPairVector m_textFieldValues;
     const Ref<Document> m_sourceDocument;
     FormSubmissionTrigger m_formSubmissionTrigger;
-    RefPtr<HTMLFormControlElement> m_submitter;
+    const RefPtr<HTMLFormControlElement> m_submitter;
 };
 
 } // namespace WebCore

@@ -145,9 +145,9 @@ private:
         SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> stroke;
     };
 
-    std::unique_ptr<ClipperFilterMaskerData> m_clipperFilterMaskerData;
-    std::unique_ptr<MarkerData> m_markerData;
-    std::unique_ptr<FillStrokeData> m_fillStrokeData;
+    const std::unique_ptr<ClipperFilterMaskerData> m_clipperFilterMaskerData;
+    const std::unique_ptr<MarkerData> m_markerData;
+    const std::unique_ptr<FillStrokeData> m_fillStrokeData;
     SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> m_linkedResource;
     bool m_inLayoutForDifferentRoot { false };
 };

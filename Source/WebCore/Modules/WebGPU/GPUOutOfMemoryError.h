@@ -63,7 +63,7 @@ private:
     }
 
     String m_message;
-    RefPtr<WebGPU::OutOfMemoryError> m_backing;
+    const RefPtr<WebGPU::OutOfMemoryError> m_backing;
 };
 
 }

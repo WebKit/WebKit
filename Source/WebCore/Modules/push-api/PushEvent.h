@@ -62,12 +62,12 @@ public:
 private:
     PushEvent(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
 
-    RefPtr<PushMessageData> m_data;
+    const RefPtr<PushMessageData> m_data;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
     PushEvent(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, RefPtr<Notification>, std::optional<uint64_t> appBadge, IsTrusted);
 
-    RefPtr<Notification> m_proposedNotification;
+    const RefPtr<Notification> m_proposedNotification;
     std::optional<uint64_t> m_proposedAppBadge;
 
     RefPtr<Notification> m_updatedNotification;

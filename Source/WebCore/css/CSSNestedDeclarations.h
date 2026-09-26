@@ -49,7 +49,7 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::NestedDeclarations; }
 
     Ref<StyleRuleNestedDeclarations> m_styleRule;
-    RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
+    const RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

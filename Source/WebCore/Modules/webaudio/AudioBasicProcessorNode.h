@@ -64,7 +64,7 @@ protected:
 
     float noiseInjectionMultiplier() const override { return 0.01; }
 
-    std::unique_ptr<AudioProcessor> m_processor;
+    const std::unique_ptr<AudioProcessor> m_processor;
 };
 
 } // namespace WebCore

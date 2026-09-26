@@ -1076,13 +1076,13 @@ CachedResourceLoader& Document::ensureCachedResourceLoader()
 {
     ASSERT(m_constructionDidFinish);
     ASSERT(!m_cachedResourceLoader);
-    m_cachedResourceLoader = [&]() -> Ref<CachedResourceLoader> {
+    lazyInitialize(m_cachedResourceLoader, [&]() -> Ref<CachedResourceLoader> {
         if (auto* frame = this->frame()) {
             if (auto* loader = frame->loader().activeDocumentLoader())
                 return loader->cachedResourceLoader();
         }
         return CachedResourceLoader::create(nullptr);
-    }();
+    }());
     m_cachedResourceLoader->setDocument(this);
     return *m_cachedResourceLoader;
 }
@@ -1390,7 +1390,7 @@ ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selec
 MediaQueryMatcher& Document::mediaQueryMatcher()
 {
     if (!m_mediaQueryMatcher)
-        m_mediaQueryMatcher = MediaQueryMatcher::create(*this);
+        lazyInitialize(m_mediaQueryMatcher, MediaQueryMatcher::create(*this));
     return *m_mediaQueryMatcher;
 }
 
@@ -3974,7 +3974,7 @@ HighlightRegistry& Document::appHighlightRegistry()
 AppHighlightStorage& Document::appHighlightStorage()
 {
     if (!m_appHighlightStorage)
-        m_appHighlightStorage = makeUnique<AppHighlightStorage>(*this);
+        lazyInitialize(m_appHighlightStorage, makeUnique<AppHighlightStorage>(*this));
     return *m_appHighlightStorage;
 }
 #endif
@@ -5872,7 +5872,7 @@ Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, cons
 StyleSheetList& Document::styleSheets()
 {
     if (!m_styleSheetList)
-        m_styleSheetList = StyleSheetList::create(*this);
+        lazyInitialize(m_styleSheetList, StyleSheetList::create(*this));
     return *m_styleSheetList;
 }
 
@@ -8184,7 +8184,7 @@ ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceUR
 SVGDocumentExtensions& Document::svgExtensions()
 {
     if (!m_svgExtensions)
-        m_svgExtensions = makeUnique<SVGDocumentExtensions>(*this);
+        lazyInitialize(m_svgExtensions, makeUnique<SVGDocumentExtensions>(*this));
     return *m_svgExtensions;
 }
 
@@ -8426,21 +8426,21 @@ String Document::originIdentifierForPasteboard() const
 ExceptionOr<Ref<XPathExpression>> Document::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
 {
     if (!m_xpathEvaluator)
-        m_xpathEvaluator = XPathEvaluator::create();
+        lazyInitialize(m_xpathEvaluator, XPathEvaluator::create());
     return m_xpathEvaluator->createExpression(expression, WTF::move(resolver));
 }
 
 Ref<XPathNSResolver> Document::createNSResolver(Node& nodeResolver)
 {
     if (!m_xpathEvaluator)
-        m_xpathEvaluator = XPathEvaluator::create();
+        lazyInitialize(m_xpathEvaluator, XPathEvaluator::create());
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
 ExceptionOr<Ref<XPathResult>> Document::evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
 {
     if (!m_xpathEvaluator)
-        m_xpathEvaluator = XPathEvaluator::create();
+        lazyInitialize(m_xpathEvaluator, XPathEvaluator::create());
     return m_xpathEvaluator->evaluate(expression, contextNode, WTF::move(resolver), type, result);
 }
 
@@ -8869,7 +8869,7 @@ EventLoopTaskGroup& Document::eventLoop()
 {
     ASSERT(isMainThread());
     if (!m_documentTaskGroup) [[unlikely]] {
-        m_documentTaskGroup = makeUnique<EventLoopTaskGroup>(windowEventLoop());
+        lazyInitialize(m_documentTaskGroup, makeUnique<EventLoopTaskGroup>(windowEventLoop()));
         m_documentTaskGroup->setScriptExecutionContext(*this);
         if (activeDOMObjectsAreStopped())
             m_documentTaskGroup->markAsReadyToStop();
@@ -9411,7 +9411,7 @@ void Document::processInternalResourceLinks(Element* element)
 int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
 {
     if (!m_idleCallbackController)
-        m_idleCallbackController = makeUnique<IdleCallbackController>(*this);
+        lazyInitialize(m_idleCallbackController, makeUnique<IdleCallbackController>(*this));
     return m_idleCallbackController->queueIdleCallback(WTF::move(callback), timeout);
 }
 
@@ -11863,7 +11863,7 @@ DOMTimerHoldingTank& Document::domTimerHoldingTank()
 {
     if (m_domTimerHoldingTank)
         return *m_domTimerHoldingTank;
-    m_domTimerHoldingTank = makeUnique<DOMTimerHoldingTank>();
+    lazyInitialize(m_domTimerHoldingTank, makeUnique<DOMTimerHoldingTank>());
     return *m_domTimerHoldingTank;
 }
 
@@ -12245,7 +12245,7 @@ std::optional<uint64_t> Document::noiseInjectionHashSalt() const
 ContentVisibilityDocumentState& Document::contentVisibilityDocumentState()
 {
     if (!m_contentVisibilityDocumentState)
-        m_contentVisibilityDocumentState = makeUnique<ContentVisibilityDocumentState>();
+        lazyInitialize(m_contentVisibilityDocumentState, makeUnique<ContentVisibilityDocumentState>());
     return *m_contentVisibilityDocumentState;
 }
 
@@ -12471,7 +12471,7 @@ ResourceMonitor& Document::resourceMonitor()
     ASSERT(!frame()->isMainFrame());
 
     if (!m_resourceMonitor) {
-        m_resourceMonitor = ResourceMonitor::create(*frame());
+        lazyInitialize(m_resourceMonitor, ResourceMonitor::create(*frame()));
         DOCUMENT_RELEASE_LOG(ResourceMonitoring, "ResourceMonitor is created for the document.");
     }
     return *m_resourceMonitor.get();

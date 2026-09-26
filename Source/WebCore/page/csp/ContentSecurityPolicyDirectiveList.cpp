@@ -635,13 +635,13 @@ void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirec
 }
 
 template<class CSPDirectiveType>
-void ContentSecurityPolicyDirectiveList::setCSPDirective(ParsedDirective&& directive, std::unique_ptr<CSPDirectiveType>& existingDirective)
+void ContentSecurityPolicyDirectiveList::setCSPDirective(ParsedDirective&& directive, const std::unique_ptr<CSPDirectiveType>& existingDirective)
 {
     if (existingDirective) {
         m_policy->reportDuplicateDirective(directive.name);
         return;
     }
-    existingDirective = makeUnique<CSPDirectiveType>(*this, WTF::move(directive.name), WTF::move(directive.value));
+    lazyInitialize(existingDirective, makeUnique<CSPDirectiveType>(*this, WTF::move(directive.name), WTF::move(directive.value)));
 }
 
 void ContentSecurityPolicyDirectiveList::applySandboxPolicy(ParsedDirective&& directive)

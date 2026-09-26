@@ -118,12 +118,12 @@ private:
     Position NODELETE startPosition();
     Position NODELETE endPosition();
 
-    RefPtr<EditingStyle> m_style;
+    const RefPtr<EditingStyle> m_style;
     ApplyStylePropertyLevel m_propertyLevel { ApplyStylePropertyLevel::Default };
     Position m_start;
     Position m_end;
     bool m_useEndingSelection;
-    RefPtr<Element> m_styledInlineElement;
+    const RefPtr<Element> m_styledInlineElement;
     bool m_removeOnly;
     IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction { nullptr };
 };

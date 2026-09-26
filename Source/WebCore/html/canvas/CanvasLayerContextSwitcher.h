@@ -54,7 +54,7 @@ private:
     WeakRef<CanvasRenderingContext2DBase> m_context;
     GraphicsContext* m_effectiveDrawingContext;
     FloatRect m_bounds;
-    std::unique_ptr<GraphicsContextSwitcher> m_targetSwitcher;
+    const std::unique_ptr<GraphicsContextSwitcher> m_targetSwitcher;
 };
 
 } // namespace WebCore

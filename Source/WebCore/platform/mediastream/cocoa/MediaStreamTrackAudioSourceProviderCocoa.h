@@ -100,7 +100,7 @@ private:
     std::optional<CAAudioStreamDescription> m_inputDescription;
     std::optional<CAAudioStreamDescription> m_outputDescription WTF_GUARDED_BY_LOCK(m_lock);
     std::unique_ptr<WebAudioBufferList> m_audioBufferList WTF_GUARDED_BY_LOCK(m_lock);
-    RefPtr<AudioSampleDataSource> m_dataSource;
+    const RefPtr<AudioSampleDataSource> m_dataSource;
 
     size_t m_pollSamplesCount { 3 };
     // Written by the capture thread without the lock and read by the rendering thread under it.

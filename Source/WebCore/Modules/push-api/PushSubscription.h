@@ -70,7 +70,7 @@ private:
     WEBCORE_EXPORT explicit PushSubscription(PushSubscriptionData&&, RefPtr<PushSubscriptionOwner>&& = nullptr);
 
     PushSubscriptionData m_data;
-    RefPtr<PushSubscriptionOwner> m_pushSubscriptionOwner;
+    const RefPtr<PushSubscriptionOwner> m_pushSubscriptionOwner;
     mutable RefPtr<PushSubscriptionOptions> m_options;
 };
 

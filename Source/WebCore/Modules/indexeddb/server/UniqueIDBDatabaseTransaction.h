@@ -112,7 +112,7 @@ private:
     WeakPtr<UniqueIDBDatabaseConnection> m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
 
-    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
+    const std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
     Vector<IDBObjectStoreIdentifier> m_objectStoreIdentifiers;
 

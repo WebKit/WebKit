@@ -154,7 +154,7 @@ private:
     {
     }
 
-    std::unique_ptr<GstMappedFrame> m_mappedFrame;
+    const std::unique_ptr<GstMappedFrame> m_mappedFrame;
 };
 
 struct PromiseGLVideoPlaneContext {

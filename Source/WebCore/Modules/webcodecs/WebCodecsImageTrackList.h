@@ -58,7 +58,7 @@ public:
 private:
     WebCodecsImageTrackList();
 
-    UniqueRef<ReadyPromise> m_readyPromise;
+    const UniqueRef<ReadyPromise> m_readyPromise;
     int m_selectedIndex { -1 };
     Vector<Ref<WebCodecsImageTrack>> m_list;
 };

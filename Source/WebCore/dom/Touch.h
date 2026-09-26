@@ -80,7 +80,7 @@ private:
         const DoublePoint& screenPosition, const DoublePoint& pagePosition,
         const DoubleSize& radius, float rotationAngle, double twist, float force, DoublePoint absoluteLocation);
 
-    RefPtr<EventTarget> m_target;
+    const RefPtr<EventTarget> m_target;
     int m_identifier;
     // Position relative to the viewport in CSS px.
     DoublePoint m_clientPosition;

@@ -304,7 +304,7 @@ private:
     String m_mediaControlsLocalizedStringsScript;
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;
-    RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
+    const RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
     String m_youTubeCaptionQuirkScript;
     String m_cnnCaptionQuirkScript;
 #endif // ENABLE(VIDEO)

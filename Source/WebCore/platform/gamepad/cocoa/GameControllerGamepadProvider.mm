@@ -217,11 +217,11 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
     prewarmGameControllerDevicesIfNecessary();
 
     if (canLoad_GameController_GCControllerDidConnectNotification()) {
-        m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidConnectNotificationSingleton() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+        lazyInitialize(m_connectObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidConnectNotificationSingleton() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             RetainPtr<id> object = notification.object;
             LOG(Gamepad, "GameControllerGamepadProvider notified of new GCController %p", object.get());
             GameControllerGamepadProvider::singleton().controllerDidConnect(object.get(), ConnectionVisibility::Visible);
-        }];
+        }] });
     }
 
     if (canLoad_GameController_GCControllerDidDisconnectNotification()) {

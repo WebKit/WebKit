@@ -53,7 +53,7 @@ private:
     void discardRealTimeKitProxyTimerFired();
 #endif
 
-    Ref<ThreadGroup> m_threadGroup;
+    const Ref<ThreadGroup> m_threadGroup;
     // Every registered thread shares this state.
     Thread::SchedulingState m_state { Thread::SchedulingState::Full };
 #if USE(GLIB)

@@ -337,7 +337,7 @@ private:
 
     std::unique_ptr<RenderMarquee> m_marquee;
 
-    std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
+    const std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
 };
 
 } // namespace WebCore

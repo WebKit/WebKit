@@ -49,8 +49,8 @@ public:
 private:
     PageSwapEvent(const AtomString& type, Init&&, IsTrusted);
 
-    RefPtr<NavigationActivation> m_activation;
-    RefPtr<ViewTransition> m_viewTransition;
+    const RefPtr<NavigationActivation> m_activation;
+    const RefPtr<ViewTransition> m_viewTransition;
 };
 
 } // namespace WebCore

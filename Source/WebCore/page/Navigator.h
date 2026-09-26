@@ -93,6 +93,6 @@ private:
     mutable String m_userAgent;
     mutable String m_platform;
     mutable RefPtr<NavigatorUAData> m_navigatorUAData;
-    RefPtr<GPU> m_gpuForWebGPU;
+    const RefPtr<GPU> m_gpuForWebGPU;
 };
 }

@@ -381,7 +381,7 @@ void BaseAudioCaptureUnit::handleNewCurrentMicrophoneDevice(const CaptureDevice&
 void BaseAudioCaptureUnit::voiceActivityDetected()
 {
     if (!m_voiceActivityThrottleTimer)
-        m_voiceActivityThrottleTimer = makeUnique<Timer>([] { });
+        lazyInitialize(m_voiceActivityThrottleTimer, makeUnique<Timer>([] { }));
 
     if (m_voiceActivityThrottleTimer->isActive() || !m_voiceActivityCallback)
         return;

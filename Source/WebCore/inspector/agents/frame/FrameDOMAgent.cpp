@@ -1485,7 +1485,7 @@ public:
     }
 
 private:
-    RefPtr<Node> m_node;
+    const RefPtr<Node> m_node;
 };
 
 } // namespace

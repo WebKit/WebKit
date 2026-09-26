@@ -59,7 +59,7 @@ private:
     TextTrackCueList() = default;
 
     Vector<Ref<TextTrackCue>> m_vector;
-    RefPtr<TextTrackCueList> m_activeCues;
+    const RefPtr<TextTrackCueList> m_activeCues;
 };
 
 inline unsigned TextTrackCueList::length() const

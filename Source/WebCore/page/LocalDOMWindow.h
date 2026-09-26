@@ -534,7 +534,7 @@ private:
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif
 
-    RefPtr<CookieStore> m_cookieStore;
+    const RefPtr<CookieStore> m_cookieStore;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     const std::unique_ptr<PushManager> m_pushManager;

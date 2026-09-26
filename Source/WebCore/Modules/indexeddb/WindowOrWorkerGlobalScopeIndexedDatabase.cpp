@@ -52,7 +52,7 @@ private:
     static ASCIILiteral supplementName() { return "DOMWindowIndexedDatabase"_s; }
     bool NODELETE isDOMWindowIndexedDatabase() const final { return true; }
 
-    RefPtr<IDBFactory> m_idbFactory;
+    const RefPtr<IDBFactory> m_idbFactory;
 };
 
 class WorkerGlobalScopeIndexedDatabase : public Supplement<WorkerGlobalScope> {
@@ -68,7 +68,7 @@ public:
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeIndexedDatabase"_s; }
 
-    RefPtr<IDBFactory> m_idbFactory;
+    const RefPtr<IDBFactory> m_idbFactory;
     const Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };
 
@@ -125,7 +125,7 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB()
         if (!connectionProxy)
             return nullptr;
 
-        m_idbFactory = IDBFactory::create(*connectionProxy);
+        lazyInitialize(m_idbFactory, IDBFactory::create(*connectionProxy));
     }
 
     return m_idbFactory.get();
@@ -158,7 +158,7 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(WorkerG
 IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 {
     if (!m_idbFactory)
-        m_idbFactory = IDBFactory::create(m_connectionProxy.get());
+        lazyInitialize(m_idbFactory, IDBFactory::create(m_connectionProxy.get()));
     return m_idbFactory.get();
 }
 

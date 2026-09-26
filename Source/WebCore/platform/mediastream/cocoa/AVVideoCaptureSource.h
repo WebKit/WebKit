@@ -176,7 +176,7 @@ private:
     std::optional<RealtimeMediaSourceSettings> m_currentSettings WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     std::optional<PhotoCapabilities> m_photoCapabilities WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
-    RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
+    const RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
     RetainPtr<AVCaptureSession> m_session WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     RetainPtr<AVCaptureDevice> m_device WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
 
@@ -208,9 +208,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_shouldCallNotifyMutedChange { false };
-    std::unique_ptr<Timer> m_startupTimer;
+    const std::unique_ptr<Timer> m_startupTimer;
 #endif
-    std::unique_ptr<Timer> m_verifyCapturingTimer;
+    const std::unique_ptr<Timer> m_verifyCapturingTimer;
     std::atomic<uint64_t> m_framesCount { 0 };
     uint64_t m_lastFramesCount { 0 };
     int64_t m_defaultTorchMode { 0 };

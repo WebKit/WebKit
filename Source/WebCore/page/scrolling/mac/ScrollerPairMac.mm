@@ -143,7 +143,7 @@ ScrollerPairMac::ScrollerPairMac(ScrollingTreeScrollingNode& node)
 
 void ScrollerPairMac::init()
 {
-    m_scrollerImpPairDelegate = adoptNS([[WebScrollerImpPairDelegateMac alloc] initWithScrollerPair:this]);
+    lazyInitialize(m_scrollerImpPairDelegate, adoptNS([[WebScrollerImpPairDelegateMac alloc] initWithScrollerPair:this]));
 
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
     [m_scrollerImpPair setDelegate:m_scrollerImpPairDelegate.get()];

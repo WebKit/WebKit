@@ -109,9 +109,9 @@ private:
 
     String m_mimeType;
     String m_uti;
-    RetainPtr<AVURLAsset> m_asset;
+    const RetainPtr<AVURLAsset> m_asset;
     RetainPtr<AVAssetTrack> m_track;
-    RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
+    const RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession WTF_GUARDED_BY_LOCK(m_sampleGeneratorLock);
     const Ref<WebCoreDecompressionSession> m_decompressionSession;
     Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;

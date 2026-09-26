@@ -251,7 +251,7 @@ private:
     FloatSize m_initialLargeViewportSize;
     float m_initialPageZoom { 1 };
 
-    RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
+    const RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
     bool m_isCrossDocument { false };
 
     using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;

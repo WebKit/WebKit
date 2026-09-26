@@ -50,7 +50,7 @@ public:
     Ref<GenericPromise> setBitRateAllocation(RefPtr<WebKitVideoEncoderBitRateAllocation>&&, double frameRate);
 
 private:
-    Ref<GStreamerInternalVideoEncoder> m_internalEncoder;
+    const Ref<GStreamerInternalVideoEncoder> m_internalEncoder;
 };
 
 } // namespace WebCore

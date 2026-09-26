@@ -67,7 +67,7 @@ private:
     SimpleRange m_checkingRange;
     SimpleRange m_automaticReplacementRange;
     SimpleRange m_paragraphRange;
-    RefPtr<Element> m_rootEditableElement;
+    const RefPtr<Element> m_rootEditableElement;
     Vector<TextCheckingResult> m_existingResults;
     TextCheckingRequestData m_requestData;
 };

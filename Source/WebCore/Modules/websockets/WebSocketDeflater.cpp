@@ -48,10 +48,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketDeflater);
 WebSocketDeflater::WebSocketDeflater(int windowBits, ContextTakeOverMode contextTakeOverMode)
     : m_windowBits(windowBits)
     , m_contextTakeOverMode(contextTakeOverMode)
+    , m_stream(makeUniqueWithoutFastMallocCheck<z_stream>())
 {
     ASSERT(m_windowBits >= 8);
     ASSERT(m_windowBits <= 15);
-    m_stream = makeUniqueWithoutFastMallocCheck<z_stream>();
     zeroBytes(*m_stream);
 }
 

@@ -47,7 +47,7 @@ private:
     void initialize(Ref<RealtimeMediaSource>&& source)
     {
         ensureOnMainThread([protectedThis = Ref { *this }, source = WTF::move(source)] () mutable {
-            protectedThis->m_observer = makeUnique<PreventSourceFromEndingObserver>(WTF::move(source));
+            lazyInitialize(protectedThis->m_observer, makeUnique<PreventSourceFromEndingObserver>(WTF::move(source)));
         });
     }
 
@@ -79,7 +79,7 @@ private:
         const Ref<RealtimeMediaSource> m_source;
     };
 
-    std::unique_ptr<PreventSourceFromEndingObserver> m_observer;
+    const std::unique_ptr<PreventSourceFromEndingObserver> m_observer;
 };
 
 MediaStreamTrackDataHolder::MediaStreamTrackDataHolder(MediaStreamTrackData&& data, Ref<RealtimeMediaSource>&& source)

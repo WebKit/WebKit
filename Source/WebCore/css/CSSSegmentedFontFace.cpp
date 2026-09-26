@@ -94,7 +94,7 @@ private:
     mutable std::optional<RefPtr<Font>> m_result; // Caches nullptr too
     mutable Ref<CSSFontFace> m_fontFace;
     FontDescription m_fontDescription;
-    RefPtr<FontFeatureValues> m_fontFeatureValues;
+    const RefPtr<FontFeatureValues> m_fontFeatureValues;
     FontPaletteValues m_fontPaletteValues;
     bool m_syntheticBold;
     bool m_syntheticItalic;

@@ -97,7 +97,6 @@ CoreAudioCaptureSourceFactoryIOS::CoreAudioCaptureSourceFactoryIOS()
 CoreAudioCaptureSourceFactoryIOS::~CoreAudioCaptureSourceFactoryIOS()
 {
     [m_listener invalidate];
-    m_listener = nullptr;
 }
 
 CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()

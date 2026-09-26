@@ -91,7 +91,7 @@ private:
 
     bool setSize(const IntSize&);
 
-    RetainPtr<VTPixelTransferSessionRef> m_transferSession;
+    const RetainPtr<VTPixelTransferSessionRef> m_transferSession;
     RetainPtr<CVPixelBufferPoolRef> m_outputBufferPool;
     bool m_shouldUseIOSurface { true };
     std::optional<FloatRect> m_croppingRectangle;

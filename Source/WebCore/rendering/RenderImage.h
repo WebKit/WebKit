@@ -149,7 +149,7 @@ private:
 
     // Text to display as long as the image isn't available.
     String m_altText;
-    std::unique_ptr<RenderImageResource> m_imageResource;
+    const std::unique_ptr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText { false };
     bool m_isGeneratedContent { false };
     bool m_hasShadowControls { false };

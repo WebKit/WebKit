@@ -111,7 +111,7 @@ CSSPositionTryDescriptors& CSSPositionTryRule::style()
     Ref mutableProperties = protect(positionTryRule())->mutableProperties();
 
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = CSSPositionTryDescriptors::create(mutableProperties.get(), *this);
+        lazyInitialize(m_propertiesCSSOMWrapper, CSSPositionTryDescriptors::create(mutableProperties.get(), *this));
 
     return *m_propertiesCSSOMWrapper;
 }

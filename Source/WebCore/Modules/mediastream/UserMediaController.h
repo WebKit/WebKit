@@ -69,7 +69,7 @@ public:
 private:
     bool isUserMediaController() const final { return true; }
 
-    RefPtr<UserMediaClient> m_client;
+    const RefPtr<UserMediaClient> m_client;
 
     WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_voiceActivityDocuments;
     bool m_shouldListenToVoiceActivity { false };

@@ -2330,7 +2330,7 @@ private:
     OptionSet<ParserContentPolicy> m_parserContentPolicy;
     AsyncNodeDeletionQueue m_asyncNodeDeletionQueue;
 
-    RefPtr<CachedResourceLoader> m_cachedResourceLoader;
+    const RefPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
 
     // Document URLs.
@@ -2380,7 +2380,7 @@ private:
 
     const UniqueRef<Style::DocumentScope> m_styleScope;
     const std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
-    RefPtr<StyleSheetList> m_styleSheetList;
+    const RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;
 
@@ -2410,7 +2410,7 @@ private:
 
     std::unique_ptr<LazyLoadElementObserver> m_lazyLoadElementObserver;
 
-    std::unique_ptr<ContentVisibilityDocumentState> m_contentVisibilityDocumentState;
+    const std::unique_ptr<ContentVisibilityDocumentState> m_contentVisibilityDocumentState;
 
 #if !LOG_DISABLED
     MonotonicTime m_documentCreationTime;
@@ -2442,9 +2442,9 @@ private:
     HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
     std::array<unsigned, numNodeListInvalidationTypes> m_nodeListAndCollectionCounts = { };
 
-    RefPtr<XPathEvaluator> m_xpathEvaluator;
+    const RefPtr<XPathEvaluator> m_xpathEvaluator;
 
-    std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
+    const std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
 
     // Collection of canvas contexts that need periodic work in "PrepareCanvasesForDisplayOrFlush" phase of
     // render update. Hold canvases via rendering context, since there is no common base class that
@@ -2529,7 +2529,7 @@ private:
     DocumentEventTiming m_eventTiming;
     mutable std::unique_ptr<LargestContentfulPaintData> m_largestContentfulPaintData;
 
-    RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
+    const RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     EventTargetSet m_touchEventTargets;
@@ -2543,13 +2543,13 @@ private:
     void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 
-    std::unique_ptr<IdleCallbackController> m_idleCallbackController;
+    const std::unique_ptr<IdleCallbackController> m_idleCallbackController;
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-    std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
-    std::unique_ptr<DeviceMotionController> m_deviceMotionController;
-    std::unique_ptr<DeviceOrientationClient> m_deviceOrientationClient;
-    std::unique_ptr<DeviceOrientationController> m_deviceOrientationController;
+    const std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
+    const std::unique_ptr<DeviceMotionController> m_deviceMotionController;
+    const std::unique_ptr<DeviceOrientationClient> m_deviceOrientationClient;
+    const std::unique_ptr<DeviceOrientationController> m_deviceOrientationController;
 #endif
 
     Timer m_pendingTasksTimer;
@@ -2562,7 +2562,7 @@ private:
     const RefPtr<HighlightRegistry> m_textExtractionHighlightRegistry;
 #if ENABLE(APP_HIGHLIGHTS)
     const RefPtr<HighlightRegistry> m_appHighlightRegistry;
-    std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;
+    const std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;
 #endif
 
     Timer m_visualUpdatesSuppressionTimer;
@@ -2606,7 +2606,7 @@ private:
     Timer m_didAssociateFormControlsTimer;
     Timer m_cookieCacheExpiryTimer;
 
-    RefPtr<SocketProvider> m_socketProvider;
+    const RefPtr<SocketProvider> m_socketProvider;
 
     String m_cachedDOMCookies;
 
@@ -2627,7 +2627,7 @@ private:
     const std::unique_ptr<StyleOriginatedTimelinesController> m_styleOriginatedTimelinesController;
 
     RefPtr<WindowEventLoop> m_eventLoop;
-    std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
+    const std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
 
     RefPtr<SWClientConnection> m_serviceWorkerConnection;
 
@@ -2641,7 +2641,7 @@ private:
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     const std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;
-    std::unique_ptr<DOMTimerHoldingTank> m_domTimerHoldingTank;
+    const std::unique_ptr<DOMTimerHoldingTank> m_domTimerHoldingTank;
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -2873,7 +2873,7 @@ private:
     RefPtr<FrameMemoryMonitor> m_frameMemoryMonitor;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    RefPtr<ResourceMonitor> m_resourceMonitor;
+    const RefPtr<ResourceMonitor> m_resourceMonitor;
 #endif
 
     mutable RefPtr<CSSCalc::RandomCachingKeyMap> m_randomCachingKeyMap;

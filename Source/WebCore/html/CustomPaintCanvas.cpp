@@ -57,7 +57,7 @@ CustomPaintCanvas::~CustomPaintCanvas()
 RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
 {
     if (!m_context)
-        m_context = PaintRenderingContext2D::create(*this);
+        lazyInitialize(m_context, PaintRenderingContext2D::create(*this));
     return m_context.get();
 }
 

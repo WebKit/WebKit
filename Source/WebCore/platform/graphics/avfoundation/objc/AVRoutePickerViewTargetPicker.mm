@@ -108,7 +108,7 @@ AVRoutePickerView *AVRoutePickerViewTargetPicker::devicePicker()
 AVRouteDetector *AVRoutePickerViewTargetPicker::routeDetector()
 {
     if (!m_routeDetector) {
-        m_routeDetector = adoptNS([PAL::allocAVRouteDetectorInstance() init]);
+        lazyInitialize(m_routeDetector, adoptNS([PAL::allocAVRouteDetectorInstance() init]));
         [[NSNotificationCenter defaultCenter] addObserver:m_routePickerViewDelegate.get() selector:@selector(notificationHandler:) name:PAL::AVRouteDetectorMultipleRoutesDetectedDidChangeNotification object:m_routeDetector.get()];
         if ([m_routeDetector multipleRoutesDetected])
             availableDevicesDidChange();

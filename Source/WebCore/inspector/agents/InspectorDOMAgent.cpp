@@ -255,7 +255,7 @@ public:
         return InspectorDOMAgent::nodeAsScriptValue(state, m_node.get());
     }
 private:
-    RefPtr<Node> m_node;
+    const RefPtr<Node> m_node;
 };
 
 class EventFiredCallback final : public EventListener {
@@ -2847,7 +2847,7 @@ void InspectorDOMAgent::didInvalidateStyleAttr(Element& element)
         return;
 
     if (!m_revalidateStyleAttrTask)
-        m_revalidateStyleAttrTask = makeUnique<RevalidateStyleAttributeTask>(this);
+        lazyInitialize(m_revalidateStyleAttrTask, makeUnique<RevalidateStyleAttributeTask>(this));
     m_revalidateStyleAttrTask->scheduleFor(element);
 }
 

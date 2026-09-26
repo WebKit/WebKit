@@ -462,7 +462,7 @@ AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
 #if PLATFORM(COCOA)
     if (RefPtr document = m_document.get()) {
         if (document->settings().isAriaLiveRegionManagementEnabled())
-            m_liveRegionManager = makeUnique<AXLiveRegionManager>(*this);
+            lazyInitialize(m_liveRegionManager, makeUnique<AXLiveRegionManager>(*this));
     }
 #endif
 
@@ -1444,7 +1444,7 @@ void AXObjectCache::remove(AXID axID)
     SetForScope removingNode(m_isRemovingNode, true);
 #if PLATFORM(COCOA)
     if (m_liveRegionManager)
-        protect(m_liveRegionManager)->unregisterLiveRegion(axID);
+        m_liveRegionManager->unregisterLiveRegion(axID);
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1957,7 +1957,7 @@ void AXObjectCache::handleLiveRegionCreated(Element& element)
 
 #if PLATFORM(COCOA)
         if (m_liveRegionManager) {
-            protect(m_liveRegionManager)->registerLiveRegion(*axObject, true);
+            m_liveRegionManager->registerLiveRegion(*axObject, true);
         }
 #endif
 
@@ -1983,7 +1983,7 @@ void AXObjectCache::initializeLiveRegionManager()
     RefPtr current = rootWebArea();
     while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
         if (current->supportsLiveRegion())
-            protect(m_liveRegionManager)->registerLiveRegion(*current);
+            m_liveRegionManager->registerLiveRegion(*current);
     }
 }
 #endif
@@ -3637,7 +3637,7 @@ void AXObjectCache::processChangedLiveRegions()
 #if PLATFORM(COCOA)
     if (m_liveRegionManager) {
         for (auto& object : changedLiveRegions)
-            protect(m_liveRegionManager)->handleLiveRegionChange(object.get());
+            m_liveRegionManager->handleLiveRegionChange(object.get());
         return;
     }
 #endif

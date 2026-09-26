@@ -65,7 +65,7 @@ ExceptionOr<Ref<CloseWatcher>> CloseWatcher::create(ScriptExecutionContext& cont
             Ref manager = protect(document->window())->closeWatcherManager();
             manager->remove(watcher.get());
         } else {
-            watcher->m_signal = signal;
+            lazyInitialize(watcher->m_signal, Ref { *signal });
             watcher->m_signalAlgorithm = signal->addAlgorithm([weakWatcher = WeakPtr { watcher.get() }](JSC::JSValue) mutable {
                 if (RefPtr watcher = weakWatcher.get())
                     watcher->destroy();
@@ -151,8 +151,8 @@ void CloseWatcher::destroy()
 
     m_active = false;
 
-    if (RefPtr signal = m_signal)
-        signal->removeAlgorithm(m_signalAlgorithm);
+    if (m_signal)
+        m_signal->removeAlgorithm(m_signalAlgorithm);
 }
 
 void CloseWatcher::eventListenersDidChange()

@@ -58,7 +58,7 @@ private:
 
 #if USE(GSTREAMER)
     GRefPtr<GstElement> m_videoSink;
-    RefPtr<GStreamerQuirksManager> m_quirksManager;
+    const RefPtr<GStreamerQuirksManager> m_quirksManager;
 #endif
 };
 

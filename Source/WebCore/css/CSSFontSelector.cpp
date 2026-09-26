@@ -114,7 +114,7 @@ FontFaceSet& CSSFontSelector::fontFaceSet()
 {
     if (!m_fontFaceSet) {
         ASSERT(m_context);
-        m_fontFaceSet = FontFaceSet::create(protect(*scriptExecutionContext()), m_cssFontFaceSet.get());
+        lazyInitialize(m_fontFaceSet, FontFaceSet::create(protect(*scriptExecutionContext()), m_cssFontFaceSet.get()));
     }
 
     return *m_fontFaceSet;

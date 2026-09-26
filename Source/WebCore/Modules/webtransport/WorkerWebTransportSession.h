@@ -76,7 +76,7 @@ private:
 
     const ScriptExecutionContextIdentifier m_contextID;
     ThreadSafeWeakPtr<WebTransportSessionClient> m_client;
-    RefPtr<WebTransportSession> m_session;
+    const RefPtr<WebTransportSession> m_session;
 };
 
 }

@@ -73,7 +73,7 @@ private:
     uint64_t m_samplesEmitted { 0 };
     uint64_t m_samplesRendered { 0 };
     bool m_isInterrupted { false };
-    RefPtr<GStreamerAudioCapturer> m_capturer;
+    const RefPtr<GStreamerAudioCapturer> m_capturer;
 };
 
 } // namespace WebCore

@@ -61,7 +61,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
 
     Vector<VideoPreset> m_presets;
-    Ref<MockRealtimeVideoSourceGStreamer> m_source;
+    const Ref<MockRealtimeVideoSourceGStreamer> m_source;
     CaptureDevice::DeviceType m_deviceType;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;

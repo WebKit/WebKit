@@ -43,7 +43,7 @@ private:
 
     virtual WebCore::MediaPlaybackTargetPicker& platformPicker();
 
-    std::unique_ptr<WebCore::MediaPlaybackTargetPicker> m_targetPicker;
+    const std::unique_ptr<WebCore::MediaPlaybackTargetPicker> m_targetPicker;
 };
 
 } // namespace WebCore

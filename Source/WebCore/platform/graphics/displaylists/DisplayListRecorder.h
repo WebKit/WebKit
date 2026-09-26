@@ -156,7 +156,7 @@ private:
     const FloatRect m_initialClip;
     const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 #if USE(CORE_TEXT)
-    std::unique_ptr<DrawGlyphsRecorder> m_drawGlyphsRecorder;
+    const std::unique_ptr<DrawGlyphsRecorder> m_drawGlyphsRecorder;
     float m_initialScale { 1 };
 #endif
 };

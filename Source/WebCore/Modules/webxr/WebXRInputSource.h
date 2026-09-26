@@ -100,7 +100,7 @@ private:
 #endif
 
 #if ENABLE(WEBXR_HANDS)
-    RefPtr<WebXRHand> m_hand;
+    const RefPtr<WebXRHand> m_hand;
 #endif
 
     bool m_selectStarted { false };

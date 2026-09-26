@@ -636,7 +636,7 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMu
     , m_insertedKeyframesRule(insertedKeyframesRule)
 {
     ASSERT(m_styleSheet);
-    m_contentsClonedForMutation = protect(m_styleSheet)->willMutateRules();
+    m_contentsClonedForMutation = m_styleSheet->willMutateRules();
 }
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)

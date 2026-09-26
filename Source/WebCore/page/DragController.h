@@ -154,7 +154,7 @@ private:
     void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 
     WeakRef<Page> m_page;
-    std::unique_ptr<DragClient> m_client;
+    const std::unique_ptr<DragClient> m_client;
 
     RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
     RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.

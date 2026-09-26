@@ -120,7 +120,7 @@ private:
     static Ref<DeprecatedCSSOMPrimitiveValue> create(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
     DeprecatedCSSOMPrimitiveValue(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
 
-    UniqueRef<DeprecatedCSSOMPrimitiveValueData> m_data;
+    const UniqueRef<DeprecatedCSSOMPrimitiveValueData> m_data;
 };
 
 } // namespace WebCore
