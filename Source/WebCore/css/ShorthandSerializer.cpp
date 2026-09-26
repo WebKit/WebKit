@@ -138,6 +138,7 @@ private:
     String serializeBorderImage() const;
     String serializeMaskBorder() const;
     String serializeBorderRadius() const;
+    String serializeBorderRadiusSide() const;
     String serializeBreakInside() const;
     String serializeColumnBreak() const;
     String serializeFont() const;
@@ -436,6 +437,15 @@ String ShorthandSerializer::serialize()
     case CSSPropertyBorderRadius:
     case CSSPropertyWebkitBorderRadius:
         return serializeBorderRadius();
+    case CSSPropertyBorderBlockEndRadius:
+    case CSSPropertyBorderBlockStartRadius:
+    case CSSPropertyBorderBottomRadius:
+    case CSSPropertyBorderInlineEndRadius:
+    case CSSPropertyBorderInlineStartRadius:
+    case CSSPropertyBorderLeftRadius:
+    case CSSPropertyBorderRightRadius:
+    case CSSPropertyBorderTopRadius:
+        return serializeBorderRadiusSide();
     case CSSPropertyContainer:
         return serializeLonghandsOmittingTrailingInitialValue(" / "_s);
     case CSSPropertyFlex:
@@ -1096,6 +1106,42 @@ String ShorthandSerializer::serializeBorderRadius() const
         else if (!r2->equals(r0) || (m_shorthand.id() == CSSPropertyWebkitBorderRadius && !serializeBoth && !r1->equals(r0)))
             result.append(r0->cssText(m_serializationContext), ' ', r1->cssText(m_serializationContext), ' ', r2->cssText(m_serializationContext));
         else if (!r1->equals(r0))
+            result.append(r0->cssText(m_serializationContext), ' ', r1->cssText(m_serializationContext));
+        else
+            result.append(r0->cssText(m_serializationContext));
+    };
+    serializeRadii(horizontalRadii);
+    if (serializeBoth) {
+        result.append(" / "_s);
+        serializeRadii(verticalRadii);
+    }
+    return result.toString();
+}
+
+String ShorthandSerializer::serializeBorderRadiusSide() const
+{
+    ASSERT(length() == 2);
+    std::array<RefPtr<const CSSValue>, 2> horizontalRadii;
+    std::array<RefPtr<const CSSValue>, 2> verticalRadii;
+    for (unsigned i = 0; i < 2; ++i) {
+        auto& value = longhandValue(i);
+        horizontalRadii[i] = value.first();
+        verticalRadii[i] = value.second();
+    }
+
+    bool serializeBoth = false;
+    for (unsigned i = 0; i < 2; ++i) {
+        if (!protect(*horizontalRadii[i])->equals(protect(*verticalRadii[i]))) {
+            serializeBoth = true;
+            break;
+        }
+    }
+
+    StringBuilder result;
+    auto serializeRadii = [&](const std::array<RefPtr<const CSSValue>, 2>& r) {
+        Ref r0 = *r[0];
+        Ref r1 = *r[1];
+        if (!r1->equals(r0))
             result.append(r0->cssText(m_serializationContext), ' ', r1->cssText(m_serializationContext));
         else
             result.append(r0->cssText(m_serializationContext));
