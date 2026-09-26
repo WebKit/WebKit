@@ -1320,7 +1320,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
         }
 
         // RefPtr if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-        if (RefPtr process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, site->domain(), websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
+        if (RefPtr process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, *site, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
@@ -2387,10 +2387,12 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
         return { createNewProcess(), nullptr, "Process swap was requested by the client"_s };
 
-    if (!m_configuration->processSwapsOnNavigation())
+    bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
+
+    if (!m_configuration->processSwapsOnNavigation() && !siteIsolationEnabled)
         return { WTF::move(sourceProcess), nullptr, "Feature is disabled"_s };
 
-    if (m_automationSession && !protect(page.preferences())->siteIsolationEnabled())
+    if (m_automationSession && !siteIsolationEnabled)
         return { WTF::move(sourceProcess), nullptr, "An automation session is active"_s };
 
     // Redirects to a different scheme for which the client has registered their own custom handler.
@@ -2398,8 +2400,6 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     // that the app's scheme handler gets used (rdar://117891282).
     if (navigation.currentRequestIsRedirect() && navigation.originalRequest().url().protocol() != targetURL.protocol() && page.urlSchemeHandlerForScheme(targetURL.protocol()))
         return { createNewProcess(), nullptr, "Redirect to a different scheme for which the app registered a custom handler"_s };
-
-    bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
 
     if (siteIsolationEnabled && &browsingContextGroup != &page.browsingContextGroup()) {
         // Only main frame navigation can swap browsing context group.

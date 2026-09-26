@@ -40,7 +40,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class RegistrableDomain;
+class Site;
 }
 
 namespace WebKit {
@@ -68,7 +68,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
+    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::Site&, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
 
     WebPageProxy* NODELETE page() const;
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }

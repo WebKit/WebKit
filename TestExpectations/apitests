@@ -68,10 +68,6 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.NavigationWithLockedHistoryWithoutPSON [ Crash ]
 [ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.QuickBackForwardNavigationWithoutPSON [ Crash ]
 
-# webkit.org/b/324191 [Site Isolation macOS Tahoe Debug]REGRESSION(315452@main): 2x TestWebKitAPI.* (api-tests) are constant crashes.
-[ mac debug arm64 siteisolation ] TestWebKitAPI.ProcessSwap.EphemeralWebStorage [ Crash ]
-[ mac debug arm64 siteisolation ] TestWebKitAPI.WebKit.DecidePolicyForNavigationActionForHyperlinkThatRedirectsWithoutPSON [ Crash ]
-
 # webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllAfterNetworkProcessTermination [ Timeout ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
