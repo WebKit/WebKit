@@ -142,7 +142,7 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     return { };
 }
 
-JSPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, JSModuleLoader*, JSString* specifierValue, RefPtr<ScriptFetchParameters> fetchParams, const SourceOrigin& sourceOrigin, bool deferred)
+JSPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, JSModuleLoader*, JSString* specifierValue, RefPtr<ScriptFetchParameters> fetchParams, const SourceOrigin& sourceOrigin, AbstractModuleRecord::ModulePhase phase)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -157,7 +157,7 @@ JSPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObj
     Identifier originURL;
     if (const String& originString = sourceOrigin.string(); !originString.isNull())
         originURL = Identifier::fromString(vm, originString);
-    auto result = importModule(globalObject, Identifier::fromString(vm, specifier), originURL, WTF::move(fetchParams), nullptr, deferred);
+    auto result = importModule(globalObject, Identifier::fromString(vm, specifier), originURL, WTF::move(fetchParams), nullptr, phase);
     RETURN_IF_EXCEPTION(scope, reject(scope));
     return result;
 }

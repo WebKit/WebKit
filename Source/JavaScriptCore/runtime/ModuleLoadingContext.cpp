@@ -45,6 +45,10 @@ ModuleLoadingContext::ModuleLoadingContext(VM& vm, Structure* structure, Step st
     , m_entry(entry, WriteBarrierEarlyInit)
     , m_referrer(referrer.toJSValue(), WriteBarrierEarlyInit)
 {
+    if (m_moduleRequest.m_phase == AbstractModuleRecord::ModulePhase::Source)
+        m_flags.add(ModuleLoadFlag::Source);
+    else if (m_moduleRequest.m_phase == AbstractModuleRecord::ModulePhase::Defer)
+        m_flags.add(ModuleLoadFlag::Deferred);
 }
 
 void ModuleLoadingContext::destroy(JSCell* cell)

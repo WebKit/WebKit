@@ -5775,6 +5775,17 @@ SourceBufferChangeTypeEnabled:
     default: true
     WebKitLegacy: true
 
+SourcePhaseImportsEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Source Phase Imports"
+  humanReadableDescription: "Enable import source / import.source() module source phase imports."
+  jscOptionName: useSourcePhaseImports
+  sharedPreferenceForWebProcess: true
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 SpatialImageControlsEnabled:
   type: bool
   status: preview

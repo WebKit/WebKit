@@ -592,9 +592,11 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
     };
 
+    enum class ImportCallPhase : uint8_t { Evaluation, Defer, Source };
+
     class ImportNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
-        ImportNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, bool deferred);
+        ImportNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, ImportCallPhase);
 
     private:
         bool isImportNode() const final { return true; }
@@ -602,7 +604,7 @@ namespace JSC {
 
         ExpressionNode* m_expr;
         ExpressionNode* m_option;
-        bool m_deferred;
+        ImportCallPhase m_phase { ImportCallPhase::Evaluation };
     };
 
     class MetaPropertyNode : public ExpressionNode {
@@ -2099,15 +2101,12 @@ namespace JSC {
 
     class ImportDeclarationNode final : public ModuleDeclarationNode {
     public:
-        enum class ImportType : uint8_t {
-            Normal,
-            Deferred
-        };
-        ImportDeclarationNode(const JSTokenLocation&, ImportType, ImportSpecifierListNode*, ModuleNameNode*, ImportAttributesListNode*);
+        ImportDeclarationNode(const JSTokenLocation&, ImportCallPhase, ImportSpecifierListNode*, ModuleNameNode*, ImportAttributesListNode*);
 
         ImportSpecifierListNode* specifierList() const { return m_specifierList; }
         ModuleNameNode* moduleName() const { return m_moduleName; }
         ImportAttributesListNode* attributesList() const { return m_attributesList; }
+        ImportCallPhase phase() const { return m_phase; }
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -2116,7 +2115,7 @@ namespace JSC {
         ImportSpecifierListNode* m_specifierList;
         ModuleNameNode* m_moduleName;
         ImportAttributesListNode* m_attributesList;
-        ImportType m_type;
+        ImportCallPhase m_phase { ImportCallPhase::Evaluation };
     };
 
     class ExportAllDeclarationNode final : public ModuleDeclarationNode {

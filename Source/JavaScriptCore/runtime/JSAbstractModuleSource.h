@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Sergey Rubanov. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,45 +25,46 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
-
-#if ENABLE(WEBASSEMBLY)
-
-#include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/JSPromise.h>
+#include "InternalFunction.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-class WebAssemblyCompileOptions;
-
-class JSWebAssembly final : public JSNonFinalObject {
+class JSAbstractModuleSourcePrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSWebAssembly, Base);
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSAbstractModuleSourcePrototype, Base);
         return &vm.plainObjectSpace();
     }
 
-    static JSWebAssembly* create(VM&, JSGlobalObject*, Structure*);
+    static JSAbstractModuleSourcePrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&, std::optional<WebAssemblyCompileOptions>&&);
-    static JSValue instantiate(JSGlobalObject*, JSPromise*, RefPtr<SourceProvider>&&, const Identifier&, JSValue);
-    static JSValue compileForModuleLoader(JSGlobalObject*, JSPromise*, RefPtr<SourceProvider>&&, const Identifier&, JSValue);
-
-    static void instantiateForStreaming(VM&, JSGlobalObject*, JSPromise*, JSWebAssemblyModule*, JSObject*, RefPtr<SourceProvider>&&);
-
 private:
-    JSWebAssembly(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*);
+    JSAbstractModuleSourcePrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
-} // namespace JSC
+class JSAbstractModuleSourceConstructor final : public InternalFunction {
+public:
+    using Base = InternalFunction;
 
-#endif // ENABLE(WEBASSEMBLY)
+    static JSAbstractModuleSourceConstructor* create(VM&, Structure*, JSAbstractModuleSourcePrototype*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    DECLARE_INFO;
+
+private:
+    JSAbstractModuleSourceConstructor(VM&, Structure*);
+    void finishCreation(VM&, JSAbstractModuleSourcePrototype*);
+};
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSAbstractModuleSourceConstructor, InternalFunction);
+
+} // namespace JSC
