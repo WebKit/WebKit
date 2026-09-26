@@ -2551,15 +2551,27 @@ RegisterID* ReflectConstructFunctionCallDotNode::emitBytecode(BytecodeGenerator&
     if (isOptionalCall())
         generator.emitOptionalCheck(function.get());
 
-    unsigned argumentIndex = 0;
-    for (ArgumentListNode* argument = m_args->m_listNode; argument; argument = argument->m_next)
-        generator.emitNode(callArguments.argumentRegister(argumentIndex++), argument->m_expr);
-
     RegisterID* target = callArguments.argumentRegister(0);
     RegisterID* argumentsList = callArguments.argumentRegister(1);
     RegisterID* newTarget = newTargetNode ? callArguments.argumentRegister(2) : target;
 
-    // FIXME: A simple array literal as the arguments list could become the arguments of an op_construct, which saves the array.
+    generator.emitNode(target, m_args->m_listNode->m_expr);
+    std::optional<CallArguments> constructArguments;
+    if (argumentsListNode->m_expr->isSimpleArray()) {
+        ElementNode* elements = static_cast<ArrayNode*>(argumentsListNode->m_expr)->elements();
+        unsigned elementCount = 0;
+        for (ElementNode* element = elements; element; element = element->next())
+            ++elementCount;
+        constructArguments.emplace(generator, nullptr, elementCount);
+        unsigned elementIndex = 0;
+        for (ElementNode* element = elements; element; element = element->next())
+            generator.emitNode(constructArguments->argumentRegister(elementIndex++), element->value());
+    } else
+        generator.emitNode(argumentsList, argumentsListNode->m_expr);
+    unsigned argumentIndex = 2;
+    for (ArgumentListNode* argument = newTargetNode; argument; argument = argument->m_next)
+        generator.emitNode(callArguments.argumentRegister(argumentIndex++), argument->m_expr);
+
     Ref<Label> realCall = generator.newLabel();
     Ref<Label> end = generator.newLabel();
     generator.emitDebugHook(WillExecuteExpression, divotStart());
@@ -2567,12 +2579,18 @@ RegisterID* ReflectConstructFunctionCallDotNode::emitBytecode(BytecodeGenerator&
     generator.emitJumpIfFalse(generator.emitIsConstructor(generator.newTemporary(), target), realCall.get());
     if (newTargetNode)
         generator.emitJumpIfFalse(generator.emitIsConstructor(generator.newTemporary(), newTarget), realCall.get());
-    if (!argumentsListNode->m_expr->isArrayLiteral())
-        generator.emitJumpIfFalse(generator.emitIsObject(generator.newTemporary(), argumentsList), realCall.get());
-    generator.emitConstructVarargs(returnValue.get(), target, newTarget, argumentsList, generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    if (constructArguments)
+        generator.emitConstruct(returnValue.get(), target, newTarget, NoExpectedFunction, *constructArguments, divot(), divotStart(), divotEnd());
+    else {
+        if (!argumentsListNode->m_expr->isArrayLiteral())
+            generator.emitJumpIfFalse(generator.emitIsObject(generator.newTemporary(), argumentsList), realCall.get());
+        generator.emitConstructVarargs(returnValue.get(), target, newTarget, argumentsList, generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    }
     generator.emitJump(end.get());
 
     generator.emitLabel(realCall.get());
+    if (constructArguments)
+        generator.emitNewArrayByReversingArguments(argumentsList, *constructArguments);
     RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
     generator.emitLabel(end.get());
     generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
