@@ -3801,6 +3801,50 @@ TEST(WKDownload, SuggestedFilenameCorrectedByContentType)
     EXPECT_WK_STREQ("video.mp4", receivedSuggestedFilename.get());
 }
 
+static bool scriptNavigationToDataURLBecomesDownload(NSString *dataURL)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"<body>test</body>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool done = false;
+    __block bool didBecomeDownload = false;
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        completionHandler(WKNavigationResponsePolicyDownload);
+    };
+    navigationDelegate.get().navigationResponseDidBecomeDownload = ^(WKNavigationResponse *, WKDownload *download) {
+        [download cancel:nil];
+        didBecomeDownload = true;
+        done = true;
+    };
+    navigationDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+        done = true;
+    };
+
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"location.href = '%@'", dataURL] completionHandler:nil];
+    Util::run(&done);
+    if (!didBecomeDownload)
+        Util::runFor(100_ms);
+    return didBecomeDownload;
+}
+
+TEST(WKDownload, ScriptNavigationToDataURLDoesNotBecomeDownload)
+{
+    EXPECT_FALSE(scriptNavigationToDataURLBecomesDownload(@"data:application/octet-stream;base64,aGVsbG8="));
+}
+
+TEST(WKDownload, ScriptNavigationToPassDataURL)
+{
+#if PLATFORM(IOS_FAMILY)
+    EXPECT_TRUE(scriptNavigationToDataURLBecomesDownload(@"data:application/vnd.apple.pkpass;base64,aGVsbG8="));
+    EXPECT_TRUE(scriptNavigationToDataURLBecomesDownload(@"data:application/vnd.apple.pkpasses;base64,aGVsbG8="));
+#else
+    EXPECT_FALSE(scriptNavigationToDataURLBecomesDownload(@"data:application/vnd.apple.pkpass;base64,aGVsbG8="));
+#endif
+}
+
 #if PLATFORM(MAC)
 TEST(WKDownload, CrossSiteTargetBlankDownloadDoesNotCrashNetworkProcess)
 {

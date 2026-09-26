@@ -1163,7 +1163,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         // wasn't initiated by the user or the API client, mirroring the existing check in the
         // PolicyAction::Use branch. The primary defense lives in the UI process; this guards
         // ports / future flows that don't share that boundary.
-        if (disallowDataRequest()) {
+        if (!MIMETypeRegistry::isAllowedMIMETypeForDataURLDownload(m_response.mimeType()) && disallowDataRequest()) {
             protect(frameLoader())->policyChecker().cannotShowMIMEType(m_response);
             stopLoadingForPolicyChange();
             return;

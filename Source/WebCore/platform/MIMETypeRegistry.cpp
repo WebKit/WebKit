@@ -908,4 +908,20 @@ bool MIMETypeRegistry::isWebArchiveMIMEType(const String& mimeType)
 
     return webArchiveMIMETypes.get().isValidValue(mimeType) ? webArchiveMIMETypes.get().contains(mimeType) : false;
 }
+
+bool MIMETypeRegistry::isAllowedMIMETypeForDataURLDownload(const String& mimeType)
+{
+#if PLATFORM(IOS_FAMILY)
+    // Wallet passes are commonly delivered by navigating to a data: URL.
+    static constexpr SortedArraySet passMIMETypeSet { WTF::toArray<ComparableLettersLiteral>({
+        "application/vnd.apple.pkpass"_s,
+        "application/vnd.apple.pkpasses"_s,
+    }) };
+    return passMIMETypeSet.contains(mimeType);
+#else
+    UNUSED_PARAM(mimeType);
+    return false;
+#endif
+}
+
 } // namespace WebCore

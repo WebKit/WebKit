@@ -6398,7 +6398,8 @@ void WebPageProxy::receivedNavigationResponsePolicyDecision(WebCore::PolicyActio
     // downloads of data: URLs go through the navigation action policy (e.g. <a href="data:..." download>)
     // or the explicit download API, neither of which reaches this code path.
     if (action == PolicyAction::Download && request.url().protocolIsData()
-        && (!navigation || !navigation->isFromAPIClientRequest())) {
+        && (!navigation || !navigation->isFromAPIClientRequest())
+        && !MIMETypeRegistry::isAllowedMIMETypeForDataURLDownload(mimeTypeFromDataURL(request.url().string()))) {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationResponsePolicyDecision: refusing to download data: URL not initiated by API client");
         action = PolicyAction::Ignore;
     }
