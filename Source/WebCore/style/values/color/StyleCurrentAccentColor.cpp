@@ -26,10 +26,26 @@
 #include "config.h"
 #include "StyleCurrentAccentColor.h"
 
+#include "StyleColor.h"
+#include "StyleResolvedColors.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
+
+WebCore::Color resolveColor(const CurrentAccentColor&, const ResolvedColors& resolvedColors)
+{
+    ResolvedColors resolvedColorsWithoutAccentColor {
+        resolvedColors.currentColor(),
+        // This is technically unnecessary, as we're sure accentColor() wouldn't have any
+        // AccentColor (they're replaced with the parent's accent color during style building)
+        // But do this to avoid infinite recursion if we made a programming mistake and
+        // accentColor() just so happen to have any AccentColor.
+        { }
+    };
+
+    return resolveColor(resolvedColors.accentColor(), resolvedColorsWithoutAccentColor);
+}
 
 // MARK: - Serialization
 

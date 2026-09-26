@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Color.h>
+#include <WebCore/StyleColor.h>
 
 namespace WebCore {
 namespace Style {
@@ -36,15 +37,17 @@ class ResolvedColors {
     WTF_MAKE_TZONE_ALLOCATED(ResolvedColors);
 
 public:
-    explicit ResolvedColors(WebCore::Color);
+    explicit ResolvedColors(WebCore::Color currentColor, Style::Color accentColor);
 
     static ResolvedColors fromStyle(const ComputedStyleProperties&);
     static ResolvedColors fromVisitedLinkStyle(const ComputedStyleProperties&);
 
     WebCore::Color currentColor() const { return m_currentColor; }
+    const Style::Color& accentColor() const LIFETIME_BOUND { return m_accentColor; }
 
 private:
     WebCore::Color m_currentColor;
+    Color m_accentColor;
 };
 
 } // namespace Style

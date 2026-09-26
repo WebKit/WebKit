@@ -256,13 +256,16 @@
             ],
             "codegen-properties": {
                 "settings-flag": "accentColorEnabled",
+                "computed-style-setter-custom": true,
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::AccentColor",
                 "color-property": true,
                 "color-property-traits-color-custom": true,
                 "color-property-traits-visited-link-color-custom": true,
-                "parser-grammar": "auto | <color>"
+                "parser-grammar": "auto | <color>",
+                "high-priority": true,
+                "style-builder-custom": "Value"
             },
             "specification": {
                 "category": "css-ui",

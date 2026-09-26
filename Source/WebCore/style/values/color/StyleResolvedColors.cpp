@@ -32,19 +32,20 @@
 namespace WebCore {
 namespace Style {
 
-ResolvedColors::ResolvedColors(WebCore::Color currentColor)
-    : m_currentColor(currentColor)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor, Style::Color accentColor)
+    : m_currentColor(WTF::move(currentColor))
+    , m_accentColor(WTF::move(accentColor))
 {
 }
 
 ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style)
 {
-    return ResolvedColors(style.color());
+    return ResolvedColors(style.color(), style.accentColor().colorOrDefaultColor());
 }
 
 ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style)
 {
-    return ResolvedColors(style.visitedLinkColor());
+    return ResolvedColors(style.visitedLinkColor(), style.accentColor().colorOrDefaultColor());
 }
 
 } // namespace Style
