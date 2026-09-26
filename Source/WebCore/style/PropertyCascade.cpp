@@ -60,9 +60,19 @@ PropertyCascade::PropertyCascade(const MatchResult& matchResult, IncludedPropert
     buildCascade();
 }
 
+PropertyCascade::IncludedProperties PropertyCascade::rollbackProperties(const PropertyCascade& parent)
+{
+    auto types = normalPropertyTypes();
+    // Preserve starting-style resolution so that a revert inside @starting-style can roll back to
+    // @starting-style declarations from lower priority layers or origins.
+    if (parent.m_includedProperties.types.contains(PropertyType::StartingStyle))
+        types.add(PropertyType::StartingStyle);
+    return { types };
+}
+
 PropertyCascade::PropertyCascade(const PropertyCascade& parent, Origin maximumOrigin, std::optional<ScopeOrdinal> rollbackScope, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback)
     : m_matchResult(parent.m_matchResult)
-    , m_includedProperties(normalProperties()) // Include all properties to the rollback cascade, lower prority layers may not get included otherwise.
+    , m_includedProperties(rollbackProperties(parent)) // Include all properties to the rollback cascade, lower prority layers may not get included otherwise.
     , m_maximumOrigin(maximumOrigin)
     , m_rollbackScope(rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
@@ -75,7 +85,7 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, Origin maximumOr
 // Constructs a cascade where all properties in the parent cascade have been reverted.
 PropertyCascade::PropertyCascade(const PropertyCascade& parent, RevertRuleTag)
     : m_matchResult(parent.m_matchResult)
-    , m_includedProperties(normalProperties())
+    , m_includedProperties(rollbackProperties(parent))
     , m_maximumOrigin(parent.m_maximumOrigin)
     , m_rollbackScope(parent.m_rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(parent.m_maximumCascadeLayerPriorityForRollback)
