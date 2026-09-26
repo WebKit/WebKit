@@ -128,7 +128,7 @@ public:
 
     using ReadBufferCompletionHandler = CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>;
 
-    void readBuffer(CStringView format, ReadBufferCompletionHandler&& completionHandler)
+    void readBuffer(UTF8CStringView format, ReadBufferCompletionHandler&& completionHandler)
     {
         m_completionHandler = WTF::move(completionHandler);
         auto mimeTypes = WTF::toArray<const char*>({ format.utf8(), nullptr });
@@ -241,7 +241,7 @@ void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& comple
     ClipboardTask::create(m_clipboard, readMode)->readFilePaths(WTF::move(completionHandler));
 }
 
-void Clipboard::readBuffer(CStringView format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode readMode)
+void Clipboard::readBuffer(UTF8CStringView format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode readMode)
 {
     ClipboardTask::create(m_clipboard, readMode)->readBuffer(format, WTF::move(completionHandler));
 }

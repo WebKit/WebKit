@@ -83,8 +83,8 @@
 #include <wtf/StdList.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/UTF8CStringView.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 inline bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
@@ -285,7 +285,7 @@ inline void checkUsesInstruction(Compilation& compilation, const char* text, boo
 {
     checkDisassembly(
         compilation,
-        [&] (CStringView disassembly) -> bool {
+        [&] (UTF8CStringView disassembly) -> bool {
             if (regex)
                 return std::regex_match(disassembly.utf8(), std::regex(text, std::regex::extended));
             return contains(disassembly.span(), byteCast<char8_t>(unsafeSpan(text)));
@@ -297,7 +297,7 @@ inline void checkDoesNotUseInstruction(Compilation& compilation, const char* tex
 {
     checkDisassembly(
         compilation,
-        [&] (CStringView disassembly) -> bool {
+        [&] (UTF8CStringView disassembly) -> bool {
             return !contains(disassembly.span(), byteCast<char8_t>(unsafeSpan(text)));
         },
         toUTF8CString("Did not expected to find ", text, " but it's there!"));
@@ -1395,7 +1395,7 @@ void testCSELoadAfterStoreDiamond(bool flag);
 void testCSELoadAcrossLoopBackEdge(unsigned count);
 void testCSELoopHeaderLoadFromBackEdgeStore(unsigned count);
 
-bool shouldRun(const TestConfig*, CStringView testName);
+bool shouldRun(const TestConfig*, UTF8CStringView testName);
 
 void testLoadPreIndex32();
 void testLoadPreIndex64();

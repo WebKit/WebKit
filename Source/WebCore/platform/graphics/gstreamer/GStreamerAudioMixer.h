@@ -27,8 +27,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ public:
     GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
     void unregisterProducer(const GRefPtr<GstPad>&);
 
-    void configureSourcePeriodTime(CStringView sourceName, uint64_t periodTime);
+    void configureSourcePeriodTime(UTF8CStringView sourceName, uint64_t periodTime);
 
 private:
     GStreamerAudioMixer();

@@ -1991,7 +1991,7 @@ bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
     if (!gst_message_parse_context_type(message, &contextTypeChars))
         return false;
 
-    auto contextType = CStringView::unsafeFromUTF8(contextTypeChars);
+    auto contextType = UTF8CStringView::unsafeFromUTF8(contextTypeChars);
 
     GST_DEBUG_OBJECT(pipeline(), "Handling %s need-context message for %s", contextType.utf8(), GST_MESSAGE_SRC_NAME(message));
 
@@ -2314,7 +2314,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 // the videoSink based on its metadata.
                 GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
                 if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
-                    auto klassStr = CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
+                    auto klassStr = UTF8CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
                     if (contains(klassStr.span(), "Sink"_s)  && contains(klassStr.span(), "Video"_s)) {
                         m_videoSink = element;
 
@@ -2330,7 +2330,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             // Detect an audio sink element and store reference to it if it supersedes what we currently have.
             GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
             if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
-                auto klassStr = CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
+                auto klassStr = UTF8CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
                 if (contains(klassStr.span(), "Sink"_s) && contains(klassStr.span(), "Audio"_s)
                     && (!m_audioSink || (m_audioSink.get() != element && GST_STATE(m_audioSink.get()) == GST_STATE_NULL)))
                     m_audioSink = element;
@@ -3227,7 +3227,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         return false;
 
     const GValue* locations = gst_structure_get_value(m_mediaLocations.get(), "locations");
-    CStringView newLocation;
+    UTF8CStringView newLocation;
 
     if (!locations) {
         // Fallback on new-location string.
@@ -4218,7 +4218,7 @@ void MediaPlayerPrivateGStreamer::managePlayerSuspend()
     static bool allowPlaybackOfInvisibleVideos = false;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        allowPlaybackOfInvisibleVideos = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS")) == "1"_s;
+        allowPlaybackOfInvisibleVideos = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS")) == "1"_s;
     });
 
     bool muted = isMuted();
@@ -4357,13 +4357,13 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
 #if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
-    auto disableGLSink = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_DISABLE_GL_SINK"));
+    auto disableGLSink = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_DISABLE_GL_SINK"));
     if (disableGLSink == "1"_s) {
         GST_INFO("Disabling hardware-accelerated rendering per user request.");
         return nullptr;
     }
 
-    auto desiredVideoSink = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_CUSTOM_VIDEO_SINK"));
+    auto desiredVideoSink = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_CUSTOM_VIDEO_SINK"));
     if (desiredVideoSink)
         return makeGStreamerElement(desiredVideoSink);
 
@@ -4594,7 +4594,7 @@ InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMess
         // which of the UUIDs it is, so we just overwrite it. This is
         // a quirk of how GStreamer provides protection events, and
         // it's not very robust, so be careful here!
-        systemId = GStreamerEMEUtilities::uuidToKeySystem(CStringView::unsafeFromUTF8(eventKeySystemId));
+        systemId = GStreamerEMEUtilities::uuidToKeySystem(UTF8CStringView::unsafeFromUTF8(eventKeySystemId));
         InitData initData { systemId, data };
         payloadBuilder.append(*initData.payload());
         m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
@@ -4720,7 +4720,7 @@ void MediaPlayerPrivateGStreamer::handleProtectionEvent(GstEvent* event)
     const char* eventKeySystemUUID = nullptr;
     GstBuffer* initData = nullptr;
     gst_event_parse_protection(event, &eventKeySystemUUID, &initData, nullptr);
-    initializationDataEncountered({ GStreamerEMEUtilities::uuidToKeySystem(CStringView::unsafeFromUTF8(eventKeySystemUUID)), initData });
+    initializationDataEncountered({ GStreamerEMEUtilities::uuidToKeySystem(UTF8CStringView::unsafeFromUTF8(eventKeySystemUUID)), initData });
 }
 
 bool MediaPlayerPrivateGStreamer::waitingForKey() const

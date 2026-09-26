@@ -79,9 +79,9 @@ static void javaScriptCallback(WKTypeRef result, WKErrorRef error, void* ctx)
     return compareJSResult(script, actualResult, expectedResult);
 }
     
-::testing::AssertionResult compareJSResult(const char* script, CStringView actualResult, const char* expectedResult)
+::testing::AssertionResult compareJSResult(const char* script, UTF8CStringView actualResult, const char* expectedResult)
 {
-    if (actualResult == CStringView::unsafeFromUTF8(expectedResult))
+    if (actualResult == UTF8CStringView::unsafeFromUTF8(expectedResult))
         return ::testing::AssertionSuccess();
 
     return ::testing::AssertionFailure()

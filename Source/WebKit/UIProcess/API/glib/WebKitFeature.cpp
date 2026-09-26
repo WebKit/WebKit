@@ -23,7 +23,7 @@
 #include "APIFeature.h"
 #include "WebKitFeaturePrivate.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 static inline WebKitFeatureStatus toFeatureStatus(API::FeatureStatus status)
 {
@@ -449,7 +449,7 @@ WebKitFeature* webkit_feature_list_find(WebKitFeatureList* featureList, const ch
     g_return_val_if_fail(featureList, nullptr);
     g_return_val_if_fail(identifier, nullptr);
 
-    const auto identifierView = CStringView::unsafeFromUTF8(identifier);
+    const auto identifierView = UTF8CStringView::unsafeFromUTF8(identifier);
 
     auto it = std::ranges::find_if(featureList->items, [&identifierView](WebKitFeature* feature) -> bool {
         return equalSpans(feature->identifier.span(), identifierView.span());

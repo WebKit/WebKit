@@ -49,7 +49,7 @@
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WTF {
 template <typename T> class SingleRootGraph;
@@ -1273,13 +1273,13 @@ public:
 
     void logAssertionFailure(
         std::nullptr_t, const char* file, int line, const char* function,
-        CStringView assertion);
+        UTF8CStringView assertion);
     void logAssertionFailure(
         Node*, const char* file, int line, const char* function,
-        CStringView assertion);
+        UTF8CStringView assertion);
     void logAssertionFailure(
         BasicBlock*, const char* file, int line, const char* function,
-        CStringView assertion);
+        UTF8CStringView assertion);
 
     bool hasDebuggerEnabled() const { return m_hasDebuggerEnabled; }
 

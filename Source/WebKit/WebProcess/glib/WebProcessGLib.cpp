@@ -93,7 +93,7 @@
 
 #if USE(VULKAN)
 #include <WebCore/VulkanUtilities.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 #endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
@@ -194,7 +194,7 @@ void WebProcess::initializeVulkanIfNeeded()
 {
 #if USE(VULKAN)
     bool useVulkan = false;
-    if (const auto envValue = CStringView::unsafeFromUTF8(getenv("WEBKIT_VULKAN_ENABLED")))
+    if (const auto envValue = UTF8CStringView::unsafeFromUTF8(getenv("WEBKIT_VULKAN_ENABLED")))
         useVulkan = (envValue == "1"_s && envValue != "0"_s);
 
     if (!useVulkan)

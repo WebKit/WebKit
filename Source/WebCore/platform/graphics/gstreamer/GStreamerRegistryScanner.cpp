@@ -479,7 +479,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         m_decoderCodecMap.add("mp4a.40.29"_s, result); // MPEG-4 HE-AAC v2 (AAC LC + SBR + PS)
         // As of writing, support for Extended HE-AAC (MPEG-D USAC) and xHE-AAC (MPEG-D USAC + MPEG-D DRC) -- which uses the
         // USAC AOT, is not yet widely available enough to be enabled by default except in platforms with a mechanism to autodetect it.
-        auto envCanPlayUsac = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_CAN_PLAY_USAC"));
+        auto envCanPlayUsac = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_CAN_PLAY_USAC"));
         bool canPlayUsac;
         if (envCanPlayUsac.isEmpty()) {
             // A few hardware platforms (Amlogic and MediaTek) explicitly report support for USAC via stream-format=usac.
@@ -657,12 +657,12 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         { ElementFactories::Type::Demuxer, "video/x-ms-asf"_s, { }, { } },
     };
 
-    if (auto hlsSupport = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_HLS_SUPPORT"))) {
+    if (auto hlsSupport = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_HLS_SUPPORT"))) {
         if (hlsSupport == "1"_s)
             mapping.append({ ElementFactories::Type::Demuxer, "application/x-hls"_s, { "application/vnd.apple.mpegurl"_s, "application/x-mpegurl"_s }, { } });
     }
 
-    if (auto dashSupport = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_DASH_SUPPORT"))) {
+    if (auto dashSupport = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_DASH_SUPPORT"))) {
         if (dashSupport == "1"_s)
             mapping.append({ ElementFactories::Type::Demuxer, "application/dash+xml"_s, { }, { } });
     }
@@ -1026,7 +1026,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
     }
 
     auto levelAsCString = level.ascii();
-    if (auto maxVideoResolution = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION"))) {
+    if (auto maxVideoResolution = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION"))) {
         uint8_t levelAsInteger = gst_codec_utils_h264_get_level_idc(levelAsCString.data());
         GST_DEBUG("Maximum video resolution requested: %s, supplied codec level IDC: %u", maxVideoResolution.utf8(), levelAsInteger);
         uint8_t maxLevel = 0;

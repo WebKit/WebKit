@@ -41,7 +41,7 @@ FilePrintStream::~FilePrintStream()
     fclose(m_file);
 }
 
-std::unique_ptr<FilePrintStream> FilePrintStream::open(CStringView filename, ASCIILiteral mode)
+std::unique_ptr<FilePrintStream> FilePrintStream::open(UTF8CStringView filename, ASCIILiteral mode)
 {
     FILE* file = fopen(filename.utf8(), mode.characters());
     if (!file)

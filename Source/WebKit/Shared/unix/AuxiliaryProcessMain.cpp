@@ -32,9 +32,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/UTF8CStringView.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if ENABLE(BREAKPAD)
@@ -86,7 +86,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 #if ENABLE(DEVELOPER_MODE)
     // Check last remaining options for JSC testing
     for (auto& arg : argvSpan.subspan(argIndex)) {
-        if (CStringView::unsafeFromUTF8(arg) == "--configure-jsc-for-testing"_s)
+        if (UTF8CStringView::unsafeFromUTF8(arg) == "--configure-jsc-for-testing"_s)
             JSC::Config::configureForTesting();
     }
 #endif

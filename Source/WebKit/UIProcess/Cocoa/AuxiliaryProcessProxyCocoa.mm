@@ -230,7 +230,7 @@ bool AuxiliaryProcessProxy::LogXPCEventHandler::handleXPCEvent(xpc_object_t even
 
         process->didReceiveLogsDuringLaunchForTesting();
         auto message = messageString.utf8();
-        logWithProcessNamePrefix(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), process->processName(), static_cast<int>(pid), CStringView::fromUTF8(message.spanIncludingNullTerminator()));
+        logWithProcessNamePrefix(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), process->processName(), static_cast<int>(pid), UTF8CStringView::fromUTF8(message.spanIncludingNullTerminator()));
     } else if (messageName == disableLogMessageName) {
         RefPtr process = m_process.get();
         if (!process)

@@ -25,37 +25,37 @@
  */
 
 #include "config.h"
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
-TEST(WTF, CStringViewNullAndEmpty)
+TEST(WTF, UTF8CStringViewNullAndEmpty)
 {
-    CStringView string;
+    UTF8CStringView string;
     EXPECT_TRUE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_EQ(string.utf8(), nullptr);
     EXPECT_TRUE(!string);
     EXPECT_FALSE(string);
 
-    string = CStringView(nullptr);
+    string = UTF8CStringView(nullptr);
     EXPECT_TRUE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_EQ(string.utf8(), nullptr);
     EXPECT_TRUE(!string);
     EXPECT_FALSE(string);
 
-    string = CStringView(""_s);
+    string = UTF8CStringView(""_s);
     EXPECT_FALSE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_TRUE(string.utf8());
     EXPECT_TRUE(!string);
     EXPECT_FALSE(string);
 
-    string = CStringView("test"_s);
+    string = UTF8CStringView("test"_s);
     EXPECT_FALSE(string.isNull());
     EXPECT_FALSE(string.isEmpty());
     EXPECT_TRUE(string.utf8());
@@ -63,82 +63,82 @@ TEST(WTF, CStringViewNullAndEmpty)
     EXPECT_TRUE(string);
 }
 
-TEST(WTF, CStringViewSize)
+TEST(WTF, UTF8CStringViewSize)
 {
-    CStringView string;
+    UTF8CStringView string;
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_EQ(string.span().size(), 0UZ);
     EXPECT_EQ(string.spanIncludingNullTerminator().size(), 0UZ);
 
-    string = CStringView(""_s);
+    string = UTF8CStringView(""_s);
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_EQ(string.span().size(), 0UZ);
     EXPECT_EQ(string.spanIncludingNullTerminator().size(), 1UZ);
 
-    string = CStringView("test"_s);
+    string = UTF8CStringView("test"_s);
     EXPECT_EQ(string.lengthInBytes(), 4UZ);
     EXPECT_EQ(string.span().size(), 4UZ);
     EXPECT_EQ(string.spanIncludingNullTerminator().size(), 5UZ);
 
-    string = CStringView::unsafeFromUTF8("water🍉melon");
+    string = UTF8CStringView::unsafeFromUTF8("water🍉melon");
     EXPECT_EQ(string.lengthInBytes(), 14UZ);
     EXPECT_EQ(string.span().size(), 14UZ);
     EXPECT_EQ(string.spanIncludingNullTerminator().size(), 15UZ);
 }
 
-TEST(WTF, CStringViewFrom)
+TEST(WTF, UTF8CStringViewFrom)
 {
     const char* stringPtr = "test";
-    CStringView string = CStringView::unsafeFromUTF8(stringPtr);
+    UTF8CStringView string = UTF8CStringView::unsafeFromUTF8(stringPtr);
     EXPECT_EQ(string.lengthInBytes(), 4UZ);
     EXPECT_TRUE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
-    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    string = UTF8CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
     EXPECT_EQ(string.lengthInBytes(), 4UZ);
     EXPECT_TRUE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
 
     stringPtr = nullptr;
-    string = CStringView::unsafeFromUTF8(stringPtr);
+    string = UTF8CStringView::unsafeFromUTF8(stringPtr);
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_FALSE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
-    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    string = UTF8CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_FALSE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
 
     stringPtr = "";
-    string = CStringView::unsafeFromUTF8(stringPtr);
+    string = UTF8CStringView::unsafeFromUTF8(stringPtr);
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_FALSE(string.isNull());
     EXPECT_FALSE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
-    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    string = UTF8CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_FALSE(string.isNull());
     EXPECT_FALSE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
 
     stringPtr = "water🍉melon";
-    string = CStringView::unsafeFromUTF8(stringPtr);
+    string = UTF8CStringView::unsafeFromUTF8(stringPtr);
     EXPECT_EQ(string.lengthInBytes(), 14UZ);
     EXPECT_TRUE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
-    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    string = UTF8CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
     EXPECT_EQ(string.lengthInBytes(), 14UZ);
     EXPECT_TRUE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
 }
 
-TEST(WTF, CStringViewEquality)
+TEST(WTF, UTF8CStringViewEquality)
 {
-    CStringView string("Test"_s);
-    CStringView sameString("Test"_s);
-    CStringView anotherString("another test"_s);
-    CStringView nullString;
-    CStringView nullString2(nullptr);
-    CStringView emptyLiteral(""_s);
+    UTF8CStringView string("Test"_s);
+    UTF8CStringView sameString("Test"_s);
+    UTF8CStringView anotherString("another test"_s);
+    UTF8CStringView nullString;
+    UTF8CStringView nullString2(nullptr);
+    UTF8CStringView emptyLiteral(""_s);
 
     EXPECT_EQ(string, string);
     EXPECT_EQ(string, sameString);
@@ -154,15 +154,15 @@ TEST(WTF, CStringViewEquality)
     // Empty from unsafeFromUTF8 vs null and vs empty literal.
     char* bareEmptyString = strdup("");
     char* bareEmptyString2 = strdup("");
-    auto emptyFromUTF8 = CStringView::unsafeFromUTF8(bareEmptyString);
-    auto emptyFromUTF8_2 = CStringView::unsafeFromUTF8(bareEmptyString2);
+    auto emptyFromUTF8 = UTF8CStringView::unsafeFromUTF8(bareEmptyString);
+    auto emptyFromUTF8_2 = UTF8CStringView::unsafeFromUTF8(bareEmptyString2);
     EXPECT_EQ(emptyFromUTF8, emptyFromUTF8_2);
     EXPECT_EQ(emptyFromUTF8, nullString);
     EXPECT_EQ(emptyFromUTF8, emptyLiteral);
     free(bareEmptyString);
     free(bareEmptyString2);
 
-    // CStringView vs ASCIILiteral.
+    // UTF8CStringView vs ASCIILiteral.
     EXPECT_EQ(string, "Test"_s);
     EXPECT_EQ("Test"_s, string);
     EXPECT_TRUE(string != "Other"_s);

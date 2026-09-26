@@ -34,7 +34,7 @@ uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t port)
 {
 #if ENABLE(REMOTE_INSPECTOR)
     auto& server = Inspector::RemoteInspectorServer::singleton();
-    if (!server.start(CStringView::unsafeFromUTF8(address), port))
+    if (!server.start(UTF8CStringView::unsafeFromUTF8(address), port))
         return 0;
 
     return server.getPort().value_or(0);

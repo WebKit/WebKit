@@ -75,7 +75,7 @@
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if PLATFORM(GTK)
 #include "WebKitRemoteInspectorProtocolHandler.h"
@@ -1462,7 +1462,7 @@ static bool pathIsBlocked(const char* path)
 
     GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
     auto pathElements = unsafeMakeSpan(splitPath.get(), g_strv_length(splitPath.get()));
-    return (pathElements.size() < 2) || std::ranges::find(blockedPrefixes, CStringView::unsafeFromUTF8(pathElements[1])) != blockedPrefixes.end();
+    return (pathElements.size() < 2) || std::ranges::find(blockedPrefixes, UTF8CStringView::unsafeFromUTF8(pathElements[1])) != blockedPrefixes.end();
 }
 
 /**

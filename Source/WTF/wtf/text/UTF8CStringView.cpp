@@ -27,13 +27,13 @@
  */
 
 #include "config.h"
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #include <wtf/PrintStream.h>
 
 namespace WTF {
 
-void CStringView::dump(PrintStream& out) const
+void UTF8CStringView::dump(PrintStream& out) const
 {
     out.print(span());
 }

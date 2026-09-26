@@ -244,7 +244,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness(ASCIILiteral errorMessage)
     SAFE_SPRINTF(std::span { buffer }, "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
 #endif
 
-    dump(errorMessage, CStringView::unsafeFromUTF8(buffer), true);
+    dump(errorMessage, UTF8CStringView::unsafeFromUTF8(buffer), true);
 
     if (!TestController::singleton().usingServerMode())
         return;
@@ -253,10 +253,10 @@ void TestInvocation::dumpWebProcessUnresponsiveness(ASCIILiteral errorMessage)
         fputs("Grab an image of the stack, then hit enter...\n", stderr);
 
     if (!fgets(buffer, sizeof(buffer), stdin) || strcmp(buffer, "#SAMPLE FINISHED\n"))
-        SAFE_FPRINTF(stderr, "Failed receive expected sample response, got:\n\t\"%s\"\nContinuing...\n", CStringView::unsafeFromUTF8(buffer));
+        SAFE_FPRINTF(stderr, "Failed receive expected sample response, got:\n\t\"%s\"\nContinuing...\n", UTF8CStringView::unsafeFromUTF8(buffer));
 }
 
-void TestInvocation::dump(CStringView textToStdout, CStringView textToStderr, bool seenError)
+void TestInvocation::dump(UTF8CStringView textToStdout, UTF8CStringView textToStderr, bool seenError)
 {
     printf("Content-Type: text/plain\n");
     if (!textToStdout.isNull())

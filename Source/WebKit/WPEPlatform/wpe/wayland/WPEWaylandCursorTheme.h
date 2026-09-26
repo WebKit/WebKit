@@ -31,7 +31,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WPE {
 
@@ -54,10 +54,10 @@ public:
         uint32_t hotspotY { 0 };
         struct wl_buffer* buffer { nullptr };
     };
-    const Vector<Image>& cursor(CStringView, double, std::optional<uint32_t> maxImages = std::nullopt);
+    const Vector<Image>& cursor(UTF8CStringView, double, std::optional<uint32_t> maxImages = std::nullopt);
 
 private:
-    void loadCursor(CStringView, double, std::optional<uint32_t> maxImages, Vector<WaylandCursorTheme::Image>&);
+    void loadCursor(UTF8CStringView, double, std::optional<uint32_t> maxImages, Vector<WaylandCursorTheme::Image>&);
 
     std::unique_ptr<CursorTheme> m_theme;
     std::unique_ptr<WaylandSHMPool> m_pool;

@@ -26,8 +26,8 @@
 #include <array>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/egl.h>
@@ -149,7 +149,7 @@ bool GLDisplay::isSoftwareRendered() const
     if (m_display == EGL_NO_DISPLAY)
         return false;
 
-    static const auto containsSoftwareRendererName = [](const CStringView& rendererName) {
+    static const auto containsSoftwareRendererName = [](const UTF8CStringView& rendererName) {
         static constexpr ASCIILiteral substringsToCheck[] = {
             "llvmpipe"_s,
             "swrast"_s,
@@ -178,13 +178,13 @@ bool GLDisplay::isSoftwareRendered() const
 
             if (GLContext::isExtensionSupported(deviceExtensionsString, "EGL_EXT_device_query_name")) {
                 if (const char* rendererName = eglQueryDeviceStringEXT(eglDevice, EGL_RENDERER_EXT))
-                    return containsSoftwareRendererName(CStringView::unsafeFromUTF8(rendererName));
+                    return containsSoftwareRendererName(UTF8CStringView::unsafeFromUTF8(rendererName));
             }
         }
     }
 
     if (const char* rendererName = reinterpret_cast<const char*>(glGetString(GL_RENDERER)))
-        return containsSoftwareRendererName(CStringView::unsafeFromUTF8(rendererName));
+        return containsSoftwareRendererName(UTF8CStringView::unsafeFromUTF8(rendererName));
 
     return false;
 }

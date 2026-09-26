@@ -297,7 +297,7 @@ TEST(WTF, CStringStdStringInterop)
     }
 }
 
-TEST(WTF, CStringViewASCIICaseConversions)
+TEST(WTF, UTF8CStringViewASCIICaseConversions)
 {
     EXPECT_EQ(WTF::convertToASCIILowercase(u8"Test"_span), UTF8CString { u8"test"_span });
     EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Test"_span), UTF8CString { u8"TEST"_span });

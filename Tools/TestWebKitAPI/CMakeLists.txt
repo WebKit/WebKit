@@ -56,7 +56,6 @@ set(TestWTF_SOURCES
     Tests/WTF/BoxPtr.cpp
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
-    Tests/WTF/CStringView.cpp
     Tests/WTF/CharacterProperties.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp
     Tests/WTF/CheckedPtr.cpp
@@ -178,6 +177,7 @@ set(TestWTF_SOURCES
     Tests/WTF/TruncateFloat.cpp
     Tests/WTF/URL.cpp
     Tests/WTF/URLParser.cpp
+    Tests/WTF/UTF8CStringView.cpp
     Tests/WTF/UTF8Conversion.cpp
     Tests/WTF/UUID.cpp
     Tests/WTF/UniqueArray.cpp

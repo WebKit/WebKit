@@ -28,7 +28,7 @@
 
 #include <libpsl.h>
 #include <wtf/URL.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     return ret;
 }
 
-static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, CStringView domain)
+static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, UTF8CStringView domain)
 {
     // psl_registerable_domain returns a pointer to domain's data or null if there is no private domain
     if (const char* topPrivateDomain = psl_registrable_domain(psl, domain.utf8()))
@@ -69,7 +69,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
 
     const psl_ctx_t* psl = psl_builtin();
     ASSERT(psl);
-    return topPrivatelyControlledDomainInternal(psl, CStringView::fromUTF8(domainUTF8.spanIncludingNullTerminator().subspan(position)));
+    return topPrivatelyControlledDomainInternal(psl, UTF8CStringView::fromUTF8(domainUTF8.spanIncludingNullTerminator().subspan(position)));
 }
 
 } // namespace WebCore

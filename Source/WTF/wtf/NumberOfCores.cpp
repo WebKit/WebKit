@@ -29,8 +29,8 @@
 #include <array>
 #include <cstdio>
 #include <wtf/text/ASCIILiteral.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if OS(DARWIN)
 #include <sys/sysctl.h>
@@ -53,10 +53,10 @@ int numberOfProcessorCores()
         return s_numberOfCores;
     
     ASCIILiteral coresEnvName = "WTF_numberOfProcessorCores";
-    auto coresEnv = CStringView::unsafeFromUTF8(getenv(coresEnvName));
+    auto coresEnv = UTF8CStringView::unsafeFromUTF8(getenv(coresEnvName));
     if (coresEnv.isNull()) {
         coresEnvName = "NUMBER_OF_PROCESSORS";
-        coresEnv = CStringView::unsafeFromUTF8(getenv(coresEnvName));
+        coresEnv = UTF8CStringView::unsafeFromUTF8(getenv(coresEnvName));
     }
     if (!coresEnv.isNull()) {
         if (auto numberOfCores = parseInteger<unsigned>(coresEnv.span())) {

@@ -435,7 +435,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
     auto width = size.width();
     auto height = size.height();
 
-    auto formatName = CStringView::unsafeFromUTF8(gst_video_format_to_string(format));
+    auto formatName = UTF8CStringView::unsafeFromUTF8(gst_video_format_to_string(format));
     GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Creating %s VideoFrame from pixel buffer", formatName.utf8());
 
     int frameRateNumerator, frameRateDenominator;
@@ -746,7 +746,7 @@ GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const Int
 
     auto width = destinationSize.width();
     auto height = destinationSize.height();
-    auto formatName = CStringView::unsafeFromUTF8(gst_video_format_to_string(format));
+    auto formatName = UTF8CStringView::unsafeFromUTF8(gst_video_format_to_string(format));
     GRefPtr outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.utf8(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
 
     if (colorSpace) {

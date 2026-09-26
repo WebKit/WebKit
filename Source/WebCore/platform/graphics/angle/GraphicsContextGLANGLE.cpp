@@ -49,8 +49,8 @@
 #include <wtf/SortedArrayMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/UTF8CStringView.h>
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCVCocoa.h"
 #endif

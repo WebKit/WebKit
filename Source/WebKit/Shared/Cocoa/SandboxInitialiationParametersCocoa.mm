@@ -59,7 +59,7 @@ void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, NSStri
     appendPathInternal(name, [path length] ? [path fileSystemRepresentation] : "");
 }
 
-void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, CStringView path)
+void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, UTF8CStringView path)
 {
     appendPathInternal(name, path.utf8());
 }

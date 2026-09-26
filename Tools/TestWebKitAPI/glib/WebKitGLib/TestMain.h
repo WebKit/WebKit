@@ -27,7 +27,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if PLATFORM(GTK)
 #include <cairo.h>
@@ -83,7 +83,7 @@
 
 inline const char* assertCmpCStringPointer(const char* string) { return string; }
 inline const char* assertCmpCStringPointer(const CString& string) { return string.legacyCStringPointer(); }
-inline const char* assertCmpCStringPointer(const CStringView& string) { return string.utf8(); }
+inline const char* assertCmpCStringPointer(const UTF8CStringView& string) { return string.utf8(); }
 
 #define ASSERT_CMP_CSTRING(s1, cmp, s2) \
     do {                                                                 \

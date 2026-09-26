@@ -35,8 +35,8 @@
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if PLATFORM(GTK)
 #include "Display.h"
@@ -195,7 +195,7 @@ static void bindSymlinksRealPath(Vector<UTF8CString>& args, const String& path, 
     }
 }
 
-static void bindIfExists(Vector<UTF8CString>& args, const CStringView& path, BindFlags bindFlags = BindFlags::ReadOnly)
+static void bindIfExists(Vector<UTF8CString>& args, const UTF8CStringView& path, BindFlags bindFlags = BindFlags::ReadOnly)
 {
     if (path.isEmpty())
         return;
@@ -226,7 +226,7 @@ static void bindIfExists(Vector<UTF8CString>& args, const CStringView& path, Bin
 
 static void bindIfExists(Vector<UTF8CString>& args, const char* path, BindFlags bindFlags = BindFlags::ReadOnly)
 {
-    bindIfExists(args, CStringView::unsafeFromUTF8(path), bindFlags);
+    bindIfExists(args, UTF8CStringView::unsafeFromUTF8(path), bindFlags);
 }
 
 static void bindDBusSession(Vector<UTF8CString>& args, XDGDBusProxy& dbusProxy, bool allowPortals)
@@ -284,9 +284,9 @@ static void bindPulse(Vector<UTF8CString>& args)
     // They can also be set as X11 props but that is getting a bit ridiculous.
     const char* pulseServer = g_getenv("PULSE_SERVER");
     if (pulseServer) {
-        auto pulseServerString = CStringView::unsafeFromUTF8(pulseServer);
+        auto pulseServerString = UTF8CStringView::unsafeFromUTF8(pulseServer);
         if (startsWith(pulseServerString.span(), "unix:"_s))
-            bindIfExists(args, CStringView::fromUTF8(pulseServerString.span().subspan(5)), BindFlags::ReadWrite);
+            bindIfExists(args, UTF8CStringView::fromUTF8(pulseServerString.span().subspan(5)), BindFlags::ReadWrite);
         // else it uses tcp
     } else {
         const char* runtimeDir = g_get_user_runtime_dir();
@@ -715,7 +715,7 @@ static int setupSeccomp()
 static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType, Vector<char*>& argv)
 {
     // gdbserver requires network access for remote debugging.
-    if (enableDebugPermissions() && endsWith(CStringView::unsafeFromUTF8(argv[0]).span(), "gdbserver"_s))
+    if (enableDebugPermissions() && endsWith(UTF8CStringView::unsafeFromUTF8(argv[0]).span(), "gdbserver"_s))
         return false;
 
     if (remoteInspectorEnabled())

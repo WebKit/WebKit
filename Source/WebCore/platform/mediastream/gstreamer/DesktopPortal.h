@@ -29,7 +29,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ public:
     GRefPtr<GVariant> getProperty(ASCIILiteral name);
 
     using ResponseCallback = CompletionHandler<void(GVariant*)>;
-    void waitResponseSignal(CStringView objectPath, ResponseCallback&& = [](auto*) { });
+    void waitResponseSignal(UTF8CStringView objectPath, ResponseCallback&& = [](auto*) { });
 
     void notifyResponse(GVariant* parameters);
 

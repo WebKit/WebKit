@@ -43,7 +43,7 @@
 #include <WebCore/PlatformDisplayGBM.h>
 #endif
 #include <WebCore/PlatformDisplaySurfaceless.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {
 

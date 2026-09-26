@@ -26,7 +26,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 G_BEGIN_DECLS
 
@@ -46,4 +46,4 @@ GtkWidget* webkitInspectorWindowNew();
 
 G_END_DECLS
 
-void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow*, CStringView subtitle);
+void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow*, UTF8CStringView subtitle);

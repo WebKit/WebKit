@@ -1112,7 +1112,7 @@ void TestRunner::resetPageVisibility()
         [webView _setVisibilityState:WebPageVisibilityStateVisible isInitialState:YES];
 }
 
-void TestRunner::setPageVisibility(CStringView newVisibility)
+void TestRunner::setPageVisibility(UTF8CStringView newVisibility)
 {
     if (newVisibility.isNull())
         return;

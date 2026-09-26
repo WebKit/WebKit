@@ -38,7 +38,7 @@ public:
 
     JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
 
-    JS_EXPORT_PRIVATE bool start(CStringView address, uint16_t port);
+    JS_EXPORT_PRIVATE bool start(UTF8CStringView address, uint16_t port);
     JS_EXPORT_PRIVATE std::optional<uint16_t> getPort() const;
     bool isRunning() const { return !!m_server; }
 

@@ -50,7 +50,7 @@ RemoteInspectorServer::~RemoteInspectorServer()
     endpoint.invalidateListener(*this);
 }
 
-bool RemoteInspectorServer::start(CStringView address, uint16_t port)
+bool RemoteInspectorServer::start(UTF8CStringView address, uint16_t port)
 {
     if (isRunning())
         return false;

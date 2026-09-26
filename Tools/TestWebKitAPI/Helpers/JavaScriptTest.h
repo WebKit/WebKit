@@ -34,7 +34,7 @@ OBJC_CLASS WebView;
 OBJC_CLASS WKWebView;
 #endif
 #include <WebKit/WKBase.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace TestWebKitAPI {
 
@@ -45,7 +45,7 @@ namespace TestWebKitAPI {
 #define EXPECT_JS_TRUE(page, script) EXPECT_JS_EQ(page, script, "true")
 
 ::testing::AssertionResult runJSTest(const char* pageExpr, const char* scriptExpr, const char* expectedResultExpr, WKPageRef, const char* script, const char* expectedResult);
-::testing::AssertionResult compareJSResult(const char* script, CStringView actualResult, const char* expectedResult);
+::testing::AssertionResult compareJSResult(const char* script, UTF8CStringView actualResult, const char* expectedResult);
 
 #if PLATFORM(COCOA)
 ::testing::AssertionResult runJSTest(const char* webViewExpr, const char* scriptExpr, const char* expectedResultExpr, WebView *, const char* script, const char* expectedResult);

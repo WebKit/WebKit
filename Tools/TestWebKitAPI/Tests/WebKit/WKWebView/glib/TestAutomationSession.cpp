@@ -23,8 +23,8 @@
 #include <gio/gio.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/SocketConnection.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/UTF8CStringView.h>
 
 class AutomationTest: public Test {
 public:
@@ -155,7 +155,7 @@ public:
         g_assert_cmpstr(browserVersion, ==, versionString.get());
     }
 
-    WebKitAutomationSession* requestSession(CStringView sessionID)
+    WebKitAutomationSession* requestSession(UTF8CStringView sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
         m_connection->sendMessage("StartAutomationSession"_s, g_variant_new("(sa{sv})", sessionID.utf8(), nullptr));

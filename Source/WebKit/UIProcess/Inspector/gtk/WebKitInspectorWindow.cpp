@@ -97,7 +97,7 @@ GtkWidget* webkitInspectorWindowNew()
         "default-width", WebInspectorUIProxy::initialWindowWidth, "default-height", WebInspectorUIProxy::initialWindowHeight, nullptr));
 }
 
-void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, CStringView subtitle)
+void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, UTF8CStringView subtitle)
 {
     g_return_if_fail(WEBKIT_IS_INSPECTOR_WINDOW(window));
 

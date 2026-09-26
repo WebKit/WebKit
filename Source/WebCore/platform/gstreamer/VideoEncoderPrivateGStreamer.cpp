@@ -96,7 +96,7 @@ static GType videoEncoderLatencyModeGetType()
     return latencyModeGType;
 }
 
-static ASCIILiteral annexBStreamFormatCapsFieldValue(CStringView name)
+static ASCIILiteral annexBStreamFormatCapsFieldValue(UTF8CStringView name)
 {
     static HashMap<String, ASCIILiteral> map = {
         { "video/x-h264"_s, "byte-stream"_s },

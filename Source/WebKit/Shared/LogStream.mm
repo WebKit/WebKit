@@ -47,7 +47,7 @@ static std::atomic<unsigned> globalLogCountForTesting { 0 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LogStream);
 
-void logWithProcessNamePrefix(os_log_t log, os_log_type_t type, ASCIILiteral processName, int pid, CStringView message)
+void logWithProcessNamePrefix(os_log_t log, os_log_type_t type, ASCIILiteral processName, int pid, UTF8CStringView message)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (processName == "WebContent"_s)
@@ -146,7 +146,7 @@ void LogStream::logOnBehalfOfWebContent(std::span<const char8_t> subsystemSpan, 
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    SUPPRESS_UNCOUNTED_LOCAL logWithProcessNamePrefix(osLog.get(), static_cast<os_log_type_t>(logType), m_processName, m_pid, CStringView::fromUTF8(string.spanIncludingNullTerminator()));
+    SUPPRESS_UNCOUNTED_LOCAL logWithProcessNamePrefix(osLog.get(), static_cast<os_log_type_t>(logType), m_processName, m_pid, UTF8CStringView::fromUTF8(string.spanIncludingNullTerminator()));
 }
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)

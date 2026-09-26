@@ -33,7 +33,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 typedef struct _GstGLMemory GstGLMemory;
 
@@ -77,7 +77,7 @@ inline bool gst_check_version(guint major, guint minor, guint micro)
 #define GST_AUDIO_CAPS_TYPE_PREFIX  "audio/"_s
 #define GST_TEXT_CAPS_TYPE_PREFIX   "text/"_s
 
-[[nodiscard]] GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, CStringView name, GstPad* target);
+[[nodiscard]] GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, UTF8CStringView name, GstPad* target);
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(const GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride, double& frameRate, PlatformVideoColorSpace&);
 std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
@@ -85,7 +85,7 @@ bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 std::optional<WebCore::IntSize> getDisplaySize(WebCore::IntSize, int, int);
 bool isProtocolAllowed(const WTF::URL&);
 #endif
-CStringView capsMediaType(const GstCaps*);
+UTF8CStringView capsMediaType(const GstCaps*);
 std::optional<TrackID> getStreamIdFromPad(const GRefPtr<GstPad>&);
 std::optional<TrackID> getStreamIdFromStream(const GRefPtr<GstStream>&);
 std::optional<TrackID> parseStreamId(const String& stringId);
@@ -302,20 +302,20 @@ bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 
 // These functions should be used for elements not provided by WebKit itself and not provided by GStreamer -core.
-GstElement* makeGStreamerElement(CStringView factoryName, const String& name = emptyString());
+GstElement* makeGStreamerElement(UTF8CStringView factoryName, const String& name = emptyString());
 
 template<typename T>
-std::optional<T> gstStructureGet(const GstStructure*, CStringView key);
+std::optional<T> gstStructureGet(const GstStructure*, UTF8CStringView key);
 
-CStringView gstStructureGetString(const GstStructure*, CStringView key);
+UTF8CStringView gstStructureGetString(const GstStructure*, UTF8CStringView key);
 
-CStringView gstStructureGetName(const GstStructure*);
-
-template<typename T>
-Vector<T> gstStructureGetArray(const GstStructure*, CStringView key);
+UTF8CStringView gstStructureGetName(const GstStructure*);
 
 template<typename T>
-Vector<T> gstStructureGetList(const GstStructure*, CStringView key);
+Vector<T> gstStructureGetArray(const GstStructure*, UTF8CStringView key);
+
+template<typename T>
+Vector<T> gstStructureGetList(const GstStructure*, UTF8CStringView key);
 
 String gstStructureToJSONString(const GstStructure*);
 

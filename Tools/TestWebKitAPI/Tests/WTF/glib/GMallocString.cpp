@@ -198,22 +198,22 @@ TEST(WTF_GMallocString, Equality)
     EXPECT_TRUE(string != emptyString);
     EXPECT_EQ(string, string);
     EXPECT_EQ(string, sameString);
-    EXPECT_EQ(string, CStringView::unsafeFromUTF8("Test"));
+    EXPECT_EQ(string, UTF8CStringView::unsafeFromUTF8("Test"));
     EXPECT_EQ(string, "Test"_s);
     EXPECT_TRUE(string != anotherString);
     EXPECT_EQ(emptyString, nullString);
 }
 
-TEST(WTF_GMallocString, CStringView)
+TEST(WTF_GMallocString, UTF8CStringView)
 {
-    CStringView nullCStringView;
-    GMallocString nullGMallocString(nullCStringView);
-    EXPECT_TRUE(nullCStringView.isNull());
+    UTF8CStringView nullUTF8CStringView;
+    GMallocString nullGMallocString(nullUTF8CStringView);
+    EXPECT_TRUE(nullUTF8CStringView.isNull());
     EXPECT_TRUE(nullGMallocString.isNull());
-    EXPECT_TRUE(nullCStringView.isNull());
+    EXPECT_TRUE(nullUTF8CStringView.isNull());
     EXPECT_TRUE(nullGMallocString.isNull());
 
-    CStringView cStringView = CStringView::unsafeFromUTF8("Test");
+    UTF8CStringView cStringView = UTF8CStringView::unsafeFromUTF8("Test");
     GMallocString gMallocString(cStringView);
     EXPECT_TRUE(WTF::equal(cStringView.span(), gMallocString.span()));
     EXPECT_FALSE(cStringView.isNull());
@@ -233,17 +233,17 @@ TEST(WTF_GMallocString, LeakUTF8)
     g_free(leakedString);
 }
 
-TEST(WTF_GMallocString, ToCStringView)
+TEST(WTF_GMallocString, ToUTF8CStringView)
 {
     GMallocString gMallocString;
-    CStringView cStringView = toCStringView(gMallocString);
+    UTF8CStringView cStringView = toUTF8CStringView(gMallocString);
     EXPECT_TRUE(cStringView.isNull());
     EXPECT_TRUE(cStringView.isEmpty());
     EXPECT_EQ(cStringView.utf8(), nullptr);
     EXPECT_EQ(cStringView.lengthInBytes(), 0UZ);
 
     gMallocString = GMallocString::unsafeAdoptFromUTF8(g_strdup(""));
-    cStringView = toCStringView(gMallocString);
+    cStringView = toUTF8CStringView(gMallocString);
     EXPECT_FALSE(cStringView.isNull());
     EXPECT_TRUE(cStringView.isEmpty());
     EXPECT_EQ(gMallocString, cStringView);
@@ -251,7 +251,7 @@ TEST(WTF_GMallocString, ToCStringView)
     EXPECT_EQ(cStringView.lengthInBytes(), 0UZ);
 
     gMallocString = GMallocString::unsafeAdoptFromUTF8(g_strdup("test"));
-    cStringView = toCStringView(gMallocString);
+    cStringView = toUTF8CStringView(gMallocString);
     EXPECT_FALSE(cStringView.isNull());
     EXPECT_FALSE(cStringView.isEmpty());
     EXPECT_EQ(gMallocString, cStringView);

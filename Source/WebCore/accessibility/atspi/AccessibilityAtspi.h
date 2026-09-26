@@ -29,7 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 typedef struct _GDBusConnection GDBusConnection;
 typedef struct _GDBusInterfaceInfo GDBusInterfaceInfo;
@@ -110,8 +110,8 @@ private:
     void didConnect(GRefPtr<GDBusConnection>&&);
     void didOwnName();
     void initializeRegistry();
-    void addEventListener(const ASCIICString& dbusName, CStringView eventName);
-    void removeEventListener(const ASCIICString& dbusName, CStringView eventName);
+    void addEventListener(const ASCIICString& dbusName, UTF8CStringView eventName);
+    void removeEventListener(const ASCIICString& dbusName, UTF8CStringView eventName);
     void addClient(const ASCIICString& dbusName);
     void removeClient(const ASCIICString& dbusName);
 

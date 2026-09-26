@@ -49,7 +49,7 @@ WaylandCursor::~WaylandCursor()
         wl_surface_destroy(m_surface);
 }
 
-void WaylandCursor::setFromName(CStringView name, double scale)
+void WaylandCursor::setFromName(UTF8CStringView name, double scale)
 {
     if (!m_theme)
         return;

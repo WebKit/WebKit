@@ -158,7 +158,7 @@ static PlatformSocketType bindAndListen(struct sockaddr_in& address)
     return socket.leak();
 }
 
-std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t serverPort)
+std::optional<PlatformSocketType> connect(UTF8CStringView serverAddress, uint16_t serverPort)
 {
     struct sockaddr_in address = { };
 
@@ -185,7 +185,7 @@ std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t se
     return socket;
 }
 
-std::optional<PlatformSocketType> listen(CStringView addressStr, uint16_t port)
+std::optional<PlatformSocketType> listen(UTF8CStringView addressStr, uint16_t port)
 {
     // FIXME: Support AF_INET6 connections.
     struct sockaddr_in address = { };

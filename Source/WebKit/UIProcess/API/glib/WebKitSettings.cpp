@@ -45,7 +45,7 @@
 #include <pal/text/TextEncodingRegistry.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if PLATFORM(GTK)
 #include "HardwareAccelerationManager.h"
@@ -4420,7 +4420,7 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
     }
 
     GUniqueOutPtr<GError> getKeysError;
-    auto allKeys = gKeyFileGetKeys(keyFile, CStringView::unsafeFromUTF8(groupName));
+    auto allKeys = gKeyFileGetKeys(keyFile, UTF8CStringView::unsafeFromUTF8(groupName));
     if (!allKeys) [[unlikely]] {
         g_propagate_error(error, allKeys.error().release());
         return FALSE;

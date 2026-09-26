@@ -32,7 +32,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if PLATFORM(GTK)
 #include "GtkUtilities.h"
@@ -184,7 +184,7 @@ GQuark webkit_favicon_database_error_quark(void)
 }
 
 #if PLATFORM(GTK)
-void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, CStringView pageURI, bool isEphemeral, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, UTF8CStringView pageURI, bool isEphemeral, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     if (!webkitFaviconDatabaseIsOpen(database)) {
         g_task_report_new_error(database, callback, userData, 0,
@@ -219,7 +219,7 @@ void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const 
     g_return_if_fail(WEBKIT_IS_FAVICON_DATABASE(database));
     g_return_if_fail(pageURI);
 
-    webkitFaviconDatabaseGetFaviconInternal(database, CStringView::unsafeFromUTF8(pageURI), false, cancellable, callback, userData);
+    webkitFaviconDatabaseGetFaviconInternal(database, UTF8CStringView::unsafeFromUTF8(pageURI), false, cancellable, callback, userData);
 }
 
 #if USE(GTK4)

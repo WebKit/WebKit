@@ -76,7 +76,7 @@ void Cursor::updateBuffer(const uint8_t* pixels, uint32_t width, uint32_t height
     gbm_bo_write(m_buffer->bufferObject(), deviceBuffer.span().data(), deviceBuffer.sizeInBytes());
 }
 
-void Cursor::setFromName(CStringView name, double scale)
+void Cursor::setFromName(UTF8CStringView name, double scale)
 {
     if (!m_theme)
         return;

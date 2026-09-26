@@ -30,7 +30,7 @@
 #include "JSExportMacros.h"
 #include <array>
 #include <wtf/Vector.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if OS(WINDOWS)
 #include <winsock2.h>
@@ -65,8 +65,8 @@ enum class Domain {
 
 void init();
 
-JS_EXPORT_PRIVATE std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t serverPort);
-JS_EXPORT_PRIVATE std::optional<PlatformSocketType> listen(CStringView address, uint16_t port);
+JS_EXPORT_PRIVATE std::optional<PlatformSocketType> connect(UTF8CStringView serverAddress, uint16_t serverPort);
+JS_EXPORT_PRIVATE std::optional<PlatformSocketType> listen(UTF8CStringView address, uint16_t port);
 JS_EXPORT_PRIVATE std::optional<PlatformSocketType> accept(PlatformSocketType);
 JS_EXPORT_PRIVATE std::optional<std::array<PlatformSocketType, 2>> createPair();
 

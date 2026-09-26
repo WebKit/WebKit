@@ -40,7 +40,7 @@ bool DumpContext::isEmpty() const
     return structures.isEmpty();
 }
 
-void DumpContext::dump(PrintStream& out, CStringView prefix) const
+void DumpContext::dump(PrintStream& out, UTF8CStringView prefix) const
 {
     structures.dump(out, prefix.utf8());
 }

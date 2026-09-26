@@ -70,8 +70,8 @@ public:
     RemoteInspectorSocketEndpoint();
     JS_EXPORT_PRIVATE ~RemoteInspectorSocketEndpoint();
 
-    std::optional<ConnectionID> connectInet(CStringView serverAddr, uint16_t serverPort, Client&);
-    JS_EXPORT_PRIVATE std::optional<ConnectionID> listenInet(CStringView address, uint16_t port, Listener&);
+    std::optional<ConnectionID> connectInet(UTF8CStringView serverAddr, uint16_t serverPort, Client&);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> listenInet(UTF8CStringView address, uint16_t port, Listener&);
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
@@ -130,7 +130,7 @@ protected:
         static constexpr Seconds initialRetryInterval { 200_ms };
         static constexpr Seconds maxRetryInterval { 5_s };
 
-        ListenerConnection(ConnectionID id, Listener& listener, CStringView address, uint16_t port)
+        ListenerConnection(ConnectionID id, Listener& listener, UTF8CStringView address, uint16_t port)
             : BaseConnection(id)
             , address { address.span() }
             , port { port }

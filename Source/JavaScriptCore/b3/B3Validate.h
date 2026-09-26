@@ -27,13 +27,13 @@
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace JSC { namespace B3 {
 
 class Procedure;
 
-JS_EXPORT_PRIVATE void validate(Procedure&, CStringView dumpBefore = { });
+JS_EXPORT_PRIVATE void validate(Procedure&, UTF8CStringView dumpBefore = { });
 
 } } // namespace JSC::B3
 

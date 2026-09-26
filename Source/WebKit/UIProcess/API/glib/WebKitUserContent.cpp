@@ -28,7 +28,7 @@
 
 using namespace WebCore;
 
-API::ContentWorld& webkitContentWorld(CStringView worldName)
+API::ContentWorld& webkitContentWorld(UTF8CStringView worldName)
 {
     static NeverDestroyed<HashMap<UTF8CString, RefPtr<API::ContentWorld>>> map;
     return *map.get().ensure(UTF8CString { worldName.span() }, [worldName = String::fromUTF8(worldName.span())] {
@@ -201,7 +201,7 @@ WebKitUserStyleSheet* webkit_user_style_sheet_new_for_world(const gchar* source,
     g_return_val_if_fail(worldName, nullptr);
 
     WebKitUserStyleSheet* userStyleSheet = static_cast<WebKitUserStyleSheet*>(fastMalloc(sizeof(WebKitUserStyleSheet)));
-    new (userStyleSheet) WebKitUserStyleSheet(source, injectedFrames, level, allowList, blockList, webkitContentWorld(CStringView::unsafeFromUTF8(worldName)));
+    new (userStyleSheet) WebKitUserStyleSheet(source, injectedFrames, level, allowList, blockList, webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)));
     return userStyleSheet;
 }
 
@@ -326,7 +326,7 @@ WebKitUserScript* webkit_user_script_new_for_world(const gchar* source, WebKitUs
     g_return_val_if_fail(worldName, nullptr);
 
     WebKitUserScript* userScript = static_cast<WebKitUserScript*>(fastMalloc(sizeof(WebKitUserScript)));
-    new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, allowList, blockList, webkitContentWorld(CStringView::unsafeFromUTF8(worldName)));
+    new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, allowList, blockList, webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)));
     return userScript;
 }
 

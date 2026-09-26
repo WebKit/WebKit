@@ -56,7 +56,7 @@ UTF8CString FileSystem::fileSystemRepresentation(const String& path)
     return UTF8CString { byteCast<char8_t>(buffer.span().data()) };
 }
 
-String FileSystem::stringFromFileSystemRepresentation(CStringView fileSystemRepresentation)
+String FileSystem::stringFromFileSystemRepresentation(UTF8CStringView fileSystemRepresentation)
 {
     return adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation.utf8())).get();
 }

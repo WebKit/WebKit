@@ -35,7 +35,7 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -532,7 +532,7 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* dest
 #if ENABLE(2022_GLIB_API)
     g_return_if_fail(g_path_is_absolute(destination));
 #else
-    auto isFileURI = startsWith(CStringView::unsafeFromUTF8(destination).span(), "file://"_s);
+    auto isFileURI = startsWith(UTF8CStringView::unsafeFromUTF8(destination).span(), "file://"_s);
     g_return_if_fail(isFileURI || g_path_is_absolute(destination));
 
     GUniquePtr<char> destinationPath;

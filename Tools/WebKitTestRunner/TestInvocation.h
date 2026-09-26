@@ -36,8 +36,8 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WTR {
 
@@ -115,7 +115,7 @@ private:
     bool resolveForceImmediateCompletion(bool canCompleteSynchronously);
 
     void dumpResults();
-    static void dump(CStringView textToStdout, CStringView textToStderr = { }, bool seenError = false);
+    static void dump(UTF8CStringView textToStdout, UTF8CStringView textToStderr = { }, bool seenError = false);
     enum class SnapshotResultType { WebView, WebContents };
     void dumpPixelsAndCompareWithExpected(SnapshotResultType, WKArrayRef repaintRects, WKImageRef = nullptr);
     void dumpAudio(WKDataRef);

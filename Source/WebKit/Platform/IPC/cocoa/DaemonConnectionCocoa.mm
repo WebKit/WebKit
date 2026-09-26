@@ -33,7 +33,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/darwin/DispatchExtras.h>
-#import <wtf/text/CStringView.h>
+#import <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {
 
@@ -85,7 +85,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
         if (event == XPC_ERROR_CONNECTION_INVALID) {
 #if HAVE(XPC_CONNECTION_COPY_INVALIDATION_REASON)
             auto reason = std::unique_ptr<char[]>(xpc_connection_copy_invalidation_reason(protectedThis->m_connection.get()));
-            SAFE_WTFLOGALWAYS("Failed to connect to mach service %s, reason: %s", protectedThis->m_machServiceName, CStringView::unsafeFromUTF8(reason.get()));
+            SAFE_WTFLOGALWAYS("Failed to connect to mach service %s, reason: %s", protectedThis->m_machServiceName, UTF8CStringView::unsafeFromUTF8(reason.get()));
 #else
             SAFE_WTFLOGALWAYS("Failed to connect to mach service %s, likely because it is not registered with launchd", protectedThis->m_machServiceName);
 #endif

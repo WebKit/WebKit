@@ -44,7 +44,7 @@ void init()
 {
 }
 
-std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t serverPort)
+std::optional<PlatformSocketType> connect(UTF8CStringView serverAddress, uint16_t serverPort)
 {
     struct sockaddr_in address = { };
 
@@ -68,7 +68,7 @@ std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t se
     return fd;
 }
 
-std::optional<PlatformSocketType> listen(CStringView addressStr, uint16_t port)
+std::optional<PlatformSocketType> listen(UTF8CStringView addressStr, uint16_t port)
 {
     struct sockaddr_in address = { };
 

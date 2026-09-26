@@ -56,7 +56,7 @@ enum class WorkaroundMode {
 
 static WorkaroundMode getWorkAroundModeFromEnvironment(ASCIILiteral environmentVariableName, ASCIILiteral defaultValue)
 {
-    auto textValue = CStringView::unsafeFromUTF8(getenv(environmentVariableName.characters()));
+    auto textValue = UTF8CStringView::unsafeFromUTF8(getenv(environmentVariableName.characters()));
     if (!textValue)
         textValue = defaultValue;
 

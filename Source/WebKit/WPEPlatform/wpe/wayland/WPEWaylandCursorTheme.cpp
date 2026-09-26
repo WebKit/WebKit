@@ -69,7 +69,7 @@ WaylandCursorTheme::WaylandCursorTheme(std::unique_ptr<CursorTheme>&& theme, std
 
 WaylandCursorTheme::~WaylandCursorTheme() = default;
 
-const Vector<WaylandCursorTheme::Image>& WaylandCursorTheme::cursor(CStringView name, double scale, std::optional<uint32_t> maxImages)
+const Vector<WaylandCursorTheme::Image>& WaylandCursorTheme::cursor(UTF8CStringView name, double scale, std::optional<uint32_t> maxImages)
 {
     uint32_t size = m_theme->size() * static_cast<uint32_t>(scale);
     auto addResult = m_cursors.add({ UTF8CString { name.span() }, size }, Vector<Image> { });
@@ -78,7 +78,7 @@ const Vector<WaylandCursorTheme::Image>& WaylandCursorTheme::cursor(CStringView 
     return addResult.iterator->value;
 }
 
-void WaylandCursorTheme::loadCursor(CStringView name, double scale, std::optional<uint32_t> maxImages, Vector<WaylandCursorTheme::Image>& images)
+void WaylandCursorTheme::loadCursor(UTF8CStringView name, double scale, std::optional<uint32_t> maxImages, Vector<WaylandCursorTheme::Image>& images)
 {
     // Try first with the scaled size.
     uint32_t scaledSize = m_theme->size() * static_cast<uint32_t>(scale);

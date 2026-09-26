@@ -29,7 +29,7 @@
 #include "VulkanHandle.h"
 #include "VulkanStructure.h"
 #include <expected>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ template <typename Type>
 using Result = std::expected<Type, VkResult>;
 
 struct ApplicationInfo : Structure<VkApplicationInfo, VK_STRUCTURE_TYPE_APPLICATION_INFO> {
-    ApplicationInfo(CStringView applicationName LIFETIME_BOUND, uint32_t apiVersion = VK_API_VERSION_1_3);
+    ApplicationInfo(UTF8CStringView applicationName LIFETIME_BOUND, uint32_t apiVersion = VK_API_VERSION_1_3);
 };
 
 struct InstanceCreateInfo : Structure<VkInstanceCreateInfo, VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO> {

@@ -45,11 +45,11 @@ bool GStreamerQuirkBroadcom::isPlatformSupported() const
 
 void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
-    auto objectType = CStringView::unsafeFromUTF8(G_OBJECT_TYPE_NAME(element));
+    auto objectType = UTF8CStringView::unsafeFromUTF8(G_OBJECT_TYPE_NAME(element));
     if (objectType == "Gstbrcmaudiosink"_s)
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
     else {
-        auto elementName = CStringView::unsafeFromUTF8(GST_ELEMENT_NAME(element));
+        auto elementName = UTF8CStringView::unsafeFromUTF8(GST_ELEMENT_NAME(element));
         if (startsWith(elementName.span(), "brcmaudiodecoder"_s)) {
             // Limit BCM audio decoder buffering to 1sec so live progressive playback can start faster.
             if (characteristics.contains(ElementRuntimeCharacteristics::IsLiveStream))

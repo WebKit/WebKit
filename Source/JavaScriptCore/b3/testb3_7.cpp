@@ -166,7 +166,7 @@ void testX86LeaAddAdd()
     if (proc.optLevel() > 1) {
         checkDisassembly(
             *code,
-            [&] (CStringView disassembly) -> bool {
+            [&] (UTF8CStringView disassembly) -> bool {
                 return contains(disassembly.span(), "lea 0x64(%rdi,%rsi,1), %rax"_s)
                     || contains(disassembly.span(), "lea 0x64(%rsi,%rdi,1), %rax"_s);
             },
@@ -217,7 +217,7 @@ void testX86LeaAddShlLeftScale1()
     if (proc.optLevel() > 1) {
         checkDisassembly(
             *code,
-            [&] (CStringView disassembly) -> bool {
+            [&] (UTF8CStringView disassembly) -> bool {
                 return contains(disassembly.span(), "lea (%rdi,%rsi,1), %rax"_s)
                     || contains(disassembly.span(), "lea (%rsi,%rdi,1), %rax"_s);
             },

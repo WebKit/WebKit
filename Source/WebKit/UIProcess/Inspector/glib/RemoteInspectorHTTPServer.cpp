@@ -33,8 +33,8 @@
 #include <wtf/URL.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {
 
@@ -87,7 +87,7 @@ const String& RemoteInspectorHTTPServer::inspectorServerAddress() const
 
 unsigned RemoteInspectorHTTPServer::handleRequest(const char* path, SoupMessageHeaders* responseHeaders, SoupMessageBody* responseBody) const
 {
-    if (CStringView::unsafeFromUTF8(path) == "/"_s) {
+    if (UTF8CStringView::unsafeFromUTF8(path) == "/"_s) {
         auto html = m_client->buildTargetListPage(RemoteInspectorClient::InspectorType::HTTP).toString().utf8();
         soup_message_headers_append(responseHeaders, "Content-Type", "text/html");
         soup_message_body_append(responseBody, SOUP_MEMORY_COPY, html.legacyCStringPointer(), html.length());

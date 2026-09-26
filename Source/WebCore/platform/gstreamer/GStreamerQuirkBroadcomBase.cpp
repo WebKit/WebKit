@@ -122,7 +122,7 @@ void GStreamerQuirkBroadcomBase::setupBufferingPercentageCorrection(MediaPlayerP
     // This code must support being run from different GStreamerQuirkBroadcomBase subclasses without breaking. Only the
     // first subclass instance should run.
 
-    auto elementTypeName = CStringView::unsafeFromUTF8(G_OBJECT_TYPE_NAME(element.get()));
+    auto elementTypeName = UTF8CStringView::unsafeFromUTF8(G_OBJECT_TYPE_NAME(element.get()));
     if (currentState == GST_STATE_NULL && newState == GST_STATE_READY) {
         bool alsoGetMultiqueue = false;
         if (elementTypeName == "GstBrcmVidFilter"_s) {

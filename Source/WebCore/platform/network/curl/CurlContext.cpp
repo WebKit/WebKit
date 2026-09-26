@@ -578,7 +578,7 @@ void CurlHandle::setHttpAuthUserPass(const String& user, const String& password,
     curl_easy_setopt(m_handle, CURLOPT_HTTPAUTH, authType);
 }
 
-void CurlHandle::setCACertPath(CStringView path)
+void CurlHandle::setCACertPath(UTF8CStringView path)
 {
     if (!path.isNull())
         curl_easy_setopt(m_handle, CURLOPT_CAINFO, path.utf8());

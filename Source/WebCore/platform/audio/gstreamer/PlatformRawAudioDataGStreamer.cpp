@@ -240,7 +240,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 #ifndef GST_DISABLE_GST_DEBUG
     [[maybe_unused]] auto [gstSourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(sourceFormat);
     auto [gstDestinationFormat, destinationLayout] = convertAudioSampleFormatToGStreamerFormat(format);
-    auto destinationFormatDescription = CStringView::unsafeFromUTF8(gst_audio_format_to_string(gstDestinationFormat));
+    auto destinationFormatDescription = UTF8CStringView::unsafeFromUTF8(gst_audio_format_to_string(gstDestinationFormat));
     GST_TRACE("Copying %s %s data at planeIndex %zu, destination format is %s %s, source offset: %zu",
         layoutToString(sourceLayout).characters(), gst_audio_format_to_string(gstSourceFormat), planeIndex,
         layoutToString(destinationLayout).characters(), destinationFormatDescription.utf8(), sourceOffset);

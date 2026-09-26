@@ -28,9 +28,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if ENABLE(JOURNALD_LOG)
 #define SD_JOURNAL_SUPPRESS_LOCATION
@@ -387,9 +387,9 @@ private:
         if (WTFShouldLogToJournal())
             sd_journal_send("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().legacyCStringPointer(), nullptr);
         else
-            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
 #else
-        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
 #endif
 
         sendMessageToObservers(channel, level, { }, arguments...);
@@ -429,10 +429,10 @@ private:
             auto lineString = makeString("CODE_LINE="_s, line);
             sd_journal_send_with_location(fileString.utf8().legacyCStringPointer(), lineString.utf8().legacyCStringPointer(), function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().legacyCStringPointer(), nullptr);
         } else {
-            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s [%s:%d %s]\n", CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), CStringView::unsafeFromUTF8(file), line, CStringView::unsafeFromUTF8(function));
+            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s [%s:%d %s]\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
         }
 #else
-        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), CStringView::unsafeFromUTF8(file), line, CStringView::unsafeFromUTF8(function));
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
 #endif
 
         sendMessageToObservers(channel, level, { { file, function, line } }, arguments...);

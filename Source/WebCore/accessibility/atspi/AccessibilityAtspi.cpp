@@ -145,10 +145,10 @@ void AccessibilityAtspi::initializeRegistry()
             const char* eventName;
             if (!g_strcmp0(signal, "EventListenerRegistered")) {
                 g_variant_get(parameters, "(&s&s@as)", &dbusName, &eventName, nullptr);
-                atspi->addEventListener(ASCIICString { dbusName }, CStringView::unsafeFromUTF8(eventName));
+                atspi->addEventListener(ASCIICString { dbusName }, UTF8CStringView::unsafeFromUTF8(eventName));
             } else if (!g_strcmp0(signal, "EventListenerDeregistered")) {
                 g_variant_get(parameters, "(&s&s)", &dbusName, &eventName);
-                atspi->removeEventListener(ASCIICString { dbusName }, CStringView::unsafeFromUTF8(eventName));
+                atspi->removeEventListener(ASCIICString { dbusName }, UTF8CStringView::unsafeFromUTF8(eventName));
             }
         }), &atspi);
 
@@ -168,13 +168,13 @@ void AccessibilityAtspi::initializeRegistry()
             const char* dbusName;
             const char* eventName;
             while (g_variant_iter_loop(&iter, "(&s&s)", &dbusName, &eventName))
-                atspi.addEventListener(ASCIICString { dbusName }, CStringView::unsafeFromUTF8(eventName));
+                atspi.addEventListener(ASCIICString { dbusName }, UTF8CStringView::unsafeFromUTF8(eventName));
         }, &atspi);
     }, this);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(CStringView eventName)
+static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(UTF8CStringView eventName)
 {
     GUniquePtr<char*> event(g_strsplit(eventName.utf8(), ":", 3));
     if (!event.get()[0] || !event.get()[1] || !event.get()[2] || !*event.get()[2])
@@ -200,7 +200,7 @@ static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(CStringView eventNa
     return event;
 }
 
-void AccessibilityAtspi::addEventListener(const ASCIICString& dbusName, CStringView eventName)
+void AccessibilityAtspi::addEventListener(const ASCIICString& dbusName, UTF8CStringView eventName)
 {
     auto& listeners = m_eventListeners.ensure(dbusName, [] {
         return Vector<GUniquePtr<char*>> { };
@@ -222,7 +222,7 @@ static bool eventIsSubtype(char** needle, char** haystack)
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-void AccessibilityAtspi::removeEventListener(const ASCIICString& dbusName, CStringView eventName)
+void AccessibilityAtspi::removeEventListener(const ASCIICString& dbusName, UTF8CStringView eventName)
 {
     if (eventName.isEmpty()) {
         m_eventListeners.remove(dbusName);

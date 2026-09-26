@@ -24,7 +24,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 static WebKitTestServer* kServer;
 
@@ -171,7 +171,7 @@ public:
         webkit_web_resource_get_data(resource, 0, resourceGetDataCallback, this);
         g_main_loop_run(m_mainLoop);
 
-        auto uri = CStringView::unsafeFromUTF8(webkit_web_resource_get_uri(resource));
+        auto uri = UTF8CStringView::unsafeFromUTF8(webkit_web_resource_get_uri(resource));
         if (uri == kServer->getURIForPath("/")) {
             g_assert_cmpint(m_resourceDataSize, ==, strlen(kIndexHtml));
             g_assert_cmpint(strncmp(m_resourceData.get(), kIndexHtml, m_resourceDataSize), ==, 0);

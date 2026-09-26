@@ -97,7 +97,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     GUniqueOutPtr<char> objectPathChars;
     g_variant_get(result.get(), "(o)", &objectPathChars.outPtr());
     auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
-    m_portal->waitResponseSignal(toCStringView(objectPath));
+    m_portal->waitResponseSignal(toUTF8CStringView(objectPath));
 
     result = session->start();
     if (!result)
@@ -106,7 +106,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     std::optional<uint32_t> nodeId;
     g_variant_get(result.get(), "(o)", &objectPathChars.outPtr());
     objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
-    m_portal->waitResponseSignal(toCStringView(objectPath), [&nodeId](GVariant* parameters) mutable {
+    m_portal->waitResponseSignal(toUTF8CStringView(objectPath), [&nodeId](GVariant* parameters) mutable {
         uint32_t portalResponse;
         GRefPtr<GVariant> responseData;
         g_variant_get(parameters, "(u@a{sv})", &portalResponse, &responseData.outPtr());

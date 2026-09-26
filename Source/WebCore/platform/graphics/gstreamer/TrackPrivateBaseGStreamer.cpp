@@ -88,7 +88,7 @@ static std::optional<String> getLanguageCode(GstTagList* tags)
     if (!language)
         return std::nullopt;
 
-    auto convertedLanguage = CStringView::unsafeFromUTF8(gst_tag_get_language_code_iso_639_1(language->utf8().legacyCStringPointer()));
+    auto convertedLanguage = UTF8CStringView::unsafeFromUTF8(gst_tag_get_language_code_iso_639_1(language->utf8().legacyCStringPointer()));
     GST_DEBUG("Converted track's language code to %s.", convertedLanguage.utf8());
     return String(convertedLanguage.span());
 }

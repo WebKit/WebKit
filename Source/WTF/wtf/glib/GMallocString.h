@@ -32,9 +32,9 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/ASCIILiteral.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/SuperFastHash.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WTF {
 
@@ -70,7 +70,7 @@ public:
         return GMallocString { adoptGMallocSpan<char8_t>(byteCast<char8_t>(string)) };
     }
 
-    explicit GMallocString(const CStringView& view)
+    explicit GMallocString(const UTF8CStringView& view)
     {
         m_spanWithNullTerminator = dupGMallocSpan(view.spanIncludingNullTerminator());
     }
@@ -123,7 +123,7 @@ inline bool operator==(const GMallocString& a, ASCIILiteral b)
     return equal(a.span(), byteCast<char8_t>(b.span()));
 }
 
-inline bool operator==(const GMallocString& a, CStringView b)
+inline bool operator==(const GMallocString& a, UTF8CStringView b)
 {
     return equal(a.span(), b.span());
 }
@@ -131,9 +131,9 @@ inline bool operator==(const GMallocString& a, CStringView b)
 // GMallocString is null terminated
 inline const char* safePrintfType(const GMallocString& string) { return string.utf8(); }
 
-inline CStringView toCStringView(const GMallocString& string LIFETIME_BOUND) { return CStringView::fromUTF8(string.spanIncludingNullTerminator()); }
+inline UTF8CStringView toUTF8CStringView(const GMallocString& string LIFETIME_BOUND) { return UTF8CStringView::fromUTF8(string.spanIncludingNullTerminator()); }
 
 } // namespace WTF
 
 using WTF::GMallocString;
-using WTF::toCStringView;
+using WTF::toUTF8CStringView;

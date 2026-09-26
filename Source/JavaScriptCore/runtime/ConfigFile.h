@@ -29,7 +29,7 @@
 #include <cstdint>
 #include <limits.h>
 #include <wtf/Platform.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace JSC {
 
@@ -37,8 +37,8 @@ class ConfigFile {
 public:
     JS_EXPORT_PRIVATE ConfigFile(const char8_t*);
 
-    JS_EXPORT_PRIVATE static void setProcessName(CStringView);
-    JS_EXPORT_PRIVATE static void setParentProcessName(CStringView);
+    JS_EXPORT_PRIVATE static void setProcessName(UTF8CStringView);
+    JS_EXPORT_PRIVATE static void setParentProcessName(UTF8CStringView);
     JS_EXPORT_PRIVATE void parse();
 
 private:
@@ -59,6 +59,6 @@ private:
     char m_configDirectory[s_maxPathLength + 1];
 };
 
-JS_EXPORT_PRIVATE void processConfigFile(const char8_t* configFile, CStringView processName, CStringView parentProcessName = { });
+JS_EXPORT_PRIVATE void processConfigFile(const char8_t* configFile, UTF8CStringView processName, UTF8CStringView parentProcessName = { });
 
 } // namespace JSC

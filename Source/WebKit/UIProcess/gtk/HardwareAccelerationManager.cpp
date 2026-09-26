@@ -27,7 +27,7 @@
 #include "HardwareAccelerationManager.h"
 
 #include "AcceleratedBackingStore.h"
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {
 
@@ -42,7 +42,7 @@ HardwareAccelerationManager::HardwareAccelerationManager()
     if (!AcceleratedBackingStore::canUseHardwareAcceleration()) {
         m_canUseHardwareAcceleration = false;
         m_acceleratedCompositingModeEnabled = false;
-    } else if (const auto disableCompositingMode = CStringView::unsafeFromUTF8(getenv("WEBKIT_DISABLE_COMPOSITING_MODE")))
+    } else if (const auto disableCompositingMode = UTF8CStringView::unsafeFromUTF8(getenv("WEBKIT_DISABLE_COMPOSITING_MODE")))
         m_acceleratedCompositingModeEnabled = disableCompositingMode == "0"_s;
 }
 

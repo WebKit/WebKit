@@ -28,7 +28,7 @@
 #include <JavaScriptCore/Structure.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StringHashDumpContext.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace JSC {
 
@@ -40,7 +40,7 @@ struct DumpContext {
     
     bool NODELETE isEmpty() const;
     
-    void dump(PrintStream&, CStringView prefix = ""_s) const;
+    void dump(PrintStream&, UTF8CStringView prefix = ""_s) const;
     
     StringHashDumpContext<Structure> structures;
     DFG::Graph* graph;

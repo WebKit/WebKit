@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
 ::testing::AssertionResult runJSTest(const char*, const char*, const char*, WebView *webView, const char* script, const char* expectedResult)
 {
     NSString *actualResult = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithUTF8String:script]];
-    return compareJSResult(script, CStringView::unsafeFromUTF8([actualResult UTF8String]), expectedResult);
+    return compareJSResult(script, UTF8CStringView::unsafeFromUTF8([actualResult UTF8String]), expectedResult);
 }
 
 ::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKWebView *view, const char* script, const char* expectedResult)

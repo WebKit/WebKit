@@ -26,7 +26,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 struct _WebKitScriptDialogImplPrivate {
     WebKitScriptDialog* dialog;
@@ -258,7 +258,7 @@ static void webkit_script_dialog_impl_class_init(WebKitScriptDialogImplClass* kl
 #endif
 }
 
-static void webkitScriptDialogImplSetText(WebKitScriptDialogImpl* dialog, CStringView text, GtkRequisition* maxSize)
+static void webkitScriptDialogImplSetText(WebKitScriptDialogImpl* dialog, UTF8CStringView text, GtkRequisition* maxSize)
 {
     WebKitScriptDialogImplPrivate* priv = dialog->priv;
     gtk_label_set_text(GTK_LABEL(priv->label), text.utf8());

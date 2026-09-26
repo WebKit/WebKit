@@ -46,7 +46,7 @@ SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer,
 {
 }
 
-SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer, CStringView separator)
+SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer, UTF8CStringView separator)
     : m_iteratorCurrent(buffer->begin())
     , m_iteratorEnd(buffer->end())
     , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->span().data() : nullptr)
@@ -59,7 +59,7 @@ void SharedBufferChunkReader::setSeparator(const Vector<char>& separator)
     m_separator = separator;
 }
 
-void SharedBufferChunkReader::setSeparator(CStringView separator)
+void SharedBufferChunkReader::setSeparator(UTF8CStringView separator)
 {
     m_separator.clear();
     m_separator.append(byteCast<char>(separator.span()));

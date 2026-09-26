@@ -27,7 +27,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WPE {
 
@@ -49,7 +49,7 @@ public:
         uint32_t delay { 0 };
         Vector<uint32_t> pixels;
     };
-    Vector<CursorImage> loadCursor(CStringView, uint32_t size, std::optional<uint32_t> maxImages = std::nullopt);
+    Vector<CursorImage> loadCursor(UTF8CStringView, uint32_t size, std::optional<uint32_t> maxImages = std::nullopt);
 
 private:
     GUniquePtr<char> m_path;

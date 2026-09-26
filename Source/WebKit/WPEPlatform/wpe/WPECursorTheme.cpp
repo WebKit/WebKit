@@ -268,7 +268,7 @@ static std::optional<CursorTheme::CursorImage> readImage(FILE* file, const Xcuso
     return image;
 }
 
-Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(CStringView name, uint32_t size, std::optional<uint32_t> maxImages)
+Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(UTF8CStringView name, uint32_t size, std::optional<uint32_t> maxImages)
 {
     GUniquePtr<char> path(g_build_filename(m_path.get(), name.utf8(), nullptr));
     if (!g_file_test(path.get(), G_FILE_TEST_EXISTS)) {

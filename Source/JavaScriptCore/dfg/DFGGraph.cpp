@@ -1831,7 +1831,7 @@ void Graph::assertIsRegistered(Structure* structure)
 
 static void logDFGAssertionFailure(
     Graph& graph, const UTF8CString& whileText, const char* file, int line, const char* function,
-    CStringView assertion)
+    UTF8CStringView assertion)
 {
     startCrashing();
     graph.dumpAndReleaseIonGraph();
@@ -1849,19 +1849,19 @@ static void logDFGAssertionFailure(
 }
 
 void Graph::logAssertionFailure(
-    std::nullptr_t, const char* file, int line, const char* function, CStringView assertion)
+    std::nullptr_t, const char* file, int line, const char* function, UTF8CStringView assertion)
 {
     logDFGAssertionFailure(*this, ""_s, file, line, function, assertion);
 }
 
 void Graph::logAssertionFailure(
-    Node* node, const char* file, int line, const char* function, CStringView assertion)
+    Node* node, const char* file, int line, const char* function, UTF8CStringView assertion)
 {
     logDFGAssertionFailure(*this, toUTF8CString("While handling node ", node, "\n\n"), file, line, function, assertion);
 }
 
 void Graph::logAssertionFailure(
-    BasicBlock* block, const char* file, int line, const char* function, CStringView assertion)
+    BasicBlock* block, const char* file, int line, const char* function, UTF8CStringView assertion)
 {
     logDFGAssertionFailure(*this, toUTF8CString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
 }

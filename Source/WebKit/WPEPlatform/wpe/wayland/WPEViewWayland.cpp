@@ -619,7 +619,7 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, con
 static void wpeViewWaylandSetCursorFromName(WPEView* view, const char* name)
 {
     if (auto* cursor = wpeDisplayWaylandGetCursor(WPE_DISPLAY_WAYLAND(wpe_view_get_display(view))))
-        cursor->setFromName(CStringView::unsafeFromUTF8(name), wpe_view_get_scale(view));
+        cursor->setFromName(UTF8CStringView::unsafeFromUTF8(name), wpe_view_get_scale(view));
 }
 
 static const struct wl_buffer_listener cursorBufferListener = {

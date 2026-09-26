@@ -27,7 +27,7 @@
 
 #include <stdio.h>
 #include <wtf/PrintStream.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WTF {
 
@@ -41,7 +41,7 @@ public:
     FilePrintStream(FILE*, AdoptionMode = Adopt);
     WTF_EXPORT_PRIVATE ~FilePrintStream() final;
     
-    WTF_EXPORT_PRIVATE static std::unique_ptr<FilePrintStream> open(CStringView filename, ASCIILiteral mode);
+    WTF_EXPORT_PRIVATE static std::unique_ptr<FilePrintStream> open(UTF8CStringView filename, ASCIILiteral mode);
     
     FILE* file() { return m_file; }
     

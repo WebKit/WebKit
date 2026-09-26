@@ -40,10 +40,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFConfig.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/UTF8CStringView.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
@@ -146,7 +146,7 @@ static os_log_t webkitSubsystemForGenericOSLog()
 }
 #endif
 
-static void logToStderr([[maybe_unused]] WTFLogChannel* channel, CStringView buffer)
+static void logToStderr([[maybe_unused]] WTFLogChannel* channel, UTF8CStringView buffer)
 {
 #if PLATFORM(COCOA)
     os_log(channel ? channel->osLogChannel : webkitSubsystemForGenericOSLog(), "%s", buffer.utf8());
@@ -174,7 +174,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
         CFStringGetCString(str.get(), buffer.mutableSpan().data(), length, kCFStringEncodingUTF8);
 
-        logToStderr(channel, CStringView::unsafeFromUTF8(buffer.span().data()));
+        logToStderr(channel, UTF8CStringView::unsafeFromUTF8(buffer.span().data()));
         return;
     }
 

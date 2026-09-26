@@ -41,8 +41,8 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/UTF8CStringView.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(LIBDRM)
@@ -288,13 +288,13 @@ WPEDisplay* wpe_display_get_default(void)
         wpeEnsureExtensionPointsLoaded();
         auto* extensionPoint = g_io_extension_point_lookup(WPE_DISPLAY_EXTENSION_POINT_NAME);
 
-        CStringView extensionName = CStringView::unsafeFromUTF8(g_getenv("WPE_PLATFORM"));
+        UTF8CStringView extensionName = UTF8CStringView::unsafeFromUTF8(g_getenv("WPE_PLATFORM"));
         if (!extensionName) {
             static constexpr auto displayNamePrefix = "wpe-display-"_s;
-            extensionName = CStringView::unsafeFromUTF8(g_getenv("WPE_DISPLAY"));
+            extensionName = UTF8CStringView::unsafeFromUTF8(g_getenv("WPE_DISPLAY"));
             if (extensionName.lengthInBytes() > displayNamePrefix.length() && extensionName.span().first(displayNamePrefix.length()) == displayNamePrefix) {
                 auto nullTerminatedSpan = extensionName.spanIncludingNullTerminator();
-                extensionName = CStringView::fromUTF8(nullTerminatedSpan.last(nullTerminatedSpan.size() - displayNamePrefix.length()));
+                extensionName = UTF8CStringView::fromUTF8(nullTerminatedSpan.last(nullTerminatedSpan.size() - displayNamePrefix.length()));
             }
         }
 

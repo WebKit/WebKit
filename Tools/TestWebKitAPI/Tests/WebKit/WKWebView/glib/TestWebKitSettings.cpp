@@ -35,8 +35,8 @@
 #include "WebViewTest.h"
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/UTF8CStringView.h>
 
 static WebKitTestServer* gServer;
 
@@ -588,7 +588,7 @@ static UTF8CString convertWebViewMainResourceDataToUTF8CString(WebViewTest* test
     return UTF8CString { byteCast<char8_t>(std::span { mainResourceData, mainResourceDataSize }) };
 }
 
-static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, CStringView userAgent)
+static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, UTF8CStringView userAgent)
 {
     test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
     test->waitUntilLoadFinished();
@@ -614,7 +614,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     const char* funkyUserAgent = "Funky!";
     webkit_settings_set_user_agent(settings.get(), funkyUserAgent);
     g_assert_cmpstr(funkyUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
-    assertThatUserAgentIsSentInHeaders(test, CStringView::unsafeFromUTF8(funkyUserAgent));
+    assertThatUserAgentIsSentInHeaders(test, UTF8CStringView::unsafeFromUTF8(funkyUserAgent));
 
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK", 0);
@@ -640,7 +640,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     const char* mobileUserAgentString = webkit_settings_get_user_agent(settings.get());
     g_assert_nonnull(g_strstr_len(mobileUserAgentString, -1, "Mobile"));
     g_assert_nonnull(g_strstr_len(mobileUserAgentString, -1, "Android"));
-    assertThatUserAgentIsSentInHeaders(test, CStringView::unsafeFromUTF8(mobileUserAgentString));
+    assertThatUserAgentIsSentInHeaders(test, UTF8CStringView::unsafeFromUTF8(mobileUserAgentString));
 
     // Setting user agent to nullptr reverts to default user agent.
     webkit_settings_set_user_agent(settings.get(), nullptr);

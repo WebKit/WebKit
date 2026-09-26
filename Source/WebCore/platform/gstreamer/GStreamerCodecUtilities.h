@@ -24,14 +24,14 @@
 #include "GRefPtrGStreamer.h"
 #include "IntSize.h"
 #include <wtf/Forward.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebCore {
 
 namespace GStreamerCodecUtilities {
 
-std::pair<CStringView, String> parseH264ProfileAndLevel(const String& codec);
-CStringView parseHEVCProfile(const String& codec);
+std::pair<UTF8CStringView, String> parseH264ProfileAndLevel(const String& codec);
+UTF8CStringView parseHEVCProfile(const String& codec);
 std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> capsFromCodecString(const String&, const IntSize&, std::optional<double> frameRate = std::nullopt);
 
 } // namespace GStreamerCodecUtilities

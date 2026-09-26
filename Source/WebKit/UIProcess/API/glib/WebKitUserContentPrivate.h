@@ -27,11 +27,11 @@
 #include "WebKitUserContent.h"
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript*);
 API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*);
-API::ContentWorld& webkitContentWorld(CStringView);
+API::ContentWorld& webkitContentWorld(UTF8CStringView);
 API::ContentRuleList& webkitUserContentFilterGetContentRuleList(WebKitUserContentFilter*);
 WebKitUserContentFilter* webkitUserContentFilterCreate(RefPtr<API::ContentRuleList>&&);
 

@@ -135,7 +135,7 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
 }
 
 #if !USE(CF)
-String stringFromFileSystemRepresentation(CStringView path)
+String stringFromFileSystemRepresentation(UTF8CStringView path)
 {
     if (path.isNull())
         return String();

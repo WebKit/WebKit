@@ -28,7 +28,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 class DownloadTest: public Test {
 public:
@@ -174,7 +174,7 @@ public:
         webkit_download_set_destination(download, destination.get());
     }
 
-    GRefPtr<WebKitDownload> downloadURIAndWaitUntilFinished(CStringView requestURI)
+    GRefPtr<WebKitDownload> downloadURIAndWaitUntilFinished(UTF8CStringView requestURI)
     {
 #if ENABLE(2022_GLIB_API)
         GRefPtr<WebKitDownload> download = adoptGRef(webkit_network_session_download_uri(m_networkSession.get(), requestURI.utf8()));
@@ -219,7 +219,7 @@ static GRefPtr<WebKitDownload> downloadLocalFileSuccessfully(DownloadTest* test,
     GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
     GRefPtr<GFileInfo> sourceInfo = adoptGRef(g_file_query_info(source.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
     GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
-    GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinished(CStringView::unsafeFromUTF8(sourceURI.get()));
+    GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(sourceURI.get()));
     g_assert_null(webkit_download_get_web_view(download.get()));
 
     Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
@@ -340,7 +340,7 @@ static void testDownloadOverwriteDestinationDisallowed(DownloadErrorTest* test, 
     GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), filename, nullptr));
     GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
     GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
-    GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinished(CStringView::unsafeFromUTF8(sourceURI.get()));
+    GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(sourceURI.get()));
     g_assert_null(webkit_download_get_web_view(download.get()));
 
     Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
@@ -372,7 +372,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     GUniquePtr<char> path(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "test.pdf", nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
     GUniquePtr<char> uri(g_file_get_uri(file.get()));
-    download = test->downloadURIAndWaitUntilFinished(CStringView::unsafeFromUTF8(uri.get()));
+    download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(uri.get()));
     g_assert_null(webkit_download_get_web_view(download.get()));
 
     g_assert_cmpint(events.size(), ==, 4);
@@ -385,7 +385,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     test->checkDestinationAndDeleteFile(download.get(), "bar");
 
     test->m_expectedError = DownloadErrorTest::DownloadCancelled;
-    download = test->downloadURIAndWaitUntilFinished(CStringView::unsafeFromUTF8(uri.get()));
+    download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(uri.get()));
     g_assert_null(webkit_download_get_web_view(download.get()));
 
     g_assert_cmpint(events.size(), ==, 4);

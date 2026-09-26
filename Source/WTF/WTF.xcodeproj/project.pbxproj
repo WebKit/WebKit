@@ -298,8 +298,8 @@
 		C519C3692D36CE2E0064418F /* SequesteredMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C519C3682D36CE2B0064418F /* SequesteredMalloc.cpp */; };
 		C805EF39E5F14481A96D39FC /* ASCIILiteral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F050790D9C432A99085E75 /* ASCIILiteral.cpp */; };
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
-		CDD4AC792D9C309A00D11414 /* CStringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD4AC772D9C309A00D11414 /* CStringView.cpp */; };
-		CDD4AC7A2D9C309A00D11414 /* CStringView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD4AC782D9C309A00D11414 /* CStringView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDD4AC792D9C309A00D11414 /* UTF8CStringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD4AC772D9C309A00D11414 /* UTF8CStringView.cpp */; };
+		CDD4AC7A2D9C309A00D11414 /* UTF8CStringView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD4AC782D9C309A00D11414 /* UTF8CStringView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA072A9236FFBF70018839C /* CrashReporter.cpp */; };
 		D6135B2E2EE4BCE0002B5F19 /* RangeAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = D6135B2D2EE4BCE0002B5F19 /* RangeAdaptors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D6D24AAE2FE09A8E0091CCF2 /* FormattedLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D24AAD2FE09A860091CCF2 /* FormattedLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1782,8 +1782,8 @@
 		CD5497AA15857D0300B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
 		CDCC9BC422382FCE00FFB51C /* AggregateLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AggregateLogger.h; path = wtf/AggregateLogger.h; sourceTree = SOURCE_ROOT; };
-		CDD4AC772D9C309A00D11414 /* CStringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CStringView.cpp; sourceTree = "<group>"; };
-		CDD4AC782D9C309A00D11414 /* CStringView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CStringView.h; sourceTree = "<group>"; };
+		CDD4AC772D9C309A00D11414 /* UTF8CStringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8CStringView.cpp; sourceTree = "<group>"; };
+		CDD4AC782D9C309A00D11414 /* UTF8CStringView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8CStringView.h; sourceTree = "<group>"; };
 		CE1132832370634900A8C83B /* AnsiColors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnsiColors.h; sourceTree = "<group>"; };
 		CEA072A8236FFBF70018839C /* CrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashReporter.h; sourceTree = "<group>"; };
 		CEA072A9236FFBF70018839C /* CrashReporter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CrashReporter.cpp; sourceTree = "<group>"; };
@@ -3006,8 +3006,6 @@
 				0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */,
 				A8A47321151A825B004123FF /* CString.cpp */,
 				A8A47322151A825B004123FF /* CString.h */,
-				CDD4AC772D9C309A00D11414 /* CStringView.cpp */,
-				CDD4AC782D9C309A00D11414 /* CStringView.h */,
 				93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */,
 				50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */,
 				50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */,
@@ -3056,6 +3054,8 @@
 				70ECA60E1B02426800449739 /* UniquedStringImpl.cpp */,
 				70ECA60C1B02426800449739 /* UniquedStringImpl.h */,
 				FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */,
+				CDD4AC772D9C309A00D11414 /* UTF8CStringView.cpp */,
+				CDD4AC782D9C309A00D11414 /* UTF8CStringView.h */,
 				A8A4732D151A825B004123FF /* WTFString.cpp */,
 				A8A4732E151A825B004123FF /* WTFString.h */,
 			);
@@ -3648,7 +3648,6 @@
 				DD3DC8FC27A4BF8E007E5B61 /* CryptographicallyRandomNumber.h in Headers */,
 				DD3DC8B727A4BF8E007E5B61 /* CryptographicUtilities.h in Headers */,
 				DDF307E127C086DF006A526F /* CString.h in Headers */,
-				CDD4AC7A2D9C309A00D11414 /* CStringView.h in Headers */,
 				463CCFBF2B251D78009AB04E /* CurrentThread.h in Headers */,
 				DD3DC8E327A4BF8E007E5B61 /* DataLog.h in Headers */,
 				DD4901E927B4748A00D7E50D /* DataMutex.h in Headers */,
@@ -4095,6 +4094,7 @@
 				DDF307CF27C086DF006A526F /* UTextProviderUTF16.h in Headers */,
 				DDF307F327C086EA006A526F /* UTF8Conversion.h in Headers */,
 				DDF307E827C086DF006A526F /* UTF8ConversionError.h in Headers */,
+				CDD4AC7A2D9C309A00D11414 /* UTF8CStringView.h in Headers */,
 				FFE39CB12B1D7472004972B0 /* util.h in Headers */,
 				DDF306F527C086CC006A526F /* utils.h in Headers */,
 				DD3DC8C227A4BF8E007E5B61 /* UUID.h in Headers */,
@@ -4616,7 +4616,6 @@
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
 				E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */,
 				A8A47439151A825B004123FF /* CString.cpp in Sources */,
-				CDD4AC792D9C309A00D11414 /* CStringView.cpp in Sources */,
 				463CCFBD2B251D78009AB04E /* CurrentThread.cpp in Sources */,
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,
@@ -4770,6 +4769,7 @@
 				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,
 				1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */,
 				A8A47469151A825B004123FF /* UTF8Conversion.cpp in Sources */,
+				CDD4AC792D9C309A00D11414 /* UTF8CStringView.cpp in Sources */,
 				7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */,
 				93E4A13728F6B75A006AD994 /* UUIDCocoa.mm in Sources */,
 				E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */,

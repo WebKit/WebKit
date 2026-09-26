@@ -33,7 +33,7 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/cocoa/OSLogSPI.h>
 #include <wtf/text/ASCIILiteral.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
 #include "StreamMessageReceiver.h"
@@ -49,7 +49,7 @@ constexpr size_t logCategoryMaxSize = 32;
 constexpr size_t logSubsystemMaxSize = 32;
 constexpr size_t logStringMaxSize = 256;
 
-void logWithProcessNamePrefix(os_log_t, os_log_type_t, ASCIILiteral processName, int pid, CStringView message);
+void logWithProcessNamePrefix(os_log_t, os_log_type_t, ASCIILiteral processName, int pid, UTF8CStringView message);
 
 class AuxiliaryProcessProxy;
 // Type which receives log messages from another process and invokes the platform logging.

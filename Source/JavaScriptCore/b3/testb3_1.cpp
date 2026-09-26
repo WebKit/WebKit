@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 Lock crashLock;
 
-bool shouldRun(const TestConfig* config, CStringView testName)
+bool shouldRun(const TestConfig* config, UTF8CStringView testName)
 {
     if (config->mode == TestConfig::Mode::ListTests) {
         dataLogLn(testName);

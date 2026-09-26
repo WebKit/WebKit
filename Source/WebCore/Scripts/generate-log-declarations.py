@@ -6,15 +6,15 @@ import sys
 PARAMETER_LIST_INCLUDE_TYPE = 1
 PARAMETER_LIST_INCLUDE_NAME = 2
 
-# How a CStringView parameter is rendered. The sender can pass a non-owning view, but the receiver must
+# How a UTF8CStringView parameter is rendered. The sender can pass a non-owning view, but the receiver must
 # not: over streaming IPC the decoded bytes live in shared memory that the sending process can still
 # modify, so the message and the receiver take an owning UTF8CString instead. See 315201@main.
-STRING_AS_VIEW = 0      # CStringView arg0
+STRING_AS_VIEW = 0      # UTF8CStringView arg0
 STRING_AS_OWNED = 1     # UTF8CString arg0
 STRING_AS_RECEIVED = 2  # UTF8CString&& arg0, arg0.legacyCStringPointer()
 STRING_AS_SENT = 3      # UTF8CString { arg0.span() }
 
-STRING_PARAMETER_TYPE = "CStringView"
+STRING_PARAMETER_TYPE = "UTF8CStringView"
 
 
 def get_argument_list(parameter_string):
@@ -94,7 +94,7 @@ def generate_log_client_virtual_functions(log_messages, log_client_virtual_funct
 
 #include <os/log.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WebCore {
 

@@ -41,7 +41,7 @@
 #include <wtf/cocoa/VectorCocoa.h>
 #include <wtf/darwin/DispatchExtras.h>
 #include <wtf/darwin/DispatchOSObject.h>
-#include <wtf/text/CStringView.h>
+#include <wtf/text/UTF8CStringView.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/packet_socket_factory.h>
@@ -87,7 +87,7 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     }).get());
 }
 
-static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, CStringView hostName, CStringView port, bool isTLS, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
+static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, UTF8CStringView hostName, UTF8CStringView port, bool isTLS, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
     RetainPtr host = adoptNS(nw_endpoint_create_host(hostName.utf8(), port.utf8()));
     // FIXME: Handle TLS certificate validation like for other network code paths, using sec_protocol_options_set_verify_block
@@ -117,7 +117,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     if (hostName.empty())
         hostName = remoteAddress.ipaddr().ToString();
     bool isTLS = options & webrtc::PacketSocketFactory::OPT_TLS;
-    m_nwConnection = createNWConnection(rtcProvider, CStringView::unsafeFromUTF8(hostName.c_str()), String::number(remoteAddress.port()).utf8(), isTLS, attributedBundleIdentifier, flags, domain);
+    m_nwConnection = createNWConnection(rtcProvider, UTF8CStringView::unsafeFromUTF8(hostName.c_str()), String::number(remoteAddress.port()).utf8(), isTLS, attributedBundleIdentifier, flags, domain);
 
     nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueueSingleton());
     nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([weakNWConnection = WeakObjCPtr { m_nwConnection.get() }, identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {

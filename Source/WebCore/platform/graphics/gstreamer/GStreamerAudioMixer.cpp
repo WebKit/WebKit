@@ -222,7 +222,7 @@ void GStreamerAudioMixer::unregisterProducer(const GRefPtr<GstPad>& mixerPad)
     }
 }
 
-void GStreamerAudioMixer::configureSourcePeriodTime(CStringView sourceName, uint64_t periodTime)
+void GStreamerAudioMixer::configureSourcePeriodTime(UTF8CStringView sourceName, uint64_t periodTime)
 {
     DataMutexLocker locker { m_streamingMembers };
     for (auto& [deviceId, mp] : locker->m_pipelines) {

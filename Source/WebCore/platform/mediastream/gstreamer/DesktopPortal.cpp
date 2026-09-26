@@ -110,7 +110,7 @@ GRefPtr<GVariant> DesktopPortal::getProperty(ASCIILiteral name)
     return nullptr;
 }
 
-void DesktopPortal::waitResponseSignal(CStringView objectPath, ResponseCallback&& callback)
+void DesktopPortal::waitResponseSignal(UTF8CStringView objectPath, ResponseCallback&& callback)
 {
     RELEASE_ASSERT(!m_currentResponseCallback);
     m_currentResponseCallback = WTF::move(callback);
@@ -229,7 +229,7 @@ std::optional<DesktopPortalScreenCast::ScreencastSession> DesktopPortalScreenCas
     GUniqueOutPtr<char> objectPathChars;
     g_variant_get(result.get(), "(o)", &objectPathChars.outPtr());
     auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
-    waitResponseSignal(toCStringView(objectPath));
+    waitResponseSignal(toUTF8CStringView(objectPath));
 
     auto sessionPath = makeStringByReplacingAll(objectPath.span(), "/request/"_s, "/session/"_s);
     sessionPath = makeStringByReplacingAll(sessionPath, token, sessionToken);

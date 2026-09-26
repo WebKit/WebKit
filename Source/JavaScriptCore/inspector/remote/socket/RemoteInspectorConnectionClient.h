@@ -43,7 +43,7 @@ class RemoteInspectorConnectionClient : public RemoteInspectorSocketEndpoint::Cl
 public:
     JS_EXPORT_PRIVATE ~RemoteInspectorConnectionClient() override;
 
-    JS_EXPORT_PRIVATE std::optional<ConnectionID> connectInet(CStringView serverAddr, uint16_t serverPort);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> connectInet(UTF8CStringView serverAddr, uint16_t serverPort);
     std::optional<ConnectionID> createClient(PlatformSocketType);
     JS_EXPORT_PRIVATE void send(ConnectionID, std::span<const uint8_t>);
 

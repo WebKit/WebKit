@@ -71,9 +71,9 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
-#import <wtf/text/CStringView.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
+#import <wtf/text/UTF8CStringView.h>
 #import <wtf/text/WTFString.h>
 
 static NSString *serviceWorkerRegistrationFilename = @"ServiceWorkerRegistrations-8.sqlite3";
@@ -3641,7 +3641,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
     HashMap<String, RetainPtr<NSData>> _dataMappings;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
-- (void)addMappingFromURLString:(NSString *)urlString toData:(CStringView)data;
+- (void)addMappingFromURLString:(NSString *)urlString toData:(UTF8CStringView)data;
 @end
 
 @implementation ServiceWorkerSchemeHandler
@@ -3653,7 +3653,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
     return self;
 }
 
-- (void)addMappingFromURLString:(NSString *)urlString toData:(CStringView)data
+- (void)addMappingFromURLString:(NSString *)urlString toData:(UTF8CStringView)data
 {
     _dataMappings.set(urlString, toNSData(byteCast<uint8_t>(data.span())));
 }
