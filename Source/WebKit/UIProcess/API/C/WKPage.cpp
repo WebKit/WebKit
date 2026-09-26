@@ -156,7 +156,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18, WKPageUIClientV19> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18, WKPageUIClientV19, WKPageUIClientV20> Versions;
 };
 
 template<> struct ClientTraits<WKPageFullScreenClientBase> {
@@ -1626,11 +1626,42 @@ private:
     CompletionHandler<void(bool)> m_completionHandler;
 };
 
+class LocalNetworkAccessPermissionListener final : public API::ObjectImpl<API::Object::Type::LocalNetworkAccessPermissionListener> {
+public:
+    static Ref<LocalNetworkAccessPermissionListener> create(CompletionHandler<void(LocalNetworkAccessPromptResult)>&& completionHandler)
+    {
+        return adoptRef(*new LocalNetworkAccessPermissionListener(WTF::move(completionHandler)));
+    }
+
+    ~LocalNetworkAccessPermissionListener()
+    {
+        // A dropped listener must still answer, or the load it is gating never resolves.
+        if (m_completionHandler)
+            m_completionHandler(LocalNetworkAccessPromptResult::ClientDeferred);
+    }
+
+    void complete(LocalNetworkAccessPromptResult result)
+    {
+        ASSERT(m_completionHandler);
+        if (m_completionHandler)
+            m_completionHandler(result);
+    }
+
+private:
+    explicit LocalNetworkAccessPermissionListener(CompletionHandler<void(LocalNetworkAccessPromptResult)>&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+    {
+    }
+
+    CompletionHandler<void(LocalNetworkAccessPromptResult)> m_completionHandler;
+};
+
 WK_ADD_API_MAPPING(WKPageRunBeforeUnloadConfirmPanelResultListenerRef, RunBeforeUnloadConfirmPanelResultListener)
 WK_ADD_API_MAPPING(WKPageRunJavaScriptAlertResultListenerRef, RunJavaScriptAlertResultListener)
 WK_ADD_API_MAPPING(WKPageRunJavaScriptConfirmResultListenerRef, RunJavaScriptConfirmResultListener)
 WK_ADD_API_MAPPING(WKPageRunJavaScriptPromptResultListenerRef, RunJavaScriptPromptResultListener)
 WK_ADD_API_MAPPING(WKPageRequestStorageAccessConfirmResultListenerRef, RequestStorageAccessConfirmResultListener)
+WK_ADD_API_MAPPING(WKPageLocalNetworkAccessPermissionListenerRef, LocalNetworkAccessPermissionListener)
 
 }
 
@@ -1652,6 +1683,10 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RequestStorageAccessConfirmResultListener)
 static bool isType(const API::Object& object) { return object.type() == API::Object::Type::RequestStorageAccessConfirmResultListener; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::LocalNetworkAccessPermissionListener)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::LocalNetworkAccessPermissionListener; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 WKTypeID WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID()
@@ -1702,6 +1737,26 @@ WKTypeID WKPageRequestStorageAccessConfirmResultListenerGetTypeID()
 void WKPageRequestStorageAccessConfirmResultListenerCall(WKPageRequestStorageAccessConfirmResultListenerRef listener, bool result)
 {
     protect(toImpl(listener))->call(result);
+}
+
+WKTypeID WKPageLocalNetworkAccessPermissionListenerGetTypeID()
+{
+    return toAPI(LocalNetworkAccessPermissionListener::APIType);
+}
+
+void WKPageLocalNetworkAccessPermissionListenerGrant(WKPageLocalNetworkAccessPermissionListenerRef listener)
+{
+    protect(toImpl(listener))->complete(LocalNetworkAccessPromptResult::Granted);
+}
+
+void WKPageLocalNetworkAccessPermissionListenerDeny(WKPageLocalNetworkAccessPermissionListenerRef listener)
+{
+    protect(toImpl(listener))->complete(LocalNetworkAccessPromptResult::Denied);
+}
+
+void WKPageLocalNetworkAccessPermissionListenerNotNow(WKPageLocalNetworkAccessPermissionListenerRef listener)
+{
+    protect(toImpl(listener))->complete(LocalNetworkAccessPromptResult::ClientDeferred);
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)
@@ -2062,6 +2117,15 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return completionHandler(false);
 
             m_client.decidePolicyForNotificationPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(NotificationPermissionRequest::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
+        }
+
+        void decidePolicyForLocalNetworkAccessPermissionRequest(WebPageProxy& page, API::SecurityOrigin& requestingOrigin, API::SecurityOrigin& topOrigin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(LocalNetworkAccessPromptResult)>&& completionHandler) final
+        {
+            if (!m_client.decidePolicyForLocalNetworkAccessPermissionRequest)
+                return completionHandler(LocalNetworkAccessPromptResult::ClientDeferred);
+
+            auto listener = LocalNetworkAccessPermissionListener::create(WTF::move(completionHandler));
+            m_client.decidePolicyForLocalNetworkAccessPermissionRequest(toAPI(&page), toAPI(&requestingOrigin), toAPI(&topOrigin), addressSpace == WebCore::IPAddressSpace::Loopback, toAPI(listener.ptr()), m_client.base.clientInfo);
         }
 
         void requestStorageAccessConfirm(WebPageProxy& page, WebFrameProxy* frame, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&& completionHandler) final

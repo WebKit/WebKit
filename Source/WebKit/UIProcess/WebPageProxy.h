@@ -28,6 +28,7 @@
 // Including more headers here slows down build times a lot.
 // Use forward declarations and WebPageProxyInternals.h instead.
 #include "APIObject.h"
+#include "LocalNetworkAccessPromptResult.h"
 #include "MessageReceiver.h"
 #include "RunJavaScriptResult.h"
 #include "TextExtractionAssertionScope.h"
@@ -208,6 +209,7 @@ enum class ArchiveError : uint8_t;
 enum class AutocorrectionResponse : uint8_t;
 enum class AutoplayEvent : uint8_t;
 enum class AutoplayEventFlags : uint8_t;
+enum class IPAddressSpace : uint8_t;
 enum class BoxSide : uint8_t;
 enum class BrowsingContextGroupSwitchDecision : uint8_t;
 enum class CaretAnimatorType : uint8_t;
@@ -2115,6 +2117,7 @@ public:
     WebCore::FloatSize NODELETE viewportSizeForCSSViewportUnits() const;
 
     void didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&&, NegotiatedLegacyTLS);
+    void requestLocalNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(LocalNetworkAccessPromptResult)>&&);
     void negotiatedLegacyTLS();
     void didNegotiateModernTLS(const URL&);
 

@@ -27,6 +27,7 @@
 
 #include "AppPrivacyReport.h"
 #include "DataTaskIdentifier.h"
+#include "LocalNetworkAccessPromptResult.h"
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkNotificationManager.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -169,7 +170,8 @@ public:
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 
-    WebCore::PermissionState requestLocalNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, bool canPrompt);
+    using LocalNetworkAccessPermissionKey = std::pair<WebCore::ClientOrigin, WebCore::IPAddressSpace>;
+    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, bool canPrompt, CompletionHandler<void(WebCore::PermissionState)>&&);
     void setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin&&, WebCore::IPAddressSpace, WebCore::PermissionState);
     WebCore::PermissionState localNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace) const;
     void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin);
@@ -328,6 +330,11 @@ public:
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
+    enum class RecordDecision : bool { No, Yes };
+    void sendLocalNetworkAccessPromptToNextPage(LocalNetworkAccessPermissionKey);
+    void finishLocalNetworkAccessPrompt(LocalNetworkAccessPermissionKey, WebCore::PermissionState, RecordDecision);
+    void cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin);
+
     void forwardResourceLoadStatisticsSettings();
     WebSWOriginStore* NODELETE swOriginStore() const LIFETIME_BOUND;
 
@@ -425,9 +432,19 @@ protected:
 
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
     // Keyed on the origin pair as well as the space, so a grant does not follow the same origin embedded
-    // in an unrelated site. Nothing writes it yet; the grant and revocation paths land with the
-    // permission store. See https://bugs.webkit.org/show_bug.cgi?id=319907
-    HashMap<std::pair<WebCore::ClientOrigin, WebCore::IPAddressSpace>, WebCore::PermissionState> m_localNetworkAccessPermissions;
+    // in an unrelated site.
+    HashMap<LocalNetworkAccessPermissionKey, WebCore::PermissionState> m_localNetworkAccessPermissions;
+    struct LocalNetworkAccessWaiter {
+        WebPageProxyIdentifier pageID;
+        CompletionHandler<void(WebCore::PermissionState)> handler;
+    };
+    struct PendingLocalNetworkAccessPrompt {
+        uint64_t generation { 0 };
+        Vector<LocalNetworkAccessWaiter> waiters;
+        HashSet<WebPageProxyIdentifier> pagesTried;
+    };
+    HashMap<LocalNetworkAccessPermissionKey, PendingLocalNetworkAccessPrompt> m_pendingLocalNetworkAccessPrompts;
+    uint64_t m_nextLocalNetworkAccessPromptGeneration { 0 };
 
     void setIPAddressSpaceOverridesForTesting(const String&);
 

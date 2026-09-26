@@ -685,6 +685,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Platform/cocoa/MediaPlaybackTargetContextSerialized.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \
 	Shared/JavaScriptEvaluationResult.serialization.in \
+	Shared/LocalNetworkAccessPromptResult.serialization.in \
 	Shared/API/APIArray.serialization.in \
 	Shared/API/APIData.serialization.in \
 	Shared/API/APIDictionary.serialization.in \

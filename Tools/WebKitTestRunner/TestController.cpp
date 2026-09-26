@@ -378,6 +378,14 @@ static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOri
     return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin, frame);
 }
 
+static void decidePolicyForLocalNetworkAccessPermissionRequest(WKPageRef, WKSecurityOriginRef, WKSecurityOriginRef, bool, WKPageLocalNetworkAccessPermissionListenerRef listener, const void*)
+{
+    // A test that expects a request to be allowed pre-seeds the decision with
+    // testRunner.setLocalNetworkAccessPermission(); anything reaching this callback did not, and must
+    // not wait on prompt UI, which never appears in a test run.
+    WKPageLocalNetworkAccessPermissionListenerDeny(listener);
+}
+
 // A placeholder to tell WebKit the client is WebKitTestRunner.
 static void runWebAuthenticationPanel()
 {
@@ -769,8 +777,8 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
 
     view->resizeTo(800, 600);
 
-    WKPageUIClientV19 otherPageUIClient = {
-        { 19, view.ptr() },
+    WKPageUIClientV20 otherPageUIClient = {
+        { 20, view.ptr() },
         nullptr, // createNewPage_deprecatedForUseWithV0
         nullptr, // showPage
         closeOtherPage,
@@ -854,7 +862,8 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         nullptr, // lockScreenOrientationCallback,
         nullptr, // unlockScreenOrientationCallback,
         addMessageToConsole,
-        tooltipDidChange
+        tooltipDidChange,
+        decidePolicyForLocalNetworkAccessPermissionRequest
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
@@ -1269,8 +1278,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV19 pageUIClient = {
-        { 19, m_mainWebView.get() },
+    WKPageUIClientV20 pageUIClient = {
+        { 20, m_mainWebView.get() },
         nullptr, // createNewPage_deprecatedForUseWithV0
         nullptr, // showPage
         nullptr, // close
@@ -1359,7 +1368,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         nullptr, // unlockScreenOrientation
 #endif
         addMessageToConsole,
-        tooltipDidChange
+        tooltipDidChange,
+        decidePolicyForLocalNetworkAccessPermissionRequest
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

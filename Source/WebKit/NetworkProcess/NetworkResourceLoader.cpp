@@ -978,8 +978,8 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     performLocalNetworkAccessCheck(request, currentURL, connectionAddressSpace, m_parameters.clientAddressSpace,
         m_parameters.clientIsSecureContext, ClientOrigin { topOrigin, sourceOrigin },
         m_parameters.localNetworkAllowedByPermissionsPolicy, m_parameters.loopbackNetworkAllowedByPermissionsPolicy,
-        [networkSession](const ClientOrigin& origin, IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& permissionHandler) {
-            permissionHandler(networkSession->requestLocalNetworkAccessPermission(origin, addressSpace, true));
+        [networkSession, webPageProxyID = webPageProxyID()](const ClientOrigin& origin, IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& permissionHandler) {
+            networkSession->requestLocalNetworkAccessPermission(webPageProxyID, origin, addressSpace, true, WTF::move(permissionHandler));
         }, [this, protectedThis = Ref { *this }, url = currentURL, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> error) mutable {
             // A rejected fetch surfaces as a bare TypeError, so the reason would otherwise be invisible.
             if (error) {

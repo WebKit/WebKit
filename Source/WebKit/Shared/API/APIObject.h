@@ -149,6 +149,7 @@ public:
         InspectorExtension,
 #endif
         KeyValueStorageManager,
+        LocalNetworkAccessPermissionListener,
         MediaCacheManager,
         MessageListener,
         Navigation,
