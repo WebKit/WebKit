@@ -1035,6 +1035,17 @@ CSSMathDepthEnabled:
   humanReadableName: "CSS math-depth"
   humanReadableDescription: "Enable support for math-depth from MathML Core."
   defaultValue: true
+
+CSSModuleScriptsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Module Scripts"
+  humanReadableDescription: "Enable importing CSS into JavaScript using 'import'"
+  jscOptionName: useCSSModuleScripts
+  sharedPreferenceForWebProcess: true
+  defaultValue: false
+
 CSSObjectViewBoxEnabled:
   type: bool
   status: stable

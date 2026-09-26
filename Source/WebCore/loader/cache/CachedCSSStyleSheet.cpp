@@ -77,7 +77,7 @@ ASCIILiteral CachedCSSStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-std::expected<String, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint) const
+std::expected<String, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, ForceUTF8Encoding forceUTF8Encoding) const
 {
     // Ensure hasValidMIMEType and hasHTTPStatusOK always get set (even if m_data is null or empty) — which in turn
     // ensures that if the MIME type isn't text/css or the HTTP status isn't an OK status, we never load the resource.
@@ -89,11 +89,19 @@ std::expected<String, CachedCSSStyleSheet::Error> CachedCSSStyleSheet::sheetText
     if (!data || data->isEmpty())
         return String();
 
-    if (!m_decodedSheetText.isNull())
-        return m_decodedSheetText;
+    switch (forceUTF8Encoding) {
+    case ForceUTF8Encoding::No:
+        if (!m_decodedSheetText.isNull())
+            return m_decodedSheetText;
 
-    // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
-    return protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span());
+        // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
+        return protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span());
+
+    case ForceUTF8Encoding::Yes:
+        auto utf8Decoder = TextResourceDecoder::create(cssContentTypeAtom(), PAL::UTF8Encoding());
+        utf8Decoder->setAlwaysUseUTF8();
+        return utf8Decoder->decodeAndFlush(data->makeContiguous()->span());
+    }
 }
 
 void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)

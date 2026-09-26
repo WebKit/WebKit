@@ -1613,6 +1613,10 @@ JSPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModul
             promise->resolve(globalObject, vm, sourceCode);
             return promise;
         }
+        case ScriptFetchParameters::Type::CSS:
+            // This fetch should've not occured, as module loading would've rejected it
+            // for being unsupported in this environment.
+            RELEASE_ASSERT_NOT_REACHED();
         default:
             break;
         }

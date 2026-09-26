@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = TypeError: Import attribute type "css" is not valid
-
+PASS A relative URL in a CSS module should be resolved relative to the CSS file's URL, not the importing document's URL
 
