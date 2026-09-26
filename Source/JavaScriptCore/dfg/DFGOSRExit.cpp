@@ -46,7 +46,6 @@
 #include <wtf/LEBEncoder.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/UnalignedAccess.h>
 
 #include <wtf/Scope.h>
 
@@ -79,59 +78,6 @@ static constexpr unsigned jsValueSourceIsAddressBit = 1 << 6;
 static constexpr unsigned hasValueProfileBit = 1 << 7;
 static constexpr unsigned valueProfileOriginTagShift = 8;
 static constexpr unsigned hasRecoveryIndexBit = 1 << 10;
-static constexpr unsigned codeOriginTagMask = 3;
-
-enum class CodeOriginTag : unsigned {
-    SameAsPrevious,
-    SameInlineCallFrame,
-    NewInlineCallFrame,
-};
-
-static CodeOriginTag codeOriginTag(const CodeOrigin& codeOrigin, const CodeOrigin& previous)
-{
-    if (codeOrigin == previous)
-        return CodeOriginTag::SameAsPrevious;
-    if (codeOrigin.inlineCallFrame() == previous.inlineCallFrame())
-        return CodeOriginTag::SameInlineCallFrame;
-    return CodeOriginTag::NewInlineCallFrame;
-}
-
-static CodeOriginTag codeOriginTagFromFlags(unsigned flags, unsigned shift)
-{
-    return static_cast<CodeOriginTag>((flags >> shift) & codeOriginTagMask);
-}
-
-static void encodeCodeOrigin(Vector<uint8_t>& bytes, CodeOriginTag tag, const CodeOrigin& codeOrigin, const CodeOrigin& previous)
-{
-    switch (tag) {
-    case CodeOriginTag::SameAsPrevious:
-        return;
-    case CodeOriginTag::NewInlineCallFrame: {
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame();
-        bytes.append(asByteSpan(inlineCallFrame));
-        [[fallthrough]];
-    }
-    case CodeOriginTag::SameInlineCallFrame:
-        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(codeOrigin.bytecodeIndex().asBits() - previous.bytecodeIndex().asBits()));
-        return;
-    }
-}
-
-static CodeOrigin decodeCodeOrigin(std::span<const uint8_t> bytes, size_t& offset, CodeOriginTag tag, const CodeOrigin& previous)
-{
-    InlineCallFrame* inlineCallFrame = previous.inlineCallFrame();
-    switch (tag) {
-    case CodeOriginTag::SameAsPrevious:
-        return previous;
-    case CodeOriginTag::NewInlineCallFrame:
-        inlineCallFrame = WTF::unalignedLoad<InlineCallFrame*>(bytes.subspan(offset, sizeof(InlineCallFrame*)).data());
-        offset += sizeof(InlineCallFrame*);
-        [[fallthrough]];
-    case CodeOriginTag::SameInlineCallFrame:
-        return CodeOrigin(BytecodeIndex::fromBits(previous.bytecodeIndex().asBits() + WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)), inlineCallFrame);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
 
 OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits)
     : m_chunkOffsets(divideRoundedUp(exits.size(), static_cast<size_t>(exitsPerChunk)))

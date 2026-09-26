@@ -88,6 +88,7 @@ public:
     Box<CCallHelpers::Label> exceptionHandler { Box<CCallHelpers::Label>::create() };
     B3::Air::StackSlot* capturedValue { nullptr };
     Vector<DFG::JumpReplacement> jumpReplacements;
+    Vector<OSRExit> osrExits;
 };
 
 } } // namespace JSC::FTL

@@ -141,7 +141,6 @@ const DFG::CommonData* JITCode::dfgCommon() const
 void JITCode::shrinkToFit()
 {
     common.shrinkToFit();
-    m_osrExit.shrinkToFit();
     osrExitDescriptors.shrinkToFit();
     osrExitConstants.shrinkToFit();
     osrExitValueReps.shrinkToFit();
@@ -160,12 +159,9 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
-    for (OSRExit& exit : m_osrExit) {
-        if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
-            RELEASE_ASSERT(exit.isExceptionHandler());
-            RELEASE_ASSERT(exit.isGenericUnwindHandler());
-            return ValueRep::usedRegisters(/* isSIMDContext = */ false, exit.valueReps(*this));
-        }
+    for (const OSRExitStream::ExceptionHandlerExit& handler : m_osrExits.exceptionHandlerExits()) {
+        if (handler.callSiteIndex.bits() == callSiteIndex.bits())
+            return ValueRep::usedRegisters(/* isSIMDContext = */ false, osrExitValueReps.decode(handler.valueRepsOffset));
     }
     return { };
 }
@@ -175,7 +171,7 @@ std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
     for (const DFG::OSRExitStub& stub : m_osrExitStubs) {
         if (ExecutableMemoryHandle* handle = stub.code.executableMemory()) {
             if (handle->contains(pc))
-                return std::optional<CodeOrigin>(m_osrExit[stub.exitIndex].m_codeOriginForExitProfile);
+                return std::optional<CodeOrigin>(osrExit(stub.exitIndex).m_codeOriginForExitProfile);
         }
     }
 

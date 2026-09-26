@@ -29,6 +29,9 @@
 #if ENABLE(DFG_JIT)
 
 #include "InlineCallFrame.h"
+#include <wtf/LEBDecoder.h>
+#include <wtf/LEBEncoder.h>
+#include <wtf/UnalignedAccess.h>
 
 namespace JSC { namespace DFG {
 
@@ -54,6 +57,47 @@ void OSRExitBase::considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock,
             site = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex(), m_kind, jitType, inlineKind);
         ExitProfile::add(sourceProfiledCodeBlock, site);
     }
+}
+
+CodeOriginTag codeOriginTag(const CodeOrigin& codeOrigin, const CodeOrigin& previous)
+{
+    if (codeOrigin == previous)
+        return CodeOriginTag::SameAsPrevious;
+    if (codeOrigin.inlineCallFrame() == previous.inlineCallFrame())
+        return CodeOriginTag::SameInlineCallFrame;
+    return CodeOriginTag::NewInlineCallFrame;
+}
+
+void encodeCodeOrigin(Vector<uint8_t>& bytes, CodeOriginTag tag, const CodeOrigin& codeOrigin, const CodeOrigin& previous)
+{
+    switch (tag) {
+    case CodeOriginTag::SameAsPrevious:
+        return;
+    case CodeOriginTag::NewInlineCallFrame: {
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame();
+        bytes.append(asByteSpan(inlineCallFrame));
+        [[fallthrough]];
+    }
+    case CodeOriginTag::SameInlineCallFrame:
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(codeOrigin.bytecodeIndex().asBits() - previous.bytecodeIndex().asBits()));
+        return;
+    }
+}
+
+CodeOrigin decodeCodeOrigin(std::span<const uint8_t> bytes, size_t& offset, CodeOriginTag tag, const CodeOrigin& previous)
+{
+    InlineCallFrame* inlineCallFrame = previous.inlineCallFrame();
+    switch (tag) {
+    case CodeOriginTag::SameAsPrevious:
+        return previous;
+    case CodeOriginTag::NewInlineCallFrame:
+        inlineCallFrame = WTF::unalignedLoad<InlineCallFrame*>(bytes.subspan(offset, sizeof(InlineCallFrame*)).data());
+        offset += sizeof(InlineCallFrame*);
+        [[fallthrough]];
+    case CodeOriginTag::SameInlineCallFrame:
+        return CodeOrigin(BytecodeIndex::fromBits(previous.bytecodeIndex().asBits() + WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)), inlineCallFrame);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::DFG
