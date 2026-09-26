@@ -1,0 +1,19 @@
+Testing DOM.performSearch matches a query that spans an element's tag name and attributes.
+
+ === Query: "section data-role" ===
+Count: 1
+section#target
+=== Query: "span data-role" ===
+Count: 1
+span
+=== Query: "data-role=\"widget" ===
+Count: 1
+section#target
+=== Query: "section" ===
+Count: 1
+section#target
+=== Query: "data-role" ===
+Count: 2
+section#target
+span
+
