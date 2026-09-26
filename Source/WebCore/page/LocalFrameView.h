@@ -746,6 +746,8 @@ public:
     OverscrollBehavior NODELETE horizontalOverscrollBehavior() const final;
     OverscrollBehavior NODELETE verticalOverscrollBehavior() const final;
 
+    ScrollAxisLock NODELETE scrollAxisLock() const final;
+
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
     Style::ScrollbarGutter NODELETE scrollbarGutterStyle() const final;

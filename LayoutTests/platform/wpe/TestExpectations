@@ -1306,5 +1306,10 @@ webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/mode-exclusive.htt
 webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/mode-mixed.https.any.sharedworker.html [ Failure Pass ]
 webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/mode-shared.https.any.sharedworker.html [ Failure Pass ]
 
+# These tests are timing out on WPE.
+fast/scrolling/scroll-axis-lock-iframe.html [ Skip ]
+fast/scrolling/scroll-axis-lock-overflow-scroll.html [ Skip ]
+fast/scrolling/scroll-axis-lock-viewport.html [ Skip ]
+
 webkit.org/b/324374 webgl/1.0.x/conformance/textures/misc/texture-size-limit.html [ Failure ]
 webkit.org/b/324374 webgl/2.0.y/conformance/textures/misc/texture-size-limit.html [ Failure ]

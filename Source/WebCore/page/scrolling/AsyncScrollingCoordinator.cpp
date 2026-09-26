@@ -1194,6 +1194,7 @@ void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(std::opti
     scrollParameters.allowsVerticalScrolling = scrollableArea.allowsVerticalScrolling();
     scrollParameters.horizontalOverscrollBehavior = scrollableArea.horizontalOverscrollBehavior();
     scrollParameters.verticalOverscrollBehavior = scrollableArea.verticalOverscrollBehavior();
+    scrollParameters.scrollAxisLock = scrollableArea.scrollAxisLock();
     scrollParameters.horizontalScrollbarMode = scrollableArea.horizontalScrollbarMode();
     scrollParameters.verticalScrollbarMode = scrollableArea.verticalScrollbarMode();
     scrollParameters.horizontalNativeScrollbarVisibility = scrollableArea.horizontalNativeScrollbarVisibility();
