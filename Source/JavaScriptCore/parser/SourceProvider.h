@@ -43,6 +43,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <span>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ScopedLambda.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
@@ -52,6 +54,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 namespace JSC {
 
 class SourceCode;
+class SourceProvider;
 class UnlinkedFunctionExecutable;
 class UnlinkedFunctionCodeBlock;
 
@@ -84,6 +87,7 @@ public:
     // Out-of-range input clamps rather than fails: a line past the end gives the end of the text,
     // and a column past the end of its line gives that line's end.
     JS_EXPORT_PRIVATE unsigned offsetForPosition(StringView text, unsigned line0Based, unsigned column0Based);
+    JS_EXPORT_PRIVATE LineColumn zeroBasedLineColumnForOffset(const SourceProvider&, unsigned offset);
 
     bool isBuilt() const
     {
@@ -159,7 +163,9 @@ public:
 
     JS_EXPORT_PRIVATE void lockUnderlyingBuffer();
     JS_EXPORT_PRIVATE void unlockUnderlyingBuffer();
-    JS_EXPORT_PRIVATE virtual CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, CodeSpecializationKind);
+    JS_EXPORT_PRIVATE CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, CodeSpecializationKind) const;
+    // Like source(), but safe on any thread. The text is valid only during the call.
+    JS_EXPORT_PRIVATE virtual void withSourceConcurrently(const ScopedLambda<void(StringView)>&) const;
 
     virtual bool isScriptBufferSourceProvider() const { return false; }
 
@@ -167,32 +173,32 @@ public:
 
     LineStartTable::PositionInfo positionInfoForOffset(unsigned offset)
     {
+        // Reads source(), which is unsafe on GC threads. documentLineColumnForOffset() is a thread-safe option.
+        ASSERT(Thread::currentSingleton().gcThreadType() == GCThreadType::None);
         return m_lineStartTable.positionInfoForOffset(source(), offset);
     }
 
     unsigned offsetForPosition(unsigned line0Based, unsigned column0Based)
     {
+        ASSERT(Thread::currentSingleton().gcThreadType() == GCThreadType::None);
         return m_lineStartTable.offsetForPosition(source(), line0Based, column0Based);
     }
 
     // An inline <script> shifts every line of its document, but shifts the column only on its first
     // line, since later lines begin where their own line begins.
-    LineColumn documentLineColumnForOffset(unsigned offset)
+    LineColumn documentZeroBasedLineColumnForOffset(unsigned offset)
     {
-        auto info = positionInfoForOffset(offset);
+        auto position = m_lineStartTable.zeroBasedLineColumnForOffset(*this, offset);
         return {
-            m_startPosition.m_line.oneBasedInt() + info.line0Based,
-            info.line0Based ? info.column0Based + 1 : m_startPosition.m_column.oneBasedInt() + info.column0Based,
+            m_startPosition.m_line.zeroBasedInt() + position.line,
+            position.line ? position.column : m_startPosition.m_column.zeroBasedInt() + position.column,
         };
     }
 
-    LineColumn documentZeroBasedLineColumnForOffset(unsigned offset)
+    LineColumn documentLineColumnForOffset(unsigned offset)
     {
-        auto info = positionInfoForOffset(offset);
-        return {
-            m_startPosition.m_line.zeroBasedInt() + info.line0Based,
-            info.line0Based ? info.column0Based : m_startPosition.m_column.zeroBasedInt() + info.column0Based,
-        };
+        auto position = documentZeroBasedLineColumnForOffset(offset);
+        return { position.line + 1, position.column + 1 };
     }
 
     bool lineStartTableIsBuilt() const { return m_lineStartTable.isBuilt(); }
