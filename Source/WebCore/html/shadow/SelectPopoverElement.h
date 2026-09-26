@@ -43,6 +43,7 @@ private:
     explicit SelectPopoverElement(Document&);
 
     bool isSelectPopoverElement() const final { return true; }
+    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
 
     void didAttachRenderers() final;
     void popoverWasHidden() final;

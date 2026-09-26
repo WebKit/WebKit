@@ -531,6 +531,8 @@ public:
 
     inline bool insideSubmitButton() const;
     inline void setInsideSubmitButton(bool);
+    inline bool inBaseAppearanceSubtree() const;
+    inline void setInBaseAppearanceSubtree(bool);
 
     inline OptionSet<EventListenerRegionType> eventListenerRegionTypes() const;
     inline void setEventListenerRegionTypes(OptionSet<EventListenerRegionType>);

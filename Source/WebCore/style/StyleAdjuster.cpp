@@ -46,6 +46,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -65,6 +66,7 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
+#include "SelectPopoverElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleableInlines.h"
@@ -718,6 +720,18 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     // Let the theme also have a crack at adjusting the style.
     if (style.appearance() != StyleAppearance::None && style.appearance() != StyleAppearance::Base)
         adjustThemeStyle(style, m_parentStyle);
+
+    if (m_element && m_element->supportsBaseAppearance(StyleAppearance::Base)) {
+        bool hasBaseAppearance = style.usedAppearance() == StyleAppearance::Base;
+        RefPtr popover = dynamicDowncast<SelectPopoverElement>(m_element);
+        if (!popover)
+            style.setInBaseAppearanceSubtree(hasBaseAppearance);
+        else if (RefPtr select = popover->selectElement(); select && select->supportsPickerPseudoElement()) {
+            // A picker only has base appearance when its select does. A list box only slots its
+            // options through the picker, so there it is left to the select.
+            style.setInBaseAppearanceSubtree(hasBaseAppearance && m_parentStyle.inBaseAppearanceSubtree());
+        }
+    }
 
     // This should be kept in sync with requiresRenderingConsolidationForViewTransition
     if (style.usedTransformStyle3D() == TransformStyle3D::Preserve3D) {

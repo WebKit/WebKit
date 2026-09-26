@@ -78,6 +78,7 @@
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "StepRange.h"
+#include "StyleAppearance.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleGradientImage.h"
@@ -929,6 +930,11 @@ void HTMLInputElement::finishParsingChildren()
 bool HTMLInputElement::rendererIsNeeded(const Style::ComputedStyle& style)
 {
     return m_inputType->rendererIsNeeded() && HTMLTextFormControlElement::rendererIsNeeded(style);
+}
+
+bool HTMLInputElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base;
 }
 
 RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
