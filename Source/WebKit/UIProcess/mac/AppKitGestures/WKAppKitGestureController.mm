@@ -1108,6 +1108,15 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!webView)
         return NO;
 
+    // An event that catches a decelerating scroll only stops the scroll (and may continue it as a new pan),
+    // so it must never begin a text selection or any other deferred gesture, no matter how long it's held
+    // before moving.
+    if (_caughtDeceleratingScroll) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: event caught a decelerating scroll; preventing deferred gestures");
+        [deferringGestureRecognizer endDeferralShouldPreventGestures:YES];
+        return YES;
+    }
+
     NSPoint locationInView = [webView convertPoint:[event locationInWindow] fromView:nil];
 
     const auto isInScrollbar = [self _isPointInScrollbar:locationInView];
@@ -1780,6 +1789,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _caughtDeceleratingScroll = true;
     _suppressNextPanScrollDelta = true;
 
+    _positionInformationManager->invalidate();
+
     RefPtr page = [webView _protectedPage];
     page->interruptSyntheticMomentumScrolling();
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Interrupted momentum scrolling");
@@ -2128,6 +2139,9 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
         ? startLocationInView(_panGestureRecognizer, webView)
         : [gestureRecognizer locationInView:webView];
 
+    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return YES;
+
     // While catching a decelerating scroll, only select gestures are allowed to begin:
     // - single click, so it can reset the interruption state
     // - mouse tracking or pan, so they can continue with successive scrolls (scrollbar drag for the former)
@@ -2139,9 +2153,6 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
         if (gestureRecognizer != _panGestureRecognizer)
             return NO;
     }
-
-    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-        return YES;
 
     // An event over a scrollbar is a scrollbar interaction; only a mouse-tracking gesture (which drives
     // `Scrollbar::mouseDown` -> thumb drag) should handle it. The AppKit text-selection/context-menu gestures
