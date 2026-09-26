@@ -3994,7 +3994,7 @@ void WebPageProxy::restoreSelectionInFocusedEditableElement()
 {
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::RestoreSelectionInFocusedEditableElement());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::RestoreSelectionInFocusedEditableElement());
 }
 
 void WebPageProxy::validateCommand(const String& commandName, CompletionHandler<void(bool, int32_t)>&& callbackFunction)
@@ -4002,7 +4002,7 @@ void WebPageProxy::validateCommand(const String& commandName, CompletionHandler<
     if (!hasRunningProcess())
         return callbackFunction(false, 0);
 
-    sendWithAsyncReply(Messages::WebPage::ValidateCommand(commandName), WTF::move(callbackFunction));
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::ValidateCommand(commandName), WTF::move(callbackFunction));
 }
 
 void WebPageProxy::increaseListLevel()
@@ -4010,7 +4010,7 @@ void WebPageProxy::increaseListLevel()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::IncreaseListLevel());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::IncreaseListLevel());
 }
 
 void WebPageProxy::decreaseListLevel()
@@ -4018,7 +4018,7 @@ void WebPageProxy::decreaseListLevel()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::DecreaseListLevel());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::DecreaseListLevel());
 }
 
 void WebPageProxy::changeListType()
@@ -4026,7 +4026,7 @@ void WebPageProxy::changeListType()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::ChangeListType());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ChangeListType());
 }
 
 void WebPageProxy::setBaseWritingDirection(WritingDirection direction)
@@ -4034,7 +4034,7 @@ void WebPageProxy::setBaseWritingDirection(WritingDirection direction)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetBaseWritingDirection(direction));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetBaseWritingDirection(direction));
 }
 
 const EditorState& WebPageProxy::editorState() const
@@ -4201,7 +4201,7 @@ void WebPageProxy::requestFontAttributesAtSelectionStart(CompletionHandler<void(
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::RequestFontAttributesAtSelectionStart(), [this, protectedThis = Ref { *this }, callback = WTF::move(callback)] (const WebCore::FontAttributes& attributes) mutable {
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestFontAttributesAtSelectionStart(), [this, protectedThis = Ref { *this }, callback = WTF::move(callback)] (const WebCore::FontAttributes& attributes) mutable {
         internals().cachedFontAttributesAtSelectionStart = attributes;
         callback(attributes);
     });
@@ -5777,7 +5777,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::CenterSelectionInVisibleArea());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::CenterSelectionInVisibleArea());
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -8004,7 +8004,7 @@ void WebPageProxy::getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&& 
 
 void WebPageProxy::getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::GetSelectionOrContentsAsString(), WTF::move(callback));
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetSelectionOrContentsAsString(), WTF::move(callback));
 }
 
 void WebPageProxy::saveResources(WebFrameProxy* frame, const Vector<WebCore::MarkupExclusionRule>& markupExclusionRules, const String& directory, const String& suggestedMainResourceName, CompletionHandler<void(std::expected<void, WebCore::ArchiveError>)>&& completionHandler)
@@ -13634,7 +13634,7 @@ void WebPageProxy::didCancelForOpenPanel()
 
 void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    send(Messages::WebPage::AdvanceToNextMisspelling(startBeforeSelection));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::AdvanceToNextMisspelling(startBeforeSelection));
 }
 
 void WebPageProxy::changeSpellingToWord(const String& word)
@@ -13642,7 +13642,7 @@ void WebPageProxy::changeSpellingToWord(const String& word)
     if (word.isEmpty())
         return;
 
-    send(Messages::WebPage::ChangeSpellingToWord(word));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ChangeSpellingToWord(word));
 }
 
 void WebPageProxy::registerEditCommand(Ref<WebEditCommandProxy>&& commandProxy, UndoOrRedo undoOrRedo)
@@ -14216,6 +14216,8 @@ void WebPageProxy::focusedFrameChanged(IPC::Connection& connection, std::optiona
     if (frame)
         MESSAGE_CHECK_BASE(frame->page() == this, connection);
     m_focusedFrame = WTF::move(frame);
+    // The cached attributes came from the previously focused frame, which may be in another process.
+    internals().cachedFontAttributesAtSelectionStart.reset();
     broadcastFocusedFrameToOtherProcesses(connection, WTF::move(frameID));
 }
 
@@ -16783,7 +16785,7 @@ void WebPageProxy::recordAutocorrectionResponse(AutocorrectionResponse response,
 void WebPageProxy::handleAlternativeTextUIResult(const String& result)
 {
     if (!isClosed())
-        send(Messages::WebPage::HandleAlternativeTextUIResult(result));
+        sendToFocusedOrMainFrameProcess(Messages::WebPage::HandleAlternativeTextUIResult(result));
 }
 
 void WebPageProxy::setFocusedElementInputType(InputType inputType)
@@ -16927,7 +16929,7 @@ void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::ChangeFontAttributes(WTF::move(changes)));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ChangeFontAttributes(WTF::move(changes)));
 }
 
 void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
@@ -16935,7 +16937,7 @@ void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::ChangeFont(WTF::move(changes)));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ChangeFont(WTF::move(changes)));
 }
 
 // FIXME: Move these functions to WebPageProxyCocoa.mm.
@@ -19786,6 +19788,7 @@ INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::CancelAutoscroll);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ReplaceSelectedText);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::SelectWordBackward);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::StoreSelectionForAccessibility);
+INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::GenerateSyntheticEditingCommand);
 #endif
 #undef INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS
 
@@ -19805,6 +19808,9 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::Upda
 #if ENABLE(REVEAL)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::RequestRVItemInCurrentSelectedRange);
 #endif
+#endif
+#if PLATFORM(MAC)
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::AttributedSubstringForCharacterRangeAsync);
 #endif
 #undef INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS
 
@@ -20367,7 +20373,7 @@ void WebPageProxy::setAllowsLayoutViewportHeightExpansion(bool value)
 void WebPageProxy::closeCurrentTypingCommand()
 {
     if (hasRunningProcess())
-        send(Messages::WebPage::CloseCurrentTypingCommand());
+        sendToFocusedOrMainFrameProcess(Messages::WebPage::CloseCurrentTypingCommand());
 }
 
 bool WebPageProxy::isAlwaysOnLoggingAllowed() const

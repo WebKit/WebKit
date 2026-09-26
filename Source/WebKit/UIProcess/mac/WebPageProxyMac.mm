@@ -264,7 +264,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), WTF::move(callbackFunction), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), Messages::WebPage::AttributedSubstringForCharacterRangeAsync::Reply { WTF::move(callbackFunction) });
 }
 
 static constexpr auto timeoutForPasteboardSyncIPC = 5_s;
