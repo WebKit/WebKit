@@ -160,7 +160,7 @@ endmacro()
 function(GLib_HandleComponent name)
     if (TARGET GLib::${name})
         set(GLib_${name}_FOUND TRUE PARENT_SCOPE)
-        return()
+        return ()
     endif ()
 
     if (name STREQUAL "GLib")
@@ -190,7 +190,7 @@ function(GLib_HandleComponent name)
               ${PC_GLib_${name}_LIBRARY_DIRS}
     )
     if (NOT GLib_${name}_LIBRARY)
-        return()
+        return ()
     endif ()
 
     set(GLib_${name}_FOUND TRUE PARENT_SCOPE)

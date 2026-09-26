@@ -68,7 +68,7 @@ class CMakeChecker(object):
         #From FindPkgConfig.cmake
         'pkg_check_modules',
         'project',
-        'remove_definitions', 'return',
+        'remove_definitions',
         'separate_arguments', 'set', 'set_directory_properties', 'set_property',
         'set_source_files_properties', 'set_target_properties',
         'set_tests_properties', 'site_name', 'source_group', 'string',
@@ -83,7 +83,7 @@ class CMakeChecker(object):
         'if', 'else', 'elseif', 'endif',
         'foreach', 'endforeach',
         'while', 'endwhile',
-        'break',
+        'break', 'return',
     ]
 
     categories = [

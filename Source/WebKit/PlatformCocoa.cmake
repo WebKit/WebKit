@@ -2512,7 +2512,7 @@ add_custom_target(_WebKit_SwiftUI_StageSwiftModule ALL DEPENDS ${_WebKit_SwiftUI
 WEBKIT_FRAMEWORK(_WebKit_SwiftUI)
 
 unset(_swiftui_dir)
-    return()
+    return ()
 endif (WEBKIT_SDK_IS_IOS_FAMILY)
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES

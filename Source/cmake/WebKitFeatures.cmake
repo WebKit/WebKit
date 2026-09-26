@@ -408,7 +408,7 @@ endmacro()
 function(_WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT _result_var)
     if (DEFINED SWIFT_CXX_INTEROP_SUPPORTED)
         set(${_result_var} ${SWIFT_CXX_INTEROP_SUPPORTED} PARENT_SCOPE)
-        return()
+        return ()
     endif ()
 
     # enable_language(Swift) hasn't run yet and gets replaced by swiftc-wrapper

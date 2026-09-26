@@ -53,7 +53,7 @@ component given its `<name>`:
 #]=======================================================================]
 
 if (NOT ANDROID)
-    return()
+    return ()
 endif ()
 
 include(CMakePushCheckState)
@@ -63,12 +63,12 @@ include(CheckIncludeFile)
 function(_AndroidHandleComponent target)
     if (TARGET Android::${target})
         message(DEBUG "Android::${target} already checked, skipping")
-        return()
+        return ()
     endif ()
 
     if (NOT Android_COMPONENT_${target}_LIBRARY)
         message(CHECK_FAIL "Invalid component name")
-        return()
+        return ()
     endif ()
 
     set(libname "${Android_COMPONENT_${target}_LIBRARY}")
@@ -87,7 +87,7 @@ function(_AndroidHandleComponent target)
 
     check_include_file("${header}" Android_COMPONENT_${target}_HAS_HEADER)
     if (NOT Android_COMPONENT_${target}_HAS_HEADER)
-        return()
+        return ()
     endif ()
 
     cmake_push_check_state(RESET)
@@ -95,7 +95,7 @@ function(_AndroidHandleComponent target)
     check_function_exists("${symbol}" Android_COMPONENT_${target}_HAS_SYMBOL)
     cmake_pop_check_state()
     if (NOT Android_COMPONENT_${target}_HAS_SYMBOL)
-        return()
+        return ()
     endif ()
 
     add_library(Android::${target} INTERFACE IMPORTED)

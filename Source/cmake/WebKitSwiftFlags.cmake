@@ -16,7 +16,7 @@
 # earliest point where SWIFT_REQUIRED is known for every port.
 
 if (NOT SWIFT_REQUIRED)
-    return()
+    return ()
 endif ()
 
 # Helpers

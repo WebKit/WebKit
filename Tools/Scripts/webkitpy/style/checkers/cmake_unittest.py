@@ -128,6 +128,8 @@ class CMakeCheckerTest(unittest.TestCase):
             '    message("If ( spaces inside a string )")\n',
             '    message("escaped \\" quote" )\n',
             'endif ()\n',
+            'return()\n',
+            'return ()\n',
             ]
         checker.check(lines)
 
@@ -146,6 +148,7 @@ class CMakeCheckerTest(unittest.TestCase):
             (16, 'command/lowercase', 5, 'Use lowercase command "endmacro"'),
             (18, 'whitespace/parentheses', 5, 'No space between command "function" and its parentheses, should be "function("'),
             (76, 'whitespace/parentheses', 5, 'No space before ")"'),
+            (78, 'whitespace/parentheses', 5, 'One space between command "return" and its parentheses, should be "return ("'),
             (23, 'list/parentheses', 5, 'First listitem "a" should be in a new line.'),
             (24, 'list/parentheses', 5, 'The parentheses after the last listitem "b" should be in a new line.'),
             (31,  'list/duplicate', 5, 'The item "a" should be added only once to the list.'),

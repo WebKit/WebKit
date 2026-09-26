@@ -52,7 +52,7 @@ command. The following variables will also be set:
 if (NOT ENABLE_INTROSPECTION)
     function(GI_INTROSPECT)
     endfunction()
-    return()
+    return ()
 endif ()
 
 find_package(PkgConfig QUIET)
@@ -137,7 +137,7 @@ find_package_handle_standard_args(GI
 )
 
 if (NOT GI_FOUND)
-    return()
+    return ()
 endif ()
 
 define_property(TARGET
