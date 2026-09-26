@@ -138,8 +138,8 @@ private:
 #endif
     Awaitable<void> exitFullScreen();
     Awaitable<void> enterInWindowFullScreen(IPC::Connection&, WebCore::FrameIdentifier);
-    Awaitable<bool> beganEnterFullScreen(IPC::Connection&, WebCore::FrameIdentifier, WebCore::IntRect initialFrameInRootViewCoordinates, WebCore::IntRect finalFrameInRootViewCoordinates);
-    Awaitable<void> beganExitFullScreen(WebCore::IntRect initialFrameInRootViewCoordinates, WebCore::IntRect finalFrameInRootViewCoordinates);
+    Awaitable<bool> beganEnterFullScreen(IPC::Connection&, WebCore::FrameIdentifier, WebCore::IntRect initialFrameInMainFrameCoordinates, WebCore::IntRect finalFrameInMainFrameCoordinates);
+    Awaitable<void> beganExitFullScreen(WebCore::IntRect initialFrameInMainFrameCoordinates, WebCore::IntRect finalFrameInMainFrameCoordinates);
     void closeFullScreen(IPC::Connection&);
     void callCloseCompletionHandlers();
     template<typename M> void sendToWebProcess(M&&);
@@ -147,7 +147,7 @@ private:
     bool isFrameInSendingProcess(WebCore::FrameIdentifier, IPC::Connection&) const;
     bool isFullScreenInSendingProcess(IPC::Connection&) const;
 
-    std::optional<std::pair<WebCore::IntRect, WebCore::IntRect>> convertFromRootViewToScreenCoordinates(std::pair<WebCore::IntRect, WebCore::IntRect> rectsInRootViewCoordinates);
+    std::optional<std::pair<WebCore::IntRect, WebCore::IntRect>> convertFromMainFrameToScreenCoordinates(std::pair<WebCore::IntRect, WebCore::IntRect> rectsInMainFrameCoordinates);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
@@ -170,7 +170,6 @@ private:
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakPtr<WebProcessProxy> m_fullScreenProcess;
     Markable<WebCore::FrameIdentifier> m_fullScreenFrameID;
-    WebCore::IntPoint m_rootFrameOriginInMainFrameCoordinates;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
