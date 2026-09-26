@@ -66,7 +66,8 @@ typedef (Element or CanvasElementImage) CanvasElementImageSource;
     [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long width;
     [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long height;
 
-    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] DOMMatrix getElementTransform(CanvasElementImageSource source, DOMMatrix drawTransform);
+    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] undefined updateElementGeometry(CanvasElementImageSource source, optional UpdateElementGeometryOptions options = {});
+    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] undefined clearElementGeometry(CanvasElementImageSource source);
 
     [CallWith=CurrentGlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
     ImageBitmap transferToImageBitmap();

@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/CanvasBase.h>
+#include <WebCore/CanvasContent.h>
 #include <WebCore/CanvasElementImage.h>
 #include <WebCore/Document.h>
 #include <WebCore/FloatRect.h>
@@ -64,6 +65,7 @@ class WebCoreOpaqueRoot;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
+struct UpdateElementGeometryOptions;
 
 class HTMLCanvasElement final : public HTMLElement, public ActiveDOMObject, public CanvasBase {
     WTF_MAKE_TZONE_ALLOCATED(HTMLCanvasElement);
@@ -78,21 +80,18 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    // `layoutSubtree` attribute opts in canvas descendants to layout and participate in hit testing.
-    // It causes the direct children of the <canvas> to have a stacking context, become a containing
-    // block for all descendants, and create RenderElements. These RenderElements behave as if they
-    // are visible, but their drawing is not visible to the user. They are recorded in DisplayLists
-    // and these DisplayLists are replayed back into the canvas only via calls to drawElementImage().
-    void setLayoutSubtree(bool);
-    bool layoutSubtree() const;
+    const AtomString& canvasContentForBindings() const;
+    CanvasContent canvasContent() const;
 
     void requestPaint();
     void dispatchPaintEvent();
 
-    ExceptionOr<Ref<DOMMatrix>> getElementTransform(const CanvasElementImageSource&, DOMMatrix& drawTransform);
     ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&);
-
     std::optional<CanvasElementSnapshot> drawableElementSnapshot(Element&) const;
+
+    ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>);
+    ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
+    ExceptionOr<Ref<DOMMatrix>> getElementTransform(const CanvasElementImageSource&, DOMMatrix& drawTransform);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);

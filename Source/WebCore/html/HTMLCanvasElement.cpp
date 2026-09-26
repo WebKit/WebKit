@@ -74,6 +74,7 @@
 #include "ScriptTrackingPrivacyCategory.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
+#include "UpdateElementGeometryOptions.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <math.h>
@@ -173,7 +174,7 @@ void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomSt
             didUpdateSizeProperties();
     }
 
-    if (name == layoutsubtreeAttr)
+    if (name == contentAttr)
         invalidateStyleAndRenderersForSubtree();
 
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -200,7 +201,9 @@ bool HTMLCanvasElement::canContainRangeEndPoint() const
 
 bool HTMLCanvasElement::canStartSelection() const
 {
-    return layoutSubtree() && HTMLElement::canStartSelection();
+    if (canvasContent() != CanvasContent::Drawable)
+        return false;
+    return HTMLElement::canStartSelection();
 }
 
 ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
@@ -219,14 +222,14 @@ ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
     return { };
 }
 
-void HTMLCanvasElement::setLayoutSubtree(bool layoutSubtree)
+const AtomString& HTMLCanvasElement::canvasContentForBindings() const
 {
-    setBooleanAttribute(layoutsubtreeAttr, layoutSubtree);
+    return attributeWithoutSynchronization(contentAttr);
 }
 
-bool HTMLCanvasElement::layoutSubtree() const
+CanvasContent HTMLCanvasElement::canvasContent() const
 {
-    return hasAttributeWithoutSynchronization(layoutsubtreeAttr);
+    return toValidCanvasContent(canvasContentForBindings());
 }
 
 void HTMLCanvasElement::requestPaint()
@@ -240,19 +243,6 @@ void HTMLCanvasElement::dispatchPaintEvent()
     dispatchEvent(CanvasPaintEvent::create(eventNames().paintEvent, { }, Event::IsTrusted::Yes));
 }
 
-ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const CanvasElementImageSource&, DOMMatrix&)
-{
-    return Exception { ExceptionCode::InvalidStateError };
-}
-
-ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element& drawableElement)
-{
-    if (auto snapshot = drawableElementSnapshot(drawableElement))
-        return CanvasElementImage::create(WTF::move(*snapshot));
-
-    return Exception { ExceptionCode::InvalidStateError };
-}
-
 std::optional<CanvasElementSnapshot> HTMLCanvasElement::drawableElementSnapshot(Element& drawableElement) const
 {
     CheckedPtr drawableRenderer = drawableElement.renderer();
@@ -264,6 +254,29 @@ std::optional<CanvasElementSnapshot> HTMLCanvasElement::drawableElementSnapshot(
         return std::nullopt;
 
     return canvasRenderer->drawableRendererSnapshot(*drawableRenderer);
+}
+
+ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element& drawableElement)
+{
+    if (auto snapshot = drawableElementSnapshot(drawableElement))
+        return CanvasElementImage::create(WTF::move(*snapshot));
+
+    return Exception { ExceptionCode::InvalidStateError };
+}
+
+ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>)
+{
+    return Exception { ExceptionCode::NotSupportedError };
+}
+
+ExceptionOr<void> HTMLCanvasElement::clearElementGeometry(const CanvasElementImageSource&)
+{
+    return Exception { ExceptionCode::NotSupportedError };
+}
+
+ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const CanvasElementImageSource&, DOMMatrix&)
+{
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)

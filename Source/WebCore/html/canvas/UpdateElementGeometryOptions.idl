@@ -25,35 +25,11 @@
  * SUCH DAMAGE.
  */
 
-typedef (Element or CanvasElementImage) CanvasElementImageSource;
-
 // https://github.com/WICG/html-in-canvas
 [
-    EnabledBySetting=HTMLInCanvasEnabled
-] interface mixin CanvasDrawElementImage {
-    undefined drawElementImage(
-        CanvasElementImageSource source,
-        unrestricted double dx, unrestricted double dy,
-        optional CanvasDrawElementImageOptions options = {});
-
-    undefined drawElementImage(
-        CanvasElementImageSource source,
-        unrestricted double dx, unrestricted double dy,
-        unrestricted double dwidth, unrestricted double dheight,
-        optional CanvasDrawElementImageOptions options = {});
-
-    undefined drawElementImage(
-        CanvasElementImageSource source,
-        unrestricted double sx, unrestricted double sy,
-        unrestricted double swidth, unrestricted double sheight,
-        unrestricted double dx, unrestricted double dy,
-        optional CanvasDrawElementImageOptions options = {});
-
-    undefined drawElementImage(
-        CanvasElementImageSource source,
-        unrestricted double sx, unrestricted double sy,
-        unrestricted double swidth, unrestricted double sheight,
-        unrestricted double dx, unrestricted double dy,
-        unrestricted double dwidth, unrestricted double dheight,
-        optional CanvasDrawElementImageOptions options = {});
+    EnabledBySetting=HTMLInCanvasEnabled,
+] dictionary UpdateElementGeometryOptions {
+    boolean preserveHitTestOrder = false;
+    DOMRectInit clip;
+    DOMMatrixInit canvasTransform;
 };

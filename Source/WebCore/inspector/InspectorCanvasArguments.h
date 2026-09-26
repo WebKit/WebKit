@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CSSStyleImageValue.h"
+#include "CanvasDrawElementImageOptions.h"
 #include "CanvasElementImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -70,8 +71,8 @@ namespace WebCore {
 struct GPUBindGroupDescriptor;
 struct GPUComputePassDescriptor;
 struct GPUComputePipelineDescriptor;
-struct GPUCopyElementImageDestination;
-struct GPUCopyElementImageSource;
+struct GPUDrawElementImageDestination;
+struct GPUDrawElementImageSource;
 struct GPUExternalTextureDescriptor;
 struct GPUImageCopyBuffer;
 struct GPUImageCopyExternalImage;
@@ -234,6 +235,10 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLEnumeratio
 
 // MARK: - Dictionaries
 
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<CanvasDrawElementImageOptions>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasDrawElementImageOptions&);
+};
+
 template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<DOMMatrix2DInit>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const DOMMatrix2DInit&);
 };
@@ -246,12 +251,12 @@ template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUComputePipel
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUComputePipelineDescriptor&);
 };
 
-template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUCopyElementImageDestination>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUCopyElementImageDestination&);
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUDrawElementImageDestination>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUDrawElementImageDestination&);
 };
 
-template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUCopyElementImageSource>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUCopyElementImageSource&);
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUDrawElementImageSource>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUDrawElementImageSource&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUExternalTextureDescriptor>> {
@@ -292,6 +297,10 @@ template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPURenderPipeli
 
 template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUShaderModuleDescriptor>> {
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUShaderModuleDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<UpdateElementGeometryOptions>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const UpdateElementGeometryOptions&);
 };
 
 // MARK: - Strings

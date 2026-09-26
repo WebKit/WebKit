@@ -3864,7 +3864,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
     return texImageSourceHelper(TexImageFunctionID::TexSubImage2D, target, level, 0, 0, format, type, xoffset, yoffset, 0, sentinelEmptyRect(), 1, 0, WTF::move(*source));
 }
 
-ExceptionOr<void> WebGLRenderingContextBase::texElementImage2D(GCGLenum, GCGLenum, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>)
+ExceptionOr<void> WebGLRenderingContextBase::texElementSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>)
 {
     return Exception { ExceptionCode::InvalidStateError };
 }

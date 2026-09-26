@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUCopyElementImageDestination.h"
+#pragma once
 
-#include <wtf/JSONValues.h>
+#include "CanvasElementImage.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-Ref<JSON::Object> GPUCopyElementImageDestination::toJSON() const
-{
-    Ref json = JSON::Object::create();
-    json->setObject("destination"_s, destination.toJSON());
-    if (width)
-        json->setDouble("width"_s, *width);
-    if (height)
-        json->setDouble("height"_s, *height);
-    return json;
-}
+struct GPUDrawElementImageSource {
+    Ref<JSON::Object> toJSON() const;
+
+    CanvasElementImageSource source;
+    std::optional<float> sourceX;
+    std::optional<float> sourceY;
+    std::optional<float> sourceWidth;
+    std::optional<float> sourceHeight;
+};
 
 } // namespace WebCore

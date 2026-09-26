@@ -1462,7 +1462,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
     return { };
 }
 
-ExceptionOr<void> GPUQueue::copyElementImageToTexture(const GPUCopyElementImageSource&, const GPUCopyElementImageDestination&)
+ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageSource&, const GPUDrawElementImageDestination&)
 {
     return Exception { ExceptionCode::InvalidStateError };
 }

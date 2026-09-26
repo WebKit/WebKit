@@ -46,11 +46,11 @@ Modules/WebGPU/GPUComputePassDescriptor.cpp
 Modules/WebGPU/GPUComputePassEncoder.cpp
 Modules/WebGPU/GPUComputePassTimestampWrites.cpp
 Modules/WebGPU/GPUComputePipeline.cpp
-Modules/WebGPU/GPUCopyElementImageDestination.cpp
-Modules/WebGPU/GPUCopyElementImageSource.cpp
 Modules/WebGPU/GPUDepthStencilState.cpp
 Modules/WebGPU/GPUDevice.cpp
 Modules/WebGPU/GPUDeviceLostInfo.cpp
+Modules/WebGPU/GPUDrawElementImageDestination.cpp
+Modules/WebGPU/GPUDrawElementImageSource.cpp
 Modules/WebGPU/GPUExtent3DDict.cpp
 Modules/WebGPU/GPUExternalTexture.cpp
 Modules/WebGPU/GPUExternalTextureBindingLayout.cpp
@@ -1875,6 +1875,7 @@ html/canvas/PaintRenderingContext2D.cpp
 html/canvas/Path2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 html/canvas/PredefinedColorSpace.cpp
+html/canvas/UpdateElementGeometryOptions.cpp
 html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLBlendFuncExtended.cpp
 html/canvas/WebGLBuffer.cpp
@@ -4130,6 +4131,7 @@ JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasCompositing.cpp
 JSCanvasDirection.cpp
 JSCanvasDrawElementImage.cpp
+JSCanvasDrawElementImageOptions.cpp
 JSCanvasDrawImage.cpp
 JSCanvasDrawPath.cpp
 JSCanvasElementImage.cpp
@@ -4432,8 +4434,6 @@ JSGPUComputePassEncoder.cpp
 JSGPUComputePassTimestampWrites.cpp
 JSGPUComputePipeline.cpp
 JSGPUComputePipelineDescriptor.cpp
-JSGPUCopyElementImageDestination.cpp
-JSGPUCopyElementImageSource.cpp
 JSGPUCullMode.cpp
 JSGPUDebugCommandsMixin.cpp
 JSGPUDepthStencilState.cpp
@@ -4444,6 +4444,8 @@ JSGPUDeviceLost.cpp
 JSGPUDeviceLostInfo.cpp
 JSGPUDeviceLostReason.cpp
 JSGPUDeviceUncapturedError.cpp
+JSGPUDrawElementImageDestination.cpp
+JSGPUDrawElementImageSource.cpp
 JSGPUError.cpp
 JSGPUErrorFilter.cpp
 JSGPUExtent3DDict.cpp
@@ -5284,6 +5286,7 @@ JSUnderlyingSourceStartCallback.cpp
 JSUndoItem.cpp
 JSUndoManager.cpp
 JSUnknownCredentialOptions.cpp
+JSUpdateElementGeometryOptions.cpp
 JSUserActivation.cpp
 JSUserMessageHandler.cpp
 JSUserMessageHandlersNamespace.cpp

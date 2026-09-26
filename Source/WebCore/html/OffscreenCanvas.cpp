@@ -52,6 +52,7 @@
 #include "Page.h"
 #include "PlaceholderRenderingContext.h"
 #include "ScriptTrackingPrivacyCategory.h"
+#include "UpdateElementGeometryOptions.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
@@ -177,9 +178,14 @@ void OffscreenCanvas::didUpdateSizeProperties(bool sizeChanged)
     scheduleCommitToPlaceholderCanvas();
 }
 
-ExceptionOr<Ref<DOMMatrix>> OffscreenCanvas::getElementTransform(const CanvasElementImageSource&, DOMMatrix&)
+ExceptionOr<void> OffscreenCanvas::updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>)
 {
-    return Exception { ExceptionCode::InvalidStateError };
+    return Exception { ExceptionCode::NotSupportedError };
+}
+
+ExceptionOr<void> OffscreenCanvas::clearElementGeometry(const CanvasElementImageSource&)
+{
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)

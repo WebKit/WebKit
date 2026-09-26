@@ -3078,6 +3078,7 @@
 		72BDED112F8DABFA00199F64 /* CVPixelBufferUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BDED0F2F8D9F9700199F64 /* CVPixelBufferUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72BDED122F8DAC0A00199F64 /* ShareableCVPixelBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BDED0D2F8D9B1600199F64 /* ShareableCVPixelBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72BDF25F2A2B670D00260319 /* PathSegmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BDF25E2A2B647200260319 /* PathSegmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		72BE1E993066183F008E5A73 /* CanvasContent.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BE1E9830660D54008E5A73 /* CanvasContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72C172132983717600136E02 /* CachedSubimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C172112983717500136E02 /* CachedSubimage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72C37B9D29650466007E8F52 /* SearchFieldPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C37B9B29650466007E8F52 /* SearchFieldPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72C37B9E29650466007E8F52 /* SearchFieldCancelButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C37B9C29650466007E8F52 /* SearchFieldCancelButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14569,11 +14570,13 @@
 		71FF851822A3F81F005D5959 /* NavigatorMaxTouchPoints.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorMaxTouchPoints.idl; sourceTree = "<group>"; };
 		7209C47E2931C86400633C0D /* TransparencyLayerContextSwitcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransparencyLayerContextSwitcher.cpp; sourceTree = "<group>"; };
 		7209C47F2931C86400633C0D /* TransparencyLayerContextSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparencyLayerContextSwitcher.h; sourceTree = "<group>"; };
+		720A3757306344850022199A /* CanvasDrawElementImageOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasDrawElementImageOptions.idl; sourceTree = "<group>"; };
+		720A3758306345980022199A /* CanvasDrawElementImageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasDrawElementImageOptions.h; sourceTree = "<group>"; };
 		7211B5D6276536820076FEF8 /* FilterResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterResults.h; sourceTree = "<group>"; };
 		721292A1301AE64C009DA7C9 /* CanvasPaintEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CanvasPaintEvent.h; sourceTree = "<group>"; };
 		721292A2301AE64C009DA7C9 /* CanvasPaintEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPaintEvent.cpp; sourceTree = "<group>"; };
-		721292A4301BAE1A009DA7C9 /* GPUCopyElementImageSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCopyElementImageSource.h; sourceTree = "<group>"; };
-		721292A5301BAE31009DA7C9 /* GPUCopyElementImageDestination.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCopyElementImageDestination.h; sourceTree = "<group>"; };
+		721292A4301BAE1A009DA7C9 /* GPUDrawElementImageSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUDrawElementImageSource.h; sourceTree = "<group>"; };
+		721292A5301BAE31009DA7C9 /* GPUDrawElementImageDestination.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUDrawElementImageDestination.h; sourceTree = "<group>"; };
 		721443452240C8BA00F12FF7 /* SVGAnimatedValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedValueProperty.h; sourceTree = "<group>"; };
 		721443462240CAD200F12FF7 /* SVGValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGValueProperty.h; sourceTree = "<group>"; };
 		7214B9B7274458FA003BE6DF /* FilterEffectVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectVector.h; sourceTree = "<group>"; };
@@ -14594,8 +14597,8 @@
 		7224293A301AB8B700856621 /* WebGLCopyElementImageConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLCopyElementImageConfig.idl; sourceTree = "<group>"; };
 		7224293B301ABB3600856621 /* CanvasElementImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasElementImage.h; sourceTree = "<group>"; };
 		7224293C301ABB3600856621 /* CanvasElementImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasElementImage.cpp; sourceTree = "<group>"; };
-		7224293D301ACFD400856621 /* GPUCopyElementImageDestination.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCopyElementImageDestination.idl; sourceTree = "<group>"; };
-		7224293E301ACFD400856621 /* GPUCopyElementImageSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCopyElementImageSource.idl; sourceTree = "<group>"; };
+		7224293D301ACFD400856621 /* GPUDrawElementImageDestination.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDrawElementImageDestination.idl; sourceTree = "<group>"; };
+		7224293E301ACFD400856621 /* GPUDrawElementImageSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDrawElementImageSource.idl; sourceTree = "<group>"; };
 		72242943301ADA9800856621 /* WebGLCopyElementImageConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLCopyElementImageConfig.h; sourceTree = "<group>"; };
 		7224ABCF2C0174EE00D85362 /* BitmapImageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapImageDescriptor.h; sourceTree = "<group>"; };
 		7225E8062A3E298C00947EBF /* RotationDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RotationDirection.cpp; sourceTree = "<group>"; };
@@ -14715,6 +14718,9 @@
 		7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaPremultiplication.h; sourceTree = "<group>"; };
 		7299BC6623D686C600CC6883 /* RenderingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingMode.h; sourceTree = "<group>"; };
 		729D052E25313E2600422098 /* RenderingResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingResourceIdentifier.h; sourceTree = "<group>"; };
+		729E39483066D74800AFE142 /* UpdateElementGeometryOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UpdateElementGeometryOptions.idl; sourceTree = "<group>"; };
+		729E39493066D76E00AFE142 /* UpdateElementGeometryOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UpdateElementGeometryOptions.h; sourceTree = "<group>"; };
+		729E394A3066E85F00AFE142 /* UpdateElementGeometryOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateElementGeometryOptions.cpp; sourceTree = "<group>"; };
 		72A13A9F274C5CC700E2A88E /* FilterEffectApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectApplier.h; sourceTree = "<group>"; };
 		72A13AB6274DCEDC00E2A88E /* FEColorMatrixSoftwareApplier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FEColorMatrixSoftwareApplier.cpp; sourceTree = "<group>"; };
 		72A13AB7274DCEDC00E2A88E /* FEColorMatrixSoftwareApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FEColorMatrixSoftwareApplier.h; sourceTree = "<group>"; };
@@ -14791,6 +14797,7 @@
 		72BDED0F2F8D9F9700199F64 /* CVPixelBufferUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CVPixelBufferUtilities.h; sourceTree = "<group>"; };
 		72BDED102F8D9F9700199F64 /* CVPixelBufferUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CVPixelBufferUtilities.cpp; sourceTree = "<group>"; };
 		72BDF25E2A2B647200260319 /* PathSegmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSegmentData.h; sourceTree = "<group>"; };
+		72BE1E9830660D54008E5A73 /* CanvasContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasContent.h; sourceTree = "<group>"; };
 		72BEE7CC2E79E32200026436 /* LayoutIntegrationGridLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutIntegrationGridLayout.h; sourceTree = "<group>"; };
 		72BEE7CD2E79E3E900026436 /* LayoutIntegrationGridLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayoutIntegrationGridLayout.cpp; sourceTree = "<group>"; };
 		72C172102983717500136E02 /* CachedSubimage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSubimage.cpp; sourceTree = "<group>"; };
@@ -21987,8 +21994,8 @@
 		D2E733882C8F9D9F00C7E549 /* Site.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Site.cpp; sourceTree = "<group>"; };
 		D32148900000000000000001 /* GPUComputePassDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUComputePassDescriptor.cpp; sourceTree = "<group>"; };
 		D32148900000000000000002 /* GPUComputePassTimestampWrites.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUComputePassTimestampWrites.cpp; sourceTree = "<group>"; };
-		D32148900000000000000003 /* GPUCopyElementImageDestination.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUCopyElementImageDestination.cpp; sourceTree = "<group>"; };
-		D32148900000000000000004 /* GPUCopyElementImageSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUCopyElementImageSource.cpp; sourceTree = "<group>"; };
+		D32148900000000000000003 /* GPUDrawElementImageDestination.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUDrawElementImageDestination.cpp; sourceTree = "<group>"; };
+		D32148900000000000000004 /* GPUDrawElementImageSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUDrawElementImageSource.cpp; sourceTree = "<group>"; };
 		D32148900000000000000005 /* GPUExternalTextureDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUExternalTextureDescriptor.cpp; sourceTree = "<group>"; };
 		D32148900000000000000006 /* GPUImageCopyBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageCopyBuffer.cpp; sourceTree = "<group>"; };
 		D32148900000000000000007 /* GPUImageCopyExternalImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageCopyExternalImage.cpp; sourceTree = "<group>"; };
@@ -26176,12 +26183,6 @@
 				1C66A7A32A4F784E0086DB6F /* GPUComputePipeline.idl */,
 				1C66A6F82A4F78160086DB6F /* GPUComputePipelineDescriptor.h */,
 				1C66A71A2A4F78200086DB6F /* GPUComputePipelineDescriptor.idl */,
-				D32148900000000000000003 /* GPUCopyElementImageDestination.cpp */,
-				721292A5301BAE31009DA7C9 /* GPUCopyElementImageDestination.h */,
-				7224293D301ACFD400856621 /* GPUCopyElementImageDestination.idl */,
-				D32148900000000000000004 /* GPUCopyElementImageSource.cpp */,
-				721292A4301BAE1A009DA7C9 /* GPUCopyElementImageSource.h */,
-				7224293E301ACFD400856621 /* GPUCopyElementImageSource.idl */,
 				1C66A6DB2A4F780D0086DB6F /* GPUCullMode.h */,
 				1C66A73C2A4F782A0086DB6F /* GPUCullMode.idl */,
 				1C66A8152A4F78700086DB6F /* GPUDebugCommandsMixin.idl */,
@@ -26201,6 +26202,12 @@
 				1C66A7FB2A4F78680086DB6F /* GPUDeviceLostReason.h */,
 				1C66A7E22A4F78600086DB6F /* GPUDeviceLostReason.idl */,
 				1C66A6E42A4F78100086DB6F /* GPUDeviceUncapturedError.idl */,
+				D32148900000000000000003 /* GPUDrawElementImageDestination.cpp */,
+				721292A5301BAE31009DA7C9 /* GPUDrawElementImageDestination.h */,
+				7224293D301ACFD400856621 /* GPUDrawElementImageDestination.idl */,
+				D32148900000000000000004 /* GPUDrawElementImageSource.cpp */,
+				721292A4301BAE1A009DA7C9 /* GPUDrawElementImageSource.h */,
+				7224293E301ACFD400856621 /* GPUDrawElementImageSource.idl */,
 				1C66A7182A4F781F0086DB6F /* GPUError.h */,
 				1C66A7442A4F782C0086DB6F /* GPUErrorFilter.h */,
 				1C66A7432A4F782C0086DB6F /* GPUErrorFilter.idl */,
@@ -28605,6 +28612,8 @@
 				7C193BB61F5E0EB90088F3E6 /* CanvasDirection.h */,
 				7C193BAC1F5E0EB20088F3E6 /* CanvasDirection.idl */,
 				72242938301AAC3E00856621 /* CanvasDrawElementImage.idl */,
+				720A3758306345980022199A /* CanvasDrawElementImageOptions.h */,
+				720A3757306344850022199A /* CanvasDrawElementImageOptions.idl */,
 				7C193B9A1F5E0EA70088F3E6 /* CanvasDrawImage.idl */,
 				7C193BA61F5E0EAE0088F3E6 /* CanvasDrawPath.idl */,
 				7224293C301ABB3600856621 /* CanvasElementImage.cpp */,
@@ -28784,6 +28793,9 @@
 				BCA5591D263F10B9007F19B3 /* PredefinedColorSpace.cpp */,
 				BCA5591A263F10B9007F19B3 /* PredefinedColorSpace.h */,
 				BCA5591C263F10B9007F19B3 /* PredefinedColorSpace.idl */,
+				729E394A3066E85F00AFE142 /* UpdateElementGeometryOptions.cpp */,
+				729E39493066D76E00AFE142 /* UpdateElementGeometryOptions.h */,
+				729E39483066D74800AFE142 /* UpdateElementGeometryOptions.idl */,
 				D3F3D35B1A69A5060059FC2B /* WebGL2RenderingContext.cpp */,
 				D3F3D35C1A69A5060059FC2B /* WebGL2RenderingContext.h */,
 				D3F3D35D1A69A5060059FC2B /* WebGL2RenderingContext.idl */,
@@ -33555,6 +33567,7 @@
 				CD814C342996CA6A005A780A /* CachedHTMLCollectionInlines.h */,
 				313171571FB0969E008D91FC /* CanvasBase.cpp */,
 				313171541FB079D1008D91FC /* CanvasBase.h */,
+				72BE1E9830660D54008E5A73 /* CanvasContent.h */,
 				D2C4612B2A0C744E00A5F791 /* CanvasNoiseInjection.cpp */,
 				D2C4612C2A0C744E00A5F791 /* CanvasNoiseInjection.h */,
 				CD6A1F0C297A1A8F00F7B9FA /* CanvasObserver.h */,
@@ -44953,6 +44966,7 @@
 				EFCC6C8F20FE914400A2321B /* CanvasActivityRecord.h in Headers */,
 				313171561FB079E5008D91FC /* CanvasBase.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
+				72BE1E993066183F008E5A73 /* CanvasContent.h in Headers */,
 				7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */,
 				721292A3301BA12F009DA7C9 /* CanvasElementImage.h in Headers */,
 				7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */,

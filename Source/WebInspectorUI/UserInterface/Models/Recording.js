@@ -511,8 +511,8 @@ WI.Recording = class Recording extends WI.Object
         case WI.Recording.Swizzle.GPURenderPipelineDescriptor:
         case WI.Recording.Swizzle.GPUComputePassDescriptor:
         case WI.Recording.Swizzle.GPUComputePipelineDescriptor:
-        case WI.Recording.Swizzle.GPUCopyElementImageDestination:
-        case WI.Recording.Swizzle.GPUCopyElementImageSource:
+        case WI.Recording.Swizzle.GPUDrawElementImageDestination:
+        case WI.Recording.Swizzle.GPUDrawElementImageSource:
         case WI.Recording.Swizzle.GPUExternalTextureDescriptor:
         case WI.Recording.Swizzle.GPUImageCopyBuffer:
         case WI.Recording.Swizzle.GPUImageCopyExternalImage:
@@ -550,10 +550,10 @@ WI.Recording = class Recording extends WI.Object
             return WI.unlocalizedString("GPUComputePassDescriptor");
         case WI.Recording.Swizzle.GPUComputePipelineDescriptor:
             return WI.unlocalizedString("GPUComputePipelineDescriptor");
-        case WI.Recording.Swizzle.GPUCopyElementImageDestination:
-            return WI.unlocalizedString("GPUCopyElementImageDestination");
-        case WI.Recording.Swizzle.GPUCopyElementImageSource:
-            return WI.unlocalizedString("GPUCopyElementImageSource");
+        case WI.Recording.Swizzle.GPUDrawElementImageDestination:
+            return WI.unlocalizedString("GPUDrawElementImageDestination");
+        case WI.Recording.Swizzle.GPUDrawElementImageSource:
+            return WI.unlocalizedString("GPUDrawElementImageSource");
         case WI.Recording.Swizzle.GPUExternalTextureDescriptor:
             return WI.unlocalizedString("GPUExternalTextureDescriptor");
         case WI.Recording.Swizzle.GPUImageCopyBuffer:
@@ -858,8 +858,8 @@ WI.Recording = class Recording extends WI.Object
                 case WI.Recording.Swizzle.GPURenderPipelineDescriptor:
                 case WI.Recording.Swizzle.GPUComputePassDescriptor:
                 case WI.Recording.Swizzle.GPUComputePipelineDescriptor:
-                case WI.Recording.Swizzle.GPUCopyElementImageDestination:
-                case WI.Recording.Swizzle.GPUCopyElementImageSource:
+                case WI.Recording.Swizzle.GPUDrawElementImageDestination:
+                case WI.Recording.Swizzle.GPUDrawElementImageSource:
                 case WI.Recording.Swizzle.GPUExternalTextureDescriptor:
                 case WI.Recording.Swizzle.GPUImageCopyBuffer:
                 case WI.Recording.Swizzle.GPUImageCopyExternalImage:
@@ -1568,8 +1568,8 @@ WI.Recording.Swizzle = {
     GPURenderPipelineDescriptor: 103,
     GPUComputePassDescriptor: 104,
     GPUComputePipelineDescriptor: 105,
-    GPUCopyElementImageDestination: 106,
-    GPUCopyElementImageSource: 107,
+    GPUDrawElementImageDestination: 106,
+    GPUDrawElementImageSource: 107,
     GPUExternalTextureDescriptor: 108,
     GPUImageCopyBuffer: 109,
     GPUImageCopyExternalImage: 110,

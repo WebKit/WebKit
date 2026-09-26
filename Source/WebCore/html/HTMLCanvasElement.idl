@@ -47,11 +47,13 @@ typedef (Element or CanvasElementImage) CanvasElementImageSource;
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long width;
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long height;
 
-    [EnabledBySetting=HTMLInCanvasEnabled] attribute boolean layoutSubtree;
+    [EnabledBySetting=HTMLInCanvasEnabled, CEReactions=NotNeeded, ImplementedAs=canvasContentForBindings, ReflectSetter] attribute [AtomString] DOMString content;
     [EnabledBySetting=HTMLInCanvasEnabled] attribute EventHandler onpaint;
     [EnabledBySetting=HTMLInCanvasEnabled] undefined requestPaint();
-    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] DOMMatrix getElementTransform(CanvasElementImageSource source, DOMMatrix drawTransform);
     [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] CanvasElementImage captureElementImage(Element element);
+    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] undefined updateElementGeometry(CanvasElementImageSource source, optional UpdateElementGeometryOptions options = {});
+    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] undefined clearElementGeometry(CanvasElementImageSource source);
+    [EnabledBySetting=HTMLInCanvasEnabled, RaisesException] DOMMatrix getElementTransform(CanvasElementImageSource source, DOMMatrix drawTransform);
 
     [CallWith=CurrentGlobalObject] RenderingContext? getContext(DOMString contextId, any... arguments);
 
