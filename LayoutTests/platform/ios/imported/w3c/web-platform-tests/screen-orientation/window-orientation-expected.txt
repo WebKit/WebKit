@@ -1,0 +1,13 @@
+
+PASS window.orientation attribute should be present
+PASS window.orientation should return a number
+PASS window.orientation should return a valid orientation angle
+PASS window.onorientationchange attribute should be present
+PASS window.onorientationchange should be null by default
+PASS window.onorientationchange should be settable and gettable
+PASS orientationchange event should fire when orientation is changed programmatically
+PASS window.orientation should correctly map screen.orientation.angle values
+PASS window.orientation should only return standardized values
+PASS window.orientation should return correct values for different orientation locks
+PASS Multiple orientation changes should fire multiple orientationchange events with valid values
+
