@@ -459,6 +459,11 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     using BaselineJITRegisters::GetById::propertyCacheGPR;
 
     constexpr GPRReg nextGPR = baseGPR; // Used as temporary register
+    constexpr GPRReg indexGPR = regT0;
+    constexpr GPRReg arrayGPR = regT1;
+    constexpr GPRReg scratchGPR = regT2;
+    constexpr GPRReg valueGPR = regT3;
+
     emitGetVirtualRegister(bytecode.m_next, nextGPR);
     JumpList genericCases;
     Jump nextIsNotCell = branchIfNotCell(nextGPR);
@@ -478,9 +483,39 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     doneCases.append(jump());
 
     nextIsNotCell.link(this);
-    emitGetVirtualRegister(bytecode.m_iterator, regT0);
-    genericCases.append(branchIfNotCell(regT0));
-    genericCases.append(branchIfNotType(regT0, SentinelType));
+    move(nextGPR, indexGPR);
+    emitGetVirtualRegister(bytecode.m_iterator, scratchGPR);
+    genericCases.append(branchIfNotCell(scratchGPR));
+    genericCases.append(branchIfNotType(scratchGPR, SentinelType));
+
+    JumpList slowCases;
+    slowCases.append(branchIfNotInt32(indexGPR));
+    emitGetVirtualRegister(bytecode.m_iterable, arrayGPR);
+    slowCases.append(branchIfNotCell(arrayGPR));
+    load8(Address(arrayGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
+    and32(TrustedImm32(IndexingTypeMask), scratchGPR);
+    Jump isInt32 = branch32(Equal, scratchGPR, TrustedImm32(ArrayWithInt32));
+    slowCases.append(branch32(NotEqual, scratchGPR, TrustedImm32(ArrayWithContiguous)));
+    isInt32.link(this);
+    loadPtr(Address(arrayGPR, JSObject::butterflyOffset()), scratchGPR);
+    slowCases.append(branch32(AboveOrEqual, indexGPR, Address(scratchGPR, Butterfly::offsetOfPublicLength())));
+    zeroExtend32ToWord(indexGPR, indexGPR);
+    load64(BaseIndex(scratchGPR, indexGPR, TimesEight), valueGPR);
+    slowCases.append(branchIfEmpty(valueGPR));
+
+    emitArrayProfilingSiteWithCell(bytecode, OpIteratorNext::Metadata::offsetOfIterableProfile() + ArrayProfile::offsetOfLastSeenStructureID(), arrayGPR, scratchGPR);
+    load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), scratchGPR);
+    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::FastArray)), scratchGPR);
+    store16ToMetadata(scratchGPR, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+    emitPutVirtualRegister(bytecode.m_value, valueGPR);
+    emitValueProfilingSite(bytecode, m_bytecodeIndex.withCheckpoint(OpIteratorNext::getValue), valueGPR);
+    storeTrustedValue(jsBoolean(false), addressFor(bytecode.m_done));
+    add32(TrustedImm32(1), indexGPR);
+    boxInt32(indexGPR, indexGPR);
+    emitPutVirtualRegister(bytecode.m_next, indexGPR);
+    doneCases.append(jump());
+
+    slowCases.link(this);
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegister(bytecode.m_iterable, argumentGPR1);
     addPtr(TrustedImm32(bytecode.m_next.offset() * static_cast<int>(sizeof(Register))), callFrameRegister, argumentGPR2);
