@@ -163,10 +163,14 @@ void OSREntryPlan::work()
     if (newlyInstalled) {
         WTF::storeStoreFence();
 
-        Locker locker { m_callee->tierUpCounter().getLock() };
-        m_callee->setOSREntryCallee(callee.copyRef(), mode());
-        m_callee->tierUpCounter().osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
-        m_callee->tierUpCounter().setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
+        {
+            Locker locker { m_callee->tierUpCounter().getLock() };
+            m_callee->setOSREntryCallee(callee.copyRef(), mode());
+            m_callee->tierUpCounter().osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
+            m_callee->tierUpCounter().setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
+        }
+        if (Options::freeRetiredWasmCode())
+            callee->reportToVMsForDestruction();
     }
 
     // We don't register our BBQCallee for deletion because this entrypoint isn't a general one and is only used for loop OSR.
