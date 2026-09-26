@@ -46,7 +46,7 @@ class MachineThreads {
 public:
     MachineThreads();
 
-    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState*, Thread*);
+    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState* conductingMutatorState, Thread* conductorThread);
 
     // Only needs to be called by clients that can use the same heap from multiple threads.
     bool addCurrentThread() { return Ref { m_threadGroup }->addCurrentThread() == ThreadGroupAddResult::NewlyAdded; }
@@ -55,10 +55,10 @@ public:
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker& locker) const { return m_threadGroup->threads(locker); }
 
 private:
-    void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState&);
+    void gatherFromConductor(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState& conductingMutatorState);
 
     void tryCopyOtherThreadStack(const ThreadSuspendLocker&, Thread&, void*, size_t capacity, size_t*);
-    bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread&);
+    bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread& conductorThread);
 
     Ref<ThreadGroup> m_threadGroup;
 };
