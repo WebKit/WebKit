@@ -118,9 +118,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_stencilReadOnly(stencilReadOnly)
     , m_parentEncoder(rawParentEncoder)
     , m_visibilityResultBuffer(visibilityResultBuffer)
-    , m_descriptor(descriptor)
-    , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(unsafeMakeSpan(descriptor.colorAttachments, descriptor.colorAttachmentCount)) : Vector<WGPURenderPassColorAttachment>())
-    , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
     , m_metalDescriptor(metalDescriptor)
     , m_maxDrawCount(maxDrawCount)
     , m_rasterizationRateMap(metalDescriptor.rasterizationRateMap)
@@ -128,10 +125,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     if (m_device->baseCapabilities().memoryBarrierLimit > maxDrawCount)
         m_metalDescriptor = nil;
 
-    if (m_descriptorColorAttachments.size())
-        m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
-    if (descriptor.depthStencilAttachment)
-        m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
     auto colorAttachments = colorAttachmentsSpan(descriptor);
     for (auto& attachment : colorAttachments) {
         auto texture = attachment.view ? TextureOrTextureView(static_cast<TextureView*>(attachment.view)) : TextureOrTextureView(static_cast<Texture*>(attachment.texture));
@@ -1219,7 +1212,7 @@ bool RenderPassEncoder::splitRenderPass()
 #endif
     m_parentEncoder->endEncoding(m_renderCommandEncoder);
     if (issuedDrawCall()) {
-        for (size_t i = 0; i < m_descriptorColorAttachments.size(); ++i)
+        for (size_t i = 0; i < m_colorAttachmentViews.size(); ++i)
             m_metalDescriptor.colorAttachments[i].loadAction = MTLLoadActionLoad;
 
         m_metalDescriptor.depthAttachment.loadAction = MTLLoadActionLoad;
@@ -1420,7 +1413,7 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
 
         bundle->updateMinMaxDepths(minDepth, maxDepth);
 
-        if (!bundle->validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor, m_colorAttachmentViews, m_depthStencilView) || !bundle->validatePipeline(m_pipeline.get())) {
+        if (!bundle->validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_colorAttachmentViews, m_depthStencilView) || !bundle->validatePipeline(m_pipeline.get())) {
             makeInvalid(@"executeBundles: validation failed");
             return;
         }
@@ -1709,7 +1702,7 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
 
 NSString* RenderPassEncoder::errorValidatingColorDepthStencilTargets(const RenderPipeline& pipeline) const
 {
-    return pipeline.errorValidatingColorDepthStencilTargets(m_descriptor, m_colorAttachmentViews, m_depthStencilView);
+    return pipeline.errorValidatingColorDepthStencilTargets(m_colorAttachmentViews, m_depthStencilView);
 }
 
 id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
