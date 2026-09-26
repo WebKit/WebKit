@@ -1,0 +1,3 @@
+
+PASS Attribute selectors on d are honored
+

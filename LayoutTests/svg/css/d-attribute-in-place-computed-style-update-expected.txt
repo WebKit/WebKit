@@ -1,0 +1,20 @@
+
+PASS Changing the d attribute updates the computed d and the rendered path
+PASS Changing the d attribute alone does not invalidate style
+PASS Setting the d attribute to its current value does not invalidate style
+PASS Changing the d attribute of many paths does not invalidate style
+PASS Repeatedly changing the d attribute keeps the computed d up to date
+PASS Changing the d attribute twice before reading style uses the last value
+PASS A stylesheet d wins over d attribute changes
+PASS The d attribute determines the computed d again once a stylesheet d no longer applies
+PASS An inline style d wins over d attribute changes
+PASS A stylesheet d: none wins over d attribute changes
+PASS A stylesheet d applying after a d attribute change wins
+PASS A stylesheet d added right before a d attribute change wins
+PASS Changing the d attribute starts a transition on d
+PASS Changing the d attribute while d is animated
+PASS A later full style resolution keeps the updated d
+PASS Changing d and another presentation attribute together
+PASS Removing and setting the d attribute again
+PASS A <use> instance follows d attribute changes on the referenced path
+

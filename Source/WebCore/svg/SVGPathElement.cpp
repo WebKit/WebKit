@@ -26,8 +26,10 @@
 #include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGResource.h"
+#include "MatchResult.h"
 #include "MutableStyleProperties.h"
 #include "RenderSVGPath.h"
+#include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGMPathElement.h"
@@ -36,6 +38,7 @@
 #include "SVGPoint.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePropertiesInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -117,6 +120,11 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
 void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::dAttr) {
+        if (canUpdateComputedDInPlace())
+            m_dAttributeStyleUpdate = DAttributeStyleUpdate::InPlace;
+        else
+            m_dAttributeStyleUpdate = oldValue == newValue ? DAttributeStyleUpdate::None : DAttributeStyleUpdate::Invalidate;
+
         auto& cache = PathCache::singleton();
         Ref pathBaseVal = protect(m_path)->baseVal();
         if (newValue.isEmpty())
@@ -127,9 +135,12 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
             cache.add(newValue, pathBaseVal->existingPathByteStream().data());
         else
             protect(protect(document())->svgExtensions())->reportError(makeString("Problem parsing d=\""_s, newValue, "\""_s));
+    } else if (oldValue != newValue && hasPresentationalHintsForAttribute(name)) {
+        m_otherPresentationalHintsAreDirty = true;
     }
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+    m_dAttributeStyleUpdate = DAttributeStyleUpdate::Invalidate;
 }
 
 void SVGPathElement::clearCache()
@@ -151,8 +162,21 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
-        if (document().settings().cssDPropertyEnabled())
-            setPresentationalHintStyleIsDirty();
+        if (document().settings().cssDPropertyEnabled()) {
+            switch (m_dAttributeStyleUpdate) {
+            case DAttributeStyleUpdate::Invalidate:
+                m_dPresentationalHintIsDirty = true;
+                setPresentationalHintStyleIsDirty();
+                break;
+            case DAttributeStyleUpdate::InPlace:
+                m_dPresentationalHintIsDirty = true;
+                setPresentationalHintStyleIsDirty(InvalidateStyle::No);
+                updateComputedDInPlace();
+                break;
+            case DAttributeStyleUpdate::None:
+                break;
+            }
+        }
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
@@ -289,12 +313,93 @@ void SVGPathElement::collectExtraStyleForPresentationalHints(MutableStylePropert
 void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
 {
     ASSERT(document().settings().cssDPropertyEnabled());
+    addPropertyToPresentationalHintStyle(style, cssPropertyIdForSVGAttributeName(SVGNames::dAttr), dPresentationalHintValue());
+}
+
+Ref<CSSValue> SVGPathElement::dPresentationalHintValue()
+{
     // In the case of the `d` property, we want to avoid providing a string value since it will require
     // the path data to be parsed again and path data can be unwieldy.
-    auto property = cssPropertyIdForSVGAttributeName(SVGNames::dAttr);
     // The fill rule value passed here is not relevant for the `d` property.
-    auto cssPathValue = CSSPathValue::create(CSS::PathFunction { CSS::Keyword::Nonzero { }, CSS::Path::Data { Ref { m_path }->currentPathByteStream() } });
-    addPropertyToPresentationalHintStyle(style, property, WTF::move(cssPathValue));
+    return CSSPathValue::create(CSS::PathFunction { CSS::Keyword::Nonzero { }, CSS::Path::Data { Ref { m_path }->currentPathByteStream() } });
+}
+
+bool SVGPathElement::updatePresentationalHintStyleForChangedProperties()
+{
+    bool dIsDirty = std::exchange(m_dPresentationalHintIsDirty, false);
+    bool othersAreDirty = std::exchange(m_otherPresentationalHintsAreDirty, false);
+
+    return dIsDirty && !othersAreDirty
+        && replacePresentationalHintStyleProperty(CSSPropertyD, dPresentationalHintValue());
+}
+
+std::optional<Style::UnadjustedStyle> SVGPathElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
+{
+    auto unadjustedStyle = SVGGeometryElement::resolveCustomStyle(resolutionContext, shadowHostStyle);
+
+    m_computedDIsFromAttribute = [&] {
+        if (!unadjustedStyle || !unadjustedStyle->matchResult || correspondingElement())
+            return false;
+
+        auto& pathFunction = unadjustedStyle->style->d().tryPath();
+        if (!pathFunction || pathFunction->parameters.data.byteStream.data().ptr() != Ref { m_path }->currentPathByteStream().data().ptr())
+            return false;
+
+        RefPtr presentationalHintStyle = this->presentationalHintStyle();
+        auto declaresD = [&](auto& declarations) {
+            return std::ranges::any_of(declarations, [&](auto& matchedProperties) {
+                Ref properties = matchedProperties.properties;
+                if (properties.ptr() == presentationalHintStyle.get())
+                    return false;
+                return properties->findPropertyIndex(CSSPropertyD) != -1 || properties->findPropertyIndex(CSSPropertyAll) != -1;
+            });
+        };
+        RefPtr matchResult = *unadjustedStyle->matchResult;
+        return !declaresD(matchResult->userAgentDeclarations) && !declaresD(matchResult->userDeclarations) && !declaresD(matchResult->authorDeclarations);
+    }();
+
+    return unadjustedStyle;
+}
+
+bool SVGPathElement::presentationalHintChangeInvalidatesStyle(const QualifiedName& name) const
+{
+    return !(name == SVGNames::dAttr && m_dAttributeStyleUpdate == DAttributeStyleUpdate::InPlace);
+}
+
+bool SVGPathElement::canUpdateComputedDInPlace() const
+{
+    if (!document().settings().cssDPropertyEnabled() || !m_computedDIsFromAttribute)
+        return false;
+
+    if (needsStyleRecalc())
+        return false;
+
+    if (Ref { m_path }->isAnimating())
+        return false;
+
+    CheckedPtr renderer = this->renderer();
+    if (!is<RenderSVGPath>(renderer) && !is<LegacyRenderSVGPath>(renderer))
+        return false;
+
+    CheckedRef style = renderer->style();
+    auto& pathFunction = style->d().tryPath();
+    if (!pathFunction || pathFunction->parameters.data.byteStream.data().ptr() != Ref { m_path }->currentPathByteStream().data().ptr())
+        return false;
+
+    if (!style->transitions().isInitial() || hasKeyframeEffects({ }) || lastStyleChangeEventStyle({ }))
+        return false;
+
+    return true;
+}
+
+void SVGPathElement::updateComputedDInPlace()
+{
+    CheckedPtr renderer = this->renderer();
+    ASSERT(renderer);
+    CheckedRef style = renderer->mutableStyle();
+    auto pathFunction = *style->d().tryPath();
+    pathFunction->data = { Ref { m_path }->currentPathByteStream() };
+    style->setD(Style::SVGPathData { WTF::move(pathFunction) });
 }
 
 void SVGPathElement::pathDidChange()
