@@ -7,6 +7,8 @@ PASS Combining functions from various scopes
 PASS ::part() can not see inner functions
 PASS ::slotted() can see inner functions
 PASS :host can see inner functions
+PASS :host resolves nested references of an outer-scope function
+PASS :host resolves local var referencing nested function of outer-scope function
 PASS Outer functions can't see inner functions
 PASS Outer functions can't see inner functions (local vars)
 PASS Function with same name in different scopes
