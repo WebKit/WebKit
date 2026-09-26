@@ -33,11 +33,12 @@
 #include "ScrollbarsController.h"
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollbarsControllerGeneric : public ScrollbarsController, public CanMakeCheckedPtr<ScrollbarsControllerGeneric> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ScrollbarsControllerGeneric);
+    WTF_MAKE_TZONE_ALLOCATED(ScrollbarsControllerGeneric);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollbarsControllerGeneric);
 public:
     explicit ScrollbarsControllerGeneric(ScrollableArea&);
