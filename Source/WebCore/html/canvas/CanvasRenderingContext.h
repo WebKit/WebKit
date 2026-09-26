@@ -164,12 +164,11 @@ protected:
 
     explicit CanvasRenderingContext(CanvasBase&, Type);
     bool NODELETE taintsOrigin(const CanvasPattern*);
-    bool NODELETE taintsOrigin(const CanvasBase*);
-    bool taintsOrigin(const CachedImage*);
+    bool taintsOrigin(const CanvasBase*);
     bool taintsOrigin(const HTMLImageElement*);
     bool taintsOrigin(const SVGImageElement*);
     bool taintsOrigin(const HTMLVideoElement*);
-    bool NODELETE taintsOrigin(const ImageBitmap*);
+    bool taintsOrigin(const ImageBitmap*);
     bool taintsOrigin(const URL&);
 
     template<class T> void checkOrigin(const T* arg)

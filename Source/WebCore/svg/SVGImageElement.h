@@ -28,6 +28,10 @@
 
 namespace WebCore {
 
+class Image;
+struct ImageOrientation;
+enum class ImageRequestState : uint8_t;
+
 class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGImageElement);
@@ -35,6 +39,15 @@ public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
+
+    // https://html.spec.whatwg.org/multipage/images.html#img-req-state
+    ImageRequestState currentRequestState() const;
+
+    RefPtr<Image> sourceImage() const;
+
+    ImageOrientation orientationForSourceImage();
+    float imageDevicePixelRatio() const { return 1; }
+
     bool renderingTaintsOrigin() const;
     String imageSourceURL() const final;
 
