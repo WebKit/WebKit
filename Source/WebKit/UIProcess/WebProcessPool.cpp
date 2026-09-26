@@ -485,6 +485,12 @@ void WebProcessPool::textCheckerStateChanged()
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
 }
 
+void WebProcessPool::notifyProcessPoolsTextCheckerStateChanged()
+{
+    for (auto& processPool : allProcessPools())
+        processPool->textCheckerStateChanged();
+}
+
 void WebProcessPool::setApplicationIsActive(bool isActive)
 {
     m_webProcessCache->setApplicationIsActive(isActive);

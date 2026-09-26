@@ -13270,32 +13270,32 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
 
     case ContextMenuItemTagSmartQuotes:
         TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagSmartDashes:
         TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagSmartLinks:
         TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticLinkDetectionEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagSmartLists:
         TextChecker::setSmartListsEnabled(!TextChecker::state().contains(TextCheckerState::SmartListsEnabled));
-        protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagTextReplacement:
         TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticTextReplacementEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagCorrectSpellingAutomatically:
         TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticSpellingCorrectionEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagShowSubstitutions:
@@ -13318,12 +13318,12 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
 
     case ContextMenuItemTagCheckSpellingWhileTyping:
         TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().contains(TextCheckerState::ContinuousSpellCheckingEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
     case ContextMenuItemTagCheckGrammarWithSpelling:
         TextChecker::setGrammarCheckingEnabled(!TextChecker::state().contains(TextCheckerState::GrammarCheckingEnabled));
-            protect(legacyMainFrameProcess())->updateTextCheckerState();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
         return;
 
 #if PLATFORM(MAC)
@@ -16668,12 +16668,6 @@ void WebPageProxy::setViewportSizeForCSSViewportUnits(const FloatSize& viewportS
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
 
-static void textCheckerStateChanged()
-{
-    for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->textCheckerStateChanged();
-}
-
 void WebPageProxy::toggleSmartInsertDelete()
 {
     if (TextChecker::isTestingMode())
@@ -16684,7 +16678,7 @@ void WebPageProxy::toggleAutomaticQuoteSubstitution()
 {
     if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled));
-        textCheckerStateChanged();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
     }
 }
 
@@ -16692,7 +16686,7 @@ void WebPageProxy::toggleAutomaticLinkDetection()
 {
     if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticLinkDetectionEnabled));
-        textCheckerStateChanged();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
     }
 }
 
@@ -16700,7 +16694,7 @@ void WebPageProxy::toggleAutomaticDashSubstitution()
 {
     if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled));
-        textCheckerStateChanged();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
     }
 }
 
@@ -16708,7 +16702,7 @@ void WebPageProxy::toggleSmartLists()
 {
     if (TextChecker::isTestingMode()) {
         TextChecker::setSmartListsEnabled(!TextChecker::state().contains(TextCheckerState::SmartListsEnabled));
-        textCheckerStateChanged();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
     }
 }
 
@@ -16716,7 +16710,7 @@ void WebPageProxy::toggleAutomaticTextReplacement()
 {
     if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticTextReplacementEnabled));
-        textCheckerStateChanged();
+        WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
     }
 }
 
