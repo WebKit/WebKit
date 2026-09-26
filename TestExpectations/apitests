@@ -364,6 +364,7 @@ rdar://147858640 TestWebKitAPI.WKWebExtensionDataRecord.GetDataRecordsForMultipl
 rdar://125926932 TestWebKitAPI.WKWebExtensionDataRecord.RemoveDataRecords [ Skip ]
 rdar://125926932 TestWebKitAPI.WKWebExtensionDataRecord.RemoveDataRecordsForMultipleContexts [ Skip ]
 webkit.org/b/309374 [ mac debug ] TestWebKitAPI.WKWebsiteDataStore.FetchPersistentCredentials [ Skip ]
+webkit.org/b/325347 TestWebKitAPI.WKWebView.AttributedStringFromListWithSymbolsFunctionListStyleType [ Fail Crash ]
 webkit.org/b/231459 TestWebKitAPI.WKWebView.InitializingWebViewWithEphemeralStorageDoesNotLog [ Skip ]
 webkit.org/b/319127 [ mac ] TestWebKitAPI.WKWebView.InputChangeFiresOnWindowBlur [ Pass Failure ]
 webkit.org/b/245241 [ ios debug ] TestWebKitAPI.WKWebViewCloseAllMediaPresentations.ElementFullscreen [ Skip ]
