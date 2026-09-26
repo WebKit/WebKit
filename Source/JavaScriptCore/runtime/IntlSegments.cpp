@@ -71,13 +71,23 @@ JSValue IntlSegments::containing(JSGlobalObject* globalObject, JSValue indexValu
         return jsUndefined();
     int32_t index = toInt32(value);
 
-    // The result of ubrk_preceding is always *smaller* than offset, or UBRK_DONE. In this case, we should set scan position with `index + 1`.
-    // Even if index + 1 exceeds length of string by 1, this is desirable if we want to scan the last segment.
-    int32_t startIndex = ubrk_preceding(m_segmenter.get(), index + 1);
-    if (startIndex == UBRK_DONE)
-        startIndex = 0;
-    // The result of ubrk_following is always greater than offset, or UBRK_DONE. Scan position should be `index`.
-    int32_t endIndex = ubrk_following(m_segmenter.get(), index);
+    // ubrk_preceding is strictly before its offset, so a boundary at `index` needs
+    // ubrk_isBoundary. index + 1 is the trail surrogate when `index` is the lead, and
+    // ICU then steps back over that whole supplementary character.
+    // A trail surrogate belongs to the same boundary as its lead.
+    int32_t boundaryIndex = index;
+    if (index > 0 && U16_IS_TRAIL(m_buffer->at(index)) && U16_IS_LEAD(m_buffer->at(index - 1)))
+        boundaryIndex = index - 1;
+
+    int32_t startIndex;
+    if (ubrk_isBoundary(m_segmenter.get(), boundaryIndex))
+        startIndex = boundaryIndex;
+    else {
+        startIndex = ubrk_preceding(m_segmenter.get(), boundaryIndex);
+        if (startIndex == UBRK_DONE)
+            startIndex = 0;
+    }
+    int32_t endIndex = ubrk_following(m_segmenter.get(), boundaryIndex);
     if (endIndex == UBRK_DONE)
         endIndex = m_buffer->size();
 
