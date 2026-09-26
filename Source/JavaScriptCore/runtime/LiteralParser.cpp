@@ -959,39 +959,24 @@ template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::Lexer::tryConsumeStringEqualTo(std::span<const Latin1Character> expected)
 {
     ASSERT(m_mode == StrictJSON);
-    using UnsignedType = SameSizeUnsignedInteger<CharType>;
-    constexpr size_t stride = SIMD::stride<UnsignedType>;
-    auto findFirstSpecialCharacter = [](const CharType* cursor) ALWAYS_INLINE_LAMBDA {
-        auto input = SIMD::load(std::bit_cast<const UnsignedType*>(cursor));
-        auto quotes = SIMD::equal(input, SIMD::splat<UnsignedType>('"'));
-        auto escapes = SIMD::equal(input, SIMD::splat<UnsignedType>('\\'));
-        auto controls = SIMD::lessThan(input, SIMD::splat<UnsignedType>(' '));
-        return SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controls));
-    };
-
+    constexpr size_t stride8 = SIMD::stride<uint8_t>;
     const CharType* body = m_ptr + 1;
-    if constexpr (sizeof(CharType) == 1) {
-        if (expected.size() >= stride)
+    if (sizeof(CharType) == 1 && expected.size() < stride8) {
+        if (m_end - body < static_cast<ptrdiff_t>(stride8) || *m_ptr != '"')
             return false;
-        if (m_end - body < static_cast<ptrdiff_t>(stride) || *m_ptr != '"')
-            return false;
-
-        auto index = findFirstSpecialCharacter(body);
+        auto input = SIMD::load(std::bit_cast<const uint8_t*>(body));
+        auto quotes = SIMD::equal(input, SIMD::splat<uint8_t>('"'));
+        auto escapes = SIMD::equal(input, SIMD::splat<uint8_t>('\\'));
+        auto controls = SIMD::lessThan(input, SIMD::splat<uint8_t>(' '));
+        auto index = SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controls));
         if (!index || *index != expected.size() || body[expected.size()] != '"')
             return false;
     } else {
-        if (m_end - body <= static_cast<ptrdiff_t>(expected.size()) || *m_ptr != '"' || body[expected.size()] != '"')
+        if (m_end - body <= static_cast<ptrdiff_t>(expected.size()) || *m_ptr != '"')
             return false;
-        // body[expected.size()] is a quote, so some stride up to and including it finds a special character.
-        for (size_t offset = 0; ; offset += stride) {
-            if (m_end - (body + offset) < static_cast<ptrdiff_t>(stride))
-                return false;
-            if (auto index = findFirstSpecialCharacter(body + offset)) {
-                if (offset + *index != expected.size())
-                    return false;
-                break;
-            }
-        }
+        const CharType* terminator = body + expected.size();
+        if (*terminator != '"' || findUnsafeStringCharacter(body, terminator, '"') != terminator)
+            return false;
     }
     if (!WTF::equal(expected.data(), std::span { body, expected.size() }))
         return false;
@@ -1042,63 +1027,66 @@ static ALWAYS_INLINE bool NODELETE isSafeStringCharacterForIdentifier(char16_t c
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
+ALWAYS_INLINE const CharType* LiteralParser<CharType, reviverMode>::Lexer::findUnsafeStringCharacter(const CharType* start, const CharType* end, CharType terminator) const
+{
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
+    constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
+    if (m_mode == StrictJSON) {
+        ASSERT(terminator == '"');
+        constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
+        auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+            auto quotes = SIMD::equal(input, quoteMask);
+            auto escapes = SIMD::equal(input, escapeMask);
+            auto controls = SIMD::lessThan(input, controlMask);
+            auto mask = SIMD::bitOr(quotes, escapes, controls);
+            return SIMD::findFirstNonZeroIndex(mask);
+        };
+
+        auto scalarMatch = [&](CharType character) ALWAYS_INLINE_LAMBDA {
+            return !isSafeStringCharacter<SafeStringCharacterSet::Strict>(character, terminator);
+        };
+
+        return SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
+    }
+
+    auto quoteMask = SIMD::splat<UnsignedType>(terminator);
+    constexpr auto tabMask = SIMD::splat<UnsignedType>('\t');
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        auto quotes = SIMD::equal(input, quoteMask);
+        auto escapes = SIMD::equal(input, escapeMask);
+        auto controls = SIMD::lessThan(input, controlMask);
+        auto notTabs = SIMD::bitNot(SIMD::equal(input, tabMask));
+        auto controlsExceptTabs = SIMD::bitAnd(notTabs, controls);
+        auto mask = SIMD::bitOr(quotes, escapes, controlsExceptTabs);
+        return SIMD::findFirstNonZeroIndex(mask);
+    };
+
+    auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+        return !isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(character, terminator);
+    };
+
+    return SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
 template <JSONIdentifierHint hint>
 ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lexString(LiteralParserToken<CharType>& token, CharType terminator)
 {
     ++m_ptr;
     const CharType* runStart = m_ptr;
 
-    if (m_mode == StrictJSON) {
-        ASSERT(terminator == '"');
-        if constexpr (hint == JSONIdentifierHint::MaybeIdentifier) {
+    if constexpr (hint == JSONIdentifierHint::MaybeIdentifier) {
+        if (m_mode == StrictJSON) {
+            ASSERT(terminator == '"');
             while (m_ptr < m_end && isSafeStringCharacterForIdentifier<SafeStringCharacterSet::Strict>(*m_ptr, terminator))
                 ++m_ptr;
         } else {
-            using UnsignedType = SameSizeUnsignedInteger<CharType>;
-            constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
-            constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
-            constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
-            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-                auto quotes = SIMD::equal(input, quoteMask);
-                auto escapes = SIMD::equal(input, escapeMask);
-                auto controls = SIMD::lessThan(input, controlMask);
-                auto mask = SIMD::bitOr(quotes, escapes, controls);
-                return SIMD::findFirstNonZeroIndex(mask);
-            };
-
-            auto scalarMatch = [&](CharType character) ALWAYS_INLINE_LAMBDA {
-                return !isSafeStringCharacter<SafeStringCharacterSet::Strict>(character, terminator);
-            };
-
-            m_ptr = SIMD::find(std::span { m_ptr, m_end }, vectorMatch, scalarMatch);
-        }
-    } else {
-        if constexpr (hint == JSONIdentifierHint::MaybeIdentifier) {
             while (m_ptr < m_end && isSafeStringCharacterForIdentifier<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))
                 ++m_ptr;
-        } else {
-            using UnsignedType = SameSizeUnsignedInteger<CharType>;
-            auto quoteMask = SIMD::splat<UnsignedType>(terminator);
-            constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
-            constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
-            constexpr auto tabMask = SIMD::splat<UnsignedType>('\t');
-            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-                auto quotes = SIMD::equal(input, quoteMask);
-                auto escapes = SIMD::equal(input, escapeMask);
-                auto controls = SIMD::lessThan(input, controlMask);
-                auto notTabs = SIMD::bitNot(SIMD::equal(input, tabMask));
-                auto controlsExceptTabs = SIMD::bitAnd(notTabs, controls);
-                auto mask = SIMD::bitOr(quotes, escapes, controlsExceptTabs);
-                return SIMD::findFirstNonZeroIndex(mask);
-            };
-
-            auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
-                return !isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(character, terminator);
-            };
-
-            m_ptr = SIMD::find(std::span { m_ptr, m_end }, vectorMatch, scalarMatch);
         }
-    }
+    } else
+        m_ptr = findUnsafeStringCharacter(m_ptr, m_end, terminator);
 
     if (m_ptr < m_end && *m_ptr == terminator) [[likely]] {
         setParserTokenString<CharType>(token, runStart);
@@ -1116,13 +1104,7 @@ TokenType LiteralParser<CharType, reviverMode>::Lexer::lexStringSlow(LiteralPars
     goto slowPathBegin;
     do {
         runStart = m_ptr;
-        if (m_mode == StrictJSON) {
-            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, terminator))
-                ++m_ptr;
-        } else {
-            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))
-                ++m_ptr;
-        }
+        m_ptr = findUnsafeStringCharacter(m_ptr, m_end, terminator);
 
         if (!m_builder.isEmpty())
             m_builder.append(std::span { runStart, m_ptr });

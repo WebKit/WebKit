@@ -276,6 +276,7 @@ private:
         ALWAYS_INLINE TokenType lexIdentifier(LiteralParserToken<CharType>&);
         template<JSONIdentifierHint>
         ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&, CharType terminator);
+        ALWAYS_INLINE const CharType* findUnsafeStringCharacter(const CharType* start, const CharType* end, CharType terminator) const;
         TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
         ALWAYS_INLINE TokenType lexNumber(LiteralParserToken<CharType>&);
         TokenType lexNumberError(LiteralParserToken<CharType>&);
