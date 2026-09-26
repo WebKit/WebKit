@@ -168,6 +168,10 @@ struct Box {
     // (e.g. always true for atomic boxes, but inline boxes spanning over multiple lines can produce individual first/last boxes).
     bool isFirstForLayoutBox() const { return m_isFirstForLayoutBox; }
     bool isLastForLayoutBox() const { return m_isLastForLayoutBox; }
+    // Whether this box fragment of an inline box has the start/end of the inline box (e.g. an inline box split by a line break has no end on the first line).
+    bool isFirstFragment() const { return m_isFirstFragment; }
+    bool isLastFragment() const { return m_isLastFragment; }
+    void setPositionWithinInlineLevelBox(EnumSet<PositionWithinInlineLevelBox>);
 
     void setIsFirstForLayoutBox() { m_isFirstForLayoutBox = true; }
     void setIsLastForLayoutBox() { m_isLastForLayoutBox = true; }
@@ -196,6 +200,8 @@ private:
     bool m_isFullyTruncated : 1 { false };
     bool m_isInGlyphDisplayListCache : 1 { false };
     bool m_isFirstFormattedLine : 1 { false };
+    bool m_isFirstFragment : 1 { false };
+    bool m_isLastFragment : 1 { false };
     // FIXME: Move this to Box::Text when there's enough bit in there.
     uint8_t m_glyphOverflowTop : 5 { 0 };
     uint8_t m_glyphOverflowBottom : 3 { 0 };
@@ -217,8 +223,16 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
     , m_isFullyTruncated(isFullyTruncated)
     , m_isFirstFormattedLine(isFirstFormattedLine)
+    , m_isFirstFragment(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
+    , m_isLastFragment(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
     , m_text(text ? WTF::move(*text) : Text { })
 {
+}
+
+inline void Box::setPositionWithinInlineLevelBox(EnumSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+{
+    m_isFirstFragment = positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First);
+    m_isLastFragment = positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last);
 }
 
 inline Box::~Box()
