@@ -162,7 +162,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
         options.clientIdentifier = scriptExecutionContext.identifier().object();
         options.resultingClientIdentifier = clientIdentifier->object();
         Ref serviceWorkerDataManager = ServiceWorkerDataManager::create(*clientIdentifier);
-        m_serviceWorkerDataManager = serviceWorkerDataManager.copyRef();
+        lazyInitialize(m_serviceWorkerDataManager, serviceWorkerDataManager.copyRef());
         m_context = scriptExecutionContext;
 
         // In case of blob URLs, we reuse the context controlling service worker.

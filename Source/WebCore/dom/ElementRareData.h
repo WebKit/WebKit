@@ -75,13 +75,13 @@ public:
     static constexpr ptrdiff_t childIndexMemoryOffset() { return OBJECT_OFFSETOF(ElementRareData, m_childIndex); }
 
     CustomElementReactionQueue* customElementReactionQueue() { return m_customElementReactionQueue.get(); }
-    void setCustomElementReactionQueue(std::unique_ptr<CustomElementReactionQueue>&& queue) { m_customElementReactionQueue = WTF::move(queue); }
+    void initializeCustomElementReactionQueue(std::unique_ptr<CustomElementReactionQueue>&& queue) { lazyInitialize(m_customElementReactionQueue, WTF::move(queue)); }
 
     CustomElementDefaultARIA* customElementDefaultARIA() { return m_customElementDefaultARIA.get(); }
-    void setCustomElementDefaultARIA(std::unique_ptr<CustomElementDefaultARIA>&& defaultARIA) { m_customElementDefaultARIA = WTF::move(defaultARIA); }
+    void initializeCustomElementDefaultARIA(std::unique_ptr<CustomElementDefaultARIA>&& defaultARIA) { lazyInitialize(m_customElementDefaultARIA, WTF::move(defaultARIA)); }
 
     FormAssociatedCustomElement* formAssociatedCustomElement() { return m_formAssociatedCustomElement.get(); }
-    void setFormAssociatedCustomElement(const std::unique_ptr<FormAssociatedCustomElement>&& element) { lazyInitialize(m_formAssociatedCustomElement, std::move(element)); }
+    void initializeFormAssociatedCustomElement(const std::unique_ptr<FormAssociatedCustomElement>&& element) { lazyInitialize(m_formAssociatedCustomElement, std::move(element)); }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(const std::unique_ptr<NamedNodeMap>&& attributeMap) { lazyInitialize(m_attributeMap, std::move(attributeMap)); }
@@ -121,13 +121,13 @@ public:
     void setPartNames(SpaceSplitString&& partNames) { m_partNames = WTF::move(partNames); }
 
     IntersectionObserverData* intersectionObserverData() const LIFETIME_BOUND { return m_intersectionObserverData.get(); }
-    void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTF::move(data); }
+    void initializeIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { lazyInitialize(m_intersectionObserverData, WTF::move(data)); }
 
     ResizeObserverData* resizeObserverData() const LIFETIME_BOUND { return m_resizeObserverData.get(); }
-    void setResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { m_resizeObserverData = WTF::move(data); }
+    void initializeResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { lazyInitialize(m_resizeObserverData, WTF::move(data)); }
 
     ElementLargestContentfulPaintData* largestContentfulPaintData() const LIFETIME_BOUND { return m_largestContentfulPaintData.get(); }
-    void setLargestContentfulPaintData(std::unique_ptr<ElementLargestContentfulPaintData>&& data) { m_largestContentfulPaintData = WTF::move(data); }
+    void initializeLargestContentfulPaintData(std::unique_ptr<ElementLargestContentfulPaintData>&& data) { lazyInitialize(m_largestContentfulPaintData, WTF::move(data)); }
 
     std::optional<LayoutUnit> lastRememberedLogicalWidth() const { return m_lastRememberedLogicalWidth; }
     std::optional<LayoutUnit> lastRememberedLogicalHeight() const { return m_lastRememberedLogicalHeight; }
@@ -140,10 +140,10 @@ public:
     void setNonce(const AtomString& value) { m_nonce = value; }
 
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
-    void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTF::move(map); }
+    void initializeAttributeStyleMap(Ref<StylePropertyMap>&& map) { lazyInitialize(m_attributeStyleMap, WTF::move(map)); }
 
     StylePropertyMapReadOnly* computedStyleMap() { return m_computedStyleMap.get(); }
-    void setComputedStyleMap(Ref<StylePropertyMapReadOnly>&& map) { m_computedStyleMap = WTF::move(map); }
+    void initializeComputedStyleMap(Ref<StylePropertyMapReadOnly>&& map) { lazyInitialize(m_computedStyleMap, WTF::move(map)); }
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() LIFETIME_BOUND { return m_explicitlySetAttrElementsMap; }
 
@@ -157,7 +157,7 @@ public:
     void setContentRelevancy(OptionSet<ContentRelevancy>& contentRelevancy) { m_contentRelevancy = contentRelevancy; }
 
     CustomStateSet* customStateSet() { return m_customStateSet.get(); }
-    void setCustomStateSet(Ref<CustomStateSet>&& customStateSet) { m_customStateSet = WTF::move(customStateSet); }
+    void initializeCustomStateSet(Ref<CustomStateSet>&& customStateSet) { lazyInitialize(m_customStateSet, WTF::move(customStateSet)); }
 
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const { return m_visibilityAdjustment; }
     void setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment) { m_visibilityAdjustment = adjustment; }
@@ -245,14 +245,14 @@ private:
     AtomString m_effectiveLang;
     const std::unique_ptr<DatasetDOMStringMap> m_dataset;
     const std::unique_ptr<DOMTokenList> m_classList;
-    std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
-    std::unique_ptr<CustomElementDefaultARIA> m_customElementDefaultARIA;
+    const std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
+    const std::unique_ptr<CustomElementDefaultARIA> m_customElementDefaultARIA;
     const std::unique_ptr<FormAssociatedCustomElement> m_formAssociatedCustomElement;
     const std::unique_ptr<NamedNodeMap> m_attributeMap;
 
-    std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
-    std::unique_ptr<ResizeObserverData> m_resizeObserverData;
-    std::unique_ptr<ElementLargestContentfulPaintData> m_largestContentfulPaintData;
+    const std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
+    const std::unique_ptr<ResizeObserverData> m_resizeObserverData;
+    const std::unique_ptr<ElementLargestContentfulPaintData> m_largestContentfulPaintData;
 
     Markable<LayoutUnit> m_lastRememberedLogicalWidth;
     Markable<LayoutUnit> m_lastRememberedLogicalHeight;
@@ -264,8 +264,8 @@ private:
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
 
-    RefPtr<StylePropertyMap> m_attributeStyleMap;
-    RefPtr<StylePropertyMapReadOnly> m_computedStyleMap;
+    const RefPtr<StylePropertyMap> m_attributeStyleMap;
+    const RefPtr<StylePropertyMapReadOnly> m_computedStyleMap;
 
     const std::unique_ptr<DOMTokenList> m_partList;
     SpaceSplitString m_partNames;
@@ -278,7 +278,7 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_invokedPopover;
 
-    RefPtr<CustomStateSet> m_customStateSet;
+    const RefPtr<CustomStateSet> m_customStateSet;
 
     OptionSet<VisibilityAdjustment> m_visibilityAdjustment;
 

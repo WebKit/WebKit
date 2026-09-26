@@ -56,7 +56,7 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
                 Locker locker { m_nodeSetLock };
                 m_nodeSet = nodeSet;
             }
-            m_document = document;
+            lazyInitialize(m_document, Ref { document });
             m_domTreeVersion = document.domTreeVersion();
         }
     );

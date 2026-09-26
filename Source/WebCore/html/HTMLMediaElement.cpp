@@ -2850,7 +2850,7 @@ void HTMLMediaElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
         return;
 
     if (!m_cueData)
-        m_cueData = makeUnique<CueData>();
+        lazyInitialize(m_cueData, makeUnique<CueData>());
 
     // Negative duration cues need be treated in the interval tree as
     // zero-length cues.
@@ -2865,7 +2865,7 @@ void HTMLMediaElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
 void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
 {
     if (!m_cueData)
-        m_cueData = makeUnique<CueData>();
+        lazyInitialize(m_cueData, makeUnique<CueData>());
 
     // Negative duration cues need to be treated in the interval tree as
     // zero-length cues.

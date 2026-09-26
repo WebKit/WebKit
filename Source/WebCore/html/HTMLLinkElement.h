@@ -166,7 +166,7 @@ private:
     const std::unique_ptr<DOMTokenList> m_sizes;
     const std::unique_ptr<DOMTokenList> m_relList;
     const std::unique_ptr<DOMTokenList> m_blockingList;
-    std::unique_ptr<ExpectIdTargetObserver> m_expectIdTargetObserver;
+    const std::unique_ptr<ExpectIdTargetObserver> m_expectIdTargetObserver;
     DisabledState m_disabledState;
     LinkRelAttribute m_relAttribute;
     bool m_loading : 1;

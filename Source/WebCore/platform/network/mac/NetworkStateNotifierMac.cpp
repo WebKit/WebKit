@@ -83,10 +83,10 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
 void NetworkStateNotifier::startObserving()
 {
     SCDynamicStoreContext context = { 0, this, 0, 0, 0 };
-    m_store = adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), [] (SCDynamicStoreRef, CFArrayRef, void*) {
+    lazyInitialize(m_store, adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), [] (SCDynamicStoreRef, CFArrayRef, void*) {
         // Calling updateState() could be expensive so we coalesce calls with a timer.
         singleton().updateStateSoon();
-    }, &context));
+    }, &context)));
     if (!m_store)
         return;
 

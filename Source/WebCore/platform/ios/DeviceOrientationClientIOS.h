@@ -65,7 +65,7 @@ private:
     WebCoreMotionManager* m_motionManager  { nullptr };
     DeviceOrientationController* m_controller  { nullptr };
     RefPtr<DeviceOrientationData> m_currentDeviceOrientation;
-    RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
+    const RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
     bool m_updating { false };
 };
 

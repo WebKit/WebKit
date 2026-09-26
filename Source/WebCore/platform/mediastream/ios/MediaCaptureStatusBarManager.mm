@@ -177,7 +177,7 @@ MediaCaptureStatusBarManager::~MediaCaptureStatusBarManager()
 
 void MediaCaptureStatusBarManager::start()
 {
-    m_handler = adoptNS([[WebCoreMediaCaptureStatusBarHandler alloc] initWithManager:this]);
+    lazyInitialize(m_handler, adoptNS([[WebCoreMediaCaptureStatusBarHandler alloc] initWithManager:this]));
     [m_handler start];
 }
 

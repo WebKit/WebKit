@@ -207,7 +207,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
             ]];
         }
 
-        m_pipPlacard = pipPlacard;
+        lazyInitialize(m_pipPlacard, WTF::move(pipPlacard));
     } @catch (NSException *exception) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "user info: ", exception.reason);
     }

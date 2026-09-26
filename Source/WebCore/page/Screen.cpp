@@ -181,7 +181,7 @@ int Screen::availWidth() const
 ScreenOrientation& Screen::orientation()
 {
     if (!m_screenOrientation)
-        m_screenOrientation = ScreenOrientation::create(window() ? protect(window()->document()).get() : nullptr);
+        lazyInitialize(m_screenOrientation, ScreenOrientation::create(window() ? protect(window()->document()).get() : nullptr));
     return *m_screenOrientation;
 }
 

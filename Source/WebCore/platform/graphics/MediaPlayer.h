@@ -887,7 +887,7 @@ private:
     PlatformDynamicRangeLimit m_platformDynamicRangeLimit { PlatformDynamicRangeLimit::initialValueForVideos() };
     PitchCorrectionAlgorithm m_pitchCorrectionAlgorithm { PitchCorrectionAlgorithm::BestAllAround };
     ViewportVisibility m_viewportVisibility { ViewportVisibility::NotVisible };
-    RefPtr<PlatformMediaResourceLoader> m_mediaResourceLoader;
+    const RefPtr<PlatformMediaResourceLoader> m_mediaResourceLoader;
     RefPtr<MediaResourceSniffer> m_sniffer;
     bool m_sniffAttempted { false };
 

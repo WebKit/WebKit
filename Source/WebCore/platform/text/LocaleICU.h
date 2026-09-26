@@ -84,7 +84,7 @@ private:
     bool m_didCreateDecimalFormat { false };
 #endif
 
-    std::unique_ptr<Vector<String>> m_monthLabels;
+    const std::unique_ptr<Vector<String>> m_monthLabels;
     String m_dateFormat;
     String m_monthFormat;
     String m_shortMonthFormat;

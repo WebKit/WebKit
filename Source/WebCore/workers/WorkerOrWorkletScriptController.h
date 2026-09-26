@@ -131,7 +131,7 @@ private:
     RefPtr<JSC::VM> m_vm;
     WeakPtr<WorkerOrWorkletGlobalScope> m_globalScope;
     JSC::Strong<JSDOMGlobalObject> m_globalScopeWrapper;
-    std::unique_ptr<WorkerConsoleClient> m_consoleClient;
+    const std::unique_ptr<WorkerConsoleClient> m_consoleClient;
     mutable Lock m_scheduledTerminationLock;
     bool m_isTerminatingExecution WTF_GUARDED_BY_LOCK(m_scheduledTerminationLock) { false };
 };

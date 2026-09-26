@@ -117,9 +117,9 @@ void ResourceUsageThread::createThreadIfNeeded()
         return;
 
     m_vm = &commonVM();
-    m_thread = Thread::create("WebCore: ResourceUsage"_s, [this] {
+    lazyInitialize(m_thread, Thread::create("WebCore: ResourceUsage"_s, [this] {
         threadBody();
-    });
+    }));
 }
 
 [[noreturn]] void ResourceUsageThread::threadBody()

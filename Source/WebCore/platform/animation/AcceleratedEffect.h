@@ -124,12 +124,12 @@ private:
     const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
 
     AnimationEffectTiming m_timing;
-    RefPtr<AcceleratedTimeline> m_timeline;
+    const RefPtr<AcceleratedTimeline> m_timeline;
     TimelineIdentifier m_timelineIdentifier;
     Vector<Keyframe> m_keyframes;
     WebAnimationType m_animationType { WebAnimationType::WebAnimation };
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
-    RefPtr<TimingFunction> m_defaultKeyframeTimingFunction;
+    const RefPtr<TimingFunction> m_defaultKeyframeTimingFunction;
     OptionSet<AcceleratedEffectProperty> m_animatedProperties;
     OptionSet<AcceleratedEffectProperty> m_disallowedProperties;
     OptionSet<AcceleratedEffectProperty> m_replacedProperties;

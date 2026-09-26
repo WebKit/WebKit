@@ -232,7 +232,7 @@ RetainPtr<CVPixelBufferRef> ShareableCVPixelBufferWithBytes::createMetalCompatib
         unsigned destinationBytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer.get());
         auto* destinationBaseAddress = static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer.get()));
         auto destinationSpan = unsafeMakeSpan(destinationBaseAddress, destinationBytesPerRow * destinationHeight);
-        protect(m_bytes)->copyPixels(destinationSpan, destinationHeight, destinationBytesPerRow);
+        m_bytes->copyPixels(destinationSpan, destinationHeight, destinationBytesPerRow);
     }
     CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
 

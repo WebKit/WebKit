@@ -131,7 +131,7 @@ private:
     PlatformCAAnimationCocoa(AnimationType, const String& keyPath);
     PlatformCAAnimationCocoa(PlatformAnimationRef);
 
-    RetainPtr<CAAnimation> m_animation;
+    const RetainPtr<CAAnimation> m_animation;
 };
 
 } // namespace WebCore

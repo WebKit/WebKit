@@ -265,11 +265,11 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer() = default;
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
     if (!m_platformSpeechWrapper) {
-        m_platformSpeechWrapper = makeUnique<SpielSpeechWrapper>(*this, [&] {
+        lazyInitialize(m_platformSpeechWrapper, makeUnique<SpielSpeechWrapper>(*this, [&] {
             m_voiceList = m_platformSpeechWrapper->initializeVoiceList();
             if (RefPtr speechClient = client())
                 speechClient->voicesDidChange();
-        });
+        }));
         return;
     }
     m_voiceList = m_platformSpeechWrapper->initializeVoiceList();
@@ -292,9 +292,9 @@ void PlatformSpeechSynthesizer::resume()
 void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!m_platformSpeechWrapper) {
-        m_platformSpeechWrapper = makeUnique<SpielSpeechWrapper>(*this, [&, utterance = WTF::move(utterance)]() mutable {
+        lazyInitialize(m_platformSpeechWrapper, makeUnique<SpielSpeechWrapper>(*this, [&, utterance = WTF::move(utterance)]() mutable {
             m_platformSpeechWrapper->speakUtterance(WTF::move(utterance));
-        });
+        }));
         return;
     }
     m_platformSpeechWrapper->speakUtterance(WTF::move(utterance));

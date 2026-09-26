@@ -56,7 +56,7 @@ public:
     const String& productName() const LIFETIME_BOUND { return m_productName; }
 
 private:
-    RetainPtr<IOHIDDeviceRef> m_rawDevice;
+    const RetainPtr<IOHIDDeviceRef> m_rawDevice;
 
     uint16_t m_vendorID;
     uint16_t m_productID;

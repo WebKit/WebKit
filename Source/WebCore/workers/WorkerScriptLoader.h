@@ -166,7 +166,7 @@ private:
     bool m_didAddToWorkerScriptLoaderMap { false };
     bool m_isMatchingServiceWorkerRegistration { false };
     std::optional<SecurityOriginData> m_topOriginForServiceWorkerRegistration;
-    RefPtr<ServiceWorkerDataManager> m_serviceWorkerDataManager;
+    const RefPtr<ServiceWorkerDataManager> m_serviceWorkerDataManager;
     WeakPtr<ScriptExecutionContext> m_context;
     String m_userAgentForSharedWorker;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;

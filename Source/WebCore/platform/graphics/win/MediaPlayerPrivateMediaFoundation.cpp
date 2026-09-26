@@ -937,7 +937,7 @@ MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::CustomVideoPresenter(Me
     m_sourceRect.bottom = 1;
     m_sourceRect.right = 1;
 
-    m_presenterEngine = makeUnique<Direct3DPresenter>();
+    lazyInitialize(m_presenterEngine, makeUnique<Direct3DPresenter>());
     m_scheduler.setPresenter(m_presenterEngine.get());
 }
 

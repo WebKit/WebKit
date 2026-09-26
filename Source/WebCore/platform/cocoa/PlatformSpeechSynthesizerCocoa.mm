@@ -389,7 +389,7 @@ void PlatformSpeechSynthesizer::resume()
 void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!m_platformSpeechWrapper)
-        m_platformSpeechWrapper = adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
+        lazyInitialize(m_platformSpeechWrapper, adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]));
 
     [m_platformSpeechWrapper speakUtterance:utterance.get()];
 }

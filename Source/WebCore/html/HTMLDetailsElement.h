@@ -59,11 +59,11 @@ private:
 
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_summarySlot;
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
-    RefPtr<HTMLSlotElement> m_defaultSlot;
+    const RefPtr<HTMLSlotElement> m_defaultSlot;
     bool m_isOpen { false };
     bool m_shouldCloseElementAfterInsertion { false };
 
-    RefPtr<ToggleEventTask> m_toggleEventTask;
+    const RefPtr<ToggleEventTask> m_toggleEventTask;
 };
 
 } // namespace WebCore

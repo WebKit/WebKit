@@ -1519,7 +1519,7 @@ private:
     std::unique_ptr<Vector<RenderLayer*>> m_negZOrderList;
 
     // This list contains child layers that cannot create stacking contexts and appear in normal flow order.
-    std::unique_ptr<Vector<RenderLayer*>> m_normalFlowList;
+    const std::unique_ptr<Vector<RenderLayer*>> m_normalFlowList;
 
     // Only valid if m_repaintRectsValid is set (std::optional<> not used to avoid padding).
     RenderObject::RepaintRects m_repaintRects;

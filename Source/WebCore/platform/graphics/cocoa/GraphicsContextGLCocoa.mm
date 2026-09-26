@@ -271,12 +271,12 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
         LOG(WebGL, "EGLContext Initialization failed.");
         return false;
     }
-    m_finishedMetalSharedEventListener = adoptNS([[MTLSharedEventListener alloc] init]);
+    lazyInitialize(m_finishedMetalSharedEventListener, adoptNS([[MTLSharedEventListener alloc] init]));
     if (!m_finishedMetalSharedEventListener) {
         ASSERT_NOT_REACHED();
         return false;
     }
-    m_finishedMetalSharedEvent = newSharedEvent(m_displayObj);
+    lazyInitialize(m_finishedMetalSharedEvent, newSharedEvent(m_displayObj));
     if (!m_finishedMetalSharedEvent) {
         ASSERT_NOT_REACHED();
         return false;
@@ -825,7 +825,7 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
 GraphicsContextGLCV* GraphicsContextGLCocoa::cvContext()
 {
     if (!m_cv)
-        m_cv = GraphicsContextGLCVCocoa::create(*this);
+        lazyInitialize(m_cv, GraphicsContextGLCVCocoa::create(*this));
     return m_cv.get();
 }
 #endif

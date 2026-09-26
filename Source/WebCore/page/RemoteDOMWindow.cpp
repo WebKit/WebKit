@@ -72,7 +72,7 @@ void RemoteDOMWindow::closePage()
 void RemoteDOMWindow::frameDetached()
 {
     if (RefPtr frame = m_frame) {
-        m_detachedFrameDocumentSecurityOrigin = frame->frameDocumentSecurityOriginOrOpaque();
+        lazyInitialize(m_detachedFrameDocumentSecurityOrigin, Ref { frame->frameDocumentSecurityOriginOrOpaque() });
         m_isDetachedFrameDocumentSandboxedOrigin = frame->frameDocumentIsSandboxedOrigin();
     }
     m_frame = nullptr;

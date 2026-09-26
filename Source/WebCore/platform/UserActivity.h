@@ -52,7 +52,7 @@ public:
 #if HAVE(NS_ACTIVITY)
     private:
         RetainPtr<id> m_activity;
-        RetainPtr<NSString> m_description;
+        const RetainPtr<NSString> m_description;
 #endif
     };
 

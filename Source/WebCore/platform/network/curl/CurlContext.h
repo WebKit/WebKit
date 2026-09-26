@@ -144,7 +144,7 @@ private:
     CurlProxySettings m_proxySettings;
     CurlShareHandle m_shareHandle;
     CurlSSLHandle m_sslHandle;
-    std::unique_ptr<CurlRequestScheduler> m_scheduler;
+    const std::unique_ptr<CurlRequestScheduler> m_scheduler;
 
     bool m_isAltSvcEnabled { false };
     bool m_isHttp2Enabled { false };
@@ -343,8 +343,8 @@ private:
     CurlSList m_requestHeaders;
     CurlSList m_proxyRequestHeaders;
 
-    std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
-    std::unique_ptr<TLSConnectionInfo> m_tlsConnectionInfo;
+    const std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
+    const std::unique_ptr<TLSConnectionInfo> m_tlsConnectionInfo;
     mutable std::unique_ptr<CertificateInfo> m_certificateInfo;
 };
 

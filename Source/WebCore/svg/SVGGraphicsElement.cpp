@@ -211,7 +211,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform = makeUnique<AffineTransform>();
+        lazyInitialize(m_supplementalTransform, makeUnique<AffineTransform>());
     return m_supplementalTransform.get();
 }
 

@@ -249,7 +249,7 @@ void PlatformSpeechSynthesizer::resume()
 void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!m_platformSpeechWrapper)
-        m_platformSpeechWrapper = makeUnique<GstSpeechSynthesisWrapper>(*this);
+        lazyInitialize(m_platformSpeechWrapper, makeUnique<GstSpeechSynthesisWrapper>(*this));
 
     m_platformSpeechWrapper->speakUtterance(WTF::move(utterance));
 }

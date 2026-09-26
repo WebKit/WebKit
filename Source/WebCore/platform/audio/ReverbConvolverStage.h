@@ -62,8 +62,8 @@ public:
     int inputReadIndex() const { return m_inputReadIndex; }
 
 private:
-    std::unique_ptr<FFTFrame> m_fftKernel;
-    std::unique_ptr<FFTConvolver> m_fftConvolver;
+    const std::unique_ptr<FFTFrame> m_fftKernel;
+    const std::unique_ptr<FFTConvolver> m_fftConvolver;
 
     AudioFloatArray m_preDelayBuffer;
 
@@ -79,8 +79,8 @@ private:
     AudioFloatArray m_temporaryBuffer;
 
     bool m_directMode;
-    std::unique_ptr<AudioFloatArray> m_directKernel;
-    std::unique_ptr<DirectConvolver> m_directConvolver;
+    const std::unique_ptr<AudioFloatArray> m_directKernel;
+    const std::unique_ptr<DirectConvolver> m_directConvolver;
 };
 
 } // namespace WebCore

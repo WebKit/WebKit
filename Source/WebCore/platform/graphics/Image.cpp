@@ -72,7 +72,7 @@ void Image::setImageObserver(RefPtr<ImageObserver>&& observer)
 ImageAdapter& Image::adapter()
 {
     if (!m_adapter)
-        m_adapter = makeUnique<ImageAdapter>(*this);
+        lazyInitialize(m_adapter, makeUnique<ImageAdapter>(*this));
     return *m_adapter;
 }
 
@@ -416,7 +416,7 @@ FloatSize Image::sourceSize(ImageOrientation orientation) const
 void Image::startAnimationAsynchronously()
 {
     if (!m_animationStartTimer)
-        m_animationStartTimer = makeUnique<Timer>(*this, &Image::startAnimation);
+        lazyInitialize(m_animationStartTimer, makeUnique<Timer>(*this, &Image::startAnimation));
     if (m_animationStartTimer->isActive())
         return;
     m_animationStartTimer->startOneShot(0_s);

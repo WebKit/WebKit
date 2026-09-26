@@ -618,8 +618,8 @@ protected:
     FloatSize m_size;
     FloatPoint m_boundsOrigin;
 
-    std::unique_ptr<TransformationMatrix> m_transform;
-    std::unique_ptr<TransformationMatrix> m_childrenTransform;
+    const std::unique_ptr<TransformationMatrix> m_transform;
+    const std::unique_ptr<TransformationMatrix> m_childrenTransform;
 
     Color m_backgroundColor;
     float m_opacity { 1 };

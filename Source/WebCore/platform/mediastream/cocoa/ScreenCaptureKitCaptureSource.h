@@ -121,7 +121,7 @@ private:
 #if HAVE(WINDOW_CAPTURE)
     std::optional<Content> m_content;
 #endif
-    RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
+    const RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
     RetainPtr<SCContentFilter> m_contentFilter;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RefPtr<ScreenCaptureSessionSource> m_sessionSource;
@@ -130,7 +130,7 @@ private:
     CaptureDevice m_captureDevice;
     uint32_t m_deviceID { 0 };
     mutable std::optional<IntSize> m_intrinsicSize;
-    std::unique_ptr<ImageTransferSessionVT> m_transferSession;
+    const std::unique_ptr<ImageTransferSessionVT> m_transferSession;
 
     FloatSize m_contentSize;
     uint32_t m_width { 0 };

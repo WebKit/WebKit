@@ -86,7 +86,7 @@ CSSStyleProperties& StyledElement::cssomStyle()
 StylePropertyMap& StyledElement::ensureAttributeStyleMap()
 {
     if (!attributeStyleMap())
-        setAttributeStyleMap(InlineStylePropertyMap::create(*this));
+        initializeAttributeStyleMap(InlineStylePropertyMap::create(*this));
     return *attributeStyleMap();
 }
 

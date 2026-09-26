@@ -243,12 +243,12 @@ private:
     float m_zoomedOutContentsScale { 0 };
     float m_deviceScaleFactor;
 
-    std::unique_ptr<TileCoverageMap> m_coverageMap;
+    const std::unique_ptr<TileCoverageMap> m_coverageMap;
 
     std::unique_ptr<TileGrid> m_tileGrid;
     std::unique_ptr<TileGrid> m_zoomedOutTileGrid;
 
-    std::unique_ptr<HistoricalVelocityData> m_historicalVelocityData; // Used when we track velocity internally.
+    const std::unique_ptr<HistoricalVelocityData> m_historicalVelocityData; // Used when we track velocity internally.
 
     FloatRect m_visibleRect; // Only used for scroll performance logging.
     std::optional<FloatRect> m_layoutViewportRect; // Only used by the tiled scrolling indicator.

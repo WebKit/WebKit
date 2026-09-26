@@ -58,7 +58,7 @@ private:
     Vector<SharedGamepadValue> m_buttonValues;
     Vector<SharedGamepadValue> m_axisValues;
 
-    std::unique_ptr<struct wpe_gamepad, void(*)(struct wpe_gamepad*)> m_gamepad;
+    const std::unique_ptr<struct wpe_gamepad, void(*)(struct wpe_gamepad*)> m_gamepad;
 };
 
 } // namespace WebCore

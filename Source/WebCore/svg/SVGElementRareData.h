@@ -69,7 +69,7 @@ public:
     MutableStyleProperties& ensureAnimatedSMILStyleProperties()
     {
         if (!m_animatedSMILStyleProperties)
-            m_animatedSMILStyleProperties = MutableStyleProperties::create(SVGAttributeMode);
+            lazyInitialize(m_animatedSMILStyleProperties, MutableStyleProperties::create(SVGAttributeMode));
         return *m_animatedSMILStyleProperties;
     }
 
@@ -83,7 +83,7 @@ public:
     SVGConditionalProcessingAttributes& conditionalProcessingAttributes(SVGElement& contextElement) LIFETIME_BOUND
     {
         if (!m_conditionalProcessingAttributes)
-            m_conditionalProcessingAttributes = makeUnique<SVGConditionalProcessingAttributes>(contextElement);
+            lazyInitialize(m_conditionalProcessingAttributes, makeUnique<SVGConditionalProcessingAttributes>(contextElement));
         return *m_conditionalProcessingAttributes;
     }
 
@@ -98,9 +98,9 @@ private:
     bool m_instancesUpdatesBlocked : 1;
     bool m_useOverrideComputedStyle : 1;
     bool m_needsOverrideComputedStyleUpdate : 1;
-    RefPtr<MutableStyleProperties> m_animatedSMILStyleProperties;
+    const RefPtr<MutableStyleProperties> m_animatedSMILStyleProperties;
     std::unique_ptr<Style::ComputedStyle> m_overrideComputedStyle;
-    std::unique_ptr<SVGConditionalProcessingAttributes> m_conditionalProcessingAttributes;
+    const std::unique_ptr<SVGConditionalProcessingAttributes> m_conditionalProcessingAttributes;
 };
 
 } // namespace WebCore

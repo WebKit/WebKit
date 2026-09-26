@@ -83,7 +83,7 @@ private:
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
-    RefPtr<cairo_t> m_platformPath;
+    const RefPtr<cairo_t> m_platformPath;
     RefPtr<PathStream> m_elementsStream;
 };
 

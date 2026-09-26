@@ -45,7 +45,7 @@ private:
     void reset() final;
     void close() final;
 
-    Ref<GStreamerInternalAudioEncoder> m_internalEncoder;
+    const Ref<GStreamerInternalAudioEncoder> m_internalEncoder;
 };
 
 } // namespace WebCore

@@ -49,10 +49,8 @@ CurlFormDataStream::CurlFormDataStream(const RefPtr<FormData>& formData)
     if (!formData || formData->isEmpty())
         return;
 
-    m_formData = formData->isolatedCopy();
-
     // Resolve the blob elements so the formData can correctly report it's size.
-    m_formData = m_formData->resolveBlobReferences(blobRegistry()->blobRegistryImpl());
+    lazyInitialize(m_formData, formData->isolatedCopy()->resolveBlobReferences(blobRegistry()->blobRegistryImpl()));
 }
 
 CurlFormDataStream::~CurlFormDataStream() = default;

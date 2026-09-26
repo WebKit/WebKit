@@ -58,7 +58,7 @@ public:
 private:
     explicit Screen(LocalDOMWindow&);
 
-    RefPtr<ScreenOrientation> m_screenOrientation;
+    const RefPtr<ScreenOrientation> m_screenOrientation;
 };
 
 } // namespace WebCore

@@ -99,9 +99,9 @@ protected:
     double m_fontSize { 0 };
     IntRect m_anchorRect;
 #if PLATFORM(MAC)
-    RetainPtr<NSPopover> m_popover;
+    const RetainPtr<NSPopover> m_popover;
 #elif PLATFORM(IOS_FAMILY)
-    RetainPtr<WebValidationBubbleViewController> m_popoverController;
+    const RetainPtr<WebValidationBubbleViewController> m_popoverController;
     RetainPtr<WebValidationBubbleTapRecognizer> m_tapRecognizer;
     RetainPtr<WebValidationBubbleDelegate> m_popoverDelegate;
     WeakObjCPtr<UIViewController> m_presentingViewController;

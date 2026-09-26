@@ -54,7 +54,7 @@ private:
     void notifyStartupResult(bool);
     void notifyStopResult(bool);
 
-    RefPtr<AudioBus> m_renderBus;
+    const RefPtr<AudioBus> m_renderBus;
 
     bool m_isPlaying { false };
     bool m_audioSinkAvailable { false };

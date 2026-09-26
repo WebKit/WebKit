@@ -77,7 +77,7 @@ private:
     Lock m_fifoLock;
     PushPullFIFO m_fifo WTF_GUARDED_BY_LOCK(m_fifoLock);
 
-    std::unique_ptr<MultiChannelResampler> m_resampler;
+    const std::unique_ptr<MultiChannelResampler> m_resampler;
     AudioIOPosition m_outputTimestamp;
 
     Lock m_dispatchToRenderThreadLock;

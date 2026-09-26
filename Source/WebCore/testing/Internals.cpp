@@ -791,7 +791,7 @@ Internals::Internals(Document& document)
 
 #if ENABLE(VIDEO)
     if (RefPtr page = document.page())
-        m_testingModeToken = protect(page->group())->ensureCaptionPreferences().createTestingModeToken().moveToUniquePtr();
+        lazyInitialize(m_testingModeToken, protect(page->group())->ensureCaptionPreferences().createTestingModeToken().moveToUniquePtr());
 #endif
 
     if (contextDocument() && protect(contextDocument())->frame()) {
@@ -8292,7 +8292,7 @@ ExceptionOr<Ref<WebXRTest>> Internals::xrTest()
         if (!navigator)
             return Exception { ExceptionCode::InvalidAccessError };
 
-        m_xrTest = WebXRTest::create(NavigatorWebXR::xr(*navigator));
+        lazyInitialize(m_xrTest, WebXRTest::create(NavigatorWebXR::xr(*navigator)));
     }
     return Ref<WebXRTest> { *m_xrTest };
 }
@@ -8424,7 +8424,7 @@ ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecution
 
     Ref session = NavigatorMediaSession::mediaSession(protect(protect(document->window())->navigator()));
     auto mock = MockMediaSessionCoordinator::create(context, WTF::move(listener));
-    m_mockMediaSessionCoordinator = mock.ptr();
+    lazyInitialize(m_mockMediaSessionCoordinator, mock.copyRef());
     session->coordinator().setMediaSessionCoordinatorPrivate(WTF::move(mock));
 
     return { };

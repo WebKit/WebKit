@@ -79,7 +79,7 @@ private:
     HashMap<uintptr_t, std::unique_ptr<GamepadLibWPE>> m_gamepadMap;
     bool m_initialGamepadsConnected { false };
 
-    std::unique_ptr<struct wpe_gamepad_provider, void (*)(struct wpe_gamepad_provider*)> m_provider;
+    const std::unique_ptr<struct wpe_gamepad_provider, void (*)(struct wpe_gamepad_provider*)> m_provider;
     struct wpe_gamepad* m_lastActiveGamepad { nullptr };
 
     RunLoop::Timer m_initialGamepadsConnectedTimer;

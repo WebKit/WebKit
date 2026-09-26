@@ -956,7 +956,7 @@ protected:
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 
     StylePropertyMap* NODELETE attributeStyleMap();
-    void setAttributeStyleMap(Ref<StylePropertyMap>&&);
+    void initializeAttributeStyleMap(Ref<StylePropertyMap>&&);
 
     FormAssociatedCustomElement& NODELETE formAssociatedCustomElementUnsafe() const;
     void ensureFormAssociatedCustomElement();

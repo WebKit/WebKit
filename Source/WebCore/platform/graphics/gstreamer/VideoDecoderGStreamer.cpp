@@ -84,7 +84,7 @@ private:
 
     VideoDecoder::OutputCallback m_outputCallback;
 
-    RefPtr<GStreamerElementHarness> m_harness;
+    const RefPtr<GStreamerElementHarness> m_harness;
     FloatSize m_presentationSize;
     int64_t m_timestamp;
     std::optional<uint64_t> m_duration;
@@ -253,7 +253,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 #endif // USE(GSTREAMER_GL)
     gst_caps_append(allowedSinkCaps.get(), gst_caps_from_string("video/x-raw"));
 
-    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
+    lazyInitialize(m_harness, GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -283,7 +283,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         options.contentHint = VideoFrameContentHint::WebCodecs;
         auto videoFrame = VideoFrameGStreamer::create(WTF::move(outputSample), options);
         m_outputCallback(VideoDecoder::DecodedFrame { WTF::move(videoFrame), timestamp, duration });
-    }, std::nullopt, WTF::move(allowedSinkCaps));
+    }, std::nullopt, WTF::move(allowedSinkCaps)));
 
     const auto& stream = m_harness->outputStreams().first();
     const auto& pad = stream->targetPad();

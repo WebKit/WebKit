@@ -942,7 +942,7 @@ const CustomFunctionRegistry* Resolver::customFunctionRegistry() const
 CustomFunctionRegistry& Resolver::ensureCustomFunctionRegistry()
 {
     if (!m_customFunctionRegistry)
-        m_customFunctionRegistry = makeUnique<CustomFunctionRegistry>();
+        lazyInitialize(m_customFunctionRegistry, makeUnique<CustomFunctionRegistry>());
     return *m_customFunctionRegistry;
 }
 

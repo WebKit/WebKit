@@ -84,7 +84,7 @@ private:
     SVGFilterExpression m_expression;
     FilterEffectVector m_effects;
 
-    std::unique_ptr<FilterResults> m_results;
+    const std::unique_ptr<FilterResults> m_results;
 };
 
 } // namespace WebCore

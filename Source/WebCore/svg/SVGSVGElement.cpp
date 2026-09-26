@@ -118,7 +118,7 @@ void SVGSVGElement::didMoveToNewDocument(Document& oldDocument, Document& newDoc
 SVGViewSpec& SVGSVGElement::currentView()
 {
     if (!m_viewSpec)
-        m_viewSpec = SVGViewSpec::create(*this);
+        lazyInitialize(m_viewSpec, SVGViewSpec::create(*this));
     return *m_viewSpec;
 }
 

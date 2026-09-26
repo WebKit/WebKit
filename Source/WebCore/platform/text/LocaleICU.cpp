@@ -222,11 +222,11 @@ const Vector<String>& LocaleICU::monthLabels()
     if (m_monthLabels)
         return *m_monthLabels;
     if (initializeShortDateFormat()) {
-        m_monthLabels = createLabelVector(m_shortDateFormat, UDAT_MONTHS, UCAL_JANUARY, 12);
+        lazyInitialize(m_monthLabels, createLabelVector(m_shortDateFormat, UDAT_MONTHS, UCAL_JANUARY, 12));
         if (m_monthLabels)
             return *m_monthLabels;
     }
-    m_monthLabels = createFallbackMonthLabels();
+    lazyInitialize(m_monthLabels, createFallbackMonthLabels());
     return *m_monthLabels;
 }
 

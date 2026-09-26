@@ -87,7 +87,7 @@ private:
     void transferVideoViewToFullscreen() final;
     void returnVideoView() final;
 
-    RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
+    const RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
 };
 

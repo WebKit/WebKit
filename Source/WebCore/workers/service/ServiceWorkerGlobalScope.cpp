@@ -276,7 +276,7 @@ void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLe
 CookieStore& ServiceWorkerGlobalScope::cookieStore()
 {
     if (!m_cookieStore)
-        m_cookieStore = CookieStore::create(this);
+        lazyInitialize(m_cookieStore, CookieStore::create(this));
     return *m_cookieStore;
 }
 

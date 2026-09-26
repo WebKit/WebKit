@@ -166,7 +166,7 @@ private:
 
     SampleMap m_samples;
     DecodeOrderSampleMap::MapType m_decodeQueue;
-    RefPtr<MediaDescription> m_description;
+    const RefPtr<MediaDescription> m_description;
     PlatformTimeRanges m_buffered;
 
     MediaTime m_lastDecodeTimestamp { MediaTime::invalidTime() };

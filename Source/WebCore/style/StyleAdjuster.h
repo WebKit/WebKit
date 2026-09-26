@@ -96,7 +96,7 @@ private:
     CheckedRef<const Document> m_document;
     const Style::ComputedStyle& m_parentStyle;
     const Style::ComputedStyle& m_parentBoxStyle;
-    RefPtr<Element> m_element;
+    const RefPtr<Element> m_element;
 };
 
 }

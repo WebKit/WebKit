@@ -148,7 +148,7 @@ private:
 
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBuffer() const final;
 
-    Ref<ShareableCVPixelBufferBytes> m_bytes;
+    const Ref<ShareableCVPixelBufferBytes> m_bytes;
 };
 
 class ShareableCVPixelBufferWithPlanarBytes : public ShareableCVPixelBuffer {

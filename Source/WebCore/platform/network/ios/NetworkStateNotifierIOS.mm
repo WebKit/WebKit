@@ -78,11 +78,11 @@ void NetworkStateNotifier::startObserving()
 {
     if (DeprecatedGlobalSettings::shouldOptOutOfNetworkStateObservation())
         return;
-    m_observer = adoptNS([[WebNetworkStateObserver alloc] initWithBlock:^ {
+    lazyInitialize(m_observer, adoptNS([[WebNetworkStateObserver alloc] initWithBlock:^{
         callOnMainThread([] {
             NetworkStateNotifier::singleton().updateStateSoon();
         });
-    }]);
+    }]));
 }
 
 } // namespace WebCore

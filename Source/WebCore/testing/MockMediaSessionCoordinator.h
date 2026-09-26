@@ -68,7 +68,7 @@ private:
     std::optional<Exception> result() const;
 
     const Ref<ScriptExecutionContext> m_context;
-    RefPtr<StringCallback> m_stateChangeListener;
+    const RefPtr<StringCallback> m_stateChangeListener;
     bool m_failCommands { false };
 };
 

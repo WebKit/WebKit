@@ -154,7 +154,7 @@ private:
     Timer m_asyncEventTimer;
     mutable Timer m_clearPositionTimer;
     bool m_closedCaptionsVisible;
-    std::unique_ptr<PAL::Clock> m_clock;
+    const std::unique_ptr<PAL::Clock> m_clock;
     Timer m_timeupdateTimer;
     MonotonicTime m_previousTimeupdateTime;
     bool m_resetCurrentTimeInNextPlay { false };

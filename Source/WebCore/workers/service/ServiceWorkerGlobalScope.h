@@ -159,7 +159,7 @@ private:
 #endif
     MonotonicTime m_lastPushEventTime;
     bool m_consoleMessageReportingEnabled { false };
-    RefPtr<CookieStore> m_cookieStore;
+    const RefPtr<CookieStore> m_cookieStore;
     bool m_hasFetchEventHandler { false };
 
     struct FetchTask {

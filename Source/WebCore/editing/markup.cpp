@@ -150,11 +150,11 @@ public:
 
     void apply()
     {
-        protect(m_element)->setAttribute(m_name, m_value);
+        m_element->setAttribute(m_name, m_value);
     }
 
 private:
-    RefPtr<Element> m_element;
+    const RefPtr<Element> m_element;
     QualifiedName m_name;
     AtomString m_value;
 };
@@ -623,7 +623,7 @@ private:
     Vector<String> m_reversedPrecedingMarkup;
     const AnnotateForInterchange m_annotate;
     RefPtr<Node> m_highestNodeToBeSerialized;
-    RefPtr<EditingStyle> m_wrappingStyle;
+    const RefPtr<EditingStyle> m_wrappingStyle;
     bool m_useComposedTree;
     bool m_ignoresUserSelectNone;
     bool m_needsPositionStyleConversion;
@@ -723,7 +723,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
     const bool parentIsTextarea = is<HTMLTextAreaElement>(text.parentElement());
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
     if (wrappingSpan) {
-        auto wrappingStyle = protect(m_wrappingStyle)->copy();
+        auto wrappingStyle = m_wrappingStyle->copy();
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
         // Make sure spans are inline style in paste side e.g. span { display: block }.
         wrappingStyle->forceDisplayInline();
@@ -883,7 +883,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         RefPtr<EditingStyle> newInlineStyle;
 
         if (shouldApplyWrappingStyle(element)) {
-            newInlineStyle = protect(m_wrappingStyle)->copy();
+            newInlineStyle = m_wrappingStyle->copy();
             newInlineStyle->removePropertiesInElementDefaultStyle(*const_cast<Element*>(&element));
             newInlineStyle->removeStyleConflictingWithStyleOfNode(*const_cast<Element*>(&element));
         } else
@@ -950,7 +950,7 @@ RefPtr<Node> StyledMarkupAccumulator::serializeNodes(const Position& start, cons
         m_highestNodeToBeSerialized = traverseNodesForSerialization(*startNode, pastEnd.get(), NodeTraversalMode::DoNotEmitString);
 
     if (m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode())
-        m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(*protect(m_highestNodeToBeSerialized->parentNode()), shouldAnnotate(), m_standardFontFamilySerializationMode);
+        lazyInitialize(m_wrappingStyle, EditingStyle::wrappingStyleForSerialization(*protect(m_highestNodeToBeSerialized->parentNode()), shouldAnnotate(), m_standardFontFamilySerializationMode));
 
     return traverseNodesForSerialization(*startNode, pastEnd.get(), NodeTraversalMode::EmitString);
 }

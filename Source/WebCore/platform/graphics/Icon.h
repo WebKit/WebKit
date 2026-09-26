@@ -88,7 +88,7 @@ public:
 private:
 #if PLATFORM(COCOA)
     Icon(CocoaImage *);
-    RetainPtr<CocoaImage> m_image;
+    const RetainPtr<CocoaImage> m_image;
 #elif PLATFORM(WIN)
     Icon(HICON);
     HICON m_hIcon;

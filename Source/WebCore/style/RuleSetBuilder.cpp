@@ -80,7 +80,7 @@ RuleSetBuilder::~RuleSetBuilder()
     addMutatingRulesToResolver();
 
     if (m_shrinkToFit == ShrinkToFit::Enable)
-        protect(m_ruleSet)->shrinkToFit();
+        m_ruleSet->shrinkToFit();
 
     m_ruleSet->m_isBuilding = false;
 }
@@ -170,7 +170,7 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
 
     case StyleRuleType::Page:
         if (m_ruleSet)
-            protect(m_ruleSet)->addPageRule(uncheckedDowncast<StyleRulePage>(rule));
+            m_ruleSet->addPageRule(uncheckedDowncast<StyleRulePage>(rule));
         return;
 
     case StyleRuleType::Media: {
@@ -327,7 +327,7 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
     for (auto& selector : selectorList) {
         RuleData ruleData(rule, selectorList.indexOfSelector(selector), selectorListIndex++, m_ruleSet->ruleCount(), m_isStartingStyle);
         m_mediaQueryCollector.addRuleIfNeeded(ruleData);
-        protect(m_ruleSet)->addRule(WTF::move(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier, m_currentScopeIdentifier, &m_featureCollectionContext);
+        m_ruleSet->addRule(WTF::move(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier, m_currentScopeIdentifier, &m_featureCollectionContext);
     }
 }
 
@@ -603,7 +603,7 @@ void RuleSetBuilder::updateDynamicMediaQueries()
         m_ruleSet->m_dynamicMediaQueryRules.appendVector(WTF::move(m_mediaQueryCollector.dynamicMediaQueryRules));
 
         // Set the initial values.
-        protect(m_ruleSet)->evaluateDynamicMediaQueryRules(m_mediaQueryCollector.evaluator, firstNewIndex);
+        m_ruleSet->evaluateDynamicMediaQueryRules(m_mediaQueryCollector.evaluator, firstNewIndex);
     }
 }
 

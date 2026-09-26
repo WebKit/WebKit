@@ -821,7 +821,7 @@ void RenderLayer::updateNormalFlowList()
         // Ignore non-overflow layers and reflections.
         if (child->isNormalFlowOnly() && !isReflectionLayer(*child)) {
             if (!m_normalFlowList)
-                m_normalFlowList = makeUnique<Vector<RenderLayer*>>();
+                lazyInitialize(m_normalFlowList, makeUnique<Vector<RenderLayer*>>());
             m_normalFlowList->append(child);
             child->setWasIncludedInZOrderTree();
         }

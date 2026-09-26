@@ -49,7 +49,7 @@ private:
     void allowURL(const URL&, CompletionHandler<void(bool)>&&) final;
 
     HashSet<URL> m_blockedURLs;
-    RetainPtr<NSData> m_replacementData;
+    const RetainPtr<NSData> m_replacementData;
 };
 
 } // namespace WebCore

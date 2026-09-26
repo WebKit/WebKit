@@ -94,7 +94,7 @@ void Page::platformInitialize()
 void Page::addSchedulePair(Ref<SchedulePair>&& pair)
 {
     if (!m_scheduledRunLoopPairs)
-        m_scheduledRunLoopPairs = makeUnique<SchedulePairHashSet>();
+        lazyInitialize(m_scheduledRunLoopPairs, makeUnique<SchedulePairHashSet>());
     m_scheduledRunLoopPairs->add(pair.get());
 
     for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {

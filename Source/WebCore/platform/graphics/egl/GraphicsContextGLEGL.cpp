@@ -350,7 +350,7 @@ bool GraphicsContextGLEGL::platformInitialize()
 #if USE(COORDINATED_GRAPHICS)
     m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateCoordinated::create();
 #else
-    m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
+    lazyInitialize(m_texmapLayer, makeUnique<TextureMapperGCGLPlatformLayer>(*this));
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
 #endif
 

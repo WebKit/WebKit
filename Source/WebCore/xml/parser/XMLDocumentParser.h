@@ -197,7 +197,7 @@ private:
     bool m_deferredEntityDeclarationsFlushed { false };
     HashMap<AtomString, uint64_t> m_entityTransitiveReferenceCounts;
 
-    std::unique_ptr<XMLErrors> m_xmlErrors;
+    const std::unique_ptr<XMLErrors> m_xmlErrors;
 
     RefPtr<PendingScript> m_pendingScript;
     RefPtr<PendingScript> m_scriptWaitingForStylesheets;

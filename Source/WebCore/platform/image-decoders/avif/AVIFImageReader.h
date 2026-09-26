@@ -45,7 +45,7 @@ public:
     size_t imageCount() const;
 
 private:
-    RefPtr<WebCore::AVIFImageDecoder> m_decoder;
+    const RefPtr<WebCore::AVIFImageDecoder> m_decoder;
     AVIFUniquePtr<avifDecoder> m_avifDecoder;
 
     bool m_dataParsed { false };

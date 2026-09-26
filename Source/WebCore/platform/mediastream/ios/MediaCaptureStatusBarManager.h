@@ -56,7 +56,7 @@ public:
 private:
     MediaCaptureStatusBarManager(TapCallback&&, ErrorCallback&&);
 
-    RetainPtr<WebCoreMediaCaptureStatusBarHandler> m_handler;
+    const RetainPtr<WebCoreMediaCaptureStatusBarHandler> m_handler;
     TapCallback m_tapCallback;
     ErrorCallback m_errorCallback;
 };

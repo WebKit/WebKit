@@ -91,7 +91,7 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate)
         }
     }
 
-    m_fftFrame = makeUnique<FFTFrame>(fftSize);
+    lazyInitialize(m_fftFrame, makeUnique<FFTFrame>(fftSize));
     m_fftFrame->doPaddedFFT(impulseResponse.first(truncatedResponseLength));
 }
 

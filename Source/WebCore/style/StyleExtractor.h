@@ -114,7 +114,7 @@ private:
     // The ComputedStyle we should use for resolving custom properties.
     const Style::ComputedStyle* computeStyleForCustomProperty(std::unique_ptr<Style::ComputedStyle>&) const;
 
-    RefPtr<Element> m_element;
+    const RefPtr<Element> m_element;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
     bool m_allowVisitedStyle;
 };

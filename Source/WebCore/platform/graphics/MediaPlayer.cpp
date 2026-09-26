@@ -1735,7 +1735,7 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader() const
 Ref<PlatformMediaResourceLoader> MediaPlayer::mediaResourceLoader()
 {
     if (!m_mediaResourceLoader)
-        m_mediaResourceLoader = protect(client())->mediaPlayerCreateResourceLoader();
+        lazyInitialize(m_mediaResourceLoader, protect(client())->mediaPlayerCreateResourceLoader());
 
     return *m_mediaResourceLoader;
 }

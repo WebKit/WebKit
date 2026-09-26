@@ -216,12 +216,12 @@ Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<Accelerat
 }
 
 AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect& borderBoxRect, const OptionSet<AcceleratedEffectProperty>& disallowedProperties)
-    : m_timelineIdentifier(effect.animation()->timeline()->acceleratedTimelineIdentifier())
+    : m_timeline(Ref { *effect.animation()->timeline() }->acceleratedRepresentation())
+    , m_timelineIdentifier(effect.animation()->timeline()->acceleratedTimelineIdentifier())
 {
     ASSERT(effect.animation());
     ASSERT(effect.animation()->timeline());
     ASSERT(effect.animation()->timeline()->canBeAccelerated());
-    m_timeline = Ref { *effect.animation()->timeline() }->acceleratedRepresentation();
 
     m_timing = effect.timing();
     m_compositeOperation = effect.composite();
@@ -237,7 +237,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         m_startTime = animation->startTime();
         if (RefPtr styleAnimation = dynamicDowncast<StyleOriginatedAnimation>(*animation)) {
             if (RefPtr defaultKeyframeTimingFunction = styleAnimation->backingAnimationTimingFunction())
-                m_defaultKeyframeTimingFunction = WTF::move(defaultKeyframeTimingFunction);
+                lazyInitialize(m_defaultKeyframeTimingFunction, defaultKeyframeTimingFunction.releaseNonNull());
         }
     }
 
@@ -306,18 +306,17 @@ AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, TimelineIdent
 }
 
 AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<AcceleratedEffectProperty>& propertyFilter)
-    : m_timelineIdentifier(source.m_timelineIdentifier)
+    : m_timeline(source.m_timeline)
+    , m_timelineIdentifier(source.m_timelineIdentifier)
+    , m_defaultKeyframeTimingFunction(source.m_defaultKeyframeTimingFunction.copyRef())
 {
     m_timing = source.m_timing;
-    m_timeline = source.m_timeline;
     m_animationType = source.m_animationType;
     m_compositeOperation = source.m_compositeOperation;
     m_paused = source.m_paused;
     m_playbackRate = source.m_playbackRate;
     m_startTime = source.m_startTime;
     m_holdTime = source.m_holdTime;
-
-    m_defaultKeyframeTimingFunction = source.m_defaultKeyframeTimingFunction.copyRef();
 
     for (auto& srcKeyframe : source.m_keyframes) {
         auto& animatedProperties = srcKeyframe.animatedProperties();

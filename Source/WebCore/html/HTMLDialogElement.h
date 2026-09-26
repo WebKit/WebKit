@@ -110,7 +110,7 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
     RefPtr<CloseWatcher> m_closeWatcher;
 
-    RefPtr<ToggleEventTask> m_toggleEventTask;
+    const RefPtr<ToggleEventTask> m_toggleEventTask;
 };
 
 } // namespace WebCore

@@ -5555,7 +5555,7 @@ std::expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEve
     typedef HashSet<RefPtr<EventTarget>> EventTargetSet;
     struct Touches {
         // The touches corresponding to the particular change state this struct instance represents.
-        RefPtr<TouchList> m_touches;
+        const RefPtr<TouchList> m_touches;
         // Set of targets involved in m_touches.
         EventTargetSet m_targets;
     };
@@ -5727,7 +5727,7 @@ std::expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEve
         if (pointState != PlatformTouchPoint::TouchStationary) {
             ASSERT(pointState < PlatformTouchPoint::TouchStateEnd);
             if (!changedTouches[pointState].m_touches)
-                changedTouches[pointState].m_touches = TouchList::create();
+                lazyInitialize(changedTouches[pointState].m_touches, TouchList::create());
             changedTouches[pointState].m_touches->append(WTF::move(touch));
             changedTouches[pointState].m_targets.add(touchTarget);
         }

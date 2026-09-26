@@ -166,11 +166,11 @@ private:
 
     bool m_useCurrentView { false };
     const Ref<SMILTimeContainer> m_timeContainer;
-    RefPtr<SVGViewSpec> m_viewSpec;
+    const RefPtr<SVGViewSpec> m_viewSpec;
     RefPtr<SVGViewElement> m_currentViewElement;
     String m_currentViewFragmentIdentifier;
 
-    Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
+    const Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
 
     mutable std::optional<FloatSize> m_cachedViewportSizeExcludingZoom;
     mutable std::optional<FloatSize> m_cachedViewportSizeForLengthResolution;

@@ -168,8 +168,8 @@ namespace WebCore {
 ValidationBubble::ValidationBubble(UIView *view, String&& message, const Settings&)
     : m_view(view)
     , m_message(WTF::move(message))
+    , m_popoverController(adoptNS([allocWebValidationBubbleViewControllerInstance() init]))
 {
-    m_popoverController = adoptNS([allocWebValidationBubbleViewControllerInstance() init]);
     [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 

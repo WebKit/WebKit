@@ -306,7 +306,7 @@ FormControlState FormController::takeStateForFormElement(const ValidatedFormList
     if (m_savedFormStateMap.isEmpty())
         return { };
     if (!m_formKeyGenerator)
-        m_formKeyGenerator = makeUnique<FormKeyGenerator>();
+        lazyInitialize(m_formKeyGenerator, makeUnique<FormKeyGenerator>());
     auto iterator = m_savedFormStateMap.find(m_formKeyGenerator->formKey(control));
     if (iterator == m_savedFormStateMap.end())
         return { };

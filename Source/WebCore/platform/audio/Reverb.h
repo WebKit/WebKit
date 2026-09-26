@@ -64,7 +64,7 @@ private:
     Vector<std::unique_ptr<ReverbConvolver>> m_convolvers;
 
     // For "True" stereo processing
-    RefPtr<AudioBus> m_tempBuffer;
+    const RefPtr<AudioBus> m_tempBuffer;
 };
 
 } // namespace WebCore

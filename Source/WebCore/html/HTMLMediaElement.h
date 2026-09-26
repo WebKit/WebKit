@@ -1423,7 +1423,7 @@ private:
     Vector<Ref<TextTrack>> m_textTracksWhenResourceSelectionBegan;
 
     struct CueData;
-    std::unique_ptr<CueData> m_cueData;
+    const std::unique_ptr<CueData> m_cueData;
 
     RefPtr<TextTrack> m_findCaptionTrack;
     std::optional<TextTrack::Mode> m_findCaptionTrackPreviousMode;

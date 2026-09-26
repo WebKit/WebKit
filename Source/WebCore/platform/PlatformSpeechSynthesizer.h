@@ -106,11 +106,11 @@ private:
     WeakPtr<PlatformSpeechSynthesizerClient> m_speechSynthesizerClient;
 
 #if PLATFORM(COCOA)
-    RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
+    const RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
 #elif USE(FLITE) && USE(GSTREAMER)
-    std::unique_ptr<GstSpeechSynthesisWrapper> m_platformSpeechWrapper;
+    const std::unique_ptr<GstSpeechSynthesisWrapper> m_platformSpeechWrapper;
 #elif USE(SPIEL)
-    std::unique_ptr<SpielSpeechWrapper> m_platformSpeechWrapper;
+    const std::unique_ptr<SpielSpeechWrapper> m_platformSpeechWrapper;
 #endif
 };
 
