@@ -165,6 +165,89 @@ unsigned getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream& str
     return builder.pathSegmentIndex();
 }
 
+namespace {
+
+// Records the running length at the end of every source segment. The parser calls
+// incrementPathSegmentCount() once per source command, after that command's
+// callbacks and before the next one's, so one arc contributes one entry even
+// though it decomposes into several cubics. That is what makes these boundaries
+// line up with the segments getPathData() returns.
+//
+// PathTraversalState only understands the normalized command set, so this runs in
+// NormalizedParsing, exactly as the legacy segment-index query does.
+class SVGPathSegmentEndLengthBuilder final : public SVGPathConsumer {
+public:
+    explicit SVGPathSegmentEndLengthBuilder(PathTraversalState& state)
+        : m_traversalState(state)
+    {
+    }
+
+    // One entry per segment except the last, whose end is the total length.
+    const Vector<float>& segmentEndLengths() const LIFETIME_BOUND { return m_segmentEndLengths; }
+
+private:
+    void incrementPathSegmentCount() final { m_segmentEndLengths.append(m_traversalState.totalLength()); }
+    bool continueConsuming() final { return true; }
+
+    void moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode) final
+    {
+        m_traversalState.processPathElement(PathElement::Type::MoveToPoint, singleElementSpan(targetPoint));
+    }
+
+    void lineTo(const FloatPoint& targetPoint, PathCoordinateMode) final
+    {
+        m_traversalState.processPathElement(PathElement::Type::AddLineToPoint, singleElementSpan(targetPoint));
+    }
+
+    void curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode) final
+    {
+        std::array points { point1, point2, targetPoint };
+        m_traversalState.processPathElement(PathElement::Type::AddCurveToPoint, std::span<FloatPoint> { points });
+    }
+
+    void closePath() final
+    {
+        m_traversalState.processPathElement(PathElement::Type::CloseSubpath, { });
+    }
+
+    // Not reachable in NormalizedParsing.
+    void lineToHorizontal(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void lineToVertical(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+
+    PathTraversalState& m_traversalState;
+    Vector<float> m_segmentEndLengths;
+};
+
+} // namespace
+
+std::optional<unsigned> getSVGPathSegmentAtLengthFromSVGPathByteStream(const SVGPathByteStream& stream, float distance)
+{
+    if (stream.isEmpty())
+        return std::nullopt;
+
+    PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
+    SVGPathSegmentEndLengthBuilder builder(traversalState);
+
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser::parse(source, builder);
+
+    // The first segment whose end lies strictly beyond the distance. Strictly, so a
+    // distance sitting exactly on a boundary belongs to the later segment.
+    auto& segmentEndLengths = builder.segmentEndLengths();
+    for (unsigned index = 0; index < segmentEndLengths.size(); ++index) {
+        if (segmentEndLengths[index] > distance)
+            return index;
+    }
+
+    // Past every recorded boundary, so it is in the last segment. There is always
+    // one more segment than there are recorded ends.
+    return segmentEndLengths.size();
+}
+
 float getTotalLengthOfSVGPathByteStream(const SVGPathByteStream& stream)
 {
     if (stream.isEmpty())

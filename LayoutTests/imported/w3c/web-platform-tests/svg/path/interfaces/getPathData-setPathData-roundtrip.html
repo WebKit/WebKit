@@ -1,0 +1,45 @@
+<!doctype html>
+<title>setPathData(getPathData(path)) leaves the path unchanged</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathData">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// Compared as segment lists rather than as d strings, so a difference in
+// serialization formatting cannot be mistaken for a round-tripping failure.
+const CASES = [
+  ["moveto and lineto, absolute",  "M 0 0 L 10 10"],
+  ["moveto and lineto, relative",  "m 5 5 l 3 4"],
+  ["horizontal and vertical",      "M 0 0 H 50 V 50 h -50 v -50"],
+  ["cubic and smooth cubic",       "M 0 0 C 1 2 3 4 5 6 S 7 8 9 10"],
+  ["cubic and smooth, relative",   "m 0 0 c 1 2 3 4 5 6 s 7 8 9 10"],
+  ["quadratic and smooth",         "M 0 0 Q 1 2 3 4 T 5 6"],
+  ["quadratic and smooth, rel",    "m 0 0 q 1 2 3 4 t 5 6"],
+  ["arc, absolute",                "M 0 0 A 10 12 30 1 0 20 20"],
+  ["arc, relative",                "m 0 0 a 10 12 30 0 1 20 20"],
+  ["closepath",                    "M 0 0 L 10 0 L 10 10 Z"],
+  ["multiple subpaths",            "M 0 0 L 5 5 Z M 10 10 L 20 20 Z"],
+  ["implicit repeated lineto",     "M 0 0 L 1 1 2 2 3 3"],
+  ["implicit lineto after moveto", "M 0 0 1 1 2 2"]
+];
+
+for (const [label, d] of CASES) {
+  test(() => {
+    const path = createPath(d);
+    const before = path.getPathData();
+    path.setPathData(before);
+    assert_path_data_equals(path.getPathData(), before);
+  }, `round trip: ${label}`);
+}
+
+test(() => {
+  // Twice, in case the first write canonicalises something the second would not.
+  const path = createPath("M 0 0 L 1 1 2 2 H 9 v 3 z");
+  path.setPathData(path.getPathData());
+  const once = path.getAttribute("d");
+  path.setPathData(path.getPathData());
+  assert_equals(path.getAttribute("d"), once, "the second write is a no-op");
+}, "round trip is idempotent");
+</script>

@@ -1757,7 +1757,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGMetadataElement.idl \
     $(WebCore)/svg/SVGNumber.idl \
     $(WebCore)/svg/SVGNumberList.idl \
+    $(WebCore)/svg/SVGPathData.idl \
+    $(WebCore)/svg/SVGPathDataSettings.idl \
     $(WebCore)/svg/SVGPathElement.idl \
+    $(WebCore)/svg/SVGPathSegment.idl \
     $(WebCore)/svg/SVGPatternElement.idl \
     $(WebCore)/svg/SVGPoint.idl \
     $(WebCore)/svg/SVGPointList.idl \
