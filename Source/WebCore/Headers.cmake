@@ -2227,6 +2227,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/writing-tools/WritingToolsTypes.h
 
     platform/AbortableTaskQueue.h
+    platform/AudioDecoder.h
     platform/AudioEncoderActiveConfiguration.h
     platform/AudioSampleFormat.h
     platform/BoxExtents.h

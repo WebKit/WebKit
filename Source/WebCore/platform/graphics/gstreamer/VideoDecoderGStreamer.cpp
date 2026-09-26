@@ -71,7 +71,7 @@ public:
         GST_DEBUG("Disposing un-configured video decoder");
     }
 
-    Ref<VideoDecoder::DecodePromise> decode(Ref<SharedBuffer>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    Ref<VideoDecoder::DecodePromise> decode(VideoDecoder::EncodedFrame&&);
     void flush();
     void close() { m_isClosed = true; }
 
@@ -153,8 +153,8 @@ GStreamerVideoDecoder::~GStreamerVideoDecoder()
 
 Ref<VideoDecoder::DecodePromise> GStreamerVideoDecoder::decode(EncodedFrame&& frame)
 {
-    return invokeAsync(gstDecoderWorkQueue(), [data = WTF::move(frame.data), isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder]() mutable {
-        return decoder->decode(WTF::move(data), isKeyFrame, timestamp, duration);
+    return invokeAsync(gstDecoderWorkQueue(), [frame = WTF::move(frame), decoder = m_internalDecoder] mutable {
+        return decoder->decode(WTF::move(frame));
     });
 }
 
@@ -296,21 +296,21 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     }));
 }
 
-Ref<VideoDecoder::DecodePromise> GStreamerInternalVideoDecoder::decode(Ref<SharedBuffer>&& frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
+Ref<VideoDecoder::DecodePromise> GStreamerInternalVideoDecoder::decode(VideoDecoder::EncodedFrame&& frame)
 {
-    GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
-    auto buffer = wrapSharedBuffer(WTF::move(frameData));
+    GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", frame.isKeyFrame ? " key" : "");
+    auto buffer = wrapSharedBuffer(WTF::move(frame.data));
     if (!buffer)
         return VideoDecoder::DecodePromise::createAndReject("Empty frame"_s);
 
-    m_timestamp = timestamp;
-    m_duration = duration;
+    m_timestamp = frame.timestamp;
+    m_duration = frame.duration;
 
-    GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = timestamp;
-    if (duration)
-        GST_BUFFER_DURATION(buffer.get()) = *duration;
+    GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = frame.timestamp;
+    if (frame.duration)
+        GST_BUFFER_DURATION(buffer.get()) = *frame.duration;
 
-    if (!isKeyFrame)
+    if (!frame.isKeyFrame)
         GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DELTA_UNIT);
 
     // FIXME: Maybe configure segment here, could be useful for reverse playback.

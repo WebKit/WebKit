@@ -76,7 +76,7 @@ public:
 
     using DecodePromise = AudioDecoder::DecodePromise;
 
-    Ref<DecodePromise> decode(Ref<SharedBuffer>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    Ref<DecodePromise> decode(AudioDecoder::EncodedData&&);
     Ref<GenericPromise> flush();
     void close();
 
@@ -191,8 +191,8 @@ std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMF
 
 Ref<AudioDecoder::DecodePromise> AudioDecoderCocoa::decode(EncodedData&& data)
 {
-    return invokeAsync(queueSingleton(), [data = WTF::move(data.data), isKeyFrame = data.isKeyFrame, timestamp = data.timestamp, duration = data.duration, decoder = m_internalDecoder]() mutable {
-        return decoder->decode(WTF::move(data), isKeyFrame, timestamp, duration);
+    return invokeAsync(queueSingleton(), [data = WTF::move(data), decoder = m_internalDecoder] mutable {
+        return decoder->decode(WTF::move(data));
     });
 }
 
@@ -330,15 +330,16 @@ Ref<SharedBuffer> InternalAudioDecoderCocoa::stripADTSHeader(SharedBuffer& buffe
     return buffer.getContiguousData(kADTSHeaderSize, buffer.size() - kADTSHeaderSize);
 }
 
-Ref<AudioDecoder::DecodePromise> InternalAudioDecoderCocoa::decode(Ref<SharedBuffer>&& frameData, [[maybe_unused]] bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
+Ref<AudioDecoder::DecodePromise> InternalAudioDecoderCocoa::decode(AudioDecoder::EncodedData&& data)
 {
     assertIsCurrent(queueSingleton());
 
-    LOG(Media, "Decoding%s frame", isKeyFrame ? " key" : "");
+    LOG(Media, "Decoding%s frame", data.isKeyFrame ? " key" : "");
 
     if (m_isClosed)
         return DecodePromise::createAndReject("Decoder is closed"_s);
 
+    Ref frameData = WTF::move(data.data);
     if (mIsAAC)
         frameData = stripADTSHeader(frameData);
 
@@ -347,9 +348,9 @@ Ref<AudioDecoder::DecodePromise> InternalAudioDecoderCocoa::decode(Ref<SharedBuf
         return DecodePromise::createAndReject("Couldn't create CMBlockBuffer"_s);
 
     CMSampleTimingInfo packetTiming = {
-        .duration = PAL::CMTimeMake(duration.value_or(0), 1000000), // CoreMedia does not deal with a CMSampleBuffer with a duration set to either invalid or indefinite. So use 0 instead if no duration has been provided.
-        .presentationTimeStamp = PAL::CMTimeMake(timestamp, 1000000),
-        .decodeTimeStamp = PAL::CMTimeMake(timestamp, 1000000)
+        .duration = PAL::CMTimeMake(data.duration.value_or(0), 1000000), // CoreMedia does not deal with a CMSampleBuffer with a duration set to either invalid or indefinite. So use 0 instead if no duration has been provided.
+        .presentationTimeStamp = PAL::CMTimeMake(data.timestamp, 1000000),
+        .decodeTimeStamp = PAL::CMTimeMake(data.timestamp, 1000000)
     };
     size_t packetSize = frameData->size();
 

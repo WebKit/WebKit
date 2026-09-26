@@ -30,6 +30,7 @@
 
 #include "LibWebRTCCodecs.h"
 #include "WebProcess.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/TZoneMallocInlines.h>
 
