@@ -5550,6 +5550,7 @@ header: <WebCore/InspectorFrontendClient.h>
 [Nested] enum class WebCore::InspectorFrontendClient::SaveMode : uint8_t {
     SingleFile,
     FileVariants,
+    MultipleFiles,
 };
 
 header: <WebCore/InspectorFrontendClient.h>

@@ -338,6 +338,8 @@ localizedStrings["Canvases"] = "Canvases";
 localizedStrings["Capitals @ Font Details Sidebar Property"] = "Capitals";
 /* Capture screenshot of the selected DOM node */
 localizedStrings["Capture Screenshot"] = "Capture Screenshot";
+/* Capture screenshots of the selected DOM nodes */
+localizedStrings["Capture Screenshots"] = "Capture Screenshots";
 localizedStrings["Capturing"] = "Capturing";
 localizedStrings["Case Sensitive"] = "Case Sensitive";
 /* Context menu label for whether searches should be case sensitive. */
@@ -1062,11 +1064,15 @@ localizedStrings["Log Animation"] = "Log Animation";
 localizedStrings["Log Canvas Context"] = "Log Canvas Context";
 /* Log (print) DOM element to Console */
 localizedStrings["Log Element"] = "Log Element";
+/* Log (print) multiple DOM elements to Console */
+localizedStrings["Log Elements"] = "Log Elements";
 localizedStrings["Log Frame Text"] = "Log Frame Text";
 localizedStrings["Log Frame Value"] = "Log Frame Value";
 localizedStrings["Log Message"] = "Log Message";
 /* Log (print) DOM node to Console */
 localizedStrings["Log Node"] = "Log Node";
+/* Log (print) multiple DOM nodes to Console */
+localizedStrings["Log Nodes"] = "Log Nodes";
 localizedStrings["Log Symbol"] = "Log Symbol";
 localizedStrings["Log Value"] = "Log Value";
 localizedStrings["Log WebSocket"] = "Log WebSocket";
