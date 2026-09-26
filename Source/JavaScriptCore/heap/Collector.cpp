@@ -25,6 +25,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
 #include "CollectorInlines.h"
+#include "HeapAnalyzer.h"
 #include "HeapHelperPool.h"
 #include "HeapInlines.h"
 #include "HeapVerifier.h"
@@ -114,7 +115,7 @@ Collector::Collector(Heap& heap)
     , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
     , m_raceMarkStack(makeUnique<MarkStackArray>())
-    , m_collectorSlotVisitor(makeUnique<SlotVisitor>(heap, *this, "C"_s))
+    , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"_s))
     , m_helperClient(&heapHelperPool())
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
@@ -290,7 +291,8 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
     }
 
     ASSERT(m_heap.m_collectionScope);
-    bool isFullGC = m_heap.m_collectionScope.value() == CollectionScope::Full;
+    CollectionScope scope = m_heap.m_collectionScope.value();
+    bool isFullGC = scope == CollectionScope::Full;
     if (Options::useGCSignpost()) [[unlikely]] {
         StringPrintStream stream;
         stream.print("GC:(", RawPointer(&m_heap), "),mode:(", (isFullGC ? "Full" : "Eden"), "),version:(", m_heap.m_gcVersion, "),conn:(", gcConductorShortName(conn), "),capacity(", m_heap.capacity() / 1024, "kb)");
@@ -311,9 +313,11 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
 
     m_heap.beginMarking();
 
+    HeapVersion markingVersion = m_heap.objectSpace().markingVersion();
+    HeapAnalyzer* heapAnalyzer = m_heap.vm().activeHeapAnalyzer();
     forEachSlotVisitor(
         [&] (SlotVisitor& visitor) {
-            visitor.didStartMarking();
+            visitor.didStartMarking(scope, markingVersion, heapAnalyzer);
         });
 
     m_parallelMarkersShouldExit = false;

@@ -132,7 +132,7 @@ template<typename ContainerType, typename Visitor>
 void WeakBlock::specializedVisit(ContainerType& container, Visitor& visitor)
 {
     size_t count = weakImplCount();
-    HeapAnalyzer* heapAnalyzer = visitor.vm().activeHeapAnalyzer();
+    HeapAnalyzer* heapAnalyzer = visitor.heapAnalyzer();
     for (size_t i = 0; i < count; ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() != WeakImpl::Live)
