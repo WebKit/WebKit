@@ -1,0 +1,75 @@
+Tests that a source-mapped inline script resolves debugger/display locations back to the correct original position.
+
+
+== Running test suite: SourceCodeLocation.InlineScript.SourceMap
+-- Running test case: SourceCodeLocation.InlineScript.SourceMap.FirstLineColumnOffset
+
+Generated (0, 0) in inline-source-map-a.js [document (4, 8)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-a-original.js" (got "inline-a-original.js").
+PASS: Mapped line should be 0.
+PASS: Mapped column should be 0.
+
+Generated (0, 13) in inline-source-map-a.js [document (4, 21)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-a-original.js" (got "inline-a-original.js").
+PASS: Mapped line should be 1.
+PASS: Mapped column should be 4.
+
+Generated (0, 22) in inline-source-map-a.js [document (4, 30)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-a-original.js" (got "inline-a-original.js").
+PASS: Mapped line should be 2.
+PASS: Mapped column should be 4.
+
+Generated (0, 26) in inline-source-map-a.js [document (4, 34)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-a-original.js" (got "inline-a-original.js").
+PASS: Mapped line should be 4.
+PASS: Mapped column should be 0.
+
+-- Running test case: SourceCodeLocation.InlineScript.SourceMap.LaterGeneratedLine
+
+Generated (0, 13) in inline-source-map-b.js [document (8, 21)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-b-original.js" (got "inline-b-original.js").
+PASS: Mapped line should be 1.
+PASS: Mapped column should be 4.
+
+Generated (1, 0) in inline-source-map-b.js [document (9, 0)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-b-original.js" (got "inline-b-original.js").
+PASS: Mapped line should be 2.
+PASS: Mapped column should be 4.
+
+Generated (1, 4) in inline-source-map-b.js [document (9, 4)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-b-original.js" (got "inline-b-original.js").
+PASS: Mapped line should be 4.
+PASS: Mapped column should be 0.
+
+-- Running test case: SourceCodeLocation.InlineScript.SourceMap.MultipleInlineScripts
+PASS: Document resource should have both inline source maps.
+
+Generated (0, 13) in inline-source-map-a.js [document (4, 21)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-a-original.js" (got "inline-a-original.js").
+PASS: Mapped line should be 1.
+PASS: Mapped column should be 4.
+
+Generated (0, 13) in inline-source-map-b.js [document (8, 21)]:
+PASS: Should have a mapped location.
+PASS: Should map to "inline-b-original.js" (got "inline-b-original.js").
+PASS: Mapped line should be 1.
+PASS: Mapped column should be 4.
+
+-- Running test case: SourceCodeLocation.InlineScript.SourceMap.PauseInFirstInlineScript
+PASS: Paused location should display "inline-a-original.js" (got "inline-a-original.js").
+PASS: Paused location should display the original `debugger;` line (1).
+PAUSE DISPLAY: inline-a-original.js:1:4
+
+-- Running test case: SourceCodeLocation.InlineScript.SourceMap.PauseInSecondInlineScript
+PASS: Paused location should display "inline-b-original.js" (got "inline-b-original.js").
+PASS: Paused location should display the original `debugger;` line (1).
+PAUSE DISPLAY: inline-b-original.js:1:4
+
