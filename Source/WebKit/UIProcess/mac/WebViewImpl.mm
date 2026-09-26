@@ -5855,6 +5855,11 @@ void WebViewImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent
         return;
     }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (event.type() == WebEventType::GestureChange && event.kind() == NativeWebGestureEvent::Kind::Magnification)
+        [appKitGestureController() transformGestureWasNotHandledByContent];
+#endif
+
     if (event.kind() != NativeWebGestureEvent::Kind::Magnification || !event.allowsNativeZoom())
         return;
 
