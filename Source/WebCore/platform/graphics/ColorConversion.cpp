@@ -43,14 +43,12 @@ LCHLike convertToPolarForm(const LabLike& color)
     // https://drafts.csswg.org/css-color/#lab-to-lch
     auto [lightness, a, b, alpha] = color.resolved();
 
-    constexpr float epsilon = LabLike::Model::achromaticEpsilon;
+    float chroma = std::hypot(a, b);
 
-    bool achromatic = std::abs(a) < epsilon && std::abs(b) < epsilon;
-
-    if (achromatic)
+    constexpr float epsilon = LCHLike::Model::powerlessHueEpsilon;
+    if (chroma <= epsilon)
         return { lightness, 0, std::numeric_limits<float>::quiet_NaN(), alpha };
 
-    float chroma = std::hypot(a, b);
     float hue = rad2deg(atan2(b, a));
 
     return { lightness, chroma, hue >= 0.0f ? hue : hue + 360.0f, alpha };
@@ -97,7 +95,7 @@ HSLA<float> ColorConversion<HSLA<float>, ExtendedSRGBA<float>>::convert(const Ex
             hue = ((green - blue) / d) + (green < blue ? 6.0f : 0.0f);
         else if (max == green)
             hue = ((blue - red) / d) + 2.0f;
-        else if (max == blue)
+        else
             hue = ((red - green) / d) + 4.0f;
 
         hue *= 60.0f;
@@ -107,7 +105,10 @@ HSLA<float> ColorConversion<HSLA<float>, ExtendedSRGBA<float>>::convert(const Ex
             saturation = std::abs(saturation);
         }
 
-        if (hue >= 360.0f)
+        constexpr float epsilon = HSLA<float>::Model::powerlessHueEpsilon / 100.0f;
+        if (saturation <= epsilon)
+            hue = std::numeric_limits<float>::quiet_NaN();
+        else if (hue >= 360.0f)
             hue -= 360.0f;
     } else
         saturation = 0.0f;
@@ -146,15 +147,21 @@ HWBA<float> ColorConversion<HWBA<float>, ExtendedSRGBA<float>>::convert(const Ex
     auto [min, max] = std::minmax({ red, green, blue });
     auto d = max - min;
 
-    float hue = std::numeric_limits<float>::quiet_NaN();
+    auto whiteness = min;
+    auto blackness = (1.0f - max);
 
-    // Compute `hue` as done in conversion to HSLA, but don't adjust for negative saturation, in order to respect out-of-gamut colors.
-    if (d != 0.0f) {
+    constexpr float epsilon = HWBA<float>::Model::powerlessHueEpsilon / 100.0f;
+
+    float hue;
+    if (d == 0.0f || whiteness + blackness >= 1.0 - epsilon)
+        hue = std::numeric_limits<float>::quiet_NaN();
+    else {
+        // Compute `hue` as done in conversion to HSLA, but don't adjust for negative saturation, in order to respect out-of-gamut colors.
         if (max == red)
             hue = ((green - blue) / d) + (green < blue ? 6.0f : 0.0f);
         else if (max == green)
             hue = ((blue - red) / d) + 2.0f;
-        else if (max == blue)
+        else
             hue = ((red - green) / d) + 4.0f;
 
         hue *= 60.0f;
@@ -163,10 +170,7 @@ HWBA<float> ColorConversion<HWBA<float>, ExtendedSRGBA<float>>::convert(const Ex
             hue -= 360.0f;
     }
 
-    auto whiteness = min * 100.0f;
-    auto blackness = (1.0f - max) * 100.0f;
-    
-    return { hue, whiteness, blackness, alpha };
+    return { hue, whiteness * 100.0f, blackness * 100.0f, alpha };
 }
 
 ExtendedSRGBA<float> ColorConversion<ExtendedSRGBA<float>, HWBA<float>>::convert(const HWBA<float>& color)

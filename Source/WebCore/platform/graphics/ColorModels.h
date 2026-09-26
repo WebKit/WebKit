@@ -180,6 +180,7 @@ template<> struct HSLModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
+    static constexpr auto powerlessHueEpsilon = 0.001;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, HSLModel<typename ColorType::ComponentType>> : ColorType {
@@ -206,6 +207,7 @@ template<> struct HWBModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
+    static constexpr auto powerlessHueEpsilon = 0.001;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, HWBModel<typename ColorType::ComponentType>> : ColorType {
@@ -232,8 +234,6 @@ template<> struct LabModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
-    // `achromaticEpsilon` is based on the value from color-js and derived from "reference extent" / 100000.
-    static constexpr auto achromaticEpsilon = 250.0 / 100000.0;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, LabModel<typename ColorType::ComponentType>> : ColorType {
@@ -260,6 +260,7 @@ template<> struct LCHModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
+    static constexpr auto powerlessHueEpsilon = 0.0015;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, LCHModel<typename ColorType::ComponentType>> : ColorType {
@@ -286,8 +287,6 @@ template<> struct OKLabModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
-    // `achromaticEpsilon` is based on the value from color-js and derived from "reference extent" / 100000.
-    static constexpr auto achromaticEpsilon = 0.8 / 100000.0;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, OKLabModel<typename ColorType::ComponentType>> : ColorType {
@@ -314,6 +313,7 @@ template<> struct OKLCHModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
+    static constexpr auto powerlessHueEpsilon = 0.000004;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, OKLCHModel<typename ColorType::ComponentType>> : ColorType {
