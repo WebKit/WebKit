@@ -41,18 +41,18 @@ namespace {
 
 void* allocate42(unsigned sizeIndex, const void* key)
 {
-    return iso_try_allocate_dynamic_primitive(key, 42 * (sizeIndex + 1), pas_non_compact_allocation_mode);
+    return iso_try_allocate_dynamic_primitive(key, 42 * (sizeIndex + 1));
 }
 
 void* allocate42WithAlignment(unsigned sizeIndex, const void* key)
 {
-    return iso_try_allocate_dynamic_primitive_with_alignment(key, 42 * (sizeIndex + 1), 32, pas_non_compact_allocation_mode);
+    return iso_try_allocate_dynamic_primitive_with_alignment(key, 42 * (sizeIndex + 1), 32);
 }
 
 void* allocate42Zeroed(unsigned sizeIndex, const void* key)
 {
     char* result = static_cast<char*>(
-        iso_try_allocate_dynamic_primitive_zeroed(key, 42 * (sizeIndex + 1), pas_non_compact_allocation_mode));
+        iso_try_allocate_dynamic_primitive_zeroed(key, 42 * (sizeIndex + 1)));
     for (unsigned i = 42; i--;)
         CHECK(!result[i]);
     return result;
@@ -60,10 +60,10 @@ void* allocate42Zeroed(unsigned sizeIndex, const void* key)
 
 void* reallocate42(unsigned sizeIndex, const void* key)
 {
-    void* result = iso_try_allocate_common_primitive(16, pas_non_compact_allocation_mode);
+    void* result = iso_try_allocate_common_primitive(16);
     CHECK(result);
     return iso_try_reallocate_dynamic_primitive(
-        result, key, 42 * (sizeIndex + 1), pas_reallocate_free_if_successful, pas_non_compact_allocation_mode);
+        result, key, 42 * (sizeIndex + 1), pas_reallocate_free_if_successful);
 }
 
 void testManySizesAndKeys(

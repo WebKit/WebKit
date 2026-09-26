@@ -86,7 +86,7 @@ static void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas
 #pragma mark ALLOC/DEALLOC
 #endif
 
-pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, size_t alignment, pas_allocation_mode allocation_mode,
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, size_t alignment,
                                                               const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction)
 {
     const pas_heap_type* type;
@@ -147,7 +147,7 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     if (mem_to_alloc > free_virtual_mem)
         return result;
 
-    result = pas_large_heap_try_allocate_and_forget(large_heap, mem_to_alloc, page_size, allocation_mode, heap_config, transaction);
+    result = pas_large_heap_try_allocate_and_forget(large_heap, mem_to_alloc, page_size, heap_config, transaction);
     if (!result.did_succeed)
         return result;
 
