@@ -116,6 +116,7 @@
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
+#include "PendingPostMessages.h"
 #include "PlatformPopupMenuData.h"
 #include "PlatformXRSystem.h"
 #include "PolicyDecision.h"
@@ -19912,8 +19913,8 @@ void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::Fra
         if (!protectedThis)
             return;
 
-        RefPtr networkProcess = message.transferredPorts.isEmpty() ? nullptr : protectedThis->websiteDataStore().networkProcessIfExists();
-        if (!networkProcess) {
+        RefPtr pendingMessagesForTargetFrame = protectedThis->m_pendingPostMessages.get(target);
+        if (message.transferredPorts.isEmpty() && (!pendingMessagesForTargetFrame || pendingMessagesForTargetFrame->isEmpty())) {
             protectedThis->sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
             return;
         }
@@ -19922,13 +19923,28 @@ void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::Fra
             return transferredPort.first;
         });
 
+        if (!pendingMessagesForTargetFrame) {
+            pendingMessagesForTargetFrame = PendingPostMessages::create();
+            protectedThis->m_pendingPostMessages.set(target, pendingMessagesForTargetFrame);
+        }
+
+        pendingMessagesForTargetFrame->append(PendingPostMessages::PendingPostMessage { source, sourceOrigin, target, targetOrigin, message, userGestureToken });
+
+        if (message.transferredPorts.isEmpty())
+            return;
+
         // First, notify the NetworkProcess of all message ports that will be transfered.
         // Then pass the message along to all web content processes to finalize the transfer.
-        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::RecordMessagePortTransferDestinationsForSiteIsolation(WTF::move(ports), protectedThis->processContainingFrame(target)->coreProcessIdentifier()), [weakThis = WTF::move(weakThis), source, sourceOrigin, target, targetOrigin, message, userGestureToken = WTF::move(userGestureToken)] mutable {
+        Ref networkProcess = protect(protectedThis->websiteDataStore())->networkProcess();
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::RecordMessagePortTransferDestinationsForSiteIsolation(WTF::move(ports), protectedThis->processContainingFrame(target)->coreProcessIdentifier()), [weakThis = WTF::move(weakThis), target, pendingMessagesForTargetFrame] mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            protectedThis->sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
+            auto messagesToSend = pendingMessagesForTargetFrame->takeMessagesThroughNextPortTransfer();
+            if (pendingMessagesForTargetFrame->isEmpty())
+                protectedThis->m_pendingPostMessages.remove(target);
+            for (auto& pendingPostMessage : messagesToSend)
+                protectedThis->sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(pendingPostMessage.source, pendingPostMessage.sourceOrigin, pendingPostMessage.target, pendingPostMessage.targetOrigin, pendingPostMessage.message, pendingPostMessage.userGestureToken));
         });
     };
 
@@ -19936,6 +19952,7 @@ void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::Fra
     // ImageBuffers to the destination, so that they outlive the process that sent them. Not waited
     // for: the destination can claim them either way, since they were deposited before being sent.
 #if ENABLE(GPU_PROCESS)
+    // FIXME: a message with ImageBuffers immediately followed by a plain message can arrive out of order at the destination.
     RefPtr serializedValue = message.message;
     auto transferIdentifiers = serializedValue ? serializedValue->transferredImageBufferIdentifiers() : Vector<WebCore::ImageBufferTransferIdentifier> { };
     if (RefPtr gpuProcess = transferIdentifiers.isEmpty() ? nullptr : GPUProcessProxy::singletonIfCreated())

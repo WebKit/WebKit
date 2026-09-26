@@ -113,7 +113,7 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
         m_pendingPostMessages = PendingPostMessages::create();
 
     RefPtr pendingPostMessages = m_pendingPostMessages;
-    pendingPostMessages->append(PendingPostMessage { source, sourceOrigin, target, targetOrigin, message, userGestureToken });
+    pendingPostMessages->append(PendingPostMessages::PendingPostMessage { source, sourceOrigin, target, targetOrigin, message, userGestureToken });
 
     if (message.transferredPorts.isEmpty())
         return;
@@ -123,26 +123,6 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
         for (auto& pendingPostMessage : messagesToSend)
             page->send(Messages::WebPageProxy::PostMessageToRemote(pendingPostMessage.source, pendingPostMessage.sourceOrigin, pendingPostMessage.target, pendingPostMessage.targetOrigin, pendingPostMessage.message, pendingPostMessage.userGestureToken));
     });
-}
-
-Vector<WebRemoteFrameClient::PendingPostMessage> WebRemoteFrameClient::PendingPostMessages::takeMessagesThroughNextPortTransfer()
-{
-    Vector<PendingPostMessage> messagesToSend;
-    ASSERT(m_pendingPostMessages.size() >= 1);
-    auto firstPendingMessage = m_pendingPostMessages[0];
-    ASSERT(!firstPendingMessage.message.transferredPorts.isEmpty());
-    messagesToSend.append(firstPendingMessage);
-    m_pendingPostMessages.removeAt(0);
-
-    for (auto& pendingPostMessage : m_pendingPostMessages) {
-        bool messageHasPorts = !pendingPostMessage.message.transferredPorts.isEmpty();
-        if (messageHasPorts)
-            break;
-        messagesToSend.append(pendingPostMessage);
-    }
-    if (messagesToSend.size() > 1)
-        m_pendingPostMessages.removeAt(0, messagesToSend.size() - 1);
-    return messagesToSend;
 }
 
 void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)

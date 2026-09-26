@@ -543,6 +543,7 @@ class NetworkIssueReporter;
 class PageClient;
 class PageLoadState;
 class PageLoadStateObserverBase;
+class PendingPostMessages;
 class PlatformXRSystem;
 class PlaybackSessionManagerProxy;
 class ProcessActivityGroupContext;
@@ -4422,6 +4423,9 @@ private:
     bool m_hasNetworkRequestsInProgress { false };
 
     HashSet<CheckedRef<WebProcessProxy>> m_unresponsiveProcesses;
+
+    HashMap<WebCore::FrameIdentifier, RefPtr<PendingPostMessages>> m_pendingPostMessages;
+
 } SWIFT_SHARED_REFERENCE(refWebPageProxy, derefWebPageProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 using WeakPtrWebPageProxy = WeakPtr<WebPageProxy>;

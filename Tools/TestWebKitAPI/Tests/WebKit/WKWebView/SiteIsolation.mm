@@ -1742,6 +1742,8 @@ TEST(SiteIsolation, PostMessageWithMessagePortsFromIFrameToMainFrame)
     "            parent.postMessage('port message ' + event.data, '*');"
     "        };"
     "        parent.postMessage('ping', '*', [channel.port2]);"
+    "        parent.postMessage('message sent after transferring port', '*');"
+    "        parent.postMessage('another message sent after transferring port', '*');"
     "    }"
     "</script>"_s;
 
@@ -1753,7 +1755,10 @@ TEST(SiteIsolation, PostMessageWithMessagePortsFromIFrameToMainFrame)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
 
+    // The message transferring the port must be delivered before the messages sent right after it.
     EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received ping with 1 ports");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received message sent after transferring port with 0 ports");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received another message sent after transferring port with 0 ports");
     EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received port message pong with 0 ports");
 
     auto mainFrame = [webView mainFrame];
