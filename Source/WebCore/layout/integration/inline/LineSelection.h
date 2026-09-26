@@ -33,12 +33,23 @@ namespace WebCore {
 
 class LineSelection {
 public:
-    static float logicalTop(const InlineIterator::LineBox& lineBox) { return lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); }
-    static float logicalBottom(const InlineIterator::LineBox& lineBox) { return lineBox.contentLogicalBottomAdjustedForFollowingLineBox(); }
+    // Adjacent line boxes touch, so only the outermost lines may extend to overflowing content without overlapping a neighbor's selection.
+    static float logicalTop(const InlineIterator::LineBox& lineBox)
+    {
+        if (lineBox.isFirst())
+            return std::min(lineBox.logicalTop(), lineBox.contentLogicalTop());
+        return lineBox.logicalTop();
+    }
+    static float logicalBottom(const InlineIterator::LineBox& lineBox)
+    {
+        if (!lineBox.next())
+            return std::max(lineBox.logicalBottom(), lineBox.contentLogicalBottom());
+        return lineBox.logicalBottom();
+    }
 
     static FloatRect logicalRect(const InlineIterator::LineBox& lineBox)
     {
-        return { FloatPoint { lineBox.contentLogicalLeft(), lineBox.contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { lineBox.contentLogicalRight(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox() } };
+        return { FloatPoint { lineBox.contentLogicalLeft(), logicalTop(lineBox) }, FloatPoint { lineBox.contentLogicalRight(), logicalBottom(lineBox) } };
     }
 
     static FloatRect physicalRect(const InlineIterator::LineBox& lineBox)
@@ -55,7 +66,7 @@ public:
         if (auto blockLevelBox = lineBox.blockLevelBox())
             return blockLevelBox->logicalTop();
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
-        return lineBox.formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { lineBox.contentLogicalTopAdjustedForPrecedingLineBox() });
+        return lineBox.formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { logicalTop(lineBox) });
     }
 
     static RenderObject::HighlightState selectionState(const InlineIterator::LineBox& lineBox)
