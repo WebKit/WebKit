@@ -137,6 +137,8 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
             m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, protect(m_storage));
     }
 
+    populateCompressionDictionaryIndex();
+
     if (options.contains(CacheOption::RegisterNotify)) {
 #if PLATFORM(COCOA)
         // Triggers with "notifyutil -p com.apple.WebKit.Cache.dump".
@@ -634,30 +636,86 @@ void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, 
     auto record = cacheEntry->encodeAsStorageRecord();
 
     m_storage->store(record, nullptr);
+
+    addToCompressionDictionaryIndex(*cacheEntry);
 }
 
 // https://www.rfc-editor.org/rfc/rfc9842#name-multiple-matching-dictionar
-static bool isBetterCompressionDictionaryMatch(const CompressionDictionaryEntry& candidate, const CompressionDictionaryEntry& best)
+bool Cache::isBetterCompressionDictionaryMatch(const CompressionDictionaryIndexEntry& candidate, const CompressionDictionaryIndexEntry& best)
 {
-    if (candidate.info().matchDest.isEmpty() != best.info().matchDest.isEmpty())
-        return !candidate.info().matchDest.isEmpty();
-    if (candidate.info().match.length() != best.info().match.length())
-        return candidate.info().match.length() > best.info().match.length();
-    return candidate.timeStamp() > best.timeStamp();
+    if (candidate.matchDest.isEmpty() != best.matchDest.isEmpty())
+        return !candidate.matchDest.isEmpty();
+    if (candidate.matchLength != best.matchLength)
+        return candidate.matchLength > best.matchLength;
+    return candidate.timeStamp > best.timeStamp;
 }
 
-// https://fetch.spec.whatwg.org/#find-the-best-matching-dictionary
-void Cache::retrieveCompressionDictionaryBestMatch(WebCore::ResourceRequest&& request, WebCore::FetchOptions::Destination destination, Function<void(WebCore::ResourceRequest&&, std::optional<CompressionDictionaryMatch>&&)>&& completionHandler)
+void Cache::addToCompressionDictionaryIndex(const CompressionDictionaryEntry& entry)
 {
-    LOG(NetworkCache, "(NetworkProcess) retrieving best compression dictionary for %s", request.url().string().latin1().data());
+    removeFromCompressionDictionaryIndex(entry.key());
 
-    auto partition = request.cachePartition();
-    traverseCompressionDictionaryRecords(partition, [request = WTF::move(request), destination, bestMatch = std::unique_ptr<CompressionDictionaryEntry> { }, completionHandler = WTF::move(completionHandler)](const TraversalRecord* traversalRecord) mutable {
+    if (entry.info().expirationTime <= WallTime::now()) {
+        m_storage->remove(entry.key());
+        return;
+    }
+
+    auto patternOrException = WebCore::URLPattern::createWithoutRegExpSupport(entry.info().match, String { entry.key().identifier() }, { });
+    if (patternOrException.hasException())
+        return;
+
+    m_compressionDictionaryIndex.ensure(entry.key().partition(), [] {
+        return Vector<CompressionDictionaryIndexEntry> { };
+    }).iterator->value.append(CompressionDictionaryIndexEntry {
+        { entry.key(), entry.hash(), entry.info().id },
+        patternOrException.releaseReturnValue().ptr(),
+        entry.info().matchDest,
+        entry.info().match.length(),
+        entry.info().expirationTime,
+        entry.timeStamp()
+    });
+}
+
+bool Cache::removeFromCompressionDictionaryIndex(const Key& key, WallTime registeredNotAfter)
+{
+    if (key.type() != recordTypeName(RecordType::CompressionDictionary))
+        return true;
+
+    auto it = m_compressionDictionaryIndex.find(key.partition());
+    if (it != m_compressionDictionaryIndex.end()) {
+        auto index = it->value.findIf([&](auto& entry) {
+            return entry.match.key == key;
+        });
+        if (index != notFound) {
+            if (it->value[index].timeStamp > registeredNotAfter)
+                return false;
+            it->value.removeAt(index);
+            if (it->value.isEmpty())
+                m_compressionDictionaryIndex.remove(it);
+        }
+    }
+
+    if (m_compressionDictionaryIndexPopulation)
+        m_compressionDictionaryIndexPopulation->removedKeys.set(key, WallTime::now());
+    return true;
+}
+
+Vector<Key> Cache::compressionDictionaryKeys(const String& partition) const
+{
+    auto it = m_compressionDictionaryIndex.find(partition);
+    if (it == m_compressionDictionaryIndex.end())
+        return { };
+
+    return it->value.map([](auto& entry) {
+        return entry.match.key;
+    });
+}
+
+void Cache::populateCompressionDictionaryIndex()
+{
+    m_compressionDictionaryIndexPopulation.emplace();
+    traverseRecordsOfTypes({ RecordType::CompressionDictionary }, std::nullopt, { }, [this, protectedThis = Ref { *this }](const TraversalRecord* traversalRecord) {
         if (!traversalRecord) {
-            std::optional<CompressionDictionaryMatch> match;
-            if (bestMatch)
-                match = CompressionDictionaryMatch { bestMatch->key(), bestMatch->hash(), bestMatch->info().id };
-            completionHandler(WTF::move(request), WTF::move(match));
+            m_compressionDictionaryIndexPopulation.reset();
             return;
         }
 
@@ -665,33 +723,70 @@ void Cache::retrieveCompressionDictionaryBestMatch(WebCore::ResourceRequest&& re
         if (!entry)
             return;
 
-        // https://www.rfc-editor.org/rfc/rfc9842#name-dictionary-freshness-requir
-        if (entry->info().expirationTime <= WallTime::now())
+        auto& population = *m_compressionDictionaryIndexPopulation;
+        if (entry->timeStamp() >= population.clearedSince)
+            return;
+        if (auto it = population.removedKeys.find(entry->key()); it != population.removedKeys.end() && entry->timeStamp() <= it->value)
             return;
 
-        // https://www.rfc-editor.org/rfc/rfc9842#name-match-dest
-        if (!entry->info().matchDest.isEmpty() && !entry->info().matchDest.contains(destination))
-            return;
-
-        if (bestMatch && !isBetterCompressionDictionaryMatch(*entry, *bestMatch))
-            return;
-
-        auto patternOrException = WebCore::URLPattern::createWithoutRegExpSupport(entry->info().match, String { entry->key().identifier() }, { });
-        if (patternOrException.hasException())
-            return;
-        Ref pattern = patternOrException.releaseReturnValue();
-        if (!pattern->testWithoutRegExp(request.url()))
-            return;
-
-        bestMatch = WTF::move(entry);
+        addToCompressionDictionaryIndex(*entry);
     });
+}
+
+// https://fetch.spec.whatwg.org/#find-the-best-matching-dictionary
+std::optional<Cache::CompressionDictionaryMatch> Cache::bestCompressionDictionaryMatch(const WebCore::ResourceRequest& request, WebCore::FetchOptions::Destination destination)
+{
+    if (m_compressionDictionaryIndex.isEmpty())
+        return std::nullopt;
+
+    auto it = m_compressionDictionaryIndex.find(request.cachePartition());
+    if (it == m_compressionDictionaryIndex.end())
+        return std::nullopt;
+
+    // https://www.rfc-editor.org/rfc/rfc9842#name-dictionary-freshness-requir
+    auto now = WallTime::now();
+    it->value.removeAllMatching([&](auto& entry) {
+        if (entry.expirationTime > now)
+            return false;
+        m_storage->remove(entry.match.key);
+        return true;
+    });
+    if (it->value.isEmpty()) {
+        m_compressionDictionaryIndex.remove(it);
+        return std::nullopt;
+    }
+
+    const CompressionDictionaryIndexEntry* bestMatch = nullptr;
+    for (auto& entry : it->value) {
+        // https://www.rfc-editor.org/rfc/rfc9842#name-match-dest
+        if (!entry.matchDest.isEmpty() && !entry.matchDest.contains(destination))
+            continue;
+
+        if (bestMatch && !isBetterCompressionDictionaryMatch(entry, *bestMatch))
+            continue;
+
+        if (!m_storage->mayContain(entry.match.key))
+            continue;
+
+        if (!entry.pattern->testWithoutRegExp(request.url()))
+            continue;
+
+        bestMatch = &entry;
+    }
+
+    if (!bestMatch)
+        return std::nullopt;
+
+    return bestMatch->match;
 }
 
 void Cache::retrieveCompressionDictionary(const Key& key, const CompressionDictionaryHash& hash, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    m_storage->retrieve(key, 1, [hash, completionHandler = WTF::move(completionHandler)](Storage::Record&& record, const Storage::Timings&) mutable {
+    m_storage->retrieve(key, 1, [protectedThis = Ref { *this }, key, hash, completionHandler = WTF::move(completionHandler)](Storage::Record&& record, const Storage::Timings&) mutable {
         auto entry = record.isNull() ? nullptr : CompressionDictionaryEntry::decodeStorageRecord(record);
         if (!entry) {
+            // A storage shrink can evict a record without telling the cache, so the index outlives it.
+            protectedThis->removeFromCompressionDictionaryIndex(key);
             completionHandler(nullptr);
             return false;
         }
@@ -751,6 +846,7 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
 
 void Cache::remove(const Key& key)
 {
+    removeFromCompressionDictionaryIndex(key);
     m_storage->remove(key);
 }
 
@@ -759,9 +855,14 @@ void Cache::remove(const WebCore::ResourceRequest& request)
     remove(makeCacheKey(RecordType::Resource, request));
 }
 
-void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler)
+void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler, WallTime dictionariesRegisteredNotAfter)
 {
-    m_storage->remove(keys, WTF::move(completionHandler));
+    auto keysToRemove = WTF::compactMap(keys, [&](auto& key) -> std::optional<Key> {
+        if (!removeFromCompressionDictionaryIndex(key, dictionariesRegisteredNotAfter))
+            return std::nullopt;
+        return key;
+    });
+    m_storage->remove(keysToRemove, WTF::move(completionHandler));
 }
 
 void Cache::traverseRecords(Function<void(const TraversalRecord*)>&& traverseHandler)
@@ -893,6 +994,15 @@ void Cache::deleteDumpFile()
 void Cache::clear(WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
+
+    m_compressionDictionaryIndex.removeIf([&](auto& partitionEntries) {
+        partitionEntries.value.removeAllMatching([&](auto& entry) {
+            return entry.timeStamp >= modifiedSince;
+        });
+        return partitionEntries.value.isEmpty();
+    });
+    if (m_compressionDictionaryIndexPopulation)
+        m_compressionDictionaryIndexPopulation->clearedSince = std::min(m_compressionDictionaryIndexPopulation->clearedSince, modifiedSince);
 
     String anyType;
     m_storage->clear(WTF::move(anyType), modifiedSince, WTF::move(completionHandler));
