@@ -41,7 +41,7 @@ PAS_BEGIN_EXTERN_C;
 const pas_heap_config bmalloc_heap_config = BMALLOC_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
-    bmalloc, BMALLOC,
+    bmalloc, BMALLOC, false,
     .allocate_page_should_zero = false,
     .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
 
