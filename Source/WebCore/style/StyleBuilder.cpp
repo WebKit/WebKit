@@ -351,7 +351,7 @@ bool Builder::applyRollbackCascadeProperty(const PropertyCascade& rollbackCascad
 
     if (RefPtr value = rollbackProperty->cssValue[linkMatchMask]) {
         BuilderStatePropertyScope levelScope(m_state, rollbackProperty);
-        applyProperty(propertyID, *value, linkMatchMask, rollbackProperty->origin);
+        applyProperty(propertyID, *value, linkMatchMask, rollbackProperty->origins[linkMatchMask]);
     }
     return true;
 }
