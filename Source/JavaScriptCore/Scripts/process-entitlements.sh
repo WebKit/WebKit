@@ -86,6 +86,11 @@ function mac_process_mya_entitlements()
     fi
 }
 
+function mac_process_testLibJSCTools_entitlements()
+{
+    [[ "${RC_XBS}" != YES ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
+}
+
 # ========================================
 # macCatalyst entitlements
 # ========================================
@@ -236,8 +241,7 @@ then
           "${PRODUCT_NAME}" == testRegExp ]]; then mac_process_jsc_entitlements
     elif [[ "${PRODUCT_NAME}" == testapi ]]; then mac_process_testapi_entitlements
     elif [[ "${PRODUCT_NAME}" == mya ]]; then mac_process_mya_entitlements
-    # testLibJSCTools only ever snapshots its own process, which needs no entitlement.
-    elif [[ "${PRODUCT_NAME}" == testLibJSCTools ]]; then true
+    elif [[ "${PRODUCT_NAME}" == testLibJSCTools ]]; then mac_process_testLibJSCTools_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == maccatalyst || "${WK_PLATFORM_NAME}" == iosmac ]]
