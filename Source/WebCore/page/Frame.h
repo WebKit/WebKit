@@ -258,11 +258,65 @@ private:
     RefPtr<Frame> m_first;
 };
 
-template<typename FrameType = Frame>
-FrameAncestorRange<FrameType> ancestorFrames(const Frame& frame)
-{
-    return FrameAncestorRange<FrameType>(frame.tree().parent());
-}
+template<typename FrameType>
+class FrameDescendantIterator {
+public:
+    using difference_type = std::ptrdiff_t;
+    using value_type = FrameType;
+
+    FrameDescendantIterator(Frame* first, Frame* root)
+        : m_root(root)
+        , m_current(firstOfType(first, root))
+    {
+    }
+
+    FrameType& operator*() const { return *m_current; }
+    FrameType* operator->() const { return m_current.get(); }
+    bool operator==(std::nullptr_t) const { return !m_current; }
+
+    FrameDescendantIterator& operator++()
+    {
+        RefPtr<Frame> next = m_current->tree().traverseNext(m_root.get());
+        m_current = firstOfType(next, m_root.get());
+        return *this;
+    }
+
+    void operator++(int) { ++*this; }
+
+private:
+    static FrameType* firstOfType(Frame* frame, Frame* root)
+    {
+        if constexpr (std::is_same_v<FrameType, Frame>)
+            return frame;
+        else {
+            for (RefPtr current = frame; current; current = current->tree().traverseNext(root)) {
+                if (auto* typedFrame = dynamicDowncast<FrameType>(*current))
+                    return typedFrame;
+            }
+            return nullptr;
+        }
+    }
+
+    RefPtr<Frame> m_root;
+    RefPtr<FrameType> m_current;
+};
+
+template<typename FrameType>
+class FrameDescendantRange {
+public:
+    FrameDescendantRange(Frame* first, Frame* root)
+        : m_root(root)
+        , m_first(first)
+    {
+    }
+
+    FrameDescendantIterator<FrameType> begin() const { return FrameDescendantIterator<FrameType>(m_first.get(), m_root.get()); }
+    static constexpr std::nullptr_t end() { return nullptr; }
+
+private:
+    RefPtr<Frame> m_root;
+    RefPtr<Frame> m_first;
+};
 
 template<typename FrameType = Frame>
 FrameAncestorRange<FrameType> ancestorFrames(const Frame* frame)
@@ -271,15 +325,27 @@ FrameAncestorRange<FrameType> ancestorFrames(const Frame* frame)
 }
 
 template<typename FrameType = Frame>
-FrameAncestorRange<FrameType> inclusiveAncestorFrames(Frame& frame)
+FrameAncestorRange<FrameType> ancestorFrames(const Frame& frame) { return ancestorFrames<FrameType>(&frame); }
+
+template<typename FrameType = Frame>
+FrameAncestorRange<FrameType> inclusiveAncestorFrames(Frame* frame) { return FrameAncestorRange<FrameType>(frame); }
+
+template<typename FrameType = Frame>
+FrameAncestorRange<FrameType> inclusiveAncestorFrames(Frame& frame) { return inclusiveAncestorFrames<FrameType>(&frame); }
+
+template<typename FrameType = Frame>
+FrameDescendantRange<FrameType> descendantFrames(Frame* root)
 {
-    return FrameAncestorRange<FrameType>(&frame);
+    return FrameDescendantRange<FrameType>(root ? root->tree().traverseNext(root) : nullptr, root);
 }
 
 template<typename FrameType = Frame>
-FrameAncestorRange<FrameType> inclusiveAncestorFrames(Frame* frame)
-{
-    return FrameAncestorRange<FrameType>(frame);
-}
+FrameDescendantRange<FrameType> descendantFrames(Frame& root) { return descendantFrames<FrameType>(&root); }
+
+template<typename FrameType = Frame>
+FrameDescendantRange<FrameType> inclusiveDescendantFrames(Frame* root) { return FrameDescendantRange<FrameType>(root, root); }
+
+template<typename FrameType = Frame>
+FrameDescendantRange<FrameType> inclusiveDescendantFrames(Frame& root) { return inclusiveDescendantFrames<FrameType>(&root); }
 
 } // namespace WebCore

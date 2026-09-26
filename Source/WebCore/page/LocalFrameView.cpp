@@ -1621,10 +1621,7 @@ bool LocalFrameView::useSlowRepaintsIfNotOverlapped() const
 
 void LocalFrameView::updateCanBlitOnScrollRecursively()
 {
-    for (RefPtr<Frame> frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(m_frame.get())) {
         if (RefPtr view = localFrame->view())
             view->setCanBlitOnScroll(!view->useSlowRepaints());
     }
@@ -4467,11 +4464,7 @@ void LocalFrameView::updateBackgroundRecursively(const std::optional<Color>& bac
         return RenderTheme::singleton().systemColor(cssValueControlBackground, view.styleColorOptions());
     };
 
-    for (RefPtr<Frame> frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(m_frame.get())) {
         if (RefPtr view = localFrame->view()) {
             auto baseBackgroundColor = backgroundColor.value_or(intrinsicBaseBackgroundColor(*view));
             view->setTransparent(!baseBackgroundColor.isVisible());

@@ -204,10 +204,7 @@ void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
     if (!m_page)
         return;
 
-    for (RefPtr frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(m_page->mainFrame())) {
         if (RefPtr document = localFrame->document())
             document->adjustMinimumDOMTimerInterval(oldTimerInterval);
     }

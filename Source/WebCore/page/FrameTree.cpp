@@ -81,7 +81,7 @@ void FrameTree::adjustRemoteFrameDescendantCountForSelfAndAncestors(int delta)
     if (!delta)
         return;
 
-    for (RefPtr frame = m_thisFrame.ptr(); frame; frame = frame->tree().parent()) {
+    for (Ref frame : inclusiveAncestorFrames(m_thisFrame.get())) {
         auto& count = frame->tree().m_remoteFrameDescendantCount;
         count += delta;
     }
@@ -360,13 +360,13 @@ inline RefPtr<Frame> FrameTree::find(const AtomString& name, F&& nameGetter, Fra
 
     // Search subtree starting with this frame first.
     Ref thisFrame = m_thisFrame.get();
-    for (RefPtr frame = thisFrame.ptr(); frame; frame = frame->tree().traverseNext(thisFrame.ptr())) {
+    for (Ref frame : inclusiveDescendantFrames(thisFrame)) {
         if (nameGetter(frame->tree()) == name)
             return frame;
     }
 
     // Then the rest of the tree.
-    for (RefPtr frame = &thisFrame->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Ref frame : inclusiveDescendantFrames(thisFrame->mainFrame())) {
         if (nameGetter(frame->tree()) == name)
             return frame;
     }
@@ -434,8 +434,8 @@ bool FrameTree::containsLocalFrame() const
 
 bool FrameTree::hasRemoteFrameAncestor() const
 {
-    for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->tree().parent()) {
-        if (is<RemoteFrame>(*ancestor))
+    for (Ref ancestor : ancestorFrames(m_thisFrame.get())) {
+        if (is<RemoteFrame>(ancestor))
             return true;
     }
     return false;
@@ -657,7 +657,7 @@ AtomString FrameTree::uniqueName() const
         return m_specifiedName;
 
     auto frameIndex { 0u };
-    for (RefPtr frame = top().tree().firstChild(); frame; frame = frame->tree().traverseNext()) {
+    for (Ref frame : descendantFrames(top())) {
         bool frameMatch = frame->frameID() == m_thisFrame->frameID();
         auto frameName = frame->tree().specifiedName();
         if (frameName.isEmpty() || isBlankTargetFrameName(frameName) || frame->tree().childBySpecifiedName(frameName)) {

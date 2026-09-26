@@ -1205,10 +1205,7 @@ bool Page::showAllPlugins() const
 
 inline std::optional<std::pair<WeakRef<MediaCanStartListener>, WeakRef<Document, WeakPtrImplWithEventTargetData>>>  Page::takeAnyMediaCanStartListener()
 {
-    for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(mainFrame())) {
         RefPtr document = localFrame->document();
         if (!document)
             continue;
@@ -1682,10 +1679,8 @@ void Page::setDefersLoading(bool defers)
     }
 
     m_defersLoading = defers;
-    for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame))
-            localFrame->loader().setDefersLoading(defers);
-    }
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(mainFrame()))
+        localFrame->loader().setDefersLoading(defers);
 }
 
 void Page::clearUndoRedoOperations()

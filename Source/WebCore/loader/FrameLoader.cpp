@@ -1303,16 +1303,11 @@ void FrameLoader::updateFirstPartyForCookies()
 void FrameLoader::setFirstPartyForCookies(const URL& url)
 {
     Ref frame = m_frame.get();
-    for (RefPtr<Frame> descendantFrame = frame.ptr(); descendantFrame; descendantFrame = descendantFrame->tree().traverseNext(frame.ptr())) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendantFrame))
-            protect(localFrame->document())->setFirstPartyForCookies(url);
-    }
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(frame))
+        protect(localFrame->document())->setFirstPartyForCookies(url);
 
     RegistrableDomain registrableDomain(url);
-    for (RefPtr<Frame> descendantFrame = frame.ptr(); descendantFrame; descendantFrame = descendantFrame->tree().traverseNext(frame.ptr())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendantFrame);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(frame)) {
         if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(protect(localFrame->document())->url())) {
             if (RefPtr parent = dynamicDowncast<LocalFrame>(localFrame->tree().parent()))
                 protect(localFrame->document())->setSiteForCookies(parent->document()->siteForCookies());
@@ -1474,7 +1469,7 @@ void FrameLoader::completed()
 {
     Ref frame = m_frame.get();
 
-    for (RefPtr descendant = frame->tree().traverseNext(frame.ptr()); descendant; descendant = descendant->tree().traverseNext(frame.ptr()))
+    for (Ref descendant : descendantFrames(frame))
         protect(descendant->navigationScheduler())->startTimer();
 
     if (RefPtr parent = frame->tree().parent()) {

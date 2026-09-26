@@ -250,10 +250,7 @@ void HistoryController::saveDocumentState()
 void HistoryController::saveDocumentAndScrollState()
 {
     Ref frame = m_frame.get();
-    for (RefPtr<Frame> descendant = frame.ptr(); descendant; descendant = descendant->tree().traverseNext(frame.ptr())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(*descendant);
-        if (!localFrame)
-            continue;
+    for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(frame)) {
         Ref history = localFrame->loader().history();
         history->saveDocumentState();
         history->saveScrollPositionAndViewStateToItem(protect(history->currentItem()).get());
