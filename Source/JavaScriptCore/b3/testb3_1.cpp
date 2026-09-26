@@ -996,6 +996,8 @@ void run(const TestConfig* config)
     RUN(testCheckSelectCheckSelect());
     RUN(testCheckSelectAndCSE());
     RUN(testCheckSelectAndDeadCheckCSE());
+    RUN(testCheckSelectWithPhiBeforeCheck());
+    RUN(testCheckSelectWithUpsilonBeforeCheck());
     RUN_BINARY(testPowDoubleByIntegerLoop, floatingPointOperands<double>(), int64Operands());
 
     RUN(testTruncOrHigh());

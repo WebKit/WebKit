@@ -1036,6 +1036,109 @@ void testCheckSelectAndDeadCheckCSE()
     CHECK_EQ(invoke<intptr_t>(*code, 1, 0), 0);
 }
 
+void testCheckSelectWithPhiBeforeCheck()
+{
+    // A Phi fed by an Upsilon in its own block, sitting between a specializable Select and the Check,
+    // as FTL emits for a value with a single incoming definition:
+    //
+    //   @sel = Select(arg0 & 0xff, -42, 35)
+    //          Upsilon(@sel, ^phi)
+    //   @phi = Phi()
+    //   @add = Add(@sel, 42)
+    //          Check(@add)
+    //          Return(@phi)
+    //
+    // A Phi takes its value from Upsilons rather than from its children, so it cannot be cloned into
+    // the arms of a specialized Select.
+    Procedure proc;
+    if (proc.optLevel() < 1)
+        return;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+
+    auto* constant = root->appendNew<ConstPtrValue>(proc, Origin(), 42);
+    auto* selectValue = root->appendNew<Value>(
+        proc, Select, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            arguments[0],
+            root->appendNew<Const32Value>(proc, Origin(), 0xff)),
+        root->appendNew<ConstPtrValue>(proc, Origin(), -42),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 35));
+    UpsilonValue* upsilon = root->appendNew<UpsilonValue>(proc, Origin(), selectValue);
+    Value* phi = root->appendNew<Value>(proc, Phi, pointerType(), Origin());
+    upsilon->setPhi(phi);
+    auto* addValue = root->appendNew<Value>(proc, Add, Origin(), selectValue, constant);
+
+    CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), addValue);
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(666), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+    root->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, true), -42);
+    CHECK_EQ(invoke<intptr_t>(*code, false), 666);
+}
+
+void testCheckSelectWithUpsilonBeforeCheck()
+{
+    // An Upsilon between a specializable Select and the Check, feeding a Phi in a later block:
+    //
+    //   root:
+    //     @sel = Select(arg0 & 0xff, -42, 35)
+    //            Upsilon(@sel, ^phi)
+    //     @add = Add(@sel, 42)
+    //            Check(@add)
+    //            Jump(#tail)
+    //   tail:
+    //     @phi = Phi()
+    //            Return(@phi)
+    //
+    // Specialization clones the Upsilon into both arms, each writing the same Phi.
+    Procedure proc;
+    if (proc.optLevel() < 1)
+        return;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* tail = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+
+    auto* constant = root->appendNew<ConstPtrValue>(proc, Origin(), 42);
+    auto* selectValue = root->appendNew<Value>(
+        proc, Select, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            arguments[0],
+            root->appendNew<Const32Value>(proc, Origin(), 0xff)),
+        root->appendNew<ConstPtrValue>(proc, Origin(), -42),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 35));
+    UpsilonValue* upsilon = root->appendNew<UpsilonValue>(proc, Origin(), selectValue);
+    auto* addValue = root->appendNew<Value>(proc, Add, Origin(), selectValue, constant);
+
+    CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), addValue);
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(666), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(tail));
+
+    Value* phi = tail->appendNew<Value>(proc, Phi, pointerType(), Origin());
+    upsilon->setPhi(phi);
+    tail->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, true), -42);
+    CHECK_EQ(invoke<intptr_t>(*code, false), 666);
+}
+
 double NODELETE b3Pow(double x, int y)
 {
     if (y < 0 || y > 1000)
