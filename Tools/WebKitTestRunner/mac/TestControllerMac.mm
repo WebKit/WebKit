@@ -76,7 +76,7 @@
 - (void)loadView
 {
     RetainPtr view = adoptNS([[NSView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
-    self.view = view;
+    self.view = view.get();
 }
 
 - (void)setDelegate:(id)delegate { }
@@ -520,7 +520,7 @@ const char* TestController::platformLibraryPathForTesting()
 static void fakeRequestViewControllerWithPaymentRequest(id, SEL, id, void (^completion)(id viewController, NSError *error))
 {
     RetainPtr viewController = adoptNS([[WKTRFakePaymentAuthorizationViewController alloc] init]);
-    completion(viewController, nil);
+    completion(viewController.get(), nil);
 }
 
 static void fakeBeginSheet(id, SEL, NSWindow *, void (^)(NSModalResponse))
@@ -531,10 +531,10 @@ FakePaymentUIForTesting::FakePaymentUIForTesting()
 {
     RetainPtr paymentAuthorizationViewControllerClass = PAL::getPKPaymentAuthorizationViewControllerClassSingleton();
     SEL requestViewControllerSelector = @selector(requestViewControllerWithPaymentRequest:completion:);
-    if (!paymentAuthorizationViewControllerClass || !class_getClassMethod(paymentAuthorizationViewControllerClass, requestViewControllerSelector))
+    if (!paymentAuthorizationViewControllerClass || !class_getClassMethod(paymentAuthorizationViewControllerClass.get(), requestViewControllerSelector))
         return;
 
-    m_requestViewControllerSwizzler = makeUnique<ClassMethodSwizzler>(paymentAuthorizationViewControllerClass, requestViewControllerSelector, reinterpret_cast<IMP>(fakeRequestViewControllerWithPaymentRequest));
+    m_requestViewControllerSwizzler = makeUnique<ClassMethodSwizzler>(paymentAuthorizationViewControllerClass.get(), requestViewControllerSelector, reinterpret_cast<IMP>(fakeRequestViewControllerWithPaymentRequest));
     m_beginSheetSwizzler = makeUnique<InstanceMethodSwizzler>(NSWindow.class, @selector(beginSheet:completionHandler:), reinterpret_cast<IMP>(fakeBeginSheet));
 }
 
