@@ -59,7 +59,7 @@ public:
 
     static InlineLayoutUnit horizontalAlignmentOffset(const Style::ComputedStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt);
 
-    static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveOrNewlyPlacedFloat, InlineItemPosition layoutRangeEnd);
+    static InlineItemPosition leadingInlineItemPositionForNextLine(const LineLayoutResult&, std::optional<InlineItemPosition> previousLineContentEnd, InlineItemPosition layoutRangeEnd);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
 
@@ -72,6 +72,8 @@ public:
     static std::optional<LineLayoutResult::InlineContentEnding> inlineContentEnding(const Line::Result&);
 
     bool NODELETE shouldDiscardRemainingContentInBlockDirection() const;
+
+    std::optional<BlockOverflowEllipsis> blockEllipsisForLine() const;
 
 private:
     bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
