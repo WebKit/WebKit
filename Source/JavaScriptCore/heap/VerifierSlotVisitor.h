@@ -74,7 +74,7 @@ public:
         std::unique_ptr<StackTrace> m_stack;
     };
 
-    VerifierSlotVisitor(Heap&, Collector&);
+    explicit VerifierSlotVisitor(Collector&);
     ~VerifierSlotVisitor();
 
     void append(const ConservativeRoots&) final;

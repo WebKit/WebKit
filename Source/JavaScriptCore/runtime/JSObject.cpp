@@ -106,8 +106,6 @@ ALWAYS_INLINE void JSObjectWithButterfly::markAuxiliaryAndVisitOutOfLineProperti
     HeapCell* base = std::bit_cast<HeapCell*>(
         butterfly->base(preCapacity, Structure::outOfLineCapacity(maxOffset)));
     
-    ASSERT(Heap::heap(base) == visitor.heap());
-    
     visitor.markAuxiliary(base);
     
     unsigned outOfLineSize = Structure::outOfLineSize(maxOffset);

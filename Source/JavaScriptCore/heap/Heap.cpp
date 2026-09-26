@@ -297,7 +297,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_objectSpace(this)
     , m_machineThreads(makeUnique<MachineThreads>())
     , m_collector(makeUnique<Collector>(*this))
-    , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*this, *m_collector, "M"_s))
+    , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*m_collector, "M"_s))
     , m_mutatorMarkStack(makeUnique<MarkStackArray>())
     , m_constraintSet(makeUnique<MarkingConstraintSet>(*this))
     , m_strongSet(vm)
@@ -395,7 +395,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     // FIXME: move Collector related initialization into Collector
 
     for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
-        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, *m_collector, toASCIICString("P", i + 1));
+        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*m_collector, toASCIICString("P", i + 1));
         if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
             visitor->optimizeForStoppedMutator();
         m_collector->m_availableParallelSlotVisitors.append(visitor.get());
@@ -1800,7 +1800,7 @@ void Heap::willStartCollection()
 
     ++m_gcVersion;
     if (Options::verifyGC()) [[unlikely]] {
-        m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*this, *m_collector);
+        m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*m_collector);
         ASSERT(!m_isMarkingForGCVerifier);
     }
 
@@ -2745,9 +2745,11 @@ void Heap::removeGCCompletionCallback(const GCCompletionCallback& callback)
 void Heap::verifierMark()
 {
     RELEASE_ASSERT(!m_isMarkingForGCVerifier);
+    RELEASE_ASSERT(m_collectionScope);
 
     SetForScope isMarkingForGCVerifierScope(m_isMarkingForGCVerifier, true);
     VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
+    visitor.didStartMarking(m_collectionScope.value(), vm().activeHeapAnalyzer());
     do {
         while (!visitor.isEmpty())
             visitor.drain();

@@ -90,7 +90,7 @@ public:
 #endif
     };
 
-    SlotVisitor(Heap&, Collector&, ASCIICString codeName);
+    SlotVisitor(Collector&, ASCIICString codeName);
     ~SlotVisitor();
 
     void append(const ConservativeRoots&) final;
@@ -129,7 +129,7 @@ public:
     bool isMarked(MarkedBlock&, HeapCell*) const final;
     bool isMarked(PreciseAllocation&, HeapCell*) const final;
 
-    void NODELETE didStartMarking();
+    void NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, HeapAnalyzer*);
     void NODELETE reset();
     void clearMarkStacks();
 
@@ -232,7 +232,6 @@ private:
     size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
     CheckedSize m_extraMemorySize { 0 };
 
-    HeapAnalyzer* m_heapAnalyzer { nullptr };
     JSCell* m_currentCell { nullptr };
     bool m_isFirstVisit { false };
     bool m_mutatorIsStopped { false };

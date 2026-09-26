@@ -105,15 +105,15 @@ void VerifierSlotVisitor::OpaqueRootData::addMarkerData(MarkerData&& marker)
     m_marker = WTF::move(marker);
 }
 
-VerifierSlotVisitor::VerifierSlotVisitor(JSC::Heap& heap, Collector& collector)
-    : Base(heap, collector, "Verifier"_s, m_opaqueRootStorage)
+VerifierSlotVisitor::VerifierSlotVisitor(Collector& collector)
+    : Base(collector, "Verifier"_s, m_opaqueRootStorage)
 {
     m_needsExtraOpaqueRootHandling = true;
 }
 
 VerifierSlotVisitor::~VerifierSlotVisitor()
 {
-    heap()->objectSpace().forEachBlock(
+    m_collector.heap().objectSpace().forEachBlock(
         [&] (MarkedBlock::Handle* handle) {
             handle->block().setVerifierMemo(nullptr);
         });
@@ -262,7 +262,7 @@ void VerifierSlotVisitor::dumpMarkerData(HeapCell* cell)
             if (isJSCellKind(cell->cellKind()))
                 dataLogLn(JSValue(static_cast<JSCell*>(cell)));
 
-            bool isMarked = heap()->isMarked(cell);
+            bool isMarked = cell->heap()->isMarked(cell);
             const char* wasOrWasNot = isMarked ? "was" : "was NOT";
             dataLogLn("In the real GC, cell ", RawPointer(cell), " ", wasOrWasNot, " marked.");
 
@@ -351,7 +351,7 @@ void VerifierSlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = std::bit_cast<HeapCell*>(base);
 
-    ASSERT(cell->heap() == heap());
+    ASSERT(cell->heap() == &m_collector.heap());
     testAndSetMarked(cell);
 }
 
