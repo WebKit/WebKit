@@ -86,9 +86,10 @@ struct WebCore::Cookie {
     String value;
 };
 
-class WebCore::HTTPHeaderMap {
+[CreateUsing=fromIPCData] class WebCore::HTTPHeaderMap {
     Vector<WebCore::HTTPHeaderMap::CommonHeader, 0, CrashOnOverflow, 6> commonHeaders();
     Vector<WebCore::HTTPHeaderMap::UncommonHeader, 0, CrashOnOverflow, 0> uncommonHeaders();
+    HashMap<String, Vector<unsigned, 0, CrashOnOverflow, 1>, ASCIICaseInsensitiveHash> repeatedValueOffsets();
 }
 
 [Nested] struct WebCore::ResourceError::IPCData {

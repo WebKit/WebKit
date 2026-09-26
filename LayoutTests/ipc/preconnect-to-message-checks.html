@@ -53,6 +53,7 @@ async function main() {
     e.f64(2);                                            // m_timeoutInterval
     e.str("POST");                                       // m_httpMethod
     e.u64(0); e.u64(0);                                  // HTTPHeaderMap { common=[], uncommon=[] }
+    e.u32(0);                                            // HTTPHeaderMap: repeated value offsets map size.
     e.u64(0);                                            // m_responseContentDispositionEncodingFallbackArray
     e.u8(0); e.u8(1); e.u8(2); e.u8(0);                  // cachePolicy, sameSiteDisposition, priority, requester
     e.bool(true); e.bool(true); e.bool(true);            // allowCookies, isTopSite, isAppInitiated

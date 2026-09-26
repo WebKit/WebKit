@@ -30,7 +30,8 @@ function makeResponse(statusCode) {
                 httpStatusCode: statusCode, httpStatusText: 'X', httpVersion: 'HTTP/1.1',
                 httpHeaderFields: {
                     commonHeaders: [{ key: 54, value: 'http://target.webkit.test/inject.js' }],
-                    uncommonHeaders: []
+                    uncommonHeaders: [],
+                    repeatedValueOffsets: []
                 },
                 networkLoadMetrics: {}, source: 1, type: 2, tainting: 0, isRedirected: false,
                 usedLegacyTLS: 0, wasPrivateRelayed: 0, proxyName: '', isRangeRequested: false,
