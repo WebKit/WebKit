@@ -8,6 +8,11 @@ Test for `Resource.ResponseSource.ServiceWorker`.
 PASS: Resource should be created.
 PASS: Resource should receive a Response.
 PASS: responseSource should be Symbol(service-worker)
+PASS: Resource URL should not change when the response does not provide a URL.
+PASS: Resource should not dispatch URLDidChange when its URL does not change.
+PASS: Resource MIME type should change after receiving the response.
+PASS: Resource MIME type should be text/plain.
+PASS: Resource should dispatch MIMETypeDidChange when its MIME type changes.
 RESPONSE: 200 Custom Status Text: OK
 
 -- Running test case: Resource.ResponseSource.ServiceWorker.500
