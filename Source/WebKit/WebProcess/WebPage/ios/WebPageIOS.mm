@@ -2319,7 +2319,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         selectionGeometries = RenderObject::collectSelectionGeometries(*range).geometries;
 
     auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
-        return frame->view()->contentsToRootView(selectionGeometry.rect());
+        return frame->view()->contentsToMainFrameView(selectionGeometry.rect());
     });
 
     bool multipleFonts = false;

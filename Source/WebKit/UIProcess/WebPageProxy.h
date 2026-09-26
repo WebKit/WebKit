@@ -1289,7 +1289,7 @@ public:
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&&);
     void applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(String&&)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText, bool isCandidate);
-    void requestAutocorrectionContext();
+    std::optional<std::pair<WebCore::PageIdentifier, Ref<IPC::Connection>>> requestAutocorrectionContext();
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
     void clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint);
 #if ENABLE(REVEAL)

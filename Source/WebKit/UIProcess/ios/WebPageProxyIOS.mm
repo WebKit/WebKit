@@ -422,7 +422,7 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
         callback({ });
         return;
     }
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), Messages::WebPage::RequestAutocorrectionData::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(String&&)>&& callback)
@@ -506,9 +506,15 @@ void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(std::optiona
 }
 #endif
 
-void WebPageProxy::requestAutocorrectionContext()
+std::optional<std::pair<PageIdentifier, Ref<IPC::Connection>>> WebPageProxy::requestAutocorrectionContext()
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::HandleAutocorrectionContextRequest(), webPageIDInMainFrameProcess());
+    RefPtr frame = focusedOrMainFrame();
+    Ref process = processContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt);
+    auto pageID = webPageIDInProcess(process);
+    process->send(Messages::WebPage::HandleAutocorrectionContextRequest(), pageID);
+    if (!process->hasConnection())
+        return std::nullopt;
+    return { { pageID, process->connection() } };
 }
 
 void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& context)
