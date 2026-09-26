@@ -5636,9 +5636,9 @@ void WebPageProxy::processNextQueuedTouchEvent()
         if (!connection) {
             while (!internals().touchEventQueue.isEmpty()) {
                 auto queuedEvents = internals().touchEventQueue.takeFirst();
-                pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, false);
                 for (auto& event : queuedEvents.deferredTouchEvents)
                     pageClient->doneWithTouchEvent(event, false);
+                pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, false);
             }
             didFinishProcessingAllPendingTouchEvents();
             return;
@@ -5650,9 +5650,10 @@ void WebPageProxy::processNextQueuedTouchEvent()
         MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent->type(), connection);
         protect(legacyMainFrameProcess())->stopResponsivenessTimer();
 
-        pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
+        // Deferred events are older than the forwarded event.
         for (auto& event : queuedEvents.deferredTouchEvents)
             pageClient->doneWithTouchEvent(event, handled);
+        pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
 
         if (!internals().touchEventQueue.isEmpty())
             processNextQueuedTouchEvent();
@@ -5669,10 +5670,13 @@ void WebPageProxy::handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&&
     if (!m_mainFrame)
         return;
 
-    if (event->type() == WebEventType::TouchMove && !internals().touchEventQueue.isEmpty()) {
+    // Replace the last queued touch move with the newer one, keeping the touch points that moved in
+    // either. The first queued event has already been sent to the web process.
+    if (event->type() == WebEventType::TouchMove && internals().touchEventQueue.size() > 1) {
         QueuedTouchEvents& lastEvent = internals().touchEventQueue.last();
         if (lastEvent.forwardedEvent->type() == WebEventType::TouchMove) {
-            lastEvent.deferredTouchEvents.append(WTF::move(event));
+            event->mergeMovedTouchPointsFrom(lastEvent.forwardedEvent.get());
+            lastEvent.deferredTouchEvents.append(std::exchange(lastEvent.forwardedEvent, WTF::move(event)));
             return;
         }
     }

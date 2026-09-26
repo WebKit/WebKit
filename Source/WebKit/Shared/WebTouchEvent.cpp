@@ -96,6 +96,25 @@ void WebPlatformTouchPoint::transformToRemoteFrameCoordinates(const WebCore::Rem
 }
 #endif
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+void WebTouchEvent::mergeMovedTouchPointsFrom(const WebTouchEvent& supersededEvent)
+{
+    ASSERT(type() == WebEventType::TouchMove);
+    ASSERT(supersededEvent.type() == WebEventType::TouchMove);
+
+    for (auto& touchPoint : m_data.touchPoints) {
+        if (touchPoint.state() != WebPlatformTouchPoint::State::Stationary)
+            continue;
+
+        auto index = supersededEvent.touchPoints().findIf([&](const auto& supersededTouchPoint) {
+            return supersededTouchPoint.id() == touchPoint.id();
+        });
+        if (index != notFound && supersededEvent.touchPoints()[index].state() == WebPlatformTouchPoint::State::Moved)
+            touchPoint.setState(WebPlatformTouchPoint::State::Moved);
+    }
+}
+#endif
+
 bool WebTouchEvent::allTouchPointsAreReleased() const
 {
     for (const auto& touchPoint : touchPoints()) {

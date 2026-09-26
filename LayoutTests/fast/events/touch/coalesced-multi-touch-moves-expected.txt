@@ -1,0 +1,11 @@
+Tests that coalescing touch moves reports the latest position of every touch point and hides no touch point movement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS movedTo[0] is "35,50"
+PASS movedTo[1] is "90,60"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
