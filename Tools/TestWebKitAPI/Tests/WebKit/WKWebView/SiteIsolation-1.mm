@@ -25,6 +25,7 @@
 
 // Overflown from SiteIsolation.mm. This file is unified with SiteIsolation.mm
 // and its neighbors, so it must not rely on their file-scope helpers or reuse their names.
+// Helpers shared between these files live in Helpers/cocoa/SiteIsolationTestUtilities.h.
 
 #import "config.h"
 
@@ -32,14 +33,18 @@
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "InstanceMethodSwizzler.h"
-#import <WebKit/WKFrameInfoPrivate.h>
-#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKFeature.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <WebKit/_WKTextInputContext.h>
+#endif
 
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
@@ -65,61 +70,32 @@
 @end
 #endif // PLATFORM(MAC)
 
+@interface SiteIsolationFontAttributesListener : NSObject <WKUIDelegatePrivate>
+- (NSDictionary<NSString *, id> *)lastFontAttributes;
+@end
+
+@implementation SiteIsolationFontAttributesListener {
+    RetainPtr<NSDictionary> _lastFontAttributes;
+}
+
+- (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes
+{
+    _lastFontAttributes = fontAttributes;
+}
+
+- (NSDictionary<NSString *, id> *)lastFontAttributes
+{
+    return _lastFontAttributes.get();
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 // Editing, font, and spelling commands act on the focused frame's selection, so they must be sent to
 // the process containing the focused frame. These tests put the selection in a cross-origin iframe and
 // check that each command takes effect there (or that its reply describes the iframe). If the command is
 // sent to the main frame's process instead, it finds the main frame's empty selection and does nothing.
-
-static constexpr auto mainFrameTextWithCrossOriginIframe = "<body style='margin: 0'>main frame text<iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
-
-struct WebViewWithFocusedCrossOriginIframe {
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<TestNavigationDelegate> navigationDelegate;
-    RetainPtr<WKFrameInfo> childFrame;
-};
-
-static WebViewWithFocusedCrossOriginIframe webViewWithFocusedCrossOriginIframe(const HTTPServer& server)
-{
-    RetainPtr configuration = server.httpsProxyConfiguration();
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"SiteIsolationEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
-            break;
-        }
-    }
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate allowAnyTLSCertificate];
-    [webView setNavigationDelegate:navigationDelegate.get()];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
-    [navigationDelegate waitForDidFinishNavigation];
-    [webView waitForNextPresentationUpdate];
-#if PLATFORM(IOS_FAMILY)
-    [webView focusInWindow];
-#endif
-
-    RetainPtr childFrame = [webView firstChildFrame];
-    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
-    while (![childFrame _isFocused]) {
-        Util::spinRunLoop();
-        childFrame = [webView firstChildFrame];
-    }
-
-    return { WTF::move(webView), WTF::move(navigationDelegate), WTF::move(childFrame) };
-}
-
-// Waits for the UI process's editor state to reflect the new selection, since some commands check it
-// before sending anything to a web process.
-static void setSelectionInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *script, _WKSelectionAttributes expectedSelection)
-{
-    [webView objectByEvaluatingJavaScript:script inFrame:frame];
-    while (!([webView _selectionAttributes] & expectedSelection))
-        Util::spinRunLoop();
-}
 
 TEST(SiteIsolation, ListCommandsInCrossOriginIframe)
 {
@@ -361,6 +337,105 @@ TEST(SiteIsolation, SpeakSelectionInCrossOriginIframe)
     // If the request reaches the main frame's process, it finds no selection there and returns the main
     // frame's contents ("main frame text") instead.
     EXPECT_WK_STREQ("subframe text", [webView textForSpeakSelection]);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+// Page-wide state set on the web view after load must reach every web content process, not just the
+// main frame's. A cross-origin iframe's process that already exists never hears about the change, even
+// though a process created later would get it from the page's creation parameters.
+
+TEST(SiteIsolation, SetEditableAfterCrossOriginIframeLoads)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto mainFrameIsEditable = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.body.isContentEditable"] boolValue];
+    };
+    auto childFrameIsEditable = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.body.isContentEditable" inFrame:childFrame.get()] boolValue];
+    };
+    EXPECT_FALSE(mainFrameIsEditable());
+    EXPECT_FALSE(childFrameIsEditable());
+
+    [webView _setEditable:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return mainFrameIsEditable();
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return childFrameIsEditable();
+    }));
+
+    [webView _setEditable:NO];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !mainFrameIsEditable() && !childFrameIsEditable();
+    }));
+}
+
+TEST(SiteIsolation, FontAttributesDelegateSetAfterFocusingCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable style='font-size: 37px'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 3)", _WKSelectionAttributeIsCaret);
+
+    // Let any editor state updates for the new selection arrive before the delegate is set, so that the
+    // only thing that can report font attributes is the web process learning that they are now needed.
+    [webView waitForNextPresentationUpdate];
+
+    // Setting a delegate that wants font attributes tells the web processes to start computing them and
+    // to send a fresh editor state. Only the focused iframe's process can report its font.
+    RetainPtr listener = adoptNS([SiteIsolationFontAttributesListener new]);
+    [webView setUIDelegate:listener.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+#if PLATFORM(MAC)
+        NSFont *font = [listener lastFontAttributes][NSFontAttributeName];
+#else
+        UIFont *font = [listener lastFontAttributes][NSFontAttributeName];
+#endif
+        return font.pointSize == 37;
+    }));
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, SelectionChangesInCrossOriginIframeAreIgnoredDuringTextInteraction)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><textarea style='display: block; width: 200px; height: 50px;'></textarea><iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body contenteditable>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 3)", _WKSelectionAttributeIsCaret);
+
+    RetainPtr contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    ASSERT_GE([contexts count], 1U);
+    RetainPtr context = [contexts firstObject];
+
+    // While a text interaction is in progress, every web process must report its selection changes as
+    // ignorable, so the UI process doesn't update its selection UI in the middle of the interaction.
+    [webView _willBeginTextInteractionInTextInputContext:context.get()];
+    [webView objectByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)" inFrame:childFrame.get()];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [webView _selectionAttributes]);
+
+    // Finishing the interaction makes the web processes report their current selection again.
+    [webView _didFinishTextInteractionInTextInputContext:context.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView _selectionAttributes] == _WKSelectionAttributeIsRange;
+    }));
 }
 
 #endif // PLATFORM(IOS_FAMILY)

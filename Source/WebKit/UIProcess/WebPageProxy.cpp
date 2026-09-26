@@ -4076,8 +4076,12 @@ void WebPageProxy::setNeedsFontAttributes(bool needsFontAttributes)
 
     m_needsFontAttributes = needsFontAttributes;
 
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetNeedsFontAttributes(needsFontAttributes));
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetNeedsFontAttributes(needsFontAttributes), pageID);
+    });
 }
 
 bool WebPageProxy::maintainsInactiveSelection() const
@@ -4217,7 +4221,9 @@ void WebPageProxy::setEditable(bool editable)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetEditable(editable));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetEditable(editable), pageID);
+    });
 }
 
 MediaProducerMutedStateFlags WebPageProxy::mutedStateFlags() const
