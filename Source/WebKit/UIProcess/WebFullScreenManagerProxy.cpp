@@ -262,9 +262,6 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
     if (!webFrame)
         co_return false;
 
-    if (auto coordinates = co_await page->convertPointToMainFrameCoordinates({ 0, 0 }, webFrame->rootFrame()->frameID()))
-        m_rootFrameOriginInMainFrameCoordinates = IntPoint(*coordinates);
-
     {
         CheckedPtr client = m_client;
         if (!client)
@@ -429,14 +426,11 @@ void WebFullScreenManagerProxy::prepareQuickLookImageURL(CompletionHandler<void(
 }
 #endif
 
-std::optional<std::pair<IntRect, IntRect>> WebFullScreenManagerProxy::convertFromRootViewToScreenCoordinates(std::pair<IntRect, IntRect> rectsInRootViewCoordinates)
+std::optional<std::pair<IntRect, IntRect>> WebFullScreenManagerProxy::convertFromMainFrameToScreenCoordinates(std::pair<IntRect, IntRect> rectsInMainFrameCoordinates)
 {
     RefPtr page = m_page.get();
     if (!page)
         return std::nullopt;
-
-    auto rectsInMainFrameCoordinates = rectsInRootViewCoordinates;
-    rectsInMainFrameCoordinates.first.moveBy(m_rootFrameOriginInMainFrameCoordinates);
 
     CheckedPtr client = m_client;
     if (!client)
@@ -447,7 +441,7 @@ std::optional<std::pair<IntRect, IntRect>> WebFullScreenManagerProxy::convertFro
     } };
 }
 
-Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(IPC::Connection& connection, FrameIdentifier frameID, IntRect initialFrameInRootViewCoordinates, IntRect finalFrameInRootViewCoordinates)
+Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(IPC::Connection& connection, FrameIdentifier frameID, IntRect initialFrameInMainFrameCoordinates, IntRect finalFrameInMainFrameCoordinates)
 {
     MESSAGE_CHECK_BASE_COROUTINE(isFrameInSendingProcess(frameID, connection), connection);
     m_fullScreenFrameID = frameID;
@@ -456,7 +450,7 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(IPC::Connection&
     if (!page)
         co_return false;
 
-    auto rectsInScreenCoordinates = convertFromRootViewToScreenCoordinates({ initialFrameInRootViewCoordinates, finalFrameInRootViewCoordinates });
+    auto rectsInScreenCoordinates = convertFromMainFrameToScreenCoordinates({ initialFrameInMainFrameCoordinates, finalFrameInMainFrameCoordinates });
     if (!rectsInScreenCoordinates)
         co_return false;
     auto [initialFrameInScreenCoordinates, finalFrameInScreenCoordinates] = *rectsInScreenCoordinates;
@@ -479,9 +473,9 @@ Awaitable<bool> WebFullScreenManagerProxy::beganEnterFullScreen(IPC::Connection&
     } };
 }
 
-Awaitable<void> WebFullScreenManagerProxy::beganExitFullScreen(IntRect initialFrameInRootViewCoordinates, IntRect finalFrameInRootViewCoordinates)
+Awaitable<void> WebFullScreenManagerProxy::beganExitFullScreen(IntRect initialFrameInMainFrameCoordinates, IntRect finalFrameInMainFrameCoordinates)
 {
-    auto rectsInScreenCoordinates = convertFromRootViewToScreenCoordinates({ finalFrameInRootViewCoordinates, initialFrameInRootViewCoordinates });
+    auto rectsInScreenCoordinates = convertFromMainFrameToScreenCoordinates({ finalFrameInMainFrameCoordinates, initialFrameInMainFrameCoordinates });
     if (!rectsInScreenCoordinates)
         co_return;
     auto [finalFrameInScreenCoordinates, initialFrameInScreenCoordinates] = *rectsInScreenCoordinates;
