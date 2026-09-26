@@ -1344,7 +1344,6 @@ Awaitable<std::optional<FrameTreeNodeData>> WebPage::getFrameTreeForBackForwardC
     RefPtr mainFrameOrigin = mainFrame->frameDocumentSecurityOrigin();
     auto mainFrameOriginData = mainFrameOrigin ? SecurityOriginData { mainFrameOrigin->data() } : WebCore::SecurityOriginData::createOpaque();
     FrameInfoData data {
-        true,
         mainFrame->frameType() == Frame::FrameType::Local ? FrameType::Local : FrameType::Remote,
         ResourceRequest { URL { page->mainFrameURL() } },
         mainFrameOriginData,

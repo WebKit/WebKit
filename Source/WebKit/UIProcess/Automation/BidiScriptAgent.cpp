@@ -909,7 +909,8 @@ std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData
 
     // FIXME: Add support for iframe contexts.
     // https://bugs.webkit.org/show_bug.cgi?id=304305
-    if (!frameInfo.isMainFrame)
+    RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+    if (!frame || !frame->isMainFrame())
         return std::nullopt;
 
     if (frameInfo.webPageProxyID) {
