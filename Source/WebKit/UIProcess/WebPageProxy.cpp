@@ -4403,6 +4403,8 @@ void WebPageProxy::propagateDragAndDrop(DragEventForwardingData&& forwardingData
     Ref targetProcess = frame->process();
     auto filenames = dragData.fileNames();
     if (!filenames.isEmpty()) {
+        for (auto& filename : filenames)
+            targetProcess->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(filename));
         Vector<SandboxExtension::Handle> freshUploadHandles;
         createSandboxExtensionsForUpload(targetProcess, filenames, freshUploadHandles);
         forwardingData.sandboxExtensionsForUpload = WTF::move(freshUploadHandles);
