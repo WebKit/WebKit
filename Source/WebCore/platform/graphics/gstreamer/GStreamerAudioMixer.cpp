@@ -73,7 +73,7 @@ GStreamerAudioMixer::MixerPipeline& GStreamerAudioMixer::ensureMixerPipeline(Dat
     gst_element_link(mixer, audioSink);
     gst_element_set_state(pipeline.get(), GST_STATE_READY);
 
-    GST_DEBUG_OBJECT(pipeline.get(), "Created mixer pipeline for device '%s'.", deviceId.utf8().legacyCStringPointer());
+    GST_DEBUG_OBJECT(pipeline.get(), "Created mixer pipeline for device '%s'.", deviceId.utf8());
     auto mp = std::unique_ptr<MixerPipeline>(new MixerPipeline {
         WTF::move(pipeline),
         GRefPtr<GstElement>(mixer),
@@ -91,7 +91,7 @@ void GStreamerAudioMixer::teardownPipeline(const String& deviceId)
 
     auto& mp = *it->value;
     ASSERT(!mp.mixer->numsinkpads);
-    GST_DEBUG_OBJECT(mp.pipeline.get(), "Teardown timeout reached, destroying idle pipeline for device '%s'.", deviceId.utf8().legacyCStringPointer());
+    GST_DEBUG_OBJECT(mp.pipeline.get(), "Teardown timeout reached, destroying idle pipeline for device '%s'.", deviceId.utf8());
     unregisterPipeline(mp.pipeline);
     gst_element_set_state(mp.pipeline.get(), GST_STATE_NULL);
     locker->m_pipelines.remove(deviceId);
@@ -193,7 +193,7 @@ void GStreamerAudioMixer::unregisterProducer(const GRefPtr<GstPad>& mixerPad)
     RELEASE_ASSERT(pipelineIt != locker->m_pipelines.end());
     auto& mp = *pipelineIt->value;
 
-    GST_DEBUG_OBJECT(mp.pipeline.get(), "Unregistering audio producer %" GST_PTR_FORMAT " from device '%s'.", mixerPad.get(), deviceId.utf8().legacyCStringPointer());
+    GST_DEBUG_OBJECT(mp.pipeline.get(), "Unregistering audio producer %" GST_PTR_FORMAT " from device '%s'.", mixerPad.get(), deviceId.utf8());
 
     GRefPtr peer = adoptGRef(gst_pad_get_peer(mixerPad.get()));
     GRefPtr bin = adoptGRef(gst_pad_get_parent_element(peer.get()));
@@ -217,7 +217,7 @@ void GStreamerAudioMixer::unregisterProducer(const GRefPtr<GstPad>& mixerPad)
     if (!mp.mixer->numsinkpads) {
         gst_element_set_state(mp.pipeline.get(), GST_STATE_PAUSED);
         mp.teardownTimer.startOneShot(s_teardownTimeout);
-        GST_DEBUG_OBJECT(mp.pipeline.get(), "No producers left for device '%s', paused pipeline; teardown in %.0f seconds.", deviceId.utf8().legacyCStringPointer(), s_teardownTimeout.seconds());
+        GST_DEBUG_OBJECT(mp.pipeline.get(), "No producers left for device '%s', paused pipeline; teardown in %.0f seconds.", deviceId.utf8(), s_teardownTimeout.seconds());
         dumpBinToDotFile(mp.pipeline.get(), "audio-mixer-after-producer-unregistration"_s);
     }
 }

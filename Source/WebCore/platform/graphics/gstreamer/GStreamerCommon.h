@@ -35,6 +35,23 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/UTF8CStringView.h>
 
+// Same as gstinfo.h, but with the arguments converted by WTF_LOG_PRINTF_ARGS() so that call sites can pass a CString directly.
+#ifndef GST_DISABLE_GST_DEBUG
+#undef GST_CAT_LEVEL_LOG
+#define GST_CAT_LEVEL_LOG(cat, level, object, format, ...) G_STMT_START { \
+    if (G_UNLIKELY(((level) <= GST_LEVEL_MAX) && ((level) <= _gst_debug_min))) \
+        gst_debug_log((cat), (level), __FILE__, GST_FUNCTION, __LINE__, (GObject*)(object), format WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
+} G_STMT_END
+
+#ifdef GST_CAT_LEVEL_LOG_ID
+#undef GST_CAT_LEVEL_LOG_ID
+#define GST_CAT_LEVEL_LOG_ID(cat, level, id, format, ...) G_STMT_START { \
+    if (G_UNLIKELY(((level) <= GST_LEVEL_MAX) && ((level) <= _gst_debug_min))) \
+        gst_debug_log_id((cat), (level), __FILE__, GST_FUNCTION, __LINE__, (id), format WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
+} G_STMT_END
+#endif
+#endif
+
 typedef struct _GstGLMemory GstGLMemory;
 
 namespace WebCore {

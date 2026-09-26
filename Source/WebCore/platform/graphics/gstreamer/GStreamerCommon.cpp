@@ -328,8 +328,8 @@ bool isProtocolAllowed(const WTF::URL& url)
     auto protocol = url.protocol();
     bool isAllowed = !protocol.isEmpty() && (allowedProtocols->contains<StringViewHashTranslator>(protocol) || isProtocolAllowedByEnvironment(protocol));
 
-    GST_DEBUG("URL: %s", url.string().utf8().legacyCStringPointer());
-    GST_DEBUG("Requested protocol: %s (allowed: %s)", protocol.utf8().legacyCStringPointer(), isAllowed ? "yes" : "no");
+    GST_DEBUG("URL: %s", url.string().utf8());
+    GST_DEBUG("Requested protocol: %s (allowed: %s)", protocol.utf8(), isAllowed ? "yes" : "no");
 
     return isAllowed;
 }
@@ -1244,7 +1244,7 @@ GstElement* /* (transfer floating) */ createAutoAudioSink(const String& role)
             GUniquePtr<GstStructure> properties(gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role->utf8().legacyCStringPointer(), nullptr));
             g_object_set(object, "stream-properties", properties.get(), nullptr);
 IGNORE_WARNINGS_BEGIN("cast-align")
-            GST_DEBUG("Set media.role as %s on %" GST_PTR_FORMAT, role->utf8().legacyCStringPointer(), GST_ELEMENT_CAST(object));
+            GST_DEBUG("Set media.role as %s on %" GST_PTR_FORMAT, role->utf8(), GST_ELEMENT_CAST(object));
 IGNORE_WARNINGS_END
         }
         if (g_object_class_find_property(objectClass, "client-name")) {

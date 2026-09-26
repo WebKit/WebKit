@@ -109,19 +109,19 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName, usingHardware);
     if (usingHardware && !lookupResult) {
-        GST_DEBUG("No hardware decoder found for codec %s, falling back to software", codecName.utf8().legacyCStringPointer());
+        GST_DEBUG("No hardware decoder found for codec %s, falling back to software", codecName.utf8());
         lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName, false);
     }
 
     if (!lookupResult) {
-        GST_WARNING("No decoder found for codec %s", codecName.utf8().legacyCStringPointer());
+        GST_WARNING("No decoder found for codec %s", codecName.utf8());
         callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
         return;
     }
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     if (!element) {
-        GST_WARNING("Unable to create decoder for codec %s", codecName.utf8().legacyCStringPointer());
+        GST_WARNING("Unable to create decoder for codec %s", codecName.utf8());
         callback(makeUnexpected(makeString("Unable to create decoder for codec "_s, codecName)));
         return;
     }
@@ -129,7 +129,7 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     Ref decoder = adoptRef(*new GStreamerVideoDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
-        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.utf8().legacyCStringPointer());
+        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.utf8());
         callback(makeUnexpected(makeString("Internal video decoder failed to configure for codec "_s, codecName)));
         return;
     }

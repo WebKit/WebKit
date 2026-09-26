@@ -398,7 +398,7 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
         else if (containerType.endsWith("mp4"_s))
             audioCapsName = "audio/mpeg, mpegversion=4"_s;
         else {
-            GST_WARNING("Audio codec for %s not supported", contentType.raw().utf8().legacyCStringPointer());
+            GST_WARNING("Audio codec for %s not supported", contentType.raw().utf8());
             return nullptr;
         }
 

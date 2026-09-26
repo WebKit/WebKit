@@ -152,7 +152,7 @@ bool SourceBufferPrivateGStreamer::canSwitchToType(const ContentType& type)
 
     if (isContentTypeSupported(type)) {
         if (player)
-            GST_INFO_OBJECT(player->pipeline(), "type change %s -> %s", m_type.raw().utf8().legacyCStringPointer(), type.raw().utf8().legacyCStringPointer());
+            GST_INFO_OBJECT(player->pipeline(), "type change %s -> %s", m_type.raw().utf8(), type.raw().utf8());
         m_type = type;
 
         return true;

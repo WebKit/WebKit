@@ -58,7 +58,7 @@ RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC(Ref<w
     std::call_once(onceFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_incoming_audio_debug, "webkitlibwebrtcaudioincoming", 0, "WebKit LibWebRTC incoming audio source");
     });
-    GST_DEBUG("Created incoming audio source with ID: %s", persistentID().utf8().legacyCStringPointer());
+    GST_DEBUG("Created incoming audio source with ID: %s", persistentID().utf8());
 }
 
 RealtimeIncomingAudioSourceLibWebRTC::~RealtimeIncomingAudioSourceLibWebRTC()

@@ -239,7 +239,7 @@ Ref<MediaTimePromise> MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTar
     if (!m_pipeline)
         rebuildPipeline();
 
-    GST_INFO_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8().legacyCStringPointer());
+    GST_INFO_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8());
     if (!doSeek(target, m_playbackRate))
         m_seekPromise->reject(PlatformMediaError::Cancelled);
     return *m_seekPromise;
@@ -431,7 +431,7 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
     // c) At the end of a flush (forced quality change). These should not produce either of these outcomes.
     // We identify (a) and (b) by setting m_isWaitingForPreroll = true at the initialization of the player and
     // at the beginning of a seek.
-    GST_DEBUG_OBJECT(pipeline(), "Pipeline prerolled. currentMediaTime = %s", currentTime().toString().utf8().legacyCStringPointer());
+    GST_DEBUG_OBJECT(pipeline(), "Pipeline prerolled. currentMediaTime = %s", currentTime().toString().utf8());
     if (!m_isWaitingForPreroll) {
         GST_DEBUG_OBJECT(pipeline(), "Preroll was consequence of a flush, nothing to do at this level.");
         return;
@@ -446,7 +446,7 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
         m_isSeeking = false;
         m_canFallBackToLastFinishedSeekPosition = true;
         invalidateCachedPosition();
-        GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentTime().toString().utf8().legacyCStringPointer());
+        GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentTime().toString().utf8());
         if (auto seekPromise = std::exchange(m_seekPromise, std::nullopt))
             seekPromise->resolve(currentTime());
     }
@@ -522,7 +522,7 @@ bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
 {
 
     bool result = m_mediaSourcePrivate && m_mediaSourcePrivate->buffered().contain(time);
-    GST_DEBUG("Time %s buffered? %s", toString(time).utf8().legacyCStringPointer(), boolForPrinting(result));
+    GST_DEBUG("Time %s buffered? %s", toString(time).utf8(), boolForPrinting(result));
     return result;
 }
 
@@ -533,7 +533,7 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     MediaTime previousDuration = m_mediaTimeDuration;
     m_mediaTimeDuration = m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::invalidTime();
 
-    GST_TRACE("previous=%s, new=%s", toString(previousDuration).utf8().legacyCStringPointer(), toString(m_mediaTimeDuration).utf8().legacyCStringPointer());
+    GST_TRACE("previous=%s, new=%s", toString(previousDuration).utf8(), toString(m_mediaTimeDuration).utf8());
 
     // Avoid emiting durationchanged in the case where the previous duration was 0 because that case is already handled
     // by the HTMLMediaElement.
@@ -626,17 +626,17 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     // YouTube TV provides empty types for some videos and we want to be selected as best media engine for them.
     if (containerType.isEmpty()) {
         result = MediaPlayer::SupportsType::MayBeSupported;
-        GST_DEBUG("mime-type \"%s\" supported: %s", parameters.type.raw().utf8().legacyCStringPointer(), convertEnumerationToString(result).utf8().legacyCStringPointer());
+        GST_DEBUG("mime-type \"%s\" supported: %s", parameters.type.raw().utf8(), convertEnumerationToString(result).utf8());
         return result;
     }
 
     registerWebKitGStreamerElements();
 
-    GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().legacyCStringPointer());
+    GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
     result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
 
-    GST_DEBUG("Supported: %s", convertEnumerationToString(result).utf8().legacyCStringPointer());
+    GST_DEBUG("Supported: %s", convertEnumerationToString(result).utf8());
     return result;
 }
 

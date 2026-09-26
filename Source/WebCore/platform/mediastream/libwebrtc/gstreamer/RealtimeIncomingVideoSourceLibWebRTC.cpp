@@ -59,7 +59,7 @@ RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<w
     std::call_once(onceFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_incoming_video_debug, "webkitlibwebrtcvideoincoming", 0, "WebKit LibWebRTC incoming video source");
     });
-    GST_DEBUG("Created incoming video source with ID: %s", persistentID().utf8().legacyCStringPointer());
+    GST_DEBUG("Created incoming video source with ID: %s", persistentID().utf8());
 }
 
 RealtimeIncomingVideoSourceLibWebRTC::~RealtimeIncomingVideoSourceLibWebRTC()

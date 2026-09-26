@@ -105,7 +105,7 @@ GStreamerCapturerObserver::~GStreamerCapturerObserver() = default;
 void GStreamerCapturer::setDevice(std::optional<GStreamerCaptureDevice>&& device)
 {
     if (device)
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Setting new capture device: %s", device->label().utf8().legacyCStringPointer());
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Setting new capture device: %s", device->label().utf8());
     else
         GST_DEBUG_OBJECT(m_pipeline.get(), "Clearing capture device");
     tearDown(true);

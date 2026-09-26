@@ -220,7 +220,7 @@ void SpielSpeechWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>
 
     const auto& uri = utterance->voice()->voiceURI();
     if (!m_voices.contains(uri)) {
-        GST_ERROR("Unknown voice URI: %s", uri.utf8().legacyCStringPointer());
+        GST_ERROR("Unknown voice URI: %s", uri.utf8());
         ASSERT_NOT_REACHED();
         return;
     }

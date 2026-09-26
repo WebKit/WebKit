@@ -411,7 +411,7 @@ void TrackDataHolder::streamIdChanged()
     ASSERT(isMainThread());
     m_gstStreamId = gstStreamId;
     m_id = streamId.value();
-    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, m_gstStreamId.utf8().legacyCStringPointer());
+    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, m_gstStreamId.utf8());
 }
 
 void TrackDataHolder::streamChanged()

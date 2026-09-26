@@ -91,7 +91,7 @@ GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_capture_source_debug, "webkitaudiocapturesource", 0, "WebKit Audio Capture Source.");
     });
-    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Created AudioCaptureSource for device %s", persistentID().utf8().legacyCStringPointer());
+    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Created AudioCaptureSource for device %s", persistentID().utf8());
 
     auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
     singleton.registerCapturer(m_capturer.copyRef());
@@ -99,7 +99,7 @@ GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&
 
 GStreamerAudioCaptureSource::~GStreamerAudioCaptureSource()
 {
-    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Un-registering AudioCaptureSource for device %s", persistentID().utf8().legacyCStringPointer());
+    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Un-registering AudioCaptureSource for device %s", persistentID().utf8());
     auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
     singleton.unregisterCapturer(*m_capturer);
 }

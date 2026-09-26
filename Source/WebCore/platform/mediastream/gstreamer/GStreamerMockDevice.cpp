@@ -79,7 +79,7 @@ GstDevice* webkitMockDeviceCreate(const CaptureDevice& captureDevice)
 
     auto displayName = captureDevice.label();
     GUniquePtr<GstStructure> properties(gst_structure_new("webkit-mock-device", "persistent-id", G_TYPE_STRING, captureDevice.persistentId().ascii().data(), "is-default", G_TYPE_BOOLEAN, captureDevice.isDefault(), nullptr));
-    GST_DEBUG("Creating mock device with name %s and properties %" GST_PTR_FORMAT, displayName.utf8().legacyCStringPointer(), properties.get());
+    GST_DEBUG("Creating mock device with name %s and properties %" GST_PTR_FORMAT, displayName.utf8(), properties.get());
     auto* device = WEBKIT_MOCK_DEVICE_CAST(g_object_new(GST_TYPE_MOCK_DEVICE, "display-name", displayName.utf8().legacyCStringPointer(),
         "device-class", deviceClass.characters(), "caps", caps.get(), "properties", properties.get(), nullptr));
     gst_object_ref_sink(device);

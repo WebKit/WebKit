@@ -1107,7 +1107,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, *metadataInterval, nullptr));
 
         String contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
-        GST_DEBUG_OBJECT(src.get(), "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8().legacyCStringPointer());
+        GST_DEBUG_OBJECT(src.get(), "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8());
         gst_caps_set_simple(caps.get(), "content-type", G_TYPE_STRING, contentType.utf8().legacyCStringPointer(), nullptr);
     }
     if (caps) {
@@ -1237,10 +1237,10 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
         return;
 
     if (!error.isCancellation()) {
-        GST_ERROR_OBJECT(src.get(), "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer());
+        GST_ERROR_OBJECT(src.get(), "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8());
         GST_ELEMENT_ERROR(src.get(), RESOURCE, FAILED, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer()), (nullptr));
     } else
-        GST_LOG_OBJECT(src.get(), "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer());
+        GST_LOG_OBJECT(src.get(), "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8());
 
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();

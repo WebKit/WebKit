@@ -23,6 +23,7 @@
 #if USE(GSTREAMER)
 
 #include "AV1Utilities.h"
+#include "GStreamerCommon.h"
 #include "HEVCUtilities.h"
 #include "VP9Utilities.h"
 #include <gst/pbutils/codec-utils.h>
@@ -72,7 +73,7 @@ std::pair<UTF8CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndL
         level = String(byteCast<Latin1Character>(unsafeSpan(levelAsStringFallback)));
     }
 
-    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().legacyCStringPointer(), GST_STR_NULL(profile.utf8()), level.ascii().data());
+    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8(), GST_STR_NULL(profile.utf8()), level.ascii().data());
     return { profile, level };
 }
 
