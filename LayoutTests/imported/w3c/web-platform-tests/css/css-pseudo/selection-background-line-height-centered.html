@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Test: ::selection background of a middle line is vertically centered when line-height exceeds the content height</title>
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-painting">
+<link rel="match" href="selection-background-line-height-centered-ref.html">
+<meta name="assert" content="The ::selection background of a text run on a line whose line-height exceeds the content height covers that line box, with the half-leading equally above and below the text. It is not shifted up to start at the previous line's content bottom.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+  body { margin: 0; }
+  #target {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    margin: 0;
+    font: 20px/60px Ahem;
+    color: transparent;
+  }
+  #target::selection {
+    color: transparent;
+    background: rgba(0, 0, 255, 0.8);
+  }
+</style>
+<div id="target">XXXX<br>XXXX<br>XXXX</div>
+<script>
+  // Select only the text of the second (middle) line.
+  var text = document.getElementById("target").childNodes[2];
+  var range = document.createRange();
+  range.setStart(text, 0);
+  range.setEnd(text, text.length);
+  var selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+</script>
