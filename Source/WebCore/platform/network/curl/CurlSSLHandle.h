@@ -51,13 +51,13 @@ public:
 
     CurlSSLHandle();
 
-    const CString& cipherList() const LIFETIME_BOUND { return m_cipherList; }
-    const CString& signatureAlgorithmsList() const LIFETIME_BOUND { return m_signatureAlgorithmsList; }
-    const CString& ecCurves() const LIFETIME_BOUND { return m_ecCurves; }
+    const ASCIICString& cipherList() const LIFETIME_BOUND { return m_cipherList; }
+    const ASCIICString& signatureAlgorithmsList() const LIFETIME_BOUND { return m_signatureAlgorithmsList; }
+    const ASCIICString& ecCurves() const LIFETIME_BOUND { return m_ecCurves; }
 
-    void setCipherList(CString&& data) { m_cipherList = WTF::move(data); }
-    void setSignatureAlgorithmsList(CString&& data) { m_signatureAlgorithmsList = WTF::move(data); }
-    void setECCurves(CString&& data) { m_ecCurves = WTF::move(data); }
+    void setCipherList(ASCIICString&& data) { m_cipherList = WTF::move(data); }
+    void setSignatureAlgorithmsList(ASCIICString&& data) { m_signatureAlgorithmsList = WTF::move(data); }
+    void setECCurves(ASCIICString&& data) { m_ecCurves = WTF::move(data); }
 
     bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
     WEBCORE_EXPORT void setIgnoreSSLErrors(bool flag) { m_ignoreSSLErrors = flag; }
@@ -97,9 +97,9 @@ private:
 
     void platformInitialize();
 
-    CString m_cipherList;
-    CString m_signatureAlgorithmsList;
-    CString m_ecCurves;
+    ASCIICString m_cipherList;
+    ASCIICString m_signatureAlgorithmsList;
+    ASCIICString m_ecCurves;
     CACertInfo m_caCertInfo;
 
     bool m_ignoreSSLErrors { false };

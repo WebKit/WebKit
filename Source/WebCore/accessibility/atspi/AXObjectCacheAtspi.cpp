@@ -258,15 +258,15 @@ void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView
         break;
     case AXLoadingEvent::Reloaded:
         wrapper->stateChanged("busy", true);
-        wrapper->loadEvent("Reload");
+        wrapper->loadEvent("Reload"_s);
         break;
     case AXLoadingEvent::Failed:
         wrapper->stateChanged("busy", false);
-        wrapper->loadEvent("LoadStopped");
+        wrapper->loadEvent("LoadStopped"_s);
         break;
     case AXLoadingEvent::Finished:
         wrapper->stateChanged("busy", false);
-        wrapper->loadEvent("LoadComplete");
+        wrapper->loadEvent("LoadComplete"_s);
         break;
     }
 }

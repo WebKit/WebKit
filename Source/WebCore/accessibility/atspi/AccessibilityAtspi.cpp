@@ -145,10 +145,10 @@ void AccessibilityAtspi::initializeRegistry()
             const char* eventName;
             if (!g_strcmp0(signal, "EventListenerRegistered")) {
                 g_variant_get(parameters, "(&s&s@as)", &dbusName, &eventName, nullptr);
-                atspi->addEventListener(dbusName, eventName);
+                atspi->addEventListener(ASCIICString { dbusName }, CStringView::unsafeFromUTF8(eventName));
             } else if (!g_strcmp0(signal, "EventListenerDeregistered")) {
                 g_variant_get(parameters, "(&s&s)", &dbusName, &eventName);
-                atspi->removeEventListener(dbusName, eventName);
+                atspi->removeEventListener(ASCIICString { dbusName }, CStringView::unsafeFromUTF8(eventName));
             }
         }), &atspi);
 
@@ -168,15 +168,15 @@ void AccessibilityAtspi::initializeRegistry()
             const char* dbusName;
             const char* eventName;
             while (g_variant_iter_loop(&iter, "(&s&s)", &dbusName, &eventName))
-                atspi.addEventListener(dbusName, eventName);
+                atspi.addEventListener(ASCIICString { dbusName }, CStringView::unsafeFromUTF8(eventName));
         }, &atspi);
     }, this);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(const char* eventName)
+static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(CStringView eventName)
 {
-    GUniquePtr<char*> event(g_strsplit(eventName, ":", 3));
+    GUniquePtr<char*> event(g_strsplit(eventName.utf8(), ":", 3));
     if (!event.get()[0] || !event.get()[1] || !event.get()[2] || !*event.get()[2])
         return event;
 
@@ -200,7 +200,7 @@ static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(const char* eventNa
     return event;
 }
 
-void AccessibilityAtspi::addEventListener(const char* dbusName, const char* eventName)
+void AccessibilityAtspi::addEventListener(const ASCIICString& dbusName, CStringView eventName)
 {
     auto& listeners = m_eventListeners.ensure(dbusName, [] {
         return Vector<GUniquePtr<char*>> { };
@@ -222,9 +222,9 @@ static bool eventIsSubtype(char** needle, char** haystack)
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* eventName)
+void AccessibilityAtspi::removeEventListener(const ASCIICString& dbusName, CStringView eventName)
 {
-    if (!eventName || !*eventName) {
+    if (eventName.isEmpty()) {
         m_eventListeners.remove(dbusName);
         return;
     }
@@ -242,7 +242,7 @@ void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* e
         m_eventListeners.remove(it);
 }
 
-void AccessibilityAtspi::addClient(const char* dbusName)
+void AccessibilityAtspi::addClient(const ASCIICString& dbusName)
 {
     if (m_clients.isEmpty())
         AXObjectCache::enableAccessibility();
@@ -253,7 +253,7 @@ void AccessibilityAtspi::addClient(const char* dbusName)
 
     m_cacheClearTimer.stop();
 
-    addResult.iterator->value = g_dbus_connection_signal_subscribe(m_connection.get(), nullptr, "org.freedesktop.DBus", "NameOwnerChanged", nullptr, dbusName,
+    addResult.iterator->value = g_dbus_connection_signal_subscribe(m_connection.get(), nullptr, "org.freedesktop.DBus", "NameOwnerChanged", nullptr, dbusName.data(),
         G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_NAMESPACE, [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar*, GVariant* parameters, gpointer userData) {
             auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
             const char* interface;
@@ -261,11 +261,11 @@ void AccessibilityAtspi::addClient(const char* dbusName)
             const char* newName;
             g_variant_get(parameters, "(&s&s&s)", &interface, &oldName, &newName);
             if (*oldName != '\0' && *newName == '\0')
-                atspi.removeClient(oldName);
+                atspi.removeClient(ASCIICString { oldName });
         }, this, nullptr);
 }
 
-void AccessibilityAtspi::removeClient(const char* dbusName)
+void AccessibilityAtspi::removeClient(const ASCIICString& dbusName)
 {
     auto id = m_clients.take(dbusName);
     if (!id)
@@ -617,7 +617,7 @@ void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
         g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
 }
 
-void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, CString&& event)
+void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, ASCIILiteral event)
 {
 #if ENABLE(DEVELOPER_MODE)
     notifyLoadEvent(atspiObject, event);
@@ -626,10 +626,10 @@ void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, CStrin
     if (!m_connection)
         return;
 
-    if (!shouldEmitSignal("Document", event.data()))
+    if (!shouldEmitSignal("Document", event.characters()))
         return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Document", event.data(),
+    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Document", event.characters(),
         g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
 }
 
@@ -771,7 +771,7 @@ GDBusInterfaceVTable AccessibilityAtspi::s_cacheFunctions = {
     [](GDBusConnection*, const gchar* sender, const gchar*, const gchar*, const gchar* methodName, GVariant*, GDBusMethodInvocation* invocation, gpointer userData) {
         if (!g_strcmp0(methodName, "GetItems")) {
             auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
-            atspi.addClient(sender);
+            atspi.addClient(ASCIICString { sender });
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(" GET_ITEMS_SIGNATURE ")"));
             g_variant_builder_open(&builder, G_VARIANT_TYPE(GET_ITEMS_SIGNATURE));
             for (auto* rootObject : atspi.m_rootObjects.keys()) {
@@ -962,7 +962,7 @@ void AccessibilityAtspi::notifyValueChanged(AccessibilityObjectAtspi& atspiObjec
     notify(atspiObject, "AXValueChanged", nullptr);
 }
 
-void AccessibilityAtspi::notifyLoadEvent(AccessibilityObjectAtspi& atspiObject, const CString& event) const
+void AccessibilityAtspi::notifyLoadEvent(AccessibilityObjectAtspi& atspiObject, ASCIILiteral event) const
 {
     if (event != "LoadComplete"_s)
         return;

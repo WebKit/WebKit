@@ -146,8 +146,8 @@ public:
     GRefPtr<WebKitUserContentManager> m_userContentManager;
     GRefPtr<WebKitWebView> m_webView;
     GMainLoop* m_mainLoop;
-    CString m_activeURI;
-    CString m_expectedTitle;
+    UTF8CString m_activeURI;
+    UTF8CString m_expectedTitle;
     GRefPtr<JSCValue> m_javascriptResult;
     GError** m_javascriptError { nullptr };
     GUniquePtr<char> m_resourceData { nullptr };

@@ -46,6 +46,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CStringView.h>
 
 #if USE(LIBSECRET)
 #include <glib/gi18n-lib.h>
@@ -558,7 +559,7 @@ void NetworkStorageSession::deleteCookie(const URL&, const URL& url, const Strin
     bool wasDeleted = false;
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
         SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
-        if (!wasDeleted && cookieName == soup_cookie_get_name(cookie)) {
+        if (!wasDeleted && cookieName == CStringView::unsafeFromUTF8(soup_cookie_get_name(cookie))) {
             soup_cookie_jar_delete_cookie(jar, cookie);
             wasDeleted = true;
         }

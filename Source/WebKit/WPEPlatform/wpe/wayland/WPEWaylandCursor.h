@@ -29,6 +29,7 @@
 #include <wayland-client.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/CStringView.h>
 
 namespace WPE {
 
@@ -40,7 +41,7 @@ public:
     explicit WaylandCursor(WPEDisplayWayland*);
     ~WaylandCursor();
 
-    void setFromName(const char*, double);
+    void setFromName(CStringView, double);
     void setFromBuffer(struct wl_buffer*, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY);
     void update() const;
 

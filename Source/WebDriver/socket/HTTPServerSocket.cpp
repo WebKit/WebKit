@@ -93,7 +93,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
     case HTTPParser::Phase::Error: {
         HTTPRequestHandler::Response response {
             400,
-            "text/html; charset=utf-8",
+            "text/html; charset=utf-8"_s,
             "<h1>Bad client</h1> Invalid HTML format"_s,
         };
         sendResponse(WTF::move(response));

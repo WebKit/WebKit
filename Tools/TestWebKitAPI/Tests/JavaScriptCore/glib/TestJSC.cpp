@@ -1595,7 +1595,7 @@ static void testJSCObject()
 typedef struct _Foo Foo;
 struct _Foo {
     int foo;
-    HashMap<CString, int> properties;
+    HashMap<UTF8CString, int> properties;
     Foo* sibling;
 };
 
@@ -1695,13 +1695,13 @@ static void multiplyFooV(Foo* foo, GPtrArray* multipliers)
 
 static int fooGetProperty(Foo* foo, const char* name)
 {
-    auto addResult = foo->properties.add(name, 0);
+    auto addResult = foo->properties.add(UTF8CString { byteCast<char8_t>(name) }, 0);
     return addResult.iterator->value;
 }
 
 static void fooSetProperty(Foo* foo, const char* name, int value)
 {
-    auto addResult = foo->properties.add(name, value);
+    auto addResult = foo->properties.add(UTF8CString { byteCast<char8_t>(name) }, value);
     if (!addResult.isNewEntry)
         addResult.iterator->value = value;
 }
@@ -1814,11 +1814,7 @@ static JSCClassVTable fooVTable = {
         }
 
         auto* foo = static_cast<Foo*>(instance);
-        if (!foo->properties.contains(name))
-            return FALSE;
-
-        foo->properties.remove(name);
-        return TRUE;
+        return foo->properties.remove(UTF8CString { byteCast<char8_t>(name) });
     },
     // enumerate_properties
     [](JSCClass* jscClass, JSCContext* context, gpointer instance) -> char** {
@@ -1827,11 +1823,11 @@ static JSCClassVTable fooVTable = {
 
         auto* foo = static_cast<Foo*>(instance);
         GRefPtr<GPtrArray> properties = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-        Vector<CString> names = copyToVector(foo->properties.keys());
+        Vector<UTF8CString> names = copyToVector(foo->properties.keys());
         std::sort(names.begin(), names.end());
         for (const auto& name : names) {
-            if (g_str_has_prefix(name.data(), "prop_enum_"))
-                g_ptr_array_add(properties.get(), g_strdup(name.data()));
+            if (g_str_has_prefix(name.legacyCStringPointer(), "prop_enum_"))
+                g_ptr_array_add(properties.get(), g_strdup(name.legacyCStringPointer()));
         }
         if (!properties->len)
             return nullptr;

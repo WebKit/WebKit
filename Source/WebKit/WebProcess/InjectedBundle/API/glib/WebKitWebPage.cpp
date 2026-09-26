@@ -105,7 +105,7 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 struct _WebKitWebPagePrivate {
     WebPage* webPage;
 
-    CString uri;
+    UTF8CString uri;
 
     GRefPtr<WebKitWebEditor> webEditor;
     HashMap<WebKitScriptWorld*, GRefPtr<WebKitWebFormManager>> formManagerMap;
@@ -180,7 +180,7 @@ static void webFrameDestroyed(WebFrame* webFrame)
     webFrameMap().remove(webFrame);
 }
 
-static void webkitWebPageSetURI(WebKitWebPage* webPage, const CString& uri)
+static void webkitWebPageSetURI(WebKitWebPage* webPage, const UTF8CString& uri)
 {
     if (webPage->priv->uri == uri)
         return;
@@ -197,7 +197,7 @@ public:
     }
 
 private:
-    static CString getDocumentLoaderURL(DocumentLoader* documentLoader)
+    static UTF8CString getDocumentLoaderURL(DocumentLoader* documentLoader)
     {
         ASSERT(documentLoader);
         if (!documentLoader->unreachableURL().isEmpty())
@@ -874,7 +874,7 @@ const gchar* webkit_web_page_get_uri(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
-    return webPage->priv->uri.data();
+    return webPage->priv->uri.legacyCStringPointer();
 }
 
 /**

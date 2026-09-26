@@ -31,4 +31,4 @@ WebKitFrame* webkitFrameCreate(WebKit::WebFrame*);
 WebKit::WebFrame* webkitFrameGetWebFrame(WebKitFrame*);
 GRefPtr<JSCValue> webkitFrameGetJSCValueForElementInWorld(WebKitFrame*, WebCore::Element&, WebKitScriptWorld*);
 Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*, const Vector<Ref<WebCore::Element>>&, WebKitScriptWorld*);
-void webkitFrameSetURI(WebKitFrame*, const CString&);
+void webkitFrameSetURI(WebKitFrame*, const UTF8CString&);

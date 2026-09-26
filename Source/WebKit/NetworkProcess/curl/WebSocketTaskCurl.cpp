@@ -135,7 +135,7 @@ void WebSocketTask::didOpen(WebCore::CurlStreamID)
         }
     }
 
-    CString cookieHeader;
+    UTF8CString cookieHeader;
     if (!cookieHeaderField.isEmpty())
         cookieHeader = makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s).utf8();
 

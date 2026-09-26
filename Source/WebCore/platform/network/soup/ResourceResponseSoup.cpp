@@ -33,6 +33,7 @@
 #include "URLSoup.h"
 #include <unicode/uset.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -78,7 +79,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const UTF8CString& 
 
     String contentType;
     const char* officialType = soup_message_headers_get_one(responseHeaders, "Content-Type");
-    if (!sniffedContentType.isNull() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED && sniffedContentType != officialType)
+    if (!sniffedContentType.isNull() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED && sniffedContentType != CStringView::unsafeFromUTF8(officialType))
         contentType = String { sniffedContentType };
     else
         contentType = String::fromLatin1(officialType);

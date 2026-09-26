@@ -40,9 +40,9 @@ public:
 
         MessageSource source;
         MessageLevel level;
-        CString message;
+        UTF8CString message;
         unsigned lineNumber;
-        CString sourceID;
+        UTF8CString sourceID;
     };
 
 #if ENABLE(2022_GLIB_API)
@@ -60,7 +60,7 @@ public:
         const char* messageText;
         const char* sourceID;
         g_variant_get(variant.get(), "(uu&su&s)", &source, &level, &messageText, &lineNumber, &sourceID);
-        test->m_consoleMessage = { static_cast<ConsoleMessageTest::MessageSource>(source), static_cast<ConsoleMessageTest::MessageLevel>(level), messageText, lineNumber, sourceID };
+        test->m_consoleMessage = { static_cast<ConsoleMessageTest::MessageSource>(source), static_cast<ConsoleMessageTest::MessageLevel>(level), UTF8CString { byteCast<char8_t>(messageText) }, lineNumber, UTF8CString { byteCast<char8_t>(sourceID) } };
 
         g_main_loop_quit(test->m_mainLoop);
     }
@@ -95,31 +95,31 @@ public:
 
 static void testWebKitConsoleMessageConsoleAPI(ConsoleMessageTest* test, gconstpointer)
 {
-    ConsoleMessageTest::ConsoleMessage referenceMessage = { ConsoleMessageTest::MessageSource::ConsoleAPI, ConsoleMessageTest::MessageLevel::Log, "Log Console Message", 1, "http://foo.com/bar" };
+    ConsoleMessageTest::ConsoleMessage referenceMessage = { ConsoleMessageTest::MessageSource::ConsoleAPI, ConsoleMessageTest::MessageLevel::Log, "Log Console Message"_s, 1, "http://foo.com/bar"_s };
     test->loadHtml("<html><body onload='console.log(\"Log Console Message\");'></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
 
     referenceMessage.level = ConsoleMessageTest::MessageLevel::Info;
-    referenceMessage.message = "Info Console Message";
+    referenceMessage.message = "Info Console Message"_s;
     test->loadHtml("<html><body onload='console.info(\"Info Console Message\");'></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
 
     referenceMessage.level = ConsoleMessageTest::MessageLevel::Warning;
-    referenceMessage.message = "Warning Console Message";
+    referenceMessage.message = "Warning Console Message"_s;
     test->loadHtml("<html><body onload='console.warn(\"Warning Console Message\");'></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
 
     referenceMessage.level = ConsoleMessageTest::MessageLevel::Error;
-    referenceMessage.message = "Error Console Message";
+    referenceMessage.message = "Error Console Message"_s;
     test->loadHtml("<html><body onload='console.error(\"Error Console Message\");'></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
 
     referenceMessage.level = ConsoleMessageTest::MessageLevel::Debug;
-    referenceMessage.message = "Debug Console Message";
+    referenceMessage.message = "Debug Console Message"_s;
     test->loadHtml("<html><body onload='console.debug(\"Debug Console Message\");'></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
@@ -128,7 +128,7 @@ static void testWebKitConsoleMessageConsoleAPI(ConsoleMessageTest* test, gconstp
 static void testWebKitConsoleMessageJavaScriptException(ConsoleMessageTest* test, gconstpointer)
 {
     ConsoleMessageTest::ConsoleMessage referenceMessage = { ConsoleMessageTest::MessageSource::JavaScript, ConsoleMessageTest::MessageLevel::Error,
-        "ReferenceError: Can't find variable: foo", 1, "http://foo.com/bar" };
+        "ReferenceError: Can't find variable: foo"_s, 1, "http://foo.com/bar"_s };
     test->loadHtml("<html><body onload='foo()'></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
@@ -137,7 +137,7 @@ static void testWebKitConsoleMessageJavaScriptException(ConsoleMessageTest* test
 static void testWebKitConsoleMessageNetworkError(ConsoleMessageTest* test, gconstpointer)
 {
     ConsoleMessageTest::ConsoleMessage referenceMessage = { ConsoleMessageTest::MessageSource::Network, ConsoleMessageTest::MessageLevel::Error,
-        "Failed to load resource: The resource at “/org/webkit/glib/tests/not-found.css” does not exist", 0, "resource:///org/webkit/glib/tests/not-found.css" };
+        UTF8CString { u8"Failed to load resource: The resource at “/org/webkit/glib/tests/not-found.css” does not exist"_span }, 0, "resource:///org/webkit/glib/tests/not-found.css"_s };
     test->loadHtml("<html><head><link rel='stylesheet' href='not-found.css' type='text/css'></head><body></body></html>", "resource:///org/webkit/glib/tests/");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);
@@ -146,7 +146,7 @@ static void testWebKitConsoleMessageNetworkError(ConsoleMessageTest* test, gcons
 static void testWebKitConsoleMessageSecurityError(ConsoleMessageTest* test, gconstpointer)
 {
     ConsoleMessageTest::ConsoleMessage referenceMessage = { ConsoleMessageTest::MessageSource::Security, ConsoleMessageTest::MessageLevel::Error,
-        "Not allowed to load local resource: file:///foo/bar/source.png", 1, "http://foo.com/bar" };
+        "Not allowed to load local resource: file:///foo/bar/source.png"_s, 1, "http://foo.com/bar"_s };
     test->loadHtml("<html><body><img src=\"file:///foo/bar/source.png\"/></body></html>", "http://foo.com/bar");
     test->waitUntilConsoleMessageReceived();
     g_assert_true(test->m_consoleMessage == referenceMessage);

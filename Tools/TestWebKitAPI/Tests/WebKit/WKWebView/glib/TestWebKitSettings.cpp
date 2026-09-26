@@ -35,6 +35,7 @@
 #include "WebViewTest.h"
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
 
 static WebKitTestServer* gServer;
@@ -545,7 +546,7 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     // Check default values of settings, before applying key_file settings.
     g_assert_true(webkit_settings_get_enable_webaudio(settings.get()));
     g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
-    CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
+    UTF8CString defaultUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
 
     // Loading settings from a file that contains an unknown setting should raise an error.
     g_key_file_load_from_data(key_file.get(), unknownSetting, strlen(unknownSetting), G_KEY_FILE_NONE, &error.outPtr());
@@ -575,8 +576,8 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     g_assert_false(webkit_settings_get_enable_webaudio(settings.get()));
     g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
 
-    CString newUserAgent = webkit_settings_get_user_agent(settings.get());
-    g_assert_cmpstr(newUserAgent.data(), !=, defaultUserAgent.data());
+    UTF8CString newUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
+    g_assert_cmpstr(newUserAgent.legacyCStringPointer(), !=, defaultUserAgent.legacyCStringPointer());
 }
 
 #if PLATFORM(GTK)
@@ -587,38 +588,38 @@ static UTF8CString convertWebViewMainResourceDataToUTF8CString(WebViewTest* test
     return UTF8CString { byteCast<char8_t>(std::span { mainResourceData, mainResourceDataSize }) };
 }
 
-static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString& userAgent)
+static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, CStringView userAgent)
 {
-    test->loadURI(gServer->getURIForPath("/").data());
+    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
     test->waitUntilLoadFinished();
-    ASSERT_CMP_CSTRING(convertWebViewMainResourceDataToUTF8CString(test), ==, userAgent);
+    ASSERT_CMP_CSTRING(convertWebViewMainResourceDataToUTF8CString(test), ==, userAgent.utf8());
 }
 
 static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
 {
     GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
-    CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
+    UTF8CString defaultUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
     webkit_web_view_set_settings(test->webView(), settings.get());
 
-    g_assert_nonnull(g_strstr_len(defaultUserAgent.data(), -1, "AppleWebKit"));
-    g_assert_nonnull(g_strstr_len(defaultUserAgent.data(), -1, "Safari"));
+    g_assert_nonnull(g_strstr_len(defaultUserAgent.legacyCStringPointer(), -1, "AppleWebKit"));
+    g_assert_nonnull(g_strstr_len(defaultUserAgent.legacyCStringPointer(), -1, "Safari"));
 
     webkit_settings_set_user_agent(settings.get(), 0);
-    g_assert_cmpstr(defaultUserAgent.data(), ==, webkit_settings_get_user_agent(settings.get()));
-    assertThatUserAgentIsSentInHeaders(test, defaultUserAgent.data());
+    g_assert_cmpstr(defaultUserAgent.legacyCStringPointer(), ==, webkit_settings_get_user_agent(settings.get()));
+    assertThatUserAgentIsSentInHeaders(test, defaultUserAgent);
 
     webkit_settings_set_user_agent(settings.get(), "");
-    g_assert_cmpstr(defaultUserAgent.data(), ==, webkit_settings_get_user_agent(settings.get()));
+    g_assert_cmpstr(defaultUserAgent.legacyCStringPointer(), ==, webkit_settings_get_user_agent(settings.get()));
 
     const char* funkyUserAgent = "Funky!";
     webkit_settings_set_user_agent(settings.get(), funkyUserAgent);
     g_assert_cmpstr(funkyUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
-    assertThatUserAgentIsSentInHeaders(test, funkyUserAgent);
+    assertThatUserAgentIsSentInHeaders(test, CStringView::unsafeFromUTF8(funkyUserAgent));
 
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK", 0);
     const char* userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
-    g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion, -1, defaultUserAgent.data()), ==, userAgentWithNullVersion);
+    g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion, -1, defaultUserAgent.legacyCStringPointer()), ==, userAgentWithNullVersion);
     g_assert_nonnull(g_strstr_len(userAgentWithNullVersion, -1, "WebKitGTK"));
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK", "");
@@ -630,7 +631,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     g_assert_nonnull(g_strstr_len(newUserAgent, -1, "3.4.5"));
     g_assert_nonnull(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
 
-    GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.data(), "WebCatGTK+/3.4.5"));
+    GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.legacyCStringPointer(), "WebCatGTK+/3.4.5"));
     g_assert_cmpstr(applicationUserAgent.get(), ==, webkit_settings_get_user_agent(settings.get()));
 
     // Test setting user agent built via WebKitUserAgent
@@ -639,11 +640,11 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     const char* mobileUserAgentString = webkit_settings_get_user_agent(settings.get());
     g_assert_nonnull(g_strstr_len(mobileUserAgentString, -1, "Mobile"));
     g_assert_nonnull(g_strstr_len(mobileUserAgentString, -1, "Android"));
-    assertThatUserAgentIsSentInHeaders(test, mobileUserAgentString);
+    assertThatUserAgentIsSentInHeaders(test, CStringView::unsafeFromUTF8(mobileUserAgentString));
 
     // Setting user agent to nullptr reverts to default user agent.
     webkit_settings_set_user_agent(settings.get(), nullptr);
-    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, defaultUserAgent.data());
+    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, defaultUserAgent.legacyCStringPointer());
 }
 #endif // PLATFORM(GTK)
 

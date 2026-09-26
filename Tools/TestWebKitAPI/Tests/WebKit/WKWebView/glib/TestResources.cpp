@@ -24,6 +24,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CStringView.h>
 
 static WebKitTestServer* kServer;
 
@@ -170,7 +171,7 @@ public:
         webkit_web_resource_get_data(resource, 0, resourceGetDataCallback, this);
         g_main_loop_run(m_mainLoop);
 
-        const char* uri = webkit_web_resource_get_uri(resource);
+        auto uri = CStringView::unsafeFromUTF8(webkit_web_resource_get_uri(resource));
         if (uri == kServer->getURIForPath("/")) {
             g_assert_cmpint(m_resourceDataSize, ==, strlen(kIndexHtml));
             g_assert_cmpint(strncmp(m_resourceData.get(), kIndexHtml, m_resourceDataSize), ==, 0);
@@ -181,7 +182,7 @@ public:
             g_assert_cmpint(m_resourceDataSize, ==, strlen(kJavascript));
             g_assert_cmpint(strncmp(m_resourceData.get(), kJavascript, m_resourceDataSize), ==, 0);
         } else if (uri == kServer->getURIForPath("/blank.ico")) {
-            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
             GUniqueOutPtr<char> contents;
             gsize contentsLength;
             g_file_get_contents(filePath.get(), &contents.outPtr(), &contentsLength, nullptr);
@@ -214,7 +215,7 @@ static void testWebViewResources(ResourcesTest* test, gconstpointer)
     g_assert_null(test->subresources());
 
     // Load simple page with subresources.
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
     test->waitUntilResourcesLoaded(4);
 
     resource = webkit_web_view_get_main_resource(test->webView());
@@ -227,7 +228,7 @@ static void testWebViewResources(ResourcesTest* test, gconstpointer)
 #if 0
     // Load the same URI again.
     // FIXME: we need a workaround for bug https://bugs.webkit.org/show_bug.cgi?id=78510.
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
     test->waitUntilResourcesLoaded(4);
 #endif
 
@@ -320,7 +321,7 @@ public:
 
 static void testWebResourceLoading(SingleResourceLoadTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    test->loadURI(kServer->getURIForPath("/javascript.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
     Vector<SingleResourceLoadTest::LoadEvents>& events = test->m_loadEvents;
@@ -331,7 +332,7 @@ static void testWebResourceLoading(SingleResourceLoadTest* test, gconstpointer)
     g_assert_cmpint(events[3], ==, SingleResourceLoadTest::Finished);
     events.clear();
 
-    test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
+    test->loadURI(kServer->getURIForPath("/redirected-css.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
     g_assert_cmpint(events.size(), ==, 5);
@@ -342,7 +343,7 @@ static void testWebResourceLoading(SingleResourceLoadTest* test, gconstpointer)
     g_assert_cmpint(events[4], ==, SingleResourceLoadTest::Finished);
     events.clear();
 
-    test->loadURI(kServer->getURIForPath("/invalid-css.html").data());
+    test->loadURI(kServer->getURIForPath("/invalid-css.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
     g_assert_cmpint(events.size(), ==, 4);
@@ -356,12 +357,12 @@ static void testWebResourceLoading(SingleResourceLoadTest* test, gconstpointer)
 static void testWebResourceResponse(SingleResourceLoadTest* test, gconstpointer)
 {
     // No cached resource: First load.
-    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    test->loadURI(kServer->getURIForPath("/javascript.html").legacyCStringPointer());
     WebKitURIResponse* response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // No cached resource: Second load.
-    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    test->loadURI(kServer->getURIForPath("/javascript.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
@@ -371,12 +372,12 @@ static void testWebResourceResponse(SingleResourceLoadTest* test, gconstpointer)
     g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // Cached resource: First load.
-    test->loadURI(kServer->getURIForPath("/image.html").data());
+    test->loadURI(kServer->getURIForPath("/image.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // Cached resource: Second load.
-    test->loadURI(kServer->getURIForPath("/image.html").data());
+    test->loadURI(kServer->getURIForPath("/image.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
@@ -388,30 +389,30 @@ static void testWebResourceResponse(SingleResourceLoadTest* test, gconstpointer)
 
 static void testWebResourceMimeType(SingleResourceLoadTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    test->loadURI(kServer->getURIForPath("/javascript.html").legacyCStringPointer());
     WebKitURIResponse* response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/javascript");
 
-    test->loadURI(kServer->getURIForPath("/image.html").data());
+    test->loadURI(kServer->getURIForPath("/image.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "image/x-icon");
 
-    test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
+    test->loadURI(kServer->getURIForPath("/redirected-css.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/css");
 
-    test->loadURI(kServer->getURIForPath("/iframe-no-content.html").data());
+    test->loadURI(kServer->getURIForPath("/iframe-no-content.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/plain");
 }
 
 static void testWebResourceSuggestedFilename(SingleResourceLoadTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    test->loadURI(kServer->getURIForPath("/javascript.html").legacyCStringPointer());
     WebKitURIResponse* response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpstr(webkit_uri_response_get_suggested_filename(response), ==, "JavaScript.js");
 
-    test->loadURI(kServer->getURIForPath("/image.html").data());
+    test->loadURI(kServer->getURIForPath("/image.html").legacyCStringPointer());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_null(webkit_uri_response_get_suggested_filename(response));
 }
@@ -428,8 +429,8 @@ public:
     static void uriChanged(WebKitWebResource* resource, GParamSpec*, ResourceURITrackingTest* test)
     {
         g_assert_true(resource == test->m_resource.get());
-        g_assert_cmpstr(test->m_activeURI.data(), !=, webkit_web_resource_get_uri(test->m_resource.get()));
-        test->m_activeURI = webkit_web_resource_get_uri(test->m_resource.get());
+        g_assert_cmpstr(test->m_activeURI.legacyCStringPointer(), !=, webkit_web_resource_get_uri(test->m_resource.get()));
+        test->m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_resource_get_uri(test->m_resource.get())) };
     }
 
     void resourceLoadStarted(WebKitWebResource* resource, WebKitURIRequest* request)
@@ -438,9 +439,9 @@ public:
             return;
 
         m_resource = resource;
-        m_activeURI = webkit_web_resource_get_uri(resource);
+        m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_resource_get_uri(resource)) };
         checkActiveURI("/redirected.css");
-        g_assert_cmpstr(m_activeURI.data(), ==, webkit_uri_request_get_uri(request));
+        g_assert_cmpstr(m_activeURI.legacyCStringPointer(), ==, webkit_uri_request_get_uri(request));
         g_signal_connect(resource, "notify::uri", G_CALLBACK(uriChanged), this);
     }
 
@@ -453,7 +454,7 @@ public:
             checkActiveURI("/simple-style.css");
         else
             checkActiveURI("/redirected.css");
-        g_assert_cmpstr(m_activeURI.data(), ==, webkit_uri_request_get_uri(request));
+        g_assert_cmpstr(m_activeURI.legacyCStringPointer(), ==, webkit_uri_request_get_uri(request));
     }
 
     void resourceReceivedResponse(WebKitWebResource* resource)
@@ -476,7 +477,7 @@ public:
         g_assert_not_reached();
     }
 
-    CString m_activeURI;
+    UTF8CString m_activeURI;
 
 private:
     void checkActiveURI(const char* uri)
@@ -487,13 +488,13 @@ private:
 
 static void testWebResourceActiveURI(ResourceURITrackingTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
+    test->loadURI(kServer->getURIForPath("/redirected-css.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
 }
 
 static void testWebResourceGetData(ResourcesTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
     test->waitUntilResourcesLoaded(4);
 
     WebKitWebResource* resource = webkit_web_view_get_main_resource(test->webView());
@@ -560,31 +561,31 @@ static void testWebResourceGetDataEmpty(Test* test, gconstpointer)
 
 static void testWebViewResourcesHistoryCache(SingleResourceLoadTest* test, gconstpointer)
 {
-    CString javascriptURI = kServer->getURIForPath("/javascript.html");
-    test->loadURI(javascriptURI.data());
+    UTF8CString javascriptURI = kServer->getURIForPath("/javascript.html");
+    test->loadURI(javascriptURI.legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     WebKitWebResource* resource = webkit_web_view_get_main_resource(test->webView());
     g_assert_nonnull(resource);
-    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, javascriptURI.data());
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, javascriptURI.legacyCStringPointer());
 
-    CString simpleStyleCSSURI = kServer->getURIForPath("/simple-style-css.html");
-    test->loadURI(simpleStyleCSSURI.data());
+    UTF8CString simpleStyleCSSURI = kServer->getURIForPath("/simple-style-css.html");
+    test->loadURI(simpleStyleCSSURI.legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     resource = webkit_web_view_get_main_resource(test->webView());
     g_assert_nonnull(resource);
-    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.data());
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.legacyCStringPointer());
 
     test->goBack();
     test->waitUntilResourceLoadFinished();
     resource = webkit_web_view_get_main_resource(test->webView());
     g_assert_nonnull(resource);
-    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, javascriptURI.data());
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, javascriptURI.legacyCStringPointer());
 
     test->goForward();
     test->waitUntilResourceLoadFinished();
     resource = webkit_web_view_get_main_resource(test->webView());
     g_assert_nonnull(resource);
-    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.data());
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.legacyCStringPointer());
 }
 
 class SendRequestTest: public SingleResourceLoadTest {
@@ -639,7 +640,7 @@ public:
 static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
 {
     test->setExpectedNewResourceURI(kServer->getURIForPath("/javascript.js"));
-    test->loadURI(kServer->getURIForPath("relative-javascript.html").data());
+    test->loadURI(kServer->getURIForPath("relative-javascript.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
 
@@ -653,7 +654,7 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
 
     // Cancel request.
     test->setExpectedCancelledResourceURI(kServer->getURIForPath("/cancel-this.js"));
-    test->loadURI(kServer->getURIForPath("/resource-to-cancel.html").data());
+    test->loadURI(kServer->getURIForPath("/resource-to-cancel.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
 
@@ -666,7 +667,7 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
     // URI changed after a redirect.
     test->setExpectedNewResourceURI(kServer->getURIForPath("/redirected.js"));
     test->setExpectedNewResourceURIAfterRedirection(kServer->getURIForPath("/javascript-after-redirection.js"));
-    test->loadURI(kServer->getURIForPath("redirected-javascript.html").data());
+    test->loadURI(kServer->getURIForPath("redirected-javascript.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
 
@@ -681,7 +682,7 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
     // Cancel after a redirect.
     test->setExpectedNewResourceURI(kServer->getURIForPath("/redirected-to-cancel.js"));
     test->setExpectedCancelledResourceURI(kServer->getURIForPath("/redirected-to-cancel.js"));
-    test->loadURI(kServer->getURIForPath("/redirected-to-cancel.html").data());
+    test->loadURI(kServer->getURIForPath("/redirected-to-cancel.html").legacyCStringPointer());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
 
@@ -721,7 +722,7 @@ public:
 static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gconstpointer) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     s_serverLock.lock();
-    test->loadURI(kServer->getURIForPath("/sync-request-on-max-conns-0").data());
+    test->loadURI(kServer->getURIForPath("/sync-request-on-max-conns-0").legacyCStringPointer());
     test->waitUntilResourcesStarted(s_maxConnectionsPerHost + 1); // s_maxConnectionsPerHost resource + main resource.
 
     for (unsigned i = 0; i < 2; ++i) {
@@ -821,7 +822,7 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='/redirected-to-cancel.js'></script></head><body></body></html>";
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
     } else if (g_str_equal(path, "/blank.ico")) {
-        GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), path, nullptr));
+        GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), path, nullptr));
         char* contents;
         gsize contentsLength;
         g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);
@@ -867,7 +868,7 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
                 Locker locker { s_serverLock };
             }
 
-            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
             g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);
         }
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, contentsLength);

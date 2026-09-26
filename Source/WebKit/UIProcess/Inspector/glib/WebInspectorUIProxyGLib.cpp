@@ -34,7 +34,7 @@ namespace WebKit {
 
 struct PlatformSaveData {
     Vector<uint8_t> dataVector;
-    CString dataString;
+    UTF8CString dataString;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(PlatformSaveData)
 
@@ -63,7 +63,7 @@ void platformSaveDataToFile(GRefPtr<GFile>&& file, const String& content, bool b
     } else
         platformSaveData->dataString = content.utf8();
 
-    const char* data = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.data() : reinterpret_cast<const char*>(platformSaveData->dataVector.span().data());
+    const char* data = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.legacyCStringPointer() : reinterpret_cast<const char*>(platformSaveData->dataVector.span().data());
     size_t dataLength = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.length() : platformSaveData->dataVector.size();
 
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,

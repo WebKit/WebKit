@@ -575,7 +575,7 @@ static void testWebViewEditorInsertImage(EditorTest* test, gconstpointer)
     test->flushEditorState();
     test->setEditable(true);
 
-    GUniquePtr<char> imagePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+    GUniquePtr<char> imagePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
     GUniquePtr<char> imageURI(g_filename_to_uri(imagePath.get(), nullptr, nullptr));
     webkit_web_view_execute_editing_command_with_argument(test->webView(), WEBKIT_EDITING_COMMAND_INSERT_IMAGE, imageURI.get());
     GUniqueOutPtr<GError> error;

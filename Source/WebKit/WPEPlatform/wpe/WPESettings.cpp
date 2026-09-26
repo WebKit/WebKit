@@ -77,7 +77,7 @@ G_DEFINE_QUARK(wpe-settings-error-quark, wpe_settings_error)
  * to watch a specific key, e.g. `changed::/wpe-platform/fonts/font-hinting`.
  */
 struct _WPESettingsPrivate {
-    HashMap<CString, SettingEntry> settings;
+    HashMap<UTF8CString, SettingEntry> settings;
 
     _WPESettingsPrivate()
     {
@@ -109,7 +109,7 @@ struct _WPESettingsPrivate {
         };
 
         for (auto& setting : defaultSettings)
-            settings.add(setting.key, SettingEntry(setting.defaultValue, GUniquePtr<GVariantType>(g_variant_type_copy(setting.type))));
+            settings.add(UTF8CString { byteCast<char8_t>(setting.key) }, SettingEntry(setting.defaultValue, GUniquePtr<GVariantType>(g_variant_type_copy(setting.type))));
     }
 };
 
@@ -180,12 +180,12 @@ gboolean wpe_settings_register(WPESettings* settingsObject, const char* key, con
     g_return_val_if_fail(type, FALSE);
     g_return_val_if_fail(g_variant_type_equal(type, g_variant_get_type(defaultValue)), FALSE);
 
-    if (settingsObject->priv->settings.contains(key)) {
+    if (settingsObject->priv->settings.contains(UTF8CString { byteCast<char8_t>(key) })) {
         g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_ALREADY_REGISTERED, "%s has already been reigstered", key);
         return FALSE;
     }
 
-    settingsObject->priv->settings.add(key, SettingEntry(defaultValue, GUniquePtr<GVariantType>(g_variant_type_copy(type))));
+    settingsObject->priv->settings.add(UTF8CString { byteCast<char8_t>(key) }, SettingEntry(defaultValue, GUniquePtr<GVariantType>(g_variant_type_copy(type))));
 
     return TRUE;
 }
@@ -275,7 +275,7 @@ void wpe_settings_save_to_keyfile(WPESettings* settingsObject, GKeyFile* keyFile
             continue;
 
         // Transform "/foo/bar/baz" into "foo/bar" and "baz".
-        GUniquePtr<char> keyString(g_strdup(key.data()));
+        GUniquePtr<char> keyString(g_strdup(key.legacyCStringPointer()));
         auto* keyStart = strrchr(keyString.get(), '/');
         ASSERT(keyStart && keyStart != keyString.get());
         *keyStart = '\0';
@@ -317,7 +317,7 @@ gboolean wpe_settings_set_value(WPESettings* settingsObject, const char* key, GV
     g_return_val_if_fail(!error || !*error, FALSE);
     g_return_val_if_fail(key && *key == '/', FALSE);
 
-    auto iter = settingsObject->priv->settings.find(key);
+    auto iter = settingsObject->priv->settings.find(UTF8CString { byteCast<char8_t>(key) });
     if (iter == settingsObject->priv->settings.end()) {
         g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", key);
         return FALSE;
@@ -366,7 +366,7 @@ GVariant* wpe_settings_get_value(WPESettings* settingsObject, const char* key, G
     g_return_val_if_fail(WPE_IS_SETTINGS(settingsObject), NULL);
     g_return_val_if_fail(key && *key == '/', NULL);
 
-    const auto iter = settingsObject->priv->settings.find(key);
+    const auto iter = settingsObject->priv->settings.find(UTF8CString { byteCast<char8_t>(key) });
     if (iter == settingsObject->priv->settings.end()) {
         g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", key);
         return nullptr;

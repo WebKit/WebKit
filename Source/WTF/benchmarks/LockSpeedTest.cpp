@@ -76,17 +76,17 @@ struct WithPadding {
     char buf[300]; // It's best if this isn't perfect to avoid false sharing.
 };
 
-HashMap<CString, Vector<double>> results;
+HashMap<ASCIICString, Vector<double>> results;
 
-void reportResult(const char* name, double value, const char* unit = "KHz")
+void reportResult(ASCIILiteral name, double value, ASCIILiteral unit = "KHz"_s)
 {
-    dataLogF("%s: %.3lf %s\n", name, value, unit);
-    results.add(name, Vector<double>()).iterator->value.append(value);
+    dataLogF("%s: %.3lf %s\n", name.characters(), value, unit.characters());
+    results.add(ASCIICString { name }, Vector<double>()).iterator->value.append(value);
 }
 
 struct Benchmark {
     template<typename LockType>
-    static void run(const char* name)
+    static void run(ASCIILiteral name)
     {
         Vector<WithPadding<LockType>> locks(numThreadGroups);
         Vector<WithPadding<double>> words(numThreadGroups);
@@ -150,7 +150,7 @@ struct Benchmark {
 // reverse.
 struct RWBenchmark {
     template<typename LockType>
-    static void run(const char* name)
+    static void run(ASCIILiteral name)
     {
         unsigned writersPerGroup = std::min(toyLockWritersPerGroup, numThreadsPerGroup);
 
@@ -232,7 +232,7 @@ struct RWBenchmark {
         snprintf(label, sizeof(label), "%s writes", name);
         reportResult(label, numWriteIterations / seconds / 1000);
         snprintf(label, sizeof(label), "%s write acquire", name);
-        reportResult(label, numWriteIterations ? totalWriteAcquireSeconds / numWriteIterations * 1000000 : 0, "usec");
+        reportResult(label, numWriteIterations ? totalWriteAcquireSeconds / numWriteIterations * 1000000 : 0, "usec"_s);
     }
 };
 

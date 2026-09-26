@@ -67,7 +67,7 @@ unsigned microsecondsInCriticalSection;
 
 struct Benchmark {
     template<typename LockType>
-    static void run(const char* name)
+    static void run(ASCIILiteral name)
     {
         LockType lock;
         Vector<unsigned> counts(numThreads);

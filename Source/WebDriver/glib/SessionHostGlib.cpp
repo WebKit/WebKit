@@ -48,19 +48,19 @@ SessionHost::~SessionHost()
 const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
 {
     static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
-    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& sessionHost = *static_cast<SessionHost*>(userData);
             sessionHost.disconnect(DisconnectReason::BrowserDidCloseConnection);
         }}
     },
-    { "DidStartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(ss)",
+    { "DidStartAutomationSession"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ss)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& sessionHost = *static_cast<SessionHost*>(userData);
             sessionHost.didStartAutomationSession(parameters);
         }}
     },
-    { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(ta(tsssb))",
+    { "SetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ta(tsssb))"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& sessionHost = *static_cast<SessionHost*>(userData);
             guint64 connectionID;
@@ -76,12 +76,12 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
             gboolean isPaired;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
                 if (!g_strcmp0(type, "Automation"))
-                    targetList.append({ targetID, name, static_cast<bool>(isPaired) });
+                    targetList.append({ targetID, UTF8CString { byteCast<char8_t>(name) }, static_cast<bool>(isPaired) });
             }
             sessionHost.setTargetList(connectionID, WTF::move(targetList));
         }}
     },
-    { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
+    { "SendMessageToFrontend"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tts)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& sessionHost = *static_cast<SessionHost*>(userData);
             guint64 connectionID, targetID;
@@ -370,7 +370,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
     m_startSessionCompletionHandler = WTF::move(completionHandler);
     m_sessionID = createVersion4UUIDString();
     GVariantBuilder builder;
-    m_socketConnection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", m_sessionID.utf8().legacyCStringPointer(), buildSessionCapabilities(&builder) ? &builder : nullptr));
+    m_socketConnection->sendMessage("StartAutomationSession"_s, g_variant_new("(sa{sv})", m_sessionID.utf8().legacyCStringPointer(), buildSessionCapabilities(&builder) ? &builder : nullptr));
 }
 
 void SessionHost::didStartAutomationSession(GVariant* parameters)
@@ -409,7 +409,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
 
     m_target = targetList[0];
     m_connectionID = connectionID;
-    m_socketConnection->sendMessage("Setup", g_variant_new("(tt)", m_connectionID, m_target.id));
+    m_socketConnection->sendMessage("Setup"_s, g_variant_new("(tt)", m_connectionID, m_target.id));
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
     startSessionCompletionHandler(true, std::nullopt);
@@ -427,7 +427,7 @@ void SessionHost::sendMessageToBackend(const String& message)
     ASSERT(m_socketConnection);
     ASSERT(m_connectionID);
     ASSERT(m_target.id);
-    m_socketConnection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, message.utf8().legacyCStringPointer()));
+    m_socketConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", m_connectionID, m_target.id, message.utf8().legacyCStringPointer()));
 }
 
 } // namespace WebDriver

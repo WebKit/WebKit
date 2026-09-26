@@ -45,15 +45,15 @@ public:
 
     struct Target {
         Target() = default;
-        Target(guint64 id, CString name, bool isPaired)
+        Target(guint64 id, UTF8CString&& name, bool isPaired)
             : id(id)
-            , name(name)
+            , name(WTF::move(name))
             , isPaired(isPaired)
         {
         }
 
         guint64 id { 0 };
-        CString name;
+        UTF8CString name;
         bool isPaired { false };
     };
 
@@ -77,7 +77,7 @@ public:
     {
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
-        m_message = message;
+        m_message = UTF8CString { byteCast<char8_t>(message) };
         g_main_loop_quit(m_mainLoop.get());
     }
 
@@ -89,7 +89,7 @@ public:
         if (!parameters.isNull())
             messageBuilder.append(",\"params\":"_s, parameters);
         messageBuilder.append('}');
-        m_connection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().legacyCStringPointer()));
+        m_connection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().legacyCStringPointer()));
     }
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
@@ -158,7 +158,7 @@ public:
     WebKitAutomationSession* requestSession(CStringView sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
-        m_connection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", sessionID.utf8(), nullptr));
+        m_connection->sendMessage("StartAutomationSession"_s, g_variant_new("(sa{sv})", sessionID.utf8(), nullptr));
         auto timeoutID = g_timeout_add(1000, [](gpointer userData) -> gboolean {
             g_main_loop_quit(static_cast<GMainLoop*>(userData));
             return G_SOURCE_REMOVE;
@@ -177,7 +177,7 @@ public:
         if (m_target.isPaired)
             return;
         g_assert_cmpuint(m_target.id, !=, 0);
-        m_connection->sendMessage("Setup", g_variant_new("(tt)", m_connectionID, m_target.id));
+        m_connection->sendMessage("Setup"_s, g_variant_new("(tt)", m_connectionID, m_target.id));
         g_main_loop_run(m_mainLoop.get());
         g_assert_true(m_target.isPaired);
     }
@@ -187,7 +187,7 @@ public:
         setupIfNeeded();
         m_webViewForAutomation = webView;
         m_createWebViewWasCalled = false;
-        m_message = CString();
+        m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view", G_CALLBACK(createWebViewCallback), this);
         sendCommandToBackend("createBrowsingContext"_s);
         g_main_loop_run(m_mainLoop.get());
@@ -196,9 +196,9 @@ public:
         g_assert_false(m_message.isNull());
         m_webViewForAutomation = nullptr;
 
-        if (strstr(m_message.data(), "The remote session failed to create a new browsing context"))
+        if (contains(m_message.span(), u8"The remote session failed to create a new browsing context"_span))
             return false;
-        if (strstr(m_message.data(), "handle"))
+        if (contains(m_message.span(), u8"handle"_span))
             return true;
         return false;
     }
@@ -216,7 +216,7 @@ public:
         g_assert_false(m_message.isNull());
         m_webViewForAutomation = nullptr;
 
-        if (strstr(m_message.data(), "\"presentation\":\"Window\""))
+        if (contains(m_message.span(), u8"\"presentation\":\"Window\""_span))
             return true;
         return false;
     }
@@ -234,7 +234,7 @@ public:
         g_assert_false(m_message.isNull());
         m_webViewForAutomation = nullptr;
 
-        if (strstr(m_message.data(), "\"presentation\":\"Tab\""))
+        if (contains(m_message.span(), u8"\"presentation\":\"Tab\""_span))
             return true;
         return false;
     }
@@ -249,23 +249,23 @@ public:
     bool m_createWebViewWasCalled { false };
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
-    CString m_message;
+    UTF8CString m_message;
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
-    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             test.m_connection = nullptr;
         }}
     },
-    { "DidStartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(ss)",
+    { "DidStartAutomationSession"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ss)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             test.didStartAutomationSession(parameters);
         }}
     },
-    { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(ta(tsssb))",
+    { "SetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ta(tsssb))"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             guint64 connectionID;
@@ -278,13 +278,13 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
             gboolean isPaired;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
                 if (!g_strcmp0(type, "Automation")) {
-                    test.setTarget(connectionID, Target(targetID, name, isPaired));
+                    test.setTarget(connectionID, Target(targetID, UTF8CString { byteCast<char8_t>(name) }, isPaired));
                     break;
                 }
             }
         }}
     },
-    { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
+    { "SendMessageToFrontend"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tts)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             guint64 connectionID, targetID;

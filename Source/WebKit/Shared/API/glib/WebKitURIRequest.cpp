@@ -48,7 +48,7 @@ using namespace WebCore;
 
 struct _WebKitURIRequestPrivate {
     WebCore::ResourceRequest resourceRequest;
-    CString uri;
+    UTF8CString uri;
     const char* httpMethod;
     GUniquePtr<SoupMessageHeaders> httpHeaders;
 };
@@ -130,7 +130,7 @@ const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_REQUEST(request), 0);
 
     request->priv->uri = request->priv->resourceRequest.url().string().utf8();
-    return request->priv->uri.data();
+    return request->priv->uri.legacyCStringPointer();
 }
 
 /**

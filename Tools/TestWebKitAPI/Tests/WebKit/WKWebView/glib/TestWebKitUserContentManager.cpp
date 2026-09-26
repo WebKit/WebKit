@@ -76,7 +76,7 @@ static void testWebViewNewWithUserContentManager(Test* test, gconstpointer)
 
 static bool isStyleSheetInjectedForURLAtPath(WebViewTest* test, const char* path, const char* world = nullptr)
 {
-    test->loadURI(kServer->getURIForPath(path).data());
+    test->loadURI(kServer->getURIForPath(path).legacyCStringPointer());
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;
@@ -91,7 +91,7 @@ static bool isStyleSheetInjectedForURLAtPath(WebViewTest* test, const char* path
 
 static bool isScriptInjectedForURLAtPath(WebViewTest* test, const char* path, const char* world = nullptr)
 {
-    test->loadURI(kServer->getURIForPath(path).data());
+    test->loadURI(kServer->getURIForPath(path).legacyCStringPointer());
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;
@@ -590,7 +590,7 @@ static void testUserContentManagerScriptMessageFromDOMBindings(UserScriptMessage
 
 static bool isCSSBlockedForURLAtPath(WebViewTest* test, const char* path)
 {
-    test->loadURI(kServer->getURIForPath(path).data());
+    test->loadURI(kServer->getURIForPath(path).legacyCStringPointer());
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;

@@ -43,7 +43,7 @@ class CurlMultipartHandle {
 public:
     WEBCORE_EXPORT static std::unique_ptr<CurlMultipartHandle> createIfNeeded(CurlMultipartHandleClient&, const CurlResponse&);
 
-    CurlMultipartHandle(CurlMultipartHandleClient&, CString&&);
+    CurlMultipartHandle(CurlMultipartHandleClient&, Latin1CString&&);
     ~CurlMultipartHandle() { }
 
     WEBCORE_EXPORT void didReceiveMessage(std::span<const uint8_t>);
@@ -85,7 +85,7 @@ private:
 
     CheckedRef<CurlMultipartHandleClient> m_client;
 
-    CString m_boundary;
+    Latin1CString m_boundary;
     Vector<uint8_t> m_buffer;
     Vector<String> m_headers;
 

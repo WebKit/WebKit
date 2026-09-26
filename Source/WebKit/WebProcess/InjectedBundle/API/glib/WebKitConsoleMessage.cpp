@@ -130,7 +130,7 @@ WebKitConsoleMessageLevel webkit_console_message_get_level(WebKitConsoleMessage*
 const gchar* webkit_console_message_get_text(WebKitConsoleMessage* consoleMessage)
 {
     g_return_val_if_fail(consoleMessage, nullptr);
-    return consoleMessage->message.data();
+    return consoleMessage->message.legacyCStringPointer();
 }
 
 /**
@@ -162,5 +162,5 @@ guint webkit_console_message_get_line(WebKitConsoleMessage* consoleMessage)
 const gchar* webkit_console_message_get_source_id(WebKitConsoleMessage* consoleMessage)
 {
     g_return_val_if_fail(consoleMessage, nullptr);
-    return consoleMessage->sourceID.data();
+    return consoleMessage->sourceID.legacyCStringPointer();
 }

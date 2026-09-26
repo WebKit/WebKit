@@ -120,7 +120,7 @@ static void testWebKitWebXRLeaveImmersiveModeAndWaitUntilImmersiveModeChanged(We
 
     g_assert_false(webkit_web_view_is_immersive_mode_enabled(test->m_webView.get()));
 
-    test->loadURI(kHttpsServer->getURIForPath("/xr-session/").data());
+    test->loadURI(kHttpsServer->getURIForPath("/xr-session/").legacyCStringPointer());
     test->waitUntilLoadFinished();
     test->showInWindow();
 
@@ -141,13 +141,13 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
     struct Result {
         bool didCallback { false };
         std::optional<WebKitXRSessionMode> mode;
-        CString origin;
+        UTF8CString origin;
         WebKitXRSessionFeatures grantedFeatures { noFeature };
         WebKitXRSessionFeatures consentRequiredFeatures { noFeature };
         WebKitXRSessionFeatures consentOptionalFeatures { noFeature };
         WebKitXRSessionFeatures requiredFeaturesRequested { noFeature };
         WebKitXRSessionFeatures optionalFeaturesRequested { noFeature };
-        CString title;
+        UTF8CString title;
     };
     struct Data {
         WebViewTest* test { nullptr };
@@ -167,7 +167,7 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
         data->result.didCallback = true;
         data->result.mode = webkit_xr_permission_request_get_session_mode(xrRequest);
         g_autofree gchar* originStr = webkit_security_origin_to_string(webkit_xr_permission_request_get_security_origin(xrRequest));
-        data->result.origin = originStr;
+        data->result.origin = UTF8CString { byteCast<char8_t>(originStr) };
         data->result.grantedFeatures = webkit_xr_permission_request_get_granted_features(xrRequest);
         data->result.consentRequiredFeatures = webkit_xr_permission_request_get_consent_required_features(xrRequest);
         data->result.consentOptionalFeatures = webkit_xr_permission_request_get_consent_optional_features(xrRequest);
@@ -201,13 +201,13 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
         test->waitUntilLoadFinished();
         test->runJavaScriptAndWaitUntilFinished(script.utf8(), nullptr);
         test->waitUntilTitleChanged();
-        data.result.title = webkit_web_view_get_title(test->webView());
+        data.result.title = UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(test->webView())) };
     };
 
     // requestSession is rejected by default without a permission-request callback
     testPermissionRequest("immersive-vr"_s, ""_s, Answer::Allow);
     g_assert_false(data.result.didCallback);
-    g_assert_cmpstr(data.result.title.data(), ==, "fail");
+    g_assert_cmpstr(data.result.title.legacyCStringPointer(), ==, "fail");
 
     // Register permission-request callback
     g_signal_connect(test->webView(), "permission-request", G_CALLBACK(permissionRequestCallback), &data);
@@ -215,30 +215,30 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
     // WebKit grants an inline session without a permission request.
     testPermissionRequest("inline"_s, ""_s, Answer::Deny);
     g_assert_false(data.result.didCallback);
-    g_assert_cmpstr(data.result.title.data(), ==, "pass");
+    g_assert_cmpstr(data.result.title.legacyCStringPointer(), ==, "pass");
 
     testPermissionRequest("immersive-vr"_s, ""_s, Answer::Deny);
     g_assert_true(data.result.didCallback);
     g_assert_cmpint(data.result.mode.value(), ==, WEBKIT_XR_SESSION_MODE_IMMERSIVE_VR);
-    g_assert_cmpstr(data.result.origin.data(), ==, "https://foo.com");
+    g_assert_cmpstr(data.result.origin.legacyCStringPointer(), ==, "https://foo.com");
     g_assert_cmpint(data.result.grantedFeatures, ==, WEBKIT_XR_SESSION_FEATURES_VIEWER | WEBKIT_XR_SESSION_FEATURES_LOCAL);
     g_assert_cmpint(data.result.consentRequiredFeatures, ==, noFeature);
     g_assert_cmpint(data.result.consentOptionalFeatures, ==, noFeature);
     g_assert_cmpint(data.result.requiredFeaturesRequested, ==, WEBKIT_XR_SESSION_FEATURES_VIEWER | WEBKIT_XR_SESSION_FEATURES_LOCAL);
     g_assert_cmpint(data.result.optionalFeaturesRequested, ==, noFeature);
-    g_assert_cmpstr(data.result.title.data(), ==, "fail");
+    g_assert_cmpstr(data.result.title.legacyCStringPointer(), ==, "fail");
 
     // Monado doesn't support hand-tracking
     testPermissionRequest("immersive-ar"_s, "requiredFeatures: ['local', 'unbounded'], optionalFeatures: ['hand-tracking']"_s, Answer::Allow);
     g_assert_true(data.result.didCallback);
     g_assert_cmpint(data.result.mode.value(), ==, WEBKIT_XR_SESSION_MODE_IMMERSIVE_AR);
-    g_assert_cmpstr(data.result.origin.data(), ==, "https://foo.com");
+    g_assert_cmpstr(data.result.origin.legacyCStringPointer(), ==, "https://foo.com");
     g_assert_cmpint(data.result.grantedFeatures, ==, WEBKIT_XR_SESSION_FEATURES_VIEWER | WEBKIT_XR_SESSION_FEATURES_LOCAL | WEBKIT_XR_SESSION_FEATURES_UNBOUNDED);
     g_assert_cmpint(data.result.consentRequiredFeatures, ==, noFeature);
     g_assert_cmpint(data.result.consentOptionalFeatures, ==, noFeature);
     g_assert_cmpint(data.result.requiredFeaturesRequested, ==, WEBKIT_XR_SESSION_FEATURES_VIEWER | WEBKIT_XR_SESSION_FEATURES_LOCAL | WEBKIT_XR_SESSION_FEATURES_UNBOUNDED);
     g_assert_cmpint(data.result.optionalFeaturesRequested, ==, noFeature);
-    g_assert_cmpstr(data.result.title.data(), ==, "pass");
+    g_assert_cmpstr(data.result.title.legacyCStringPointer(), ==, "pass");
 }
 
 static void testWebKitXRHitTest(WebXRTest* test, gconstpointer)
@@ -285,7 +285,7 @@ static void testWebKitXRHitTest(WebXRTest* test, gconstpointer)
         test->waitUntilLoadFinished();
         test->runJavaScriptAndWaitUntilFinished(script.utf8(), nullptr);
         test->waitUntilTitleChanged();
-        return CString { webkit_web_view_get_title(test->webView()) };
+        return UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(test->webView())) };
     };
 
     // FIXME: requestHitTestSource throws NotSupportedError because the SDK doesn't support XR_ANDROID_raycast yet

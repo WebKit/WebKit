@@ -60,7 +60,7 @@ SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, cons
 
 SocketConnection::~SocketConnection() = default;
 
-bool SocketConnection::didReceiveInvalidMessage(const CString& message)
+bool SocketConnection::didReceiveInvalidMessage(ASCIILiteral message)
 {
     RELEASE_LOG_FAULT_WITH_PAYLOAD(Process, "Received invalid message (%s), closing SocketConnection", message);
     close();
@@ -136,8 +136,8 @@ bool SocketConnection::readMessage()
     auto messageData = m_readBuffer.span();
     const size_t bodySize = ntohl(consumeAndReinterpretCastTo<uint32_t>(messageData));
 
-    MESSAGE_CHECK(bodySize >= MinimumMessageBodySize, "message body too small");
-    MESSAGE_CHECK(bodySize <= MaximumMessageBodySize, "message body too big");
+    MESSAGE_CHECK(bodySize >= MinimumMessageBodySize, "message body too small"_s);
+    MESSAGE_CHECK(bodySize <= MaximumMessageBodySize, "message body too big"_s);
 
     // Ensure the whole message has been read from the socket.
     const size_t messageSize = sizeof(uint32_t) + sizeof(MessageFlags) + bodySize;
@@ -153,7 +153,7 @@ bool SocketConnection::readMessage()
     messageData = messageData.first(bodySize);
 
     const auto nullIndex = find(messageData, '\0');
-    MESSAGE_CHECK(nullIndex != notFound, "message name delimiter missing");
+    MESSAGE_CHECK(nullIndex != notFound, "message name delimiter missing"_s);
 
     const UTF8CString messageName { byteCast<char8_t>(consumeSpan(messageData, nullIndex)) };
     ASSERT(messageData.front() == '\0');
@@ -187,7 +187,7 @@ bool SocketConnection::readMessage()
 
 #undef MESSAGE_CHECK
 
-void SocketConnection::sendMessage(const CString& messageName, GVariant* parameters)
+void SocketConnection::sendMessage(ASCIILiteral messageName, GVariant* parameters)
 {
     ASSERT(!messageName.isEmpty());
 
@@ -197,7 +197,7 @@ void SocketConnection::sendMessage(const CString& messageName, GVariant* paramet
     CheckedUint32 bodySize = messageNameAndTerminator.size();
     bodySize += parametersSize;
     if (bodySize.hasOverflowed() || bodySize > MaximumMessageBodySize) [[unlikely]] {
-        g_warning("Trying to send message '%s' with invalid too long body", messageName.data());
+        g_warning("Trying to send message '%s' with invalid too long body", messageName.characters());
         return;
     }
     ASSERT(bodySize >= MinimumMessageBodySize);
@@ -284,8 +284,8 @@ void SocketConnection::didClose()
         return;
 
     close();
-    ASSERT(m_messageHandlers.contains("DidClose"));
-    m_messageHandlers.get("DidClose").second(*this, nullptr, m_userData);
+    ASSERT(m_messageHandlers.contains("DidClose"_s));
+    m_messageHandlers.get("DidClose"_s).second(*this, nullptr, m_userData);
 }
 
 } // namespace WTF

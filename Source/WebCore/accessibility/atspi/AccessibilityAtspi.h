@@ -29,6 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CStringView.h>
 
 typedef struct _GDBusConnection GDBusConnection;
 typedef struct _GDBusInterfaceInfo GDBusInterfaceInfo;
@@ -86,7 +87,7 @@ public:
 
     void selectionChanged(AccessibilityObjectAtspi&);
 
-    void loadEvent(AccessibilityObjectAtspi&, CString&&);
+    void loadEvent(AccessibilityObjectAtspi&, ASCIILiteral);
 
     static const char* localizedRoleName(AccessibilityRole);
 
@@ -109,10 +110,10 @@ private:
     void didConnect(GRefPtr<GDBusConnection>&&);
     void didOwnName();
     void initializeRegistry();
-    void addEventListener(const char* dbusName, const char* eventName);
-    void removeEventListener(const char* dbusName, const char* eventName);
-    void addClient(const char* dbusName);
-    void removeClient(const char* dbusName);
+    void addEventListener(const ASCIICString& dbusName, CStringView eventName);
+    void removeEventListener(const ASCIICString& dbusName, CStringView eventName);
+    void addClient(const ASCIICString& dbusName);
+    void removeClient(const ASCIICString& dbusName);
 
     void ensureCache();
     void addToCacheIfNeeded(AccessibilityObjectAtspi&);
@@ -130,7 +131,7 @@ private:
     void notifyTextChanged(AccessibilityObjectAtspi&) const;
     void notifyTextCaretMoved(AccessibilityObjectAtspi&, unsigned) const;
     void notifyValueChanged(AccessibilityObjectAtspi&) const;
-    void notifyLoadEvent(AccessibilityObjectAtspi&, const CString&) const;
+    void notifyLoadEvent(AccessibilityObjectAtspi&, ASCIILiteral) const;
 #endif
 
     static GDBusInterfaceVTable s_cacheFunctions;
@@ -141,11 +142,11 @@ private:
     GRefPtr<GDBusConnection> m_connection;
     GRefPtr<GDBusProxy> m_registry;
     Vector<PendingRootRegistration> m_pendingRootRegistrations;
-    HashMap<CString, Vector<GUniquePtr<char*>>> m_eventListeners;
+    HashMap<ASCIICString, Vector<GUniquePtr<char*>>> m_eventListeners;
     HashMap<AccessibilityRootAtspi*, Vector<unsigned, 3>> m_rootObjects;
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 7>> m_atspiObjects;
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 1>> m_atspiHyperlinks;
-    HashMap<CString, unsigned> m_clients;
+    HashMap<ASCIICString, unsigned> m_clients;
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
     ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;

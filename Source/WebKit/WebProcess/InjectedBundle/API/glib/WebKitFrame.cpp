@@ -55,7 +55,7 @@ using namespace WebCore;
 struct _WebKitFramePrivate {
     RefPtr<WebFrame> webFrame;
 
-    CString uri;
+    UTF8CString uri;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitFrame, webkit_frame, G_TYPE_OBJECT, GObject)
@@ -64,7 +64,7 @@ static void webkit_frame_class_init(WebKitFrameClass*)
 {
 }
 
-static CString getURL(WebFrame* webFrame)
+static UTF8CString getURL(WebFrame* webFrame)
 {
     RefPtr documentLoader = webFrame->coreLocalFrame()->loader().provisionalDocumentLoader();
     if (!documentLoader)
@@ -115,7 +115,7 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
     });
 }
 
-void webkitFrameSetURI(WebKitFrame* frame, const CString& uri)
+void webkitFrameSetURI(WebKitFrame* frame, const UTF8CString& uri)
 {
     if (frame->priv->uri == uri)
         return;
@@ -177,7 +177,7 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
     if (frame->priv->uri.isNull())
         frame->priv->uri = frame->priv->webFrame->url().string().utf8();
 
-    return frame->priv->uri.data();
+    return frame->priv->uri.legacyCStringPointer();
 }
 
 #if PLATFORM(GTK) && !USE(GTK4)

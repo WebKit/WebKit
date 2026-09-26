@@ -25,7 +25,7 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE const CString& applicationID();
+WTF_EXPORT_PRIVATE const UTF8CString& applicationID();
 
 } // namespace WTF
 

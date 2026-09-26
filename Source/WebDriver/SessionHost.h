@@ -109,7 +109,7 @@ private:
 
     struct Target {
         uint64_t id { 0 };
-        CString name;
+        UTF8CString name;
         bool paired { false };
     };
 

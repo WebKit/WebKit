@@ -101,19 +101,19 @@ void RemoteInspector::stopInternal(StopSource)
 const SocketConnection::MessageHandlers& RemoteInspector::messageHandlers()
 {
     static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
-    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& inspector = *static_cast<RemoteInspector*>(userData);
             inspector.stop();
         }}
     },
-    { "GetTargetList", std::pair<CString, SocketConnection::MessageCallback> { { },
+    { "GetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& inspector = *static_cast<RemoteInspector*>(userData);
             inspector.receivedGetTargetListMessage();
         }}
     },
-    { "Setup", std::pair<CString, SocketConnection::MessageCallback> { "(t)",
+    { "Setup"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(t)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& inspector = *static_cast<RemoteInspector*>(userData);
             guint64 targetID;
@@ -121,7 +121,7 @@ const SocketConnection::MessageHandlers& RemoteInspector::messageHandlers()
             inspector.receivedSetupMessage(targetID);
         }}
     },
-    { "SendMessageToTarget", std::pair<CString, SocketConnection::MessageCallback> { "(ts)",
+    { "SendMessageToTarget"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ts)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& inspector = *static_cast<RemoteInspector*>(userData);
             guint64 targetID;
@@ -130,7 +130,7 @@ const SocketConnection::MessageHandlers& RemoteInspector::messageHandlers()
             inspector.receivedDataMessage(targetID, message);
         }}
     },
-    { "FrontendDidClose", std::pair<CString, SocketConnection::MessageCallback> { "(t)",
+    { "FrontendDidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(t)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& inspector = *static_cast<RemoteInspector*>(userData);
             guint64 targetID;
@@ -201,7 +201,7 @@ void RemoteInspector::pushListingsNow()
         g_variant_builder_add_value(&builder, listing.get());
     g_variant_builder_close(&builder);
     g_variant_builder_add(&builder, "b", m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed);
-    m_socketConnection->sendMessage("SetTargetList", g_variant_builder_end(&builder));
+    m_socketConnection->sendMessage("SetTargetList"_s, g_variant_builder_end(&builder));
 }
 
 void RemoteInspector::pushListingsSoon()
@@ -235,7 +235,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
     if (!m_socketConnection)
         return;
 
-    m_socketConnection->sendMessage("SendMessageToFrontend", g_variant_new("(ts)", static_cast<guint64>(targetIdentifier), message.utf8().legacyCStringPointer()));
+    m_socketConnection->sendMessage("SendMessageToFrontend"_s, g_variant_new("(ts)", static_cast<guint64>(targetIdentifier), message.utf8().legacyCStringPointer()));
 }
 
 void RemoteInspector::receivedGetTargetListMessage()

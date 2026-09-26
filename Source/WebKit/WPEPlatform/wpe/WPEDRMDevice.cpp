@@ -44,13 +44,13 @@ struct _WPEDRMDevice {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(_WPEDRMDevice);
 
     _WPEDRMDevice(const char* primaryNode, const char *renderNode)
-        : primaryNode(primaryNode)
-        , renderNode(renderNode)
+        : primaryNode(byteCast<char8_t>(primaryNode))
+        , renderNode(byteCast<char8_t>(renderNode))
     {
     }
 
-    CString primaryNode;
-    CString renderNode;
+    UTF8CString primaryNode;
+    UTF8CString renderNode;
 
     int referenceCount { 1 };
 };
@@ -176,7 +176,7 @@ const char* wpe_drm_device_get_primary_node(WPEDRMDevice* device)
 {
     g_return_val_if_fail(device, nullptr);
 
-    return device->primaryNode.data();
+    return device->primaryNode.legacyCStringPointer();
 }
 
 /**
@@ -191,5 +191,5 @@ const char* wpe_drm_device_get_render_node(WPEDRMDevice* device)
 {
     g_return_val_if_fail(device, nullptr);
 
-    return device->renderNode.data();
+    return device->renderNode.legacyCStringPointer();
 }

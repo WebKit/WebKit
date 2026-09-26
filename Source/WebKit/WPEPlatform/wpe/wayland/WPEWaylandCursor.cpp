@@ -49,15 +49,15 @@ WaylandCursor::~WaylandCursor()
         wl_surface_destroy(m_surface);
 }
 
-void WaylandCursor::setFromName(const char* name, double scale)
+void WaylandCursor::setFromName(CStringView name, double scale)
 {
     if (!m_theme)
         return;
 
-    if (!g_strcmp0(m_name.get(), name))
+    if (!g_strcmp0(m_name.get(), name.utf8()))
         return;
 
-    m_name.reset(g_strdup(name));
+    m_name.reset(g_strdup(name.utf8()));
     if (!g_strcmp0(m_name.get(), "none")) {
         m_cursorChanged = true;
         update();
@@ -69,7 +69,7 @@ void WaylandCursor::setFromName(const char* name, double scale)
     // FIXME: support animated cursors.
     const auto& cursor = m_theme->cursor(name, scale, 1);
     if (cursor.isEmpty()) {
-        g_warning("Cursor %s not found in theme", name);
+        g_warning("Cursor %s not found in theme", name.utf8());
         return;
     }
 

@@ -34,14 +34,14 @@ public:
         waitUntilLoadFinished();
     }
 
-    CString evaluateString(const char* javascript)
+    UTF8CString evaluateString(const char* javascript)
     {
         GUniqueOutPtr<GError> error;
         auto* result = runJavaScriptAndWaitUntilFinished(javascript, &error.outPtr());
         g_assert_no_error(error.get());
         g_assert_nonnull(result);
         GUniquePtr<char> string(javascriptResultToCString(result));
-        return string.get();
+        return UTF8CString { byteCast<char8_t>(string.get()) };
     }
 
     WPEClipboard* clipboard() const
@@ -100,11 +100,11 @@ static void testEditorSelectAllKeyBindingNonEditable(EditorKeyBindingTest* test,
     test->loadContentsAndWait(selectedSpanHTML);
 
     auto selection = test->evaluateString("getSelection().toString();");
-    g_assert_cmpstr(selection.data(), ==, "make Jack a dull");
+    g_assert_cmpstr(selection.legacyCStringPointer(), ==, "make Jack a dull");
 
     test->keyStroke(KEY(a), { WebViewTest::Modifiers::Control });
     selection = test->evaluateString("getSelection().toString().trim();");
-    g_assert_cmpstr(selection.data(), ==, "All work and no play make Jack a dull boy.");
+    g_assert_cmpstr(selection.legacyCStringPointer(), ==, "All work and no play make Jack a dull boy.");
 }
 
 // A command the selection does not allow has to fall through to the page, or

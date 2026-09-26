@@ -124,13 +124,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteInspectorClient);
 const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers()
 {
     static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
-    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& client = *static_cast<RemoteInspectorClient*>(userData);
             client.connectionDidClose();
         }}
     },
-    { "DidSetupInspectorClient", std::pair<CString, SocketConnection::MessageCallback> { "(ay)",
+    { "DidSetupInspectorClient"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ay)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& client = *static_cast<RemoteInspectorClient*>(userData);
             GRefPtr<GVariant> backendCommandsVariant;
@@ -138,7 +138,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
             client.setBackendCommands(g_variant_get_bytestring(backendCommandsVariant.get()));
         }}
     },
-    { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(ta(tsssb))",
+    { "SetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ta(tsssb))"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& client = *static_cast<RemoteInspectorClient*>(userData);
             guint64 connectionID;
@@ -159,7 +159,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
             client.setTargetList(connectionID, WTF::move(targetList));
         }}
     },
-    { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
+    { "SendMessageToFrontend"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tts)"_s,
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& client = *static_cast<RemoteInspectorClient*>(userData);
             guint64 connectionID, targetID;
@@ -204,7 +204,7 @@ RemoteInspectorClient::~RemoteInspectorClient()
 void RemoteInspectorClient::setupConnection(Ref<SocketConnection>&& connection)
 {
     m_socketConnection = WTF::move(connection);
-    m_socketConnection->sendMessage("SetupInspectorClient", g_variant_new("(@ay)", g_variant_new_bytestring(Inspector::backendCommandsHash().data())));
+    m_socketConnection->sendMessage("SetupInspectorClient"_s, g_variant_new("(@ay)", g_variant_new_bytestring(Inspector::backendCommandsHash().data())));
 }
 
 void RemoteInspectorClient::setBackendCommands(const char* backendCommands)
@@ -246,20 +246,20 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, co
         return;
     }
 
-    m_socketConnection->sendMessage("Setup", g_variant_new("(tt)", connectionID, targetID));
+    m_socketConnection->sendMessage("Setup"_s, g_variant_new("(tt)", connectionID, targetID));
     if (inspectorType == InspectorType::UI)
         addResult.iterator->value->initialize(debuggableType(targetType));
 }
 
 void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)
 {
-    m_socketConnection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", connectionID, targetID, message.utf8().legacyCStringPointer()));
+    m_socketConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", connectionID, targetID, message.utf8().legacyCStringPointer()));
 }
 
 void RemoteInspectorClient::closeFromFrontend(uint64_t connectionID, uint64_t targetID)
 {
     ASSERT(m_inspectorProxyMap.contains(std::make_pair(connectionID, targetID)));
-    m_socketConnection->sendMessage("FrontendDidClose", g_variant_new("(tt)", connectionID, targetID));
+    m_socketConnection->sendMessage("FrontendDidClose"_s, g_variant_new("(tt)", connectionID, targetID));
     m_inspectorProxyMap.remove(std::make_pair(connectionID, targetID));
 }
 

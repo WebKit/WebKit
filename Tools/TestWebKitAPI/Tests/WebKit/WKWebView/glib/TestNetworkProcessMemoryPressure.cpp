@@ -85,7 +85,7 @@ static void testMemoryPressureSettings(MemoryPressureTest* test, gconstpointer)
     // kill the process as soon as it detects that it's using more than 1MB, so the network process
     // won't be able to complete the resource load. This causes an internal error and the load-failed
     // signal is emitted.
-    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).data()));
+    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer()));
     test->loadURI(fileURL.get());
     test->waitUntilLoadFailed();
 }

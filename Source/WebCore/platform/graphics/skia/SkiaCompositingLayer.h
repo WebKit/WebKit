@@ -349,7 +349,7 @@ private:
     // value string/geometry were computed for.
     struct {
         std::optional<unsigned> count;
-        CString string;
+        ASCIICString string;
         float backgroundWidth { 0 };
         float backgroundHeight { 0 };
         float baselineOffset { 0 };

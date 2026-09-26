@@ -46,7 +46,7 @@ public:
     GeoclueGeolocationProvider();
     ~GeoclueGeolocationProvider();
 
-    using UpdateNotifyFunction = Function<void(WebCore::GeolocationPositionData&&, std::optional<CString> error)>;
+    using UpdateNotifyFunction = Function<void(WebCore::GeolocationPositionData&&, std::optional<UTF8CString> error)>;
     void start(UpdateNotifyFunction&&);
     void stop();
     void setEnableHighAccuracy(bool);
@@ -71,7 +71,7 @@ private:
     void requestAccuracyLevel();
     void createLocation(const char*);
     void locationUpdated(GRefPtr<GDBusProxy>&&);
-    void didFail(CString);
+    void didFail(UTF8CString&&);
 
     void startGeoclueClient();
     void stopGeoclueClient();

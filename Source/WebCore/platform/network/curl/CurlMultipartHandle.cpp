@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CurlMultipartHandle);
 
-static std::optional<CString> extractBoundary(const CurlResponse& response)
+static std::optional<Latin1CString> extractBoundary(const CurlResponse& response)
 {
     static const auto contentTypeLength = strlen("content-type:");
 
@@ -77,7 +77,7 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
     return makeUnique<CurlMultipartHandle>(client, WTF::move(*boundary));
 }
 
-CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, CString&& boundary)
+CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, Latin1CString&& boundary)
     : m_client(client)
     , m_boundary(WTF::move(boundary))
 {

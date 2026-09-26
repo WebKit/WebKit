@@ -321,7 +321,7 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
 {
     // Default policy is NO_THIRD_PARTY.
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     char** domains = test->getDomains();
     g_assert_nonnull(domains);
@@ -331,7 +331,7 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
 
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     domains = test->getDomains();
     g_assert_nonnull(domains);
@@ -342,7 +342,7 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
 
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     domains = test->getDomains();
     g_assert_nonnull(domains);
@@ -372,7 +372,7 @@ static void testCookieManagerAddCookie(CookieManagerTest* test, gconstpointer)
 {
     // Load the html content, with the default NO_THIRD_PARTY accept policy,
     // which will automatically add one cookie.
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
 
@@ -440,7 +440,7 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
 {
     // Load the html content and retrieve the two cookies automatically added with ALWAYS policy.
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
 
@@ -539,7 +539,7 @@ static void testCookieManagerReplaceGetAllCookies(CookieManagerTest* test, gcons
 {
     // Load the html content and retrieve the two cookies automatically added with ALWAYS policy.
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
 
@@ -574,7 +574,7 @@ static void testCookieManagerReplaceGetAllCookies(CookieManagerTest* test, gcons
 static void testCookieManagerDeleteCookie(CookieManagerTest* test, gconstpointer)
 {
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
 
     // Initially, there should be two cookies available.
@@ -624,7 +624,7 @@ static void testCookieManagerDeleteCookie(CookieManagerTest* test, gconstpointer
 static void testCookieManagerDeleteCookies(CookieManagerTest* test, gconstpointer)
 {
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
 
@@ -636,7 +636,7 @@ static void testCookieManagerDeleteCookies(CookieManagerTest* test, gconstpointe
     test->deleteCookiesForDomain(kThirdPartyDomain);
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
 
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
 
@@ -649,7 +649,7 @@ static void testCookieManagerCookiesChanged(CookieManagerTest* test, gconstpoint
 {
     g_assert_false(test->m_cookiesChanged);
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_true(test->m_cookiesChanged);
 
@@ -693,7 +693,7 @@ static void testCookieManagerPersistentStorage(CookiePersistentStorageTest* test
     // Initialization of web view is deferred to ensure it's not required for
     // setting persistent storage to work.
     test->initializeWebView();
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_true(test->m_cookiesChanged);
     domains = test->getDomains();
@@ -707,7 +707,7 @@ static void testCookieManagerPersistentStorage(CookiePersistentStorageTest* test
     g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_true(test->m_cookiesChanged);
     domains = test->getDomains();
@@ -749,7 +749,7 @@ static void testCookieManagerPersistentStorageDeleteAll(CookieManagerTest* test,
 
     // Ensure the web process is created and load something without cookies.
     test->m_cookiesChanged = false;
-    test->loadURI(kServer->getURIForPath("/no-cookies.html").data());
+    test->loadURI(kServer->getURIForPath("/no-cookies.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
     g_assert_false(test->m_cookiesChanged);
     char** domains = test->getDomains();
@@ -791,7 +791,7 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
 #endif
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
-    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/index.html").data());
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/index.html").legacyCStringPointer());
     g_main_loop_run(test->m_mainLoop);
 
     domains = test->getDomains();
@@ -867,7 +867,7 @@ static void testCookieSyncWithWebView(CookiePersistentStorageTest* test, gconstp
     GUniquePtr<SoupCookie> cookie(soup_cookie_new(kCookieName, kCookieValue, kFirstPartyDomain, kCookiePath, SOUP_COOKIE_MAX_AGE_ONE_DAY));
     test->addCookie(cookie.get());
 
-    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->loadURI(kServer->getURIForPath("/index.html").legacyCStringPointer());
     test->waitUntilLoadFinished();
 
     auto* value = test->runJavaScriptAndWaitUntilFinished("document.cookie", nullptr);

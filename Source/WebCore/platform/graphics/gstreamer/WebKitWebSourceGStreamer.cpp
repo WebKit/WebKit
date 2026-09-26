@@ -66,7 +66,7 @@ struct WebKitWebSrcPrivate {
 
     // Configuration of the element (properties set by the user of WebKitWebSrc):
     // They can only change when state < PAUSED.
-    CString originalURI;
+    UTF8CString originalURI;
     bool keepAlive { false };
     GUniquePtr<GstStructure> extraHeaders;
     bool compress { false };
@@ -84,7 +84,7 @@ struct WebKitWebSrcPrivate {
 
         // Properties initially empty, but set once the first HTTP response arrives:
         bool wasResponseReceived { false };
-        CString redirectedURI;
+        UTF8CString redirectedURI;
         bool didPassAccessControlCheck { false };
         std::optional<uint64_t> size;
         bool isSeekable { false };
@@ -285,7 +285,7 @@ static void webkitWebSrcReset([[maybe_unused]] WebKitWebSrc* src, DataMutexLocke
     // Soft reset is done during flushes. In these, we preserve the seek target.
     if (resetType == ResetType::Hard) {
         members->didPassAccessControlCheck = false;
-        members->redirectedURI = CString();
+        members->redirectedURI = UTF8CString();
         members->isSeekable = false;
         members->size = { };
         members->requestedPosition = 0;
@@ -345,11 +345,11 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
 
     switch (propID) {
     case WEBKIT_WEBSRC_PROP_LOCATION:
-        g_value_set_string(value, priv->originalURI.data());
+        g_value_set_string(value, priv->originalURI.legacyCStringPointer());
         break;
     case WEBKIT_WEBSRC_PROP_RESOLVED_LOCATION: {
         DataMutexLocker members { priv->dataMutex };
-        g_value_set_string(value, members->redirectedURI.isNull() ? priv->originalURI.data() : members->redirectedURI.data());
+        g_value_set_string(value, members->redirectedURI.isNull() ? priv->originalURI.legacyCStringPointer() : members->redirectedURI.legacyCStringPointer());
         break;
     }
     case WEBKIT_WEBSRC_PROP_KEEP_ALIVE:
@@ -620,8 +620,8 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     ASSERT(!priv->originalURI.isNull());
     ASSERT(members->requestedPosition != members->stopPosition);
 
-    GST_DEBUG_OBJECT(src, "Posting task to request R%u %s requestedPosition=%" G_GUINT64_FORMAT " stopPosition=%" G_GUINT64_FORMAT, members->requestNumber, priv->originalURI.data(), members->requestedPosition, members->stopPosition);
-    URL url { String(byteCast<char8_t>(unsafeSpan(priv->originalURI.data()))) };
+    GST_DEBUG_OBJECT(src, "Posting task to request R%u %s requestedPosition=%" G_GUINT64_FORMAT " stopPosition=%" G_GUINT64_FORMAT, members->requestNumber, priv->originalURI.legacyCStringPointer(), members->requestedPosition, members->stopPosition);
+    URL url { String(priv->originalURI.span()) };
 
     ResourceRequest request(WTF::move(url));
     request.setAllowCookies(true);
@@ -783,10 +783,10 @@ static gboolean webKitWebSrcQuery(GstBaseSrc* baseSrc, GstQuery* query)
     gboolean result = FALSE;
 
     if (GST_QUERY_TYPE(query) == GST_QUERY_URI) {
-        gst_query_set_uri(query, priv->originalURI.data());
+        gst_query_set_uri(query, priv->originalURI.legacyCStringPointer());
         DataMutexLocker members { src->priv->dataMutex };
         if (!members->redirectedURI.isNull())
-            gst_query_set_uri_redirection(query, members->redirectedURI.data());
+            gst_query_set_uri_redirection(query, members->redirectedURI.legacyCStringPointer());
         result = TRUE;
     }
 
@@ -894,7 +894,7 @@ static URL convertPlaybinURI(String&& uriString)
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(handler);
-    gchar* ret = g_strdup(src->priv->originalURI.data());
+    gchar* ret = g_strdup(src->priv->originalURI.legacyCStringPointer());
     return ret;
 }
 
@@ -908,7 +908,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
         return FALSE;
     }
 
-    priv->originalURI = CString();
+    priv->originalURI = UTF8CString();
     if (!uri)
         return TRUE;
 
@@ -1046,10 +1046,10 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     GUniquePtr<GstStructure> httpHeaders(gst_structure_new_empty("http-headers"));
 
-    gst_structure_set(httpHeaders.get(), "uri", G_TYPE_STRING, priv->originalURI.data(),
+    gst_structure_set(httpHeaders.get(), "uri", G_TYPE_STRING, priv->originalURI.legacyCStringPointer(),
         "http-status-code", G_TYPE_UINT, response.httpStatusCode(), nullptr);
     if (!members->redirectedURI.isNull())
-        gst_structure_set(httpHeaders.get(), "redirection-uri", G_TYPE_STRING, members->redirectedURI.data(), nullptr);
+        gst_structure_set(httpHeaders.get(), "redirection-uri", G_TYPE_STRING, members->redirectedURI.legacyCStringPointer(), nullptr);
 
     // Pack request headers in the http-headers structure.
     GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));

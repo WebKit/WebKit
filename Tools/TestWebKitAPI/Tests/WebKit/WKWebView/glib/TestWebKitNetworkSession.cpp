@@ -137,7 +137,7 @@ public:
     WebSocketServerType createWebSocketAndWaitUntilConnected()
     {
         m_webSocketRequestReceived = WebSocketServerType::Unknown;
-        GUniquePtr<char> createWebSocket(g_strdup_printf("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo").data()));
+        GUniquePtr<char> createWebSocket(g_strdup_printf("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo").legacyCStringPointer()));
         runJavaScriptAndWaitUntilFinished(createWebSocket.get(), nullptr);
         if (m_webSocketRequestReceived == WebSocketServerType::Unknown)
             g_main_loop_run(m_mainLoop);
@@ -165,7 +165,7 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
 {
     // Proxy URI is unset by default. Requests to kServer should be received by kServer.
     GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", kServer->port()));
-    auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     // WebSocket requests should also be received by kServer.
@@ -177,7 +177,7 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
     WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), nullptr);
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
 
     // WebSocket requests should also be received by proxyServer.
@@ -192,7 +192,7 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == ephemeralSession.get());
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
-    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/echoPort").data());
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/echoPort").legacyCStringPointer());
     g_main_loop_run(test->m_mainLoop);
     WebKitWebResource* resource = webkit_web_view_get_main_resource(webView.get());
     g_assert_true(WEBKIT_IS_WEB_RESOURCE(resource));
@@ -209,14 +209,14 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
 
     // Remove the proxy. Requests to kServer should be received by kServer again.
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
     settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), ignoreHosts);
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     GUniquePtr<char> localhostEchoPortURI(g_strdup_printf("http://localhost:%s/echoPort", serverPortAsString.get()));
     mainResourceData = test->loadURIAndGetMainResourceData(localhostEchoPortURI.get());
@@ -225,20 +225,20 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
 
     // Remove the proxy again to ensure next test is not using any previous values.
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
     webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer());
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     webkit_network_proxy_settings_free(settings);
 
     // Reset to use the default resolver.
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_DEFAULT, nullptr);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     kServer->removeWebSocketHandler();

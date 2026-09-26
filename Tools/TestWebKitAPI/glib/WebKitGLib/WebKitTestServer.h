@@ -43,13 +43,13 @@ public:
     SoupServer* soupServer() const { return m_soupServer.get(); }
     const URL& baseURL() const { return m_baseURL; }
     unsigned port() const;
-    CString getURIForPath(const char* path) const;
+    UTF8CString getURIForPath(const char* path) const;
     void run(SoupServerCallback);
 
     void addWebSocketHandler(SoupServerWebsocketCallback, gpointer userData);
     void removeWebSocketHandler();
     const URL& baseWebSocketURL() const { return m_baseWebSocketURL; }
-    CString getWebSocketURIForPath(const char* path) const;
+    UTF8CString getWebSocketURIForPath(const char* path) const;
 
 private:
     GRefPtr<SoupServer> m_soupServer;

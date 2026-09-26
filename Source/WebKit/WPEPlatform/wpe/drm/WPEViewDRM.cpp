@@ -495,7 +495,7 @@ static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const W
 static void wpeViewDRMSetCursorFromName(WPEView* view, const char* name)
 {
     if (auto* cursor = wpeDisplayDRMGetCursor(WPE_DISPLAY_DRM(wpe_view_get_display(view))))
-        cursor->setFromName(name, wpe_view_get_scale(view));
+        cursor->setFromName(CStringView::unsafeFromUTF8(name), wpe_view_get_scale(view));
 }
 
 static void wpeViewDRMSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)

@@ -59,7 +59,7 @@ enum {
 
 typedef struct _JSCClassPrivate {
     JSGlobalContextRef context;
-    CString name;
+    UTF8CString name;
     JSClassRef jsClass;
     JSCClassVTable* vtable;
     GDestroyNotify destroyFunction;
@@ -279,7 +279,7 @@ static void jscClassGetProperty(GObject* object, guint propID, GValue* value, GP
 
     switch (propID) {
     case PROP_NAME:
-        g_value_set_string(value, jscClass->priv->name.data());
+        g_value_set_string(value, jscClass->priv->name.legacyCStringPointer());
         break;
     case PROP_PARENT:
         g_value_set_object(value, jscClass->priv->parentClass);
@@ -298,7 +298,7 @@ static void jscClassSetProperty(GObject* object, guint propID, const GValue* val
         jscClass->priv->context = jscContextGetJSContext(JSC_CONTEXT(g_value_get_object(value)));
         break;
     case PROP_NAME:
-        jscClass->priv->name = g_value_get_string(value);
+        jscClass->priv->name = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     case PROP_PARENT:
         if (auto* parent = g_value_get_object(value))
@@ -458,7 +458,7 @@ GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass
     priv->destroyFunction = destroyFunction;
 
     JSClassDefinition definition = kJSClassDefinitionEmpty;
-    definition.className = priv->name.data();
+    definition.className = priv->name.legacyCStringPointer();
 
 #define SET_IMPL_IF_NEEDED(definitionFunc, vtableFunc) \
     for (auto* klass = jscClass.get(); klass; klass = klass->priv->parentClass) { \
@@ -478,7 +478,7 @@ GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass
 
     priv->jsClass = JSClassCreate(&definition);
 
-    GUniquePtr<char> prototypeName(g_strdup_printf("%sPrototype", priv->name.data()));
+    GUniquePtr<char> prototypeName(g_strdup_printf("%sPrototype", priv->name.legacyCStringPointer()));
     JSClassDefinition prototypeDefinition = kJSClassDefinitionEmpty;
     prototypeDefinition.className = prototypeName.get();
     RefPtr prototypeClass = JSClassCreate(&prototypeDefinition);
@@ -524,7 +524,7 @@ const char* jsc_class_get_name(JSCClass* jscClass)
 {
     g_return_val_if_fail(JSC_IS_CLASS(jscClass), nullptr);
 
-    return jscClass->priv->name.data();
+    return jscClass->priv->name.legacyCStringPointer();
 }
 
 /**
@@ -599,7 +599,7 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
     g_return_val_if_fail(priv->context, nullptr);
 
     if (!name)
-        name = priv->name.data();
+        name = priv->name.legacyCStringPointer();
 
     va_list args;
     va_start(args, paramCount);
@@ -608,7 +608,7 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
     });
     va_end(args);
 
-    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.legacyCStringPointer(), callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
 
 }
 
@@ -646,13 +646,13 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
     g_return_val_if_fail(priv->context, nullptr);
 
     if (!name)
-        name = priv->name.data();
+        name = priv->name.legacyCStringPointer();
 
     Vector<GType> parameters(parametersCount, [parameterTypes = unsafeMakeSpan(parameterTypes, parametersCount)](size_t i) -> GType {
         return parameterTypes[i];
     });
 
-    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.legacyCStringPointer(), callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
 }
 
 /**
@@ -686,9 +686,9 @@ JSCValue* jsc_class_add_constructor_variadic(JSCClass* jscClass, const char* nam
     g_return_val_if_fail(jscClass->priv->context, nullptr);
 
     if (!name)
-        name = priv->name.data();
+        name = priv->name.legacyCStringPointer();
 
-    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, std::nullopt).leakRef();
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.legacyCStringPointer(), callback, userData, destroyNotify, returnType, std::nullopt).leakRef();
 }
 
 static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, std::optional<Vector<GType>>&& parameters)

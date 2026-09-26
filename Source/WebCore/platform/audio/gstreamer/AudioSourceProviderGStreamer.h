@@ -93,7 +93,7 @@ private:
     unsigned long m_deinterleavePadAddedHandlerId { 0 };
     unsigned long m_deinterleavePadRemovedHandlerId { 0 };
     Lock m_adapterLock;
-    CString m_providerId;
+    ASCIICString m_providerId;
 };
 
 }

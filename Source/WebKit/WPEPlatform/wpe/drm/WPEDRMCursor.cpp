@@ -76,15 +76,15 @@ void Cursor::updateBuffer(const uint8_t* pixels, uint32_t width, uint32_t height
     gbm_bo_write(m_buffer->bufferObject(), deviceBuffer.span().data(), deviceBuffer.sizeInBytes());
 }
 
-void Cursor::setFromName(const char* name, double scale)
+void Cursor::setFromName(CStringView name, double scale)
 {
     if (!m_theme)
         return;
 
-    if (!g_strcmp0(m_name.get(), name))
+    if (!g_strcmp0(m_name.get(), name.utf8()))
         return;
 
-    m_name.reset(g_strdup(name));
+    m_name.reset(g_strdup(name.utf8()));
     if (!g_strcmp0(m_name.get(), "none")) {
         m_isHidden = true;
         return;
@@ -93,7 +93,7 @@ void Cursor::setFromName(const char* name, double scale)
     // FIXME: support animated cursors.
     const auto& cursor = m_theme->cursor(name, scale, 1);
     if (cursor.isEmpty()) {
-        g_warning("Cursor %s not found in theme", name);
+        g_warning("Cursor %s not found in theme", name.utf8());
         return;
     }
 

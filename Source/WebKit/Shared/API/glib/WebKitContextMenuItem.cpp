@@ -61,7 +61,7 @@ struct _WebKitContextMenuItemPrivate {
 
     std::unique_ptr<WebContextMenuItemGlib> menuItem;
     GRefPtr<WebKitContextMenu> subMenu;
-    CString titleUTF8;
+    UTF8CString titleUTF8;
 #endif // ENABLE(CONTEXT_MENUS)
 };
 
@@ -400,7 +400,7 @@ const gchar* webkit_context_menu_item_get_title(WebKitContextMenuItem* item)
         return nullptr;
     if (item->priv->titleUTF8.isNull())
         item->priv->titleUTF8 = item->priv->menuItem->title().utf8();
-    return item->priv->titleUTF8.data();
+    return item->priv->titleUTF8.legacyCStringPointer();
 #else
     g_assert_not_reached();
 #endif // ENABLE(CONTEXT_MENUS)

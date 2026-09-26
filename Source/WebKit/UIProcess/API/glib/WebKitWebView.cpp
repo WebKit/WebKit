@@ -801,21 +801,21 @@ static void webkitWebViewRequestFavicon(WebKitWebView* webView)
     webkitFaviconDatabaseGetFaviconInternal(database, priv->activeURI, webkitWebViewIsEphemeral(webView), priv->faviconCancellable.get(), gotFaviconCallback, webView);
 }
 
-static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, const char* faviconURI)
+static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, UTF8CString&& faviconURI)
 {
     if (webView->priv->faviconURI == faviconURI)
         return;
 
-    webView->priv->faviconURI = UTF8CString { byteCast<char8_t>(faviconURI) };
+    webView->priv->faviconURI = WTF::move(faviconURI);
     webkitWebViewRequestFavicon(webView);
 }
 
 static void faviconChangedCallback(WebKitFaviconDatabase*, const char* pageURI, const char* faviconURI, WebKitWebView* webView)
 {
-    if (webView->priv->activeURI != pageURI)
+    if (webView->priv->activeURI != UTF8CString { byteCast<char8_t>(pageURI) })
         return;
 
-    webkitWebViewUpdateFaviconURI(webView, faviconURI);
+    webkitWebViewUpdateFaviconURI(webView, UTF8CString { byteCast<char8_t>(faviconURI) });
 }
 #endif // PLATFORM(GTK)
 
@@ -2791,7 +2791,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 #if PLATFORM(GTK)
         if (auto* database = webkitWebViewGetFaviconDatabase(webView)) {
             GUniquePtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.legacyCStringPointer()));
-            webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
+            webkitWebViewUpdateFaviconURI(webView, UTF8CString { byteCast<char8_t>(faviconURI.get()) });
         }
 #endif
         break;

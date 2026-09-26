@@ -70,18 +70,18 @@ static UnixFileDescriptor createSharedMemory()
         fileDescriptor = shm_open(SHM_ANON, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     } while (fileDescriptor == -1 && errno == EINTR);
 #else
-    CString tempName;
+    UTF8CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
         auto name = makeString("/WPEWaylandSHMPool."_s, cryptographicallyRandomNumber<unsigned>());
         tempName = name.utf8();
 
         do {
-            fileDescriptor = shm_open(tempName.data(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+            fileDescriptor = shm_open(tempName.legacyCStringPointer(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
         } while (fileDescriptor == -1 && errno == EINTR);
     }
 
     if (fileDescriptor != -1)
-        shm_unlink(tempName.data());
+        shm_unlink(tempName.legacyCStringPointer());
 #endif
 
     return UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };

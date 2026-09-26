@@ -60,7 +60,7 @@ struct _WPEClipboardPrivate {
 WEBKIT_DEFINE_TYPE(WPEClipboard, wpe_clipboard, G_TYPE_OBJECT)
 
 struct _WPEClipboardContent {
-    std::optional<CString> text;
+    std::optional<UTF8CString> text;
     std::optional<HashMap<const char*, GRefPtr<GBytes>>> buffers;
     int referenceCount { 1 };
 };
@@ -387,7 +387,7 @@ void wpe_clipboard_content_set_text(WPEClipboardContent* content, const char* te
 {
     g_return_if_fail(content);
 
-    content->text = CString(text);
+    content->text = UTF8CString { byteCast<char8_t>(text) };
 }
 
 /**
@@ -402,7 +402,7 @@ const char* wpe_clipboard_content_get_text(WPEClipboardContent* content)
 {
     g_return_val_if_fail(content, nullptr);
 
-    return content->text ? content->text->data() : nullptr;
+    return content->text ? content->text->legacyCStringPointer() : nullptr;
 }
 
 /**

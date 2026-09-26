@@ -359,9 +359,7 @@ static_assert(!std::constructible_from<CString, std::span<const char>>);
 static_assert(std::constructible_from<ASCIICString, std::span<const char>>);
 static_assert(!std::constructible_from<CString, std::string>);
 static_assert(std::constructible_from<UTF8CString, std::string>);
-#if PLATFORM(COCOA)
 static_assert(!std::constructible_from<CString, const char*>);
-#endif
 static_assert(std::constructible_from<ASCIICString, const char*>);
 template<typename StringType> concept HasMutableSpan = requires(StringType& string)
 {

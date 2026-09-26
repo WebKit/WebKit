@@ -144,7 +144,7 @@ public:
     WEBCORE_EXPORT bool doAction() const;
 
     WEBCORE_EXPORT String documentAttribute(const String&) const;
-    void loadEvent(const char*);
+    void loadEvent(ASCIILiteral);
 
     WEBCORE_EXPORT AccessibilityObjectAtspi* activeDescendant() const;
     void activeDescendantChanged();

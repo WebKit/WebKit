@@ -100,28 +100,28 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
 const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers()
 {
     static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
-    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
         [](SocketConnection& connection, GVariant*, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             inspectorServer.connectionDidClose(connection);
         }}
     },
-    { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(a(tsssb)b)",
+    { "SetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(a(tsssb)b)"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             inspectorServer.setTargetList(connection, parameters);
         }}
     },
-    { "SetupInspectorClient", std::pair<CString, SocketConnection::MessageCallback> { "(ay)",
+    { "SetupInspectorClient"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ay)"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             GRefPtr<GVariant> backendCommandsHash;
             g_variant_get(parameters, "(@ay)", &backendCommandsHash.outPtr());
             auto* backendCommands = inspectorServer.setupInspectorClient(connection, g_variant_get_bytestring(backendCommandsHash.get()));
-            connection.sendMessage("DidSetupInspectorClient", g_variant_new("(@ay)", backendCommands));
+            connection.sendMessage("DidSetupInspectorClient"_s, g_variant_new("(@ay)", backendCommands));
         }}
     },
-    { "Setup", std::pair<CString, SocketConnection::MessageCallback> { "(tt)",
+    { "Setup"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tt)"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             guint64 connectionID, targetID;
@@ -129,7 +129,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             inspectorServer.setup(connection, connectionID, targetID);
         }}
     },
-    { "FrontendDidClose", std::pair<CString, SocketConnection::MessageCallback> { "(tt)",
+    { "FrontendDidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tt)"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             guint64 connectionID, targetID;
@@ -137,7 +137,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             inspectorServer.close(connection, connectionID, targetID);
         }}
     },
-    { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(ts)",
+    { "SendMessageToFrontend"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ts)"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             guint64 targetID;
@@ -146,7 +146,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             inspectorServer.sendMessageToFrontend(connection, targetID, message);
         }}
     },
-    { "SendMessageToBackend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
+    { "SendMessageToBackend"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tts)"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             guint64 connectionID, targetID;
@@ -155,7 +155,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             inspectorServer.sendMessageToBackend(connection, connectionID, targetID, message);
         }}
     },
-    { "StartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(sa{sv})",
+    { "StartAutomationSession"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(sa{sv})"_s,
         [](SocketConnection& connection, GVariant* parameters, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
             const char* sessionID;
@@ -164,7 +164,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             auto capabilities = processSessionCapabilities(sessionCapabilities.get());
             inspectorServer.startAutomationSession(connection, sessionID, capabilities);
             auto clientCapabilities = RemoteInspector::singleton().clientCapabilities();
-            connection.sendMessage("DidStartAutomationSession", g_variant_new("(ss)",
+            connection.sendMessage("DidStartAutomationSession"_s, g_variant_new("(ss)",
                 clientCapabilities ? clientCapabilities->browserName.utf8().legacyCStringPointer() : "",
                 clientCapabilities ? clientCapabilities->browserVersion.utf8().legacyCStringPointer() : ""));
         }}
@@ -231,7 +231,7 @@ void RemoteInspectorServer::setTargetList(SocketConnection& remoteInspectorConne
     if (!clientConnection)
         return;
 
-    clientConnection->sendMessage("SetTargetList", g_variant_new("(t@a(tsssb))", addResult.iterator->value, targetList.get()));
+    clientConnection->sendMessage("SetTargetList"_s, g_variant_new("(t@a(tsssb))", addResult.iterator->value, targetList.get()));
 }
 
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
@@ -249,7 +249,7 @@ GVariant* RemoteInspectorServer::setupInspectorClient(SocketConnection& clientCo
 
     // Ask all remote inspectors to push their target lists to notify the new client.
     for (RefPtr remoteInspectorConnection : m_remoteInspectorConnectionToIDMap.keys())
-        remoteInspectorConnection->sendMessage("GetTargetList", nullptr);
+        remoteInspectorConnection->sendMessage("GetTargetList"_s, nullptr);
 
     return backendCommands;
 }
@@ -266,7 +266,7 @@ void RemoteInspectorServer::setup(SocketConnection& clientConnection, uint64_t c
     }
 
     m_inspectionTargets.add(std::make_pair(connectionID, targetID));
-    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("Setup", g_variant_new("(t)", targetID));
+    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("Setup"_s, g_variant_new("(t)", targetID));
 }
 
 void RemoteInspectorServer::close(SocketConnection& clientConnection, uint64_t connectionID, uint64_t targetID)
@@ -279,7 +279,7 @@ void RemoteInspectorServer::close(SocketConnection& clientConnection, uint64_t c
     }
 
     ASSERT(m_inspectionTargets.contains(std::make_pair(connectionID, targetID)));
-    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("FrontendDidClose", g_variant_new("(t)", targetID));
+    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("FrontendDidClose"_s, g_variant_new("(t)", targetID));
     m_inspectionTargets.remove(std::make_pair(connectionID, targetID));
 }
 
@@ -308,7 +308,7 @@ void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnectio
         for (RefPtr connection : clientConnections) {
             if (!connection)
                 continue;
-            connection->sendMessage("SetTargetList", g_variant_new("(t@a(tsssb))", connectionID, g_variant_new_array(G_VARIANT_TYPE("(tsssb)"), nullptr, 0)));
+            connection->sendMessage("SetTargetList"_s, g_variant_new("(t@a(tsssb))", connectionID, g_variant_new_array(G_VARIANT_TYPE("(tsssb)"), nullptr, 0)));
         }
     }
     m_connections.remove(&clientConnection);
@@ -323,7 +323,7 @@ void RemoteInspectorServer::sendMessageToBackend(SocketConnection& clientConnect
         return;
     }
 
-    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("SendMessageToTarget", g_variant_new("(t&s)", targetID, message));
+    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("SendMessageToTarget"_s, g_variant_new("(t&s)", targetID, message));
 }
 
 void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspectorConnection, uint64_t targetID, const char* message)
@@ -338,7 +338,7 @@ void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspec
 
     RefPtr clientConnection = m_inspectionTargets.contains(connectionTargetPair) ? m_clientConnection : m_automationConnection;
     ASSERT(clientConnection);
-    clientConnection->sendMessage("SendMessageToFrontend", g_variant_new("(tt&s)", connectionID, targetID, message));
+    clientConnection->sendMessage("SendMessageToFrontend"_s, g_variant_new("(tt&s)", connectionID, targetID, message));
 }
 
 void RemoteInspectorServer::startAutomationSession(SocketConnection& automationConnection, const char* sessionID, const RemoteInspector::Client::SessionCapabilities& capabilities)

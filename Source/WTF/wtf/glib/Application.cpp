@@ -32,21 +32,21 @@
 
 namespace WTF {
 
-const CString& applicationID()
+const UTF8CString& applicationID()
 {
-    static NeverDestroyed<CString> id;
+    static NeverDestroyed<UTF8CString> id;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         if (auto* app = g_application_get_default()) {
             if (const char* appID = g_application_get_application_id(app)) {
-                id.get() = appID;
+                id.get() = UTF8CString { byteCast<char8_t>(appID) };
                 return;
             }
         }
 
         const char* programName = g_get_prgname();
         if (programName && g_application_id_is_valid(programName)) {
-            id.get() = programName;
+            id.get() = UTF8CString { byteCast<char8_t>(programName) };
             return;
         }
 

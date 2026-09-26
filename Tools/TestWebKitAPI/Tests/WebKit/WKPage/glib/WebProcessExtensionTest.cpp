@@ -122,24 +122,24 @@ struct DelayedSignal {
 
     DelayedSignal(DelayedSignalType type, const char* str)
         : type(type)
-        , str(str)
+        , str(UTF8CString { byteCast<char8_t>(str) })
     {
     }
 
     DelayedSignal(DelayedSignalType type, const char* str, const char* str2, const char* str3, gboolean b, gboolean b2)
         : type(type)
-        , str(str)
-        , str2(str2)
-        , str3(str3)
+        , str(UTF8CString { byteCast<char8_t>(str) })
+        , str2(UTF8CString { byteCast<char8_t>(str2) })
+        , str3(UTF8CString { byteCast<char8_t>(str3) })
         , b(b)
         , b2(b2)
     {
     }
 
     DelayedSignalType type;
-    CString str;
-    CString str2;
-    CString str3;
+    UTF8CString str;
+    UTF8CString str2;
+    UTF8CString str3;
     gboolean b;
     gboolean b2;
     guint64 n;
@@ -736,16 +736,16 @@ static void dbusConnectionCreated(GObject*, GAsyncResult* result, gpointer userD
             emitDocumentLoaded(connection);
             break;
         case URIChangedSignal:
-            emitURIChanged(connection, delayedSignal.str.data());
+            emitURIChanged(connection, delayedSignal.str.legacyCStringPointer());
             break;
         case FormControlsAssociatedSignal:
-            emitFormControlsAssociated(connection, delayedSignal.str.data());
+            emitFormControlsAssociated(connection, delayedSignal.str.legacyCStringPointer());
             break;
         case FormSubmissionWillCompleteSignal:
-            emitFormSubmissionEvent(connection, "FormSubmissionWillComplete", delayedSignal.str.data(), delayedSignal.str2.data(), delayedSignal.str3.data(), delayedSignal.b, delayedSignal.b2);
+            emitFormSubmissionEvent(connection, "FormSubmissionWillComplete", delayedSignal.str.legacyCStringPointer(), delayedSignal.str2.legacyCStringPointer(), delayedSignal.str3.legacyCStringPointer(), delayedSignal.b, delayedSignal.b2);
             break;
         case FormSubmissionWillSendDOMEventSignal:
-            emitFormSubmissionEvent(connection, "FormSubmissionWillSendDOMEvent", delayedSignal.str.data(), delayedSignal.str2.data(), delayedSignal.str3.data(), delayedSignal.b, delayedSignal.b2);
+            emitFormSubmissionEvent(connection, "FormSubmissionWillSendDOMEvent", delayedSignal.str.legacyCStringPointer(), delayedSignal.str2.legacyCStringPointer(), delayedSignal.str3.legacyCStringPointer(), delayedSignal.b, delayedSignal.b2);
             break;
         }
     }

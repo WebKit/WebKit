@@ -43,8 +43,8 @@ public:
     static Ref<DNSCache> create();
 
     enum class Type { Default, IPv4Only, IPv6Only };
-    std::optional<Vector<GRefPtr<GInetAddress>>> lookup(const CString& host, Type = Type::Default);
-    void update(const CString& host, Vector<GRefPtr<GInetAddress>>&&, Type = Type::Default);
+    std::optional<Vector<GRefPtr<GInetAddress>>> lookup(const UTF8CString& host, Type = Type::Default);
+    void update(const UTF8CString& host, Vector<GRefPtr<GInetAddress>>&&, Type = Type::Default);
     void clear();
 
 private:
@@ -55,7 +55,7 @@ private:
         MonotonicTime expirationTime;
     };
 
-    using DNSCacheMap = HashMap<CString, CachedResponse>;
+    using DNSCacheMap = HashMap<UTF8CString, CachedResponse>;
 
     DNSCacheMap& mapForType(Type) WTF_REQUIRES_LOCK(m_lock);
     void removeExpiredResponsesFired();

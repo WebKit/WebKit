@@ -41,10 +41,10 @@ struct StringBufferBase {
     char* data() { return buffer.data(); }
     size_t size() { return sizeof(char) * buffer.size(); }
 
-    CString createString()
+    ASCIICString createString()
     {
         buffer[BufferSize - 1] = '\0';
-        return { buffer.data() };
+        return ASCIICString { buffer.data() };
     }
 
     std::array<char, BufferSize> buffer;
@@ -159,7 +159,7 @@ struct InstructionList {
 
 // To enable showing sensible disassembly, different instructions have to be formatted differently. Each such formatting
 // class specifies the list of instructions it can format, but generally instructions under a given formatter fall into
-// the same class of instructions. The disassemble() static function returns a CString holding the formatted data.
+// the same class of instructions. The disassemble() static function returns an ASCIICString holding the formatted data.
 
 struct RTypeDefaultFormatting {
     using List = InstructionList<
@@ -182,7 +182,7 @@ struct RTypeDefaultFormatting {
         RISCV64Instructions::MULW, RISCV64Instructions::DIVW, RISCV64Instructions::DIVUW, RISCV64Instructions::REMW, RISCV64Instructions::REMUW>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -201,7 +201,7 @@ struct RTypeR2Formatting {
         RISCV64Instructions::FCLASS_S, RISCV64Instructions::FCLASS_D>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -225,7 +225,7 @@ struct RTypeWithRoundingModeDefaultFormatting {
         RISCV64Instructions::FDIV_D>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
         uint8_t rm = T::rm(insn);
@@ -245,7 +245,7 @@ struct RTypeWithRoundingModeFSQRTFormatting {
         RISCV64Instructions::FSQRT_S, RISCV64Instructions::FSQRT_D>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
         uint8_t rm = T::rm(insn);
@@ -273,7 +273,7 @@ struct RTypeWithRoundingModeFCVTFormatting {
         RISCV64Instructions::FCVT_S_D, RISCV64Instructions::FCVT_D_S>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
         uint8_t rm = T::rm(insn);
@@ -301,7 +301,7 @@ struct RTypeWithAqRlDefaultFormatting {
         RISCV64Instructions::AMOMAXU_W, RISCV64Instructions::AMOMAXU_D>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -318,7 +318,7 @@ struct RTypeWithAqRlLRFormatting {
         RISCV64Instructions::LR_W, RISCV64Instructions::LR_D>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -338,7 +338,7 @@ struct R4TypeWithRoundingModeDefaultFormatting {
         RISCV64Instructions::FNMADD_S, RISCV64Instructions::FNMADD_D>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
         uint8_t rm = T::rm(insn);
@@ -361,7 +361,7 @@ struct ITypeDefaultFormatting {
         RISCV64Instructions::ADDIW, RISCV64Instructions::SLLIW, RISCV64Instructions::SRLIW, RISCV64Instructions::SRAIW>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -383,7 +383,7 @@ struct ITypeImmediateAsOffsetFormatting {
         RISCV64Instructions::FLW, RISCV64Instructions::FLD>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -401,7 +401,7 @@ struct STypeDefaultFormatting {
         RISCV64Instructions::FSW, RISCV64Instructions::FSD>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -423,7 +423,7 @@ struct BTypeDefaultFormatting {
         RISCV64Instructions::BGEU>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -440,7 +440,7 @@ struct UTypeDefaultFormatting {
         RISCV64Instructions::LUI, RISCV64Instructions::AUIPC>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -455,7 +455,7 @@ struct JTypeDefaultFormatting {
     using List = InstructionList<RISCV64Instructions::JAL>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -470,7 +470,7 @@ struct FenceInstructionFormatting {
     using List = InstructionList<RISCV64Instructions::FENCE>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(List::contains<T>());
 
@@ -489,11 +489,11 @@ struct FenceIInstructionFormatting {
     using List = InstructionList<RISCV64Instructions::FENCE_I>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue)
     {
         static_assert(List::contains<T>());
 
-        return { T::name };
+        return ASCIICString { T::name };
     }
 };
 
@@ -502,11 +502,11 @@ struct EnvironmentInstructionFormatting {
         RISCV64Instructions::ECALL, RISCV64Instructions::EBREAK>;
 
     template<typename T>
-    static CString disassemble(RISCV64Instructions::InstructionValue)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue)
     {
         static_assert(List::contains<T>());
 
-        return { T::name };
+        return ASCIICString { T::name };
     }
 };
 
@@ -547,7 +547,7 @@ struct DisassemblyFormatting {
         FenceIInstructionFormatting,
         EnvironmentInstructionFormatting>::Type;
 
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         static_assert(Type::List::template contains<T>());
         return Type::template disassemble<T>(insn);
@@ -556,7 +556,7 @@ struct DisassemblyFormatting {
 
 template<typename InsnType, typename... OtherInsnTypes>
 struct Disassembler {
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         if (InsnType::matches(insn))
             return DisassemblyFormatting<InsnType>::disassemble(insn);
@@ -566,7 +566,7 @@ struct Disassembler {
 
 template<typename InsnType>
 struct Disassembler<InsnType> {
-    static CString disassemble(RISCV64Instructions::InstructionValue insn)
+    static ASCIICString disassemble(RISCV64Instructions::InstructionValue insn)
     {
         if (InsnType::matches(insn))
             return DisassemblyFormatting<InsnType>::disassemble(insn);
@@ -574,7 +574,7 @@ struct Disassembler<InsnType> {
     }
 };
 
-CString disassembleOpcode(uint32_t *pc)
+ASCIICString disassembleOpcode(uint32_t *pc)
 {
     using namespace RISCV64Instructions;
     using DisassemblerType = Disassembler<
@@ -628,7 +628,7 @@ CString disassembleOpcode(uint32_t *pc)
     auto disassembly = DisassemblerType::disassemble(InstructionValue { *pc });
     if (!disassembly.isNull())
         return disassembly;
-    return CString { "<unrecognized opcode>" };
+    return "<unrecognized opcode>"_s;
 }
 
 } // namespace RISCV64Disassembler

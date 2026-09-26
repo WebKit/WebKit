@@ -45,7 +45,7 @@ struct _WebKitConsoleMessage {
 
     JSC::MessageSource source;
     JSC::MessageLevel level;
-    CString message;
+    UTF8CString message;
     unsigned lineNumber;
-    CString sourceID;
+    UTF8CString sourceID;
 };

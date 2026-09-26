@@ -59,7 +59,7 @@ DNSCache::DNSCacheMap& DNSCache::mapForType(Type type)
     return m_dnsMap;
 }
 
-std::optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& host, Type type)
+std::optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const UTF8CString& host, Type type)
 {
     Locker locker { m_lock };
     auto& map = mapForType(type);
@@ -76,7 +76,7 @@ std::optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& hos
     return response.addressList;
 }
 
-void DNSCache::update(const CString& host, Vector<GRefPtr<GInetAddress>>&& addressList, Type type)
+void DNSCache::update(const UTF8CString& host, Vector<GRefPtr<GInetAddress>>&& addressList, Type type)
 {
     Locker locker { m_lock };
     auto& map = mapForType(type);
@@ -104,8 +104,8 @@ void DNSCache::pruneResponsesInMap(DNSCacheMap& map)
     if (map.size() <= maxCacheSize)
         return;
 
-    Vector<CString> keys = copyToVector(map.keys());
-    std::sort(keys.begin(), keys.end(), [&map](const CString& a, const CString& b) {
+    Vector<UTF8CString> keys = copyToVector(map.keys());
+    std::sort(keys.begin(), keys.end(), [&map](const UTF8CString& a, const UTF8CString& b) {
         return map.get(a).expirationTime < map.get(b).expirationTime;
     });
 

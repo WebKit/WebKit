@@ -1195,7 +1195,7 @@ void AccessibilityObjectAtspi::stateChanged(const char* name, bool value)
     AccessibilityAtspi::singleton().stateChanged(*this, name, value);
 }
 
-void AccessibilityObjectAtspi::loadEvent(const char* event)
+void AccessibilityObjectAtspi::loadEvent(ASCIILiteral event)
 {
     AccessibilityAtspi::singleton().loadEvent(*this, event);
 }

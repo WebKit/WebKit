@@ -47,13 +47,13 @@ void CurlSSLHandle::platformInitialize()
         "AES128-GCM-SHA256:"
         "AES256-GCM-SHA384:"
         "AES128-SHA:"
-        "AES256-SHA";
+        "AES256-SHA"_s;
 
     constexpr auto ecCurves =
         "X25519:"
         "P-256:"
         "P-384:"
-        "P-521";
+        "P-521"_s;
 
     setCipherList(cipherList);
     setECCurves(ecCurves);

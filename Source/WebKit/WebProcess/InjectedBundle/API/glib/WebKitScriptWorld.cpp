@@ -50,7 +50,7 @@ struct _WebKitScriptWorldPrivate {
     }
 
     RefPtr<InjectedBundleScriptWorld> scriptWorld;
-    CString name;
+    UTF8CString name;
 };
 
 static std::array<unsigned, LAST_SIGNAL> signals;
@@ -190,5 +190,5 @@ const char* webkit_script_world_get_name(WebKitScriptWorld* world)
 {
     g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
 
-    return world->priv->name.data();
+    return world->priv->name.legacyCStringPointer();
 }

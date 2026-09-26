@@ -75,6 +75,7 @@
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 
 #if PLATFORM(GTK)
 #include "WebKitRemoteInspectorProtocolHandler.h"
@@ -1447,10 +1448,10 @@ IGNORE_CLANG_WARNINGS_END
 
 static bool pathIsBlocked(const char* path)
 {
-    static const Vector<CString, 4> blockedPrefixes = {
+    static constexpr std::array blockedPrefixes {
         // These are recreated by bwrap and it doesn't make sense to try and rebind them.
-        "sys", "proc", "dev",
-        "", // All of `/` isn't acceptable.
+        "sys"_s, "proc"_s, "dev"_s,
+        ""_s, // All of `/` isn't acceptable.
     };
 
     if (!g_path_is_absolute(path))
@@ -1461,7 +1462,7 @@ static bool pathIsBlocked(const char* path)
 
     GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
     auto pathElements = unsafeMakeSpan(splitPath.get(), g_strv_length(splitPath.get()));
-    return (pathElements.size() < 2) || blockedPrefixes.contains(pathElements[1]);
+    return (pathElements.size() < 2) || std::ranges::find(blockedPrefixes, CStringView::unsafeFromUTF8(pathElements[1])) != blockedPrefixes.end();
 }
 
 /**

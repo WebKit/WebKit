@@ -66,7 +66,7 @@ static Vector<GRefPtr<GInetAddress>> addressListGListToVector(GList* addressList
 }
 
 struct LookupAsyncData {
-    CString hostname;
+    UTF8CString hostname;
     DNSCache::Type dnsCacheType { DNSCache::Type::Default };
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(LookupAsyncData)
@@ -74,13 +74,14 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(LookupAsyncData)
 static GList* webkitCachedResolverLookupByName(GResolver* resolver, const char* hostname, GCancellable* cancellable, GError** error)
 {
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
-    auto addressList = priv->cache->lookup(hostname);
+    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto addressList = priv->cache->lookup(host);
     if (addressList)
         return addressListVectorToGList(addressList.value());
 
     auto* returnValue = g_resolver_lookup_by_name(priv->wrappedResolver.get(), hostname, cancellable, error);
     if (returnValue)
-        priv->cache->update(hostname, addressListGListToVector(returnValue));
+        priv->cache->update(host, addressListGListToVector(returnValue));
     return returnValue;
 }
 
@@ -88,14 +89,15 @@ static void webkitCachedResolverLookupByNameAsync(GResolver* resolver, const cha
 {
     GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
-    auto addressList = priv->cache->lookup(hostname);
+    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto addressList = priv->cache->lookup(host);
     if (addressList) {
         g_task_return_pointer(task.get(), addressListVectorToGList(addressList.value()), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         return;
     }
 
     auto* asyncData = createLookupAsyncData();
-    asyncData->hostname = hostname;
+    asyncData->hostname = WTF::move(host);
     g_task_set_task_data(task.get(), asyncData, reinterpret_cast<GDestroyNotify>(destroyLookupAsyncData));
     g_resolver_lookup_by_name_async(priv->wrappedResolver.get(), hostname, cancellable, [](GObject* resolver, GAsyncResult* result, gpointer userData) {
         GRefPtr<GTask> task = adoptGRef(G_TASK(userData));
@@ -133,13 +135,14 @@ static GList* webkitCachedResolverLookupByNameWithFlags(GResolver* resolver, con
 {
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
     auto cacheType = dnsCacheType(flags);
-    auto addressList = priv->cache->lookup(hostname, cacheType);
+    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto addressList = priv->cache->lookup(host, cacheType);
     if (addressList)
         return addressListVectorToGList(addressList.value());
 
     auto* returnValue = g_resolver_lookup_by_name_with_flags(priv->wrappedResolver.get(), hostname, flags, cancellable, error);
     if (returnValue)
-        priv->cache->update(hostname, addressListGListToVector(returnValue), cacheType);
+        priv->cache->update(host, addressListGListToVector(returnValue), cacheType);
     return returnValue;
 }
 
@@ -148,14 +151,15 @@ static void webkitCachedResolverLookupByNameWithFlagsAsync(GResolver* resolver, 
     GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
     auto cacheType = dnsCacheType(flags);
-    auto addressList = priv->cache->lookup(hostname, cacheType);
+    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto addressList = priv->cache->lookup(host, cacheType);
     if (addressList) {
         g_task_return_pointer(task.get(), addressListVectorToGList(addressList.value()), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         return;
     }
 
     auto* asyncData = createLookupAsyncData();
-    asyncData->hostname = hostname;
+    asyncData->hostname = WTF::move(host);
     asyncData->dnsCacheType = cacheType;
     g_task_set_task_data(task.get(), asyncData, reinterpret_cast<GDestroyNotify>(destroyLookupAsyncData));
     g_resolver_lookup_by_name_with_flags_async(priv->wrappedResolver.get(), hostname, flags, cancellable, [](GObject* resolver, GAsyncResult* result, gpointer userData) {

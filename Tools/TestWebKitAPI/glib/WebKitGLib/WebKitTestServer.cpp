@@ -35,9 +35,9 @@ WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
     GRefPtr<GTlsCertificate> certificate;
     if (options[ServerHTTPS]) {
         GUniqueOutPtr<GError> error;
-        CString resourcesDir = Test::getResourcesDir();
-        GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.data(), "test-cert.pem", nullptr));
-        GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.data(), "test-key.pem", nullptr));
+        UTF8CString resourcesDir = Test::getResourcesDir();
+        GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.legacyCStringPointer(), "test-cert.pem", nullptr));
+        GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.legacyCStringPointer(), "test-key.pem", nullptr));
         certificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.get(), sslKeyFile.get(), &error.outPtr()));
         g_assert_no_error(error.get());
     }
@@ -91,14 +91,14 @@ void WebKitTestServer::removeWebSocketHandler()
         soup_server_remove_handler(m_soupServer.get(), "/websocket");
 }
 
-CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
+UTF8CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
 {
     g_assert_false(m_baseWebSocketURL.isNull());
     g_assert_true(path && *path == '/');
     return URL(m_baseWebSocketURL, String::fromLatin1(path + 1)).string().utf8(); // Ignore the leading slash.
 }
 
-CString WebKitTestServer::getURIForPath(const char* path) const
+UTF8CString WebKitTestServer::getURIForPath(const char* path) const
 {
     return URL(m_baseURL, String::fromLatin1(path)).string().utf8();
 }

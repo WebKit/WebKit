@@ -44,9 +44,9 @@
 struct _WebKitUserAgent {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(_WebKitUserAgent);
     WebKitUserAgentType type { WEBKIT_USER_AGENT_TYPE_DEFAULT };
-    CString applicationName;
-    CString applicationVersion;
-    CString userAgentString;
+    UTF8CString applicationName;
+    UTF8CString applicationVersion;
+    UTF8CString userAgentString;
     int referenceCount { 1 };
 };
 
@@ -100,9 +100,9 @@ WebKitUserAgent* webkit_user_agent_new_with_application_details(WebKitUserAgentT
 {
     WebKitUserAgent* userAgent = webkit_user_agent_new(type);
     if (applicationName)
-        userAgent->applicationName = applicationName;
+        userAgent->applicationName = UTF8CString { byteCast<char8_t>(applicationName) };
     if (applicationVersion)
-        userAgent->applicationVersion = applicationVersion;
+        userAgent->applicationVersion = UTF8CString { byteCast<char8_t>(applicationVersion) };
     return userAgent;
 }
 
@@ -170,7 +170,7 @@ WebKitUserAgentType webkit_user_agent_get_user_agent_type(WebKitUserAgent* userA
 const gchar* webkit_user_agent_get_application_name(WebKitUserAgent* userAgent)
 {
     g_return_val_if_fail(userAgent, nullptr);
-    return userAgent->applicationName.isNull() ? nullptr : userAgent->applicationName.data();
+    return userAgent->applicationName.isNull() ? nullptr : userAgent->applicationName.legacyCStringPointer();
 }
 
 /**
@@ -186,7 +186,7 @@ const gchar* webkit_user_agent_get_application_name(WebKitUserAgent* userAgent)
 const gchar* webkit_user_agent_get_application_version(WebKitUserAgent* userAgent)
 {
     g_return_val_if_fail(userAgent, nullptr);
-    return userAgent->applicationVersion.isNull() ? nullptr : userAgent->applicationVersion.data();
+    return userAgent->applicationVersion.isNull() ? nullptr : userAgent->applicationVersion.legacyCStringPointer();
 }
 
 /**
@@ -207,5 +207,5 @@ const gchar* webkit_user_agent_to_string(WebKitUserAgent* userAgent)
         String appVer = userAgent->applicationVersion.isNull() ? String { } : String::fromUTF8(userAgent->applicationVersion.span());
         userAgent->userAgentString = WebCore::standardUserAgent(appName, appVer, toWebCoreUserAgentType(userAgent->type)).utf8();
     }
-    return userAgent->userAgentString.data();
+    return userAgent->userAgentString.legacyCStringPointer();
 }

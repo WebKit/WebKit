@@ -49,7 +49,7 @@ public:
     void loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI);
     void reset();
 
-    void setRedirectURI(const char* uri) { m_redirectURI = uri; }
+    void setRedirectURI(const char* uri) { m_redirectURI = UTF8CString { byteCast<char8_t>(uri) }; }
 
     enum LoadEvents {
         ProvisionalLoadStarted,
@@ -65,6 +65,6 @@ public:
     GUniquePtr<GError> m_error;
     Vector<LoadEvents> m_loadEvents;
     float m_estimatedProgress;
-    CString m_redirectURI;
-    CString m_committedURI;
+    UTF8CString m_redirectURI;
+    UTF8CString m_committedURI;
 };

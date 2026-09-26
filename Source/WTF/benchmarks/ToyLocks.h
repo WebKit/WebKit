@@ -35,6 +35,7 @@
 #include <wtf/ReadWriteLock.h>
 #include <wtf/Threading.h>
 #include <wtf/WordLock.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #if __has_include(<os/lock.h>)
 #include <os/lock.h>
@@ -1163,39 +1164,39 @@ template<typename Benchmark>
 void runEverything(const char* what)
 {
     if (!strcmp(what, "yieldspinlock") || !strcmp(what, "all"))
-        Benchmark::template run<YieldSpinLock>("YieldSpinLock");
+        Benchmark::template run<YieldSpinLock>("YieldSpinLock"_s);
     if (!strcmp(what, "pausespinlock") || !strcmp(what, "all"))
-        Benchmark::template run<PauseSpinLock>("PauseSpinLock");
+        Benchmark::template run<PauseSpinLock>("PauseSpinLock"_s);
 #if defined(EXTRA_LOCKS) && EXTRA_LOCKS
     if (!strcmp(what, "transactionalspinlock") || !strcmp(what, "all"))
-        Benchmark::template run<TransactionalSpinLock>("TransactionalSpinLock");
+        Benchmark::template run<TransactionalSpinLock>("TransactionalSpinLock"_s);
     if (!strcmp(what, "synchroniclock") || !strcmp(what, "all"))
-        Benchmark::template run<SynchronicLock>("SynchronicLock");
+        Benchmark::template run<SynchronicLock>("SynchronicLock"_s);
 #endif
     if (!strcmp(what, "wordlock") || !strcmp(what, "all"))
-        Benchmark::template run<WordLock>("WTFWordLock");
+        Benchmark::template run<WordLock>("WTFWordLock"_s);
     if (!strcmp(what, "lock") || !strcmp(what, "all"))
-        Benchmark::template run<Lock>("WTFLock");
+        Benchmark::template run<Lock>("WTFLock"_s);
     if (!strcmp(what, "barginglock") || !strcmp(what, "all"))
-        Benchmark::template run<BargingLock<uint8_t>>("ByteBargingLock");
+        Benchmark::template run<BargingLock<uint8_t>>("ByteBargingLock"_s);
     if (!strcmp(what, "bargingwordlock") || !strcmp(what, "all"))
-        Benchmark::template run<BargingLock<uint32_t>>("WordBargingLock");
+        Benchmark::template run<BargingLock<uint32_t>>("WordBargingLock"_s);
     if (!strcmp(what, "thunderlock") || !strcmp(what, "all"))
-        Benchmark::template run<ThunderLock<uint8_t>>("ByteThunderLock");
+        Benchmark::template run<ThunderLock<uint8_t>>("ByteThunderLock"_s);
     if (!strcmp(what, "thunderwordlock") || !strcmp(what, "all"))
-        Benchmark::template run<ThunderLock<uint32_t>>("WordThunderLock");
+        Benchmark::template run<ThunderLock<uint32_t>>("WordThunderLock"_s);
     if (!strcmp(what, "cascadelock") || !strcmp(what, "all"))
-        Benchmark::template run<CascadeLock<uint8_t>>("ByteCascadeLock");
+        Benchmark::template run<CascadeLock<uint8_t>>("ByteCascadeLock"_s);
     if (!strcmp(what, "cascadewordlock") || !strcmp(what, "all"))
-        Benchmark::template run<CascadeLock<uint32_t>>("WordCascadeLock");
+        Benchmark::template run<CascadeLock<uint32_t>>("WordCascadeLock"_s);
     if (!strcmp(what, "handofflock") || !strcmp(what, "all"))
-        Benchmark::template run<HandoffLock>("HandoffLock");
+        Benchmark::template run<HandoffLock>("HandoffLock"_s);
 #ifdef HAS_UNFAIR_LOCK
     if (!strcmp(what, "unfairlock") || !strcmp(what, "all"))
-        Benchmark::template run<UnfairLock>("UnfairLock");
+        Benchmark::template run<UnfairLock>("UnfairLock"_s);
 #endif
     if (!strcmp(what, "mutex") || !strcmp(what, "all"))
-        Benchmark::template run<std::mutex>("std::mutex");
+        Benchmark::template run<std::mutex>("std::mutex"_s);
 }
 
 // The read-write locks are driven by a benchmark that mixes readers and writers, so they get
@@ -1205,15 +1206,15 @@ template<typename Benchmark>
 void runEverythingRW(const char* what)
 {
     if (!strcmp(what, "readwritelock") || !strcmp(what, "allrw"))
-        Benchmark::template run<ReadWriteLock>("WTFReadWriteLock");
+        Benchmark::template run<ReadWriteLock>("WTFReadWriteLock"_s);
     if (!strcmp(what, "pftlock") || !strcmp(what, "allrw"))
-        Benchmark::template run<PFTLock>("PFTLock");
+        Benchmark::template run<PFTLock>("PFTLock"_s);
     if (!strcmp(what, "pftparkinglock") || !strcmp(what, "allrw"))
-        Benchmark::template run<PFTParkingLock>("PFTParkingLock");
+        Benchmark::template run<PFTParkingLock>("PFTParkingLock"_s);
     if (!strcmp(what, "countedrwlock") || !strcmp(what, "allrw"))
-        Benchmark::template run<CountedRWLock>("CountedRWLock");
+        Benchmark::template run<CountedRWLock>("CountedRWLock"_s);
     if (!strcmp(what, "sharedmutex") || !strcmp(what, "allrw"))
-        Benchmark::template run<SharedMutexRWLock>("std::shared_mutex");
+        Benchmark::template run<SharedMutexRWLock>("std::shared_mutex"_s);
 }
 
 } // anonymous namespace

@@ -128,7 +128,7 @@ public:
         return m_eventMonitor.source.value() == event->source;
     }
 
-    void startEventMonitor(std::optional<AtspiAccessible*> source, Vector<CString>&& events)
+    void startEventMonitor(std::optional<AtspiAccessible*> source, Vector<ASCIILiteral>&& events)
     {
         m_eventMonitor.source = source;
         m_eventMonitor.eventTypes = WTF::move(events);
@@ -139,7 +139,7 @@ public:
         }, this, nullptr));
 
         for (const auto& event : m_eventMonitor.eventTypes)
-            atspi_event_listener_register(m_eventMonitor.listener.get(), event.data(), nullptr);
+            atspi_event_listener_register(m_eventMonitor.listener.get(), event.characters(), nullptr);
     }
 
     Vector<UniqueAtspiEvent> stopEventMonitor(unsigned expectedEvents, std::optional<Seconds> timeout = std::nullopt)
@@ -151,7 +151,7 @@ public:
 
         auto events = WTF::move(m_eventMonitor.events);
         for (const auto& event : m_eventMonitor.eventTypes)
-            atspi_event_listener_deregister(m_eventMonitor.listener.get(), event.data(), nullptr);
+            atspi_event_listener_deregister(m_eventMonitor.listener.get(), event.characters(), nullptr);
         m_eventMonitor = { nullptr, { }, { }, nullptr };
         return events;
     }
@@ -185,7 +185,7 @@ private:
 
     struct {
         GRefPtr<AtspiEventListener> listener;
-        Vector<CString> eventTypes;
+        Vector<ASCIILiteral> eventTypes;
         Vector<UniqueAtspiEvent> events;
         std::optional<AtspiAccessible*> source;
     } m_eventMonitor;
@@ -342,7 +342,7 @@ static void testAccessibleChildrenChanged(AccessibilityTest* test, gconstpointer
     g_assert_cmpint(atspi_accessible_get_child_count(bar.get(), nullptr), ==, 0);
 
     // Add a new paragraph.
-    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add", "object:children-changed:remove" });
+    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add"_s, "object:children-changed:remove"_s });
     test->runJavaScriptAndWaitUntilFinished("let p = document.createElement('p'); p.innerText = 'Baz'; document.getElementById('parent').appendChild(p);", nullptr);
     auto events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -364,7 +364,7 @@ static void testAccessibleChildrenChanged(AccessibilityTest* test, gconstpointer
     events = { };
 
     // Remove one of the paragraphs.
-    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add", "object:children-changed:remove" });
+    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add"_s, "object:children-changed:remove"_s });
     test->runJavaScriptAndWaitUntilFinished("let div = document.getElementById('parent'); div.removeChild(div.children[0]);", nullptr);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -383,7 +383,7 @@ static void testAccessibleChildrenChanged(AccessibilityTest* test, gconstpointer
     events = { };
 
     // Set a role. It causes removing and recreating the node with the new role.
-    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add", "object:children-changed:remove" });
+    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add"_s, "object:children-changed:remove"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('parent').children[0].role='button'", nullptr);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -399,7 +399,7 @@ static void testAccessibleChildrenChanged(AccessibilityTest* test, gconstpointer
     events = { };
 
     // Remove the container.
-    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add", "object:children-changed:remove" });
+    test->startEventMonitor(documentWeb.get(), { "object:children-changed:add"_s, "object:children-changed:remove"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('grandparent').removeChild(document.getElementById('parent'));", nullptr);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -659,7 +659,7 @@ static void testAccessibleStateChangedFocus(AccessibilityTest* test, gconstpoint
     auto documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
 
-    test->startEventMonitor(nullptr, { "object:state-changed" });
+    test->startEventMonitor(nullptr, { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished(
         "container=document.getElementById('container');"
         "var i = document.createElement('div');"
@@ -705,7 +705,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     unsigned nextChild = 0;
     auto checkbox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), nextChild++, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(checkbox.get()));
-    test->startEventMonitor(checkbox.get(), { "object:state-changed" });
+    test->startEventMonitor(checkbox.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('check').checked = true;", nullptr);
     auto events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -715,7 +715,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 
     auto toggleButton = adoptGRef(atspi_accessible_get_child_at_index(section.get(), nextChild++, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(toggleButton.get()));
-    test->startEventMonitor(toggleButton.get(), { "object:state-changed" });
+    test->startEventMonitor(toggleButton.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('toggle').ariaPressed = false;", nullptr);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -725,7 +725,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 
     auto entry = adoptGRef(atspi_accessible_get_child_at_index(section.get(), nextChild++, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(entry.get()));
-    test->startEventMonitor(entry.get(), { "object:state-changed" });
+    test->startEventMonitor(entry.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("let e = document.getElementById('entry'); e.ariaRequired = true; e.focus();", nullptr);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -752,7 +752,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(option2.get()));
     g_assert_false(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(AccessibilityTest::isSelected(option2.get()));
-    test->startEventMonitor(option1.get(), { "object:state-changed" });
+    test->startEventMonitor(option1.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('list').selectedIndex = 0;", nullptr);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -761,7 +761,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     events = { };
     g_assert_true(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(AccessibilityTest::isSelected(option2.get()));
-    test->startEventMonitor(option1.get(), { "object:state-changed" });
+    test->startEventMonitor(option1.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('list').selectedIndex = 1;", nullptr);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -782,7 +782,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(option2.get()));
     g_assert_true(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(AccessibilityTest::isSelected(option2.get()));
-    test->startEventMonitor(option2.get(), { "object:state-changed" });
+    test->startEventMonitor(option2.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').selectedIndex = 1;", nullptr);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -791,7 +791,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     events = { };
     g_assert_true(AccessibilityTest::isSelected(option2.get()));
     g_assert_false(AccessibilityTest::isSelected(option1.get()));
-    test->startEventMonitor(option2.get(), { "object:state-changed" });
+    test->startEventMonitor(option2.get(), { "object:state-changed"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').selectedIndex = 0", nullptr);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -804,7 +804,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 
 static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
 {
-    test->startEventMonitor(nullptr, { "object:state-changed:focused" });
+    test->startEventMonitor(nullptr, { "object:state-changed:focused"_s });
     test->showInWindow();
     test->loadHtml(
         "<html>"
@@ -843,7 +843,7 @@ static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
 
 static void testAccessibleListMarkers(AccessibilityTest* test, gconstpointer)
 {
-    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().legacyCStringPointer()));
     test->showInWindow(800, 600);
     test->loadHtml(
         "<html>"
@@ -913,7 +913,7 @@ static void testAccessibleListMarkers(AccessibilityTest* test, gconstpointer)
 static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow();
-    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().legacyCStringPointer()));
     test->loadHtml(
         "<html>"
         "  <body>"
@@ -958,7 +958,7 @@ static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
 static void testComponentScrollTo(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow(640, 480);
-    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().legacyCStringPointer()));
     test->loadHtml(
         "<html>"
         "  <body>"
@@ -1568,7 +1568,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     // Text caret moved.
     auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_TEXT(p.get()));
-    test->startEventMonitor(p.get(), { "object:text-caret-moved" });
+    test->startEventMonitor(p.get(), { "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(p.get()), 10, nullptr));
     auto events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1580,7 +1580,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
     auto input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_TEXT(input.get()));
-    test->startEventMonitor(input.get(), { "object:text-caret-moved" });
+    test->startEventMonitor(input.get(), { "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 5, nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1589,7 +1589,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
 
     auto div = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 2, nullptr));
     g_assert_true(ATSPI_IS_TEXT(div.get()));
-    test->startEventMonitor(div.get(), { "object:text-caret-moved" });
+    test->startEventMonitor(div.get(), { "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(div.get()), 15, nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1601,7 +1601,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
     auto password = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_TEXT(password.get()));
-    test->startEventMonitor(password.get(), { "object:text-caret-moved" });
+    test->startEventMonitor(password.get(), { "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(password.get()), 2, nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1609,7 +1609,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpuint(events[0]->detail1, ==, 2);
 
     // Selection changed.
-    test->startEventMonitor(p.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    test->startEventMonitor(p.get(), { "object:text-selection-changed"_s, "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(p.get()), 0, 10, 15, nullptr));
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1618,7 +1618,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpuint(event->detail1, ==, 15);
     g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
 
-    test->startEventMonitor(input.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    test->startEventMonitor(input.get(), { "object:text-selection-changed"_s, "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(input.get()), 0, 5, 10, nullptr));
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1627,7 +1627,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpuint(event->detail1, ==, 10);
     g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
 
-    test->startEventMonitor(div.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    test->startEventMonitor(div.get(), { "object:text-selection-changed"_s, "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(div.get()), 0, 15, 18, nullptr));
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1636,7 +1636,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpuint(event->detail1, ==, 18);
     g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
 
-    test->startEventMonitor(password.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    test->startEventMonitor(password.get(), { "object:text-selection-changed"_s, "object:text-caret-moved"_s });
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(password.get()), 0, 2, 3, nullptr));
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1647,7 +1647,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
 
     // Text changed.
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 5, nullptr));
-    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(input.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_a);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1657,7 +1657,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "a");
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 0, nullptr));
-    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(input.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_Delete);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1668,7 +1668,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "T");
 
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(div.get()), 10, nullptr));
-    test->startEventMonitor(div.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(div.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_b);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1678,7 +1678,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "b");
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(div.get()), 15, nullptr));
-    test->startEventMonitor(div.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(div.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_BackSpace);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1689,7 +1689,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "n");
 
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(password.get()), 2, nullptr));
-    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(password.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_a);
     events = test->stopEventMonitor(1);
     g_assert_cmpstr(events[0]->type, ==, "object:text-changed:insert");
@@ -1697,7 +1697,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpuint(events[0]->detail2, ==, 1);
     g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "•");
-    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(password.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_BackSpace);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1709,7 +1709,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
 
     // Text replaced.
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(input.get()), 0, 5, 10, nullptr));
-    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(input.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_c);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1725,7 +1725,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "c");
 
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(div.get()), 0, 10, 18, nullptr));
-    test->startEventMonitor(div.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(div.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_Delete);
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -1736,7 +1736,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "bntet ed");
 
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(password.get()), 0, 0, 3, nullptr));
-    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(password.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->keyStroke(GDK_KEY_z);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1752,7 +1752,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "•");
 
     // Text input value changed.
-    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(input.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[0].value = 'foo';", nullptr);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -1767,7 +1767,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(G_VALUE_HOLDS_STRING(&events[1]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "foo");
 
-    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->startEventMonitor(password.get(), { "object:text-changed:insert"_s, "object:text-changed:delete"_s });
     test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[1].value = '7890';", nullptr);
     events = test->stopEventMonitor(2);
     g_assert_cmpuint(events.size(), ==, 2);
@@ -2252,20 +2252,20 @@ static void testValueBasic(AccessibilityTest* test, gconstpointer)
     g_assert_cmpfloat(atspi_value_get_maximum_value(ATSPI_VALUE(slider.get()), nullptr), ==, 100);
     g_assert_cmpfloat(atspi_value_get_minimum_increment(ATSPI_VALUE(slider.get()), nullptr), ==, 25);
 
-    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value" });
+    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value"_s });
     g_assert_true(atspi_value_set_current_value(ATSPI_VALUE(slider.get()), 75, nullptr));
     auto events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
     g_assert_cmpstr(events[0]->type, ==, "object:property-change:accessible-value");
     g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 75);
 
-    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value" });
+    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value"_s });
     g_assert_true(atspi_value_set_current_value(ATSPI_VALUE(slider.get()), 125, nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
     g_assert_cmpstr(events[0]->type, ==, "object:property-change:accessible-value");
     g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 100);
-    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value" });
+    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value"_s });
     g_assert_true(atspi_value_set_current_value(ATSPI_VALUE(slider.get()), -25, nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -2595,7 +2595,7 @@ static void testDocumentLoadEvents(AccessibilityTest* test, gconstpointer)
     test->showInWindow();
     test->loadURI("about:blank");
     test->waitUntilLoadFinished();
-    test->startEventMonitor(std::nullopt, { "document:", "object:state-changed:busy" });
+    test->startEventMonitor(std::nullopt, { "document:"_s, "object:state-changed:busy"_s });
     test->loadHtml(
         "<html>"
         "  <body>"
@@ -2616,7 +2616,7 @@ static void testDocumentLoadEvents(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(atspi_accessible_get_role(events[1]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
     events = { };
 
-    test->startEventMonitor(std::nullopt, { "document:", "object:state-changed:busy" });
+    test->startEventMonitor(std::nullopt, { "document:"_s, "object:state-changed:busy"_s });
     webkit_web_view_reload(test->webView());
     test->waitUntilLoadFinished();
     events = test->stopEventMonitor(4);
@@ -2640,7 +2640,7 @@ static void testDocumentLoadEvents(AccessibilityTest* test, gconstpointer)
 static void testImageBasic(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow(800, 600);
-    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().legacyCStringPointer()));
     test->loadHtml(
         "<html>"
         "  <body>"
@@ -2726,7 +2726,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_false(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 1, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 0);
     g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 1, nullptr));
-    test->startEventMonitor(listBox.get(), { "object:selection-changed" });
+    test->startEventMonitor(listBox.get(), { "object:selection-changed"_s });
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     auto events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -2739,7 +2739,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     auto option1 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 0, nullptr));
     g_assert_true(selectedChild.get() == option1.get());
     g_assert_true(AccessibilityTest::isSelected(option1.get()));
-    test->startEventMonitor(listBox.get(), { "object:selection-changed" });
+    test->startEventMonitor(listBox.get(), { "object:selection-changed"_s });
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 2, nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -2764,7 +2764,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
     g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 0, nullptr));
-    test->startEventMonitor(listBox.get(), { "object:selection-changed" });
+    test->startEventMonitor(listBox.get(), { "object:selection-changed"_s });
     g_assert_true(atspi_selection_clear_selection(ATSPI_SELECTION(listBox.get()), nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -2803,7 +2803,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
     g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 1, nullptr));
-    test->startEventMonitor(listBox.get(), { "object:selection-changed" });
+    test->startEventMonitor(listBox.get(), { "object:selection-changed"_s });
     g_assert_true(atspi_selection_select_all(ATSPI_SELECTION(listBox.get()), nullptr));
     events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);
@@ -2876,7 +2876,7 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
     auto option1 = adoptGRef(atspi_accessible_get_child_at_index(menuList.get(), 0, nullptr));
     g_assert_false(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(atspi_selection_select_child(ATSPI_SELECTION(menuList.get()), 3, nullptr));
-    test->startEventMonitor(menuList.get(), { "object:selection-changed" });
+    test->startEventMonitor(menuList.get(), { "object:selection-changed"_s });
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
     auto events = test->stopEventMonitor(1);
     g_assert_cmpuint(events.size(), ==, 1);

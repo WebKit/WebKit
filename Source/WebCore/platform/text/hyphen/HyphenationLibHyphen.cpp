@@ -126,7 +126,7 @@ public:
         return adoptRef(*new HyphenationDictionary());
     }
 
-    static Ref<HyphenationDictionary> create(const CString& dictPath)
+    static Ref<HyphenationDictionary> create(const UTF8CString& dictPath)
     {
         return adoptRef(*new HyphenationDictionary(dictPath));
     }
@@ -137,8 +137,8 @@ public:
     }
 
 private:
-    HyphenationDictionary(const CString& dictPath)
-        : m_libhyphenDictionary(HyphenDictUniquePtr(hnj_hyphen_load(dictPath.data()), hnj_hyphen_free))
+    HyphenationDictionary(const UTF8CString& dictPath)
+        : m_libhyphenDictionary(HyphenDictUniquePtr(hnj_hyphen_load(dictPath.legacyCStringPointer()), hnj_hyphen_free))
     {
     }
 
@@ -186,11 +186,11 @@ public:
 
 namespace WebCore {
 
-static void countLeadingSpaces(const CString& utf8String, int32_t& pointerOffset, int32_t& characterOffset)
+static void countLeadingSpaces(const UTF8CString& utf8String, int32_t& pointerOffset, int32_t& characterOffset)
 {
     pointerOffset = 0;
     characterOffset = 0;
-    const char* stringData = utf8String.data();
+    const char* stringData = utf8String.legacyCStringPointer();
     char32_t character = 0;
     while (static_cast<unsigned>(pointerOffset) < utf8String.length()) {
         int32_t nextPointerOffset = pointerOffset;

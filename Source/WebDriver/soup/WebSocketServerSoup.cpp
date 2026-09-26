@@ -79,8 +79,8 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     if (webSocketServer->messageHandler().acceptHandshake(WTF::move(handshakeMessage))) // Follow with handshake procedure
         return;
 
-    HTTPRequestHandler::Response errorResponse = { 503, "Service Unavailable", "text/plain"_s };
-    RELEASE_LOG(WebDriverBiDi, "Error during handshake, sending error response: %s", errorResponse.data.data());
+    HTTPRequestHandler::Response errorResponse = { 503, "Service Unavailable"_s, "text/plain"_s };
+    RELEASE_LOG(WebDriverBiDi, "Error during handshake, sending error response: %s", errorResponse.data.legacyCStringPointer());
     soup_server_message_set_status(message, errorResponse.statusCode, nullptr);
     auto* responseHeaders = soup_server_message_get_response_headers(message);
     soup_message_headers_append(responseHeaders, "Content-Type", errorResponse.contentType.utf8().legacyCStringPointer());

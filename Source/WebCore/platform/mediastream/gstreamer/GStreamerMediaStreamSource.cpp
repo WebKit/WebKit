@@ -710,7 +710,7 @@ private:
 };
 
 struct _WebKitMediaStreamSrcPrivate {
-    CString uri;
+    UTF8CString uri;
     HashMap<String, RefPtr<InternalSource>> sources;
     RefPtr<WebKitMediaStreamObserver> mediaStreamObserver;
     RefPtr<MediaStreamPrivate> stream;
@@ -876,13 +876,13 @@ static const char* const* webkitMediaStreamSrcUriGetProtocols(GType)
 static char* webkitMediaStreamSrcUriGetUri(GstURIHandler* handler)
 {
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(handler);
-    return g_strdup(self->priv->uri.data());
+    return g_strdup(self->priv->uri.legacyCStringPointer());
 }
 
 static gboolean webkitMediaStreamSrcUriSetUri(GstURIHandler* handler, const char* uri, GError**)
 {
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(handler);
-    self->priv->uri = CString(uri);
+    self->priv->uri = UTF8CString { byteCast<char8_t>(uri) };
     return TRUE;
 }
 

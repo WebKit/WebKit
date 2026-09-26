@@ -209,7 +209,7 @@ private:
 
         // On-screen overlay state, only used when drawsFPS is set.
         int displayedFPS { -1 };
-        CString fpsString;
+        ASCIICString fpsString;
         float backgroundWidth { 0 };
         float backgroundHeight { 0 };
         float textBaseline { 0 };

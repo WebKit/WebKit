@@ -51,9 +51,9 @@ enum {
 
 struct _WebKitURIResponsePrivate {
     ResourceResponse resourceResponse;
-    CString uri;
-    CString mimeType;
-    CString suggestedFilename;
+    UTF8CString uri;
+    UTF8CString mimeType;
+    UTF8CString suggestedFilename;
     GUniquePtr<SoupMessageHeaders> httpHeaders;
 };
 
@@ -181,7 +181,7 @@ const gchar* webkit_uri_response_get_uri(WebKitURIResponse* response)
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
     response->priv->uri = response->priv->resourceResponse.url().string().utf8();
-    return response->priv->uri.data();
+    return response->priv->uri.legacyCStringPointer();
 }
 
 /**
@@ -234,7 +234,7 @@ const gchar* webkit_uri_response_get_mime_type(WebKitURIResponse* response)
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
     response->priv->mimeType = response->priv->resourceResponse.mimeType().utf8();
-    return response->priv->mimeType.data();
+    return response->priv->mimeType.legacyCStringPointer();
 }
 
 /**
@@ -258,7 +258,7 @@ const gchar* webkit_uri_response_get_suggested_filename(WebKitURIResponse* respo
         return 0;
 
     response->priv->suggestedFilename = response->priv->resourceResponse.suggestedFilename().utf8();
-    return response->priv->suggestedFilename.data();
+    return response->priv->suggestedFilename.legacyCStringPointer();
 }
 
 /**

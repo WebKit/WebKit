@@ -153,14 +153,16 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
                 spellDictionaries.append(dict);
         } else {
             // No dictionaries selected, we get the first one from the list.
-            CString dictLanguage;
+            // Per the enchant documentation (http://rrthomas.github.io/enchant/): All inputs and outputs are in UTF-8 encoding. Language tags use
+            // the familiar ISO standards, and take the form of "xx_YY" (language_LOCALE), where the locale ("_YY") portion is optional, but encouraged.
+            UTF8CString dictLanguage;
             enchant_broker_list_dicts(m_broker, [](const char* const languageTag, const char* const, const char* const, const char* const, void* data) {
-                auto* dictLanguage = static_cast<CString*>(data);
+                auto* dictLanguage = static_cast<UTF8CString*>(data);
                 if (dictLanguage->isNull())
-                    *dictLanguage = languageTag;
+                    *dictLanguage = UTF8CString { byteCast<char8_t>(languageTag) };
             }, &dictLanguage);
             if (!dictLanguage.isNull()) {
-                if (auto* dict = enchant_broker_request_dict(m_broker, dictLanguage.data()))
+                if (auto* dict = enchant_broker_request_dict(m_broker, dictLanguage.legacyCStringPointer()))
                     spellDictionaries.append(dict);
             }
         }

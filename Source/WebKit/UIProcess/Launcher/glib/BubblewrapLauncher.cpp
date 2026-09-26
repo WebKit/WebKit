@@ -168,7 +168,7 @@ static int createFlatpakInfo(const char* instanceID)
 
     if (!data.get()) {
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        g_key_file_set_string(keyFile.get(), "Application", "name", WTF::applicationID().data());
+        g_key_file_set_string(keyFile.get(), "Application", "name", WTF::applicationID().legacyCStringPointer());
         g_key_file_set_string(keyFile.get(), "Instance", "instance-id", instanceID);
 
         if (remoteInspectorEnabled())

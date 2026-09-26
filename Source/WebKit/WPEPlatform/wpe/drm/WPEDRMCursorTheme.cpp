@@ -61,16 +61,16 @@ CursorTheme::CursorTheme(std::unique_ptr<WPE::CursorTheme>&& theme)
 
 CursorTheme::~CursorTheme() = default;
 
-const Vector<CursorTheme::Image>& CursorTheme::cursor(const char* name, double scale, std::optional<uint32_t> maxImages)
+const Vector<CursorTheme::Image>& CursorTheme::cursor(CStringView name, double scale, std::optional<uint32_t> maxImages)
 {
     uint32_t size = m_theme->size() * static_cast<uint32_t>(scale);
-    auto addResult = m_cursors.add({ CString(name), size }, Vector<Image> { });
+    auto addResult = m_cursors.add({ UTF8CString { name.span() }, size }, Vector<Image> { });
     if (addResult.isNewEntry)
         loadCursor(name, scale, maxImages, addResult.iterator->value);
     return addResult.iterator->value;
 }
 
-void CursorTheme::loadCursor(const char* name, double scale, std::optional<uint32_t> maxImages, Vector<CursorTheme::Image>& images)
+void CursorTheme::loadCursor(CStringView name, double scale, std::optional<uint32_t> maxImages, Vector<CursorTheme::Image>& images)
 {
     // Try first with the scaled size.
     uint32_t scaledSize = m_theme->size() * static_cast<uint32_t>(scale);

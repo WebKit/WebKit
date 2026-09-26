@@ -43,7 +43,7 @@
  * Gamepads are tracked by a [class@GamepadManager].
  */
 struct _WPEGamepadPrivate {
-    CString name;
+    UTF8CString name;
     bool isMonitoringInput;
 };
 
@@ -74,7 +74,7 @@ static void wpeGamepadSetProperty(GObject* object, guint propId, const GValue* v
 
     switch (propId) {
     case PROP_NAME:
-        gamepad->priv->name = g_value_get_string(value);
+        gamepad->priv->name = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -163,7 +163,7 @@ const char* wpe_gamepad_get_name(WPEGamepad* gamepad)
 {
     g_return_val_if_fail(WPE_IS_GAMEPAD(gamepad), nullptr);
 
-    return gamepad->priv->name.data();
+    return gamepad->priv->name.legacyCStringPointer();
 }
 
 /**
