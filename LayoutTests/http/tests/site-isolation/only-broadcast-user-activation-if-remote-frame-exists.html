@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
 <body style="margin: 0">
+<button id="target" onclick="" style="display: block; width: 100px; height: 50px">Activate</button>
 <script>
 
 let messageCounts = new Map();
@@ -30,9 +32,7 @@ async function countBroadcastsForInteraction()
     await settle();
     messageCounts = new Map();
 
-    eventSender.mouseMoveTo(10, 10);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await UIHelper.activateElement(document.getElementById("target"));
     await settle();
 
     // window.open() consumes a transient activation.
