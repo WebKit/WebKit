@@ -244,6 +244,12 @@ public:
     void addSharedProcessDomain(const WebCore::RegistrableDomain&);
     const HashSet<WebCore::RegistrableDomain>& sharedProcessDomains() const LIFETIME_BOUND { return m_sharedProcessDomains; }
 
+    // The only registrable domains this process's cookie IPC may name: those of every site it has hosted frames
+    // for under site isolation, kept after the frames go away because their unload handlers can still use cookies.
+    // std::nullopt means any, before the process is used for site isolation or once it hosts unrecorded sites.
+    std::optional<HashSet<WebCore::RegistrableDomain>> hostedDomains() const;
+    void setMayHostAnySite();
+
     IsolatedProcessType isolatedProcessType() const { return m_isolatedProcessType; }
     void setIsolatedProcessType(IsolatedProcessType, std::optional<WebCore::Site> mainFrameSite);
     const std::optional<WebCore::Site>& mainFrameSite() const LIFETIME_BOUND { return m_mainFrameSite; }
@@ -680,6 +686,7 @@ private:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
     void updateSiteForMainFrameNavigation(const URL&);
+    void sendHostedDomainsToNetworkProcess();
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -890,6 +897,8 @@ private:
     HashSet<WebCore::Site> m_committedSites;
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
+    bool m_wasUsedForSiteIsolation { false };
+    bool m_mayHostAnySite { false };
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
     bool m_isEligibleForWebProcessCache { true };

@@ -477,6 +477,8 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
     proxy->m_committedSites.add(site);
     proxy->m_remoteWorkerSites.add(site);
     proxy->m_site = WTF::move(site);
+    // Workers are placed by top site, so this process also runs third-party workers from sites it has no record of.
+    proxy->m_mayHostAnySite = true;
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerForRemoteWorkers());
     proxy->didStartRunningProcess();
     proxy->connect();
@@ -585,7 +587,38 @@ void WebProcessProxy::platformDestroy()
 
 void WebProcessProxy::addSharedProcessDomain(const RegistrableDomain& domain)
 {
-    m_sharedProcessDomains.add(domain);
+    if (m_sharedProcessDomains.add(domain).isNewEntry)
+        sendHostedDomainsToNetworkProcess();
+}
+
+std::optional<HashSet<RegistrableDomain>> WebProcessProxy::hostedDomains() const
+{
+    if (!m_wasUsedForSiteIsolation || m_mayHostAnySite)
+        return std::nullopt;
+
+    auto domains = m_sharedProcessDomains;
+    for (auto& site : m_committedSites) {
+        if (!site.isEmpty())
+            domains.add(site.domain());
+    }
+    return domains;
+}
+
+void WebProcessProxy::setMayHostAnySite()
+{
+    if (std::exchange(m_mayHostAnySite, true))
+        return;
+    sendHostedDomainsToNetworkProcess();
+}
+
+// Sent ahead of the AddAllowedFirstPartyForCookies that every load waits for, on the same connection.
+void WebProcessProxy::sendHostedDomainsToNetworkProcess()
+{
+    RefPtr dataStore = m_websiteDataStore;
+    if (!dataStore)
+        return;
+    if (RefPtr networkProcess = dataStore->networkProcessIfExists())
+        networkProcess->send(Messages::NetworkProcess::SetHostedDomains(coreProcessIdentifier(), hostedDomains()), 0);
 }
 
 void WebProcessProxy::setIsolatedProcessType(IsolatedProcessType isolatedProcessType, std::optional<WebCore::Site> mainFrameSite)
@@ -2766,11 +2799,15 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
         m_sharedProcessDomains.clear();
         m_site = makeUnexpected(SiteState::SharedProcess);
         m_sharedProcessMainFrameSite = mainFrameSite;
+        m_wasUsedForSiteIsolation = true;
+        sendHostedDomainsToNetworkProcess();
         return;
     }
     ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_committedSites.add(*site);
     m_site = *site;
+    m_wasUsedForSiteIsolation = true;
+    sendHostedDomainsToNetworkProcess();
 }
 
 unsigned WebProcessProxy::suspendedPageCount() const
