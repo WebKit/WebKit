@@ -979,7 +979,8 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
 
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(navigationState->webView().get(), frameInfo, protect(error.nsError()).get(), url);
 
-    if (frameInfo.isMainFrame) {
+    RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+    if (frame && frame->isMainFrame()) {
         // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
         if (navigationState->m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError)
             [navigationDelegate webView:navigationState->webView().get() didFailProvisionalNavigation:protect(wrapper(navigation)).get() withError:errorWithRecoveryAttempter.get()];

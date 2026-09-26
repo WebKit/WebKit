@@ -260,7 +260,6 @@ void ProvisionalPageProxy::cancel()
     error.setType(WebCore::ResourceError::Type::Cancellation);
     auto securityOriginData = SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url());
     FrameInfoData frameInfo {
-        true, // isMainFrame
         FrameType::Local,
         m_request,
         securityOriginData,
@@ -608,7 +607,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& 
 {
     auto& frameInfo = data.frameInfo;
     auto navigationID = data.navigationID;
-    if (!frameInfo.isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameInfo.frameID) || navigationID != m_navigationID) {
+    if (!m_mainFrame || m_mainFrame->frameID() != frameInfo.frameID || navigationID != m_navigationID) {
         reply(PolicyDecision { std::nullopt, WebCore::PolicyAction::Ignore, navigationID });
         return;
     }

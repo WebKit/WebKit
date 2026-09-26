@@ -973,13 +973,8 @@ void WebPageProxy::updateFocusedElementInformation(const FocusedElementInformati
 
 void WebPageProxy::convertFocusedElementInformationRectsToMainFrameCoordinates(FocusedElementInformation information, CompletionHandler<void(FocusedElementInformation)>&& completionHandler)
 {
-    if (!information.frame || information.frame->isMainFrame) {
-        completionHandler(WTF::move(information));
-        return;
-    }
-
-    RefPtr frame = WebFrameProxy::webFrame(information.frame->frameID);
-    if (!frame) {
+    RefPtr frame = information.frame ? WebFrameProxy::webFrame(information.frame->frameID) : nullptr;
+    if (!frame || frame->isMainFrame()) {
         completionHandler(WTF::move(information));
         return;
     }

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebExtensionFrameIdentifier.h"
 
-#include "FrameInfoData.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <WebCore/Frame.h>
@@ -77,14 +76,6 @@ WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame& frame)
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
     return toWebExtensionFrameIdentifier(std::optional { frame.frameID() });
-}
-
-WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData& frameInfoData)
-{
-    if (frameInfoData.isMainFrame)
-        return WebExtensionFrameConstants::MainFrameIdentifier;
-
-    return toWebExtensionFrameIdentifier(std::optional(frameInfoData.frameID));
 }
 
 std::optional<WebExtensionFrameIdentifier> toWebExtensionFrameIdentifier(double identifier)

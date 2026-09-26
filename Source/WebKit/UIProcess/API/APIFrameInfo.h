@@ -49,7 +49,7 @@ public:
     static Ref<FrameInfo> create(WebKit::FrameInfoData&&);
     virtual ~FrameInfo();
 
-    bool isMainFrame() const { return m_data.isMainFrame; }
+    bool isMainFrame() const { return m_stateSnapshot.isMainFrame; }
     bool isLocalFrame() const { return m_data.frameType == WebKit::FrameType::Local; }
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_data.request; }
     const WebCore::SecurityOriginData& securityOrigin() const LIFETIME_BOUND { return m_data.securityOrigin; }
@@ -73,6 +73,7 @@ private:
         const WebCore::CertificateInfo certificateInfo;
         Markable<WebCore::FrameIdentifier> parentFrameID;
         WTF::String title;
+        bool isMainFrame { false };
     };
     static StateSnapshot stateSnapshot(WebCore::FrameIdentifier);
 

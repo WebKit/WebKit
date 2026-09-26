@@ -724,10 +724,6 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameInfoD
         if (!frameInfo)
             return completionHandler({ });
 
-        if (frameInfo->isMainFrame != isMainFrame()) {
-            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: isMainFrame mismatch");
-            frameInfo->isMainFrame = isMainFrame();
-        }
         if (frameInfo->frameID != frameID()) {
             RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: frameID mismatch");
             frameInfo->frameID = frameID();
