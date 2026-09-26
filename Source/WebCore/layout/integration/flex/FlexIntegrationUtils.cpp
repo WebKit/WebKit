@@ -720,7 +720,13 @@ FlexItemDefiniteCrossSizeScope::FlexItemDefiniteCrossSizeScope(RenderBox& flexIt
     }
 
     auto crossSize = FlexFormattingUtils::innerCrossSizeForFlexItem(flexItem);
-    FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem) ? saveAndSetBlockSize(crossSize) : saveAndSetInlineSize(crossSize);
+    if (FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem)) {
+        saveAndSetInlineSize({ });
+        saveAndSetBlockSize(crossSize);
+    } else {
+        saveAndSetInlineSize(crossSize);
+        saveAndSetBlockSize({ });
+    }
 
     if (invalidateContentWidths == InvalidateContentWidths::Yes) {
         flexItem.invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
