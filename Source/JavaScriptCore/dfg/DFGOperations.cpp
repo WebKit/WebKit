@@ -4383,7 +4383,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringSplitRegExp, EncodedJSValue, (JSGlobalOb
 
     JSValue limitValue = JSValue::decode(encodedLimit);
 
-    if (separator->isSymbolSplitFastAndNonObservable() && (limitValue.isUndefined() || limitValue.isNumber())) [[likely]] {
+    if (separator->isSymbolSplitFastAndNonObservable(globalObject) && (limitValue.isUndefined() || limitValue.isNumber())) [[likely]] {
         unsigned limit = 0xFFFFFFFFu;
         if (!limitValue.isUndefined()) {
             limit = limitValue.toUInt32(globalObject);
@@ -4437,7 +4437,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringMatchRegExp, EncodedJSValue, (JSGlobalOb
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (regexp->isSymbolMatchFastAndNonObservable()) [[likely]]
+    if (regexp->isSymbolMatchFastAndNonObservable(globalObject)) [[likely]]
         OPERATION_RETURN(scope, JSValue::encode(regExpMatchFast(globalObject, regexp, thisString)));
 
     JSValue matcher = regexp->get(globalObject, vm.propertyNames->matchSymbol);
@@ -4475,7 +4475,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringSearchRegExp, EncodedJSValue, (JSGlobalO
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (regexp->isSymbolSearchFastAndNonObservable()) [[likely]]
+    if (regexp->isSymbolSearchFastAndNonObservable(globalObject)) [[likely]]
         OPERATION_RETURN(scope, JSValue::encode(regExpSearchFast(globalObject, regexp, thisString)));
 
     JSValue searcher = regexp->get(globalObject, vm.propertyNames->searchSymbol);
