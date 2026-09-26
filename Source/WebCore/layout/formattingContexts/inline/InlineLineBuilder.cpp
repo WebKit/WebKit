@@ -317,16 +317,21 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Horiz
 
 LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine, bool isFirstFormattedLineCandidate)
 {
-    initialize(lineInput.initialLogicalRect, lineInput.needsLayoutRange, previousLine, isFirstFormattedLineCandidate);
+    initialize(lineInput.initialLogicalRect, lineInput.needsLayoutRange, lineInput.blockEllipsis, previousLine, isFirstFormattedLineCandidate);
     auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
     auto result = m_line.close();
     auto inlineContentEnding = result.isContentful ? InlineFormattingUtils::inlineContentEnding(result) : std::nullopt;
+
+    // A line with no inline content (e.g. block content) is not where the ellipsis goes.
+    auto blockEllipsis = m_blockEllipsis && (inlineContentEnding || m_blockEllipsisContentOnly) ? m_blockEllipsis : std::nullopt;
+    // When the ellipsis moved the entire content to the next line, the line stays with the ellipsis and a strut (see LineLayoutResult::inflowContentType).
+    auto hasContentfulInlineContent = inlineContentEnding || blockEllipsis;
 
     auto updateMarginStateIfNeeded = [&] {
         // When a line places contentful inline content, the block margin from previous content stays
         // before this line; nothing is left for the next line, so reset marginState. Lines without
         // contentful inline content leave marginState alone for the next line to apply.
-        if (!inlineContentEnding)
+        if (!hasContentfulInlineContent)
             return;
         auto& marginState = blockLayoutState().marginState();
         marginState.resetMarginValues();
@@ -343,7 +348,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
             , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.topLeft() }
             , { }
             , { }
-            , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { } }
+            , { isFirstFormattedLineCandidate && hasContentfulInlineContent ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { } }
             , { }
             , inlineContentEnding
             , { }
@@ -358,10 +363,21 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
     // e.g. <div style="text-align-last: center">last line<br><div style="display: inline; position: absolute"></div></div>
     // Both the inline content ('last line') and the trailing out-of-flow box are supposed to be center aligned.
     auto shouldTreatAsLastLine = isLastInlineContent || lineContent->range.endIndex() == lineInput.needsLayoutRange.endIndex();
-    auto inlineBaseDirection = !result.runs.isEmpty() ? inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine) : TextDirection::LTR;
+    auto inlineBaseDirection = [&] {
+        if (!result.runs.isEmpty())
+            return inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine);
+        // The ellipsis takes its direction from the bidi paragraph even when it is all there is on the line.
+        return blockEllipsis ? rootStyle().writingMode().bidiDirection() : TextDirection::LTR;
+    }();
     auto lineEndsWithForcedLineBreak = lineContent->lineBreakReason == LineContent::LineBreakReason::ForcedLineBreakByBlockContent || Line::hasTrailingForcedLineBreak(result.runs);
     auto isLastLineOrLineEndsWithForcedLineBreak = shouldTreatAsLastLine || lineEndsWithForcedLineBreak;
-    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, isLastLineOrLineEndsWithForcedLineBreak, inlineBaseDirection) : 0.f;
+    auto contentLogicalLeft = [&]() -> InlineLayoutUnit {
+        if (result.runs.isEmpty() && !blockEllipsis)
+            return { };
+        // Alignment measures the ellipsis together with the rest of the content.
+        auto contentLogicalRight = result.contentLogicalRight + (blockEllipsis ? blockEllipsis->logicalWidth : InlineLayoutUnit { });
+        return InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, isLastLineOrLineEndsWithForcedLineBreak, inlineBaseDirection);
+    }();
     Vector<int32_t> visualOrderList;
     if (result.contentNeedsBidiReordering)
         computedVisualOrder(result.runs, visualOrderList);
@@ -373,13 +389,14 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.topLeft(), m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth, result.hangablePunctuationStartWidth }
         , { WTF::move(visualOrderList), inlineBaseDirection }
-        , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, isLastInlineContent }
+        , { isFirstFormattedLineCandidate && hasContentfulInlineContent ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, isLastInlineContent }
         , { WTF::move(lineContent->rubyBaseAlignmentOffsetList), lineContent->rubyAnnotationOffset }
         , inlineContentEnding
         , result.nonSpanningInlineLevelBoxCount
         , { }
         , { }
-        , lineContent->range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
+        , lineContent->range.isEmpty() && !blockEllipsis ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
+        , blockEllipsis
     };
 }
 
@@ -430,9 +447,10 @@ void LineBuilder::createLineSpanningInlineBoxes(const InlineItemRange& needsLayo
         m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart, InlineItem::opaqueBidiLevel });
 }
 
-void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine, bool isFirstFormattedLineCandidate)
+void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<BlockOverflowEllipsis>& blockEllipsis, const std::optional<PreviousLine>& previousLine, bool isFirstFormattedLineCandidate)
 {
     ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
+    ASSERT(!blockEllipsis || !isInIntrinsicWidthMode());
     reset();
 
     m_previousLine = previousLine;
@@ -444,6 +462,8 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
     m_candidateContentMaximumHeight = { };
+    m_blockEllipsis = blockEllipsis;
+    m_blockEllipsisContentOnly = false;
     inlineContentBreaker().setHyphenationDisabled(layoutState().isHyphenationDisabled());
 
     createLineSpanningInlineBoxes(needsLayoutRange);
@@ -646,7 +666,8 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
 
     auto handleLineEnding = [&] {
         auto isLastInlineContent = isLastLineWithInlineContent(lineContent, needsLayoutRange.endIndex(), m_line.runs());
-        auto horizontalAvailableSpace = m_lineLogicalRect.width();
+        // The block ellipsis takes its space from the end of the line (see handleInlineContent).
+        auto horizontalAvailableSpace = std::max(InlineLayoutUnit { }, m_lineLogicalRect.width() - (m_blockEllipsis ? m_blockEllipsis->logicalWidth : InlineLayoutUnit { }));
         auto& rootStyle = this->rootStyle();
 
         auto handleTrailingContent = [&] {
@@ -1481,18 +1502,20 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         const auto& availableLineWidthOverride = layoutState().availableLineWidthOverride();
         auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
         auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : constraints.logicalRect.width();
+        if (m_blockEllipsis)
+            availableTotalWidthForContent = std::min(availableTotalWidthForContent, constraints.logicalRect.width() - m_blockEllipsis->logicalWidth);
         return availableWidth(m_line, availableTotalWidthForContent, intrinsicWidthMode());
     }();
 
     auto lineHasContent = m_line.hasContent();
-    auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty();
+    auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty() || m_blockEllipsis;
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
 
     if (auto minimumRequiredWidth = continuousInlineContent.minimumRequiredWidth(); minimumRequiredWidth && *minimumRequiredWidth > availableWidthForCandidateContent) {
         if (verticalPositionHasFloatOrInlineContent)
             lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Wrap, InlineContentBreaker::IsEndOfLine::Yes, { }, { } };
     } else {
-        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), verticalPositionHasFloatOrInlineContent, !m_wrapOpportunityList.isEmpty() };
+        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), verticalPositionHasFloatOrInlineContent, !m_wrapOpportunityList.isEmpty(), !!m_blockEllipsis };
         auto needsClonedDecorationHandling = inlineContent.hasTrailingClonedDecoration() || !m_line.inlineBoxListWithClonedDecorationEnd().isEmpty();
         if (needsClonedDecorationHandling)
             lineBreakingResult = handleInlineContentWithClonedDecoration(lineCandidate, lineStatus);
@@ -1500,7 +1523,6 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
             lineBreakingResult = inlineContentBreaker().processInlineContent(continuousInlineContent, lineStatus);
     }
     result = processLineBreakingResult(lineCandidate, layoutRange, lineBreakingResult);
-
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break;
     if (lineGainsNewContent || !lineHasContent) {
         // In some cases in order to put this content on the line, we have to avoid float boxes that didn't constrain the line initially.
@@ -1508,6 +1530,8 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         // In some other cases we can't put any content on the line due to such newly discovered floats (e.g. shape-outside floats with gaps in-between them in vertical axis)
         m_lineLogicalRect = constraints.logicalRect;
         m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
+        // Wrapping off an empty line means the block ellipsis left no room for any of the content.
+        m_blockEllipsisContentOnly = m_blockEllipsis && lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap;
     }
     m_candidateContentMaximumHeight = constraints.logicalRect.height();
     return result;
@@ -1822,6 +1846,16 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
         // If the second 'X' overflows the line, the trailing whitespace gets trimmed which introduces a stray inline box
         // on the first line ('X <span>' and 'X</span>' first and second line respectively).
         // In such cases we need to revert the content on the line to a previous wrapping opportunity to keep such content together.
+        if (m_blockEllipsis && !m_line.hasContent()) {
+            // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut"
+            // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+            // Everything placed on the line so far (inline box starts, floats, out-of-flow boxes) moves to the next line together with the content.
+            auto& leadingInlineItem = candidateRuns.first().inlineItem;
+            auto isPartialLeadingItem = m_partialLeadingTextItem && &*m_partialLeadingTextItem == &leadingInlineItem;
+            auto placedInlineItemEnd = isPartialLeadingItem ? layoutRange.startIndex() : static_cast<size_t>(&leadingInlineItem - m_inlineItemList.data());
+            revertLineToStart(layoutRange, placedInlineItemEnd);
+            return { InlineContentBreaker::IsEndOfLine::Yes, { 0, true } };
+        }
         auto needsRevert = m_line.trimmableTrailingWidth() && !m_line.runs().isEmpty() && m_line.runs().last().isInlineBoxStart();
         if (needsRevert && m_wrapOpportunityList.size() > 1) {
             m_wrapOpportunityList.removeLast();
@@ -1870,6 +1904,14 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
     return { InlineContentBreaker::IsEndOfLine::No };
 }
 
+bool LineBuilder::unplaceFloatBox(const Box& floatBox)
+{
+    m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+        return placedFloatItem.layoutBox() == &floatBox;
+    });
+    return layoutState().placedFloats().remove(floatBox);
+}
+
 size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRange, const InlineItem& lastInlineItemToAdd)
 {
     ASSERT(!m_wrapOpportunityList.isEmpty());
@@ -1902,12 +1944,6 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     auto result = processLineBreakingResult(lineCandidate, layoutRange, { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::Yes, { }, { } });
 
     // Remove floats that are outside of this "rebuild" range to ensure we don't add them twice.
-    auto unplaceFloatBox = [&](const Box& floatBox) -> bool {
-        m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
-            return placedFloatItem.layoutBox() == &floatBox;
-        });
-        return layoutState().placedFloats().remove(floatBox);
-    };
     for (auto index = endOfCandidateContent; index < layoutRange.endIndex(); ++index) {
         auto& inlineItem = m_inlineItemList[index];
         if (inlineItem.isFloat() && unplaceFloatBox(inlineItem.layoutBox()))
@@ -1915,6 +1951,19 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     }
 
     return result.committedCount.value + numberOfFloatsInRange;
+}
+
+void LineBuilder::revertLineToStart(const InlineItemRange& layoutRange, size_t placedInlineItemEnd)
+{
+    ASSERT(!m_line.hasContent());
+    // Floats placed on this line move to the next line with the rest of the content (suspended floats are taken care of by the caller).
+    for (auto index = layoutRange.startIndex(); index < placedInlineItemEnd; ++index) {
+        auto& inlineItem = m_inlineItemList[index];
+        if (inlineItem.isFloat())
+            unplaceFloatBox(inlineItem.layoutBox());
+    }
+    // Inline boxes spanning over from the previous line stay, as they are open on this line too.
+    m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
 }
 
 size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange)

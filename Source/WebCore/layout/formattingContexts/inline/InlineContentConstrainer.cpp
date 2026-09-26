@@ -208,7 +208,7 @@ InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLine
     // Hyphenation occurs when we require more space than is available. In this case, we should apply max stretch to idealLineWidth.
     InlineRect lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, idealLineWidth + textWrapPrettyStretchability * textWrapPrettyMaxStretch, 0.f };
     LineLayoutResult lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, lastValidEntry.previousLine, !lastValidEntry.previousLine);
-    InlineItemPosition lineEnd = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, lastValidEntry.lineEnd, !lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty(), layoutRange.end);
+    InlineItemPosition lineEnd = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult, lastValidEntry.lineEnd, layoutRange.end);
     bool didLayoutAllItems = lineEnd.index == layoutRange.endIndex();
     bool hasEnoughItemsForCurrentLine = layoutRange.endIndex() - layoutRange.startIndex() > lastLineBreakingPointOffset();
     bool hasEnoughItemsForNextLine = lineEnd.index + lastLineBreakingPointOffset() < layoutRange.endIndex();
@@ -228,7 +228,7 @@ InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLine
     auto shortenedLayoutRange = layoutRange;
     shortenedLayoutRange.end.index -= lastLineBreakingPointOffset();
     LineLayoutResult shortenedLineLayoutResult = lineBuilder.layoutInlineContent({ shortenedLayoutRange, lineInitialRect }, lastValidEntry.previousLine, !lastValidEntry.previousLine);
-    InlineItemPosition shortenedLineEnd = InlineFormattingUtils::leadingInlineItemPositionForNextLine(shortenedLineLayoutResult.inlineItemRange.end, lastValidEntry.lineEnd, !shortenedLineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !shortenedLineLayoutResult.floatContent.placedFloats.isEmpty(), shortenedLayoutRange.end);
+    InlineItemPosition shortenedLineEnd = InlineFormattingUtils::leadingInlineItemPositionForNextLine(shortenedLineLayoutResult, lastValidEntry.lineEnd, shortenedLayoutRange.end);
     return { lastValidEntry.accumulatedCost,
         // This function is only called when there are no more viable break points for PrettifyRange.
         // Use the last valid entry's accumulated cost as we must use this breakpoint no matter what.
@@ -292,7 +292,7 @@ void InlineContentConstrainer::initialize()
         if (numberOfVisibleLinesAllowed && (lineIndex + 1 >= numberOfVisibleLinesAllowed))
             break;
 
-        layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, !lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty(), layoutRange.end);
+        layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult, previousLineEnd, layoutRange.end);
         previousLineEnd = layoutRange.start;
         isFirstFormattedLineCandidate &= !lineLayoutResult.hasContentfulInFlowContent();
         previousLine = buildPreviousLine(lineIndex, lineLayoutResult);

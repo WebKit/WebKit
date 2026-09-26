@@ -142,6 +142,7 @@ public:
         bool m_hasTextContent { false };
         bool m_isTextOnlyContent { true };
         bool m_isFullyTrimmable { false };
+        bool m_hasNonTrimmableContent { false };
         bool m_hasTrailingWordSeparator { false };
         bool m_hasTrailingSoftHyphen { false };
         bool m_hasShapedContent { false };
@@ -156,6 +157,7 @@ public:
         bool hasFullyTrimmableTrailingContent { false };
         bool hasContent { false };
         bool hasWrapOpportunityAtPreviousPosition { false };
+        bool hasBlockEllipsis { false };
     };
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
     void setHyphenationDisabled(bool hyphenationIsDisabled) { m_hyphenationIsDisabled = hyphenationIsDisabled; }
