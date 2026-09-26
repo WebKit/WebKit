@@ -12132,6 +12132,47 @@ TEST(SiteIsolation, ApplyAutocorrectionInCrossOriginIframe)
     EXPECT_WK_STREQ("the", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
 }
 
+TEST(SiteIsolation, AutocorrectionContextAndRectsInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0'><input></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    bool didStartInputSession = false;
+    RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) {
+        didStartInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focusInWindow];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').focus()" inFrame:childFrame.get()];
+    Util::run(&didStartInputSession);
+    while (![childFrame _isFocused]) {
+        Util::spinRunLoop();
+        childFrame = [webView firstChildFrame];
+    }
+
+    [[webView textInputContentView] insertText:@"hello"];
+
+    if (![UIKeyboard usesInputSystemUI])
+        EXPECT_WK_STREQ("hello", [webView autocorrectionContext].contextBeforeSelection);
+
+    auto firstRect = [webView autocorrectionRectsForString:@"hello"].first;
+    EXPECT_FALSE(CGRectIsEmpty(firstRect));
+    EXPECT_GE(firstRect.origin.x, 100);
+    EXPECT_GE(firstRect.origin.y, 100);
+}
+
 TEST(SiteIsolation, InsertDictatedTextWithAlternativesInCrossOriginIframe)
 {
     HTTPServer server({
