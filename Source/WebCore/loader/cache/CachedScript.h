@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CachedResource.h"
-#include <JavaScriptCore/CodeBlockHash.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/ThreadAssertions.h>
 
 namespace WebCore {
@@ -43,7 +43,8 @@ public:
     enum class ShouldDecodeAsUTF8Only : bool { No, Yes };
     WEBCORE_EXPORT StringView script(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
     WEBCORE_EXPORT unsigned scriptHash(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
-    WEBCORE_EXPORT JSC::CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind, ShouldDecodeAsUTF8Only);
+    // Like script(), but safe on any thread. The text is valid only during the call.
+    WEBCORE_EXPORT void withScriptConcurrently(ShouldDecodeAsUTF8Only, const ScopedLambda<void(StringView)>&);
 
     bool requiresPrivacyProtections() const { return m_requiresPrivacyProtections; }
 
@@ -59,13 +60,13 @@ private:
 
     void setBodyDataFrom(const CachedResource&) final;
 
-    // m_script, m_decodingState and m_decoder are written on the main thread under m_lock and read
-    // on compilation threads by codeBlockHashConcurrently(), which locks; the main thread's own
-    // reads use assertIsOwnerThread() instead of locking. m_scriptHash and m_wasForceDecodedAsUTF8
-    // are not read off the main thread, so they need no guard.
+    // m_script, m_wasForceDecodedAsUTF8, m_decodingState and m_decoder are written on the main thread
+    // under m_lock and read on other threads by withScriptConcurrently(), which locks; the main
+    // thread's own reads use assertIsOwnerThread() instead of locking. m_scriptHash is not read off
+    // the main thread, so it needs no guard.
     String m_script WTF_GUARDED_BY_LOCK(m_lock);
     unsigned m_scriptHash { 0 };
-    bool m_wasForceDecodedAsUTF8 { false };
+    bool m_wasForceDecodedAsUTF8 WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_requiresPrivacyProtections { false };
 
     enum DecodingState : uint8_t { NeverDecoded, DataAndDecodedStringHaveSameBytes, DataAndDecodedStringHaveDifferentBytes };

@@ -488,7 +488,6 @@ static ALWAYS_INLINE BytecodeIndex NODELETE tryGetBytecodeIndex(unsigned llintPC
 
 void SamplingProfiler::processUnverifiedStackTraces()
 {
-    // This function needs to be called from the JSC execution thread.
     RELEASE_ASSERT(m_lock.isLocked());
 
     TinyBloomFilter<uintptr_t> filter = m_vm.heap.objectSpace().blocks().filter();
