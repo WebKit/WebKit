@@ -4551,19 +4551,37 @@ void WebPageProxy::startDrag(SelectionData&& selectionData, OptionSet<WebCore::D
 }
 #endif
 
-void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask, const std::optional<WebCore::FrameIdentifier>& frameID)
+void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
 {
     if (!hasRunningProcess())
         return;
-    auto completionHandler = [this, protectedThis = Ref { *this }, globalPosition, dragOperationMask] (std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
+
+    auto dragSourceFrameID = std::exchange(m_dragSourceFrameID, std::nullopt);
+    dragEndedInFrame(std::nullopt, clientPosition, globalPosition, dragOperationMask, [this, protectedThis = Ref { *this }, dragSourceFrameID, clientPosition, globalPosition, dragOperationMask](std::optional<FrameIdentifier> frameUnderDragEnd) {
+        if (!dragSourceFrameID || !hasRunningProcess())
+            return;
+
+        // With Site Isolation, the frame under the point where the drag ended may be in a different process
+        // from the one that started the drag, which then needs to dispatch dragend on its own.
+        Ref sourceProcess = processContainingFrame(dragSourceFrameID);
+        if (processContainingFrame(frameUnderDragEnd).ptr() == sourceProcess.ptr())
+            return;
+        sendToProcessContainingFrame(dragSourceFrameID, Messages::WebPage::DragSourceEnded(*dragSourceFrameID, clientPosition, globalPosition, dragOperationMask));
+    });
+}
+
+void WebPageProxy::dragEndedInFrame(const std::optional<FrameIdentifier>& frameID, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask, CompletionHandler<void(std::optional<FrameIdentifier>)>&& completionHandler)
+{
+    auto replyHandler = [this, protectedThis = Ref { *this }, frameID, globalPosition, dragOperationMask, completionHandler = WTF::move(completionHandler)] (std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         if (!remoteUserInputEventData) {
             resetCurrentDragInformation();
+            completionHandler(frameID);
             return;
         }
-        dragEnded(roundedIntPoint(remoteUserInputEventData->transformedPoint), globalPosition, dragOperationMask, remoteUserInputEventData->targetFrameID);
+        dragEndedInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(remoteUserInputEventData->transformedPoint), globalPosition, dragOperationMask, WTF::move(completionHandler));
     };
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DragEnded(frameID, clientPosition, globalPosition, dragOperationMask), WTF::move(completionHandler));
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DragEnded(frameID, clientPosition, globalPosition, dragOperationMask), WTF::move(replyHandler));
     setDragCaretRect({ });
 }
 
@@ -4577,10 +4595,10 @@ void WebPageProxy::didStartDrag(const std::optional<FrameIdentifier>& targetFram
     sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidStartDrag(targetFrameID));
 }
 
-void WebPageProxy::dragCancelled()
+void WebPageProxy::dragCancelled(const std::optional<FrameIdentifier>& frameID)
 {
     if (hasRunningProcess())
-        send(Messages::WebPage::DragCancelled());
+        sendToProcessContainingFrame(frameID, Messages::WebPage::DragCancelled(frameID));
 }
 
 void WebPageProxy::resetCurrentDragInformation()

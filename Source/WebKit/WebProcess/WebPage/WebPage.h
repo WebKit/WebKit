@@ -1469,13 +1469,14 @@ public:
 
 #if ENABLE(DRAG_SUPPORT)
     void dragEnded(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation>, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void dragSourceEnded(WebCore::FrameIdentifier, WebCore::IntPoint clientPositionInMainFrameView, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation>);
 
     void willPerformLoadDragDestinationAction();
     void mayPerformUploadDragDestinationAction();
 
     void willStartDrag() { ASSERT(!m_isStartingDrag); m_isStartingDrag = true; }
     void didStartDrag(std::optional<WebCore::FrameIdentifier>);
-    void dragCancelled();
+    void dragCancelled(std::optional<WebCore::FrameIdentifier>);
     OptionSet<WebCore::DragSourceAction> allowedDragSourceActions() const { return m_allowedDragSourceActions; }
 #if ENABLE(MODEL_PROCESS)
     void modelDragEnded(WebCore::NodeIdentifier);

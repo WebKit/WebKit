@@ -486,6 +486,7 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
 {
+    m_dragSourceFrameID = frameID;
     if (RefPtr pageClient = this->pageClient())
         pageClient->startDrag(dragItem, WTF::move(dragImageHandle), nodeID, frameID);
 }
