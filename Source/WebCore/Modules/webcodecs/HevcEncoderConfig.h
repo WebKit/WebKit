@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
 
-typedef [EnforceRange] unsigned long WebCodecsVideoEncoderConfigSize;
-typedef [EnforceRange] unsigned long long WebCodecsVideoEncoderConfigBitrate;
+#if ENABLE(WEB_CODECS)
 
-[
-    Conditional=WEB_CODECS,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-] dictionary WebCodecsVideoEncoderConfig {
-    required DOMString codec;
-    required WebCodecsVideoEncoderConfigSize width;
-    required WebCodecsVideoEncoderConfigSize height;
-    WebCodecsVideoEncoderConfigSize displayWidth;
-    WebCodecsVideoEncoderConfigSize displayHeight;
-    WebCodecsVideoEncoderConfigBitrate bitrate;
-    double framerate;
-    HardwareAcceleration hardwareAcceleration = "no-preference";
-    WebCodecsAlphaOption alpha = "discard";
-    DOMString scalabilityMode;
-    BitrateMode bitrateMode = "variable";
-    LatencyMode latencyMode = "quality";
-    AvcEncoderConfig avc;
-    HevcEncoderConfig hevc;
+namespace WebCore {
+
+enum class HevcBitstreamFormat : bool {
+    Annexb,
+    Hevc
 };
+
+struct HevcEncoderConfig {
+    using BitstreamFormat = HevcBitstreamFormat;
+    HevcBitstreamFormat format;
+};
+
+}
+
+#endif // ENABLE(WEB_CODECS)

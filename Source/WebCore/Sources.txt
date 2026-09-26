@@ -4635,6 +4635,7 @@ JSHTMLVideoElement.cpp
 JSHardwareAcceleration.cpp
 JSHashChangeEvent.cpp
 JSHdrMetadataType.cpp
+JSHevcEncoderConfig.cpp
 JSHighlight.cpp
 JSHighlightHitResult.cpp
 JSHighlightRegistry.cpp
