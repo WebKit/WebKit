@@ -13,15 +13,12 @@ bindings/js/JSDOMConvertNullable.h
 bindings/js/JSDOMGlobalObject.cpp
 bindings/js/JSDOMIterator.h
 bindings/js/JSDOMPromiseDeferred.h
-[ macOS ] bindings/js/JSDOMWindowBase.cpp
 bindings/js/JSHTMLCanvasElementCustom.cpp
 bindings/js/JSIDBTransactionCustom.cpp
 bindings/js/JSIntersectionObserverCustom.cpp
 bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSNodeCustom.cpp
-[ macOS ] bindings/js/JSObservableArray.h
 bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
-[ macOS ] bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSRangeCustom.cpp
 bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
@@ -41,7 +38,6 @@ css/CSSCounterStyleRule.h
 css/CSSFontFace.cpp
 css/CSSFontFaceRule.cpp
 css/CSSGroupingRule.cpp
-[ macOS ] css/CSSImageValue.h
 css/CSSKeyframesRule.cpp
 css/CSSNestedDeclarations.cpp
 css/CSSPageRule.cpp
@@ -54,14 +50,12 @@ css/CSSStyleSheetObservableArray.cpp
 css/FontFaceSet.cpp
 css/SelectorCheckerTestFunctions.h
 css/ShorthandSerializer.cpp
-[ macOS ] css/StyleAttributeMutationScope.h
 css/StyleRuleImport.h
 css/StyleSheetContents.cpp
 css/typedom/numeric/CSSMathValue.h
 css/typedom/transform/CSSSkewY.cpp
 dom/Attr.cpp
 dom/BroadcastChannel.cpp
-[ macOS ] dom/ChildListMutationScope.h
 dom/CollectionIndexCacheInlines.h
 dom/ComposedTreeIterator.h
 dom/ContainerNode.cpp
@@ -109,7 +103,6 @@ page/LocalDOMWindow.cpp
 page/LocalFrame.cpp
 page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
-[ macOS ] page/NavigationDestination.h
 page/PartitionedSecurityOrigin.h
 page/Performance.cpp
 page/PrintContext.cpp
@@ -133,7 +126,6 @@ page/text-extraction/TextExtraction.cpp
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
-[ macOS ] platform/encryptedmedia/CDMProxy.h
 platform/graphics/DisplayRefreshMonitorManager.h
 platform/graphics/ImageBackingStore.h
 [ iOS ] platform/graphics/avfoundation/SampleBufferDisplayLayer.h
@@ -226,8 +218,6 @@ rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 style/AnchorPositionEvaluator.cpp
-[ macOS ] style/ChildChangeInvalidation.cpp
-[ macOS ] style/ChildChangeInvalidation.h
 style/ElementRuleCollector.cpp
 style/RuleData.h
 style/RuleSet.cpp
