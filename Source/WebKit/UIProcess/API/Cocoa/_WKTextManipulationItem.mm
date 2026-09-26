@@ -32,9 +32,44 @@
 NSString * const _WKTextManipulationItemErrorDomain = @"WKTextManipulationItemErrorDomain";
 NSString * const _WKTextManipulationItemErrorItemKey = @"item";
 
+static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRelation relation)
+{
+    switch (relation) {
+    case _WKTextManipulationViewportRelationIntersecting:
+        return "intersecting"_s;
+    case _WKTextManipulationViewportRelationOffscreen:
+        return "offscreen"_s;
+    case _WKTextManipulationViewportRelationClippedByAncestor:
+        return "clipped-by-ancestor"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown"_s;
+}
+
+@implementation _WKTextManipulationViewportProximityInfo
+
+- (instancetype)initWithRelation:(_WKTextManipulationViewportRelation)relation viewportSizedDistance:(CGFloat)viewportSizedDistance viewportCoverage:(CGFloat)viewportCoverage
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _relation = relation;
+    _viewportSizedDistance = viewportSizedDistance;
+    _viewportCoverage = viewportCoverage;
+    return self;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; relation = %s viewportSizedDistance = %.3f viewportCoverage = %.3f>", self.class, self, descriptionForViewportRelation(self.relation).characters(), self.viewportSizedDistance, self.viewportCoverage];
+}
+
+@end
+
 @implementation _WKTextManipulationItem {
     RetainPtr<NSString> _identifier;
     RetainPtr<NSArray<_WKTextManipulationToken *>> _tokens;
+    RetainPtr<_WKTextManipulationViewportProximityInfo> _viewportProximityInfo;
 }
 
 - (instancetype)initWithIdentifier:(NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens
@@ -59,6 +94,15 @@ NSString * const _WKTextManipulationItemErrorItemKey = @"item";
     return self;
 }
 
+- (instancetype)initWithIdentifier:(NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe viewportProximityInfo:(_WKTextManipulationViewportProximityInfo *)viewportProximityInfo
+{
+    if (!(self = [self initWithIdentifier:identifier tokens:tokens isSubframe:isSubframe isCrossSiteSubframe:isCrossSiteSubframe]))
+        return nil;
+
+    _viewportProximityInfo = viewportProximityInfo;
+    return self;
+}
+
 - (NSString *)identifier
 {
     return _identifier.get();
@@ -67,6 +111,11 @@ NSString * const _WKTextManipulationItemErrorItemKey = @"item";
 - (NSArray<_WKTextManipulationToken *> *)tokens
 {
     return _tokens.get();
+}
+
+- (_WKTextManipulationViewportProximityInfo *)viewportProximityInfo
+{
+    return _viewportProximityInfo.get();
 }
 
 - (BOOL)isEqual:(id)object
@@ -119,7 +168,7 @@ NSString * const _WKTextManipulationItemErrorItemKey = @"item";
         [recursiveDescriptions addObject:description.get()];
     }];
     RetainPtr tokenDescription = adoptNS([[NSString alloc] initWithFormat:@"[\n\t%@\n]", retainPtr([recursiveDescriptions componentsJoinedByString:@",\n\t"]).get()]);
-    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ tokens = %@>", self.class, self, retainPtr(self.identifier).get(), tokenDescription.get()];
+    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ viewportProximityInfo = %@ tokens = %@>", self.class, self, retainPtr(self.identifier).get(), retainPtr(self.viewportProximityInfo).get(), tokenDescription.get()];
 }
 
 @end

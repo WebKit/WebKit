@@ -30,17 +30,37 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, _WKTextManipulationViewportRelation) {
+    _WKTextManipulationViewportRelationIntersecting,
+    _WKTextManipulationViewportRelationOffscreen,
+    _WKTextManipulationViewportRelationClippedByAncestor,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+@interface _WKTextManipulationViewportProximityInfo : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithRelation:(_WKTextManipulationViewportRelation)relation viewportSizedDistance:(CGFloat)viewportSizedDistance viewportCoverage:(CGFloat)viewportCoverage;
+
+@property (nonatomic, readonly) _WKTextManipulationViewportRelation relation;
+@property (nonatomic, readonly) CGFloat viewportSizedDistance;
+@property (nonatomic, readonly) CGFloat viewportCoverage;
+
+@end
+
 WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 @interface _WKTextManipulationItem : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens;
 - (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe WK_API_AVAILABLE(macos(14.0), ios(17.0));
+- (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe viewportProximityInfo:(nullable _WKTextManipulationViewportProximityInfo *)viewportProximityInfo WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, readonly, nullable, copy) NSString *identifier;
 @property (nonatomic, readonly, copy) NSArray<_WKTextManipulationToken *> *tokens;
 @property (nonatomic, readonly) BOOL isSubframe WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, readonly) BOOL isCrossSiteSubframe WK_API_AVAILABLE(macos(14.0), ios(17.0));
+@property (nonatomic, readonly, nullable) _WKTextManipulationViewportProximityInfo *viewportProximityInfo WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 - (BOOL)isEqualToTextManipulationItem:(nullable _WKTextManipulationItem *)otherItem includingContentEquality:(BOOL)includingContentEquality;
 @property (nonatomic, readonly, copy) NSString *debugDescription;
