@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter with feFlood-driven feDisplacementMap</title>
+<link rel="help" href="https://drafts.csswg.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-feflood-displacement-expected.html">
+<!-- feFlood gives a uniform rgb(255,128,255) map. With scale=16, R and B both read 255, so every
+     pixel samples the backdrop at (x + 8, y + 8) and the square at (110, 110) appears at (102, 102). -->
+
+<div class="pattern"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="displace" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feFlood flood-color="rgb(255,128,255)" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="16" xChannelSelector="R" yChannelSelector="B"/>
+  </filter>
+</svg>
+
+<style>
+body { margin: 0; background: white; }
+.pattern {
+  position: absolute;
+  background: fuchsia;
+  width: 60px;
+  height: 60px;
+  top: 110px;
+  left: 110px;
+}
+.filter {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 80px;
+  left: 80px;
+  backdrop-filter: url(#displace);
+}
+</style>

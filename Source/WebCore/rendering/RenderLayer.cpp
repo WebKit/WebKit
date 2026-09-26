@@ -76,6 +76,7 @@
 #include "FrameTree.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextSwitcher.h"
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLFormControlElement.h"
@@ -172,6 +173,7 @@
 #include <stdio.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -3359,8 +3361,14 @@ static inline bool NODELETE paintForFixedRootBackground(const RenderLayer* layer
     return layer->renderer().isDocumentElementRenderer() && (paintFlags & RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly);
 }
 
+// Set while a layer captures its backdrop, so that layer is left out of the capture and captures do not nest.
+static RenderLayer* s_backdropFilterCaptureLayer = nullptr;
+
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
 {
+    if (this == s_backdropFilterCaptureLayer)
+        return;
+
     auto shouldContinuePaint = [&] () {
         return backing()->paintsIntoWindow()
             || backing()->paintsIntoCompositedAncestor()
@@ -3922,6 +3930,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, fragmentOffset);
         }
         
+        if (shouldPaintContent)
+            paintReferenceBackdropFilter(currentContext, offsetFromRoot, paintBehavior);
+
         if (isPaintingCompositedBackground) {
             // Paint only the backgrounds for all of the fragments of the layer.
             if (shouldPaintContent && !selectionOnly) {
@@ -4028,6 +4039,85 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     // Re-set this to whatever it was before we painted the layer.
     if (needToAdjustSubpixelQuantization)
         context.setShouldSubpixelQuantizeFonts(didQuantizeFonts);
+}
+
+// Software path for reference (url()) backdrop-filters, which Core Animation cannot express:
+// capture the backdrop, run the referenced SVG filter over it, and draw the result under the
+// element's content.
+void RenderLayer::paintReferenceBackdropFilter(GraphicsContext& currentContext, const LayoutSize& offsetFromRoot, OptionSet<PaintBehavior> paintBehavior)
+{
+    if (s_backdropFilterCaptureLayer)
+        return;
+
+    // Non-display paints, such as ContentfulPaintChecker's null context, don't need the capture.
+    if (currentContext.paintingDisabled())
+        return;
+
+    if (!renderer().style().backdropFilter().hasReferenceFilter())
+        return;
+
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer());
+    if (!box)
+        return;
+
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    // Work in the element's local space (border box at the origin): a userSpaceOnUse filter
+    // region resolves from the filter element's literal x/y, so capture and filter region
+    // only line up in local coordinates.
+    LayoutRect borderBox = box->borderBoxRect();
+    const auto& backdropFilter = renderer().style().backdropFilter();
+    LayoutRect filterRegion = enclosingLayoutRect(CSSFilterRenderer::resolvedReferenceFilterRegion(renderer(), backdropFilter, borderBox));
+
+    FilterGeometry geometry { .referenceBox = borderBox, .filterRegion = filterRegion, .scale = FloatSize(deviceScaleFactor, deviceScaleFactor) };
+    RefPtr filter = CSSFilterRenderer::create(renderer(), backdropFilter, geometry, renderer().page().preferredFilterRenderingModes(currentContext), { }, currentContext);
+    if (!filter)
+        return;
+
+    auto colorSpace = ColorSpace::SRGB();
+    auto switcher = GraphicsContextSwitcher::create(currentContext, filterRegion, colorSpace, RefPtr<Filter> { WTF::move(filter) });
+    if (!switcher)
+        return;
+
+    GraphicsContextStateSaver destSpaceSaver(currentContext);
+    currentContext.translate(FloatSize(offsetFromRoot));
+
+    // Clip the filtered result to the element's rounded border box so the backdrop honours
+    // border-radius, matching the Core Animation path.
+    GraphicsContextStateSaver roundedClipSaver(currentContext, false);
+    auto borderShape = BorderShape::shapeForBorderRect(renderer().style(), box->borderBoxRect());
+    if (borderShape.hasNonZeroRadii()) {
+        roundedClipSaver.save();
+        borderShape.clipToOuterShape(currentContext, deviceScaleFactor);
+    }
+
+    switcher->beginClipAndDrawSourceImage(currentContext, filterRegion, borderBox);
+    CheckedPtr viewLayer = renderer().view().layer();
+    if (auto* sourceContext = viewLayer ? switcher->drawingContext(currentContext) : nullptr) {
+        // Re-paint the real view root instead of the current paint root: when this element is
+        // composited its own layer is the paint root, and the backdrop lives in another backing
+        // that cannot be read back.
+        SetForScope captureScope(s_backdropFilterCaptureLayer, this);
+        LayoutRect captureDirty = filterRegion;
+        captureDirty.move(offsetFromAncestor(viewLayer.get()));
+        // Follow this layer's own transform, including an animated one, so the capture tracks
+        // where the element actually is. Only a translation is handled; rotation or scale
+        // would need inverse-mapped sampling.
+        if (transform()) {
+            auto selfTransform = currentTransform();
+            if (selfTransform.isIdentityOrTranslation())
+                captureDirty.move(LayoutSize(LayoutUnit(selfTransform.e()), LayoutUnit(selfTransform.f())));
+        }
+        GraphicsContextStateSaver captureStateSaver(*sourceContext);
+        auto captureTranslate = FloatPoint(filterRegion.location()) - FloatPoint(captureDirty.location());
+        sourceContext->translate(captureTranslate);
+        // Snapshotting paints composited layers at their current animated transform, so a
+        // backdrop moved by an accelerated animation is captured where it is on screen. It also
+        // drops document markers, which are visible behind the element, so add them back.
+        auto captureBehavior = paintBehavior | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting | PaintBehavior::IncludeDocumentMarkers;
+        LayerPaintingInfo captureInfo(viewLayer.get(), captureDirty, captureBehavior, LayoutSize());
+        viewLayer->paintLayer(*sourceContext, captureInfo, { });
+    }
+    switcher->endClipAndDrawSourceImage(currentContext, colorSpace);
 }
 
 void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& translationOffset)
