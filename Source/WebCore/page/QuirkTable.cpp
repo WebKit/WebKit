@@ -933,6 +933,8 @@ static constexpr Quirk fullTable[] = {
             needsYouTubeCaptionQuirk,
             // youtube.com: rdar://110097836
             shouldSilenceResizeObservers,
+            // youtube.com https://bugs.webkit.org/show_bug.cgi?id=325264
+            shouldDisableThreadedAnimationsQuirk,
         } },
 
     // Embedded youtube.com players need the caption quirk regardless of the embedding site.

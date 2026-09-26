@@ -365,6 +365,7 @@ https://www.youtube.com/
     NeedsYouTubeMouseOutQuirk
     NeedsYouTubeOverflowScrollQuirk
     ShouldDisableElementFullscreenQuirk
+    ShouldDisableThreadedAnimationsQuirk
     ShouldSilenceResizeObservers
 https://www.youtube-nocookie.com/
     (none)
