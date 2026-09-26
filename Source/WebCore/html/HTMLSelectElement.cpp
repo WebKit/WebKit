@@ -1263,6 +1263,8 @@ void HTMLSelectElement::listBoxOnChange()
 {
     ASSERT(!isSingleSelectDropdownBox());
 
+    updateSelectedContentIfEnabled();
+
     auto& items = listItems();
 
     // If the cached selection list is empty, or the size has changed, then fire
@@ -1522,9 +1524,7 @@ void HTMLSelectElement::selectOption(int optionIndex, OptionSet<SelectOptionFlag
     // Update the button text element to display the new selection and ensure it picks up the new
     // selection's direction and unicode-bidi.
     updateButtonText(selectedOption.get(), optionIndex);
-    if (document().settings().htmlEnhancedSelectEnabled()
-        && !document().settings().mutationEventsEnabled())
-        updateSelectedContent(selectedOption.get());
+    updateSelectedContentIfEnabled(selectedOption.get());
 
     scrollToSelection();
 
@@ -2560,6 +2560,13 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
     }
 
     return { };
+}
+
+void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* selectedOption) const
+{
+    auto& settings = document().settings();
+    if (settings.htmlEnhancedSelectParsingEnabled() && settings.htmlEnhancedSelectEnabled() && !settings.mutationEventsEnabled())
+        updateSelectedContent(selectedOption);
 }
 
 void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption) const

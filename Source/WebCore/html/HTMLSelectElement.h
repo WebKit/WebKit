@@ -294,6 +294,7 @@ private:
     void updateSelectedState(int listIndex, bool multi, bool shift);
     void menuListDefaultEventHandler(Event&);
     void baseAppearanceListBoxDefaultEventHandler(Event&);
+    void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr) const;
     void closePickerIfNoLongerSupported(bool hadOpenPicker);
     void optionDeselectedByUser(HTMLOptionElement&);
     bool handleImplicitSubmissionKeypress(KeyboardEvent&);
