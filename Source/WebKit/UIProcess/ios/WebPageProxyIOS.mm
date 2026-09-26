@@ -1283,7 +1283,9 @@ void WebPageProxy::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState har
         pageClient->hardwareKeyboardAvailabilityChanged();
 
     updateCurrentModifierState();
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(hardwareKeyboardState), webPageIDInMainFrameProcess());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(hardwareKeyboardState), pageID);
+    });
 }
 
 void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&& callback)
@@ -1688,8 +1690,12 @@ void WebPageProxy::setShouldRevealCurrentSelectionAfterInsertion(bool shouldReve
 
 void WebPageProxy::setScreenIsBeingCaptured(bool captured)
 {
-    if (hasRunningProcess())
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::SetScreenIsBeingCaptured(captured), webPageIDInMainFrameProcess());
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetScreenIsBeingCaptured(captured), pageID);
+    });
 }
 
 void WebPageProxy::willOpenAppLink()

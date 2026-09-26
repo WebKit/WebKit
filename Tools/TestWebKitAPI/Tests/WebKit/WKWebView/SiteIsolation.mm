@@ -88,6 +88,8 @@
 
 @interface WKContentView ()
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
+- (BOOL)screenIsBeingCaptured;
+- (void)_sceneCaptureStateDidChange;
 @end
 #endif
 
@@ -13230,6 +13232,56 @@ TEST(SiteIsolation, SynchronousPositionInformationForTextInCrossOriginIframe)
     [webView waitForNextPresentationUpdate];
 
     EXPECT_TRUE([[webView wkContentView] hasSelectablePositionAtPoint:CGPointMake(140, 130)]);
+}
+
+static bool screenIsBeingCapturedInProcessForFrame(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    __block bool done = false;
+    __block bool result = false;
+    [webView _screenIsBeingCapturedForFrame:frame._handle completionHandler:^(BOOL captured) {
+        result = captured;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+TEST(SiteIsolation, ScreenCaptureStateReachesCrossSiteIframeProcesses)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<input type='password'>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    __block BOOL screenIsBeingCaptured = NO;
+    InstanceMethodSwizzler screenCaptureSwizzler {
+        NSClassFromString(@"WKContentView"),
+        @selector(screenIsBeingCaptured),
+        imp_implementationWithBlock(^BOOL(id) {
+            return screenIsBeingCaptured;
+        })
+    };
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE([mainFrame _processIdentifier], [childFrame _processIdentifier]);
+    EXPECT_FALSE(screenIsBeingCapturedInProcessForFrame(webView.get(), childFrame.get()));
+
+    screenIsBeingCaptured = YES;
+    [[webView wkContentView] _sceneCaptureStateDidChange];
+    EXPECT_TRUE(screenIsBeingCapturedInProcessForFrame(webView.get(), mainFrame.get()));
+    EXPECT_TRUE(screenIsBeingCapturedInProcessForFrame(webView.get(), childFrame.get()));
+
+    [webView evaluateJavaScript:@"document.querySelector('iframe').src = 'https://c.com/subframe'" completionHandler:nil];
+    while (![[webView firstChildFrame].securityOrigin.host isEqualToString:@"c.com"])
+        Util::spinRunLoop();
+    RetainPtr newChildFrame = [webView firstChildFrame];
+    EXPECT_NE([newChildFrame _processIdentifier], [childFrame _processIdentifier]);
+    EXPECT_TRUE(screenIsBeingCapturedInProcessForFrame(webView.get(), newChildFrame.get()));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
