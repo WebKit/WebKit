@@ -1,6 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<body>
 <script>
 
 const makeSource = (src, type) => {
@@ -161,6 +162,81 @@ test(() => {
     const newSource = model.insertBefore(makeSource("model-child-2.usdz", "model/vnd.usdz+zip"), model.firstChild);
     assert_equals(model.currentSrc, newSource.src);
 }, "An inserted <source> with a supported type is selected.");
+
+test(() => {
+    const root = document.createElement("div");
+    const model = root.appendChild(document.createElement("model"));
+    const initialSource = model.appendChild(makeSource("model-initial.usdz"));
+    assert_equals(model.currentSrc, initialSource.src);
+
+    const container = root.appendChild(document.createElement("div"));
+    const newSource = container.appendChild(makeSource("model-moved.usdz"));
+    model.moveBefore(newSource, initialSource);
+    assert_equals(model.currentSrc, newSource.src);
+}, "Moving a <source> before the current source with moveBefore() updates currentSrc.");
+
+test(() => {
+    const root = document.createElement("div");
+    const model = root.appendChild(document.createElement("model"));
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+
+    const container = root.appendChild(document.createElement("div"));
+    container.moveBefore(source, null);
+    assert_equals(model.currentSrc, "");
+}, "Moving the <source> out of the <model> with moveBefore() changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, firstSource.src);
+
+    model.moveBefore(secondSource, firstSource);
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Reordering <source> children within the same <model> via moveBefore() updates currentSrc.");
+
+test(() => {
+    const root = document.createElement("div");
+    const firstModel = root.appendChild(document.createElement("model"));
+    const secondModel = root.appendChild(document.createElement("model"));
+    const source = firstModel.appendChild(makeSource("model.usdz"));
+    assert_equals(firstModel.currentSrc, source.src);
+    assert_equals(secondModel.currentSrc, "");
+
+    secondModel.moveBefore(source, null);
+    assert_equals(firstModel.currentSrc, "", "source is no longer considered by the first <model>");
+    assert_equals(secondModel.currentSrc, source.src, "source is picked up by the second <model>");
+}, "Moving a <source> from one <model> to another with moveBefore() updates currentSrc on both.");
+
+test(() => {
+    const root = document.createElement("div");
+    const model = root.appendChild(document.createElement("model"));
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+
+    const video = root.appendChild(document.createElement("video"));
+    video.moveBefore(source, null);
+    assert_equals(model.currentSrc, "", "source is no longer considered by the <model> once it has moved into a <video>");
+}, "Moving a <source> from a <model> into a <video> with moveBefore() updates currentSrc on the model.");
+
+async_test((t) => {
+    const picture = document.body.appendChild(document.createElement("picture"));
+    const source = picture.appendChild(document.createElement("source"));
+    source.srcset = "../fast/picture/resources/blue_rect.jpg";
+    const img = picture.appendChild(document.createElement("img"));
+    img.src = "../fast/picture/resources/image-set-4x.png";
+    const model = document.body.appendChild(document.createElement("model"));
+
+    img.addEventListener("load", t.step_func(() => {
+        assert_true(img.currentSrc.endsWith("/blue_rect.jpg"), "img initially uses the <picture>'s <source>");
+
+        img.addEventListener("load", t.step_func_done(() => {
+            assert_true(img.currentSrc.endsWith("/image-set-4x.png"), "img should fall back to its own src once the <source> has moved into the <model>");
+        }), { once: true });
+        model.moveBefore(source, null);
+    }), { once: true });
+}, "Moving a <source> from a <picture> into a <model> with moveBefore() must notify the old <picture>.");
 </script>
 </body>
 </html>

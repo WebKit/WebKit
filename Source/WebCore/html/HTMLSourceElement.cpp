@@ -130,8 +130,23 @@ void HTMLSourceElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& 
     if (isSubtreeRoot == IsSubtreeRoot::No)
         return;
 
+    RefPtr newParent { parentElement() };
+
+#if ENABLE(VIDEO)
+    if (RefPtr newMediaElement = dynamicDowncast<HTMLMediaElement>(newParent))
+        newMediaElement->sourceWasAdded(*this);
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    if (RefPtr oldModelElement = dynamicDowncast<HTMLModelElement>(oldParent))
+        oldModelElement->sourcesChanged();
+
+    if (RefPtr newModelElement = dynamicDowncast<HTMLModelElement>(newParent))
+        newModelElement->sourcesChanged();
+#endif
+
     RefPtr oldParentPicture = dynamicDowncast<HTMLPictureElement>(oldParent);
-    RefPtr parentPicture = dynamicDowncast<HTMLPictureElement>(parentElement());
+    RefPtr parentPicture = dynamicDowncast<HTMLPictureElement>(newParent);
 
     m_shouldCallSourcesChanged = false;
     if (parentPicture) {

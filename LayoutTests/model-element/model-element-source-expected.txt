@@ -1,4 +1,5 @@
 
+
 PASS The HTMLModelElement interface has a currentSrc property.
 PASS The currentSrc property is read-only.
 PASS The currentSrc property is the empty string when no <source> is provided.
@@ -21,4 +22,10 @@ PASS Changing a <source type> to a supported type causes it to be selected.
 PASS Changing a <source type> to an unsupported type causes it not to be selected.
 PASS An inserted <source> with an unsupported type is not selected.
 PASS An inserted <source> with a supported type is selected.
+PASS Moving a <source> before the current source with moveBefore() updates currentSrc.
+PASS Moving the <source> out of the <model> with moveBefore() changes the currentSrc property.
+PASS Reordering <source> children within the same <model> via moveBefore() updates currentSrc.
+PASS Moving a <source> from one <model> to another with moveBefore() updates currentSrc on both.
+PASS Moving a <source> from a <model> into a <video> with moveBefore() updates currentSrc on the model.
+PASS Moving a <source> from a <picture> into a <model> with moveBefore() must notify the old <picture>.
 
