@@ -140,7 +140,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         auto requestableExtensions = context->requestableExtensions();
         m_estimatedMemoryCost = estimatedMemoryCostForIPC(*context);
         RemoteGraphicsContextGLInitializationState initializationState {
-            .attributes = context->contextAttributes(),
+            .attributes = contextAttributes,
             .knownActiveExtensions = knownActiveExtensions.toRaw(),
             .requestableExtensions = requestableExtensions.toRaw(),
             .estimatedMemoryCost = m_estimatedMemoryCost,
@@ -151,8 +151,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
             .maxRenderbufferSize = context->maxRenderbufferSize(),
             .maxViewportDims = context->maxViewportDims(),
         };
-        if (contextAttributes.isWebGL2 || contextAttributes.antialias)
-            initializationState.maxSamples = context->maxSamples();
+        initializationState.maxSamples = context->maxSamples();
         if (contextAttributes.isWebGL2) {
             initializationState.maxTransformFeedbackSeparateAttribs = context->maxTransformFeedbackSeparateAttribs();
             initializationState.maxUniformBufferBindings = context->maxUniformBufferBindings();
