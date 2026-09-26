@@ -148,7 +148,9 @@ static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnS
 {
     return WTF::switchOn(columnEnd,
         [](const CSS::Keyword::Auto&) {
-            return false;
+            // An auto end with an explicit start resolves to a single-column span at the start line
+            // (grid shorthand behavior), so trailing implicit columns are supported here.
+            return true;
         },
         [&](const Style::GridPositionExplicit&) {
             if (!columnEnd.namedGridLine().value.isEmpty())
