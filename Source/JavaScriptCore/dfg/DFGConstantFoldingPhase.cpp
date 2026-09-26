@@ -1848,7 +1848,7 @@ private:
                             node->setOp(ArithBitURShift);
                             break;
                         default:
-                            DFG_CRASH(m_graph, node, "Unexpected node");
+                            DFG_CRASH(m_graph, node, "Unexpected node"_s);
                             break;
                         }
                         node->child1() = Edge(node->child1().node(), KnownInt32Use);
@@ -2599,7 +2599,7 @@ private:
                 node->remove(m_graph);
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Bad Upsilon phi() pointer");
+                DFG_CRASH(m_graph, node, "Bad Upsilon phi() pointer"_s);
                 break;
             }
         }

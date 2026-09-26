@@ -81,7 +81,7 @@ public:
             }
             
             case EntrySwitch: {
-                DFG_CRASH(m_graph, terminal, "Unexpected EntrySwitch in CPS form.");
+                DFG_CRASH(m_graph, terminal, "Unexpected EntrySwitch in CPS form."_s);
                 break;
             }
 

@@ -908,7 +908,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinOperatio
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinOperationBody>(*lexicalGlobalObject, *callFrame, "mixinOperation");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinOperationBody>(*lexicalGlobalObject, *callFrame, "mixinOperation"_s);
 }
 
 #endif
@@ -939,7 +939,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinComplexO
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinComplexOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinComplexOperationBody>(*lexicalGlobalObject, *callFrame, "mixinComplexOperation");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinComplexOperationBody>(*lexicalGlobalObject, *callFrame, "mixinComplexOperation"_s);
 }
 
 #endif
@@ -956,7 +956,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinCustomOp
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinCustomOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinCustomOperationBody>(*lexicalGlobalObject, *callFrame, "mixinCustomOperation");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinCustomOperationBody>(*lexicalGlobalObject, *callFrame, "mixinCustomOperation"_s);
 }
 
 #endif
@@ -974,7 +974,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinConditio
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "mixinConditionalOperation");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "mixinConditionalOperation"_s);
 }
 
 #endif
@@ -992,7 +992,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinSettings
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinSettingsConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinSettingsConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "mixinSettingsConditionalOperation");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinSettingsConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "mixinSettingsConditionalOperation"_s);
 }
 
 #endif
@@ -1011,7 +1011,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinResultFi
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinResultFieldOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinResultFieldOperationBody>(*lexicalGlobalObject, *callFrame, "mixinResultFieldOperation");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_mixinResultFieldOperationBody>(*lexicalGlobalObject, *callFrame, "mixinResultFieldOperation"_s);
 }
 
 #endif
@@ -1029,7 +1029,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_partialMixinO
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_partialMixinOperationFromPartial, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_partialMixinOperationFromPartialBody>(*lexicalGlobalObject, *callFrame, "partialMixinOperationFromPartial");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_partialMixinOperationFromPartialBody>(*lexicalGlobalObject, *callFrame, "partialMixinOperationFromPartial"_s);
 }
 
 #endif
@@ -1047,7 +1047,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_supplementalM
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod1, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_supplementalMethod1Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod1");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_supplementalMethod1Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod1"_s);
 }
 
 #endif
@@ -1078,7 +1078,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_supplementalM
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod2, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_supplementalMethod2Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod2");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_supplementalMethod2Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod2"_s);
 }
 
 #endif
@@ -1095,7 +1095,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_supplementalM
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod3, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_supplementalMethod3Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod3");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_supplementalMethod3Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod3"_s);
 }
 
 #endif
@@ -1112,7 +1112,7 @@ static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunction_supplementa
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfaceConstructorFunction_supplementalMethod4, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunction_supplementalMethod4Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod4");
+    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunction_supplementalMethod4Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod4"_s);
 }
 
 #endif
@@ -1180,7 +1180,7 @@ static inline EncodedJSValue jsTestInterfacePrototypeFunction_entriesCaller(JSGl
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_entries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries"_s);
 }
 
 static inline EncodedJSValue jsTestInterfacePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestInterface* thisObject)
@@ -1194,7 +1194,7 @@ static inline EncodedJSValue jsTestInterfacePrototypeFunction_keysCaller(JSGloba
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_keys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys"_s);
 }
 
 static inline EncodedJSValue jsTestInterfacePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestInterface* thisObject)
@@ -1208,7 +1208,7 @@ static inline EncodedJSValue jsTestInterfacePrototypeFunction_valuesCaller(JSGlo
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values"_s);
 }
 
 static inline EncodedJSValue jsTestInterfacePrototypeFunction_forEachCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestInterface* thisObject)
@@ -1218,7 +1218,7 @@ static inline EncodedJSValue jsTestInterfacePrototypeFunction_forEachCaller(JSGl
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_forEach, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_forEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_forEachCaller>(*lexicalGlobalObject, *callFrame, "forEach"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestInterface::subspaceForImpl(JSC::VM& vm)

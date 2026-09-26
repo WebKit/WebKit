@@ -31,6 +31,7 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include "UIScriptContext.h"
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebKit/WKTextCheckerGLib.h>
@@ -207,7 +208,7 @@ JSObjectRef UIScriptControllerGtk::contentsOfUserInterfaceItem(JSStringRef inter
     GRefPtr<GVariant> contentDictionary = WKViewContentsOfUserInterfaceItem(webView, toWTFString(interfaceItem).utf8().legacyCStringPointer());
     auto jsonObject = toJSONObject(contentDictionary.get());
 
-    return JSValueToObject(m_context->jsContext(), contentDictionary ? JSValueMakeFromJSONString(m_context->jsContext(), createJSString(jsonObject->toJSONString().utf8().legacyCStringPointer()).get()) : JSValueMakeUndefined(m_context->jsContext()), nullptr);
+    return JSValueToObject(m_context->jsContext(), contentDictionary ? JSValueMakeFromJSONString(m_context->jsContext(), ::createJSString(jsonObject->toJSONString()).get()) : JSValueMakeUndefined(m_context->jsContext()), nullptr);
 }
 
 void UIScriptControllerGtk::setWebViewEditable(bool editable)

@@ -31,10 +31,10 @@
 #include "PlatformDisplay.h"
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/CStringView.h>
-#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if USE(GLIB)
@@ -232,9 +232,9 @@ void initializeIfNeeded()
     }
 
 #if USE(GLIB)
-    const String applicationName = makeString(getApplicationID(), '.', processTypeDescription(processType()));
+    auto applicationName = toUTF8CString(getApplicationID(), '.', processTypeDescription(processType()));
 #else
-    const String applicationName = makeString("WebKit."_s, processTypeDescription(processType()));
+    auto applicationName = toUTF8CString("WebKit."_s, processTypeDescription(processType()));
 #endif
 
     auto instance = Instance::create({ { applicationName }, layerNames.span(), extensionNames.span() });

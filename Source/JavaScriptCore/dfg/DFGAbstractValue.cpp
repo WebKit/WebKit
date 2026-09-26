@@ -139,7 +139,7 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
             m_type |= SpecAnyIntAsDouble;
         }
         if (m_type & ~SpecFullDouble)
-            DFG_CRASH(graph, node, toUTF8CString("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n").legacyCStringPointer());
+            DFG_CRASH(graph, node, toUTF8CString("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n"));
     } else if (representation == NodeResultInt52) {
         if (m_type & SpecAnyIntAsDouble) {
             // AnyIntAsDouble can produce i32 or i52. SpecAnyIntAsDouble doesn't bound the magnitude of the value.
@@ -158,7 +158,7 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
         }
 
         if (m_type & ~SpecInt52Any)
-            DFG_CRASH(graph, node, toUTF8CString("Abstract value ", *this, " for int52 node has type outside SpecInt52Any.\n").legacyCStringPointer());
+            DFG_CRASH(graph, node, toUTF8CString("Abstract value ", *this, " for int52 node has type outside SpecInt52Any.\n"));
 
         if (m_value) {
             DFG_ASSERT(graph, node, m_value.isAnyInt());
@@ -174,7 +174,7 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
             m_type |= SpecAnyIntAsDouble;
         }
         if (m_type & ~SpecBytecodeTop)
-            DFG_CRASH(graph, node, toUTF8CString("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n").legacyCStringPointer());
+            DFG_CRASH(graph, node, toUTF8CString("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n"));
     }
     
     checkConsistency();

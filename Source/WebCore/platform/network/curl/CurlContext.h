@@ -37,6 +37,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
+#include <wtf/text/CStringView.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -206,8 +207,7 @@ public:
         }
     }
 
-    void append(const char* str) { m_list = curl_slist_append(m_list, str); }
-    void append(const String& str) { append(str.utf8().legacyCStringPointer()); }
+    void append(CStringView str) { m_list = curl_slist_append(m_list, str.utf8()); }
 
 private:
     struct curl_slist* m_list { nullptr };
@@ -277,7 +277,7 @@ public:
     void setHttpAuthUserPass(const String&, const String&, long authType = CURLAUTH_ANY);
 
     void disableServerTrustEvaluation();
-    void setCACertPath(const char*);
+    void setCACertPath(CStringView);
     void setCACertBlob(void*, size_t);
     void setSslVerifyPeer(VerifyPeer);
     void setSslVerifyHost(VerifyHost);

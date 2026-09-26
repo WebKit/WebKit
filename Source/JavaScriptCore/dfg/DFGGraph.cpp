@@ -693,7 +693,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     if (!myContext.isEmpty()) {
         StringPrintStream prefixStr;
         prefixStr.print(prefix);
-        myContext.dump(out, prefixStr.toUTF8CString().legacyCStringPointer());
+        myContext.dump(out, prefixStr.toUTF8CString());
         out.print("\n");
     }
 }
@@ -1826,12 +1826,12 @@ void Graph::assertIsRegistered(Structure* structure)
     if (m_plan.watchpoints().isRegisteredNotWatched(structure))
         return;
 
-    DFG_CRASH(*this, nullptr, toUTF8CString("Structure ", pointerDump(structure), " is watchable but isn't being watched.").legacyCStringPointer());
+    DFG_CRASH(*this, nullptr, toUTF8CString("Structure ", pointerDump(structure), " is watchable but isn't being watched."));
 }
 
 static void logDFGAssertionFailure(
     Graph& graph, const UTF8CString& whileText, const char* file, int line, const char* function,
-    const char* assertion)
+    CStringView assertion)
 {
     startCrashing();
     graph.dumpAndReleaseIonGraph();
@@ -1849,19 +1849,19 @@ static void logDFGAssertionFailure(
 }
 
 void Graph::logAssertionFailure(
-    std::nullptr_t, const char* file, int line, const char* function, const char* assertion)
+    std::nullptr_t, const char* file, int line, const char* function, CStringView assertion)
 {
     logDFGAssertionFailure(*this, ""_s, file, line, function, assertion);
 }
 
 void Graph::logAssertionFailure(
-    Node* node, const char* file, int line, const char* function, const char* assertion)
+    Node* node, const char* file, int line, const char* function, CStringView assertion)
 {
     logDFGAssertionFailure(*this, toUTF8CString("While handling node ", node, "\n\n"), file, line, function, assertion);
 }
 
 void Graph::logAssertionFailure(
-    BasicBlock* block, const char* file, int line, const char* function, const char* assertion)
+    BasicBlock* block, const char* file, int line, const char* function, CStringView assertion)
 {
     logDFGAssertionFailure(*this, toUTF8CString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
 }

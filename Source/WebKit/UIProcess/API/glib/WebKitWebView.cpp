@@ -798,7 +798,7 @@ static void webkitWebViewRequestFavicon(WebKitWebView* webView)
         return;
 
     priv->faviconCancellable = adoptGRef(g_cancellable_new());
-    webkitFaviconDatabaseGetFaviconInternal(database, priv->activeURI.legacyCStringPointer(), webkitWebViewIsEphemeral(webView), priv->faviconCancellable.get(), gotFaviconCallback, webView);
+    webkitFaviconDatabaseGetFaviconInternal(database, priv->activeURI, webkitWebViewIsEphemeral(webView), priv->faviconCancellable.get(), gotFaviconCallback, webView);
 }
 
 static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, const char* faviconURI)
@@ -2762,7 +2762,7 @@ void webkitWebViewWillStartLoad(WebKitWebView* webView)
 
     GUniquePtr<GError> error(g_error_new_literal(WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED, _("Load request cancelled")));
     webkitWebViewLoadFailed(webView, pageLoadState.isProvisional() ? WEBKIT_LOAD_STARTED : WEBKIT_LOAD_COMMITTED,
-        pageLoadState.isProvisional() ? pageLoadState.provisionalURL().string().utf8().legacyCStringPointer() : pageLoadState.url().string().utf8().legacyCStringPointer(),
+        pageLoadState.isProvisional() ? pageLoadState.provisionalURL().string() : pageLoadState.url().string(),
         error.get());
 }
 
@@ -2806,16 +2806,16 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
 }
 
-void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
+void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const String& failingURI, GError *error)
 {
     webkitWebViewCompleteAuthenticationRequest(webView);
 
     gboolean returnValue;
-    g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
+    g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI.utf8().legacyCStringPointer(), error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
-void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* failingURI, GError* error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
+void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const String& failingURI, GError* error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
 {
     webkitWebViewCompleteAuthenticationRequest(webView);
 
@@ -2826,10 +2826,11 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_website_data_manager_get_tls_errors_policy(websiteDataManager);
 #endif
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
+        auto failingURIUTF8 = failingURI.utf8();
         gboolean returnValue;
-        g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURI, certificate, tlsErrors, &returnValue);
+        g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURIUTF8.legacyCStringPointer(), certificate, tlsErrors, &returnValue);
         if (!returnValue)
-            g_signal_emit(webView, signals[LOAD_FAILED], 0, WEBKIT_LOAD_STARTED, failingURI, error, &returnValue);
+            g_signal_emit(webView, signals[LOAD_FAILED], 0, WEBKIT_LOAD_STARTED, failingURIUTF8.legacyCStringPointer(), error, &returnValue);
     }
 
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
@@ -6181,7 +6182,7 @@ WebKitImageList* webkit_web_view_get_page_icons(WebKitWebView* webView)
 }
 #endif
 
-void webkitWebViewLoadServiceWorker(WebKitWebView* webView, const gchar* url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
+void webkitWebViewLoadServiceWorker(WebKitWebView* webView, const URL& url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
 {
     Ref page = getPage(webView);
 
@@ -6190,7 +6191,7 @@ void webkitWebViewLoadServiceWorker(WebKitWebView* webView, const gchar* url, bo
         return;
     }
 
-    page->loadServiceWorker(URL { String::fromUTF8(url) }, usingModules, [completionHandler = WTF::move(completionHandler)](bool success) mutable {
+    page->loadServiceWorker(url, usingModules, [completionHandler = WTF::move(completionHandler)](bool success) mutable {
         completionHandler(success);
     });
 }

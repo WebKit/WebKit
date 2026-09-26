@@ -69,12 +69,12 @@ void LogChannels::initializeLogChannelsIfNecessary(std::optional<String> logChan
     m_logChannelsNeedInitialization = false;
 
     String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
-    WTFInitializeLogChannelStatesFromString(m_logChannels.mutableSpan().data(), m_logChannels.size(), enabledChannelsString.utf8().legacyCStringPointer());
+    WTFInitializeLogChannelStatesFromString(m_logChannels.mutableSpan().data(), m_logChannels.size(), enabledChannelsString);
 }
 
 WTFLogChannel* LogChannels::getLogChannel(const String& name)
 {
-    return WTFLogChannelByName(m_logChannels.mutableSpan().data(), m_logChannels.size(), name.utf8().legacyCStringPointer());
+    return WTFLogChannelByName(m_logChannels.mutableSpan().data(), m_logChannels.size(), name);
 }
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

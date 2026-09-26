@@ -212,14 +212,14 @@ void AbstractInterpreter<AbstractStateType>::verifyEdge(Node* node, Edge edge)
         if (edge.useKind() == UntypedUse && node->op() == ExtractFromTuple)
             return;
         DFG_CRASH(m_graph, node, toUTF8CString("Tuple edge verification error: ", node, "->", edge, " was expected to have Untyped use kind (had ", edge.useKind(),
-            "). Has type ", SpeculationDump(m_state.forTupleNodeWithoutFastForward(edge.node(), node->extractOffset()).m_type)).legacyCStringPointer(),
+            "). Has type ", SpeculationDump(m_state.forTupleNodeWithoutFastForward(edge.node(), node->extractOffset()).m_type)),
             AbstractInterpreterInvalidType, node->op(), edge->op(), edge.useKind(), m_state.forNodeWithoutFastForward(node).m_type);
     }
 
     if (!(m_state.forNodeWithoutFastForward(edge).m_type & ~typeFilterFor(edge.useKind())))
         return;
     
-    DFG_CRASH(m_graph, node, toUTF8CString("Edge verification error: ", node, "->", edge, " was expected to have type ", SpeculationDump(typeFilterFor(edge.useKind())), " but has type ", SpeculationDump(forNode(edge).m_type), " (", forNode(edge).m_type, ")").legacyCStringPointer(), AbstractInterpreterInvalidType, node->op(), edge->op(), edge.useKind(), forNode(edge).m_type);
+    DFG_CRASH(m_graph, node, toUTF8CString("Edge verification error: ", node, "->", edge, " was expected to have type ", SpeculationDump(typeFilterFor(edge.useKind())), " but has type ", SpeculationDump(forNode(edge).m_type), " (", forNode(edge).m_type, ")"), AbstractInterpreterInvalidType, node->op(), edge->op(), edge.useKind(), forNode(edge).m_type);
 }
 
 template<typename AbstractStateType>
@@ -532,7 +532,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 value.makeBytecodeTop();
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Bad flush format for argument");
+                DFG_CRASH(m_graph, node, "Bad flush format for argument"_s);
                 break;
             }
         }
@@ -558,7 +558,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case ForwardVarargs:
             break;
         default:
-            DFG_CRASH(m_graph, node, "Bad opcode");
+            DFG_CRASH(m_graph, node, "Bad opcode"_s);
             break;
         }
         LoadVarargsData* data = node->loadVarargsData();
@@ -654,10 +654,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setTypeForNode(node, SpecBigInt);
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Incorrect DFG op");
+                DFG_CRASH(m_graph, node, "Incorrect DFG op"_s);
             }
 #else
-            DFG_CRASH(m_graph, node, "No BigInt32 support");
+            DFG_CRASH(m_graph, node, "No BigInt32 support"_s);
 #endif
         } else if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
@@ -2244,7 +2244,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsBoolean(true));
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Unexpected node type");
+                DFG_CRASH(m_graph, node, "Unexpected node type"_s);
                 break;
             }
             break;
@@ -2492,7 +2492,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     didFold = true;
                     break;
                 default:
-                    DFG_CRASH(m_graph, node, "Unexpected node type");
+                    DFG_CRASH(m_graph, node, "Unexpected node type"_s);
                     break;
                 }
                 if (didFold)
@@ -2705,7 +2705,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         } else if (node->child1().useKind() == UntypedUse)
             clobberWorld();
         else
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
         setTypeForNode(node, SpecStringResolved);
         break;
     }
@@ -2720,7 +2720,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         } else if (node->child1().useKind() == UntypedUse)
             clobberWorld();
         else
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
         setTypeForNode(node, SpecStringResolved);
         break;
     }
@@ -2987,7 +2987,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     setNonCellTypeForNode(node, SpecFullDouble);
                     break;
                 default:
-                    DFG_CRASH(m_graph, node, "Bad use kind");
+                    DFG_CRASH(m_graph, node, "Bad use kind"_s);
                     break;
                 }
                 break;
@@ -3169,7 +3169,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 case BigUint64ArrayMode:
                     break;
                 default:
-                    DFG_CRASH(m_graph, node, "impossible array mode for MultiGetByVal");
+                    DFG_CRASH(m_graph, node, "impossible array mode for MultiGetByVal"_s);
                     break;
                 }
             }
@@ -3272,7 +3272,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 case BigUint64ArrayMode:
                     break;
                 default:
-                    DFG_CRASH(m_graph, node, "impossible array mode for MultiPutByVal");
+                    DFG_CRASH(m_graph, node, "impossible array mode for MultiPutByVal"_s);
                     break;
                 }
             }
@@ -4670,7 +4670,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             admittedTypes = SpecOther;
             break;
         default:
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
             break;
         }
         
@@ -6027,7 +6027,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case LastNodeType:
     case ArithIMul:
     case FiatInt52:
-        DFG_CRASH(m_graph, node, "Unexpected node type");
+        DFG_CRASH(m_graph, node, "Unexpected node type"_s);
         break;
     }
     

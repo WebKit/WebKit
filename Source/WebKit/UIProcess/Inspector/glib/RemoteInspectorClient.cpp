@@ -79,7 +79,7 @@ public:
             m_proxy->show();
     }
 
-    void setTargetName(const CString& name)
+    void setTargetName(const UTF8CString& name)
     {
 #if PLATFORM(GTK)
         if (m_proxy)

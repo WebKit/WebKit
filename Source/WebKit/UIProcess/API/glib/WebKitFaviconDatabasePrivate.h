@@ -22,6 +22,7 @@
 #include "APIData.h"
 #include "WebKitFaviconDatabase.h"
 #include <WebCore/LinkIcon.h>
+#include <wtf/text/CStringView.h>
 
 WebKitFaviconDatabase* webkitFaviconDatabaseCreate();
 void webkitFaviconDatabaseOpen(WebKitFaviconDatabase*, const String& path, bool isEphemeral);
@@ -31,5 +32,5 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase*, const W
 void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase*, const WebCore::LinkIcon&, API::Data&, const String&, bool isEphemeral);
 #endif
 #if PLATFORM(GTK)
-void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase*, const gchar* pageURI, bool isEphemeral, GCancellable*, GAsyncReadyCallback, gpointer);
+void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase*, CStringView pageURI, bool isEphemeral, GCancellable*, GAsyncReadyCallback, gpointer);
 #endif

@@ -150,7 +150,7 @@ void InPlaceAbstractState::initialize()
                     entrypoint->valuesAtHead.argument(i).makeBytecodeTop();
                     break;
                 default:
-                    DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
+                    DFG_CRASH(m_graph, nullptr, "Bad flush format for argument"_s);
                     break;
                 }
             }

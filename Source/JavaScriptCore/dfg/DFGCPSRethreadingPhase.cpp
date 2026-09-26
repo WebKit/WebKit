@@ -96,7 +96,7 @@ private:
                     }
                     switch (node->child1()->op()) {
                     case SetArgumentMaybe:
-                        DFG_CRASH(m_graph, node, "Invalid Phantom(@SetArgumentMaybe)");
+                        DFG_CRASH(m_graph, node, "Invalid Phantom(@SetArgumentMaybe)"_s);
                         break;
                     case Phi:
                     case SetArgumentDefinitely:
@@ -543,7 +543,7 @@ private:
                 break;
 
             default:
-                DFG_CRASH(m_graph, node, "Invalid node in flush graph");
+                DFG_CRASH(m_graph, node, "Invalid node in flush graph"_s);
                 break;
             }
         }

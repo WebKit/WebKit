@@ -158,18 +158,18 @@ static PlatformSocketType bindAndListen(struct sockaddr_in& address)
     return socket.leak();
 }
 
-std::optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort)
+std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t serverPort)
 {
     struct sockaddr_in address = { };
 
     address.sin_family = AF_INET;
-    int ret = ::inet_pton(AF_INET, serverAddress, &address.sin_addr);
+    int ret = ::inet_pton(AF_INET, serverAddress.utf8(), &address.sin_addr);
     if (ret != 1) {
         struct addrinfo hints = { };
         struct addrinfo* res;
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_family = AF_INET;
-        if (!getaddrinfo(serverAddress, 0, &hints, &res)) {
+        if (!getaddrinfo(serverAddress.utf8(), 0, &hints, &res)) {
             address.sin_addr = reinterpret_cast<struct sockaddr_in*>(res->ai_addr)->sin_addr;
             freeaddrinfo(res);
         }
@@ -185,13 +185,13 @@ std::optional<PlatformSocketType> connect(const char* serverAddress, uint16_t se
     return socket;
 }
 
-std::optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
+std::optional<PlatformSocketType> listen(CStringView addressStr, uint16_t port)
 {
     // FIXME: Support AF_INET6 connections.
     struct sockaddr_in address = { };
     address.sin_family = AF_INET;
-    if (addressStr && *addressStr)
-        ::inet_pton(AF_INET, addressStr, &address.sin_addr);
+    if (!addressStr.isEmpty())
+        ::inet_pton(AF_INET, addressStr.utf8(), &address.sin_addr);
     else
         address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(port);

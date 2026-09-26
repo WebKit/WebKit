@@ -118,7 +118,7 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    void updateWindowTitle(const CString&);
+    void updateWindowTitle(const UTF8CString&);
 #endif
 
 #if PLATFORM(WIN)

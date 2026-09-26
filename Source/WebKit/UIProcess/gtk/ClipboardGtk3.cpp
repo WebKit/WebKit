@@ -164,9 +164,9 @@ void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& 
     }, new ReadURLAsyncData(WTF::move(completionHandler)));
 }
 
-void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode)
+void Clipboard::readBuffer(CStringView format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode)
 {
-    gtk_clipboard_request_contents(m_clipboard, gdk_atom_intern(format, TRUE), [](GtkClipboard*, GtkSelectionData* selection, gpointer userData) {
+    gtk_clipboard_request_contents(m_clipboard, gdk_atom_intern(format.utf8(), TRUE), [](GtkClipboard*, GtkSelectionData* selection, gpointer userData) {
         std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
         int contentsLength;
         const auto* contents = gtk_selection_data_get_data_with_length(selection, &contentsLength);

@@ -29,19 +29,17 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/StringPrintStream.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 UTF8CString reduceWhitespace(const UTF8CString& input)
 {
     StringPrintStream out;
     
-    const char* data = input.legacyCStringPointer();
+    auto data = byteCast<char>(input.span());
     
-    for (unsigned i = 0; i < input.length();) {
+    for (size_t i = 0; i < data.size();) {
         if (isUnicodeCompatibleASCIIWhitespace(data[i])) {
-            while (i < input.length() && isUnicodeCompatibleASCIIWhitespace(data[i]))
+            while (i < data.size() && isUnicodeCompatibleASCIIWhitespace(data[i]))
                 ++i;
             out.print(CharacterDump(' '));
             continue;
@@ -54,5 +52,3 @@ UTF8CString reduceWhitespace(const UTF8CString& input)
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

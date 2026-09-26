@@ -137,7 +137,7 @@ JSC_DEFINE_HOST_FUNCTION(makeThisTypeErrorForBuiltins, (JSGlobalObject* globalOb
     scope.assertNoException();
     auto functionName = callFrame->uncheckedArgument(1).getString(globalObject);
     scope.assertNoException();
-    return JSValue::encode(createTypeError(globalObject, makeThisTypeErrorMessage(interfaceName.utf8().legacyCStringPointer(), functionName.utf8().legacyCStringPointer())));
+    return JSValue::encode(createTypeError(globalObject, makeThisTypeErrorMessage(interfaceName, functionName)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -153,7 +153,7 @@ JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* global
     auto attributeName = callFrame->uncheckedArgument(1).getString(globalObject);
     scope.assertNoException();
 
-    auto error = uncheckedDowncast<ErrorInstance>(createTypeError(globalObject, JSC::makeDOMAttributeGetterTypeErrorMessage(interfaceName.utf8().legacyCStringPointer(), attributeName)));
+    auto error = uncheckedDowncast<ErrorInstance>(createTypeError(globalObject, JSC::makeDOMAttributeGetterTypeErrorMessage(interfaceName, attributeName)));
     error->setNativeGetterTypeError();
     return JSValue::encode(error);
 }

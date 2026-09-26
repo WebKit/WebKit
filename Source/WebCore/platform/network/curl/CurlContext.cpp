@@ -347,7 +347,7 @@ void CurlHandle::enableSSL()
     curl_easy_setopt(m_handle, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 #else
     if (auto* path = std::get_if<String>(&sslHandle.getCACertInfo()))
-        setCACertPath(path->utf8().legacyCStringPointer());
+        setCACertPath(path->utf8());
     else if (auto data = std::get_if<CertificateInfo::Certificate>(&sslHandle.getCACertInfo()))
         setCACertBlob(const_cast<uint8_t*>(data->span().data()), data->size());
 #endif
@@ -421,7 +421,7 @@ void CurlHandle::setURL(const URL& url, LocalhostAlias localhostAlias)
             auto alias = makeString(host, ':', static_cast<unsigned>(*port), ":127.0.0.1"_s);
 
             m_localhostAlias.clear();
-            m_localhostAlias.append(alias);
+            m_localhostAlias.append(alias.utf8());
 
             curl_easy_setopt(m_handle, CURLOPT_RESOLVE, m_localhostAlias.head());
         }
@@ -462,7 +462,7 @@ void CurlHandle::appendRequestHeader(const String& header)
     if (startsWithLettersIgnoringASCIICase(header, "proxy-"_s)) {
         bool needToEnable = m_proxyRequestHeaders.isEmpty();
 
-        m_proxyRequestHeaders.append(header);
+        m_proxyRequestHeaders.append(header.utf8());
 
         if (needToEnable)
             enableProxyRequestHeaders();
@@ -471,7 +471,7 @@ void CurlHandle::appendRequestHeader(const String& header)
 
     bool needToEnable = m_requestHeaders.isEmpty();
 
-    m_requestHeaders.append(header);
+    m_requestHeaders.append(header.utf8());
 
     if (needToEnable)
         enableRequestHeaders();
@@ -578,10 +578,10 @@ void CurlHandle::setHttpAuthUserPass(const String& user, const String& password,
     curl_easy_setopt(m_handle, CURLOPT_HTTPAUTH, authType);
 }
 
-void CurlHandle::setCACertPath(const char* path)
+void CurlHandle::setCACertPath(CStringView path)
 {
-    if (path)
-        curl_easy_setopt(m_handle, CURLOPT_CAINFO, path);
+    if (!path.isNull())
+        curl_easy_setopt(m_handle, CURLOPT_CAINFO, path.utf8());
 }
 
 void CurlHandle::setCACertBlob(void* data, size_t length)

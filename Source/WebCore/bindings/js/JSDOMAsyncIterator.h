@@ -351,7 +351,7 @@ JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMAsyncIteratorBase<JSWrapper, I
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto castedThis = dynamicDowncast<JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>>(callFrame->thisValue());
     if (!castedThis)
-        return throwThisTypeError(*globalObject, scope, JSWrapper::info()->className, "onPromiseSettled");
+        return throwThisTypeError(*globalObject, scope, JSWrapper::info()->className, "onPromiseSettled"_s);
 
     return JSC::JSValue::encode(castedThis->template settle<typename DOMWrapped::Iterator>(*globalObject, *callFrame));
 }
@@ -386,7 +386,7 @@ JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMAsyncIteratorBase<JSWrapper, I
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto castedThis = dynamicDowncast<JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>>(callFrame->thisValue());
     if (!castedThis)
-        return throwThisTypeError(*globalObject, scope, JSWrapper::info()->className, "onPromiseFulfilled");
+        return throwThisTypeError(*globalObject, scope, JSWrapper::info()->className, "onPromiseFulfilled"_s);
 
     return castedThis->fulfill(globalObject, callFrame->argument(0));
 }
@@ -418,7 +418,7 @@ JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMAsyncIteratorBase<JSWrapper, I
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto castedThis = dynamicDowncast<JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>>(callFrame->thisValue());
     if (!castedThis)
-        return throwThisTypeError(*globalObject, scope, JSWrapper::info()->className, "onPromiseRejected");
+        return throwThisTypeError(*globalObject, scope, JSWrapper::info()->className, "onPromiseRejected"_s);
 
     return castedThis->reject(globalObject, callFrame->argument(0));
 }
@@ -547,7 +547,7 @@ JSC::EncodedJSValue JSDOMAsyncIteratorPrototype<JSWrapper, IteratorTraits>::retu
         RETURN_IF_EXCEPTION(scope, { });
 
         auto deferred = DeferredPromise::create(*uncheckedDowncast<JSDOMGlobalObject>(globalObject), *promise);
-        rejectPromiseWithThisTypeError(deferred, JSWrapper::info()->className, "return");
+        rejectPromiseWithThisTypeError(deferred, JSWrapper::info()->className, "return"_s);
         return JSC::JSValue::encode(promise);
     }
 

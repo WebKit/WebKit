@@ -58,7 +58,7 @@ static void initializeRemoteInspectorServer(StringView address)
 
     auto backendCommands = WebCore::webKitBundlePath({ "WebKit.Resources"_s, "WebInspectorUI"_s, "Protocol"_s, "InspectorBackendCommands.js"_s });
     Inspector::RemoteInspector::singleton().setBackendCommandsPath(backendCommands);
-    Inspector::RemoteInspectorServer::singleton().start(host.utf8().legacyCStringPointer(), port.value());
+    Inspector::RemoteInspectorServer::singleton().start(host.utf8(), port.value());
 }
 #endif
 

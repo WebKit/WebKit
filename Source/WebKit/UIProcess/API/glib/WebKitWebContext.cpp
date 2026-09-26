@@ -319,7 +319,7 @@ void WebKitAutomationClient::requestAutomationSession(const String& sessionIdent
 {
     if (m_webContext->priv->automationSession)
         g_critical("WebKitWebContext already has an active automation session.");
-    m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().legacyCStringPointer(), capabilities));
+    m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier, capabilities));
     g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
     m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
 }

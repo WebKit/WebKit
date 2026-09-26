@@ -1159,7 +1159,7 @@ private:
                 target = handleInternalFieldClass<JSAsyncGenerator>(node, writes);
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Bad structure");
+                DFG_CRASH(m_graph, node, "Bad structure"_s);
             }
             break;
         }
@@ -1993,7 +1993,7 @@ escapeChildren:
         }
 
         default:
-            DFG_CRASH(m_graph, allocation.identifier(), "Bad allocation kind");
+            DFG_CRASH(m_graph, allocation.identifier(), "Bad allocation kind"_s);
         }
     }
 
@@ -2618,7 +2618,7 @@ escapeChildren:
                     break;
                 }
                 default:
-                    DFG_CRASH(m_graph, node, "Bad location kind");
+                    DFG_CRASH(m_graph, node, "Bad location kind"_s);
                 }
             }
 
@@ -2673,7 +2673,7 @@ escapeChildren:
                 }
 
                 default:
-                    DFG_CRASH(m_graph, node, "Bad location kind");
+                    DFG_CRASH(m_graph, node, "Bad location kind"_s);
                 }
             }
 
@@ -2723,7 +2723,7 @@ escapeChildren:
                 }
 
                 default:
-                    DFG_CRASH(m_graph, node, "Bad location kind");
+                    DFG_CRASH(m_graph, node, "Bad location kind"_s);
                 }
             }
 
@@ -2786,7 +2786,7 @@ escapeChildren:
                 }
 
                 default:
-                    DFG_CRASH(m_graph, node, "Bad location kind");
+                    DFG_CRASH(m_graph, node, "Bad location kind"_s);
                 }
             }
 
@@ -2814,7 +2814,7 @@ escapeChildren:
         }
 
         default:
-            DFG_CRASH(m_graph, node, "Bad materialize op");
+            DFG_CRASH(m_graph, node, "Bad materialize op"_s);
         }
     }
 
@@ -2992,7 +2992,7 @@ escapeChildren:
         }
 
         default:
-            DFG_CRASH(m_graph, base, "Bad location kind");
+            DFG_CRASH(m_graph, base, "Bad location kind"_s);
             break;
         }
 

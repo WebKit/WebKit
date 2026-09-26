@@ -398,7 +398,7 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
         while (it < startOfVars) {
             JSValue v = it->jsValue();
             String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
-            dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii().data(), it++, (long long)JSValue::encode(v), valueAsString(v).legacyCStringPointer());
+            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii(), it++, (long long)JSValue::encode(v), valueAsString(v));
         }
         
         dataLogF("--------------------------------------------------------------- Variables ---\n");
@@ -410,14 +410,14 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
         while (it < endOfCalleeSaves) {
             JSValue v = it->jsValue();
             String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
-            dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii().data(), it++, (long long)JSValue::encode(v), valueAsString(v).legacyCStringPointer());
+            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii(), it++, (long long)JSValue::encode(v), valueAsString(v));
         }
         
         dataLogF("------------------------------------------------------------ Callee Saves ---\n");
         
         while (it != callFrameTop) {
             JSValue v = it->jsValue();
-            dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, "CalleeSaveReg", it++, (long long)JSValue::encode(v), valueAsString(v).legacyCStringPointer());
+            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, "CalleeSaveReg"_s, it++, (long long)JSValue::encode(v), valueAsString(v));
         }
     }
 
@@ -432,7 +432,7 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogLn(codeBlock);
     long long calleeBits = (long long)callFrame->callee().rawPtr();
     auto calleeString = valueAsString(it->jsValue());
-    dataLogF("% 4d  Callee           : %10p  0x%llx %s\n", registerNumber++, it++, calleeBits, calleeString.legacyCStringPointer());
+    SAFE_DATALOGF("% 4d  Callee           : %10p  0x%llx %s\n", registerNumber++, it++, calleeBits, calleeString);
     
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
         if (visitor->callFrame() == callFrame) {
@@ -450,7 +450,7 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     while (it <= bottom) {
         JSValue v = it->jsValue();
         String name = codeBlock ? codeBlock->nameForRegister(VirtualRegister(registerNumber)) : emptyString();
-        dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii().data(), it++, (long long)JSValue::encode(v), valueAsString(v).legacyCStringPointer());
+        SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii(), it++, (long long)JSValue::encode(v), valueAsString(v));
     }
     
     dataLogF("--------------------------------------------------------------------- End ---\n");

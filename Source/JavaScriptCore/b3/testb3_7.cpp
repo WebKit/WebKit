@@ -166,9 +166,9 @@ void testX86LeaAddAdd()
     if (proc.optLevel() > 1) {
         checkDisassembly(
             *code,
-            [&] (const char* disassembly) -> bool {
-                return strstr(disassembly, "lea 0x64(%rdi,%rsi,1), %rax")
-                    || strstr(disassembly, "lea 0x64(%rsi,%rdi,1), %rax");
+            [&] (CStringView disassembly) -> bool {
+                return contains(disassembly.span(), "lea 0x64(%rdi,%rsi,1), %rax"_s)
+                    || contains(disassembly.span(), "lea 0x64(%rsi,%rdi,1), %rax"_s);
             },
             "Expected to find something like lea 0x64(%rdi,%rsi,1), %rax but didn't!"_s);
     }
@@ -217,9 +217,9 @@ void testX86LeaAddShlLeftScale1()
     if (proc.optLevel() > 1) {
         checkDisassembly(
             *code,
-            [&] (const char* disassembly) -> bool {
-                return strstr(disassembly, "lea (%rdi,%rsi,1), %rax")
-                    || strstr(disassembly, "lea (%rsi,%rdi,1), %rax");
+            [&] (CStringView disassembly) -> bool {
+                return contains(disassembly.span(), "lea (%rdi,%rsi,1), %rax"_s)
+                    || contains(disassembly.span(), "lea (%rsi,%rdi,1), %rax"_s);
             },
             "Expected to find something like lea (%rdi,%rsi,1), %rax but didn't!"_s);
     }

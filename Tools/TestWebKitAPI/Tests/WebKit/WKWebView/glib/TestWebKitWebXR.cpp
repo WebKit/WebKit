@@ -199,7 +199,7 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
         data.resetResult();
         test->loadHtml("", "https://foo.com/bar");
         test->waitUntilLoadFinished();
-        test->runJavaScriptAndWaitUntilFinished(script.utf8().legacyCStringPointer(), nullptr);
+        test->runJavaScriptAndWaitUntilFinished(script.utf8(), nullptr);
         test->waitUntilTitleChanged();
         data.result.title = webkit_web_view_get_title(test->webView());
     };
@@ -283,7 +283,7 @@ static void testWebKitXRHitTest(WebXRTest* test, gconstpointer)
             "start()"_s);
         test->loadHtml("", "https://foo.com/bar");
         test->waitUntilLoadFinished();
-        test->runJavaScriptAndWaitUntilFinished(script.utf8().legacyCStringPointer(), nullptr);
+        test->runJavaScriptAndWaitUntilFinished(script.utf8(), nullptr);
         test->waitUntilTitleChanged();
         return CString { webkit_web_view_get_title(test->webView()) };
     };

@@ -77,7 +77,7 @@ TEST(Viewport, RespectInitialScaleExceptOnWikipediaDomain)
         constexpr auto viewportWidth = 1000;
         auto expectedViewportScale = screenWidth / viewportWidth;
 
-        auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:requestURL.utf8().legacyCStringPointer()]]];
+        auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:requestURL.createNSString().get()]];
         RetainPtr response = makeViewportMetaTag(viewportWidth, expectedViewportScale);
         [webView loadSimulatedRequest:request responseHTMLString:response.get()];
         [navigationDelegate waitForDidFinishNavigation];

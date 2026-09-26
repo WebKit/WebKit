@@ -44,7 +44,7 @@ static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String
 {
     auto fsRep = fileSystemRepresentation(path);
 
-    if (!fsRep.legacyCStringPointer() || fsRep.legacyCStringPointer()[0] == '\0')
+    if (fsRep.isEmpty())
         return std::nullopt;
 
     auto statFunc = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? stat : lstat;

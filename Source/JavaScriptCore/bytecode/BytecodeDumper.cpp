@@ -51,7 +51,7 @@ void BytecodeDumperBase<InstructionStreamType>::printLocationAndOp(typename Inst
 template<typename InstructionStreamType>
 void BytecodeDumperBase<InstructionStreamType>::dumpValue(VirtualRegister reg)
 {
-    m_out.printf("%s", registerName(reg).legacyCStringPointer());
+    m_out.print(registerName(reg));
 }
 
 template<typename InstructionStreamType>
@@ -152,7 +152,7 @@ void CodeBlockBytecodeDumper<Block>::dumpConstants()
                 sourceCodeRepresentationDescription = ": in source as link-time-constant";
                 break;
             }
-            this->m_out.printf("   k%u = %s%s\n", static_cast<unsigned>(i), toUTF8CString(constant.get()).legacyCStringPointer(), sourceCodeRepresentationDescription);
+            this->m_out.print("   k", static_cast<unsigned>(i), " = ", constant.get(), sourceCodeRepresentationDescription, "\n");
             ++i;
         }
     }
@@ -212,8 +212,10 @@ void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
         do {
             this->m_out.printf("  %1d = {\n", i);
             auto& unlinkedTable = this->block()->unlinkedStringSwitchJumpTable(i);
-            for (const auto& entry : unlinkedTable.m_offsetTable)
-                this->m_out.printf("\t\t\"%s\" => %04d\n", entry.key->utf8().legacyCStringPointer(), entry.value.m_branchOffset);
+            for (const auto& entry : unlinkedTable.m_offsetTable) {
+                this->m_out.print("\t\t\"", entry.key->utf8(), "\" => ");
+                this->m_out.printf("%04d\n", entry.value.m_branchOffset);
+            }
             this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");
             ++i;

@@ -195,7 +195,7 @@ public:
                             dataLogLn();
                         }
 
-                        DFG_CRASH(m_graph, node, toUTF8CString("Live bytecode local not available: operand = ", operand, ", availabilityMap = ", availabilityMap, ", origin = ", exitOrigin).legacyCStringPointer());
+                        DFG_CRASH(m_graph, node, toUTF8CString("Live bytecode local not available: operand = ", operand, ", availabilityMap = ", availabilityMap, ", origin = ", exitOrigin));
                     }
                 }
             }

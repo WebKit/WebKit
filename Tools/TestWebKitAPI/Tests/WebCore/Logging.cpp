@@ -80,7 +80,7 @@ public:
 
         m_stderr = fdopen(m_descriptors[0], "r");
 
-        WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "all");
+        WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "all"_s);
         WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Error);
         WTFSetLogChannelLevel(&TestChannel2, WTFLogLevel::Error);
         WTFSetLogChannelLevel(&TestChannel3, WTFLogLevel::Error);
@@ -130,35 +130,35 @@ TEST_F(LoggingTest, Initialization)
     EXPECT_EQ(TestChannel4.level, WTFLogLevel::Error);
 
     TestChannel1.state = WTFLogChannelState::Off;
-    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1");
+    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1"_s);
     EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
     EXPECT_EQ(TestChannel1.state, WTFLogChannelState::On);
 
     TestChannel1.state = WTFLogChannelState::Off;
-    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=foo");
+    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=foo"_s);
     EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
     if (testLogOutput)
         EXPECT_TRUE(output().containsIgnoringASCIICase("Unknown logging level: foo"_s));
 
-    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=warning");
+    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=warning"_s);
     EXPECT_EQ(TestChannel1.level, WTFLogLevel::Warning);
     EXPECT_EQ(TestChannel2.level, WTFLogLevel::Error);
     EXPECT_EQ(TestChannel3.level, WTFLogLevel::Error);
     EXPECT_EQ(TestChannel4.level, WTFLogLevel::Error);
 
-    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel4=   debug, Channel3 = info,Channel2=error");
+    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel4=   debug, Channel3 = info,Channel2=error"_s);
     EXPECT_EQ(TestChannel1.level, WTFLogLevel::Warning);
     EXPECT_EQ(TestChannel2.level, WTFLogLevel::Error);
     EXPECT_EQ(TestChannel3.level, WTFLogLevel::Info);
     EXPECT_EQ(TestChannel4.level, WTFLogLevel::Debug);
 
-    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "-all");
+    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "-all"_s);
     EXPECT_EQ(TestChannel1.state, WTFLogChannelState::Off);
     EXPECT_EQ(TestChannel2.state, WTFLogChannelState::Off);
     EXPECT_EQ(TestChannel3.state, WTFLogChannelState::Off);
     EXPECT_EQ(TestChannel4.state, WTFLogChannelState::Off);
 
-    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "all");
+    WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "all"_s);
     EXPECT_EQ(TestChannel1.state, WTFLogChannelState::On);
     EXPECT_EQ(TestChannel2.state, WTFLogChannelState::On);
     EXPECT_EQ(TestChannel3.state, WTFLogChannelState::On);

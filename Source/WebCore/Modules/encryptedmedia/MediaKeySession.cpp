@@ -580,7 +580,7 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
 
     // 1. Let session be the associated MediaKeySession object.
     // 2. If session is closed, return a resolved promise.
-    ALWAYS_LOG(identifier, "EME - closing session ", m_sessionId.utf8().legacyCStringPointer());
+    ALWAYS_LOG(identifier, "EME - closing session ", m_sessionId);
 
     if (m_closed) {
         ALWAYS_LOG(identifier, "Resolved: already closed");

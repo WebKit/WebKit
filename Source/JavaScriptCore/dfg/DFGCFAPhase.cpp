@@ -231,7 +231,7 @@ private:
             
             if (ASSERT_ENABLED
                 && m_state.didClobberOrFolded() != writesOverlap(m_graph, node, JSCell_structureID))
-                DFG_CRASH(m_graph, node, toUTF8CString("AI-clobberize disagreement; AI says ", m_state.clobberState(), " while clobberize says ", writeSet(m_graph, node)).legacyCStringPointer());
+                DFG_CRASH(m_graph, node, toUTF8CString("AI-clobberize disagreement; AI says ", m_state.clobberState(), " while clobberize says ", writeSet(m_graph, node)));
         }
         if (m_verbose) {
             WTF::dataFile().atomically([&](auto&) {

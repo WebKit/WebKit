@@ -1097,7 +1097,7 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_getAttributeBody
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_getAttribute, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_getAttributeBody>(*lexicalGlobalObject, *callFrame, "getAttribute");
+    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_getAttributeBody>(*lexicalGlobalObject, *callFrame, "getAttribute"_s);
 }
 
 JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getAttributeWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject* lexicalGlobalObject, JSTestDOMJIT* castedThis, DOMJIT::IDLJSArgumentType<IDLDOMString> encodedName))
@@ -1138,7 +1138,7 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_itemBody(JSC::JS
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_item, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_itemBody>(*lexicalGlobalObject, *callFrame, "item");
+    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_itemBody>(*lexicalGlobalObject, *callFrame, "item"_s);
 }
 
 JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_itemWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject* lexicalGlobalObject, JSTestDOMJIT* castedThis, DOMJIT::IDLJSArgumentType<IDLUnsignedShort> encodedX, DOMJIT::IDLJSArgumentType<IDLUnsignedShort> encodedY))
@@ -1171,7 +1171,7 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_hasAttributeBody
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_hasAttribute, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_hasAttributeBody>(*lexicalGlobalObject, *callFrame, "hasAttribute");
+    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_hasAttributeBody>(*lexicalGlobalObject, *callFrame, "hasAttribute"_s);
 }
 
 JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_hasAttributeWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject* lexicalGlobalObject, JSTestDOMJIT* castedThis))
@@ -1206,7 +1206,7 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_getElementByIdBo
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_getElementById, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_getElementByIdBody>(*lexicalGlobalObject, *callFrame, "getElementById");
+    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_getElementByIdBody>(*lexicalGlobalObject, *callFrame, "getElementById"_s);
 }
 
 JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementByIdWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject* lexicalGlobalObject, JSTestDOMJIT* castedThis, DOMJIT::IDLJSArgumentType<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>> encodedElementId))
@@ -1243,7 +1243,7 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_getElementsByNam
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDOMJITPrototypeFunction_getElementsByName, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_getElementsByNameBody>(*lexicalGlobalObject, *callFrame, "getElementsByName");
+    return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunction_getElementsByNameBody>(*lexicalGlobalObject, *callFrame, "getElementsByName"_s);
 }
 
 JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementsByNameWithoutTypeCheck, JSC::EncodedJSValue, (JSC::JSGlobalObject* lexicalGlobalObject, JSTestDOMJIT* castedThis, DOMJIT::IDLJSArgumentType<IDLAtomStringAdaptor<IDLDOMString>> encodedElementName))

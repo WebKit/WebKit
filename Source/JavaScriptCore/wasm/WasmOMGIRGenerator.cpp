@@ -7109,7 +7109,7 @@ std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Comp
 
     procedure.resetReachability();
     if (ASSERT_ENABLED)
-        validate(procedure, "After parsing:\n");
+        validate(procedure, "After parsing:\n"_s);
 
     estimateStaticExecutionCounts(procedure);
 

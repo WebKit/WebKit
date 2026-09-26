@@ -120,7 +120,7 @@ Ref<JSON::Value> Database::toJSON() const
 
 bool Database::save(const UTF8CString& filename) const
 {
-    auto out = FilePrintStream::open(filename.legacyCStringPointer(), "w");
+    auto out = FilePrintStream::open(filename, "w"_s);
     if (!out)
         return false;
     out->print(toJSON().get());

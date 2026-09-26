@@ -208,7 +208,7 @@ static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFun
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringifierReadOnlyAttributePrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifierReadOnlyAttribute>::call<jsTestStringifierReadOnlyAttributePrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestStringifierReadOnlyAttribute>::call<jsTestStringifierReadOnlyAttributePrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestStringifierReadOnlyAttribute::subspaceForImpl(JSC::VM& vm)

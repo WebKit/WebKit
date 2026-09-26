@@ -63,7 +63,7 @@ SandboxExtensionImpl::~SandboxExtensionImpl()
     return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
 #else
     if (m_handle == -1) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s', errno = %d", m_token.legacyCStringPointer(), errno);
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s', errno = %d", m_token, errno);
         return false;
     }
     return true;

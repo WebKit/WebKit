@@ -201,7 +201,7 @@ static inline JSC::EncodedJSValue jsTestScheduledActionPrototypeFunction_methodB
 
 JSC_DEFINE_HOST_FUNCTION(jsTestScheduledActionPrototypeFunction_method, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestScheduledAction>::call<jsTestScheduledActionPrototypeFunction_methodBody>(*lexicalGlobalObject, *callFrame, "method");
+    return IDLOperation<JSTestScheduledAction>::call<jsTestScheduledActionPrototypeFunction_methodBody>(*lexicalGlobalObject, *callFrame, "method"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestScheduledAction::subspaceForImpl(JSC::VM& vm)

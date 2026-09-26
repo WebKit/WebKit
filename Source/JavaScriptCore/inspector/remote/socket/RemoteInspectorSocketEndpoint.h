@@ -70,8 +70,8 @@ public:
     RemoteInspectorSocketEndpoint();
     JS_EXPORT_PRIVATE ~RemoteInspectorSocketEndpoint();
 
-    std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort, Client&);
-    JS_EXPORT_PRIVATE std::optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
+    std::optional<ConnectionID> connectInet(CStringView serverAddr, uint16_t serverPort, Client&);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> listenInet(CStringView address, uint16_t port, Listener&);
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
@@ -130,9 +130,9 @@ protected:
         static constexpr Seconds initialRetryInterval { 200_ms };
         static constexpr Seconds maxRetryInterval { 5_s };
 
-        ListenerConnection(ConnectionID id, Listener& listener, const char* address, uint16_t port)
+        ListenerConnection(ConnectionID id, Listener& listener, CStringView address, uint16_t port)
             : BaseConnection(id)
-            , address { String::fromLatin1(address) }
+            , address { address.span() }
             , port { port }
             , listener { listener }
         {
@@ -146,7 +146,7 @@ protected:
             if (nextRetryTime && *nextRetryTime > MonotonicTime::now())
                 return false;
 
-            if (auto newSocket = Socket::listen(address.utf8().legacyCStringPointer(), port)) {
+            if (auto newSocket = Socket::listen(address, port)) {
                 if (setSocket(*newSocket)) {
                     retryInterval = initialRetryInterval;
                     return true;
@@ -165,7 +165,7 @@ protected:
             return Socket::isListening(socket);
         }
 
-        String address;
+        UTF8CString address;
         uint16_t port;
         Listener& listener;
         std::optional<MonotonicTime> nextRetryTime;

@@ -510,7 +510,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         }
         
         if (hasPresentedViewController) {
-            TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetStateToConsistentValues - Failed to remove presented view controller\n");
+            TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetStateToConsistentValues - Failed to remove presented view controller\n"_s);
             return false;
         }
     }

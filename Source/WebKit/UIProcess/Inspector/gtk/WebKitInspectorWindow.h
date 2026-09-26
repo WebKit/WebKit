@@ -26,6 +26,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <wtf/text/CStringView.h>
 
 G_BEGIN_DECLS
 
@@ -42,6 +43,7 @@ typedef struct _WebKitInspectorWindowClass WebKitInspectorWindowClass;
 GType webkit_inspector_window_get_type(void);
 
 GtkWidget* webkitInspectorWindowNew();
-void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow*, const char* subtitle);
 
 G_END_DECLS
+
+void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow*, CStringView subtitle);

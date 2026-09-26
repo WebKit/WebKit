@@ -44,12 +44,12 @@ void init()
 {
 }
 
-std::optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort)
+std::optional<PlatformSocketType> connect(CStringView serverAddress, uint16_t serverPort)
 {
     struct sockaddr_in address = { };
 
     address.sin_family = AF_INET;
-    inet_aton(serverAddress, &address.sin_addr);
+    inet_aton(serverAddress.utf8(), &address.sin_addr);
     address.sin_port = htons(serverPort);
 
     int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -68,7 +68,7 @@ std::optional<PlatformSocketType> connect(const char* serverAddress, uint16_t se
     return fd;
 }
 
-std::optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
+std::optional<PlatformSocketType> listen(CStringView addressStr, uint16_t port)
 {
     struct sockaddr_in address = { };
 
@@ -103,8 +103,8 @@ std::optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
 
     // FIXME: Support AF_INET6 connections.
     address.sin_family = AF_INET;
-    if (addressStr && *addressStr)
-        inet_aton(addressStr, &address.sin_addr);
+    if (!addressStr.isEmpty())
+        inet_aton(addressStr.utf8(), &address.sin_addr);
     else
         address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(port);

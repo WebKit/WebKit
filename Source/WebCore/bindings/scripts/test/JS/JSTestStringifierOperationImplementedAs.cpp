@@ -194,7 +194,7 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototy
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringifierOperationImplementedAsPrototypeFunction_identifier, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifierOperationImplementedAs>::call<jsTestStringifierOperationImplementedAsPrototypeFunction_identifierBody>(*lexicalGlobalObject, *callFrame, "identifier");
+    return IDLOperation<JSTestStringifierOperationImplementedAs>::call<jsTestStringifierOperationImplementedAsPrototypeFunction_identifierBody>(*lexicalGlobalObject, *callFrame, "identifier"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierOperationImplementedAs>::ClassParameter castedThis)
@@ -209,7 +209,7 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototy
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringifierOperationImplementedAsPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifierOperationImplementedAs>::call<jsTestStringifierOperationImplementedAsPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestStringifierOperationImplementedAs>::call<jsTestStringifierOperationImplementedAsPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestStringifierOperationImplementedAs::subspaceForImpl(JSC::VM& vm)

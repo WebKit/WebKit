@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 Lock crashLock;
 
-bool shouldRun(const TestConfig* config, const char* testName)
+bool shouldRun(const TestConfig* config, CStringView testName)
 {
     if (config->mode == TestConfig::Mode::ListTests) {
         dataLogLn(testName);
@@ -45,14 +45,14 @@ bool shouldRun(const TestConfig* config, const char* testName)
         for (auto& failingTest : {
             "testNegFloatWithUselessDoubleConversion",
         }) {
-            if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound) {
+            if (WTF::findIgnoringASCIICaseWithoutLength(testName.utf8(), failingTest) != WTF::notFound) {
                 dataLogLn("*** Warning: Skipping known-bad test: ", testName);
                 return false;
             }
         }
     }
 
-    return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
+    return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName.utf8(), filter) != WTF::notFound;
 }
 
 template<typename T>

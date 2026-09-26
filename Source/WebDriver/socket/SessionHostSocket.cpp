@@ -175,7 +175,7 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     } else
         m_isRemoteBrowser = true;
 
-    m_clientID = connectInet(targetIp.utf8().legacyCStringPointer(), targetPort);
+    m_clientID = connectInet(targetIp.utf8(), targetPort);
     if (!m_clientID)
         completionHandler(makeString(targetIp.utf8().span(), ':', targetPort, " is not reachable."_s));
     else

@@ -40,7 +40,7 @@ RemoteInspectorConnectionClient::~RemoteInspectorConnectionClient()
     endpoint.invalidateClient(*this);
 }
 
-std::optional<ConnectionID> RemoteInspectorConnectionClient::connectInet(const char* serverAddr, uint16_t serverPort)
+std::optional<ConnectionID> RemoteInspectorConnectionClient::connectInet(CStringView serverAddr, uint16_t serverPort)
 {
     auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
     return endpoint.connectInet(serverAddr, serverPort, *this);

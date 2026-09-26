@@ -36,31 +36,31 @@ namespace WTF {
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, Seconds value)
 {
-    out << toUTF8CString(value).legacyCStringPointer();
+    out << toUTF8CString(value).toStdString();
     return out;
 }
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, WallTime value)
 {
-    out << toUTF8CString(value).legacyCStringPointer();
+    out << toUTF8CString(value).toStdString();
     return out;
 }
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, MonotonicTime value)
 {
-    out << toUTF8CString(value).legacyCStringPointer();
+    out << toUTF8CString(value).toStdString();
     return out;
 }
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, ApproximateTime value)
 {
-    out << toUTF8CString(value).legacyCStringPointer();
+    out << toUTF8CString(value).toStdString();
     return out;
 }
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, TimeWithDynamicClockType value)
 {
-    out << toUTF8CString(value).legacyCStringPointer();
+    out << toUTF8CString(value).toStdString();
     return out;
 }
 

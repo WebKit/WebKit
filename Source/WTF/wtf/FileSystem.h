@@ -41,6 +41,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)
@@ -140,7 +141,8 @@ WTF_EXPORT_PRIVATE void traverseDirectory(const String& path, NOESCAPE const Fun
 
 WTF_EXPORT_PRIVATE UTF8CString fileSystemRepresentation(const String&);
 #if !PLATFORM(WIN)
-WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(const char*);
+WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(CStringView);
+inline String stringFromFileSystemRepresentation(const char* path) { return stringFromFileSystemRepresentation(CStringView::unsafeFromUTF8(path)); }
 #endif
 
 // stat() needs a null-terminated path, so these take the span including the terminator and check for it.

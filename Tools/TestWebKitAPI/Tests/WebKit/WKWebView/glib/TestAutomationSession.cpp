@@ -23,6 +23,7 @@
 #include <gio/gio.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/SocketConnection.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
 
 class AutomationTest: public Test {
@@ -154,10 +155,10 @@ public:
         g_assert_cmpstr(browserVersion, ==, versionString.get());
     }
 
-    WebKitAutomationSession* requestSession(const char* sessionID)
+    WebKitAutomationSession* requestSession(CStringView sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
-        m_connection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", sessionID, nullptr));
+        m_connection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", sessionID.utf8(), nullptr));
         auto timeoutID = g_timeout_add(1000, [](gpointer userData) -> gboolean {
             g_main_loop_quit(static_cast<GMainLoop*>(userData));
             return G_SOURCE_REMOVE;
@@ -303,7 +304,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     // Network session for automation is nullptr if automation is not enabled.
     g_assert_null(webkit_web_context_get_network_session_for_automation(test->m_webContext.get()));
 #endif
-    auto* session = test->requestSession(sessionID.legacyCStringPointer());
+    auto* session = test->requestSession(sessionID);
     g_assert_null(session);
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
@@ -323,7 +324,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_assert_false(webkit_web_context_is_automation_allowed(otherContext.get()));
 
-    session = test->requestSession(sessionID.legacyCStringPointer());
+    session = test->requestSession(sessionID);
     g_assert_cmpstr(webkit_automation_session_get_id(session), ==, sessionID.legacyCStringPointer());
     g_assert_cmpuint(test->m_target.id, >, 0);
     ASSERT_CMP_CSTRING(test->m_target.name, ==, sessionID);

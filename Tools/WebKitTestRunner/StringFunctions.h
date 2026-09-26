@@ -65,9 +65,14 @@ inline WKRetainPtr<WKStringRef> toWK(const std::string& string)
     return toWK(string.c_str());
 }
 
+inline WKRetainPtr<WKStringRef> toWK(const WTF::UTF8CString& string)
+{
+    return adoptWK(WKStringCreateWithUTF8CString(string.legacyCStringPointer()));
+}
+
 inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
 {
-    return toWK(string.utf8().legacyCStringPointer());
+    return toWK(string.utf8());
 }
 
 inline RefPtr<OpaqueJSString> toJS(WKStringRef string)

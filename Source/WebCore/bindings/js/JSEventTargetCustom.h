@@ -61,7 +61,7 @@ public:
     using Operation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, ClassParameter);
 
     template<Operation operation, CastedThisErrorBehavior = CastedThisErrorBehavior::Throw>
-    static JSC::EncodedJSValue call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
+    static JSC::EncodedJSValue call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, ASCIILiteral operationName)
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -69,7 +69,7 @@ public:
         auto thisValue = callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::strict());
         auto thisObject = jsEventTargetCast(vm, thisValue.isUndefinedOrNull() ? JSC::JSValue(&lexicalGlobalObject) : thisValue);
         if (thisObject.isNull()) [[unlikely]]
-            return throwThisTypeError(lexicalGlobalObject, throwScope, "EventTarget", operationName);
+            return throwThisTypeError(lexicalGlobalObject, throwScope, "EventTarget"_s, operationName);
 
         Ref wrapped = thisObject.wrapped();
         if (RefPtr window = dynamicDowncast<DOMWindow>(wrapped)) {

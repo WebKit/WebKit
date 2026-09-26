@@ -54,7 +54,7 @@ PhaseScope::~PhaseScope()
 {
     m_procedure.setLastPhaseName(m_name);
     if (shouldValidateIRAtEachPhase())
-        validate(m_procedure, m_dumpBefore.legacyCStringPointer());
+        validate(m_procedure, m_dumpBefore);
 
     if (Options::dumpIonGraph()) [[unlikely]]
         m_procedure.appendIonGraphPass(m_name);

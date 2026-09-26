@@ -65,7 +65,7 @@ extern "C" void preTest()
 extern "C" int runTest(int argc, char* argv[])
 {
     CommandLine options(argc, argv);
-    processConfigFile(Options::configFile(), "jsc");
+    processConfigFile(Options::configFile(), "jsc"_s);
 
     return runJSC(
         options, true,

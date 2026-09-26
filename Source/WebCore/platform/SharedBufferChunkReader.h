@@ -35,6 +35,7 @@
 
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,10 +43,10 @@ namespace WebCore {
 class WEBCORE_EXPORT SharedBufferChunkReader {
 public:
     SharedBufferChunkReader(FragmentedSharedBuffer*, const Vector<char>& separator);
-    SharedBufferChunkReader(FragmentedSharedBuffer*, const char* separator);
+    SharedBufferChunkReader(FragmentedSharedBuffer*, CStringView separator);
 
     void setSeparator(const Vector<char>&);
-    void setSeparator(const char*);
+    void setSeparator(CStringView);
 
     // Returns false when the end of the buffer was reached.
     bool nextChunk(Vector<uint8_t>& data, bool includeSeparator = false);

@@ -289,7 +289,7 @@ static inline EncodedJSValue jsTestDefaultToJSONCustomGetterPrototypeFunction_to
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONCustomGetterPrototypeFunction_toJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDefaultToJSONCustomGetter>::call<jsTestDefaultToJSONCustomGetterPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+    return IDLOperation<JSTestDefaultToJSONCustomGetter>::call<jsTestDefaultToJSONCustomGetterPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONCustomGetter::subspaceForImpl(JSC::VM& vm)

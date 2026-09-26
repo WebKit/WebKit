@@ -26,6 +26,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 
 struct _WebKitScriptDialogImplPrivate {
     WebKitScriptDialog* dialog;
@@ -257,10 +258,10 @@ static void webkit_script_dialog_impl_class_init(WebKitScriptDialogImplClass* kl
 #endif
 }
 
-static void webkitScriptDialogImplSetText(WebKitScriptDialogImpl* dialog, const char* text, GtkRequisition* maxSize)
+static void webkitScriptDialogImplSetText(WebKitScriptDialogImpl* dialog, CStringView text, GtkRequisition* maxSize)
 {
     WebKitScriptDialogImplPrivate* priv = dialog->priv;
-    gtk_label_set_text(GTK_LABEL(priv->label), text);
+    gtk_label_set_text(GTK_LABEL(priv->label), text.utf8());
     GtkRequisition naturalRequisition;
     gtk_widget_get_preferred_size(priv->label, nullptr, &naturalRequisition);
     gtk_widget_set_size_request(priv->swindow, std::min(naturalRequisition.width, maxSize->width), std::min(maxSize->height, naturalRequisition.height));
@@ -300,7 +301,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         GtkWidget* button = webkitScriptDialogImplAddButton(dialog, _("_Close"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplCancel), dialog);
-        webkitScriptDialogImplSetText(dialog, scriptDialog->message.legacyCStringPointer(), maxSize);
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message, maxSize);
         break;
     }
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
@@ -324,7 +325,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         button = webkitScriptDialogImplAddButton(dialog, _("_OK"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplConfirm), dialog);
-        webkitScriptDialogImplSetText(dialog, scriptDialog->message.legacyCStringPointer(), maxSize);
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message, maxSize);
         break;
     }
     case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM: {
@@ -335,7 +336,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         button = webkitScriptDialogImplAddButton(dialog, _("Leave Page"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplConfirm), dialog);
-        webkitScriptDialogImplSetText(dialog, scriptDialog->message.legacyCStringPointer(), maxSize);
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message, maxSize);
         break;
     }
     }

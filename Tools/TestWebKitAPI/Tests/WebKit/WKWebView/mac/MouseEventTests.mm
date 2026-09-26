@@ -39,7 +39,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
-#import <wtf/text/MakeString.h>
 
 @interface OverrideMouseLocation : NSObject
 + (NSPoint)overrideMouseLocation;
@@ -165,13 +164,13 @@ TEST(MouseEventTests, ProcessSwapWithDeferredMouseMoveEventCompletion)
             return respond(task, "<body>Hello world</body>");
 
         if ([host isEqualToString:@"webkit.org"]) {
-            return respond(task, makeString("<body style='width: 100%; height: 100%;'>"_s,
-                "<script>"_s,
-                "    document.body.addEventListener('mousemove', () => {"_s,
-                "        location.href = 'pson://www.apple.com/index.html';"_s,
-                "    });"_s,
-                "</script>"_s,
-                "</body>"_s).utf8().legacyCStringPointer());
+            return respond(task, "<body style='width: 100%; height: 100%;'>"
+                "<script>"
+                "    document.body.addEventListener('mousemove', () => {"
+                "        location.href = 'pson://www.apple.com/index.html';"
+                "    });"
+                "</script>"
+                "</body>");
         }
     }];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];

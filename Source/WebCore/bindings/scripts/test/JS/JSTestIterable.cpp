@@ -253,7 +253,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunction_entriesCaller(JSGlo
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries"_s);
 }
 
 static inline EncodedJSValue jsTestIterablePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
@@ -267,7 +267,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunction_keysCaller(JSGlobal
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys"_s);
 }
 
 static inline EncodedJSValue jsTestIterablePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
@@ -281,7 +281,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunction_valuesCaller(JSGlob
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values"_s);
 }
 
 static inline EncodedJSValue jsTestIterablePrototypeFunction_forEachCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
@@ -291,7 +291,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunction_forEachCaller(JSGlo
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_forEach, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_forEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_forEachCaller>(*lexicalGlobalObject, *callFrame, "forEach"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestIterable::subspaceForImpl(JSC::VM& vm)

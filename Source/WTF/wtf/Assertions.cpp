@@ -40,6 +40,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFConfig.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringCommon.h>
@@ -145,14 +146,14 @@ static os_log_t webkitSubsystemForGenericOSLog()
 }
 #endif
 
-static void logToStderr([[maybe_unused]] WTFLogChannel* channel, const char* buffer)
+static void logToStderr([[maybe_unused]] WTFLogChannel* channel, CStringView buffer)
 {
 #if PLATFORM(COCOA)
-    os_log(channel ? channel->osLogChannel : webkitSubsystemForGenericOSLog(), "%s", buffer);
+    os_log(channel ? channel->osLogChannel : webkitSubsystemForGenericOSLog(), "%s", buffer.utf8());
 #elif OS(ANDROID)
-    __android_log_write(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, buffer);
+    __android_log_write(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, buffer.utf8());
 #endif
-    fputs(buffer, stderr);
+    fputs(buffer.utf8(), stderr);
 }
 
 WTF_ATTRIBUTE_NSSTRING(2, 0)
@@ -173,7 +174,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
         CFStringGetCString(str.get(), buffer.mutableSpan().data(), length, kCFStringEncodingUTF8);
 
-        logToStderr(channel, buffer.span().data());
+        logToStderr(channel, CStringView::unsafeFromUTF8(buffer.span().data()));
         return;
     }
 
@@ -558,7 +559,7 @@ ALLOW_NONLITERAL_FORMAT_END
 
     loggingAccumulator().accumulate(loggingString);
 
-    logToStderr(channel, loggingString.utf8().legacyCStringPointer());
+    logToStderr(channel, loggingString.utf8());
 }
 
 void WTFLog(WTFLogChannel* channel, const char* format, ...)
@@ -610,24 +611,26 @@ void WTFLogAlwaysAndCrash(const char* format, ...)
     CRASH();
 }
 
-WTFLogChannel* WTFLogChannelByName(WTFLogChannel* channels[], size_t count, const char* name)
-{
-    for (size_t i = 0; i < count; ++i) {
-        WTFLogChannel* channel = channels[i];
-        if (equalIgnoringASCIICase(name, channel->name))
-            return channel;
-    }
-
-    return nullptr;
-}
-
 static void NODELETE setStateOfAllChannels(WTFLogChannel* channels[], size_t channelCount, WTFLogChannelState state)
 {
     for (size_t i = 0; i < channelCount; ++i)
         channels[i]->state = state;
 }
 
-void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t count, const char* logLevel)
+} // extern "C"
+
+WTFLogChannel* WTFLogChannelByName(WTFLogChannel* channels[], size_t count, StringView name)
+{
+    for (size_t i = 0; i < count; ++i) {
+        WTFLogChannel* channel = channels[i];
+        if (equalIgnoringASCIICase(name, StringView::fromLatin1(channel->name)))
+            return channel;
+    }
+
+    return nullptr;
+}
+
+void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t count, StringView logLevel)
 {
 #if USE(OS_LOG) && !RELEASE_LOG_DISABLED
     for (size_t i = 0; i < count; ++i) {
@@ -636,7 +639,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
     }
 #endif
 
-    for (auto logLevelComponent : StringView::fromLatin1(logLevel).split(',')) {
+    for (auto logLevelComponent : logLevel.split(',')) {
         auto componentInfo = logLevelComponent.split('=');
         auto it = componentInfo.begin();
         if (it == componentInfo.end())
@@ -670,15 +673,13 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
                 SAFE_WTFLOGALWAYS("Unknown logging level: %s", level.utf8());
         }
 
-        if (WTFLogChannel* channel = WTFLogChannelByName(channels, count, component.utf8().legacyCStringPointer())) {
+        if (WTFLogChannel* channel = WTFLogChannelByName(channels, count, component)) {
             channel->state = logChannelState;
             channel->level = logChannelLevel;
         } else
             SAFE_WTFLOGALWAYS("Unknown logging channel: %s", component.utf8());
     }
 }
-
-} // extern "C"
 
 #if !ASAN_ENABLED && (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
 

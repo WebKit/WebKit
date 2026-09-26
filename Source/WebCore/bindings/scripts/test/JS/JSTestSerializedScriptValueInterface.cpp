@@ -339,7 +339,7 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_function, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunction_functionBody>(*lexicalGlobalObject, *callFrame, "function");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunction_functionBody>(*lexicalGlobalObject, *callFrame, "function"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturningBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis)
@@ -354,7 +354,7 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturning, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturningBody>(*lexicalGlobalObject, *callFrame, "functionReturning");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturningBody>(*lexicalGlobalObject, *callFrame, "functionReturning"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestSerializedScriptValueInterface::subspaceForImpl(JSC::VM& vm)

@@ -90,8 +90,8 @@ JS_EXPORT_PRIVATE Exception* throwSyntaxError(JSGlobalObject*, ThrowScope&, cons
 inline Exception* throwRangeError(JSGlobalObject* globalObject, ThrowScope& scope, const String& errorMessage) { return throwException(globalObject, scope, createRangeError(globalObject, errorMessage)); }
 inline Exception* throwError(JSGlobalObject* globalObject, ThrowScope& scope, ErrorType errorType, const String& errorMessage) { return throwException(globalObject, scope, createError(globalObject, errorType, errorMessage)); }
 
-JS_EXPORT_PRIVATE String makeDOMAttributeGetterTypeErrorMessage(const char* interfaceName, const String& attributeName);
-JS_EXPORT_PRIVATE String makeDOMAttributeSetterTypeErrorMessage(const char* interfaceName, const String& attributeName);
+JS_EXPORT_PRIVATE String makeDOMAttributeGetterTypeErrorMessage(StringView interfaceName, const String& attributeName);
+JS_EXPORT_PRIVATE String makeDOMAttributeSetterTypeErrorMessage(StringView interfaceName, const String& attributeName);
 
 JS_EXPORT_PRIVATE JSValue throwDOMAttributeGetterTypeError(JSGlobalObject*, ThrowScope&, const ClassInfo*, PropertyName);
 JS_EXPORT_PRIVATE JSValue throwDOMAttributeSetterTypeError(JSGlobalObject*, ThrowScope&, const ClassInfo*, PropertyName);

@@ -53,7 +53,7 @@ void WebPasteboardProxy::readText(IPC::Connection& connection, const String& pas
         return;
     }
 
-    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().legacyCStringPointer(), [completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
+    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8(), [completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
         completionHandler(String::fromUTF8(buffer->span()));
     }, connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
@@ -65,7 +65,7 @@ void WebPasteboardProxy::readFilePaths(IPC::Connection& connection, const String
 
 void WebPasteboardProxy::readBuffer(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
-    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().legacyCStringPointer(), [completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
+    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8(), [completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
         completionHandler(WTF::move(buffer));
     }, connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
@@ -221,7 +221,7 @@ void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, s
         return;
     }
 
-    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().legacyCStringPointer(), [completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
+    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8(), [completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
         completionHandler(WTF::move(buffer));
     }, connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }

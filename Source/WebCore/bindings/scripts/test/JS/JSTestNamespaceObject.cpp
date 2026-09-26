@@ -246,7 +246,7 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overl
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamespaceObject>::callStatic<jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperationOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedNamespaceOperation");
+    return IDLOperation<JSTestNamespaceObject>::callStatic<jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperationOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedNamespaceOperation"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -264,7 +264,7 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_enabl
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamespaceObject>::callStatic<jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperationBody>(*lexicalGlobalObject, *callFrame, "enabledBySettingNamespaceOperation");
+    return IDLOperation<JSTestNamespaceObject>::callStatic<jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperationBody>(*lexicalGlobalObject, *callFrame, "enabledBySettingNamespaceOperation"_s);
 }
 
 #if ENABLE(Condition1)
@@ -279,7 +279,7 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_names
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamespaceObject>::callStatic<jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartialBody>(*lexicalGlobalObject, *callFrame, "namespaceOperationFromPartial");
+    return IDLOperation<JSTestNamespaceObject>::callStatic<jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartialBody>(*lexicalGlobalObject, *callFrame, "namespaceOperationFromPartial"_s);
 }
 
 #endif

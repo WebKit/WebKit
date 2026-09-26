@@ -356,6 +356,11 @@ JSCValue* WebViewTest::runJavaScriptAndWaitUntilFinished(const char* javascript,
     return m_javascriptResult.get();
 }
 
+JSCValue* WebViewTest::runJavaScriptAndWaitUntilFinished(CStringView javascript, GError** error, WebKitWebView* webView)
+{
+    return runJavaScriptAndWaitUntilFinished(javascript.utf8(), error, webView);
+}
+
 JSCValue* WebViewTest::runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError** error)
 {
     m_javascriptResult = nullptr;

@@ -838,7 +838,7 @@ static inline EncodedJSValue jsTestDefaultToJSONPrototypeFunction_toJSONBody(JSG
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONPrototypeFunction_toJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDefaultToJSON>::call<jsTestDefaultToJSONPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+    return IDLOperation<JSTestDefaultToJSON>::call<jsTestDefaultToJSONPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSON::subspaceForImpl(JSC::VM& vm)

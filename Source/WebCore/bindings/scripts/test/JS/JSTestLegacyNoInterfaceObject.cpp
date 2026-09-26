@@ -314,7 +314,7 @@ static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestLegacyNoInterfaceObject>::call<jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperationBody>(*lexicalGlobalObject, *callFrame, "voidOperation");
+    return IDLOperation<JSTestLegacyNoInterfaceObject>::call<jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperationBody>(*lexicalGlobalObject, *callFrame, "voidOperation"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestLegacyNoInterfaceObject>::ClassParameter castedThis)
@@ -328,7 +328,7 @@ static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestLegacyNoInterfaceObject>::call<jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperationBody>(*lexicalGlobalObject, *callFrame, "customOperation");
+    return IDLOperation<JSTestLegacyNoInterfaceObject>::call<jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperationBody>(*lexicalGlobalObject, *callFrame, "customOperation"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -342,7 +342,7 @@ static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectConstructorFuncti
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestLegacyNoInterfaceObject>::callStatic<jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperationBody>(*lexicalGlobalObject, *callFrame, "staticOperation");
+    return IDLOperation<JSTestLegacyNoInterfaceObject>::callStatic<jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperationBody>(*lexicalGlobalObject, *callFrame, "staticOperation"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestLegacyNoInterfaceObject::subspaceForImpl(JSC::VM& vm)

@@ -3713,7 +3713,7 @@ void SpeculativeJIT::compileGetPrivateName(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
     }
 }
 
@@ -3831,7 +3831,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
         }
 
         default:
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
             return;
         }
     }
@@ -3877,7 +3877,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
     // Int32Use is converted to Identity.
 
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         return;
     }
 }
@@ -6602,7 +6602,7 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
     }
 
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -8503,7 +8503,7 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 
@@ -10387,7 +10387,7 @@ void SpeculativeJIT::compileArrayPush(Node* node)
     }
 
     case Array::ForceExit:
-        DFG_CRASH(m_graph, node, "Bad array mode type");
+        DFG_CRASH(m_graph, node, "Bad array mode type"_s);
         break;
 
     default:
@@ -10643,7 +10643,7 @@ void SpeculativeJIT::compileCheckStructure(Node* node)
     }
 
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         return;
     }
 }
@@ -13063,7 +13063,7 @@ void SpeculativeJIT::emitSwitch(Node* node)
         return;
     }
     case SwitchCell: {
-        DFG_CRASH(m_graph, node, "Bad switch kind");
+        DFG_CRASH(m_graph, node, "Bad switch kind"_s);
         return;
     } }
     RELEASE_ASSERT_NOT_REACHED();
@@ -13633,7 +13633,7 @@ void SpeculativeJIT::compileStringReplace(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad UseKind");
+        DFG_CRASH(m_graph, node, "Bad UseKind"_s);
         break;
     }
 }
@@ -15681,7 +15681,7 @@ void SpeculativeJIT::compileObjectAssign(Node* node)
         return;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         return;
     }
 }
@@ -15769,7 +15769,7 @@ void SpeculativeJIT::compileObjectToString(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad UseKind");
+        DFG_CRASH(m_graph, node, "Bad UseKind"_s);
         break;
     }
 }
@@ -15983,7 +15983,7 @@ void SpeculativeJIT::compileNewInternalFieldObject(Node* node)
         compileNewInternalFieldObjectImpl<JSAsyncGenerator>(node, operationNewAsyncGenerator);
         break;
     default:
-        DFG_CRASH(m_graph, node, "Bad structure");
+        DFG_CRASH(m_graph, node, "Bad structure"_s);
     }
 }
 
@@ -17883,7 +17883,7 @@ void SpeculativeJIT::compileGlobalIsNaN(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -17924,7 +17924,7 @@ void SpeculativeJIT::compileNumberIsNaN(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -17954,7 +17954,7 @@ void SpeculativeJIT::compileGlobalIsFinite(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -17998,7 +17998,7 @@ void SpeculativeJIT::compileNumberIsFinite(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -18061,7 +18061,7 @@ void SpeculativeJIT::compileNumberIsSafeInteger(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -18103,7 +18103,7 @@ void SpeculativeJIT::compileToIntegerOrInfinity(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -18167,7 +18167,7 @@ void SpeculativeJIT::compileToLength(Node* node)
         break;
     }
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -18369,7 +18369,7 @@ unsigned SpeculativeJIT::appendOSRExit(OSRExit&& exit, bool isExceptionHandler)
             if (m_currentNode) {
                 switch (mayExit(m_graph, m_currentNode)) {
                 case DoesNotExit:
-                    DFG_CRASH(m_graph, m_currentNode, "Generating OSR exit while node says DoesNotExit");
+                    DFG_CRASH(m_graph, m_currentNode, "Generating OSR exit while node says DoesNotExit"_s);
                     break;
                 case ExitsForExceptions:
                     DFG_ASSERT(m_graph, m_currentNode, isExceptionHandler);

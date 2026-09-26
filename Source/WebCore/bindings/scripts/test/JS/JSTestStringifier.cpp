@@ -192,7 +192,7 @@ static inline JSC::EncodedJSValue jsTestStringifierPrototypeFunction_toStringBod
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringifierPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestStringifier>::call<jsTestStringifierPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString");
+    return IDLOperation<JSTestStringifier>::call<jsTestStringifierPrototypeFunction_toStringBody>(*lexicalGlobalObject, *callFrame, "toString"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestStringifier::subspaceForImpl(JSC::VM& vm)

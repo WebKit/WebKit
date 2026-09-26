@@ -49,6 +49,7 @@
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CStringView.h>
 
 namespace WTF {
 template <typename T> class SingleRootGraph;
@@ -128,7 +129,7 @@ using SSANaturalLoops = NaturalLoops<SSACFG>;
         if (!!(assertion))                                              \
             break;                                                      \
         (graph).logAssertionFailure(                                    \
-            (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+            (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion ""_s); \
         CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(__VA_ARGS__);          \
     } while (false)
 
@@ -1272,13 +1273,13 @@ public:
 
     void logAssertionFailure(
         std::nullptr_t, const char* file, int line, const char* function,
-        const char* assertion);
+        CStringView assertion);
     void logAssertionFailure(
         Node*, const char* file, int line, const char* function,
-        const char* assertion);
+        CStringView assertion);
     void logAssertionFailure(
         BasicBlock*, const char* file, int line, const char* function,
-        const char* assertion);
+        CStringView assertion);
 
     bool hasDebuggerEnabled() const { return m_hasDebuggerEnabled; }
 

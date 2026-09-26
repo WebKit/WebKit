@@ -158,7 +158,7 @@ void setDataFile(const char* path)
             pathToOpen = formattedPath.data();
         }
 
-        file = FilePrintStream::open(pathToOpen, "w").release();
+        file = FilePrintStream::open(CStringView::unsafeFromUTF8(pathToOpen), "w"_s).release();
         if (file)
             WTFLogAlways("*** DataLog output to \"%s\" ***\n", pathToOpen);
         else

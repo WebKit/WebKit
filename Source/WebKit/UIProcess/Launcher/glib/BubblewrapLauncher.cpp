@@ -197,6 +197,9 @@ static void bindSymlinksRealPath(Vector<UTF8CString>& args, const String& path, 
 
 static void bindIfExists(Vector<UTF8CString>& args, const CStringView& path, BindFlags bindFlags = BindFlags::ReadOnly)
 {
+    if (path.isEmpty())
+        return;
+
     const ASCIILiteral bindType = [&] () {
         switch (bindFlags) {
         case BindFlags::Device:
@@ -223,9 +226,6 @@ static void bindIfExists(Vector<UTF8CString>& args, const CStringView& path, Bin
 
 static void bindIfExists(Vector<UTF8CString>& args, const char* path, BindFlags bindFlags = BindFlags::ReadOnly)
 {
-    if (!path || path[0] == '\0')
-        return;
-
     bindIfExists(args, CStringView::unsafeFromUTF8(path), bindFlags);
 }
 
@@ -252,7 +252,7 @@ static void bindX11(Vector<UTF8CString>& args)
         }, 1);
         auto displayString = display.substring(1, displayNumberEnd - 1);
         auto x11File = makeString("/tmp/.X11-unix/X"_s, displayString);
-        bindIfExists(args, x11File.utf8().legacyCStringPointer(), BindFlags::ReadWrite);
+        bindIfExists(args, x11File.utf8(), BindFlags::ReadWrite);
     }
 
     const char* xauth = g_getenv("XAUTHORITY");
@@ -423,21 +423,21 @@ static void bindGStreamerData(Vector<UTF8CString>& args)
     GUniquePtr<char> defaultRegistryPath(g_build_filename(g_get_user_cache_dir(), "gstreamer-1.0", nullptr));
     const char* registryPath = environmentVariableValue("GST_REGISTRY", defaultRegistryPath.get());
     auto registryDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(registryPath));
-    bindIfExists(args, registryDir.utf8().legacyCStringPointer(), BindFlags::ReadWrite);
+    bindIfExists(args, registryDir.utf8(), BindFlags::ReadWrite);
 
     bindPathVar(args, "GST_PRESET_PATH");
 
     // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
     if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
         auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
-        bindIfExists(args, parentDir.utf8().legacyCStringPointer(), BindFlags::ReadWrite);
+        bindIfExists(args, parentDir.utf8(), BindFlags::ReadWrite);
     }
 
     // GST_DEBUG_DUMP_DOT_DIR might not exist when the application starts, so we need write
     // permissions for its parent directory.
     if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
         auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
-        bindIfExists(args, parentDir.utf8().legacyCStringPointer(), BindFlags::ReadWrite);
+        bindIfExists(args, parentDir.utf8(), BindFlags::ReadWrite);
     }
 
     // /usr/lib is already added so this is only required for other dirs.
@@ -742,13 +742,8 @@ static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType, Vecto
     return true;
 }
 
-static std::optional<UTF8CString> directoryContainingDBusSocket(const char* dbusAddress)
+static std::optional<UTF8CString> directoryContainingDBusSocket(StringView dbusAddressString)
 {
-    if (!dbusAddress)
-        return std::nullopt;
-
-    auto dbusAddressString = StringView::fromLatin1(dbusAddress);
-
     if (!dbusAddressString.startsWith("unix:"_s))
         return std::nullopt;
 
@@ -862,14 +857,14 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         // bus and a11y bus sockets wherever they may be. xdg-dbus-proxy is sandboxed only because
         // we have to mount .flatpak-info in its mount namespace so that portals may use it as a
         // trusted way to get the app ID of the process that is using it.
-        if (auto sessionBusDirectory = directoryContainingDBusSocket(g_getenv("DBUS_SESSION_BUS_ADDRESS"))) {
+        if (auto sessionBusDirectory = directoryContainingDBusSocket(String::fromUTF8(g_getenv("DBUS_SESSION_BUS_ADDRESS")))) {
             sandboxArgs.appendList<UTF8CString>({
                 "--bind"_s, *sessionBusDirectory, *sessionBusDirectory,
             });
         }
 
 #if USE(ATSPI)
-        if (auto a11yBusDirectory = directoryContainingDBusSocket(launchOptions.extraInitializationData.get("accessibilityBusAddress"_s).utf8().legacyCStringPointer())) {
+        if (auto a11yBusDirectory = directoryContainingDBusSocket(launchOptions.extraInitializationData.get("accessibilityBusAddress"_s))) {
             sandboxArgs.appendList<UTF8CString>({
                 "--bind"_s, *a11yBusDirectory, *a11yBusDirectory,
             });
@@ -966,14 +961,14 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
         auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(execDirectory));
-        bindIfExists(sandboxArgs, parentDir.utf8().legacyCStringPointer());
+        bindIfExists(sandboxArgs, parentDir.utf8());
     }
 
     auto executablePath = FileSystem::currentExecutablePath();
     if (!executablePath.isNull()) {
         // Our executable is `/foo/bar/bin/Process`, we want `/foo/bar` as a usable prefix
-        auto parentDir = FileSystem::parentPath(FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath.legacyCStringPointer())));
-        bindIfExists(sandboxArgs, parentDir.utf8().legacyCStringPointer());
+        auto parentDir = FileSystem::parentPath(FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath)));
+        bindIfExists(sandboxArgs, parentDir.utf8());
     }
 #endif
 

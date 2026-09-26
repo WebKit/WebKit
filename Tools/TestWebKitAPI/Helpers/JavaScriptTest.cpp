@@ -76,17 +76,17 @@ static void javaScriptCallback(WKTypeRef result, WKErrorRef error, void* ctx)
     Util::run(&context.didFinish);
 
     auto actualResult = utf8CString(context.actualString.get());
-    return compareJSResult(script, actualResult.legacyCStringPointer(), expectedResult);
+    return compareJSResult(script, actualResult, expectedResult);
 }
     
-::testing::AssertionResult compareJSResult(const char* script, const char* actualResult, const char* expectedResult)
+::testing::AssertionResult compareJSResult(const char* script, CStringView actualResult, const char* expectedResult)
 {
-    if (!strcmp(actualResult, expectedResult))
+    if (actualResult == CStringView::unsafeFromUTF8(expectedResult))
         return ::testing::AssertionSuccess();
 
     return ::testing::AssertionFailure()
         << "JS expression: " << script << "\n"
-        << "       Actual: " << actualResult << "\n"
+        << "       Actual: " << actualResult.utf8() << "\n"
         << "     Expected: " << expectedResult;
 }
 

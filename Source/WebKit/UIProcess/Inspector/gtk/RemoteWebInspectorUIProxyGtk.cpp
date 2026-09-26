@@ -42,11 +42,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-void RemoteWebInspectorUIProxy::updateWindowTitle(const CString& targetName)
+void RemoteWebInspectorUIProxy::updateWindowTitle(const UTF8CString& targetName)
 {
     if (!m_window)
         return;
-    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_window.get()), !targetName.isNull() ? targetName.data() : nullptr);
+    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_window.get()), targetName);
 }
 
 static void remoteInspectorViewDestroyed(RemoteWebInspectorUIProxy* inspectorProxy)

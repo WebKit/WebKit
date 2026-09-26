@@ -36,6 +36,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {
@@ -67,7 +68,7 @@ public:
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, bool fromMainFrameProcess);
 
-    static void dumpWebProcessUnresponsiveness(const char* errorMessage);
+    static void dumpWebProcessUnresponsiveness(ASCIILiteral errorMessage);
     void outputText(const String&);
     void outputResourceLoadCallback(const String&);
 
@@ -114,7 +115,7 @@ private:
     bool resolveForceImmediateCompletion(bool canCompleteSynchronously);
 
     void dumpResults();
-    static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
+    static void dump(CStringView textToStdout, CStringView textToStderr = { }, bool seenError = false);
     enum class SnapshotResultType { WebView, WebContents };
     void dumpPixelsAndCompareWithExpected(SnapshotResultType, WKArrayRef repaintRects, WKImageRef = nullptr);
     void dumpAudio(WKDataRef);

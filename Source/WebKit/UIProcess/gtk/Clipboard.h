@@ -28,6 +28,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/CStringView.h>
 
 #if USE(GTK4)
 typedef struct _GdkClipboard GdkClipboard;
@@ -61,7 +62,7 @@ public:
     void readText(CompletionHandler<void(String&&)>&&, ReadMode = ReadMode::Asynchronous);
     void readFilePaths(CompletionHandler<void(Vector<String>&&)>&&, ReadMode = ReadMode::Asynchronous);
     void readURL(CompletionHandler<void(String&& url, String&& title)>&&, ReadMode = ReadMode::Asynchronous);
-    void readBuffer(const char*, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&&, ReadMode = ReadMode::Asynchronous);
+    void readBuffer(CStringView, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&&, ReadMode = ReadMode::Asynchronous);
     void write(WebCore::SelectionData&&, CompletionHandler<void(int64_t)>&&);
     void clear();
 

@@ -66,7 +66,7 @@ bool ValidateUnlinked::validateNode(Node* node)
     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
     if (globalObject != m_graph.m_codeBlock->globalObject()) {
         if (Options::dumpUnlinkedDFGValidation()) [[unlikely]] {
-            m_graph.logAssertionFailure(node, __FILE__, __LINE__, WTF_PRETTY_FUNCTION, "Bad GlobalObject");
+            m_graph.logAssertionFailure(node, __FILE__, __LINE__, WTF_PRETTY_FUNCTION, "Bad GlobalObject"_s);
             dataLogLn(RawPointer(globalObject), " != ", RawPointer(m_graph.m_codeBlock->globalObject()));
         }
         return false;

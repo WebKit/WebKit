@@ -230,7 +230,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_hasBody(JSC::JS
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_has, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_hasBody>(*lexicalGlobalObject, *callFrame, "has");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_hasBody>(*lexicalGlobalObject, *callFrame, "has"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_entriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -244,7 +244,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_entriesBody(JSC
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_entries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_entriesBody>(*lexicalGlobalObject, *callFrame, "entries");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_entriesBody>(*lexicalGlobalObject, *callFrame, "entries"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_keysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -258,7 +258,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_keysBody(JSC::J
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_keys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_keysBody>(*lexicalGlobalObject, *callFrame, "keys");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_keysBody>(*lexicalGlobalObject, *callFrame, "keys"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_valuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -272,7 +272,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_valuesBody(JSC:
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_values, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_valuesBody>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_valuesBody>(*lexicalGlobalObject, *callFrame, "values"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_forEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -292,7 +292,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_forEachBody(JSC
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_forEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_forEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_forEachBody>(*lexicalGlobalObject, *callFrame, "forEach"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_addBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -312,7 +312,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_addBody(JSC::JS
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_add, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_addBody>(*lexicalGlobalObject, *callFrame, "add");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_addBody>(*lexicalGlobalObject, *callFrame, "add"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_clearBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -326,7 +326,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_clearBody(JSC::
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_clear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_clearBody>(*lexicalGlobalObject, *callFrame, "clear");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_clearBody>(*lexicalGlobalObject, *callFrame, "clear"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_deleteBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestSetLike>::ClassParameter castedThis)
@@ -346,7 +346,7 @@ static inline JSC::EncodedJSValue jsTestSetLikePrototypeFunction_deleteBody(JSC:
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_delete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_deleteBody>(*lexicalGlobalObject, *callFrame, "delete");
+    return IDLOperation<JSTestSetLike>::call<jsTestSetLikePrototypeFunction_deleteBody>(*lexicalGlobalObject, *callFrame, "delete"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestSetLike::subspaceForImpl(JSC::VM& vm)

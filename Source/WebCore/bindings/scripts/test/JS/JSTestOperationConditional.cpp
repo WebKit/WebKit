@@ -214,7 +214,7 @@ static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunction_no
 
 JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_nonConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunction_nonConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "nonConditionalOperation");
+    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunction_nonConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "nonConditionalOperation"_s);
 }
 
 #endif
@@ -232,7 +232,7 @@ static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunction_co
 
 JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunction_conditionalOperationBody>(*lexicalGlobalObject, *callFrame, "conditionalOperation");
+    return IDLOperation<JSTestOperationConditional>::call<jsTestOperationConditionalPrototypeFunction_conditionalOperationBody>(*lexicalGlobalObject, *callFrame, "conditionalOperation"_s);
 }
 
 #endif

@@ -55,8 +55,8 @@ class WebKitWebResourceLoadManager;
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewWillStartLoad(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
-void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const char* failingURI, GError*);
-void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
+void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const String& failingURI, GError*);
+void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const String& failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 void webkitWebViewGetLoadDecisionForIcons(WebKitWebView*, const HashMap<WebKit::CallbackID, WebCore::LinkIcon>&, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&&);
 void webkitWebViewSetIcon(WebKitWebView*, const WebCore::LinkIcon&, API::Data&);
@@ -143,7 +143,7 @@ WebKit::RendererBufferDescription webkitWebViewGetRendererBufferDescription(WebK
 void webkitWebViewSetIsImmersiveModeEnabled(WebKitWebView*, bool);
 #endif
 
-void webkitWebViewLoadServiceWorker(WebKitWebView*, const gchar* url, bool usingModules, CompletionHandler<void(bool success)>&&);
+void webkitWebViewLoadServiceWorker(WebKitWebView*, const URL&, bool usingModules, CompletionHandler<void(bool success)>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 WebKitWebExtensionContext *webkitWebViewGetWebExtensionContext(WebKitWebView*);

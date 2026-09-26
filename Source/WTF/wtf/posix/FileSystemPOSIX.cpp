@@ -96,7 +96,7 @@ std::optional<WallTime> fileCreationTime(const String& path)
 {
 #if (OS(LINUX) && HAVE(STATX)) || OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     auto fsRep = fileSystemRepresentation(path);
-    if (!fsRep.legacyCStringPointer() || fsRep.legacyCStringPointer()[0] == '\0')
+    if (fsRep.isEmpty())
         return std::nullopt;
 
 #if OS(LINUX) && HAVE(STATX)
@@ -135,12 +135,12 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
 }
 
 #if !USE(CF)
-String stringFromFileSystemRepresentation(const char* path)
+String stringFromFileSystemRepresentation(CStringView path)
 {
-    if (!path)
+    if (path.isNull())
         return String();
 
-    return String::fromUTF8(path);
+    return String::fromUTF8(path.span());
 }
 
 UTF8CString fileSystemRepresentation(const String& path)

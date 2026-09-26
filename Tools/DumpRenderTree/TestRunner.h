@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 #include <wtf/RefCounted.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -139,7 +140,7 @@ public:
     void setShouldInvertColors(bool);
 #endif
 
-    void setPageVisibility(const char*);
+    void setPageVisibility(CStringView);
     void resetPageVisibility();
 
     static void setAllowsAnySSLCertificate(bool);

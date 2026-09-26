@@ -272,7 +272,7 @@ static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFuncti
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDefaultToJSONFilteredByExposed>::call<jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+    return IDLOperation<JSTestDefaultToJSONFilteredByExposed>::call<jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONFilteredByExposed::subspaceForImpl(JSC::VM& vm)

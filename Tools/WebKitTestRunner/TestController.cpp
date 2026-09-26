@@ -1452,7 +1452,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
     createWebViewWithOptions(options);
 
     if (!resetStateToConsistentValues(options, ResetStage::BeforeTest))
-        TestInvocation::dumpWebProcessUnresponsiveness("<unknown> - TestController::run - Failed to reset state to consistent values\n");
+        TestInvocation::dumpWebProcessUnresponsiveness("<unknown> - TestController::run - Failed to reset state to consistent values\n"_s);
 }
 
 template<typename F> static void batchUpdatePreferences(WKPreferencesRef preferences, F&& functor)
@@ -3101,8 +3101,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         Vector<unsigned char> bytes;
         for (size_t i = 0; i < length; i++) {
             auto key = WKArrayGetItemAtIndex(keys, i);
-            auto keyStr = toWTFString(stringValue(key)).utf8();
-            auto intValue = doubleValue(dictionary, keyStr.legacyCStringPointer());
+            auto intValue = doubleValue(WKDictionaryGetItemForKey(dictionary, stringValue(key)));
             bytes.append(static_cast<unsigned char>(intValue));
         }
         WKDataRef data = WKDataCreate(bytes.begin(), bytes.size());

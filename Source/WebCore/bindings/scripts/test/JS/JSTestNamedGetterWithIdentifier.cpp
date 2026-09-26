@@ -370,7 +370,7 @@ static inline JSC::EncodedJSValue jsTestNamedGetterWithIdentifierPrototypeFuncti
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunction_getterName, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestNamedGetterWithIdentifier>::call<jsTestNamedGetterWithIdentifierPrototypeFunction_getterNameBody>(*lexicalGlobalObject, *callFrame, "getterName");
+    return IDLOperation<JSTestNamedGetterWithIdentifier>::call<jsTestNamedGetterWithIdentifierPrototypeFunction_getterNameBody>(*lexicalGlobalObject, *callFrame, "getterName"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedGetterWithIdentifier::subspaceForImpl(JSC::VM& vm)

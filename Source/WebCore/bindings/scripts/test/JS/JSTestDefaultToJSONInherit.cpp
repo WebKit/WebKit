@@ -296,7 +296,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritPrototypeFunction_toJSONB
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONInheritPrototypeFunction_toJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDefaultToJSONInherit>::call<jsTestDefaultToJSONInheritPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+    return IDLOperation<JSTestDefaultToJSONInherit>::call<jsTestDefaultToJSONInheritPrototypeFunction_toJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONInherit::subspaceForImpl(JSC::VM& vm)

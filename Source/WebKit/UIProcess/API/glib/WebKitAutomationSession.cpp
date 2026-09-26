@@ -353,10 +353,14 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
         return WEBKIT_NETWORK_PROXY_MODE_NO_PROXY;
 
     if (!proxy.ignoreAddressList.isEmpty()) {
+        auto ignoreAddressListUTF8 = WTF::map(proxy.ignoreAddressList, [](const String& ignoreAddress) {
+            return ignoreAddress.utf8();
+        });
         Vector<const char*> ignoreAddressList;
-        ignoreAddressList.reserveInitialCapacity(proxy.ignoreAddressList.size() + 1);
-        for (const auto& ignoreAddress : proxy.ignoreAddressList)
-            ignoreAddressList.append(ignoreAddress.utf8().legacyCStringPointer());
+        ignoreAddressList.reserveInitialCapacity(ignoreAddressListUTF8.size() + 1);
+        for (const auto& ignoreAddress : ignoreAddressListUTF8)
+            ignoreAddressList.append(ignoreAddress.legacyCStringPointer());
+        ignoreAddressList.append(nullptr);
         *settings = webkit_network_proxy_settings_new(nullptr, ignoreAddressList.span().data());
     } else
         *settings = webkit_network_proxy_settings_new(nullptr, nullptr);
@@ -373,9 +377,9 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
     return WEBKIT_NETWORK_PROXY_MODE_CUSTOM;
 }
 
-WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const char* sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const String& sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
-    auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
+    auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID.utf8().legacyCStringPointer(), nullptr));
     session->priv->webContext = webContext;
 #if ENABLE(2022_GLIB_API)
     WebKitNetworkSession* networkSession = webkit_web_context_get_network_session_for_automation(webContext);

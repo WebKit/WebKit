@@ -471,7 +471,7 @@ static inline JSC::EncodedJSValue jsTestEnabledBySettingPrototypeFunction_enable
 
 JSC_DEFINE_HOST_FUNCTION(jsTestEnabledBySettingPrototypeFunction_enabledBySettingOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestEnabledBySetting>::call<jsTestEnabledBySettingPrototypeFunction_enabledBySettingOperationBody>(*lexicalGlobalObject, *callFrame, "enabledBySettingOperation");
+    return IDLOperation<JSTestEnabledBySetting>::call<jsTestEnabledBySettingPrototypeFunction_enabledBySettingOperationBody>(*lexicalGlobalObject, *callFrame, "enabledBySettingOperation"_s);
 }
 
 #endif

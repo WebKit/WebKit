@@ -254,14 +254,14 @@ ConfigFile::ConfigFile(const char8_t* filename)
     m_configDirectory[0] = '\0';
 }
 
-void ConfigFile::setProcessName(const char* processName)
+void ConfigFile::setProcessName(CStringView processName)
 {
-    strncpy(s_processName, processName, s_processNameMax);
+    strncpy(s_processName, processName.utf8(), s_processNameMax);
 }
 
-void ConfigFile::setParentProcessName(const char* parentProcessName)
+void ConfigFile::setParentProcessName(CStringView parentProcessName)
 {
-    strncpy(s_parentProcessName, parentProcessName, s_processNameMax);
+    strncpy(s_parentProcessName, parentProcessName.utf8(), s_processNameMax);
 }
 
 void ConfigFile::parse()
@@ -512,7 +512,7 @@ void ConfigFile::canonicalizePaths()
     }
 }
 
-void processConfigFile(const char8_t* configFilename, const char* processName, const char* parentProcessName)
+void processConfigFile(const char8_t* configFilename, CStringView processName, CStringView parentProcessName)
 {
     static std::once_flag processConfigFileOnceFlag;
 

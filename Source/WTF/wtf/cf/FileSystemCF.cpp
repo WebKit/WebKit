@@ -56,9 +56,9 @@ UTF8CString FileSystem::fileSystemRepresentation(const String& path)
     return UTF8CString { byteCast<char8_t>(buffer.span().data()) };
 }
 
-String FileSystem::stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
+String FileSystem::stringFromFileSystemRepresentation(CStringView fileSystemRepresentation)
 {
-    return adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation)).get();
+    return adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation.utf8())).get();
 }
 
 RetainPtr<CFURLRef> FileSystem::pathAsURL(const String& path)

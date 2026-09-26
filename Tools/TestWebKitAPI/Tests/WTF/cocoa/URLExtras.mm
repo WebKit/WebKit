@@ -74,6 +74,11 @@ static NSURL *literalURL(const char* literal)
     return WTF::URLWithData(literalAsData(literal), nil);
 }
 
+static NSURL *literalURL(const UTF8CString& string)
+{
+    return WTF::URLWithData(toNSData(byteCast<uint8_t>(string.span())).get(), nil);
+}
+
 TEST(URLExtras, URLExtras)
 {
     EXPECT_STREQ("http://site.com", originalDataAsString(literalURL("http://site.com")));
@@ -178,7 +183,7 @@ TEST(URLExtras, URLExtras_Spoof)
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://"_s, host, '/').utf8();
-        EXPECT_STREQ(url.legacyCStringPointer(), userVisibleString(literalURL(url.legacyCStringPointer())));
+        EXPECT_STREQ(url.legacyCStringPointer(), userVisibleString(literalURL(url)));
     }
 }
 

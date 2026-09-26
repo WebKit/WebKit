@@ -380,7 +380,7 @@ private:
                 node->setOp(ArithBitRShift);
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
+                DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup"_s);
                 break;
             }
 
@@ -1708,7 +1708,7 @@ private:
                         node->setResult(NodeResultDouble);
                         break;
                     default:
-                        DFG_CRASH(m_graph, node, "Bad use kind");
+                        DFG_CRASH(m_graph, node, "Bad use kind"_s);
                         break;
                     }
                 } else {
@@ -2949,7 +2949,7 @@ private:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
-            DFG_CRASH(m_graph, node, "Unexpected node during fixup");
+            DFG_CRASH(m_graph, node, "Unexpected node during fixup"_s);
             break;
 
         case PutGlobalVariable: {

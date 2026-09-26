@@ -367,7 +367,7 @@ static inline JSC::EncodedJSValue jsTestLegacyOverrideBuiltInsPrototypeFunction_
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItem, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestLegacyOverrideBuiltIns>::call<jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItemBody>(*lexicalGlobalObject, *callFrame, "namedItem");
+    return IDLOperation<JSTestLegacyOverrideBuiltIns>::call<jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItemBody>(*lexicalGlobalObject, *callFrame, "namedItem"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestLegacyOverrideBuiltIns::subspaceForImpl(JSC::VM& vm)

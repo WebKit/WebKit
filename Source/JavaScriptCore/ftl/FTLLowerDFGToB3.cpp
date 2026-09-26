@@ -388,7 +388,7 @@ public:
                     case FlushedJSValue:
                         break;
                     default:
-                        DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
+                        DFG_CRASH(m_graph, nullptr, "Bad flush format for argument"_s);
                         break;
                     }
                 }
@@ -469,7 +469,7 @@ private:
                     type = pointerType();
                     break;
                 default:
-                    DFG_CRASH(m_graph, node, "Bad Phi node result type");
+                    DFG_CRASH(m_graph, node, "Bad Phi node result type"_s);
                     break;
                 }
                 m_phis.add(node, m_proc.add<Value>(B3::Phi, type, Origin(node)));
@@ -2068,7 +2068,7 @@ private:
             break;
 
         default:
-            DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
+            DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend"_s);
             break;
         }
 
@@ -2140,7 +2140,7 @@ private:
             ASSERT(phi->result() == NodeResultStorage);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
         ValueFromBlock upsilon = m_out.anchor(upsilonValue);
@@ -2173,7 +2173,7 @@ private:
             setStorage(phi);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad result type");
+            DFG_CRASH(m_graph, m_node, "Bad result type"_s);
             break;
         }
     }
@@ -2326,7 +2326,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
         }
     }
 
@@ -2444,7 +2444,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
         }
     }
 
@@ -2523,7 +2523,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -2663,7 +2663,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad flush format");
+            DFG_CRASH(m_graph, m_node, "Bad flush format"_s);
             break;
         }
     }
@@ -3157,7 +3157,7 @@ private:
 
         case UntypedUse: {
             if (!isSub) {
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 break;
             }
 
@@ -3171,7 +3171,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -3258,7 +3258,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -3339,7 +3339,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -3510,7 +3510,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -3539,7 +3539,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -3975,7 +3975,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -4252,7 +4252,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -4423,7 +4423,7 @@ private:
             vmCall(pointerType(), operationEnsureArrayStorage, m_vmValue, cell);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             break;
         }
 
@@ -4494,7 +4494,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -5533,7 +5533,7 @@ private:
                 setDouble(toIntegerOrInfinity(lowDouble(operand)));
                 break;
             default:
-                DFG_CRASH(m_graph, m_node, "Bad result type");
+                DFG_CRASH(m_graph, m_node, "Bad result type"_s);
                 break;
             }
             return;
@@ -6280,7 +6280,7 @@ IGNORE_CLANG_WARNINGS_END
 #endif
                 return;
             }
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             return;
         }
         }
@@ -6800,7 +6800,7 @@ IGNORE_CLANG_WARNINGS_END
                     case TypeFloat64:
                         return m_out.loadDouble(pointer);
                     default:
-                        DFG_CRASH(m_graph, m_node, "Bad typed array type");
+                        DFG_CRASH(m_graph, m_node, "Bad typed array type"_s);
                     }
                     return nullptr;
                 };
@@ -6856,7 +6856,7 @@ IGNORE_CLANG_WARNINGS_END
         case Array::SelectUsingArguments:
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             return nullptr;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -7085,7 +7085,7 @@ IGNORE_CLANG_WARNINGS_END
                     case TypeFloat64:
                         return m_out.loadDouble(pointer);
                     default:
-                        DFG_CRASH(m_graph, m_node, "Bad typed array type");
+                        DFG_CRASH(m_graph, m_node, "Bad typed array type"_s);
                     }
                     return nullptr;
                 };
@@ -7513,7 +7513,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad array type");
+                DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             }
 
             m_out.jump(continuation);
@@ -7706,7 +7706,7 @@ IGNORE_CLANG_WARNINGS_END
         case Array::Unprofiled:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             break;
         }
     }
@@ -8156,7 +8156,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -8179,7 +8179,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 return;
             }
             if (m_node->ecmaMode().isStrict())
@@ -8200,7 +8200,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -8440,7 +8440,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             return;
         }
     }
@@ -9127,7 +9127,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             return;
         }
     }
@@ -9213,7 +9213,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            DFG_CRASH(m_graph, m_node, "Bad array type"_s);
             return;
         }
     }
@@ -9992,7 +9992,7 @@ IGNORE_CLANG_WARNINGS_END
             vmCall(Void, operationObjectAssignUntyped, weakPointer(globalObject), lowCell(m_node->child1()), lowJSValue(m_node->child2()));
             return;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -10078,7 +10078,7 @@ IGNORE_CLANG_WARNINGS_END
             compileNewInternalFieldObjectImpl<JSAsyncGenerator>(operationNewAsyncGenerator);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad structure");
+            DFG_CRASH(m_graph, m_node, "Bad structure"_s);
         }
     }
 
@@ -10192,7 +10192,7 @@ IGNORE_CLANG_WARNINGS_END
                 switch (m_node->indexingType()) {
                 case ALL_BLANK_INDEXING_TYPES:
                 case ALL_UNDECIDED_INDEXING_TYPES:
-                    DFG_CRASH(m_graph, m_node, "Bad indexing type");
+                    DFG_CRASH(m_graph, m_node, "Bad indexing type"_s);
                     break;
 
                 case ALL_DOUBLE_INDEXING_TYPES:
@@ -10210,7 +10210,7 @@ IGNORE_CLANG_WARNINGS_END
                     break;
 
                 default:
-                    DFG_CRASH(m_graph, m_node, "Corrupt indexing type");
+                    DFG_CRASH(m_graph, m_node, "Corrupt indexing type"_s);
                     break;
                 }
             }
@@ -11209,7 +11209,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -11237,7 +11237,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return;
         }
     }
@@ -11391,7 +11391,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -11612,7 +11612,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -11900,7 +11900,7 @@ IGNORE_CLANG_WARNINGS_END
                 }, kids[0], kids[1], kids[2]);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad number of children");
+            DFG_CRASH(m_graph, m_node, "Bad number of children"_s);
             break;
         }
         ValueFromBlock slowResult = m_out.anchor(slowResultValue);
@@ -14673,7 +14673,7 @@ IGNORE_CLANG_WARNINGS_END
             forwarding = true;
             break;
         default:
-            DFG_CRASH(m_graph, node, "bad node type");
+            DFG_CRASH(m_graph, node, "bad node type"_s);
             break;
         }
 
@@ -15307,7 +15307,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -15572,7 +15572,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 break;
             }
 
@@ -15618,7 +15618,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 break;
             }
 
@@ -15716,7 +15716,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 return;
             }
             return;
@@ -15742,7 +15742,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 return;
             }
 
@@ -15750,7 +15750,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         } }
 
-        DFG_CRASH(m_graph, m_node, "Bad switch kind");
+        DFG_CRASH(m_graph, m_node, "Bad switch kind"_s);
     }
 
     void compileEntrySwitch()
@@ -15977,7 +15977,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -16011,7 +16011,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -16041,7 +16041,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -16076,7 +16076,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -16120,7 +16120,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -16801,7 +16801,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -16826,7 +16826,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -17701,7 +17701,7 @@ IGNORE_CLANG_WARNINGS_END
                 result = vmCall(Int64, operationParseIntDouble, weakPointer(globalObject), lowDouble(m_node->child1()), radix);
                 break;
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 break;
             }
         } else {
@@ -17717,7 +17717,7 @@ IGNORE_CLANG_WARNINGS_END
                 break;
             // Int32Use is converted to Identity.
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
                 break;
             }
         }
@@ -17754,7 +17754,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -17799,7 +17799,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             break;
         }
     }
@@ -18925,7 +18925,7 @@ IGNORE_CLANG_WARNINGS_END
                 break;
             }
             default:
-                DFG_CRASH(m_graph, m_node, "Bad indexing type");
+                DFG_CRASH(m_graph, m_node, "Bad indexing type"_s);
                 break;
             }
         }
@@ -19181,7 +19181,7 @@ IGNORE_CLANG_WARNINGS_END
                             break;
 
                         default:
-                            DFG_CRASH(m_graph, m_node, "Invalid indexing type");
+                            DFG_CRASH(m_graph, m_node, "Invalid indexing type"_s);
                             break;
                         }
 
@@ -19392,7 +19392,7 @@ IGNORE_CLANG_WARNINGS_END
             compileMaterializeNewInternalFieldObjectImpl<JSAsyncGenerator>(operationNewAsyncGenerator);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad structure");
+            DFG_CRASH(m_graph, m_node, "Bad structure"_s);
         }
     }
 
@@ -23765,7 +23765,7 @@ IGNORE_CLANG_WARNINGS_END
             return m_out.phi(Int32, results);
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return nullptr;
         }
     }
@@ -24530,7 +24530,7 @@ IGNORE_CLANG_WARNINGS_END
         case 4:
             return m_out.load32(pointer);
         default:
-            DFG_CRASH(m_graph, m_node, "Bad element size");
+            DFG_CRASH(m_graph, m_node, "Bad element size"_s);
         }
     }
 
@@ -24545,7 +24545,7 @@ IGNORE_CLANG_WARNINGS_END
             case 4:
                 return Output::Store32;
             default:
-                DFG_CRASH(m_graph, m_node, "Bad element size");
+                DFG_CRASH(m_graph, m_node, "Bad element size"_s);
                 return Output::Store32;
             }
         }
@@ -24556,7 +24556,7 @@ IGNORE_CLANG_WARNINGS_END
             return Output::StoreDouble;
         case TypeFloat16:
         default:
-            DFG_CRASH(m_graph, m_node, "Bad typed array type");
+            DFG_CRASH(m_graph, m_node, "Bad typed array type"_s);
         }
     }
 
@@ -24691,7 +24691,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
             return nullptr;
         }
     }
@@ -25100,7 +25100,7 @@ IGNORE_CLANG_WARNINGS_END
         case StrictInt52:
             return Int52;
         }
-        DFG_CRASH(m_graph, m_node, "Bad use kind");
+        DFG_CRASH(m_graph, m_node, "Bad use kind"_s);
         return Int52;
     }
 
@@ -25456,7 +25456,7 @@ IGNORE_CLANG_WARNINGS_END
             return result;
         }
 
-        DFG_CRASH(m_graph, m_node, makeString("Value not defined: "_s, edge.node()->index()).ascii().data());
+        DFG_CRASH(m_graph, m_node, toUTF8CString("Value not defined: ", edge.node()->index()));
         return nullptr;
     }
 
@@ -26001,7 +26001,7 @@ IGNORE_CLANG_WARNINGS_END
             speculateSetIteratorObject(edge);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Unsupported speculation use kind");
+            DFG_CRASH(m_graph, m_node, "Unsupported speculation use kind"_s);
         }
     }
 
@@ -26326,7 +26326,7 @@ IGNORE_CLANG_WARNINGS_END
             case Array::OriginalArray:
             case Array::OriginalNonCopyOnWriteArray:
             case Array::OriginalCopyOnWriteArray:
-                DFG_CRASH(m_graph, m_node, "Unexpected original array");
+                DFG_CRASH(m_graph, m_node, "Unexpected original array"_s);
                 return nullptr;
 
             case Array::Array:
@@ -26369,7 +26369,7 @@ IGNORE_CLANG_WARNINGS_END
             case Array::OriginalArray:
             case Array::OriginalNonCopyOnWriteArray:
             case Array::OriginalCopyOnWriteArray:
-                DFG_CRASH(m_graph, m_node, "Unexpected original array");
+                DFG_CRASH(m_graph, m_node, "Unexpected original array"_s);
                 return nullptr;
 
             case Array::Array:
@@ -26401,7 +26401,7 @@ IGNORE_CLANG_WARNINGS_END
         default:
             break;
         }
-        DFG_CRASH(m_graph, m_node, "Corrupt array class");
+        DFG_CRASH(m_graph, m_node, "Corrupt array class"_s);
     }
 
     LValue isArrayTypeForCheckArray(LValue cell, ArrayMode arrayMode)
@@ -27277,7 +27277,7 @@ IGNORE_CLANG_WARNINGS_END
                 if (m_node) {
                     switch (mayExit(m_graph, m_node)) {
                     case DoesNotExit:
-                        DFG_CRASH(m_graph, m_node, "Generating OSR exit while node says DoesNotExit");
+                        DFG_CRASH(m_graph, m_node, "Generating OSR exit while node says DoesNotExit"_s);
                         break;
                     case ExitsForExceptions:
                         DFG_ASSERT(m_graph, m_node, isExceptionHandler);
@@ -27438,7 +27438,7 @@ IGNORE_CLANG_WARNINGS_END
             if (Options::validateFTLOSRExitLiveness()) [[unlikely]] {
                 if (m_graph.m_plan.mode() != JITCompilationMode::FTLForOSREntry) {
                     if (availability.isDead() && m_graph.isLiveInBytecode(operand, exitOrigin))
-                        DFG_CRASH(m_graph, m_node, toUTF8CString("Live bytecode local not available: operand = ", operand, ", availability = ", availability, ", origin = ", exitOrigin).legacyCStringPointer());
+                        DFG_CRASH(m_graph, m_node, toUTF8CString("Live bytecode local not available: operand = ", operand, ", availability = ", availability, ", origin = ", exitOrigin));
                 }
             }
             ExitValue exitValue = exitValueForAvailability(arguments, map, availability);
@@ -27452,7 +27452,7 @@ IGNORE_CLANG_WARNINGS_END
             Node* node = heapPair.key.base();
             ExitTimeObjectMaterialization* materialization = map.get(node);
             if (!materialization)
-                DFG_CRASH(m_graph, m_node, toUTF8CString("Could not find materialization for ", node, " in ", availabilityMap).legacyCStringPointer());
+                DFG_CRASH(m_graph, m_node, toUTF8CString("Could not find materialization for ", node, " in ", availabilityMap));
 
             ExitValue exitValue = exitValueForAvailability(arguments, map, heapPair.value);
             if (exitValue.hasIndexInStackmapLocations())
@@ -27505,7 +27505,7 @@ IGNORE_CLANG_WARNINGS_END
             return ExitValue::inJSStackAsDouble(flush.virtualRegister());
         }
 
-        DFG_CRASH(m_graph, m_node, "Invalid flush format");
+        DFG_CRASH(m_graph, m_node, "Invalid flush format"_s);
         return ExitValue::dead();
     }
 
@@ -27567,7 +27567,7 @@ IGNORE_CLANG_WARNINGS_END
         if (isValid(value))
             return exitArgument(arguments, DataFormatStorage, value.value());
 
-        DFG_CRASH(m_graph, m_node, toUTF8CString("Cannot find value for node: ", node).legacyCStringPointer());
+        DFG_CRASH(m_graph, m_node, toUTF8CString("Cannot find value for node: ", node));
         return ExitValue::dead();
     }
 
@@ -27606,7 +27606,7 @@ IGNORE_CLANG_WARNINGS_END
             return exitArgument(arguments, DataFormatJS, boxBoolean(value.value()));
 
         // Doubles and Int52 have been converted by ValueRep()
-        DFG_CRASH(m_graph, m_node, toUTF8CString("Cannot find value for node: ", node).legacyCStringPointer());
+        DFG_CRASH(m_graph, m_node, toUTF8CString("Cannot find value for node: ", node));
     }
 
     void setInt32(Node* node, LValue value)
@@ -27633,7 +27633,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        DFG_CRASH(m_graph, m_node, "Corrupt int52 kind");
+        DFG_CRASH(m_graph, m_node, "Corrupt int52 kind"_s);
     }
     void setJSValue(Node* node, LValue value)
     {

@@ -66,10 +66,10 @@ private:
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
         if (resourceError.tlsErrors()) {
-            webkitWebViewLoadFailedWithTLSErrors(m_webView, resourceError.failingURL().string().utf8().legacyCStringPointer(), error.get(),
+            webkitWebViewLoadFailedWithTLSErrors(m_webView, resourceError.failingURL().string(), error.get(),
                 static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()), resourceError.certificate());
         } else
-            webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().string().utf8().legacyCStringPointer(), error.get());
+            webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().string(), error.get());
     }
 
     void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
@@ -88,7 +88,7 @@ private:
             return;
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
-        webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().string().utf8().legacyCStringPointer(), error.get());
+        webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().string(), error.get());
     }
 
     bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem* addedItem, const Vector<Ref<WebBackForwardListItem>>& removedItems) override

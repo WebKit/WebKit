@@ -139,7 +139,7 @@ RefPtr<GPUVideoEncoder> GPUVideoEncoder::create(CreationInfo&& creationInfo, con
 
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
-        rtcParameters.emplace(parameter.first.utf8().legacyCStringPointer(), parameter.second.utf8().legacyCStringPointer());
+        rtcParameters.emplace(parameter.first.utf8().toStdString(), parameter.second.utf8().toStdString());
 
     webrtc::LocalEncoderScalabilityMode rtcScalabilityMode;
     switch (creationInfo.scalabilityMode) {

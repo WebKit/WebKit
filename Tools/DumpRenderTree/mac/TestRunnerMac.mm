@@ -1112,17 +1112,17 @@ void TestRunner::resetPageVisibility()
         [webView _setVisibilityState:WebPageVisibilityStateVisible isInitialState:YES];
 }
 
-void TestRunner::setPageVisibility(const char* newVisibility)
+void TestRunner::setPageVisibility(CStringView newVisibility)
 {
-    if (!newVisibility)
+    if (newVisibility.isNull())
         return;
 
     WebView *webView = [mainFrame webView];
-    if (!strcmp(newVisibility, "visible"))
+    if (newVisibility == "visible"_s)
         [webView _setVisibilityState:WebPageVisibilityStateVisible isInitialState:NO];
-    else if (!strcmp(newVisibility, "hidden"))
+    else if (newVisibility == "hidden"_s)
         [webView _setVisibilityState:WebPageVisibilityStateHidden isInitialState:NO];
-    else if (!strcmp(newVisibility, "prerender"))
+    else if (newVisibility == "prerender"_s)
         [webView _setVisibilityState:WebPageVisibilityStatePrerender isInitialState:NO];
 }
 

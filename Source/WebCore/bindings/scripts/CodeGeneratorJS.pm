@@ -6406,7 +6406,7 @@ sub GenerateOperationTrampolineDefinition
 
     push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    return ${idlOperationType}<${className}>::${callFunctionName}<" . join(", ", @callFunctionTemplateArguments) . ">(*lexicalGlobalObject, *callFrame, \"" . $operation->name . "\");\n");
+    push(@$outputArray, "    return ${idlOperationType}<${className}>::${callFunctionName}<" . join(", ", @callFunctionTemplateArguments) . ">(*lexicalGlobalObject, *callFrame, \"" . $operation->name . "\"_s);\n");
     push(@$outputArray, "}\n\n");
 }
 
@@ -6716,7 +6716,7 @@ sub GenerateDefaultToJSONOperationDefinition
     my $interfaceName = $interface->type->name;
     push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    return IDLOperation<JS${interfaceName}>::call<${functionName}Body>(*lexicalGlobalObject, *callFrame, \"toJSON\");\n");
+    push(@$outputArray, "    return IDLOperation<JS${interfaceName}>::call<${functionName}Body>(*lexicalGlobalObject, *callFrame, \"toJSON\"_s);\n");
     push(@$outputArray, "}\n");
     push(@$outputArray, "\n");
 }
@@ -7847,7 +7847,7 @@ END
         push(@implContent,  <<END);
 JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<${className}>::call<${functionName}Caller>(*lexicalGlobalObject, *callFrame, "${propertyName}");
+    return IDLOperation<${className}>::call<${functionName}Caller>(*lexicalGlobalObject, *callFrame, "${propertyName}"_s);
 }
 
 END

@@ -128,10 +128,10 @@ public:
 
     using ReadBufferCompletionHandler = CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>;
 
-    void readBuffer(const char* format, ReadBufferCompletionHandler&& completionHandler)
+    void readBuffer(CStringView format, ReadBufferCompletionHandler&& completionHandler)
     {
         m_completionHandler = WTF::move(completionHandler);
-        auto mimeTypes = WTF::toArray<const char*>({ format, nullptr });
+        auto mimeTypes = WTF::toArray<const char*>({ format.utf8(), nullptr });
         gdk_clipboard_read_async(m_clipboard, mimeTypes.data(), G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
             auto task = adoptRef(static_cast<ClipboardTask*>(userData));
             GUniqueOutPtr<GError> error;
@@ -241,7 +241,7 @@ void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& comple
     ClipboardTask::create(m_clipboard, readMode)->readFilePaths(WTF::move(completionHandler));
 }
 
-void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode readMode)
+void Clipboard::readBuffer(CStringView format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode readMode)
 {
     ClipboardTask::create(m_clipboard, readMode)->readBuffer(format, WTF::move(completionHandler));
 }

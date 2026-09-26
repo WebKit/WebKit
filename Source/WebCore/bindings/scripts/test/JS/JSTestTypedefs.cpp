@@ -525,7 +525,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcBody(JSC::
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_func, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_funcBody>(*lexicalGlobalObject, *callFrame, "func");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_funcBody>(*lexicalGlobalObject, *callFrame, "func"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_setShadowBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -562,7 +562,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_setShadowBody(
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_setShadow, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_setShadowBody>(*lexicalGlobalObject, *callFrame, "setShadow");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_setShadowBody>(*lexicalGlobalObject, *callFrame, "setShadow"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_methodWithSequenceArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -583,7 +583,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_methodWithSequ
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_methodWithSequenceArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_methodWithSequenceArgBody>(*lexicalGlobalObject, *callFrame, "methodWithSequenceArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_methodWithSequenceArgBody>(*lexicalGlobalObject, *callFrame, "methodWithSequenceArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequenceArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -604,7 +604,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequen
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_nullableSequenceArgBody>(*lexicalGlobalObject, *callFrame, "nullableSequenceArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_nullableSequenceArgBody>(*lexicalGlobalObject, *callFrame, "nullableSequenceArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_sequenceOfNullablesArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -625,7 +625,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_sequenceOfNull
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_sequenceOfNullablesArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_sequenceOfNullablesArgBody>(*lexicalGlobalObject, *callFrame, "sequenceOfNullablesArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_sequenceOfNullablesArgBody>(*lexicalGlobalObject, *callFrame, "sequenceOfNullablesArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -646,7 +646,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequen
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArgBody>(*lexicalGlobalObject, *callFrame, "nullableSequenceOfNullablesArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArgBody>(*lexicalGlobalObject, *callFrame, "nullableSequenceOfNullablesArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -667,7 +667,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequen
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArgBody>(*lexicalGlobalObject, *callFrame, "nullableSequenceOfUnionsArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArgBody>(*lexicalGlobalObject, *callFrame, "nullableSequenceOfUnionsArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_unionArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -688,7 +688,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_unionArgBody(J
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_unionArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_unionArgBody>(*lexicalGlobalObject, *callFrame, "unionArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_unionArgBody>(*lexicalGlobalObject, *callFrame, "unionArg"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -713,7 +713,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampB
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_funcWithClamp, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_funcWithClampBody>(*lexicalGlobalObject, *callFrame, "funcWithClamp");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_funcWithClampBody>(*lexicalGlobalObject, *callFrame, "funcWithClamp"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampInTypedefBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -734,7 +734,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampI
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_funcWithClampInTypedef, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_funcWithClampInTypedefBody>(*lexicalGlobalObject, *callFrame, "funcWithClampInTypedef");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_funcWithClampInTypedefBody>(*lexicalGlobalObject, *callFrame, "funcWithClampInTypedef"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_pointFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -749,7 +749,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_pointFunctionB
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_pointFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_pointFunctionBody>(*lexicalGlobalObject, *callFrame, "pointFunction");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_pointFunctionBody>(*lexicalGlobalObject, *callFrame, "pointFunction"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_stringSequenceFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -770,7 +770,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_stringSequence
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_stringSequenceFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_stringSequenceFunctionBody>(*lexicalGlobalObject, *callFrame, "stringSequenceFunction");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_stringSequenceFunctionBody>(*lexicalGlobalObject, *callFrame, "stringSequenceFunction"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_stringSequenceFunction2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -791,7 +791,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_stringSequence
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_stringSequenceFunction2, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_stringSequenceFunction2Body>(*lexicalGlobalObject, *callFrame, "stringSequenceFunction2");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_stringSequenceFunction2Body>(*lexicalGlobalObject, *callFrame, "stringSequenceFunction2"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresIncludeBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
@@ -812,7 +812,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_callWithSequen
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresInclude, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresIncludeBody>(*lexicalGlobalObject, *callFrame, "callWithSequenceThatRequiresInclude");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresIncludeBody>(*lexicalGlobalObject, *callFrame, "callWithSequenceThatRequiresInclude"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestTypedefs::subspaceForImpl(JSC::VM& vm)

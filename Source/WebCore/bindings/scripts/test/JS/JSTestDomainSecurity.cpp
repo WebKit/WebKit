@@ -245,7 +245,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_exciting
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_excitingFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_excitingFunctionBody>(*lexicalGlobalObject, *callFrame, "excitingFunction");
+    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_excitingFunctionBody>(*lexicalGlobalObject, *callFrame, "excitingFunction"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_postMessageBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
@@ -266,7 +266,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_postMess
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_postMessage, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_postMessageBody>(*lexicalGlobalObject, *callFrame, "postMessage");
+    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_postMessageBody>(*lexicalGlobalObject, *callFrame, "postMessage"_s);
 }
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
@@ -324,7 +324,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overload
 
 JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_overloadedMethodOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedMethod");
+    return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_overloadedMethodOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedMethod"_s);
 }
 
 JSC::GCClient::IsoSubspace* JSTestDomainSecurity::subspaceForImpl(JSC::VM& vm)

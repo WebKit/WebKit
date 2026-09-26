@@ -37,7 +37,7 @@ static String getExecutablePath()
 {
     auto executablePath = FileSystem::currentExecutablePath();
     if (!executablePath.isNull())
-        return FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath.legacyCStringPointer()));
+        return FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath));
     return { };
 }
 #endif

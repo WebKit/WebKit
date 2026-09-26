@@ -930,10 +930,10 @@ void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQU
     auto packetData = packet.utf8();
     int sent = static_cast<int>(send(m_debugServer.m_clientSocket, packetData.legacyCStringPointer(), packetData.length(), 0));
     if (sent < 0)
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Failed to send packet: ", packetData.legacyCStringPointer(), " sent: ", sent);
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Failed to send packet: ", packetData, " sent: ", sent);
     else {
         m_debuggerState = DebuggerState::Replied;
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sent reply: ", packetData.legacyCStringPointer());
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sent reply: ", packetData);
     }
 }
 

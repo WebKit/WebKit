@@ -112,7 +112,7 @@ RemoteInspectorClient::RemoteInspectorClient(URL url, RemoteInspectorObserver& o
         return;
     }
 
-    m_connectionID = connectInet(url.host().utf8().legacyCStringPointer(), url.port().value());
+    m_connectionID = connectInet(url.host().utf8(), url.port().value());
     if (!m_connectionID) {
         LOG_ERROR("Inspector client could not connect to %s", url.string().utf8());
         return;

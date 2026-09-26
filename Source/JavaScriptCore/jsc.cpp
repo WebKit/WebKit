@@ -4751,7 +4751,7 @@ int jscmain(int argc, char** argv)
 
     {
         Options::AllowUnfinalizedAccessScope scope;
-        processConfigFile(Options::configFile(), "jsc");
+        processConfigFile(Options::configFile(), "jsc"_s);
     }
 
     JSC::initialize();

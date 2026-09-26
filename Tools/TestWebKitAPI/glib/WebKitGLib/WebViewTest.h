@@ -24,6 +24,7 @@
 #include <optional>
 #include <wtf/OptionSet.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 
 class WebViewTest: public Test {
 public:
@@ -90,6 +91,7 @@ public:
 #endif
 
     JSCValue* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**, WebKitWebView* = nullptr);
+    JSCValue* runJavaScriptAndWaitUntilFinished(CStringView javascript, GError**, WebKitWebView* = nullptr);
     JSCValue* runJavaScriptAndWaitUntilFinished(const char* javascript, gsize, GError**);
     JSCValue* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
     JSCValue* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, const char* sourceURI, GError**);

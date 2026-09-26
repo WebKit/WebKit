@@ -784,7 +784,7 @@ void WKWebsiteDataStoreGetAllStorageAccessEntries(WKWebsiteDataStoreRef dataStor
     protect(WebKit::toImpl(dataStoreRef))->getAllStorageAccessEntries(WebKit::toImpl(pageRef)->identifier(), [context, callback] (Vector<String>&& domains) {
         auto domainArrayRef = WKMutableArrayCreate();
         for (auto domain : domains)
-            WKArrayAppendItem(domainArrayRef, adoptWK(WKStringCreateWithUTF8CString(domain.utf8().legacyCStringPointer())).get());
+            WKArrayAppendItem(domainArrayRef, adoptWK(WebKit::toCopiedAPI(domain)).get());
 
         callback(context, domainArrayRef);
     });

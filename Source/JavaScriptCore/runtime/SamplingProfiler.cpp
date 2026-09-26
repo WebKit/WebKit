@@ -1199,7 +1199,7 @@ void SamplingProfiler::reportDataToOptionFile()
         StringPrintStream pathOut;
         pathOut.print(path, "/");
         pathOut.print("JSCSampilingProfile-", reinterpret_cast<uintptr_t>(this), ".txt");
-        auto out = FilePrintStream::open(pathOut.toUTF8CString().legacyCStringPointer(), "w");
+        auto out = FilePrintStream::open(pathOut.toUTF8CString(), "w"_s);
         reportTopFunctions(*out);
         reportTopBytecodes(*out);
     }

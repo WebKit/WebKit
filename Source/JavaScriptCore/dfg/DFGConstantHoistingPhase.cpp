@@ -71,7 +71,7 @@ public:
                 result = &int52Values;
                 break;
             default:
-                DFG_CRASH(m_graph, nullptr, "Invalid node type in valuesFor()");
+                DFG_CRASH(m_graph, nullptr, "Invalid node type in valuesFor()"_s);
                 result = nullptr;
                 break;
             }

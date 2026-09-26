@@ -100,7 +100,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     m_graph.ensureCPSDominators();
     m_graph.ensureCPSNaturalLoops();
     
-    const char* prefix = "    ";
+    constexpr auto prefix = "    "_s;
     const char* disassemblyPrefix = "        ";
     
     Node* lastNode = nullptr;

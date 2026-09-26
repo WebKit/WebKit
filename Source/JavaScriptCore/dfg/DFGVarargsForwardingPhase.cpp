@@ -336,7 +336,7 @@ private:
             break;
             
         default:
-            DFG_CRASH(m_graph, candidate, "bad node type");
+            DFG_CRASH(m_graph, candidate, "bad node type"_s);
             break;
         }
 

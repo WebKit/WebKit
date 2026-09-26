@@ -169,7 +169,7 @@ void PageClientImpl::didRelaunchProcess()
 
 void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
-    webkitWebViewBaseSetTooltipText(WEBKIT_WEB_VIEW_BASE(m_viewWidget), newToolTip.utf8().legacyCStringPointer());
+    webkitWebViewBaseSetTooltipText(WEBKIT_WEB_VIEW_BASE(m_viewWidget), newToolTip);
 }
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
@@ -569,7 +569,7 @@ void PageClientImpl::derefView()
 void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get("CLIPBOARD"_s);
-    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, requiresInteraction, completionHandler = WTF::move(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
+    clipboard.readBuffer(PasteboardCustomData::gtkType(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, requiresInteraction, completionHandler = WTF::move(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
         if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No && PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
             completionHandler(DOMPasteAccessResponse::GrantedForGesture);
             return;

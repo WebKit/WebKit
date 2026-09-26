@@ -293,16 +293,14 @@ JSObject* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
     return createTypeError(globalObject, errorString);
 }
 
-String makeDOMAttributeGetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
+String makeDOMAttributeGetterTypeErrorMessage(StringView interfaceName, const String& attributeName)
 {
-    auto interfaceNameSpan = unsafeSpan(interfaceName);
-    return makeString("The "_s, interfaceNameSpan, '.', attributeName, " getter can only be used on instances of "_s, interfaceNameSpan);
+    return makeString("The "_s, interfaceName, '.', attributeName, " getter can only be used on instances of "_s, interfaceName);
 }
 
-String makeDOMAttributeSetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
+String makeDOMAttributeSetterTypeErrorMessage(StringView interfaceName, const String& attributeName)
 {
-    auto interfaceNameSpan = unsafeSpan(interfaceName);
-    return makeString("The "_s, interfaceNameSpan, '.', attributeName, " setter can only be used on instances of "_s, interfaceNameSpan);
+    return makeString("The "_s, interfaceName, '.', attributeName, " setter can only be used on instances of "_s, interfaceName);
 }
 
 Exception* throwConstructorCannotBeCalledAsFunctionTypeError(JSGlobalObject* globalObject, ThrowScope& scope, ASCIILiteral constructorName)

@@ -39,8 +39,7 @@ namespace FileSystemImpl {
 
 bool validRepresentation(const UTF8CString& representation)
 {
-    auto* data = representation.legacyCStringPointer();
-    return !!data && data[0] != '\0';
+    return !representation.isEmpty();
 }
 
 // Converts a string to something suitable to be displayed to the user.

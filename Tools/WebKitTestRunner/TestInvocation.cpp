@@ -233,18 +233,18 @@ end:
     TestController::singleton().reattachPageToWebProcess();
 }
 
-void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
+void TestInvocation::dumpWebProcessUnresponsiveness(ASCIILiteral errorMessage)
 {
-    fprintf(stderr, "%s", errorMessage);
+    SAFE_FPRINTF(stderr, "%s", errorMessage);
     char buffer[1024] = { };
 #if PLATFORM(COCOA)
     pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
-    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName().characters(), static_cast<long>(pid));
+    SAFE_SPRINTF(std::span { buffer }, "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
 #else
-    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName().characters());
+    SAFE_SPRINTF(std::span { buffer }, "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
 #endif
 
-    dump(errorMessage, buffer, true);
+    dump(errorMessage, CStringView::unsafeFromUTF8(buffer), true);
 
     if (!TestController::singleton().usingServerMode())
         return;
@@ -253,16 +253,16 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
         fputs("Grab an image of the stack, then hit enter...\n", stderr);
 
     if (!fgets(buffer, sizeof(buffer), stdin) || strcmp(buffer, "#SAMPLE FINISHED\n"))
-        fprintf(stderr, "Failed receive expected sample response, got:\n\t\"%s\"\nContinuing...\n", buffer);
+        SAFE_FPRINTF(stderr, "Failed receive expected sample response, got:\n\t\"%s\"\nContinuing...\n", CStringView::unsafeFromUTF8(buffer));
 }
 
-void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bool seenError)
+void TestInvocation::dump(CStringView textToStdout, CStringView textToStderr, bool seenError)
 {
     printf("Content-Type: text/plain\n");
-    if (textToStdout)
-        fputs(textToStdout, stdout);
-    if (textToStderr)
-        fputs(textToStderr, stderr);
+    if (!textToStdout.isNull())
+        fputs(textToStdout.utf8(), stdout);
+    if (!textToStderr.isNull())
+        fputs(textToStderr.utf8(), stderr);
 
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
@@ -342,9 +342,9 @@ void TestInvocation::dumpResults()
         m_textOutput.append(TestController::singleton().dumpPrivateClickMeasurement());
 
     if (m_textOutput.hasOverflowed())
-        dump("text output overflowed");
+        dump("text output overflowed"_s);
     else if (m_textOutput.length() || !m_audioResult)
-        dump(m_textOutput.toString().utf8().legacyCStringPointer());
+        dump(m_textOutput.toString().utf8());
     else
         dumpAudio(m_audioResult.get());
 

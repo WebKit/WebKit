@@ -233,8 +233,6 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 WTF_EXPORT_PRIVATE void WTFLogAlwaysV(const char* format, va_list) WTF_ATTRIBUTE_NSSTRING(1, 0);
 WTF_EXPORT_PRIVATE void WTFLogAlways(const char* format, ...) WTF_ATTRIBUTE_NSSTRING(1, 2);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFLogAlwaysAndCrash(const char* format, ...) WTF_ATTRIBUTE_NSSTRING(1, 2);
-WTF_EXPORT_PRIVATE WTFLogChannel* NODELETE WTFLogChannelByName(WTFLogChannel*[], size_t count, const char*);
-WTF_EXPORT_PRIVATE void WTFInitializeLogChannelStatesFromString(WTFLogChannel*[], size_t count, const char*);
 WTF_EXPORT_PRIVATE void WTFLogWithLevel(WTFLogChannel*, WTFLogLevel, const char* format, ...) WTF_ATTRIBUTE_NSSTRING(3, 4);
 WTF_EXPORT_PRIVATE void NODELETE WTFSetLogChannelLevel(WTFLogChannel*, WTFLogLevel);
 WTF_EXPORT_PRIVATE bool NODELETE WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
@@ -382,6 +380,13 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void NODELETE WTFCrashWithSecurityImpl
 
 #ifdef __cplusplus
 }
+
+namespace WTF {
+class StringView;
+}
+
+WTF_EXPORT_PRIVATE WTFLogChannel* NODELETE WTFLogChannelByName(WTFLogChannel*[], size_t count, WTF::StringView name);
+WTF_EXPORT_PRIVATE void WTFInitializeLogChannelStatesFromString(WTFLogChannel*[], size_t count, WTF::StringView logLevel);
 #endif
 
 /* BACKTRACE

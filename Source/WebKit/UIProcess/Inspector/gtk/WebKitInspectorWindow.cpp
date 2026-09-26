@@ -97,17 +97,17 @@ GtkWidget* webkitInspectorWindowNew()
         "default-width", WebInspectorUIProxy::initialWindowWidth, "default-height", WebInspectorUIProxy::initialWindowHeight, nullptr));
 }
 
-void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, const char* subtitle)
+void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, CStringView subtitle)
 {
     g_return_if_fail(WEBKIT_IS_INSPECTOR_WINDOW(window));
 
 #if USE(GTK4)
-    if (subtitle) {
-        gtk_label_set_text(GTK_LABEL(window->subtitleLabel), subtitle);
+    if (!subtitle.isNull()) {
+        gtk_label_set_text(GTK_LABEL(window->subtitleLabel), subtitle.utf8());
         gtk_widget_show(window->subtitleLabel);
     } else
         gtk_widget_hide(window->subtitleLabel);
 #else
-    gtk_header_bar_set_subtitle(GTK_HEADER_BAR(window->headerBar), subtitle);
+    gtk_header_bar_set_subtitle(GTK_HEADER_BAR(window->headerBar), subtitle.utf8());
 #endif // USE(GTK4)
 }

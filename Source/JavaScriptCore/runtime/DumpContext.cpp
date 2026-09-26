@@ -40,9 +40,9 @@ bool DumpContext::isEmpty() const
     return structures.isEmpty();
 }
 
-void DumpContext::dump(PrintStream& out, const char* prefix) const
+void DumpContext::dump(PrintStream& out, CStringView prefix) const
 {
-    structures.dump(out, prefix);
+    structures.dump(out, prefix.utf8());
 }
 
 } // namespace JSC

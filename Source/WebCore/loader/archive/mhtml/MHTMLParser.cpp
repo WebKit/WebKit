@@ -53,7 +53,7 @@ static bool skipLinesUntilBoundaryFound(SharedBufferChunkReader& lineReader, con
 }
 
 MHTMLParser::MHTMLParser(FragmentedSharedBuffer* data)
-    : m_lineReader(data, "\r\n")
+    : m_lineReader(data, "\r\n"_s)
 {
 }
 
@@ -149,14 +149,14 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
             LOG_ERROR("Binary contents requires end of part");
             return nullptr;
         }
-        m_lineReader.setSeparator(endOfPartBoundary.utf8().legacyCStringPointer());
+        m_lineReader.setSeparator(endOfPartBoundary.utf8());
         Vector<uint8_t> part;
         if (!m_lineReader.nextChunk(part)) {
             LOG_ERROR("Binary contents requires end of part");
             return nullptr;
         }
         content.append(WTF::move(part));
-        m_lineReader.setSeparator("\r\n");
+        m_lineReader.setSeparator("\r\n"_s);
         Vector<uint8_t> nextChars;
         if (m_lineReader.peek(nextChars, 2) != 2) {
             LOG_ERROR("Invalid seperator.");

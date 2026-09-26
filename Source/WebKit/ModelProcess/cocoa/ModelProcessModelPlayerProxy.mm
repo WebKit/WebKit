@@ -830,7 +830,7 @@ void ModelProcessModelPlayerProxy::updateAnchorParenting()
                 if (REEntityRef placement = REEntityFindInHierarchyByName(desiredParent, placementName.legacyCStringPointer()))
                     desiredParent = placement;
                 else
-                    RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::updateAnchorParenting: the anchor's asset has no entity named '%s', anchoring to its root instead. nodeID=%" PRIu64, this, placementName.legacyCStringPointer(), nodeID.toUInt64());
+                    RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::updateAnchorParenting: the anchor's asset has no entity named '%s', anchoring to its root instead. nodeID=%" PRIu64, this, placementName, nodeID.toUInt64());
             }
         }
 

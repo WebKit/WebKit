@@ -251,7 +251,7 @@ static inline EncodedJSValue jsTestAsyncIterableWithoutFlagsPrototypeFunction_va
 
 JSC_DEFINE_HOST_FUNCTION(jsTestAsyncIterableWithoutFlagsPrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
-    return IDLOperation<JSTestAsyncIterableWithoutFlags>::call<jsTestAsyncIterableWithoutFlagsPrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values");
+    return IDLOperation<JSTestAsyncIterableWithoutFlags>::call<jsTestAsyncIterableWithoutFlagsPrototypeFunction_valuesCaller>(*lexicalGlobalObject, *callFrame, "values"_s);
 }
 
 JSC_ANNOTATE_HOST_FUNCTION(TestAsyncIterableWithoutFlagsIteratorBaseOnPromiseSettled, TestAsyncIterableWithoutFlagsIteratorBase::onPromiseSettled);

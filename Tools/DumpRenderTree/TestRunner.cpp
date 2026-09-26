@@ -1203,7 +1203,7 @@ static JSValueRef setPageVisibilityCallback(JSContextRef context, JSObjectRef fu
     ASSERT(!*exception);
 
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setPageVisibility(utf8CString(visibility.get()).legacyCStringPointer());
+    controller->setPageVisibility(utf8CString(visibility.get()));
     
     return JSValueMakeUndefined(context);
 }    

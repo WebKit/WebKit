@@ -25,7 +25,7 @@
 #include <JavaScriptCore/RemoteInspector.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
-WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext*, const char* sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities&);
+WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext*, const String& sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities&);
 #endif
 
 WebKit::WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession*);

@@ -337,7 +337,7 @@ void WebExtensionContext::loadBackgroundWebView()
         return;
     }
 
-    webkitWebViewLoadServiceWorker(m_backgroundWebView.get(), backgroundContentURL().string().utf8().legacyCStringPointer(), protect(extension())->backgroundContentUsesModules(), [this, protectedThis = Ref { *this }](bool success) {
+    webkitWebViewLoadServiceWorker(m_backgroundWebView.get(), backgroundContentURL(), protect(extension())->backgroundContentUsesModules(), [this, protectedThis = Ref { *this }](bool success) {
         if (!success) {
             m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad);
             recordErrorIfNeeded(backgroundContentLoadError());

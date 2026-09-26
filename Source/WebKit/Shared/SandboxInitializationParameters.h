@@ -27,6 +27,7 @@
 #define SandboxInitializationParameters_h
 
 #include <wtf/Vector.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -44,7 +45,7 @@ public:
 #if PLATFORM(COCOA)
     void addConfDirectoryParameter(ASCIILiteral name, int confID);
     void addPathParameter(ASCIILiteral name, NSString *path);
-    void addPathParameter(ASCIILiteral name, const char* path);
+    void addPathParameter(ASCIILiteral name, CStringView path);
     void addParameter(ASCIILiteral name, UTF8CString&& value);
 
     Vector<const char*> namedParameterVector() const;

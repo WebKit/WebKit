@@ -41,6 +41,7 @@
 #include <wtf/cocoa/VectorCocoa.h>
 #include <wtf/darwin/DispatchExtras.h>
 #include <wtf/darwin/DispatchOSObject.h>
+#include <wtf/text/CStringView.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/packet_socket_factory.h>
@@ -86,11 +87,11 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     }).get());
 }
 
-static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, const char* hostName, const char* port, bool isTLS, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
+static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, CStringView hostName, CStringView port, bool isTLS, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
-    auto host = adoptNS(nw_endpoint_create_host(hostName, port));
+    RetainPtr host = adoptNS(nw_endpoint_create_host(hostName.utf8(), port.utf8()));
     // FIXME: Handle TLS certificate validation like for other network code paths, using sec_protocol_options_set_verify_block
-    auto tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
+    RetainPtr tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
         nw_tcp_options_set_no_delay(tcp_options, true);
     }));
 
@@ -116,7 +117,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     if (hostName.empty())
         hostName = remoteAddress.ipaddr().ToString();
     bool isTLS = options & webrtc::PacketSocketFactory::OPT_TLS;
-    m_nwConnection = createNWConnection(rtcProvider, hostName.c_str(), String::number(remoteAddress.port()).utf8().legacyCStringPointer(), isTLS, attributedBundleIdentifier, flags, domain);
+    m_nwConnection = createNWConnection(rtcProvider, CStringView::unsafeFromUTF8(hostName.c_str()), String::number(remoteAddress.port()).utf8(), isTLS, attributedBundleIdentifier, flags, domain);
 
     nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueueSingleton());
     nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([weakNWConnection = WeakObjCPtr { m_nwConnection.get() }, identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
@@ -234,7 +235,7 @@ auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
 
     bool isHTTPS = url.protocolIs("https"_s);
     auto port = url.port().value_or(isHTTPS ? 443 : 80);
-    auto nwConnection = createNWConnection(rtcProvider, url.host().toString().utf8().legacyCStringPointer(), String::number(port).utf8().legacyCStringPointer(), isHTTPS, attributedBundleIdentifier, flags, domain);
+    auto nwConnection = createNWConnection(rtcProvider, url.host().toString().utf8(), String::number(port).utf8(), isHTTPS, attributedBundleIdentifier, flags, domain);
 
     NamePromise::AutoRejectProducer promiseProducer;
     Ref promise = promiseProducer.promise();

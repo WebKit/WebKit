@@ -311,10 +311,9 @@ JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::JSGlobalObject& lexica
     return createRejectedPromiseWithTypeError(lexicalGlobalObject, JSC::makeDOMAttributeGetterTypeErrorMessage(classInfo->className, String(attributeName.uid())), RejectedPromiseWithTypeErrorCause::NativeGetter);
 }
 
-String makeThisTypeErrorMessage(const char* interfaceName, const char* functionName)
+String makeThisTypeErrorMessage(StringView interfaceName, StringView functionName)
 {
-    auto interfaceNameSpan = unsafeSpan(interfaceName);
-    return makeString("Can only call "_s, interfaceNameSpan, '.', unsafeSpan(functionName), " on instances of "_s, interfaceNameSpan);
+    return makeString("Can only call "_s, interfaceName, '.', functionName, " on instances of "_s, interfaceName);
 }
 
 String makeUnsupportedIndexedSetterErrorMessage(ASCIILiteral interfaceName)
@@ -322,18 +321,18 @@ String makeUnsupportedIndexedSetterErrorMessage(ASCIILiteral interfaceName)
     return makeString("Failed to set an indexed property on "_s, interfaceName, ": Indexed property setter is not supported."_s);
 }
 
-EncodedJSValue throwThisTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, const char* interfaceName, const char* functionName)
+EncodedJSValue throwThisTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral interfaceName, ASCIILiteral functionName)
 {
     return throwTypeError(lexicalGlobalObject, scope, makeThisTypeErrorMessage(interfaceName, functionName));
 }
 
-JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise& promise, const char* interfaceName, const char* methodName)
+JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise& promise, ASCIILiteral interfaceName, ASCIILiteral methodName)
 {
     promise.reject(ExceptionCode::TypeError, makeThisTypeErrorMessage(interfaceName, methodName));
     return JSValue::encode(jsUndefined());
 }
 
-JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const char* interfaceName, const char* methodName)
+JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject& lexicalGlobalObject, ASCIILiteral interfaceName, ASCIILiteral methodName)
 {
     return createRejectedPromiseWithTypeError(lexicalGlobalObject, makeThisTypeErrorMessage(interfaceName, methodName), RejectedPromiseWithTypeErrorCause::InvalidThis);
 }

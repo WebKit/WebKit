@@ -2595,11 +2595,11 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     }, webkitWebViewBase);
 }
 
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
+void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const String& tooltip)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (tooltip && tooltip[0] != '\0') {
-        priv->tooltipText = UTF8CString { byteCast<char8_t>(tooltip) };
+    if (!tooltip.isEmpty()) {
+        priv->tooltipText = tooltip.utf8();
         gtk_widget_set_has_tooltip(GTK_WIDGET(webViewBase), TRUE);
     } else {
         priv->tooltipText = ""_s;

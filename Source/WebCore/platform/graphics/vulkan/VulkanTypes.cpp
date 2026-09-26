@@ -59,9 +59,9 @@
 namespace WebCore {
 namespace Vulkan {
 
-ApplicationInfo::ApplicationInfo(const char* applicationName, uint32_t apiVersion)
+ApplicationInfo::ApplicationInfo(CStringView applicationName, uint32_t apiVersion)
 {
-    value().pApplicationName = applicationName;
+    value().pApplicationName = applicationName.utf8();
     value().apiVersion = apiVersion;
 }
 

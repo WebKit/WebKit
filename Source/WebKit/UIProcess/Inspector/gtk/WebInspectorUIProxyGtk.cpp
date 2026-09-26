@@ -75,7 +75,7 @@ void WebInspectorUIProxy::setClient(std::unique_ptr<WebInspectorUIProxyClient>&&
 void WebInspectorUIProxy::updateInspectorWindowTitle() const
 {
     ASSERT(m_inspectorWindow);
-    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_inspectorWindow.get()), !m_inspectedURLString.isEmpty() ? m_inspectedURLString.utf8().legacyCStringPointer() : nullptr);
+    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_inspectorWindow.get()), !m_inspectedURLString.isEmpty() ? CStringView { m_inspectedURLString.utf8() } : CStringView { });
 }
 
 static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)

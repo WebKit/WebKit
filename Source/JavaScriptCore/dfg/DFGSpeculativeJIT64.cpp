@@ -150,10 +150,10 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
     case DataFormatDouble:
     case DataFormatInt52:
         // this type currently never occurs
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format");
+        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format"_s);
         return InvalidGPRReg;
     }
 }
@@ -688,7 +688,7 @@ void SpeculativeJIT::emitCall(Node* node)
         isDirect = true;
         break;
     default:
-        DFG_CRASH(m_graph, node, "bad node type");
+        DFG_CRASH(m_graph, node, "bad node type"_s);
         break;
     }
     UNUSED_VARIABLE(isConstruct);
@@ -1271,10 +1271,10 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     case DataFormatStrictInt52:
     case DataFormatBigInt32:
     case DataFormatJSBigInt32:
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format");
+        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format"_s);
         return InvalidGPRReg;
     }
 }
@@ -1381,7 +1381,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
     }
 
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         return InvalidGPRReg;
     }
 }
@@ -1421,7 +1421,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
             DFG_CRASH(
                 m_graph, m_currentNode, toUTF8CString(
                     "Expected ", edge, " to have double format but instead it is spilled as ",
-                    dataFormatToString(spillFormat)).legacyCStringPointer());
+                    dataFormatToString(spillFormat)));
         }
         DFG_ASSERT(m_graph, m_currentNode, spillFormat == DataFormatDouble, spillFormat);
         FPRReg fpr = fprAllocate();
@@ -1510,10 +1510,10 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatStrictInt52:
     case DataFormatBigInt32:
     case DataFormatJSBigInt32:
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format");
+        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format"_s);
         return InvalidGPRReg;
     }
 }
@@ -1590,10 +1590,10 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     case DataFormatStrictInt52:
     case DataFormatBigInt32:
     case DataFormatJSBigInt32:
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
         
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format");
+        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format"_s);
         return InvalidGPRReg;
     }
 }
@@ -1709,10 +1709,10 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
     case DataFormatInt52:
     case DataFormatStrictInt52:
     case DataFormatBigInt32:
-        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format"_s);
 
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format");
+        DFG_CRASH(m_graph, m_currentNode, "Corrupt data format"_s);
         return InvalidGPRReg;
     }
 }
@@ -2233,7 +2233,7 @@ void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
         return;
 
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -2500,7 +2500,7 @@ void SpeculativeJIT::emitBranch(Node* node)
     }
         
     default:
-        DFG_CRASH(m_graph, m_currentNode, "Bad use kind");
+        DFG_CRASH(m_graph, m_currentNode, "Bad use kind"_s);
     }
 }
 
@@ -2699,7 +2699,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<G
     case Array::SelectUsingArguments:
     case Array::SelectUsingPredictions:
     case Array::Unprofiled:
-        DFG_CRASH(m_graph, node, "Bad array mode type");
+        DFG_CRASH(m_graph, node, "Bad array mode type"_s);
         break;
     case Array::Undecided: {
         SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 1));
@@ -3517,7 +3517,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            DFG_CRASH(m_graph, node, "Bad flush format");
+            DFG_CRASH(m_graph, node, "Bad flush format"_s);
             break;
         }
 
@@ -3672,7 +3672,7 @@ void SpeculativeJIT::compile(Node* node)
         }
 
         default:
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
         }
         break;
     }
@@ -4236,7 +4236,7 @@ void SpeculativeJIT::compile(Node* node)
                 strictInt52Result(resultGPR, node);
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Bad result type");
+                DFG_CRASH(m_graph, node, "Bad result type"_s);
                 break;
             }
             break;
@@ -4494,7 +4494,7 @@ void SpeculativeJIT::compile(Node* node)
             case Array::Double:
                 return operationArrayShiftElementsDouble;
             default:
-                DFG_CRASH(m_graph, node, "Bad array mode");
+                DFG_CRASH(m_graph, node, "Bad array mode"_s);
                 return operationArrayShiftElementsInt32;
             }
         }();
@@ -4651,7 +4651,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
             break;
         }
         break;
@@ -4717,7 +4717,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         default:
-            DFG_CRASH(m_graph, node, "Bad use kind");
+            DFG_CRASH(m_graph, node, "Bad use kind"_s);
             break;
         }
         break;
@@ -6971,7 +6971,7 @@ void SpeculativeJIT::compile(Node* node)
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
-        DFG_CRASH(m_graph, node, "Unexpected tier-up node");
+        DFG_CRASH(m_graph, node, "Unexpected tier-up node"_s);
         break;
 #endif // ENABLE(FTL_JIT)
 
@@ -7032,7 +7032,7 @@ void SpeculativeJIT::compile(Node* node)
     case CPUIntrinsic:
     case CallWasm:
     case TailCallInlinedCallerWasm:
-        DFG_CRASH(m_graph, node, "Unexpected node");
+        DFG_CRASH(m_graph, node, "Unexpected node"_s);
         break;
     }
 
@@ -7432,7 +7432,7 @@ void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
     }
 
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -7733,7 +7733,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::DirectArguments:
     case Array::ScopedArguments:
     case Array::Undecided:
-        DFG_CRASH(m_graph, node, "Bad array mode type");
+        DFG_CRASH(m_graph, node, "Bad array mode type"_s);
         break;
     case Array::BigInt64Array:
     case Array::BigUint64Array:
@@ -8017,7 +8017,7 @@ void SpeculativeJIT::compileGetPrivateNameById(Node* node)
     }
 
     default:
-        DFG_CRASH(m_graph, node, "Bad use kind");
+        DFG_CRASH(m_graph, node, "Bad use kind"_s);
         break;
     }
 }
@@ -9474,7 +9474,7 @@ void SpeculativeJIT::compileArrayUnshift(Node* node)
     }
 
     default:
-        DFG_CRASH(m_graph, node, "Bad array mode");
+        DFG_CRASH(m_graph, node, "Bad array mode"_s);
         break;
     }
 }
