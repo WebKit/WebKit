@@ -294,7 +294,7 @@ private:
     }
 
     SVGTransformType m_type { SVG_TRANSFORM_UNKNOWN };
-    Ref<SVGMatrix> m_matrix;
+    const Ref<SVGMatrix> m_matrix;
     float m_angle { 0 };
     FloatPoint m_rotationCenter;
 };

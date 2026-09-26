@@ -90,7 +90,7 @@ private:
     };
     RuleInformation NODELETE collectRuleInformation();
 
-    RefPtr<RuleSet> m_ownedRuleSet;
+    const RefPtr<RuleSet> m_ownedRuleSet;
     const InvalidationRuleSetVector m_ruleSets;
 
     RuleInformation m_ruleInformation;

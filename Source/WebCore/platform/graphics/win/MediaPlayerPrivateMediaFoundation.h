@@ -430,7 +430,7 @@ private:
         COMPtr<IMediaEventSink> m_mediaEventSink;
         COMPtr<IMFTransform> m_mixer;
         COMPtr<IMFMediaType> m_mediaType;
-        std::unique_ptr<Direct3DPresenter> m_presenterEngine;
+        const std::unique_ptr<Direct3DPresenter> m_presenterEngine;
         MFVideoNormalizedRect m_sourceRect;
         bool m_sampleNotify { false };
         bool m_prerolled { false };

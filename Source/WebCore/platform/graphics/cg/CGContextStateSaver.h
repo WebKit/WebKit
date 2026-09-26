@@ -65,7 +65,7 @@ public:
     }
     
 private:
-    RetainPtr<CGContextRef> m_context;
+    const RetainPtr<CGContextRef> m_context;
     bool m_saveAndRestore;
 };
 

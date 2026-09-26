@@ -70,8 +70,8 @@ private:
     ThreadSafeWeakPtr<MediaDeviceRouteControllerClient> m_client;
     Vector<Ref<MediaDeviceRoute>> m_activeRoutes;
 #if HAVE(AVSYSTEMROUTING_FRAMEWORK)
-    RetainPtr<WebMediaDeviceRouteObserver> m_routeObserver;
-    RetainPtr<AVSystemRouteController> m_platformController;
+    const RetainPtr<WebMediaDeviceRouteObserver> m_routeObserver;
+    const RetainPtr<AVSystemRouteController> m_platformController;
 #endif
 };
 

@@ -58,7 +58,7 @@ private:
     bool supportsRemoteVideoPlayback() const final { return hasActiveRoute(); }
     bool operator==(const MediaPlaybackTarget&) const final;
 
-    RefPtr<MediaDeviceRoute> m_route;
+    const RefPtr<MediaDeviceRoute> m_route;
     bool m_hasActiveRoute;
 };
 

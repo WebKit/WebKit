@@ -50,7 +50,7 @@ private:
     WorkletPendingTasks(Worklet&, PendingTaskPromise&&, int counter);
 
     WeakPtr<Worklet> m_worklet;
-    UniqueRef<PendingTaskPromise> m_promise;
+    const UniqueRef<PendingTaskPromise> m_promise;
     int m_counter;
 };
 

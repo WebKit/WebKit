@@ -189,7 +189,7 @@ private:
 
     KeyframesRuleMap m_keyframesRuleMap;
 
-    std::unique_ptr<Style::CustomFunctionRegistry> m_customFunctionRegistry;
+    const std::unique_ptr<Style::CustomFunctionRegistry> m_customFunctionRegistry;
 
     MQ::MediaQueryEvaluator m_mediaQueryEvaluator;
 

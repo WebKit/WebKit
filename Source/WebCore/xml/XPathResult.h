@@ -78,7 +78,7 @@ private:
     Lock m_nodeSetLock;
     XPath::NodeSet m_nodeSet WTF_GUARDED_BY_LOCK(m_nodeSetLock);
     unsigned short m_resultType;
-    RefPtr<Document> m_document;
+    const RefPtr<Document> m_document;
     uint64_t m_domTreeVersion { 0 };
 };
 

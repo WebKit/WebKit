@@ -71,7 +71,7 @@ private:
 
     AudioDecoder::OutputCallback m_outputCallback;
 
-    RefPtr<GStreamerElementHarness> m_harness;
+    const RefPtr<GStreamerElementHarness> m_harness;
     GRefPtr<GstCaps> m_inputCaps;
     GRefPtr<GstBuffer> m_header;
     bool m_isClosed { false };
@@ -252,7 +252,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     pad = adoptGRef(gst_element_get_static_pad(outputCapsFilter, "src"));
     gst_element_add_pad(harnessedElement.get(), gst_ghost_pad_new("src", pad.get()));
 
-    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
+    lazyInitialize(m_harness, GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -275,7 +275,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
 
         auto data = PlatformRawAudioDataGStreamer::create(WTF::move(outputSample));
         m_outputCallback(AudioDecoder::DecodedData { WTF::move(data) });
-    });
+    }));
 }
 
 Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(Ref<SharedBuffer>&& frameData, [[maybe_unused]] bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)

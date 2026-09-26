@@ -56,7 +56,7 @@ public:
 private:
     explicit XPathExpression(std::unique_ptr<XPath::Expression>);
 
-    std::unique_ptr<XPath::Expression> m_topExpression;
+    const std::unique_ptr<XPath::Expression> m_topExpression;
 };
 
 }

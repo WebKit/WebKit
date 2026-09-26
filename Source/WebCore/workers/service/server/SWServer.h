@@ -392,7 +392,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, ScriptExecutionContextIdentifier> m_visibleClientIdToInternalClientIdMap;
 
     const UniqueRef<SWOriginStore> m_originStore;
-    RefPtr<SWRegistrationStore> m_registrationStore;
+    const RefPtr<SWRegistrationStore> m_registrationStore;
     HashMap<ContextConnectionKey, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
     HashMap<ContextConnectionKey, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
@@ -421,7 +421,7 @@ private:
     uint64_t m_focusOrder { 0 };
     ServiceWorkerIsInspectable m_isInspectable { ServiceWorkerIsInspectable::Yes };
 
-    RefPtr<BackgroundFetchEngine> m_backgroundFetchEngine;
+    const RefPtr<BackgroundFetchEngine> m_backgroundFetchEngine;
 };
 
 } // namespace WebCore

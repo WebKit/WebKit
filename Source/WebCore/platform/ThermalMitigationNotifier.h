@@ -53,7 +53,7 @@ private:
     void notifyThermalMitigationChanged(bool);
     friend void notifyThermalMitigationChanged(ThermalMitigationNotifier&, bool);
 
-    RetainPtr<WebThermalMitigationObserver> m_observer;
+    const RetainPtr<WebThermalMitigationObserver> m_observer;
     ThermalMitigationChangeCallback m_callback;
 #endif
 };

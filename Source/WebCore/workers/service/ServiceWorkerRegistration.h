@@ -134,9 +134,9 @@ private:
     RefPtr<ServiceWorker> m_waitingWorker;
     RefPtr<ServiceWorker> m_activeWorker;
 
-    std::unique_ptr<NavigationPreloadManager> m_navigationPreload;
+    const std::unique_ptr<NavigationPreloadManager> m_navigationPreload;
 
-    RefPtr<CookieStoreManager> m_cookieStoreManager;
+    const RefPtr<CookieStoreManager> m_cookieStoreManager;
 };
 
 WebCoreOpaqueRoot NODELETE root(ServiceWorkerRegistration*);

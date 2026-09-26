@@ -369,7 +369,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (!m_captureHelper)
-        m_captureHelper = adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]);
+        lazyInitialize(m_captureHelper, adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]));
 
     if (!m_contentFilter) {
         m_contentFilter = ScreenCaptureKitSharingSessionManager::singleton().contentFilter(m_captureDevice);
@@ -614,7 +614,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (!contentRect.size().isEmpty() && !intrinsicSize.isEmpty()) {
         if (!areSizesRoughlyEqual(contentRect.size(), intrinsicSize)) {
             if (!m_transferSession)
-                m_transferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
+                lazyInitialize(m_transferSession, ImageTransferSessionVT::create(preferedPixelBufferFormat()));
 
             m_transferSession->setCroppingRectangle(contentRect, intrinsicSize);
             if (auto newFrame = m_transferSession->convertCMSampleBuffer(m_currentFrame.get(), IntSize { contentRect.size() })) {

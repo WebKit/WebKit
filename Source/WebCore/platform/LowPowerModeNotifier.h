@@ -58,7 +58,7 @@ private:
     void notifyLowPowerModeChanged(bool);
     friend void notifyLowPowerModeChanged(LowPowerModeNotifier&, bool);
 
-    RetainPtr<WebLowPowerModeObserver> m_observer;
+    const RetainPtr<WebLowPowerModeObserver> m_observer;
     LowPowerModeChangeCallback m_callback;
 #elif USE(GLIB)
     LowPowerModeChangeCallback m_callback;

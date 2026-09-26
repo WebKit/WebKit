@@ -480,7 +480,7 @@ void HTMLLinkElement::processInternalResourceLink(Element* element)
     if (document->readyState() == Document::ReadyState::Loading && isConnected() && mediaAttributeMatches() && !indicatedElement) {
         potentiallyBlockRendering();
         if (!m_expectIdTargetObserver)
-            m_expectIdTargetObserver = makeUnique<ExpectIdTargetObserver>(makeAtomString(m_url.fragmentIdentifier()), *this);
+            lazyInitialize(m_expectIdTargetObserver, makeUnique<ExpectIdTargetObserver>(makeAtomString(m_url.fragmentIdentifier()), *this));
     } else
         unblockRendering();
 }

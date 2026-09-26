@@ -49,7 +49,7 @@ private:
     std::optional<size_t> readFromFile(const FormDataElement::EncodedFileData&, char*, size_t);
     std::optional<size_t> readFromData(const Vector<uint8_t>&, char*, size_t);
 
-    RefPtr<FormData> m_formData;
+    const RefPtr<FormData> m_formData;
 
     std::unique_ptr<Vector<uint8_t>> m_postData;
     bool m_isContentLengthUpdated { false };

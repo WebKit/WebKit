@@ -367,7 +367,7 @@ private:
     RefPtr<SharedBuffer> readBufferForTypeWithSecurityCheck(const String&);
 #endif
 
-    std::unique_ptr<PasteboardContext> m_context;
+    const std::unique_ptr<PasteboardContext> m_context;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<SelectionData> m_selectionData;

@@ -252,7 +252,7 @@ void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallba
     // Force the Thread object to be initialized fully before storing it to m_thread (and becoming visible to other threads).
     WTF::storeStoreFence();
 
-    m_thread = WTF::move(thread);
+    lazyInitialize(m_thread, WTF::move(thread));
 }
 
 void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)

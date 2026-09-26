@@ -266,7 +266,7 @@ private:
 
     TextIterator m_iterator;
     RefPtr<Node> m_node;
-    RefPtr<Node> m_pastEndNode;
+    const RefPtr<Node> m_pastEndNode;
     std::optional<Vector<String>> m_text;
 };
 

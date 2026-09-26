@@ -162,7 +162,7 @@ void PDFJSDocument::createDocumentStructure()
     body->setAttribute(styleAttr, "margin: 0px;height: 100vh;"_s);
     rootElement->appendChild(body);
 
-    m_iframe = HTMLIFrameElement::create(HTMLNames::iframeTag, *this);
+    lazyInitialize(m_iframe, HTMLIFrameElement::create(HTMLNames::iframeTag, *this));
     m_iframe->setAttribute(srcAttr, AtomString(viewerURL));
     m_iframe->setAttribute(styleAttr, "width: 100%; height: 100%; border: 0; display: block;"_s);
 

@@ -244,7 +244,7 @@ private:
 
     Markable<PageIdentifier> m_pageIdentifier;
 #if !RELEASE_LOG_DISABLED
-    UniqueRef<Timer> m_stateLogTimer;
+    const UniqueRef<Timer> m_stateLogTimer;
     const Ref<AggregateLogger> m_logger;
 #endif
 

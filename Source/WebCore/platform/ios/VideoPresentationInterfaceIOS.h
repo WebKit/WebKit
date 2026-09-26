@@ -274,7 +274,7 @@ private:
     bool m_finalizeSetupNeedsVideoContentLayer { false };
     bool m_finalizeSetupNeedsReturnVideoContentLayer { false };
     const Ref<PlaybackSessionInterfaceIOS> m_playbackSessionInterface;
-    RetainPtr<UIView> m_pipPlacard;
+    const RetainPtr<UIView> m_pipPlacard;
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
     bool m_prefersSpatialAudioExperience { false };

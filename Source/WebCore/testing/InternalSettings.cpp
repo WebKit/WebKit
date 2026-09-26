@@ -146,7 +146,7 @@ public:
 private:
     bool isInternalSettingsWrapper() const final { return true; }
 
-    RefPtr<InternalSettings> m_internalSettings;
+    const RefPtr<InternalSettings> m_internalSettings;
 };
 
 ASCIILiteral InternalSettings::supplementName()

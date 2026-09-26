@@ -467,7 +467,7 @@ GraphicsLayerCA::~GraphicsLayerCA()
         protect(m_contentsShapeMaskLayer)->setOwner(nullptr);
 
     if (m_shapeMaskLayer)
-        protect(m_shapeMaskLayer)->setOwner(nullptr);
+        m_shapeMaskLayer->setOwner(nullptr);
 
     if (m_structuralLayer)
         protect(m_structuralLayer)->setOwner(nullptr);
@@ -2001,7 +2001,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         constexpr auto washFillColor = Color::red.colorWithAlphaByte(50);
         constexpr auto washBorderColor = Color::red.colorWithAlphaByte(100);
         
-        m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
+        lazyInitialize(m_visibleTileWashLayer, createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this));
         m_visibleTileWashLayer->setName(makeString("Visible Tile Wash Layer 0x"_s, hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase)));
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
         m_visibleTileWashLayer->setBorderColor(washBorderColor);

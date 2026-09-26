@@ -63,7 +63,7 @@ private:
 
     String debugDescription() const final;
 
-    RetainPtr<CFDataRef> m_data;
+    const RetainPtr<CFDataRef> m_data;
 };
 
 } // namespace WebCore

@@ -112,7 +112,7 @@ public:
     // Exposed as public because freestanding functions use this.
     using GraphicsContext::nativeImageForDrawing;
 private:
-    RefPtr<cairo_t> m_cr;
+    const RefPtr<cairo_t> m_cr;
 
     class CairoState;
     CairoState* m_cairoState;

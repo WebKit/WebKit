@@ -129,7 +129,7 @@ private:
 
 #if PLATFORM(MAC)
     NSPasteboardItem *itemAtIndex(size_t index) const;
-    RetainPtr<NSPasteboard> m_pasteboard;
+    const RetainPtr<NSPasteboard> m_pasteboard;
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<AbstractPasteboard> m_pasteboard;

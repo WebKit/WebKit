@@ -104,7 +104,7 @@ private:
     ScriptExecutionContextIdentifier m_contextIdentifier;
     const Ref<SharedWorkerThread> m_workerThread;
     WeakRef<CacheStorageProvider> m_cacheStorageProvider;
-    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+    const RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     bool m_isTerminatingOrTerminated { false };
     ClientOrigin m_clientOrigin;
 };

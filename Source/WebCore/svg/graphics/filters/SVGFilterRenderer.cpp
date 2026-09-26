@@ -290,7 +290,7 @@ FilterEffectVector SVGFilterRenderer::effectsOfType(FilterFunction::Type filterT
 FilterResults& SVGFilterRenderer::ensureResults(NOESCAPE const FilterResultsCreator& resultsCreator)
 {
     if (!m_results)
-        m_results = resultsCreator();
+        lazyInitialize(m_results, resultsCreator());
     return *m_results;
 }
 

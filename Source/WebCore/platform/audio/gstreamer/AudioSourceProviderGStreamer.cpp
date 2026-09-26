@@ -124,7 +124,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
     registerActivePipeline(m_pipeline);
     ASP_DEBUG("MediaStream WebAudio provider created");
 
-    m_streamPrivate = MediaStreamPrivate::create(Logger::create(this), { source });
+    lazyInitialize(m_streamPrivate, MediaStreamPrivate::create(Logger::create(this), { source }));
 
     m_audioSinkBin = gst_parse_bin_from_description("tee name=audioTee", true, nullptr);
 

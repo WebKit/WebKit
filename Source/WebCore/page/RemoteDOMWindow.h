@@ -77,7 +77,7 @@ private:
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking, CanNavigateState) final;
 
     WeakPtr<RemoteFrame> m_frame;
-    RefPtr<const SecurityOrigin> m_detachedFrameDocumentSecurityOrigin;
+    const RefPtr<const SecurityOrigin> m_detachedFrameDocumentSecurityOrigin;
     bool m_isDetachedFrameDocumentSandboxedOrigin { false };
 };
 

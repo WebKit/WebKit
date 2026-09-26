@@ -146,13 +146,13 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         if (d->m_user.isEmpty() && d->m_password.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication,
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                 d->m_initialCredential = networkStorageSession->credentialStorage().get(firstRequest().cachePartition(), firstRequest().url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials before sending a request.
             // This makes it possible to implement logout by sending an XMLHttpRequest with known incorrect credentials, and aborting it immediately
             // (so that an authentication dialog doesn't pop up).
-            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                 networkStorageSession->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_password, CredentialPersistence::None), firstRequest().url());
         }
     }
@@ -196,7 +196,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         [streamProperties setObject:@YES forKey:@"_WebKitSynchronousRequest"];
     }
 
-    RetainPtr<CFDataRef> sourceApplicationAuditData = protect(d->m_context)->sourceApplicationAuditData();
+    RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
     if (sourceApplicationAuditData)
         [streamProperties setObject:(__bridge NSData *)sourceApplicationAuditData.get() forKey:@"kCFStreamPropertySourceApplication"];
 
@@ -433,7 +433,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     }
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s) && protect(d->m_context)->shouldClearReferrerOnHTTPSToHTTPRedirect())
+    if (!request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s) && d->m_context->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
 
     const URL& url = request.url();
@@ -456,7 +456,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // URL didn't include credentials of its own.
         if (d->m_user.isEmpty() && d->m_password.isEmpty() && !redirectResponse.isNull()) {
             Credential credential;
-            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                 credential = networkStorageSession->credentialStorage().get(request.cachePartition(), request.url());
             if (!credential.isEmpty()) {
                 d->m_initialCredential = credential;
@@ -547,19 +547,19 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                 networkStorageSession->credentialStorage().remove(d->m_partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
             Credential credential;
-            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                 credential = networkStorageSession->credentialStorage().get(d->m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistence::None);
                 if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+                    if (CheckedPtr networkStorageSession = d->m_context->storageSession())
                         networkStorageSession->credentialStorage().set(d->m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
                 [protect(challenge.sender()) useCredential:protect(credential.nsCredential()) forAuthenticationChallenge:protect(mac(challenge))];
@@ -603,7 +603,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized)
             urlToStore = challenge.failureResponse().url();
-        if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
+        if (CheckedPtr networkStorageSession = d->m_context->storageSession())
             networkStorageSession->credentialStorage().set(d->m_partition, webCredential, ProtectionSpace([currentChallenge protectionSpace]), urlToStore);
         [[currentChallenge sender] useCredential:protect(webCredential.nsCredential()) forAuthenticationChallenge:currentChallenge.get()];
     } else

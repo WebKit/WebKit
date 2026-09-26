@@ -102,7 +102,7 @@ private:
     std::atomic<bool> m_isXBitmapImage { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     String m_uti;
-    RetainPtr<CGImageSourceRef> m_nativeDecoder;
+    const RetainPtr<CGImageSourceRef> m_nativeDecoder;
 };
 
 } // namespace WebCore

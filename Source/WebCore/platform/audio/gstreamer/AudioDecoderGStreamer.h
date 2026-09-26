@@ -45,7 +45,7 @@ private:
     void reset() final;
     void close() final;
 
-    Ref<GStreamerInternalAudioDecoder> m_internalDecoder;
+    const Ref<GStreamerInternalAudioDecoder> m_internalDecoder;
 };
 
 }

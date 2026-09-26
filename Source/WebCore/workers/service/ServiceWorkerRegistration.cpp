@@ -272,7 +272,7 @@ bool ServiceWorkerRegistration::virtualHasPendingActivity() const
 NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
 {
     if (!m_navigationPreload)
-        m_navigationPreload = std::unique_ptr<NavigationPreloadManager>(new NavigationPreloadManager(*this));
+        lazyInitialize(m_navigationPreload, std::unique_ptr<NavigationPreloadManager>(new NavigationPreloadManager(*this)));
     return *m_navigationPreload;
 }
 
@@ -357,7 +357,7 @@ void ServiceWorkerRegistration::getNotifications(const GetNotificationOptions& f
 CookieStoreManager& ServiceWorkerRegistration::cookies()
 {
     if (!m_cookieStoreManager)
-        m_cookieStoreManager = CookieStoreManager::create(*this);
+        lazyInitialize(m_cookieStoreManager, CookieStoreManager::create(*this));
     return *m_cookieStoreManager;
 }
 

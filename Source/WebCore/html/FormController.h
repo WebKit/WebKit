@@ -61,7 +61,7 @@ private:
     static SavedFormStateMap parseStateVector(const Vector<AtomString>&);
 
     SavedFormStateMap m_savedFormStateMap;
-    std::unique_ptr<FormKeyGenerator> m_formKeyGenerator;
+    const std::unique_ptr<FormKeyGenerator> m_formKeyGenerator;
 };
 
 } // namespace WebCore

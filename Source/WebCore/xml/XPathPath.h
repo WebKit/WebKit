@@ -42,7 +42,7 @@ private:
     Value evaluate() const final;
     Value::Type resultType() const final { return Value::Type::NodeSet; }
 
-    std::unique_ptr<Expression> m_expression;
+    const std::unique_ptr<Expression> m_expression;
     Vector<std::unique_ptr<Expression>> m_predicates;
 };
 
@@ -75,8 +75,8 @@ private:
     Value evaluate() const final;
     Value::Type resultType() const final { return Value::Type::NodeSet; }
 
-    std::unique_ptr<Expression> m_filter;
-    std::unique_ptr<LocationPath> m_path;
+    const std::unique_ptr<Expression> m_filter;
+    const std::unique_ptr<LocationPath> m_path;
 };
 
 } // namespace WebCore::XPath

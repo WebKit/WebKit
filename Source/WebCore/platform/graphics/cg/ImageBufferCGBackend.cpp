@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    RetainPtr<CGContextRef> m_context;
+    const RetainPtr<CGContextRef> m_context;
 };
 
 ImageBufferCGBackend::ImageBufferCGBackend(const ImageBufferParameters& parameters, std::unique_ptr<GraphicsContextCG>&& context)

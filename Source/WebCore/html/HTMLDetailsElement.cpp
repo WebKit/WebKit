@@ -133,7 +133,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
     defaultSlot->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock);
     root.appendChild(defaultSlot);
-    m_defaultSlot = WTF::move(defaultSlot);
+    lazyInitialize(m_defaultSlot, WTF::move(defaultSlot));
 
     static MainThreadNeverDestroyed<const String> stylesheet(StringImpl::createWithoutCopying(detailsElementShadowUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(document);
@@ -158,7 +158,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
 void HTMLDetailsElement::queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState)
 {
     if (!m_toggleEventTask)
-        m_toggleEventTask = ToggleEventTask::create(*this);
+        lazyInitialize(m_toggleEventTask, ToggleEventTask::create(*this));
 
     RefPtr { m_toggleEventTask }->queue(oldState, newState, nullptr);
 }

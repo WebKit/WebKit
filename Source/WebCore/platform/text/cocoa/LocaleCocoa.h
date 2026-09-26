@@ -84,7 +84,7 @@ private:
     void initializeLocaleData() final;
 
     RetainPtr<NSLocale> m_locale;
-    RetainPtr<NSCalendar> m_gregorianCalendar;
+    const RetainPtr<NSCalendar> m_gregorianCalendar;
     Vector<String> m_monthLabels;
     RetainPtr<NSDateFormatter> timeFormatter();
     RetainPtr<NSDateFormatter> shortTimeFormatter();

@@ -42,7 +42,7 @@ public:
     PAL::SleepDisabler::Type type() const { return m_type; }
 
 private:
-    std::unique_ptr<PAL::SleepDisabler> m_platformSleepDisabler;
+    const std::unique_ptr<PAL::SleepDisabler> m_platformSleepDisabler;
     Markable<SleepDisablerIdentifier> m_identifier;
     PAL::SleepDisabler::Type m_type;
     std::optional<PageIdentifier> m_pageID;

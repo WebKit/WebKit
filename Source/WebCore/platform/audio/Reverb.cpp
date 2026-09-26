@@ -114,7 +114,7 @@ void Reverb::initialize(AudioBus& impulseResponseBuffer, size_t renderSliceSize,
     // For "True" stereo processing we allocate a temporary buffer to avoid repeatedly allocating it in the process() method.
     // It can be bad to allocate memory in a real-time thread.
     if (m_numberOfResponseChannels == 4)
-        m_tempBuffer = AudioBus::create(2, MaxFrameSize);
+        lazyInitialize(m_tempBuffer, AudioBus::create(2, MaxFrameSize));
 }
 
 void Reverb::process(const AudioBus& sourceBus, AudioBus& destinationBus, size_t framesToProcess)

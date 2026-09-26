@@ -174,7 +174,7 @@ private:
     RetainPtr<CGImageRef> m_contentReplacementImage;
 
     // Ensure there are no async calls on a dead tile cache.
-    RetainPtr<LegacyTileCacheTombstone> m_tombstone;
+    const RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
     std::optional<FloatRect> m_overrideVisibleRect;
 
@@ -194,8 +194,8 @@ private:
     bool m_tileControllerShouldUseLowScaleTiles { false };
     bool m_didCallWillStartScrollingOrZooming { false };
     
-    std::unique_ptr<LegacyTileGrid> m_zoomedOutTileGrid;
-    std::unique_ptr<LegacyTileGrid> m_zoomedInTileGrid;
+    const std::unique_ptr<LegacyTileGrid> m_zoomedOutTileGrid;
+    const std::unique_ptr<LegacyTileGrid> m_zoomedInTileGrid;
 
     Timer m_tileCreationTimer;
 

@@ -43,7 +43,7 @@ SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type
         return;
     }
 
-    m_platformSleepDisabler = PAL::SleepDisabler::create(reason, type);
+    lazyInitialize(m_platformSleepDisabler, PAL::SleepDisabler::create(reason, type));
 }
 
 SleepDisabler::~SleepDisabler()

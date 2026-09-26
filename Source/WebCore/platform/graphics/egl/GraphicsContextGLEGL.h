@@ -101,7 +101,7 @@ private:
 #endif
 
 #if !USE(COORDINATED_GRAPHICS)
-    std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
+    const std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 
     friend class TextureMapperGCGLPlatformLayer;
 #endif

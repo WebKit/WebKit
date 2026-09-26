@@ -54,7 +54,7 @@ ScriptModuleLoader& ShadowRealmGlobalScope::moduleLoader()
     auto wrapper = m_wrapper.get();
     ASSERT(wrapper);
 
-    m_moduleLoader = m_parentLoader->shadowRealmLoader(wrapper).moveToUniquePtr();
+    lazyInitialize(m_moduleLoader, m_parentLoader->shadowRealmLoader(wrapper).moveToUniquePtr());
     return *m_moduleLoader;
 }
 

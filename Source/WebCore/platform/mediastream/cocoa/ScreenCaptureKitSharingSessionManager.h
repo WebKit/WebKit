@@ -75,7 +75,7 @@ public:
 private:
     ScreenCaptureSessionSource(WeakPtr<ScreenCaptureSessionSourceObserver>&&, RetainPtr<SCStream>&&, RetainPtr<SCContentFilter>&&, CleanupFunction&&);
 
-    RetainPtr<SCStream> m_stream;
+    const RetainPtr<SCStream> m_stream;
     RetainPtr<SCContentFilter> m_contentFilter;
     WeakPtr<ScreenCaptureSessionSourceObserver> m_observer;
     CleanupFunction m_cleanupFunction;

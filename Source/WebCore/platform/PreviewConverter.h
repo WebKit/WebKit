@@ -132,7 +132,7 @@ private:
     size_t m_lengthAppended { 0 };
 
 #if USE(QUICK_LOOK)
-    RetainPtr<WebPreviewConverterDelegate> m_platformDelegate;
+    const RetainPtr<WebPreviewConverterDelegate> m_platformDelegate;
     RetainPtr<QLPreviewConverter> m_platformConverter;
 #endif
 };

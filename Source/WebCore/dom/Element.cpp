@@ -3680,7 +3680,7 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     setCustomElementState(CustomElementState::Custom);
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
-        data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
+        data.initializeCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
@@ -3722,7 +3722,7 @@ void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
     auto& data = ensureElementRareData();
     bool alreadyScheduledToUpgrade = data.customElementReactionQueue();
     if (!alreadyScheduledToUpgrade)
-        data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
+        data.initializeCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
     data.customElementReactionQueue()->enqueueElementUpgrade(*this, alreadyScheduledToUpgrade);
 }
 
@@ -3751,7 +3751,7 @@ CustomElementDefaultARIA& Element::customElementDefaultARIA()
     ASSERT(isPrecustomizedOrDefinedCustomElement());
     CheckedPtr defaultARIA = elementRareData()->customElementDefaultARIA();
     if (!defaultARIA) {
-        elementRareData()->setCustomElementDefaultARIA(makeUnique<CustomElementDefaultARIA>());
+        elementRareData()->initializeCustomElementDefaultARIA(makeUnique<CustomElementDefaultARIA>());
         defaultARIA = elementRareData()->customElementDefaultARIA();
     }
     return *defaultARIA.unsafeGet();
@@ -5410,7 +5410,7 @@ IntersectionObserverData& Element::ensureIntersectionObserverData()
     ASSERT(!is<HTMLImageElement>(*this));
     auto& rareData = ensureElementRareData();
     if (!rareData.intersectionObserverData())
-        rareData.setIntersectionObserverData(makeUnique<IntersectionObserverData>());
+        rareData.initializeIntersectionObserverData(makeUnique<IntersectionObserverData>());
     return *rareData.intersectionObserverData();
 }
 
@@ -5595,7 +5595,7 @@ ResizeObserverData& Element::ensureResizeObserverData()
 {
     auto& rareData = ensureElementRareData();
     if (!rareData.resizeObserverData())
-        rareData.setResizeObserverData(makeUnique<ResizeObserverData>());
+        rareData.initializeResizeObserverData(makeUnique<ResizeObserverData>());
     return *rareData.resizeObserverData();
 }
 
@@ -5608,7 +5608,7 @@ ElementLargestContentfulPaintData& Element::ensureLargestContentfulPaintData()
 {
     auto& rareData = ensureElementRareData();
     if (!rareData.largestContentfulPaintData())
-        rareData.setLargestContentfulPaintData(makeUnique<ElementLargestContentfulPaintData>());
+        rareData.initializeLargestContentfulPaintData(makeUnique<ElementLargestContentfulPaintData>());
     return *rareData.largestContentfulPaintData();
 }
 
@@ -6461,9 +6461,9 @@ StylePropertyMap* Element::attributeStyleMap()
     return elementRareData()->attributeStyleMap();
 }
 
-void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
+void Element::initializeAttributeStyleMap(Ref<StylePropertyMap>&& map)
 {
-    ensureElementRareData().setAttributeStyleMap(WTF::move(map));
+    ensureElementRareData().initializeAttributeStyleMap(WTF::move(map));
 }
 
 void Element::ensureFormAssociatedCustomElement()
@@ -6471,7 +6471,7 @@ void Element::ensureFormAssociatedCustomElement()
     auto& customElement = downcast<HTMLMaybeFormAssociatedCustomElement>(*this);
     auto& data = ensureElementRareData();
     if (!data.formAssociatedCustomElement())
-        data.setFormAssociatedCustomElement(makeUniqueWithoutRefCountedCheck<FormAssociatedCustomElement>(customElement));
+        data.initializeFormAssociatedCustomElement(makeUniqueWithoutRefCountedCheck<FormAssociatedCustomElement>(customElement));
 }
 
 FormAssociatedCustomElement& Element::formAssociatedCustomElementUnsafe() const
@@ -6490,7 +6490,7 @@ StylePropertyMapReadOnly& Element::computedStyleMap()
         return *map;
 
     auto map = ComputedStylePropertyMapReadOnly::create(*this);
-    rareData.setComputedStyleMap(WTF::move(map));
+    rareData.initializeComputedStyleMap(WTF::move(map));
     return *rareData.computedStyleMap();
 }
 
@@ -6606,7 +6606,7 @@ CustomStateSet& Element::ensureCustomStateSet()
 {
     auto& rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (!rareData.customStateSet())
-        rareData.setCustomStateSet(CustomStateSet::create(*this));
+        rareData.initializeCustomStateSet(CustomStateSet::create(*this));
     return *rareData.customStateSet();
 }
 

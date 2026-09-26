@@ -62,7 +62,7 @@ public:
 private:
     PlaybackSessionInterfaceAVKitLegacy(PlaybackSessionModel&);
 
-    RetainPtr<WebAVPlayerController> m_playerController;
+    const RetainPtr<WebAVPlayerController> m_playerController;
 
 };
 

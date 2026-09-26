@@ -132,7 +132,7 @@ private:
 
     std::unique_ptr<MatchResultCache> m_matchResultCache;
 
-    std::unique_ptr<EnvironmentVariables> m_environmentVariables;
+    const std::unique_ptr<EnvironmentVariables> m_environmentVariables;
 
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 

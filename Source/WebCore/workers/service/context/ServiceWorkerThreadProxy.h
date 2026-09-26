@@ -140,7 +140,7 @@ private:
 #endif
     const Ref<ServiceWorkerThread> m_serviceWorkerThread;
     WeakRef<CacheStorageProvider> m_cacheStorageProvider;
-    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+    const RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     bool m_isTerminatingOrTerminated { false };
 
     ServiceWorkerInspectorProxy m_inspectorProxy;

@@ -77,11 +77,11 @@ private:
     Timer m_updateStateTimer;
 
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<WebNetworkStateObserver> m_observer;
+    const RetainPtr<WebNetworkStateObserver> m_observer;
 #endif
 
 #if PLATFORM(MAC)
-    RetainPtr<SCDynamicStoreRef> m_store;
+    const RetainPtr<SCDynamicStoreRef> m_store;
 #endif
 
 #if PLATFORM(WIN)

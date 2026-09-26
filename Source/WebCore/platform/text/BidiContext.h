@@ -51,7 +51,7 @@ private:
     unsigned m_direction : 5; // Direction
     unsigned m_override : 1;
     unsigned m_source : 1; // BidiEmbeddingSource
-    RefPtr<BidiContext> m_parent;
+    const RefPtr<BidiContext> m_parent;
 };
 
 inline unsigned char nextGreaterOddLevel(unsigned char level)

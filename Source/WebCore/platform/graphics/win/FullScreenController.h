@@ -53,7 +53,7 @@ protected:
 
     class Private;
     friend class Private;
-    std::unique_ptr<FullScreenController::Private> m_private;
+    const std::unique_ptr<FullScreenController::Private> m_private;
 };
 
 } // namespace WebCore

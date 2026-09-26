@@ -75,7 +75,7 @@ private:
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
-    RefPtr<GStreamerElementHarness> m_harness;
+    const RefPtr<GStreamerElementHarness> m_harness;
     GRefPtr<GstElement> m_encoder;
     GRefPtr<GstElement> m_outputCapsFilter;
     GRefPtr<GstCaps> m_outputCaps;
@@ -214,7 +214,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         delete static_cast<ThreadSafeWeakPtr<GStreamerInternalAudioEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
-    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
+    lazyInitialize(m_harness, GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -239,7 +239,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         GstMappedBuffer mappedBuffer(outputBuffer, GST_MAP_READ);
         AudioEncoder::EncodedFrame encodedFrame { mappedBuffer.createVector(), isKeyFrame, m_timestamp, m_duration };
         m_outputCallback({ WTF::move(encodedFrame) });
-    });
+    }));
 }
 
 GStreamerInternalAudioEncoder::~GStreamerInternalAudioEncoder()

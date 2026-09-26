@@ -233,8 +233,8 @@ private:
 
     AVPlayerLayer *avPlayerLayer() const;
 
-    RetainPtr<NSObject> m_delegate;
-    std::unique_ptr<PlatformCALayerList> m_customSublayers;
+    const RetainPtr<NSObject> m_delegate;
+    const std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
 #if ENABLE(SCROLLING_THREAD)

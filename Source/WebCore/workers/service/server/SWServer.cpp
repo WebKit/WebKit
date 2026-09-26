@@ -596,7 +596,7 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
     RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty(), ServiceWorker, "No path to store the service worker registrations");
 
     if (RefPtr store = delegate.createRegistrationStore(*this)) {
-        m_registrationStore = store;
+        lazyInitialize(m_registrationStore, Ref { *store });
         // Only import the list of origins that have registrations, not the full registration data.
         // This is lightweight and sufficient for getOriginsWithRegistrations() to work immediately.
         // Full registrations are imported lazily per origin on first use (see importRegistrationsForOrigin).
@@ -2245,7 +2245,7 @@ void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentif
 BackgroundFetchEngine& SWServer::backgroundFetchEngine()
 {
     if (!m_backgroundFetchEngine)
-        m_backgroundFetchEngine = BackgroundFetchEngine::create(*this);
+        lazyInitialize(m_backgroundFetchEngine, BackgroundFetchEngine::create(*this));
     return *m_backgroundFetchEngine;
 }
 

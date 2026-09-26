@@ -218,11 +218,11 @@ protected:
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     WeakPtr<ImageObserver> m_imageObserver;
-    std::unique_ptr<ImageAdapter> m_adapter;
+    const std::unique_ptr<ImageAdapter> m_adapter;
 
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
-    std::unique_ptr<Timer> m_animationStartTimer;
+    const std::unique_ptr<Timer> m_animationStartTimer;
     WEBCORE_EXPORT static bool gSystemAllowsAnimationControls;
 };
 

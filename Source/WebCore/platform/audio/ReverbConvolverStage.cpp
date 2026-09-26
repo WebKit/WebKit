@@ -56,7 +56,7 @@ ReverbConvolverStage::ReverbConvolverStage(std::span<const float> impulseRespons
     ASSERT(accumulationBuffer);
 
     if (!m_directMode) {
-        m_fftKernel = makeUnique<FFTFrame>(fftSize);
+        lazyInitialize(m_fftKernel, makeUnique<FFTFrame>(fftSize));
         m_fftKernel->doPaddedFFT(impulseResponse.subspan(stageOffset, stageLength));
         // Account for the normalization (if any) of the convolver. By linearity,
         // we can scale the FFT by the factor instead of the input. We do it this
@@ -64,17 +64,17 @@ ReverbConvolverStage::ReverbConvolverStage(std::span<const float> impulseRespons
         // computing the FFT.
         if (scale != 1)
             m_fftKernel->scaleFFT(scale);
-        m_fftConvolver = makeUnique<FFTConvolver>(fftSize);
+        lazyInitialize(m_fftConvolver, makeUnique<FFTConvolver>(fftSize));
     } else {
         ASSERT(!stageOffset);
         ASSERT(stageLength <= fftSize / 2);
 
-        m_directKernel = makeUnique<AudioFloatArray>(fftSize / 2);
+        lazyInitialize(m_directKernel, makeUnique<AudioFloatArray>(fftSize / 2));
         m_directKernel->copyToRange(impulseResponse, 0, stageLength);
         // Account for the normalization (if any) of the convolver node.
         if (scale != 1)
             VectorMath::multiplyByScalar(m_directKernel->span().first(stageLength), scale, m_directKernel->span());
-        m_directConvolver = makeUnique<DirectConvolver>(renderSliceSize);
+        lazyInitialize(m_directConvolver, makeUnique<DirectConvolver>(renderSliceSize));
     }
 
     // The convolution stage at offset stageOffset needs to have a corresponding delay to cancel out the offset.

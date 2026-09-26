@@ -76,7 +76,7 @@ public:
 
     ResourceHandleClient* client() { return m_client; }
 
-    RefPtr<NetworkingContext> m_context;
+    const RefPtr<NetworkingContext> m_context;
     ResourceHandleClient* m_client;
     ResourceRequest m_firstRequest;
     ResourceRequest m_previousRequest;
@@ -103,7 +103,7 @@ public:
 
     AuthenticationChallenge m_currentWebChallenge;
     Timer m_failureTimer;
-    RefPtr<SecurityOrigin> m_sourceOrigin;
+    const RefPtr<SecurityOrigin> m_sourceOrigin;
 
     int status { 0 };
 

@@ -180,7 +180,7 @@ private:
     Timer m_resourceTimingBufferFullTimer;
     Vector<Ref<PerformanceEntry>> m_backupResourceTimingBuffer;
 
-    RefPtr<PerformanceEntry> m_firstInput;
+    const RefPtr<PerformanceEntry> m_firstInput;
 
     // https://w3c.github.io/resource-timing/#dfn-resource-timing-buffer-full-flag
     bool m_resourceTimingBufferFullFlag { false };
@@ -191,7 +191,7 @@ private:
     ContinuousTime m_continuousTimeOrigin;
 
     RefPtr<PerformanceNavigationTiming> m_navigationTiming;
-    std::unique_ptr<PerformanceUserTiming> m_userTiming;
+    const std::unique_ptr<PerformanceUserTiming> m_userTiming;
 
     std::array<PerformanceEntryBuffer, PerformanceEntry::performanceEntryTypeCount> m_entryBufferMap;
     OrderedHashSet<Ref<PerformanceObserver>> m_observers;

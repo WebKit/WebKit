@@ -101,7 +101,7 @@ public:
 private:
     MockMediaDeviceRoute();
 
-    RetainPtr<WebMockMediaDeviceRoute> m_platformRoute;
+    const RetainPtr<WebMockMediaDeviceRoute> m_platformRoute;
 };
 
 } // namespace WebCore

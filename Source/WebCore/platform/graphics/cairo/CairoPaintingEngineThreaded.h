@@ -43,7 +43,7 @@ public:
 private:
     void paint(WebCore::GraphicsLayer&, WebCore::CoordinatedTileBuffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
 
-    Ref<WorkerPool> m_workerPool;
+    const Ref<WorkerPool> m_workerPool;
 };
 
 } // namespace Cairo

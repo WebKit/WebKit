@@ -1178,7 +1178,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
             if (m_element->hasClassName(instreamNativeVideoDivClass)) {
-                RefPtr video = dynamicDowncast<HTMLVideoElement>(protect(m_element)->treeScope().getElementById(videoElementID));
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element->treeScope().getElementById(videoElementID));
                 if (video && video->isFullscreen())
                     style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
             }

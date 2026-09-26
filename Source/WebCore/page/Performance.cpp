@@ -350,9 +350,9 @@ void Performance::processEventEntry(const PerformanceEventTimingCandidate& candi
     // We instead set first-input and call setDispatchedInputEvent() here; ongoing
     // spec discussion at https://github.com/w3c/event-timing/issues/159 :
     if (!m_firstInput && !candidate.interactionID.isUnassigned()) {
-        m_firstInput = PerformanceEventTiming::create(candidate, true);
+        lazyInitialize(m_firstInput, PerformanceEventTiming::create(candidate, true));
         addToEntryBuffer(*m_firstInput);
-        queueEntry(protect(*m_firstInput));
+        queueEntry(*m_firstInput);
         if (RefPtr document = dynamicDowncast<Document>(*scriptExecutionContext())) {
             if (auto* window = document->window())
                 window->setDispatchedInputEvent();
@@ -515,7 +515,7 @@ void Performance::resourceTimingBufferFullTimerFired()
 ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     if (!m_userTiming)
-        m_userTiming = makeUnique<PerformanceUserTiming>(*this);
+        lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
 
     auto mark = m_userTiming->mark(globalObject, markName, WTF::move(markOptions));
     if (mark.hasException())
@@ -529,7 +529,7 @@ ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalO
 void Performance::clearMarks(const String& markName)
 {
     if (!m_userTiming)
-        m_userTiming = makeUnique<PerformanceUserTiming>(*this);
+        lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
     m_userTiming->clearMarks(markName);
     clearEntryBuffer(PerformanceEntry::Type::Mark, markName);
 }
@@ -537,7 +537,7 @@ void Performance::clearMarks(const String& markName)
 ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, StartOrMeasureOptions&& startOrMeasureOptions, const String& endMark)
 {
     if (!m_userTiming)
-        m_userTiming = makeUnique<PerformanceUserTiming>(*this);
+        lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
 
     auto measure = m_userTiming->measure(globalObject, measureName, WTF::move(startOrMeasureOptions), endMark);
     if (measure.hasException())
@@ -578,7 +578,7 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
 void Performance::clearMeasures(const String& measureName)
 {
     if (!m_userTiming)
-        m_userTiming = makeUnique<PerformanceUserTiming>(*this);
+        lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
     m_userTiming->clearMeasures(measureName);
     clearEntryBuffer(PerformanceEntry::Type::Measure, measureName);
 }

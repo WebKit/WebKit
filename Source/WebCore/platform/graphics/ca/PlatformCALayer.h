@@ -396,7 +396,7 @@ protected:
 
     const LayerType m_layerType;
     const PlatformLayerIdentifier m_layerID;
-    RetainPtr<PlatformLayer> m_layer;
+    const RetainPtr<PlatformLayer> m_layer;
     RefPtr<PlatformCALayer> m_maskLayer;
     PlatformCALayerClient* m_owner;
 };

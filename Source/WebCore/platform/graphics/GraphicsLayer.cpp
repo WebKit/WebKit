@@ -456,7 +456,7 @@ void GraphicsLayer::setTransform(const TransformationMatrix& matrix)
     if (m_transform)
         *m_transform = matrix;
     else
-        m_transform = makeUnique<TransformationMatrix>(matrix);
+        lazyInitialize(m_transform, makeUnique<TransformationMatrix>(matrix));
 }
 
 const TransformationMatrix& GraphicsLayer::childrenTransform() const
@@ -469,7 +469,7 @@ void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)
     if (m_childrenTransform)
         *m_childrenTransform = matrix;
     else
-        m_childrenTransform = makeUnique<TransformationMatrix>(matrix);
+        lazyInitialize(m_childrenTransform, makeUnique<TransformationMatrix>(matrix));
 }
 
 bool GraphicsLayer::setFilters(const FilterOperations& filters)

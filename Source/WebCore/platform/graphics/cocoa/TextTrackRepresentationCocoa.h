@@ -73,8 +73,8 @@ protected:
     TextTrackRepresentationClient& m_client;
 
 private:
-    RetainPtr<CALayer> m_layer;
-    RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;
+    const RetainPtr<CALayer> m_layer;
+    const RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;
 };
 
 }

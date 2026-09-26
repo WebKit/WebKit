@@ -314,9 +314,9 @@ ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaA
         const void* key = kCGImageSourceTypeIdentifierHint;
         const void* value = utiHint.get();
         auto options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(options.get()));
+        lazyInitialize(m_nativeDecoder, adoptCF(CGImageSourceCreateIncremental(options.get())));
     } else
-        m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
+        lazyInitialize(m_nativeDecoder, adoptCF(CGImageSourceCreateIncremental(nullptr)));
 }
 
 size_t ImageDecoderCG::bytesDecodedToDetermineProperties() const

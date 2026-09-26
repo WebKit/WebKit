@@ -284,7 +284,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     }
 
     if (layerClass)
-        m_layer = adoptNS([(CALayer *)[layerClass alloc] init]);
+        lazyInitialize(m_layer, adoptNS([(CALayer *)[layerClass alloc] init]));
 
 #if PLATFORM(MAC)
     bool isBackdropLayer = layerType == LayerType::LayerTypeBackdropLayer;
@@ -301,7 +301,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
 PlatformCALayerCocoa::PlatformCALayerCocoa(PlatformLayer* layer, PlatformCALayerClient* owner)
     : PlatformCALayer(layerTypeForPlatformLayer(layer), owner)
 {
-    m_layer = layer;
+    lazyInitialize(m_layer, retainPtr(layer));
     commonInit();
 }
 
@@ -328,7 +328,7 @@ void PlatformCALayerCocoa::commonInit()
         RetainPtr tiledBackingLayer = static_cast<WebTiledBackingLayer*>(m_layer.get());
         CheckedPtr tileController = [tiledBackingLayer.get() createTileController:this];
 
-        m_customSublayers = makeUnique<PlatformCALayerList>(tileController->containerLayers());
+        lazyInitialize(m_customSublayers, makeUnique<PlatformCALayerList>(tileController->containerLayers()));
     }
 
     if ([m_layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
@@ -559,7 +559,7 @@ void PlatformCALayerCocoa::addAnimationForKey(const String& key, PlatformCAAnima
     if (!m_delegate) {
         auto webAnimationDelegate = adoptNS([[WebAnimationDelegate alloc] init]);
         [webAnimationDelegate setOwner:this];
-        m_delegate = WTF::move(webAnimationDelegate);
+        lazyInitialize(m_delegate, WTF::move(webAnimationDelegate));
     }
 
     RetainPtr propertyAnimation = static_cast<CAAnimation *>(downcast<PlatformCAAnimationCocoa>(animation).platformAnimation());

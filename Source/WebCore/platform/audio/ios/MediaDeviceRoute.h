@@ -144,8 +144,8 @@ private:
     explicit MediaDeviceRoute(WebMediaDevicePlatformRoute *);
 
     WTF::UUID m_identifier;
-    RetainPtr<WebMediaDevicePlatformRoute> m_platformRoute;
-    RetainPtr<WebPlaybackControlObserver> m_playbackControlObserver;
+    const RetainPtr<WebMediaDevicePlatformRoute> m_platformRoute;
+    const RetainPtr<WebPlaybackControlObserver> m_playbackControlObserver;
     WeakPtr<MediaDeviceRouteClient> m_client;
 #if HAVE(AVSYSTEMROUTING_FRAMEWORK)
     RetainPtr<AVSystemRouteSession> m_routeSession;

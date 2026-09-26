@@ -206,7 +206,7 @@ private:
 #endif
 
     friend class ResourceHandleInternal;
-    std::unique_ptr<ResourceHandleInternal> d;
+    const std::unique_ptr<ResourceHandleInternal> d;
 };
 
 }

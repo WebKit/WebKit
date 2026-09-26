@@ -118,25 +118,25 @@ ThreadGlobalData& threadGlobalDataSlow()
 void ThreadGlobalData::initializeCachedResourceRequestInitiatorTypes()
 {
     ASSERT(!m_cachedResourceRequestInitiatorTypes);
-    m_cachedResourceRequestInitiatorTypes = makeUnique<CachedResourceRequestInitiatorTypes>();
+    lazyInitialize(m_cachedResourceRequestInitiatorTypes, makeUnique<CachedResourceRequestInitiatorTypes>());
 }
 
 void ThreadGlobalData::initializeEventNames()
 {
     ASSERT(!m_eventNames);
-    m_eventNames = EventNames::create();
+    lazyInitialize(m_eventNames, EventNames::create());
 }
 
 void ThreadGlobalData::initializeQualifiedNameCache()
 {
     ASSERT(!m_qualifiedNameCache);
-    m_qualifiedNameCache = makeUnique<QualifiedNameCache>();
+    lazyInitialize(m_qualifiedNameCache, makeUnique<QualifiedNameCache>());
 }
 
 void ThreadGlobalData::initializeMimeTypeRegistryThreadGlobalData()
 {
-    ASSERT(!m_MIMETypeRegistryThreadGlobalData);
-    m_MIMETypeRegistryThreadGlobalData = MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData();
+    ASSERT(!m_mimeTypeRegistryThreadGlobalData);
+    lazyInitialize(m_mimeTypeRegistryThreadGlobalData, MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData());
 }
 
 void ThreadGlobalData::initializeFontCache()

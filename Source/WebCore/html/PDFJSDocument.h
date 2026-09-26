@@ -67,7 +67,7 @@ private:
     bool m_injectedStyleAndScript { false };
     bool m_isFinishedParsing { false };
     bool m_isContentScriptLoaded { false };
-    RefPtr<HTMLIFrameElement> m_iframe;
+    const RefPtr<HTMLIFrameElement> m_iframe;
     RefPtr<HTMLScriptElement> m_script;
     RefPtr<PDFJSDocumentEventListener> m_listener;
 };

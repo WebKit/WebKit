@@ -290,7 +290,7 @@ void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
     if (meta && meta->n_textures == 1) {
         guint ids[4] = { texture->id(), 0, 0, 0 };
         if (gst_video_gl_texture_upload_meta_upload(meta, ids)) {
-            m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
+            lazyInitialize(m_buffer, CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr));
             return;
         }
     }
@@ -299,7 +299,7 @@ void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
     auto srcData = m_mappedVideoFrame->planeData(0);
     IntPoint origin;
     texture->updateContents(srcData.data(), IntRect(origin, m_size), origin, stride, PixelFormat::BGRA8);
-    m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
+    lazyInitialize(m_buffer, CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr));
     m_mappedVideoFrame = std::nullopt;
 }
 

@@ -583,7 +583,7 @@ bool Extractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value)
     if (propertyID == CSSPropertyFontSize) {
         if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(*value)) {
             protect(m_element->document())->updateLayoutIgnorePendingStylesheets();
-            if (auto* style = protect(m_element)->computedStyle(m_pseudoElementIdentifier)) {
+            if (auto* style = m_element->computedStyle(m_pseudoElementIdentifier)) {
                 if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                     if (keywordValue->valueID() == sizeIdentifier)
                         return true;

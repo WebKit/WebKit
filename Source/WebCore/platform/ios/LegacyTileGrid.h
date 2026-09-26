@@ -110,7 +110,7 @@ private:
 
 private:        
     WeakRef<LegacyTileCache> m_tileCache;
-    RetainPtr<CALayer> m_tileHostLayer;
+    const RetainPtr<CALayer> m_tileHostLayer;
 
     IntPoint m_origin;
     IntSize m_tileSize;

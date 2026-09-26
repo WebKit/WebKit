@@ -178,7 +178,7 @@ public:
 
     size_t memoryCost() const final
     {
-        return protect(m_buffer)->memoryCost();
+        return m_buffer->memoryCost();
     }
 
     std::unique_ptr<SerializedImageBuffer> clone() const final
@@ -187,7 +187,7 @@ public:
     }
 
 private:
-    RefPtr<ImageBuffer> m_buffer;
+    const RefPtr<ImageBuffer> m_buffer;
 };
 #endif
 

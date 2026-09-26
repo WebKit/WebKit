@@ -1150,7 +1150,7 @@ bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
 IntersectionObserverData& HTMLImageElement::ensureIntersectionObserverData()
 {
     if (!m_intersectionObserverData)
-        m_intersectionObserverData = makeUnique<IntersectionObserverData>();
+        lazyInitialize(m_intersectionObserverData, makeUnique<IntersectionObserverData>());
     return *m_intersectionObserverData;
 }
 

@@ -103,7 +103,7 @@ private:
     static AffineTransform computeCTM(SVGElement*, CTMScope, StyleUpdateStrategy);
 
     // Used by <animateMotion>
-    std::unique_ptr<AffineTransform> m_supplementalTransform;
+    const std::unique_ptr<AffineTransform> m_supplementalTransform;
 
     mutable std::optional<AffineTransform> m_cachedConcatenatedTransform;
 

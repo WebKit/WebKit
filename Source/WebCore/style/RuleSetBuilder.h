@@ -82,7 +82,7 @@ private:
         void addRuleIfNeeded(const RuleData&);
     };
 
-    RefPtr<RuleSet> m_ruleSet;
+    const RefPtr<RuleSet> m_ruleSet;
     MediaQueryCollector m_mediaQueryCollector;
     Resolver* m_resolver { nullptr };
     const ShrinkToFit m_shrinkToFit { ShrinkToFit::Enable };

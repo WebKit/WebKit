@@ -55,7 +55,7 @@ protected:
     unsigned bytesPerRow() const override;
     String debugDescription() const override;
 
-    RefPtr<cairo_surface_t> m_surface;
+    const RefPtr<cairo_surface_t> m_surface;
     mutable GraphicsContextCairo m_context;
 };
 

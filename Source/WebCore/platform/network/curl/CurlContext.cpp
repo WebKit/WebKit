@@ -123,7 +123,7 @@ CurlContext::CurlContext()
     if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAX_HOST_CONNECTIONS"))
         maxHostConnections = *value;
 
-    m_scheduler = makeUnique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
+    lazyInitialize(m_scheduler, makeUnique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections));
 
     auto info = curl_version_info(CURLVERSION_NOW);
     RELEASE_ASSERT(info->features & CURL_VERSION_LARGEFILE);
@@ -365,7 +365,7 @@ CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
         return CURLE_ABORTED_BY_CALLBACK;
 
     if (!m_sslVerifier)
-        m_sslVerifier = makeUnique<CurlSSLVerifier>(sslCtx);
+        lazyInitialize(m_sslVerifier, makeUnique<CurlSSLVerifier>(sslCtx));
 
     return CURLE_OK;
 }
@@ -904,7 +904,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
     if (!m_tlsConnectionInfo) {
         if (auto ssl = sslConnection()) {
-            m_tlsConnectionInfo = makeUnique<TLSConnectionInfo>();
+            lazyInitialize(m_tlsConnectionInfo, makeUnique<TLSConnectionInfo>());
             m_tlsConnectionInfo->protocol = OpenSSL::tlsVersion(*ssl);
             m_tlsConnectionInfo->cipher = OpenSSL::tlsCipherName(*ssl);
         }

@@ -150,10 +150,10 @@ protected:
     ProcessIdentity m_resourceOwner;
     ColorSpace m_drawingBufferColorSpace;
 #if ENABLE(VIDEO)
-    std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
+    const std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
 #endif
-    RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
-    RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
+    const RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
+    const RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
 #if ENABLE(WEBXR)
     using RasterizationRateMapArray =  EnumeratedArray<PlatformXR::Layout, RetainPtr<MTLRasterizationRateMap>, PlatformXR::Layout::Layered>;
     RasterizationRateMapArray m_rasterizationRateMap;
