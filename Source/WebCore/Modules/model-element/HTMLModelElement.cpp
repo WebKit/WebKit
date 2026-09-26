@@ -104,6 +104,12 @@
 #include "DocumentImmersive.h"
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "ElementVolumetricScene.h"
+#endif
+
 #if ENABLE(TOUCH_EVENTS) && (ENABLE(GPU_PROCESS_MODEL) || ENABLE(MODEL_PROCESS))
 #include <WebCore/TouchEvent.h>
 #endif
@@ -358,6 +364,15 @@ HTMLModelElement& HTMLModelElement::readyPromiseResolve()
 // MARK: - VisibilityChangeClient overrides.
 
 void HTMLModelElement::visibilityStateChanged()
+{
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    ElementVolumetricScene::documentVisibilityDidChange(*this);
+#endif
+
+    updatePlayerVisibility();
+}
+
+void HTMLModelElement::updatePlayerVisibility()
 {
 #if ENABLE(SPATIAL_PORTAL)
     if (CheckedPtr controller = m_lastRegisteredPortalController.get()) {
@@ -630,6 +645,13 @@ void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer, NodeIdentifier
         renderer->updateFromElement();
     if (!m_readyPromise->isFulfilled())
         m_readyPromise->resolve(*this);
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == ModelPresentationMode::Volumetric) {
+        if (RefPtr page = document().page())
+            page->chrome().client().reconnectVolumetricSceneForElement(*this);
+    }
+#endif
 }
 
 void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, NodeIdentifier nodeID, const ResourceError&)
@@ -784,8 +806,8 @@ bool HTMLModelElement::isVisible() const
     }
 #endif
     bool isVisibleInline = !protect(document())->hidden() && m_isIntersectingViewport;
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    return isVisibleInline || m_detachedForImmersive;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    return isVisibleInline || m_presentationMode != ModelPresentationMode::Inline;
 #else
     return isVisibleInline;
 #endif
@@ -823,8 +845,8 @@ void HTMLModelElement::modelDidChange()
     }
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    bool hasRenderer = this->renderer() || m_detachedForImmersive;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    bool hasRenderer = this->renderer() || m_presentationMode != ModelPresentationMode::Inline;
 #else
     bool hasRenderer = this->renderer();
 #endif
@@ -922,7 +944,7 @@ void HTMLModelElement::createModelPlayer()
     // in with load probably doesn't make sense.
     bool isForImmersive = false;
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    isForImmersive = m_detachedForImmersive;
+    isForImmersive = m_presentationMode == ModelPresentationMode::Immersive;
 #endif
     modelPlayer->load(nodeID, *model, contentSize(), isForImmersive);
 
@@ -957,7 +979,7 @@ void HTMLModelElement::deleteModelPlayer()
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     // Let the document trigger the model player deletion after transitioning out the immersive element if needed
     RefPtr documentImmersive = document().immersiveIfExists();
-    if (m_detachedForImmersive && documentImmersive)
+    if (m_presentationMode == ModelPresentationMode::Immersive && documentImmersive)
         return documentImmersive->exitRemovedImmersiveElementIfNeeded(this, WTF::move(deleteModelPlayerBlock));
 #endif
     deleteModelPlayerBlock();
@@ -1131,8 +1153,8 @@ void HTMLModelElement::configureGraphicsLayer(GraphicsLayer& graphicsLayer, Colo
 #if ENABLE(MODEL_ELEMENT_PORTAL)
         .hasPortal = hasPortal(),
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-        .detachedForImmersive = m_detachedForImmersive,
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        .presentationMode = m_presentationMode,
 #endif
     });
 }
@@ -1215,8 +1237,10 @@ bool HTMLModelElement::canSetEntityTransform() const
 
 bool HTMLModelElement::supportsStageModeInteraction() const
 {
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    if (m_detachedForImmersive)
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // The inline box is blank while the content is presented elsewhere, so a hit-test over it must not drive
+    // stage mode.
+    if (m_presentationMode != ModelPresentationMode::Inline)
         return false;
 #endif
     return canSetEntityTransform();
@@ -2048,21 +2072,28 @@ void HTMLModelElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
 
 void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(ExceptionOr<LayerHostingContextIdentifier>)>&& completion)
 {
-    setDetachedForImmersive(true);
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == ModelPresentationMode::Volumetric) {
+        completion(Exception { ExceptionCode::InvalidStateError, "Model is presented in a volumetric scene"_s });
+        return;
+    }
+#endif
+
+    setPresentationMode(ModelPresentationMode::Immersive);
     ensureModelPlayer([weakThis = WeakPtr { *this }, completion = WTF::move(completion)](auto result) mutable {
         RefPtr protectedThis { weakThis };
         if (!protectedThis)
             return completion(Exception { ExceptionCode::AbortError });
 
         if (result.hasException()) {
-            protectedThis->setDetachedForImmersive(false);
+            protectedThis->setPresentationMode(ModelPresentationMode::Inline);
             completion(result.releaseException());
             return;
         }
 
         RefPtr modelPlayer = result.releaseReturnValue();
         if (!modelPlayer) {
-            protectedThis->setDetachedForImmersive(false);
+            protectedThis->setPresentationMode(ModelPresentationMode::Inline);
             completion(Exception { ExceptionCode::AbortError });
             return;
         }
@@ -2073,7 +2104,7 @@ void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(Except
                 return completion(Exception { ExceptionCode::AbortError });
 
             if (!contextID.has_value()) {
-                protectedThis->setDetachedForImmersive(false);
+                protectedThis->setPresentationMode(ModelPresentationMode::Inline);
                 completion(Exception { ExceptionCode::TypeError, "Failed to decode model"_s });
                 return;
             }
@@ -2087,7 +2118,7 @@ void HTMLModelElement::exitImmersivePresentation(CompletionHandler<void()>&& com
 {
     RefPtr modelPlayer = m_modelPlayer;
     if (!modelPlayer) {
-        setDetachedForImmersive(false);
+        setPresentationMode(ModelPresentationMode::Inline);
         completion();
         return;
     }
@@ -2100,20 +2131,9 @@ void HTMLModelElement::exitImmersivePresentation(CompletionHandler<void()>&& com
 
         // Only reset if no new request has re-armed the flag since this exit started.
         if (protectedThis->m_immersiveDetachGeneration == generation)
-            protectedThis->setDetachedForImmersive(false);
+            protectedThis->setPresentationMode(ModelPresentationMode::Inline);
         completion();
     });
-}
-
-void HTMLModelElement::setDetachedForImmersive(bool detachedForImmersive)
-{
-    if (detachedForImmersive)
-        ++m_immersiveDetachGeneration;
-    m_detachedForImmersive = detachedForImmersive;
-    visibilityStateChanged();
-    invalidateStyleAndLayerComposition();
-    if (CheckedPtr renderer = this->renderer())
-        renderer->updateFromElement();
 }
 
 void HTMLModelElement::ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>&& completion)
@@ -2133,6 +2153,34 @@ void HTMLModelElement::ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefP
 }
 
 #endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void HTMLModelElement::setPresentationMode(ModelPresentationMode mode)
+{
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    // Bumped before the early return below, and even when the mode is unchanged: exitImmersivePresentation()
+    // leaves the mode Immersive until its completion runs, so a re-armed request has to invalidate an exit that
+    // is already in flight.
+    if (mode == ModelPresentationMode::Immersive)
+        ++m_immersiveDetachGeneration;
+#endif
+
+    if (m_presentationMode == mode)
+        return;
+
+    m_presentationMode = mode;
+
+    // Skips visibilityStateChanged() so that a mode change cannot itself start a volumetric scene exit.
+    updatePlayerVisibility();
+
+    // Re-running layer configuration is what moves the content between the page and its new host.
+    invalidateStyleAndLayerComposition();
+    if (CheckedPtr renderer = this->renderer())
+        renderer->updateFromElement();
+}
+
+#endif // ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
 void HTMLModelElement::triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<RefPtr<ModelPlayer>>&& result)
 {
@@ -2179,6 +2227,11 @@ void HTMLModelElement::stop()
     m_lastRegisteredPortalController = nullptr;
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // Nothing else closes the volume once the element driving it is gone.
+    ElementVolumetricScene::exitVolumetricScene(*this);
+#endif
+
     // Once an active DOM object has been stopped it cannot be restarted,
     // so we can delete the model player now.
     deletePendingModelPlayer();
@@ -2207,8 +2260,8 @@ LayoutSize HTMLModelElement::contentSize() const
 
 bool HTMLModelElement::modelContainerSizeIsEmpty() const
 {
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    return contentSize().isEmpty() && !m_detachedForImmersive;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    return contentSize().isEmpty() && m_presentationMode == ModelPresentationMode::Inline;
 #else
     return contentSize().isEmpty();
 #endif
@@ -2277,6 +2330,10 @@ void HTMLModelElement::removingSteps(RemovalType removalType, ContainerNode& old
         LazyLoadElementObserver::unobserve(*this, document);
 
         m_loadModelTimer = nullptr;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        ElementVolumetricScene::exitVolumetricScene(*this);
+#endif
 
         deletePendingModelPlayer();
         deleteModelPlayer();
@@ -2372,6 +2429,16 @@ bool HTMLModelElement::hasLiveModelPlayer() const
     RefPtr modelPlayer = m_modelPlayer;
     return modelPlayer && !modelPlayer->isPlaceholder();
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+RefPtr<ModelPlayer> HTMLModelElement::liveModelPlayer() const
+{
+    RefPtr modelPlayer = m_modelPlayer;
+    if (!modelPlayer || modelPlayer->isPlaceholder())
+        return nullptr;
+    return modelPlayer;
+}
+#endif
 
 bool HTMLModelElement::isModelLoading() const
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,23 @@
 
 #pragma once
 
-#if ENABLE(MODEL_ELEMENT)
-
-#include <WebCore/Color.h>
-#include <WebCore/LayoutPoint.h>
-#include <WebCore/LayoutSize.h>
-#include <WebCore/Model.h>
-#include <wtf/RefPtr.h>
-
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-#include <WebCore/ModelPresentationMode.h>
-#endif
+
+#include <cstdint>
 
 namespace WebCore {
 
-struct ModelPlayerGraphicsLayerConfiguration {
-    RefPtr<Model> model;
-    LayoutSize contentSize;
-    LayoutPoint contentOrigin;
-    Color backgroundColor;
-    bool isInteractive;
-#if ENABLE(MODEL_ELEMENT_PORTAL)
-    bool hasPortal;
+// Where a model player's content is displayed. The non-inline modes are mutually exclusive per player.
+enum class ModelPresentationMode : uint8_t {
+    Inline,
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    Immersive,
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    ModelPresentationMode presentationMode { ModelPresentationMode::Inline };
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    Volumetric,
 #endif
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)

@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Connected volumetric scene for a spatial portal</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+
+    assert_true(internals.establishesSpatialPortal(portal), 'The element establishes a portal');
+    assert_equals(presentationMode(portal), "inline", 'The portal starts inline');
+}, 'A spatial portal can host a volumetric scene and starts inline');
+
+promise_test(async t => {
+    const [portal, model] = await createPortalWithReadyModel(t);
+
+    assert_equals(presentationMode(model), "unavailable", 'A hosted model cannot host a scene of its own');
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(model),
+        'Should reject for a model inside a portal');
+
+    assert_equals(presentationMode(portal), "inline", 'The portal is left inline');
+}, 'A model inside a portal defers to the portal');
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+
+    // internals.withUserGesture() above leaves activation behind, so spend it before testing its absence.
+    internals.consumeTransientActivation();
+    assert_false(internals.hasTransientActivation(), 'The page has no transient activation');
+
+    await promise_rejects_dom(t, "NotAllowedError", portal.requestVolumetricScene(),
+        'Should reject without transient activation');
+
+    assert_equals(presentationMode(portal), "inline", 'A rejected request leaves the portal inline');
+}, 'Requesting a volumetric scene for a portal without transient activation is rejected');
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+    t.add_cleanup(() => portal.exitVolumetricScene());
+
+    await requestVolumetricScene(portal);
+
+    assert_equals(presentationMode(portal), "volumetric", 'The portal is presented volumetrically');
+}, 'A portal hosting a loaded model enters a volumetric scene');
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+
+    await requestVolumetricScene(portal);
+    assert_equals(presentationMode(portal), "volumetric", 'The portal is presented volumetrically');
+
+    portal.exitVolumetricScene();
+
+    await waitForPresentationMode(t, portal, "inline");
+}, 'Exiting a volumetric scene returns the portal inline');
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+    t.add_cleanup(() => portal.exitVolumetricScene());
+
+    await requestVolumetricScene(portal);
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(portal),
+        'Should reject while already presented');
+
+    assert_equals(presentationMode(portal), "volumetric", 'The established scene is left alone');
+}, 'Requesting a volumetric scene for a portal that is already presented is rejected');
+</script>
+</body>

@@ -99,6 +99,10 @@
 #import <wtf/text/WTFString.h>
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#import "VolumetricSceneContentContext.h"
+#endif
+
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
 #if PLATFORM(VISION)
@@ -1922,6 +1926,41 @@ RefPtr<PortalPresentationManagerProxy> WebPageProxy::portalPresentationManagerPr
     return internals().portalPresentationManagerProxy;
 }
 #endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void WebPageProxy::presentVolumetricScene(WebCore::NodeIdentifier nodeID, VolumetricSceneContentContext contentContext, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr portalPresentationManager = portalPresentationManagerProxy();
+    if (!portalPresentationManager)
+        return completion(false);
+
+    portalPresentationManager->showVolumetricScene(nodeID, contentContext, WTF::move(completion));
+}
+
+void WebPageProxy::reconnectVolumetricSceneToContentContext(WebCore::NodeIdentifier nodeID, VolumetricSceneContentContext contentContext)
+{
+    if (RefPtr portalPresentationManager = portalPresentationManagerProxy())
+        portalPresentationManager->reconnectVolumetricSceneToContentContext(nodeID, contentContext);
+}
+
+void WebPageProxy::dismissVolumetricScene(WebCore::NodeIdentifier nodeID)
+{
+    if (RefPtr portalPresentationManager = portalPresentationManagerProxy())
+        portalPresentationManager->hideVolumetricScene(nodeID);
+}
+
+void WebPageProxy::volumetricSceneDidClose(WebCore::NodeIdentifier nodeID)
+{
+    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::VolumetricSceneDidClose(nodeID), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::updateVolumetricSceneSize(WebCore::NodeIdentifier nodeID, WebCore::FloatSize volumeSizeInMeters)
+{
+    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::UpdateVolumetricSceneSize(nodeID, volumeSizeInMeters), webPageIDInMainFrameProcess());
+}
+
+#endif // ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
 #if USE(UICONTEXTMENU)
 

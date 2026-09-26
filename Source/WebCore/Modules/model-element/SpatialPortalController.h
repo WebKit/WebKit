@@ -42,6 +42,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include <WebCore/ModelPresentationMode.h>
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -75,6 +79,9 @@ class SpatialPortalController : public CanMakeWeakPtr<SpatialPortalController>, 
     friend class PortalModelPlayerClient;
     friend class PortalIntersectionObserverCallback;
     friend class PortalVisibilityChangeClient;
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    friend class ElementVolumetricScene;
+#endif
 public:
     explicit SpatialPortalController(Element&);
     ~SpatialPortalController();
@@ -118,6 +125,10 @@ public:
 
     bool isPortalVisible() const;
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    RefPtr<ModelPlayer> liveModelPlayer() const;
+#endif
+
 private:
     struct HostedModel {
         WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> element;
@@ -144,6 +155,7 @@ private:
     void logWarning(ModelPlayer&, const String&);
     RefPtr<GraphicsLayer> portalGraphicsLayer() const;
     void viewportIntersectionChanged(bool isIntersecting);
+    void portalVisibilityChanged();
     void documentVisibilityChanged();
 
     ModelPlayer* ensureModelPlayer();
@@ -175,6 +187,11 @@ private:
     void environmentMapDidLoad(const URL&, RefPtr<SharedBuffer>&&);
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    ModelPresentationMode presentationMode() const { return m_presentationMode; }
+    void setPresentationMode(ModelPresentationMode);
+#endif
+
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
 
     HashMap<NodeIdentifier, HostedModel> m_hostedModels;
@@ -200,6 +217,9 @@ private:
     RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
     EnvironmentMapKind m_environmentMapKind { EnvironmentMapKind::Default };
     bool m_environmentMapFailed { false };
+#endif
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    ModelPresentationMode m_presentationMode { ModelPresentationMode::Inline };
 #endif
     bool m_anchorUpdateScheduled { false };
     bool m_handlesGesture { false };

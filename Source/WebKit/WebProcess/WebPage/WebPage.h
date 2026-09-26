@@ -31,6 +31,7 @@
 #include "RemoteSnapshotIdentifier.h"
 #include "RunJavaScriptResult.h"
 #include "SandboxExtension.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/BoxExtents.h>
 #include <WebCore/CornerRadii.h>
@@ -836,6 +837,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
@@ -1779,6 +1782,16 @@ public:
 
 #if ENABLE(MODEL_PROCESS)
     void setHasModelElement(bool);
+#endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void enterVolumetricSceneForElement(WebCore::Element&, CompletionHandler<void(bool)>&&);
+    void exitVolumetricSceneForElement(WebCore::Element&);
+    void reconnectVolumetricSceneForElement(WebCore::Element&);
+    void dismissVolumetricScenesForDetachedElements();
+
+    void volumetricSceneDidClose(WebCore::NodeIdentifier);
+    void updateVolumetricSceneSize(WebCore::NodeIdentifier, WebCore::FloatSize volumeSizeInMeters);
 #endif
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(StringView);
@@ -3436,6 +3449,19 @@ private:
 
     RefPtr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;
     std::unique_ptr<FrameInfoData> m_mainFrameNavigationInitiator;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    struct VolumetricSceneRequest {
+        WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> element;
+        // The volume does not exist until PresentVolumetricScene has been sent, so an exit arriving before
+        // then has nothing to dismiss and must cancel the request instead of racing it.
+        bool isPending { true };
+        bool wasCancelledWhilePending { false };
+        bool isDismissing { false };
+    };
+    // Keyed by node rather than layer: a reload changes the layer but not the node.
+    HashMap<WebCore::NodeIdentifier, VolumetricSceneRequest> m_volumetricSceneElements;
+#endif
 
     mutable RefPtr<Logger> m_logger;
 

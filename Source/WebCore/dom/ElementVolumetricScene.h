@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,40 @@
 
 #pragma once
 
-#if ENABLE(MODEL_ELEMENT)
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
-#include <WebCore/Color.h>
-#include <WebCore/LayoutPoint.h>
-#include <WebCore/LayoutSize.h>
-#include <WebCore/Model.h>
-#include <wtf/RefPtr.h>
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 #include <WebCore/ModelPresentationMode.h>
-#endif
+#include <optional>
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ModelPlayerGraphicsLayerConfiguration {
-    RefPtr<Model> model;
-    LayoutSize contentSize;
-    LayoutPoint contentOrigin;
-    Color backgroundColor;
-    bool isInteractive;
-#if ENABLE(MODEL_ELEMENT_PORTAL)
-    bool hasPortal;
-#endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    ModelPresentationMode presentationMode { ModelPresentationMode::Inline };
-#endif
+class Element;
+class ModelPlayer;
+template<typename IDLType> class DOMPromiseDeferred;
+
+// Presents an element's model content in a volumetric scene that coexists with the page.
+class ElementVolumetricScene {
+public:
+    static void requestVolumetricScene(Element&, DOMPromiseDeferred<void>&&);
+    static void exitVolumetricScene(Element&);
+
+    static void documentVisibilityDidChange(Element&);
+
+    // Not on the exit request: the volume still holds the hosting claim until it actually closes.
+    WEBCORE_EXPORT static void volumetricSceneDidClose(Element&);
+
+    WEBCORE_EXPORT static RefPtr<ModelPlayer> playerForElement(const Element&);
+
+    WEBCORE_EXPORT static String presentationModeForTesting(const Element&);
+
+private:
+    static std::optional<ModelPresentationMode> presentationMode(const Element&);
+    static void setPresentationMode(Element&, ModelPresentationMode);
+    static bool isPresentedInVolumetricScene(const Element&);
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(CONNECTED_VOLUMETRIC_SCENE)

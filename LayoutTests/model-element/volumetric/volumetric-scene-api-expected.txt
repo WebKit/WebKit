@@ -1,0 +1,9 @@
+
+PASS The volumetric scene API is exposed on Element
+PASS A plain element cannot host a volumetric scene
+PASS A model element can host a volumetric scene and starts inline
+PASS exitVolumetricScene() on an element with no scene is a no-op
+PASS A spatial portal can host a volumetric scene and starts inline
+PASS exitVolumetricScene() on a portal with no scene is a no-op
+PASS A spatial portal with no model cannot host a volumetric scene
+

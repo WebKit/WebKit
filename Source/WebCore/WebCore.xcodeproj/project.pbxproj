@@ -5312,6 +5312,8 @@
 		BC4630BD2E9D5B7C00EA911F /* CSSPrimitiveNumericCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630BB2E9D5A5A00EA911F /* CSSPrimitiveNumericCategory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4630BE2E9D5CAD00EA911F /* CSSCalcOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630B92E9D59D000EA911F /* CSSCalcOperator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4630FB2EA1A00A00EA911F /* ModelPlayerGraphicsLayerConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630FA2EA19FD500EA911F /* ModelPlayerGraphicsLayerConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A7F1C3E4E5B60718293A4C2 /* ModelPresentationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A7F1C3D4E5B60718293A4C1 /* ModelPresentationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3B7C4D205F60718293A4B5C8 /* ElementVolumetricScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B7C4D1F5F60718293A4B5C7 /* ElementVolumetricScene.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4631102EA310B600EA911F /* StyleTextSpacingTrim.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46310E2EA30B5900EA911F /* StyleTextSpacingTrim.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC46311F2EA42C0500EA911F /* StyleScrollbarWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46311C2EA4078B00EA911F /* StyleScrollbarWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4631452EA6B6AF00EA911F /* StyleGridAutoFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631432EA6AD5900EA911F /* StyleGridAutoFlow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15385,6 +15387,9 @@
 		7C6752BA1B06E82000C279CB /* NonElementParentNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NonElementParentNode.idl; sourceTree = "<group>"; };
 		7C6771092526A45800FDEF00 /* HTMLElement+CSSOMView.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "HTMLElement+CSSOMView.idl"; sourceTree = "<group>"; };
 		7C6771222527D22100FDEF00 /* Element+PointerLock.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+PointerLock.idl"; sourceTree = "<group>"; };
+		3B7C4D1E5F60718293A4B5C6 /* Element+VolumetricScene.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+VolumetricScene.idl"; sourceTree = "<group>"; };
+		3B7C4D1F5F60718293A4B5C7 /* ElementVolumetricScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementVolumetricScene.h; sourceTree = "<group>"; };
+		3B7C4D215F60718293A4B5C9 /* ElementVolumetricScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ElementVolumetricScene.cpp; sourceTree = "<group>"; };
 		7C6771242527D22200FDEF00 /* Element+PointerEvents.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+PointerEvents.idl"; sourceTree = "<group>"; };
 		7C6771252527D22200FDEF00 /* Element+Fullscreen.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+Fullscreen.idl"; sourceTree = "<group>"; };
 		7C6771262527D22300FDEF00 /* Element+CSSOMView.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+CSSOMView.idl"; sourceTree = "<group>"; };
@@ -19764,6 +19769,7 @@
 		BC4630D82E9DA09900EA911F /* StyleCalculationTree+Conversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Conversion.h"; sourceTree = "<group>"; };
 		BC4630D92E9DA09900EA911F /* StyleCalculationTree+Conversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "StyleCalculationTree+Conversion.cpp"; sourceTree = "<group>"; };
 		BC4630FA2EA19FD500EA911F /* ModelPlayerGraphicsLayerConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelPlayerGraphicsLayerConfiguration.h; sourceTree = "<group>"; };
+		2A7F1C3D4E5B60718293A4C1 /* ModelPresentationMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelPresentationMode.h; sourceTree = "<group>"; };
 		BC46310E2EA30B5900EA911F /* StyleTextSpacingTrim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTextSpacingTrim.h; sourceTree = "<group>"; };
 		BC46311C2EA4078B00EA911F /* StyleScrollbarWidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleScrollbarWidth.h; sourceTree = "<group>"; };
 		BC46311D2EA4078B00EA911F /* StyleScrollbarWidth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScrollbarWidth.cpp; sourceTree = "<group>"; };
@@ -32460,6 +32466,7 @@
 				BC2B41162732F0C700A2D191 /* ModelPlayerProvider.cpp */,
 				BC2B41152732F0C700A2D191 /* ModelPlayerProvider.h */,
 				52597BB82DC412F500CAAF01 /* ModelPlayerTransformState.h */,
+				2A7F1C3D4E5B60718293A4C1 /* ModelPresentationMode.h */,
 				52597BE62DC6533200CAAF01 /* PlaceholderModelPlayer.cpp */,
 				52597BE52DC6533200CAAF01 /* PlaceholderModelPlayer.h */,
 				1F2E3D4C5B6A79880716253F /* PortalAction.h */,
@@ -43238,6 +43245,7 @@
 				7C6771242527D22200FDEF00 /* Element+PointerEvents.idl */,
 				7C6771222527D22100FDEF00 /* Element+PointerLock.idl */,
 				7A7C8B5427F32D2B0008E234 /* Element+Typedom.idl */,
+				3B7C4D1E5F60718293A4B5C6 /* Element+VolumetricScene.idl */,
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
@@ -43266,6 +43274,8 @@
 				725F64BD2C7D633100F87348 /* ElementTextDirection.cpp */,
 				725F64BC2C7D633100F87348 /* ElementTextDirection.h */,
 				E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */,
+				3B7C4D215F60718293A4B5C9 /* ElementVolumetricScene.cpp */,
+				3B7C4D1F5F60718293A4B5C7 /* ElementVolumetricScene.h */,
 				93849C1E24BE404A00448D5A /* EmptyScriptExecutionContext.h */,
 				05FD69DF12845D4300B2BEB3 /* EpochTimeStamp.h */,
 				2ECF7ADE10162B5800427DE7 /* ErrorEvent.cpp */,
@@ -45859,6 +45869,7 @@
 				F454C13A2BA3F91100871551 /* ElementTargetingController.h in Headers */,
 				F454C1342BA3B57500871551 /* ElementTargetingTypes.h in Headers */,
 				E4D58EBB17B8F12800CBDCA8 /* ElementTraversal.h in Headers */,
+				3B7C4D205F60718293A4B5C8 /* ElementVolumetricScene.h in Headers */,
 				6FD1EBC028AEECC700FFF5D2 /* EllipsisBoxPainter.h in Headers */,
 				F55B3DBC1251F12D003EF269 /* EmailInputType.h in Headers */,
 				E36D702027B72013006531B7 /* EmptyAttachmentElementClient.h in Headers */,
@@ -48054,6 +48065,7 @@
 				BC46307C2E9C18D100EA911F /* ModelPlayerIdentifier.h in Headers */,
 				BC2B41182732F42300A2D191 /* ModelPlayerProvider.h in Headers */,
 				52597BB92DC412F500CAAF01 /* ModelPlayerTransformState.h in Headers */,
+				2A7F1C3E4E5B60718293A4C2 /* ModelPresentationMode.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
 				E3201C1A1F8E82130076A032 /* ModuleFetchParameters.h in Headers */,
