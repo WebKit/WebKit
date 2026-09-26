@@ -336,8 +336,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
     bool centerOnGapVertically = false;
     switch (hRule) {
     case RoundTile: {
+        // https://drafts.csswg.org/css-backgrounds/#border-image-process
         float scaledSourceWidth = srcRect.width() * tileScale.width();
-        int numItems = std::max<int>(floorf(dstRect.width() / scaledSourceWidth), 1);
+        int numItems = std::max<int>(roundf(dstRect.width() / scaledSourceWidth), 1);
         tileScale.setWidth(dstRect.width() / (srcRect.width() * numItems));
         break;
     }
@@ -357,8 +358,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
 
     switch (vRule) {
     case RoundTile: {
+        // https://drafts.csswg.org/css-backgrounds/#border-image-process
         float scaledSourceHeight = srcRect.height() * tileScale.height();
-        int numItems = std::max<int>(floorf(dstRect.height() / scaledSourceHeight), 1);
+        int numItems = std::max<int>(roundf(dstRect.height() / scaledSourceHeight), 1);
         tileScale.setHeight(dstRect.height() / (srcRect.height() * numItems));
         break;
     }

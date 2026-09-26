@@ -5218,7 +5218,6 @@ webkit.org/b/299914 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/299909 imported/w3c/web-platform-tests/css/css-backgrounds/background-origin/origin-content-box_with_radius.html [ ImageOnlyFailure ]
 webkit.org/b/299909 imported/w3c/web-platform-tests/css/css-backgrounds/background-origin/origin-padding-box_with_radius.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-002.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-002.htm [ ImageOnlyFailure ]
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
