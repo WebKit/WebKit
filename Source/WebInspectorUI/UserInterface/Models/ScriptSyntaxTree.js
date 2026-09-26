@@ -106,6 +106,61 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         return allNodes;
     }
 
+    functionInfo(position)
+    {
+        let containers = this.containersOfPosition(position);
+        for (let i = containers.length - 1; i >= 0; --i) {
+            let node = containers[i];
+            switch (node.type) {
+            case WI.ScriptSyntaxTree.NodeType.FunctionDeclaration:
+            case WI.ScriptSyntaxTree.NodeType.FunctionExpression:
+                if (containers.includes(node.id))
+                    return this._createFunctionInfo(node, node.id.name);
+                break;
+
+            case WI.ScriptSyntaxTree.NodeType.MethodDefinition:
+            case WI.ScriptSyntaxTree.NodeType.Property: {
+                if (node.value.id || !this._isFunction(node.value) || !containers.includes(node.key))
+                    break;
+                let name = this._keyForNode(node.key, node.computed);
+                if (name) {
+                    let position = (this._functionReturnDivot(node.value) === node.range[0]) ? node.startPosition : node.value.startPosition;
+                    return this._createFunctionInfo(node.value, name, position);
+                }
+                break;
+            }
+
+            case WI.ScriptSyntaxTree.NodeType.VariableDeclarator:
+                if (node.init?.id || !this._isFunction(node.init) || node.id.type !== WI.ScriptSyntaxTree.NodeType.Identifier || !containers.includes(node.id))
+                    break;
+                return this._createFunctionInfo(node.init, node.id.name);
+
+            case WI.ScriptSyntaxTree.NodeType.AssignmentExpression:
+                if (node.right.id || !this._isFunction(node.right))
+                    break;
+
+                switch (node.left.type) {
+                case WI.ScriptSyntaxTree.NodeType.Identifier:
+                    if (containers.includes(node.left))
+                        return this._createFunctionInfo(node.right, node.left.name);
+                    break;
+
+                case WI.ScriptSyntaxTree.NodeType.MemberExpression: {
+                    if (!containers.includes(node.left.property))
+                        break;
+                    let name = this._keyForNode(node.left.property, node.left.computed);
+                    if (name)
+                        return this._createFunctionInfo(node.right, name);
+                    break;
+                }
+                }
+                break;
+            }
+        }
+
+        return null;
+    }
+
     filterByRange(startPosition, endPosition)
     {
         console.assert(this._parsedSuccessfully);
@@ -175,15 +230,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         return hasNonEmptyReturnStatement;
     }
 
-    static functionReturnDivot(node)
-    {
-        console.assert(node.type === WI.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WI.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WI.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
-
-        // "f" in "function". "s" in "set". "g" in "get". First letter in any method name for classes and object literals.
-        // The "[" for computed methods in classes and object literals.
-        return node.typeProfilingReturnDivot;
-    }
-
     updateTypes(nodesToUpdate, callback)
     {
         console.assert(this._script.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"));
@@ -215,7 +261,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 allRequests.push({
                     typeInformationDescriptor: WI.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn,
                     sourceID,
-                    divot: WI.ScriptSyntaxTree.functionReturnDivot(node)
+                    divot: this._functionReturnDivot(node)
                 });
                 allRequestNodes.push(node);
                 break;
@@ -257,6 +303,47 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
     }
 
     // Private
+
+    _functionReturnDivot(node)
+    {
+        console.assert(node.type === WI.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WI.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WI.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
+
+        // "f" in "function". "s" in "set". "g" in "get". First letter in any method name for classes and object literals.
+        // The "[" for computed methods in classes and object literals.
+        return node.typeProfilingReturnDivot;
+    }
+
+    _createFunctionInfo(node, name, position)
+    {
+        return {
+            name,
+            position: position || node.startPosition,
+            endPosition: node.endPosition,
+            offset: this._functionReturnDivot(node),
+        };
+    }
+
+    _isFunction(node)
+    {
+        switch (node?.type) {
+        case WI.ScriptSyntaxTree.NodeType.FunctionDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.FunctionExpression:
+        case WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
+            return true;
+        }
+        return false;
+    }
+
+    _keyForNode(node, computed)
+    {
+        if (node.type === WI.ScriptSyntaxTree.NodeType.PrivateIdentifier)
+            return "#" + node.name;
+        if (!computed && node.type === WI.ScriptSyntaxTree.NodeType.Identifier)
+            return node.name;
+        if (node.type === WI.ScriptSyntaxTree.NodeType.Literal && (typeof node.value === "string" || typeof node.value === "number"))
+            return String(node.value);
+        return "";
+    }
 
     _gatherIdentifiersInDeclaration(node)
     {
