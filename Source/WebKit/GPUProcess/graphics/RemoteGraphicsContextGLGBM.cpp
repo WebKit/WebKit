@@ -43,6 +43,7 @@ public:
 
 private:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
+    void didRunOutOfMessages() final;
     void prepareForDisplay(CompletionHandler<void(uint64_t, std::optional<WebCore::DMABufBuffer::Attributes>&&, UnixFileDescriptor&&)>&&) final;
 };
 
@@ -51,6 +52,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGLGBM);
 RemoteGraphicsContextGLGBM::RemoteGraphicsContextGLGBM(GPUConnectionToWebProcess& connection, RemoteGraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : RemoteGraphicsContextGL(connection, identifier, renderingBackend, WTF::move(streamConnection))
 { }
+
+void RemoteGraphicsContextGLGBM::didRunOutOfMessages()
+{
+    assertIsCurrent(workQueue());
+    if (RefPtr context = m_context)
+        context->flush();
+}
 
 void RemoteGraphicsContextGLGBM::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
