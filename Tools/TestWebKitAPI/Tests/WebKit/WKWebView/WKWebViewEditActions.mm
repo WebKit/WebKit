@@ -150,6 +150,24 @@ TEST(WKWebViewEditActions, ChangeListType)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#three')).color"]);
 }
 
+TEST(WKWebViewEditActions, ChangeListTypeRemovesIncompatibleAttributes)
+{
+    auto webView = webViewForEditActionTesting(@"<ul type='circle'><li id='one'>One</li></ul>");
+
+    [webView setPosition:@"one" offset:0];
+    [webView _changeListType:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li#one"]);
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"'' + document.querySelector('ol').getAttribute('type')"]);
+
+    [webView stringByEvaluatingJavaScript:@"var ol = document.querySelector('ol'); ol.setAttribute('type', '1'); ol.setAttribute('start', '3'); ol.setAttribute('reversed', '');"];
+    [webView setPosition:@"one" offset:0];
+    [webView _changeListType:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ul > li#one"]);
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"'' + document.querySelector('ul').getAttribute('type')"]);
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"'' + document.querySelector('ul').getAttribute('start')"]);
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"'' + document.querySelector('ul').getAttribute('reversed')"]);
+}
+
 TEST(WKWebViewEditActions, NestedListInsertion)
 {
     auto webView = webViewForEditActionTesting();
