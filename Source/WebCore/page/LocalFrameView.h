@@ -703,6 +703,17 @@ public:
     void setOwnerHasRendererInParentFrameProcess(bool hasRenderer) { m_ownerHasRendererInParentFrameProcess = hasRenderer; }
     bool ownerHasRendererInParentFrameProcess() const { return m_ownerHasRendererInParentFrameProcess; }
 
+    void setOwnerIsInFixedOrStickyContentInParentFrameProcess(bool isInFixedOrStickyContent) { m_ownerIsInFixedOrStickyContentInParentFrameProcess = isInFixedOrStickyContent; }
+    bool ownerIsInFixedOrStickyContentInParentFrameProcess() const { return m_ownerIsInFixedOrStickyContentInParentFrameProcess; }
+
+    void setNeedsSampledFixedContainerEdgesUpdate()
+    {
+        if (m_ownerIsInFixedOrStickyContentInParentFrameProcess)
+            m_needsSampledFixedContainerEdgesUpdate = true;
+    }
+    bool needsSampledFixedContainerEdgesUpdate() const { return m_needsSampledFixedContainerEdgesUpdate; }
+    void clearNeedsSampledFixedContainerEdgesUpdate() { m_needsSampledFixedContainerEdgesUpdate = false; }
+
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
 
@@ -1060,6 +1071,8 @@ private:
 
     bool m_hasSetExposedContentRectFromEmbedder { false };
     bool m_ownerHasRendererInParentFrameProcess { true };
+    bool m_ownerIsInFixedOrStickyContentInParentFrameProcess { false };
+    bool m_needsSampledFixedContainerEdgesUpdate { false };
 
     OptionSet<PaintBehavior> m_paintBehavior;
 

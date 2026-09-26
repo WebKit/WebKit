@@ -1494,6 +1494,9 @@ private:
     void scheduleRenderingUpdateInternal();
     void prioritizeVisibleResources();
 
+    void updateSampledFixedContainerEdgesIfNeeded();
+    void sampledFixedContainerEdgesTimerFired();
+
     RenderingUpdateScheduler* NODELETE existingRenderingUpdateScheduler() LIFETIME_BOUND;
 
     WheelEventTestMonitor& ensureWheelEventTestMonitor();
@@ -1548,6 +1551,8 @@ private:
 
     const UniqueRef<BackForwardController> m_backForwardController;
     HashSet<WeakRef<LocalFrame>> m_rootFrames;
+    MonotonicTime m_lastSampledFixedContainerEdgesTime;
+    Timer m_sampledFixedContainerEdgesTimer;
     const UniqueRef<EditorClient> m_editorClient;
 
     Ref<Frame> m_mainFrame;

@@ -1349,6 +1349,7 @@ using WebCore::ScrollPosition = WebCore::IntPoint;
     WebCore::FloatRect exposedContentRectInChildView();
 #endif
     bool ownerHasRenderer();
+    bool ownerIsInFixedOrStickyContent();
     WebCore::TransformationMatrix childFrameOwnerToRootContentTransform();
     WebCore::TransformationMatrix absoluteToChildFrameOwnerLocalTransform();
     float frameScaleFactor();

@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Top: a header goes fixed, static, then fixed again; only the frame's own matching report can complete the
+     color. Bottom: an SVG-referencing filter blocks the paint below the security check, so the result is null. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top" id="p5top">
+<div class="half" style="left: 0; background-color: rgb(255, 120, 0)"></div>
+<div class="half" style="right: 0"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=ff7800"></iframe></div>
+</div>
+<div class="edge bottom" id="p5bottom" style="filter: url(#p5filter); display: none"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=ff00ff"></iframe></div>
+<svg style="position: absolute; width: 0; height: 0"><filter id="p5filter"><feColorMatrix type="saturate" values="0"/></filter></svg>
+<div class="tall"></div>
+<script>
+const EXPECTED = { top: "rgb(255, 120, 0)", bottom: null };
+
+addEventListener("load", async () => {
+    await prepareEdgeSampling();
+
+    // fixed -> static -> fixed, so the bit turns true a second time and must re-arm sampling.
+    document.getElementById("p5top").style.position = "static";
+    await UIHelper.ensurePresentationUpdate();
+    document.getElementById("p5top").style.position = "fixed";
+
+    // Hidden until the frame's cross-origin content has settled, so the fixed container's cached edge
+    // is never sampled from an about:blank frame before the security check can block it.
+    for (let i = 0; i < 5; ++i)
+        await UIHelper.ensurePresentationUpdate();
+    document.getElementById("p5bottom").style.display = "";
+
+    color = await settledEdges(EXPECTED);
+    assertEdges(EXPECTED);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Top: scrolled past a transparent region, so the visible color is not the color scrolled away from. Bottom: the
+     color comes from a cross-site frame nested inside another cross-site frame. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe scrolling="yes" data-src="http://localhost:8000/site-isolation/resources/scrollable-color.html?top=00000000&amp;bottom=007aff&amp;boundary=500&amp;height=3000&amp;scrollTo=600"></iframe></div>
+<div class="edge bottom"><iframe data-src="http://localhost:8000/site-isolation/resources/nested-holder.html?src=http://127.0.0.1:8000/site-isolation/resources/solid-color.html%3Fcolor%3Dff00ff"></iframe></div>
+<div class="tall"></div>
+<script>
+const EXPECTED = { top: "rgb(0, 122, 255)", bottom: "rgb(255, 0, 255)" };
+
+addEventListener("load", async () => {
+    const scrolled = new Promise(resolve => {
+        addEventListener("message", event => {
+            if (event.data && event.data.scrolledTo !== undefined)
+                resolve(event.data.scrolledTo);
+        }, { once: true });
+    });
+
+    await loadEdgeSamplingFrames();
+    const offset = await scrolled;
+    if (offset === 600)
+        testPassed("Frame scrolled past the color boundary");
+    else
+        testFailed(`Frame scrolled to ${offset}, expected 600`);
+
+    // After the frame has scrolled, so the top edge is not sampled before.
+    await UIHelper.ensurePresentationUpdate();
+    await setEdgeSamplingInsets();
+
+    color = await settledEdges(EXPECTED);
+    assertEdges(EXPECTED);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

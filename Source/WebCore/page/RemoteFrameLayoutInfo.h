@@ -58,6 +58,7 @@ public:
     FloatRect exposedContentRectInChildView() const { return m_exposedContentRectInChildView; }
 #endif
     bool ownerHasRenderer() const { return m_ownerHasRenderer; }
+    bool ownerIsInFixedOrStickyContent() const { return m_ownerIsInFixedOrStickyContent; }
     const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
     const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
     float frameScaleFactor() const { return m_frameScaleFactor; }
@@ -74,6 +75,7 @@ private:
         FloatRect exposedContentRectInChildView,
 #endif
         bool ownerHasRenderer,
+        bool ownerIsInFixedOrStickyContent,
         TransformationMatrix childFrameOwnerToRootContentTransform,
         TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
         float frameScaleFactor,
@@ -98,6 +100,8 @@ private:
 
     // Whether the frame's owner element has a renderer (e.g. not display:none).
     bool m_ownerHasRenderer;
+
+    bool m_ownerIsInFixedOrStickyContent;
 
     // The transformation matrix to project from the frame owner's
     // coordinate space to its RenderView's (root) coordinate space.

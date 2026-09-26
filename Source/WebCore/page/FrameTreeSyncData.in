@@ -37,3 +37,7 @@ FrameRect : WebCore::IntRect [Headers=<WebCore/IntRect.h>]
 
 FrameGeometry : WebCore::FrameGeometrySyncData [Headers=<WebCore/FrameGeometrySyncData.h>]
 FrameViewportInfo : WebCore::FrameViewportInfo [Headers=<WebCore/FrameGeometrySyncData.h>]
+
+## Colors at this frame's visible edges, for fixed container edge sampling in the parent frame's process
+
+SampledFixedContainerEdges : WebCore::FixedContainerEdges [Headers=<WebCore/FixedContainerEdges.h>]
