@@ -1543,6 +1543,13 @@ webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.
 [ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ]
 [ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerRemove.html [ Pass Crash ]
 
+# Flaky again after reverting the deferred CapturingStateChanged dispatch (303033@main). The
+# generic [ Skip ] in LayoutTests/TestExpectations does not take effect on mac-wk2 because the
+# Debug x86_64 line above already claims this test on this platform, so mac-wk2 configurations
+# fall back to the default (Pass) and the flaky test runs. Skip the Release configurations (which
+# the mac-wk2 bots run) here until the underlying capturing-state event ordering is fixed forward.
+webkit.org/b/302413 [ Release ] inspector/timeline/timeline-event-TimerInstall.html [ Skip ]
+
 webkit.org/b/267384 [ Sonoma+ ] fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/267670 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass ImageOnlyFailure ]

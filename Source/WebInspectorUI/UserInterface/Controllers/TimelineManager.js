@@ -288,10 +288,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._activeRecording || shouldCreateRecording)
             this._loadNewRecording();
 
-        this._capturingState = WI.TimelineManager.CapturingState.Starting;
-        this.dispatchEventToListeners(WI.TimelineManager.Event.CapturingStateChanged, {
-            capturingState: WI.TimelineManager.CapturingState.Starting,
-        });
+        this._updateCapturingState(TimelineManager.CapturingState.Starting);
 
         this._capturingStartTime = NaN;
         this._activeRecording.start(this._initiatedByBackendStart);
@@ -305,10 +302,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (this._capturingState !== TimelineManager.CapturingState.Starting && this._capturingState !== TimelineManager.CapturingState.Active)
             return;
 
-        this._capturingState = WI.TimelineManager.CapturingState.Stopping;
-        this.dispatchEventToListeners(WI.TimelineManager.Event.CapturingStateChanged, {
-            capturingState: WI.TimelineManager.CapturingState.Stopping,
-        });
+        this._updateCapturingState(TimelineManager.CapturingState.Stopping);
 
         this._capturingEndTime = NaN;
         this._activeRecording.stop(this._initiatedByBackendStop);
@@ -422,17 +416,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
         WI.DOMNode.addEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
 
-        this._capturingState = WI.TimelineManager.CapturingState.Active;
-        // Each instrument will send a `capturingStarted` event to the frontend so wait to notify
-        // listeners that the capturing state has changed until after receiving all of them to
-        // avoid any issues interleaving events from a previously stopped recording with commands
-        // to start a new recording (e.g. start 1a, start 1b, stop 1a, start 2, stop 1b).
-        InspectorBackend.runAfterPendingDispatches(() => {
-            this.dispatchEventToListeners(WI.TimelineManager.Event.CapturingStateChanged, {
-                capturingState: WI.TimelineManager.CapturingState.Active,
-                startTime: this._capturingStartTime,
-            });
-        });
+        this._updateCapturingState(TimelineManager.CapturingState.Active, {startTime: this._capturingStartTime});
     }
 
     capturingStopped(endTime)
@@ -473,17 +457,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._initiatedByBackendStart = false;
         this._initiatedByBackendStop = false;
 
-        this._capturingState = WI.TimelineManager.CapturingState.Inactive;
-        // Each instrument will send a `capturingStopped` event to the frontend so wait to notify
-        // listeners that the capturing state has changed until after receiving all of them to
-        // avoid any issues interleaving events from a previously stopped recording with commands
-        // to start a new recording (e.g. start 1a, start 1b, stop 1a, start 2, stop 1b).
-        InspectorBackend.runAfterPendingDispatches(() => {
-            this.dispatchEventToListeners(WI.TimelineManager.Event.CapturingStateChanged, {
-                capturingState: WI.TimelineManager.CapturingState.Inactive,
-                endTime: this._capturingEndTime,
-            });
-        });
+        this._updateCapturingState(TimelineManager.CapturingState.Inactive, {endTime: this._capturingEndTime});
     }
 
     autoCaptureStarted()
@@ -817,6 +791,16 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     }
 
     // Private
+
+    _updateCapturingState(state, data = {})
+    {
+        if (this._capturingState === state)
+            return;
+
+        this._capturingState = state;
+
+        this.dispatchEventToListeners(TimelineManager.Event.CapturingStateChanged, data);
+    }
 
     _processRecord(target, recordPayload, parentRecordPayload)
     {

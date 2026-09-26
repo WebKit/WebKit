@@ -14,7 +14,7 @@ function test()
     }
 
     WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
-        if (event.data.capturingState === WI.TimelineManager.CapturingState.Active) {
+        if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
             InspectorTest.assert(typeof event.data.startTime === "number");
             InspectorTest.assert(event.data.startTime > 0);
 
@@ -31,7 +31,7 @@ function test()
             return;
         }
 
-        if (event.data.capturingState === WI.TimelineManager.CapturingState.Inactive) {
+        if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive) {
             InspectorTest.assert(typeof event.data.endTime === "number");
             InspectorTest.assert(event.data.endTime > 0);
 
