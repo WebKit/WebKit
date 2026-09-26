@@ -737,11 +737,14 @@ void WebPage::handleImageServiceClick(WebCore::FrameIdentifier frameID, const In
     if (!webFrame)
         return;
 
+    auto elementAbsoluteBox = protect(element.renderBox())->absoluteContentQuad().enclosingBoundingBox();
+    auto elementBoxInMainFrameView = webFrame->coreFrame()->virtualView()->contentsToMainFrameView(elementAbsoluteBox);
+
     send(Messages::WebPageProxy::ShowContextMenuFromFrame(webFrame->info(), ContextMenuContextData {
         point,
         image,
         element.isContentEditable(),
-        protect(element.renderBox())->absoluteContentQuad().enclosingBoundingBox(),
+        elementBoxInMainFrameView,
         HTMLAttachmentElement::getAttachmentIdentifier(element),
         contextForElement(element),
         image.mimeType()
@@ -754,10 +757,13 @@ void WebPage::handlePDFServiceClick(WebCore::FrameIdentifier frameID, const IntP
     if (!webFrame)
         return;
 
+    auto elementAbsoluteBox = protect(element.renderBox())->absoluteContentQuad().enclosingBoundingBox();
+    auto elementBoxInMainFrameView = webFrame->coreFrame()->virtualView()->contentsToMainFrameView(elementAbsoluteBox);
+
     send(Messages::WebPageProxy::ShowContextMenuFromFrame(webFrame->info(), ContextMenuContextData {
         point,
         element.isContentEditable(),
-        protect(element.renderBox())->absoluteContentQuad().enclosingBoundingBox(),
+        elementBoxInMainFrameView,
         element.uniqueIdentifier(),
         "application/pdf"_s
     }, { }));

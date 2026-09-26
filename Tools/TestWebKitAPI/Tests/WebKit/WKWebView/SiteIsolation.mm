@@ -12298,11 +12298,35 @@ TEST(SiteIsolation, IframeImageTranslationIfIframeIsAddedAfterTranslationCall)
 
 #if ENABLE(SERVICE_CONTROLS)
 
-TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
+const ASCIILiteral imageServiceControlTestMainPage =
+    "<body style='margin: 0'>"_s
+    "  <iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe>"_s
+    "</body>"_s;
+
+const ASCIILiteral imageServiceControlTestScrolledMainPage =
+    "<body style='margin: 0'>"_s
+    "  <iframe style='margin: 1000px 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe>"_s
+    "  <script>window.scrollTo(0, 900);</script>"_s
+    "</body>"_s;
+
+const ASCIILiteral imageServiceControlTestIframePage =
+    "<!DOCTYPE html>"_s
+    "<body style='margin: 0'>"_s
+    "  <img style='margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'>"_s
+    "</body>"_s;
+
+const ASCIILiteral imageServiceControlTestScrolledIframePage =
+    "<!DOCTYPE html>"_s
+    "<body style='margin: 0'>"_s
+    "  <img style='margin: 1000px 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'>"_s
+    "  <script>window.scrollTo(0, 950);</script>"_s
+    "</body>"_s;
+
+static void testImageServiceControlledImageBounds(const ASCIILiteral& mainFrameHTML, const ASCIILiteral& iframeHTML)
 {
     HTTPServer server({
-        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
-        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><img style='margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'></body>"_s } },
+        { "/mainframe"_s, mainFrameHTML },
+        { "/iframe"_s, iframeHTML },
         { "/image.png"_s, { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } }
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -12377,6 +12401,26 @@ TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
     EXPECT_NEAR(capturedSourceFrame.origin.y, expectedOnScreen.origin.y, 1);
     EXPECT_NEAR(capturedSourceFrame.size.width, expectedOnScreen.size.width, 1);
     EXPECT_NEAR(capturedSourceFrame.size.height, expectedOnScreen.size.height, 1);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestMainPage, imageServiceControlTestIframePage);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInScrolledCrossOriginIframe)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestMainPage, imageServiceControlTestScrolledIframePage);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInScrolledMainPageWithCrossOriginIframe)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestScrolledMainPage, imageServiceControlTestIframePage);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInScrolledMainPageWithScrolledCrossOriginIframe)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestScrolledMainPage, imageServiceControlTestScrolledIframePage);
 }
 
 #endif // ENABLE(SERVICE_CONTROLS)

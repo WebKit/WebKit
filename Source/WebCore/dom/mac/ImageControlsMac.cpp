@@ -170,7 +170,8 @@ bool handleEvent(HTMLElement& element, Event& event)
         if (!view)
             return false;
 
-        auto point = view->contentsToWindow(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
+        // FIXME: so is it contentsToWindow or contentsToRootView???
+        auto point = view->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
 
         if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(target->shadowHost())) {
             RefPtr image = imageFromImageElementNode(*shadowHost);

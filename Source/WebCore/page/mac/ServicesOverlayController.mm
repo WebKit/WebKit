@@ -661,7 +661,8 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
     if (!frameView)
         return;
 
-    IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
+    // FIXME: the original is contentsToWindow, is it right?? Seems like other places uses contentsToRootView
+    IntPoint windowPoint = frameView->contentsToMainFrameView(clickPoint);
 
     RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)

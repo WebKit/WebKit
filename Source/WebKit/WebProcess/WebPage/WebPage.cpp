@@ -10755,13 +10755,6 @@ void WebPage::contentsToRootViewRect(FrameIdentifier frameID, FloatRect rect, Co
     completionHandler(contentsToRootView(frameID, rect));
 }
 
-void WebPage::contentsToRootViewRects(FrameIdentifier frameID, Vector<FloatRect> rects, CompletionHandler<void(Vector<FloatRect>)>&& completionHandler)
-{
-    for (auto& rect : rects)
-        rect = contentsToRootView(frameID, rect);
-    completionHandler(WTF::move(rects));
-}
-
 void WebPage::contentsToRootViewPoint(FrameIdentifier frameID, FloatPoint point, CompletionHandler<void(FloatPoint)>&& completionHandler)
 {
     completionHandler(contentsToRootView(frameID, point));

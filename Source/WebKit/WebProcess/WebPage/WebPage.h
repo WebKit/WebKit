@@ -2826,7 +2826,6 @@ private:
     template<typename T> T contentsToRootView(WebCore::FrameIdentifier, T);
     template<typename T> T rootViewToContents(WebCore::FrameIdentifier, T);
     void contentsToRootViewRect(WebCore::FrameIdentifier, WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
-    void contentsToRootViewRects(WebCore::FrameIdentifier, Vector<WebCore::FloatRect>, CompletionHandler<void(Vector<WebCore::FloatRect>)>&&);
     void contentsToRootViewPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, CompletionHandler<void(WebCore::FloatPoint)>&&);
     void remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier, WebCore::DictionaryPopupInfo, CompletionHandler<void(WebCore::DictionaryPopupInfo)>&&);
 

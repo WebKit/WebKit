@@ -132,12 +132,14 @@ public:
     WEBCORE_EXPORT FloatRect convertToRootViewAcrossIsolatedFrames(FloatRect) const;
     WEBCORE_EXPORT FloatQuad convertToRootViewAcrossIsolatedFrames(const FloatQuad&) const;
     WEBCORE_EXPORT IntRect convertToRootViewAcrossIsolatedFrames(IntRect) const;
+    WEBCORE_EXPORT IntPoint convertToRootViewAcrossIsolatedFrames(IntPoint) const;
 
     WEBCORE_EXPORT FloatRect rootViewToContentsAcrossIsolatedFrames(FloatRect) const;
 
     // Similar to contentsToRootView, but also works in Site Isolation mode and will
     // convert all the way to the main frame.
     WEBCORE_EXPORT IntRect contentsToMainFrameView(const IntRect&) const;
+    WEBCORE_EXPORT IntPoint contentsToMainFrameView(const IntPoint&) const;
 
     WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
 

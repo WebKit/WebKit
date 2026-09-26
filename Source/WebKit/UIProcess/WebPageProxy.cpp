@@ -13198,25 +13198,7 @@ void WebPageProxy::showContextMenuFromFrame(FrameInfoData&& frameInfo, ContextMe
     if (!frame)
         return;
 
-    Vector<FloatRect> rectsToConvert { FloatRect { FloatPoint { contextMenuContextData.menuLocation() }, FloatSize { } } };
-#if ENABLE(SERVICE_CONTROLS)
-    if (!contextMenuContextData.controlledImageBounds().isEmpty())
-        rectsToConvert.append(FloatRect { contextMenuContextData.controlledImageBounds() });
-#endif
-
-    auto rootFrameID = frame->rootFrame()->frameID();
-    convertRectsToMainFrameCoordinates(WTF::move(rectsToConvert), rootFrameID, [weakThis = WeakPtr { *this }, contextMenuContextData = WTF::move(contextMenuContextData), userData = WTF::move(userData), frameInfo = WTF::move(frameInfo)] (std::optional<Vector<FloatRect>> convertedRects) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRects || convertedRects->isEmpty())
-            return;
-
-        contextMenuContextData.setMenuLocation(IntPoint(convertedRects->first().location()));
-#if ENABLE(SERVICE_CONTROLS)
-        if (convertedRects->size() > 1)
-            contextMenuContextData.setControlledImageBounds(IntRect(convertedRects->last()));
-#endif
-        protectedThis->showContextMenu(WTF::move(frameInfo), WTF::move(contextMenuContextData), userData);
-    });
+    showContextMenu(WTF::move(frameInfo), WTF::move(contextMenuContextData), userData);
 }
 
 void WebPageProxy::showContextMenu(FrameInfoData&& frameInfo, ContextMenuContextData&& contextMenuContextData, const UserData& userData)
@@ -16341,24 +16323,6 @@ void WebPageProxy::convertRectToMainFrameCoordinates(WebCore::FloatRect rect, st
         if (!protectedThis)
             return completionHandler(std::nullopt);
         protectedThis->convertRectToMainFrameCoordinates(convertedRect, nextFrameID, WTF::move(completionHandler));
-    });
-}
-
-void WebPageProxy::convertRectsToMainFrameCoordinates(Vector<WebCore::FloatRect> rects, std::optional<WebCore::FrameIdentifier> frameID, CompletionHandler<void(std::optional<Vector<WebCore::FloatRect>>)>&& completionHandler)
-{
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
-        return completionHandler(std::nullopt);
-
-    RefPtr parent = frame->parentFrame();
-    if (!parent)
-        return completionHandler(WTF::move(rects));
-
-    sendWithAsyncReplyToProcessContainingFrame(parent->frameID(), Messages::WebPage::ContentsToRootViewRects(frame->frameID(), WTF::move(rects)), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), nextFrameID = parent->rootFrame()->frameID()](Vector<FloatRect> convertedRects) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return completionHandler(std::nullopt);
-        protectedThis->convertRectsToMainFrameCoordinates(WTF::move(convertedRects), nextFrameID, WTF::move(completionHandler));
     });
 }
 
