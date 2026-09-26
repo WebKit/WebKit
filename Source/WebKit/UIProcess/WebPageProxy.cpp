@@ -12870,16 +12870,7 @@ void WebPageProxy::requestDOMPasteAccess(IPC::Connection& connection, DOMPasteAc
         }
     }
 
-    auto rootFrameID = frame->rootFrame()->frameID();
-    convertRectToMainFrameCoordinates(elementRect, rootFrameID, [weakThis = WeakPtr { *this }, pasteAccessCategory, requiresInteraction, frameID, originIdentifier, completionHandler = WTF::move(completionHandler)](std::optional<FloatRect> convertedRect) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect) {
-            completionHandler(DOMPasteAccessResponse::DeniedForGesture);
-            return;
-        }
-
-        protect(protectedThis->pageClient())->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, frameID, IntRect(*convertedRect), originIdentifier, WTF::move(completionHandler));
-    });
+    protect(pageClient())->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, frameID, elementRect, originIdentifier, WTF::move(completionHandler));
 }
 
 // BackForwardList

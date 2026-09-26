@@ -878,14 +878,14 @@ void WebPage::advanceToNextMisspelling(bool)
 IntRect WebPage::rectForElementAtInteractionLocation() const
 {
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
-    if (!localMainFrame)
+    RefPtr localMainOrRootFrame = protect(*m_page)->localMainOrRootFrame();
+    if (!localMainOrRootFrame)
         return IntRect();
-    HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(flooredIntPoint(m_lastInteractionLocation), hitType);
+    HitTestResult result = localMainOrRootFrame->eventHandler().hitTestResultAtPoint(flooredIntPoint(m_lastInteractionLocation), hitType);
     RefPtr hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())
         return IntRect();
-    return protect(result.innerNodeFrame()->view())->contentsToRootView(protect(hitNode->renderer())->absoluteBoundingBoxRect(true));
+    return protect(result.innerNodeFrame()->view())->contentsToMainFrameView(protect(hitNode->renderer())->absoluteBoundingBoxRect(true));
 }
 
 void WebPage::updateSelectionAppearance()
