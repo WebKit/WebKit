@@ -1,0 +1,2 @@
+Tests that an opaque-origin frame cannot be named as the source of a message claiming a real origin.
+PASS

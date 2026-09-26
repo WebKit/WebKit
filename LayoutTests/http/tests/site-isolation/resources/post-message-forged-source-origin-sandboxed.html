@@ -1,0 +1,12 @@
+<script>
+onload = () => {
+    parent.postMessage("sandboxed loaded", "*");
+};
+
+addEventListener("message", (event) => {
+    if (event.data != "post to victim")
+        return;
+    // frames[1] is the cross-site victim.
+    parent.frames[1].postMessage("from sandbox", "*");
+});
+</script>

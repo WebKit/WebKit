@@ -1,0 +1,9 @@
+<script>
+addEventListener("message", (event) => {
+    opener.postMessage("opened window received " + event.data, "*");
+});
+
+onload = () => {
+    opener.postMessage("opened window loaded", "*");
+};
+</script>
