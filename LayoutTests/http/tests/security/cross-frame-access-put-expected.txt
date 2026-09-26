@@ -71,7 +71,7 @@ CONSOLE MESSAGE: PASS: window.HTMLTableSectionElement should be 'function HTMLTa
 CONSOLE MESSAGE: PASS: window.HTMLTextAreaElement should be 'function HTMLTextAreaElement() {    [native code]}' and is.
 CONSOLE MESSAGE: PASS: window.HTMLTitleElement should be 'function HTMLTitleElement() {    [native code]}' and is.
 CONSOLE MESSAGE: PASS: window.HTMLUListElement should be 'function HTMLUListElement() {    [native code]}' and is.
-CONSOLE MESSAGE: PASS: window.MutationEvent should be 'function MutationEvent() {    [native code]}' and is.
+CONSOLE MESSAGE: PASS: window.MutationEvent should be 'undefined' and is.
 CONSOLE MESSAGE: PASS: window.Node should be 'function Node() {    [native code]}' and is.
 CONSOLE MESSAGE: PASS: window.NodeFilter should be 'function NodeFilter() {    [native code]}' and is.
 CONSOLE MESSAGE: PASS: window.ProcessingInstruction should be 'function ProcessingInstruction() {    [native code]}' and is.

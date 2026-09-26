@@ -437,7 +437,7 @@ static bool isSafariOrWebApp()
 bool defaultMutationEventsEnabled()
 {
 #if PLATFORM(COCOA)
-    return (WTF::CocoaApplication::isAppleApplication() && !isSafariOrWebApp()) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
+    return (WTF::CocoaApplication::isAppleApplication() && !isSafariOrWebApp() && !isRunningTest(applicationBundleIdentifier())) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
 #else
     return false;
 #endif

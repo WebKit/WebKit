@@ -150,11 +150,6 @@ static bool shouldUseBackForwardCache(const std::string& pathOrURL)
     return pathContains(pathOrURL, "://web-platform.test");
 }
 
-static bool shouldDisableMutationEvents(const std::string& pathOrURL)
-{
-    return isWebPlatformTestURL(URL { { }, String::fromUTF8(pathOrURL.c_str()) });
-}
-
 static bool shouldEnableTouchEventRegions(const std::string& pathOrURL)
 {
     return pathContains(pathOrURL, "touch-event-regions-layer-tree/");
@@ -196,8 +191,6 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolWebPreferenceFeatures.insert({ "SiteIsolationEnabled", true });
     if (shouldUseBackForwardCache(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "UsesBackForwardCache", true });
-    if (shouldDisableMutationEvents(command.pathOrURL))
-        features.boolWebPreferenceFeatures.insert({ "MutationEventsEnabled", false });
     if (shouldEnableTouchEventRegions(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "AlwaysUseTouchEventRegions", true });
     if (shouldEnableGlobalPrivacyControl(command.pathOrURL))

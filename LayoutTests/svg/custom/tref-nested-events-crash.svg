@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?><!-- webkit-test-runner [ MutationEventsEnabled=true ] -->
 <svg onload="CFcrash()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <!-- Test for https://bugs.webkit.org/show_bug.cgi?id=93004 -->
   <g id="test-body-content">
