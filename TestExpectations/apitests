@@ -93,6 +93,7 @@ webkit.org/b/254289 [ ios ] TestWebKitAPI.AppPrivacyReport.RestoreFromInteractio
 webkit.org/b/254289 [ ios ] TestWebKitAPI.AppPrivacyReport.RestoreFromInteractionStateIsNonAppInitiated [ Skip ]
 webkit.org/b/254289 [ ios ] TestWebKitAPI.AppPrivacyReport.RestoreFromSessionStateIsAppInitiated [ Skip ]
 webkit.org/b/254289 [ ios ] TestWebKitAPI.AppPrivacyReport.RestoreFromSessionStateIsNonAppInitiated [ Skip ]
+webkit.org/b/325352 [ mac ] TestWebKitAPI.AttributedSubstringForProposedRange.FarRangeResolutionScalesWithLineBreakCount [ Skip ]
 rdar://134545195 [ mac ] TestWebKitAPI.AudioRoutingArbitration.Basic [ Skip ]
 rdar://134545195 [ mac ] TestWebKitAPI.AudioRoutingArbitration.Close [ Skip ]
 rdar://136533250 [ mac ] TestWebKitAPI.AudioRoutingArbitration.Deletion [ Skip ]
