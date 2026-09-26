@@ -44,8 +44,13 @@ public:
     };
     static_assert(sizeof(Slot) <= 64);
 
+    static constexpr unsigned maxLongStringLength = 256;
+    static constexpr unsigned longStringCapacityLog2 = 7;
+    static constexpr unsigned longStringCapacity = 1U << longStringCapacityLog2;
+
     using Cache = std::array<Slot, capacity>;
     using JSStringCache = std::array<JSString*, capacity>;
+    using LongJSStringCache = std::array<JSString*, longStringCapacity>;
 
     template<typename CharacterType>
     ALWAYS_INLINE Ref<AtomStringImpl> makeIdentifier(std::span<const CharacterType> characters);
@@ -59,12 +64,13 @@ public:
     ALWAYS_INLINE void clear()
     {
         m_cache.fill({ });
-        m_jsStrings.fill(nullptr);
+        clearJSStrings();
     }
 
     ALWAYS_INLINE void clearJSStrings()
     {
         m_jsStrings.fill(nullptr);
+        m_longJSStrings.fill(nullptr);
     }
 
     VM& vm() const;
@@ -83,8 +89,12 @@ private:
         return m_cache[cacheIndex(firstCharacter, lastCharacter, length)];
     }
 
+    template<typename CharacterType>
+    JSString* makeLongJSString(std::span<const CharacterType> characters);
+
     Cache m_cache { };
     JSStringCache m_jsStrings { };
+    LongJSStringCache m_longJSStrings { };
 };
 
 } // namespace JSC

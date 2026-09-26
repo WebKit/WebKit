@@ -31,6 +31,7 @@
 #include "JSString.h"
 #include "SmallStrings.h"
 #include "VM.h"
+#include <wtf/UnalignedAccess.h>
 
 namespace JSC {
 
@@ -95,12 +96,8 @@ ALWAYS_INLINE JSString* JSONAtomStringCache::makeJSString(std::span<const Charac
     if (characters.size() == 1) {
         if (firstCharacter <= maxSingleCharacterString)
             return jsSingleCharacterString(vm, firstCharacter);
-    } else if (characters.size() > maxAtomizeStringLength) {
-        if constexpr (std::is_same_v<CharacterType, char16_t>)
-            return jsNontrivialString(vm, String(StringImpl::create8BitIfPossible(characters)));
-        else
-            return jsNontrivialString(vm, String(characters));
-    }
+    } else if (characters.size() > maxAtomizeStringLength)
+        return makeLongJSString(characters);
 
     auto lastCharacter = characters.back();
     unsigned index = cacheIndex(firstCharacter, lastCharacter, characters.size());
@@ -119,6 +116,46 @@ ALWAYS_INLINE JSString* JSONAtomStringCache::makeJSString(std::span<const Charac
     WTF::copyElements(std::span<char16_t> { slot.m_buffer }, characters);
     JSString* result = jsString(vm, String { WTF::move(impl) });
     m_jsStrings[index] = result;
+    return result;
+}
+
+// Long values such as URLs and type names repeat heavily in real JSON, so they are shared without
+// atomizing. Called only for lengths above maxAtomizeStringLength, so both 8-byte loads are in bounds.
+template<typename CharacterType>
+inline JSString* JSONAtomStringCache::makeLongJSString(std::span<const CharacterType> characters)
+{
+    VM& vm = this->vm();
+    auto create = [&] {
+        if constexpr (std::is_same_v<CharacterType, char16_t>)
+            return jsNontrivialString(vm, String(StringImpl::create8BitIfPossible(characters)));
+        else
+            return jsNontrivialString(vm, String(characters));
+    };
+
+    if (characters.size() > maxLongStringLength)
+        return create();
+
+    auto bytes = asBytes(characters);
+    uint64_t head = WTF::unalignedLoad<uint64_t>(bytes.data());
+    uint64_t tail = WTF::unalignedLoad<uint64_t>(bytes.last(sizeof(uint64_t)).data());
+    uint64_t hash = (head * 0x9E3779B97F4A7C15ULL) ^ (tail * 0xC2B2AE3D27D4EB4FULL) ^ characters.size();
+    hash ^= hash >> 32;
+    unsigned index = static_cast<unsigned>(hash * 0x9E3779B97F4A7C15ULL >> (64 - longStringCapacityLog2));
+
+    JSString*& slot = m_longJSStrings[index];
+    if (JSString* cached = slot) {
+        SUPPRESS_UNCOUNTED_LOCAL StringImpl* impl = cached->getValueImpl();
+        if (impl->length() == characters.size()) {
+            if (impl->is8Bit()) {
+                if (equal(impl->span8().data(), characters))
+                    return cached;
+            } else if (equal(impl->span16().data(), characters))
+                return cached;
+        }
+    }
+
+    JSString* result = create();
+    slot = result;
     return result;
 }
 

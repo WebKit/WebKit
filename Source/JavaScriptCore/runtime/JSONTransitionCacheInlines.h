@@ -64,8 +64,14 @@ ALWAYS_INLINE Structure* JSONTransitionCache::transitionIfMatches(const Entry& e
     if (entry.from.value() != from)
         return nullptr;
     Structure* to = entry.to.unvalidatedGet();
-    ASSERT(to->transitionPropertyName());
-    if (!WTF::equal(to->transitionPropertyName(), name))
+    SUPPRESS_UNCOUNTED_LOCAL UniquedStringImpl* transitionName = to->transitionPropertyName();
+    ASSERT(transitionName);
+    if (transitionName->length() != name.size())
+        return nullptr;
+    if (transitionName->is8Bit()) [[likely]] {
+        if (!WTF::equal(transitionName->span8().data(), name))
+            return nullptr;
+    } else if (!WTF::equal(transitionName->span16().data(), name))
         return nullptr;
     return to;
 }
