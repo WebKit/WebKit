@@ -60,6 +60,7 @@ Helpers/cocoa/FindInPageUtilities.mm @nonARC
 Helpers/cocoa/MouseSupportUIDelegate.mm @nonARC
 Helpers/cocoa/PasteboardUtilities.mm @nonARC
 Helpers/cocoa/PDFTestHelpers.mm @nonARC
+Helpers/cocoa/SiteIsolationTestUtilities.mm @nonARC
 Helpers/cocoa/SiteIsolationUtilities.mm @nonARC
 Helpers/ios/IOSMouseEventTestHarness.mm @nonARC
 Helpers/mac/WKWebViewForTestingImmediateActions.mm @nonARC

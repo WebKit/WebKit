@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -433,22 +434,6 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 
 namespace TestWebKitAPI {
 
-static void setFeatureEnabled(WKWebViewConfiguration *configuration, NSString *featureName, bool enabled)
-{
-    auto preferences = [configuration preferences];
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:featureName]) {
-            [preferences _setEnabled:enabled forFeature:feature];
-            break;
-        }
-    }
-}
-
-static void enableSiteIsolation(WKWebViewConfiguration *configuration)
-{
-    setFeatureEnabled(configuration, @"SiteIsolationEnabled", true);
-}
-
 static void disableSharedProcess(WKWebViewConfiguration *configuration)
 {
     setFeatureEnabled(configuration, @"SiteIsolationSharedProcessEnabled", false);
@@ -464,25 +449,9 @@ static RetainPtr<WKProcessPool> processPoolWithBackForwardCacheDisabled()
     return adoptNS([[WKProcessPool alloc] _initWithConfiguration:poolConfiguration.get()]);
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect, bool enable)
-{
-    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate allowAnyTLSCertificate];
-    if (enable)
-        enableSiteIsolation(configuration.get());
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:rect configuration:configuration.get()]);
-    webView.get().navigationDelegate = navigationDelegate.get();
-    return { WTF::move(webView), WTF::move(navigationDelegate) };
-}
-
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> viewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect = CGRectZero)
 {
     return siteIsolatedViewAndDelegate(configuration, rect, false);
-}
-
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect = CGRectZero)
-{
-    return siteIsolatedViewAndDelegate(configuration, rect, true);
 }
 
 enum class EnableProcessCache : bool { No, Yes };
@@ -529,11 +498,6 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTF::move(webView), WTF::move(navigationDelegate) };
-}
-
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
-{
-    return siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), rect, true);
 }
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithoutSharedProcess(const HTTPServer& server, CGRect rect = CGRectZero)

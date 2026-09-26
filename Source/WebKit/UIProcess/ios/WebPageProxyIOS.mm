@@ -1682,8 +1682,12 @@ void WebPageProxy::focusTextInputContextAndPlaceCaret(const ElementContext& cont
 
 void WebPageProxy::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
 {
-    if (hasRunningProcess())
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::SetShouldRevealCurrentSelectionAfterInsertion(shouldRevealCurrentSelectionAfterInsertion), webPageIDInMainFrameProcess());
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetShouldRevealCurrentSelectionAfterInsertion(shouldRevealCurrentSelectionAfterInsertion), pageID);
+    });
 }
 
 void WebPageProxy::setScreenIsBeingCaptured(bool captured)
