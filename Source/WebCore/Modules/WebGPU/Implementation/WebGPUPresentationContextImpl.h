@@ -56,6 +56,7 @@ public:
     void present(uint32_t frameIndex, bool = false);
 
     Seconds lastFrameGPUCost() const;
+    Seconds lastFramePresentStall() const;
 
     WGPUSurface backing() const { return m_backing.get(); }
     bool isPresentationContextImpl() const final { return true; }
