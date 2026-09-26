@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/js-test.js"></script>
+    <script src="../../../../../resources/ui-helper.js"></script>
+
+<style>
+#scroller {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 200px;
+    height: 200px;
+    overflow: scroll;
+    background: blue;
+}
+
+#content {
+    width: 200px;
+    height: 1000px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="scroller">
+    <div id="content"></div>
+</div>
+<div id="console"></div>
+
+<script>
+description("Tests that dragging a finger up over a scrollable element scrolls it down.");
+window.jsTestIsAsync = true;
+
+const scroller = document.getElementById("scroller");
+
+window.addEventListener("load", async () => {
+    await UIHelper.renderingUpdate();
+
+    scroller.addEventListener("scroll", () => {
+        shouldBeGreaterThan("scroller.scrollTop", "0");
+        finishJSTest();
+    }, { once: true });
+
+    // Drag a finger 100px up over scroller, in 5 steps of 20px.
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 120);
+    await eventSender.asyncTouchStart();
+    for (let y = 100; y > 0; y -= 20) {
+        eventSender.updateTouchPoint(0, 100, y);
+        await eventSender.asyncTouchMove();
+    }
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+});
+</script>
+</body>
+
+</html>

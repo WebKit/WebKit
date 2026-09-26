@@ -43,7 +43,7 @@ struct WPETouchPoint {
     double y;
 };
 
-WPE_API WPEEvent* wpeEventTouchCreateForTesting(WPEEventType, WPEView*, WPEInputSource, guint32 time, WPEModifiers, Vector<WPETouchPoint>&&);
+WPE_API WPEEvent* wpeEventTouchCreateForTesting(WPEEventType, WPEView*, WPEInputSource, guint32 time, WPEModifiers, Vector<WPETouchPoint>&&, size_t primaryIndex);
 
 WPE_API bool wpeEventIsTouchForTesting(WPEEvent*);
 

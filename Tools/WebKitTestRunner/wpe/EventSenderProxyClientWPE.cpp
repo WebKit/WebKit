@@ -421,7 +421,14 @@ void EventSenderProxyClientWPE::sendTouchEvent(int type, double time)
         return WPETouchPoint(point.id, toWPETouchPointState(point.state), point.x, point.y);
     });
 
-    auto* event = wpeEventTouchCreateForTesting(static_cast<WPEEventType>(type), view, WPE_INPUT_SOURCE_TOUCHSCREEN, secToMsTimestamp(time), static_cast<WPEModifiers>(m_touchModifiers), WTF::move(points));
+    // The primary touch point is used by the gesture detector. Use the touch point that changed, or the first one if none did.
+    auto primaryIndex = m_touchPoints.findIf([](const auto& point) {
+        return point.state != TouchPoint::State::Stationary;
+    });
+    if (primaryIndex == notFound)
+        primaryIndex = 0;
+
+    auto* event = wpeEventTouchCreateForTesting(static_cast<WPEEventType>(type), view, WPE_INPUT_SOURCE_TOUCHSCREEN, secToMsTimestamp(time), static_cast<WPEModifiers>(m_touchModifiers), WTF::move(points), primaryIndex);
     wpe_view_event(view, event);
     wpe_event_unref(event);
 }
