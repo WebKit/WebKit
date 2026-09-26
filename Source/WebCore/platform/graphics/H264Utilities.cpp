@@ -29,6 +29,7 @@
 #include "AnnexBUtilities.h"
 #include "BitReader.h"
 #include "Logging.h"
+#include <algorithm>
 #include <bit>
 #include <cstdlib>
 #include <limits>
@@ -43,6 +44,314 @@ H264NaluType h264NaluType(uint8_t data)
 {
     constexpr uint8_t naluTypeMask = 0x1F;
     return static_cast<H264NaluType>(data & naluTypeMask);
+}
+
+size_t findH264AnnexBSpsIndex(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
+{
+    return naluIndices.findIf([&](auto& index) {
+        return h264NaluType(data[index.payloadStartOffset]) == H264NaluType::Sps;
+    });
+}
+
+std::optional<uint8_t> findH264AnnexBMaxNumReorderFrames(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
+{
+    auto spsIndex = findH264AnnexBSpsIndex(data, naluIndices);
+    if (spsIndex == notFound)
+        return std::nullopt;
+
+    auto& index = naluIndices[spsIndex];
+    if (!index.payloadSize)
+        return std::nullopt;
+
+    return H264BitstreamParser::parseSpsMaxNumReorderFrames(data.subspan(index.payloadStartOffset, index.payloadSize));
+}
+
+std::optional<uint8_t> findAVCCMaxNumReorderFrames(std::span<const uint8_t> avcc)
+{
+    // Mirrors the avcC header walk in H264UtilitiesCocoa's createVideoInfoFromAVCC(), stopping as soon as the first SPS NAL unit has been located.
+    if (avcc.size() < 7)
+        return std::nullopt;
+
+    BitReader reader { avcc };
+
+    // configurationVersion
+    reader.read(8);
+    // AVCProfileIndication;
+    reader.read(8);
+    // profile_compatibility;
+    reader.read(8);
+    // AVCLevelIndication;
+    reader.read(8);
+    // bit(6) reserved = '111111'b;
+    // unsigned int(2) lengthSizeMinusOne;
+    reader.read(8);
+    // bit(3) reserved = '111'b;
+    // unsigned int(5) numOfSequenceParameterSets;
+    auto numOfSequenceParameterSets = reader.read<uint8_t>();
+    if (!numOfSequenceParameterSets || !(0x1f & *numOfSequenceParameterSets))
+        return std::nullopt;
+
+    auto size = reader.read<uint16_t>();
+    if (!size || *size <= h264NaluHeaderSize)
+        return std::nullopt;
+
+    size_t spsStart = reader.byteOffset();
+    if (!reader.skipBytes(*size))
+        return std::nullopt;
+
+    return H264BitstreamParser::parseSpsMaxNumReorderFrames(avcc.subspan(spsStart, *size));
+}
+
+// Table A-1 of the H.264 spec: MaxDpbMbs for a given level.
+static uint64_t maxDpbMbsFromLevelNumber(uint32_t profileIDC, uint32_t levelIDC, bool constraintSet3Flag)
+{
+    if ((profileIDC == 66 || profileIDC == 77) && levelIDC == 11 && constraintSet3Flag)
+        return 396; // Level 1b.
+
+    switch (levelIDC) {
+    case 10: return 396;
+    case 11: return 900;
+    case 12:
+    case 13:
+    case 20: return 2376;
+    case 21: return 4752;
+    case 22:
+    case 30: return 8100;
+    case 31: return 18000;
+    case 32: return 20480;
+    case 40:
+    case 41: return 32768;
+    case 42: return 34816;
+    case 50: return 110400;
+    case 51:
+    case 52: return 184320;
+    default: return 0;
+    }
+}
+
+static void skipH264HRDParameters(BitReader& reader)
+{
+    // cpb_cnt_minus1: ue(v)
+    uint32_t cpbCntMinus1 = reader.readExpGolomb();
+    // bit_rate_scale: u(4), cpb_size_scale: u(4)
+    reader.consumeBits(8);
+    for (uint32_t i = 0; i <= cpbCntMinus1 && reader.ok(); ++i) {
+        // bit_rate_value_minus1[i], cpb_size_value_minus1[i]: ue(v) each.
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+        // cbr_flag[i]: u(1)
+        reader.consumeBits(1);
+    }
+    // initial_cpb_removal_delay_length_minus1(5), cpb_removal_delay_length_minus1(5),
+    // dpb_output_delay_length_minus1(5), time_offset_length(5).
+    reader.consumeBits(20);
+}
+
+// Ported from libwebrtc's nalu_rewriter.cc.
+std::optional<uint8_t> H264BitstreamParser::parseSpsMaxNumReorderFrames(std::span<const uint8_t> data)
+{
+    if (data.size() <= h264NaluHeaderSize)
+        return std::nullopt;
+
+    auto rbsp = parseRbsp(data.subspan(h264NaluHeaderSize));
+    BitReader reader(rbsp.span());
+
+    // profile_idc: u(8)
+    uint32_t profileIDC = reader.readBits(8);
+    // constraint_set0_flag..constraint_set5_flag + reserved_zero_2bits: u(8)
+    uint32_t constraintFlags = reader.readBits(8);
+    bool constraintSet3Flag = (constraintFlags >> 4) & 0x1;
+    // level_idc: u(8)
+    uint32_t levelIDC = reader.readBits(8);
+    // seq_parameter_set_id: ue(v)
+    reader.readExpGolomb();
+
+    if (profileIDC == 100 || profileIDC == 110 || profileIDC == 122 || profileIDC == 244 || profileIDC == 44
+        || profileIDC == 83 || profileIDC == 86 || profileIDC == 118 || profileIDC == 128 || profileIDC == 138
+        || profileIDC == 139 || profileIDC == 134) {
+        // chroma_format_idc: ue(v)
+        uint32_t chromaFormatIDC = reader.readExpGolomb();
+        if (chromaFormatIDC == 3) {
+            // separate_colour_plane_flag: u(1)
+            reader.consumeBits(1);
+        }
+        // bit_depth_luma_minus8, bit_depth_chroma_minus8: ue(v) each.
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+        // qpprime_y_zero_transform_bypass_flag: u(1)
+        reader.consumeBits(1);
+        // seq_scaling_matrix_present_flag: u(1)
+        if (reader.readFlag()) {
+            int scalingListCount = chromaFormatIDC == 3 ? 12 : 8;
+            for (int i = 0; i < scalingListCount; ++i) {
+                // seq_scaling_list_present_flag[i]: u(1)
+                if (!reader.readFlag())
+                    continue;
+                int lastScale = 8;
+                int nextScale = 8;
+                int sizeOfScalingList = i < 6 ? 16 : 64;
+                for (int j = 0; j < sizeOfScalingList; ++j) {
+                    if (nextScale) {
+                        // delta_scale: se(v)
+                        int deltaScale = reader.readSignedExpGolomb();
+                        if (!reader.ok() || deltaScale < -128 || deltaScale > 127)
+                            return std::nullopt;
+                        nextScale = (lastScale + deltaScale + 256) % 256;
+                    }
+                    if (nextScale)
+                        lastScale = nextScale;
+                }
+            }
+        }
+    }
+
+    // log2_max_frame_num_minus4: ue(v)
+    reader.readExpGolomb();
+
+    // pic_order_cnt_type: ue(v)
+    uint32_t picOrderCntType = reader.readExpGolomb();
+    if (picOrderCntType == 0) {
+        // log2_max_pic_order_cnt_lsb_minus4: ue(v)
+        reader.readExpGolomb();
+    } else if (picOrderCntType == 1) {
+        // delta_pic_order_always_zero_flag: u(1)
+        reader.consumeBits(1);
+        // offset_for_non_ref_pic, offset_for_top_to_bottom_field: se(v) each.
+        reader.readSignedExpGolomb();
+        reader.readSignedExpGolomb();
+        // num_ref_frames_in_pic_order_cnt_cycle: ue(v)
+        uint32_t numRefFramesInPicOrderCntCycle = reader.readExpGolomb();
+        for (uint32_t i = 0; i < numRefFramesInPicOrderCntCycle; ++i) {
+            // offset_for_ref_frame[i]: se(v)
+            reader.readSignedExpGolomb();
+            if (!reader.ok())
+                return std::nullopt;
+        }
+    }
+
+    // max_num_ref_frames: ue(v) -- unused beyond consuming.
+    reader.readExpGolomb();
+    // gaps_in_frame_num_value_allowed_flag: u(1)
+    reader.consumeBits(1);
+    // pic_width_in_mbs_minus1: ue(v)
+    uint32_t picWidthInMbsMinus1 = reader.readExpGolomb();
+    // pic_height_in_map_units_minus1: ue(v)
+    uint32_t picHeightInMapUnitsMinus1 = reader.readExpGolomb();
+    // frame_mbs_only_flag: u(1)
+    bool frameMbsOnlyFlag = reader.readFlag();
+    if (!frameMbsOnlyFlag) {
+        // mb_adaptive_frame_field_flag: u(1)
+        reader.consumeBits(1);
+    }
+    // direct_8x8_inference_flag: u(1)
+    reader.consumeBits(1);
+    // frame_cropping_flag: u(1)
+    if (reader.readFlag()) {
+        // frame_crop_{left,right,top,bottom}_offset: ue(v) each -- unused for reorder computation.
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+    }
+    // vui_parameters_present_flag: u(1)
+    bool vuiParamsPresentFlag = reader.readFlag();
+
+    if (!reader.ok())
+        return std::nullopt;
+
+    if (picOrderCntType == 2)
+        return 0;
+
+    uint32_t picWidthInMbs = picWidthInMbsMinus1 + 1;
+    uint32_t frameHeightInMbs = (frameMbsOnlyFlag ? 1 : 2) * (picHeightInMapUnitsMinus1 + 1);
+    if (!picWidthInMbs || !frameHeightInMbs)
+        return std::nullopt;
+
+    uint64_t maxDpbMbs = maxDpbMbsFromLevelNumber(profileIDC, levelIDC, constraintSet3Flag);
+    uint8_t maxDpbFrames = static_cast<uint8_t>(std::min<uint64_t>(maxDpbMbs / (static_cast<uint64_t>(picWidthInMbs) * frameHeightInMbs), 16));
+
+    auto isConstrainedHighProfile = [&] {
+        return constraintSet3Flag && (profileIDC == 44 || profileIDC == 86 || profileIDC == 100 || profileIDC == 110 || profileIDC == 122 || profileIDC == 244);
+    };
+
+    if (!vuiParamsPresentFlag)
+        return isConstrainedHighProfile() ? 0 : maxDpbFrames;
+
+    // Walk vui_parameters() (Annex E.1.1 of the H.264 spec) up to bitstream_restriction_flag.
+    // aspect_ratio_info_present_flag: u(1)
+    if (reader.readFlag()) {
+        constexpr uint32_t extendedSar = 255;
+        // aspect_ratio_idc: u(8)
+        if (reader.readBits(8) == extendedSar) {
+            // sar_width, sar_height: u(16) each.
+            reader.consumeBits(32);
+        }
+    }
+    // overscan_info_present_flag: u(1)
+    if (reader.readFlag()) {
+        // overscan_appropriate_flag: u(1)
+        reader.consumeBits(1);
+    }
+    // video_signal_type_present_flag: u(1)
+    if (reader.readFlag()) {
+        // video_format: u(3), video_full_range_flag: u(1)
+        reader.consumeBits(4);
+        // colour_description_present_flag: u(1)
+        if (reader.readFlag()) {
+            // colour_primaries, transfer_characteristics, matrix_coefficients: u(8) each.
+            reader.consumeBits(24);
+        }
+    }
+    // chroma_loc_info_present_flag: u(1)
+    if (reader.readFlag()) {
+        // chroma_sample_loc_type_top_field, chroma_sample_loc_type_bottom_field: ue(v) each.
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+    }
+    // timing_info_present_flag: u(1)
+    if (reader.readFlag()) {
+        // num_units_in_tick, time_scale: u(32) each; fixed_frame_rate_flag: u(1).
+        reader.consumeBits(65);
+    }
+    // nal_hrd_parameters_present_flag: u(1)
+    bool nalHrdParametersPresentFlag = reader.readFlag();
+    if (nalHrdParametersPresentFlag)
+        skipH264HRDParameters(reader);
+    // vcl_hrd_parameters_present_flag: u(1)
+    bool vclHrdParametersPresentFlag = reader.readFlag();
+    if (vclHrdParametersPresentFlag)
+        skipH264HRDParameters(reader);
+    if (nalHrdParametersPresentFlag || vclHrdParametersPresentFlag) {
+        // low_delay_hrd_flag: u(1)
+        reader.consumeBits(1);
+    }
+    // pic_struct_present_flag: u(1)
+    reader.consumeBits(1);
+    // bitstream_restriction_flag: u(1)
+    bool bitstreamRestrictionFlag = reader.readFlag();
+    uint32_t maxNumReorderFrames = 0;
+    if (bitstreamRestrictionFlag) {
+        // motion_vectors_over_pic_boundaries_flag: u(1)
+        reader.consumeBits(1);
+        // max_bytes_per_pic_denom, max_bits_per_mb_denom: ue(v) each.
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+        // log2_max_mv_length_horizontal, log2_max_mv_length_vertical: ue(v) each.
+        reader.readExpGolomb();
+        reader.readExpGolomb();
+        // max_num_reorder_frames: ue(v)
+        maxNumReorderFrames = reader.readExpGolomb();
+        // max_dec_frame_buffering: ue(v) -- unused.
+        reader.readExpGolomb();
+    }
+
+    if (!reader.ok())
+        return std::nullopt;
+
+    if (bitstreamRestrictionFlag)
+        return static_cast<uint8_t>(std::min(maxNumReorderFrames, static_cast<uint32_t>(maxDpbFrames)));
+
+    return isConstrainedHighProfile() ? 0 : maxDpbFrames;
 }
 
 auto H264BitstreamParser::parseSps(std::span<const uint8_t> data) -> std::optional<SpsState>

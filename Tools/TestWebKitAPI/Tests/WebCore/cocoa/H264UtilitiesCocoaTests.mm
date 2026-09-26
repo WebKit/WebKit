@@ -27,6 +27,8 @@
 
 #if PLATFORM(COCOA)
 
+#import <WebCore/AnnexBUtilities.h>
+#import <WebCore/H264Utilities.h>
 #import <WebCore/H264UtilitiesCocoa.h>
 #import <WebCore/TrackInfo.h>
 #import <wtf/RetainPtr.h>
@@ -233,6 +235,41 @@ TEST(H264UtilitiesCocoa, TruncatedNALULengthReturnsEmpty)
     RetainPtr sample = adoptCF(rawSampleBuffer);
 
     EXPECT_TRUE(convertAVCCMSampleBufferToAnnexB(sample.get(), false).isEmpty());
+}
+
+// A real, valid 1280x720 H.264 Annex B chunk (SPS + PPS + one IDR slice), borrowed verbatim from libwebrtc's h264_bitstream_parser_unittest.cc.
+// Its SPS has pic_order_cnt_type == 2, so frames from this stream are never reordered.
+static constexpr uint8_t kH264AnnexBChunk[] = {
+    0x00, 0x00, 0x00, 0x01, 0x67, 0x42, 0x80, 0x20, 0xda, 0x01, 0x40, 0x16,
+    0xe8, 0x06, 0xd0, 0xa1, 0x35, 0x00, 0x00, 0x00, 0x01, 0x68, 0xce, 0x06,
+    0xe2, 0x00, 0x00, 0x00, 0x01, 0x65, 0xb8, 0x40, 0xf0, 0x8c, 0x03, 0xf2,
+    0x75, 0x67, 0xad, 0x41, 0x64, 0x24, 0x0e, 0xa0, 0xb2, 0x12, 0x1e, 0xf8,
+};
+
+TEST(H264UtilitiesCocoa, CreatesVideoInfoFromAnnexBSpsPpsPair)
+{
+    auto naluIndices = findNaluIndices(std::span { kH264AnnexBChunk });
+    auto videoInfo = createVideoInfoFromAVCAnnexBStream(std::span { kH264AnnexBChunk }, naluIndices);
+    ASSERT_TRUE(!!videoInfo);
+    EXPECT_EQ(videoInfo->size().width(), 1280.f);
+    EXPECT_EQ(videoInfo->size().height(), 720.f);
+
+    EXPECT_EQ(findH264AnnexBMaxNumReorderFrames(std::span { kH264AnnexBChunk }, naluIndices).value_or(1), 0u);
+}
+
+TEST(H264UtilitiesCocoa, ConvertsAnnexBToLengthPrefixedSkippingLeadingParameterSets)
+{
+    auto naluIndices = findNaluIndices(std::span { kH264AnnexBChunk });
+    auto lengthPrefixed = convertAVCAnnexBToLengthPrefixed(std::span { kH264AnnexBChunk }, naluIndices);
+
+    // Only the trailing IDR slice (19 bytes) should remain, 4-byte length-prefixed.
+    constexpr size_t sliceSize = 19;
+    ASSERT_EQ(lengthPrefixed.size(), 4 + sliceSize);
+    EXPECT_EQ(lengthPrefixed[0], 0);
+    EXPECT_EQ(lengthPrefixed[1], 0);
+    EXPECT_EQ(lengthPrefixed[2], 0);
+    EXPECT_EQ(lengthPrefixed[3], sliceSize);
+    EXPECT_EQ(lengthPrefixed[4], 0x65);
 }
 
 } // namespace TestWebKitAPI
