@@ -187,6 +187,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         request,
         request.url().isValid() ? String() : request.url().string(),
         requester,
+        navigationAction.pendingDispatchNavigateEventIdentifier(),
     };
 }
 

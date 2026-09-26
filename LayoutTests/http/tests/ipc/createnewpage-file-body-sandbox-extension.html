@@ -105,7 +105,7 @@ if (!window.IPC) {
                         } },
                         sandboxExtensionHandles: [ { takeImpl: NULLOPT } ]
                     },
-                    invalidURLString: '', requester: NULLOPT,
+                    invalidURLString: '', requester: NULLOPT, pendingNavigateEventID: NULLOPT,
                 }
             }, () => { });
         } catch (e) {

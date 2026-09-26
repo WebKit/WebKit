@@ -4225,6 +4225,19 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
     m_quickRedirectComing = false;
 }
 
+bool FrameLoader::dispatchPendingNavigateEventAfterNavigationPolicy(PendingNavigateEventIdentifier identifier)
+{
+    RefPtr policyDocumentLoader = m_policyDocumentLoader;
+    if (!policyDocumentLoader)
+        return true;
+
+    auto pendingDispatchNavigateEvent = policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent(identifier);
+    if (!pendingDispatchNavigateEvent)
+        return true;
+
+    return pendingDispatchNavigateEvent();
+}
+
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a

@@ -1937,6 +1937,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/OriginAgentClusterPolicy.h
     loader/PCMSites.h
     loader/PCMTokens.h
+    loader/PendingNavigateEventIdentifier.h
     loader/PingLoader.h
     loader/PolicyChecker.h
     loader/PolicyContainer.h
