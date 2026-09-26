@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Top: the frame paints only before its load finishes, and its container stays at opacity 0 until after the
+     load. Bottom: the frame turns a color after its own load, while hidden, and must repaint on its own. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top" style="opacity: 0"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=ff7800&amp;delay=1000"></iframe></div>
+<div class="edge bottom" id="p6bottom" style="opacity: 0"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=00ff00&amp;changeColorAfter=300"></iframe></div>
+<div class="tall"></div>
+<script>
+const EXPECTED = { top: "rgb(255, 120, 0)", bottom: "rgb(0, 255, 0)" };
+
+addEventListener("load", async () => {
+    // Before the load, so changing the insets cannot make the frame repaint after it.
+    await setEdgeSamplingInsets();
+    await loadEdgeSamplingFrames();
+    testPassed("Loaded frames");
+
+    // Waits for the UI process to tell every process that the load finished.
+    for (let i = 0; i < 5; ++i)
+        await UIHelper.ensurePresentationUpdate();
+
+    document.querySelector(".edge.top").style.opacity = 1;
+    document.getElementById("p6bottom").style.opacity = 1;
+
+    color = await settledEdges(EXPECTED);
+    assertEdges(EXPECTED);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

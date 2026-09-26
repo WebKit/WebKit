@@ -2704,7 +2704,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         }
 
         edges.colors.setAt(side, [&] -> FixedContainerEdge {
-            auto samplingResult = PageColorSampler::predominantColor(*page, computeSamplingRect(result.container->renderStyle(), side));
+            auto samplingResult = PageColorSampler::predominantColor(m_frame.get(), computeSamplingRect(result.container->renderStyle(), side), side);
             if (!std::holds_alternative<Color>(samplingResult))
                 return samplingResult;
 
@@ -3835,6 +3835,9 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
     if (oldPosition != newPosition) {
         if (RefPtr page = m_frame->page(); page && page->mainFrame().tree().containsRemoteFrame())
             page->scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
+
+        if (RefPtr rootView = m_frame->rootFrame().view())
+            rootView->setNeedsSampledFixedContainerEdgesUpdate();
     }
 }
 

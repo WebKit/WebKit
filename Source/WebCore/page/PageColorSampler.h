@@ -25,15 +25,25 @@
 
 #pragma once
 
+#include <WebCore/BoxSides.h>
 #include <WebCore/Color.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class LayoutRect;
+class LocalFrame;
 class Page;
 
 enum class PredominantColorType : uint8_t;
+
+struct FixedContainerEdges;
+
+struct FixedContainerEdgeSamplingContext {
+    BoxSide side;
+    bool sawIndeterminateRemoteFrame { false };
+    bool sawAwaitingRemoteFrame { false };
+};
 
 class PageColorSampler {
 public:
@@ -41,7 +51,9 @@ public:
     WEBCORE_EXPORT static bool colorsAreSimilar(const Color&, const Color&);
 
     static constexpr auto nearlyTransparentAlphaThreshold = 0.1;
-    static Variant<PredominantColorType, Color> predominantColor(Page&, const LayoutRect&);
+    static Variant<PredominantColorType, Color> predominantColor(LocalFrame&, const LayoutRect&, BoxSide);
+    WEBCORE_EXPORT static FixedContainerEdges sampleFixedContainerEdges(LocalFrame&);
+    static FixedContainerEdgeSamplingContext* fixedContainerEdgeSamplingContext();
 };
 
 } // namespace WebCore

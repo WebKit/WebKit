@@ -164,6 +164,7 @@
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -418,6 +419,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTF::move(pageConfiguration.progressTrackerClient)))
     , m_documentSyncClient(WTF::move(pageConfiguration.documentSyncClient))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTF::move(pageConfiguration.backForwardClient)))
+    , m_sampledFixedContainerEdgesTimer(*this, &Page::sampledFixedContainerEdgesTimerFired)
     , m_editorClient(WTF::move(pageConfiguration.editorClient))
     , m_mainFrame(createMainFrame(*this, WTF::move(pageConfiguration.mainFrameCreationParameters), WTF::move(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier, FrameTreeSyncData::create()))
     , m_validationMessageClient(WTF::move(pageConfiguration.validationMessageClient))
@@ -2268,6 +2270,29 @@ unsigned NODELETE Page::renderingUpdateCount() const
     return m_renderingUpdateCount;
 }
 
+static bool ownerIsInFixedOrStickyContent(const LocalFrame& frame, const Frame& child)
+{
+    CheckedPtr ownerRenderer = child.ownerRenderer();
+    if (!ownerRenderer)
+        return false;
+
+    if (frame.isMainFrame()) {
+        for (CheckedPtr layer = ownerRenderer->enclosingLayer(); layer; layer = layer->parent()) {
+            if (layer->isViewportConstrained())
+                return true;
+        }
+        return false;
+    }
+
+    if (frame.isRootFrame()) {
+        RefPtr view = frame.view();
+        return view && view->ownerIsInFixedOrStickyContentInParentFrameProcess();
+    }
+
+    RefPtr parent = dynamicDowncast<LocalFrame>(frame.tree().parent());
+    return parent && ownerIsInFixedOrStickyContent(*parent, frame);
+}
+
 void Page::syncLocalFrameInfoToRemote()
 {
     ASSERT(mainFrame().tree().containsRemoteFrame());
@@ -2300,6 +2325,7 @@ void Page::syncLocalFrameInfoToRemote()
 
             auto absoluteToChildFrameOwnerLocalTransform = frameView->absoluteToChildFrameOwnerLocalTransform(*child);
             auto contentBoxLocation = frameView->childFrameOwnerContentBoxLocation(*child);
+            auto ownerIsInFixedOrSticky = ownerIsInFixedOrStickyContent(frame, *child);
 
             // We could use the mapAbsoluteToChildFrameViewRect member function here, but use the
             // static version instead to reuse absoluteToChildFrameOwnerLocalTransform across
@@ -2354,12 +2380,19 @@ void Page::syncLocalFrameInfoToRemote()
                 exposedContentRectInChildView,
 #endif
                 !!child->ownerRenderer(),
+                ownerIsInFixedOrSticky,
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 WTF::move(absoluteToChildFrameOwnerLocalTransform),
                 frame.frameScaleFactorForChild(*child),
                 contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));
+
+            if (RefPtr remoteChild = dynamicDowncast<RemoteFrame>(child.get())) {
+                bool awaiting = ownerIsInFixedOrSticky && (remoteChild->isAwaitingSampledFixedContainerEdges() || !remoteChild->ownerWasInFixedOrStickyContent().value_or(true));
+                remoteChild->setAwaitingSampledFixedContainerEdges(awaiting);
+                remoteChild->setOwnerWasInFixedOrStickyContent(ownerIsInFixedOrSticky);
+            }
         }
 
         frame.loader().client().broadcastFrameViewportInfoToOtherProcessesIfNeeded({
@@ -2377,6 +2410,44 @@ void Page::syncLocalFrameInfoToRemote()
             WTF::move(childrenFrameLayoutInfo)
         });
     });
+}
+
+static constexpr Seconds sampledFixedContainerEdgesUpdateInterval { 200_ms };
+
+void Page::updateSampledFixedContainerEdgesIfNeeded()
+{
+    if (!settings().contentInsetBackgroundFillEnabled())
+        return;
+
+    Vector<Ref<LocalFrame>> rootFramesNeedingUpdate;
+    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_rootFrames)) {
+        RefPtr view = rootFrame->view();
+        if (view && view->ownerIsInFixedOrStickyContentInParentFrameProcess() && view->needsSampledFixedContainerEdgesUpdate())
+            rootFramesNeedingUpdate.append(rootFrame);
+    }
+
+    if (rootFramesNeedingUpdate.isEmpty())
+        return;
+
+    auto nextUpdateTime = m_lastSampledFixedContainerEdgesTime + sampledFixedContainerEdgesUpdateInterval;
+    if (auto now = MonotonicTime::now(); now < nextUpdateTime) {
+        if (!m_sampledFixedContainerEdgesTimer.isActive())
+            m_sampledFixedContainerEdgesTimer.startOneShot(nextUpdateTime - now);
+        return;
+    }
+
+    for (Ref rootFrame : rootFramesNeedingUpdate) {
+        rootFrame->loader().client().broadcastSampledFixedContainerEdgesToOtherProcesses(PageColorSampler::sampleFixedContainerEdges(rootFrame.get()));
+        if (RefPtr view = rootFrame->view())
+            view->clearNeedsSampledFixedContainerEdgesUpdate();
+    }
+
+    m_lastSampledFixedContainerEdgesTime = MonotonicTime::now();
+}
+
+void Page::sampledFixedContainerEdgesTimerFired()
+{
+    scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
@@ -2691,8 +2762,10 @@ void Page::doAfterUpdateRendering()
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
 
-    if (mainFrame().tree().containsRemoteFrame())
+    if (mainFrame().tree().containsRemoteFrame()) {
         syncLocalFrameInfoToRemote();
+        updateSampledFixedContainerEdgesIfNeeded();
+    }
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)

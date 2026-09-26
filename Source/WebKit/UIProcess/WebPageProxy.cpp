@@ -9403,6 +9403,15 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
     else if (auto* viewportInfo = std::get_if<WebCore::FrameViewportInfo>(&data.value))
         webFrameProxy->setFrameViewportInfo(*viewportInfo);
 
+    if (data.value.index() == std::to_underlying(WebCore::FrameTreeSyncDataType::SampledFixedContainerEdges)) {
+        RefPtr parentFrame = webFrameProxy->parentFrame();
+        if (!parentFrame)
+            return;
+
+        sendToProcessContainingFrame(parentFrame->frameID(), Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess(frameID, WebCore::FrameTreeSyncSerializationData { data }));
+        return;
+    }
+
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
             return;

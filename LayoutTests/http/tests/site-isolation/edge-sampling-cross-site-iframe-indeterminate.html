@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- A two-color frame reports Multiple at the top; a local color wins over a Multiple frame at the bottom. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe data-src="http://localhost:8000/site-isolation/resources/split-color.html?left=ff0000&amp;right=0000ff"></iframe></div>
+<div class="edge bottom"><div class="most" style="background-color: rgb(1, 2, 3)"></div><div class="half" style="right: 0; width: 20%"><iframe data-src="http://localhost:8000/site-isolation/resources/split-color.html?left=ff0000&amp;right=0000ff"></iframe></div></div>
+<div class="tall"></div>
+<script>
+addEventListener("load", () => testFixedContainerEdges({ top: "multiple", bottom: "rgb(1, 2, 3)" }));
+</script>
+</body>
+</html>

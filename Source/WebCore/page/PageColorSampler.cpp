@@ -61,6 +61,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SetForScope.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -287,6 +288,13 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return averageColor(std::span(samples));
 }
 
+static FixedContainerEdgeSamplingContext* currentFixedContainerEdgeSamplingContext;
+
+FixedContainerEdgeSamplingContext* PageColorSampler::fixedContainerEdgeSamplingContext()
+{
+    return currentFixedContainerEdgeSamplingContext;
+}
+
 bool PageColorSampler::colorsAreSimilar(const Color& a, const Color& b)
 {
     static constexpr auto maxDistanceSquaredForSimilarColors = 36;
@@ -296,17 +304,13 @@ bool PageColorSampler::colorsAreSimilar(const Color& a, const Color& b)
     return distance <= maxDistanceSquaredForSimilarColors;
 }
 
-Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteRect)
+Variant<PredominantColorType, Color> PageColorSampler::predominantColor(LocalFrame& frame, const LayoutRect& absoluteRect, BoxSide side)
 {
-    RefPtr frame = page.localMainFrame();
-    if (!frame)
-        return PredominantColorType::None;
-
-    RefPtr view = frame->view();
+    RefPtr view = frame.view();
     if (!view)
         return PredominantColorType::None;
 
-    RefPtr document = frame->document();
+    RefPtr document = frame.document();
     if (!document)
         return PredominantColorType::None;
 
@@ -319,8 +323,16 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     };
 
     auto colorSpace = ColorSpace::SRGB();
-    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
+    FixedContainerEdgeSamplingContext context { side };
+    RefPtr<ImageBuffer> snapshot;
+    {
+        SetForScope scope { currentFixedContainerEdgeSamplingContext, &context };
+        snapshot = snapshotFrameRect(frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
+    }
     if (!snapshot)
+        return PredominantColorType::None;
+
+    if (context.sawAwaitingRemoteFrame)
         return PredominantColorType::None;
 
     auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
@@ -352,7 +364,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     }
 
     if (colorDistribution.isEmpty())
-        return PredominantColorType::None;
+        return context.sawIndeterminateRemoteFrame ? PredominantColorType::Multiple : PredominantColorType::None;
 
     for (auto& [color, count] : colorDistribution) {
         if (count > minimumSampleCountForPredominantColor) {
@@ -396,6 +408,35 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     }
 
     return PredominantColorType::Multiple;
+}
+
+FixedContainerEdges PageColorSampler::sampleFixedContainerEdges(LocalFrame& frame)
+{
+    ASSERT(frame.isRootFrame());
+
+    FixedContainerEdges edges;
+
+    if (!frame.contentRenderer())
+        return edges;
+
+    RefPtr view = frame.view();
+    if (!view)
+        return edges;
+
+    static constexpr int sampleRectMargin = 4;
+    static constexpr int thickness = 2;
+
+    auto visibleRect = view->windowToContents(view->windowClipRect());
+    visibleRect.inflate(-sampleRectMargin);
+    if (visibleRect.width() < thickness || visibleRect.height() < thickness)
+        return edges;
+
+    edges.colors.setAt(BoxSide::Top, predominantColor(frame, IntRect { visibleRect.x(), visibleRect.y(), visibleRect.width(), thickness }, BoxSide::Top));
+    edges.colors.setAt(BoxSide::Bottom, predominantColor(frame, IntRect { visibleRect.x(), visibleRect.maxY() - thickness, visibleRect.width(), thickness }, BoxSide::Bottom));
+    edges.colors.setAt(BoxSide::Left, predominantColor(frame, IntRect { visibleRect.x(), visibleRect.y(), thickness, visibleRect.height() }, BoxSide::Left));
+    edges.colors.setAt(BoxSide::Right, predominantColor(frame, IntRect { visibleRect.maxX() - thickness, visibleRect.y(), thickness, visibleRect.height() }, BoxSide::Right));
+
+    return edges;
 }
 
 } // namespace WebCore

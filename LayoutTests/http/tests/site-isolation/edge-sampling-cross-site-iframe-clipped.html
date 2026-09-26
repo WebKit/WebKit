@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Top: a 3px border at the frame's own edge must not win over its fill. Bottom: a frame taller than its clipping
+     ancestor must report what is visible through the clip, and re-report once that clip changes. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=ff7800&amp;border=00ff00"></iframe></div>
+<div id="p3clip" style="position: fixed; bottom: 0; left: 0; right: 0; height: 120px; overflow: hidden">
+    <div id="p3tall" style="position: absolute; top: 0; left: 0; right: 0; height: 400px; opacity: 0">
+        <iframe style="display: block; width: 100%; height: 100%; border: 0" data-src="http://localhost:8000/site-isolation/resources/scrollable-color.html?top=00ff00&amp;bottom=ff00ff&amp;boundary=120&amp;height=400&amp;scrollTo=0"></iframe>
+    </div>
+</div>
+<div class="tall"></div>
+<script>
+const EXPECTED = { top: "rgb(255, 120, 0)", bottom: "rgb(0, 255, 0)" };
+
+addEventListener("load", async () => {
+    await prepareEdgeSampling();
+
+    // Waits for the tall frame's own first report before the ancestor's clip changes.
+    for (let i = 0; i < 5; ++i)
+        await UIHelper.ensurePresentationUpdate();
+
+    const tall = document.getElementById("p3tall");
+    tall.style.height = "120px";
+    tall.style.opacity = 1;
+
+    color = await settledEdges(EXPECTED);
+    assertEdges(EXPECTED);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

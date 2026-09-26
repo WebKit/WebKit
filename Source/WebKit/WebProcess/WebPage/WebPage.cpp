@@ -1438,6 +1438,22 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
         updateRemoteIntersectionObservers();
         break;
 
+    case FrameTreeSyncDataType::SampledFixedContainerEdges: {
+        if (RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(coreFrame.get()))
+            remoteFrame->setAwaitingSampledFixedContainerEdges(false);
+
+        RefPtr parent = coreFrame->tree().parent();
+        if (RefPtr localParent = dynamicDowncast<WebCore::LocalFrame>(parent.get())) {
+            if (localParent->rootFrame().isMainFrame())
+                setNeedsFixedContainerEdgesUpdate();
+            else if (RefPtr rootView = localParent->rootFrame().view())
+                rootView->setNeedsSampledFixedContainerEdgesUpdate();
+
+            protect(corePage())->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+        }
+        break;
+    }
+
     default:
         break;
     }
@@ -1471,6 +1487,12 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
     if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(WTF::move(data));
         updateChildFrameVisibleRectsFromParent(*coreFrame);
+
+        if (RefPtr localFrame = dynamicDowncast<WebCore::LocalFrame>(coreFrame.get()); localFrame && localFrame->isRootFrame()) {
+            if (RefPtr rootView = localFrame->view())
+                rootView->setNeedsSampledFixedContainerEdgesUpdate();
+        } else if (RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(coreFrame.get()); remoteFrame && remoteFrame->ownerWasInFixedOrStickyContent().value_or(false))
+            remoteFrame->setAwaitingSampledFixedContainerEdges(true);
     }
 
     // UIProcess sends this message when the frame associated with frameID navigates or is newly
@@ -1523,12 +1545,30 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
             needsViewportContentsChanged = true;
         }
 
+        auto ownerIsInFixedOrStickyContent = layoutInfo->ownerIsInFixedOrStickyContent();
+        if (childView->ownerIsInFixedOrStickyContentInParentFrameProcess() != ownerIsInFixedOrStickyContent) {
+            childView->setOwnerIsInFixedOrStickyContentInParentFrameProcess(ownerIsInFixedOrStickyContent);
+
+            if (ownerIsInFixedOrStickyContent) {
+                childView->setNeedsSampledFixedContainerEdgesUpdate();
+                if (RefPtr client = dynamicDowncast<WebLocalFrameLoaderClient>(localChild->loader().client()))
+                    client->clearLastBroadcastFrameTreeSyncData();
+            }
+
+            needsRenderingUpdate = true;
+        }
+
         auto visibleRectFromParentFrameProcess = layoutInfo->onScreenRectInChildView();
         visibleRectFromParentFrameProcess.intersect(IntRect { { }, childView->size() });
 
         if (childView->visibleRectFromParentFrameProcess() != visibleRectFromParentFrameProcess) {
             childView->setVisibleRectFromParentFrameProcess(visibleRectFromParentFrameProcess);
             needsViewportContentsChanged = true;
+
+            if (ownerIsInFixedOrStickyContent) {
+                childView->setNeedsSampledFixedContainerEdgesUpdate();
+                needsRenderingUpdate = true;
+            }
 
             // FIXME: if this frame has a remote descendant, then we have to propagate this frame's
             // windowClipRect to it via Page::syncLocalFrameInfoToRemote(), and that currently only

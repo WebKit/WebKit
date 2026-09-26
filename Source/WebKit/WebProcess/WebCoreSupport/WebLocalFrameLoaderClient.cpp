@@ -1092,6 +1092,7 @@ void WebLocalFrameLoaderClient::clearLastBroadcastFrameTreeSyncData()
 {
     m_lastBroadcastFrameGeometry = std::nullopt;
     m_lastBroadcastFrameViewportInfo = std::nullopt;
+    m_lastBroadcastSampledFixedContainerEdges = std::nullopt;
     m_lastAllRemoteDescendantsWereOffscreen = false;
 }
 
@@ -1173,6 +1174,10 @@ void WebLocalFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(Frame
         if (m_lastBroadcastFrameViewportInfo == *viewportInfo)
             return;
         m_lastBroadcastFrameViewportInfo = *viewportInfo;
+    } else if (auto* sampledEdges = std::get_if<FixedContainerEdges>(&data.value)) {
+        if (m_lastBroadcastSampledFixedContainerEdges == *sampledEdges)
+            return;
+        m_lastBroadcastSampledFixedContainerEdges = *sampledEdges;
     }
 
     WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(WTF::move(data));

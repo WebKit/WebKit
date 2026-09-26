@@ -30,8 +30,10 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentPage.h"
+#include "FixedContainerEdges.h"
 #include "GraphicsContext.h"
 #include "Page.h"
+#include "PageColorSampler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -162,6 +164,23 @@ IntRect RemoteFrameView::windowClipRect() const
 
 void RemoteFrameView::paintContents(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy, RegionContext*)
 {
+    if (auto* samplingContext = PageColorSampler::fixedContainerEdgeSamplingContext()) {
+        if (m_frame->isAwaitingSampledFixedContainerEdges()) {
+            samplingContext->sawAwaitingRemoteFrame = true;
+            return;
+        }
+
+        auto edge = m_frame->frameTreeSyncData().sampledFixedContainerEdges.colors.at(samplingContext->side);
+        if (auto* type = std::get_if<PredominantColorType>(&edge)) {
+            if (*type == PredominantColorType::Multiple)
+                samplingContext->sawIndeterminateRemoteFrame = true;
+            return;
+        }
+
+        context.fillRect(rect, std::get<Color>(edge));
+        return;
+    }
+
     m_frame->client().paintContents(context, rect);
 }
 

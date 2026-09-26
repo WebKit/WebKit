@@ -5502,6 +5502,9 @@ void RenderLayerBacking::dumpProperties(const GraphicsLayer* layer, TextStream& 
 
 void RenderLayerBacking::setNeedsFixedContainerEdgesUpdateIfNeeded()
 {
+    if (auto* rootView = renderer().frame().rootFrame().view())
+        rootView->setNeedsSampledFixedContainerEdgesUpdate();
+
     if (!m_owningLayer.isViewportConstrained())
         return;
 

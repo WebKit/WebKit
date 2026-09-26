@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Full-width frame at the top; a half-width frame at the bottom is too small to win a color. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=ff7800"></iframe></div>
+<div class="edge bottom"><div class="half" style="left: 0"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=007aff"></iframe></div></div>
+<div class="tall"></div>
+<script>
+addEventListener("load", () => testFixedContainerEdges({ top: "rgb(255, 120, 0)", bottom: "multiple" }));
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@
 #include "SameDocumentNavigationType.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FrameGeometrySyncData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
@@ -324,6 +325,7 @@ private:
     std::optional<WebCore::FrameGeometrySyncData> m_lastBroadcastFrameGeometry;
     std::optional<WebCore::FrameViewportInfo> m_lastBroadcastFrameViewportInfo;
     bool m_lastAllRemoteDescendantsWereOffscreen { false };
+    std::optional<WebCore::FixedContainerEdges> m_lastBroadcastSampledFixedContainerEdges;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;

@@ -63,6 +63,7 @@
 #include "WebsitePoliciesData.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentSyncData.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FocusControllerTypes.h>
@@ -901,7 +902,7 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     bool isSecureForPaymentSession = false;
 #endif
 
-    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, FrameGeometrySyncData { m_frameGeometry }, FrameViewportInfo { m_frameViewportInfo });
+    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, FrameGeometrySyncData { m_frameGeometry }, FrameViewportInfo { m_frameViewportInfo }, WebCore::FixedContainerEdges { });
 }
 
 Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const

@@ -77,6 +77,12 @@ public:
     WEBCORE_EXPORT ProcessIdentifier hostingProcessIdentifier() const;
     void setHostingProcessIdentifier(ProcessIdentifier processID) { m_hostingProcessIdentifier = processID; }
 
+    std::optional<bool> ownerWasInFixedOrStickyContent() const { return m_ownerWasInFixedOrStickyContent; }
+    void setOwnerWasInFixedOrStickyContent(bool value) { m_ownerWasInFixedOrStickyContent = value; }
+
+    bool isAwaitingSampledFixedContainerEdges() const { return m_isAwaitingSampledFixedContainerEdges; }
+    void setAwaitingSampledFixedContainerEdges(bool value) { m_isAwaitingSampledFixedContainerEdges = value; }
+
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
     void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
     void updateRemoteFrameOffsetInMainFrame(IntPoint);
@@ -147,6 +153,8 @@ private:
     AutoplayPolicy m_autoplayPolicy;
     ColorSchemePreference m_colorSchemePreference;
     bool m_preventsParentFromBeingComplete { true };
+    std::optional<bool> m_ownerWasInFixedOrStickyContent;
+    bool m_isAwaitingSampledFixedContainerEdges { false };
 };
 
 } // namespace WebCore
