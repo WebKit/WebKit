@@ -369,11 +369,11 @@ static String int128ToString(Int128 value)
     if (isNegative)
         value = -value;
 
-    while (value) {
+    do {
         Int128 digit = value % 10;
         resultString.append(static_cast<char>('0' + digit));
         value /= 10;
-    }
+    } while (value);
 
     if (isNegative)
         resultString.append('-');
@@ -387,36 +387,13 @@ static String buildDecimalFormat(TemporalUnit unit, Int128 ns)
 {
     ASSERT(unit == TemporalUnit::Second || unit == TemporalUnit::Millisecond || unit == TemporalUnit::Microsecond);
 
-    int flactionalDigits = 0;
-    Int128 exponent = 0;
-    if (unit == TemporalUnit::Second) {
-        flactionalDigits = 9;
-        exponent = Int128(1000000000);
-    } else if (unit == TemporalUnit::Millisecond) {
-        flactionalDigits = 6;
-        exponent = Int128(1000000);
-    } else {
-        ASSERT(unit == TemporalUnit::Microsecond);
-        flactionalDigits = 3;
-        exponent = Int128(1000);
-    }
+    ASCIILiteral exponent = "E-3"_s;
+    if (unit == TemporalUnit::Second)
+        exponent = "E-9"_s;
+    else if (unit == TemporalUnit::Millisecond)
+        exponent = "E-6"_s;
 
-    Int128 integerPart = ns / exponent;
-    ASSERT(ns % exponent >= std::numeric_limits<int64_t>::min() && ns % exponent <= std::numeric_limits<int64_t>::max());
-    int64_t fractionalPart = std::abs(static_cast<int64_t>(ns % exponent));
-
-    StringBuilder builder;
-
-    builder.append(int128ToString(integerPart));
-    builder.append("."_s);
-
-    String fractionalString = String::number(fractionalPart);
-    int zeroLength = flactionalDigits - fractionalString.length();
-    for (int i = 0; i < zeroLength; ++i)
-        builder.append("0"_s);
-    builder.append(fractionalString);
-
-    return builder.toString();
+    return makeString(int128ToString(ns), exponent);
 }
 
 static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration)
