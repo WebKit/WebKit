@@ -418,7 +418,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         console.assert(redirect instanceof WI.Redirect, redirect);
         console.assert(parentResource instanceof WI.Resource, parentResource);
 
-        let entry = parentEntry || this._activeCollection.entries.find((activeEntry) => activeEntry.resource === parentResource);
+        let entry = parentEntry || this._activeCollection.resourceEntryMap.get(parentResource);
         if (!entry?.redirectEntries?.length)
             return;
 
@@ -643,6 +643,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _resetCollection(collection)
     {
         collection.entries = [];
+        collection.resourceEntryMap = new Map;
         collection.filteredEntries = [];
         collection.pendingInsertions = [];
         collection.pendingUpdates = [];
@@ -869,7 +870,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 linkElement.addEventListener("click", (event) => {
                     event.stopPropagation();
                     // Find the redirect entry for the previous redirect
-                    let parentEntry = this._activeCollection.entries.find(e => e.resource === entry.resource);
+                    let parentEntry = this._activeCollection.resourceEntryMap.get(entry.resource);
                     if (parentEntry?.redirectEntries) {
                         let previousEntry = parentEntry.redirectEntries.find(e => e.redirect === entry.previousRedirect);
                         if (previousEntry) {
@@ -885,7 +886,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 linkElement.title = entry.resource.url;
                 linkElement.addEventListener("click", (event) => {
                     event.stopPropagation();
-                    let parentEntry = this._activeCollection.entries.find(e => e.resource === entry.resource);
+                    let parentEntry = this._activeCollection.resourceEntryMap.get(entry.resource);
                     if (parentEntry) {
                         let rowIndex = this._activeCollection.filteredEntries.indexOf(parentEntry);
                         if (rowIndex !== -1) {
@@ -1630,7 +1631,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         for (let resource of collection.pendingInsertions) {
-            let existingEntry = collection.entries.find(entry => entry.resource === resource);
+            let existingEntry = collection.resourceEntryMap.get(resource);
             if (existingEntry)
                 continue;
 
@@ -1638,6 +1639,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._populateRedirectEntriesForResourceEntry(resourceEntry);
             this._tryLinkResourceToDOMNode(resourceEntry);
             collection.entries.push(resourceEntry);
+            collection.resourceEntryMap.set(resourceEntry.resource, resourceEntry);
         }
         collection.pendingInsertions = [];
 
@@ -1722,8 +1724,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         let collection = this._activeCollection;
 
-        let index = collection.entries.findIndex((x) => x.resource === resource);
-        if (index === -1)
+        let existingEntry = collection.resourceEntryMap.get(resource);
+        if (!existingEntry)
             return;
 
         // Don't wipe out the previous entry, as it may be used by a node entry.
@@ -1734,7 +1736,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let entry = this._entryForResource(resource);
         this._populateRedirectEntriesForResourceEntry(entry);
-        updateExistingEntry(collection.entries[index], entry);
+        updateExistingEntry(existingEntry, entry);
 
         let rowIndex = this._rowIndexForRepresentedObject(resource);
         if (rowIndex === -1)
@@ -1824,7 +1826,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (!this._detailView) {
             if (object instanceof WI.Resource) {
-                let entry = this._activeCollection.entries.find(e => e.resource === object);
+                let entry = this._activeCollection.resourceEntryMap.get(object);
                 this._detailView = new WI.NetworkResourceDetailView(object, entry, this);
                 this._detailView.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._handleCurrentResourceDetailViewDidChange, this);
             } else if (object instanceof WI.DOMNode) {
@@ -2057,11 +2059,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 return;
             }
 
-            let index = collection.entries.findIndex((x) => x.resource === resource);
-            if (index === -1)
+            let entry = collection.resourceEntryMap.get(resource);
+            if (!entry)
                 return;
 
-            let entry = collection.entries[index];
             entry.resourceSize = resource.size;
 
             if (!wasMain)
@@ -2092,11 +2093,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 return;
             }
 
-            let index = collection.entries.findIndex((x) => x.resource === resource);
-            if (index === -1)
+            let entry = collection.resourceEntryMap.get(resource);
+            if (!entry)
                 return;
 
-            let entry = collection.entries[index];
             entry.transferSize = !isNaN(resource.networkTotalTransferSize) ? resource.networkTotalTransferSize : resource.estimatedTotalTransferSize;
 
             if (!wasMain)
@@ -2180,7 +2180,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        let existingEntry = collection.entries.find(entry => entry.resource === resource);
+        let existingEntry = collection.resourceEntryMap.get(resource);
         if (existingEntry) {
             collection.pendingUpdates.push(resource);
             this.needsLayout();
@@ -2197,6 +2197,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         } else if (this._isDefaultSort() || !this._entriesSortComparator) {
             // Default sort has fast path.
             collection.entries.push(resourceEntry);
+            collection.resourceEntryMap.set(resourceEntry.resource, resourceEntry);
             if (this._passFilter(resourceEntry)) {
                 collection.filteredEntries.push(resourceEntry);
                 this._table.reloadDataAddedToEndOnly();
@@ -2205,6 +2206,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         insertObjectIntoSortedArray(resourceEntry, collection.entries, this._entriesSortComparator);
+        collection.resourceEntryMap.set(resourceEntry.resource, resourceEntry);
 
         if (this._passFilter(resourceEntry)) {
             if (WI.settings.groupMediaRequestsByDOMNode.value)
