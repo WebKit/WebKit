@@ -161,6 +161,9 @@ std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(u
         if (&entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)
             continue;
 
+        if (entry.parentRenderStyle->inBaseAppearanceSubtree() != parentStyle.inBaseAppearanceSubtree())
+            continue;
+
         if (parentStyle.inheritedEqual(*entry.parentRenderStyle))
             return std::make_optional(Result { .entry = entry, .inheritedEqual = true });
         partiallyMatchingEntry = &entry;

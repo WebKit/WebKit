@@ -259,6 +259,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
 
     bool childShouldCreateRenderer(const Node&) const final;
+    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
 

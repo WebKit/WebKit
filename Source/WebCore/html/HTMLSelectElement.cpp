@@ -79,6 +79,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
+#include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDisplay.h"
 #include "UnicodeBidi.h"
@@ -733,6 +734,11 @@ bool HTMLSelectElement::isMouseFocusable() const
     if (renderer())
         return isFocusable();
     return HTMLFormControlElement::isMouseFocusable();
+}
+
+bool HTMLSelectElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base || appearance == StyleAppearance::BaseSelect;
 }
 
 RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)

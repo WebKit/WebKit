@@ -1,0 +1,44 @@
+The option styles of a base appearance select do not apply to a native one, whichever of the two is styled first.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS optionStyle(nativeListBoxFirst).display is "block"
+PASS optionStyle(nativeListBoxFirst).paddingInlineStart is "0px"
+PASS groupStyle(nativeListBoxFirst).borderBlockStartStyle is "none"
+PASS optionStyle(nativeListBoxSecond).display is "block"
+PASS optionStyle(nativeListBoxSecond).paddingInlineStart is "0px"
+PASS groupStyle(nativeListBoxSecond).borderBlockStartStyle is "none"
+PASS optionStyle(nativeMultipleFirst).display is "block"
+PASS optionStyle(nativeMultipleFirst).paddingInlineStart is "0px"
+PASS groupStyle(nativeMultipleFirst).borderBlockStartStyle is "none"
+PASS optionStyle(nativeMultipleSecond).display is "block"
+PASS optionStyle(nativeMultipleSecond).paddingInlineStart is "0px"
+PASS groupStyle(nativeMultipleSecond).borderBlockStartStyle is "none"
+PASS optionStyle(baseListBoxFirst).display is "flex"
+PASS optionStyle(baseListBoxFirst).alignItems is "center"
+PASS groupStyle(baseListBoxFirst).borderBlockStartStyle is "solid"
+PASS optionStyle(baseListBoxSecond).display is "flex"
+PASS optionStyle(baseListBoxSecond).alignItems is "center"
+PASS groupStyle(baseListBoxSecond).borderBlockStartStyle is "solid"
+PASS optionStyle(baseDropdownFirst).display is "flex"
+PASS optionStyle(baseDropdownFirst).alignItems is "center"
+PASS groupStyle(baseDropdownFirst).borderBlockStartStyle is "solid"
+PASS optionStyle(baseDropdownSecond).display is "flex"
+PASS optionStyle(baseDropdownSecond).alignItems is "center"
+PASS groupStyle(baseDropdownSecond).borderBlockStartStyle is "solid"
+PASS getComputedStyle(nested).appearance is "auto"
+PASS optionStyle(nested).display is "block"
+PASS optionStyle(nested).paddingInlineStart is "0px"
+PASS baseListBoxFirst.options[0].offsetHeight > 0 is true
+PASS baseListBoxSecond.options[0].offsetHeight > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+one
+two
+
+one
+two
+

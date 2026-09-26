@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="nativeListBoxFirst" size="4"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="baseListBoxSecond" class="base" size="4"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="baseListBoxFirst" class="base" size="4"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="nativeListBoxSecond" size="4"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="nativeMultipleFirst" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="baseDropdownSecond" class="base" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="baseDropdownFirst" class="base" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="nativeMultipleSecond" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<script>
+description("The option styles of a base appearance select do not apply to a native one, whichever of the two is styled first.");
+
+function optionStyle(select)
+{
+    return getComputedStyle(select.options[0]);
+}
+
+function groupStyle(select)
+{
+    return getComputedStyle(select.querySelector("optgroup"));
+}
+
+for (const id of ["nativeListBoxFirst", "nativeListBoxSecond", "nativeMultipleFirst", "nativeMultipleSecond"]) {
+    shouldBeEqualToString(`optionStyle(${id}).display`, "block");
+    shouldBeEqualToString(`optionStyle(${id}).paddingInlineStart`, "0px");
+    shouldBeEqualToString(`groupStyle(${id}).borderBlockStartStyle`, "none");
+}
+
+for (const id of ["baseListBoxFirst", "baseListBoxSecond", "baseDropdownFirst", "baseDropdownSecond"]) {
+    shouldBeEqualToString(`optionStyle(${id}).display`, "flex");
+    shouldBeEqualToString(`optionStyle(${id}).alignItems`, "center");
+    shouldBeEqualToString(`groupStyle(${id}).borderBlockStartStyle`, "solid");
+}
+
+// A select has an appearance of its own, so one inside a base appearance list box stays native.
+const nested = document.createElement("select");
+nested.size = 4;
+nested.append(new Option("nested"));
+baseListBoxFirst.options[0].append(nested);
+shouldBeEqualToString("getComputedStyle(nested).appearance", "auto");
+shouldBeEqualToString("optionStyle(nested).display", "block");
+shouldBeEqualToString("optionStyle(nested).paddingInlineStart", "0px");
+
+// A list box lays out its options itself, so they also need a box, not only these styles.
+for (const id of ["baseListBoxFirst", "baseListBoxSecond"])
+    shouldBeTrue(`${id}.options[0].offsetHeight > 0`);
+</script>
+</body>
+</html>

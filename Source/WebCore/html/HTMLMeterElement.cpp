@@ -37,6 +37,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleAppearance.h"
 #include "StyleComputedStyleBase+GettersInlines.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
@@ -61,6 +62,11 @@ Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Doc
     Ref meter = adoptRef(*new HTMLMeterElement(tagName, document));
     meter->ensureUserAgentShadowRoot();
     return meter;
+}
+
+bool HTMLMeterElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base;
 }
 
 RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)

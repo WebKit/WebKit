@@ -133,32 +133,31 @@ select:not(:-internal-select-preferred-size-one):disabled {
     cursor: -internal-auto-base(revert-rule, not-allowed);
 }
 
-/* FIXME: Unlike the rules above these cannot revert, because -internal-auto-base() reads the
-   appearance of the option rather than of its select, which is never base-select. A native list
-   box's options therefore report these in their computed style. */
-
 select[multiple]:-internal-select-preferred-size-one option {
-    min-inline-size: 24px;
-    min-block-size: max(24px, 1lh);
-    padding-block: 0.4lh;
-    padding-inline: 0.75em 1.1em;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
+    min-inline-size: -internal-auto-base(revert-rule, 24px);
+    min-block-size: -internal-auto-base(revert-rule, max(24px, 1lh));
+    padding-block: -internal-auto-base(revert-rule, 0.4lh);
+    padding-inline: -internal-auto-base(revert-rule, 0.75em 1.1em);
+    display: -internal-auto-base(revert-rule, flex);
+    align-items: -internal-auto-base(revert-rule, center);
+    gap: -internal-auto-base(revert-rule, 0.5em);
+}
+
+select[multiple]:-internal-select-preferred-size-one optgroup:not(:first-child) {
+    border-block-start: -internal-auto-base(revert-rule, 1px solid color-mix(currentColor 12%));
 }
 
 /* No block padding: the block size is an exact multiple of the row size. */
 select:not(:-internal-select-preferred-size-one) option {
-    min-inline-size: 24px;
-    min-block-size: max(24px, 1lh);
-    padding-block: 0;
-    padding-inline: 0.75em 1.1em;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
+    min-inline-size: -internal-auto-base(revert-rule, 24px);
+    min-block-size: -internal-auto-base(revert-rule, max(24px, 1lh));
+    padding-block: -internal-auto-base(revert-rule, 0);
+    padding-inline: -internal-auto-base(revert-rule, 0.75em 1.1em);
+    display: -internal-auto-base(revert-rule, flex);
+    align-items: -internal-auto-base(revert-rule, center);
+    gap: -internal-auto-base(revert-rule, 0.5em);
 }
 
-select[multiple]:-internal-select-preferred-size-one optgroup:not(:first-child),
 select:not(:-internal-select-preferred-size-one) optgroup:not(:first-child) {
-    border-block-start: 1px solid color-mix(currentColor 12%);
+    border-block-start: -internal-auto-base(revert-rule, 1px solid color-mix(currentColor 12%));
 }

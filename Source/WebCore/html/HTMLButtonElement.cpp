@@ -37,6 +37,7 @@
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
 #include "Settings.h"
+#include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
@@ -85,6 +86,11 @@ void HTMLButtonElement::removingSteps(RemovalType removalType, ContainerNode& ol
 {
     HTMLFormControlElement::removingSteps(removalType, oldParentOfRemovedTree);
     computeType(attributeWithoutSynchronization(HTMLNames::typeAttr));
+}
+
+bool HTMLButtonElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base;
 }
 
 RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)

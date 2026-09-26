@@ -62,6 +62,7 @@ private:
 
     bool isLabelable() const final { return true; }
 
+    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
