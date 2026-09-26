@@ -71,6 +71,7 @@ class RootObject;
 
 ObjcValue convertValueToObjcValue(JSGlobalObject*, JSValue, ObjcValueType);
 JSValue convertNSStringToString(JSGlobalObject* lexicalGlobalObject, NSString *nsstring);
+JSValue convertObjcValueToValue(JSGlobalObject*, id, RootObject*);
 JSValue convertObjcValueToValue(JSGlobalObject*, void* buffer, ObjcValueType, RootObject*);
 ObjcValueType objcValueTypeForType(const char *type);
 

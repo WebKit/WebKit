@@ -284,7 +284,7 @@ void ValidatedFormListedElement::updateValidity()
             }
         }
 
-        if (CheckedPtr cache = protect(element)->document().existingAXObjectCache())
+        if (CheckedPtr cache = protect(element.document())->existingAXObjectCache())
             cache->onValidityChange(element);
     }
 
@@ -511,7 +511,7 @@ FormControlState ValidatedFormListedElement::saveFormControlState() const
 
 void ValidatedFormListedElement::restoreFormControlStateIfNecessary()
 {
-    asHTMLElement().document().formController().restoreControlStateFor(*this);
+    protect(asHTMLElement().document())->formController().restoreControlStateFor(*this);
 }
 
 bool ValidatedFormListedElement::matchesValidPseudoClass() const

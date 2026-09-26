@@ -69,12 +69,12 @@ ObjcMethod::ObjcMethod(ClassStructPtr aClass, SELStructPtr selector)
 
 int ObjcMethod::numParameters() const
 {
-    return [getMethodSignature() numberOfArguments] - 2;
+    return [protect(getMethodSignature()) numberOfArguments] - 2;
 }
 
 NSMethodSignature* ObjcMethod::getMethodSignature() const
 {
-    return [_objcClass instanceMethodSignatureForSelector:_selector];
+    return [protect(_objcClass) instanceMethodSignatureForSelector:_selector];
 }
 
 bool ObjcMethod::isFallbackMethod() const
@@ -103,13 +103,13 @@ JSValue ObjcField::valueFromInstance(JSGlobalObject* lexicalGlobalObject, const 
 
     JSValue result = jsUndefined();
     
-    id targetObject = (downcast<ObjcInstance>(instance))->getObject();
+    RetainPtr<id> targetObject = (downcast<ObjcInstance>(instance))->getObject();
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
-        if (id objcValue = [targetObject valueForKey:(__bridge NSString *)_name.get()])
-            result = convertObjcValueToValue(lexicalGlobalObject, &objcValue, ObjcObjectType, protect(instance->rootObject()).get());
+        if (RetainPtr<id> objcValue = [targetObject valueForKey:(__bridge NSString *)_name.get()])
+            result = convertObjcValueToValue(lexicalGlobalObject, objcValue, protect(instance->rootObject()).get());
         {
             JSLockHolder lock(lexicalGlobalObject);
             ObjcInstance::moveGlobalExceptionToExecState(lexicalGlobalObject);
@@ -128,7 +128,7 @@ static id convertValueToObjcObject(JSGlobalObject* lexicalGlobalObject, JSValue 
     RefPtr<RootObject> rootObject = findRootObject(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
     if (!rootObject)
         return nil;
-    return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject.get() rootObject:rootObject.get()];
+    return [protect(webScriptObjectClass()) _convertValueToObjcValue:value originRootObject:rootObject.get() rootObject:rootObject.get()];
 }
 
 bool ObjcField::setValueToInstance(JSGlobalObject* lexicalGlobalObject, const Instance* instance, JSValue aValue) const
@@ -136,8 +136,8 @@ bool ObjcField::setValueToInstance(JSGlobalObject* lexicalGlobalObject, const In
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    id targetObject = (downcast<ObjcInstance>(instance))->getObject();
-    id value = convertValueToObjcObject(lexicalGlobalObject, aValue);
+    RetainPtr<id> targetObject = (downcast<ObjcInstance>(instance))->getObject();
+    RetainPtr<id> value = convertValueToObjcObject(lexicalGlobalObject, aValue);
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
@@ -183,7 +183,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     ObjcValue oValue = convertValueToObjcValue (lexicalGlobalObject, aValue, ObjcObjectType);
 
     @try {
-        [_array insertObject:(__bridge id)oValue.objectValue atIndex:index];
+        [_array insertObject:protect((__bridge id)oValue.objectValue) atIndex:index];
         return true;
     } @catch(NSException* localException) {
         throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
@@ -273,7 +273,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     
     objcInstance->begin();
 
-    id targetObject = objcInstance->getObject();
+    RetainPtr<id> targetObject = objcInstance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         auto* objcClass = downcast<ObjcClass>(objcInstance->getClass());
@@ -293,7 +293,7 @@ CallData ObjcFallbackObjectImp::getCallData(JSCell* cell)
     CallData callData;
 
     ObjcFallbackObjectImp* thisObject = uncheckedDowncast<ObjcFallbackObjectImp>(cell);
-    id targetObject = thisObject->_instance->getObject();
+    RetainPtr<id> targetObject = thisObject->_instance->getObject();
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]) {
         callData.type = CallData::Type::Native;
         callData.native.function = callObjCFallbackObject;
@@ -324,7 +324,7 @@ JSC_DEFINE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive, (JSGlobalObject* 
 
 bool ObjcFallbackObjectImp::toBoolean(JSGlobalObject*) const
 {
-    id targetObject = _instance->getObject();
+    RetainPtr<id> targetObject = _instance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return true;

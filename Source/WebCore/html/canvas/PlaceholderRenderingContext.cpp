@@ -56,7 +56,7 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
     {
         Locker locker { m_lock };
         if (m_delegate) {
-            m_delegate->tryCopyToLayer(imageBuffer, opaque);
+            protect(m_delegate)->tryCopyToLayer(imageBuffer, opaque);
             m_delegateBufferVersion = bufferVersion;
         }
     }
@@ -82,7 +82,7 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
                 // Compare the versions, so that possibly already historical buffer in this
                 // main thread task does not override the newest buffer that the worker thread
                 // already set.
-                source->m_delegate->tryCopyToLayer(*imageBuffer, opaque);
+                protect(source->m_delegate)->tryCopyToLayer(*imageBuffer, opaque);
                 source->m_delegateBufferVersion = bufferVersion;
             }
         }
@@ -98,7 +98,7 @@ void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer,
     Locker locker { m_lock };
     if ((m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get()))) {
         if (buffer) {
-            m_delegate->tryCopyToLayer(*buffer, opaque);
+            protect(m_delegate)->tryCopyToLayer(*buffer, opaque);
             m_delegateBufferVersion = m_placeholderBufferVersion;
         }
     }
@@ -161,7 +161,7 @@ RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(Surf
 {
     if (!m_buffer) {
         // Transparent black bitmaps are not cached.
-        return canvas().createTransparentBlackImageBuffer();
+        return protect(canvas())->createTransparentBlackImageBuffer();
     }
     return m_buffer;
 }
@@ -173,7 +173,7 @@ RefPtr<NativeImage> PlaceholderRenderingContext::surfaceBufferToNativeImage(Surf
     RefPtr buffer = m_buffer;
     if (!buffer) {
         // No frame has been committed yet, so the placeholder reads as transparent black.
-        return ImageBuffer::sinkIntoNativeImage(canvas().createTransparentBlackImageBuffer());
+        return ImageBuffer::sinkIntoNativeImage(protect(canvas())->createTransparentBlackImageBuffer());
     }
     m_bufferNativeImage = buffer->copyNativeImage();
     return m_bufferNativeImage;

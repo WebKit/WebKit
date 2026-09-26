@@ -6,10 +6,6 @@
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 bindings/js/ScriptControllerMac.mm
 bridge/objc/objc_class.mm
-bridge/objc/objc_instance.mm
-bridge/objc/objc_runtime.mm
-bridge/objc/objc_utility.mm
-crypto/cocoa/SerializedCryptoKeyWrapCocoa.mm
 [ iOS ] editing/cocoa/DataDetection.mm
 [ macOS ] editing/cocoa/EditingHTMLConverter.mm
 loader/archive/cf/LegacyWebArchive.cpp
@@ -19,7 +15,6 @@ loader/archive/cf/LegacyWebArchive.cpp
 [ Mac ] page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
-platform/cf/KeyedDecoderCF.cpp
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
@@ -64,7 +59,6 @@ platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm
 [ iOS ] platform/ios/ValidationBubbleIOS.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
-platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/WebItemProviderPasteboard.mm
 [ iOS ] platform/ios/WidgetIOS.mm
 [ iOS ] platform/ios/wak/WAKScrollView.mm
@@ -74,14 +68,12 @@ platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/wak/WKView.mm
 [ iOS ] platform/ios/wak/WebCoreThread.mm
 platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
-platform/mediastream/cocoa/AVVideoCaptureSource.mm
 platform/mediastream/cocoa/CoreAudioCaptureUnit.mm
 platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm
 [ iOS ] platform/network/cocoa/ResourceErrorCocoa.mm
-platform/network/cocoa/ResourceHandleCocoa.mm
+[ iOS ] platform/network/cocoa/ResourceHandleCocoa.mm
 platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
 [ iOS ] platform/network/ios/WebCoreURLResponseIOS.mm
 [ iOS ] platform/text/cocoa/TextBoundaries.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
-testing/cocoa/WebViewVisualIdentificationOverlay.mm

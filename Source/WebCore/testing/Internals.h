@@ -250,11 +250,11 @@ public:
     bool NODELETE isSharingStyleSheetContents(HTMLLinkElement&, HTMLLinkElement&);
     bool isStyleSheetLoadingSubresources(HTMLLinkElement&);
     enum class CachePolicy { UseProtocolCachePolicy, ReloadIgnoringCacheData, ReturnCacheDataElseLoad, ReturnCacheDataDontLoad };
-    void NODELETE setOverrideCachePolicy(CachePolicy);
+    void setOverrideCachePolicy(CachePolicy);
     ExceptionOr<void> setCanShowModalDialogOverride(bool allow);
     enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
-    void NODELETE setOverrideResourceLoadPriority(ResourceLoadPriority);
-    void NODELETE setStrictRawResourceValidationPolicyDisabled(bool);
+    void setOverrideResourceLoadPriority(ResourceLoadPriority);
+    void setStrictRawResourceValidationPolicyDisabled(bool);
     void setImmediateRendererDestructionEnabled(bool);
     std::optional<ResourceLoadPriority> getResourcePriority(const String& url);
 
@@ -301,7 +301,7 @@ public:
 
     void disableTileSizeUpdateDelay();
 
-    void NODELETE setSpeculativeTilingDelayDisabledForTesting(bool);
+    void setSpeculativeTilingDelayDisabledForTesting(bool);
 
     Ref<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Element&) const;
 
@@ -320,14 +320,14 @@ public:
     ExceptionOr<bool> isTimerAligned(int timeoutId);
     String requestAnimationFrameThrottlingReasons() const;
     double requestAnimationFrameInterval() const;
-    bool NODELETE scriptedAnimationsAreSuspended() const;
+    bool scriptedAnimationsAreSuspended() const;
     bool NODELETE areTimersThrottled() const;
     double domTimerAlignmentInterval() const;
     double domTimerAlignmentIntervalIncreaseLimit() const;
 
     enum EventThrottlingBehavior { Responsive, Unresponsive };
-    void NODELETE setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior>);
-    std::optional<EventThrottlingBehavior> NODELETE eventThrottlingBehaviorOverride() const;
+    void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior>);
+    std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const;
 
     // Spatial Navigation testing.
     ExceptionOr<unsigned> lastSpatialNavigationCandidateCount() const;
@@ -763,7 +763,7 @@ public:
 
     ExceptionOr<void> startTrackingStyleRecalcs();
     ExceptionOr<unsigned> styleRecalcCount();
-    unsigned NODELETE lastStyleUpdateSize() const;
+    unsigned lastStyleUpdateSize() const;
     unsigned styleInvalidationTraversalCount() const;
     void resetStyleInvalidationTraversalCount();
 
@@ -836,7 +836,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    void NODELETE setShouldInterruptAudioOnPageVisibilityChange(bool);
+    void setShouldInterruptAudioOnPageVisibilityChange(bool);
 #endif
 #if ENABLE(MEDIA_RECORDER)
     void NODELETE setCustomPrivateRecorderCreator();
@@ -846,7 +846,7 @@ public:
     void emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection&, const String& action);
     void useMockRTCPeerConnectionFactory(const String&);
     void setICECandidateFiltering(bool);
-    void NODELETE setEnumeratingAllNetworkInterfacesEnabled(bool);
+    void setEnumeratingAllNetworkInterfacesEnabled(bool);
     void stopPeerConnection(RTCPeerConnection&);
     void clearPeerConnectionFactory();
     void clearWebRTCCodecsConnection();
@@ -868,7 +868,7 @@ public:
     void isBlobInternalURLRegistered(const String&, DOMPromiseDeferred<IDLBoolean>&&);
 
 #if ENABLE(VIDEO)
-    unsigned NODELETE mediaElementCount();
+    unsigned mediaElementCount();
     Vector<String> mediaResponseSources(HTMLMediaElement&);
     Vector<String> mediaResponseContentRanges(HTMLMediaElement&);
     void NODELETE simulateAudioInterruption(HTMLMediaElement&);
@@ -1026,7 +1026,7 @@ public:
     void setMediaControlsHidePlaybackRates(HTMLMediaElement&, bool);
 #endif // ENABLE(VIDEO)
 
-    float NODELETE pageMediaVolume();
+    float pageMediaVolume();
     void setPageMediaVolume(float);
 
 #if ENABLE(NSREFRESHCONTROLLER_TESTING)
@@ -1034,7 +1034,7 @@ public:
 #endif
 
     String userVisibleString(const DOMURL&);
-    void NODELETE setShowAllPlugins(bool);
+    void setShowAllPlugins(bool);
 
     String resourceLoadStatisticsForURL(const DOMURL&);
     void NODELETE setTrackingPreventionEnabled(bool);
@@ -1048,7 +1048,7 @@ public:
     String composedTreeAsTextFromNode(Node& root, Node& startNode);
 
     bool isProcessingUserGesture();
-    double NODELETE lastHandledUserGestureTimestamp();
+    double lastHandledUserGestureTimestamp();
 
     void withUserGesture(Ref<VoidCallback>&&);
     void withoutUserGesture(Ref<VoidCallback>&&);
@@ -1075,8 +1075,8 @@ public:
     void setBaseWritingDirection(BaseWritingDirection);
 
 #if ENABLE(POINTER_LOCK)
-    bool NODELETE pageHasPendingPointerLock() const;
-    bool NODELETE pageHasPointerLock() const;
+    bool pageHasPendingPointerLock() const;
+    bool pageHasPointerLock() const;
 #endif
 
     Vector<String> accessKeyModifiers() const;
@@ -1104,7 +1104,7 @@ public:
     void setPageIsFocused(bool);
     void setPageIsFocusedAndActive(bool);
     void setPageIsInWindow(bool);
-    bool NODELETE isPageActive() const;
+    bool isPageActive() const;
 
 #if ENABLE(MEDIA_STREAM)
     void stopObservingRealtimeMediaSource();
@@ -1481,7 +1481,7 @@ public:
 
     Vector<WebDriverCookieData> webDriverGetCookies(Document&) const;
 
-    void NODELETE setAlwaysAllowLocalWebarchive(bool);
+    void setAlwaysAllowLocalWebarchive(bool);
     void processWillSuspend();
     void processDidResume();
 
@@ -1579,7 +1579,7 @@ public:
 
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<String> appHighlightContextMenuItemTitles() const;
-    unsigned NODELETE numberOfAppHighlights();
+    unsigned numberOfAppHighlights();
 #endif
 
     Vector<Ref<AbstractRange>> textExtractionHighlightRanges() const;
@@ -1645,7 +1645,7 @@ public:
 
     RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 
-    bool NODELETE hasSleepDisabler() const;
+    bool hasSleepDisabler() const;
 
     void NODELETE acceptTypedArrays(Int32Array&);
 
@@ -1659,7 +1659,7 @@ public:
 
     JSC::JSValue dumpJSNodeStatistics();
 
-    bool NODELETE isVisuallyNonEmpty() const;
+    bool isVisuallyNonEmpty() const;
         
     bool isUsingUISideCompositing() const;
 
@@ -1696,7 +1696,7 @@ public:
     using ImageBufferResourceLimitsPromise = DOMPromiseDeferred<IDLDictionary<ImageBufferResourceLimits>>;
     void getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&&);
 
-    void NODELETE setResourceCachingDisabledByWebInspector(bool);
+    void setResourceCachingDisabledByWebInspector(bool);
     ExceptionOr<void> lowerAllFrameMemoryMonitorLimits();
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -1712,7 +1712,7 @@ public:
     ExceptionOr<Ref<WritableStream>> writableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);
 
 #if ENABLE(MODEL_ELEMENT)
-    void NODELETE disableModelLoadDelaysForTesting();
+    void disableModelLoadDelaysForTesting();
     String modelElementState(HTMLModelElement&);
     bool NODELETE isModelElementIntersectingViewport(HTMLModelElement&);
 #endif
@@ -1727,7 +1727,7 @@ public:
 
     ExceptionOr<void> copyImageAtLocation(int x, int y);
 
-    bool NODELETE hasMediaSessionManager() const;
+    bool hasMediaSessionManager() const;
 
     size_t NODELETE fileConnectionHandleCount(const FileSystemHandle&) const;
 
@@ -1751,7 +1751,7 @@ private:
 #endif // ENABLE(MEDIA_STREAM)
 
     Document* NODELETE contextDocument() const;
-    LocalFrame* NODELETE frame() const;
+    LocalFrame* frame() const;
 
     AccessibilityObject* axObjectForElement(Element&) const;
 

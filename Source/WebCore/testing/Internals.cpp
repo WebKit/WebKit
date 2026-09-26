@@ -656,7 +656,7 @@ void Internals::resetToConsistentState(Page& page)
         mainFrameView->setFixedLayoutSize(IntSize());
         mainFrameView->enableFixedWidthAutoSizeMode(false, { });
 
-        if (auto* backing = mainFrameView->tiledBacking())
+        if (CheckedPtr backing = mainFrameView->tiledBacking())
             backing->setTileSizeUpdateDelayDisabledForTesting(false);
     }
 
@@ -674,7 +674,7 @@ void Internals::resetToConsistentState(Page& page)
     localMainFrame->loader().clearTestingOverrides();
 
 #if ENABLE(VIDEO)
-    Ref captionPreferences = page.group().ensureCaptionPreferences();
+    Ref captionPreferences = protect(page.group())->ensureCaptionPreferences();
     captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode::ForcedOnly);
     captionPreferences->setCaptionsStyleSheetOverride(emptyString());
     captionPreferences->setPreferredLanguage(emptyString());
@@ -1119,7 +1119,7 @@ void Internals::setOverrideResourceLoadPriority(ResourceLoadPriority priority)
 
 void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
 {
-    if (auto* localFrame = frame())
+    if (RefPtr localFrame = frame())
         localFrame->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
 }
 
@@ -1418,7 +1418,7 @@ void Internals::disableTileSizeUpdateDelay()
     if (!view)
         return;
 
-    if (auto* backing = view->tiledBacking())
+    if (CheckedPtr backing = view->tiledBacking())
         backing->setTileSizeUpdateDelayDisabledForTesting(true);
 }
 
@@ -1492,13 +1492,13 @@ ExceptionOr<void> Internals::suspendAnimations() const
     if (!document || !document->frame())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    document->ensureTimelinesController().suspendAnimations();
+    protect(document->ensureTimelinesController())->suspendAnimations();
     for (RefPtr<Frame> frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         if (RefPtr document = localFrame->document())
-            document->ensureTimelinesController().suspendAnimations();
+            protect(document->ensureTimelinesController())->suspendAnimations();
     }
 
     return { };
@@ -1510,13 +1510,13 @@ ExceptionOr<void> Internals::resumeAnimations() const
     if (!document || !document->frame())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    document->ensureTimelinesController().resumeAnimations();
+    protect(document->ensureTimelinesController())->resumeAnimations();
     for (RefPtr<Frame> frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         if (RefPtr document = localFrame->document())
-            document->ensureTimelinesController().resumeAnimations();
+            protect(document->ensureTimelinesController())->resumeAnimations();
     }
 
     return { };
@@ -1657,7 +1657,7 @@ Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(El
 float Internals::usedOutlineOffset(Element& element)
 {
     protect(element.document())->updateStyleIfNeeded();
-    auto* style = element.computedStyle();
+    CheckedPtr style = element.computedStyle();
     if (!style)
         return 0;
     return Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength(), style->deviceScaleFactor());
@@ -2197,7 +2197,7 @@ ExceptionOr<bool> Internals::isCaretBlinkingSuspended(Document& document)
 Ref<DOMRect> Internals::boundingBox(Element& element)
 {
     protect(element.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
-    auto renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!renderer)
         return DOMRect::create();
     return DOMRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
@@ -2255,7 +2255,7 @@ ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& ma
 
     Ref document = node.document();
     protect(document->editor())->updateEditorUINowIfScheduled();
-    return document->markers().markersFor(node, markerTypes).size();
+    return protect(document->markers())->markersFor(node, markerTypes).size();
 }
 
 ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const String& markerType, unsigned index)
@@ -2269,7 +2269,7 @@ ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const Strin
 
     protect(document->editor())->updateEditorUINowIfScheduled();
 
-    auto markers = document->markers().markersFor(node, markerTypes);
+    auto markers = protect(document->markers())->markersFor(node, markerTypes);
     if (markers.size() <= index)
         return nullptr;
     return markers[index].get();
@@ -2450,12 +2450,12 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
     if (!element.renderBox())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    RenderBox& box = *element.renderBox();
-    ScrollableArea* scrollableArea;
+    CheckedRef box = *element.renderBox();
+    CheckedPtr<ScrollableArea> scrollableArea;
 
     if (&element == document->scrollingElementForAPI()) {
 
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(protect(box.frame())->mainFrame());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(protect(box->frame())->mainFrame());
         if (!localFrame)
             return Exception { ExceptionCode::InvalidAccessError };
 
@@ -2465,11 +2465,11 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
 
         scrollableArea = frameView;
     } else {
-        if (!box.canBeScrolledAndHasScrollableArea())
+        if (!box->canBeScrolledAndHasScrollableArea())
             return Exception { ExceptionCode::InvalidAccessError };
 
-        ASSERT(box.layer());
-        scrollableArea = box.layer()->scrollableArea();
+        ASSERT(box->layer());
+        scrollableArea = box->layer()->scrollableArea();
     }
     
     if (!scrollableArea)
@@ -2662,8 +2662,8 @@ ExceptionOr<uint64_t> Internals::lineIndexAfterPageBreak(Element& element)
 
     if (!element.renderer() || !is<RenderBlockFlow>(element.renderer()))
         return Exception { ExceptionCode::NotFoundError };
-    auto& blockFlow = downcast<RenderBlockFlow>(*element.renderer());
-    if (!blockFlow.childrenInline())
+    CheckedRef blockFlow = downcast<RenderBlockFlow>(*element.renderer());
+    if (!blockFlow->childrenInline())
         return Exception { ExceptionCode::NotFoundError };
 
     size_t lineIndex = 0;
@@ -2783,7 +2783,7 @@ Vector<String> Internals::recentSearches(const HTMLInputElement& element)
         return { };
 
     protect(element.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
-    auto* searchField = dynamicDowncast<RenderSearchField>(element.renderer());
+    CheckedPtr searchField = dynamicDowncast<RenderSearchField>(element.renderer());
     if (!searchField)
         return { };
 
@@ -2950,7 +2950,7 @@ ExceptionOr<uint64_t> Internals::lastSpellCheckProcessedSequence()
 void Internals::advanceToNextMisspelling()
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (auto* document = contextDocument())
+    if (RefPtr document = contextDocument())
         protect(document->editor())->advanceToNextMisspelling();
 #endif
 }
@@ -3054,7 +3054,7 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
 
     RefPtr frame = document.frame();
     RefPtr frameView = document.view();
-    auto* renderView = document.renderView();
+    CheckedPtr renderView = document.renderView();
     if (!renderView)
         return nullptr;
 
@@ -3743,7 +3743,7 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
 {
     if (!document.frame() || !document.frame()->contentRenderer())
         return Exception { ExceptionCode::InvalidAccessError };
-    return document.frame()->contentRenderer()->compositor().layerTreeAsText(toLayerTreeAsTextOptions(flags));
+    return protect(protect(document.frame()->contentRenderer())->compositor())->layerTreeAsText(toLayerTreeAsTextOptions(flags));
 }
 
 ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
@@ -3757,11 +3757,11 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
     if (!element.renderer() || !element.renderer()->hasLayer())
         return Exception { ExceptionCode::NotFoundError };
 
-    auto& layerModelObject = downcast<RenderLayerModelObject>(*element.renderer());
-    if (!layerModelObject.layer()->isComposited())
+    CheckedRef layerModelObject = downcast<RenderLayerModelObject>(*element.renderer());
+    if (!layerModelObject->layer()->isComposited())
         return Exception { ExceptionCode::NotFoundError };
 
-    auto* backing = layerModelObject.layer()->backing();
+    auto* backing = layerModelObject->layer()->backing();
     RefPtr graphicsLayer = backing->graphicsLayer();
     return graphicsLayer->primaryLayerID() ? graphicsLayer->primaryLayerID()->object().toUInt64() : 0;
 }
@@ -3793,7 +3793,7 @@ ExceptionOr<uint64_t> Internals::verticalScrollbarLayerID(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    return getLayerID(protect(areaOrException.returnValue()->layerForVerticalScrollbar()));
+    return getLayerID(protect(protect(areaOrException.returnValue())->layerForVerticalScrollbar()));
 }
 
 ExceptionOr<Ref<DOMRect>> Internals::horizontalScrollbarFrameRect(Node* node) const
@@ -3814,7 +3814,7 @@ ExceptionOr<Ref<DOMRect>> Internals::verticalScrollbarFrameRect(Node* node) cons
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    if (RefPtr scrollbar = areaOrException.returnValue()->verticalScrollbar())
+    if (RefPtr scrollbar = protect(areaOrException.returnValue())->verticalScrollbar())
         return DOMRect::create(scrollbar->frameRect());
 
     return DOMRect::create();
@@ -3826,7 +3826,7 @@ ExceptionOr<Ref<DOMRect>> Internals::scrollCornerRect(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    return DOMRect::create(areaOrException.returnValue()->scrollCornerRect());
+    return DOMRect::create(protect(areaOrException.returnValue())->scrollCornerRect());
 }
 
 ExceptionOr<Internals::ScrollingNodeID> Internals::scrollingNodeIDForNode(Node* node)
@@ -3835,7 +3835,7 @@ ExceptionOr<Internals::ScrollingNodeID> Internals::scrollingNodeIDForNode(Node* 
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto scrollingNodeID = areaOrException.returnValue()->scrollingNodeID();
+    auto scrollingNodeID = protect(areaOrException.returnValue())->scrollingNodeID();
     if (!scrollingNodeID)
         return { { 0, 0 } };
     return { { scrollingNodeID->object().toUInt64(), scrollingNodeID->processIdentifier().toUInt64() } };
@@ -3846,7 +3846,7 @@ ExceptionOr<unsigned> Internals::scrollableAreaWidth(Node& node)
     auto areaOrException = scrollableAreaForNode(&node);
     if (areaOrException.hasException())
         return areaOrException.releaseException();
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     return scrollableArea->contentsSize().width();
 }
 
@@ -3868,7 +3868,7 @@ ExceptionOr<String> Internals::platformLayerTreeAsText(Element& element, unsigne
     if (!document->frame() || !document->frame()->contentRenderer())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto text = document->frame()->contentRenderer()->compositor().platformLayerTreeAsText(element, toPlatformLayerTreeFlags(flags));
+    auto text = protect(protect(document->frame()->contentRenderer())->compositor())->platformLayerTreeAsText(element, toPlatformLayerTreeFlags(flags));
     if (!text)
         return Exception { ExceptionCode::NotFoundError };
 
@@ -3896,7 +3896,7 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
     Ref document = nodeRef->document();
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
-    ScrollableArea* scrollableArea = nullptr;
+    CheckedPtr<ScrollableArea> scrollableArea;
     if (is<Document>(nodeRef)) {
         RefPtr frameView = downcast<Document>(nodeRef.get()).view();
         if (!frameView)
@@ -3913,12 +3913,12 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
         if (!element->renderBox())
             return Exception { ExceptionCode::InvalidAccessError };
 
-        auto& renderBox = *element->renderBox();
-        if (auto* renderListBox = dynamicDowncast<RenderListBox>(renderBox))
-            scrollableArea = renderListBox;
+        CheckedRef renderBox = *element->renderBox();
+        if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(renderBox.get()))
+            scrollableArea = renderListBox.get();
         else {
-            ASSERT(renderBox.layer());
-            scrollableArea = renderBox.layer()->scrollableArea();
+            ASSERT(renderBox->layer());
+            scrollableArea = renderBox->layer()->scrollableArea();
         }
     } else
         return Exception { ExceptionCode::InvalidNodeTypeError };
@@ -3926,7 +3926,7 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
     if (!scrollableArea)
         return Exception { ExceptionCode::InvalidNodeTypeError };
 
-    return scrollableArea;
+    return scrollableArea.get();
 }
 
 ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
@@ -3935,7 +3935,7 @@ ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     switch (scrollableArea->scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyle::Default:
         return "default"_str;
@@ -3955,7 +3955,7 @@ ExceptionOr<bool> Internals::scrollbarUsingDarkAppearance(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     return scrollableArea->useDarkAppearance();
 }
 
@@ -3965,7 +3965,7 @@ ExceptionOr<String> Internals::horizontalScrollbarState(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     return scrollableArea->horizontalScrollbarStateForTesting();
 }
 
@@ -3975,7 +3975,7 @@ ExceptionOr<String> Internals::verticalScrollbarState(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     return scrollableArea->verticalScrollbarStateForTesting();
 }
 
@@ -3996,7 +3996,7 @@ ExceptionOr<String> Internals::scrollbarsControllerTypeForNode(Node* node) const
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     return scrollbarsControllerTypeString(scrollableArea->scrollbarsController());
 }
 
@@ -4886,9 +4886,9 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
     if (!document || !document->frame())
         return JSC::jsNull();
 
-    auto& scriptController = document->frame()->script();
+    CheckedRef scriptController = document->frame()->script();
     auto world = ScriptController::createWorld(name);
-    return scriptController.executeScriptInWorldIgnoringException(world, source, JSC::SourceTaintedOrigin::Untainted);
+    return scriptController->executeScriptInWorldIgnoringException(world, source, JSC::SourceTaintedOrigin::Untainted);
 }
 
 #if !PLATFORM(MAC)
@@ -5414,7 +5414,7 @@ ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
     if (!document || !document->frame())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return DOMRect::create(document->frame()->selection().selectionBounds());
+    return DOMRect::create(protect(document->frame()->selection())->selectionBounds());
 }
 
 ExceptionOr<RefPtr<StaticRange>> Internals::selectedRange()
@@ -5430,7 +5430,7 @@ ExceptionOr<RefPtr<StaticRange>> Internals::selectedRange()
 
 void Internals::setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset)
 {
-    protect(contextDocument())->frame()->selection().moveTo(
+    protect(protect(contextDocument())->frame()->selection())->moveTo(
         VisiblePosition { makeDeprecatedLegacyPosition(baseNode.ptr(), baseOffset) },
         VisiblePosition { makeDeprecatedLegacyPosition(extentNode.get(), extentOffset) });
 }
@@ -5438,7 +5438,7 @@ void Internals::setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseO
 void Internals::setSelectionFromNone()
 {
     if (RefPtr localFrame = frame())
-        localFrame->selection().setSelectionFromNone();
+        protect(localFrame->selection())->setSelectionFromNone();
 }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -6399,7 +6399,7 @@ void Internals::queueMicroTask(int testNumber)
     if (!document)
         return;
 
-    document->eventLoop().queueMicrotask(document->vm(), [document, testNumber]() {
+    protect(document->eventLoop())->queueMicrotask(document->vm(), [document, testNumber]() {
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #"_s, testNumber, " has run."_s));
     });
 }
@@ -6436,7 +6436,7 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     if (!scrollableArea)
         return Exception { ExceptionCode::InvalidAccessError };
 
@@ -6463,7 +6463,7 @@ ExceptionOr<bool> Internals::isScrollSnapInProgress(Element& element)
     if (areaOrException.hasException())
         return areaOrException.releaseException();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    CheckedPtr scrollableArea = areaOrException.releaseReturnValue();
     if (!scrollableArea)
         return Exception { ExceptionCode::InvalidAccessError };
 
@@ -6884,7 +6884,7 @@ ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const St
     if (!source)
         return Exception { ExceptionCode::NotSupportedError };
 
-    context.eventLoop().queueTask(*source, [callback = WTF::move(callback)] {
+    protect(context.eventLoop())->queueTask(*source, [callback = WTF::move(callback)] {
         callback->invoke();
     });
 
@@ -6898,9 +6898,9 @@ ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const
         return Exception { ExceptionCode::NotSupportedError };
 
     ScriptExecutionContext& context = document; // This avoids unnecessarily exporting Document::eventLoop.
-    context.eventLoop().queueTask(*source, [movedCallback = WTF::move(callback), protectedDocument = Ref { document }]() mutable {
+    protect(context.eventLoop())->queueTask(*source, [movedCallback = WTF::move(callback), protectedDocument = Ref { document }]() mutable {
         ScriptExecutionContext& context = protectedDocument.get();
-        context.eventLoop().queueMicrotask(context.vm(), [callback = WTF::move(movedCallback)] {
+        protect(context.eventLoop())->queueMicrotask(context.vm(), [callback = WTF::move(movedCallback)] {
             callback->invoke();
         });
     });
@@ -6921,7 +6921,7 @@ ExceptionOr<bool> Internals::hasSameEventLoopAs(WindowProxy& proxy)
     if (!proxyContext)
         return Exception { ExceptionCode::InvalidStateError };
 
-    return context->eventLoop().hasSameEventLoopAs(proxyContext->eventLoop());
+    return protect(context->eventLoop())->hasSameEventLoopAs(protect(proxyContext->eventLoop()));
 }
 
 Vector<String> Internals::accessKeyModifiers() const
@@ -7910,7 +7910,7 @@ auto Internals::webDriverGetCookies(Document& document) const -> Vector<WebDrive
 
 void Internals::setAlwaysAllowLocalWebarchive(bool alwaysAllowLocalWebarchive)
 {
-    auto* localFrame = frame();
+    RefPtr localFrame = frame();
     if (!localFrame)
         return;
     localFrame->loader().setAlwaysAllowLocalWebarchive(alwaysAllowLocalWebarchive);
@@ -7949,7 +7949,7 @@ void Internals::testDictionaryLogging()
     dictionary.set("boolKey"_s, true);
     dictionary.set("doubleKey"_s, 2.7182818284590452353602874);
 
-    page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary("testMessage"_s, "testDescription"_s, dictionary, ShouldSample::No);
+    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("testMessage"_s, "testDescription"_s, dictionary, ShouldSample::No);
 }
 
 void Internals::setMaximumIntervalForUserGestureForwardingForFetch(double interval)
@@ -7978,11 +7978,11 @@ String Internals::highlightPseudoElementColor(const AtomString& highlightName, E
     document->updateStyleIfNeeded();
 
     Ref styleResolver = document->styleScope().resolver();
-    auto* parentStyle = element.computedStyle();
+    CheckedPtr parentStyle = element.computedStyle();
     if (!parentStyle)
         return { };
 
-    auto resolvedStyle = styleResolver->styleForPseudoElement(element, { PseudoElementType::Highlight, highlightName }, { parentStyle });
+    auto resolvedStyle = styleResolver->styleForPseudoElement(element, { PseudoElementType::Highlight, highlightName }, { parentStyle.get() });
     if (!resolvedStyle)
         return { };
 
@@ -8422,10 +8422,10 @@ ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecution
     if (!document->settings().mediaSessionCoordinatorEnabled())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto& session = NavigatorMediaSession::mediaSession(protect(protect(document->window())->navigator()));
+    Ref session = NavigatorMediaSession::mediaSession(protect(protect(document->window())->navigator()));
     auto mock = MockMediaSessionCoordinator::create(context, WTF::move(listener));
     m_mockMediaSessionCoordinator = mock.ptr();
-    session.coordinator().setMediaSessionCoordinatorPrivate(WTF::move(mock));
+    session->coordinator().setMediaSessionCoordinatorPrivate(WTF::move(mock));
 
     return { };
 }

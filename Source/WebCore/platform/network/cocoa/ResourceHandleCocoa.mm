@@ -53,6 +53,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/Ref.h>
 #import <wtf/SchedulePair.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 
@@ -145,13 +146,13 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         if (d->m_user.isEmpty() && d->m_password.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication,
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            if (auto* networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
                 d->m_initialCredential = networkStorageSession->credentialStorage().get(firstRequest().cachePartition(), firstRequest().url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials before sending a request.
             // This makes it possible to implement logout by sending an XMLHttpRequest with known incorrect credentials, and aborting it immediately
             // (so that an authentication dialog doesn't pop up).
-            if (auto* networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
                 networkStorageSession->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_password, CredentialPersistence::None), firstRequest().url());
         }
     }
@@ -235,7 +236,7 @@ bool ResourceHandle::start()
     if (!context->isValid())
         return false;
 
-    if (auto* networkStorageSession = context->storageSession())
+    if (CheckedPtr networkStorageSession = context->storageSession())
         d->m_storageSession = networkStorageSession->platformSession();
 
     // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
@@ -245,14 +246,14 @@ bool ResourceHandle::start()
 
 #if !PLATFORM(IOS_FAMILY)
     createNSURLConnection(
-        ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
+        protect(ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr)),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || context->localFileContentSniffingEnabled(),
         d->m_contentEncodingSniffingPolicy,
         schedulingBehavior);
 #else
     createNSURLConnection(
-        ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
+        protect(ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr)),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || context->localFileContentSniffingEnabled(),
         d->m_contentEncodingSniffingPolicy,
@@ -260,15 +261,16 @@ bool ResourceHandle::start()
         (NSDictionary *)client()->connectionProperties(this).get());
 #endif
 
-    [connection() setDelegateQueue:operationQueueForAsyncClients()];
-    [connection() start];
+    RetainPtr urlConnection = connection();
+    [urlConnection setDelegateQueue:protect(operationQueueForAsyncClients())];
+    [urlConnection start];
     d->m_startTime = MonotonicTime::now();
 
     LOG(Network, "Handle %p starting connection %p for %@", this, connection(), firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
 
     if (d->m_connection) {
         if (d->m_defersLoading)
-            connection().defersCallbacks = YES;
+            [urlConnection setDefersCallbacks:YES];
 
         return true;
     }
@@ -297,16 +299,16 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
 
 void ResourceHandle::schedule(SchedulePair& pair)
 {
-    NSRunLoop *runLoop = pair.nsRunLoop();
+    RetainPtr runLoop = pair.nsRunLoop();
     if (!runLoop)
         return;
-    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(__bridge NSString *)pair.mode()];
+    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:bridge_cast(protect(pair.mode()))];
 }
 
 void ResourceHandle::unschedule(SchedulePair& pair)
 {
-    if (NSRunLoop *runLoop = pair.nsRunLoop())
-        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(__bridge NSString *)pair.mode()];
+    if (RetainPtr runLoop = pair.nsRunLoop())
+        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:bridge_cast(protect(pair.mode()))];
 }
 
 id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage, RefPtr<SynchronousLoaderMessageQueue>&& queue)
@@ -369,14 +371,14 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     bool shouldUseCredentialStorage = storedCredentialsPolicy == StoredCredentialsPolicy::Use;
 #if !PLATFORM(IOS_FAMILY)
     handle->createNSURLConnection(
-        handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()),
+        protect(handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue())),
         shouldUseCredentialStorage,
         handle->shouldContentSniff() || context->localFileContentSniffingEnabled(),
         handle->contentEncodingSniffingPolicy(),
         SchedulingBehavior::Synchronous);
 #else
     handle->createNSURLConnection(
-        handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
+        protect(handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue())), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         shouldUseCredentialStorage,
         handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()),
         handle->contentEncodingSniffingPolicy(),
@@ -384,8 +386,9 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         (NSDictionary *)handle->client()->connectionProperties(handle.get()).get());
 #endif
 
-    [handle->connection() setDelegateQueue:operationQueueForAsyncClients()];
-    [handle->connection() start];
+    RetainPtr connection = handle->connection();
+    [connection setDelegateQueue:protect(operationQueueForAsyncClients())];
+    [connection start];
 
     do {
         if (auto task = client.messageQueue().waitForMessage())
@@ -394,7 +397,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     error = client.error();
 
-    [handle->connection() cancel];
+    [connection cancel];
 
     if (error.isNull())
         response = client.response();
@@ -453,7 +456,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // URL didn't include credentials of its own.
         if (d->m_user.isEmpty() && d->m_password.isEmpty() && !redirectResponse.isNull()) {
             Credential credential;
-            if (auto* networkStorageSession = protect(d->m_context)->storageSession())
+            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
                 credential = networkStorageSession->credentialStorage().get(request.cachePartition(), request.url());
             if (!credential.isEmpty()) {
                 d->m_initialCredential = credential;
@@ -485,7 +488,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
     if (challenge.protectionSpace().isProxy()) {
         // Cannot use receivedRequestToContinueWithoutCredential(), because current challenge is not yet set.
-        [challenge.sender() continueWithoutCredentialForAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+        [protect(challenge.sender()) continueWithoutCredentialForAuthenticationChallenge:protect(challenge.nsURLAuthenticationChallenge())];
         return;
     }
 
@@ -506,7 +509,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     }
 #endif // PLATFORM(IOS_FAMILY)
 
-    d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+    d->m_currentMacChallenge = RetainPtr { challenge.nsURLAuthenticationChallenge() };
     d->m_currentWebChallenge = core(d->m_currentMacChallenge.get().get());
     d->m_currentWebChallenge.setAuthenticationClient(this);
 
@@ -517,7 +520,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
     else {
         clearAuthentication();
-        [challenge.sender() performDefaultHandlingForAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+        [protect(challenge.sender()) performDefaultHandlingForAuthenticationChallenge:protect(challenge.nsURLAuthenticationChallenge())];
     }
 }
 
@@ -529,7 +532,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
     if (!d->m_user.isEmpty() || !d->m_password.isEmpty()) {
         auto credential = adoptNS([[NSURLCredential alloc] initWithUser:d->m_user.createNSString().get()
             password:d->m_password.createNSString().get() persistence:NSURLCredentialPersistenceForSession]);
-        d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+        d->m_currentMacChallenge = RetainPtr { challenge.nsURLAuthenticationChallenge() };
         d->m_currentWebChallenge = challenge;
         receivedCredential(challenge, Credential(credential.get()));
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
@@ -544,22 +547,22 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            if (auto* networkStorageSession = d->m_context->storageSession())
+            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
                 networkStorageSession->credentialStorage().remove(d->m_partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
             Credential credential;
-            if (auto* networkStorageSession = d->m_context->storageSession())
+            if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
                 credential = networkStorageSession->credentialStorage().get(d->m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistence::None);
                 if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    if (auto* networkStorageSession = d->m_context->storageSession())
+                    if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
                         networkStorageSession->credentialStorage().set(d->m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                [challenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:mac(challenge)];
+                [protect(challenge.sender()) useCredential:protect(credential.nsCredential()) forAuthenticationChallenge:protect(mac(challenge))];
                 return true;
             }
         }
@@ -600,11 +603,11 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized)
             urlToStore = challenge.failureResponse().url();
-        if (auto* networkStorageSession = d->m_context->storageSession())
+        if (CheckedPtr networkStorageSession = protect(d->m_context)->storageSession())
             networkStorageSession->credentialStorage().set(d->m_partition, webCredential, ProtectionSpace([currentChallenge protectionSpace]), urlToStore);
-        [[currentChallenge sender] useCredential:webCredential.nsCredential() forAuthenticationChallenge:currentChallenge.get()];
+        [[currentChallenge sender] useCredential:protect(webCredential.nsCredential()) forAuthenticationChallenge:currentChallenge.get()];
     } else
-        [[currentChallenge sender] useCredential:credential.nsCredential() forAuthenticationChallenge:currentChallenge.get()];
+        [[currentChallenge sender] useCredential:protect(credential.nsCredential()) forAuthenticationChallenge:currentChallenge.get()];
 
     clearAuthentication();
 }

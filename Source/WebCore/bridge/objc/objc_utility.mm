@@ -187,35 +187,40 @@ JSValue convertNSStringToString(JSGlobalObject* lexicalGlobalObject, NSString *n
     id              object wrapper
     other           should not happen
 */
+JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, id obj, RootObject* rootObject)
+{
+    JSLockHolder lock(lexicalGlobalObject);
+
+    if (auto *str = dynamic_objc_cast<NSString>(obj))
+        return convertNSStringToString(lexicalGlobalObject, str);
+    if ([obj isKindOfClass:webUndefinedClass()])
+        return jsUndefined();
+    if ((__bridge CFBooleanRef)obj == kCFBooleanTrue)
+        return jsBoolean(true);
+    if ((__bridge CFBooleanRef)obj == kCFBooleanFalse)
+        return jsBoolean(false);
+    if ([obj isKindOfClass:[NSNumber class]])
+        return jsNumber([obj doubleValue]);
+    if ([obj isKindOfClass:[NSArray class]])
+        return RuntimeArray::create(lexicalGlobalObject, new ObjcArray(obj, rootObject));
+    if ([obj isKindOfClass:webScriptObjectClass()]) {
+        JSObject* imp = [obj _imp];
+        return imp ? imp : jsUndefined();
+    }
+    if ([obj isKindOfClass:[NSNull class]])
+        return jsNull();
+    if (!obj)
+        return jsUndefined();
+    return ObjcInstance::create(obj, rootObject)->createRuntimeObject(lexicalGlobalObject);
+}
+
 JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, void* buffer, ObjcValueType type, RootObject* rootObject)
 {
     JSLockHolder lock(lexicalGlobalObject);
     
     switch (type) {
-        case ObjcObjectType: {
-            id obj = *(const id*)buffer;
-            if (auto *str = dynamic_objc_cast<NSString>(obj))
-                return convertNSStringToString(lexicalGlobalObject, str);
-            if ([obj isKindOfClass:webUndefinedClass()])
-                return jsUndefined();
-            if ((__bridge CFBooleanRef)obj == kCFBooleanTrue)
-                return jsBoolean(true);
-            if ((__bridge CFBooleanRef)obj == kCFBooleanFalse)
-                return jsBoolean(false);
-            if ([obj isKindOfClass:[NSNumber class]])
-                return jsNumber([obj doubleValue]);
-            if ([obj isKindOfClass:[NSArray class]])
-                return RuntimeArray::create(lexicalGlobalObject, new ObjcArray(obj, rootObject));
-            if ([obj isKindOfClass:webScriptObjectClass()]) {
-                JSObject* imp = [obj _imp];
-                return imp ? imp : jsUndefined();
-            }
-            if ([obj isKindOfClass:[NSNull class]])
-                return jsNull();
-            if (obj == 0)
-                return jsUndefined();
-            return ObjcInstance::create(obj, rootObject)->createRuntimeObject(lexicalGlobalObject);
-        }
+        case ObjcObjectType:
+            return convertObjcValueToValue(lexicalGlobalObject, *(const id*)buffer, rootObject);
         case ObjcCharType:
             return jsNumber(*(char*)buffer);
         case ObjcUnsignedCharType:

@@ -6,10 +6,7 @@ Modules/WebGPU/GPUQueue.cpp
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 [ Mac ] accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 bridge/objc/WebScriptObject.mm
-bridge/objc/objc_instance.mm
-bridge/objc/objc_runtime.mm
 bridge/objc/objc_utility.mm
-crypto/cocoa/SerializedCryptoKeyWrapCocoa.mm
 [ iOS ] editing/cocoa/DataDetection.mm
 inspector/agents/page/PageTimelineAgent.cpp
 page/InteractionRegion.cpp
@@ -18,13 +15,10 @@ page/cocoa/WebTextIndicatorLayer.mm
 [ iOS ] page/ios/EventHandlerIOS.mm
 [ Mac ] page/mac/EventHandlerMac.mm
 [ Mac ] page/mac/ImageOverlayControllerMac.mm
-[ Mac ] page/mac/ServicesOverlayController.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 [ iOS ] platform/audio/ios/MediaSessionHelperIOS.mm
-platform/cf/KeyedDecoderCF.cpp
-platform/cf/KeyedEncoderCF.cpp
 platform/cf/MainThreadSharedTimerCF.cpp
 [ Mac ] platform/cocoa/DragDataCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm
@@ -95,7 +89,6 @@ platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm
 [ iOS ] platform/ios/ValidationBubbleIOS.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
-platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/WebEvent.mm
 [ iOS ] platform/ios/WebItemProviderPasteboard.mm
 [ iOS ] platform/ios/wak/WAKClipView.mm
@@ -106,14 +99,12 @@ platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/wak/WebCoreThread.mm
 [ iOS ] platform/ios/wak/WebCoreThreadRun.cpp
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
-platform/mediastream/cocoa/AVVideoCaptureSource.mm
+[ iOS ] platform/mediastream/cocoa/AVVideoCaptureSource.mm
 [ Mac ] platform/mediastream/cocoa/ScreenCaptureKitCaptureSource.mm
 [ Mac ] platform/mediastream/cocoa/ScreenCaptureKitSharingSessionManager.mm
-platform/network/cf/DNSResolveQueueCFNet.cpp
-platform/network/cocoa/ResourceHandleCocoa.mm
+[ iOS ] platform/network/cocoa/ResourceHandleCocoa.mm
 platform/network/cocoa/SynchronousLoaderClient.mm
 platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
 [ iOS ] platform/text/cocoa/TextBoundaries.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
-[ Mac ] testing/ServiceWorkerInternals.mm

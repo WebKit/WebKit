@@ -92,29 +92,16 @@ html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 html/CustomPaintCanvas.cpp
-html/HTMLCanvasElement.cpp
 html/HTMLInputElement.cpp
-html/HTMLLinkElement.cpp
-html/HTMLMaybeFormAssociatedCustomElement.cpp
-html/HTMLMediaElement.cpp
-html/HTMLTextFormControlElement.cpp
-html/ImageBitmap.cpp
-html/LinkIconCollector.cpp
-html/MediaController.cpp
-html/MediaElementSession.cpp
-html/OffscreenCanvas.cpp
-html/ValidatedFormListedElement.cpp
 html/canvas/CanvasFilterContextSwitcher.cpp
 html/canvas/CanvasRenderingContext.cpp
 html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
-html/canvas/PlaceholderRenderingContext.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 [ macOS ] page/ContextMenuController.cpp
 [ iOS ] page/DOMTimer.cpp
-page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
 page/FocusController.cpp
@@ -137,14 +124,12 @@ page/cocoa/WebTextIndicatorLayer.mm
 page/mac/DragControllerMac.mm
 [ Mac ] page/mac/EventHandlerMac.mm
 [ Mac ] page/mac/ImageOverlayControllerMac.mm
-[ Mac ] page/mac/ServicesOverlayController.mm
 page/scrolling/AsyncScrollingCoordinator.cpp
 [ Mac ] page/scrolling/AsyncScrollingCoordinator.h
 page/scrolling/ScrollAnchoringController.cpp
 [ Mac ] page/scrolling/ThreadedScrollingCoordinator.cpp
 [ Mac ] page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/text-extraction/TextExtraction.cpp
-page/writing-tools/WritingToolsController.mm
 [ iOS ] platform/audio/ios/MediaSessionManagerIOS.mm
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
@@ -184,9 +169,7 @@ platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.h
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
-platform/mock/MockRealtimeVideoSource.cpp
 platform/network/cf/FormDataStreamCFNet.mm
-platform/network/cocoa/ResourceHandleCocoa.mm
 platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
 [ macOS ] rendering/AttachmentLayout.mm
 rendering/BackgroundPainter.cpp

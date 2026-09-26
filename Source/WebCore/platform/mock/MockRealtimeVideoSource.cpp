@@ -107,7 +107,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::timeFont()
     description.setComputedSize(m_baseFontSize);
     description.setUsedSize(m_baseFontSize);
     m_timeFont = { FontCascadeDescription { description } };
-    m_timeFont->update(nullptr);
+    protect(*m_timeFont)->update(nullptr);
 
     return *m_timeFont;
 }
@@ -121,7 +121,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::bipBopFont()
     description.setComputedSize(m_bipBopFontSize);
     description.setUsedSize(m_bipBopFontSize);
     m_bipBopFont = { FontCascadeDescription { description } };
-    m_bipBopFont->update(nullptr);
+    protect(*m_bipBopFont)->update(nullptr);
 
     return *m_bipBopFont;
 }
@@ -135,7 +135,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
     description.setComputedSize(m_statsFontSize);
     description.setUsedSize(m_statsFontSize);
     m_statsFont = { FontCascadeDescription { description } };
-    m_statsFont->update(nullptr);
+    protect(*m_statsFont)->update(nullptr);
 
     return *m_statsFont;
 }
@@ -611,30 +611,30 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextDrawingMode::Fill);
     auto string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
-    context.drawText(drawingState.timeFont(), TextRun(StringView(string)), timeLocation);
+    context.drawText(protect(drawingState.timeFont()), TextRun { string }, timeLocation);
 
     string = makeString(pad('0', 6, m_frameNumber++));
     timeLocation.move(0, drawingState.baseFontSize());
-    context.drawText(drawingState.timeFont(), TextRun(StringView(string)), timeLocation);
+    context.drawText(protect(drawingState.timeFont()), TextRun { string }, timeLocation);
 
     FloatPoint statsLocation(captureSize.width() * .45, captureSize.height() * .75);
     string = makeString("Requested frame rate: "_s, FormattedNumber::fixedWidth(frameRate(), 1), " fps"_s);
-    context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
+    context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
 
     statsLocation.move(0, drawingState.statsFontSize());
     string = makeString("Observed frame rate: "_s, FormattedNumber::fixedWidth(observedFrameRate(), 1), " fps"_s);
-    context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
+    context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
 
     auto size = this->size();
     statsLocation.move(0, drawingState.statsFontSize());
     string = makeString("Size: "_s, size.width(), " x "_s, size.height());
-    context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
+    context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
 
     String deviceString;
     if (mockCamera()) {
         statsLocation.move(0, drawingState.statsFontSize());
         string = makeString("Preset size: "_s, captureSize.width(), " x "_s, captureSize.height());
-        context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
+        context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
 
         ASCIILiteral camera;
         switch (facingMode()) {
@@ -665,18 +665,18 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         deviceString = "Unknown capture"_s;
 
     statsLocation.move(0, drawingState.statsFontSize());
-    context.drawText(drawingState.statsFont(), TextRun(string), statsLocation);
+    context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
 
     FloatPoint bipBopLocation(captureSize.width() * .6, captureSize.height() * .6);
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
         context.setFillColor(Color::cyan);
         String bip("Bip"_s);
-        context.drawText(drawingState.bipBopFont(), TextRun(StringView(bip)), bipBopLocation);
+        context.drawText(protect(drawingState.bipBopFont()), TextRun { bip }, bipBopLocation);
     } else if (frameMod > 30 && frameMod <= 45) {
         context.setFillColor(Color::yellow);
         String bop("Bop"_s);
-        context.drawText(drawingState.bipBopFont(), TextRun(StringView(bop)), bipBopLocation);
+        context.drawText(protect(drawingState.bipBopFont()), TextRun { bop }, bipBopLocation);
     }
 }
 
@@ -757,7 +757,7 @@ ImageBuffer* MockRealtimeVideoSource::imageBufferInternal()
     if (!m_imageBuffer)
         return nullptr;
 
-    m_imageBuffer->context().setStrokeThickness(1);
+    protect(m_imageBuffer)->context().setStrokeThickness(1);
 
     return m_imageBuffer.get();
 }

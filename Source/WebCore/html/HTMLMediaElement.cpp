@@ -947,7 +947,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->screenPropertiesChanged(displayId);
     });
-    document.addScreenPropertiesChangedObserver(*m_screenPropertiesChangedObserver);
+    document.addScreenPropertiesChangedObserver(*protect(m_screenPropertiesChangedObserver));
 }
 
 void HTMLMediaElement::unregisterWithDocument(Document& document)
@@ -6296,7 +6296,7 @@ void HTMLMediaElement::handlePlaybackPositionChanged()
     bool canReachEnd = true;
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
-        canReachEnd = m_mediaSource->isEnded();
+        canReachEnd = protect(m_mediaSource)->isEnded();
 #endif
 
     // When the current playback position reaches the end of the media resource then the user agent must follow these steps:
@@ -6765,7 +6765,7 @@ bool HTMLMediaElement::couldPlayIfEnoughData() const
         return false;
 
     RefPtr manager = sessionManager();
-    if (!canProduceAudio() || (manager && manager->hasActiveAudioSession(mediaSession())))
+    if (!canProduceAudio() || (manager && manager->hasActiveAudioSession(protect(mediaSession()))))
         return true;
 
     Ref mediaSession = this->mediaSession();
@@ -7928,11 +7928,11 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         auto fullscreenCheckType = m_ignoreFullscreenPermissionsPolicy ? DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement : DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement;
         m_ignoreFullscreenPermissionsPolicy = false;
         protect(protect(document())->fullscreen())->requestFullscreen(*this, fullscreenCheckType, [weakThis = WeakPtr { *this }](ExceptionOr<void> result) {
-            auto* rawThis = weakThis.get();
-            if (!rawThis || !result.hasException())
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !result.hasException())
                 return;
-            rawThis->setChangingVideoFullscreenMode(false);
-            rawThis->m_waitingToEnterFullscreen = false;
+            protectedThis->setChangingVideoFullscreenMode(false);
+            protectedThis->m_waitingToEnterFullscreen = false;
         }, mode);
         return;
     }
@@ -9765,7 +9765,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
         }
 #endif
 #if ENABLE(MEDIA_STREAM)
-        if (protect(document())->quirks().shouldEnableCameraBackgroundPlayback() && mediaState().containsAny(MediaProducerMediaState::IsPlayingVideo) && m_mediaStreamSrcObject && m_mediaStreamSrcObject->hasMatchingTrack(isCameraTrack)) {
+        if (protect(document())->quirks().shouldEnableCameraBackgroundPlayback() && mediaState().containsAny(MediaProducerMediaState::IsPlayingVideo) && m_mediaStreamSrcObject && protect(m_mediaStreamSrcObject)->hasMatchingTrack(isCameraTrack)) {
             INFO_LOG(LOGIDENTIFIER, "returning true because playing a camera MediaStreamTrack");
             return true;
         }

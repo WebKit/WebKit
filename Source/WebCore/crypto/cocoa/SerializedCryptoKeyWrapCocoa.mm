@@ -58,10 +58,10 @@ namespace WebCore {
 
 const NSUInteger currentSerializationVersion = 1;
 
-const NSString* versionKey = @"version";
-const NSString* wrappedKEKKey = @"wrappedKEK";
-const NSString* encryptedKeyKey = @"encryptedKey";
-const NSString* tagKey = @"tag";
+static NSString * const versionKey = @"version";
+static NSString * const wrappedKEKKey = @"wrappedKEK";
+static NSString * const encryptedKeyKey = @"encryptedKey";
+static NSString * const tagKey = @"tag";
 
 constexpr size_t masterKeySizeInBytes = 16;
 constexpr size_t kekSizeInBytes = 16;
@@ -118,7 +118,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CFArrayRef> acls = adoptCF(SecAccessCopyMatchingACLList(accessRef, kSecACLAuthorizationExportClear));
 ALLOW_DEPRECATED_DECLARATIONS_END
-    SecACLRef acl = checked_cf_cast<SecACLRef>(CFArrayGetValueAtIndex(acls.get(), 0));
+    RetainPtr<SecACLRef> acl = checked_cf_cast<SecACLRef>(CFArrayGetValueAtIndex(acls.get(), 0));
 
     SecTrustedApplicationRef trustedAppRef;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -142,7 +142,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto base64EncodedMasterKeyData = base64EncodeToVector(masterKeyData);
 
     // Cannot use kSecClassKey because of <rdar://problem/16068207>.
-    NSDictionary *attributes = @{
+    RetainPtr<NSDictionary> attributes = @{
         (id)kSecClass : (id)kSecClassGenericPassword,
         (id)kSecAttrSynchronizable : @NO,
 #if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
@@ -154,7 +154,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         (id)kSecValueData : toNSData(base64EncodedMasterKeyData).autorelease(),
     };
 
-    status = SecItemAdd((CFDictionaryRef)attributes, nullptr);
+    status = SecItemAdd((CFDictionaryRef)attributes.get(), nullptr);
     if (status) {
         WTFLogAlways("Cannot store WebCrypto master key, error %d", (int)status);
         return std::nullopt;
@@ -251,7 +251,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return false;
     RELEASE_ASSERT(tagLength == expectedTagLengthAES);
 
-    auto dictionary = @{
+    RetainPtr dictionary = @{
         versionKey: [NSNumber numberWithUnsignedInteger:currentSerializationVersion],
         wrappedKEKKey: WTF::toNSData(wrappedKEK).autorelease(),
         encryptedKeyKey: WTF::toNSData(encryptedKey).autorelease(),
@@ -278,7 +278,7 @@ static std::optional<std::array<uint8_t, size>> createArrayFromData(NSData * dat
 
 std::optional<struct WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint8_t>& wrappedKey)
 {
-    NSDictionary* dictionary = [NSPropertyListSerialization propertyListWithData:toNSDataNoCopy(wrappedKey.span(), FreeWhenDone::No).get() options:0 format:nullptr error:nullptr];
+    RetainPtr<NSDictionary> dictionary = [NSPropertyListSerialization propertyListWithData:toNSDataNoCopy(wrappedKey.span(), FreeWhenDone::No).get() options:0 format:nullptr error:nullptr];
     if (!dictionary)
         return std::nullopt;
 

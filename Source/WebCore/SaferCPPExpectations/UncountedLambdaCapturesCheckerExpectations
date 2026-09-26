@@ -6,7 +6,6 @@ css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 page/IntelligenceTextEffectsSupport.cpp
-page/writing-tools/WritingToolsController.mm
 [ iOS ] platform/PreviewConverter.cpp
 platform/ScrollableArea.cpp
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm

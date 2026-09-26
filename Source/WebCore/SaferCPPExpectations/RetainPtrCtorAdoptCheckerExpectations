@@ -11,5 +11,4 @@ platform/graphics/cg/PatternCG.cpp
 [ iOS ] platform/ios/WebCoreMotionManager.mm
 [ iOS ] platform/ios/wak/WKView.mm
 [ iOS ] platform/ios/wak/WebCoreThread.mm
-platform/mediastream/cocoa/AVVideoCaptureSource.mm
 platform/network/cf/DNSResolveQueueCFNet.cpp

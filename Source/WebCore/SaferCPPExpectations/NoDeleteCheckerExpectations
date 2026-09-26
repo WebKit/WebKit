@@ -15,4 +15,3 @@ rendering/StyledMarkedText.cpp
 rendering/TextDecorationPainter.cpp
 style/values/primitives/StyleValueHandleMap.h
 svg/animation/SMILTimeContainer.cpp
-testing/Internals.cpp

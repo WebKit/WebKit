@@ -111,35 +111,35 @@ bool ResourceMonitorPersistence::openDatabase(String&& directoryPath)
 
     const auto path = databasePath(directoryPath);
 
-    if (!m_sqliteDB->open(path, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked))
+    if (!protect(*m_sqliteDB)->open(path, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked))
         return reportErrorAndCloseDatabase("open database"_s);
 
-    if (!m_sqliteDB->tableExists(recordTableName)) {
-        if (!m_sqliteDB->executeCommand(createRecordTableSQL))
+    if (!protect(*m_sqliteDB)->tableExists(recordTableName)) {
+        if (!protect(*m_sqliteDB)->executeCommand(createRecordTableSQL))
             return reportErrorAndCloseDatabase("create `record` table"_s);
 
         RESOURCEMONITOR_RELEASE_LOG("openDatabase: Table %" PUBLIC_LOG_STRING " created", recordTableName.characters());
     }
 
-    if (!m_sqliteDB->indexExists(hostIndexName)) {
-        if (!m_sqliteDB->executeCommand(createHostIndexSQL))
+    if (!protect(*m_sqliteDB)->indexExists(hostIndexName)) {
+        if (!protect(*m_sqliteDB)->executeCommand(createHostIndexSQL))
             return reportErrorAndCloseDatabase("create `host` index on `record` table"_s);
 
         RESOURCEMONITOR_RELEASE_LOG("openDatabase: Index %" PUBLIC_LOG_STRING " created", hostIndexName.characters());
     }
 
-    if (!m_sqliteDB->indexExists(accessIndexName)) {
-        if (!m_sqliteDB->executeCommand(createAccessIndexSQL))
+    if (!protect(*m_sqliteDB)->indexExists(accessIndexName)) {
+        if (!protect(*m_sqliteDB)->executeCommand(createAccessIndexSQL))
             return reportErrorAndCloseDatabase("create `access` index on `record` table"_s);
 
         RESOURCEMONITOR_RELEASE_LOG("openDatabase: Index %" PUBLIC_LOG_STRING " created", accessIndexName.characters());
     }
 
-    m_insertSQLStatement = m_sqliteDB->prepareStatement(insertRecordSQL);
+    m_insertSQLStatement = protect(*m_sqliteDB)->prepareStatement(insertRecordSQL);
     if (!m_insertSQLStatement)
         return reportErrorAndCloseDatabase("prepare insert statement"_s);
 
-    m_sqliteDB->turnOnIncrementalAutoVacuum();
+    protect(*m_sqliteDB)->turnOnIncrementalAutoVacuum();
 
     return true;
 }
@@ -148,7 +148,7 @@ void ResourceMonitorPersistence::deleteAllRecords()
 {
     ASSERT(!isMainThread());
 
-    auto deleteStatement = m_sqliteDB->prepareStatement(deleteAllRecordsSQL);
+    auto deleteStatement = protect(*m_sqliteDB)->prepareStatement(deleteAllRecordsSQL);
     if (!deleteStatement || !deleteStatement->executeCommand())
         return reportSQLError("deleteAllRecords"_s, "delete all records"_s);
 
@@ -161,7 +161,7 @@ void ResourceMonitorPersistence::deleteExpiredRecords(ContinuousApproximateTime 
 
     auto expirationTime = continuousApproximateTimeToDouble(now - duration);
 
-    auto deleteStatement = m_sqliteDB->prepareStatement(deleteExpiredRecordsSQL);
+    auto deleteStatement = protect(*m_sqliteDB)->prepareStatement(deleteExpiredRecordsSQL);
     if (!deleteStatement || deleteStatement->bindDouble(1, expirationTime) != SQLITE_OK || !deleteStatement->executeCommand())
         return reportSQLError("deleteExpiredRecords"_s, "delete expired records"_s);
 
@@ -172,7 +172,7 @@ Vector<ResourceMonitorPersistence::Record> ResourceMonitorPersistence::importRec
 {
     ASSERT(!isMainThread());
 
-    auto selectStatement = m_sqliteDB->prepareStatement(selectAllRecordsSQL);
+    auto selectStatement = protect(*m_sqliteDB)->prepareStatement(selectAllRecordsSQL);
     if (!selectStatement) {
         reportSQLError("importRecords"_s, "fetch records of host and access"_s);
         return { };
@@ -196,10 +196,11 @@ void ResourceMonitorPersistence::recordAccess(const String& host, ContinuousAppr
     if (!m_insertSQLStatement)
         return;
 
-    m_insertSQLStatement->reset();
+    CheckedRef insertStatement = *m_insertSQLStatement;
+    insertStatement->reset();
 
     double access = continuousApproximateTimeToDouble(time);
-    if (m_insertSQLStatement->bindText(1, host) != SQLITE_OK || m_insertSQLStatement->bindDouble(2, access) != SQLITE_OK || !m_insertSQLStatement->executeCommand())
+    if (insertStatement->bindText(1, host) != SQLITE_OK || insertStatement->bindDouble(2, access) != SQLITE_OK || !insertStatement->executeCommand())
         RESOURCEMONITOR_RELEASE_LOG("recordAccess: Failed to insert record (%d) - %" PUBLIC_LOG_STRING, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
 }
 
@@ -211,7 +212,7 @@ void ResourceMonitorPersistence::closeDatabase()
 
     if (isDatabaseOpen()) {
         RESOURCEMONITOR_RELEASE_LOG("closeDatabase: Closing database");
-        m_sqliteDB->close();
+        protect(*m_sqliteDB)->close();
     }
 
     m_sqliteDB = nullptr;

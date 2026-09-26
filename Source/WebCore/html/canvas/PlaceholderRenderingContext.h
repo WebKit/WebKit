@@ -37,7 +37,7 @@ namespace WebCore {
 class PlaceholderRenderingContext;
 
 // Thread-safe interface to submit frames from worker to the placeholder rendering context.
-class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
+class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContextSource);
     WTF_MAKE_NONCOPYABLE(PlaceholderRenderingContextSource);
 public:

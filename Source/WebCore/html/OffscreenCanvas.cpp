@@ -172,7 +172,7 @@ void OffscreenCanvas::setSizeForControllingContext(IntSize newSize)
 void OffscreenCanvas::didUpdateSizeProperties(bool sizeChanged)
 {
     if (m_context)
-        m_context->didUpdateCanvasSizeProperties(sizeChanged);
+        protect(m_context.get())->didUpdateCanvasSizeProperties(sizeChanged);
     notifyObserversCanvasResized();
     scheduleCommitToPlaceholderCanvas();
 }
@@ -223,7 +223,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
                 return result.releaseException();
             if (!m_context) {
                 m_context = ImageBitmapRenderingContext::create(*this, settings.releaseReturnValue());
-                downcast<ImageBitmapRenderingContext>(m_context.get())->transferFromImageBitmap(nullptr);
+                protect(downcast<ImageBitmapRenderingContext>(m_context.get()))->transferFromImageBitmap(nullptr);
             }
         }
         if (RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(m_context.get()))
@@ -293,7 +293,7 @@ ExceptionOr<Ref<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
     if (size().isEmpty())
         return Exception { ExceptionCode::InvalidStateError };
     bool bitmapOriginClean = originClean();
-    RefPtr buffer = m_context->transferToImageBuffer();
+    RefPtr buffer = protect(m_context.get())->transferToImageBuffer();
     if (!buffer)
         return Exception { ExceptionCode::UnknownError }; // UnknownError is used for DOM out-of-memory.
     return ImageBitmap::create(buffer.releaseNonNull(), bitmapOriginClean);
@@ -385,14 +385,15 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
 {
     if (!m_placeholderSource)
         return;
-    if  (!m_context)
+    RefPtr context = m_context.get();
+    if (!context)
         return;
-    if (m_context->compositingResultsNeedUpdating())
-        m_context->prepareForDisplay();
-    RefPtr imageBuffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
+    if (context->compositingResultsNeedUpdating())
+        context->prepareForDisplay();
+    RefPtr imageBuffer = context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     if (!imageBuffer)
         return;
-    protect(m_placeholderSource)->setPlaceholderBuffer(*imageBuffer, m_context->canvasBase().originClean(), m_context->isOpaque());
+    protect(m_placeholderSource)->setPlaceholderBuffer(*imageBuffer, protect(context->canvasBase())->originClean(), context->isOpaque());
 }
 
 void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()

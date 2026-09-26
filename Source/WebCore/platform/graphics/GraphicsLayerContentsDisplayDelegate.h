@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if !USE(CA) && !USE(COORDINATED_GRAPHICS)
 #include <WebCore/PlatformLayer.h>
@@ -52,7 +52,7 @@ enum class GraphicsLayerCompositingCoordinatesOrientation : uint8_t;
 // Platform specific interface for attaching contents to GraphicsLayer.
 // Responsible for creating compositor resources to show the particular contents
 // in the platform specific GraphicsLayer.
-class WEBCORE_EXPORT GraphicsLayerContentsDisplayDelegate : public RefCounted<GraphicsLayerContentsDisplayDelegate> {
+class WEBCORE_EXPORT GraphicsLayerContentsDisplayDelegate : public ThreadSafeRefCounted<GraphicsLayerContentsDisplayDelegate> {
 public:
     virtual ~GraphicsLayerContentsDisplayDelegate();
 

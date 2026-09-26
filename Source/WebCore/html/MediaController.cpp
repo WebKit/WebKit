@@ -132,8 +132,8 @@ Ref<TimeRanges> MediaController::buffered() const
     // the intersection of the ranges of the media resources of the mediagroup elements that the
     // user agent has buffered, at the time the attribute is evaluated.
     Ref<TimeRanges> bufferedRanges = TimeRanges::create(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
-    forEachElement([&] (auto element) {
-        bufferedRanges->intersectWith(protect(element)->buffered());
+    forEachElement([&] (Ref<HTMLMediaElement>&& element) {
+        bufferedRanges->intersectWith(element->buffered());
     });
     return bufferedRanges;
 }
@@ -147,8 +147,8 @@ Ref<TimeRanges> MediaController::seekable() const
     // the intersection of the ranges of the media resources of the mediagroup elements that the
     // user agent is able to seek to, at the time the attribute is evaluated.
     Ref<TimeRanges> seekableRanges = TimeRanges::create(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
-    forEachElement([&] (auto element) {
-        seekableRanges->intersectWith(protect(element)->seekable());
+    forEachElement([&] (Ref<HTMLMediaElement>&& element) {
+        seekableRanges->intersectWith(element->seekable());
     });
     return seekableRanges;
 }
@@ -159,8 +159,8 @@ Ref<TimeRanges> MediaController::played()
     // the union of the ranges of the media resources of the mediagroup elements that the
     // user agent has so far rendered, at the time the attribute is evaluated.
     Ref<TimeRanges> playedRanges = TimeRanges::create();
-    forEachElement([&] (auto element) {
-        playedRanges->unionWith(protect(element)->played());
+    forEachElement([&] (Ref<HTMLMediaElement>&& element) {
+        playedRanges->unionWith(element->played());
     });
     return playedRanges;
 }

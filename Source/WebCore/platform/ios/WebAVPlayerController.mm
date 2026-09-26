@@ -186,7 +186,7 @@ static Class createWebAVPlayerControllerForwarderClassSingleton()
 
     Class superClass = PAL::getAVPlayerControllerClassSingleton();
     Class implClass = [WebAVPlayerControllerForwarder class];
-    Class newClass = objc_allocateClassPair(superClass, "WebAVPlayerControllerForwarder_AVKitCompatible", 0);
+    RetainPtr<Class> newClass = objc_allocateClassPair(superClass, "WebAVPlayerControllerForwarder_AVKitCompatible", 0);
 
     // Add ivar BEFORE registering the class pair (required by ObjC runtime).
     class_addIvar(newClass, "_playerController", sizeof(WebAVPlayerController *), log2(sizeof(WebAVPlayerController *)), @encode(WebAVPlayerController *));
@@ -215,7 +215,7 @@ static Class createWebAVPlayerControllerForwarderClassSingleton()
         class_replaceMethod(newClass, selector, method_getImplementation(method), method_getTypeEncoding(method));
     }
 
-    return newClass;
+    return newClass.autorelease();
 }
 
 namespace WebCore {
@@ -250,6 +250,15 @@ Class webAVPlayerControllerClassSingleton()
     RetainPtr<WebAVMediaSelectionOption> _currentAudioMediaSelectionOption;
     RetainPtr<WebAVMediaSelectionOption> _currentLegibleMediaSelectionOption;
     RetainPtr<AVPlayer> _player;
+    RetainPtr<AVPlayerController> _playerControllerProxy;
+    RetainPtr<NSArray> _loadedTimeRanges;
+    RetainPtr<NSArray> _seekableTimeRanges;
+    RetainPtr<AVValueTiming> _timing;
+    RetainPtr<NSArray> _audioMediaSelectionOptions;
+    RetainPtr<NSArray> _legibleMediaSelectionOptions;
+    RetainPtr<NSString> _externalPlaybackAirPlayDeviceLocalizedName;
+    RetainPtr<AVValueTiming> _minTiming;
+    RetainPtr<AVValueTiming> _maxTiming;
 }
 
 - (instancetype)init
@@ -287,16 +296,97 @@ Class webAVPlayerControllerClassSingleton()
     [self removeObserver:self forKeyPath:@"hasLiveStreamingContent" context:WebAVPlayerControllerHasLiveStreamingContentObserverContext];
     [self removeObserver:self forKeyPath:@"playingOnSecondScreen" context:WebAVPlayerControllerIsPlayingOnSecondScreenObserverContext];
 
-    [_playerControllerProxy release];
-    [_loadedTimeRanges release];
-    [_seekableTimeRanges release];
-    [_timing release];
-    [_audioMediaSelectionOptions release];
-    [_legibleMediaSelectionOptions release];
-    [_externalPlaybackAirPlayDeviceLocalizedName release];
-    [_minTiming release];
-    [_maxTiming release];
     [super dealloc];
+}
+
+- (AVPlayerController *)playerControllerProxy
+{
+    return _playerControllerProxy.get();
+}
+
+- (void)setPlayerControllerProxy:(AVPlayerController *)playerControllerProxy
+{
+    _playerControllerProxy = playerControllerProxy;
+}
+
+- (NSArray *)loadedTimeRanges
+{
+    return _loadedTimeRanges.get();
+}
+
+- (void)setLoadedTimeRanges:(NSArray *)loadedTimeRanges
+{
+    _loadedTimeRanges = loadedTimeRanges;
+}
+
+- (NSArray *)seekableTimeRanges
+{
+    return _seekableTimeRanges.get();
+}
+
+- (void)setSeekableTimeRanges:(NSArray *)seekableTimeRanges
+{
+    _seekableTimeRanges = seekableTimeRanges;
+}
+
+- (AVValueTiming *)timing
+{
+    return _timing.get();
+}
+
+- (void)setTiming:(AVValueTiming *)timing
+{
+    _timing = timing;
+}
+
+- (NSArray *)audioMediaSelectionOptions
+{
+    return _audioMediaSelectionOptions.get();
+}
+
+- (void)setAudioMediaSelectionOptions:(NSArray *)audioMediaSelectionOptions
+{
+    _audioMediaSelectionOptions = audioMediaSelectionOptions;
+}
+
+- (NSArray *)legibleMediaSelectionOptions
+{
+    return _legibleMediaSelectionOptions.get();
+}
+
+- (void)setLegibleMediaSelectionOptions:(NSArray *)legibleMediaSelectionOptions
+{
+    _legibleMediaSelectionOptions = legibleMediaSelectionOptions;
+}
+
+- (NSString *)externalPlaybackAirPlayDeviceLocalizedName
+{
+    return _externalPlaybackAirPlayDeviceLocalizedName.get();
+}
+
+- (void)setExternalPlaybackAirPlayDeviceLocalizedName:(NSString *)externalPlaybackAirPlayDeviceLocalizedName
+{
+    _externalPlaybackAirPlayDeviceLocalizedName = externalPlaybackAirPlayDeviceLocalizedName;
+}
+
+- (AVValueTiming *)minTiming
+{
+    return _minTiming.get();
+}
+
+- (void)setMinTiming:(AVValueTiming *)minTiming
+{
+    _minTiming = minTiming;
+}
+
+- (AVValueTiming *)maxTiming
+{
+    return _maxTiming.get();
+}
+
+- (void)setMaxTiming:(AVValueTiming *)maxTiming
+{
+    _maxTiming = maxTiming;
 }
 
 - (AVPlayer *)player
@@ -318,27 +408,28 @@ Class webAVPlayerControllerClassSingleton()
 - (void)play:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->play();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->play();
 }
 
 - (void)pause:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->pause();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->pause();
 }
 
 - (void)togglePlayback:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
+    CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate;
+    if (!delegate)
         return;
 
-    if (self.delegate->isPlaying())
-        self.delegate->pause();
+    if (delegate->isPlaying())
+        delegate->pause();
     else
-        self.delegate->play();
+        delegate->play();
 }
 
 - (void)togglePlaybackEvenWhenInBackground:(id)sender
@@ -353,12 +444,13 @@ Class webAVPlayerControllerClassSingleton()
 
 - (void)setPlaying:(BOOL)playing
 {
-    if (!self.delegate)
+    CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate;
+    if (!delegate)
         return;
     if (playing)
-        self.delegate->play();
+        delegate->play();
     else
-        self.delegate->pause();
+        delegate->pause();
 }
 
 - (WebCore::PlaybackSessionModel*)delegate
@@ -400,8 +492,8 @@ Class webAVPlayerControllerClassSingleton()
     _defaultPlaybackRate = defaultPlaybackRate;
     [self didChangeValueForKey:@"defaultPlaybackRate"];
 
-    if (!fromJavaScript && self.delegate && self.delegate->defaultPlaybackRate() != _defaultPlaybackRate)
-        self.delegate->setDefaultPlaybackRate(_defaultPlaybackRate);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate; !fromJavaScript && delegate && delegate->defaultPlaybackRate() != _defaultPlaybackRate)
+        delegate->setDefaultPlaybackRate(_defaultPlaybackRate);
 
     if ([self isPlaying])
         [self setRate:_defaultPlaybackRate fromJavaScript:fromJavaScript];
@@ -440,8 +532,8 @@ Class webAVPlayerControllerClassSingleton()
     // `defaultPlaybackRate` in these cases when communicating with AVKit.
     [self setDefaultPlaybackRate:_rate fromJavaScript:fromJavaScript];
 
-    if (!fromJavaScript && self.delegate && self.delegate->playbackRate() != _rate)
-        self.delegate->setPlaybackRate(_rate);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate; !fromJavaScript && delegate && delegate->playbackRate() != _rate)
+        delegate->setPlaybackRate(_rate);
 }
 
 + (NSSet *)keyPathsForValuesAffectingPlaying
@@ -453,30 +545,30 @@ Class webAVPlayerControllerClassSingleton()
 {
     UNUSED_PARAM(sender);
     _isScrubbing = YES;
-    if (self.delegate)
-        self.delegate->beginScrubbing();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->beginScrubbing();
 }
 
 - (void)endScrubbing:(id)sender
 {
     UNUSED_PARAM(sender);
     _isScrubbing = NO;
-    if (self.delegate)
-        self.delegate->endScrubbing();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->endScrubbing();
 }
 
 - (void)seekToTime:(NSTimeInterval)time
 {
     _seekToTime = time;
-    if (self.delegate)
-        self.delegate->seekToTime(time);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->seekToTime(time);
 }
 
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)before toleranceAfter:(NSTimeInterval)after
 {
     _seekToTime = time;
-    if (self.delegate)
-        self.delegate->seekToTime(time, before, after);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->seekToTime(time, before, after);
 }
 
 - (void)seekByTimeInterval:(NSTimeInterval)interval
@@ -616,29 +708,29 @@ Class webAVPlayerControllerClassSingleton()
 - (void)beginScanningForward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->beginScanningForward();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->beginScanningForward();
 }
 
 - (void)endScanningForward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->endScanning();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->endScanning();
 }
 
 - (void)beginScanningBackward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->beginScanningBackward();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->beginScanningBackward();
 }
 
 - (void)endScanningBackward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->endScanning();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->endScanning();
 }
 
 - (BOOL)canSeekToBeginning
@@ -661,8 +753,8 @@ Class webAVPlayerControllerClassSingleton()
 - (void)seekToBeginning:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->seekToTime(-INFINITY);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->seekToTime(-INFINITY);
 }
 
 - (void)seekChapterBackward:(id)sender
@@ -690,8 +782,8 @@ Class webAVPlayerControllerClassSingleton()
 - (void)seekToEnd:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->seekToTime(INFINITY);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->seekToTime(INFINITY);
 }
 
 - (void)seekChapterForward:(id)sender
@@ -752,7 +844,8 @@ Class webAVPlayerControllerClassSingleton()
 
     _currentAudioMediaSelectionOption = option;
 
-    if (!self.delegate)
+    CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate;
+    if (!delegate)
         return;
 
     NSInteger index = NSNotFound;
@@ -763,7 +856,7 @@ Class webAVPlayerControllerClassSingleton()
     if (index == NSNotFound)
         return;
 
-    self.delegate->selectAudioMediaOption(index);
+    delegate->selectAudioMediaOption(index);
 }
 
 - (WebAVMediaSelectionOption *)currentLegibleMediaSelectionOption
@@ -778,8 +871,8 @@ Class webAVPlayerControllerClassSingleton()
 
     _currentLegibleMediaSelectionOption = option;
 
-    if (self.delegate && option)
-        self.delegate->selectLegibleMediaOption(option.tag);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate; delegate && option)
+        delegate->selectLegibleMediaOption(option.tag);
 }
 
 - (BOOL)isPlayingOnExternalScreen
@@ -827,26 +920,28 @@ Class webAVPlayerControllerClassSingleton()
         return;
     _muted = muted;
 
-    if (self.delegate)
-        self.delegate->setMuted(muted);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->setMuted(muted);
 }
 
 - (void)toggleMuted:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->toggleMuted();
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->toggleMuted();
 }
 
 - (double)volume
 {
-    return self.delegate ? self.delegate->volume() : 0;
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        return delegate->volume();
+    return 0;
 }
 
 - (void)setVolume:(double)volume
 {
-    if (self.delegate)
-        self.delegate->setVolume(volume);
+    if (CheckedPtr<WebCore::PlaybackSessionModel> delegate = self.delegate)
+        delegate->setVolume(volume);
 }
 
 - (void)volumeChanged:(double)volume

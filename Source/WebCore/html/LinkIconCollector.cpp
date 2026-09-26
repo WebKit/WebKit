@@ -98,8 +98,9 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
         // part of the size, "60x70" becomes "60". This is for compatibility reasons
         // and is probably good enough for now.
         std::optional<unsigned> iconSize;
-        if (linkElement->sizes().length())
-            iconSize = parseIntegerAllowingTrailingJunk<unsigned>(linkElement->sizes().item(0));
+        Ref sizes = linkElement->sizes();
+        if (sizes->length())
+            iconSize = parseIntegerAllowingTrailingJunk<unsigned>(sizes->item(0));
 
         Vector<std::pair<String, String>> attributes;
         if (protect(linkElement)->hasAttributes()) {

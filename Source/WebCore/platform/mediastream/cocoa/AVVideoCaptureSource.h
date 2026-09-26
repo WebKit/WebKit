@@ -63,7 +63,7 @@ enum class VideoFrameRotation : uint16_t;
 class AVVideoCaptureSource : public RealtimeVideoCaptureSource {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
-    static NSMutableArray* cameraCaptureDeviceTypes();
+    static RetainPtr<NSArray> cameraCaptureDeviceTypes();
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
     WEBCORE_EXPORT static void NODELETE setUseAVCaptureDeviceRotationCoordinatorAPI(bool);
@@ -72,7 +72,7 @@ public:
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
     void deviceDisconnected(RetainPtr<NSNotification>);
 
-    AVCaptureSession* session() const;
+    RetainPtr<AVCaptureSession> session() const;
 
     void captureSessionIsRunningDidChange(bool);
     void captureSessionRuntimeError(RetainPtr<NSError>);
@@ -119,7 +119,7 @@ private:
     void setSessionSizeFrameRateAndZoom();
     bool setPreset(NSString*);
     void computeVideoFrameRotation();
-    AVFrameRateRange* frameDurationForFrameRate(double);
+    RetainPtr<AVFrameRateRange> frameDurationForFrameRate(double);
     void stopSession();
 
     // OrientationNotifier::Observer API
@@ -132,7 +132,7 @@ private:
 
     IntSize sizeForPreset(NSString*);
 
-    AVCaptureDevice* device() const;
+    RetainPtr<AVCaptureDevice> device() const;
 
     IntDegrees sensorOrientationFromVideoOutput();
 

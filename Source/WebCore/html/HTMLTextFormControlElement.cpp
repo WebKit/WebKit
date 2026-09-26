@@ -127,7 +127,7 @@ static unsigned innerTextLengthFrom(TextControlInnerTextElement& innerText)
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document)
     : HTMLFormControlElement(tagName, document)
-    , m_cachedSelectionDirection(document.frame() && document.frame()->editor().behavior().shouldConsiderSelectionAsDirectional() ? SelectionHasForwardDirection : SelectionHasNoDirection)
+    , m_cachedSelectionDirection(document.frame() && protect(document.frame())->editor().behavior().shouldConsiderSelectionAsDirectional() ? SelectionHasForwardDirection : SelectionHasNoDirection)
 {
 }
 
@@ -435,7 +435,7 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
             break;
         }
         SetForScope isInsideSetSelectionRange(m_isInsideSetSelectionRange, true);
-        frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, options, intent);
+        protect(frame->selection())->moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, options, intent);
     }
 
     return m_cachedSelectionStart != previousSelectionStart || m_cachedSelectionEnd != previousSelectionEnd || m_cachedSelectionDirection != previousSelectionDirection;
@@ -675,9 +675,9 @@ void HTMLTextFormControlElement::effectiveSpellcheckAttributeChanged(bool isSpel
 
     auto selection = VisibleSelection::selectionFromContentsOfNode(innerTextElement.get());
     if (isSpellcheckEnabled)
-        protect(document())->editor().markMisspellingsAndBadGrammar(selection);
+        protect(protect(document())->editor())->markMisspellingsAndBadGrammar(selection);
     else
-        protect(document())->editor().clearMisspellingsAndBadGrammar(selection);
+        protect(protect(document())->editor())->clearMisspellingsAndBadGrammar(selection);
 }
 
 void HTMLTextFormControlElement::disabledStateChanged()

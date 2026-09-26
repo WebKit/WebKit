@@ -173,6 +173,11 @@ Boolean _LSApplicationCheckInProxy(LSSessionID, const audit_token_t, CFDictionar
 
 WTF_EXTERN_C_END
 
+#ifdef __cplusplus
+#include <wtf/cf/CFTypeTraits.h>
+WTF_DECLARE_CF_TYPE_TRAIT_WITHOUT_TYPE_ID(LSASN);
+#endif
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

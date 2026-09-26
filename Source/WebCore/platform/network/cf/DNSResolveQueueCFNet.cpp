@@ -70,9 +70,9 @@ void DNSResolveQueueCFNet::updateIsUsingProxy()
 
     CFIndex httpProxyCount = httpProxyArray ? CFArrayGetCount(httpProxyArray) : 0;
     CFIndex httpsProxyCount = httpsProxyArray ? CFArrayGetCount(httpsProxyArray) : 0;
-    if (httpProxyCount == 1 && CFEqual(CFDictionaryGetValue(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpProxyArray.get(), 0)), kCFProxyTypeKey), kCFProxyTypeNone))
+    if (httpProxyCount == 1 && CFEqual(CFDictionaryGetValue(protect(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpProxyArray.get(), 0))), kCFProxyTypeKey), kCFProxyTypeNone))
         httpProxyCount = 0;
-    if (httpsProxyCount == 1 && CFEqual(CFDictionaryGetValue(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpsProxyArray.get(), 0)), kCFProxyTypeKey), kCFProxyTypeNone))
+    if (httpsProxyCount == 1 && CFEqual(CFDictionaryGetValue(protect(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpsProxyArray.get(), 0))), kCFProxyTypeKey), kCFProxyTypeNone))
         httpsProxyCount = 0;
 
     m_isUsingProxy = httpProxyCount || httpsProxyCount;
@@ -119,9 +119,9 @@ static constexpr auto timeoutForDNSResolution = 60_s;
 
 void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<CompletionHandlerWrapper>&& completionHandler)
 {
-    RetainPtr hostEndpoint = adoptCF(nw_endpoint_create_host(hostname.utf8().legacyCStringPointer(), "0"));
-    RetainPtr context = adoptCF(nw_context_create("WebKit DNS Lookup"));
-    RetainPtr parameters = adoptCF(nw_parameters_create());
+    OSObjectPtr hostEndpoint = adoptOSObject(nw_endpoint_create_host(hostname.utf8().legacyCStringPointer(), "0"));
+    OSObjectPtr context = adoptOSObject(nw_context_create("WebKit DNS Lookup"));
+    OSObjectPtr parameters = adoptOSObject(nw_parameters_create());
 
 #if USE(SOURCE_APPLICATION_AUDIT_DATA)
     if (auto auditToken = applicationAuditToken())
@@ -133,9 +133,9 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
 
     nw_context_set_privacy_level(context.get(), nw_context_privacy_level_silent);
     nw_parameters_set_context(parameters.get(), context.get());
-    RetainPtr pathEvaluator = adoptCF(nw_path_create_evaluator_for_endpoint(hostEndpoint.get(), parameters.get()));
-    RetainPtr path = adoptCF(nw_path_evaluator_copy_path(pathEvaluator.get()));
-    RetainPtr resolver = adoptCF(nw_resolver_create_with_path(path.get()));
+    OSObjectPtr pathEvaluator = adoptOSObject(nw_path_create_evaluator_for_endpoint(hostEndpoint.get(), parameters.get()));
+    OSObjectPtr path = adoptOSObject(nw_path_evaluator_copy_path(pathEvaluator.get()));
+    OSObjectPtr resolver = adoptOSObject(nw_resolver_create_with_path(path.get()));
 
     RELEASE_ASSERT_WITH_MESSAGE(isMainThread(), "Always create timer on the main thread.");
     auto timeoutTimer = makeUnique<Timer>([resolver, completionHandler]() mutable {

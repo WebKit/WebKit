@@ -173,7 +173,7 @@ void ValidationMessage::adjustBubblePosition()
         return;
     if (!m_element->renderer())
         return;
-    LayoutRect hostRect = m_element->renderer()->absoluteBoundingBoxRect();
+    LayoutRect hostRect = protect(m_element->renderer())->absoluteBoundingBoxRect();
     if (hostRect.isEmpty())
         return;
     double hostX = hostRect.x();

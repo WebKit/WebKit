@@ -138,12 +138,12 @@ static void drawPattern(void *overlayPtr, CGContextRef ctx)
 {
     WebViewVisualIdentificationOverlay *overlay = (WebViewVisualIdentificationOverlay *)overlayPtr;
 
-    auto attributes = @{
+    RetainPtr attributes = @{
         (id)kCTFontAttributeName : (id)createIdentificationFont().get(),
         (id)kCTForegroundColorFromContextAttributeName : @YES
     };
-    auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, (__bridge CFStringRef)overlay->_kind.get(), (__bridge CFDictionaryRef)attributes));
-    auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
+    RetainPtr attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, (__bridge CFStringRef)overlay->_kind.get(), (__bridge CFDictionaryRef)attributes.get()));
+    RetainPtr line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
 
     CGSize textSize = [overlay->_kind sizeWithAttributes:attributes];
 

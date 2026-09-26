@@ -340,7 +340,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray *array, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
     for (id anObject in array)
-        aList.append(convertObjcValueToValue(lexicalGlobalObject, &anObject, ObjcObjectType, rootObject));
+        aList.append(convertObjcValueToValue(lexicalGlobalObject, anObject, rootObject));
 }
 
 - (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args
@@ -413,7 +413,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
     JSObject* object = [self _imp];
     PutPropertySlot slot(object);
-    object->methodTable()->put(object, lexicalGlobalObject, Identifier::fromString(vm, String(key)), convertObjcValueToValue(lexicalGlobalObject, &value, ObjcObjectType, protect([self _rootObject])), slot);
+    object->methodTable()->put(object, lexicalGlobalObject, Identifier::fromString(vm, String(key)), convertObjcValueToValue(lexicalGlobalObject, value, protect([self _rootObject])), slot);
 
     if (scope.exception()) [[unlikely]] {
         addExceptionToConsole(lexicalGlobalObject);
@@ -542,7 +542,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    [self _imp]->methodTable()->putByIndex([self _imp], lexicalGlobalObject, index, convertObjcValueToValue(lexicalGlobalObject, &value, ObjcObjectType, protect([self _rootObject])), false);
+    [self _imp]->methodTable()->putByIndex([self _imp], lexicalGlobalObject, index, convertObjcValueToValue(lexicalGlobalObject, value, protect([self _rootObject])), false);
 
     if (scope.exception()) [[unlikely]] {
         addExceptionToConsole(lexicalGlobalObject);

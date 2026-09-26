@@ -530,7 +530,7 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (mainFrameDocument && mainFrameDocument->quirks().requiresUserGestureToPlayInFullscreen() && document->fullscreen().fullscreenElement() && state == MediaPlaybackState::Playing && element->paused()) {
+    if (mainFrameDocument && mainFrameDocument->quirks().requiresUserGestureToPlayInFullscreen() && protect(document->fullscreen())->fullscreenElement() && state == MediaPlaybackState::Playing && element->paused()) {
         auto lastPause = element->lastUserPauseTime();
         bool reboundFromRecentPause = lastPause.isFinite() && (MonotonicTime::now() - lastPause) < 500_ms;
         if (!document->processingUserGestureForMedia() || reboundFromRecentPause)
@@ -757,7 +757,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 
     RefPtr manager = sessionManager();
     bool registeredAsNowPlayingApplication = manager && manager->registeredAsNowPlayingApplication();
-    if (client().presentationType() == MediaType::Audio && purpose == PlaybackControlsPurpose::NowPlaying) {
+    if (protect(client())->presentationType() == MediaType::Audio && purpose == PlaybackControlsPurpose::NowPlaying) {
         if (!element->hasSource()
             || element->error()
             || (!isLongEnoughForMainContent() && !registeredAsNowPlayingApplication)) {
@@ -766,7 +766,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         }
     }
 
-    if (client().presentationType() == MediaType::Audio && (purpose == PlaybackControlsPurpose::ControlsManager || purpose == PlaybackControlsPurpose::MediaSession)) {
+    if (protect(client())->presentationType() == MediaType::Audio && (purpose == PlaybackControlsPurpose::ControlsManager || purpose == PlaybackControlsPurpose::MediaSession)) {
         if (!hasBehaviorRestriction(RequireUserGestureToControlControlsManager) || protect(element->document())->processingUserGestureForMedia()) {
             INFO_LOG(LOGIDENTIFIER, "returning TRUE: audio element with user gesture");
             return true;
@@ -1004,19 +1004,19 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasList
 #else
     UNUSED_PARAM(hasListeners);
     if (RefPtr element = m_element.get())
-        element->document().playbackTargetPickerClientStateDidChange(*this, element->mediaState());
+        protect(element->document())->playbackTargetPickerClientStateDidChange(*this, element->mediaState());
 #endif
 }
 
 void MediaElementSession::setPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
     m_playbackTarget = WTF::move(device);
-    client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
+    protect(client())->setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
 }
 
 void MediaElementSession::targetAvailabilityChangedTimerFired()
 {
-    client().wirelessRoutesAvailableDidChange();
+    protect(client())->wirelessRoutesAvailableDidChange();
 }
 
 void MediaElementSession::externalOutputDeviceAvailableDidChange(bool hasTargets)
@@ -1033,11 +1033,11 @@ void MediaElementSession::externalOutputDeviceAvailableDidChange(bool hasTargets
 bool MediaElementSession::isPlayingToWirelessPlaybackTarget() const
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
+    if (!m_playbackTarget || !protect(m_playbackTarget)->hasActiveRoute())
         return false;
 #endif
 
-    return client().isPlayingToWirelessPlaybackTarget();
+    return protect(client())->isPlayingToWirelessPlaybackTarget();
 }
 
 void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
@@ -1045,13 +1045,13 @@ void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
     INFO_LOG(LOGIDENTIFIER, shouldPlay);
     m_shouldPlayToPlaybackTarget = shouldPlay;
     updateClientDataBuffering();
-    client().setShouldPlayToPlaybackTarget(shouldPlay);
+    protect(client())->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
 void MediaElementSession::playbackTargetPickerWasDismissed()
 {
     INFO_LOG(LOGIDENTIFIER);
-    client().playbackTargetPickerWasDismissed();
+    protect(client())->playbackTargetPickerWasDismissed();
 }
 
 void MediaElementSession::audioSessionCategoryChanged(AudioSessionCategory category, AudioSessionMode mode, RouteSharingPolicy policy)
@@ -1170,9 +1170,10 @@ void MediaElementSession::mediaEngineUpdated()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_restrictions & WirelessVideoPlaybackDisabled)
         setWirelessVideoPlaybackDisabled(true);
+    CheckedRef client = this->client();
     if (m_playbackTarget)
-        client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
-    client().setShouldPlayToPlaybackTarget(m_shouldPlayToPlaybackTarget);
+        client->setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
+    client->setShouldPlayToPlaybackTarget(m_shouldPlayToPlaybackTarget);
 #endif
 
 }
@@ -1647,8 +1648,9 @@ void MediaElementSession::updateMediaUsageIfChanged()
             isOutsideOfFullscreen = !element->isDescendantOf(*fullscreenElement);
     }
 #endif
-    bool isAudio = client().presentationType() == MediaType::Audio;
-    bool isVideo = client().presentationType() == MediaType::Video;
+    auto presentationType = protect(client())->presentationType();
+    bool isAudio = presentationType == MediaType::Audio;
+    bool isVideo = presentationType == MediaType::Video;
     bool processingUserGesture = document->processingUserGestureForMedia();
     bool isPlaying = element->isPlaying();
 

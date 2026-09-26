@@ -79,12 +79,6 @@ html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 html/HTMLInputElement.cpp
-html/HTMLLinkElement.cpp
-html/HTMLTextFormControlElement.cpp
-html/ImageBitmap.cpp
-html/MediaElementSession.cpp
-html/ValidatedFormListedElement.cpp
-html/ValidationMessage.cpp
 html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
@@ -94,7 +88,6 @@ html/parser/HTMLScriptRunner.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp
 inspector/InspectorFrontendHost.cpp
 inspector/InspectorInstrumentation.cpp
-inspector/InspectorOverlay.cpp
 inspector/InspectorOverlayLabel.cpp
 inspector/PageDebugger.cpp
 inspector/WorkerDebugger.cpp
@@ -169,7 +162,6 @@ loader/FrameLoader.cpp
 loader/ImageLoader.cpp
 loader/ResourceLoader.cpp
 loader/ResourceMonitor.cpp
-loader/ResourceMonitorPersistence.cpp
 loader/SubframeLoader.cpp
 loader/SubresourceLoader.cpp
 loader/WorkerThreadableLoader.cpp
@@ -178,7 +170,6 @@ mathml/MathMLMathElement.cpp
 mathml/MathMLPresentationElement.cpp
 page/AutoscrollController.cpp
 [ iOS ] page/DOMTimer.cpp
-page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
 page/FocusController.cpp
@@ -200,7 +191,6 @@ page/SettingsBase.cpp
 page/SpatialNavigation.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
 [ iOS ] page/ios/FrameIOS.mm
-[ Mac ] page/mac/ServicesOverlayController.mm
 page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollAnchoringController.cpp
 [ Mac ] page/scrolling/ScrollLatchingController.cpp
@@ -208,7 +198,6 @@ page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp
 page/scrolling/ScrollingStateStickyNode.cpp
-page/writing-tools/WritingToolsController.mm
 platform/ScrollingEffectsController.cpp
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/LowPowerModeNotifier.mm
@@ -226,9 +215,7 @@ platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 platform/ios/PlaybackSessionInterfaceIOS.mm
 [ iOS ] platform/ios/TileControllerMemoryHandlerIOS.cpp
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
-platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
-platform/mock/MockRealtimeVideoSource.cpp
 platform/text/cocoa/LocalizedDateCache.mm
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AttachmentLayout.mm
@@ -440,7 +427,6 @@ svg/SVGMaskElement.cpp
 svg/SVGSVGElement.cpp
 svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
-testing/Internals.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerNotificationClient.cpp
