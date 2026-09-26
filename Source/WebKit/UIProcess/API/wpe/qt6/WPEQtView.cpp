@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2018, 2019, 2021, 2024 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
+ * Copyright (C) 2026, Savoir-faire Linux, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,12 +22,14 @@
 #include "config.h"
 #include "WPEQtView.h"
 
+#include "WPEQtInputMethodContextImpl.h"
 #include "WPEQtViewLoadRequest.h"
 #include "WPEQtViewLoadRequestPrivate.h"
 #include "WPEQtViewPrivate.h"
 #include "WPEViewQtQuick.h"
 
 #include <QQmlEngine>
+#include <QInputMethod>
 #include <QQuickWindow>
 #include <QSGSimpleTextureNode>
 
@@ -51,9 +54,15 @@ WPEQtView::WPEQtView(QQuickItem* parent)
 {
     connect(this, &QQuickItem::windowChanged, this, &WPEQtView::configureWindow);
     setFlag(ItemHasContents, true);
+    setFlag(ItemAcceptsInputMethod, true);
     setAcceptedMouseButtons(Qt::AllButtons);
     setAcceptHoverEvents(true);
     setAcceptTouchEvents(true);
+
+    connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, this, [this] {
+        if (!QGuiApplication::inputMethod()->isVisible() && !hasActiveFocus())
+            QMetaObject::invokeMethod(this, &WPEQtView::finishFocusOut, Qt::QueuedConnection);
+    });
 }
 
 WPEQtView::~WPEQtView()
@@ -133,6 +142,8 @@ void WPEQtView::createWebView()
         d->m_webView = nullptr;
         return;
     }
+
+    m_wpe_display = wpeDisplay;
 
     g_signal_connect_swapped(d->m_webView.get(), "notify::uri", G_CALLBACK(notifyUrlChangedCallback), this);
     g_signal_connect_swapped(d->m_webView.get(), "notify::title", G_CALLBACK(notifyTitleChangedCallback), this);
@@ -585,6 +596,22 @@ void WPEQtView::keyReleaseEvent(QKeyEvent* event)
     Q_D(WPEQtView);
     if (!d->m_webView)
         return;
+
+    // Only QKeyEvent input is supported; preedit input is not implemented.
+    // Event from a virtual keyboard has 0 nativeScanCode. Hence, it needs to be committed
+    // instead of being dispatched. Only printable text is being committed, which ensures
+    // that keys like Backspace, Delete, Tab, Escape and Enter are not committed.
+    if (!event->nativeScanCode() && !event->text().isEmpty() && event->text().at(0).isPrint()) {
+        if (m_wpe_display) {
+            auto* im = wpe_display_qtquick_get_input_method_context(m_wpe_display);
+            if (im) {
+                QByteArray commitUtf8 = event->text().toUtf8();
+                g_signal_emit_by_name(im, "committed", commitUtf8.constData());
+                return;
+            }
+        }
+    }
+
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
     wpe_view_dispatch_key_release_event(WPE_VIEW_QTQUICK(wpeView), event);
 }
@@ -610,11 +637,109 @@ void WPEQtView::focusInEvent(QFocusEvent*)
 
 void WPEQtView::focusOutEvent(QFocusEvent*)
 {
+    QMetaObject::invokeMethod(this, &WPEQtView::finishFocusOut, Qt::QueuedConnection);
+}
+
+void WPEQtView::finishFocusOut()
+{
     Q_D(WPEQtView);
+
+    auto* im = m_wpe_display ? wpe_display_qtquick_get_input_method_context(m_wpe_display) : nullptr;
+    bool keyboardSessionActive = im && wpe_input_method_context_keyboard_session_active(im);
+    bool inputMethodVisible = QGuiApplication::inputMethod()->isVisible();
+    bool windowActive = window() && window()->isActive();
+
+    // Wait until Qt and OSK focus state settle down.
+    if (hasActiveFocus() || (windowActive && (keyboardSessionActive || inputMethodVisible)))
+        return;
+
+    if (!im)
+        qWarning() << "WPEQtView: finishFocusOut: input method context is null.";
+
     if (!d->m_webView)
         return;
+
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-    wpe_view_focus_out(WPE_VIEW(wpeView));
+    if (wpe_view_get_has_focus(wpeView))
+        wpe_view_focus_out(WPE_VIEW(wpeView));
+}
+
+int wpeImHintsToQt(WPEInputHints hints, WPEInputPurpose purpose)
+{
+    int qtHints = Qt::InputMethodHint::ImhNone;
+    switch (purpose) {
+    case WPE_INPUT_PURPOSE_FREE_FORM:
+        break;
+    case WPE_INPUT_PURPOSE_ALPHA:
+        qtHints |= Qt::InputMethodHint::ImhPreferLatin;
+        break;
+    case WPE_INPUT_PURPOSE_DIGITS:
+        qtHints |= Qt::InputMethodHint::ImhDigitsOnly;
+        break;
+    case WPE_INPUT_PURPOSE_NUMBER:
+        qtHints |= Qt::InputMethodHint::ImhPreferNumbers;
+        break;
+    case WPE_INPUT_PURPOSE_PHONE:
+        qtHints |= Qt::InputMethodHint::ImhDialableCharactersOnly;
+        break;
+    case WPE_INPUT_PURPOSE_URL:
+        qtHints |= Qt::InputMethodHint::ImhUrlCharactersOnly;
+        break;
+    case WPE_INPUT_PURPOSE_EMAIL:
+        qtHints |= Qt::InputMethodHint::ImhEmailCharactersOnly;
+        break;
+    case WPE_INPUT_PURPOSE_NAME:
+        break;
+    case WPE_INPUT_PURPOSE_PASSWORD:
+        qtHints |= Qt::InputMethodHint::ImhHiddenText;
+        break;
+    case WPE_INPUT_PURPOSE_TERMINAL:
+        break;
+    default:
+        g_assert_not_reached();
+    }
+
+    if (hints & WPE_INPUT_HINT_LOWERCASE)
+        qtHints |= Qt::InputMethodHint::ImhPreferLowercase;
+    if (hints & WPE_INPUT_HINT_UPPERCASE_CHARS)
+        qtHints |= Qt::InputMethodHint::ImhPreferUppercase;
+
+    return qtHints;
+}
+
+QVariant WPEQtView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    if (query == Qt::ImEnabled)
+        return true;
+
+    if (!m_wpe_display)
+        return QVariant();
+
+    auto* im = wpe_display_qtquick_get_input_method_context(m_wpe_display);
+    if (!im)
+        return QVariant();
+
+    QVariant v;
+
+    if (query == Qt::ImHints)
+        v = wpeImHintsToQt(wpe_get_hints(im), wpe_get_purpose(im));
+
+    else if (query == Qt::ImCursorPosition)
+        v = wpe_get_surrounding_cursor_index(im);
+
+    else if (query == Qt::ImAnchorPosition)
+        v = wpe_get_surrounding_anchor_index(im);
+
+    else if (query == Qt::ImSurroundingText)
+        v = QString(wpe_get_surrounding_text(im));
+
+    else if (query == Qt::ImCursorRectangle) {
+        int x = 0, y = 0, width = 0, height = 0;
+        wpe_get_cursor_rect(im, &x, &y, &width, &height);
+        v = QRect(x, y, width, height);
+    }
+
+    return v;
 }
 
 void WPEQtView::invalidateSceneGraph()
