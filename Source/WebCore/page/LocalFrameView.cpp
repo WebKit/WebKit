@@ -6600,6 +6600,22 @@ void LocalFrameView::scrollDidEnd()
         document->addPendingScrollEventTarget(*document, ScrollEventType::Scrollend);
 }
 
+void LocalFrameView::scrollSnapChangeEventTargetsChanged(Markable<NodeIdentifier> blockTarget, Markable<NodeIdentifier> inlineTarget)
+{
+    RefPtr document = m_frame->document();
+    if (!document)
+        return;
+    document->addPendingScrollSnapChangeEventTarget(*document, resolveScrollSnapEventTarget(blockTarget), resolveScrollSnapEventTarget(inlineTarget));
+}
+
+void LocalFrameView::scrollSnapChangingEventTargetsChanged(Markable<NodeIdentifier> blockTarget, Markable<NodeIdentifier> inlineTarget)
+{
+    RefPtr document = m_frame->document();
+    if (!document)
+        return;
+    document->addPendingScrollSnapChangingEventTarget(*document, resolveScrollSnapEventTarget(blockTarget), resolveScrollSnapEventTarget(inlineTarget));
+}
+
 void LocalFrameView::scheduleScrollEvent()
 {
     setIsAwaitingScrollend(true);

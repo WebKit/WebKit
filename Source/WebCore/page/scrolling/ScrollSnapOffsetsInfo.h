@@ -125,6 +125,13 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scroll
 // explicitly requested scrollIntoView() alignment must be used as-is.
 void adjustScrollAlignmentForScrollSnapAlign(const RenderElement&, ScrollAlignment* alignX, ScrollAlignment* alignY);
 
+// Resolves a snap target NodeIdentifier (as tracked by ScrollSnapAnimatorState) to the Node it identifies
+// for exposure via SnapEvent.snapTargetBlock/snapTargetInline, per
+// https://drafts.csswg.org/css-scroll-snap-2/#snap-events. If the snap target is a pseudo-element, this
+// returns its host element instead, per spec.
+Node* resolveScrollSnapEventTarget(Markable<NodeIdentifier>);
+
+
 template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
 {
     ts << offset.offset << " snapTargetID: "_s <<  offset.snapTargetID << " isFocused: "_s << offset.isFocused << " isTarget: "_s << offset.isTarget << " snapAreaIndices: " << offset.snapAreaIndices;

@@ -5260,6 +5260,14 @@ ScrollAnimatorEnabled:
     default: false
     WebCore: false
 
+ScrollSnapEventsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Scroll Snap Events"
+  humanReadableDescription: "Enable the scrollsnapchange and scrollsnapchanging events"
+  defaultValue: false
+
 ScrollToTextFragmentEnabled:
   type: bool
   status: stable

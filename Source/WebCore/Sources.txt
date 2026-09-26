@@ -1505,6 +1505,7 @@ dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
 dom/SimulatedClick.cpp
 dom/SlotAssignment.cpp @header:RenderStyleGetters
+dom/SnapEvent.cpp
 dom/SpaceSplitString.cpp
 dom/SpeculationRulesMatcher.cpp
 dom/StaticNodeList.cpp
@@ -5201,6 +5202,7 @@ JSSharedWorker.cpp
 JSSharedWorkerGlobalScope.cpp
 JSSlotAssignmentMode.cpp
 JSSlotable.cpp
+JSSnapEvent.cpp
 JSSourceBuffer.cpp @cost:3
 JSSourceBufferList.cpp
 JSSpeechRecognition.cpp

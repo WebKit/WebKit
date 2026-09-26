@@ -245,7 +245,14 @@ bool ScrollingEffectsController::usesScrollSnap() const
 void ScrollingEffectsController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
 {
     if (snapOffsetInfo.isEmpty()) {
-        m_scrollSnapState = nullptr;
+        if (m_scrollSnapState) {
+            // scroll-snap-type just went from non-none to none; https://drafts.csswg.org/css-scroll-snap-2/#snap-events
+            // requires this to fire scrollsnapchange (with a null target in both axes) even though there's
+            // no layout-driven re-snap to observe the change via, since we're discarding the snap state below.
+            m_scrollSnapState = nullptr;
+            notifyScrollSnapChangingTargetsChangedIfNeeded();
+            notifyScrollSnapChangeTargetsChangedIfNeeded();
+        }
         return;
     }
 
@@ -282,13 +289,48 @@ void ScrollingEffectsController::setActiveScrollSnapIndexForAxis(ScrollEventAxis
     m_scrollSnapState->setActiveSnapIndexForAxis(axis, index);
 }
 
-float ScrollingEffectsController::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, ScrollSnapPointSelectionMethod selectionMethod) const
+Markable<NodeIdentifier> ScrollingEffectsController::currentScrollSnapTargetForAxis(ScrollEventAxis axis) const
+{
+    if (!usesScrollSnap())
+        return { };
+
+    return m_scrollSnapState->currentSnapTargetForAxis(axis);
+}
+
+Markable<NodeIdentifier> ScrollingEffectsController::changingScrollSnapTargetForAxis(ScrollEventAxis axis) const
+{
+    if (!usesScrollSnap())
+        return { };
+
+    return m_scrollSnapState->changingSnapTargetForAxis(axis);
+}
+
+void ScrollingEffectsController::notifyScrollSnapChangeTargetsChangedIfNeeded()
+{
+    if (!usesScrollSnap())
+        return;
+
+    m_client.scrollSnapChangeTargetsChanged(currentScrollSnapTargetForAxis(ScrollEventAxis::Horizontal), currentScrollSnapTargetForAxis(ScrollEventAxis::Vertical));
+}
+
+void ScrollingEffectsController::notifyScrollSnapChangingTargetsChangedIfNeeded()
+{
+    if (!usesScrollSnap())
+        return;
+
+    m_client.scrollSnapChangingTargetsChanged(changingScrollSnapTargetForAxis(ScrollEventAxis::Horizontal), changingScrollSnapTargetForAxis(ScrollEventAxis::Vertical));
+}
+
+float ScrollingEffectsController::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, ScrollSnapPointSelectionMethod selectionMethod)
 {
     if (!usesScrollSnap())
         return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
 
-    return m_scrollSnapState->adjustedScrollDestination(axis, destinationOffset, velocity, originalOffset, m_client.scrollExtents(), m_client.pageScaleFactor(), selectionMethod);
+    auto result = m_scrollSnapState->adjustedScrollDestination(axis, destinationOffset, velocity, originalOffset, m_client.scrollExtents(), m_client.pageScaleFactor(), selectionMethod);
+    notifyScrollSnapChangingTargetsChangedIfNeeded();
+    return result;
 }
+
 
 #if !PLATFORM(MAC)
 #if ENABLE(KINETIC_SCROLLING)
@@ -361,11 +403,17 @@ void ScrollingEffectsController::adjustDeltaForSnappingIfNeeded(float& deltaX, f
         auto originalOffset = LayoutPoint(scrollOffset.x() / scale, scrollOffset.y() / scale);
         auto newOffset = LayoutPoint((scrollOffset.x() + deltaX) / scale, (scrollOffset.y() + deltaY) / scale);
 
-        auto offsetX = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Horizontal, LayoutSize(extents.contentsSize), newOffset, deltaX, originalOffset.x()).first;
-        auto offsetY = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Vertical, LayoutSize(extents.contentsSize), newOffset, deltaY, originalOffset.y()).first;
+        auto [offsetX, snapIndexX] = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Horizontal, LayoutSize(extents.contentsSize), newOffset, deltaX, originalOffset.x());
+        auto [offsetY, snapIndexY] = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Vertical, LayoutSize(extents.contentsSize), newOffset, deltaY, originalOffset.y());
 
         deltaX = (offsetX - originalOffset.x()) * scale;
         deltaY = (offsetY - originalOffset.y()) * scale;
+
+        // This is an immediate (non-animated) snap-adjusted destination, about to be applied by the
+        // caller; see https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+        m_scrollSnapState->setChangingSnapTargetForAxis(ScrollEventAxis::Horizontal, snapIndexX);
+        m_scrollSnapState->setChangingSnapTargetForAxis(ScrollEventAxis::Vertical, snapIndexY);
+        notifyScrollSnapChangingTargetsChangedIfNeeded();
     }
 }
 
@@ -486,6 +534,20 @@ void ScrollingEffectsController::resnapAfterLayout()
     ScrollOffset offset = roundedIntPoint(m_client.scrollOffset());
     if (m_scrollSnapState->resnapAfterLayout(offset, m_client.scrollExtents(), m_client.pageScaleFactor()))
         m_activeScrollSnapIndexDidChange = true;
+
+    // A layout-triggered re-snap settles immediately; see https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+    notifyScrollSnapDidSettle();
+}
+
+void ScrollingEffectsController::notifyScrollSnapDidSettle()
+{
+    if (!usesScrollSnap())
+        return;
+
+    m_scrollSnapState->setChangingSnapTargetForAxis(ScrollEventAxis::Horizontal, m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal));
+    m_scrollSnapState->setChangingSnapTargetForAxis(ScrollEventAxis::Vertical, m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical));
+    notifyScrollSnapChangingTargetsChangedIfNeeded();
+    notifyScrollSnapChangeTargetsChangedIfNeeded();
 }
 
 void ScrollingEffectsController::startScrollSnapAnimation()
@@ -553,6 +615,9 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
     if (usesScrollSnap() && m_isAnimatingScrollSnap) {
         m_scrollSnapState->transitionToDestinationReachedState();
         stopScrollSnapAnimation();
+        // The gesture/animation has now actually reached the target predicted at its setup (see
+        // setupAnimationForState()); https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+        notifyScrollSnapDidSettle();
     }
 
 #if HAVE(RUBBER_BANDING)
