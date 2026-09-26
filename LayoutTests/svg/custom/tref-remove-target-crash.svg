@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] --><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <text x="100" y="50" font-family="Verdana" font-size="25" fill="green">
     <!-- Removing the referenced text element should not cause a crash -->
     <tref xlink:href="#text1"/>

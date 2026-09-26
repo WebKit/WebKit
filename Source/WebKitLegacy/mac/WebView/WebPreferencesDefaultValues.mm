@@ -169,7 +169,7 @@ bool defaultFontFaceSetConstructorEnabled()
 
 bool defaultMutationEventsEnabled()
 {
-    return WTF::CocoaApplication::isAppleApplication() || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
+    return (WTF::CocoaApplication::isAppleApplication() && !WTF::CocoaApplication::isDumpRenderTree()) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
 }
 
 bool defaultSearchInputResultsAttributeEnabled()

@@ -1,4 +1,4 @@
-<!DOCTYPE svg [
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] --><!DOCTYPE svg [
 <!ATTLIST bar id ID #REQUIRED>
 ]>
 <svg version="1.1" baseProfile="basic" id="svg-root"

@@ -1,4 +1,4 @@
-<script>
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] --><script>
 window.onload = function() {
     if (window.testRunner)
         testRunner.dumpAsText();
@@ -8,7 +8,7 @@ window.onload = function() {
     document.execCommand("insertparagraph", false);
     document.execCommand("InsertText", false);
 
-    document.firstChild.appendChild(document.createElement('body'));
+    document.documentElement.appendChild(document.createElement('body'));
     document.body.innerText = "This tests executing an editing command while executing a typing command.\nPASS";
 };
 

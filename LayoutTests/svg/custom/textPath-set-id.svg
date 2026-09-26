@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] --><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
   <defs>
     <path d="M150 50 L 450 50" />
   </defs>
