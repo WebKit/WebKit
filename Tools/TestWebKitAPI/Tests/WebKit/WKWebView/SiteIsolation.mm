@@ -14375,6 +14375,159 @@ TEST(SiteIsolation, NoRedundantFocusPolicyCallbackAfterBlurAndRefocusInCrossOrig
 }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+
+static constexpr auto iframeContentForCrossOriginDblclickWindowListener = "<!DOCTYPE html>"
+    "<html>"
+    "<body style='margin: 0; padding: 0;'>"
+    "<script>"
+    "window.addEventListener('dblclick', function(e) {"
+    "    parent.postMessage({"
+    "        type: 'dblclick',"
+    "        clientX: e.clientX,"
+    "        clientY: e.clientY"
+    "    }, '*');"
+    "});"
+    "requestAnimationFrame(() => parent.postMessage({ type: 'iframeReady' }, '*'));"
+    "</script>"
+    "</body>"
+    "</html>"_s;
+
+static constexpr auto iframeContentForCrossOriginDblclickDocumentListener = "<!DOCTYPE html>"
+    "<html>"
+    "<body style='margin: 0; padding: 0;'>"
+    "<script>"
+    "document.addEventListener('dblclick', function(e) {"
+    "    parent.postMessage({"
+    "        type: 'dblclick',"
+    "        clientX: e.clientX,"
+    "        clientY: e.clientY"
+    "    }, '*');"
+    "});"
+    "requestAnimationFrame(() => parent.postMessage({ type: 'iframeReady' }, '*'));"
+    "</script>"
+    "</body>"
+    "</html>"_s;
+
+static constexpr auto mainHTMLForCrossOriginDblclick = "<!DOCTYPE html>"
+    "<html>"
+    "<body style='margin: 0; padding: 0;'>"
+    "<iframe id='frame' src='https://webkit.org/iframe' style='width: 100px; height: 100px; position: absolute; border: none;'></iframe>"
+    "<script>"
+    "window.iframeReady = new Promise(resolve => {"
+    "    window.addEventListener('message', function(e) {"
+    "        if (e.data.type === 'iframeReady')"
+    "            resolve();"
+    "    });"
+    "});"
+    "window.dblclickReceived = new Promise(resolve => {"
+    "    window.addEventListener('message', function(e) {"
+    "        if (e.data.type === 'dblclick') {"
+    "            window.clientX = e.data.clientX;"
+    "            window.clientY = e.data.clientY;"
+    "            resolve();"
+    "        }"
+    "    });"
+    "});"
+    "</script>"
+    "</body>"
+    "</html>"_s;
+
+static void testDblclickInCrossOriginIFrame(TestWKWebView *webView, CGFloat tapX, CGFloat tapY, NSString *expectedX, NSString *expectedY, NSString *jsTransform = nil)
+{
+    [webView objectByCallingAsyncFunction:@"return await window.iframeReady;" withArguments:@{ }];
+    [webView waitForNextPresentationUpdate];
+
+    if (jsTransform) {
+        __block bool done = false;
+        [webView evaluateJavaScript:jsTransform completionHandler:^(id, NSError *) {
+            done = true;
+        }];
+        Util::run(&done);
+        [webView waitForNextPresentationUpdate];
+    }
+
+    [webView _simulateDoubleClickAtLocation:CGPointMake(tapX, tapY)];
+    [webView objectByCallingAsyncFunction:@"return await window.dblclickReceived;" withArguments:@{ }];
+
+    EXPECT_WK_STREQ(expectedX, [webView stringByEvaluatingJavaScript:@"window.clientX"]);
+    EXPECT_WK_STREQ(expectedY, [webView stringByEvaluatingJavaScript:@"window.clientY"]);
+}
+
+TEST(SiteIsolation, DblclickWithWindowListenerInSimpleIFrameCrossOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { mainHTMLForCrossOriginDblclick } },
+        { "/iframe"_s, { iframeContentForCrossOriginDblclickWindowListener } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    testDblclickInCrossOriginIFrame(webView.get(), 50, 50, @"50", @"50");
+}
+
+TEST(SiteIsolation, DblclickWithWindowListenerInRotatedIFrameCrossOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { mainHTMLForCrossOriginDblclick } },
+        { "/iframe"_s, { iframeContentForCrossOriginDblclickWindowListener } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    testDblclickInCrossOriginIFrame(webView.get(), 10, 10, @"90", @"90", @"frame.style.rotate = \"180deg\";");
+}
+
+TEST(SiteIsolation, DblclickWithWindowListenerInScaledIFrameCrossOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { mainHTMLForCrossOriginDblclick } },
+        { "/iframe"_s, { iframeContentForCrossOriginDblclickWindowListener } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    testDblclickInCrossOriginIFrame(webView.get(), 50, 50, @"25", @"25", @"frame.style.transformOrigin = \"top left\"; frame.style.scale = \"2\";");
+}
+
+TEST(SiteIsolation, DblclickWithDocumentListenerInSimpleIFrameCrossOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { mainHTMLForCrossOriginDblclick } },
+        { "/iframe"_s, { iframeContentForCrossOriginDblclickDocumentListener } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    testDblclickInCrossOriginIFrame(webView.get(), 50, 50, @"50", @"50");
+}
+
+TEST(SiteIsolation, DblclickWithDocumentListenerInRotatedIFrameCrossOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { mainHTMLForCrossOriginDblclick } },
+        { "/iframe"_s, { iframeContentForCrossOriginDblclickDocumentListener } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    testDblclickInCrossOriginIFrame(webView.get(), 10, 10, @"90", @"90", @"frame.style.rotate = \"180deg\";");
+}
+
+TEST(SiteIsolation, DblclickWithDocumentListenerInScaledIFrameCrossOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { mainHTMLForCrossOriginDblclick } },
+        { "/iframe"_s, { iframeContentForCrossOriginDblclickDocumentListener } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    testDblclickInCrossOriginIFrame(webView.get(), 50, 50, @"25", @"25", @"frame.style.transformOrigin = \"top left\"; frame.style.scale = \"2\";");
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 TEST(SiteIsolation, MultiProcessBFCacheSameSiteCaching)
 {
     HTTPServer server({

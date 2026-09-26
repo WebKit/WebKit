@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("A dblclick from a double tap on a cross-origin iframe that is nested inside an offset same-site subframe must reach the iframe. Regression test for the same double-counted-offset hazard as tap-nested-cross-origin-frame-in-offset-subframe.html, but for the forwarded dblclick dispatch.");
+jsTestIsAsync = true;
+
+let done = false;
+addEventListener("message", (event) => {
+    if (event.data === "ready") {
+        runTest();
+    } else if (event.data === "dblclicked" && !done) {
+        done = true;
+        testPassed("The nested cross-origin iframe received the dblclick.");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.humanSpeedDoubleTapAt(500, 425);
+    setTimeout(() => {
+        if (done)
+            return;
+        done = true;
+        testFailed("The nested cross-origin iframe did not receive the dblclick.");
+        finishJSTest();
+    }, 3000);
+}
+</script>
+<iframe style="position: absolute; left: 350px; top: 300px; width: 300px; height: 250px; border: none;" src="http://127.0.0.1:8000/site-isolation/touch-events/resources/samesite-offset-container-dblclick.html"></iframe>
+</html>

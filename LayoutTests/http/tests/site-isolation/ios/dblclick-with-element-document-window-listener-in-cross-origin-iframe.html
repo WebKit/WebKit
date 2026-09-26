@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+iframe { display: block; width: 400px; height: 100px; border: none; }
+</style>
+<body style="margin: 0;">
+<iframe id="elementFrame" src="http://localhost:8000/site-isolation/resources/dblclick-listener-variants.html?listener=element"></iframe>
+<iframe id="documentFrame" src="http://localhost:8000/site-isolation/resources/dblclick-listener-variants.html?listener=document"></iframe>
+<iframe id="windowFrame" src="http://localhost:8000/site-isolation/resources/dblclick-listener-variants.html?listener=window"></iframe>
+<script>
+description("A dblclick from a double tap inside a cross-origin iframe must fire for a listener registered on an element, on the document, and on the window.");
+jsTestIsAsync = true;
+
+const listenerTypes = ["element", "document", "window"];
+const readyListenerTypes = new Set();
+const receivedListenerTypes = new Set();
+
+addEventListener("message", (event) => {
+    if (event.data.type === "ready")
+        readyListenerTypes.add(event.data.listenerType);
+    else if (event.data.type === "dblclick") {
+        testPassed("Received dblclick for the " + event.data.listenerType + " listener");
+        receivedListenerTypes.add(event.data.listenerType);
+        if (receivedListenerTypes.size === listenerTypes.length)
+            finishJSTest();
+    }
+});
+
+async function runTest() {
+    while (readyListenerTypes.size < listenerTypes.length)
+        await UIHelper.animationFrame();
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.humanSpeedDoubleTapAt(200, elementFrame.offsetTop + 50);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.humanSpeedDoubleTapAt(200, documentFrame.offsetTop + 50);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.humanSpeedDoubleTapAt(200, windowFrame.offsetTop + 50);
+}
+
+runTest();
+</script>
+</body>
+</html>
