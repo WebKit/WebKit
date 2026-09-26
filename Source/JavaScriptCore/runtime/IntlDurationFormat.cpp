@@ -123,6 +123,7 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
     }
 
     bool prevStyleIsNumeric = prevStyle && (prevStyle.value() == IntlDurationFormat::UnitStyle::Numeric || prevStyle.value() == IntlDurationFormat::UnitStyle::TwoDigit);
+    bool isFractional = unit == TemporalUnit::Millisecond || unit == TemporalUnit::Microsecond || unit == TemporalUnit::Nanosecond;
 
     IntlDurationFormat::Display displayDefault = IntlDurationFormat::Display::Always;
     IntlDurationFormat::UnitStyle style = IntlDurationFormat::UnitStyle::Short;
@@ -143,9 +144,17 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
         }
     }
 
+    if (isFractional && style == IntlDurationFormat::UnitStyle::Numeric)
+        displayDefault = IntlDurationFormat::Display::Auto;
+
     IntlDurationFormat::Display display = intlOption<IntlDurationFormat::Display>(globalObject, options, displayName, { { "auto"_s, IntlDurationFormat::Display::Auto }, { "always"_s, IntlDurationFormat::Display::Always } }, "display name must be either \"auto\" or \"always\""_s, displayDefault);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/ecma402/#sec-validatedurationunitstyle
+    if (isFractional && display == IntlDurationFormat::Display::Always && style == IntlDurationFormat::UnitStyle::Numeric) [[unlikely]] {
+        throwRangeError(globalObject, scope, "style option is inconsistent"_s);
+        return { };
+    }
     if (prevStyleIsNumeric) {
         if (style != IntlDurationFormat::UnitStyle::Numeric && style != IntlDurationFormat::UnitStyle::TwoDigit) {
             throwRangeError(globalObject, scope, "style option is inconsistent"_s);
