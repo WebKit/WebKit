@@ -340,7 +340,7 @@ public:
         return !hasBeenInvalidated();
     }
     
-    void add(Watchpoint*);
+    JS_EXPORT_PRIVATE void add(Watchpoint*);
     
     void startWatching()
     {

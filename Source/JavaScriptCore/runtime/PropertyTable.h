@@ -106,8 +106,8 @@ public:
 
     // Constructor is passed an initial capacity, a PropertyTable to copy, or both.
     static PropertyTable* create(VM&, unsigned initialCapacity);
-    static PropertyTable* clone(VM&, const PropertyTable&);
-    static PropertyTable* clone(VM&, unsigned initialCapacity, const PropertyTable&);
+    JS_EXPORT_PRIVATE static PropertyTable* clone(VM&, const PropertyTable&);
+    JS_EXPORT_PRIVATE static PropertyTable* clone(VM&, unsigned initialCapacity, const PropertyTable&);
     ~PropertyTable();
 
     // Find a value in the table.
