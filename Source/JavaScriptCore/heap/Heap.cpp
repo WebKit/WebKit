@@ -853,7 +853,7 @@ void Heap::beginMarking()
     setMutatorShouldBeFenced(true);
 
 #if ENABLE(WEBASSEMBLY)
-    prepareWasmCalleeCleanup();
+    beginMarkingWasmCallees();
 #endif
 }
 
@@ -937,7 +937,7 @@ void Heap::endMarking()
     setMutatorShouldBeFenced(Options::forceFencedBarrier());
 
 #if ENABLE(WEBASSEMBLY)
-    finalizeWasmCalleeCleanup();
+    releaseUnmarkedWasmCallees();
 #endif
 }
 
@@ -2876,21 +2876,21 @@ bool Heap::isWasmCalleePendingDestruction(Wasm::Callee& callee)
     return m_wasmCalleesPendingDestruction.contains(callee);
 }
 
-bool Heap::didDiscoverPendingWasmCallee(Wasm::Callee* callee)
+bool Heap::markWasmCalleeIfPending(Wasm::Callee* callee)
 {
     if (!m_wasmCalleesPendingDestructionSnapshot.contains(callee))
         return false;
-    m_wasmCalleesDiscoveredDuringGC.add(callee);
+    m_wasmCalleesFoundOnStacks.add(callee);
     return true;
 }
 
-void Heap::prepareWasmCalleeCleanup()
+void Heap::beginMarkingWasmCallees()
 {
     ASSERT(worldIsStopped());
     ASSERT(m_wasmCalleesPendingDestructionSnapshot.isEmpty());
-    ASSERT(m_wasmCalleesDiscoveredDuringGC.isEmpty());
+    ASSERT(m_wasmCalleesFoundOnStacks.isEmpty());
     m_wasmCalleesPendingDestructionSnapshot.clear();
-    m_wasmCalleesDiscoveredDuringGC.clear();
+    m_wasmCalleesFoundOnStacks.clear();
     m_boxedWasmCalleeFilter = TinyBloomFilter<uintptr_t>();
 
     Locker locker(m_wasmCalleesPendingDestructionLock);
@@ -2900,7 +2900,7 @@ void Heap::prepareWasmCalleeCleanup()
     }
 }
 
-void Heap::finalizeWasmCalleeCleanup()
+void Heap::releaseUnmarkedWasmCallees()
 {
     ASSERT(worldIsStopped());
     if (m_wasmCalleesPendingDestructionSnapshot.isEmpty())
@@ -2912,7 +2912,7 @@ void Heap::finalizeWasmCalleeCleanup()
         Locker locker(m_wasmCalleesPendingDestructionLock);
         wasmCalleesToRelease = m_wasmCalleesPendingDestruction.takeIf<8>([&](const auto& callee) {
             return m_wasmCalleesPendingDestructionSnapshot.contains(callee.ptr())
-                && !m_wasmCalleesDiscoveredDuringGC.contains(callee.ptr());
+                && !m_wasmCalleesFoundOnStacks.contains(callee.ptr());
         });
     }
 
@@ -2925,7 +2925,7 @@ void Heap::finalizeWasmCalleeCleanup()
         WTF::crossModifyingCodeFence();
 
     m_wasmCalleesPendingDestructionSnapshot.clear();
-    m_wasmCalleesDiscoveredDuringGC.clear();
+    m_wasmCalleesFoundOnStacks.clear();
 }
 
 #endif

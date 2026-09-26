@@ -96,7 +96,7 @@ inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion mark
         if (calleeBits.isNativeCallee()) {
             if (!boxedWasmCalleeFilter.ruleOut(std::bit_cast<uintptr_t>(pointer))) {
                 Wasm::Callee* wasmCallee = static_cast<Wasm::Callee*>(calleeBits.asNativeCallee());
-                if (m_heap.didDiscoverPendingWasmCallee(wasmCallee))
+                if (m_heap.markWasmCalleeIfPending(wasmCallee))
                     return;
             }
             // FIXME: We could probably just return here.
