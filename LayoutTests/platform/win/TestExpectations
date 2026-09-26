@@ -2500,7 +2500,6 @@ fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 fast/canvas/font-family-system-ui-canvas.html [ Skip ] # ImageOnlyFailure
 
-fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html [ Failure ]
 fast/events/anchor-mouse-focusable-quirk.html [ Skip ] # Cocoa-only quirk

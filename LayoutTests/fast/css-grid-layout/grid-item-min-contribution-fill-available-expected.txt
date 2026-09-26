@@ -1,3 +1,0 @@
-
-PASS .inline-grid 1
-
