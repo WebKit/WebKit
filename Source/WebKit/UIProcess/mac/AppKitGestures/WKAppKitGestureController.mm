@@ -267,6 +267,9 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     WeakObjCPtr<WKMouseTrackingGestureRecognizer> _activeMouseTrackingGestureRecognizer;
     bool _mouseTrackingHasSentMouseDown;
     WebCore::FloatPoint _mouseTrackingStartLocationInWindow;
+    bool _mouseTrackingIsSuppressedForTransformGesture;
+    bool _contentDeclinedTransformGesture;
+    MonotonicTime _lastTransformGestureDriveTime;
 
     RetainPtr<WKPressGestureRecognizer> _dragPressGestureRecognizer;
     RetainPtr<NSDraggingSession> _gestureDraggingSession;
@@ -799,6 +802,91 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return NO;
 }
 
+- (BOOL)_isRecognizingTransformGesture
+{
+    auto isRecognizing = [](NSGestureRecognizer *gesture) {
+        auto state = [gesture state];
+        return state == NSGestureRecognizerStateBegan || state == NSGestureRecognizerStateChanged;
+    };
+
+    bool isRecognizingTransformGesture = isRecognizing(_magnificationGestureRecognizer);
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    isRecognizingTransformGesture |= isRecognizing(_rotationGestureRecognizer);
+#endif
+
+    return isRecognizingTransformGesture;
+}
+
+- (BOOL)_shouldSuppressMouseTrackingForTransformGesture
+{
+    static constexpr Seconds transformGestureDriveTimeout = 50_ms;
+
+    if (!_contentDeclinedTransformGesture || ![self _isRecognizingTransformGesture])
+        return NO;
+
+    return MonotonicTime::now() - _lastTransformGestureDriveTime < transformGestureDriveTimeout;
+}
+
+- (void)transformGestureWasNotHandledByContent
+{
+    if (![self _isRecognizingTransformGesture])
+        return;
+
+    _contentDeclinedTransformGesture = true;
+    [self _transformGestureDidDrive];
+}
+
+- (void)_transformGestureDidEnd
+{
+    if (![self _isRecognizingTransformGesture])
+        _contentDeclinedTransformGesture = false;
+}
+
+- (void)_transformGestureDidDrive
+{
+    _lastTransformGestureDriveTime = MonotonicTime::now();
+
+    if (!_contentDeclinedTransformGesture || !_mouseTrackingHasSentMouseDown)
+        return;
+
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
+    CheckedPtr impl = [webView _impl];
+    if (impl->ignoresAllEvents())
+        return;
+
+    RetainPtr activeMouseTrackingGesture = _activeMouseTrackingGestureRecognizer.get();
+
+    NSEventModifierFlags modifierFlags = 0;
+    NSPoint locationInWindow = _mouseTrackingStartLocationInWindow;
+
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    if (activeMouseTrackingGesture) {
+        modifierFlags = [activeMouseTrackingGesture modifierFlags];
+        locationInWindow = [activeMouseTrackingGesture mouseLocationInWindow];
+    }
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+
+    RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp
+        location:locationInWindow
+        modifierFlags:modifierFlags
+        timestamp:GetCurrentEventTime()
+        windowNumber:impl->windowNumber()
+        context:nil
+        eventNumber:0
+        clickCount:1
+        pressure:0.0];
+    if (activeMouseTrackingGesture)
+        mouseUp = [activeMouseTrackingGesture eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
+    impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+
+    _mouseTrackingHasSentMouseDown = false;
+    _mouseTrackingIsSuppressedForTransformGesture = true;
+}
+
 - (void)mouseTrackingGestureRecognized:(NSGestureRecognizer *)gesture
 {
     RetainPtr webView = _view.get();
@@ -851,6 +939,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     switch (gesture.state) {
     case NSGestureRecognizerStateBegan:
+        _mouseTrackingIsSuppressedForTransformGesture = false;
         _activeMouseTrackingGestureRecognizer = mouseTrackingGesture.get();
         if (_mouseTrackingHasSentMouseDown)
             [mouseTrackingGesture beginTrackingMouseInheritedFromWindowLocation:_mouseTrackingStartLocationInWindow];
@@ -861,6 +950,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     case NSGestureRecognizerStateChanged: {
         if (_activeMouseTrackingGestureRecognizer.get() != mouseTrackingGesture)
             break;
+
+        if ([self _shouldSuppressMouseTrackingForTransformGesture]) {
+            _mouseTrackingIsSuppressedForTransformGesture = true;
+            break;
+        }
 
         if (!_mouseTrackingHasSentMouseDown) {
             // Either the synthetic single-click path or this mouse-tracking path delivers a mouse
@@ -876,8 +970,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             if (std::abs(movementInWindow.width) <= allowableMovement && std::abs(movementInWindow.height) <= allowableMovement)
                 break;
 
+            bool isResumingAfterTransformGesture = std::exchange(_mouseTrackingIsSuppressedForTransformGesture, false);
+            auto mouseDownLocation = isResumingAfterTransformGesture
+                ? [mouseTrackingGesture mouseLocationInWindow]
+                : [mouseTrackingGesture startLocationInWindow];
+
+            if (isResumingAfterTransformGesture)
+                [mouseTrackingGesture beginReportingMovementFromWindowLocation:mouseDownLocation];
+
             RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
-                location:[self _adjustedMouseDownLocationInWindow:[mouseTrackingGesture startLocationInWindow]]
+                location:[self _adjustedMouseDownLocationInWindow:mouseDownLocation]
                 modifierFlags:modifierFlags
                 timestamp:timestamp
                 windowNumber:windowNumber
@@ -1837,6 +1939,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto phase = toWebEventPhase(gesture.state);
     auto magnification = [self currentMagnification:gesture.magnification atPhase:phase];
 
+    if (phase == WebKit::WebEventPhase::Began || phase == WebKit::WebEventPhase::Changed)
+        [self _transformGestureDidDrive];
+    else
+        [self _transformGestureDidEnd];
+
     WebKit::NativeWebGestureEvent::Init init {
         .kind = WebKit::NativeWebGestureEvent::Kind::Magnification,
         .phase = phase,
@@ -1885,6 +1992,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     auto phase = toWebEventPhase(gesture.state);
+
+    if (phase == WebKit::WebEventPhase::Began || phase == WebKit::WebEventPhase::Changed)
+        [self _transformGestureDidDrive];
+    else
+        [self _transformGestureDidEnd];
 
     WebKit::NativeWebGestureEvent::Init init {
         .kind = WebKit::NativeWebGestureEvent::Kind::Rotation,
@@ -1953,6 +2065,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [self _handleClickCancelled];
     _activeMouseTrackingGestureRecognizer = nil;
     _mouseTrackingHasSentMouseDown = false;
+    _mouseTrackingIsSuppressedForTransformGesture = false;
+    _contentDeclinedTransformGesture = false;
+    _lastTransformGestureDriveTime = MonotonicTime();
     _isMomentumActive = false;
     [self _resetCaughtDeceleratingScroll];
     [self resetDOMDoubleClickGestureRecognizer];
