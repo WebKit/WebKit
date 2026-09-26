@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AbstractModuleRecord.h"
+#include "FunctionExecutable.h"
 #include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssemblyArrayInlines.h"
@@ -40,6 +41,7 @@
 #include "JSWebAssemblyStruct.h"
 #include "JSWebAssemblyTag.h"
 #include "Register.h"
+#include "StackVisitor.h"
 #include "VMTrapsInlines.h"
 #include "WasmBaselineData.h"
 #include "WasmConstExprGenerator.h"
@@ -58,6 +60,25 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+JSGlobalObject* JSWebAssemblyInstance::incumbentGlobalObjectFromStack(VM& vm, JSGlobalObject* fallback)
+{
+    JSGlobalObject* incumbent = nullptr;
+    if (vm.topCallFrame) {
+        StackVisitor::visit(vm.topCallFrame, vm, [&](StackVisitor& visitor) {
+            if (visitor->isNativeCalleeFrame())
+                return IterationStatus::Continue;
+            if (auto* codeBlock = visitor->codeBlock()) {
+                if (auto* functionExecutable = dynamicDowncast<FunctionExecutable>(codeBlock->ownerExecutable()); functionExecutable && functionExecutable->isBuiltinFunction())
+                    return IterationStatus::Continue;
+                incumbent = codeBlock->globalObject();
+                return IterationStatus::Done;
+            }
+            return IterationStatus::Continue;
+        });
+    }
+    return incumbent ? incumbent : fallback;
+}
 
 using Wasm::CalleeGroup;
 using Wasm::CompilationMode;
@@ -203,6 +224,7 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_jsModule);
     visitor.append(thisObject->m_moduleRecord);
+    visitor.append(thisObject->m_incumbentGlobalObject);
     for (auto& memory : thisObject->m_memories)
         visitor.append(memory);
     for (auto& table : thisObject->m_tables)
@@ -314,7 +336,7 @@ size_t JSWebAssemblyInstance::allocationSize(const Wasm::ModuleInformation& info
 }
 
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode, RefPtr<SourceProvider>&& provider)
+JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* instanceStructure, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, CreationMode creationMode, RefPtr<SourceProvider>&& provider, JSGlobalObject* incumbent)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -342,6 +364,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     auto* jsInstance = new (NotNull, cell) JSWebAssemblyInstance(vm, instanceStructure, jsModule, moduleRecord, WTF::move(provider));
     jsInstance->finishCreation(vm);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    jsInstance->m_incumbentGlobalObject.set(vm, jsInstance, incumbent ? incumbent : globalObject);
 
     if (creationMode == CreationMode::FromJS) {
         // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.

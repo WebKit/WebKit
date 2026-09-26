@@ -70,6 +70,7 @@
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/ConsoleClient.h>
 #include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/FunctionExecutable.h>
 #include <JavaScriptCore/GetterSetter.h>
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSCustomGetterFunction.h>
@@ -584,7 +585,7 @@ GetterSetter* JSDOMGlobalObject::createCrossOriginGetterSetter(JSGlobalObject* l
 
 #if ENABLE(WEBASSEMBLY)
 // https://webassembly.github.io/spec/web-api/index.html#compile-a-potential-webassembly-response
-static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, JSC::JSPromise* promise, JSC::JSValue source, JSC::Wasm::CompilerMode compilerMode, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&& compileOptions)
+static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, JSC::JSPromise* promise, JSC::JSValue source, JSC::Wasm::CompilerMode compilerMode, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&& compileOptions, JSC::JSGlobalObject* incumbent = nullptr)
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
@@ -639,7 +640,7 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
     String wasmSourceURL = inputResponse->url();
     auto resourceLoaderIdentifier = inputResponse->resourceLoaderIdentifier();
     uint64_t requestIdentifier = resourceLoaderIdentifier ? resourceLoaderIdentifier->toUInt64() : 0;
-    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), WTF::move(wasmSourceURL), requestIdentifier);
+    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, incumbent, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), WTF::move(wasmSourceURL), requestIdentifier);
 
     if (inputResponse->isBodyReceivedByChunk()) {
         inputResponse->consumeBodyReceivedByChunk([vmPtr = &vm, compiler = WTF::move(compiler)](auto&& result) mutable {
@@ -701,10 +702,10 @@ void JSDOMGlobalObject::compileStreaming(JSC::JSGlobalObject* globalObject, JSC:
     handleResponseOnStreamingAction(globalObject, promise, source, JSC::Wasm::CompilerMode::Validation, nullptr, WTF::move(compileOptions));
 }
 
-void JSDOMGlobalObject::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromise* promise, JSC::JSValue source, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&& compileOptions)
+void JSDOMGlobalObject::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromise* promise, JSC::JSValue source, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&& compileOptions, JSC::JSGlobalObject* incumbent)
 {
     ASSERT(source);
-    handleResponseOnStreamingAction(globalObject, promise, source, JSC::Wasm::CompilerMode::FullCompile, importObject, WTF::move(compileOptions));
+    handleResponseOnStreamingAction(globalObject, promise, source, JSC::Wasm::CompilerMode::FullCompile, importObject, WTF::move(compileOptions), incumbent);
 }
 #endif
 
@@ -884,17 +885,23 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
                     }
                 }
 
-                if (auto* codeBlock = visitor->codeBlock())
+                if (auto* codeBlock = visitor->codeBlock()) {
+                    if (m_skipFirstFrame) {
+                        if (auto* functionExecutable = dynamicDowncast<FunctionExecutable>(codeBlock->ownerExecutable()); functionExecutable && functionExecutable->isBuiltinFunction())
+                            return IterationStatus::Continue;
+                    }
                     m_globalObject = codeBlock->globalObject();
-                else {
-                    ASSERT(visitor->callee().rawPtr());
-                    // FIXME: Callee is not an object if the caller is Web Assembly.
-                    // Figure out what to do here. We can probably get the global object
-                    // from the top-most Wasm Instance. https://bugs.webkit.org/show_bug.cgi?id=165721
-                    if (visitor->callee().isCell() && visitor->callee().asCell()->isObject())
-                        m_globalObject = downcast<JSObject>(visitor->callee().asCell())->realm();
+                    return IterationStatus::Done;
                 }
-                return IterationStatus::Done;
+                // https://bugs.webkit.org/show_bug.cgi?id=165721
+                // https://bugs.webkit.org/show_bug.cgi?id=322179
+                if (m_skipFirstFrame)
+                    return IterationStatus::Continue;
+                if (visitor->callee().isCell() && visitor->callee().asCell()->isObject()) {
+                    m_globalObject = downcast<JSObject>(visitor->callee().asCell())->realm();
+                    return IterationStatus::Done;
+                }
+                return IterationStatus::Continue;
             }
 
             JSC::JSGlobalObject* NODELETE globalObject() const { return m_globalObject; }
@@ -910,6 +917,9 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
         if (iter.globalObject())
             return *downcast<JSDOMGlobalObject>(iter.globalObject());
     }
+
+    if (auto* backup = vm.backupIncumbentGlobalObject())
+        return *downcast<JSDOMGlobalObject>(backup);
 
     // In the case of legacyActiveGlobalObjectForAccessor, it is possible that vm.topCallFrame is nullptr when the script is evaluated as JSONP.
     // Since we put JSGlobalObject to VMEntryScope, we can retrieve the right globalObject from that.
