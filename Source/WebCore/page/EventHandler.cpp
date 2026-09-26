@@ -1050,8 +1050,8 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     m_mouseDownMayStartDrag = false;
 
     if (m_mouseDownMayStartAutoscroll && !panScrollInProgress()) {
-        m_autoscrollController->startAutoscrollForSelection(renderer);
-        m_mouseDownMayStartAutoscroll = false;
+        if (m_autoscrollController->startAutoscrollForSelection(renderer))
+            m_mouseDownMayStartAutoscroll = false;
     }
 
     if (m_selectionInitiationState != ExtendedSelection) {
