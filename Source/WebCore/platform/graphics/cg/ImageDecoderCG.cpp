@@ -111,7 +111,7 @@ static void appendImageSourceOption(CFMutableDictionaryRef options, SubsamplingL
     if (subsamplingLevel == SubsamplingLevel::Default)
         return;
 
-    subsamplingLevel = std::min(SubsamplingLevel::Last, std::max(SubsamplingLevel::First, subsamplingLevel));
+    subsamplingLevel = std::clamp(subsamplingLevel, SubsamplingLevel::First, SubsamplingLevel::Last);
     int subsampleInt = 1 << static_cast<int>(subsamplingLevel); // [0..3] => [1, 2, 4, 8]
     auto subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
     CFDictionarySetValue(options, kCGImageSourceSubsampleFactor, subsampleNumber.get());

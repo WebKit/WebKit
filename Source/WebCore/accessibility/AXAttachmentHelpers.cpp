@@ -40,7 +40,7 @@ bool AXAttachmentHelpers::hasProgress(const HTMLAttachmentElement& attachmentEle
 {
     auto& progressString = attachmentElement.getAttribute(progressAttr);
     bool validProgress = false;
-    float result = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
+    float result = std::clamp<float>(progressString.toFloat(&validProgress), 0, 1);
     if (progress)
         *progress = result;
     return validProgress;
