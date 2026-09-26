@@ -38,7 +38,8 @@
 
 TEST(WTF, CStringNullStringConstructor)
 {
-    CString string;
+    ASCIICString typedString;
+    const CStringBase& string = typedString;
     constexpr size_t zeroLength = 0;
     ASSERT_TRUE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
@@ -136,10 +137,12 @@ TEST(WTF, CStringZeroTerminated)
 
 TEST(WTF, CStringLegacyCStringPointer)
 {
-    CString nullString;
+    ASCIICString typedNullString;
+    const CStringBase& nullString = typedNullString;
     EXPECT_EQ(nullString.legacyCStringPointer(), static_cast<const char*>(nullptr));
 
-    CString string = ASCIICString { "WebKit"_s };
+    ASCIICString typedString { "WebKit"_s };
+    const CStringBase& string = typedString;
     EXPECT_EQ(string.legacyCStringPointer(), string.data());
     EXPECT_STREQ(string.legacyCStringPointer(), "WebKit");
 }
@@ -157,43 +160,23 @@ TEST(WTF, CStringCopyOnWrite)
 
 TEST(WTF, CStringComparison)
 {
-    // Slicing a typed string is how an encoding-erased CString is spelled now. The comparison it
-    // selects is the byte-wise one on CString, which CStringWithEncodingComparison does not cover.
-    CString a;
-    CString b;
-    ASSERT_TRUE(a == b);
-    ASSERT_FALSE(a != b);
-    a = ASCIICString { "a"_s };
-    b = CString();
-    ASSERT_FALSE(a == b);
-    ASSERT_TRUE(a != b);
-    a = ASCIICString { "a"_s };
-    b = ASCIICString { "b"_s };
-    ASSERT_FALSE(a == b);
-    ASSERT_TRUE(a != b);
-    a = ASCIICString { "a"_s };
-    b = ASCIICString { "a"_s };
-    ASSERT_TRUE(a == b);
-    ASSERT_FALSE(a != b);
-    a = ASCIICString { "a"_s };
-    b = ASCIICString { "aa"_s };
-    ASSERT_FALSE(a == b);
-    ASSERT_TRUE(a != b);
-    a = ASCIICString { ""_s };
-    b = ASCIICString { ""_s };
-    ASSERT_TRUE(a == b);
-    ASSERT_FALSE(a != b);
-    a = ASCIICString { ""_s };
-    b = CString();
-    ASSERT_FALSE(a == b);
-    ASSERT_TRUE(a != b);
-    a = ASCIICString { "a"_s };
-    b = ASCIICString { ""_s };
-    ASSERT_FALSE(a == b);
-    ASSERT_TRUE(a != b);
+    // Binding a typed string to const CStringBase& is how an encoding-erased string is spelled now. The
+    // comparison that selects is the byte-wise one on CStringBase, which CStringWithEncodingComparison does not cover.
+    auto compare = [](const CStringBase& a, const CStringBase& b) {
+        EXPECT_NE(a == b, a != b);
+        return a == b;
+    };
+    ASSERT_TRUE(compare(ASCIICString(), ASCIICString()));
+    ASSERT_FALSE(compare(ASCIICString { "a"_s }, ASCIICString()));
+    ASSERT_FALSE(compare(ASCIICString { "a"_s }, ASCIICString { "b"_s }));
+    ASSERT_TRUE(compare(ASCIICString { "a"_s }, ASCIICString { "a"_s }));
+    ASSERT_FALSE(compare(ASCIICString { "a"_s }, ASCIICString { "aa"_s }));
+    ASSERT_TRUE(compare(ASCIICString { ""_s }, ASCIICString { ""_s }));
+    ASSERT_FALSE(compare(ASCIICString { ""_s }, ASCIICString()));
+    ASSERT_FALSE(compare(ASCIICString { "a"_s }, ASCIICString { ""_s }));
 
     // Comparison against an ASCII literal, which is valid in every encoding and so is the one raw
-    // comparison CString still offers. It is a non-template overload, so an ASCIICString on the left
+    // comparison CStringBase still offers. It is a non-template overload, so an ASCIICString on the left
     // picks it too: the typed operator cannot deduce its parameter from a literal.
     ASCIICString c;
     ASCIILiteral d;
@@ -319,47 +302,46 @@ static_assert(std::same_as<decltype(std::declval<const UTF8CString&>().legacyCSt
 // ASCII is spelled with char, as in ASCIILiteral, so its accessors match the untyped ones.
 static_assert(std::same_as<decltype(std::declval<const ASCIICString&>().data()), const char*>);
 static_assert(std::same_as<decltype(std::declval<const ASCIICString&>().span())::element_type, const char>);
-// Erasing the encoding gives back the untyped CString span.
-static_assert(std::same_as<decltype(std::declval<const CString&>().span())::element_type, const char>);
-static_assert(std::same_as<decltype(std::declval<const CString&>().legacyCStringPointer()), const char*>);
+// Erasing the encoding gives back the untyped CStringBase span.
+static_assert(std::same_as<decltype(std::declval<const CStringBase&>().span())::element_type, const char>);
+static_assert(std::same_as<decltype(std::declval<const CStringBase&>().legacyCStringPointer()), const char*>);
 // Only UTF-8 needs the escape hatch, so the constrained override has to keep hiding
-// CString::legacyCStringPointer() for the other encodings: Latin-1 bytes are not a C string, and
+// CStringBase::legacyCStringPointer() for the other encodings: Latin-1 bytes are not a C string, and
 // ASCIICString::data() is already a const char*.
 template<typename StringType> concept HasLegacyCStringPointer = requires(const StringType& string)
 {
     string.legacyCStringPointer();
 };
-static_assert(HasLegacyCStringPointer<CString>);
+static_assert(HasLegacyCStringPointer<CStringBase>);
 static_assert(HasLegacyCStringPointer<UTF8CString>);
 static_assert(!HasLegacyCStringPointer<ASCIICString>);
 static_assert(!HasLegacyCStringPointer<Latin1CString>);
 // printf-style formatting reads the bytes back as UTF-8 or ASCII, so Latin-1 is kept away from it for
-// the same reason. The encoding-erased CString stays accepted while its producers are migrated.
+// the same reason. The encoding-erased CStringBase stays accepted for byte-agnostic callers.
 template<typename StringType> concept HasSafePrintfType = requires(const StringType& string)
 {
     safePrintfType(string);
 };
-static_assert(HasSafePrintfType<CString>);
+static_assert(HasSafePrintfType<CStringBase>);
 static_assert(HasSafePrintfType<UTF8CString>);
 static_assert(HasSafePrintfType<ASCIICString>);
 static_assert(!HasSafePrintfType<Latin1CString>);
-// Slicing to CString is allowed, but nothing implicitly converts the other way or between encodings.
-static_assert(std::is_convertible_v<UTF8CString, CString>);
-static_assert(!std::is_convertible_v<CString, UTF8CString>);
+// A typed string binds to const CStringBase&, but nothing implicitly converts the other way or between encodings.
+static_assert(std::is_convertible_v<const UTF8CString&, const CStringBase&>);
+static_assert(!std::is_convertible_v<const CStringBase&, const UTF8CString&>);
 static_assert(!std::is_convertible_v<Latin1CString, UTF8CString>);
-// Bytes get into a CString only through CStringWithEncoding: the encoding-erased base cannot be
-// built from a literal, a span or a std::string, and cannot hand out a buffer to write into.
-// ASCIILiteral converts to const char*, but that is a worse match than CString(ASCIILiteral), so
-// a literal is rejected outright rather than quietly losing its length, and any embedded null, to
-// a strlen. A std::string reaches the span constructor only through a user-defined conversion, so
-// with that constructor gone it has no way in at all.
-static_assert(!std::constructible_from<CString, ASCIILiteral>);
+// CStringBase only exists as the base of CStringWithEncoding, so bytes get into one only through a typed
+// string: it cannot be created, copied or moved out of a typed string, or assigned through, which
+// would relabel the encoding of the string it refers to.
+static_assert(!std::is_destructible_v<CStringBase>);
+static_assert(!std::is_default_constructible_v<CStringBase>);
+static_assert(!std::is_constructible_v<CStringBase, const UTF8CString&>);
+static_assert(!std::is_constructible_v<CStringBase, UTF8CString&&>);
+static_assert(!std::is_assignable_v<CStringBase&, const Latin1CString&>);
+static_assert(!std::is_assignable_v<CStringBase&, Latin1CString&&>);
 static_assert(std::constructible_from<UTF8CString, ASCIILiteral>);
-static_assert(!std::constructible_from<CString, std::span<const char>>);
 static_assert(std::constructible_from<ASCIICString, std::span<const char>>);
-static_assert(!std::constructible_from<CString, std::string>);
 static_assert(std::constructible_from<UTF8CString, std::string>);
-static_assert(!std::constructible_from<CString, const char*>);
 static_assert(std::constructible_from<ASCIICString, const char*>);
 template<typename StringType> concept HasMutableSpan = requires(StringType& string)
 {
@@ -367,15 +349,15 @@ template<typename StringType> concept HasMutableSpan = requires(StringType& stri
     string.mutableSpanIncludingNullTerminator();
     string.grow(1);
 };
-static_assert(!HasMutableSpan<CString>);
+static_assert(!HasMutableSpan<CStringBase>);
 static_assert(HasMutableSpan<UTF8CString>);
-// The storage cannot be taken out of a CString either, which is what closes the last way to build
+// The storage cannot be taken out of a CStringBase either, which is what closes the last way to build
 // one from bytes that never named an encoding.
 template<typename StringType> concept HasBuffer = requires(const StringType& string)
 {
     string.buffer();
 };
-static_assert(!HasBuffer<CString>);
+static_assert(!HasBuffer<CStringBase>);
 static_assert(!HasBuffer<UTF8CString>);
 // Ordering across encodings must not compile. This has to go through a concept: with concrete
 // types, selecting a deleted overload is a hard error rather than an unsatisfied requirement.
@@ -404,8 +386,8 @@ static_assert(std::same_as<decltype(std::declval<const String&>().latin1()), Lat
 static_assert(std::same_as<decltype(std::declval<const String&>().tryGetUTF8()), std::expected<UTF8CString, UTF8ConversionError>>);
 static_assert(std::same_as<decltype(std::declval<const StringView&>().tryGetUTF8()), std::expected<UTF8CString, UTF8ConversionError>>);
 static_assert(std::same_as<decltype(WTF::convertToASCIILowercase(u8""_span)), UTF8CString>);
-// Comparing against a plain CString stays available: it means "unknown encoding", so it is the deliberate escape hatch.
-static_assert(IsEqualityComparable<UTF8CString, CString>);
+// Comparing against a plain CStringBase stays available: it means "unknown encoding", so it is the deliberate escape hatch.
+static_assert(IsEqualityComparable<UTF8CString, CStringBase>);
 // An ASCII literal is valid in every encoding, so this stays available too.
 static_assert(IsEqualityComparable<UTF8CString, ASCIILiteral>);
 
@@ -500,8 +482,8 @@ TEST(WTF, CStringWithEncodingHashing)
     map.add(UTF8CString { u8"key"_span }, 1);
     EXPECT_EQ(map.get(UTF8CString { u8"key"_span }), 1);
 
-    // Hashing is over the raw bytes, so an equal untyped CString agrees.
-    EXPECT_EQ(UTF8CString { u8"key"_span }.hash(), CString { ASCIICString { "key"_s } }.hash());
+    // Hashing is over the raw bytes, so an equal untyped CStringBase agrees.
+    EXPECT_EQ(UTF8CString { u8"key"_span }.hash(), static_cast<const CStringBase&>(ASCIICString { "key"_s }).hash());
 }
 
 template<typename StringType> concept AdaptableToString = std::constructible_from<WTF::StringTypeAdapter<StringType>, const StringType&>;
@@ -509,12 +491,12 @@ template<typename StringType> concept AdaptableToString = std::constructible_fro
 TEST(WTF, CStringWithEncodingMakeString)
 {
     // makeString picks its adapter off the span's element type, so a UTF8CString is decoded as UTF-8.
-    // An untyped CString has no encoding to decode from, so it has no adapter at all and erasing the
+    // An untyped CStringBase has no encoding to decode from, so it has no adapter at all and erasing the
     // encoding does not compile, rather than silently reinterpreting the bytes as Latin-1.
     static_assert(AdaptableToString<UTF8CString>);
     static_assert(AdaptableToString<Latin1CString>);
     static_assert(AdaptableToString<ASCIICString>);
-    static_assert(!AdaptableToString<CString>);
+    static_assert(!AdaptableToString<CStringBase>);
 
     UTF8CString utf8String { u8"Water🍉Melon"_span };
     EXPECT_EQ(makeString(utf8String), String::fromUTF8(u8"Water🍉Melon"_span));
@@ -532,12 +514,12 @@ template<typename StringType> concept PrintableToStream = requires(StringPrintSt
 
 TEST(WTF, CStringWithEncodingPrintStream)
 {
-    // A PrintStream holds UTF-8, so printing transcodes whatever it is given. An untyped CString
+    // A PrintStream holds UTF-8, so printing transcodes whatever it is given. An untyped CStringBase
     // has no encoding to transcode from, so printing one does not compile.
     static_assert(PrintableToStream<UTF8CString>);
     static_assert(PrintableToStream<Latin1CString>);
     static_assert(PrintableToStream<ASCIICString>);
-    static_assert(!PrintableToStream<CString>);
+    static_assert(!PrintableToStream<CStringBase>);
 
     auto print = [](const auto& string) {
         StringPrintStream out;

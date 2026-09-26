@@ -48,7 +48,7 @@ namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
 
-// CStringBuffer is the ref-counted storage class for the characters in a CString.
+// CStringBuffer is the ref-counted storage class for the characters in a CStringBase.
 // The data is implicitly allocated 1 character longer than length(), as it is zero-terminated.
 class CStringBuffer final : public RefCounted<CStringBuffer> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CStringBuffer, CStringBuffer);
@@ -59,7 +59,7 @@ public:
     std::span<const char> spanIncludingNullTerminator() const LIFETIME_BOUND { return unsafeMakeSpan(m_data, m_length + 1); }
 
 private:
-    friend class CString;
+    friend class CStringBase;
 
     static Ref<CStringBuffer> createUninitialized(size_t length);
 
@@ -75,14 +75,13 @@ private:
 
 // A null-terminated, nullable, copy-on-write char array. Useful for interacting with C-style APIs.
 
-// Like const char*, CString does not know its encoding. The caller must apply the right encoding when extracting characters.
-// Prefer CStringWithEncoding (UTF8CString / Latin1CString / ASCIICString) below, which carries the encoding in the type.
-class CString {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CString);
+// Like const char*, CStringBase does not know its encoding. The caller must apply the right encoding when extracting characters.
+// It only exists as the base of CStringWithEncoding (UTF8CString / Latin1CString / ASCIICString) below, which carries the
+// encoding in the type. Its constructors, assignments and destructor are protected, so a const CStringBase& is the only
+// way to handle one directly, and neither slicing nor assigning through it can change a string's encoding.
+class CStringBase {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CStringBase);
 public:
-    CString() { }
-    CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
-
     const char* data() const LIFETIME_BOUND; // Any encoding
 
     // Escape hatch for external C functions and printf-style formatting, matching
@@ -107,16 +106,24 @@ public:
     WTF_EXPORT_PRIVATE unsigned NODELETE hash() const;
 
 protected:
-    // Only reachable through CStringWithEncoding below. Each of these either puts bytes into a
-    // CString or hands out a buffer to put them into, and the encoding-erased base has no way to
-    // say what encoding those bytes are in. An ASCII literal is valid in every supported encoding,
-    // but a CString built from one still has to name the encoding it is going to be read as.
-    WTF_EXPORT_PRIVATE CString(ASCIILiteral);
-    WTF_EXPORT_PRIVATE CString(std::span<const char>);
-    // Also loses the length, and any embedded null, to a strlen.
-    WTF_EXPORT_PRIVATE CString(const char*);
+    CStringBase() = default;
+    CStringBase(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
+    CStringBase(const CStringBase&) = default;
+    CStringBase(CStringBase&&) = default;
+    CStringBase& operator=(const CStringBase&) = default;
+    CStringBase& operator=(CStringBase&&) = default;
+    ~CStringBase() = default;
 
-    WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, std::span<char>& characterBuffer);
+    // Only reachable through CStringWithEncoding below. Each of these either puts bytes into a
+    // CStringBase or hands out a buffer to put them into, and the encoding-erased base has no way to
+    // say what encoding those bytes are in. An ASCII literal is valid in every supported encoding,
+    // but a CStringBase built from one still has to name the encoding it is going to be read as.
+    WTF_EXPORT_PRIVATE CStringBase(ASCIILiteral);
+    WTF_EXPORT_PRIVATE CStringBase(std::span<const char>);
+    // Also loses the length, and any embedded null, to a strlen.
+    WTF_EXPORT_PRIVATE CStringBase(const char*);
+
+    WTF_EXPORT_PRIVATE void allocateUninitialized(size_t length, std::span<char>& characterBuffer);
 
     // Copy-on-write
     WTF_EXPORT_PRIVATE std::span<char> mutableSpan() LIFETIME_BOUND;
@@ -129,62 +136,53 @@ private:
     RefPtr<CStringBuffer> m_buffer;
 } SWIFT_ESCAPABLE;
 
-WTF_EXPORT_PRIVATE bool NODELETE operator==(const CString&, const CString&);
-WTF_EXPORT_PRIVATE bool NODELETE operator==(const CString&, ASCIILiteral);
-WTF_EXPORT_PRIVATE bool operator<(const CString&, const CString&);
+WTF_EXPORT_PRIVATE bool NODELETE operator==(const CStringBase&, const CStringBase&);
+WTF_EXPORT_PRIVATE bool NODELETE operator==(const CStringBase&, ASCIILiteral);
+WTF_EXPORT_PRIVATE bool operator<(const CStringBase&, const CStringBase&);
 
 WTF_EXPORT_PRIVATE UTF8CString convertToASCIILowercase(std::span<const char8_t>);
 WTF_EXPORT_PRIVATE UTF8CString convertToASCIIUppercase(std::span<const char8_t>);
 
-struct CStringHash {
-    static unsigned hash(const CString& string) { return string.hash(); }
-    WTF_EXPORT_PRIVATE static bool NODELETE equal(const CString& a, const CString& b);
-    static constexpr bool safeToCompareToEmptyOrDeleted = true;
-};
-
 template<typename> struct DefaultHash;
-template<> struct DefaultHash<CString> : CStringHash { };
-
 template<typename> struct HashTraits;
-template<> struct HashTraits<CString> : SimpleClassHashTraits<CString> { };
 
-inline const char* CString::data() const LIFETIME_BOUND
+inline const char* CStringBase::data() const LIFETIME_BOUND
 {
     return m_buffer ? m_buffer->spanIncludingNullTerminator().data() : nullptr;
 }
 
-inline std::span<const char> CString::span() const LIFETIME_BOUND
+inline std::span<const char> CStringBase::span() const LIFETIME_BOUND
 {
     if (m_buffer)
         return m_buffer->span();
     return { };
 }
 
-inline std::span<const char> CString::spanIncludingNullTerminator() const LIFETIME_BOUND
+inline std::span<const char> CStringBase::spanIncludingNullTerminator() const LIFETIME_BOUND
 {
     if (m_buffer)
         return m_buffer->spanIncludingNullTerminator();
     return { };
 }
 
-inline size_t CString::length() const
+inline size_t CStringBase::length() const
 {
     return m_buffer ? m_buffer->length() : 0;
 }
 
-inline std::string CString::toStdString() const
+inline std::string CStringBase::toStdString() const
 {
     auto span = this->span();
     return std::string { span.data(), span.size() };
 }
 
-// CString is null terminated
-inline const char* safePrintfType(const CString& cstring) { return cstring.data(); }
+// CStringBase is null terminated
+inline const char* safePrintfType(const CStringBase& cstring) { return cstring.data(); }
 
-// A CString that remembers the encoding of its bytes. Converts implicitly to CString, which erases the encoding.
+// A C string that remembers the encoding of its bytes. Binds to const CStringBase&, which erases the encoding.
 // The character type carries the encoding, following WTF convention: char8_t is UTF-8, Latin1Character is
 // Latin-1, and char is ASCII, as in ASCIILiteral. For char that is a representation, not a meaning: a char in
-// CString itself means "any encoding", and ASCII is spelled with char here only because const char* is what C
+// CStringBase itself means "any encoding", and ASCII is spelled with char here only because const char* is what C
 // string interfaces take, which is what an ASCII string is for. ASCIICString::data() is therefore directly
 // usable by those interfaces and needs no escape hatch.
 //
@@ -192,25 +190,25 @@ inline const char* safePrintfType(const CString& cstring) { return cstring.data(
 // a mutable buffer, so there is no point at which the contents can be checked. It is therefore defined as
 // Latin-1 restricted to 0..127, and every operation treats it that way. A stray non-ASCII byte is then merely
 // a mislabeled Latin-1 byte, with no ill-defined behavior; the constructor asserts against it in debug builds.
-template<typename CharacterType> class CStringWithEncoding final : public CString {
-    // Heap allocation policy is inherited from CString.
+template<typename CharacterType> class CStringWithEncoding final : public CStringBase {
+    // Heap allocation policy is inherited from CStringBase.
     static_assert(std::same_as<CharacterType, char8_t> || std::same_as<CharacterType, Latin1Character> || std::same_as<CharacterType, char>);
 public:
     CStringWithEncoding() = default;
 
     CStringWithEncoding(HashTableDeletedValueType)
-        : CString(HashTableDeletedValue)
+        : CStringBase(HashTableDeletedValue)
     {
     }
 
     // An ASCII literal is valid in every supported encoding.
     CStringWithEncoding(ASCIILiteral literal)
-        : CString(literal)
+        : CStringBase(literal)
     {
     }
 
     explicit CStringWithEncoding(std::span<const CharacterType> characters)
-        : CString(byteCast<char>(characters))
+        : CStringBase(byteCast<char>(characters))
     {
         if constexpr (std::same_as<CharacterType, char>)
             ASSERT(charactersAreAllASCII(byteCast<Latin1Character>(characters)));
@@ -222,30 +220,33 @@ public:
     {
     }
 
-    // Null-terminated, like CString(const char*), and likewise asserts the encoding of its bytes.
+    // Null-terminated, like CStringBase(const char*), and likewise asserts the encoding of its bytes.
     explicit CStringWithEncoding(const CharacterType* string)
-        : CString(byteCast<char>(string))
+        : CStringBase(byteCast<char>(string))
     {
         if constexpr (std::same_as<CharacterType, char>)
-            ASSERT(charactersAreAllASCII(byteCast<Latin1Character>(CString::span())));
+            ASSERT(charactersAreAllASCII(byteCast<Latin1Character>(CStringBase::span())));
     }
 
     static CStringWithEncoding newUninitialized(size_t length, std::span<CharacterType>& characterBuffer)
     {
         std::span<char> bytes;
-        CStringWithEncoding result { CString::newUninitialized(length, bytes) };
+        CStringWithEncoding result;
+        result.allocateUninitialized(length, bytes);
         characterBuffer = byteCast<CharacterType>(bytes);
         return result;
     }
 
-    // These hide the CString versions so that the encoding survives into the pointer and span types.
-    const CharacterType* data() const LIFETIME_BOUND { return byteCast<CharacterType>(CString::data()); }
-    std::span<const CharacterType> span() const LIFETIME_BOUND { return byteCast<CharacterType>(CString::span()); }
-    std::span<const CharacterType> spanIncludingNullTerminator() const LIFETIME_BOUND { return byteCast<CharacterType>(CString::spanIncludingNullTerminator()); }
-    std::span<CharacterType> mutableSpan() LIFETIME_BOUND { return byteCast<CharacterType>(CString::mutableSpan()); }
-    std::span<CharacterType> mutableSpanIncludingNullTerminator() LIFETIME_BOUND { return byteCast<CharacterType>(CString::mutableSpanIncludingNullTerminator()); }
-    using CString::grow;
+    // These hide the CStringBase versions so that the encoding survives into the pointer and span types.
+    const CharacterType* data() const LIFETIME_BOUND { return byteCast<CharacterType>(CStringBase::data()); }
+    std::span<const CharacterType> span() const LIFETIME_BOUND { return byteCast<CharacterType>(CStringBase::span()); }
+    std::span<const CharacterType> spanIncludingNullTerminator() const LIFETIME_BOUND { return byteCast<CharacterType>(CStringBase::spanIncludingNullTerminator()); }
+    std::span<CharacterType> mutableSpan() LIFETIME_BOUND { return byteCast<CharacterType>(CStringBase::mutableSpan()); }
+    std::span<CharacterType> mutableSpanIncludingNullTerminator() LIFETIME_BOUND { return byteCast<CharacterType>(CStringBase::mutableSpanIncludingNullTerminator()); }
+    using CStringBase::grow;
     CStringWithEncoding isolatedCopy() const { return CStringWithEncoding { span() }; }
+    // Swift does not see members inherited from CStringBase, which it cannot import now that its destructor is protected.
+    std::string toStdString() const { return CStringBase::toStdString(); }
 
     // This is the escape hatch for external C functions and printf-style formatting. It is named for the
     // destination rather than the contents: const char* is what C string interfaces take, which is why this
@@ -253,17 +254,17 @@ public:
     // Interactions with other strings should go through the span. Only offered for UTF-8: Latin-1 bytes are
     // meaningful to a const char* API only when they happen to be ASCII, and such a string should have come from
     // String::ascii(), whose data() is already a const char*. Callers that really want the raw bytes can use
-    // byteCast<char>(span()) or slice to CString.
+    // byteCast<char>(span()) or bind a const CStringBase&.
     // FIXME: Should go away once callers that only need bytes have moved to span().
-    const char* legacyCStringPointer() const LIFETIME_BOUND requires std::same_as<CharacterType, char8_t> { return CString::data(); }
+    const char* legacyCStringPointer() const LIFETIME_BOUND requires std::same_as<CharacterType, char8_t> { return CStringBase::data(); }
 
 #if USE(FOUNDATION) && defined(__OBJC__)
     // Converts nil to a null string, like String(NSString *), which is the reverse of how
     // createNSString() below converts a null string to an empty NSString. Truncates at an embedded
     // null, as the result is a C string. Only offered for UTF-8: -cStringUsingEncoding: returns null
-    // for a string Latin-1 cannot represent, which would silently produce a null CString here.
+    // for a string Latin-1 cannot represent, which would silently produce a null string here.
     explicit CStringWithEncoding(NSString *string) requires std::same_as<CharacterType, char8_t>
-        : CString(string.UTF8String)
+        : CStringBase(string.UTF8String)
     {
     }
 
@@ -279,23 +280,16 @@ public:
         return adoptNS([[NSString alloc] initWithBytes:characters.data() length:characters.size() encoding:encoding]);
     }
 #endif
-
-private:
-    // Takes the result of CString::newUninitialized() above, whose encoding the caller has just named.
-    explicit CStringWithEncoding(CString&& string)
-        : CString(WTF::move(string))
-    {
-    }
 };
 
 // Latin-1 is refused for the same reason legacyCStringPointer() withholds a pointer from it: a printf
 // destination reads the bytes back as UTF-8 or ASCII, so a non-ASCII Latin-1 byte would be garbled. Use
 // String::utf8(), or String::ascii() where losing a non-ASCII character to '?' is as acceptable as it is
-// for the other unprintables. This is an exact match, so it wins over the CString overload above, which
+// for the other unprintables. This is an exact match, so it wins over the CStringBase overload above, which
 // would require a derived-to-base conversion.
 const char* safePrintfType(const Latin1CString&) = delete;
 
-// These are exact matches, so they win over the CString overloads above, which would require a derived-to-base conversion.
+// These are exact matches, so they win over the CStringBase overloads above, which would require a derived-to-base conversion.
 template<typename CharacterType>
 bool NODELETE operator==(const CStringWithEncoding<CharacterType>& a, const CStringWithEncoding<CharacterType>& b)
 {
@@ -314,7 +308,7 @@ bool operator<(const CStringWithEncoding<CharacterType>& a, const CStringWithEnc
     return is_lt(compareSpans(a.span(), b.span()));
 }
 
-// ASCII is Latin-1 restricted to 0..127, so ASCII against Latin-1 is left to the CString comparison above,
+// ASCII is Latin-1 restricted to 0..127, so ASCII against Latin-1 is left to the CStringBase comparison above,
 // which compares bytes; decoding both sides would give the same answer. UTF-8 bytes cannot be compared
 // against either of the single-byte encodings, so those combinations decode to code points instead.
 // Treating ASCII as Latin-1 rather than as raw bytes is what keeps this consistent for an ASCIICString that
@@ -356,7 +350,7 @@ template<typename CharacterType> struct HashTraits<CStringWithEncoding<Character
 } // namespace WTF
 
 using WTF::ASCIICString;
-using WTF::CString;
+using WTF::CStringBase;
 using WTF::CStringWithEncoding;
 using WTF::Latin1CString;
 using WTF::UTF8CString;
