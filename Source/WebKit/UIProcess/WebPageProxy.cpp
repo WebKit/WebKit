@@ -12085,12 +12085,19 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
 #endif
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
+            RefPtr requestingFrame = WebFrameProxy::webFrame(frameID);
+            RefPtr mainFrame = this->mainFrame();
+            if (!requestingFrame || !mainFrame || requestingFrame->page() != this) {
+                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Digital credentials request has no active frame."_s }));
+                return;
+            }
             MESSAGE_CHECK_COMPLETION_BASE(
-                requestData.topOrigin.securityOrigin()->isSameOriginDomain(SecurityOrigin::create(protect(mainFrame())->url())),
+                &requestingFrame->process() == WebProcessProxy::fromConnection(connection).ptr(),
                 connection,
-                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request is not same-origin with top-level navigable."_s }))
+                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request is not allowed."_s }))
             );
 
+<<<<<<< HEAD
             auto lastActivationTimestamp = internals().lastActivationTimestamp;
             bool hasTransientActivation = MonotonicTime::now() - lastActivationTimestamp < WebCore::LocalDOMWindow::transientActivationDuration();
             if (!hasTransientActivation || lastActivationTimestamp <= internals().lastConsumedDigitalCredentialsActivationTimestamp) {
@@ -12098,9 +12105,17 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
                 return;
             }
             internals().lastConsumedDigitalCredentialsActivationTimestamp = lastActivationTimestamp;
+=======
+            auto topLevelOrigin = mainFrame->documentSecurityOriginData();
+            auto requestingOrigin = requestingFrame->documentSecurityOriginData();
+
+            auto sanitizedRequestData = requestData;
+            sanitizedRequestData.topOrigin = WTF::move(topLevelOrigin);
+            sanitizedRequestData.documentOrigin = WTF::move(requestingOrigin);
+>>>>>>> bb4d1e92ad74 (Digital Credentials: derive request origins from trusted UI-process state)
 
             LOG(DigitalCredentials, "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: passing to pageClient to present chooser UI");
-            protect(pageClient())->showDigitalCredentialsChooser(requestData, WTF::move(completionHandler));
+            protect(pageClient())->showDigitalCredentialsChooser(sanitizedRequestData, WTF::move(completionHandler));
 #else
             completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials UI is not supported."_s }));
 #endif
