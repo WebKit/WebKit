@@ -225,6 +225,43 @@ extension AppKitGesturesTests.Embedded {
         let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
         #expect(newSelection == crazySelection)
     }
+
+    @Test(
+        .bug("https://webkit.org/b/324477", "Interrupt an enclosing scroll view's deceleration follows the link below")
+    )
+    func interruptingEnclosingScrollViewDecelerationDoesNotFollowLink() async throws {
+        let html = """
+            <body style="margin: 0;">
+                <a id="link" href="about:blank"
+                   style="display: block; width: 100%; height: 100vh;
+                          background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+                </a>
+            </body>
+            """
+
+        let initialURL = try #require(URL(string: "http://webkit.org/"))
+        try await page.load(html: html, baseURL: initialURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let cgScreenOrigin = screenBounds(ofPointInWindowCoordinates: .init(x: 0, y: windowSize.height))
+        let viewportInCGScreen = CGRect(origin: cgScreenOrigin, size: windowSize)
+
+        let center = viewportInCGScreen.center
+        let flickStart = CGPoint(x: center.x, y: center.y + 50)
+        let flickEnd = CGPoint(x: center.x, y: center.y - 50)
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: flickStart, end: flickEnd, duration: .seconds(0.1))
+            composer.advanceTime(0.05)
+            composer._wk_click(at: center, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(1))
+        #expect(page.url == initialURL)
+    }
 }
 
 #endif // HAVE_APPKIT_GESTURES_SUPPORT
