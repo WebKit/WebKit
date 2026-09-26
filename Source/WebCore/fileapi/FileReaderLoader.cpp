@@ -119,6 +119,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
     options.credentials = FetchOptions::Credentials::Include;
     options.mode = FetchOptions::Mode::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
+    options.cachingPolicy = CachingPolicy::DisallowCaching;
 
     if (m_client) {
         auto loader = ThreadableLoader::create(*scriptExecutionContext, *this, WTF::move(request), options);

@@ -1,0 +1,10 @@
+Reading a Blob should not add a resource to the memory cache, because each read uses a unique temporary URL that will never be requested again.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS memoryCacheSizeAfterReads is initialMemoryCacheSize
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
