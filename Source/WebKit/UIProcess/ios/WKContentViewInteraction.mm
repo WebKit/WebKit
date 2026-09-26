@@ -104,6 +104,7 @@
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyMessages.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKDragActionsInternal.h"
@@ -12389,7 +12390,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled
 {
     if (WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled))
-        protect(_page->legacyMainFrameProcess())->updateTextCheckerState();
+        WebKit::WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
 }
 
 - (void)setGrammarCheckingEnabled:(BOOL)enabled
@@ -12398,7 +12399,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
         return;
 
     WebKit::TextChecker::setGrammarCheckingEnabled(enabled);
-    protect(_page->legacyMainFrameProcess())->updateTextCheckerState();
+    WebKit::WebProcessPool::notifyProcessPoolsTextCheckerStateChanged();
 }
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
