@@ -154,6 +154,10 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageProxyCocoaAdditionsImpl.mm>)
+#import <WebKitAdditions/WebPageProxyCocoaAdditionsImpl.mm>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

@@ -984,6 +984,11 @@ void WebPageProxy::showColorPanel()
 
 Color WebPageProxy::platformUnderPageBackgroundColor() const
 {
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (auto color = axCustomColorModeUnderPageBackgroundColor(); color.isValid())
+        return color;
+#endif
+
 #if ENABLE(DARK_MODE_CSS)
     return WebCore::roundAndClampToSRGBALossy(RetainPtr { NSColor.controlBackgroundColor.CGColor }.get());
 #else
