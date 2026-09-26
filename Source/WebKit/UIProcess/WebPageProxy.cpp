@@ -13788,28 +13788,28 @@ void WebPageProxy::ignoreWord(IPC::Connection& connection, const String& word)
     TextChecker::ignoreWord(spellDocumentTag(), word);
 }
 
-void WebPageProxy::requestCheckingOfString(TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
+void WebPageProxy::requestCheckingOfString(IPC::Connection& connection, TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
 {
-    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, *this), insertionPoint);
+    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, *this, WebProcessProxy::fromConnection(connection)), insertionPoint);
 }
 
 
-void WebPageProxy::requestExtendedCheckingOfString(TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
+void WebPageProxy::requestExtendedCheckingOfString(IPC::Connection& connection, TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
 {
 #if PLATFORM(COCOA)
-    TextChecker::requestExtendedCheckingOfString(TextCheckerCompletion::create(requestID, request, *this), insertionPoint);
+    TextChecker::requestExtendedCheckingOfString(TextCheckerCompletion::create(requestID, request, *this, WebProcessProxy::fromConnection(connection)), insertionPoint);
 #endif
 }
 
 
-void WebPageProxy::didFinishCheckingText(TextCheckerRequestID requestID, const Vector<WebCore::TextCheckingResult>& result)
+void WebPageProxy::didFinishCheckingText(WebProcessProxy& process, TextCheckerRequestID requestID, const Vector<WebCore::TextCheckingResult>& result)
 {
-    send(Messages::WebPage::DidFinishCheckingText(requestID, result));
+    process.send(Messages::WebPage::DidFinishCheckingText(requestID, result), webPageIDInProcess(process));
 }
 
-void WebPageProxy::didCancelCheckingText(TextCheckerRequestID requestID)
+void WebPageProxy::didCancelCheckingText(WebProcessProxy& process, TextCheckerRequestID requestID)
 {
-    send(Messages::WebPage::DidCancelCheckingText(requestID));
+    process.send(Messages::WebPage::DidCancelCheckingText(requestID), webPageIDInProcess(process));
 }
 
 void WebPageProxy::focusFromServiceWorker(CompletionHandler<void()>&& callback)

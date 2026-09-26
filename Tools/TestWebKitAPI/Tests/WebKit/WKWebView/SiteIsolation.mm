@@ -4117,6 +4117,94 @@ TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframeWithScrolled
         }
     );
 }
+
+static bool shouldReportBadGrammar = false;
+static RetainPtr<NSString> stringForGrammarReview;
+static BlockPtr<void(NSInteger, NSArray<NSTextCheckingResult *> *)> grammarReviewCompletionHandler;
+
+static NSArray<NSTextCheckingResult *> *badGrammarResults(NSString *string)
+{
+    NSRange range = [string rangeOfString:@"in then"];
+    if (range.location == NSNotFound)
+        return @[ ];
+    NSDictionary *detail = @{
+        NSGrammarRange: [NSValue valueWithRange:NSMakeRange(0, range.length)],
+        NSGrammarCorrections: @[ @"in the" ],
+    };
+    return @[ [NSTextCheckingResult grammarCheckingResultWithRange:range details:@[ detail ]] ];
+}
+
+static NSArray<NSTextCheckingResult *> *swizzledCheckStringForGrammarReview(id, SEL, NSString *stringToCheck, NSRange, NSTextCheckingTypes types, NSDictionary *, NSInteger, NSOrthography **, NSInteger *)
+{
+    if (!shouldReportBadGrammar || !(types & NSTextCheckingTypeGrammar))
+        return @[ ];
+    return badGrammarResults(stringToCheck);
+}
+
+using GrammarReviewCompletionHandler = void (^)(NSInteger, NSArray<NSTextCheckingResult *> *);
+
+static NSInteger swizzledRequestGrammarReview(id, SEL, NSString *stringToCheck, NSRange, NSString *, NSDictionary *, GrammarReviewCompletionHandler completionHandler)
+{
+    if ([stringToCheck containsString:@"in then"]) {
+        stringForGrammarReview = stringToCheck;
+        grammarReviewCompletionHandler = makeBlockPtr(completionHandler);
+    }
+    return 0;
+}
+
+TEST(SiteIsolation, ExtendedProofreadingResultsReachCrossOriginIframe)
+{
+    shouldReportBadGrammar = false;
+    stringForGrammarReview = nil;
+    grammarReviewCompletionHandler = nullptr;
+
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    enableSiteIsolation(configuration.get());
+    setFeatureEnabled(configuration.get(), @"ExtendedProofreadingEnabled", true);
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    InstanceMethodSwizzler checkStringSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:),
+        reinterpret_cast<IMP>(swizzledCheckStringForGrammarReview)
+    };
+    InstanceMethodSwizzler requestGrammarCheckingSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(requestGrammarCheckingOfString:range:language:options:completionHandler:),
+        reinterpret_cast<IMP>(swizzledRequestGrammarReview)
+    };
+
+    [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+    [webView _setGrammarCheckingEnabledForTesting:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    RetainPtr childFrame = [webView firstChildFrame];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body)" inFrame:childFrame.get()];
+    [webView insertText:@"Let's go in then store\n" replacementRange:NSMakeRange(0, 0)];
+    while (!grammarReviewCompletionHandler)
+        Util::spinRunLoop();
+
+    shouldReportBadGrammar = true;
+    grammarReviewCompletionHandler(0, badGrammarResults(stringForGrammarReview.get()));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"internals.markerCountForNode(document.body.firstChild, 'grammar')" inFrame:childFrame.get()] intValue] > 0;
+    }));
+}
 #endif
 
 TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInCrossOriginIframe)

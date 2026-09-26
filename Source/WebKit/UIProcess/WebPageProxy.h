@@ -2124,8 +2124,8 @@ public:
 
     SpellDocumentTag spellDocumentTag();
 
-    void didFinishCheckingText(TextCheckerRequestID, const Vector<WebCore::TextCheckingResult>&);
-    void didCancelCheckingText(TextCheckerRequestID);
+    void didFinishCheckingText(WebProcessProxy&, TextCheckerRequestID, const Vector<WebCore::TextCheckingResult>&);
+    void didCancelCheckingText(WebProcessProxy&, TextCheckerRequestID);
         
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
     WebCore::ScrollPinningBehavior NODELETE scrollPinningBehavior() const;
@@ -3445,8 +3445,8 @@ private:
     void updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const WebCore::GrammarDetail&);
     void learnWord(IPC::Connection&, const String& word);
     void ignoreWord(IPC::Connection&, const String& word);
-    void requestCheckingOfString(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, int32_t insertionPoint);
-    void requestExtendedCheckingOfString(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, int32_t insertionPoint);
+    void requestCheckingOfString(IPC::Connection&, TextCheckerRequestID, const WebCore::TextCheckingRequestData&, int32_t insertionPoint);
+    void requestExtendedCheckingOfString(IPC::Connection&, TextCheckerRequestID, const WebCore::TextCheckingRequestData&, int32_t insertionPoint);
 
     void takeFocus(WebCore::FocusDirection);
     void setToolTip(const String&);

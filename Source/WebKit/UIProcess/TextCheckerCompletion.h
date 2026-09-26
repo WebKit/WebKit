@@ -35,10 +35,11 @@ namespace WebKit {
 using SpellDocumentTag = int64_t;
 
 class WebPageProxy;
+class WebProcessProxy;
 
 class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
 public:
-    static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&);
+    static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&, WebProcessProxy&);
 
     const WebCore::TextCheckingRequestData& NODELETE textCheckingRequestData() const;
     SpellDocumentTag spellDocumentTag();
@@ -46,11 +47,12 @@ public:
     void didCancelCheckingText() const;
 
 private:
-    TextCheckerCompletion(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&);
+    TextCheckerCompletion(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&, WebProcessProxy&);
 
     const TextCheckerRequestID m_requestID;
     const WebCore::TextCheckingRequestData m_requestData;
     WeakPtr<WebPageProxy> m_page;
+    WeakPtr<WebProcessProxy> m_process;
 };
 
 } // namespace WebKit
