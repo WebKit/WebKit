@@ -55,6 +55,10 @@ struct AudioDestinationCreationOptions {
 #if PLATFORM(IOS_FAMILY)
     const String& sceneIdentifier;
 #endif
+    // Output device id (empty means the default device) and silent-sink selection. Only honored by
+    // the GStreamer port. See AudioContext.setSinkId().
+    String outputDeviceId { };
+    bool isSilent { false };
 };
 
 class AudioDestination : public AbstractRefCounted {
@@ -71,6 +75,17 @@ public:
     virtual void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& = [](bool) { }) = 0;
     virtual void stop(CompletionHandler<void(bool)>&& = [](bool) { }) = 0;
     virtual bool isPlaying() = 0;
+
+    // Switches the output device at runtime. persistentDeviceId is a port-specific device id (empty
+    // means the default device); isSilent requests a sink that drops audio. The completion handler
+    // reports whether the device was acquired; on failure the previous routing stays in effect.
+    // Only the GStreamer port implements this; other ports report success without switching.
+    virtual void setSinkId(const String& persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        UNUSED_PARAM(persistentDeviceId);
+        UNUSED_PARAM(isSilent);
+        completionHandler(true);
+    }
 
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate
     virtual float sampleRate() const { return m_sampleRate; }
@@ -92,6 +107,9 @@ public:
     const String& inputDeviceId() const LIFETIME_BOUND { return m_inputDeviceId; }
     unsigned numberOfInputChannels() const { return m_numberOfInputChannels; }
     unsigned numberOfOutputChannels() const { return m_numberOfOutputChannels; }
+    // Output device id in effect (empty means the default device) and silent-sink selection.
+    const String& outputDeviceId() const LIFETIME_BOUND { return m_outputDeviceId; }
+    bool isSilent() const { return m_isSilent; }
 
 #if PLATFORM(IOS_FAMILY)
     const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
@@ -100,6 +118,12 @@ public:
 
 protected:
     explicit AudioDestination(const CreationOptions&);
+
+    void setSinkSelection(const String& outputDeviceId, bool isSilent)
+    {
+        m_outputDeviceId = outputDeviceId;
+        m_isSilent = isSilent;
+    }
 
     Lock m_callbackLock;
     AudioIOCallback* m_callback WTF_GUARDED_BY_LOCK(m_callbackLock) { nullptr };
@@ -112,6 +136,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     String m_sceneIdentifier;
 #endif
+    String m_outputDeviceId;
+    bool m_isSilent { false };
 };
 
 inline AudioDestination::AudioDestination(const CreationOptions& options)
@@ -122,6 +148,8 @@ inline AudioDestination::AudioDestination(const CreationOptions& options)
 #if PLATFORM(IOS_FAMILY)
     , m_sceneIdentifier { options.sceneIdentifier }
 #endif
+    , m_outputDeviceId { options.outputDeviceId }
+    , m_isSilent { options.isSilent }
 {
     Locker locker { m_callbackLock };
     m_callback = &options.callback;

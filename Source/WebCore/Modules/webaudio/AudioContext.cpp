@@ -33,6 +33,8 @@
 #include "DOMAudioSession.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
@@ -43,6 +45,7 @@
 #include "NowPlayingInfo.h"
 #include "PageInlines.h"
 #include "Performance.h"
+#include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -52,11 +55,13 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
+#include "MediaDevices.h"
 #include "MediaStream.h"
 #include "MediaStreamAudioDestinationNode.h"
 #include "MediaStreamAudioSource.h"
 #include "MediaStreamAudioSourceNode.h"
 #include "MediaStreamAudioSourceOptions.h"
+#include "NavigatorMediaDevices.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -124,7 +129,11 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 
     if (contextOptions.sampleRate && !isSupportedSampleRate(*contextOptions.sampleRate))
         return Exception { ExceptionCode::NotSupportedError, "sampleRate is not in range"_s };
-    
+
+    // FIXME: When sampleRate is unspecified and sinkId identifies a specific output device, the
+    // context should use that device's sample rate (constructor step 10.3), which needs a
+    // per-device sample rate query in the platform AudioDestination.
+
     auto audioContext = adoptRef(*new AudioContext(document, contextOptions));
     audioContext->suspendIfNeeded();
     return audioContext;
@@ -140,6 +149,8 @@ AudioContext::AudioContext(Document& document, const AudioContextOptions& contex
 
     // Initialize the destination node's muted state to match the page's current muted state.
     pageMutedStateDidChange();
+
+    applyConstructorSinkId(contextOptions);
 
     document.addAudioProducer(*this);
 
@@ -191,6 +202,8 @@ void AudioContext::uninitialize()
 
 void AudioContext::stop()
 {
+    rejectPendingSinkChangePromises();
+
     if (RefPtr document = this->document())
         document->removeAudioProducer(*this);
     BaseAudioContext::stop();
@@ -239,6 +252,8 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
     }
+
+    rejectPendingSinkChangePromises();
 
     addReaction(State::Closed, WTF::move(promise));
 
@@ -347,6 +362,8 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
                         return;
                     }
 
+                    context.commitConstructionSinkId();
+
                     // Since we update the state asynchronously, we may have been interrupted after the
                     // call to resume() and before this lambda runs. In this case, we don't want to
                     // reset the state to running.
@@ -367,6 +384,250 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
     m_currentRenderingOperation = protect(m_currentRenderingOperation)->whenSettled(RunLoop::mainSingleton(), [doResume = WTF::move(doResume)](auto) mutable {
         return doResume();
     });
+}
+
+static bool sinkIdsAreEqual(const Variant<String, Ref<AudioSinkInfo>>& current, const Variant<String, AudioSinkOptions>& requested)
+{
+    if (std::holds_alternative<String>(current) && std::holds_alternative<String>(requested))
+        return std::get<String>(current) == std::get<String>(requested);
+    if (std::holds_alternative<Ref<AudioSinkInfo>>(current) && std::holds_alternative<AudioSinkOptions>(requested))
+        return std::get<Ref<AudioSinkInfo>>(current)->type() == std::get<AudioSinkOptions>(requested).type;
+    return false;
+}
+
+static bool sinkIdsAreEqual(const Variant<String, Ref<AudioSinkInfo>>& current, const Variant<String, Ref<AudioSinkInfo>>& requested)
+{
+    if (std::holds_alternative<String>(current) && std::holds_alternative<String>(requested))
+        return std::get<String>(current) == std::get<String>(requested);
+    if (std::holds_alternative<Ref<AudioSinkInfo>>(current) && std::holds_alternative<Ref<AudioSinkInfo>>(requested))
+        return std::get<Ref<AudioSinkInfo>>(current)->type() == std::get<Ref<AudioSinkInfo>>(requested)->type();
+    return false;
+}
+
+static bool isAllowedToUseSpeakerSelection(const Document& document)
+{
+#if ENABLE(MEDIA_STREAM)
+    return MediaDevices::isFeaturePolicyAllowingSpeakerSelection(document);
+#else
+    return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::SpeakerSelection, document, PermissionsPolicy::ShouldReportViolation::No);
+#endif
+}
+
+// https://webaudio.github.io/web-audio-api/#validating-sink-identifier
+ExceptionOr<AudioContext::ResolvedSinkId> AudioContext::validateSinkId(const Variant<String, AudioSinkOptions>& sinkId)
+{
+    RefPtr document = this->document();
+    if (!document || !isAllowedToUseSpeakerSelection(*document))
+        return Exception { ExceptionCode::NotAllowedError, "Speaker selection is not allowed by permissions policy"_s };
+
+    if (std::holds_alternative<AudioSinkOptions>(sinkId))
+        return ResolvedSinkId { AudioSinkInfo::create(std::get<AudioSinkOptions>(sinkId).type), String { }, true };
+
+    auto deviceId = std::get<String>(sinkId);
+    if (deviceId.isEmpty())
+        return ResolvedSinkId { emptyString(), String { }, false };
+
+#if ENABLE(MEDIA_STREAM)
+    RefPtr window = document->window();
+    RefPtr mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr;
+    if (mediaDevices) {
+        auto persistentId = mediaDevices->deviceIdToPersistentId(deviceId);
+        if (!persistentId.isNull())
+            return ResolvedSinkId { deviceId, WTF::move(persistentId), false };
+    }
+#endif
+    // The spec rejects every validation failure with NotAllowedError, but the WPTs and other
+    // engines use NotFoundError for an unmatched device id.
+    return Exception { ExceptionCode::NotFoundError, "No audio output device matches the given identifier"_s };
+}
+
+void AudioContext::applySinkChange(SinkChangeIdentifier identifier, ResolvedSinkId&& resolved, ResumeAfterSinkChange resumeAfterSinkChange)
+{
+    auto persistentDeviceId = resolved.persistentDeviceId;
+    bool isSilent = resolved.isSilent;
+    protect(destination())->setSinkId(persistentDeviceId, isSilent, [activity = makePendingActivity(*this), identifier, resolved = WTF::move(resolved), resumeAfterSinkChange](bool success) mutable {
+        // The completion may arrive outside of any event loop task, e.g. as a GPU process IPC
+        // reply; settle the promise from a queued task so its reactions get normal microtask timing.
+        auto& context = activity->object();
+        context.queueTaskKeepingObjectAlive(context, TaskSource::MediaElement, [identifier, resolved = WTF::move(resolved), resumeAfterSinkChange, success](auto& context) mutable {
+            context.finishSinkChange(identifier, WTF::move(resolved), resumeAfterSinkChange, success);
+        });
+    });
+}
+
+void AudioContext::finishSinkChange(SinkChangeIdentifier identifier, ResolvedSinkId&& resolved, ResumeAfterSinkChange resumeAfterSinkChange, bool success)
+{
+    auto promise = m_pendingSinkChangePromises.take(identifier);
+    if (!promise) {
+        // close() or a document detach settled the promise; leave [[sink ID]] unchanged.
+        return;
+    }
+
+    if (!success) {
+        ERROR_LOG(LOGIDENTIFIER, "Failed to acquire the audio output device");
+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "The audio output device could not be acquired"_s });
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_sinkId = WTF::move(resolved.sinkId);
+    m_sinkIdAtConstruction = std::nullopt;
+    m_constructionSinkIdWasInvalid = false;
+
+    // The spec resolves the promise and fires sinkchange within a single task, which would run the
+    // event listeners before the promise reactions; the WPTs require the opposite order, which
+    // firing the event from a separate task provides.
+    promise->resolve();
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().sinkchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+    if (resumeAfterSinkChange == ResumeAfterSinkChange::No)
+        return;
+
+    // Yield to the event loop so the suspended + sinkchange events dispatch before resuming.
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& context) {
+        if (context.isStopped() || context.isClosed() || context.m_wasSuspendedByScript)
+            return;
+        Ref destination = context.destination();
+        if (!destination->isInitialized())
+            return;
+        destination->resume([activity = context.makePendingActivity(context)](std::optional<Exception>&& exception) {
+            auto& context = activity->object();
+            if (exception || context.isStopped() || context.isClosed() || context.m_wasSuspendedByScript)
+                return;
+            bool interrupted = context.m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
+            context.setState(interrupted ? State::Interrupted : State::Running);
+        });
+    });
+}
+
+// https://webaudio.github.io/web-audio-api/#dom-audiocontext-setsinkid
+void AudioContext::setSinkId(Variant<String, AudioSinkOptions>&& sinkId, DOMPromiseDeferred<void>&& promise)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    RefPtr document = this->document();
+    if (!document || !document->isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        return;
+    }
+
+    if (isStopped() || isClosed()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        return;
+    }
+
+    if (sinkIdsAreEqual(m_sinkId, sinkId)) {
+        promise.resolve();
+        return;
+    }
+
+#if ENABLE(MEDIA_STREAM)
+    if (document->settings().speakerSelectionRequiresUserGesture() && !document->processingUserGestureForMedia()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "A user gesture is required"_s });
+        return;
+    }
+#endif
+
+    auto validation = validateSinkId(sinkId);
+    if (validation.hasException()) {
+        promise.reject(validation.releaseException());
+        return;
+    }
+
+    // The promise stays registered until settled so that a close() or document detach while the
+    // change is in flight rejects it with InvalidStateError. See https://crbug.com/1408376.
+    auto identifier = SinkChangeIdentifier::generate();
+    m_pendingSinkChangePromises.add(identifier, makeUnique<DOMPromiseDeferred<void>>(WTF::move(promise)));
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [identifier, resolved = validation.releaseReturnValue()](auto& context) mutable {
+        context.performSinkChange(identifier, WTF::move(resolved));
+    });
+}
+
+void AudioContext::performSinkChange(SinkChangeIdentifier identifier, ResolvedSinkId&& resolved)
+{
+    if (!m_pendingSinkChangePromises.contains(identifier))
+        return;
+
+    if (isStopped() || isClosed()) {
+        rejectSinkChangePromise(identifier, Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        return;
+    }
+
+    // A concurrent sink change may have made this request idempotent; resolve with no side effects.
+    if (sinkIdsAreEqual(m_sinkId, resolved.sinkId)) {
+        if (auto promise = m_pendingSinkChangePromises.take(identifier))
+            promise->resolve();
+        return;
+    }
+
+    if (state() != State::Running) {
+        applySinkChange(identifier, WTF::move(resolved), ResumeAfterSinkChange::No);
+        return;
+    }
+
+    // A running context suspends around the switch, with a statechange event for each transition.
+    protect(destination())->suspend([activity = makePendingActivity(*this), identifier, resolved = WTF::move(resolved)](std::optional<Exception>&& exception) mutable {
+        auto& context = activity->object();
+        if (!context.m_pendingSinkChangePromises.contains(identifier))
+            return;
+        if (exception) {
+            context.rejectSinkChangePromise(identifier, WTF::move(*exception));
+            return;
+        }
+        if (context.isStopped() || context.isClosed()) {
+            context.rejectSinkChangePromise(identifier, Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+            return;
+        }
+        context.setState(State::Suspended);
+        context.applySinkChange(identifier, WTF::move(resolved), ResumeAfterSinkChange::Yes);
+    });
+}
+
+void AudioContext::rejectSinkChangePromise(SinkChangeIdentifier identifier, Exception&& exception)
+{
+    if (auto promise = m_pendingSinkChangePromises.take(identifier))
+        promise->reject(WTF::move(exception));
+}
+
+void AudioContext::rejectPendingSinkChangePromises()
+{
+    auto pending = std::exchange(m_pendingSinkChangePromises, { });
+    for (auto& promise : pending.values())
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+}
+
+// https://webaudio.github.io/web-audio-api/#dom-audiocontext-audiocontext (constructor step 10.1)
+void AudioContext::applyConstructorSinkId(const AudioContextOptions& options)
+{
+    if (!options.sinkId)
+        return;
+
+    RefPtr document = this->document();
+    if (!document || !document->settings().audioContextSetSinkIdEnabled())
+        return;
+
+    if (sinkIdsAreEqual(m_sinkId, *options.sinkId))
+        return;
+
+    auto validation = validateSinkId(*options.sinkId);
+    if (validation.hasException()) {
+        // An invalid sink id at construction does not throw; startRendering() fires error instead.
+        m_constructionSinkIdWasInvalid = true;
+        return;
+    }
+
+    // [[sink ID]] is only committed once processing starts, see commitConstructionSinkId(). The
+    // destination has not been created yet, so setSinkId() just stores the routing for it.
+    auto resolved = validation.releaseReturnValue();
+    protect(destination())->setSinkId(resolved.persistentDeviceId, resolved.isSilent, [](bool) { });
+    m_sinkIdAtConstruction = WTF::move(resolved);
+}
+
+void AudioContext::commitConstructionSinkId()
+{
+    if (auto resolved = std::exchange(m_sinkIdAtConstruction, std::nullopt))
+        m_sinkId = WTF::move(resolved->sinkId);
 }
 
 void AudioContext::sourceNodeWillBeginPlayback(AudioNode& audioNode)
@@ -398,14 +659,27 @@ void AudioContext::startRendering()
         if (protectedThis->isStopped() || protectedThis->m_wasSuspendedByScript || protectedThis->isClosed())
             return;
 
+        // https://webaudio.github.io/web-audio-api/#dom-audiocontext-audiocontext "sending a control
+        // message to start processing": an invalid sinkId at construction fires error instead of
+        // starting, and [[sink ID]] stays "".
+        if (std::exchange(protectedThis->m_constructionSinkIdWasInvalid, false)) {
+            queueTaskToDispatchEvent(*protectedThis, TaskSource::MediaElement, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            return;
+        }
+
         protectedThis->lazyInitialize();
         Ref destination = protectedThis->destination();
         if (!destination->isInitialized())
             return;
 
         destination->startRendering([pendingActivity = protectedThis->makePendingActivity(*protectedThis), protectedThis = WTF::move(protectedThis)](std::optional<Exception>&& exception) {
-            if (!exception)
-                protectedThis->setState(State::Running);
+            if (exception) {
+                if (std::exchange(protectedThis->m_sinkIdAtConstruction, std::nullopt))
+                    queueTaskToDispatchEvent(*protectedThis, TaskSource::MediaElement, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+                return;
+            }
+            protectedThis->commitConstructionSinkId();
+            protectedThis->setState(State::Running);
         });
     });
 }
@@ -491,6 +765,8 @@ void AudioContext::mayResumePlayback(bool shouldResume)
             return;
 
         destination->resume([pendingActivity = protectedThis->makePendingActivity(*protectedThis), protectedThis = WTF::move(protectedThis)](std::optional<Exception>&& exception) {
+            if (!exception)
+                protectedThis->commitConstructionSinkId();
             protectedThis->setState(exception ? State::Suspended : State::Running);
         });
     });

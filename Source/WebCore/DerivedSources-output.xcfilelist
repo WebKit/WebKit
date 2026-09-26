@@ -278,6 +278,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSampleFormat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSampleFormat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioScheduledSourceNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioScheduledSourceNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSinkInfo.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSinkInfo.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSinkOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSinkOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSinkType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioSinkType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTimestamp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTimestamp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrack+MediaSource.cpp

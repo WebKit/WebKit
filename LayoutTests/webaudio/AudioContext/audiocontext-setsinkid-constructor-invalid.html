@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AudioContext constructor with an invalid sinkId</title>
+    <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+      // https://webaudio.github.io/web-audio-api/#dom-audiocontext-audiocontext
+      // "sending a control message to start processing": when validation of
+      // [[sink ID at construction]] fails, [[sink ID]] is set to the empty string, an error
+      // event fires, and the remaining steps (transitioning to running) are aborted.
+      promise_test(async t => {
+        const context = new AudioContext({ sinkId: 'nonexistent-device-id' });
+        t.add_cleanup(() => context.close());
+
+        await new Promise(resolve => context.addEventListener('error', resolve, { once: true }));
+        assert_equals(context.sinkId, '', '[[sink ID]] stays the empty string');
+        assert_equals(context.state, 'suspended', 'the context never transitions to running');
+      }, 'An invalid sinkId at construction fires error, keeps sinkId as "" and the context suspended.');
+    </script>
+  </body>
+</html>

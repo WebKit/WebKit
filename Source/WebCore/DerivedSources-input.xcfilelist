@@ -951,6 +951,9 @@ $(PROJECT_DIR)/Modules/webaudio/AudioParamMap.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEventInit.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioScheduledSourceNode.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioSinkInfo.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioSinkOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioSinkType.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioTimestamp.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioWorklet.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioWorkletGlobalScope.idl

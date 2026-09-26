@@ -698,6 +698,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEventInit.idl \
     $(WebCore)/Modules/webaudio/AudioScheduledSourceNode.idl \
+    $(WebCore)/Modules/webaudio/AudioSinkInfo.idl \
+    $(WebCore)/Modules/webaudio/AudioSinkOptions.idl \
+    $(WebCore)/Modules/webaudio/AudioSinkType.idl \
     $(WebCore)/Modules/webaudio/AudioTimestamp.idl \
     $(WebCore)/Modules/webaudio/AudioWorklet.idl \
     $(WebCore)/Modules/webaudio/AudioWorkletGlobalScope.idl \
