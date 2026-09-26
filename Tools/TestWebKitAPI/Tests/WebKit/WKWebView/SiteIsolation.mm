@@ -11488,6 +11488,55 @@ TEST(SiteIsolation, DragOverStateInfo)
     EXPECT_TRUE(dragStarted);
 }
 
+TEST(SiteIsolation, DragOverDataTransferTypesInCrossOriginSubframe)
+{
+    static constexpr ASCIILiteral mainframeHTML = "<body style='margin: 0'>"
+    "<iframe width='400' height='400' style='border: none;' src='https://domain2.com/subframe'></iframe>"
+    "</body>"_s;
+
+    static constexpr ASCIILiteral subframeHTML = "<body style='margin: 0; width: 100%; height: 100vh;'>"
+    "<script>"
+    "    window.dragOverTypes = [];"
+    "    window.didDrop = false;"
+    "    document.addEventListener('dragover', (e) => {"
+    "        window.dragOverTypes = Array.from(e.dataTransfer.types);"
+    "        if (window.dragOverTypes.includes('Files'))"
+    "            e.preventDefault();"
+    "    });"
+    "    document.addEventListener('drop', (e) => {"
+    "        e.preventDefault();"
+    "        window.didDrop = true;"
+    "    });"
+    "</script>"
+    "</body>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [simulator writeFiles:@[ [NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"] ]];
+    [simulator runFrom:CGPointMake(200, 200) to:CGPointMake(200, 200)];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"dragOverTypes.includes('Files')" inFrame:childFrame.get()] boolValue]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"didDrop" inFrame:childFrame.get()] boolValue]);
+}
+
 TEST(SiteIsolation, DropExternalFileInCrossOriginSubframe)
 {
     static constexpr ASCIILiteral mainframeHTML = "<body style='margin: 0'>"
