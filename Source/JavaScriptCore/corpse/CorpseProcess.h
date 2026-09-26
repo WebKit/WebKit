@@ -25,13 +25,15 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
-#include <mach/mach.h>
+#if ENABLE(MYA)
+
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 namespace Corpse {
@@ -43,15 +45,15 @@ class Process final : public RefCounted<Process> {
 public:
     static Ref<Process> create(pid_t pid) { return adoptRef(*new Process(pid)); }
 
-    ~Process() { detach(); }
-
     bool attach();
-    void detach();
+    void detach() { m_taskPort = { }; }
 
     pid_t pid() const { return m_pid; }
-    mach_port_t taskPort() const { return m_taskPort; }
 
-    bool isAttached() const { return MACH_PORT_VALID(m_taskPort); }
+    CString executablePath() const;
+    TaskHandle taskPort() const { return taskHandle(m_taskPort); }
+
+    bool isAttached() const { return isValidTaskHandle(taskPort()); }
 
     // The target process may have terminated while we still hold the port.
     bool holdsLiveTask() const;
@@ -69,10 +71,10 @@ private:
     }
 
     pid_t m_pid;
-    mach_port_t m_taskPort { MACH_PORT_NULL };
+    OwnedTaskHandle m_taskPort;
 };
 
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

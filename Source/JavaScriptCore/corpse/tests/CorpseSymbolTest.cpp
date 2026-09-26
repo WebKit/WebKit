@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +25,8 @@
  */
 
 #include "config.h"
-#include "CorpseSymbolTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
@@ -34,7 +34,6 @@
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <dlfcn.h>
-#include <mach/mach.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <wtf/MonotonicTime.h>
@@ -59,6 +58,8 @@ void testSymbol()
     SuiteTracer tracer("Symbol");
     if (!tracer.shouldRun())
         return;
+    if (linuxSkip("Symbol", "corpses are not implemented on Linux yet"))
+        return;
 
     SelfSnapshot self;
     if (!self.isValid())
@@ -72,7 +73,7 @@ void testSymbol()
         auto expected = reinterpret_cast<uintptr_t>(WebConfig::g_config);
         Address found = snapshot.symbol("g_config");
         TEST_ASSERT(found, "a symbol exported by JavaScriptCore is found");
-        TEST_ASSERT_HEX_EQ(found.toMachVMAddress(), expected,
+        TEST_ASSERT_HEX_EQ(found.toTargetVMAddress(), expected,
             "g_config resolves to the address this process uses for it");
     }
     {
@@ -84,8 +85,8 @@ void testSymbol()
         TEST_ASSERT(found, "a symbol exported by a shared cache image is found");
         // A function pointer arrives signed on arm64e; only the address it names is
         // being compared here.
-        TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
-            Address(expected).stripped().toMachVMAddress(),
+        TEST_ASSERT_HEX_EQ(found.stripped().toTargetVMAddress(),
+            Address(expected).stripped().toTargetVMAddress(),
             "tolower resolves to the address this process uses for it");
     }
     {
@@ -96,12 +97,13 @@ void testSymbol()
         else {
             Address found = snapshot.symbol("environ");
             TEST_ASSERT(found, "a data symbol in the shared cache is found");
-            TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
-                Address(expected).stripped().toMachVMAddress(),
+            TEST_ASSERT_HEX_EQ(found.stripped().toTargetVMAddress(),
+                Address(expected).stripped().toTargetVMAddress(),
                 "environ resolves to the address this process uses for it");
         }
     }
     {
+        ExpectedErrors expectedErrors(3);
         TEST_ASSERT(!snapshot.symbol("jscToolsTestNoSuchSymbolAnywhere"),
             "a name that is not exported anywhere is not found");
         TEST_ASSERT(!snapshot.symbol(nullptr), "no name resolves to nothing");
@@ -110,6 +112,7 @@ void testSymbol()
     {
         // Only exported symbols appear in a trie. This one is in the binary, and
         // still must not be found: saying so is the honest answer.
+        ExpectedErrors expectedErrors;
         TEST_ASSERT(jscToolsTestHiddenGlobal == 42, "the hidden global is in this binary");
         TEST_ASSERT(!snapshot.symbol("jscToolsTestHiddenGlobal"),
             "a symbol hidden from the linker is not found");
@@ -117,6 +120,7 @@ void testSymbol()
     {
         // A look up prepends the underscore that a Mach-O symbol name carries, so a
         // name that already has one is asking for a different symbol.
+        ExpectedErrors expectedErrors;
         TEST_ASSERT(!snapshot.symbol("_malloc"),
             "a name given with its underscore already attached is not found");
     }
@@ -133,6 +137,7 @@ void testSymbol()
         TEST_ASSERT(symbol.address() == snapshot.symbol("g_config"),
             "a Symbol resolves to what the snapshot reports");
 
+        ExpectedErrors expectedErrors(2);
         Symbol missing(snapshot, "jscToolsTestNoSuchSymbolAnywhere");
         TEST_ASSERT(!missing.isValid(), "a Symbol that did not resolve is not valid");
         TEST_ASSERT(!missing.address(), "a Symbol that did not resolve has no address");
@@ -146,6 +151,7 @@ void testSymbol()
     {
         // A name that is nowhere walks every image in the corpse, which is the most
         // work a look up can be asked to do. It has to stay bounded.
+        ExpectedErrors expectedErrors;
         static constexpr double budgetSeconds = 60;
         MonotonicTime start = MonotonicTime::now();
         TEST_ASSERT(!snapshot.symbol("jscToolsTestAnotherNameThatIsNowhere"),
@@ -159,4 +165,4 @@ void testSymbol()
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

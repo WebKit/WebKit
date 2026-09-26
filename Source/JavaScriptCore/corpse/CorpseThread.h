@@ -25,11 +25,12 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseRegion.h>
-#include <mach/mach.h>
 #include <stdint.h>
 #include <string>
 #include <wtf/Vector.h>
@@ -63,6 +64,7 @@ public:
 
 private:
     static Vector<Thread> collect(const Snapshot&);
+    static Vector<Thread> platformCollect(const Snapshot&);
 
     uint64_t m_id { 0 };
     std::string m_name;
@@ -79,4 +81,4 @@ private:
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

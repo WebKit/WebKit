@@ -105,7 +105,10 @@ SUPPORTS_TEXT_BASED_API[sdk=iphoneos.internal] = YES;
 TAPI_USE_SRCROOT = YES;
 TAPI_ENABLE_PROJECT_HEADERS = YES;
 TAPI_VERIFY_MODE = $(WK_TAPI_VERIFY_MODE_$(WK_ENABLE_SLOW_BUILD_VERIFICATION));
-WK_TAPI_VERIFY_MODE_YES = Pedantic;
+WK_TAPI_VERIFY_MODE_YES = $(WK_TAPI_VERIFY_MODE_MYA_HEAP_$(WK_MYA_HEAP));
+WK_TAPI_VERIFY_MODE_MYA_HEAP_NO = Pedantic;
+// MYA_HEAP builds export every symbol, so only check that the declared exports exist.
+WK_TAPI_VERIFY_MODE_MYA_HEAP_YES = ErrorsOnly;
 // C++ dialect flags (-fvisibility, others inherited from CommonBase.xcconfig)
 // are needed because JavaScriptCore / WTF private headers are only safe to use
 // from other WebKit projects, which build with the same dialect.

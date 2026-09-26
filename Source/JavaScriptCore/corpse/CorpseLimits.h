@@ -30,43 +30,34 @@
 
 #if ENABLE(MYA)
 
-#include <optional>
-#include <span>
+#include <stddef.h>
 #include <stdint.h>
-#include <string_view>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 namespace Corpse {
 
-// A forward byte parser over a local buffer. Every read reports whether it got
-// what it asked for, and a read that fails consumes nothing.
-class ByteParser {
-public:
-    ByteParser(std::span<const uint8_t> data, size_t position = 0)
-        : m_data(data)
-        , m_position(position)
-    {
-    }
+// Sizes and counts read out of a corpse are used to bound loops and to size
+// allocations, so they are checked against these limits first. Each one is a
+// sanity check on a single value: it says the struct we read was not what we
+// thought it was, in which case the addresses in it are not worth chasing. They
+// are not a bound on the work a lookup can do, because the per-image limits
+// multiply by the image count. maxTotalBytesRead below is that bound.
+//
+// The values sit above what was empirically measured: across every Mach-O image
+// installed on a sample system the largest load commands were 7.4 KB and the
+// largest exports trie 2.1 MB, and a process that dlopens every framework on the
+// system reaches about 2,800 images.
+constexpr size_t maxLoadCommandsSize = 128 * KB; // About 17× the measured maximum.
+constexpr size_t maxExportsTrieSize = 16 * MB; // About 8× the measured maximum.
+constexpr uint32_t maxImageCount = 16 * 1024; // About 6× the measured maximum.
+constexpr size_t maxPathLength = 4 * KB; // PATH_MAX on Darwin and on Linux.
 
-    size_t position() const { return m_position; }
-
-    std::optional<uint8_t> consumeByte();
-
-    // Decodes the ULEB128 at the cursor. Returns nullopt if the buffer ends
-    // before the encoding does, or if the value will not fit in 64 bits.
-    // Untrusted data can hold either, and silently truncating one would yield a
-    // plausible wrong value instead of a detected failure.
-    std::optional<uint64_t> consumeULEB128();
-
-    // Returns the null-terminated string at the cursor. Returns nullopt if the
-    // buffer ends before the terminator does: without that the trailing bytes of
-    // a truncated buffer read back as a complete string.
-    std::optional<std::string_view> consumeCString();
-
-private:
-    std::span<const uint8_t> m_data;
-    size_t m_position;
-};
+// A lookup that finds nothing will read every image's load commands and exports
+// trie, which measured 101 MB for the ~2,800 image process above and 0.4 MB for
+// a small one. This caps the total for one lookup, so a corpse claiming many
+// large images cannot turn a single symbol lookup into unbounded copying.
+constexpr size_t maxTotalBytesRead = 256 * MB; // About 2.5× the measured maximum.
 
 } // namespace Corpse
 } // namespace JSC

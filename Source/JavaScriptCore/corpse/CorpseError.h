@@ -25,9 +25,17 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
+#if ENABLE(MYA)
+
+#include <stdint.h>
+#include <utility>
 #include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 namespace Corpse {
@@ -37,9 +45,51 @@ namespace Corpse {
 class Error {
 public:
     static void report(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+
+    static unsigned reportCount() { return s_reportCount; }
+
+private:
+    static thread_local unsigned s_reportCount;
+};
+
+// Mya may be used on corrupted target heaps; we must be able to
+// use and test it in these cases without crashing, and
+// let the operator see what is going on.
+//
+// A scope names the operation in progress on this thread. Counters go to the
+// innermost scope, and every scope prints when an error is reported.
+class Diagnostics {
+    WTF_MAKE_NONCOPYABLE(Diagnostics);
+public:
+    Diagnostics(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    ~Diagnostics();
+
+    static void count(ASCIILiteral what, uint64_t by = 1);
+    static uint64_t total(ASCIILiteral what);
+
+private:
+    void print() const;
+
+    CString m_operation;
+    Vector<std::pair<ASCIILiteral, uint64_t>> m_counters;
+    Diagnostics* const m_parent;
+
+    static thread_local Diagnostics* s_current;
+
+    friend class Error;
 };
 
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#define CORPSE_REPORT(format, ...) \
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
+    ::JSC::Corpse::Error::report(format __VA_OPT__(, LOG_PRINTF_TYPE(__VA_ARGS__))) \
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#define CORPSE_DIAGNOSTICS(format, ...) \
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
+    ::JSC::Corpse::Diagnostics diagnosticsScope(format __VA_OPT__(, LOG_PRINTF_TYPE(__VA_ARGS__))) \
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // ENABLE(MYA)

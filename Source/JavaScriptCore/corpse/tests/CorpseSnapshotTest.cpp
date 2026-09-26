@@ -24,26 +24,39 @@
  */
 
 #include "config.h"
-#include "CorpseSnapshotTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
+#include <JavaScriptCore/CorpseImage.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#if OS(DARWIN)
+#include <mach-o/loader.h>
 #include <mach/mach.h>
+#endif
 #include <unistd.h>
 
 namespace JSCToolsTest {
 
+using JSC::Corpse::Image;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+using JSC::Corpse::TaskHandle;
+
+#if OS(DARWIN)
+constexpr uint32_t imageHeaderMagic = MH_MAGIC_64;
+#else
+constexpr uint32_t imageHeaderMagic = 0x464c457f; // "\177ELF", read little-endian.
+#endif
 
 void testSnapshot()
 {
     SuiteTracer tracer("Snapshot");
     if (!tracer.shouldRun())
+        return;
+    if (linuxSkip("Snapshot", "corpses are not implemented on Linux yet"))
         return;
 
     RefPtr<Process> process = Process::create(getpid());
@@ -53,12 +66,12 @@ void testSnapshot()
     }
 
     unsigned firstId = 0;
-    mach_port_t firstCorpsePort = MACH_PORT_NULL;
-    mach_port_t secondCorpsePort = MACH_PORT_NULL;
+    TaskHandle firstCorpsePort = JSC::Corpse::invalidTaskHandle;
+    TaskHandle secondCorpsePort = JSC::Corpse::invalidTaskHandle;
     {
         Snapshot snapshot(process);
         TEST_ASSERT(snapshot.isValid(), "a snapshot of this process is valid");
-        TEST_ASSERT(MACH_PORT_VALID(snapshot.corpsePort()), "a valid snapshot holds a corpse port");
+        TEST_ASSERT(JSC::Corpse::isValidTaskHandle(snapshot.corpsePort()), "a valid snapshot holds a corpse port");
         TEST_ASSERT(snapshot.process() == process.get(), "a snapshot keeps the process it came from");
         firstId = snapshot.id();
         TEST_ASSERT(firstId, "a snapshot has an identifier");
@@ -71,10 +84,15 @@ void testSnapshot()
             "two snapshots hold two different corpses");
         secondCorpsePort = second.corpsePort();
     }
+#if OS(DARWIN)
     TEST_ASSERT_EQ(machPortSendRightCount(firstCorpsePort), 0u,
         "destroying a snapshot gives its corpse port back");
     TEST_ASSERT_EQ(machPortSendRightCount(secondCorpsePort), 0u,
         "and so does destroying the second");
+#else
+    UNUSED_VARIABLE(firstCorpsePort);
+    UNUSED_VARIABLE(secondCorpsePort);
+#endif
     {
         // The two above are gone; their identifiers must not come back.
         Snapshot later(process);
@@ -84,8 +102,12 @@ void testSnapshot()
         RefPtr<Process> unattached = Process::create(getpid());
         Snapshot snapshot(unattached);
         TEST_ASSERT(!snapshot.isValid(), "a snapshot of an unattached process is invalid");
-        TEST_ASSERT(snapshot.threads().isEmpty(), "an invalid snapshot reports no threads");
-        TEST_ASSERT(!snapshot.symbol("g_config"), "an invalid snapshot resolves no symbol");
+        {
+            ExpectedErrors expectedErrors(3);
+            TEST_ASSERT(snapshot.threads().isEmpty(), "an invalid snapshot reports no threads");
+            TEST_ASSERT(snapshot.images().isEmpty(), "an invalid snapshot reports no images");
+            TEST_ASSERT(!snapshot.symbol("g_config"), "an invalid snapshot resolves no symbol");
+        }
     }
     {
         RefPtr<Process> none;
@@ -94,10 +116,30 @@ void testSnapshot()
     }
     {
         Snapshot snapshot(process);
+        ExpectedErrors expectedErrors(2);
         TEST_ASSERT(!snapshot.symbol(nullptr), "an unnamed symbol resolves to nothing");
         TEST_ASSERT(!snapshot.symbol(""), "an empty symbol name resolves to nothing");
     }
+    {
+        Snapshot snapshot(process);
+        const Vector<Image>& images = snapshot.images();
+        TEST_ASSERT(!images.isEmpty(), "a snapshot lists the images of its process");
+        TEST_ASSERT(&snapshot.images() == &images, "the image list is read once");
 
+        unsigned unnamed = 0;
+        unsigned withoutHeader = 0;
+        for (const Image& image : images) {
+            if (image.path().isEmpty())
+                ++unnamed;
+            auto magic = snapshot.read<uint32_t>(image.loadAddress());
+            if (!magic || *magic != imageHeaderMagic)
+                ++withoutHeader;
+        }
+        TEST_ASSERT_EQ(unnamed, 0u, "every image has a path");
+        TEST_ASSERT_EQ(withoutHeader, 0u, "every image's load address is where its header is");
+    }
+
+#if OS(DARWIN)
     {
         // A corpse and the thread rights read out of it are Mach ports. Taking a snapshot
         // must not leave any of them behind.
@@ -123,8 +165,9 @@ void testSnapshot()
         TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
             "and leaves no port name behind");
     }
+#endif // OS(DARWIN)
 }
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

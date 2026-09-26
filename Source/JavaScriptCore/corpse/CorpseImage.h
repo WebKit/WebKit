@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +26,42 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
-namespace JSCToolsTest {
+#if ENABLE(MYA)
 
-void testByteParser();
+#include <JavaScriptCore/CorpseAddress.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
-} // namespace JSCToolsTest
+namespace JSC {
+namespace Corpse {
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+class Snapshot;
+
+// One image (the executable or a shared library) mapped into a corpse.
+class Image {
+public:
+    const CString& path() const { return m_path; }
+    Address loadAddress() const { return m_loadAddress; } // Where the image's header landed.
+
+private:
+    Image(CString&& path, Address loadAddress)
+        : m_path(WTF::move(path))
+        , m_loadAddress(loadAddress)
+    {
+    }
+
+    static Vector<Image> collect(const Snapshot&);
+    static Vector<Image> platformCollect(const Snapshot&);
+
+    CString m_path;
+    Address m_loadAddress;
+
+    friend class Snapshot;
+};
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA)
