@@ -55,6 +55,24 @@ std::optional<CalendarID> isBuiltinCalendar(StringView string)
     return entry->value;
 }
 
+void throwInvalidCalendarIdentifier(JSGlobalObject* globalObject, ThrowScope& scope, StringView identifier)
+{
+    throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(100, identifier), "' is not a valid calendar identifier"_s));
+}
+
+// CanonicalizeCalendar ( id )
+// https://tc39.es/proposal-temporal/#sec-temporal-canonicalizecalendar
+CalendarID canonicalizeCalendar(JSGlobalObject* globalObject, StringView identifier)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (auto calendarId = isBuiltinCalendar(identifier)) [[likely]]
+        return *calendarId;
+    throwInvalidCalendarIdentifier(globalObject, scope, identifier);
+    return iso8601CalendarID();
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporalcalendarslotvaluewithisodefault
 CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject* globalObject, JSObject* item)
 {

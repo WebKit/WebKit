@@ -372,13 +372,8 @@ static RelativeToRecord getTemporalRelativeToOption(JSGlobalObject* globalObject
 
         // Steps 6.g-i: calendar = result.[[Calendar]]; if ~empty~ → "iso8601"; CanonicalizeCalendar.
         if (parsedCalOpt) {
-            auto rawCal = StringView(*parsedCalOpt).convertToASCIILowercase();
-            auto canonicalized = isBuiltinCalendar(rawCal);
-            if (!canonicalized) [[unlikely]] {
-                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
-                return { };
-            }
-            parts.calendarId = *canonicalized;
+            parts.calendarId = canonicalizeCalendar(globalObject, StringView(*parsedCalOpt));
+            RETURN_IF_EXCEPTION(scope, { });
         }
 
         // Steps 6.j-k: isoDate = CreateISODateRecord(...); time = result.[[Time]], which is ~start-of-day~ when the string had no time part.

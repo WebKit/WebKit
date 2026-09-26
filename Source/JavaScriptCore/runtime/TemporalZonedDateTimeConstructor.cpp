@@ -132,10 +132,8 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
             return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime calendar must be a string"_s);
         auto calStr = asString(calendarArg)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        auto calIdx = isBuiltinCalendar(calStr); // CanonicalizeCalendar: case-insensitive lookup + legacy aliases
-        if (!calIdx) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(100, calStr), "' is not a valid calendar identifier"_s));
-        calendarID = *calIdx;
+        calendarID = canonicalizeCalendar(globalObject, calStr);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
     // Step 11: Return ? CreateTemporalZonedDateTime(_epochNanoseconds_, _timeZone_, _calendar_, NewTarget).

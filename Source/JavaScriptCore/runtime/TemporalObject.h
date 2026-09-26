@@ -98,7 +98,7 @@ static inline bool isAbsentUnit(Variant<TemporalAuto, std::optional<TemporalUnit
     return std::holds_alternative<std::optional<TemporalUnit>>(unit) && !std::get<std::optional<TemporalUnit>>(unit);
 }
 
-WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
+WTF::String ellipsizeAt(unsigned maxLength, StringView);
 PropertyName NODELETE temporalUnitPluralPropertyName(VM&, TemporalUnit);
 PropertyName NODELETE temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);

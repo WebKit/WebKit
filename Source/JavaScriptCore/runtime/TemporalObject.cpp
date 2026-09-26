@@ -165,11 +165,11 @@ static StringView NODELETE singularUnit(StringView unit)
 }
 
 // For use in error messages where a string value is potentially unbounded
-WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
+WTF::String ellipsizeAt(unsigned maxLength, StringView string)
 {
     if (string.length() <= maxLength)
-        return string;
-    return makeString(StringView(string).left(maxLength - 1), horizontalEllipsis);
+        return string.toString();
+    return makeString(string.left(maxLength - 1), horizontalEllipsis);
 }
 
 PropertyName temporalUnitPluralPropertyName(VM& vm, TemporalUnit unit)
@@ -642,19 +642,15 @@ CalendarID toTemporalCalendarIdentifier(JSGlobalObject* globalObject, JSValue ca
         ISO8601::TemporalProduction::Time,
     });
     if (!parsed) [[unlikely]] {
-        throwRangeError(globalObject, scope, makeString("invalid calendar identifier: "_s, calendarString));
+        throwInvalidCalendarIdentifier(globalObject, scope, calendarString);
         return iso8601CalendarID();
     }
-    // PTCS Step 2.a-c: extract calendar (or default to "iso8601").
-    String identifier = parsed->calendar
-        ? StringView(*parsed->calendar).convertToASCIILowercase()
-        : "iso8601"_s;
 
+    // PTCS Step 2.a-c: extract calendar (or default to "iso8601").
     // Step 4: Return ? CanonicalizeCalendar(identifier).
-    if (auto calendarId = isBuiltinCalendar(identifier))
-        return *calendarId;
-    throwRangeError(globalObject, scope, makeString("invalid calendar identifier: "_s, identifier));
-    return iso8601CalendarID();
+    if (!parsed->calendar)
+        return iso8601CalendarID();
+    RELEASE_AND_RETURN(scope, canonicalizeCalendar(globalObject, StringView(*parsed->calendar)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaldisambiguation

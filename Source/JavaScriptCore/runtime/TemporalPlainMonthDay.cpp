@@ -135,13 +135,8 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         // Steps 5-7: calendar = result.[[Calendar]] (default "iso8601"); calendar = ? CanonicalizeCalendar(calendar).
         CalendarID calendarId = iso8601CalendarID();
         if (calendarOptional) {
-            auto rawCal = StringView(*calendarOptional).convertToASCIILowercase();
-            auto canonicalized = isBuiltinCalendar(rawCal);
-            if (!canonicalized) [[unlikely]] {
-                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
-                return { };
-            }
-            calendarId = *canonicalized;
+            calendarId = canonicalizeCalendar(globalObject, StringView(*calendarOptional));
+            RETURN_IF_EXCEPTION(scope, { });
         }
 
         // Step 8-9: GetOptionsObject + GetTemporalOverflowOption (validate; overflow unused for strings).

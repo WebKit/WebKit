@@ -281,13 +281,8 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
         // Steps 5-7: calendar = result.[[Calendar]]; if ~empty~ → "iso8601"; CanonicalizeCalendar.
         CalendarID calendarId = iso8601CalendarID();
         if (calendarOptional) {
-            auto rawCal = StringView(*calendarOptional).convertToASCIILowercase();
-            auto canonicalized = isBuiltinCalendar(rawCal);
-            if (!canonicalized) [[unlikely]] {
-                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
-                return { };
-            }
-            calendarId = *canonicalized;
+            calendarId = canonicalizeCalendar(globalObject, StringView(*calendarOptional));
+            RETURN_IF_EXCEPTION(scope, { });
         }
         // Steps 8-9: GetOptionsObject + GetTemporalOverflowOption.
         //   Options aren't reachable on the compare path (compare takes no options arg); the
@@ -380,13 +375,8 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
         // Steps 5-7: calendar = result.[[Calendar]]; if ~empty~ → "iso8601"; CanonicalizeCalendar.
         CalendarID calendarId = iso8601CalendarID();
         if (calendarOptional) {
-            auto rawCal = StringView(*calendarOptional).convertToASCIILowercase();
-            auto canonicalized = isBuiltinCalendar(rawCal);
-            if (!canonicalized) [[unlikely]] {
-                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
-                return { };
-            }
-            calendarId = *canonicalized;
+            calendarId = canonicalizeCalendar(globalObject, StringView(*calendarOptional));
+            RETURN_IF_EXCEPTION(scope, { });
         }
 
         // Steps 8-9: GetOptionsObject + overflow. (result unused for strings)

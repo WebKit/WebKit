@@ -40,6 +40,8 @@ namespace JSC {
 // Free helper functions (previously static methods of the removed TemporalCalendar JSObject class).
 
 JS_EXPORT_PRIVATE std::optional<CalendarID> isBuiltinCalendar(StringView);
+CalendarID canonicalizeCalendar(JSGlobalObject*, StringView identifier);
+void throwInvalidCalendarIdentifier(JSGlobalObject*, ThrowScope&, StringView identifier);
 
 CalendarID getTemporalCalendarIdentifierWithISODefault(JSGlobalObject*, JSObject* item);
 

@@ -204,14 +204,8 @@ static std::optional<ZDTEpochArgs> toEpochArgsFromString(JSGlobalObject* globalO
     // Steps 5.h-5.j: calendar = result.[[Calendar]]; if empty → "iso8601"; CanonicalizeCalendar.
     CalendarID calendarID = iso8601CalendarID();
     if (calendarOptional) {
-        auto rawCal = String(calendarOptional->span()).convertToASCIILowercase();
-        auto canonicalized = isBuiltinCalendar(rawCal);
-        if (canonicalized)
-            calendarID = *canonicalized;
-        else [[unlikely]] {
-            throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
-            return std::nullopt;
-        }
+        calendarID = canonicalizeCalendar(globalObject, StringView(calendarOptional->span()));
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
     }
 
     // Step 5.k: Set matchBehaviour to ~match-minutes~.

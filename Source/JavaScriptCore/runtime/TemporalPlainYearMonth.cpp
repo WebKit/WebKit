@@ -153,13 +153,8 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         //            parseISODateTime already enforced Step 4.a.ii.(3) — short-form non-iso8601 → nullopt.
         CalendarID calendarId = iso8601CalendarID();
         if (calendarOptional) {
-            auto rawCal = StringView(*calendarOptional).convertToASCIILowercase();
-            auto canonicalized = isBuiltinCalendar(rawCal);
-            if (!canonicalized) [[unlikely]] {
-                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
-                return { };
-            }
-            calendarId = *canonicalized;
+            calendarId = canonicalizeCalendar(globalObject, StringView(*calendarOptional));
+            RETURN_IF_EXCEPTION(scope, { });
         }
 
         // Step 16: resolvedOptions = ? GetOptionsObject(options). Step 17: ? GetTemporalOverflowOption
