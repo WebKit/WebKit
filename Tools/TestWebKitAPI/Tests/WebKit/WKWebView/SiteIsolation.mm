@@ -11516,6 +11516,59 @@ TEST(SiteIsolation, DropExternalFileInCrossOriginSubframe)
     EXPECT_WK_STREQ(dropFileName.get(), "apple.gif");
 }
 
+TEST(SiteIsolation, SubmitFormWithFileDroppedInCrossOriginSubframe)
+{
+    static constexpr ASCIILiteral mainframeHTML = "<body style='margin: 0'>"
+    "<iframe width='400' height='400' style='border: none;' src='https://domain2.com/subframe'></iframe>"
+    "</body>"_s;
+
+    static constexpr ASCIILiteral subframeHTML = "<body style='margin: 0; width: 100%; height: 100vh;'>"
+    "<form method='post' enctype='multipart/form-data' action='/upload'><input type='file' name='file'></form>"
+    "<script>"
+    "    document.addEventListener('dragover', (e) => e.preventDefault());"
+    "    document.addEventListener('drop', (e) => {"
+    "        e.preventDefault();"
+    "        document.querySelector('input').files = e.dataTransfer.files;"
+    "        document.forms[0].submit();"
+    "    });"
+    "</script>"
+    "</body>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } },
+        { "/upload"_s, { "<script>window.webkit.messageHandlers.testHandler.postMessage('uploaded')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    __block bool uploaded = false;
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    [messageHandler addMessage:@"uploaded" withHandler:^{
+        uploaded = true;
+    }];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    pid_t subframePID = [webView firstChildFrame]._processIdentifier;
+
+    [simulator writeFiles:@[ [NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"] ]];
+    [simulator runFrom:CGPointMake(200, 200) to:CGPointMake(200, 200)];
+
+    EXPECT_TRUE(Util::runFor(&uploaded, 10_s));
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, subframePID);
+}
+
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 TEST(SiteIsolation, AlternateRequest)
