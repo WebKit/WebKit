@@ -1112,13 +1112,21 @@ WI.Resource = class Resource extends WI.SourceCode
         if (this._failed)
             return this._requestContentFailure();
 
-        if (!this._finishThenRequestContentPromise) {
-            this._finishThenRequestContentPromise = new Promise((resolve, reject) => {
-                this.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, resolve, this);
-                this.singleFireEventListener(WI.Resource.Event.LoadingDidFail, reject, this);
-            }).then(this.requestContent.bind(this));
-        }
+        this._finishThenRequestContentPromise ||= (async () => {
+            let {promise, resolve, reject} = Promise.withResolvers();
 
+            this.addEventListener(WI.Resource.Event.LoadingDidFinish, resolve, this);
+            using removeLoadingDidFinishListener = new ScopeExit(() => {
+                this.removeEventListener(WI.Resource.Event.LoadingDidFinish, resolve, this);
+            });
+
+            this.addEventListener(WI.Resource.Event.LoadingDidFail, reject, this);
+            using removeLoadingDidFailListener = new ScopeExit(() => {
+                this.removeEventListener(WI.Resource.Event.LoadingDidFail, reject, this);
+            });
+
+            await promise;
+        })().then(this.requestContent.bind(this));
         return this._finishThenRequestContentPromise;
     }
 
