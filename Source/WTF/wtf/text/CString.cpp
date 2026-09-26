@@ -49,7 +49,7 @@ Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
     return buffer;
 }
 
-CString::CString(ASCIILiteral string)
+CStringBase::CStringBase(ASCIILiteral string)
 {
     if (string.isNull())
         return;
@@ -57,7 +57,7 @@ CString::CString(ASCIILiteral string)
     init(string.span());
 }
 
-CString::CString(const char* string)
+CStringBase::CStringBase(const char* string)
 {
     if (!string)
         return;
@@ -65,7 +65,7 @@ CString::CString(const char* string)
     init(unsafeSpan(string));
 }
 
-CString::CString(std::span<const char> string)
+CStringBase::CStringBase(std::span<const char> string)
 {
     if (!string.data()) {
         ASSERT(string.empty());
@@ -75,7 +75,7 @@ CString::CString(std::span<const char> string)
     init(string);
 }
 
-void CString::init(std::span<const char> string)
+void CStringBase::init(std::span<const char> string)
 {
     ASSERT(string.data());
 
@@ -83,7 +83,7 @@ void CString::init(std::span<const char> string)
     memcpySpan(m_buffer->mutableSpan(), string);
 }
 
-std::span<char> CString::mutableSpan() LIFETIME_BOUND
+std::span<char> CStringBase::mutableSpan() LIFETIME_BOUND
 {
     copyBufferIfNeeded();
     if (!m_buffer)
@@ -91,7 +91,7 @@ std::span<char> CString::mutableSpan() LIFETIME_BOUND
     return m_buffer->mutableSpan();
 }
 
-std::span<char> CString::mutableSpanIncludingNullTerminator() LIFETIME_BOUND
+std::span<char> CStringBase::mutableSpanIncludingNullTerminator() LIFETIME_BOUND
 {
     copyBufferIfNeeded();
     if (!m_buffer)
@@ -99,15 +99,13 @@ std::span<char> CString::mutableSpanIncludingNullTerminator() LIFETIME_BOUND
     return m_buffer->mutableSpanIncludingNullTerminator();
 }
 
-CString CString::newUninitialized(size_t length, std::span<char>& characterBuffer)
+void CStringBase::allocateUninitialized(size_t length, std::span<char>& characterBuffer)
 {
-    CString result;
-    result.m_buffer = CStringBuffer::createUninitialized(length);
-    characterBuffer = result.m_buffer->mutableSpan();
-    return result;
+    m_buffer = CStringBuffer::createUninitialized(length);
+    characterBuffer = m_buffer->mutableSpan();
 }
 
-void CString::copyBufferIfNeeded()
+void CStringBase::copyBufferIfNeeded()
 {
     if (!m_buffer || m_buffer->hasOneRef())
         return;
@@ -118,12 +116,12 @@ void CString::copyBufferIfNeeded()
     memcpySpan(m_buffer->mutableSpanIncludingNullTerminator(), buffer->spanIncludingNullTerminator());
 }
 
-bool CString::isSafeToSendToAnotherThread() const
+bool CStringBase::isSafeToSendToAnotherThread() const
 {
     return !m_buffer || m_buffer->hasOneRef();
 }
 
-void CString::grow(size_t newLength)
+void CStringBase::grow(size_t newLength)
 {
     ASSERT(newLength > length());
 
@@ -132,7 +130,7 @@ void CString::grow(size_t newLength)
     m_buffer = WTF::move(newBuffer);
 }
 
-bool operator==(const CString& a, const CString& b)
+bool operator==(const CStringBase& a, const CStringBase& b)
 {
     if (a.isNull() != b.isNull())
         return false;
@@ -141,7 +139,7 @@ bool operator==(const CString& a, const CString& b)
     return equal(byteCast<Latin1Character>(a.span()).data(), byteCast<Latin1Character>(b.span()));
 }
 
-bool operator==(const CString& a, ASCIILiteral b)
+bool operator==(const CStringBase& a, ASCIILiteral b)
 {
     if (a.isNull() != b.isNull())
         return false;
@@ -150,29 +148,20 @@ bool operator==(const CString& a, ASCIILiteral b)
     return equal(byteCast<Latin1Character>(a.span()).data(), b.span8());
 }
 
-unsigned CString::hash() const
+unsigned CStringBase::hash() const
 {
     if (isNull())
         return 0;
     return SuperFastHash::computeHash(span());
 }
 
-bool operator<(const CString& a, const CString& b)
+bool operator<(const CStringBase& a, const CStringBase& b)
 {
     if (a.isNull())
         return !b.isNull();
     if (b.isNull())
         return false;
     return is_lt(compareSpans(a.span(), b.span()));
-}
-
-bool CStringHash::equal(const CString& a, const CString& b)
-{
-    if (a.isHashTableDeletedValue())
-        return b.isHashTableDeletedValue();
-    if (b.isHashTableDeletedValue())
-        return false;
-    return a == b;
 }
 
 enum class ASCIICase { Lower, Upper };

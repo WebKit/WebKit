@@ -113,7 +113,7 @@ class WTFAtomStringPrinter(StringPrinter):
 
 
 class WTFCStringPrinter(StringPrinter):
-    "Print a WTF::CString"
+    "Print a WTF::CStringBase"
     def to_string(self):
         string = (self.val['m_buffer']['m_ptr'] + 1).cast(gdb.lookup_type('char').pointer())
         length = self.val['m_buffer']['m_ptr']['m_length']
@@ -298,7 +298,7 @@ def add_pretty_printers():
     pretty_printers = (
         (re.compile("^WTF::Vector<.*>$"), WTFVectorPrinter),
         (re.compile("^WTF::AtomString$"), WTFAtomStringPrinter),
-        (re.compile("^WTF::CString$"), WTFCStringPrinter),
+        (re.compile("^WTF::CStringBase$"), WTFCStringPrinter),
         (re.compile("^WTF::String$"), WTFStringPrinter),
         (re.compile("^WTF::StringImpl$"), WTFStringImplPrinter),
         (re.compile("^WebCore::LayoutUnit$"), WebCoreLayoutUnitPrinter),

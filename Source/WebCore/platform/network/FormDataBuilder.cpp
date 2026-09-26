@@ -53,7 +53,7 @@ static inline void append(Vector<uint8_t>& buffer, ASCIILiteral string)
     buffer.append(string.span8());
 }
 
-static inline void append(Vector<uint8_t>& buffer, const CString& string)
+static inline void append(Vector<uint8_t>& buffer, const CStringBase& string)
 {
     buffer.append(string.span());
 }

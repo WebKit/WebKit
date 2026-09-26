@@ -185,16 +185,16 @@ public:
     }
 };
 
-// A CString does not know its encoding, so there is no right way to decode it. The adapter above
+// A CStringBase does not know its encoding, so there is no right way to decode it. The adapter above
 // would take its span<const char> and reinterpret the bytes as Latin-1, which silently mojibakes any
 // non-ASCII UTF-8 content. Use one of the CStringWithEncoding aliases instead, or take the span and
 // say which encoding it holds. This matches printInternal() in PrintStream.h.
-// This opts out CString and nothing else: an explicit specialization matches the exact type, so
+// This opts out CStringBase and nothing else: an explicit specialization matches the exact type, so
 // CStringWithEncoding keeps using the adapter above, where span() carries the encoding in its
 // element type.
-template<> class StringTypeAdapter<CString> {
+template<> class StringTypeAdapter<CStringBase> {
 public:
-    StringTypeAdapter(const CString&) = delete;
+    StringTypeAdapter(const CStringBase&) = delete;
 };
 
 template<> class StringTypeAdapter<StringImpl*> {
