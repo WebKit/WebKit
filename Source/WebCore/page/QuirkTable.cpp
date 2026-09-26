@@ -52,6 +52,8 @@ static constexpr std::array playStationSignInHosts { "www.playstation.com"_s, "m
 static constexpr std::array claudeLogoutSurvivingCookieNames { "__ssid"_s, "__cf_bm"_s, "anthropic-device-id"_s, "lastActiveOrg"_s, "activitySessionId"_s };
 
 static constexpr auto chromeUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"_s;
+static constexpr auto chromeUserAgent152 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"_s;
+static constexpr auto safari13UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"_s;
 
 static constexpr auto bestBuyLanguageScript = "Object.defineProperty(navigator,'language',{get:function(){return'en-US'}});Object.defineProperty(navigator,'languages',{get:function(){return['en-US','en']}});"_s;
 
@@ -177,6 +179,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("as.com"_s).when(smallScreen()),
         .behaviors = { shouldDisableElementFullscreenQuirk } },
 
+    // studio.atomm.com rdar://157636545
+    { .match = URLMatch::host("studio.atomm.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     // att.com rdar://55185021
     { .match = URLMatch::domain("att.com"_s),
         .behaviors = { shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk },
@@ -200,6 +206,10 @@ static constexpr Quirk fullTable[] = {
             needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(bestBuyLanguageScript)),
         } },
 
+    // bilibili.com rdar://154408203
+    { .match = URLMatch::domain("bilibili.com"_s),
+        .behaviors = { needsSafariVersionUserAgentQuirk(QuirkParameters::fromSafariVersion("18.6"_s)) } },
+
     // billpaysite.com rdar://141328971
     { .match = URLMatch::hostOrSubdomainOf("billpaysite.com"_s),
         .behaviors = { needsPartitionedCookiesQuirk } },
@@ -220,6 +230,10 @@ static constexpr Quirk fullTable[] = {
     // canva.com https://webkit.org/b/293886
     { .match = URLMatch::domain("canva.com"_s),
         .behaviors = { shouldTranscodeHeicImagesQuirk } },
+
+    // capcut.com rdar://177597110
+    { .match = URLMatch::domain("capcut.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
 
     { .match = URLMatch::domain("capitalgroup.com"_s),
         .behaviors = { shouldDelayReloadWhenRegisteringServiceWorker } },
@@ -272,14 +286,27 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::host("codepen.io"_s),
         .behaviors = { shouldEnableSpeakerSelectionPermissionsPolicyQuirk } },
 
+    // commitmono.com rdar://129051694
+    { .match = URLMatch::domain("commitmono.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     { .match = URLMatch::domain("crunchyroll.com"_s),
         .behaviors = { needsSuppressPostLayoutBoundaryEventsQuirk } },
 
     { .match = URLMatch::domain("dailymail.co.uk"_s),
         .behaviors = { shouldUnloadHeavyFrames } },
 
+    // mypay.dfas.mil rdar://67081760
+    { .match = URLMatch::host("mypay.dfas.mil"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     { .match = URLMatch::host("digits.t-mobile.com"_s),
-        .behaviors = { needsNavigatorUserAgentDataQuirk, needsCustomUserAgentData } },
+        .behaviors = {
+            needsNavigatorUserAgentDataQuirk,
+            needsCustomUserAgentData,
+            // digits.t-mobile.com rdar://158721595
+            needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)),
+        } },
 
     // descript.com rdar://156024693
     { .match = URLMatch::domain("descript.com"_s),
@@ -292,6 +319,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("dictionary.com"_s),
         .behaviors = { needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(chromeUserAgentScript)).when(secondaryURLMatches(anyclipPlayerScriptURL)) },
         .isAvailable = iOSFamily },
+
+    // digiposte.fr rdar://177229829
+    { .match = URLMatch::domain("digiposte.fr"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
 
     // digitaltrends.com rdar://121014613
     { .match = URLMatch::domain("digitaltrends.com"_s).when(smallScreen()),
@@ -322,6 +353,10 @@ static constexpr Quirk fullTable[] = {
             // espn.com rdar://problem/73227900
             shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk,
         } },
+
+    // tool.european-calculator.eu rdar://59424306
+    { .match = URLMatch::host("tool.european-calculator.eu"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
 
     // Expedia Group rdar://126631968
     { .match = URLMatch::domain(expediaGroupDomains),
@@ -444,6 +479,14 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::host("meet.google.com"_s),
         .behaviors = { shouldEnableCameraBackgroundPlayback } },
 
+    // meet.goto.com rdar://112632639
+    { .match = URLMatch::host("meet.goto.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
+    // gunbroker.com rdar://157388533
+    { .match = URLMatch::domain("gunbroker.com"_s),
+        .behaviors = { needsSafariVersionUserAgentQuirk(QuirkParameters::fromSafariVersion("18.6"_s)) } },
+
     // hbomax.com https://bugs.webkit.org/show_bug.cgi?id=244737
     { .match = URLMatch::domain("hbomax.com"_s),
         .behaviors = { shouldEnableFontLoadingAPIQuirk } },
@@ -460,6 +503,14 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::host("play.hbomax.com"_s),
         .behaviors = { needsZeroMaxTouchPointsQuirk },
         .isAvailable = desktopContentModeQuirks },
+
+    // hfhs.org rdar://61788722
+    { .match = URLMatch::domain("hfhs.org"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
+    // security.us.hsbc.com rdar://65870401
+    { .match = URLMatch::host("security.us.hsbc.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(safari13UserAgent)) } },
 
     { .match = URLMatch::domain("hulu.com"_s),
         .behaviors = {
@@ -514,7 +565,16 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("invideo.io"_s),
         .behaviors = {
             needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(inVideoChromeObjectScript)),
+            needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)),
         } },
+
+    // ippk.pl rdar://82221582
+    { .match = URLMatch::domain("ippk.pl"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
+    // irs.gov rdar://60782373
+    { .match = URLMatch::domain("irs.gov"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
 
     // linkedin.com: native taps must reach the video.js player surface.
     { .match = URLMatch::domain("linkedin.com"_s),
@@ -686,6 +746,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::hostOrSubdomainOf("roblox.com"_s),
         .behaviors = { needsIPadMiniUserAgentQuirk } },
 
+    // sapo.pt rdar://60314791
+    { .match = URLMatch::domain("sapo.pt"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     { .match = URLMatch::domain("scribd.com"_s),
         .behaviors = { needsReuseLiveRangeForSelectionUpdateQuirk } },
 
@@ -740,6 +804,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("steampowered.com"_s),
         .behaviors = { shouldTreatAddingMouseOutEventListenerAsContentChange } },
 
+    // sutterhealth.org rdar://61788722
+    { .match = URLMatch::domain("sutterhealth.org"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     { .match = URLMatch::anyTopLevelDomain("theguardian"_s),
         .behaviors = { shouldHideSoftTopScrollEdgeEffectDuringFocusQuirk.when(elementMatchesSelector(onCrosswordID)) } },
 
@@ -764,6 +832,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::host("teams.microsoft.com"_s).when(queryContains("Retried+3+times+without+success"_s)),
         .behaviors = { isMicrosoftTeamsRedirectURLQuirk } },
 
+    // santaclaracounty.telleronline.net rdar://165844163
+    { .match = URLMatch::host("santaclaracounty.telleronline.net"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     { .match = URLMatch::domain("thesaurus.com"_s),
         .behaviors = { needsAnchorToBeMouseFocusableQuirk } },
 
@@ -771,6 +843,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("thesaurus.com"_s),
         .behaviors = { needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(chromeUserAgentScript)).when(secondaryURLMatches(anyclipPlayerScriptURL)) },
         .isAvailable = iOSFamily },
+
+    // dev.ti.com rdar://126629168
+    { .match = URLMatch::host("dev.ti.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
 
     { .match = URLMatch::domain("tiktok.com"_s),
         .behaviors = {
@@ -782,6 +858,8 @@ static constexpr Quirk fullTable[] = {
             shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onSliderRole)),
             // tiktok.com rdar://174179805
             shouldComputeSimulatedMouseEventMovementDeltaQuirk,
+            // tiktok.com rdar://154893648
+            needsSafariVersionUserAgentQuirk(QuirkParameters::fromSafariVersion("18.6"_s)),
             // FIXME(rdar://148759791): Remove this once TikTok removes the outdated error message.
             needsChromeCompatibilityUserAgentQuirk(QuirkParameters::fromChromeCompatibilityVersion("136"_s)),
         } },
@@ -805,6 +883,10 @@ static constexpr Quirk fullTable[] = {
     // unifi.ui.com rdar://180411019
     { .match = URLMatch::domain("ui.com"_s),
         .behaviors = { needsSupportsProgressMonitoringQuirk } },
+
+    // upgrad.com rdar://170751919
+    { .match = URLMatch::domain("upgrad.com"_s),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
 
     // Breaks express checkout on victoriassecret.com (rdar://104818312).
     { .match = URLMatch::domain("victoriassecret.com"_s),
@@ -1018,6 +1100,9 @@ consteval bool everyQuirkCarriesWhatItDeclares()
                     return false;
 
                 if (parametersNeeded.contains(QuirkParametersNeeded::NeedsChromeCompatibilityVersion) && behavior.parameters->chromeCompatibilityVersion.isEmpty())
+                    return false;
+
+                if (parametersNeeded.contains(QuirkParametersNeeded::NeedsSafariVersion) && behavior.parameters->safariVersion.isEmpty())
                     return false;
 
                 if (parametersNeeded.contains(QuirkParametersNeeded::NeedsCookieNames) && behavior.parameters->cookieNames.empty())
