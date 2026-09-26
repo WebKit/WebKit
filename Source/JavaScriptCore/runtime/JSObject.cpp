@@ -2980,13 +2980,6 @@ void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(VM&, PropertySlot& slot, JSCell* getterSetter, unsigned attributes, PropertyOffset offset)
 {
-    if (structure()->isUncacheableDictionary()) {
-        slot.setGetterSlot(this, attributes, uncheckedDowncast<GetterSetter>(getterSetter));
-        return;
-    }
-
-    // This access is cacheable because Structure requires an attributeChangedTransition
-    // if this property stops being an accessor.
     slot.setCacheableGetterSlot(this, attributes, uncheckedDowncast<GetterSetter>(getterSetter), offset);
 }
 
