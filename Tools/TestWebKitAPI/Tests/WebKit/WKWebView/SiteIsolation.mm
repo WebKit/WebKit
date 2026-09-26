@@ -8515,17 +8515,6 @@ TEST(SiteIsolation, CoordinateTransformation)
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
 
-    auto convertPoint = [] (TestWKWebView *webView, CGPoint point) {
-        __block CGPoint result;
-        __block bool done { false };
-        [webView _convertPoint:point fromFrame:[webView firstChildFrame] toMainFrameCoordinates:^(CGPoint transformedPoint, NSError *error) {
-            EXPECT_NULL(error);
-            result = transformedPoint;
-            done = true;
-        }];
-        Util::run(&done);
-        return result;
-    };
     auto convertRect = [] (TestWKWebView *webView, CGRect rect) {
         __block CGRect result;
         __block bool done { false };
@@ -8542,9 +8531,6 @@ TEST(SiteIsolation, CoordinateTransformation)
     {
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
         [navigationDelegate waitForDidFinishNavigation];
-        auto transformedPoint = convertPoint(webView.get(), { 11, 10 });
-        EXPECT_EQ(transformedPoint.x, 21);
-        EXPECT_EQ(transformedPoint.y, expectedTransformedY);
         auto transformedRect = convertRect(webView.get(), { { 11, 10 }, { 9, 8 } });
         EXPECT_EQ(transformedRect.origin.x, 21);
         EXPECT_EQ(transformedRect.origin.y, expectedTransformedY);
@@ -8555,9 +8541,6 @@ TEST(SiteIsolation, CoordinateTransformation)
     {
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/example"]]];
         [navigationDelegate waitForDidFinishNavigation];
-        auto transformedPoint = convertPoint(webView.get(), { 11, 10 });
-        EXPECT_EQ(transformedPoint.x, 21);
-        EXPECT_EQ(transformedPoint.y, expectedTransformedY);
         auto transformedRect = convertRect(webView.get(), { { 11, 10 }, { 9, 8 } });
         EXPECT_EQ(transformedRect.origin.x, 21);
         EXPECT_EQ(transformedRect.origin.y, expectedTransformedY);
@@ -8572,12 +8555,6 @@ TEST(SiteIsolation, CoordinateTransformation)
     }];
     Util::run(&removedIframe);
     __block bool done { false };
-    [webView _convertPoint:CGPoint { 11, 10 } fromFrame:frameInfoOfRemovedFrame.get() toMainFrameCoordinates:^(CGPoint, NSError *error) {
-        EXPECT_NOT_NULL(error);
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
     [webView _convertRect:CGRect { { 11, 10 }, { 9, 8 } } fromFrame:frameInfoOfRemovedFrame.get() toMainFrameCoordinates:^(CGRect, NSError *error) {
         EXPECT_NOT_NULL(error);
         done = true;
