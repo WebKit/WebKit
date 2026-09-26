@@ -652,6 +652,7 @@ public:
     void didFinishDocumentLoad(WebViewClass *);
     void didFailNavigation(WebViewClass *, RefPtr<API::Error>);
     void webViewWebContentProcessDidTerminate(WebViewClass *);
+    void webViewDidClose(WebViewClass *);
 
 #if PLATFORM(MAC)
     void runOpenPanel(WKWebView *, WKOpenPanelParameters *, void (^)(NSArray *));

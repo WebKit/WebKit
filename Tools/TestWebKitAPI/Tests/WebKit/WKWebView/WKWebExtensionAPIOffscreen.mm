@@ -216,6 +216,40 @@ TEST_F(WKWebExtensionAPIOffscreen, CloseDocument)
     }, offscreenConfig);
 }
 
+TEST_F(WKWebExtensionAPIOffscreen, WindowCloseFromDocumentClosesDocument)
+{
+    auto *backgroundScript = @[
+        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"browser.test.assertTrue(await browser.offscreen.hasDocument())",
+
+        @"browser.runtime.sendMessage('Close')",
+
+        // window.close() is handled asynchronously, so give the UI process time to tear down the offscreen document.
+        @"let hasDocument = true",
+        @"for (let attempt = 0; attempt < 50 && hasDocument; ++attempt) {",
+        @"  hasDocument = await browser.offscreen.hasDocument()",
+        @"  if (hasDocument)",
+        @"    await new Promise((resolve) => setTimeout(resolve, 50))",
+        @"}",
+
+        @"browser.test.assertFalse(hasDocument, 'The offscreen document should be closed after it calls window.close()')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *offscreenScript = @[
+        @"browser.runtime.onMessage.addListener((message) => {",
+        @"  if (message === 'Close')",
+        @"    window.close()",
+        @"})",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(backgroundScript),
+        @"offscreen.html": @"<script type='module' src='offscreen.js'></script>",
+        @"offscreen.js": Util::constructScript(offscreenScript),
+    }, offscreenConfig);
+}
+
 TEST_F(WKWebExtensionAPIOffscreen, CloseDocumentWithoutOneOpenFails)
 {
     auto *script = @[

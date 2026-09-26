@@ -198,6 +198,15 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 7
     extensionContext->webViewWebContentProcessDidTerminate(webView);
 }
 
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    RefPtr extensionContext = _webExtensionContext.get();
+    if (!extensionContext)
+        return;
+
+    extensionContext->webViewDidClose(webView);
+}
+
 #if PLATFORM(MAC)
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
 {
@@ -3072,6 +3081,16 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webVie
 #endif
 
     ASSERT_NOT_REACHED();
+}
+
+void WebExtensionContext::webViewDidClose(WKWebView *webView)
+{
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (isOffscreenWebView(webView)) {
+        unloadOffscreenWebView();
+        return;
+    }
+#endif
 }
 
 #if PLATFORM(MAC)
