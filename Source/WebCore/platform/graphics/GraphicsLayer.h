@@ -541,7 +541,7 @@ public:
     void setRenderingIsSuppressedIncludingDescendants(bool suppressed) { m_renderingIsSuppressedIncludingDescendants = suppressed; }
 
     const std::optional<FloatRect>& animationExtent() const LIFETIME_BOUND { return m_animationExtent; }
-    void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
+    virtual void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
     static void traverse(GraphicsLayer&, NOESCAPE const Function<void(GraphicsLayer&)>&);
 

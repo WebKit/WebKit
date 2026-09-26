@@ -99,6 +99,7 @@ public:
 
     // Update graphics layer position and bounds.
     void updateGeometry(const RenderLayer* compositingAncestor);
+    void updateAnimationExtent();
 
     // Update state the requires that descendant layers have been updated.
     void updateAfterDescendants();

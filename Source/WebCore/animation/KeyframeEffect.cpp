@@ -1726,6 +1726,11 @@ bool KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation() const
     return isRunningAccelerated() && animatablePropertiesContainTransformRelatedProperty(m_blendingKeyframes.properties());
 }
 
+bool KeyframeEffect::isRunningOrAboutToRunAcceleratedTransformRelatedAnimation() const
+{
+    return (isRunningAccelerated() || isAboutToRunAccelerated()) && animatablePropertiesContainTransformRelatedProperty(m_blendingKeyframes.properties());
+}
+
 void KeyframeEffect::invalidate()
 {
     LOG_WITH_STREAM(Animations, stream << "KeyframeEffect::invalidate on element " << ValueOrNull(m_target.get()));

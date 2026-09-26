@@ -1609,6 +1609,20 @@ static void setContentsClipShapePath(GraphicsLayer& graphicsLayer, const Style::
     graphicsLayer.setContentsClipShapePath(shapePath);
 }
 
+void RenderLayerBacking::updateAnimationExtent()
+{
+    auto computeAnimationExtent = [&] () -> std::optional<FloatRect> {
+        auto styleable = Styleable::fromRenderer(renderer());
+        if (!styleable || !styleable->isRunningOrAboutToRunAcceleratedTransformRelatedAnimation())
+            return { };
+        LayoutRect animatedBounds;
+        if (m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds, RenderLayer::IncludeCompositedDescendants))
+            return FloatRect(animatedBounds);
+        return { };
+    };
+    m_graphicsLayer->setAnimationExtent(computeAnimationExtent());
+}
+
 void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 {
     ASSERT(!m_owningLayer.normalFlowListDirty());
@@ -1618,9 +1632,6 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     const Style::ComputedStyle& style = renderer().style();
     const auto deviceScaleFactor = this->deviceScaleFactor();
-
-    auto styleable = Styleable::fromRenderer(renderer());
-    bool isRunningAcceleratedTransformAnimation = styleable && styleable->isRunningAcceleratedTransformRelatedAnimation();
 
     updateTransform(style);
     updateOpacity(style);
@@ -1710,13 +1721,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         m_contentsContainmentLayer->setSize(primaryGraphicsLayerRect.size());
     }
 
-    auto computeAnimationExtent = [&] () -> std::optional<FloatRect> {
-        LayoutRect animatedBounds;
-        if (isRunningAcceleratedTransformAnimation && m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds, RenderLayer::IncludeCompositedDescendants))
-            return FloatRect(animatedBounds);
-        return { };
-    };
-    m_graphicsLayer->setAnimationExtent(computeAnimationExtent());
+    updateAnimationExtent();
     m_graphicsLayer->setPreserves3D(preserves3D);
     m_graphicsLayer->setBackfaceVisibility(style.backfaceVisibility() == BackfaceVisibility::Visible);
 
@@ -5237,6 +5242,9 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     }
 
     m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTF::move(acceleratedEffects), WTF::move(baseValues));
+
+    if (!renderer.view().needsLayout() && !m_owningLayer.normalFlowListDirty() && !m_owningLayer.zOrderListsDirty())
+        updateAnimationExtent();
 
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
     m_owningLayer.setNeedsCompositingGeometryUpdate();

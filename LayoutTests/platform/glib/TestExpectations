@@ -1360,6 +1360,8 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 
 webkit.org/b/314312 media/media-sources-selection.html [ ImageOnlyFailure ]
 
+webkit.org/b/325281 compositing/backing/backing-store-attachment-animating-pseudo-element-outside-viewport.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////
