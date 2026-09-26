@@ -38,7 +38,7 @@ if (Intl.DurationFormat) {
         var fmt = new Intl.DurationFormat('en', {
             style: 'digital',
             milliseconds: 'numeric',
-            millisecondsDisplay: 'always',
+            millisecondsDisplay: 'auto',
             fractionalDigits: 2
         });
 

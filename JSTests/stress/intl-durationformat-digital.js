@@ -53,7 +53,7 @@ if (Intl.DurationFormat) {
         var fmt = new Intl.DurationFormat('en', {
             style: 'digital',
             milliseconds: 'numeric',
-            millisecondsDisplay: 'always',
+            millisecondsDisplay: 'auto',
             fractionalDigits: 9
         });
 
@@ -65,12 +65,22 @@ if (Intl.DurationFormat) {
         var fmt = new Intl.DurationFormat('en', {
             style: 'digital',
             milliseconds: 'numeric',
-            millisecondsDisplay: 'always',
+            millisecondsDisplay: 'auto',
             fractionalDigits: 2
         });
 
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
             `1 yr, 2 mths, 3 wks, 4 days, 10:34:33.03`,
+        ]);
+    }
+    {
+        var fmt = new Intl.DurationFormat('en', {
+            style: 'digital',
+            milliseconds: 'numeric',
+        });
+
+        shouldBeOneOf(fmt.format({ hours: 10, seconds: 33, milliseconds: 32 }), [
+            `10:00:33.032`,
         ]);
     }
     {
