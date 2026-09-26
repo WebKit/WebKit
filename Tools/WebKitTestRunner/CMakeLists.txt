@@ -137,21 +137,6 @@ WEBKIT_ADD_PREFIX_HEADER(TestRunnerInjectedBundle WebKitTestRunnerPrefix.h PREFI
 WEBKIT_EXECUTABLE(WebKitTestRunner)
 WEBKIT_ADD_PREFIX_HEADER(WebKitTestRunner WebKitTestRunnerPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
 
-if (APPLE)
-    # libWebCoreTestSupport.a (static archive) contains TUs that reference
-    # `inline` JSC/WebCore wrappers (jsUndefined(), `intersection()` calling
-    # `LayoutRect::intersect()`, ...). With Cocoa's project-wide
-    # -fvisibility=hidden -fvisibility-inlines-hidden, the wrappers' callees
-    # in WebCore/JSC are emitted only as local `t` symbols, so the test
-    # runner link can't find them. Defer resolution to dyld via
-    # -undefined,dynamic_lookup; at load time the runner's own loaded
-    # WebCore.framework / JavaScriptCore.framework satisfy them via the
-    # process flat namespace. Bug 312083.
-    target_link_options(WebKitTestRunner PRIVATE
-        "LINKER:-undefined,dynamic_lookup"
-    )
-endif ()
-
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestRunnerInjectedBundle -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitTestRunner -Wno-unused-parameter)

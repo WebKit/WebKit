@@ -246,7 +246,8 @@ set(PRODUCT_NAME "WebKitLegacy")
 set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKitLegacy")
 configure_file(${WEBKITLEGACY_DIR}/mac/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
 execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
-execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2]" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
+WEBKIT_GET_DEVICE_FAMILY(_device_family)
+execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_device_family}]" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
 
 set(WebKitLegacy_POST_BUILD_COMMAND
     ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist

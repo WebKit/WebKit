@@ -1011,38 +1011,8 @@ function(WEBKIT_DEFINE_AUXILIARY_PROCESSES)
         endif ()
     endfunction()
 
-    set(_der_script "${CMAKE_CURRENT_BINARY_DIR}/generate_der_entitlements.py")
-    file(WRITE ${_der_script} "
-import plistlib, sys
-with open(sys.argv[1], 'rb') as f:
-    ents = plistlib.load(f)
-def dl(n):
-    return bytes([n]) if n < 128 else (bytes([0x81, n]) if n < 256 else bytes([0x82, (n>>8)&0xff, n&0xff]))
-entries = b''
-for k, v in sorted(ents.items()):
-    e = bytes([0x0c]) + dl(len(k)) + k.encode() + bytes([0x01, 0x01, 0xff if v else 0x00])
-    entries += bytes([0x30]) + dl(len(e)) + e
-ctx = bytes([0xb0]) + dl(len(entries)) + entries
-inner = bytes([0x02, 0x01, 0x01]) + ctx
-with open(sys.argv[2], 'wb') as f:
-    f.write(bytes([0x70]) + dl(len(inner)) + inner)
-")
-    function(WEBKIT_GENERATE_DER_ENTITLEMENTS _xml_path _der_output)
-        execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} ${_der_script} "${_xml_path}" "${_der_output}")
-    endfunction()
-
     set(_sim_get_task_allow "${CMAKE_CURRENT_BINARY_DIR}/XPCService-get-task-allow.entitlements")
-    file(WRITE ${_sim_get_task_allow}
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
-        "<plist version=\"1.0\">\n"
-        "<dict>\n"
-        "\t<key>com.apple.security.get-task-allow</key>\n"
-        "\t<true/>\n"
-        "</dict>\n"
-        "</plist>\n"
-    )
+    WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS(${_sim_get_task_allow})
 
     if (USE_EXTENSIONKIT)
         WEBKIT_DEFINE_PROCESS_EXTENSIONS()
@@ -1061,7 +1031,6 @@ endfunction()
 function(WEBKIT_DEFINE_XPC_SERVICES)
     if (WEBKIT_SDK_IS_MACOS)
         set(_info_plist_variant OSX)
-        set(WebKit_XPC_SERVICE_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices)
         # Relative symlink (matches Xcode layout; absolute breaks if build dir is moved).
         file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework")
         file(CREATE_LINK "Versions/Current/XPCServices"
@@ -1071,10 +1040,10 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         set(RUNLOOP_TYPE NSRunLoop)
     else ()
         set(_info_plist_variant iOS)
-        # Built beside the framework and symlinked into it afterwards, so each
-        # service is signed before the framework seals over the symlinks.
-        set(WebKit_XPC_SERVICE_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     endif ()
+    # Built beside the framework and symlinked into it, as Xcode does, so the framework's
+    # signature covers the symlinks rather than the services.
+    set(WebKit_XPC_SERVICE_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     # Also read by WEBKIT_DEFINE_MACOS_RESOURCES.
     set(WebKit_XPC_SERVICE_DIR ${WebKit_XPC_SERVICE_DIR} PARENT_SCOPE)
 
@@ -1105,24 +1074,12 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         set(PRODUCT_BUNDLE_IDENTIFIER ${_svc_BUNDLE_IDENTIFIER})
         set(EXECUTABLE_NAME ${_svc_EXECUTABLE_NAME})
         set(PRODUCT_NAME ${_svc_BUNDLE_IDENTIFIER})
-        configure_file(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist
+        WEBKIT_CONFIGURE_BUNDLE_PLIST(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist
             ${_contents_dir}/Info.plist)
+        set_property(TARGET ${_target} APPEND PROPERTY
+            LINK_DEPENDS ${_contents_dir}/Info.plist)
 
         if (NOT WEBKIT_SDK_IS_MACOS)
-            # FIXME: These may be applicable to add for macOS too (with
-            # different UIDeviceFamily).
-            execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_contents_dir}/Info.plist)
-            # TARGETED_DEVICE_FAMILY of the platform being built, which no XPC service
-            # target overrides. https://developer.apple.com/documentation/xcode/build-settings-reference
-            if (WEBKIT_SDK_IS_XROS)
-                set(_device_family 7)
-            else ()
-                set(_device_family 1)
-            endif ()
-            execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_device_family}]" ${_contents_dir}/Info.plist)
-            execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_contents_dir}/Info.plist)
-            execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_contents_dir}/Info.plist)
-
             target_link_options(${_target} PRIVATE
                 "LINKER:-rpath,@executable_path/.."
                 "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/.."
@@ -1150,8 +1107,8 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         if (WEBKIT_SDK_IS_MACOS)
             # This WebKit is loaded from the build directory rather than from its
             # install name, and launchd starts a service with no environment pointing
-            # at it, so bake in the way back to the frameworks beside the framework
-            # the service lives in. Xcode does the same through
+            # at it, so bake in the way back to the frameworks beside the service.
+            # Xcode does the same through
             # WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORKS.
             file(RELATIVE_PATH _path_to_frameworks
                 "${_exe_dir}" "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
@@ -1159,6 +1116,14 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
                 "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/${_path_to_frameworks}"
                 "LINKER:-dyld_env,DYLD_LIBRARY_PATH=@executable_path/${_path_to_frameworks}"
             )
+
+            set(_framework_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices)
+            add_custom_command(TARGET WebKit POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${_framework_xpc_dir}
+                COMMAND ${CMAKE_COMMAND} -E rm -rf ${_framework_xpc_dir}/${_svc_BUNDLE_IDENTIFIER}.xpc
+                COMMAND ${CMAKE_COMMAND} -E create_symlink ../../../../${_svc_BUNDLE_IDENTIFIER}.xpc
+                    ${_framework_xpc_dir}/${_svc_BUNDLE_IDENTIFIER}.xpc
+                VERBATIM)
         endif ()
 
         # Link into the bundle, and sign the wrapper rather than the Mach-O.
@@ -1168,10 +1133,6 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             MACOSX_BUNDLE FALSE
             RUNTIME_OUTPUT_DIRECTORY "${_exe_dir}"
             CODE_SIGN_BUNDLE "${_bundle_dir}")
-
-        # XPC services are part of WebKit.framework, so they must finish
-        # signing before the framework bundle signs.
-        add_dependencies(WebKit_CodeSign ${_target}_CodeSign)
     endfunction()
 
     WEBKIT_XPC_SERVICE(WebProcess
@@ -2156,32 +2117,27 @@ add_dependencies(WebKit WebKit_Assets)
 
 function(WEBKIT_EMBED_EXTENSION _host_target _ext_name _host_bundle_id)
     set(options CHANGE_EXTENSION_POINT ADD_ATS)
-    cmake_parse_arguments(ARG "${options}" "" "" ${ARGN})
+    cmake_parse_arguments(ARG "${options}" "BUNDLE_DIR" "" ${ARGN})
+    if (NOT ARG_BUNDLE_DIR)
+        message(FATAL_ERROR "WEBKIT_EMBED_EXTENSION: BUNDLE_DIR is required")
+    endif ()
 
-    set(_dst_plist "$<TARGET_FILE_DIR:${_host_target}>/Extensions/${_ext_name}.appex/Info.plist")
+    set(_src_appex "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${_ext_name}.appex")
+    set(_dst_appex "${ARG_BUNDLE_DIR}/Extensions/${_ext_name}.appex")
+    set(_dst_plist "${_dst_appex}/Info.plist")
 
-    add_custom_command(TARGET ${_host_target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-            "$<TARGET_FILE_DIR:${_host_target}>/Extensions"
-        COMMAND ${CMAKE_COMMAND} -E rm -rf
-            "$<TARGET_FILE_DIR:${_host_target}>/Extensions/${_ext_name}.appex"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${_ext_name}.appex"
-            "$<TARGET_FILE_DIR:${_host_target}>/Extensions/${_ext_name}.appex"
+    set(_plist_commands
         COMMAND /usr/libexec/PlistBuddy -c
             "Set :CFBundleIdentifier ${_host_bundle_id}.${_ext_name}"
-            "${_dst_plist}"
-        COMMENT "Embedding ${_ext_name} in ${_host_target}")
-
+            "${_dst_plist}")
     if (ARG_CHANGE_EXTENSION_POINT)
-        add_custom_command(TARGET ${_host_target} POST_BUILD
+        list(APPEND _plist_commands
             COMMAND /usr/libexec/PlistBuddy -c
                 "Set :EXAppExtensionAttributes:EXExtensionPointIdentifier com.apple.web-browser-engine.content"
                 "${_dst_plist}")
     endif ()
-
     if (ARG_ADD_ATS)
-        add_custom_command(TARGET ${_host_target} POST_BUILD
+        list(APPEND _plist_commands
             COMMAND /usr/libexec/PlistBuddy -c
                 "Add :NSAppTransportSecurity dict"
                 "${_dst_plist}"
@@ -2190,16 +2146,28 @@ function(WEBKIT_EMBED_EXTENSION _host_target _ext_name _host_bundle_id)
                 "${_dst_plist}")
     endif ()
 
-    add_custom_command(TARGET ${_host_target} POST_BUILD
-        COMMAND codesign --force --sign -
-            "$<TARGET_FILE_DIR:${_host_target}>/Extensions/${_ext_name}.appex")
+    _WEBKIT_CODE_SIGN_COMMAND(_codesign_command ${_ext_name} ${_dst_appex})
+    get_target_property(_entitlements ${_ext_name} CODE_SIGN_ENTITLEMENTS)
+    if (NOT _entitlements)
+        set(_entitlements "")
+    endif ()
+
+    set(_output "${_dst_appex}/_CodeSignature/CodeResources")
+    add_custom_command(
+        OUTPUT ${_output}
+        COMMAND ${CMAKE_COMMAND} -E rm -rf "${_dst_appex}"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${_src_appex}" "${_dst_appex}"
+        ${_plist_commands}
+        COMMAND ${_codesign_command}
+        DEPENDS ${_ext_name} "${_src_appex}/Info.plist" ${_entitlements}
+        COMMENT "Embedding ${_ext_name} in ${_host_target}"
+        VERBATIM)
+
+    target_sources(${_host_target} PRIVATE ${_output})
+    set_property(TARGET ${_host_target} APPEND PROPERTY LINK_DEPENDS ${_output})
 endfunction()
 
 function(WEBKIT_DEFINE_IOS_RESOURCES)
-    # The XPC service symlinks must be created in the SAME POST_BUILD chain as
-    # the codesign below; a separate add_custom_command(POST_BUILD ...)
-    # registered afterward modifies the framework after the seal and breaks
-    # code-sign verification at sim runtime. Inject inline.
     if (NOT USE_EXTENSIONKIT)
         set(_xpc_service_bundles
             com.apple.WebKit.Networking
@@ -2255,13 +2223,7 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
         COMMAND ${CMAKE_COMMAND} -E create_symlink ../../libWebKitSwift.dylib
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks/libWebKitSwift.dylib
         ${_xpc_service_symlinks}
-        COMMAND codesign --force --sign - ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
-        COMMENT "Installing WebKit.framework resources and codesigning")
-
-    # Note: the XPC service and Frameworks/libWebKitSwift.dylib symlinks MUST be
-    # created in the same POST_BUILD chain as codesign above. A separate
-    # add_custom_command modifies the framework after the seal, which breaks
-    # codesign verification at sim runtime.
+        COMMENT "Installing WebKit.framework resources")
 
     set(_sb_profiles_dir "${WEBKIT_DIR}/Resources/SandboxProfiles/ios")
     set(_sb_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework")
@@ -2310,15 +2272,9 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
         set(EXECUTABLE_NAME ${_executable_name})
         set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_id})
         set(PRODUCT_BUNDLE_NAME ${_name})
-        configure_file(${_info_plist} ${_appex_dir}/Info.plist)
-
-        # Add platform keys required by runningboardd/ExtensionKit validation.
-        execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_appex_dir}/Info.plist)
-        # TARGETED_DEVICE_FAMILY from Configurations/BaseExtension.xcconfig, which
-        # the extension targets set for every SDK.
-        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2,7]" ${_appex_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_appex_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_appex_dir}/Info.plist)
+        # TARGETED_DEVICE_FAMILY from Configurations/BaseExtension.xcconfig.
+        WEBKIT_CONFIGURE_BUNDLE_PLIST(${_info_plist} ${_appex_dir}/Info.plist
+            TARGETED_DEVICE_FAMILY 1 2 7)
 
         WEBKIT_EXECUTABLE_DECLARE(${_name})
         set(${_name}_SOURCES ${_swift_source})
@@ -2331,8 +2287,8 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
             # MACOSX_BUNDLE defaults on for the embedded SDKs, which would nest
             # an .app inside the .appex.
             MACOSX_BUNDLE FALSE
-            # Sign the appex bundle. 
-            CODE_SIGN_BUNDLE "${_appex_dir}"
+            # WEBKIT_EMBED_EXTENSION signs each host's modified copy.
+            SKIP_CODESIGN TRUE
         )
         set_property(TARGET ${_name} PROPERTY CODE_SIGN_FLAGS
             --timestamp=none --generate-entitlement-der)

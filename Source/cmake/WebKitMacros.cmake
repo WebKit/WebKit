@@ -734,103 +734,91 @@ function(_WEBKIT_ADD_DSYM _target)
         COMMENT "Generating dSYM for ${_target}")
 endfunction()
 
+# Sets <out_var> to the shell command that signs <path> with <target>'s signing identity,
+# CODE_SIGN_FLAGS and CODE_SIGN_ENTITLEMENTS.
+function(_WEBKIT_CODE_SIGN_COMMAND _out_var _target _path)
+    set(_identity ${WEBKIT_CODE_SIGN_IDENTITY})
+    if (NOT _identity)
+        set(_identity "-")
+    endif ()
+    get_target_property(_extra_flags ${_target} CODE_SIGN_FLAGS)
+    if (NOT _extra_flags)
+        set(_extra_flags "")
+    endif ()
+    set(_entitlements "")
+    get_target_property(_entitlements_path ${_target} CODE_SIGN_ENTITLEMENTS)
+    if (_entitlements_path)
+        set(_entitlements --entitlements ${_entitlements_path})
+    endif ()
+    set(${_out_var}
+        set -o pipefail &&
+        ${WEBKITADDITIONS_CODESIGN_PRELUDE}
+        /usr/bin/codesign --force --sign ${_identity} ${_extra_flags} ${_entitlements} ${_path} 2>&1 |
+        sed "/replacing existing signature/d"
+        PARENT_SCOPE)
+endfunction()
+
+# Signs <target> in POST_BUILD, so that building the target directly, e.g.
+# `cmake --build . --target jsc`, always signs it (webkit.org/b/320034).
 function(_WEBKIT_ADD_CODE_SIGN _target)
     get_target_property(_skip_codesign ${_target} SKIP_CODESIGN)
     if (_skip_codesign)
         return ()
     endif ()
-    set(_identity ${WEBKIT_CODE_SIGN_IDENTITY})
-    if (NOT _identity)
-        set(_identity "-")
-    endif ()
     cmake_parse_arguments(_arg "" "" "DEPENDS" ${ARGN})
+    set_property(TARGET ${_target} PROPERTY _WEBKIT_CODE_SIGN_DEPENDS ${_arg_DEPENDS})
+
+    # Registered at the end of the directory so that signing is the last POST_BUILD
+    # step, after anything else that writes into the bundle.
+    cmake_language(EVAL CODE
+        "cmake_language(DEFER CALL _WEBKIT_ADD_POST_BUILD_CODE_SIGN [[${_target}]])")
+endfunction()
+
+function(_WEBKIT_ADD_POST_BUILD_CODE_SIGN _target)
+    get_target_property(_depends ${_target} _WEBKIT_CODE_SIGN_DEPENDS)
+    if (NOT _depends)
+        set(_depends "")
+    endif ()
+    get_target_property(_entitlements_path ${_target} CODE_SIGN_ENTITLEMENTS)
+    if (_entitlements_path)
+        list(APPEND _depends ${_entitlements_path})
+    endif ()
+    # Info.plist changes break the signature.
+    foreach (_property MACOSX_FRAMEWORK_INFO_PLIST MACOSX_BUNDLE_INFO_PLIST)
+        get_target_property(_info_plist ${_target} ${_property})
+        if (_info_plist)
+            list(APPEND _depends ${_info_plist})
+        endif ()
+    endforeach ()
+
     # Targets that build a bundle need to sign the entire bundle. For
-    # frameworks, this is automatic, but auxiliary bundles like XPC services
+    # frameworks and loadable bundles, this is automatic, but auxiliary bundles like XPC services
     # may set an explicit bundle path with the CODE_SIGN_BUNDLE property.
     get_target_property(_is_framework ${_target} FRAMEWORK)
+    get_target_property(_is_loadable_bundle ${_target} BUNDLE)
     get_target_property(_sign_bundle ${_target} CODE_SIGN_BUNDLE)
     if (_sign_bundle)
         set(_sign_path "${_sign_bundle}")
-    elseif (_is_framework)
+    elseif (_is_framework OR _is_loadable_bundle)
         set(_sign_path "$<TARGET_BUNDLE_DIR:${_target}>")
     else ()
         set(_sign_path "$<TARGET_FILE:${_target}>")
     endif ()
-    set(_cstemp_path "$<TARGET_FILE:${_target}>.cstemp")
-    get_target_property(_extra_flags ${_target} CODE_SIGN_FLAGS)
-    if (NOT _extra_flags)
-        set(_extra_flags "")
-    endif ()
-    get_target_property(_entitlements_path ${_target} CODE_SIGN_ENTITLEMENTS)
-    set(_entitlements "")
-    if (_entitlements_path)
-        set(_entitlements --entitlements ${_entitlements_path})
-        list(APPEND _arg_DEPENDS ${_entitlements_path})
-    endif ()
-
-    # Info.plist changes break the signature.
-    get_target_property(_info_plist ${_target} MACOSX_FRAMEWORK_INFO_PLIST)
-    if (_info_plist)
-        if (WEBKIT_SDK_IS_MACOS)
-            list(APPEND _arg_DEPENDS
-                "$<TARGET_BUNDLE_CONTENT_DIR:${_target}>/Resources/Info.plist")
-        else ()
-            list(APPEND _arg_DEPENDS
-                "$<TARGET_BUNDLE_CONTENT_DIR:${_target}>/Info.plist")
-        endif ()
-    endif ()
-
-    get_target_property(_target_type ${_target} TYPE)
-    if (NOT _is_framework)
-        # Executables and dylibs have no "sign last" ordering constraint (unlike a
-        # framework, which must sign after its embedded bundles). Attach the
-        # signing as a POST_BUILD step so that building the target directly,
-        # e.g. `cmake --build . --target jsc`, always signs it. A stamp-based
-        # target that only runs during an `all` build would leave a directly
-        # built executable unsigned and unable to JIT (webkit.org/b/320034).
-        add_custom_command(
-            TARGET ${_target} POST_BUILD
-            # Work around rdar://145010536 when a previous codesign task was interrupted.
-            COMMAND rm -f ${_cstemp_path}
-            COMMAND set -o pipefail &&
-                ${WEBKITADDITIONS_CODESIGN_PRELUDE}
-                /usr/bin/codesign --force --sign ${_identity} ${_extra_flags} ${_entitlements} ${_sign_path} 2>&1 |
-                sed "/replacing existing signature/d"
-            VERBATIM
-            COMMENT "Code signing ${_target}")
-        # A POST_BUILD command only re-runs when the target relinks, so make a
-        # change to the entitlements force a relink; otherwise editing the
-        # entitlements would leave the binary signed with the stale set.
-        if (_entitlements_path)
-            set_property(TARGET ${_target} APPEND PROPERTY
-                LINK_DEPENDS ${_entitlements_path})
-        endif ()
-        # Preserve a named ${_target}_CodeSign target so ordering edges elsewhere
-        # (e.g. WebKit.framework signing after its XPC services) keep resolving.
-        # The POST_BUILD command above performs the actual signing when the
-        # target builds, so this target only needs to depend on it.
-        add_custom_target(${_target}_CodeSign ALL)
-        add_dependencies(${_target}_CodeSign ${_target})
-        return ()
-    endif ()
-
-    set(_stamp "${CMAKE_CURRENT_BINARY_DIR}/${_target}-codesign.stamp")
+    _WEBKIT_CODE_SIGN_COMMAND(_codesign_command ${_target} ${_sign_path})
 
     add_custom_command(
-        OUTPUT ${_stamp}
-        DEPENDS $<TARGET_FILE:${_target}> ${_arg_DEPENDS}
+        TARGET ${_target} POST_BUILD
         # Work around rdar://145010536 when a previous codesign task was interrupted.
-        COMMAND rm -f ${_cstemp_path}
-        COMMAND set -o pipefail &&
-            ${WEBKITADDITIONS_CODESIGN_PRELUDE}
-            /usr/bin/codesign --force --sign ${_identity} ${_extra_flags} ${_entitlements} ${_sign_path} 2>&1 |
-            sed "/replacing existing signature/d"
-        COMMAND ${CMAKE_COMMAND} -E touch ${_stamp}
+        COMMAND rm -f "$<TARGET_FILE:${_target}>.cstemp"
+        COMMAND ${_codesign_command}
         VERBATIM
         COMMENT "Code signing ${_target}")
-    add_custom_target(${_target}_CodeSign ALL DEPENDS ${_stamp})
-    add_dependencies(${_target}_CodeSign ${_target})
-    set_target_properties(${_target} PROPERTIES CODESIGN_STAMP ${_stamp})
+    # A POST_BUILD command only re-runs when the target relinks, so make a
+    # change to any signing input force a relink; otherwise the bundle would
+    # keep a signature over stale contents.
+    if (_depends)
+        set_property(TARGET ${_target} APPEND PROPERTY LINK_DEPENDS ${_depends})
+    endif ()
 endfunction()
 
 macro(_WEBKIT_TARGET_INTERFACE _target)
@@ -846,18 +834,6 @@ macro(_WEBKIT_TARGET_INTERFACE _target)
     endif ()
     if (NOT ${_target}_LIBRARY_TYPE STREQUAL "SHARED")
         target_compile_definitions(${_target}_PostBuild INTERFACE "STATICALLY_LINKED_WITH_${_target}")
-    endif ()
-    if (TARGET ${_target}_CodeSign)
-        get_target_property(_codesign_stamp ${_target} CODESIGN_STAMP)
-        if (_codesign_stamp)
-            # add_dependencies() on a utility target would order every consumer's
-            # objects behind signing; only linking reads the signed binary.
-            set_property(TARGET ${_target}_PostBuild APPEND PROPERTY
-                INTERFACE_LINK_DEPENDS ${_codesign_stamp})
-        else ()
-            # Executables sign in POST_BUILD and have no stamp.
-            add_dependencies(${_target}_PostBuild ${_target}_CodeSign)
-        endif ()
     endif ()
     add_library(WebKit::${_target} ALIAS ${_target}_PostBuild)
 endmacro()
@@ -913,7 +889,7 @@ macro(WEBKIT_LIBRARY _target)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
     endif ()
 
-    if (APPLE AND ${${_target}_LIBRARY_TYPE} MATCHES SHARED)
+    if (APPLE AND ${${_target}_LIBRARY_TYPE} MATCHES "SHARED|MODULE")
         _WEBKIT_ADD_DSYM(${_target})
         _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()
