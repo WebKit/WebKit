@@ -3963,6 +3963,16 @@ MediaRecorderEnabledWebM:
       default: false
   sharedPreferenceForWebProcess: true
 
+MediaResourceLoadTimeoutForTesting:
+  type: uint32_t
+  status: internal
+  category: media
+  condition: PLATFORM(COCOA)
+  webcoreDeprecatedGlobalSettings: true
+  humanReadableName: "Media Resource Load Timeout For Testing"
+  humanReadableDescription: "Test override for the timeout applied to each media resource load serviced by WebKit, in milliseconds (0 means use production default)"
+  defaultValue: 0
+
 MediaSessionCaptureToggleAPIEnabled:
   type: bool
   status: stable

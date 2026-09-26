@@ -296,7 +296,9 @@ public:
         Function<void()> m_function;
     };
 
-    WTF_EXPORT_PRIVATE Ref<RunLoop::DispatchTimer> dispatchAfter(Seconds, Function<void()>&&);
+    WTF_EXPORT_PRIVATE Ref<RunLoop::DispatchTimer> scheduleTimer(Seconds, Function<void()>&&);
+
+    void dispatchAfter(Seconds delay, Function<void()>&& function) final { scheduleTimer(delay, WTF::move(function)); }
 
     WTF_EXPORT_PRIVATE String listActiveTimersForLogging() const;
 
