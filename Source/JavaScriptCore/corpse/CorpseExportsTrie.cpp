@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CorpseExportsTrie.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA) && OS(DARWIN)
 
 #include <mach-o/loader.h>
 #include <optional>
@@ -141,4 +141,4 @@ std::expected<ExportsTrie::Export, ExportsTrie::Failure> ExportsTrie::lookUp(std
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA) && OS(DARWIN)

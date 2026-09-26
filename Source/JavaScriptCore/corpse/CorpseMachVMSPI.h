@@ -25,12 +25,23 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+// The Mach VM SPI this library needs on top of what the rest of WebKit uses, kept
+// here so that what libJavaScriptCoreTools adds stays separate and distinct from
+// wtf/spi/cocoa/MachVMSPI.h.
 
-namespace JSCToolsTest {
+#include <wtf/Platform.h>
 
-void testByteParser();
+#if ENABLE(MYA) && OS(DARWIN)
 
-} // namespace JSCToolsTest
+DECLARE_SYSTEM_HEADER
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <wtf/spi/cocoa/MachVMSPI.h>
+
+WTF_EXTERN_C_BEGIN
+
+kern_return_t mach_vm_remap_new(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t, mach_vm_offset_t mask, int flags,
+    vm_map_read_t srcTask, mach_vm_address_t srcAddress, boolean_t copy, vm_prot_t* currentProtection, vm_prot_t* maximumProtection, vm_inherit_t);
+
+WTF_EXTERN_C_END
+
+#endif // ENABLE(MYA) && OS(DARWIN)

@@ -25,7 +25,9 @@
 
 #include "config.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseClient.h>
@@ -57,6 +59,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #if HAVE(READLINE)
 // readline/history.h has a Function typedef that conflicts with WTF::Function;
@@ -594,16 +597,16 @@ private:
             snprintf(buffer, sizeof(buffer), "%.3f", thread.systemTimeUsec() / 1000.0);
             row.cells[4] = buffer;
             if (thread.stackPointer()) {
-                snprintf(buffer, sizeof(buffer), "0x%llx",
-                    thread.stackPointer().toMachVMAddress());
+                SAFE_SPRINTF(std::span { buffer }, "0x%llx",
+                    static_cast<unsigned long long>(thread.stackPointer().toTargetVMAddress()));
                 row.cells[5] = buffer;
             } else
                 row.cells[5] = "-";
             if (thread.hasStack()) {
                 const auto& stack = thread.stackRegion();
-                snprintf(buffer, sizeof(buffer), "0x%llx-0x%llx",
-                    stack.base().toMachVMAddress(),
-                    stack.end().toMachVMAddress());
+                SAFE_SPRINTF(std::span { buffer }, "0x%llx-0x%llx",
+                    static_cast<unsigned long long>(stack.base().toTargetVMAddress()),
+                    static_cast<unsigned long long>(stack.end().toTargetVMAddress()));
                 row.cells[6] = buffer;
                 formatByteSize(stack.size(), buffer, sizeof(buffer));
                 row.cells[7] = buffer;
@@ -709,16 +712,16 @@ private:
             return;
         }
 
-        std::string name(token);
-        Address address = snapshot->symbol(name.c_str());
+        CString name = UTF8CString { byteCast<char8_t>(std::span { token }) };
+        Address address = snapshot->symbol(name.data());
         if (!address) {
-            fprintf(stderr, "mya: No symbol '%s' in snapshot #%u\n", name.c_str(), snapshot->id());
+            SAFE_FPRINTF(stderr, "mya: No symbol '%s' in snapshot #%u\n", name, snapshot->id());
             return;
         }
         if (hex)
-            printf("&%s = 0x%llx\n", name.c_str(), address.toMachVMAddress());
+            SAFE_PRINTF("&%s = 0x%llx\n", name, static_cast<unsigned long long>(address.toTargetVMAddress()));
         else
-            printf("&%s = %llu\n", name.c_str(), address.toMachVMAddress());
+            SAFE_PRINTF("&%s = %llu\n", name, static_cast<unsigned long long>(address.toTargetVMAddress()));
     }
 
     // Releases resources without extra output. Dropping the current selection
@@ -1392,16 +1395,16 @@ private:
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
 
 int main(int argc, char** argv)
 {
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
     return Mya::Shell().run(argc, argv);
-#else
+#else // ENABLE(MYA)
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
-    printf("Not supported platform for mya\n");
+    SAFE_PRINTF("Not supported platform for mya\n");
     return 1;
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
 }

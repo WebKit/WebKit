@@ -25,7 +25,9 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <wtf/text/ASCIILiteral.h>
 
@@ -48,4 +50,4 @@ private:
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

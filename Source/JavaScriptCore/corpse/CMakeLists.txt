@@ -5,6 +5,7 @@ set(JavaScriptCoreTools_SOURCES
     CorpseClient.cpp
     CorpseError.cpp
     CorpseExportsTrie.cpp
+    CorpseMemory.cpp
     CorpseProcess.cpp
     CorpseRegion.cpp
     CorpseSnapshot.cpp
@@ -21,6 +22,10 @@ set(JavaScriptCoreTools_FRAMEWORKS
     WTF
     bmalloc
 )
+
+if (ENABLE_MYA_HEAP)
+    list(APPEND JavaScriptCoreTools_LIBRARIES LLDB::LLDB)
+endif ()
 
 WEBKIT_LIBRARY_DECLARE(JavaScriptCoreTools)
 

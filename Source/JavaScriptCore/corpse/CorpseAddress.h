@@ -25,13 +25,17 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <bit>
 #include <compare>
 #include <cstddef>
-#include <mach/mach.h>
+#include <limits>
 #include <stdint.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 
 #if CPU(ARM64E)
 #include <ptrauth.h>
@@ -40,21 +44,28 @@
 namespace JSC {
 namespace Corpse {
 
+#if OS(DARWIN)
+using target_address_t = mach_vm_address_t;
+#else
+using target_address_t = uint64_t;
+#endif
+
 // An address in the target corpse process. A corpse address can never be dereferenced
 // by accident.
 class Address {
 public:
     Address() = default;
-    explicit Address(mach_vm_address_t value)
+    explicit Address(target_address_t value)
         : m_value(value)
     {
     }
+
     explicit Address(const void* pointer)
-        : m_value(reinterpret_cast<mach_vm_address_t>(pointer))
+        : m_value(reinterpret_cast<target_address_t>(pointer))
     {
     }
 
-    mach_vm_address_t toMachVMAddress() const { return m_value; }
+    target_address_t toTargetVMAddress() const { return m_value; }
     explicit operator bool() const { return m_value; }
     template<typename T> explicit operator T() const = delete;
 
@@ -90,11 +101,31 @@ public:
 
     uint64_t operator-(Address other) const { return m_value - other.m_value; }
 
+    static constexpr Address deletedValue() { return Address(std::numeric_limits<target_address_t>::max()); }
+
 private:
-    mach_vm_address_t m_value { 0 };
+    target_address_t m_value { 0 };
 };
 
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+namespace WTF {
+
+template<> struct DefaultHash<JSC::Corpse::Address> {
+    using Address = JSC::Corpse::Address;
+    static unsigned hash(Address address) { return intHash(address.toTargetVMAddress()); }
+    static bool equal(Address a, Address b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<> struct HashTraits<JSC::Corpse::Address> : GenericHashTraits<JSC::Corpse::Address> {
+    using Address = JSC::Corpse::Address;
+    static constexpr bool emptyValueIsZero = true;
+    static void constructDeletedValue(Address& slot) { slot = Address::deletedValue(); }
+    static bool isDeletedValue(Address value) { return value == Address::deletedValue(); }
+};
+
+} // namespace WTF
+
+#endif // ENABLE(MYA)
