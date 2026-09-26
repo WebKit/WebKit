@@ -73,13 +73,27 @@ public:
                 break;
             if (precedingLineBox.logicalBottom() < logicalTop())
                 break;
-            return precedingLineBox.contentLogicalBottom();
+            return adjustedContentLogicalBottom(precedingLineBox, *this);
         }
         return contentLogicalTop();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        if (!formattingContextRoot().writingMode().isLineInverted()) {
+            // Mirrors the walk in contentLogicalTopAdjustedForPrecedingLineBox so that adjoining lines meet at the same position.
+            if (!hasContentfulInFlowBox() || hasBlockLevelBox())
+                return contentLogicalBottom();
+            for (auto followingLineIndex = m_lineIndex + 1; followingLineIndex < lines().size(); ++followingLineIndex) {
+                auto followingLineBox = LineBoxIteratorModernPath { *m_inlineContent, followingLineIndex };
+                if (!followingLineBox.hasContentfulInFlowBox())
+                    continue;
+                if (logicalBottom() < followingLineBox.logicalTop())
+                    break;
+                return adjustedContentLogicalBottom(*this, followingLineBox);
+            }
+            return contentLogicalBottom();
+        }
+        if (m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         auto followingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 };
         if (followingLineBox.hasBlockLevelBox())
@@ -153,6 +167,15 @@ public:
 
 private:
     void setAtEnd() { m_lineIndex = lines().size(); }
+
+    static float adjustedContentLogicalBottom(const LineBoxIteratorModernPath& precedingLineBox, const LineBoxIteratorModernPath& followingLineBox)
+    {
+        auto precedingContentLogicalBottom = precedingLineBox.contentLogicalBottom();
+        auto followingContentLogicalTop = followingLineBox.contentLogicalTop();
+        if (precedingContentLogicalBottom >= followingContentLogicalTop)
+            return precedingContentLogicalBottom;
+        return std::clamp(followingLineBox.logicalTop(), precedingContentLogicalBottom, followingContentLogicalTop);
+    }
 
     const InlineDisplay::Lines& lines() const LIFETIME_BOUND { return m_inlineContent->displayContent().lines; }
     const InlineDisplay::Line& line() const LIFETIME_BOUND { return lines()[m_lineIndex]; }
