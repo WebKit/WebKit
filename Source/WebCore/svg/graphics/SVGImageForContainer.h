@@ -67,11 +67,15 @@ public:
 
     RefPtr<NativeImage> currentNativeImage() final;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void setInvertContent(bool invert) { m_containerContext.invertContent = invert; }
+#endif
+
 private:
     WEBCORE_EXPORT SVGImageForContainer(SVGImage*, SVGImage::ContainerContext&&);
 
     WeakPtr<SVGImage> m_image;
-    const SVGImage::ContainerContext m_containerContext;
+    SVGImage::ContainerContext m_containerContext;
 };
 
 } // namespace WebCore

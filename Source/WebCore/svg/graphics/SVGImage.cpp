@@ -238,6 +238,10 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     ImageObserverDisableScope imageObserverDisabler(*this);
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    applyInvertContent(containerContext.invertContent);
+#endif
+
     auto containerSize = containerContext.containerSize;
     IntSize roundedContainerSize = roundedIntSize(containerSize);
     setContainerSize(roundedContainerSize);
@@ -270,6 +274,22 @@ void SVGImage::applyLinkParameters(const Style::LinkParameters& parameters)
     document->styleScope().environmentVariables().setLinkParameters(parameters);
     m_appliedLinkParameters = parameters;
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+void SVGImage::applyInvertContent(std::optional<bool> invert)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    page->settings().setAxCustomColorModeEnabled(invert.value_or(m_fallbackInvertContent));
+
+    if (RefPtr document = page->localTopDocument()) {
+        ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
+        document->updateStyleIfNeeded();
+    }
+}
+#endif
 
 bool SVGImage::hasHDRContent() const
 {
@@ -608,7 +628,9 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
                 m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-                m_page->settings().setAxCustomColorModeEnabled(AXCustomColorModeController::shouldAdjustSVGImages(m_page));
+                m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(m_page);
+                m_page->settings().setAxCustomColorModeEnabled(m_fallbackInvertContent);
+                m_page->settings().setAxCustomColorModeAppearanceDetectionEnabled(false);
 #endif
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);

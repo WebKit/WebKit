@@ -50,10 +50,10 @@ public:
     void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&, const Style::LinkParameters&);
     FloatSize imageSizeForRenderer(const RenderObject*) const;
 
-    Image* imageForRenderer(const RenderObject*) const;
+    Image* imageForRenderer(const RenderObject*);
 
 private:
-    Image* findImageForRenderer(const RenderObject*) const;
+    SVGImageForContainer* findContainerForRenderer(const RenderObject*) const;
 
     using ImageForContainerMap = HashMap<const CachedImageClient*, Ref<SVGImageForContainer>>;
 

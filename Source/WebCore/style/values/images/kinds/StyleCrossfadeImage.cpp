@@ -37,6 +37,10 @@
 #include "DeprecatedCSSOMValue.h"
 #include "RenderElement.h"
 #include "SVGImageForContainer.h"
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/PointerComparison.h>
@@ -176,13 +180,25 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
     RefPtr protectedFromImage = fromImage;
     RefPtr protectedToImage = toImage;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    auto invertContent = AXCustomColorModeController::shouldInvertSVGImage(*renderer);
+#endif
+
     if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
         auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
-        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL });
+        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            , .invertContent = invertContent
+#endif
+        });
     }
     if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
         auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
-        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL });
+        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            , .invertContent = invertContent
+#endif
+        });
     }
 
     return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), size);

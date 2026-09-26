@@ -28,6 +28,10 @@
 #include "LocalFrameView.h"
 #include "SVGImage.h"
 #include "SVGImageForContainer.h"
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -72,24 +76,28 @@ void SVGImageCache::setContainerContextForClient(const CachedImageClient& client
     }));
 }
 
-Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const
+SVGImageForContainer* SVGImageCache::findContainerForRenderer(const RenderObject* renderer) const
 {
     return renderer ? m_imageForContainerMap.get(&renderer->cachedImageClient()) : nullptr;
 }
 
 FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* image = findImageForRenderer(renderer);
-    return image ? image->size() : protect(m_svgImage)->size();
+    SUPPRESS_UNCOUNTED_LOCAL auto* container = findContainerForRenderer(renderer);
+    return container ? container->size() : protect(m_svgImage)->size();
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not
 // restart on page load, nor will two animations in different pages have different timelines.
-Image* SVGImageCache::imageForRenderer(const RenderObject* renderer) const
+Image* SVGImageCache::imageForRenderer(const RenderObject* renderer)
 {
-    if (Image* image = findImageForRenderer(renderer)) {
-        ASSERT(!image->size().isEmpty());
-        return image;
+    SUPPRESS_UNCOUNTED_LOCAL auto* container = findContainerForRenderer(renderer);
+    if (container) {
+        ASSERT(!container->size().isEmpty());
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        container->setInvertContent(AXCustomColorModeController::shouldInvertSVGImage(*renderer));
+#endif
+        return container;
     }
 
     return &Image::nullImage();
