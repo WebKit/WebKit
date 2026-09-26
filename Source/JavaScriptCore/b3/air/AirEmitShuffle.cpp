@@ -106,6 +106,12 @@ Vector<Inst, 2> ShufflePair::insts(Code& code, Value* origin) const
     ASSERT(isValidForm(moveFor(bank(), width()), Arg::Tmp, Arg::Addr));
 
     ASSERT(src().isSomeImm());
+    // Only Move32 lacks an immediate form, and it zero-extends, so a register destination takes the
+    // zero-extended value in a single Move.
+    if (dst().isTmp()) {
+        ASSERT(width() == Width32);
+        return { Inst(Move, origin, Arg::bigImm(static_cast<uint32_t>(src().value())), dst()) };
+    }
     Tmp tmp = code.newTmp(bank());
     ASSERT(isValidForm(Move, Arg::BigImm, Arg::Tmp));
     ASSERT(isValidForm(moveFor(bank(), width()), Arg::Tmp, dst().kind()));
@@ -349,6 +355,11 @@ Vector<Inst> emitShuffle(
         Opcode move = moveForWidth(pair.width());
         
         if (!isValidForm(move, pair.src().kind(), pair.dst().kind())) {
+            if (pair.src().isSomeImm() && pair.dst().isTmp()) {
+                ASSERT(move == Move32);
+                result.append(Inst(Move, origin, Arg::bigImm(static_cast<uint32_t>(pair.src().value())), pair.dst()));
+                return;
+            }
             Tmp scratch =
                 getScratch(scratchIndex, findPossibleScratch(code, bank, pair.src(), pair.dst()));
             RELEASE_ASSERT(scratch);
