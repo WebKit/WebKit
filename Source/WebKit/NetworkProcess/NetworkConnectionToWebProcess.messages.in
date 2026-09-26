@@ -165,5 +165,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
 #if ENABLE(IPC_TESTING_API)
     TakeInvalidMessageStringForTesting() -> (String error) Synchronous
+    AddSyntheticParkedLoaderForTesting(WebKit::NetworkResourceLoadIdentifier identifier, WebCore::ProcessIdentifier destination) -> (bool added) Synchronous
+    RemoveSyntheticParkedLoaderForTesting(WebKit::NetworkResourceLoadIdentifier identifier) -> () Synchronous
 #endif
 }

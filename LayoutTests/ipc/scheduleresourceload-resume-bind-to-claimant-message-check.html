@@ -1,0 +1,203 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that ScheduleResourceLoad rejects an existingLoaderToResume claim from a non-destination WebContent process via MESSAGE_CHECK</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async (t) => {
+    if (!window.IPC) {
+        done();
+        return;
+    }
+
+    const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+
+    // Use this page's own URL for first-party-for-cookies and the request URL so the FPFC
+    // MESSAGE_CHECK earlier in NetworkConnectionToWebProcess::scheduleResourceLoad (which fires
+    // for forged FPFCs) does not pre-empt the bind-to-claimant MESSAGE_CHECK we want to exercise.
+    const docURL = document.location.href;
+
+    // Plant a synthetic parked NetworkResourceLoader on the shared NetworkSession with a
+    // destination WebProcessIdentifier that this WebContent process cannot match. ProcessIdentifiers
+    // are sequential per-host process and will not collide with a large constant.
+    const SYNTHETIC_K = 0xCAFEn;
+    const NON_MATCHING_DESTINATION = 0xDEADBEEFn;
+
+    // A synthetic entry has no attached loader, so CachedNetworkResourceLoader's expiration timer
+    // is a no-op for it and it outlives the test. Drain any entry left behind by an earlier failed
+    // run and register removal as a cleanup, so a single failure cannot poison every later run
+    // sharing this NetworkProcess (AddSyntheticParkedLoaderForTesting replies false when an entry
+    // for the identifier is already parked).
+    const removeSyntheticParkedLoader = () => {
+        CoreIPC.Networking.NetworkConnectionToWebProcess.RemoveSyntheticParkedLoaderForTesting(0, {
+            identifier: SYNTHETIC_K,
+        }, () => { });
+    };
+    removeSyntheticParkedLoader();
+    t.add_cleanup(removeSyntheticParkedLoader);
+
+    let added = false;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.AddSyntheticParkedLoaderForTesting(0, {
+        identifier: SYNTHETIC_K,
+        destination: NON_MATCHING_DESTINATION,
+    }, reply => { added = reply.added; });
+    assert_true(added, 'AddSyntheticParkedLoaderForTesting should succeed');
+
+    const resourceLoadParameters = {
+        // NetworkConnectionToWebProcess::scheduleResourceLoad silently drops loads whose webPageProxyID is not
+        // allow-listed for this process, before the MESSAGE_CHECK under test. IPC.webPageProxyID is the WebPageProxy
+        // message destination (a PageIdentifier), not the WebPageProxyIdentifier, so it would be dropped.
+        webPageProxyID: BigInt(IPC.webPageProxyIdentifierForMessageArguments),
+        webPageID: BigInt(IPC.pageID),
+        webFrameID: BigInt(IPC.frameID),
+        request: {
+            getRequestDataToSerialize: {
+                variantType: 'WebCore::ResourceRequest::RequestData',
+                variant: {
+                    m_url: { string: docURL },
+                    m_firstPartyForCookies: { string: docURL },
+                    m_timeoutInterval: 60.0,
+                    m_httpMethod: 'GET',
+                    m_httpHeaderFields: { commonHeaders: [], uncommonHeaders: [] },
+                    m_responseContentDispositionEncodingFallbackArray: [],
+                    m_cachePolicy: 0,
+                    m_sameSiteDisposition: 1,
+                    m_priority: 2,
+                    m_requester: 0,
+                    m_allowCookies: true,
+                    m_isTopSite: true,
+                    m_isAppInitiated: true,
+                    m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                    m_useAdvancedPrivacyProtections: false,
+                    m_didFilterLinkDecoration: false,
+                    m_isPrivateTokenUsageByThirdPartyAllowed: false,
+                    m_wasSchemeOptimisticallyUpgraded: false,
+                    m_targetAddressSpace: 0,
+                },
+            },
+            cachePartition: '',
+            shouldBlockThirdPartyStorage: false,
+            hiddenFromInspector: false,
+        },
+        requestBody: { data: {}, sandboxExtensionHandles: [] },
+        topOrigin: {},
+        sourceOrigin: {},
+        parentPID: { alias: 0 },
+        contentSniffingPolicy: 0,
+        contentEncodingSniffingPolicy: 0,
+        storedCredentialsPolicy: 1,
+        clientCredentialPolicy: 0,
+        shouldClearReferrerOnHTTPSToHTTPRedirect: true,
+        needsCertificateInfo: false,
+        // The parked-loader resume path (existingLoaderToResume) only exists for main-frame
+        // navigation process swaps. Marking this as a main-frame navigation also makes
+        // NetworkResourceLoadParameters::topOriginForServiceWorkers derive the origin from the
+        // request URL instead of dereferencing the (test-omitted) topOrigin SecurityOrigin.
+        isMainFrameNavigation: true,
+        navigationLosesFrameSpecificStorageAccess: false,
+        mainResourceNavigationDataForAnyFrame: {},
+        shouldPreconnectOnly: 0,
+        isNavigatingToAppBoundDomain: {},
+        hadMainFrameMainResourcePrivateRelayed: false,
+        allowPrivacyProxy: true,
+        advancedPrivacyProtections: 0,
+        mayBlockNetworkRequest: false,
+        requiredCookiesVersion: 0n,
+        identifier: { optionalValue: 99001n },
+        requestBodySandboxExtensions: [],
+        resourceSandboxExtension: {},
+        maximumBufferingTime: { value: 0 },
+        options: {
+            destination: 0,
+            mode: 0,
+            credentials: 0,
+            cache: 0,
+            redirect: 0,
+            referrerPolicy: 0,
+            keepAlive: true,
+            integrity: '',
+            clientIdentifier: {},
+            resultingClientIdentifier: {},
+        },
+        cspResponseHeaders: {},
+        parentFrameURL: { string: '' },
+        frameURL: { string: '' },
+        parentCrossOriginEmbedderPolicy: {
+            value: 0,
+            reportOnlyValue: 0,
+            reportingEndpoint: '',
+            reportOnlyReportingEndpoint: '',
+        },
+        crossOriginEmbedderPolicy: {
+            value: 0,
+            reportOnlyValue: 0,
+            reportingEndpoint: '',
+            reportOnlyReportingEndpoint: '',
+        },
+        originalRequestHeaders: { commonHeaders: [], uncommonHeaders: [] },
+        preflightPolicy: 0,
+        shouldEnableCrossOriginResourcePolicy: false,
+        frameAncestorOrigins: [],
+        pageHasResourceLoadClient: false,
+        parentFrameID: {},
+        crossOriginAccessControlCheckEnabled: false,
+        documentURL: { string: '' },
+        isCrossOriginOpenerPolicyEnabled: false,
+        isClearSiteDataHeaderEnabled: false,
+        isClearSiteDataExecutionContextEnabled: false,
+        isDisplayingInitialEmptyDocument: false,
+        effectiveSandboxFlags: { alias: 0 },
+        openerURL: { string: '' },
+        sourceCrossOriginOpenerPolicy: {
+            value: 0,
+            reportOnlyValue: 0,
+            reportingEndpoint: '',
+            reportOnlyReportingEndpoint: '',
+        },
+        navigationID: {},
+        navigationRequester: {},
+        serviceWorkersMode: 1,
+        serviceWorkerRegistrationIdentifier: {},
+        httpHeadersToKeep: 0,
+        navigationPreloadIdentifier: {},
+        workerIdentifier: { alias: { variantType: 'std::monostate', variant: null } },
+        mainDocumentURL: { string: '' },
+        userContentControllerIdentifier: {},
+        pageHasLoadedWebExtensions: false,
+        linkPreconnectEarlyHintsEnabled: false,
+        shouldRecordFrameLoadForStorageAccess: false,
+        isInitiatorPrefetch: false,
+        isInitiatedByDedicatedWorker: false,
+        globalPrivacyControlEnabled: false,
+        shouldConsiderEnhancedSecurityForInsecureResponse: false,
+        originalNavigationStartTime: { secondsSinceEpochSeconds: 0 },
+        clientAddressSpace: 0, // WebCore::IPAddressSpace::Public
+        clientIsSecureContext: false,
+        localNetworkAllowedByPermissionsPolicy: false,
+        loopbackNetworkAllowedByPermissionsPolicy: false,
+    };
+
+    // Drain any preexisting MESSAGE_CHECK error so the next take only sees the one we provoke.
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
+
+    // Send a real ScheduleResourceLoad whose existingLoaderToResume names the synthetic parked
+    // entry. NetworkSession::takeLoaderAwaitingWebProcessTransfer must return WrongCaller because
+    // this WebContent process is not the nominated destination, and scheduleResourceLoad must
+    // MESSAGE_CHECK on that outcome.
+    CoreIPC.Networking.NetworkConnectionToWebProcess.ScheduleResourceLoad(0, {
+        resourceLoadParameters: resourceLoadParameters,
+        existingLoaderToResume: { optionalValue: SYNTHETIC_K },
+    });
+
+    let messageCheck = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {},
+        reply => messageCheck = reply.error);
+
+    assert_true(!!messageCheck && messageCheck.includes('Message check failed'),
+        'ScheduleResourceLoad with existingLoaderToResume claimed by a non-destination WebContent process should trigger MESSAGE_CHECK, got: "' + messageCheck + '"');
+
+}, 'ScheduleResourceLoad rejects existingLoaderToResume claim from a non-destination WebContent process');
+
+done();
+</script>
+</body>
