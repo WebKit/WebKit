@@ -25,7 +25,7 @@
 
 WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
 {
-    constructor(symbol, {caseSensitive, isRegex, disabled, actions, condition, ignoreCount, autoContinue} = {})
+    constructor(symbol, {caseSensitive, isRegex, matchFunctionCalls, matchPropertyReads, disabled, actions, condition, ignoreCount, autoContinue} = {})
     {
         console.assert(typeof symbol === "string" && symbol.trim().length, symbol);
 
@@ -34,6 +34,10 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         this._symbol = symbol;
         this._caseSensitive = caseSensitive !== undefined ? !!caseSensitive : true;
         this._isRegex = isRegex !== undefined ? !!isRegex : false;
+        this._matchFunctionCalls = matchFunctionCalls !== undefined ? !!matchFunctionCalls : true;
+        this._matchPropertyReads = matchPropertyReads !== undefined ? !!matchPropertyReads : false;
+
+        console.assert(this._matchFunctionCalls || this._matchPropertyReads, this);
     }
 
     // Static
@@ -49,6 +53,8 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         return new WI.SymbolicBreakpoint(json.symbol, {
             caseSensitive: json.caseSensitive,
             isRegex: json.isRegex,
+            matchFunctionCalls: json.matchFunctionCalls,
+            matchPropertyReads: json.matchPropertyReads,
             disabled: json.disabled,
             condition: json.condition,
             actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
@@ -62,6 +68,8 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
     get symbol() { return this._symbol; }
     get caseSensitive() { return this._caseSensitive; }
     get isRegex() { return this._isRegex; }
+    get matchFunctionCalls() { return this._matchFunctionCalls; }
+    get matchPropertyReads() { return this._matchPropertyReads; }
 
     get displayName()
     {
@@ -122,6 +130,8 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         json.symbol = this._symbol;
         json.caseSensitive = this._caseSensitive;
         json.isRegex = this._isRegex;
+        json.matchFunctionCalls = this._matchFunctionCalls;
+        json.matchPropertyReads = this._matchPropertyReads;
         if (key === WI.ObjectStore.toJSONSymbol)
             json[WI.objectStores.eventBreakpoints.keyPath] = this._symbol + "-" + this._caseSensitive + "-" + this._isRegex;
         return json;
