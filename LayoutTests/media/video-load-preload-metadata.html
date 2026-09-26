@@ -19,7 +19,7 @@
                 testExpected("video.readyState", HTMLMediaElement.HAVE_ENOUGH_DATA, "<");
 
                 setTimeout(function () {
-                    testExpected("video.buffered.length", 0, "==");
+                    testExpected("video.buffered.length", 0, ">");
                     playbackStarted = true;
                     run("video.play()");
                 }, 250);
@@ -35,6 +35,6 @@
 
     <body onload="start()">
         <video controls preload="metadata"></video>
-        <p>Test that preload="metadata" disables buffering before playback.</p>
+        <p>Test that preload="metadata" buffers a first frame before playback.</p>
     </body>
 </html>

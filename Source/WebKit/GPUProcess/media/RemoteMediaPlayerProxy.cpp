@@ -205,10 +205,11 @@ void RemoteMediaPlayerProxy::cancelLoad()
     protect(m_player)->cancelLoad();
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, WebCore::DynamicRangeMode preferredDynamicRangeMode, PlatformDynamicRangeLimit platformDynamicRangeLimit)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, WebCore::MediaPlayerEnums::Preload effectivePreloadValue, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, WebCore::DynamicRangeMode preferredDynamicRangeMode, PlatformDynamicRangeLimit platformDynamicRangeLimit)
 {
     RefPtr player = m_player;
     player->setPrivateBrowsingMode(privateMode);
+    m_effectivePreloadValue = effectivePreloadValue;
     player->setPreload(preload);
     player->setPreservesPitch(preservesPitch);
     player->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
@@ -291,8 +292,9 @@ void RemoteMediaPlayerProxy::setMuted(bool muted)
     protect(m_player)->setMuted(muted);
 }
 
-void RemoteMediaPlayerProxy::setPreload(WebCore::MediaPlayerEnums::Preload preload)
+void RemoteMediaPlayerProxy::setPreload(WebCore::MediaPlayerEnums::Preload preload, WebCore::MediaPlayerEnums::Preload effectivePreloadValue)
 {
+    m_effectivePreloadValue = effectivePreloadValue;
     protect(m_player)->setPreload(preload);
 }
 

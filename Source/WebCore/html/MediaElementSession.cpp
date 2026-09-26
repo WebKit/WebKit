@@ -666,6 +666,16 @@ MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() con
         if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || element->elementIsHidden())
             return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
+#if HAVE(AVPLAYER_RESOURCE_CONSERVATION_LEVEL)
+        // A paused video preloading only metadata needs no more than the frame it paints, and without a resource
+        // conservation level LimitReadAhead would instead detach the player item that frame comes from.
+        if (RefPtr player = element->player(); player && element->isVideo()
+            && player->preload() == MediaPlayer::Preload::MetaData
+            && element->effectivePreloadValue() == MediaPlayer::Preload::MetaData) {
+            return MediaPlayer::BufferingPolicy::LimitReadAhead;
+        }
+#endif
+
         return currentPolicy;
     }();
 

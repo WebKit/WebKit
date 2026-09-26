@@ -234,7 +234,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
     auto pitchCorrectionAlgorithm = player->pitchCorrectionAlgorithm();
     auto isFullscreen = player->isInFullscreenOrPictureInPicture();
 
-    protect(connection())->send(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, pitchCorrectionAlgorithm, prepareToPlay, prepareToRender, presentationSize, scale, isFullscreen, preferredDynamicRangeMode, platformDynamicRangeLimit), m_id);
+    protect(connection())->send(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, player->effectivePreloadValue(), preservesPitch, pitchCorrectionAlgorithm, prepareToPlay, prepareToRender, presentationSize, scale, isFullscreen, preferredDynamicRangeMode, platformDynamicRangeLimit), m_id);
 }
 
 void MediaPlayerPrivateRemote::load(const URL& url, const LoadOptions& options)
@@ -336,7 +336,11 @@ void MediaPlayerPrivateRemote::setMuted(bool muted)
 
 void MediaPlayerPrivateRemote::setPreload(MediaPlayer::Preload preload)
 {
-    protect(connection())->send(Messages::RemoteMediaPlayerProxy::SetPreload(preload), m_id);
+    auto player = m_player.get();
+    if (!player)
+        return;
+
+    protect(connection())->send(Messages::RemoteMediaPlayerProxy::SetPreload(preload, player->effectivePreloadValue()), m_id);
 }
 
 void MediaPlayerPrivateRemote::setPrivateBrowsingMode(bool privateMode)
