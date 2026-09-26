@@ -1892,7 +1892,11 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
     // https://drafts.csswg.org/css-color-4/#activecaption
     // DEPRECATED: Active window caption.
     case CSSValueActivecaption:
-        return systemColor(CSSValueCanvastext, options);
+#if PLATFORM(COCOA)
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DeprecatedSystemColorsUseCSSColor4Mappings))
+            return systemColor(CSSValueCanvastext, options);
+#endif
+        return systemColor(CSSValueCanvas, options);
 
     // https://drafts.csswg.org/css-color-4/#appworkspace
     // DEPRECATED: Background color of multiple document interface.
