@@ -2552,3 +2552,7 @@ webkit.org/b/324624 imported/w3c/web-platform-tests/css/filter-effects/filter-in
 # unpremultiplied on macOS 27, so this only fails on 26 and earlier. 16 bit decodes are
 # unpremultiplied either way, so copy-external-image-image-bitmap-alpha.html runs everywhere.
 webkit.org/b/285186 [ Sequoia Tahoe ] fast/webgpu/copy-external-image-image-bitmap-alpha-8bpc.html [ Failure ]
+
+# Keyboard scrolling is smooth here and runs on the scrolling thread, so the scroll reaches the
+# snapshot a frame after the two the test waits for.
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-keyboard-scroll-on-body.html [ Failure ]
