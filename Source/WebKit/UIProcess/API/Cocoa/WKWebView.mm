@@ -196,6 +196,7 @@
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/TextManipulationItem.h>
 #import <WebCore/ViewportArguments.h>
+#import <WebCore/ViewportProximityInfo.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCorePersistentCoders.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
@@ -4605,6 +4606,28 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
     return result;
 }
 
+static _WKTextManipulationViewportRelation createViewportRelation(WebCore::ViewportRelation relation)
+{
+    switch (relation) {
+    case WebCore::ViewportRelation::Intersecting:
+        return _WKTextManipulationViewportRelationIntersecting;
+    case WebCore::ViewportRelation::Offscreen:
+        return _WKTextManipulationViewportRelationOffscreen;
+    case WebCore::ViewportRelation::ClippedByAncestor:
+        return _WKTextManipulationViewportRelationClippedByAncestor;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKTextManipulationViewportRelationIntersecting;
+}
+
+static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximityInfo(const std::optional<WebCore::ViewportProximityInfo>& info)
+{
+    if (!info)
+        return { };
+
+    return adoptNS([[_WKTextManipulationViewportProximityInfo alloc] initWithRelation:createViewportRelation(info->relation) viewportSizedDistance:info->viewportSizedDistance viewportCoverage:info->viewportCoverage]);
+}
+
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)())completionHandler
 {
     THROW_IF_SUSPENDED;
@@ -4654,7 +4677,7 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
                 return wkToken;
             });
             auto identifier = makeString(item.frameID ? item.frameID->toUInt64() : 0, '-', item.identifier ? item.identifier->toUInt64() : 0);
-            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString().get() tokens:tokens.get() isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe]);
+            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString().get() tokens:tokens.get() isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe viewportProximityInfo:createViewportProximityInfo(item.viewportProximityInfo).get()]);
         };
 
         if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
