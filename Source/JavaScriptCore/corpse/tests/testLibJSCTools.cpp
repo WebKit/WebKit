@@ -32,6 +32,7 @@
 #include "CorpseAddressTest.h"
 #include "CorpseByteParserTest.h"
 #include "CorpseExportsTrieTest.h"
+#include "CorpseMemoryTest.h"
 #include "CorpseProcessTest.h"
 #include "CorpseRegionTest.h"
 #include "CorpseSnapshotTest.h"
@@ -124,6 +125,7 @@ int main(int argc, char** argv)
         JSCToolsTest::testProcess();
         JSCToolsTest::testSnapshot();
         JSCToolsTest::testRegion();
+        JSCToolsTest::testMemory();
         JSCToolsTest::testThreads();
         JSCToolsTest::testSymbol();
     }

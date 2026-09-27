@@ -110,6 +110,7 @@ if (DEVELOPER_MODE)
             ../corpse/tests/CorpseAddressTest.cpp
             ../corpse/tests/CorpseByteParserTest.cpp
             ../corpse/tests/CorpseExportsTrieTest.cpp
+            ../corpse/tests/CorpseMemoryTest.cpp
             ../corpse/tests/CorpseProcessTest.cpp
             ../corpse/tests/CorpseRegionTest.cpp
             ../corpse/tests/CorpseSnapshotTest.cpp

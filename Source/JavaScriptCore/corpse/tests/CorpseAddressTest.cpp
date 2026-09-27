@@ -33,6 +33,8 @@
 #include <JavaScriptCore/CorpseAddress.h>
 #include <mach/mach.h>
 #include <type_traits>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 #if CPU(ARM64E)
 #include <ptrauth.h>
@@ -119,6 +121,83 @@ void testAddress()
             "stripping clears a tagged top byte");
     }
 #endif
+
+    {
+        // Test Address as a hash table key.
+        HashMap<Address, unsigned> map;
+        Address first(static_cast<mach_vm_address_t>(0x100000000));
+        Address second(static_cast<mach_vm_address_t>(0x100004000));
+
+        map.add(first, 1u);
+        map.add(second, 2u);
+        TEST_ASSERT_EQ(map.size(), static_cast<unsigned>(2), "two addresses are two keys");
+        TEST_ASSERT_EQ(map.get(first), static_cast<unsigned>(1), "the first key finds its value");
+        TEST_ASSERT_EQ(map.get(second), static_cast<unsigned>(2), "so does the second");
+        TEST_ASSERT(map.contains(first), "a key that was added is found");
+
+        TEST_ASSERT(map.remove(first), "a key can be removed");
+        TEST_ASSERT(!map.contains(first), "and is then not found");
+        TEST_ASSERT(map.contains(second), "while the other key survives its removal");
+        TEST_ASSERT_EQ(map.get(second), static_cast<unsigned>(2), "with its value intact");
+
+        // Re-adding after a removal has to reuse the deleted bucket rather than trip
+        // over it.
+        map.add(first, 3u);
+        TEST_ASSERT_EQ(map.get(first), static_cast<unsigned>(3), "a removed key can be added again");
+
+        HashSet<Address> set;
+        set.add(first);
+        TEST_ASSERT(set.contains(first), "an Address works as a set element too");
+        TEST_ASSERT(!set.contains(second), "and an absent one is absent");
+    }
+    {
+        Address slot;
+        WTF::HashTraits<Address>::constructDeletedValue(slot);
+        TEST_ASSERT(WTF::HashTraits<Address>::isDeletedValue(slot),
+            "the deleted key the traits construct is recognised as deleted");
+        TEST_ASSERT(slot != Address(), "and is not the empty key");
+        TEST_ASSERT(!WTF::HashTraits<Address>::isDeletedValue(Address()),
+            "the empty key is not the deleted key");
+    }
+    {
+        // Test that re-adding an Address to a HashMap (keyed on Address) doesn't result
+        // in some entries being hidden due to confusion with deleted entries.
+
+        // A truncated probe chain only shows up once keys collide. Test with churning.
+        static constexpr size_t pageSize = 16384;
+        static constexpr mach_vm_address_t keyBase = 0x100000000;
+        static constexpr unsigned windowSize = 64;
+        static constexpr unsigned rounds = 200;
+
+        auto keyAt = [] (unsigned index) {
+            return Address(keyBase + static_cast<mach_vm_address_t>(index) * pageSize);
+        };
+
+        HashMap<Address, unsigned> map;
+        for (unsigned index = 0; index < windowSize; ++index)
+            map.add(keyAt(index), index);
+
+        unsigned first = 0;
+        unsigned limit = windowSize;
+        bool everyKeyFound = true;
+        for (unsigned round = 0; round < rounds && everyKeyFound; ++round) {
+            if (!map.remove(keyAt(first++))) {
+                everyKeyFound = false;
+                break;
+            }
+            map.add(keyAt(limit), limit);
+            ++limit;
+
+            for (unsigned index = first; index < limit; ++index) {
+                if (map.find(keyAt(index)) == map.end()) {
+                    everyKeyFound = false;
+                    break;
+                }
+            }
+        }
+        TEST_ASSERT(everyKeyFound, "every key in the window survives repeated add and remove");
+        TEST_ASSERT_EQ(map.size(), windowSize, "and the window keeps its size");
+    }
 }
 
 } // namespace JSCToolsTest
