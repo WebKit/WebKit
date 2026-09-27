@@ -28,15 +28,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/WebGPUCppAPI.h>
-#include <optional>
 
 namespace WebKit::WebGPU {
 
-struct TextureBindingLayout {
-    ::WebGPU::TextureSampleType sampleType { ::WebGPU::TextureSampleType::Float };
-    ::WebGPU::TextureViewDimension viewDimension { ::WebGPU::TextureViewDimension::_2d };
-    bool multisampled { false };
-};
+using TextureBindingLayout = ::WebGPU::TextureBindingLayout;
 
 } // namespace WebKit::WebGPU
 

@@ -37,28 +37,13 @@ namespace WebKit::WebGPU {
 
 std::optional<BindGroupLayoutDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::BindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
 {
-    Vector<BindGroupLayoutEntry> entries;
-    entries.reserveInitialCapacity(bindGroupLayoutDescriptor.entries.size());
-    for (const auto& entry : bindGroupLayoutDescriptor.entries) {
-        auto convertedEntry = convertToBacking(entry);
-        if (!convertedEntry)
-            return std::nullopt;
-        entries.append(WTF::move(*convertedEntry));
-    }
-
-    return { { { bindGroupLayoutDescriptor.label }, WTF::move(entries) } };
+    return { { { bindGroupLayoutDescriptor.label }, Vector<BindGroupLayoutEntry> { bindGroupLayoutDescriptor.entries } } };
 }
 
 // The descriptor borrows the entries from entries.
 std::optional<::WebGPU::BindGroupLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupLayoutDescriptor& bindGroupLayoutDescriptor, Vector<::WebGPU::BindGroupLayoutEntry>& entries)
 {
-    entries.reserveInitialCapacity(bindGroupLayoutDescriptor.entries.size());
-    for (const auto& backingEntry : borrow(bindGroupLayoutDescriptor.entries)) {
-        auto entry = convertFromBacking(backingEntry);
-        if (!entry)
-            return std::nullopt;
-        entries.append(WTF::move(*entry));
-    }
+    entries = bindGroupLayoutDescriptor.entries;
 
     return ::WebGPU::BindGroupLayoutDescriptor { .label = bindGroupLayoutDescriptor.label, .entries = entries.span() };
 }
