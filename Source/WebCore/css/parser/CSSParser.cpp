@@ -173,7 +173,7 @@ static inline void filterProperties(IsImportant important, const ParsedPropertyV
     }
 }
 
-static Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector& parsedProperties, CSSParserMode mode)
+static NEVER_INLINE_LARGE_STACK_ALLOC Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector& parsedProperties, CSSParserMode mode)
 {
     std::bitset<numCSSProperties> seenProperties;
     size_t unusedEntries = parsedProperties.size();
@@ -793,8 +793,7 @@ RefPtr<StyleRuleFontFace> CSSParser::consumeFontFaceRule(CSSParserTokenRange pre
         observerWrapper->observer().endRuleBody(endOffset);
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::FontFace);
-    return StyleRuleFontFace::create(createStyleProperties(declarations, m_context.mode));
+    return StyleRuleFontFace::create(consumeStylePropertiesInNewNestingContext(block, StyleRuleType::FontFace));
 }
 
 // The associated number represents the maximum number of allowed values for this font-feature-values type.
@@ -944,8 +943,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParser::consumeFontPaletteValuesRule(CSSPa
         observerWrapper->observer().endRuleBody(endOffset);
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::FontPaletteValues);
-    Ref properties = createStyleProperties(declarations, m_context.mode);
+    Ref properties = consumeStylePropertiesInNewNestingContext(block, StyleRuleType::FontPaletteValues);
 
     auto fontFamilies = [&] {
         Vector<AtomString> fontFamilies;
@@ -1064,9 +1062,7 @@ RefPtr<StyleRulePage> CSSParser::consumePageRule(CSSParserTokenRange prelude, CS
         observerWrapper->observer().endRuleHeader(endOffset);
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::Page);
-
-    return StyleRulePage::create(createStyleProperties(declarations, m_context.mode), WTF::move(selectorList));
+    return StyleRulePage::create(consumeStylePropertiesInNewNestingContext(block, StyleRuleType::Page), WTF::move(selectorList));
 }
 
 RefPtr<StyleRuleCounterStyle> CSSParser::consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -1083,8 +1079,7 @@ RefPtr<StyleRuleCounterStyle> CSSParser::consumeCounterStyleRule(CSSParserTokenR
         observerWrapper->observer().endRuleBody(observerWrapper->endOffset(block));
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::CounterStyle);
-    auto descriptors = CSSCounterStyleDescriptors::create(name, createStyleProperties(declarations, m_context.mode));
+    auto descriptors = CSSCounterStyleDescriptors::create(name, consumeStylePropertiesInNewNestingContext(block, StyleRuleType::CounterStyle));
     if (!descriptors.isValid())
         return nullptr;
     return StyleRuleCounterStyle::create(name, WTF::move(descriptors));
@@ -1103,8 +1098,7 @@ RefPtr<StyleRuleViewTransition> CSSParser::consumeViewTransitionRule(CSSParserTo
         observerWrapper->observer().endRuleBody(endOffset);
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::ViewTransition);
-    return StyleRuleViewTransition::create(createStyleProperties(declarations, m_context.mode));
+    return StyleRuleViewTransition::create(consumeStylePropertiesInNewNestingContext(block, StyleRuleType::ViewTransition));
 }
 
 #if ENABLE(SPATIAL_PORTAL)
@@ -1125,8 +1119,7 @@ RefPtr<StyleRuleEnvironmentMap> CSSParser::consumeEnvironmentMapRule(CSSParserTo
         observerWrapper->observer().endRuleBody(endOffset);
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::EnvironmentMap);
-    return StyleRuleEnvironmentMap::create(createStyleProperties(declarations, m_context.mode));
+    return StyleRuleEnvironmentMap::create(consumeStylePropertiesInNewNestingContext(block, StyleRuleType::EnvironmentMap));
 }
 
 #endif // ENABLE(SPATIAL_PORTAL)
@@ -1148,8 +1141,7 @@ RefPtr<StyleRulePositionTry> CSSParser::consumePositionTryRule(CSSParserTokenRan
         observerWrapper->observer().endRuleBody(endOffset);
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::PositionTry);
-    return StyleRulePositionTry::create(ruleName.toAtomString(), createStyleProperties(declarations, m_context.mode));
+    return StyleRulePositionTry::create(ruleName.toAtomString(), consumeStylePropertiesInNewNestingContext(block, StyleRuleType::PositionTry));
 }
 
 RefPtr<StyleRuleFunction> CSSParser::consumeFunctionRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -1433,7 +1425,7 @@ RefPtr<StyleRuleContainer> CSSParser::consumeContainerRule(CSSParserTokenRange p
     return StyleRuleContainer::create(WTF::move(*query), WTF::move(rules));
 }
 
-RefPtr<StyleRuleProperty> CSSParser::consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+NEVER_INLINE_LARGE_STACK_ALLOC RefPtr<StyleRuleProperty> CSSParser::consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     auto nameToken = prelude.consumeIncludingWhitespace();
     if (nameToken.type() != IdentToken || !prelude.atEnd())
@@ -1511,9 +1503,7 @@ RefPtr<StyleRuleKeyframe> CSSParser::consumeKeyframeStyleRule(CSSParserTokenRang
         observerWrapper->observer().endRuleHeader(observerWrapper->endOffset(prelude));
     }
 
-    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::Keyframe);
-
-    return StyleRuleKeyframe::create(WTF::move(keyList), createStyleProperties(declarations, m_context.mode));
+    return StyleRuleKeyframe::create(WTF::move(keyList), consumeStylePropertiesInNewNestingContext(block, StyleRuleType::Keyframe));
 }
 
 static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRange selectors)
@@ -1611,6 +1601,11 @@ RefPtr<StyleRuleBase> CSSParser::consumeStyleRule(CSSParserTokenRange prelude, C
     return styleRule;
 }
 
+static NEVER_INLINE_LARGE_STACK_ALLOC void swapParsedProperties(ParsedPropertyVector& a, ParsedPropertyVector& b)
+{
+    std::swap(a, b);
+}
+
 // https://drafts.csswg.org/css-syntax/#consume-block-contents
 // https://drafts.csswg.org/css-syntax/#block-contents
 void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType ruleType, OptionSet<BlockAllowedRule> blockAllowedRules, ParsingStyleDeclarationsInRuleList isParsingStyleDeclarationsInRuleList)
@@ -1636,12 +1631,12 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
     };
 
     std::unique_ptr<ParsedPropertyVector> initialDeclarationBlock;
-    auto storeDeclarations = [&] {
+    auto storeDeclarations = [&]() NEVER_INLINE_LARGE_STACK_ALLOC {
         // We don't wrap the first declaration block, we store it until the end of the style rule.
         // For @function we always use the declaration block.
         if (!initialDeclarationBlock && ruleType != StyleRuleType::Function) {
             initialDeclarationBlock = makeUnique<ParsedPropertyVector>();
-            std::swap(*initialDeclarationBlock, topContext().m_parsedProperties);
+            swapParsedProperties(*initialDeclarationBlock, topContext().m_parsedProperties);
             return;
         }
 
@@ -1650,7 +1645,7 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
             return;
 
         ParsedPropertyVector properties;
-        std::swap(properties, topContext().m_parsedProperties);
+        swapParsedProperties(properties, topContext().m_parsedProperties);
 
         if (ruleType == StyleRuleType::Function) {
             auto rule = StyleRuleFunctionDeclarations::create(createStyleProperties(properties, m_context.mode));
@@ -1743,7 +1738,7 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
 
     // Restore the initial declaration block
     if (initialDeclarationBlock)
-        std::swap(*initialDeclarationBlock, topContext().m_parsedProperties);
+        swapParsedProperties(*initialDeclarationBlock, topContext().m_parsedProperties);
 
     // Yield remaining comments
     if (useObserver) {
@@ -1761,6 +1756,12 @@ ParsedPropertyVector CSSParser::consumeDeclarationListInNewNestingContext(CSSPar
         result = WTF::move(topContext().m_parsedProperties);
     });
     return result;
+}
+
+NEVER_INLINE_LARGE_STACK_ALLOC Ref<ImmutableStyleProperties> CSSParser::consumeStylePropertiesInNewNestingContext(CSSParserTokenRange range, StyleRuleType ruleType)
+{
+    auto declarations = consumeDeclarationListInNewNestingContext(range, ruleType);
+    return createStyleProperties(declarations, m_context.mode);
 }
 
 Vector<Ref<StyleRuleBase>> CSSParser::consumeDeclarationRuleListInNewNestingContext(CSSParserTokenRange range, StyleRuleType ruleType)
