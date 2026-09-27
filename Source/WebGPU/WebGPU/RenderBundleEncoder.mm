@@ -1100,7 +1100,7 @@ void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder)
     m_renderPassEncoder = nullptr;
     m_currentPipelineState = nil;
     m_depthStencilState = nil;
-    m_bindGroupDynamicOffsets = std::nullopt;
+    m_bindGroupDynamicOffsets = BindGroupDynamicOffsetsContainer();
     resetIndexBuffer();
 }
 
@@ -1190,8 +1190,9 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* gro
                 m_icbDescriptor.maxFragmentBufferBindCount = std::max<NSUInteger>(m_icbDescriptor.maxFragmentBufferBindCount, 2 + groupIndex);
         }
 
-        recordCommand([groupIndex, group = protect(groupPtr), protectedThis = protect(*this), dynamicOffsets = WTF::move(dynamicOffsets)]() mutable {
-            protectedThis->setBindGroup(groupIndex, group.get(), WTF::move(dynamicOffsets));
+        recordCommand([groupIndex, group = protect(groupPtr), protectedThis = protect(*this), dynamicOffsets = WTF::move(dynamicOffsets)]() {
+            auto offsetsCopy = dynamicOffsets;
+            protectedThis->setBindGroup(groupIndex, group.get(), WTF::move(offsetsCopy));
             return false;
         });
         return;
