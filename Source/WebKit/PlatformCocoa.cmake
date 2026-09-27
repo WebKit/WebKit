@@ -2469,6 +2469,12 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
         VERBATIM)
     add_custom_target(WebKitCorePredictionModel ALL DEPENDS ${WebKit_RESOURCES_DIR}/corePrediction_model)
     add_dependencies(WebKit WebKitCorePredictionModel)
+
+    file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks)
+    file(CREATE_LINK ../../../../libWebKitSwift.dylib
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks/libWebKitSwift.dylib SYMBOLIC)
+    file(CREATE_LINK Versions/Current/Frameworks
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks SYMBOLIC)
 endfunction()
 
 target_link_options(WebKit PRIVATE
