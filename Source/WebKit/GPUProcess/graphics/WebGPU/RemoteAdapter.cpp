@@ -34,7 +34,6 @@
 #include "StreamServerConnection.h"
 #include "WebGPUDeviceDescriptor.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>

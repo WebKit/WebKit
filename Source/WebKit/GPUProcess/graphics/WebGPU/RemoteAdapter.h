@@ -47,7 +47,6 @@ namespace WebKit {
 namespace WebGPU {
 struct DeviceDescriptor;
 class ObjectHeap;
-struct SupportedFeatures;
 }
 
 class RemoteAdapter final : public IPC::StreamMessageReceiver {

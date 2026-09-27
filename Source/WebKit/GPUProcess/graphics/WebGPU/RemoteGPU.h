@@ -37,7 +37,6 @@
 #include "WebGPUIdentifier.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPURequestAdapterOptions.h"
-#include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
