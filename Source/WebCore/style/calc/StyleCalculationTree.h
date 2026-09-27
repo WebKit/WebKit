@@ -446,7 +446,7 @@ struct Atan2 {
 
 // Exponential Functions - https://drafts.csswg.org/css-values-4/#exponent-funcs
 struct Pow {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Atan2);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Pow);
     static constexpr auto op = CSSCalc::Operator::Pow;
 
     Child a;
