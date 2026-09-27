@@ -1,0 +1,5 @@
+
+
+PASS An SVG with no natural dimensions throws
+PASS An SVG with a width and height of its own is usable
+

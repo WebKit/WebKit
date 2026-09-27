@@ -58,6 +58,17 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		F0D651B16B96C5F253620B8F /* VideoFrameImageSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = BD4CD44C2BB32AA87A1363B5 /* VideoFrameImageSizing.h */; };
+		1863F79048F6FFFA90166A4C /* CanvasImageSource+OriginClean.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAEDC49F73FDE10093DD376 /* CanvasImageSource+OriginClean.h */; };
+		3E326C97BF9F6FDF63B47CAC /* CanvasImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD5AAD1212AE3CBE3022D00C /* CanvasImageSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		81FEA682A043C294E1C01339 /* CanvasImageSource+Usability.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D95AF9CD2A75B2267ECDF9 /* CanvasImageSource+Usability.h */; };
+		66F9596DF837DBB71DC2EF63 /* CanvasPatternSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC908EB2F22DB107844701E5 /* CanvasPatternSizing.h */; };
+		2AE6B3D33C13DE3929FC2021 /* CanvasDrawImageSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BD120F885B67FA75D46CBE1 /* CanvasDrawImageSizing.h */; };
+		969825AB9D23F0FB0DCE0A11 /* SizedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 563C1375F94DDADF69B40207 /* SizedImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3470704B5333F4D30F012D5E /* ImageSizingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 257524222FF97A6B8028F838 /* ImageSizingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		716B2D0F546E3C09FA4108CA /* DefaultSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 96678FE1C22624AD3A8E0844 /* DefaultSizing.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7915577A65BBC088CFB5EC0D /* ImageRequestState.h in Headers */ = {isa = PBXBuildFile; fileRef = 556DC2093B5FAC965262859B /* ImageRequestState.h */; };
+		58D20235FE0A31C88C42127E /* ApplyImageDevicePixelRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = A982C9E0C49ACF9F9917C84A /* ApplyImageDevicePixelRatio.h */; };
 		0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 00146289103CD1DE000B20DB /* OriginAccessEntry.h */; };
 		003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 003F1FE911E6AB43008258D9 /* UserContentTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318213BA867F0035A948 /* XMLDocumentParser.h */; };
@@ -7811,6 +7822,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BD4CD44C2BB32AA87A1363B5 /* VideoFrameImageSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoFrameImageSizing.h; sourceTree = "<group>"; };
+		2DAEDC49F73FDE10093DD376 /* CanvasImageSource+OriginClean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CanvasImageSource+OriginClean.h"; sourceTree = "<group>"; };
+		68B717F54E784EC04BF1DA29 /* CanvasImageSource+OriginClean.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CanvasImageSource+OriginClean.cpp"; sourceTree = "<group>"; };
+		B15BEDB1C15E038D08C7600B /* CanvasImageSource+Usability.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CanvasImageSource+Usability.cpp"; sourceTree = "<group>"; };
+		DD5AAD1212AE3CBE3022D00C /* CanvasImageSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasImageSource.h; sourceTree = "<group>"; };
+		46D95AF9CD2A75B2267ECDF9 /* CanvasImageSource+Usability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CanvasImageSource+Usability.h"; sourceTree = "<group>"; };
+		CC908EB2F22DB107844701E5 /* CanvasPatternSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasPatternSizing.h; sourceTree = "<group>"; };
+		3BD120F885B67FA75D46CBE1 /* CanvasDrawImageSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasDrawImageSizing.h; sourceTree = "<group>"; };
+		563C1375F94DDADF69B40207 /* SizedImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SizedImage.h; sourceTree = "<group>"; };
+		EA9928B2D3DE85B6F7D270CB /* ImageSizingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSizingContext.cpp; sourceTree = "<group>"; };
+		257524222FF97A6B8028F838 /* ImageSizingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageSizingContext.h; sourceTree = "<group>"; };
+		96678FE1C22624AD3A8E0844 /* DefaultSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultSizing.h; sourceTree = "<group>"; };
+		556DC2093B5FAC965262859B /* ImageRequestState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageRequestState.h; sourceTree = "<group>"; };
+		A982C9E0C49ACF9F9917C84A /* ApplyImageDevicePixelRatio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplyImageDevicePixelRatio.h; sourceTree = "<group>"; };
 		00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessEntry.cpp; sourceTree = "<group>"; };
 		00146289103CD1DE000B20DB /* OriginAccessEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAccessEntry.h; sourceTree = "<group>"; };
 		003F1FE911E6AB43008258D9 /* UserContentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentTypes.h; sourceTree = "<group>"; };
@@ -28606,6 +28631,7 @@
 				7C193BAC1F5E0EB20088F3E6 /* CanvasDirection.idl */,
 				72242938301AAC3E00856621 /* CanvasDrawElementImage.idl */,
 				7C193B9A1F5E0EA70088F3E6 /* CanvasDrawImage.idl */,
+				3BD120F885B67FA75D46CBE1 /* CanvasDrawImageSizing.h */,
 				7C193BA61F5E0EAE0088F3E6 /* CanvasDrawPath.idl */,
 				7224293C301ABB3600856621 /* CanvasElementImage.cpp */,
 				7224293B301ABB3600856621 /* CanvasElementImage.h */,
@@ -28621,6 +28647,11 @@
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
 				7C193BA21F5E0EAB0088F3E6 /* CanvasImageData.idl */,
 				7C193BB01F5E0EB50088F3E6 /* CanvasImageSmoothing.idl */,
+				68B717F54E784EC04BF1DA29 /* CanvasImageSource+OriginClean.cpp */,
+				2DAEDC49F73FDE10093DD376 /* CanvasImageSource+OriginClean.h */,
+				B15BEDB1C15E038D08C7600B /* CanvasImageSource+Usability.cpp */,
+				46D95AF9CD2A75B2267ECDF9 /* CanvasImageSource+Usability.h */,
+				DD5AAD1212AE3CBE3022D00C /* CanvasImageSource.h */,
 				7236E0022B804C890051BE69 /* CanvasLayerContextSwitcher.cpp */,
 				7236E0012B804C880051BE69 /* CanvasLayerContextSwitcher.h */,
 				72D5376E2BE718F9004577FD /* CanvasLayers.idl */,
@@ -28638,6 +28669,7 @@
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
 				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
 				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,
+				CC908EB2F22DB107844701E5 /* CanvasPatternSizing.h */,
 				7C193B9E1F5E0EA90088F3E6 /* CanvasRect.idl */,
 				49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */,
 				49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */,
@@ -33532,6 +33564,7 @@
 				3AD4AB8B2C3CADF700A3E7F3 /* Allowlist.h */,
 				FABE72EE1059C1EB00D889A7 /* AnchorElementFunctions.cpp */,
 				FABE72EE1059C1EB00D889A6 /* AnchorElementFunctions.h */,
+				A982C9E0C49ACF9F9917C84A /* ApplyImageDevicePixelRatio.h */,
 				E5F67D942B65CC8F00CC30DE /* AttachmentAssociatedElement.cpp */,
 				E5F67D932B65CC2400CC30DE /* AttachmentAssociatedElement.h */,
 				A5F6E16C132ED46E008EDAE3 /* Autocapitalize.cpp */,
@@ -33912,6 +33945,7 @@
 				97205AB21239291000B17380 /* ImageDocument.h */,
 				F55B3D8D1251F12D003EF269 /* ImageInputType.cpp */,
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
+				556DC2093B5FAC965262859B /* ImageRequestState.h */,
 				E52EFDF32112875A00AD282A /* InputMode.cpp */,
 				E52EFDF22112875A00AD282A /* InputMode.h */,
 				37E3524A12450C5200BAF5D9 /* InputType.cpp */,
@@ -37067,6 +37101,7 @@
 				2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
 				555130001E7CCCCA00A69E38 /* DecodingOptions.h */,
+				96678FE1C22624AD3A8E0844 /* DefaultSizing.h */,
 				49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */,
 				49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */,
 				2D29ECC1192ECC8300984B78 /* DisplayRefreshMonitorClient.cpp */,
@@ -37250,6 +37285,8 @@
 				72C18A3F230B04B7006847C7 /* ImagePaintingOptions.h */,
 				CA3A4AAB25416E3C006CDAE2 /* ImageResolution.cpp */,
 				CA3A4AAD25416E3E006CDAE2 /* ImageResolution.h */,
+				EA9928B2D3DE85B6F7D270CB /* ImageSizingContext.cpp */,
+				257524222FF97A6B8028F838 /* ImageSizingContext.h */,
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
 				5550CB411E955E3C00111AA0 /* ImageTypes.h */,
@@ -37402,6 +37439,7 @@
 				46C963C52B6C9CAE002F46D1 /* ShareableBitmapHandle.cpp */,
 				46C963C42B6C9CAE002F46D1 /* ShareableBitmapHandle.h */,
 				1C4DB02427339E5E007B0AD1 /* ShouldLocalizeAxisNames.h */,
+				563C1375F94DDADF69B40207 /* SizedImage.h */,
 				72FD30A927E3217A0023CDAC /* SourceBrush.cpp */,
 				72FD30AA27E3217B0023CDAC /* SourceBrush.h */,
 				46E6F1922AFAB7EC002807E2 /* SourceBrushLogicalGradient.h */,
@@ -40371,6 +40409,7 @@
 				CD1F9AF426FD215600617EB6 /* VideoColorSpace.idl */,
 				CD1F9AEC26FD20C600617EB6 /* VideoColorSpaceInit.h */,
 				CD1F9AEB26FD20C600617EB6 /* VideoColorSpaceInit.idl */,
+				BD4CD44C2BB32AA87A1363B5 /* VideoFrameImageSizing.h */,
 				CD1F9AF226FD211700617EB6 /* VideoMatrixCoefficients.h */,
 				CD1F9AF126FD211700617EB6 /* VideoMatrixCoefficients.idl */,
 				4110A1AD28DB707800321D09 /* VideoPixelFormat.idl */,
@@ -44631,6 +44670,7 @@
 				63152D191F9531EE007A5E4B /* ApplicationManifestLoader.h in Headers */,
 				6354F4C91F7AFC9400D89DF3 /* ApplicationManifestParser.h in Headers */,
 				9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */,
+				58D20235FE0A31C88C42127E /* ApplyImageDevicePixelRatio.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
 				512DD8F60D91E6AF000F89EE /* Archive.h in Headers */,
 				3ADA87B52AC4ECDB00A75301 /* ArchiveError.h in Headers */,
@@ -44954,15 +44994,20 @@
 				313171561FB079E5008D91FC /* CanvasBase.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
 				7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */,
+				2AE6B3D33C13DE3929FC2021 /* CanvasDrawImageSizing.h in Headers */,
 				721292A3301BA12F009DA7C9 /* CanvasElementImage.h in Headers */,
 				7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
+				1863F79048F6FFFA90166A4C /* CanvasImageSource+OriginClean.h in Headers */,
+				81FEA682A043C294E1C01339 /* CanvasImageSource+Usability.h in Headers */,
+				3E326C97BF9F6FDF63B47CAC /* CanvasImageSource.h in Headers */,
 				7C193BBD1F5E0EED0088F3E6 /* CanvasLineCap.h in Headers */,
 				7C193BBE1F5E0EED0088F3E6 /* CanvasLineJoin.h in Headers */,
 				D2C4612E2A0C744E00A5F791 /* CanvasNoiseInjection.h in Headers */,
 				CD6A1F0D297A1A8F00F7B9FA /* CanvasObserver.h in Headers */,
 				4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
+				66F9596DF837DBB71DC2EF63 /* CanvasPatternSizing.h in Headers */,
 				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
 				49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */,
 				3140C5241FDF318700D2A873 /* CanvasRenderingContext2DBase.h in Headers */,
@@ -45612,6 +45657,7 @@
 				41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */,
 				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 				E4F38D1B2626F13B007B1064 /* DefaultResourceLoadPriority.h in Headers */,
+				716B2D0F546E3C09FA4108CA /* DefaultSizing.h in Headers */,
 				CD83D36221122A210076E11C /* DeferrableTask.h in Headers */,
 				FD31602C12B0267600C1A359 /* DelayDSPKernel.h in Headers */,
 				FD31602E12B0267600C1A359 /* DelayNode.h in Headers */,
@@ -46580,9 +46626,11 @@
 				F446EDE1265DB1E50031DA8F /* ImageOverlayDataDetectionResultIdentifier.h in Headers */,
 				7B0C389F2ACEDEF400F1FDDC /* ImagePaintingOptions.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
+				7915577A65BBC088CFB5EC0D /* ImageRequestState.h in Headers */,
 				CA3A4AAF25416E40006CDAE2 /* ImageResolution.h in Headers */,
 				417BA339299567CE007AEAB4 /* ImageResource.h in Headers */,
 				CD27AE5022A9868700947FF9 /* ImageRotationSessionVT.h in Headers */,
+				3470704B5333F4D30F012D5E /* ImageSizingContext.h in Headers */,
 				7C193BC11F5E0EED0088F3E6 /* ImageSmoothingQuality.h in Headers */,
 				5546757B1FD212A9003B10B0 /* ImageSource.h in Headers */,
 				078ED193216D079500775B33 /* ImageTransferSessionVT.h in Headers */,
@@ -49251,6 +49299,7 @@
 				FD00D7A514A3F61900734011 /* SincResampler.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				D2E7338A2C8F9DA000C7E549 /* Site.h in Headers */,
+				969825AB9D23F0FB0DCE0A11 /* SizedImage.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
 				C149D55D242EA6B9003EBB12 /* SleepDisabler.h in Headers */,
 				C149D55F242EA7B8003EBB12 /* SleepDisablerClient.h in Headers */,
@@ -50308,6 +50357,7 @@
 				419F0FD32A39F7D3002F5972 /* VideoEncoderScalabilityMode.h in Headers */,
 				412827B227E4AC3C005ADDE2 /* VideoFrame.h in Headers */,
 				7BE37F8727BBB708007A6CD3 /* VideoFrameCV.h in Headers */,
+				F0D651B16B96C5F253620B8F /* VideoFrameImageSizing.h in Headers */,
 				41EB797E27C3E45E001C3E3E /* VideoFrameLibWebRTC.h in Headers */,
 				41DEEFB62719BA1A00CB8D74 /* VideoFrameMetadata.h in Headers */,
 				41DEEFB02719B29000CB8D74 /* VideoFrameRequestCallback.h in Headers */,

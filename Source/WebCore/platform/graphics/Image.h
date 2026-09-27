@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/ColorSpace.h>
+#include <WebCore/ConcreteObjectSize.h>
 #include <WebCore/DecodingOptions.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageAdapter.h>
@@ -174,6 +175,10 @@ public:
     virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned);
     virtual RefPtr<NativeImage> currentNativeImage();
     virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation = ImageOrientation::Orientation::FromImage);
+
+    virtual RefPtr<NativeImage> nativeImage(ConcreteObjectSize, const ColorSpace& = ColorSpace::SRGB());
+    virtual RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize);
+    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage);
 
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 

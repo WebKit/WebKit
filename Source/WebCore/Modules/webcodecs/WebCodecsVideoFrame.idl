@@ -25,21 +25,22 @@
 
 // https://w3c.github.io/webcodecs/#videoframe
 
-// FIXME: Use HTML's CanvasImageSource, which includes VideoFrame, instead of the
-// separate constructor overload below. Typedefs are shared across IDL files, so the
-// name has to differ from it until then.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be duplicated here.
 typedef (HTMLImageElement
     or SVGImageElement
-    or HTMLCanvasElement
-    or ImageBitmap
-    or CSSStyleImageValue
-#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
-    or OffscreenCanvas
-#endif
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     or HTMLVideoElement
 #endif
-) VideoFrameCanvasImageSource;
+    or HTMLCanvasElement
+    or ImageBitmap
+#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
+    or OffscreenCanvas
+#endif
+#if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
+    or WebCodecsVideoFrame
+#endif
+    or CSSStyleImageValue
+) CanvasImageSource;
 
 [
     ExportMacro=WEBCORE_EXPORT,
@@ -49,8 +50,7 @@ typedef (HTMLImageElement
     InterfaceName=VideoFrame,
     ReportExtraMemoryCost,
 ] interface WebCodecsVideoFrame {
-    [CallWith=CurrentScriptExecutionContext] constructor(VideoFrameCanvasImageSource image, optional VideoFrameInit init = {});
-    [CallWith=CurrentScriptExecutionContext] constructor(WebCodecsVideoFrame image, optional VideoFrameInit init = {});
+    [CallWith=CurrentScriptExecutionContext] constructor(CanvasImageSource image, optional VideoFrameInit init = {});
     [CallWith=CurrentScriptExecutionContext] constructor(AllowSharedBufferSource data, VideoFrameBufferInit init);
 
     readonly attribute VideoPixelFormat? format;

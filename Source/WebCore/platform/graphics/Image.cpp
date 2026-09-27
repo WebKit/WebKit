@@ -209,6 +209,21 @@ RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ImageOrientation)
     return currentNativeImage();
 }
 
+RefPtr<NativeImage> Image::nativeImage(ConcreteObjectSize, const ColorSpace& colorSpace)
+{
+    return nativeImage(colorSpace);
+}
+
+RefPtr<NativeImage> Image::currentNativeImage(ConcreteObjectSize)
+{
+    return currentNativeImage();
+}
+
+RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation orientation)
+{
+    return currentPreTransformedNativeImage(orientation);
+}
+
 void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     RefPtr tileImage = currentPreTransformedNativeImage(options.orientation());

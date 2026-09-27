@@ -48,6 +48,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLSrcsetParser.h"
+#include "ImageRequestState.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LazyLoadElementObserver.h"
@@ -560,6 +561,21 @@ RenderImageResource* ImageLoader::renderImageResource()
 #endif
 
     return nullptr;
+}
+
+ImageRequestState ImageLoader::currentRequestState() const
+{
+    RefPtr image = m_image;
+    if (!image)
+        return ImageRequestState::Unavailable;
+
+    if (image->errorOccurred())
+        return ImageRequestState::Broken;
+
+    if (!image->hasImage())
+        return ImageRequestState::Unavailable;
+
+    return m_imageComplete ? ImageRequestState::CompletelyAvailable : ImageRequestState::PartiallyAvailable;
 }
 
 void ImageLoader::updateRenderer()

@@ -1700,6 +1700,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/VoidCallback.h
 
     html/canvas/CanvasElementImage.h
+    html/canvas/CanvasImageSource.h
     html/canvas/PredefinedColorSpace.h
     html/canvas/WebGLAny.h
     html/canvas/WebGLBuffer.h
@@ -2536,6 +2537,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Damage.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
+    platform/graphics/DefaultSizing.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorFactory.h
@@ -2644,6 +2646,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageOrientation.h
     platform/graphics/ImagePaintingOptions.h
     platform/graphics/ImageResolution.h
+    platform/graphics/ImageSizingContext.h
     platform/graphics/ImageSource.h
     platform/graphics/ImageTypes.h
     platform/graphics/ImageUtilities.h
@@ -2737,6 +2740,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ShareableBitmapHandle.h
 
     platform/graphics/ShouldLocalizeAxisNames.h
+    platform/graphics/SizedImage.h
     platform/graphics/SourceBrush.h
     platform/graphics/SourceBrushLogicalGradient.h
     platform/graphics/SourceBufferPrivate.h

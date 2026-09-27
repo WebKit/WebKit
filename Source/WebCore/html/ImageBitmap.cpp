@@ -30,6 +30,8 @@
 #include "Blob.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "CanvasImageSource+OriginClean.h"
+#include "CanvasImageSource+Usability.h"
 #include "ContainerNodeInlines.h"
 #include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
@@ -42,6 +44,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "HostWindow.h"
+#include "Image.h"
 #include "ImageBitmapOptions.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -310,31 +313,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     );
 }
 
-static bool taintsOrigin(CachedImage& cachedImage)
-{
-    RefPtr image = cachedImage.image();
-    if (!image)
-        return false;
-
-    if (image->sourceURL().protocolIsData())
-        return false;
-
-    if (image->renderingTaintsOrigin())
-        return true;
-
-    if (!cachedImage.isCORSSameOrigin())
-        return true;
-
-    return false;
-}
-
-#if ENABLE(VIDEO)
-static bool taintsOrigin(SecurityOrigin* origin, HTMLVideoElement& video)
-{
-    return video.taintsOrigin(*origin);
-}
-#endif
-
 // https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
 static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSize, ImageBitmapOptions& options, std::optional<IntRect> rect)
 {
@@ -448,7 +426,12 @@ static std::optional<PixelFormat> bufferFormatForDecodedPixels(PixelFormat decod
 
 static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext& scriptExecutionContext, Image& image, const IntRect& sourceRectangle, const FloatSize& outputSize, ImageOrientation orientation, const ImageBitmapOptions& options, DrawsHDRContent drawsHDRContent)
 {
-    RefPtr nativeImage = image.nativeImage();
+    // Only a bitmap has decoded pixels to keep unpremultiplied. Other images take the premultiplied draw below.
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image);
+    if (!bitmapImage)
+        return nullptr;
+
+    RefPtr nativeImage = bitmapImage->nativeImage();
     if (!nativeImage)
         return nullptr;
 
@@ -603,23 +586,29 @@ Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scr
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<HTMLImageElement>&& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    // 2. If image is not completely available, then return a promise rejected with
-    // an "InvalidStateError" DOMException and abort these steps.
-
-    if (!imageElement->complete()) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
+    // Check the usability of the image argument. If this throws an exception or returns bad,
+    // then return a promise rejected with an "InvalidStateError" DOMException.
+    if (!isUsable(imageElement.get())) {
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an image that is not usable"_s });
         return;
     }
 
-    createCompletionHandler(scriptExecutionContext, protect(imageElement->cachedImage()).get(), protect(imageElement->renderer()), WTF::move(options), rect, WTF::move(completionHandler));
+    createCompletionHandler(scriptExecutionContext, protect(imageElement->cachedImage()).get(), WTF::move(options), rect, WTF::move(completionHandler));
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<SVGImageElement>&& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    createCompletionHandler(scriptExecutionContext, protect(imageElement->cachedImage()).get(), protect(imageElement->renderer()), WTF::move(options), rect, WTF::move(completionHandler));
+    // Check the usability of the image argument. If this throws an exception or returns bad,
+    // then return a promise rejected with an "InvalidStateError" DOMException.
+    if (!isUsable(imageElement.get())) {
+        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from an image that is not usable"_s });
+        return;
+    }
+
+    createCompletionHandler(scriptExecutionContext, protect(imageElement->cachedImage()).get(), WTF::move(options), rect, WTF::move(completionHandler));
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CachedImage* cachedImage, RenderElement* renderer, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CachedImage* cachedImage, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
@@ -634,7 +623,11 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //    resizeHeight options are not specified, then return a promise rejected with
     //    an "InvalidStateError" DOMException and abort these steps.
 
-    auto imageSize = cachedImage->imageSizeForRenderer(renderer, 1.0f);
+    auto imageSize = FloatSize { };
+    if (RefPtr image = cachedImage->hasImage() ? cachedImage->image() : nullptr) {
+        auto naturalDimensions = image->naturalDimensions();
+        imageSize = { naturalDimensions.width.value_or(0), naturalDimensions.height.value_or(0) };
+    }
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s });
         return;
@@ -676,17 +669,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    RefPtr imageForRenderer = cachedImage->imageForRenderer(renderer);
-    if (!imageForRenderer) {
+    RefPtr sourceImage = cachedImage->image();
+    if (!sourceImage) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto drawsHDRContent = imageForRenderer->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
-    const bool originClean = !taintsOrigin(*cachedImage);
+    auto drawsHDRContent = sourceImage->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
+    const bool originClean = isOriginClean(*cachedImage, *protect(scriptExecutionContext.securityOrigin()));
 
-    auto orientation = imageForRenderer->orientation();
+    auto orientation = sourceImage->orientation();
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = ImageOrientation::Orientation::None;
 
@@ -697,16 +690,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
     auto sourceRect = sourceRectangle.releaseReturnValue();
     auto bufferAlphaFormat = AlphaPremultiplication::Unpremultiplied;
-    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *imageForRenderer, sourceRect, outputSize, orientation, options, drawsHDRContent);
+    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *sourceImage, sourceRect, outputSize, orientation, options, drawsHDRContent);
     if (!bitmapData) {
         bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
-        bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace(), 1, drawsHDRContent);
+        bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), sourceImage->colorSpace(), 1, drawsHDRContent);
         if (!bitmapData) {
             completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
             return;
         }
+        auto concreteSize = ConcreteObjectSize::fixed(imageSize);
         FloatRect destRect(FloatPoint(), outputSize);
-        bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+        bitmapData->context().drawImage(*sourceImage, concreteSize, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
@@ -732,7 +726,9 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 #if ENABLE(WEB_CODECS)
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<WebCodecsVideoFrame>&& videoFrame, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    if (videoFrame->isDetached()) {
+    // Check the usability of the image argument. If this throws an exception or returns bad,
+    // then return a promise rejected with an "InvalidStateError" DOMException.
+    if (!isUsable(videoFrame.get())) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached video frame"_s });
         return;
     }
@@ -774,14 +770,14 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CanvasBase& canvas, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    // 2. If the canvas element's bitmap has either a horizontal dimension or a vertical
-    //    dimension equal to zero, then return a promise rejected with an "InvalidStateError"
-    //    DOMException and abort these steps.
-    auto size = canvas.size();
-    if (!size.width() || !size.height()) {
+    // Check the usability of the image argument. If this throws an exception or returns bad,
+    // then return a promise rejected with an "InvalidStateError" DOMException.
+    if (!isUsable(canvas)) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height"_s });
         return;
     }
+
+    auto size = canvas.size();
 
     // 4. Let the ImageBitmap object's bitmap data be a copy of the canvas element's bitmap
     //    data, cropped to the source rectangle with formatting.
@@ -838,7 +834,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 4. Check the usability of the image argument. If this throws an exception
     //    or returns bad, then return p rejected with an "InvalidStateError"
     //    DOMException.
-    if (video->readyState() == HTMLMediaElement::HAVE_NOTHING || video->readyState() == HTMLMediaElement::HAVE_METADATA) {
+    if (!isUsable(video.get())) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s });
         return;
     }
@@ -868,7 +864,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     if (!colorSpace)
         colorSpace = ColorSpace::SRGB();
 
-    const bool originClean = !taintsOrigin(protect(scriptExecutionContext.securityOrigin()), video);
+    const bool originClean = isOriginClean(video, *protect(scriptExecutionContext.securityOrigin()));
 
     // FIXME: Add support for pixel formats to ImageBitmap.
     auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode(scriptExecutionContext), *colorSpace, { PixelFormat::BGRA8 });
@@ -912,9 +908,9 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleI
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<ImageBitmap>&& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    // 2. If image's [[Detached]] internal slot value is true, return a promise
-    //    rejected with an "InvalidStateError" DOMException and abort these steps.
-    if (existingImageBitmap->isDetached() || !existingImageBitmap->buffer()) {
+    // Check the usability of the image argument. If this throws an exception or returns bad,
+    // then return a promise rejected with an "InvalidStateError" DOMException.
+    if (!isUsable(existingImageBitmap.get()) || !existingImageBitmap->buffer()) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_s });
         return;
     }

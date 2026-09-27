@@ -41,6 +41,8 @@ class Page;
 class RenderImageResource;
 struct ImageCandidate;
 
+enum class ImageRequestState : uint8_t;
+
 template<typename T, typename Counter> class EventSender;
 using ImageEventSender = EventSender<ImageLoader, SingleThreadWeakPtrImpl>;
 
@@ -74,6 +76,9 @@ public:
     bool shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandidate&) const;
 
     bool imageComplete() const { return m_imageComplete; }
+
+    // https://html.spec.whatwg.org/multipage/images.html#img-req-state
+    ImageRequestState currentRequestState() const;
 
     CachedImage* image() const { return m_image.get(); }
     void clearImage(); // Cancels pending load events, and doesn't dispatch new ones.

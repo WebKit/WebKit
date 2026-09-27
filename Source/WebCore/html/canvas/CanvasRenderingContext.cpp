@@ -27,6 +27,7 @@
 #include "CanvasRenderingContext.h"
 
 #include "CachedImage.h"
+#include "CanvasImageSource+OriginClean.h"
 #include "CanvasPattern.h"
 #include "ColorSpace.h"
 #include "GraphicsLayer.h"
@@ -148,47 +149,23 @@ bool CanvasRenderingContext::taintsOrigin(const CanvasPattern* pattern)
 
 bool CanvasRenderingContext::taintsOrigin(const CanvasBase* sourceCanvas)
 {
-    return sourceCanvas && !sourceCanvas->originClean();
-}
-
-bool CanvasRenderingContext::taintsOrigin(const CachedImage* cachedImage)
-{
-    if (!cachedImage)
-        return false;
-
-    RefPtr image = cachedImage->image();
-    if (!image)
-        return false;
-
-    if (image->sourceURL().protocolIsData())
-        return false;
-
-    if (image->renderingTaintsOrigin())
-        return true;
-
-    if (cachedImage->isCORSCrossOrigin())
-        return true;
-
-    ASSERT(m_canvas->securityOrigin());
-    ASSERT(cachedImage->origin());
-    ASSERT(m_canvas->securityOrigin()->toString() == cachedImage->origin()->toString());
-    return false;
+    return sourceCanvas && !isOriginClean(*sourceCanvas, *protect(m_canvas)->securityOrigin());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
 {
-    return element && taintsOrigin(protect(element->cachedImage()));
+    return element && !isOriginClean(*element, *protect(m_canvas)->securityOrigin());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const SVGImageElement* element)
 {
-    return element && taintsOrigin(protect(element->cachedImage()));
+    return element && !isOriginClean(*element, *protect(m_canvas)->securityOrigin());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
 {
 #if ENABLE(VIDEO)
-    return video && protect(video)->taintsOrigin(*m_canvas->securityOrigin());
+    return video && !isOriginClean(*video, *protect(m_canvas)->securityOrigin());
 #else
     UNUSED_PARAM(video);
     return false;
@@ -197,7 +174,7 @@ bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
 
 bool CanvasRenderingContext::taintsOrigin(const ImageBitmap* imageBitmap)
 {
-    return imageBitmap && !imageBitmap->originClean();
+    return imageBitmap && !isOriginClean(*imageBitmap, *protect(m_canvas)->securityOrigin());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const URL& url)

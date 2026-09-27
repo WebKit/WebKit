@@ -85,6 +85,8 @@ public:
     LayoutSize unclampedImageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
     void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
 
+    NaturalDimensions naturalDimensions(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
+
     bool hasHDRContent() const;
 
     bool isManuallyCached() const { return m_isManuallyCached; }

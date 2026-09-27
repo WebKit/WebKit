@@ -367,6 +367,13 @@ void CachedImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intri
         image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
+NaturalDimensions CachedImage::naturalDimensions(ImageOrientation orientation) const
+{
+    if (RefPtr image = m_image)
+        return image->naturalDimensions(orientation);
+    return NaturalDimensions::none();
+}
+
 bool CachedImage::hasHDRContent() const
 {
     return m_image && protect(m_image)->hasHDRContent();

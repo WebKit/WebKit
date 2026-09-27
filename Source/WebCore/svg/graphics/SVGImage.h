@@ -120,6 +120,10 @@ private:
     bool hasHDRContent() const final;
     RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) final;
 
+    RefPtr<NativeImage> nativeImage(ConcreteObjectSize, const ColorSpace& = ColorSpace::SRGB()) final;
+    RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize) final;
+    RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage) final;
+
     void startAnimationTimerFired();
 
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);

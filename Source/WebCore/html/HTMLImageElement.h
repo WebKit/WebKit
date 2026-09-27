@@ -46,7 +46,9 @@ class LayoutSize;
 class SecurityOrigin;
 
 struct ImageCandidate;
+struct ImageOrientation;
 
+enum class ImageRequestState : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 enum class RequestPriority : uint8_t;
@@ -79,6 +81,7 @@ public:
 
     WEBCORE_EXPORT unsigned naturalWidth() const;
     WEBCORE_EXPORT unsigned naturalHeight() const;
+
     const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
     WEBCORE_EXPORT const AtomString& currentSrc();
 
@@ -87,6 +90,15 @@ public:
     const AtomString& NODELETE altText() const;
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
+
+    // https://html.spec.whatwg.org/multipage/images.html#img-req-state
+    ImageRequestState currentRequestState() const;
+
+    ImageOrientation orientationForSourceImage();
+
+    float sourceImageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
+
+    RefPtr<Image> sourceImage() const;
 
     void NODELETE setLoadManually(bool);
 

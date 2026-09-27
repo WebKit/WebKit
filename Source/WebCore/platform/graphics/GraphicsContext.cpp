@@ -345,6 +345,13 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destin
     return image.draw(*this, destination, source, options);
 }
 
+ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+{
+    if (!concreteObjectSize.size().isEmpty())
+        image.setContainerSize(concreteObjectSize.size());
+    return drawImage(image, destination, source, options);
+}
+
 ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
 {
     return drawBitmapImage(image, FloatRect(destination, image.size()), FloatRect(FloatPoint(), image.size()), imagePaintingOptions);

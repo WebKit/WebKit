@@ -9,8 +9,8 @@
 <img id=myImage></img>
 <script>
 promise_test(async (t) => {
-    myImage.src = 'data:';
-    await new Promise(resolve => myImage.onerror = resolve);
+    myImage.src = 'resources/green.png';
+    await new Promise(resolve => myImage.onload = resolve);
     const videoFrame = new VideoFrame(myImage, {timestamp: 0});
     t.add_cleanup(() => videoFrame.close());
     return promise_rejects_js(t, TypeError,

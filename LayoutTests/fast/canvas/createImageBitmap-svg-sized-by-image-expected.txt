@@ -1,0 +1,5 @@
+
+
+PASS A viewBox-only SVG, laid out at 200x100, is rejected
+PASS An SVG with a width and height of its own, laid out at 200x100, keeps them
+
