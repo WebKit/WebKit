@@ -1,0 +1,12 @@
+<body style="margin: 0; font: 20px monospace;">
+<div id="editor" contenteditable style="width: 400px; height: 100px;">Hello world this is editable text inside a cross origin iframe.</div>
+<script>
+document.addEventListener("selectionchange", () => {
+    const selection = getSelection();
+    const isInEditor = !!selection.anchorNode && editor.contains(selection.anchorNode);
+    window.top.postMessage(`selection:${isInEditor}:${selection.isCollapsed}:${selection.anchorOffset}:${document.activeElement === editor}`, "*");
+});
+editor.addEventListener("focus", () => window.top.postMessage("focused", "*"));
+addEventListener("load", () => window.top.postMessage("ready", "*"));
+</script>
+</body>

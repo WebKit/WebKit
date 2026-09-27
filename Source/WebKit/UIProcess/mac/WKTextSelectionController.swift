@@ -183,6 +183,7 @@ extension WKTextSelectionController {
         } else {
             await withCheckedContinuation { continuation in
                 page.selectPositionAtPoint(
+                    nil,
                     WebCore.IntPoint(point),
                     isInteractingWithFocusedElement,
                     consuming: .init(continuation)
