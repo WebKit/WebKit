@@ -26,6 +26,8 @@
 #include "WebKitColorPrivate.h"
 #include "WebKitScriptDialogPrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/PlatformRenderTheme.h>
 
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
@@ -102,21 +104,31 @@ WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 /**
  * webkit_web_view_set_background_color:
  * @web_view: a #WebKitWebView
- * @color: a #WebKitColor
+ * @color: (nullable): a #WebKitColor, or %NULL to reset to the default system appearance color
  *
  * Sets the color that will be used to draw the @web_view background before
  * the actual contents are rendered. Note that if the web page loaded in @web_view
  * specifies a background color, it will take precedence over the @color.
- * By default the @web_view background color is opaque white.
+ * By default the @web_view background color is based on the system appearance.
+ *
+ * Since 2.56, %NULL can be passed to reset the background color to the default system appearance color.
  *
  * Since: 2.24
  */
 void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* backgroundColor)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(backgroundColor);
 
     auto& page = webkitWebViewGetPage(webView);
+    if (!backgroundColor) {
+        page.setBackgroundColor(std::nullopt);
+#if ENABLE(WPE_PLATFORM)
+        if (auto* view = static_cast<WebKit::PageClientImpl&>(*page.pageClient()).wpeView())
+            wpe_view_set_opaque_rectangles(view, nullptr, 0);
+#endif
+        return;
+    }
+
     auto color = webkitColorToWebCoreColor(backgroundColor);
     page.setBackgroundColor(color);
 #if ENABLE(WPE_PLATFORM)
@@ -136,7 +148,8 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* b
  * @color: (out): a #WebKitColor to fill in with the background color
  *
  * Gets the color that is used to draw the @web_view background before the
- * actual contents are rendered. For more information see also
+ * actual contents are rendered. By default the @web_view background color
+ * is based on the system appearance. For more information see also
  * webkit_web_view_set_background_color().
  *
  * Since: 2.24
@@ -144,10 +157,18 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* b
 void webkit_web_view_get_background_color(WebKitWebView* webView, WebKitColor* color)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    auto& page = webkitWebViewGetPage(webView);
+    g_return_if_fail(color);
 
-    auto& webCoreColor = page.backgroundColor();
-    webkitColorFillFromWebCoreColor(webCoreColor.value_or(WebCore::Color::white), color);
+    auto& page = webkitWebViewGetPage(webView);
+    if (auto webCoreColor = page.backgroundColor()) {
+        webkitColorFillFromWebCoreColor(*webCoreColor, color);
+        return;
+    }
+
+    OptionSet<WebCore::StyleColorOptions> styleColorOptions;
+    if (page.useDarkAppearance())
+        styleColorOptions.add(WebCore::StyleColorOptions::UseDarkAppearance);
+    webkitColorFillFromWebCoreColor(WebCore::RenderTheme::singleton().systemColor(WebCore::CSSValueID::Canvas, styleColorOptions), color);
 }
 
 guint createContextMenuSignal(WebKitWebViewClass* webViewClass)

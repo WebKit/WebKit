@@ -10394,6 +10394,11 @@ bool Document::useDarkAppearance([[maybe_unused]] const Style::ComputedStyle* st
         return pageUsesDarkAppearance;
 #endif
 
+    if (RefPtr frame = this->frame(); frame && frame->isMainFrame()) {
+        if (url().isAboutBlank() || !frame->loader().stateMachine().committedFirstRealDocumentLoad())
+            return pageUsesDarkAppearance;
+    }
+
     return false;
 }
 

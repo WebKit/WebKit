@@ -125,7 +125,7 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     , m_hardwareAccelerationEnabled(webPage.corePage()->settings().hardwareAccelerationEnabled())
 #endif
-    , m_backgroundColor(webPage.backgroundColor())
+    , m_backgroundColor(webPage.effectiveBackgroundColor())
     , m_swapChain(*this)
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
     , m_useExplicitSync(usesGL() && useExplicitSync())
@@ -1003,7 +1003,7 @@ void AcceleratedSurface::backgroundColorDidChange()
 {
     ASSERT(RunLoop::isMain());
     Ref webPage = m_webPage;
-    const auto& color = webPage->backgroundColor();
+    const auto color = webPage->effectiveBackgroundColor();
 
     bool wasOpaque = this->isOpaque();
     {
