@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Reference: Painting of a scrolled grid container</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<html>
+<body>
+<style>
+    .gridItem {
+        height: 100px;
+        width: 100px;
+        background-color: green;
+    }
+</style>
+<div>This test checks that we correctly paint scrolled grid container.</div>
+<div>There should be no red below.</div>
+
+<div>Default writing mode (horizontal-lr)</div>
+
+<div class="gridItem"></div>
+<div class="gridItem"></div>
+<div class="gridItem"></div>
+<div class="gridItem"></div>
+
+
+<div>Flipped writing mode (vertical-rl)</div>
+
+<div class="gridItem"></div>
+<div class="gridItem"></div>
+<div class="gridItem"></div>
+<div class="gridItem"></div>
+
+</body>
+</html>

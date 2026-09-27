@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Reference: Grid items spanning multiple tracks are painted once</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<html>
+<head>
+    <link href="/css/support/grid.css" rel="stylesheet">
+    <style>
+        .grid div {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        This test shows 4 grids where all the items are placed in several cells (span or areas).<br>
+        It passes if these grid items are painted only once.
+    </div>
+    <div class="grid">
+        <div class="firstRowFirstColumn">item</div>
+        <div class="secondRowFirstColumn">item</div>
+    </div>
+    <div class="grid">
+        <div class="firstRowFirstColumn">item</div>
+        <div class="firstRowSecondColumn">item</div>
+    </div>
+    <div class="grid">
+        <div class="firstRowFirstColumn">item</div>
+        <div class="secondRowFirstColumn">item</div>
+    </div>
+    <div class="grid">
+        <div class="firstRowFirstColumn">item</div>
+        <div class="firstRowSecondColumn">item</div>
+    </div>
+</body>
+</html>
