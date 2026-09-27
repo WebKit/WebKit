@@ -1,0 +1,10 @@
+This tests that a form hidden from accessibility is not handed back as a control's form owner. The control is associated by the form attribute so it stays in the tree itself, but an assistive technology given the form would have an element it cannot reach, and the field list is already filtered the same way.
+
+PASS: accessibilityController.accessibleElementById('origin') != null === true
+PASS: accessibilityController.accessibleElementById('origin').formOwnerElement() == null === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Search
+From

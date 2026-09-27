@@ -1,0 +1,35 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form" aria-hidden="true">
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<!-- Associated with the hidden form by id, so the field itself stays in the accessibility tree. -->
+<label for="origin">From</label><input id="origin" type="text" form="form">
+
+<script>
+var output = "This tests that a form hidden from accessibility is not handed back as a control's form owner. The control is associated by the form attribute so it stays in the tree itself, but an assistive technology given the form would have an element it cannot reach, and the field list is already filtered the same way.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // The field is reachable, so this is a question about the form rather than about the control.
+        output += expect("accessibilityController.accessibleElementById('origin') != null", "true");
+
+        // The form is aria-hidden, so it is not in the tree and must not be offered as the owner.
+        output += expect("accessibilityController.accessibleElementById('origin').formOwnerElement() == null", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

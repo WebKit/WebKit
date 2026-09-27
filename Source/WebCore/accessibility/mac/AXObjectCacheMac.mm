@@ -52,6 +52,7 @@
 #import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
@@ -425,6 +426,26 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& obje
         if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo.get()];
     }
+}
+
+void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(AccessibilityObject& object, const PossibleFormValidationErrorData& formData)
+{
+    AX_ASSERT(isMainThread());
+
+    processQueuedIsolatedNodeUpdates();
+
+    RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (const String& text) {
+        return text.createNSString();
+    });
+    NSDictionary *userInfo = @{
+        NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
+        NSAccessibilityFormValidationErrorFieldCountKey: @(formData.errorFieldCount),
+    };
+
+    NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityPossibleFormValidationErrorNotification, userInfo);
+
+    if (gShouldRepostNotificationsForTests) [[unlikely]]
+        [object.wrapper() accessibilityPostedNotification:NSAccessibilityPossibleFormValidationErrorNotification userInfo:userInfo];
 }
 
 void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)

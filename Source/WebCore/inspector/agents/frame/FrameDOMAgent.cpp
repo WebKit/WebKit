@@ -1722,7 +1722,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> FrameDOMAgent::buildObjec
             ignored = axObject->isIgnored();
             ignoredByDefault = axObject->isIgnoredByDefault();
 
-            String invalidValue = axObject->invalidStatus();
+            String invalidValue = axObject->invalidStatusIncludingInferred();
             if (invalidValue == "false"_s)
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False;
             else if (invalidValue == "grammar"_s)

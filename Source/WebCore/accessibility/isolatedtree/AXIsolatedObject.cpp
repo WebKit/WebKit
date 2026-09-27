@@ -134,6 +134,10 @@ bool isDefaultValue(AXProperty property, AXPropertyValueVariant& value)
         [](std::nullptr_t&) { return true; },
         [](Markable<AXID> typedValue) { return !typedValue; },
         [&](String& typedValue) {
+            // An absent invalid status reads back as "false", so as an optimization don't cache
+            // anything in that case.
+            if (property == AXProperty::InvalidStatus)
+                return typedValue.isEmpty() || typedValue == "false"_s;
             return typedValue.isEmpty(); // null or empty
         },
         [](bool typedValue) { return !typedValue; },

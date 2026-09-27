@@ -1,0 +1,22 @@
+This tests when a control failing native constraint validation reports AXInvalid, with form error detection turned on. Being empty is true of every required control from the moment the page loads, so it waits for the user to work on the form or try to submit it. A value that is present but wrong, or one the page rejected itself, is the author saying something really is wrong and reports straight away.
+
+Nobody has touched this form yet.
+PASS: document.getElementById('empty-required').checkValidity() === false
+PASS: invalidStatus('empty-required') === 'false'
+
+A wrong value and a custom error are statements about this page, so neither waits.
+PASS: invalidStatus('bad-email') === 'true'
+PASS: invalidStatus('rejected') === 'true'
+document.getElementById('submit').click();
+
+Having tried to submit, being empty counts too.
+PASS: invalidStatus('empty-required') === 'true'
+
+Filling it in clears it again.
+document.getElementById('empty-required').value = 'SFO';
+PASS: invalidStatus('empty-required') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Destination Email Passenger name  Search

@@ -88,6 +88,7 @@ namespace WebCore {
     macro(PointerEventsChanged) \
     macro(PopoverTargetChanged) \
     macro(PositionInSetChanged) \
+    macro(PossibleFormValidationError) \
     macro(RoleChanged) \
     macro(RowIndexChanged) \
     macro(RowSpanChanged) \

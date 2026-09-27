@@ -162,6 +162,10 @@ using namespace WebCore;
 #define NSAccessibilityHighlightedSearchKey @"AXHighlightedSearchKey"
 #endif
 
+#ifndef NSAccessibilityFormFieldWithErrorSearchKey
+#define NSAccessibilityFormFieldWithErrorSearchKey @"AXFormFieldWithErrorSearchKey"
+#endif
+
 #ifndef NSAccessibilityKeyboardFocusableSearchKey
 #define NSAccessibilityKeyboardFocusableSearchKey @"AXKeyboardFocusableSearchKey"
 #endif
@@ -929,6 +933,7 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
         SearchKeyEntry { NSAccessibilityHeadingSameLevelSearchKey, AccessibilitySearchKey::HeadingSameLevel },
         SearchKeyEntry { NSAccessibilityHeadingSearchKey, AccessibilitySearchKey::Heading },
         SearchKeyEntry { NSAccessibilityHighlightedSearchKey, AccessibilitySearchKey::Highlighted },
+        SearchKeyEntry { NSAccessibilityFormFieldWithErrorSearchKey, AccessibilitySearchKey::FormFieldWithError },
         SearchKeyEntry { NSAccessibilityKeyboardFocusableSearchKey, AccessibilitySearchKey::KeyboardFocusable },
         SearchKeyEntry { NSAccessibilityItalicFontSearchKey, AccessibilitySearchKey::ItalicFont },
         SearchKeyEntry { NSAccessibilityLandmarkSearchKey, AccessibilitySearchKey::Landmark },

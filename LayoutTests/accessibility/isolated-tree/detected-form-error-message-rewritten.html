@@ -1,0 +1,57 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error"></div>
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<script>
+var output = "This tests that a field reports its message again after the page blanks the wording and writes it back, with no submission in progress. Nothing pairs a message with a field outside the window after a submission attempt, so the pairing has to outlast the wording.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("email-error").textContent = "Enter a valid email address.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        // Waiting for this waits out the settle window, which is what makes the rest of the test about a
+        // page changing its message with no submission left to attribute it to.
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        output += evalAndReturn("document.getElementById('email-error').textContent = '';");
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'no error messages'");
+
+        // The same element says something again.
+        output += evalAndReturn("document.getElementById('email-error').textContent = 'Enter a valid email address.';");
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

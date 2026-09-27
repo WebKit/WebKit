@@ -1,0 +1,54 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text" required>
+  <div id="origin-error"></div>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that a message the page writes from the invalid event is found. Native validation runs before the submit event and never reaches it, so a page that renders its own message from that listener has already written it by the time the submission is known to have failed.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    // Where a page that leaves validation to the browser puts its own wording, rather than in a submit
+    // listener. The submit event is never dispatched at all on this path.
+    var submitEventsSeen = 0;
+    document.getElementById("form").addEventListener("submit", () => { submitEventsSeen++; });
+    document.getElementById("origin").addEventListener("invalid", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").textContent = "Please enter a valid origin.";
+        // Reading the tree here is what an attached assistive technology does at any moment.
+        accessibilityController.accessibleElementById("origin-error");
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Empty and required, so constraint validation already fails, but nobody has worked on this form yet
+        // and an untouched field failing validation is not an error to report.
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += expect("submitEventsSeen", "0");
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

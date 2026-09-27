@@ -107,7 +107,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& coreObject, AX
             wrapper->valueChanged(coreObject.valueForRange());
         break;
     case AXNotification::InvalidStatusChanged:
-        wrapper->stateChanged("invalid-entry", coreObject.invalidStatus() != "false"_s);
+        wrapper->stateChanged("invalid-entry", coreObject.invalidStatusIncludingInferred() != "false"_s);
         break;
     case AXNotification::ElementBusyChanged:
         wrapper->stateChanged("busy", coreObject.isBusy());

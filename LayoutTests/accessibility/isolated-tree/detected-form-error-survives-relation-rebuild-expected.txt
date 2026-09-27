@@ -1,0 +1,18 @@
+This tests that a message paired with a field outlives a rebuild of the relations map. Relations are rebuilt from the markup, and a pairing the page never wrote is not in the markup to be rebuilt from, so it has to be re-established or the field quietly stops reporting the message that made it findable.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+document.getElementById('unrelated').setAttribute('aria-labelledby', 'unrelated-label');
+PASS: stripAXPrefix(axElement('unrelated').description) === 'Hotels'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search
+Book a hotel
+Hotels

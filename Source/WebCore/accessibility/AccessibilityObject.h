@@ -327,7 +327,9 @@ public:
     bool supportsHasPopup() const final;
     bool pressedIsPresent() const final;
     bool ariaIsMultiline() const;
-    String explicitInvalidStatus() const final;
+    String explicitInvalidStatus() const;
+    String invalidStatusIncludingInferred() const final;
+    RefPtr<AXCoreObject> formOwnerObject() const;
     bool supportsPressed() const;
     bool supportsExpanded() const final;
     bool supportsChecked() const final;

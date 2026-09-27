@@ -1,0 +1,56 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="empty-required">Destination</label><input id="empty-required" type="text" required>
+  <label for="bad-email">Email</label><input id="bad-email" type="email" value="not-an-address">
+  <label for="rejected">Passenger name</label><input id="rejected" type="text" value="Ada">
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests when a control failing native constraint validation reports AXInvalid, with form error detection turned on. Being empty is true of every required control from the moment the page loads, so it waits for the user to work on the form or try to submit it. A value that is present but wrong, or one the page rejected itself, is the author saying something really is wrong and reports straight away.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.getElementById("rejected").setCustomValidity("That name is already booked.");
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+    });
+
+    function invalidStatus(id) {
+        return accessibilityController.accessibleElementById(id).stringAttributeValue("AXInvalid");
+    }
+
+    output += "Nobody has touched this form yet.\n";
+    output += expect("document.getElementById('empty-required').checkValidity()", "false");
+    output += expect("invalidStatus('empty-required')", "'false'");
+
+    output += "\nA wrong value and a custom error are statements about this page, so neither waits.\n";
+    output += expect("invalidStatus('bad-email')", "'true'");
+    output += expect("invalidStatus('rejected')", "'true'");
+
+    setTimeout(async function() {
+        output += evalAndReturn("document.getElementById('submit').click();");
+
+        output += "\nHaving tried to submit, being empty counts too.\n";
+        output += await expectAsync("invalidStatus('empty-required')", "'true'");
+
+        output += "\nFilling it in clears it again.\n";
+        output += evalAndReturn("document.getElementById('empty-required').value = 'SFO';");
+        output += await expectAsync("invalidStatus('empty-required')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

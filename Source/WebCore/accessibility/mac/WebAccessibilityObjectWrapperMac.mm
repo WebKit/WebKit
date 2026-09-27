@@ -1525,7 +1525,7 @@ static id handlePopupValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject
 
 static id handleInvalidAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.invalidStatus().createNSString().autorelease();
+    return backingObject.invalidStatusIncludingInferred().createNSString().autorelease();
 }
 
 static id handleHasPopupAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -2249,7 +2249,7 @@ static id handleBrailleRoleDescriptionAttribute(WebAccessibilityObjectWrapper*, 
 
 static id handleErrorMessageElementsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    if (backingObject.invalidStatus() == "false"_s)
+    if (backingObject.invalidStatusIncludingInferred() == "false"_s)
         return nil;
     return makeNSArray(backingObject.errorMessageObjects());
 }

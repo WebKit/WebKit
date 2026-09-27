@@ -61,6 +61,7 @@ public:
     RefPtr<AccessibilityUIElement> linkedUIElementAtIndex(unsigned) override;
     JSValueRef detailsElements(JSContextRef) override;
     JSValueRef errorMessageElements(JSContextRef) override;
+    RefPtr<AccessibilityUIElement> formOwnerElement() override;
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned) override;
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned) override;
     RefPtr<AccessibilityUIElement> ariaActionsElementAtIndex(unsigned) override;

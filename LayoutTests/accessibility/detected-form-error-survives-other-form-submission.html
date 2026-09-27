@@ -1,0 +1,58 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="newsletter">
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error"></div>
+  <button id="subscribe" type="submit">Subscribe</button>
+</form>
+
+<form id="search" target="resultFrame" action="about:blank" method="get">
+  <label for="query">Search</label><input id="query" type="text">
+  <button id="go" type="submit">Go</button>
+</form>
+<iframe name="resultFrame"></iframe>
+
+<script>
+var output = "This tests that one form submitting does not throw away what was detected about another. Pages carry several forms, and a search box being used says nothing about whether the error beside the newsletter field is still true.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("newsletter").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("email-error").textContent = "Enter a valid email address.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        // The newsletter form fails and its message is paired with the field.
+        document.getElementById("subscribe").click();
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        // The search form submits for real. It targets an iframe, so this page survives to be asked.
+        output += evalAndReturn("document.getElementById('go').click();");
+
+        // The newsletter field is still wrong, and still says what is wrong with it.
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

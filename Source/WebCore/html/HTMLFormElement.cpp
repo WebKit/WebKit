@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "AXObjectCache.h"
 #include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "DOMTokenList.h"
@@ -266,6 +267,8 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
             shouldValidate = false;
     }
 
+    notifyAccessibilityOfSubmissionWithoutNavigation(RefPtr { submitter ? submitter : findSubmitter(event) }.get());
+
     // Interactive validation must be done before dispatching the submit event.
     if (shouldValidate && !validateInteractively()) {
         m_isSubmittingOrPreparingForSubmission = false;
@@ -290,13 +293,39 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
 
     m_isSubmittingOrPreparingForSubmission = false;
 
-    if (!m_shouldSubmit)
+    if (!m_shouldSubmit) {
+        // The page cancelled its own submit event, so nothing will navigate. It may be about to
+        // report a validation error, so don't cancel our form tracking via notifyAccessibilityThatSubmissionWillNavigate().
         return;
+    }
+
+    notifyAccessibilityThatSubmissionWillNavigate();
 
     if (auto plannedFormSubmission = std::exchange(m_plannedFormSubmission, nullptr))
         plannedFormSubmission->cancel();
 
     submit(event, !submitter, trigger, submitter);
+}
+
+void HTMLFormElement::notifyAccessibilityOfSubmissionWithoutNavigation(HTMLFormControlElement* submitter)
+{
+#if PLATFORM(COCOA)
+
+    Ref document = this->document();
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->onFormSubmissionAttemptWithoutNavigation(Ref { *this }, RefPtr { submitter }.get());
+#else
+    UNUSED_PARAM(submitter);
+#endif
+}
+
+void HTMLFormElement::notifyAccessibilityThatSubmissionWillNavigate()
+{
+#if PLATFORM(COCOA)
+    Ref document = this->document();
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->onFormSubmissionWillNavigate(Ref { *this });
+#endif
 }
 
 void HTMLFormElement::submit()

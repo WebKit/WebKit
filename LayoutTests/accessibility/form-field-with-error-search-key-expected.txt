@@ -1,0 +1,22 @@
+This tests which controls AXFormFieldWithErrorSearchKey matches. A field the author marked invalid, and a field holding a value that is present but wrong, both match straight away, because each is the page saying something really is wrong. A required field that is merely empty does not, since that is true of every required field from first paint, so it matches only once the user has worked on the form or tried to submit it.
+
+PASS: fieldsWithError() === 2
+PASS: axElement('author-says-invalid').stringAttributeValue('AXInvalid') === 'true'
+PASS: axElement('untouched-bad-email').stringAttributeValue('AXInvalid') === 'true'
+PASS: axElement('untouched-required').stringAttributeValue('AXInvalid') === 'false'
+document.getElementById('submit').click();
+PASS: fieldsWithError() === 3
+PASS: axElement('untouched-required').stringAttributeValue('AXInvalid') === 'true'
+PASS: stripAXPrefix(axElement('required-button').stringValue) === ''
+PASS: stripAXPrefix(axElement('required-button').title) === '1 Adult'
+document.getElementById('untouched-required').value = 'SFO';
+PASS: fieldsWithError() === 2
+document.getElementById('author-says-invalid').setAttribute('aria-invalid', 'false');
+PASS: fieldsWithError() === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Origin Destination Email
+1 Adult
+Promo code  Search

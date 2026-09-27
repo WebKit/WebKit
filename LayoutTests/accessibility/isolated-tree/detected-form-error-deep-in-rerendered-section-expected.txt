@@ -1,0 +1,16 @@
+This tests that a message is still found when a whole section of the page arrives at once and the message sits well below the container that reported the change, with a control in every wrapper on the way down so that nothing above the message looks like a message itself.
+
+PASS: !axElement('origin') === true
+PASS: invalidFor('origin') === 'true'
+PASS: errorMessageCount(axElement('origin')) > 0 === true
+PASS: invalidFor('destination') === 'true'
+PASS: errorMessageCount(axElement('destination')) > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+To
+Please enter a valid destination.
+Search

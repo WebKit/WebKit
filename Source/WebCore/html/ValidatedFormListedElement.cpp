@@ -545,6 +545,12 @@ void ValidatedFormListedElement::setInteractedWithSinceLastFormSubmitEvent(bool 
     });
 
     m_wasInteractedWithSinceLastFormSubmitEvent = interactedWith;
+
+    if (willValidate() && valueMissing() && !customError()) {
+        Ref element = asHTMLElement();
+        if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
+            cache->onValidityChange(element);
+    }
 }
 
 } // namespace WebCore

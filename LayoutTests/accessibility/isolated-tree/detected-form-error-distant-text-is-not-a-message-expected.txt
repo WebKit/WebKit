@@ -1,0 +1,12 @@
+This tests that text appearing outside the form is only taken as a message about a field when it is next to that field. A message in a div straight after the form is how plain markup reports an error and must still be found, but content further down the page is page furniture even when it lines up with a field above it.
+
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageCount(axElement('email')) === 0
+PASS: formValidationErrors === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email    Sign in
+Save 10 percent when you book today.

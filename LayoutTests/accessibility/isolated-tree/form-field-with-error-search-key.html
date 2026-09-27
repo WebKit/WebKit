@@ -1,0 +1,63 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="author-says-invalid">Origin</label><input id="author-says-invalid" type="text" aria-invalid="true">
+  <label for="untouched-required">Destination</label><input id="untouched-required" type="text" required>
+  <label for="untouched-bad-email">Email</label><input id="untouched-bad-email" type="email" value="not-an-address">
+  <div id="required-button" role="button" tabindex="0" aria-required="true">1 Adult</div>
+  <label for="not-required">Promo code</label><input id="not-required" type="text">
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests which controls AXFormFieldWithErrorSearchKey matches. A field the author marked invalid, and a field holding a value that is present but wrong, both match straight away, because each is the page saying something really is wrong. A required field that is merely empty does not, since that is true of every required field from first paint, so it matches only once the user has worked on the form or tried to submit it.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function fieldsWithError() {
+        return formFieldWithErrorCount(accessibilityController.accessibleElementById("form"));
+    }
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    // The marked field and the one holding an address that is not one. The empty required field is not
+    // wrong yet, only unfinished.
+    output += expect("fieldsWithError()", "2");
+    output += expect("axElement('author-says-invalid').stringAttributeValue('AXInvalid')", "'true'");
+    output += expect("axElement('untouched-bad-email').stringAttributeValue('AXInvalid')", "'true'");
+    output += expect("axElement('untouched-required').stringAttributeValue('AXInvalid')", "'false'");
+
+    setTimeout(async function() {
+        // Attempting a submission is the user saying they are done, so the empty field counts now too.
+        output += evalAndReturn("document.getElementById('submit').click();");
+        output += await expectAsync("fieldsWithError()", "3");
+        output += expect("axElement('untouched-required').stringAttributeValue('AXInvalid')", "'true'");
+
+        // The button carries aria-required and has no value, and is still not a match. A required control
+        // the user supplies no value for proves nothing, and its visible text is a label not a value.
+        output += expect("stripAXPrefix(axElement('required-button').stringValue)", "''");
+        output += expect("stripAXPrefix(axElement('required-button').title)", "'1 Adult'");
+
+        // Fixing a field takes it back out, with the page having to say nothing.
+        output += evalAndReturn("document.getElementById('untouched-required').value = 'SFO';");
+        output += await expectAsync("fieldsWithError()", "2");
+
+        output += evalAndReturn("document.getElementById('author-says-invalid').setAttribute('aria-invalid', 'false');");
+        output += await expectAsync("fieldsWithError()", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

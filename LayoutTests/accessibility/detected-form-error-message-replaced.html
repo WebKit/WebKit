@@ -1,0 +1,61 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="first-error"></div>
+  <div id="second-error"></div>
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<script>
+var output = "This tests that a field paired with a different message than last time ends up holding only the new one. Sites keep the old message element around with its wording intact and merely stop showing it, so the field must not go on reading a message the page has replaced.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var submissions = 0;
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        ++submissions;
+        if (submissions == 1) {
+            document.getElementById("first-error").textContent = "Enter a valid email address.";
+            return;
+        }
+        // The first message keeps its wording and is only taken off screen, which is what stops it being
+        // treated as withdrawn. A second, different element carries what the page now wants to say.
+        document.getElementById("first-error").style.display = "none";
+        document.getElementById("second-error").textContent = "That address is already registered.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        document.getElementById("submit").click();
+
+        // Only the message that is current. Both would have the field read out wording the page withdrew.
+        output += await expectAsync("errorMessageText(axElement('email'))", "'That address is already registered.'");
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+This tests that a control reports the form it belongs to through AXFormOwner. That is how an assistive technology gets from a submit button to the form it submits. Membership is read from the DOM rather than remembered, so a form built by script answers the same as one that was parsed, and a control moved out of a form stops reporting an owner.
+
+PASS: formOwnerIdentifier('email') === 'form'
+PASS: formOwnerIdentifier('submit') === 'form'
+PASS: formOwnerIdentifier('outside') === 'form'
+PASS: formOwnerIdentifier('unowned') === 'none'
+var created = document.createElement('form');created.id = 'createdForm';var field = document.createElement('input');field.id = 'createdField'; field.type = 'text';created.appendChild(field);document.getElementById('container').appendChild(created);
+PASS: formOwnerIdentifier('createdField') === 'createdForm'
+document.getElementById('container').appendChild(document.getElementById('createdField'));
+PASS: formOwnerIdentifier('createdField') === 'none'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email  Sign in
+
+

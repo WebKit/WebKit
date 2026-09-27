@@ -1,0 +1,47 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="destination">Destination</label><input id="destination" type="text" required>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that resetting a form updates what AXInvalid reports for a required control that is still empty. Resetting clears the record of the user having worked on the form, and being empty only counts once they have, so the control goes back to reporting no error. The control is invalid the whole time, so validity never changes and nothing else would tell the accessibility tree that the answer did.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+    });
+
+    function invalidStatus(id) {
+        return accessibilityController.accessibleElementById(id).stringAttributeValue("AXInvalid");
+    }
+
+    setTimeout(async function() {
+        output += "Nobody has worked on this form yet, so being empty does not count.\n";
+        output += expect("invalidStatus('destination')", "'false'");
+
+        output += "\nHaving tried to submit, it counts.\n";
+        output += evalAndReturn("document.getElementById('submit').click();");
+        output += await expectAsync("invalidStatus('destination')", "'true'");
+
+        output += "\nResetting puts the form back to untouched, and the control is still invalid throughout.\n";
+        output += evalAndReturn("document.getElementById('form').reset();");
+        output += expect("document.getElementById('destination').checkValidity()", "false");
+        output += await expectAsync("invalidStatus('destination')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

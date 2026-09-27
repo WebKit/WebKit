@@ -145,6 +145,8 @@ private:
     unsigned formElementIndex(FormListedElement&);
 
     bool validateInteractively();
+    void notifyAccessibilityOfSubmissionWithoutNavigation(HTMLFormControlElement* submitter);
+    void notifyAccessibilityThatSubmissionWillNavigate();
 
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector. Returns true if there

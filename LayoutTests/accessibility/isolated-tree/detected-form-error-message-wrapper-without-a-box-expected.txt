@@ -1,0 +1,12 @@
+This tests that a message is still placed next to its field when the element holding the whole message has no box of its own. Sites group a message in a wrapper that takes up no space, and the position of such a wrapper has to come from what is inside it.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search

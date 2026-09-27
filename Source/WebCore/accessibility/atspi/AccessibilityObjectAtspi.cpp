@@ -850,7 +850,7 @@ OptionSet<Atspi::State> AccessibilityObjectAtspi::states() const
     if (m_coreObject->isBusy())
         states.add(Atspi::State::Busy);
 
-    if (m_coreObject->invalidStatus() != "false"_s)
+    if (m_coreObject->invalidStatusIncludingInferred() != "false"_s)
         states.add(Atspi::State::InvalidEntry);
 
     if (liveObject && liveObject->supportsAutoComplete() && liveObject->autoCompleteValue() != "none"_s)

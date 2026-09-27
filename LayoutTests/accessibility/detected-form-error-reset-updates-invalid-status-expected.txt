@@ -1,0 +1,18 @@
+This tests that resetting a form updates what AXInvalid reports for a required control that is still empty. Resetting clears the record of the user having worked on the form, and being empty only counts once they have, so the control goes back to reporting no error. The control is invalid the whole time, so validity never changes and nothing else would tell the accessibility tree that the answer did.
+
+Nobody has worked on this form yet, so being empty does not count.
+PASS: invalidStatus('destination') === 'false'
+
+Having tried to submit, it counts.
+document.getElementById('submit').click();
+PASS: invalidStatus('destination') === 'true'
+
+Resetting puts the form back to untouched, and the control is still invalid throughout.
+document.getElementById('form').reset();
+PASS: document.getElementById('destination').checkValidity() === false
+PASS: invalidStatus('destination') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Destination  Search

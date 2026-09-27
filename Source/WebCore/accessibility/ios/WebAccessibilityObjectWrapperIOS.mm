@@ -2172,9 +2172,18 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
 - (NSArray *)accessibilityErrorMessageElements
 {
     RefPtr<AccessibilityObject> object = self.axBackingObject;
-    if (![self _prepareAccessibilityCall] || object->invalidStatus() == "false"_s)
+    if (![self _prepareAccessibilityCall] || object->invalidStatusIncludingInferred() == "false"_s)
         return nil;
     return accessibleElementsForObjects(object->errorMessageObjects());
+}
+
+- (id)accessibilityFormOwnerElement
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    RefPtr owner = protect(self.axBackingObject)->formOwnerObject();
+    return owner ? owner->wrapper() : nil;
 }
 
 - (id)accessibilityLinkedElement
@@ -3242,7 +3251,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return protect(self.axBackingObject)->invalidStatus().createNSString().autorelease();
+    return protect(self.axBackingObject)->invalidStatusIncludingInferred().createNSString().autorelease();
 }
 
 - (NSString *)accessibilityCurrentState

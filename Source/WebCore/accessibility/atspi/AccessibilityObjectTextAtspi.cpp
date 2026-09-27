@@ -817,7 +817,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
             break;
         }
 
-        String invalidStatus = m_coreObject->invalidStatus();
+        String invalidStatus = m_coreObject->invalidStatusIncludingInferred();
         if (invalidStatus != "false"_s)
             addAttributeIfNeeded("invalid"_s, invalidStatus);
 
