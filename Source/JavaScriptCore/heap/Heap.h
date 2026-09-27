@@ -630,7 +630,7 @@ public:
     bool isWasmCalleePendingDestruction(Wasm::Callee&);
 
     const TinyBloomFilter<uintptr_t>& boxedWasmCalleeFilter() const { return m_boxedWasmCalleeFilter; }
-    bool didDiscoverPendingWasmCallee(Wasm::Callee*);
+    bool markWasmCalleeIfPending(Wasm::Callee*);
 #endif
 
     // This is a debug function for checking who marked the target cell.
@@ -730,8 +730,8 @@ private:
     void gatherVMRoots(ConservativeRoots&);
     void beginMarking();
 #if ENABLE(WEBASSEMBLY)
-    void prepareWasmCalleeCleanup();
-    void finalizeWasmCalleeCleanup();
+    void beginMarkingWasmCallees();
+    void releaseUnmarkedWasmCallees();
 #endif
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
@@ -924,10 +924,10 @@ private:
     UncheckedKeyHashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
     // We snapshot m_wasmCalleesPendingDestruction at the start of GC rather than consulting it
     // directly during scanning because new callees can be registered while we scan. Without the
-    // snapshot, a callee could be added after we already passed its frame, never get recorded
-    // as discovered, and be incorrectly destroyed.
+    // snapshot, a callee could be added after we already passed its frame, never be recorded
+    // as found on a stack, and be incorrectly destroyed.
     UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesPendingDestructionSnapshot;
-    UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesDiscoveredDuringGC;
+    UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesFoundOnStacks;
     TinyBloomFilter<uintptr_t> m_boxedWasmCalleeFilter;
 #endif
 
