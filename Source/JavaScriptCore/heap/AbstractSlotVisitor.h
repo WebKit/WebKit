@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/CollectionScope.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/MarkStack.h>
 #include <JavaScriptCore/RootMarkReason.h>
@@ -39,6 +40,7 @@ namespace JSC {
 class Collector;
 class ConservativeRoots;
 class Heap;
+class HeapAnalyzer;
 class HeapCell;
 class JSCell;
 class MarkedBlock;
@@ -139,10 +141,12 @@ public:
 
     inline bool isEmpty(); // Defined in AbstractSlotVisitorInlines.h
 
-    VM& vm();
-    const VM& vm() const;
-    Heap* heap() const;
-    Collector& collector() const LIFETIME_BOUND;
+    Collector& collector() const { return m_collector; }
+
+    CollectionScope collectionScope() const { return m_collectionScope; }
+    HeapAnalyzer* heapAnalyzer() const { return m_heapAnalyzer; }
+
+    inline void NODELETE didStartMarking(CollectionScope, HeapAnalyzer*); // Defined in AbstractSlotVisitorInlines.h
 
     virtual void append(const ConservativeRoots&) = 0;
 
@@ -215,7 +219,7 @@ public:
     const ASCIICString& codeName() const LIFETIME_BOUND { return m_codeName; }
 
 protected:
-    inline AbstractSlotVisitor(Heap&, Collector&, ASCIICString codeName, ConcurrentPtrHashSet&);
+    inline AbstractSlotVisitor(Collector&, ASCIICString codeName, ConcurrentPtrHashSet&);
 
     virtual void didAddOpaqueRoot(void*) { }
     virtual void didFindOpaqueRoot(void*) { }
@@ -228,7 +232,7 @@ protected:
 
     size_t m_visitCount { 0 };
 
-    Heap& m_heap;
+    HeapAnalyzer* m_heapAnalyzer { nullptr };
     Collector& m_collector;
     ReferrerContext* m_context { nullptr };
     ASCIICString m_codeName;
@@ -241,6 +245,7 @@ protected:
     bool m_suppressVerifier { false };
     bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
     bool m_needsExtraOpaqueRootHandling { false };
+    CollectionScope m_collectionScope { CollectionScope::Full };
 
     friend class MarkingConstraintSolver;
 };

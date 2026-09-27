@@ -106,32 +106,11 @@ inline AbstractSlotVisitor::ReferrerContext::~ReferrerContext()
     m_visitor.m_context = m_previous;
 }
 
-inline AbstractSlotVisitor::AbstractSlotVisitor(JSC::Heap& heap, Collector& collector, ASCIICString codeName, ConcurrentPtrHashSet& opaqueRoots)
-    : m_heap(heap)
-    , m_collector(collector)
+inline AbstractSlotVisitor::AbstractSlotVisitor(Collector& collector, ASCIICString codeName, ConcurrentPtrHashSet& opaqueRoots)
+    : m_collector(collector)
     , m_codeName(WTF::move(codeName))
     , m_opaqueRoots(opaqueRoots)
 {
-}
-
-inline Heap* AbstractSlotVisitor::heap() const
-{
-    return &m_heap;
-}
-
-inline Collector& AbstractSlotVisitor::collector() const
-{
-    return m_collector;
-}
-
-inline VM& AbstractSlotVisitor::vm()
-{
-    return m_heap.vm();
-}
-
-inline const VM& AbstractSlotVisitor::vm() const
-{
-    return m_heap.vm();
 }
 
 inline bool AbstractSlotVisitor::addOpaqueRoot(void* ptr)
@@ -236,9 +215,16 @@ ALWAYS_INLINE ReferrerToken AbstractSlotVisitor::referrer() const
     return m_context->referrer();
 }
 
+inline void AbstractSlotVisitor::didStartMarking(CollectionScope scope, HeapAnalyzer* analyzer)
+{
+    m_collectionScope = scope;
+    m_heapAnalyzer = analyzer;
+}
+
 ALWAYS_INLINE void AbstractSlotVisitor::reset()
 {
     m_visitCount = 0;
+    m_heapAnalyzer = nullptr;
 }
 
 } // namespace JSC

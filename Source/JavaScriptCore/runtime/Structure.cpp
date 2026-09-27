@@ -1433,7 +1433,7 @@ void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         // NOTE: This can interleave in pin(), in which case it may see a null property table.
         // That's fine, because then the barrier will fire and we will scan this again.
         visitor.append(thisObject->m_propertyTableUnsafe);
-    } else if (visitor.vm().isAnalyzingHeap())
+    } else if (visitor.heapAnalyzer())
         visitor.append(thisObject->m_propertyTableUnsafe);
     else if (thisObject->m_propertyTableUnsafe)
         thisObject->m_propertyTableUnsafe.clear();
@@ -1455,7 +1455,7 @@ void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     }
 
     // Mark only in non Full collection. In full collection, we handle it as a weak-link.
-    if (!(visitor.heap()->collectionScope() == CollectionScope::Full)) {
+    if (visitor.collectionScope() != CollectionScope::Full) {
         if (auto* transition = thisObject->m_transitionTable.trySingleTransition())
             visitor.appendUnbarriered(transition);
     }
