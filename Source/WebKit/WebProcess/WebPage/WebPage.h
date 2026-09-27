@@ -75,6 +75,7 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
@@ -2250,6 +2251,8 @@ public:
 
     void paintRemoteFrameContents(WebCore::FrameIdentifier, const WebCore::IntRect&, WebCore::GraphicsContext&);
 
+    void postMessageToRemote(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, const std::optional<WebCore::SecurityOriginData>& targetOrigin, const WebCore::MessageWithMessagePorts&, const std::optional<WebCore::UserGestureTokenData>&);
+
 #if ENABLE(VIDEO)
     void setCaptionDisplaySettingsPreviewProfileID(const String&);
     void showCaptionDisplaySettingsPreview(WebCore::HTMLMediaElementIdentifier);
@@ -2795,6 +2798,7 @@ private:
 #endif
 
     void remotePostMessage(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&, std::optional<WebCore::UserGestureTokenData>&&);
+    void didFlushMessagePortOperationsForRemotePostMessage();
     void renderTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
     void layerTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions>, CompletionHandler<void(String&&)>&&);
     void frameTextForTesting(WebCore::FrameIdentifier, CompletionHandler<void(String&&)>&&);
@@ -3440,6 +3444,15 @@ private:
 
     bool m_backgroundTextExtractionEnabled { false };
     bool m_isPopup { false };
+
+    // Messages posted to remote frames, in posting order. An entry that transfers message ports waits
+    // for the network process to acknowledge a flush before it is sent. When the queue is not empty,
+    // its first entry is always one that is waiting.
+    struct PendingRemotePostMessage {
+        bool waitsForFlush { false };
+        Function<void()> send;
+    };
+    Deque<PendingRemotePostMessage> m_pendingRemotePostMessages;
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     bool m_allowsImmersiveEnvironments { false };

@@ -101,7 +101,7 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
         serializedValue->sinkBuffersIntoTransferHandles();
 
     if (RefPtr page = m_frame->page())
-        page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
+        page->postMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken);
 }
 
 void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)

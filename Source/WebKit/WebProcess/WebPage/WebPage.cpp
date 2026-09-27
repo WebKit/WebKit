@@ -10563,6 +10563,35 @@ void WebPage::frameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdenti
     protect(corePage()->focusController())->setFocusedFrame(coreFrame.get(), WebCore::BroadcastFocusedFrame::No);
 }
 
+void WebPage::postMessageToRemote(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, const std::optional<WebCore::SecurityOriginData>& targetOrigin, const WebCore::MessageWithMessagePorts& message, const std::optional<WebCore::UserGestureTokenData>& userGestureToken)
+{
+    if (message.transferredPorts.isEmpty() && m_pendingRemotePostMessages.isEmpty()) {
+        send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
+        return;
+    }
+
+    bool waitsForFlush = !message.transferredPorts.isEmpty();
+    if (waitsForFlush) {
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::FlushMessagePortOperations(), [weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->didFlushMessagePortOperationsForRemotePostMessage();
+        });
+    }
+
+    m_pendingRemotePostMessages.append({ waitsForFlush, [weakThis = WeakPtr { *this }, source, sourceOrigin, target, targetOrigin, message, userGestureToken] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
+    } });
+}
+
+void WebPage::didFlushMessagePortOperationsForRemotePostMessage()
+{
+    ASSERT(!m_pendingRemotePostMessages.isEmpty() && m_pendingRemotePostMessages.first().waitsForFlush);
+    do {
+        m_pendingRemotePostMessages.takeFirst().send();
+    } while (!m_pendingRemotePostMessages.isEmpty() && !m_pendingRemotePostMessages.first().waitsForFlush);
+}
+
 void WebPage::remotePostMessage(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
 {
     RefPtr targetFrame = WebProcess::singleton().webFrame(target);
