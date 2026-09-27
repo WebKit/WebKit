@@ -21,20 +21,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::DepthStencilState {
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::DepthStencilState {
     ::WebGPU::TextureFormat format;
-
     std::optional<bool> depthWriteEnabled;
     std::optional<::WebGPU::CompareFunction> depthCompare;
-
-    WebKit::WebGPU::StencilFaceState stencilFront;
-    WebKit::WebGPU::StencilFaceState stencilBack;
-
-    std::optional<uint32_t> stencilReadMask;
-    std::optional<uint32_t> stencilWriteMask;
-
+    ::WebGPU::StencilFaceState stencilFront;
+    ::WebGPU::StencilFaceState stencilBack;
+    uint32_t stencilReadMask;
+    uint32_t stencilWriteMask;
     int32_t depthBias;
     float depthBiasSlopeScale;
     float depthBiasClamp;
 };
+
+header: "WebGPUDepthStencilState.h"
+using WebKit::WebGPU::DepthStencilState = ::WebGPU::DepthStencilState;
 #endif

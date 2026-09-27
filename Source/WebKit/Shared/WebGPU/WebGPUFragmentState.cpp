@@ -41,19 +41,7 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const ::W
     if (!base)
         return std::nullopt;
 
-    Vector<std::optional<ColorTargetState>> targets;
-    targets.reserveInitialCapacity(fragmentState.targets.size());
-    for (const auto& target : fragmentState.targets) {
-        if (target) {
-            auto convertedTarget = convertToBacking(*target);
-            if (!convertedTarget)
-                return std::nullopt;
-            targets.append(WTF::move(*convertedTarget));
-        } else
-            targets.append(std::nullopt);
-    }
-
-    return { { WTF::move(*base), WTF::move(targets) } };
+    return { { WTF::move(*base), Vector<std::optional<ColorTargetState>> { fragmentState.targets } } };
 }
 
 std::optional<::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState, RenderPipelineDescriptorStorage& storage)
@@ -62,16 +50,7 @@ std::optional<::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBac
     if (!stage)
         return std::nullopt;
 
-    storage.fragmentTargets.reserveInitialCapacity(fragmentState.targets.size());
-    for (const auto& backingTarget : borrow(fragmentState.targets)) {
-        if (backingTarget) {
-            auto target = convertFromBacking(*backingTarget);
-            if (!target)
-                return std::nullopt;
-            storage.fragmentTargets.append(WTF::move(*target));
-        } else
-            storage.fragmentTargets.append(std::nullopt);
-    }
+    storage.fragmentTargets = fragmentState.targets;
 
     return { { WTF::move(*stage), storage.fragmentTargets.span() } };
 }
