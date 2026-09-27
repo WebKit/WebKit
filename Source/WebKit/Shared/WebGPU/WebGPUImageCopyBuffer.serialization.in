@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageCopyBuffer : WebKit::WebGPU::ImageDataLayout {
+[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageCopyBuffer : ::WebGPU::TexelCopyBufferLayout {
     WebKit::WebGPUIdentifier buffer;
 };
 #endif

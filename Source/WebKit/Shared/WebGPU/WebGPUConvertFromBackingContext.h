@@ -83,7 +83,6 @@ struct ImageCopyExternalImageVideoSource;
 #endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
-struct ImageDataLayout;
 struct InternalError;
 struct ObjectDescriptorBase;
 struct OutOfMemoryError;
@@ -98,11 +97,9 @@ struct RenderPassDepthStencilAttachment;
 struct RenderPassDescriptor;
 struct RenderPassLayout;
 struct RenderPipelineDescriptor;
-struct RequestAdapterOptions;
 struct ShaderModuleCompilationHint;
 struct ShaderModuleDescriptor;
 struct SupportedFeatures;
-struct SupportedLimits;
 struct TextureDescriptor;
 struct ValidationError;
 struct VertexBufferLayout;
@@ -143,7 +140,6 @@ public:
 #endif
     std::optional<::WebGPU::TexelCopyTextureInfo> convertFromBacking(const ImageCopyTexture&);
     std::optional<WebCore::WebGPUImageCopyTextureTagged> convertFromBacking(const ImageCopyTextureTagged&);
-    std::optional<::WebGPU::TexelCopyBufferLayout> LEGACY_NODELETE convertFromBacking(const ImageDataLayout&);
     std::optional<WebCore::WebGPUObjectDescriptorBase> LEGACY_NODELETE convertFromBacking(const ObjectDescriptorBase&);
     // std::nullopt when the layout does not convert; nullptr when it is missing and allowed to be.
     std::optional<RefPtr<::WebGPU::PipelineLayout>> convertLayoutFromBacking(const PipelineDescriptorBase&, bool allowMissingPipelineLayout);
@@ -156,7 +152,6 @@ public:
     std::optional<::WebGPU::RenderPassDescriptor> convertFromBacking(const RenderPassDescriptor&, Vector<std::optional<::WebGPU::RenderPassColorAttachment>>& colorAttachmentsStorage);
     std::optional<::WebGPU::PassTimestampWrites> convertFromBacking(const RenderPassTimestampWrites&);
     std::optional<::WebGPU::RenderPipelineDescriptor> convertFromBacking(const RenderPipelineDescriptor&, RenderPipelineDescriptorStorage&, bool allowMissingPipelineLayout = false);
-    std::optional<::WebGPU::RequestAdapterOptions> LEGACY_NODELETE convertFromBacking(const RequestAdapterOptions&);
     std::optional<::WebGPU::ShaderModuleDescriptor> convertFromBacking(const ShaderModuleDescriptor&, Vector<::WebGPU::ShaderModuleCompilationHint>& hintsStorage);
     std::optional<::WebGPU::TextureDescriptor> convertFromBacking(const TextureDescriptor&);
     std::optional<::WebGPU::VertexBufferLayout> convertFromBacking(const VertexBufferLayout&, Vector<::WebGPU::VertexAttribute>& attributesStorage);

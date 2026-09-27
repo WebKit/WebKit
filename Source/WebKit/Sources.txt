@@ -344,7 +344,6 @@ Shared/WebGPU/WebGPUImageCopyBuffer.cpp
 Shared/WebGPU/WebGPUImageCopyExternalImage.cpp
 Shared/WebGPU/WebGPUImageCopyTexture.cpp
 Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp
-Shared/WebGPU/WebGPUImageDataLayout.cpp
 Shared/WebGPU/WebGPUObjectDescriptorBase.cpp
 Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
 Shared/WebGPU/WebGPUPresentationContextDescriptor.cpp
@@ -355,9 +354,7 @@ Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDescriptor.cpp
 Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
 Shared/WebGPU/WebGPURenderPipelineDescriptor.cpp
-Shared/WebGPU/WebGPURequestAdapterOptions.cpp
 Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp
-Shared/WebGPU/WebGPUSupportedLimits.cpp
 Shared/WebGPU/WebGPUTextureDescriptor.cpp
 Shared/WebGPU/WebGPUVertexBufferLayout.cpp
 Shared/WebGPU/WebGPUVertexState.cpp

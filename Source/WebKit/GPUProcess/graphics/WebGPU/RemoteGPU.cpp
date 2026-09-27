@@ -157,14 +157,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
     ASSERT(backing);
 
     Ref objectHeap = m_objectHeap;
-    auto convertedOptions = objectHeap->convertFromBacking(options);
-    ASSERT(convertedOptions);
-    if (!convertedOptions) {
-        callback(std::nullopt);
-        return;
-    }
-
-    backing->requestAdapter(*convertedOptions, [callback = WTF::move(callback), objectHeap, streamConnection = protect(*m_streamConnection), identifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(*this)](RefPtr<::WebGPU::Adapter>&& adapter) mutable {
+    backing->requestAdapter(options, [callback = WTF::move(callback), objectHeap, streamConnection = protect(*m_streamConnection), identifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(*this)](RefPtr<::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             callback(std::nullopt);
             return;
@@ -174,7 +167,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
         objectHeap->addObject(identifier, remoteAdapter);
 
         auto info = adapter->info();
-        callback({ { WTF::move(info.name), adapter->features(), WebGPU::convertToBacking(adapter->limits()), info.isFallbackAdapter, info.subgroupMinSize, info.subgroupMaxSize } });
+        callback({ { WTF::move(info.name), adapter->features(), adapter->limits(), info.isFallbackAdapter, info.subgroupMinSize, info.subgroupMaxSize } });
     });
 }
 

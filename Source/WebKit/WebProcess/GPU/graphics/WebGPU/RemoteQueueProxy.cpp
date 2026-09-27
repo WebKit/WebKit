@@ -99,18 +99,16 @@ void RemoteQueueProxy::writeTexture(const ::WebGPU::TexelCopyTextureInfo& destin
 {
     auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedDataLayout = m_convertToBackingContext->convertToBacking(dataLayout);
-    ASSERT(convertedDataLayout);
-    if (!convertedDestination || !convertedDataLayout)
+    if (!convertedDestination)
         return;
 
     if (data.size() > maxCrossProcessResourceCopySize) {
         auto handle = WebCore::SharedMemoryHandle::createCopy(data, WebCore::SharedMemoryProtection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTF::move(handle), *convertedDataLayout, writeSize), [](auto) mutable {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTF::move(handle), dataLayout, writeSize), [](auto) mutable {
         });
         UNUSED_VARIABLE(sendResult);
     } else {
-        auto sendResult = send(Messages::RemoteQueue::WriteTextureWithCopy(*convertedDestination, Vector(data), *convertedDataLayout, writeSize));
+        auto sendResult = send(Messages::RemoteQueue::WriteTextureWithCopy(*convertedDestination, Vector(data), dataLayout, writeSize));
         UNUSED_VARIABLE(sendResult);
     }
 }

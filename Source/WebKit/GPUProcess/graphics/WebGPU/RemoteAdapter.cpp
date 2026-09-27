@@ -86,7 +86,7 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         auto remoteDevice = RemoteDevice::create(*gpuConnectionToWebProcess, gpu, device, objectHeap, WTF::move(streamConnection), identifier, queueIdentifier);
         objectHeap->addObject(identifier, remoteDevice);
         objectHeap->addObject(queueIdentifier, remoteDevice->queue());
-        callback(device->features(), WebGPU::convertToBacking(device->limits()));
+        callback(device->features(), ::WebGPU::Limits { device->limits() });
     });
 }
 
