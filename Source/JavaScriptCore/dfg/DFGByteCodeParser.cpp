@@ -13069,6 +13069,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         // have seen a fast path, m_next holds a fast-iteration sentinel cell or index. When that happens we need to OSR exit since
         // it is not a callable.
         addToGraph(Check, Edge(get(bytecode.m_next), ObjectUse));
+        addToGraph(Check, Edge(get(bytecode.m_iterator), ObjectUse));
 
         Terminality terminality = handleCall<OpIteratorNext>(currentInstruction, Call, CallMode::Regular, nextCheckpoint(), nullptr);
         ASSERT_UNUSED(terminality, terminality == NonTerminal);
