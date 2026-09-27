@@ -1,0 +1,6 @@
+Replays a memory-cached raw resource whose buffered data has more than one segment to a second client, and destroys that client from inside the first segment's callout. This test passes if the web process does not crash.
+
+PASS: response was buffered in more than one segment.
+PASS: second request was served from the memory cache.
+PASS: did not crash.
+
