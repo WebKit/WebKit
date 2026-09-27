@@ -83,9 +83,46 @@ class StringUtils(unittest.TestCase):
 
     def test_elapsed(self):
         self.assertEqual(string_utils.elapsed(0), 'no time')
+        self.assertEqual(string_utils.elapsed(0, 2), '0 seconds')
+        self.assertEqual(string_utils.elapsed(0, None, True), '0s')
+        self.assertEqual(string_utils.elapsed(0, 2, True), '0s')
+
         self.assertEqual(string_utils.elapsed(.5), 'less than a second')
+        self.assertEqual(string_utils.elapsed(.5, 1), '0.5 seconds')
+        self.assertEqual(string_utils.elapsed(.5, None, True), '<1s')
+        self.assertEqual(string_utils.elapsed(.5, 1, True), '0.5s')
+
         self.assertEqual(string_utils.elapsed(1), '1 second')
+        self.assertEqual(string_utils.elapsed(1, 2), '1 second')
+        self.assertEqual(string_utils.elapsed(1, None, True), '1s')
+        self.assertEqual(string_utils.elapsed(1, 2, True), '1s')
+
         self.assertEqual(string_utils.elapsed(4), '4 seconds')
+        self.assertEqual(string_utils.elapsed(4, 2), '4 seconds')
+        self.assertEqual(string_utils.elapsed(4, None, True), '4s')
+        self.assertEqual(string_utils.elapsed(4, 2, True), '4s')
+
         self.assertEqual(string_utils.elapsed(74), '1 minute and 14 seconds')
-        self.assertEqual(string_utils.elapsed(3 * 60 * 60), '3 hours 0 minutes and 0 seconds')
-        self.assertEqual(string_utils.elapsed(24 * 60 * 60 + 60 * 60 + 4 * 60 + 5), '1 day 1 hour 4 minutes and 5 seconds')
+        self.assertEqual(string_utils.elapsed(74, 2), '1 minute and 14 seconds')
+        self.assertEqual(string_utils.elapsed(74, None, True), '1m 14s')
+        self.assertEqual(string_utils.elapsed(74, 2, True), '1m 14s')
+
+        self.assertEqual(string_utils.elapsed(3.14159265), '3 seconds')
+        self.assertEqual(string_utils.elapsed(3.14159265, 2), '3.14 seconds')
+        self.assertEqual(string_utils.elapsed(3.14159265, None, True), '3s')
+        self.assertEqual(string_utils.elapsed(3.14159265, 2, True), '3.14s')
+
+        self.assertEqual(string_utils.elapsed(97.8459703), '1 minute and 38 seconds')
+        self.assertEqual(string_utils.elapsed(97.8459703, 2), '1 minute and 37.85 seconds')
+        self.assertEqual(string_utils.elapsed(97.8459703, None, True), '1m 38s')
+        self.assertEqual(string_utils.elapsed(97.8459703, 2, True), '1m 37.85s')
+
+        self.assertEqual(string_utils.elapsed(3 * 60 * 60 + 5.66), '3 hours 0 minutes and 6 seconds')
+        self.assertEqual(string_utils.elapsed(3 * 60 * 60 + 5.66, 1), '3 hours 0 minutes and 5.7 seconds')
+        self.assertEqual(string_utils.elapsed(3 * 60 * 60 + 5.66, None, True), '3h 0m 6s')
+        self.assertEqual(string_utils.elapsed(3 * 60 * 60 + 5.66, 1, True), '3h 0m 5.7s')
+
+        self.assertEqual(string_utils.elapsed(24 * 60 * 60 + 60 * 60 + 4 * 60 + 5.65), '1 day 1 hour 4 minutes and 6 seconds')
+        self.assertEqual(string_utils.elapsed(24 * 60 * 60 + 60 * 60 + 4 * 60 + 5.65, 1), '1 day 1 hour 4 minutes and 5.6 seconds')
+        self.assertEqual(string_utils.elapsed(24 * 60 * 60 + 60 * 60 + 4 * 60 + 5.65, None, True), '1d 1h 4m 6s')
+        self.assertEqual(string_utils.elapsed(24 * 60 * 60 + 60 * 60 + 4 * 60 + 5.65, 1, True), '1d 1h 4m 5.6s')
