@@ -142,7 +142,11 @@ final class WebBackForwardList {
     }
 
     @used
-    func itemForID(identifier: WebCore.BackForwardItemIdentifier) -> WebKit.WebBackForwardListItem? {
+    func itemForID(identifier: WebCore.BackForwardItemIdentifier) -> WebKit.RefPtrWebBackForwardListItem {
+        WebKit.RefPtrWebBackForwardListItem(entryForID(identifier))
+    }
+
+    private func entryForID(_ identifier: WebCore.BackForwardItemIdentifier) -> WebKit.WebBackForwardListItem? {
         // FIXME: consider restructuring this a bit. It's a bit odd that it basically refers
         // to a map within WebBackForwardListItem. Maybe WebBackForwardList should
         // own that map. This is a pre-existing quirk of the C++ implementation, not a
@@ -330,7 +334,11 @@ final class WebBackForwardList {
     }
 
     @used
-    func currentItem() -> WebKit.WebBackForwardListItem? {
+    func currentItem() -> WebKit.RefPtrWebBackForwardListItem {
+        WebKit.RefPtrWebBackForwardListItem(currentEntry())
+    }
+
+    private func currentEntry() -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
@@ -351,7 +359,11 @@ final class WebBackForwardList {
     }
 
     @used
-    func backItem() -> WebKit.WebBackForwardListItem? {
+    func backItem() -> WebKit.RefPtrWebBackForwardListItem {
+        WebKit.RefPtrWebBackForwardListItem(backEntry())
+    }
+
+    private func backEntry() -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
@@ -379,7 +391,11 @@ final class WebBackForwardList {
     }
 
     @used
-    func forwardItem() -> WebKit.WebBackForwardListItem? {
+    func forwardItem() -> WebKit.RefPtrWebBackForwardListItem {
+        WebKit.RefPtrWebBackForwardListItem(forwardEntry())
+    }
+
+    private func forwardEntry() -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
@@ -408,7 +424,11 @@ final class WebBackForwardList {
     }
 
     @used
-    func itemAtDeltaFromCurrentIndex(delta: Int, allowSkipping: Bool = true) -> WebKit.WebBackForwardListItem? {
+    func itemAtDeltaFromCurrentIndex(delta: Int, allowSkipping: Bool = true) -> WebKit.RefPtrWebBackForwardListItem {
+        WebKit.RefPtrWebBackForwardListItem(entryAtDeltaFromCurrentIndex(delta: delta, allowSkipping: allowSkipping))
+    }
+
+    private func entryAtDeltaFromCurrentIndex(delta: Int, allowSkipping: Bool) -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
@@ -677,7 +697,7 @@ final class WebBackForwardList {
             return
         }
 
-        guard let unwrappedCurrentItem = currentItem() else {
+        guard let unwrappedCurrentItem = currentEntry() else {
             // We should only ever have no current item if we also have no current item index.
             assert(currentIndex == nil)
 
@@ -933,9 +953,9 @@ final class WebBackForwardList {
         childFrameID: WebCore.FrameIdentifier,
         childFrameIndex: UInt64,
         childFrameName: WTF.String
-    ) -> WebKit.FrameState? {
-        guard let targetItem = itemForID(identifier: itemID) else {
-            return nil
+    ) -> WebKit.RefPtrFrameState {
+        guard let targetItem = entryForID(itemID) else {
+            return WebKit.RefPtrFrameState()
         }
         // FIXME: After session restore, the back/forward list's frame identifiers don't match
         // the current WebView's frames because the original identifiers are unavailable.
@@ -952,7 +972,7 @@ final class WebBackForwardList {
                 childFrameItem = parentFrameItem.childItemForFrameName(childFrameName)
             }
             guard let matchedItem = childFrameItem else {
-                return nil
+                return WebKit.RefPtrFrameState()
             }
             let existingFrameID = Optional(fromCxx: matchedItem.frameID())
             if existingFrameID == nil {
@@ -960,9 +980,9 @@ final class WebBackForwardList {
             }
         }
         guard let childFrameItem else {
-            return nil
+            return WebKit.RefPtrFrameState()
         }
-        return getFrameState(childFrameItem)
+        return WebKit.RefPtrFrameState(getFrameState(childFrameItem))
     }
 
     @used
@@ -979,7 +999,7 @@ final class WebBackForwardList {
     }
 
     private func addChildItem(parentFrameID: WebCore.FrameIdentifier, frameState: WebKit.RefFrameState) {
-        guard let currentItem = currentItem() else {
+        guard let currentItem = currentEntry() else {
             return
         }
         guard let parentItem = currentItem.mainFrameItem().childItemForFrameID(parentFrameID) else {
@@ -992,8 +1012,8 @@ final class WebBackForwardList {
         setFrameStateBackForwardItemIdentifier(frameState, itemID)
     }
 
-    func completeFrameStateForNavigation(navigatedFrameState: WebKit.FrameState) -> WebKit.FrameState {
-        guard let currentItem = currentItem() else {
+    private func completeFrameStateForNavigation(navigatedFrameState: WebKit.FrameState) -> WebKit.FrameState {
+        guard let currentItem = currentEntry() else {
             return navigatedFrameState
         }
         guard let navigatedFrameID = Optional(fromCxx: navigatedFrameState.frameID) else {
@@ -1163,7 +1183,7 @@ final class WebBackForwardList {
         let process = WebKit.WebProcessProxy.fromConnection(connection)
         try messageCheckItemURLs(frameState: frameState, process: process)
 
-        guard let item = currentItem() else {
+        guard let item = currentEntry() else {
             return
         }
 
@@ -1270,7 +1290,7 @@ final class WebBackForwardList {
         itemID: WebCore.BackForwardItemIdentifier,
         completionHandler: CompletionHandlers.WebBackForwardList.BackForwardListContainsItemCompletionHandler
     ) {
-        completionHandler.pointee(itemForID(identifier: itemID) != nil)
+        completionHandler.pointee(entryForID(itemID) != nil)
     }
 
     @used
@@ -1289,7 +1309,7 @@ final class WebBackForwardList {
             try messageCheck { !WebKit.isInspectorPage(webPageProxy) }
         }
 
-        if let item = itemForID(identifier: itemID) {
+        if let item = entryForID(itemID) {
             // Mirror of the C++ backForwardGoToItemShared guard (webkit.org/b/318728): ignore an index
             // move opposite to the in-flight traversal direction so a stale split leg can't clobber it.
             if let webPageProxy = page.get(), let priorCurrentIndex = currentIndex,
@@ -1357,7 +1377,7 @@ final class WebBackForwardList {
         }
 
         let delta = Int(delta)
-        guard let item = itemAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
+        guard let item = entryAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
             return WebKit.RefPtrFrameState()
         }
         guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {

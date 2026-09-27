@@ -92,7 +92,7 @@ WebBackForwardList::~WebBackForwardList()
     ASSERT((!m_page && !m_currentIndex) || !m_page->hasRunningProcess());
 }
 
-WebBackForwardListItem* WebBackForwardList::itemForID(BackForwardItemIdentifier identifier)
+RefPtr<WebBackForwardListItem> WebBackForwardList::itemForID(BackForwardItemIdentifier identifier)
 {
     if (!m_page)
         return nullptr;
@@ -269,7 +269,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     page->didChangeBackForwardList(nullptr, WTF::move(removedItems));
 }
 
-WebBackForwardListItem* WebBackForwardList::currentItem() const
+RefPtr<WebBackForwardListItem> WebBackForwardList::currentItem() const
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 
@@ -991,7 +991,7 @@ void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackFor
     completionHandler(rawCounts());
 }
 
-FrameState* WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIdentifier itemID, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName)
+RefPtr<FrameState> WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIdentifier itemID, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName)
 {
     RefPtr targetItem = itemForID(itemID);
     if (!targetItem)
@@ -1062,7 +1062,7 @@ WebBackForwardListMessageForwarder& WebBackForwardListWrapper::messageReceiver()
     return m_messageForwarder.get();
 }
 
-WebBackForwardListItem* WebBackForwardListWrapper::currentItem() const
+RefPtr<WebBackForwardListItem> WebBackForwardListWrapper::currentItem() const
 {
     return m_impl->currentItem();
 }

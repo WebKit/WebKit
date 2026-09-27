@@ -5228,7 +5228,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 - (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item
 {
     if (_page->backForwardList().currentItem() == &item._item)
-        _page->recordNavigationSnapshot(*protect(_page->backForwardList().currentItem()));
+        _page->recordNavigationSnapshot(*_page->backForwardList().currentItem());
 
     if (RefPtr viewSnapshot = item._item.snapshot())
         return viewSnapshot->asLayerContents();

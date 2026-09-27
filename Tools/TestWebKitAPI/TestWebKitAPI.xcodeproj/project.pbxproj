@@ -597,6 +597,7 @@
 				WebKit/WKWebView/TextSize.swift,
 				WebKit/WKWebView/TextWidth.swift,
 				WebKit/WKWebView/TimeZoneOverride.swift,
+				WebKit/WKWebView/WKBackForwardListTests.swift,
 				WebKit/WKWebView/WKWebExtensionAPIAction.swift,
 				WebKit/WKWebView/WKWebExtensionAPIAlarms.swift,
 				WebKit/WKWebView/WKWebExtensionAPICommands.swift,

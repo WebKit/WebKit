@@ -66,13 +66,13 @@ public:
 
     virtual ~WebBackForwardList();
 
-    WebBackForwardListItem* itemForID(WebCore::BackForwardItemIdentifier);
+    RefPtr<WebBackForwardListItem> itemForID(WebCore::BackForwardItemIdentifier);
 
     void goToItem(WebBackForwardListItem&);
     void removeAllItems();
     void clear();
 
-    WebBackForwardListItem* NODELETE currentItem() const;
+    RefPtr<WebBackForwardListItem> currentItem() const;
     RefPtr<WebBackForwardListItem> backItem() const;
     RefPtr<WebBackForwardListItem> forwardItem() const;
 
@@ -102,7 +102,7 @@ public:
     void backForwardAddItemShared(IPC::Connection&, Ref<FrameState>&&, LoadedWebArchive);
     void backForwardGoToItemShared(IPC::Connection&, WebCore::BackForwardItemIdentifier);
 
-    FrameState* findFrameStateInItem(WebCore::BackForwardItemIdentifier, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName);
+    RefPtr<FrameState> findFrameStateInItem(WebCore::BackForwardItemIdentifier, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName);
     void updateFrameIdentifier(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
     void replaceFrameStateForChild(WebBackForwardListItem&, WebCore::FrameIdentifier, Ref<FrameState>&& newFrameState);
@@ -172,7 +172,7 @@ public:
     void removeAllItems();
     void clear();
 
-    WebBackForwardListItem* WTF_NULLABLE currentItem() const;
+    RefPtr<WebBackForwardListItem> currentItem() const;
 
     RefPtr<WebBackForwardListItem> itemAtDeltaFromCurrentIndex(int, AllowSkippingBackForwardItems = AllowSkippingBackForwardItems::Yes) const;
     RefPtr<WebBackForwardListItem> backItem() const;
