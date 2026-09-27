@@ -9522,10 +9522,19 @@ void WebPage::requestAttachmentIcon(const String& identifier, const WebCore::Flo
 
 RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const String& identifier) const
 {
-    // FIXME: Handle attachment elements in subframes too as well.
-    if (RefPtr localTopDocument = this->localTopDocument())
-        return localTopDocument->attachmentForIdentifier(identifier);
+    // Each document tracks its own attachments. With site isolation the main frame may be remote, so check every local frame.
+    if (!m_page)
+        return nullptr;
 
+    for (RefPtr frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        if (!localFrame)
+            continue;
+        if (RefPtr document = localFrame->document()) {
+            if (RefPtr attachment = document->attachmentForIdentifier(identifier))
+                return attachment;
+        }
+    }
     return nullptr;
 }
 

@@ -74,9 +74,9 @@ std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsola
     return siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), rect, true);
 }
 
-WebViewWithFocusedCrossOriginIframe webViewWithFocusedCrossOriginIframe(const HTTPServer& server)
+WebViewWithFocusedCrossOriginIframe webViewWithFocusedCrossOriginIframe(const HTTPServer& server, WKWebViewConfiguration *configuration)
 {
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    auto [webView, navigationDelegate] = configuration ? siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600)) : siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];

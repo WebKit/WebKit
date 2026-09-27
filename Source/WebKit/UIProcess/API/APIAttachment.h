@@ -49,6 +49,7 @@ class FragmentedSharedBuffer;
 
 namespace WebKit {
 class WebPageProxy;
+class WebProcessProxy;
 }
 
 namespace API {
@@ -100,6 +101,11 @@ public:
     RefPtr<WebCore::SharedBuffer> createSerializedRepresentation() const;
     void updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String& contentType);
 
+    // The web process whose document contains the attachment's element. With site isolation, this can be
+    // a process other than the main frame's.
+    RefPtr<WebKit::WebProcessProxy> owningProcess() const;
+    void setOwningProcess(WebKit::WebProcessProxy&);
+
 private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
 
@@ -111,6 +117,7 @@ private:
     WTF::String m_filePath;
     WTF::String m_contentType;
     WeakPtr<WebKit::WebPageProxy> m_webPage;
+    WeakPtr<WebKit::WebProcessProxy> m_owningProcess;
     InsertionState m_insertionState { InsertionState::NotInserted };
     WebCore::AttachmentAssociatedElementType m_associatedElementType { WebCore::AttachmentAssociatedElementType::None };
 #if PLATFORM(COCOA)

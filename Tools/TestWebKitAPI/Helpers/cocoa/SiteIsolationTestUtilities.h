@@ -69,8 +69,9 @@ struct WebViewWithFocusedCrossOriginIframe {
 };
 
 // Loads https://example.com/mainframe in a site-isolated web view, then focuses its first child frame,
-// which must be an iframe with id 'iframe' (see mainFrameTextWithCrossOriginIframe).
-WebViewWithFocusedCrossOriginIframe webViewWithFocusedCrossOriginIframe(const HTTPServer&);
+// which must be an iframe with id 'iframe' (see mainFrameTextWithCrossOriginIframe). A configuration, if
+// given, must come from the server's httpsProxyConfiguration().
+WebViewWithFocusedCrossOriginIframe webViewWithFocusedCrossOriginIframe(const HTTPServer&, WKWebViewConfiguration * = nil);
 
 // Runs a selection script in the frame, then waits for the UI process's editor state to reflect the new
 // selection, since some commands check it before sending anything to a web process.

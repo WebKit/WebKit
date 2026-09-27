@@ -18156,6 +18156,10 @@ void WebPageProxy::requestAttachmentIcon(IPC::Connection& connection, const Stri
 {
     MESSAGE_CHECK_BASE(protect(preferences())->attachmentElementEnabled(), connection);
 
+    // The icon goes to the process that asked for it, which is the one whose document contains the attachment.
+    Ref process = WebProcessProxy::fromConnection(connection);
+    auto pageID = webPageIDInProcess(process);
+
     auto updateAttachmentIcon = [&, protectedThis = Ref { *this }] {
         FloatSize size = requestedSize;
         std::optional<ShareableBitmap::Handle> handle;
@@ -18167,13 +18171,13 @@ void WebPageProxy::requestAttachmentIcon(IPC::Connection& connection, const Stri
         }
 #endif
 
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTF::move(handle), size), webPageIDInMainFrameProcess());
+        process->send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTF::move(handle), size), pageID);
     };
 
 #if PLATFORM(MAC)
     if (RefPtr attachment = attachmentForIdentifier(identifier); attachment && attachment->shouldUseFileWrapperIconForDirectory()) {
         attachment->doWithFileWrapper([&, updateAttachmentIcon = WTF::move(updateAttachmentIcon)] (NSFileWrapper *fileWrapper) {
-            if (updateIconForDirectory(fileWrapper, attachment->identifier()))
+            if (updateIconForDirectory(fileWrapper, attachment->identifier(), process, pageID))
                 return;
 
             updateAttachmentIcon();
@@ -18196,13 +18200,23 @@ RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& iden
 void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, CompletionHandler<void()>&& callback)
 {
     auto attachmentIdentifier = attachment->identifier();
-    sendWithAsyncReply(Messages::WebPage::InsertAttachment(attachmentIdentifier, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType()), WTF::move(callback));
+
+    // The attachment is inserted at the focused frame's selection, so its element will be in that frame's process.
+    // Record that now, since the client can update the attachment before that process reports the insertion.
+    if (RefPtr frame = focusedOrMainFrame())
+        attachment->setOwningProcess(protect(frame->process()));
+
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::InsertAttachment(attachmentIdentifier, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType()), WTF::move(callback));
     m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTF::move(attachment));
 }
 
 void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, CompletionHandler<void()>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferReference(attachment.associatedElementData())), WTF::move(callback));
+    // The element is in the document of the process that reported it, which can be other than the main frame's.
+    RefPtr process = attachment.owningProcess();
+    if (!process)
+        process = &legacyMainFrameProcess();
+    process->sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferReference(attachment.associatedElementData())), WTF::move(callback), webPageIDInProcess(*process));
 }
 
 void WebPageProxy::registerAttachmentIdentifierFromData(IPC::Connection& connection, const String& identifier, const String& contentType, const String& preferredFileName, const IPC::SharedBufferReference& data)
@@ -18344,6 +18358,7 @@ void WebPageProxy::didInsertAttachmentWithIdentifier(IPC::Connection& connection
     MESSAGE_CHECK_BASE(IdentifierToAttachmentMap::isValidKey(identifier), connection);
 
     Ref attachment = ensureAttachment(identifier);
+    attachment->setOwningProcess(WebProcessProxy::fromConnection(connection));
     attachment->setAssociatedElementType(associatedElementType);
     attachment->setInsertionState(API::Attachment::InsertionState::Inserted);
     if (RefPtr pageClient = this->pageClient())

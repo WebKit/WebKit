@@ -846,7 +846,7 @@ void WebPageProxy::exitExternalPlayback()
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(MAC)
 
-bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier)
+bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier, WebProcessProxy& process, WebCore::PageIdentifier pageID)
 {
     RetainPtr image = [fileWrapper icon];
     if (!image)
@@ -859,7 +859,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     auto handle = convertedImage->createHandle();
     if (!handle)
         return false;
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTF::move(handle), iconSize), webPageIDInMainFrameProcess());
+    process.send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTF::move(handle), iconSize), pageID);
     return true;
 }
 

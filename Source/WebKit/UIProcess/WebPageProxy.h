@@ -2781,7 +2781,7 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(MAC)
-    bool updateIconForDirectory(NSFileWrapper *, const String&);
+    bool updateIconForDirectory(NSFileWrapper *, const String&, WebProcessProxy&, WebCore::PageIdentifier);
 #endif
 
 #if ENABLE(NOTIFICATIONS)
