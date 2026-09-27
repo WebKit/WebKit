@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing a link inside a cross-origin iframe should show a context menu describing the link, not the iframe.");
+jsTestIsAsync = true;
+
+let contextMenu;
+addEventListener("message", async (event) => {
+    if (event.data !== "ready")
+        return;
+
+    // The iframe is at y = 100, and the link is 20px into it.
+    contextMenu = (await UIHelper.longPressAndGetContextMenuContentAt(120, 145)).contextMenu;
+    shouldBeTrue("contextMenu.isLink");
+    shouldBeEqualToString("contextMenu.url", "http://localhost:8000/site-isolation/resources/simple.html");
+    finishJSTest();
+});
+</script>
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/link-frame.html"></iframe>

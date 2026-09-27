@@ -1,0 +1,6 @@
+<body style="margin: 0; font: 20px monospace;">
+<a id="link" href="http://localhost:8000/site-isolation/resources/simple.html" style="display: block; margin: 20px; width: 200px; height: 50px;">Link in a cross origin iframe</a>
+<script>
+window.top.postMessage("ready", "*");
+</script>
+</body>
