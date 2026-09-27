@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+@keyframes anim {
+    from { color: rgb(0, 0, 0); }
+    to { color: rgb(255, 255, 255); }
+}
+target::before {
+    content: "";
+    color: red;
+}
+target.animating::before {
+    animation: anim 100s linear paused;
+}
+</style>
+<container>
+<target>Text</target>
+<target-sibling></target-sibling>
+</container>
+<script>
+var target = document.querySelector("target");
+var targetSibling = document.querySelector("target-sibling");
+
+test(() => {
+    target.offsetLeft;
+    internals.startTrackingStyleRecalcs();
+    targetSibling.style.backgroundColor = "blue";
+    assert_equals(getComputedStyle(target, "::before").color, "rgb(255, 0, 0)", "getComputedStyle color is correct");
+    assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+}, "No style resolution for a pseudo-element without animations when a sibling is invalid.");
+
+test(() => {
+    target.className = "animating";
+    target.offsetLeft;
+    internals.startTrackingStyleRecalcs();
+    targetSibling.style.backgroundColor = "green";
+    getComputedStyle(target, "::before").color;
+    assert_equals(internals.styleRecalcCount(), 1, "getComputedStyle triggered style resolution for the pseudo-element animation");
+}, "Animation on a pseudo-element forces style resolution in getComputedStyle().");
+</script>

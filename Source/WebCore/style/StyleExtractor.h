@@ -100,7 +100,7 @@ public:
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
     bool propertyMatches(CSSPropertyID, CSSValueID) const;
 
-    static bool updateStyleIfNeededForProperty(Element&, CSSPropertyID);
+    static bool updateStyleIfNeededForProperty(Element&, const std::optional<Style::PseudoElementIdentifier>&, CSSPropertyID);
 
     WEBCORE_EXPORT static WTF::String appleColorFilterSerializationForTesting(Element&);
 
