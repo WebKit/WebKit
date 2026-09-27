@@ -807,6 +807,7 @@ public:
             || a.accentColor != b.accentColor
             || a.insideDefaultButton != b.insideDefaultButton
             || a.insideSubmitButton != b.insideSubmitButton
+            || a.paintOrder != b.paintOrder
     #if ENABLE(DARK_MODE_CSS)
             || a.colorScheme != b.colorScheme
     #endif
