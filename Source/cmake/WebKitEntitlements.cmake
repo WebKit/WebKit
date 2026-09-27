@@ -6,12 +6,13 @@
 #   [BUNDLE_IDENTIFIER <bundle id>]         # if different from target name
 #   [PRODUCT_NAME <product name>]           # if different from bundle identifier
 #   [VARIANT <variant>]                     # XPC service variant to base extra entitlements off of
+#   [NO_RESTRICTED_ENTITLEMENTS]            # omit restricted entitlements even if USE_RESTRICTED_ENTITLEMENTS
 #   [OUTPUT <output path>]                  # if unspecified, a default will be used and set as <target>'s CODE_SIGN_ENTITLEMENTS path
 #   [DEPENDS <file>...]                     # other files the script reads
 # )
 
 function(WEBKIT_GENERATE_ENTITLEMENTS _target)
-    cmake_parse_arguments(_arg "EXTENSION" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "DEPENDS" ${ARGN})
+    cmake_parse_arguments(_arg "EXTENSION;NO_RESTRICTED_ENTITLEMENTS" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "DEPENDS" ${ARGN})
     if (NOT _arg_OUTPUT)
         set(_arg_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements)
         set_target_properties(${_target} PROPERTIES CODE_SIGN_ENTITLEMENTS ${_arg_OUTPUT})
@@ -32,6 +33,12 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
     set(_script ${_arg_USING})
     if (USE_APPLE_INTERNAL_SDK)
         set(_additional_entitlements_script ${WebKitAdditions_HEADERS_DIR}/Scripts/process-additional-entitlements.sh)
+    endif ()
+
+    if (USE_RESTRICTED_ENTITLEMENTS AND NOT _arg_NO_RESTRICTED_ENTITLEMENTS)
+        set(_use_restricted_entitlements YES)
+    else ()
+        set(_use_restricted_entitlements NO)
     endif ()
 
     set(_skip_rosetta_breaking_entitlements "")
@@ -56,7 +63,7 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
             WK_PROCESSED_XCENT_FILE=${_arg_OUTPUT}
             WK_RELOCATABLE_WEBPUSHD=$<IF:$<BOOL:${USE_RELOCATABLE_WEBPUSHD}>,YES,NO>
             WK_USE_FATAL_EXCEPTIONS=$<IF:$<BOOL:${USE_FATAL_EXCEPTIONS}>,YES,NO>
-            WK_USE_RESTRICTED_ENTITLEMENTS=$<IF:$<BOOL:${USE_RESTRICTED_ENTITLEMENTS}>,YES,NO>
+            WK_USE_RESTRICTED_ENTITLEMENTS=${_use_restricted_entitlements}
             WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT=$<IF:$<BOOL:${WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}>,YES,NO>
             WK_XPC_SERVICE_VARIANT=${_arg_VARIANT}
             # -eu flag to fail on build settings which need to be added to this

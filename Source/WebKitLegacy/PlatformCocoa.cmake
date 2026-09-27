@@ -240,16 +240,18 @@ endif ()
 
 set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
 
+# Used to substitute placeholders in Info.plist.
+set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
+set(SHORT_VERSION_STRING "${MACOSX_FRAMEWORK_SHORT_VERSION_STRING}")
+set(PRODUCT_NAME "WebKitLegacy")
+set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKitLegacy")
+
 # Platform-specific configuration, selected by the target SDK.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
 
 target_compile_options(WebKitLegacy PRIVATE
     "$<$<COMPILE_LANGUAGE:OBJC>:-std=gnu99>")
 
-set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
-set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
-set(PRODUCT_NAME "WebKitLegacy")
-set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKitLegacy")
 configure_file(${WEBKITLEGACY_DIR}/mac/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
 execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
 WEBKIT_GET_DEVICE_FAMILY(_device_family)
@@ -1268,6 +1270,9 @@ if (WebKitLegacy_INSTALL_NAME_DIR)
         INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
     )
 endif ()
+
+set_target_properties(WebKitLegacy PROPERTIES
+    MACOSX_FRAMEWORK_INFO_PLIST ${WEBKITLEGACY_DIR}/mac/Info.plist)
 
 set(WebKitLegacy_XIBS
     ${WEBKITLEGACY_DIR}/en.lproj/WebJavaScriptTextInputPanel.xib
