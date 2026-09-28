@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WPEQtUnderlayRenderNode.h"
 
-#include "WPEQtView.h"
 #include "WPEViewQtQuick.h"
 
+#include <QCoreApplication>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 
@@ -66,58 +66,51 @@ static WTF::UnixFileDescriptor wpeQtUnderlayCreateReleaseFence(QOpenGLFunctions*
 
 WPEQtUnderlayRenderNode::~WPEQtUnderlayRenderNode()
 {
-    releaseResources();
+    QObject::disconnect(m_frameSwappedConnection);
+    if (!m_wpeView)
+        return;
+
+    if (m_frameNeedsAck && !m_frameReadyForAck)
+        wpe_view_qtquick_rollback_frame(m_wpeView.get());
+    if (m_releaseFence)
+        wpe_view_qtquick_set_frame_release_fence(m_wpeView.get(), m_releaseFence.release());
+    if (m_frameReadyForAck) {
+        QMetaObject::invokeMethod(QCoreApplication::instance(), [view = m_wpeView] {
+            wpe_view_qtquick_did_update_scene(view.get());
+            }, Qt::QueuedConnection);
+    }
 }
 
-void WPEQtUnderlayRenderNode::setView(WPEQtView* qtView, WPEViewQtQuick* wpeView)
+void WPEQtUnderlayRenderNode::setView(QQuickWindow* window, WPEViewQtQuick* wpeView)
 {
-    if (m_wpeView.get() != wpeView) {
-        releaseResources();
-        m_wpeView = wpeView;
+    // one node per view
+    ASSERT(!m_wpeView || m_wpeView.get() == wpeView);
+
+    m_wpeView = wpeView;
+    if (!m_frameSwappedConnection) {
+        m_frameSwappedConnection = QObject::connect(window, &QQuickWindow::frameSwapped, window, [this] {
+            frameSwapped();
+        }, Qt::DirectConnection);
     }
-    m_qtView = qtView;
 }
 
 void WPEQtUnderlayRenderNode::releaseResources()
 {
-    if (m_frameNeedsAck && m_wpeView)
-        wpe_view_qtquick_rollback_frame(m_wpeView.get());
-
     m_blitter.invalidate();
-    m_buffer = nullptr;
-    m_releaseFence = { };
-    m_qtView = nullptr;
-    m_frameNeedsAck = false;
-    m_frameReadyForAck = false;
 }
 
 void WPEQtUnderlayRenderNode::advanceFrame()
 {
-    if (!m_wpeView)
+    if (!m_wpeView || !m_blitter.initialize())
         return;
 
-    if (m_frameNeedsAck && !m_frameReadyForAck) {
-        m_buffer = nullptr;
-        wpe_view_qtquick_rollback_frame(m_wpeView.get());
-        m_frameNeedsAck = false;
-    }
-
-    if (!m_blitter.initialize())
-        return;
-
-    if (m_frameReadyForAck) {
-        if (m_releaseFence)
-            wpe_view_qtquick_set_frame_release_fence(m_wpeView.get(), m_releaseFence.release());
-        if (m_qtView)
-            m_qtView->triggerDidUpdateScene();
-
-        m_frameReadyForAck = false;
-        m_frameNeedsAck = false;
-    }
+    if (m_releaseFence)
+        wpe_view_qtquick_set_frame_release_fence(m_wpeView.get(), m_releaseFence.release());
 
     EGLImage image = EGL_NO_IMAGE_KHR;
     gboolean didPromote = FALSE;
     GUniqueOutPtr<GError> error;
+    // WPE returns the committed buffer while it's acknowledgment is pending.
     GRefPtr<WPEBuffer> buffer = adoptGRef(wpe_view_qtquick_acquire_frame(m_wpeView.get(), &image, &didPromote, &error.outPtr()));
     if (!buffer)
         return;
@@ -129,7 +122,8 @@ void WPEQtUnderlayRenderNode::advanceFrame()
     }
 
     m_buffer = WTF::move(buffer);
-    m_frameNeedsAck = didPromote;
+    if (didPromote)
+        m_frameNeedsAck = true;
 }
 
 void WPEQtUnderlayRenderNode::render(const RenderState* state)
@@ -157,10 +151,18 @@ void WPEQtUnderlayRenderNode::render(const RenderState* state)
     m_releaseFence = wpeQtUnderlayCreateReleaseFence(gl);
     if (!m_releaseFence)
         gl->glFinish();
-    m_frameReadyForAck = true;
-    // The frame is acknowledged from the next synchronization, which only runs
-    // when the item is updated. Schedule that update here, otherwise WPE waits
-    // for an acknowledgement that never arrives and stops producing frames.
-    if (m_qtView)
-        m_qtView->triggerUpdateScene();
+    m_frameReadyForAck = m_frameNeedsAck;
+}
+
+void WPEQtUnderlayRenderNode::frameSwapped()
+{
+    if (!m_frameReadyForAck)
+        return;
+
+    m_frameNeedsAck = false;
+    m_frameReadyForAck = false;
+    // Capturing GRefPtr keeps the view alive until the queued call runs.
+    QMetaObject::invokeMethod(QCoreApplication::instance(), [view = m_wpeView] {
+        wpe_view_qtquick_did_update_scene(view.get());
+        }, Qt::QueuedConnection);
 }
