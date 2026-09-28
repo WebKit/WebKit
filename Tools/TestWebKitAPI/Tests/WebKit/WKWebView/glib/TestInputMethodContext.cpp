@@ -528,6 +528,12 @@ public:
         return WebViewTest::javascriptResultToNumber(jsResult);
     }
 
+    unsigned editableSelectionEnd()
+    {
+        auto* jsResult = runJavaScriptAndWaitUntilFinished("document.getElementById('editable').selectionEnd", nullptr);
+        return WebViewTest::javascriptResultToNumber(jsResult);
+    }
+
     void keyStrokeAndWaitForEvents(unsigned keyval, unsigned eventsCount, OptionSet<Modifiers> modifiers = OptionSet<Modifiers>())
     {
         m_eventsExpected = eventsCount;
@@ -1208,8 +1214,38 @@ static void testWebKitInputMethodContextPreeditCursor(InputMethodTest* test, gco
     // The composition starts where the input method said its caret was, one code unit in. With the
     // caret left at the end of the preedit this would be 3.
     g_assert_cmpuint(test->editableSelectionStart(), ==, 1);
+    g_assert_cmpuint(test->editableSelectionEnd(), ==, 1);
 
     test->keyStrokeAndWaitForEvents(KEY(Escape), 3);
+}
+
+static void testWebKitInputMethodContextPreeditOverSelection(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(testHTML, nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("window.inputTypes = []; input.addEventListener('beforeinput', event => inputTypes.push(event.inputType)); input.value = 'Hello world'; input.setSelectionRange(6, 11)", nullptr);
+
+    test->keyStrokeAndWaitForEvents(KEY(w), 4, { WebViewTest::Modifiers::Control, WebViewTest::Modifiers::Shift });
+    test->m_events.clear();
+    {
+        auto editableValue = test->editableValue();
+        g_assert_cmpstr(editableValue.get(), ==, "Hello w");
+        auto* jsResult = test->runJavaScriptAndWaitUntilFinished("JSON.stringify(inputTypes)", nullptr);
+        GUniquePtr<char> inputTypes(WebViewTest::javascriptResultToCString(jsResult));
+        g_assert_cmpstr(inputTypes.get(), ==, "[\"insertCompositionText\"]");
+    }
+
+    test->keyStrokeAndWaitForEvents(KEY(Escape), 3);
+    test->m_events.clear();
+    {
+        auto editableValue = test->editableValue();
+        g_assert_cmpstr(editableValue.get(), ==, "Hello ");
+        auto* jsResult = test->runJavaScriptAndWaitUntilFinished("JSON.stringify(inputTypes)", nullptr);
+        GUniquePtr<char> inputTypes(WebViewTest::javascriptResultToCString(jsResult));
+        g_assert_cmpstr(inputTypes.get(), ==, "[\"insertCompositionText\",\"deleteCompositionText\"]");
+    }
 }
 
 static void testWebKitInputMethodContextFocusChange(InputMethodTest* test, gconstpointer)
@@ -1448,6 +1484,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
     InputMethodTest::add("WebKitInputMethodContext", "cursor-area", testWebKitInputMethodContextCursorArea);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-cursor", testWebKitInputMethodContextPreeditCursor);
+    InputMethodTest::add("WebKitInputMethodContext", "preedit-over-selection", testWebKitInputMethodContextPreeditOverSelection);
     InputMethodTest::add("WebKitInputMethodContext", "focus-change", testWebKitInputMethodContextFocusChange);
     InputMethodTest::add("WebKitInputMethodContext", "focus-interaction", testWebKitInputMethodContextFocusInteraction);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
