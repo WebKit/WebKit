@@ -28,6 +28,7 @@
 
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEWaylandCursorTheme.h"
+#include <glib.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
@@ -54,11 +55,11 @@ void WaylandCursor::setFromName(UTF8CStringView name, double scale)
     if (!m_theme)
         return;
 
-    if (!g_strcmp0(m_name.get(), name.utf8()))
+    if (m_name == name)
         return;
 
-    m_name.reset(g_strdup(name.utf8()));
-    if (!g_strcmp0(m_name.get(), "none")) {
+    m_name = UTF8CString { name.span() };
+    if (m_name == "none"_s) {
         m_cursorChanged = true;
         update();
         wl_surface_attach(m_surface, nullptr, 0, 0);
@@ -87,7 +88,7 @@ void WaylandCursor::setFromName(UTF8CStringView name, double scale)
 
 void WaylandCursor::setFromBuffer(struct wl_buffer* buffer, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY)
 {
-    m_name = nullptr;
+    m_name = { };
     m_hotspot.x = hotspotX;
     m_hotspot.y = hotspotY;
     m_cursorChanged = true;

@@ -26,7 +26,7 @@
 #include <optional>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/UTF8CStringView.h>
 
 namespace WPE {
@@ -37,7 +37,7 @@ public:
     static std::unique_ptr<CursorTheme> create(const char* path, uint32_t size);
     static std::unique_ptr<CursorTheme> create();
 
-    CursorTheme(GUniquePtr<char>&&, uint32_t, Vector<GUniquePtr<char>>&&);
+    CursorTheme(UTF8CString&&, uint32_t, Vector<UTF8CString>&&);
 
     uint32_t size() const { return m_size; }
 
@@ -52,9 +52,9 @@ public:
     Vector<CursorImage> loadCursor(UTF8CStringView, uint32_t size, std::optional<uint32_t> maxImages = std::nullopt);
 
 private:
-    GUniquePtr<char> m_path;
+    UTF8CString m_path;
     uint32_t m_size { 0 };
-    Vector<GUniquePtr<char>> m_inherited;
+    Vector<UTF8CString> m_inherited;
 };
 
 } // namespace WPE

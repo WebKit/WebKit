@@ -40,6 +40,7 @@
 #include <wtf/Vector.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>

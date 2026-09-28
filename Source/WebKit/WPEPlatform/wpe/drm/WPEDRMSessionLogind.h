@@ -27,6 +27,7 @@
 
 #if ENABLE(JOURNALD_LOG)
 #include "WPEDRMSession.h"
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -37,16 +38,16 @@ namespace DRM {
 class SessionLogind final : public Session {
 public:
     static std::unique_ptr<Session> create();
-    SessionLogind(GRefPtr<GDBusProxy>&&, GUniquePtr<char>&&);
+    SessionLogind(GRefPtr<GDBusProxy>&&, GMallocString&&);
     ~SessionLogind();
 
 private:
-    const char* seatID() const LIFETIME_BOUND final { return m_seatID.get(); }
+    const char* seatID() const LIFETIME_BOUND final { return m_seatID.utf8(); }
     int openDevice(const char*, int) final;
     int closeDevice(int) final;
 
     GRefPtr<GDBusProxy> m_sessionProxy;
-    GUniquePtr<char> m_seatID;
+    GMallocString m_seatID;
     bool m_inControl { false };
 };
 

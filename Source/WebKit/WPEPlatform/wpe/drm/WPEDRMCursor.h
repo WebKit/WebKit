@@ -27,7 +27,7 @@
 
 #include <gbm.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/UTF8CStringView.h>
 
 namespace WPE {
@@ -65,7 +65,7 @@ private:
     uint32_t m_deviceHeight { 0 };
     std::unique_ptr<CursorTheme> m_theme;
     bool m_isHidden { false };
-    GUniquePtr<char> m_name;
+    UTF8CString m_name;
     std::unique_ptr<Buffer> m_buffer;
     struct {
         uint32_t x { 0 };

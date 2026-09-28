@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <wayland-client-protocol.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <xkbcommon/xkbcommon.h>
 

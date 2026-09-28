@@ -29,16 +29,17 @@
 #include <array>
 #include <stdio.h>
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CursorTheme);
 
-static GUniquePtr<char> cursorsPath(const char* basePath, Vector<GUniquePtr<char>>& inherited)
+static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& inherited)
 {
     auto inheritedThemes = [&]() -> GUniquePtr<char*> {
-        GUniquePtr<char> index(g_build_filename(basePath, "index.theme", nullptr));
+        GUniquePtr<char> index(g_build_filename(basePath.utf8(), "index.theme", nullptr));
         if (!g_file_test(index.get(), G_FILE_TEST_EXISTS))
             return nullptr;
 
@@ -49,42 +50,42 @@ static GUniquePtr<char> cursorsPath(const char* basePath, Vector<GUniquePtr<char
         return GUniquePtr<char*>(g_key_file_get_string_list(keyFile.get(), "Icon Theme", "Inherits", nullptr, nullptr));
     };
 
-    String pathOfIndex = FileSystem::pathByAppendingComponent(String::fromUTF8(basePath), "index.theme"_s);
+    String pathOfIndex = FileSystem::pathByAppendingComponent(String::fromUTF8(basePath.span()), "index.theme"_s);
     String canonicalPathOfIndex = FileSystem::realPath(pathOfIndex);
     GUniquePtr<char> canonicalDirectoryOfIndex(g_path_get_dirname(canonicalPathOfIndex.utf8().legacyCStringPointer()));
-    const char* actualBasePath = g_file_test(canonicalDirectoryOfIndex.get(), G_FILE_TEST_IS_DIR) ? canonicalDirectoryOfIndex.get() : basePath;
-    GUniquePtr<char> baseCursorsPath(g_build_filename(actualBasePath, "cursors", nullptr));
+    auto actualBasePath = g_file_test(canonicalDirectoryOfIndex.get(), G_FILE_TEST_IS_DIR) ? UTF8CStringView::unsafeFromUTF8(canonicalDirectoryOfIndex.get()) : basePath;
+    GUniquePtr<char> baseCursorsPath(g_build_filename(actualBasePath.utf8(), "cursors", nullptr));
 
     if (auto inherits = inheritedThemes()) {
         for (unsigned i = 0; inherits.get()[i]; ++i) {
-            GUniquePtr<char> parentPath(g_path_get_dirname(actualBasePath));
+            GUniquePtr<char> parentPath(g_path_get_dirname(actualBasePath.utf8()));
             GUniquePtr<char> inheritedBasePath(g_build_filename(parentPath.get(), inherits.get()[i], nullptr));
-            auto path = cursorsPath(inheritedBasePath.get(), inherited);
-            auto exists = path && inherited.containsIf([&](const auto& item) {
-                return !g_strcmp0(item.get(), path.get());
+            auto path = cursorsPath(UTF8CStringView::unsafeFromUTF8(inheritedBasePath.get()), inherited);
+            auto exists = !path.isNull() && inherited.containsIf([&](const auto& item) {
+                return item == path;
             });
-            if (path && !exists)
+            if (!path.isNull() && !exists)
                 inherited.append(WTF::move(path));
         }
     }
 
     if (g_file_test(baseCursorsPath.get(), G_FILE_TEST_IS_DIR))
-        return baseCursorsPath;
+        return UTF8CString { byteCast<char8_t>(baseCursorsPath.get()) };
 
-    return nullptr;
+    return { };
 }
 
-static std::unique_ptr<CursorTheme> tryCreateTheme(const char* basePath, uint32_t size)
+static std::unique_ptr<CursorTheme> tryCreateTheme(UTF8CStringView basePath, uint32_t size)
 {
-    if (!g_file_test(basePath, G_FILE_TEST_IS_DIR))
+    if (!g_file_test(basePath.utf8(), G_FILE_TEST_IS_DIR))
         return nullptr;
 
-    Vector<GUniquePtr<char>> inheritedThemes;
+    Vector<UTF8CString> inheritedThemes;
     auto path = cursorsPath(basePath, inheritedThemes);
-    if (!path && inheritedThemes.isEmpty())
+    if (path.isNull() && inheritedThemes.isEmpty())
         return nullptr;
 
-    if (!path) {
+    if (path.isNull()) {
         // If there's no cursors path, use the first inherited theme.
         path = WTF::move(inheritedThemes[0]);
         inheritedThemes.removeAt(0);
@@ -97,17 +98,17 @@ std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size
 {
     auto tryLoadTheme = [](const char* name, uint32_t size) -> std::unique_ptr<CursorTheme> {
         GUniquePtr<char> path(g_build_filename(g_get_user_data_dir(), "icons", name, nullptr));
-        if (auto theme = tryCreateTheme(path.get(), size))
+        if (auto theme = tryCreateTheme(UTF8CStringView::unsafeFromUTF8(path.get()), size))
             return theme;
 
         path.reset(g_build_filename(g_get_home_dir(), ".icons", name, nullptr));
-        if (auto theme = tryCreateTheme(path.get(), size))
+        if (auto theme = tryCreateTheme(UTF8CStringView::unsafeFromUTF8(path.get()), size))
             return theme;
 
         auto* dataDirs = g_get_system_data_dirs();
         for (unsigned i = 0; dataDirs[i]; ++i) {
             path.reset(g_build_filename(dataDirs[i], "icons", name, nullptr));
-            if (auto theme = tryCreateTheme(path.get(), size))
+            if (auto theme = tryCreateTheme(UTF8CStringView::unsafeFromUTF8(path.get()), size))
                 return theme;
         }
 
@@ -135,7 +136,7 @@ std::unique_ptr<CursorTheme> CursorTheme::create()
     return create("default", 24);
 }
 
-CursorTheme::CursorTheme(GUniquePtr<char>&& path, uint32_t size, Vector<GUniquePtr<char>>&& inherited)
+CursorTheme::CursorTheme(UTF8CString&& path, uint32_t size, Vector<UTF8CString>&& inherited)
     : m_path(WTF::move(path))
     , m_size(size)
     , m_inherited(WTF::move(inherited))
@@ -270,11 +271,11 @@ static std::optional<CursorTheme::CursorImage> readImage(FILE* file, const Xcuso
 
 Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(UTF8CStringView name, uint32_t size, std::optional<uint32_t> maxImages)
 {
-    GUniquePtr<char> path(g_build_filename(m_path.get(), name.utf8(), nullptr));
+    GUniquePtr<char> path(g_build_filename(m_path.legacyCStringPointer(), name.utf8(), nullptr));
     if (!g_file_test(path.get(), G_FILE_TEST_EXISTS)) {
         path = nullptr;
         for (auto& theme : m_inherited) {
-            path.reset(g_build_filename(theme.get(), name.utf8(), nullptr));
+            path.reset(g_build_filename(theme.legacyCStringPointer(), name.utf8(), nullptr));
             if (g_file_test(path.get(), G_FILE_TEST_EXISTS))
                 break;
             path = nullptr;
