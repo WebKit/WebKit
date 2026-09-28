@@ -239,6 +239,15 @@ void CanvasPath::rect(float x, float y, float width, float height)
         return;
     }
 
+    if (width < 0 || height < 0) {
+        m_path.moveTo(FloatPoint(x, y));
+        m_path.addLineTo(FloatPoint(x + width, y));
+        m_path.addLineTo(FloatPoint(x + width, y + height));
+        m_path.addLineTo(FloatPoint(x, y + height));
+        m_path.closeSubpath();
+        return;
+    }
+
     m_path.addRect(FloatRect(x, y, width, height));
 }
 
