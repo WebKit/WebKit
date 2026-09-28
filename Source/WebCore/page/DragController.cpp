@@ -267,8 +267,11 @@ DragEventTargetData DragController::performDragOperation(DragData&& dragData, Lo
     if (RefPtr document = m_documentUnderMouse)
         shouldOpenExternalURLsPolicy = document->shouldOpenExternalURLsPolicyToPropagate();
 
-    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get())))
-        return { remoteFrame->frameID() };
+    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get()))) {
+        if (auto remoteUserInputEventData = frame.eventHandler().userInputEventDataForRemoteFrame(remoteFrame.get(), hitTestResult.roundedPointInInnerNodeFrame()))
+            return *remoteUserInputEventData;
+        return { DragEventHandled::No };
+    }
 
     if (m_dragDestinationActionMask.contains(DragDestinationAction::DHTML) && dragIsHandledByDocument(m_dragHandlingMethod) && frame.view()) {
         client().willPerformDragDestinationAction(DragDestinationAction::DHTML, dragData);
@@ -458,7 +461,7 @@ DragHandlingMethod DragController::tryDocumentDrag(LocalFrame& frame, const Drag
         return DragHandlingMethod::NonDefault;
     }
 
-    if (destinationActionMask.contains(DragDestinationAction::Edit) && canProcessDrag(dragData)) {
+    if (destinationActionMask.contains(DragDestinationAction::Edit) && canProcessDrag(frame, dragData)) {
         if (dragData.containsColor()) {
             dragOperation = DragOperation::Generic;
             return DragHandlingMethod::SetColor;
@@ -616,7 +619,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         return fileInput->receiveDroppedFiles(dragData);
     }
 
-    if (!m_page->dragController().canProcessDrag(dragData))
+    if (!canProcessDrag(*innerFrame, dragData))
         return false;
 
     VisibleSelection dragCaret = m_page->dragCaretController().caretPosition();
@@ -680,18 +683,16 @@ bool DragController::concludeEditDrag(const DragData& dragData)
     return true;
 }
 
-bool DragController::canProcessDrag(const DragData& dragData)
+bool DragController::canProcessDrag(LocalFrame& frame, const DragData& dragData)
 {
-    RefPtr localMainFrame = m_page->localMainFrame();
-    if (!localMainFrame)
-        return false;
-    IntPoint point = protect(localMainFrame->view())->windowToContents(dragData.clientPosition());
+    Ref rootFrame = frame.rootFrame();
+    IntPoint point = protect(rootFrame->view())->windowToContents(dragData.clientPosition());
     HitTestResult result = HitTestResult(point);
-    if (!localMainFrame->contentRenderer())
+    if (!rootFrame->contentRenderer())
         return false;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
+    result = rootFrame->eventHandler().hitTestResultAtPoint(point, hitType);
 
     RefPtr dragNode = result.innerNonSharedNode();
     if (!dragNode)

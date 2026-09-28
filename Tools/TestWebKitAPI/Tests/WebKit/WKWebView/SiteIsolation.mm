@@ -9588,6 +9588,27 @@ TEST(SiteIsolation, DragAndDrop)
     NSArray *registeredTypes = [[simulator sourceItemProviders].firstObject registeredTypeIdentifiers];
     EXPECT_WK_STREQ(UTTypeURL.identifier, [registeredTypes firstObject]);
 }
+
+TEST(SiteIsolation, DropTextOnContentEditableInCrossOriginSubframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 100px; width: 300px; height: 200px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0'><div id='editor' contenteditable style='width: 300px; height: 100px;'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 400));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerObject:@"Hello" visibility:NSItemProviderRepresentationVisibilityAll];
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(250, 150) to:CGPointMake(250, 150)];
+
+    EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"editor.textContent" inFrame:[webView firstChildFrame]]);
+}
 #endif
 
 TEST(SiteIsolation, FramesDuringProvisionalNavigation)
@@ -11532,6 +11553,58 @@ TEST(SiteIsolation, MouseClickAfterIncompleteDragging)
     RetainPtr clickCount = [webView objectByEvaluatingJavaScript:@"clickCount" inFrame:[webView firstChildFrame]];
 
     EXPECT_EQ([clickCount intValue], 1);
+}
+
+static constexpr auto mainFrameWithOffsetCrossOriginSubframe = "<body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 100px; width: 300px; height: 200px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s;
+
+TEST(SiteIsolation, DropFileOnFileInputInCrossOriginSubframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithOffsetCrossOriginSubframe } },
+        { "/subframe"_s, { "<body style='margin: 0'><input type='file' style='width: 300px; height: 200px;'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [simulator writeFiles:@[ [NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"] ]];
+    [simulator runFrom:CGPointMake(250, 150) to:CGPointMake(250, 150)];
+
+    EXPECT_WK_STREQ("apple.gif", [webView stringByEvaluatingJavaScript:@"Array.from(document.querySelector('input').files, (file) => file.name).join()" inFrame:[webView firstChildFrame]]);
+}
+
+TEST(SiteIsolation, DropTextOnContentEditableInCrossOriginSubframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithOffsetCrossOriginSubframe } },
+        { "/subframe"_s, { "<body style='margin: 0'><div id='editor' contenteditable style='width: 300px; height: 100px;'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard writeObjects:@[ @"Hello" ]];
+    [simulator setExternalDragPasteboard:pasteboard];
+    [simulator runFrom:CGPointMake(250, 150) to:CGPointMake(250, 150)];
+
+    EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"editor.textContent" inFrame:[webView firstChildFrame]]);
 }
 
 TEST(SiteIsolation, DragOverStateInfo)
