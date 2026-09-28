@@ -2509,12 +2509,12 @@ void RenderLayerBacking::updateSeparatedProperties()
             return false;
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return false;
-        auto* image = renderImage->cachedImage()->imageForRenderer(renderImage);
-        if (!image)
+        RefPtr bitmapImage = dynamicDowncast<BitmapImage>(renderImage->cachedImage()->imageForRenderer(renderImage));
+        if (!bitmapImage)
             return false;
-        if (image == &Image::nullImage())
+        if (bitmapImage.get() == &BitmapImage::nullImage())
             return false;
-        return !image->isAnimated() && image->isBitmapImage() && image->nativeImage();
+        return !bitmapImage->isAnimated() && bitmapImage->nativeImage();
     }();
 
     m_graphicsLayer->setIsSeparatedImage(isSeparatedImage);

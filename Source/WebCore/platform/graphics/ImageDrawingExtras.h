@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,29 +24,41 @@
 
 #pragma once
 
-#include "Color.h"
-#include "GeneratedImage.h"
+#include <WebCore/PlatformExportMacros.h>
+#include <cstdint>
+#include <memory>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class FloatSize;
-
-class ColorImageGeneratedImage final : public GeneratedImage {
+// Additional, optional information a caller can hand to Image::draw() for image kinds
+// that can make use of it. The base type carries nothing itself, it exists so that
+// platform code can pass information through without knowing what is in it.
+class ImageDrawingExtras {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageDrawingExtras, WEBCORE_EXPORT);
 public:
-    static Ref<ColorImageGeneratedImage> create(const Color& color, const FloatSize& size)
+    enum class Type : uint8_t {
+        Style,
+    };
+
+    virtual ~ImageDrawingExtras() = default;
+
+    Type type() const { return m_type; }
+
+    virtual std::unique_ptr<ImageDrawingExtras> copy() const = 0;
+    bool operator==(const ImageDrawingExtras& other) const { return m_type == other.m_type && equals(other); }
+
+protected:
+    explicit ImageDrawingExtras(Type type)
+        : m_type(type)
     {
-        return adoptRef(*new ColorImageGeneratedImage(color, size));
     }
+    ImageDrawingExtras(const ImageDrawingExtras&) = default;
+
+    virtual bool equals(const ImageDrawingExtras&) const = 0;
 
 private:
-    ColorImageGeneratedImage(const Color&, const FloatSize&);
-
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
-    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
-
-    void dump(WTF::TextStream&) const override;
-
-    Color m_color;
+    Type m_type;
 };
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
+#include "BitmapImage.h"
 #include "BorderShape.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
@@ -339,14 +340,15 @@ static bool cachedImageIsPhoto(const CachedImage& cachedImage)
     if (cachedImage.errorOccurred())
         return false;
 
-    RefPtr image = cachedImage.image();
-    if (!image || !image->isBitmapImage())
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(cachedImage.image());
+    if (!bitmapImage)
         return false;
 
-    if (image->nativeImage() && image->nativeImage()->hasAlpha())
+    RefPtr nativeImage = bitmapImage->nativeImage();
+    if (!nativeImage)
         return false;
 
-    return true;
+    return !nativeImage->hasAlpha();
 }
 
 static RefPtr<Image> findIconImage(const RenderObject& renderer)
@@ -359,8 +361,18 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!image)
             return nullptr;
 
-        if (image->isSVGImageForContainer()
-            || (image->isBitmapImage() && image->nativeImage() && image->nativeImage()->hasAlpha()))
+        if (image->isSVGImageForContainer())
+            return image;
+
+        RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image);
+        if (!bitmapImage)
+            return nullptr;
+
+        RefPtr nativeImage = bitmapImage->nativeImage();
+        if (!nativeImage)
+            return nullptr;
+
+        if (nativeImage->hasAlpha())
             return image;
     }
 

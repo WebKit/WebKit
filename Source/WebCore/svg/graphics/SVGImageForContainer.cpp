@@ -41,18 +41,19 @@ FloatSize SVGImageForContainer::size(ImageOrientation) const
     return FloatSize(roundedIntSize(scaledContainerSize));
 }
 
-ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     return protect(m_image)->drawForContainer(context, m_containerContext, dstRect, srcRect, options);
 }
 
-void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void SVGImageForContainer::drawPattern(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     protect(m_image)->drawPatternForContainer(context, m_containerContext, srcRect, patternTransform, phase, spacing, dstRect, options);
 }
 
-RefPtr<NativeImage> SVGImageForContainer::currentNativeImage()
+// Rasterized at the container's size, as it is drawn.
+RefPtr<NativeImage> SVGImageForContainer::currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras*)
 {
     return protect(m_image)->nativeImage(size());
 }

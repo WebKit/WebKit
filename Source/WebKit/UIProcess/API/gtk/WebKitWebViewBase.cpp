@@ -3778,7 +3778,7 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
         return;
     }
 
-    RefPtr nativeImage = cursor.image()->currentNativeImage();
+    RefPtr nativeImage = cursor.image()->currentNativeImage(WebCore::ConcreteObjectSize::fixed(cursor.image()->size()));
     if (!nativeImage)
         return;
 

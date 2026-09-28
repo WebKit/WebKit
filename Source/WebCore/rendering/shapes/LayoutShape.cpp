@@ -218,7 +218,7 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
 
     GraphicsContext& graphicsContext = imageBuffer->context();
     if (image)
-        graphicsContext.drawImage(*image, IntRect({ }, snappedPhysicalImageSize));
+        graphicsContext.drawImage(*image, ConcreteObjectSize::fixed(image->size()), IntRect({ }, snappedPhysicalImageSize));
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, snappedPhysicalImageSize });

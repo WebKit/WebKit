@@ -157,7 +157,8 @@
     if (!cachedImage || !cachedImage->hasImage())
         return nullptr;
     
-    auto nativeImage = protect(cachedImage->image())->nativeImage();
+    Ref image = *cachedImage->image();
+    auto nativeImage = image->nativeImage(WebCore::ConcreteObjectSize::fixed(image->size()));
     if (!nativeImage)
         return nullptr;
 

@@ -286,7 +286,7 @@ FullScreenMediaDetails WebFullScreenManager::getImageMediaDetails(CheckedPtr<Ren
         }
     }
 
-    RefPtr nativeImage = image->nativeImage();
+    RefPtr nativeImage = image->nativeImage(ConcreteObjectSize::fixed(image->size()));
     if (!nativeImage)
         return { };
 

@@ -1354,7 +1354,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
-        auto newImage = image->currentNativeImage();
+        auto newImage = image->currentNativeImage(ConcreteObjectSize::fixed(image->size()));
         if (!newImage)
             return;
 

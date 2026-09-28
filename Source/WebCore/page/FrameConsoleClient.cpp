@@ -382,7 +382,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                         if (RefPtr cachedImage = imageElement.cachedImage()) {
                             if (RefPtr image = cachedImage->image(); image && image != &Image::nullImage()) {
                                 snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
-                                snapshot->context().drawImage(*image, FloatPoint(0, 0));
+                                snapshot->context().drawImage(*image, ConcreteObjectSize::fixed(image->size()), FloatPoint(0, 0));
                             }
                         }
                     };

@@ -161,7 +161,7 @@ TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
 
     auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
 
-    ctx.drawImage(gradientImage.get(), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
+    ctx.drawImage(gradientImage.get(), ConcreteObjectSize::fixed(gradientImage->size()), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
 
     // The primary context should be red.
     CGContextFlush(primaryCGContext.get());

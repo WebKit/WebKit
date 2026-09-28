@@ -96,7 +96,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
 
 DragImageRef createDragImageFromImage(Image* image, ImageOrientation, GraphicsClient*, float)
 {
-    return image->currentNativeImage()->platformImage();
+    return image->currentNativeImage(ConcreteObjectSize::fixed(image->size()))->platformImage();
 }
 
 DragImageRef createDragImageIconForCachedImageFilename(const String&)

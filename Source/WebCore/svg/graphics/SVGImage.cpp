@@ -257,7 +257,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
     applyLinkParameters(containerContext.linkParameters);
     protect(frameView())->scrollToFragment(containerContext.initialFragmentURL);
 
-    return draw(context, dstRect, scaledSrc, options);
+    return draw(context, ConcreteObjectSize::fixed(size()), dstRect, scaledSrc, options);
 }
 
 void SVGImage::applyLinkParameters(const Style::LinkParameters& parameters)
@@ -303,9 +303,9 @@ bool SVGImage::hasHDRContent() const
     return false;
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(const ColorSpace& colorSpace)
+RefPtr<NativeImage> SVGImage::nativeImage(ConcreteObjectSize concreteObjectSize, const ColorSpace& colorSpace, const ImageDrawingExtras*)
 {
-    return nativeImage(size(), colorSpace);
+    return nativeImage(concreteObjectSize.size(), colorSpace);
 }
 
 RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpace& colorSpace)
@@ -327,24 +327,19 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpac
     setContainerSize(size);
 
     auto imageRect = FloatRect { { }, size };
-    imageBuffer->context().drawImage(*this, imageRect, imageRect);
+    imageBuffer->context().drawImage(*this, ConcreteObjectSize::fixed(size), imageRect, imageRect);
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(ConcreteObjectSize concreteObjectSize, const ColorSpace& colorSpace)
+RefPtr<NativeImage> SVGImage::currentNativeImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
-    return nativeImage(concreteObjectSize.size(), colorSpace);
+    return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
 }
 
-RefPtr<NativeImage> SVGImage::currentNativeImage(ConcreteObjectSize concreteObjectSize)
+RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSize concreteObjectSize, ImageOrientation, const ImageDrawingExtras* extras)
 {
-    return nativeImage(concreteObjectSize);
-}
-
-RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSize concreteObjectSize, ImageOrientation)
-{
-    return nativeImage(concreteObjectSize);
+    return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
 }
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& srcRect,
@@ -380,7 +375,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const Container
     context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
-ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;

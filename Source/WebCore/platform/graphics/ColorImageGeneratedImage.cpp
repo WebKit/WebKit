@@ -40,13 +40,13 @@ ColorImageGeneratedImage::ColorImageGeneratedImage(const Color& color, const Flo
     setContainerSize(size);
 }
 
-ImageDrawResult ColorImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect&, ImagePaintingOptions options)
+ImageDrawResult ColorImageGeneratedImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect&, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     Image::fillWithSolidColor(context, destinationRect, m_color, options.compositeOperator());
     return ImageDrawResult::DidDraw;
 }
 
-void ColorImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void ColorImageGeneratedImage::drawPattern(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     if (spacing.isZero()) {
         Image::fillWithSolidColor(context, destinationRect, m_color, options.compositeOperator());

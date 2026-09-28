@@ -642,7 +642,7 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
         return;
     }
 
-    auto nativeImage = cursor.image()->currentNativeImage();
+    auto nativeImage = cursor.image()->currentNativeImage(WebCore::ConcreteObjectSize::fixed(cursor.image()->size()));
     if (!nativeImage)
         return;
 

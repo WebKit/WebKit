@@ -79,7 +79,7 @@ bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     }
 
     auto sourceRect = FloatRect { { }, imageSize };
-    gc.drawImage(image(), destinationRect, sourceRect, { CompositeOperator::Copy });
+    gc.drawImage(image(), ConcreteObjectSize::fixed(imageSize), destinationRect, sourceRect, { CompositeOperator::Copy });
     return true;
 }
 

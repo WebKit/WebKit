@@ -68,7 +68,7 @@ static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, Compos
     if (targetSize != imageSize)
         context.scale(targetSize / imageSize);
 
-    context.drawImage(image, IntPoint(), options);
+    context.drawImage(image, ConcreteObjectSize::fixed(imageSize), IntPoint(), options);
 
     if (useTransparencyLayer)
         context.endTransparencyLayer();
@@ -91,7 +91,7 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext& context)
     context.endTransparencyLayer();
 }
 
-ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
@@ -107,7 +107,7 @@ ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const Fl
     return ImageDrawResult::DidDraw;
 }
 
-void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras*)
 {
     auto imageBuffer = context.createImageBuffer(size());
     if (!imageBuffer)

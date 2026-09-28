@@ -57,15 +57,15 @@ public:
         protect(m_image)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, ImagePaintingOptions = { }) final;
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
-    void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions = { }) final;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
     bool currentFrameIsComplete() const final { return !!m_image; }
 
-    RefPtr<NativeImage> currentNativeImage() final;
+    RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     void setInvertContent(bool invert) { m_containerContext.invertContent = invert; }

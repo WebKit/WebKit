@@ -134,7 +134,7 @@ public:
             return nullptr;
 
         auto writeIconToTemporaryFile = [](const RefPtr<WebCore::Image>& icon) -> UTF8CString {
-            auto nativeImage = icon->nativeImage();
+            auto nativeImage = icon->nativeImage(WebCore::ConcreteObjectSize::fixed(icon->size()));
             if (!nativeImage)
                 return { };
 
@@ -180,7 +180,7 @@ public:
             return nullptr;
 
         auto writeIconToBuffer = [](const RefPtr<WebCore::Image>& icon) -> GRefPtr<GBytes> {
-            auto nativeImage = icon->nativeImage();
+            auto nativeImage = icon->nativeImage(WebCore::ConcreteObjectSize::fixed(icon->size()));
             if (!nativeImage)
                 return nullptr;
 

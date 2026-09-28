@@ -116,7 +116,7 @@ static RetainPtr<UIImage> uiImageForImage(Image* image)
     if (!image)
         return nullptr;
 
-    auto nativeImage = image->nativeImage();
+    auto nativeImage = image->nativeImage(ConcreteObjectSize::fixed(image->size()));
     if (!nativeImage)
         return nullptr;
 

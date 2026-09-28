@@ -213,7 +213,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     };
 
     auto& context = paintInfo.context();
-    context.drawImage(*image, destRect, srcRect, options);
+    context.drawImage(*image, ConcreteObjectSize::fixed(image->size()), destRect, srcRect, options);
 
     RefPtr cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())

@@ -107,7 +107,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!graphicsContext)
         return { };
 
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
+    graphicsContext->drawImage(*image, ConcreteObjectSize::fixed(image->size(renderImage.imageOrientation())), FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
     return sharedBitmap;
 }
 

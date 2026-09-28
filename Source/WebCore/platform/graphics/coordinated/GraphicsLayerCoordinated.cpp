@@ -468,7 +468,7 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCoordinated::crea
 void GraphicsLayerCoordinated::setContentsToImage(Image* image)
 {
     if (image) {
-        auto nativeImage = image->currentNativeImage();
+        auto nativeImage = image->currentNativeImage(ConcreteObjectSize::fixed(image->size()));
         if (!nativeImage)
             return;
 

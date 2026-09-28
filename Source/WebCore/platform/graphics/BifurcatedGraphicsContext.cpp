@@ -417,10 +417,10 @@ void BifurcatedGraphicsContext::drawPattern(const NativeImage& nativeImage, cons
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    auto result = m_primaryContext.drawImage(image, destination, source, options);
-    m_secondaryContext.drawImage(image, destination, source, options);
+    auto result = m_primaryContext.drawImage(image, concreteObjectSize, destination, source, options, extras);
+    m_secondaryContext.drawImage(image, concreteObjectSize, destination, source, options, extras);
 
     VERIFY_STATE_SYNCHRONIZATION();
 

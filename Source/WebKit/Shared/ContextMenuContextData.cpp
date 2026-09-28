@@ -108,7 +108,7 @@ void ContextMenuContextData::setImage(WebCore::Image& image)
     RefPtr controlledImage = ShareableBitmap::create({ IntSize(image.size()) });
     m_controlledImage = controlledImage;
     if (auto graphicsContext = controlledImage->createGraphicsContext())
-        graphicsContext->drawImage(image, IntPoint());
+        graphicsContext->drawImage(image, ConcreteObjectSize::fixed(image.size()), IntPoint());
 }
 
 std::optional<ShareableBitmap::Handle> ContextMenuContextData::createControlledImageReadOnlyHandle() const

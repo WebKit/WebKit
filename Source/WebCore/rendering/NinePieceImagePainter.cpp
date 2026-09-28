@@ -252,7 +252,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
             continue;
 
         if (isCornerPiece(piece)) {
-            graphicsContext.drawImage(*image, destinationRects[piece], sourceRects[piece], options);
+            graphicsContext.drawImage(*image, ConcreteObjectSize::fixed(image->size()), destinationRects[piece], sourceRects[piece], options);
             continue;
         }
 

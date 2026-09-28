@@ -232,7 +232,7 @@ GRefPtr<GdkPixbuf> selectionDataImageAsGdkPixbuf(const SelectionData& selectionD
     if (!image)
         return nullptr;
 
-    RefPtr nativeImage = image->currentNativeImage();
+    RefPtr nativeImage = image->currentNativeImage(WebCore::ConcreteObjectSize::fixed(image->size()));
     if (!nativeImage)
         return nullptr;
 

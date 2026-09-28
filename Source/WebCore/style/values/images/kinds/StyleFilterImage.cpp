@@ -162,7 +162,7 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
         return &WebCore::Image::nullImage();
 
     auto filteredImage = sourceImage->filteredNativeImage(*cssFilter, [&](GraphicsContext& context) {
-        context.drawImage(*image, sourceImageRect);
+        context.drawImage(*image, ConcreteObjectSize::fixed(image->size()), sourceImageRect);
     });
     if (!filteredImage)
         return &WebCore::Image::nullImage();
