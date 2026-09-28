@@ -27,13 +27,14 @@
 
 #include "WPEQtUnderlayBlitter.h"
 
+#include <QMetaObject>
+#include <QQuickWindow>
 #include <QRectF>
 #include <QSGRenderNode>
 
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
-class WPEQtView;
 typedef struct _WPEBuffer WPEBuffer;
 typedef struct _WPEViewQtQuick WPEViewQtQuick;
 
@@ -42,7 +43,7 @@ public:
     WPEQtUnderlayRenderNode() = default;
     ~WPEQtUnderlayRenderNode() override;
 
-    void setView(WPEQtView*, WPEViewQtQuick*);
+    void setView(QQuickWindow*, WPEViewQtQuick*);
     void setRect(const QRectF& rect) { m_rect = rect; }
     QRectF rect() const override { return m_rect; }
     StateFlags changedStates() const override { return ScissorState; }
@@ -52,8 +53,10 @@ public:
     void advanceFrame();
 
 private:
-    WPEQtView* m_qtView { nullptr };
+    void frameSwapped();
+
     WTF::GRefPtr<WPEViewQtQuick> m_wpeView;
+    QMetaObject::Connection m_frameSwappedConnection;
     WPEQtUnderlayBlitter m_blitter;
     WTF::GRefPtr<WPEBuffer> m_buffer;
     WTF::UnixFileDescriptor m_releaseFence;
