@@ -1295,7 +1295,9 @@ void SkiaCompositingLayer::paintBackdrop(SkCanvas& canvas, PaintContext& context
     paint.setImageFilter(m_backdrop.filter);
     if (context.blendMode)
         paint.setBlendMode(*context.blendMode);
-    paintWithFilter(canvas, context, clipTransform, *inverseTransform, m_backdrop.clipRect.rect(), paint, WTF::move(paintBackdropRootSubtree));
+    // Per spec, a backdrop blur mirrors the image at the border box, and an aligned surface could include pixels from outside it.
+    // https://drafts.csswg.org/filter-effects-2/#BackdropFilterProperty
+    paintWithFilter(canvas, context, clipTransform, *inverseTransform, m_backdrop.clipRect.rect(), paint, FilterSurfaceAlignment::LocalCoordinates, WTF::move(paintBackdropRootSubtree));
 }
 
 void SkiaCompositingLayer::paintWithMaskAndBackdrop(SkCanvas& canvas, PaintContext& context)
@@ -1352,15 +1354,33 @@ static int maxFilterSurfaceSize()
     return PlatformDisplay::sharedDisplay().skiaGrContext()->maxTextureSize() / 2;
 }
 
-void SkiaCompositingLayer::paintWithFilter(SkCanvas& canvas, PaintContext& context, const TransformationMatrix& layerTransform, const TransformationMatrix& inverseLayerTransform, const FloatRect& localBounds, const SkPaint& layerPaint, PaintFunction&& paintFunction)
+static std::optional<SkMatrix> computeDeviceAlignedSurfaceTransform(const TransformationMatrix& layerToDevice, const FloatRect& localBounds)
+{
+    auto matrix = SkM44(layerToDevice).asM33();
+    matrix.normalizePerspective();
+    if (!matrix.isScaleTranslate())
+        return std::nullopt;
+
+    const auto deviceBounds = matrix.mapRect(localBounds);
+    const int maxSurfaceSize = maxFilterSurfaceSize();
+    if (deviceBounds.width() > maxSurfaceSize || deviceBounds.height() > maxSurfaceSize)
+        return std::nullopt;
+
+    return matrix;
+}
+
+void SkiaCompositingLayer::paintWithFilter(SkCanvas& canvas, PaintContext& context, const TransformationMatrix& layerTransform, const TransformationMatrix& inverseLayerTransform, const FloatRect& localBounds, const SkPaint& layerPaint, FilterSurfaceAlignment alignment, PaintFunction&& paintFunction)
 {
     // Like Chromium, paint the subtree into a surface in the layer plane at a fixed scale, filter it there and
     // draw the result with the layer transform. SkCanvas::saveLayer() would pick the layer resolution at the
     // center of the bounds instead, which under a perspective can be far off the resolution anywhere else.
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     const auto scale = filterSurfaceScale(context);
-    auto scaledBounds = localBounds;
-    scaledBounds.scale(scale.width(), scale.height());
+
+    // Align the surface with the device pixels if possible, so the result needs no resampling.
+    const auto deviceAlignedTransform = alignment == FilterSurfaceAlignment::DevicePixels ? computeDeviceAlignedSurfaceTransform(TransformationMatrix(canvas.getLocalToDevice()).multiply(layerTransform), localBounds) : std::nullopt;
+    const auto layerToScaled = deviceAlignedTransform.value_or(SkMatrix::Scale(scale.width(), scale.height()));
+    const FloatRect scaledBounds = layerToScaled.mapRect(localBounds);
 
     // A surface larger than that loses what is beyond it, as in Chromium.
     const int maxSurfaceSize = maxFilterSurfaceSize();
@@ -1383,7 +1403,7 @@ void SkiaCompositingLayer::paintWithFilter(SkCanvas& canvas, PaintContext& conte
 
     surfaceCanvas->clear(SK_ColorTRANSPARENT);
     surfaceCanvas->translate(-surfaceRect.x(), -surfaceRect.y());
-    surfaceCanvas->scale(scale.width(), scale.height());
+    surfaceCanvas->concat(layerToScaled);
     surfaceCanvas->concat(SkM44(inverseLayerTransform));
 
     {
@@ -1394,7 +1414,7 @@ void SkiaCompositingLayer::paintWithFilter(SkCanvas& canvas, PaintContext& conte
     }
 
     // Filter parameters are in layer units, the surface is in scaled pixels relative to its origin.
-    auto layerToSurface = SkMatrix::Scale(scale.width(), scale.height());
+    auto layerToSurface = layerToScaled;
     layerToSurface.postTranslate(-surfaceRect.x(), -surfaceRect.y());
     auto filter = layerPaint.refImageFilter()->makeWithLocalMatrix(layerToSurface);
 
@@ -1402,7 +1422,7 @@ void SkiaCompositingLayer::paintWithFilter(SkCanvas& canvas, PaintContext& conte
     const auto sourceBounds = SkRect::MakeIWH(surfaceRect.width(), surfaceRect.height());
     const auto deviceToLayer = inverseLayerPlaneTransform(TransformationMatrix(canvas.getLocalToDevice()).multiply(layerTransform));
     auto clipRect = deviceToLayer ? FloatRect(layerPlaneClipBounds(*deviceToLayer, FloatRect(canvas.getDeviceClipBounds()))) : FloatRect();
-    clipRect.scale(scale.width(), scale.height());
+    clipRect = layerToScaled.mapRect(clipRect);
     clipRect.move(-surfaceRect.x(), -surfaceRect.y());
     auto outputRect = intersection(enclosingIntRect(FloatRect(filter->computeFastBounds(sourceBounds))), enclosingIntRect(clipRect));
     outputRect.setWidth(std::min(outputRect.width(), maxSurfaceSize));
@@ -1422,15 +1442,20 @@ void SkiaCompositingLayer::paintWithFilter(SkCanvas& canvas, PaintContext& conte
         if (const auto* damageRegion = context.damageRegionOrNull())
             damageRegion->clipCanvasInDeviceSpace(canvas);
 
-        canvas.concat(SkM44(layerTransform));
-        canvas.scale(1 / scale.width(), 1 / scale.height());
-        canvas.translate(surfaceRect.x(), surfaceRect.y());
+        if (deviceAlignedTransform)
+            canvas.setMatrix(SkM44::Translate(surfaceRect.x(), surfaceRect.y()));
+        else {
+            canvas.concat(SkM44(layerTransform));
+            canvas.scale(1 / scale.width(), 1 / scale.height());
+            canvas.translate(surfaceRect.x(), surfaceRect.y());
+        }
 
         SkPaint paint(layerPaint);
         paint.setImageFilter(nullptr);
         paint.setAntiAlias(true);
         const auto destinationRect = SkRect::MakeXYWH(filteredOffset.x(), filteredOffset.y(), filteredSubset.width(), filteredSubset.height());
-        canvas.drawImageRect(filtered.get(), SkRect::Make(filteredSubset), destinationRect, SkSamplingOptions(SkFilterMode::kLinear), &paint, SkCanvas::kStrict_SrcRectConstraint);
+        const auto sampling = SkSamplingOptions(deviceAlignedTransform ? SkFilterMode::kNearest : SkFilterMode::kLinear);
+        canvas.drawImageRect(filtered.get(), SkRect::Make(filteredSubset), destinationRect, sampling, &paint, SkCanvas::kStrict_SrcRectConstraint);
     }
 
     // The render tasks are now recorded -- submit them to the GPU now, instead of
@@ -1543,7 +1568,7 @@ void SkiaCompositingLayer::paintWithFilterAndMask(SkCanvas& canvas, PaintContext
     layerPaint.setImageFilter(filter->filter);
 
     auto paintFilteredSubtree = [&](SkCanvas& canvas, PaintContext& context) {
-        paintWithFilter(canvas, context, layerTransform, *inverseTransform, localBounds, layerPaint, [&](SkCanvas& canvas, PaintContext& context) {
+        paintWithFilter(canvas, context, layerTransform, *inverseTransform, localBounds, layerPaint, FilterSurfaceAlignment::DevicePixels, [&](SkCanvas& canvas, PaintContext& context) {
             paintSelfAndChildren(canvas, context);
         });
     };

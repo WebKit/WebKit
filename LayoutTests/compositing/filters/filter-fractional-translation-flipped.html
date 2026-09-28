@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>A horizontally flipped filtered layer at a fractional device position should cover the same device pixels as the same layer without a filter.</title>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-150">
+<style>
+.test {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    height: 100px;
+    background: repeating-linear-gradient(90deg, black 0 1px, white 1px 2px);
+    transform: translateX(10.5px) scaleX(-1);
+    will-change: transform;
+    /* The shadow lands far outside the viewport, so only the source graphic is visible. */
+    filter: drop-shadow(0 2000px 0 red);
+}
+</style>
+</head>
+<body>
+<div class="test"></div>
+</body>
+</html>

@@ -10362,3 +10362,6 @@ imported/w3c/web-platform-tests/css/filter-effects/filter-in-3d-transformed-ance
 # webkit.org/b/301546 [iOS26-iOS27] Two tests in imported/w3c/web-platform-tests/uievents/mouse are constant failures
 imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=16 [ Failure ]
 imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=42 [ Failure ]
+
+# The layer next to a backdrop filter snaps its antialiased edge to the pixel grid.
+webkit.org/b/325197 css3/filters/backdrop/backdrop-filter-fractional-translation-edge.html [ ImageOnlyFailure ]

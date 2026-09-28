@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    transform: translateX(10.9px);
+    will-change: transform;
+}
+.outside {
+    position: absolute;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background: black;
+}
+.backdrop {
+    position: absolute;
+    left: 100px;
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="outside"></div>
+<div class="backdrop"></div>
+</div>
+</body>
+</html>
