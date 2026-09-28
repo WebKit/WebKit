@@ -113,7 +113,7 @@ UTF8CString Process::executablePath() const
     int length = proc_pidpath(m_pid, path.data(), path.size());
     if (length <= 0)
         return { };
-    return UTF8CString(byteCast<char8_t>(std::span { path }.first(length)));
+    return UTF8CString::fromUTF8(std::span { path }.first(length));
 }
 
 #else
@@ -143,7 +143,7 @@ UTF8CString Process::executablePath() const
     ssize_t length = readlink(link.data(), path.data(), path.size());
     if (length <= 0 || static_cast<size_t>(length) >= path.size())
         return { };
-    return UTF8CString(byteCast<char8_t>(std::span { path }.first(length)));
+    return UTF8CString::fromUTF8(std::span { path }.first(length));
 }
 
 #endif // OS(DARWIN)

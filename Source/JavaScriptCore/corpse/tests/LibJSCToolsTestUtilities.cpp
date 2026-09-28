@@ -389,4 +389,12 @@ void analyzeInAndOutOfProcess(CreateTargetObject create, NOESCAPE const Function
 
 #endif // ENABLE(MYA)
 
+
+#if HAVE(LLDB)
+const ASCIILiteral* copiedHeaderConstantInUtilities()
+{
+    return &copiedHeaderConstant;
+}
+#endif
+
 } // namespace JSCToolsTest
