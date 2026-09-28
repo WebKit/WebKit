@@ -3009,6 +3009,14 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Web
     updateRemoteWorkerProcessAssertion(workerType);
 }
 
+std::optional<WebPageProxyIdentifier> WebProcessProxy::remoteWorkerPageProxyID(RemoteWorkerType workerType) const
+{
+    auto& workerInformation = workerType == RemoteWorkerType::SharedWorker ? m_sharedWorkerInformation : m_serviceWorkerInformation;
+    if (!workerInformation)
+        return std::nullopt;
+    return workerInformation->remoteWorkerPageProxyID;
+}
+
 void WebProcessProxy::markProcessAsRecentlyUsed()
 {
     liveProcessesLRU().moveToLastIfPresent(*this);
