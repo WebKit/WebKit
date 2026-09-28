@@ -184,7 +184,7 @@ namespace WebCore {
 #endif
     WEBCORE_EXPORT String contextMenuItemTagInspectElement();
 #if HAVE(TRANSLATION_UI_SERVICES)
-    String contextMenuItemTagTranslate(const String& selectedString);
+    WEBCORE_EXPORT String contextMenuItemTagTranslate(const String& selectedString);
 #endif
 #if ENABLE(WRITING_TOOLS)
     String contextMenuItemTagWritingTools();

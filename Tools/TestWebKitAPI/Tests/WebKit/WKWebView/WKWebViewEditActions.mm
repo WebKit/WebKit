@@ -27,8 +27,11 @@
 
 #import "ClassMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "PDFTestHelpers.h"
+#import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
@@ -269,6 +272,21 @@ TEST(WKWebViewEditActions, PasteAndMatchStyle)
     EXPECT_WK_STREQ("WebKit", [destination stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+
+static ClassMethodSwizzler makeTranslationAvailabilityScope(BOOL available)
+{
+    return {
+        PAL::getLTUITranslationViewControllerClassSingleton(),
+        @selector(isAvailable),
+        imp_implementationWithBlock(^BOOL {
+            return available;
+        })
+    };
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES)
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(WKWebViewEditActions, ModifyBaseWritingDirection)
@@ -357,9 +375,8 @@ TEST(WKWebViewEditActions, SetFontFamily)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
-TEST(WebKit, CanInvokeTranslateWithTextSelection)
+static void runCanInvokeTranslateWithTextSelectionTest(TestWKWebView *webView, void (^selectText)())
 {
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
     auto translateSelector = ^{
 #if USE(BROWSERENGINEKIT)
         if ([webView hasAsyncTextInput])
@@ -367,17 +384,6 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
 #endif
         return @selector(_translate:);
     }();
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
-
-    auto makeTranslationAvailabilityScope = [](BOOL available) -> ClassMethodSwizzler {
-        return {
-            PAL::getLTUITranslationViewControllerClassSingleton(),
-            @selector(isAvailable),
-            imp_implementationWithBlock(^BOOL {
-                return available;
-            })
-        };
-    };
 
     {
         auto swizzler = makeTranslationAvailabilityScope(YES);
@@ -387,7 +393,7 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
         [webView waitForNextPresentationUpdate];
         EXPECT_FALSE([webView canPerformAction:translateSelector withSender:nil]);
 
-        [webView selectAll:nil];
+        selectText();
         [webView waitForNextPresentationUpdate];
         EXPECT_TRUE([webView canPerformAction:translateSelector withSender:nil]);
     }
@@ -395,6 +401,29 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
         auto swizzler = makeTranslationAvailabilityScope(NO);
         EXPECT_FALSE([webView canPerformAction:translateSelector withSender:nil]);
     }
+}
+
+TEST(WebKit, CanInvokeTranslateWithTextSelection)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    runCanInvokeTranslateWithTextSelectionTest(webView, ^{
+        [webView selectAll:nil];
+    });
+}
+
+TEST(WebKit, CanInvokeTranslateWithTextSelectionInPDF)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]]];
+    [webView waitForNextPresentationUpdate];
+
+    runCanInvokeTranslateWithTextSelectionTest(webView, ^{
+        [webView selectTextInGranularity:UITextGranularityDocument atPoint:CGPointMake(100, 100)];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_WK_STREQ("Test PDF Content\n555-555-1234", [[webView textInputContentView] selectedText]);
+    });
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
@@ -489,6 +518,129 @@ TEST(WKWebViewEditActions, CopyFontAtCaretSelection)
         "getComputedStyle(deepestChild).color";
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:getComputedColor]);
 }
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+
+static NSMenuItem *menuItemWithIdentifier(NSMenu *menu, NSString *identifier)
+{
+    for (NSMenuItem *item in menu.itemArray) {
+        if ([item.identifier isEqualToString:identifier])
+            return item;
+    }
+    return nil;
+}
+
+static NSMenuItem *menuItemWithTitlePrefix(NSMenu *menu, NSString *prefix)
+{
+    for (NSMenuItem *item in menu.itemArray) {
+        if ([item.title hasPrefix:prefix])
+            return item;
+    }
+    return nil;
+}
+
+static RetainPtr<NSMenu> proposedContextMenuAfterRightClick(TestWKWebView *webView, NSPoint pointInWindow)
+{
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    __block RetainPtr<NSMenu> proposedMenu;
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        proposedMenu = menu;
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    [webView setUIDelegate:delegate];
+    [webView rightClickAtPoint:pointInWindow];
+    TestWebKitAPI::Util::run(&gotProposedMenu);
+    [webView setUIDelegate:nil];
+    return proposedMenu;
+}
+
+static RetainPtr<NSMenu> pdfContextMenuAfterRightClick(TestWKWebView *webView, NSPoint pointInWindow)
+{
+    __block RetainPtr<NSMenu> contextMenu;
+    __block bool didPopUpContextMenu = false;
+
+    // PDF context menus don't go through the UI delegate, so we intercept the menu before it starts tracking.
+    ClassMethodSwizzler swizzler {
+        NSMenu.class,
+        @selector(popUpContextMenu:withEvent:forView:),
+        imp_implementationWithBlock(^(Class, NSMenu *menu, NSEvent *, NSView *) {
+            contextMenu = menu;
+            didPopUpContextMenu = true;
+        })
+    };
+
+    [webView rightClickAtPoint:pointInWindow];
+    TestWebKitAPI::Util::run(&didPopUpContextMenu);
+    return contextMenu;
+}
+
+TEST(WKWebViewEditActions, CanInvokeTranslateContextMenuItemWithSelection)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; font-size: 32px;'>Hello world</body>"];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+
+    auto pointOnSelectedText = NSMakePoint(10, [webView frame].size.height - 10);
+    {
+        auto swizzler = makeTranslationAvailabilityScope(YES);
+        RetainPtr menu = proposedContextMenuAfterRightClick(webView, pointOnSelectedText);
+        EXPECT_NOT_NULL(menuItemWithIdentifier(menu, _WKMenuItemIdentifierTranslate));
+    }
+
+    [webView sendClickAtPoint:NSZeroPoint];
+    [webView waitForPendingMouseEvents];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+
+    {
+        auto swizzler = makeTranslationAvailabilityScope(NO);
+        RetainPtr menu = proposedContextMenuAfterRightClick(webView, pointOnSelectedText);
+        EXPECT_NOT_NULL(menuItemWithIdentifier(menu, _WKMenuItemIdentifierCopy));
+        EXPECT_NULL(menuItemWithIdentifier(menu, _WKMenuItemIdentifierTranslate));
+    }
+}
+
+TEST(WKWebViewEditActions, CanInvokeTranslateContextMenuItemWithSelectionInPDF)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]]];
+    [webView waitForNextPresentationUpdate];
+
+    [[webView window] makeFirstResponder:webView];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+
+    auto pointOnText = NSMakePoint(100, 500);
+    [webView sendClickAtPoint:pointOnText];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+
+    {
+        auto swizzler = makeTranslationAvailabilityScope(YES);
+        RetainPtr menu = pdfContextMenuAfterRightClick(webView, pointOnText);
+        EXPECT_NOT_NULL(menuItemWithTitlePrefix(menu, @"Translate "));
+    }
+
+    [webView sendClickAtPoint:NSZeroPoint];
+    [webView waitForPendingMouseEvents];
+    [webView sendClickAtPoint:pointOnText];
+    [webView waitForPendingMouseEvents];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+
+    {
+        auto swizzler = makeTranslationAvailabilityScope(NO);
+        RetainPtr menu = pdfContextMenuAfterRightClick(webView, pointOnText);
+        EXPECT_NOT_NULL([menu itemWithTitle:@"Copy"]);
+        EXPECT_NULL(menuItemWithTitlePrefix(menu, @"Translate "));
+    }
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES)
 
 #endif
 

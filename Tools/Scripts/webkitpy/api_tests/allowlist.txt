@@ -3310,6 +3310,8 @@ TestWebKitAPI.WKWebViewEditActions.SetAlignment
 TestWebKitAPI.WKWebViewEditActions.SetFontFamily
 TestWebKitAPI.WKWebViewEditActions.SetTextColor
 TestWebKitAPI.WKWebViewEditActions.ToggleStrikeThrough
+TestWebKitAPI.WKWebViewEditActions.CanInvokeTranslateContextMenuItemWithSelection
+TestWebKitAPI.WKWebViewEditActions.CanInvokeTranslateContextMenuItemWithSelectionInPDF
 TestWebKitAPI.WKWebViewMacEditingTests.ConcurrentInputMethodKeyDownsScopeQueueingPerKey
 TestWebKitAPI.WKWebViewMacEditingTests.DoNotCrashWhenInterpretingKeyEventWhileDeallocatingView
 TestWebKitAPI.WKWebViewMacEditingTests.DoNotRenderInlinePredictionsForRegularMarkedText
@@ -3400,6 +3402,7 @@ TestWebKitAPI.WebKit.BackgroundColorSystemColor
 TestWebKitAPI.WebKit.BackgroundColorToggleAppearance
 TestWebKitAPI.WebKit.BacklightLevelNotificationCrash
 TestWebKitAPI.WebKit.CanInvokeTranslateWithTextSelection
+TestWebKitAPI.WebKit.CanInvokeTranslateWithTextSelectionInPDF
 TestWebKitAPI.WebKit.CannotHaveMultipleFindOverlays
 TestWebKitAPI.WebKit.CaptureTextFromCamera
 TestWebKitAPI.WebKit.ClickAutoFillButton
@@ -5630,6 +5633,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.BeforeUnloadPromptAllowOnReload
 [ ios ] TestWebKitAPI.WebKit.BeforeUnloadPromptRejectOnReload
 [ ios ] TestWebKitAPI.WebKit.CanInvokeTranslateWithTextSelection
+[ ios ] TestWebKitAPI.WebKit.CanInvokeTranslateWithTextSelectionInPDF
 [ ios ] TestWebKitAPI.WebKit.CanRestoreSessionStateWithoutHistoryEntryData
 [ ios ] TestWebKitAPI.WebKit.CannotHaveMultipleFindOverlays
 [ ios ] TestWebKitAPI.WebKit.CaptureTextFromCamera

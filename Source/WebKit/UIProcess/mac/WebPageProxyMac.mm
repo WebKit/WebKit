@@ -696,7 +696,16 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 #if ENABLE(PDF_PLUGIN)
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
 {
-    if (!contextMenu.items.size())
+    auto items = contextMenu.items;
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    if (!canHandleContextMenuTranslation()) {
+        items.removeAllMatching([](auto& item) {
+            return item.action == WebCore::ContextMenuItemTagTranslate;
+        });
+    }
+#endif
+
+    if (items.isEmpty())
         return completionHandler(std::nullopt);
 
     RefPtr pageClient = this->pageClient();
@@ -706,8 +715,8 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     RetainPtr menuTarget = adoptNS([[WKPDFMenuTarget alloc] init]);
     RetainPtr nsMenu = adoptNS([[NSMenu alloc] init]);
     [nsMenu setAllowsContextMenuPlugIns:false];
-    for (unsigned i = 0; i < contextMenu.items.size(); i++) {
-        auto& item = contextMenu.items[i];
+    for (unsigned i = 0; i < items.size(); i++) {
+        auto& item = items[i];
         auto isOpenWithDefaultViewerItem = item.action == WebCore::ContextMenuItemTagOpenWithDefaultApplication;
 
         if (item.separator == ContextMenuItemIsSeparator::Yes) {

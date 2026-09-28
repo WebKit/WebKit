@@ -113,6 +113,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/StyleColorOptions.h>
+#include <WebCore/TranslationContextMenuInfo.h>
 #include <WebCore/VoidCallback.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <algorithm>
@@ -2549,6 +2550,8 @@ ContextMenuAction UnifiedPDFPlugin::contextMenuActionFromTag(ContextMenuItemTag 
         return ContextMenuItemTagCopy;
     case ContextMenuItemTag::CopyLink:
         return ContextMenuItemTagCopyLinkToClipboard;
+    case ContextMenuItemTag::Translate:
+        return ContextMenuItemTagTranslate;
     case ContextMenuItemTag::DictionaryLookup:
         return ContextMenuItemTagLookUpInDictionary;
     case ContextMenuItemTag::Invalid:
@@ -2584,6 +2587,7 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) -> ContextMenuItemTag
     static constexpr std::array regularContextMenuItemTags {
         ContextMenuItemTag::AutoSize,
         ContextMenuItemTag::WebSearch,
+        ContextMenuItemTag::Translate,
         ContextMenuItemTag::DictionaryLookup,
         ContextMenuItemTag::Copy,
         ContextMenuItemTag::CopyLink,
@@ -2684,6 +2688,8 @@ String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) cons
         return contextMenuItemPDFAutoSize();
     case ContextMenuItemTag::WebSearch:
         return contextMenuItemTagSearchWeb();
+    case ContextMenuItemTag::Translate:
+        return contextMenuItemTagTranslate(selectionString());
     case ContextMenuItemTag::DictionaryLookup:
         return contextMenuItemTagLookUpInDictionary(selectionString());
     case ContextMenuItemTag::Copy:
@@ -2756,11 +2762,11 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const Int
     if (allowsCopying)
         items.append(contextMenuItem(ContextMenuItemTag::Copy));
 
-    bool shouldPresentLookupAndSearchOptions = !isInBaseSystem();
-    if (shouldPresentLookupAndSearchOptions) {
+    bool shouldPresentTextServiceOptions = !isInBaseSystem();
+    if (shouldPresentTextServiceOptions) {
         items.insertVector(0, Vector<PDFContextMenuItem> {
             contextMenuItem(ContextMenuItemTag::DictionaryLookup),
-            separatorContextMenuItem(),
+            contextMenuItem(ContextMenuItemTag::Translate),
             contextMenuItem(ContextMenuItemTag::WebSearch),
             separatorContextMenuItem(),
         });
@@ -2823,7 +2829,11 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
     case ContextMenuItemTag::WebSearch:
         performWebSearch(selectionString());
         break;
-    case ContextMenuItemTag::DictionaryLookup: {
+    case ContextMenuItemTag::Translate: {
+        RetainPtr selection = m_currentSelection;
+        showTranslationUIForSelection(selection);
+        break;
+    } case ContextMenuItemTag::DictionaryLookup: {
         RetainPtr selection = m_currentSelection;
         showDefinitionForSelection(selection.get());
         break;
@@ -3351,7 +3361,7 @@ String UnifiedPDFPlugin::selectionString() const
 {
     if (!hasSelection())
         return { };
-    return m_currentSelection.get().string;
+    return [m_currentSelection string];
 }
 
 std::pair<String, String> UnifiedPDFPlugin::stringsBeforeAndAfterSelection(int characterCount) const
@@ -3964,6 +3974,24 @@ std::pair<String, RetainPtr<PDFSelection>> UnifiedPDFPlugin::textForImmediateAct
 
     return { { }, wordSelection };
 }
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+void UnifiedPDFPlugin::showTranslationUIForSelection(PDFSelection *selection)
+{
+    RefPtr frame = m_frame.get();
+    if (!frame)
+        return;
+
+    RefPtr page = frame->page();
+    if (!page)
+        return;
+
+    auto rectForSelectionInRootView = this->rectForSelectionInRootView(selection);
+    auto pluginFrameInRootView = convertFromPluginToRootView(IntRect { IntPoint { }, size() });
+    TranslationContextMenuInfo info { selection.string, WebCore::IntRect { rectForSelectionInRootView }, pluginFrameInRootView.location() };
+    protect(page)->send(Messages::WebPageProxy::HandleContextMenuTranslation { info });
+}
+#endif
 
 #if PLATFORM(MAC)
 void UnifiedPDFPlugin::accessibilityScrollToPage(PDFDocumentLayout::PageIndex pageIndex)

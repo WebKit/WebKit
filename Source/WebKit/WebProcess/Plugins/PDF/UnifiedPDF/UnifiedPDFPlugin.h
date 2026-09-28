@@ -367,6 +367,7 @@ private:
         AutoSize,
         WebSearch,
         DictionaryLookup,
+        Translate,
         Copy,
         CopyLink,
         NextPage,
@@ -682,6 +683,10 @@ private:
     bool NODELETE shouldUseInProcessBackingStore() const;
 
     bool delegatesScrollingToMainFrame() const final;
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    void showTranslationUIForSelection(PDFSelection *);
+#endif
 
     RefPtr<PDFPresentationController> m_presentationController;
 
