@@ -271,7 +271,11 @@ void CSSStyleSheet::forEachStyleScope(NOESCAPE const Function<void(Style::Scope&
         apply(*scope);
         return;
     }
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (auto& treeScope : m_adoptingTreeScopes)
+#else
+    for (const auto& treeScope : copyToVectorOf<Ref<ContainerNode>>(m_adoptingTreeScopes))
+#endif
         apply(styleScopeFor(treeScope));
 }
 
