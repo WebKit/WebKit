@@ -158,6 +158,48 @@ extension AppKitGesturesTests.Basic {
         #expect(actual.map(\.type) == expectedEvents)
     }
 
+    @Test
+    func singleClickReportsMovementFromLastKnownMousePosition() async throws {
+        let html = """
+            <!DOCTYPE html>
+            <div id="start" style="position: absolute; left: 50px; top: 50px; width: 100px; height: 100px;"></div>
+            <div id="target" onclick="void(0)" style="position: absolute; left: 350px; top: 250px; width: 100px; height: 100px;"></div>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        try await establishElementUnderMouse(byRestingCursorOnElementWithID: "start")
+
+        try await page.callJavaScript {
+            """
+            window.movementLog = [];
+            document.addEventListener("mousemove", event => {
+                window.movementLog.push([event.movementX, event.movementY]);
+            });
+            """
+        }
+
+        let targetBounds = try await screenBounds(ofElementWithID: "target")
+
+        await recap.play { composer in
+            composer._wk_click(at: targetBounds.center, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let movementLog = try await page.callJavaScript(returning: [[Double]].self) {
+            """
+            return window.movementLog;
+            """
+        }
+
+        // The centers of #start and #target are 300px apart horizontally and 200px apart vertically.
+        let movement = try #require(movementLog.first, "clicking #target did not dispatch a mousemove")
+        #expect(abs(movement[0] - 300) <= 1)
+        #expect(abs(movement[1] - 200) <= 1)
+    }
+
     @Test(arguments: [Recap.KeyboardModifiers(), .shift, .option, .command, .all])
     func singleClickReportsHeldModifierKeys(modifiers: Recap.KeyboardModifiers) async throws {
         let expectedEvents: [DOMEventType] = [.pointerdown, .mousedown, .pointerup, .mouseup, .click]
