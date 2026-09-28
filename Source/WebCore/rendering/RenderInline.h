@@ -51,7 +51,6 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
 private:
-    LayoutRect frameRectForStickyPositioning() const final { return borderBoxRectInContainer(); }
     void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 };
 
