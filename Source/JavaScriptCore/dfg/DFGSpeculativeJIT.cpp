@@ -17030,8 +17030,72 @@ void SpeculativeJIT::genericJSValuePeepholeBranch(Node* node, Node* branchNode, 
     m_currentNode = branchNode;
 }
 
+bool SpeculativeJIT::tryCompileHeapBigIntCompareWithZero(Node* node, RelationalCondition condition)
+{
+    Edge valueEdge = node->child1();
+    Edge zeroEdge = node->child2();
+    if (!zeroEdge->isHeapBigIntZeroConstant(m_graph)) {
+        if (!valueEdge->isHeapBigIntZeroConstant(m_graph))
+            return false;
+        std::swap(valueEdge, zeroEdge);
+        condition = commute(condition);
+    }
+
+    SpeculateCellOperand value(this, valueEdge);
+    SpeculateCellOperand zero(this, zeroEdge);
+    GPRTemporary result(this);
+    GPRTemporary scratch(this);
+
+    GPRReg valueGPR = value.gpr();
+    GPRReg zeroGPR = zero.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratchGPR = scratch.gpr();
+
+    speculateHeapBigInt(valueEdge, valueGPR);
+    speculateHeapBigInt(zeroEdge, zeroGPR);
+
+    auto isNegative = [&](ResultCondition resultCondition, GPRReg dest) {
+        test8(resultCondition, Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(TypeInfoPerCellBit), dest);
+    };
+
+    // Only one Zero HeapBigInt instance exists per VM. Thus you can use pointer comparison.
+    auto isZero = [&](RelationalCondition relationalCondition, GPRReg dest) {
+        comparePtr(relationalCondition, valueGPR, zero.gpr(), dest);
+    };
+
+    switch (condition) {
+    case LessThan:
+        isNegative(NonZero, resultGPR);
+        break;
+    case GreaterThanOrEqual:
+        isNegative(Zero, resultGPR);
+        break;
+    case Equal:
+        isZero(Equal, resultGPR);
+        break;
+    case LessThanOrEqual:
+        isNegative(NonZero, resultGPR);
+        isZero(Equal, scratchGPR);
+        or32(scratchGPR, resultGPR);
+        break;
+    case GreaterThan:
+        isNegative(Zero, resultGPR);
+        isZero(NotEqual, scratchGPR);
+        and32(scratchGPR, resultGPR);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    unblessedBooleanResult(resultGPR, node);
+    return true;
+}
+
 void SpeculativeJIT::compileHeapBigIntEquality(Node* node)
 {
+    if (tryCompileHeapBigIntCompareWithZero(node, Equal))
+        return;
+
     SpeculateCellOperand left(this, node->child1());
     SpeculateCellOperand right(this, node->child2());
     GPRTemporary result(this, Reuse, left);
@@ -17064,6 +17128,9 @@ void SpeculativeJIT::compileHeapBigIntEquality(Node* node)
 
 void SpeculativeJIT::compileHeapBigIntCompare(Node* node, RelationalCondition condition)
 {
+    if (tryCompileHeapBigIntCompareWithZero(node, condition))
+        return;
+
     SpeculateCellOperand left(this, node->child1());
     SpeculateCellOperand right(this, node->child2());
     GPRReg leftGPR = left.gpr();

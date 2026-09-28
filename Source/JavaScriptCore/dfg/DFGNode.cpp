@@ -32,6 +32,7 @@
 #include "DFGGraph.h"
 #include "DFGPromotedHeapLocation.h"
 #include "DOMJITSignature.h"
+#include "JSBigInt.h"
 #include "JSCellButterfly.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -104,6 +105,11 @@ bool Node::hasVariableAccessData(Graph& graph)
     default:
         return false;
     }
+}
+
+bool Node::isHeapBigIntZeroConstant(Graph& graph)
+{
+    return isConstant() && constant()->value() == JSValue(graph.m_vm.heapBigIntConstantZero.get());
 }
 
 void Node::remove(Graph& graph)

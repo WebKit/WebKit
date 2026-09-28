@@ -1267,6 +1267,7 @@ public:
     void compileSymbolEquality(Node*);
     void compileHeapBigIntEquality(Node*);
     void compileHeapBigIntCompare(Node*, RelationalCondition);
+    bool tryCompileHeapBigIntCompareWithZero(Node*, RelationalCondition);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
     void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Node*, Edge neitherDoubleNorHeapBigInt, Edge notDouble);
     void emitBitwiseJSValueEquality(GPRReg&, GPRReg&, GPRReg& result);

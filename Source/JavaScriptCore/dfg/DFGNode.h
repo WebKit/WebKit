@@ -1065,6 +1065,8 @@ public:
     {
         return isConstant() && constant()->value() && constant()->value().isCell();
     }
+
+    bool isHeapBigIntZeroConstant(Graph&);
      
     JSCell* asCell()
     {
