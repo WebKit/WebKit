@@ -1088,23 +1088,23 @@ static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* tes
     test->waitUntilLoadFinished();
 
     test->showContextMenuAtPositionAndWaitUntilFinished(0, 0);
-    g_assert_cmpstr(test->m_node.name.legacyCStringPointer(), ==, "HTML");
+    ASSERT_CMP_CSTRING(test->m_node.name, ==, "HTML");
     g_assert_cmpuint(test->m_node.type, ==, ContextMenuWebExtensionNodeTest::Node::NodeElement);
-    g_assert_cmpstr(test->m_node.contents.legacyCStringPointer(), ==, "WebKitGTK Context menu testsWebKitGTK Website");
-    g_assert_cmpstr(test->m_node.parentName.legacyCStringPointer(), ==, "#document");
+    ASSERT_CMP_CSTRING(test->m_node.contents, ==, "WebKitGTK Context menu testsWebKitGTK Website");
+    ASSERT_CMP_CSTRING(test->m_node.parentName, ==, "#document");
 
     test->showContextMenuAtPositionAndWaitUntilFinished(1, 20);
-    g_assert_cmpstr(test->m_node.name.legacyCStringPointer(), ==, "#text");
+    ASSERT_CMP_CSTRING(test->m_node.name, ==, "#text");
     g_assert_cmpuint(test->m_node.type, ==, ContextMenuWebExtensionNodeTest::Node::NodeText);
-    g_assert_cmpstr(test->m_node.contents.legacyCStringPointer(), ==, "WebKitGTK Context menu tests");
-    g_assert_cmpstr(test->m_node.parentName.legacyCStringPointer(), ==, "P");
+    ASSERT_CMP_CSTRING(test->m_node.contents, ==, "WebKitGTK Context menu tests");
+    ASSERT_CMP_CSTRING(test->m_node.parentName, ==, "P");
 
     // Link menu.
     test->showContextMenuAtPositionAndWaitUntilFinished(1, 101);
-    g_assert_cmpstr(test->m_node.name.legacyCStringPointer(), ==, "#text");
+    ASSERT_CMP_CSTRING(test->m_node.name, ==, "#text");
     g_assert_cmpuint(test->m_node.type, ==, ContextMenuWebExtensionNodeTest::Node::NodeText);
-    g_assert_cmpstr(test->m_node.contents.legacyCStringPointer(), ==, "WebKitGTK Website");
-    g_assert_cmpstr(test->m_node.parentName.legacyCStringPointer(), ==, "A");
+    ASSERT_CMP_CSTRING(test->m_node.contents, ==, "WebKitGTK Website");
+    ASSERT_CMP_CSTRING(test->m_node.parentName, ==, "A");
 }
 
 static void writeNextChunk(SoupServerMessage* message)
@@ -1153,7 +1153,7 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
 static void testContextMenuLiveStream(ContextMenuDefaultTest* test, gconstpointer)
 {
     test->showInWindow();
-    test->loadURI(kServer->getURIForPath("/live-stream").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/live-stream"));
     test->waitUntilLoadFinished();
 
     test->m_expectedMenuType = ContextMenuDefaultTest::VideoLive;

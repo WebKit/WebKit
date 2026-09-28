@@ -577,7 +577,7 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
 
     UTF8CString newUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
-    g_assert_cmpstr(newUserAgent.legacyCStringPointer(), !=, defaultUserAgent.legacyCStringPointer());
+    ASSERT_CMP_CSTRING(newUserAgent, !=, defaultUserAgent);
 }
 
 #if PLATFORM(GTK)
@@ -590,7 +590,7 @@ static UTF8CString convertWebViewMainResourceDataToUTF8CString(WebViewTest* test
 
 static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, UTF8CStringView userAgent)
 {
-    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(gServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     ASSERT_CMP_CSTRING(convertWebViewMainResourceDataToUTF8CString(test), ==, userAgent.utf8());
 }
@@ -605,11 +605,11 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     g_assert_nonnull(g_strstr_len(defaultUserAgent.legacyCStringPointer(), -1, "Safari"));
 
     webkit_settings_set_user_agent(settings.get(), 0);
-    g_assert_cmpstr(defaultUserAgent.legacyCStringPointer(), ==, webkit_settings_get_user_agent(settings.get()));
+    ASSERT_CMP_CSTRING(defaultUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
     assertThatUserAgentIsSentInHeaders(test, defaultUserAgent);
 
     webkit_settings_set_user_agent(settings.get(), "");
-    g_assert_cmpstr(defaultUserAgent.legacyCStringPointer(), ==, webkit_settings_get_user_agent(settings.get()));
+    ASSERT_CMP_CSTRING(defaultUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
 
     const char* funkyUserAgent = "Funky!";
     webkit_settings_set_user_agent(settings.get(), funkyUserAgent);
@@ -644,7 +644,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
 
     // Setting user agent to nullptr reverts to default user agent.
     webkit_settings_set_user_agent(settings.get(), nullptr);
-    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, defaultUserAgent.legacyCStringPointer());
+    ASSERT_CMP_CSTRING(webkit_settings_get_user_agent(settings.get()), ==, defaultUserAgent);
 }
 #endif // PLATFORM(GTK)
 

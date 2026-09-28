@@ -137,13 +137,11 @@ TEST(WTF, CStringZeroTerminated)
 
 TEST(WTF, CStringLegacyCStringPointer)
 {
-    ASCIICString typedNullString;
-    const CStringBase& nullString = typedNullString;
+    UTF8CString nullString;
     EXPECT_EQ(nullString.legacyCStringPointer(), static_cast<const char*>(nullptr));
 
-    ASCIICString typedString { "WebKit"_s };
-    const CStringBase& string = typedString;
-    EXPECT_EQ(string.legacyCStringPointer(), string.data());
+    UTF8CString string { u8"WebKit"_span };
+    EXPECT_EQ(string.legacyCStringPointer(), static_cast<const CStringBase&>(string).data());
     EXPECT_STREQ(string.legacyCStringPointer(), "WebKit");
 }
 
@@ -302,15 +300,13 @@ static_assert(std::same_as<decltype(std::declval<const ASCIICString&>().data()),
 static_assert(std::same_as<decltype(std::declval<const ASCIICString&>().span())::element_type, const char>);
 // Erasing the encoding gives back the untyped CStringBase span.
 static_assert(std::same_as<decltype(std::declval<const CStringBase&>().span())::element_type, const char>);
-static_assert(std::same_as<decltype(std::declval<const CStringBase&>().legacyCStringPointer()), const char*>);
-// Only UTF-8 needs the escape hatch, so the constrained override has to keep hiding
-// CStringBase::legacyCStringPointer() for the other encodings: Latin-1 bytes are not a C string, and
-// ASCIICString::data() is already a const char*.
+// Only UTF-8 needs the escape hatch, and the encoding-erased CStringBase does not offer it: Latin-1 bytes
+// are not a C string, and ASCIICString::data() is already a const char*.
 template<typename StringType> concept HasLegacyCStringPointer = requires(const StringType& string)
 {
     string.legacyCStringPointer();
 };
-static_assert(HasLegacyCStringPointer<CStringBase>);
+static_assert(!HasLegacyCStringPointer<CStringBase>);
 static_assert(HasLegacyCStringPointer<UTF8CString>);
 static_assert(!HasLegacyCStringPointer<ASCIICString>);
 static_assert(!HasLegacyCStringPointer<Latin1CString>);

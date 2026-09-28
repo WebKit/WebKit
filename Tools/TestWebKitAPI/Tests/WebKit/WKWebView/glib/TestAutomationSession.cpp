@@ -325,7 +325,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_false(webkit_web_context_is_automation_allowed(otherContext.get()));
 
     session = test->requestSession(sessionID);
-    g_assert_cmpstr(webkit_automation_session_get_id(session), ==, sessionID.legacyCStringPointer());
+    ASSERT_CMP_CSTRING(webkit_automation_session_get_id(session), ==, sessionID);
     g_assert_cmpuint(test->m_target.id, >, 0);
     ASSERT_CMP_CSTRING(test->m_target.name, ==, sessionID);
     g_assert_false(test->m_target.isPaired);

@@ -25,7 +25,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
     switch (loadEvent) {
     case WEBKIT_LOAD_STARTED:
         g_assert_true(webkit_web_view_is_loading(webView));
-        g_assert_cmpstr(test->m_activeURI.legacyCStringPointer(), ==, webkit_web_view_get_uri(webView));
+        ASSERT_CMP_CSTRING(test->m_activeURI, ==, webkit_web_view_get_uri(webView));
         test->provisionalLoadStarted();
         break;
     case WEBKIT_LOAD_REDIRECTED:
@@ -33,7 +33,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
         test->m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(webView)) };
         test->m_committedURI = test->m_activeURI;
         if (!test->m_redirectURI.isNull())
-            g_assert_cmpstr(test->m_redirectURI.legacyCStringPointer(), ==, test->m_activeURI.legacyCStringPointer());
+            ASSERT_CMP_CSTRING(test->m_redirectURI, ==, test->m_activeURI);
         test->provisionalLoadReceivedServerRedirect();
         break;
     case WEBKIT_LOAD_COMMITTED: {
@@ -50,7 +50,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
     }
     case WEBKIT_LOAD_FINISHED:
         if (!test->m_loadFailed)
-            g_assert_cmpstr(test->m_activeURI.legacyCStringPointer(), ==, webkit_web_view_get_uri(webView));
+            ASSERT_CMP_CSTRING(test->m_activeURI, ==, webkit_web_view_get_uri(webView));
 
         // When a new load is started before the previous one has finished, we receive the load-finished signal
         // of the ongoing load while we already have a provisional URL for the new load. This is the only case
@@ -81,11 +81,11 @@ static gboolean loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadE
 
     switch (loadEvent) {
     case WEBKIT_LOAD_STARTED:
-        g_assert_cmpstr(test->m_activeURI.legacyCStringPointer(), ==, failingURI);
+        ASSERT_CMP_CSTRING(test->m_activeURI, ==, failingURI);
         test->provisionalLoadFailed(failingURI, error);
         break;
     case WEBKIT_LOAD_COMMITTED:
-        g_assert_cmpstr(test->m_activeURI.legacyCStringPointer(), ==, webkit_web_view_get_uri(webView));
+        ASSERT_CMP_CSTRING(test->m_activeURI, ==, webkit_web_view_get_uri(webView));
         test->loadFailed(failingURI, error);
         break;
     default:
@@ -98,7 +98,7 @@ static gboolean loadFailedWithTLSErrorsCallback(WebKitWebView* webView, const ch
 {
     test->m_loadFailed = true;
     g_assert_false(webkit_web_view_is_loading(webView));
-    g_assert_cmpstr(test->m_activeURI.legacyCStringPointer(), ==, failingURI);
+    ASSERT_CMP_CSTRING(test->m_activeURI, ==, failingURI);
     g_assert_true(G_IS_TLS_CERTIFICATE(certificate));
     g_assert_cmpuint(tlsErrors, !=, 0);
     return test->loadFailedWithTLSErrors(failingURI, certificate, tlsErrors);

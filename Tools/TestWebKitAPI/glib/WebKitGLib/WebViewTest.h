@@ -40,6 +40,7 @@ public:
     void platformDestroy();
 
     virtual void loadURI(const char* uri);
+    void loadURI(const UTF8CString& uri) { loadURI(uri.legacyCStringPointer()); }
     virtual void loadHtml(const char* html, const char* baseURI, WebKitWebView* = nullptr);
     virtual void loadPlainText(const char* plainText);
     virtual void loadRequest(WebKitURIRequest*);

@@ -198,7 +198,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
 
     test->m_policyDecisionResponse = PolicyClientTest::Use;
     test->m_respondToPolicyDecisionAsynchronously = false;
-    test->loadURI(kServer->getURIForPath("/redirect").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect"));
     test->waitUntilLoadFinished();
     g_assert_cmpint(test->m_loadEvents.size(), ==, 4);
 
@@ -229,7 +229,7 @@ static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
     test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_RESPONSE;
 
     test->m_policyDecisionResponse = PolicyClientTest::Use;
-    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -248,7 +248,7 @@ static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
     g_assert_true(webkit_response_policy_decision_is_main_frame_main_resource(decision));
 
     test->m_respondToPolicyDecisionAsynchronously = true;
-    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -257,7 +257,7 @@ static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
 
     test->m_respondToPolicyDecisionAsynchronously = false;
     test->m_policyDecisionResponse = PolicyClientTest::Ignore;
-    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
@@ -400,7 +400,7 @@ static void testCustomUserAgentPolicy(PolicyClientTest* test, gconstpointer)
     test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
     UTF8CString seenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").legacyCStringPointer());
 
-    g_assert_cmpstr(seenUserAgent.legacyCStringPointer(), ==, kSiteYUserAgent);
+    ASSERT_CMP_CSTRING(seenUserAgent, ==, kSiteYUserAgent);
 
     GUniquePtr<char> navigatorUserAgent(WebViewTest::javascriptResultToCString(test->runJavaScriptAndWaitUntilFinished("navigator.userAgent", nullptr)));
     g_assert_cmpstr(navigatorUserAgent.get(), ==, kSiteYUserAgent);
@@ -410,14 +410,14 @@ static void testCustomUserAgentPolicy(PolicyClientTest* test, gconstpointer)
     test->m_websitePolicies = nullptr;
     test->m_policyDecisionResponse = PolicyClientTest::Use;
     UTF8CString defaultUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").legacyCStringPointer());
-    g_assert_cmpstr(defaultUserAgent.legacyCStringPointer(), !=, kSiteYUserAgent);
+    ASSERT_CMP_CSTRING(defaultUserAgent, !=, kSiteYUserAgent);
     g_assert_nonnull(g_strstr_len(defaultUserAgent.legacyCStringPointer(), -1, "AppleWebKit"));
 
     // (3) Navigate once more with a DIFFERENT custom UA: the new value is used.
     test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("custom-user-agent", kSiteZUserAgent, nullptr));
     test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
     UTF8CString secondSeenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").legacyCStringPointer());
-    g_assert_cmpstr(secondSeenUserAgent.legacyCStringPointer(), ==, kSiteZUserAgent);
+    ASSERT_CMP_CSTRING(secondSeenUserAgent, ==, kSiteZUserAgent);
 }
 
 static void setProxySettings(PolicyClientTest* test, WebKitNetworkProxyMode mode, WebKitNetworkProxySettings* proxySettings)
@@ -444,7 +444,7 @@ static void testUpgradeToHTTPSPolicy(PolicyClientTest* test, gconstpointer)
     // unaffected by the policy.
     auto serverURI = kServer->getURIForPath("/");
     test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
-    test->loadURI(serverURI.legacyCStringPointer());
+    test->loadURI(serverURI);
     test->waitUntilLoadFinished();
     g_assert_false(test->m_loadFailed);
     ASSERT_CMP_CSTRING(webkit_web_view_get_uri(test->m_webView.get()), ==, serverURI);
@@ -474,7 +474,7 @@ static void testUpgradeToHTTPSPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(webkit_website_policies_get_upgrade_to_https_policy(test->m_websitePolicies.get()), ==, WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE);
 
     test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
-    test->loadURI(serverURI.legacyCStringPointer());
+    test->loadURI(serverURI);
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY);

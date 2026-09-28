@@ -35,7 +35,7 @@ const char* kDNTHeaderNotPresent = "DNT header not present";
 static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 {
     test->setRedirectURI(kServer->getURIForPath("/normal").legacyCStringPointer());
-    test->loadURI(kServer->getURIForPath("/redirect").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect"));
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -140,7 +140,7 @@ public:
 
 static void testLoadCancelled(LoadStopTrackingTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/cancelled").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/cancelled"));
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -165,7 +165,7 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
     test->reload();
     test->wait(0.25); // Wait for a quarter of a second.
 
-    test->loadURI(kServer->getURIForPath("/normal").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal"));
     test->waitUntilLoadFinished();
     assertNormalLoadHappened(test->m_loadEvents);
 
@@ -176,18 +176,18 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 
 static void testLoadProgress(LoadTrackingTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/normal").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal"));
     test->waitUntilLoadFinished();
     g_assert_cmpfloat(test->m_estimatedProgress, ==, 1);
 }
 
 static void testWebViewHistoryLoad(LoadTrackingTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/normal").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal"));
     test->waitUntilLoadFinished();
     assertNormalLoadHappened(test->m_loadEvents);
 
-    test->loadURI(kServer->getURIForPath("/normal2").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal2"));
     test->waitUntilLoadFinished();
     assertNormalLoadHappened(test->m_loadEvents);
 
@@ -233,8 +233,8 @@ public:
 
 static void testWebViewLoadTwiceAndReload(LoadTwiceAndReloadTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/normal").legacyCStringPointer());
-    test->loadURI(kServer->getURIForPath("/normal2").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal"));
+    test->loadURI(kServer->getURIForPath("/normal2"));
     test->waitUntilFinished();
 }
 
@@ -249,7 +249,7 @@ static void testUnfinishedSubresourceLoad(LoadTrackingTest* test, gconstpointer)
 {
     // Verify that LoadFinished occurs even if the next load starts before the
     // previous load actually finishes.
-    test->loadURI(kServer->getURIForPath("/unfinished-subresource-load").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/unfinished-subresource-load"));
     auto signalID = g_signal_connect(test->webView(), "notify::uri", G_CALLBACK(uriChanged), test);
     test->waitUntilLoadFinished();
     test->waitUntilLoadFinished();
@@ -272,7 +272,7 @@ public:
 
     static void uriChanged(GObject*, GParamSpec*, ViewURITrackingTest* test)
     {
-        g_assert_cmpstr(test->m_currentURI.legacyCStringPointer(), !=, webkit_web_view_get_uri(test->webView()));
+        ASSERT_CMP_CSTRING(test->m_currentURI, !=, webkit_web_view_get_uri(test->webView()));
         test->m_currentURI = UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(test->webView())) };
     }
 
@@ -286,17 +286,18 @@ public:
 
     enum State { Provisional, ProvisionalAfterRedirect, Commited, Finished };
 
+    using LoadTrackingTest::loadURI;
     void loadURI(const char* uri)
     {
         reset();
         LoadTrackingTest::loadURI(uri);
     }
 
-    void loadURIAndRedirectOnCommitted(const char* uri, const char* redirectURI)
+    void loadURIAndRedirectOnCommitted(const UTF8CString& uri, const UTF8CString& redirectURI)
     {
         reset();
-        m_uriToLoadOnCommitted = UTF8CString { byteCast<char8_t>(redirectURI) };
-        LoadTrackingTest::loadURI(uri);
+        m_uriToLoadOnCommitted = redirectURI;
+        LoadTrackingTest::loadURI(uri.legacyCStringPointer());
     }
 
     void provisionalLoadStarted()
@@ -352,7 +353,7 @@ private:
 static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
 {
     // Normal load, the URL doesn't change.
-    test->loadURI(kServer->getURIForPath("/normal1").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal1"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/normal1");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -360,7 +361,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/normal1");
 
     // Redirect, the URL changes after the redirect.
-    test->loadURI(kServer->getURIForPath("/redirect").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, "/normal");
@@ -368,7 +369,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/normal");
 
     // Normal load, URL changed by WebKitPage::send-request.
-    test->loadURI(kServer->getURIForPath("/normal-change-request").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal-change-request"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/normal-change-request");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -376,7 +377,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed");
 
     // Redirect, URL changed by WebKitPage::send-request.
-    test->loadURI(kServer->getURIForPath("/redirect-to-change-request").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect-to-change-request"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-to-change-request");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, "/normal-change-request");
@@ -384,7 +385,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed-on-redirect");
 
     // Non-API request loads.
-    test->loadURI(kServer->getURIForPath("/redirect-js/normal").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect-js/normal"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/normal");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -396,7 +397,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Commited, "/normal");
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/normal");
 
-    test->loadURI(kServer->getURIForPath("/redirect-js/redirect").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect-js/redirect"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/redirect");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -408,7 +409,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Commited, "/normal");
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/normal");
 
-    test->loadURI(kServer->getURIForPath("/redirect-js/normal-change-request").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect-js/normal-change-request"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/normal-change-request");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -420,7 +421,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Commited, "/request-changed");
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed");
 
-    test->loadURI(kServer->getURIForPath("/redirect-js/redirect-to-change-request").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect-js/redirect-to-change-request"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/redirect-to-change-request");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -432,7 +433,7 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::Commited, "/request-changed-on-redirect");
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed-on-redirect");
 
-    test->loadURIAndRedirectOnCommitted(kServer->getURIForPath("/normal").legacyCStringPointer(), kServer->getURIForPath("/headers").legacyCStringPointer());
+    test->loadURIAndRedirectOnCommitted(kServer->getURIForPath("/normal"), kServer->getURIForPath("/headers"));
     test->waitUntilLoadFinished();
     test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/normal");
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
@@ -467,7 +468,7 @@ public:
     {
         // New load, load-started hasn't been emitted yet.
         g_assert_true(m_loadEvents.isEmpty());
-        g_assert_cmpstr(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI.legacyCStringPointer());
+        ASSERT_CMP_CSTRING(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI);
     }
 
     void endLoad()
@@ -481,7 +482,7 @@ public:
 
 static void testWebViewIsLoading(ViewIsLoadingTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/normal").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal"));
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_loading(test->webView()));
 
@@ -493,10 +494,10 @@ static void testWebViewIsLoading(ViewIsLoadingTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_loading(test->webView()));
 
-    test->loadURI(kServer->getURIForPath("/normal").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal"));
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_loading(test->webView()));
-    test->loadURI(kServer->getURIForPath("/normal2").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal2"));
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_loading(test->webView()));
 
@@ -554,6 +555,7 @@ public:
         g_dbus_connection_signal_unsubscribe(g_dbus_proxy_get_connection(m_proxy.get()), m_uriChangedSignalID);
     }
 
+    using WebViewTest::loadURI;
     void loadURI(const char* uri)
     {
         m_webPageURIs.clear();
@@ -577,14 +579,14 @@ public:
 static void testWebPageURI(WebPageURITest* test, gconstpointer)
 {
     // Normal load.
-    test->loadURI(kServer->getURIForPath("/normal1").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal1"));
     test->waitUntilLoadFinished();
     test->checkViewAndPageURIsMatch();
     g_assert_cmpint(test->m_webPageURIs.size(), ==, 1);
     ASSERT_CMP_CSTRING(test->m_webPageURIs[0], ==, kServer->getURIForPath("/normal1"));
 
     // Redirect
-    test->loadURI(kServer->getURIForPath("/redirect").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect"));
     test->waitUntilLoadFinished();
     test->checkViewAndPageURIsMatch();
     g_assert_cmpint(test->m_webPageURIs.size(), ==, 2);
@@ -592,7 +594,7 @@ static void testWebPageURI(WebPageURITest* test, gconstpointer)
     ASSERT_CMP_CSTRING(test->m_webPageURIs[1], ==, kServer->getURIForPath("/normal"));
 
     // Normal load, URL changed by WebKitPage::send-request.
-    test->loadURI(kServer->getURIForPath("/normal-change-request").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/normal-change-request"));
     test->waitUntilLoadFinished();
     test->checkViewAndPageURIsMatch();
     g_assert_cmpint(test->m_webPageURIs.size(), ==, 2);
@@ -600,7 +602,7 @@ static void testWebPageURI(WebPageURITest* test, gconstpointer)
     ASSERT_CMP_CSTRING(test->m_webPageURIs[1], ==, kServer->getURIForPath("/request-changed"));
 
     // Redirect, URL changed by WebKitPage::send-request.
-    test->loadURI(kServer->getURIForPath("/redirect-to-change-request").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/redirect-to-change-request"));
     test->waitUntilLoadFinished();
     test->checkViewAndPageURIsMatch();
     g_assert_cmpint(test->m_webPageURIs.size(), ==, 3);
@@ -638,7 +640,7 @@ static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
     g_assert_cmpint(strncmp(mainResourceData, "1", mainResourceDataSize), ==, 0);
 
     // Load a URI for which the web extension will add the Do Not Track header.
-    test->loadURI(kServer->getURIForPath("/add-do-not-track-header").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/add-do-not-track-header"));
     test->waitUntilLoadFinished();
 
     mainResourceData = test->mainResourceData(mainResourceDataSize);
@@ -670,7 +672,7 @@ static void testURIResponseHTTPHeaders(WebViewTest* test, gconstpointer)
     g_assert_true(WEBKIT_IS_URI_RESPONSE(response));
     g_assert_null(webkit_uri_response_get_http_headers(response));
 
-    test->loadURI(kServer->getURIForPath("/headers").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/headers"));
     test->waitUntilLoadFinished();
     resource = webkit_web_view_get_main_resource(test->webView());
     g_assert_true(WEBKIT_IS_WEB_RESOURCE(resource));
@@ -688,14 +690,14 @@ static void testUserAgent(WebViewTest* test, gconstpointer)
     const char* userAgent = webkit_settings_get_user_agent(webkit_web_view_get_settings(test->webView()));
 
     s_userAgentMap.clear();
-    test->loadURI(kServer->getURIForPath("/ua-main").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/ua-main"));
     test->waitUntilLoadFinished();
     g_assert_cmpuint(s_userAgentMap.size(), ==, 1);
     g_assert_true(s_userAgentMap.contains("/ua-main"_s));
     ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-main"_s));
     s_userAgentMap.clear();
 
-    test->loadURI(kServer->getURIForPath("/ua-main-redirect").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/ua-main-redirect"));
     test->waitUntilLoadFinished();
     g_assert_cmpuint(s_userAgentMap.size(), ==, 2);
     g_assert_true(s_userAgentMap.contains("/ua-main-redirect"_s));
@@ -704,7 +706,7 @@ static void testUserAgent(WebViewTest* test, gconstpointer)
     ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-main"_s));
     s_userAgentMap.clear();
 
-    test->loadURI(kServer->getURIForPath("/ua-css").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/ua-css"));
     test->waitUntilLoadFinished();
     g_assert_cmpuint(s_userAgentMap.size(), ==, 2);
     g_assert_true(s_userAgentMap.contains("/ua-css"_s));
@@ -713,7 +715,7 @@ static void testUserAgent(WebViewTest* test, gconstpointer)
     ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-style.css"_s));
     s_userAgentMap.clear();
 
-    test->loadURI(kServer->getURIForPath("/ua-redirected-css").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/ua-redirected-css"));
     test->waitUntilLoadFinished();
     g_assert_cmpuint(s_userAgentMap.size(), ==, 3);
     g_assert_true(s_userAgentMap.contains("/ua-redirected-css"_s));

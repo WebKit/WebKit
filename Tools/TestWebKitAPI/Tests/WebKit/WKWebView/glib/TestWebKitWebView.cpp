@@ -300,7 +300,7 @@ static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
 
 static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
 {
-    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(gServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_null(webkit_web_view_get_custom_charset(test->webView()));
     webkit_web_view_set_custom_charset(test->webView(), "utf8");
@@ -1791,7 +1791,7 @@ static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer
     test->initialize();
 
     // Notifications don't work with local or special schemes.
-    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(gServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_false(test->hasPermission());
 
@@ -1849,7 +1849,7 @@ static void testWebViewNotificationInitialPermissionAllowed(NotificationWebViewT
     g_signal_connect(test->m_webContext.get(), "initialize-notification-permissions", G_CALLBACK(setInitialNotificationPermissionsAllowedCallback), test);
     test->initialize();
 
-    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(gServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_true(test->hasPermission());
 
@@ -1862,7 +1862,7 @@ static void testWebViewNotificationInitialPermissionDisallowed(NotificationWebVi
     g_signal_connect(test->m_webContext.get(), "initialize-notification-permissions", G_CALLBACK(setInitialNotificationPermissionsDisallowedCallback), test);
     test->initialize();
 
-    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(gServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_false(test->hasPermission());
 }
@@ -2069,7 +2069,7 @@ static void testWebViewOffscreenWindow(WebViewTest* test, gconstpointer)
 {
     GtkWidget* window = gtk_offscreen_window_new();
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(test->webView()));
-    test->loadURI(gServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(gServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     gtk_widget_show_all(window);
     gtk_widget_destroy(window);
@@ -2101,26 +2101,26 @@ static void testWebViewTitleChange(WebViewTitleTest* test, gconstpointer)
     test->loadHtml("<head><title>Page Title</title></head>", nullptr);
     test->waitUntilTitleChanged();
     g_assert_cmpint(test->m_webViewTitles.size(), ==, 1);
-    g_assert_cmpstr(test->m_webViewTitles[0].legacyCStringPointer(), ==, "Page Title");
+    ASSERT_CMP_CSTRING(test->m_webViewTitles[0], ==, "Page Title");
 
     test->loadHtml("<head><title>Another Page Title</title></head>", nullptr);
     test->waitUntilTitleChanged();
     g_assert_cmpint(test->m_webViewTitles.size(), ==, 2);
-    g_assert_cmpstr(test->m_webViewTitles[1].legacyCStringPointer(), ==, "");
+    ASSERT_CMP_CSTRING(test->m_webViewTitles[1], ==, "");
     test->waitUntilTitleChanged();
     g_assert_cmpint(test->m_webViewTitles.size(), ==, 3);
     /* Page title should be immediately unset when loading a new page. */
-    g_assert_cmpstr(test->m_webViewTitles[2].legacyCStringPointer(), ==, "Another Page Title");
+    ASSERT_CMP_CSTRING(test->m_webViewTitles[2], ==, "Another Page Title");
 
     test->loadHtml("<p>This page has no title!</p>", nullptr);
     test->waitUntilLoadFinished();
     g_assert_cmpint(test->m_webViewTitles.size(), ==, 4);
-    g_assert_cmpstr(test->m_webViewTitles[3].legacyCStringPointer(), ==, "");
+    ASSERT_CMP_CSTRING(test->m_webViewTitles[3], ==, "");
 
     test->loadHtml("<script>document.title = 'one'; document.title = 'two'; document.title = 'three';</script>", nullptr);
     test->waitUntilTitleChanged();
     g_assert_cmpint(test->m_webViewTitles.size(), ==, 5);
-    g_assert_cmpstr(test->m_webViewTitles[4].legacyCStringPointer(), ==, "three");
+    ASSERT_CMP_CSTRING(test->m_webViewTitles[4], ==, "three");
 }
 
 #if PLATFORM(WPE)

@@ -79,7 +79,7 @@ static void testEditorCopyKeyBindingNonEditable(EditorKeyBindingTest* test, gcon
     test->loadContentsAndWait(selectedSpanHTML);
 
     auto copied = test->copyWithKeyStroke(KEY(c), { WebViewTest::Modifiers::Control });
-    g_assert_cmpstr(copied.legacyCStringPointer(), ==, "make Jack a dull");
+    ASSERT_CMP_CSTRING(copied, ==, "make Jack a dull");
 }
 
 static void testEditorCopyKeyBindingEditable(EditorKeyBindingTest* test, gconstpointer)
@@ -92,7 +92,7 @@ static void testEditorCopyKeyBindingEditable(EditorKeyBindingTest* test, gconstp
         "</body></html>");
 
     auto copied = test->copyWithKeyStroke(KEY(c), { WebViewTest::Modifiers::Control });
-    g_assert_cmpstr(copied.legacyCStringPointer(), ==, "and no play");
+    ASSERT_CMP_CSTRING(copied, ==, "and no play");
 }
 
 static void testEditorSelectAllKeyBindingNonEditable(EditorKeyBindingTest* test, gconstpointer)
@@ -100,11 +100,11 @@ static void testEditorSelectAllKeyBindingNonEditable(EditorKeyBindingTest* test,
     test->loadContentsAndWait(selectedSpanHTML);
 
     auto selection = test->evaluateString("getSelection().toString();");
-    g_assert_cmpstr(selection.legacyCStringPointer(), ==, "make Jack a dull");
+    ASSERT_CMP_CSTRING(selection, ==, "make Jack a dull");
 
     test->keyStroke(KEY(a), { WebViewTest::Modifiers::Control });
     selection = test->evaluateString("getSelection().toString().trim();");
-    g_assert_cmpstr(selection.legacyCStringPointer(), ==, "All work and no play make Jack a dull boy.");
+    ASSERT_CMP_CSTRING(selection, ==, "All work and no play make Jack a dull boy.");
 }
 
 // A command the selection does not allow has to fall through to the page, or

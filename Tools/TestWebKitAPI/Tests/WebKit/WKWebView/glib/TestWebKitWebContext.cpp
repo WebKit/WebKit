@@ -454,7 +454,7 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
 static void testWebContextLanguages(WebViewTest* test, gconstpointer)
 {
     static const char* expectedDefaultLanguage = "en-US";
-    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
@@ -469,7 +469,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), reinterpret_cast<const char* const*>(languages->pdata));
 
     static const char* expectedLanguages = "en,ES-es;q=0.90,dE;q=0.80";
-    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     mainResourceDataSize = 0;
     mainResourceData = test->mainResourceData(mainResourceDataSize);
@@ -679,7 +679,7 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     g_assert_true(waitUntilXHRDone());
 
     // It isn't still possible to load file from an HTTP URL.
-    test->loadURI(kServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     value = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
     g_assert_nonnull(value);
@@ -733,6 +733,8 @@ public:
         return UTF8CString { byteCast<char8_t>(std::span { data, dataSize }) };
     }
 
+    UTF8CString loadURIAndGetMainResourceData(const UTF8CString& uri) { return loadURIAndGetMainResourceData(uri.legacyCStringPointer()); }
+
     GUniquePtr<char> proxyServerPortAsString()
     {
         GUniquePtr<char> port(g_strdup_printf("%u", m_proxyServer.port()));
@@ -775,7 +777,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 {
     // Proxy URI is unset by default. Requests to kServer should be received by kServer.
     GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", kServer->port()));
-    auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     // WebSocket requests should also be received by kServer.
@@ -788,7 +790,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     auto* dataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     webkit_network_proxy_settings_free(settings);
 
@@ -819,14 +821,14 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Remove the proxy. Requests to kServer should be received by kServer again.
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
     settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), ignoreHosts);
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     GUniquePtr<char> localhostEchoPortURI(g_strdup_printf("http://localhost:%s/echoPort", serverPortAsString.get()));
     mainResourceData = test->loadURIAndGetMainResourceData(localhostEchoPortURI.get());
@@ -835,20 +837,20 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Remove the proxy again to ensure next test is not using any previous values.
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
     webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     webkit_network_proxy_settings_free(settings);
 
     // Reset to use the default resolver.
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_DEFAULT, nullptr);
-    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").legacyCStringPointer());
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
     kServer->removeWebSocketHandler();

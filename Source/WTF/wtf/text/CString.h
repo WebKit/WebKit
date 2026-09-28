@@ -85,12 +85,6 @@ class CStringBase {
 public:
     const char* data() const LIFETIME_BOUND; // Any encoding
 
-    // Escape hatch for external C functions and printf-style formatting, matching
-    // CString::legacyCStringPointer() below. Unlike data(), this keeps returning const char*
-    // as producers are migrated to the encoding-aware types. Named for the destination rather than the
-    // contents: const char* is what C string interfaces take, which is why it is char and not char8_t.
-    const char* legacyCStringPointer() const LIFETIME_BOUND { return data(); } // Any encoding
-
     std::string toStdString() const;
 
     std::span<const char> span() const LIFETIME_BOUND; // Any encoding

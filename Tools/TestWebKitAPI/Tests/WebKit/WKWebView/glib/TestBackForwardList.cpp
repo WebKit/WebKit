@@ -167,7 +167,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     UTF8CString uriPage1 = kServer->getURIForPath("/Page1");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    test->loadURI(uriPage1.legacyCStringPointer());
+    test->loadURI(uriPage1);
     test->waitUntilLoadFinished();
     test->waitUntilTitleChanged();
 
@@ -185,7 +185,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     UTF8CString uriPage2 = kServer->getURIForPath("/Page2");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    test->loadURI(uriPage2.legacyCStringPointer());
+    test->loadURI(uriPage2);
     test->waitUntilLoadFinished();
     test->waitUntilTitleChanged();
 
@@ -248,7 +248,7 @@ static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpo
     for (int i = 0; i < kBackForwardListLimit; i++) {
         GUniquePtr<char> path(g_strdup_printf("/Page%d", i));
         test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-        test->loadURI(kServer->getURIForPath(path.get()).legacyCStringPointer());
+        test->loadURI(kServer->getURIForPath(path.get()));
         test->waitUntilLoadFinished();
     }
 
@@ -258,7 +258,7 @@ static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpo
 
     GUniquePtr<char> path(g_strdup_printf("/Page%d", kBackForwardListLimit));
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem | BackForwardListTest::RemovedItems;
-    test->loadURI(kServer->getURIForPath(path.get()).legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath(path.get()));
     test->waitUntilLoadFinishedAndCheckRemovedItems(removedItems.get());
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, kBackForwardListLimit);
@@ -286,17 +286,17 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
 
     UTF8CString uriPage1 = kServer->getURIForPath("/Page1");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    test->loadURI(uriPage1.legacyCStringPointer());
+    test->loadURI(uriPage1);
     test->waitUntilLoadFinished();
 
     UTF8CString uriPage2 = kServer->getURIForPath("/Page2");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    test->loadURI(uriPage2.legacyCStringPointer());
+    test->loadURI(uriPage2);
     test->waitUntilLoadFinished();
 
     UTF8CString uriPage3 = kServer->getURIForPath("/Page3");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    test->loadURI(uriPage3.legacyCStringPointer());
+    test->loadURI(uriPage3);
     test->waitUntilLoadFinished();
 
     test->m_changedFlags = BackForwardListTest::CurrentItem;
@@ -394,7 +394,7 @@ static void testWebKitWebViewNavigationAfterSessionRestore(BackForwardListTest* 
 
     // A normal load after a session restore should remove the forward list, add the new item and update the current one.
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem | BackForwardListTest::RemovedItems;
-    test->loadURI(kServer->getURIForPath("/Page4").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/Page4"));
     test->waitUntilLoadFinished();
 }
 

@@ -416,7 +416,7 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
 
     test->willWaitForFaviconURIChanged();
 
-    test->loadURI(kServer->getURIForPath("/foo").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/foo"));
     test->waitUntilLoadFinishedAndFaviconChanged();
     UTF8CString faviconURI = kServer->getURIForPath("/icon/favicon.ico");
 
@@ -432,14 +432,14 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     g_assert_cmpint(cairo_image_surface_get_height(test->m_favicon), ==, 16);
 #endif
     g_assert_true(test->m_faviconURI.has_value());
-    g_assert_cmpstr(test->m_faviconURI->legacyCStringPointer(), ==, faviconURI.legacyCStringPointer());
+    ASSERT_CMP_CSTRING(test->m_faviconURI->legacyCStringPointer(), ==, faviconURI);
     g_assert_no_error(test->m_error.get());
 
 #if !USE(GTK4)
     // Check that another page with the same favicon returns the same icon.
     cairo_surface_t* favicon = cairo_surface_reference(test->m_favicon);
     test->willWaitForFaviconURIChanged();
-    test->loadURI(kServer->getURIForPath("/bar").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/bar"));
     test->waitUntilLoadFinishedAndFaviconChanged();
     test->waitUntilFaviconURIChangedIfNeeded();
     // favicon changes twice, first to reset it and then when the new icon is loaded.
@@ -449,14 +449,14 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     g_assert_nonnull(test->m_favicon);
     g_assert_true(test->m_favicon == favicon);
     g_assert_true(test->m_faviconURI.has_value());
-    g_assert_cmpstr(test->m_faviconURI->legacyCStringPointer(), ==, faviconURI.legacyCStringPointer());
+    ASSERT_CMP_CSTRING(test->m_faviconURI->legacyCStringPointer(), ==, faviconURI);
     g_assert_no_error(test->m_error.get());
     cairo_surface_destroy(favicon);
 #endif
 
     test->willWaitForFaviconURIChanged();
     faviconURI = kServer->getURIForPath("/favicon.ico");
-    test->loadURI(kServer->getURIForPath("/nofavicon").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/nofavicon"));
     test->waitUntilLoadFinishedAndFaviconChanged();
 
     // Note that /favicon.icon results in HTTP 404 Not Found, and when an icon
@@ -474,7 +474,7 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     // WebKitWebView::notify::favicon, but not WebKitFaviconDatabase::icon-changed.
     g_assert_null(webkit_web_view_get_favicon(test->webView()));
     test->m_faviconURI.reset();
-    test->loadURI(kServer->getURIForPath("/foo").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/foo"));
     test->waitUntilFaviconChanged();
     g_assert_false(test->m_faviconURI.has_value());
     g_assert_nonnull(webkit_web_view_get_favicon(test->webView()));
@@ -487,7 +487,7 @@ static void testFaviconDatabaseGetPageIcons(FaviconDatabaseTest *test, gconstpoi
     test->open("testFaviconDatabaseGetPageIcons");
 
     UTF8CString pageURI = kServer->getURIForPath("/multipleicons");
-    test->loadURI(pageURI.legacyCStringPointer());
+    test->loadURI(pageURI);
     test->waitUntilLoadFinishedAndPageIconsChanged();
 
 #if PLATFORM(GTK)
@@ -575,7 +575,7 @@ static void testFaviconDatabaseEphemeral(FaviconDatabaseTest* test, gconstpointe
     test->open("testFaviconDatabaseEphemeral");
     g_assert_true(g_file_test(databaseFile.get(), G_FILE_TEST_EXISTS));
 
-    test->loadURI(kServer->getURIForPath("/foo").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/foo"));
     test->waitUntilLoadFinishedAndFaviconChanged();
     g_assert_nonnull(webkit_favicon_database_get_favicon_uri(test->m_database.get(), kServer->getURIForPath("/foo").legacyCStringPointer()));
 
@@ -618,7 +618,7 @@ void testFaviconDatabaseClear(FaviconDatabaseTest* test, gconstpointer)
 {
     test->open("testFaviconDatabaseClear");
 
-    test->loadURI(kServer->getURIForPath("/foo").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/foo"));
     test->waitUntilLoadFinishedAndFaviconChanged();
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").legacyCStringPointer());
     g_assert_nonnull(test->m_favicon);

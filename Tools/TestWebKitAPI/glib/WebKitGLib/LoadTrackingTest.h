@@ -38,6 +38,7 @@ public:
     virtual void loadFailed(const char* failingURI, GError*);
     virtual void estimatedProgressChanged();
 
+    using WebViewTest::loadURI;
     void loadURI(const char* uri);
     void loadHtml(const char* html, const char* baseURI, WebKitWebView* = nullptr);
     void loadPlainText(const char* plainText);

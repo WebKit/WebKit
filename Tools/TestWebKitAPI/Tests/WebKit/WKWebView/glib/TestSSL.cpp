@@ -68,7 +68,7 @@ static void testSSL(SSLTest* test, gconstpointer)
 {
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_nonnull(test->m_certificate);
     // Self-signed certificate has a nullptr issuer.
@@ -114,7 +114,7 @@ static void testInsecureContent(InsecureContentTest* test, gconstpointer)
 {
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
-    test->loadURI(kHttpsServer->getURIForPath("/insecure-content/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/insecure-content/"));
     test->waitUntilLoadFinished();
 
     g_assert_false(test->m_insecureContentRun);
@@ -135,7 +135,7 @@ static void testTLSErrorsPolicy(SSLTest* test, gconstpointer)
 #endif
 
     assertIfSSLRequestProcessed = true;
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadFailed);
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
@@ -151,7 +151,7 @@ static void testTLSErrorsPolicy(SSLTest* test, gconstpointer)
 #endif
 
     test->m_loadFailed = false;
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_false(test->m_loadFailed);
 
@@ -191,7 +191,7 @@ static void testTLSErrorsRedirect(SSLTest* test, gconstpointer)
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
     assertIfSSLRequestProcessed = true;
-    test->loadURI(kHttpsServer->getURIForPath("/redirect").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/redirect"));
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadFailed);
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
@@ -212,7 +212,7 @@ static void testTLSErrorsHTTPAuth(SSLTest* test, gconstpointer)
 
     assertIfSSLRequestProcessed = true;
     g_signal_connect(test->webView(), "authenticate", G_CALLBACK(webViewAuthenticationCallback), NULL);
-    test->loadURI(kHttpsServer->getURIForPath("/auth").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/auth"));
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadFailed);
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
@@ -256,7 +256,7 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
 
     assertIfSSLRequestProcessed = true;
     // The load-failed-with-tls-errors signal should be emitted when there is a TLS failure.
-    test->loadURI(kHttpsServer->getURIForPath("/test-tls/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/test-tls/"));
     test->waitUntilLoadFinished();
     g_assert_true(G_IS_TLS_CERTIFICATE(test->certificate()));
     g_assert_cmpuint(test->tlsErrors(), ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
@@ -273,7 +273,7 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
     webkit_web_context_allow_tls_certificate_for_host(test->m_webContext.get(), test->certificate(), test->host().legacyCStringPointer());
 #endif
     // The page should now load without errors.
-    test->loadURI(kHttpsServer->getURIForPath("/test-tls/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/test-tls/"));
     test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -341,7 +341,7 @@ static void testSubresourceLoadFailedWithTLSErrors(TLSSubresourceTest* test, gco
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
     assertIfSSLRequestProcessed = true;
-    test->loadURI(kHttpServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpServer->getURIForPath("/"));
     test->waitUntilSubresourceLoadFail();
     g_assert_true(G_IS_TLS_CERTIFICATE(test->m_certificate.get()));
     g_assert_cmpuint(test->m_tlsErrors, ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
@@ -432,7 +432,7 @@ static void testWebSocketTLSErrors(WebSocketTest* test, gconstpointer)
 {
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
-    test->loadURI(kHttpServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
 
     // First, check that insecure ws:// web sockets work fine.
@@ -486,7 +486,7 @@ static void testTLSErrorsEphemeral(EphemeralSSLTest* test, gconstpointer)
     g_assert_cmpint(webkit_website_data_manager_get_tls_errors_policy(websiteDataManager), ==, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 #endif
 
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadFailed);
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
@@ -582,7 +582,7 @@ static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpoi
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     // Cancel the authentiation request.
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     auto* request = test->waitForAuthenticationRequest();
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "");
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED);
@@ -604,7 +604,7 @@ static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpoi
     test->m_loadEvents.clear();
 
     // Complete the request with no credential.
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     request = test->waitForAuthenticationRequest();
     webkit_authentication_request_authenticate(request, nullptr);
     test->waitUntilLoadFinished();
@@ -619,7 +619,7 @@ static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpoi
     test->m_loadEvents.clear();
 
     // Complete the request with a credential with no certificate.
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     request = test->waitForAuthenticationRequest();
     WebKitCredential* credential = webkit_credential_new_for_certificate(nullptr, WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
     webkit_authentication_request_authenticate(request, credential);
@@ -635,7 +635,7 @@ static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpoi
 
     // Complete the request with a credential with an invalid certificate.
     test->m_rejectClientCertificates = true;
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     request = test->waitForAuthenticationRequest();
     credential = webkit_credential_new_for_certificate(test->m_clientCertificate.get(), WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
     webkit_authentication_request_authenticate(request, credential);
@@ -651,7 +651,7 @@ static void testClientSideCertificate(ClientSideCertificateTest* test, gconstpoi
     test->m_rejectClientCertificates = false;
 
     // Complete the request with a credential with a valid certificate.
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     request = test->waitForAuthenticationRequest();
     credential = webkit_credential_new_for_certificate(test->m_clientCertificate.get(), WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
     webkit_authentication_request_authenticate(request, credential);
@@ -689,7 +689,7 @@ static void testWebSocketClientSideCertificate(WebSocketClientSideCertificateTes
     // Ignore server certificate errors.
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
-    test->loadURI(kHttpServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
 
     // Try first without having the certificate in credential storage.
@@ -700,7 +700,7 @@ static void testWebSocketClientSideCertificate(WebSocketClientSideCertificateTes
     g_assert_true(events & WebSocketTest::EventFlags::DidClose);
 
     // Load the page to ensure the certificate is stored in session credential sotorage.
-    test->loadURI(kHttpsServer->getURIForPath("/").legacyCStringPointer());
+    test->loadURI(kHttpsServer->getURIForPath("/"));
     test->waitUntilLoadFinished();
 
     // And try to connect again now with the certificate in credential storage.

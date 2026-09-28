@@ -756,7 +756,7 @@ static void testPolicyResponseDownload(PolicyResponseDownloadTest* test, gconstp
     // Delay the DecideDestination to ensure that the load is aborted before the network task has became a download.
     // See https://bugs.webkit.org/show_bug.cgi?id=164220.
     test->m_shouldDelayDecideDestination = true;
-    test->loadURI(requestURI.legacyCStringPointer());
+    test->loadURI(requestURI);
     test->waitUntilDownloadStarted();
 
     WebKitURIRequest* request = webkit_download_get_request(test->m_download.get());
@@ -778,7 +778,7 @@ static void testPolicyResponseDownload(PolicyResponseDownloadTest* test, gconstp
 static void testPolicyResponseDownloadCancel(PolicyResponseDownloadTest* test, gconstpointer)
 {
     auto requestURI = kServer->getURIForPath("/test.pdf");
-    test->loadURI(requestURI.legacyCStringPointer());
+    test->loadURI(requestURI);
     test->waitUntilDownloadStarted();
 
     WebKitURIRequest* request = webkit_download_get_request(test->m_download.get());

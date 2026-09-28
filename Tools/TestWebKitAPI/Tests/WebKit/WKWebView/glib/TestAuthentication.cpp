@@ -55,6 +55,7 @@ public:
 
     static int authenticationRetries;
 
+    using LoadTrackingTest::loadURI;
     void loadURI(const char* uri)
     {
         // Reset the retry count of the fake server when a page is loaded.
@@ -127,7 +128,7 @@ int AuthenticationTest::authenticationRetries = 0;
 static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpointer)
 {
     // Test authentication request getters match soup authentication header.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, kServer->baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, kServer->port());
@@ -146,7 +147,7 @@ static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpoi
 static void testWebViewAuthenticationCancel(AuthenticationTest* test, gconstpointer)
 {
     // Test cancel.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     webkit_authentication_request_cancel(request);
     // Server doesn't ask for new credentials.
@@ -164,7 +165,7 @@ static void testWebViewAuthenticationCancel(AuthenticationTest* test, gconstpoin
 
 static void testWebViewAuthenticationLoadCancelled(AuthenticationTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     test->waitForAuthenticationRequest();
     webkit_web_view_stop_loading(test->webView());
     // Expect empty page.
@@ -183,7 +184,7 @@ static void testWebViewAuthenticationLoadCancelled(AuthenticationTest* test, gco
 static void testWebViewAuthenticationFailure(AuthenticationTest* test, gconstpointer)
 {
     // Test authentication failures.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     g_assert_false(webkit_authentication_request_is_retry(request));
     WebKitCredential* credential = webkit_credential_new(authTestUsername, "wrongpassword", WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
@@ -211,7 +212,7 @@ static void testWebViewAuthenticationFailure(AuthenticationTest* test, gconstpoi
 static void testWebViewAuthenticationNoCredential(AuthenticationTest* test, gconstpointer)
 {
     // Test continue without credentials.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     webkit_authentication_request_authenticate(request, 0);
     // Server doesn't ask for new credentials.
@@ -228,7 +229,7 @@ static void testWebViewAuthenticationNoCredential(AuthenticationTest* test, gcon
 
 static void testWebViewAuthenticationEphemeral(EphemeralAuthenticationTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     auto* request = test->waitForAuthenticationRequest();
     g_assert_null(webkit_authentication_request_get_proposed_credential(request));
     g_assert_false(webkit_authentication_request_can_save_credentials(request));
@@ -242,7 +243,7 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
 #if USE(LIBSECRET)
     // If WebKit has been compiled with libsecret, and private browsing is disabled
     // then check that credentials can be saved.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     request = test->waitForAuthenticationRequest();
     g_assert_null(webkit_authentication_request_get_proposed_credential(request));
     g_assert_true(webkit_authentication_request_can_save_credentials(request));
@@ -266,7 +267,7 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
     g_assert_false(webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager));
 #endif
 
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     request = test->waitForAuthenticationRequest();
     g_assert_null(webkit_authentication_request_get_proposed_credential(request));
     webkit_authentication_request_set_proposed_credential(request, nullptr);
@@ -297,7 +298,7 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
 static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpointer)
 {
     // Test correct authentication.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
     webkit_authentication_request_authenticate(request, credential);
@@ -313,7 +314,7 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     g_assert_true(test->m_authenticationSucceededReceived);
 
     // Test loading the same (authorized) page again.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     // There is no authentication challenge.
     test->waitUntilLoadFinished();
     test->waitUntilTitleChanged();
@@ -330,7 +331,7 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
 static void testWebViewAuthenticationPageProvidedAuthorizationHeader(AuthenticationTest* test, gconstpointer)
 {
     // Authenticate once, so that the credentials end up in the auth cache for the whole domain.
-    test->loadURI(kServer->getURIForPath("/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
     webkit_authentication_request_authenticate(request, credential);
@@ -353,7 +354,7 @@ static void testWebViewAuthenticationPageProvidedAuthorizationHeader(Authenticat
 
 static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/empty-realm.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/empty-realm.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
     webkit_authentication_request_authenticate(request, credential);
@@ -509,7 +510,7 @@ public:
 
 static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/proxy/auth-test.html").legacyCStringPointer());
+    test->loadURI(kServer->getURIForPath("/proxy/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, test->m_proxyServer.baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, test->m_proxyServer.port());
@@ -530,7 +531,7 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
     auto httpsServer = makeUnique<WebKitTestServer>(WebKitTestServer::ServerHTTPS);
     httpsServer->run(serverCallback);
 
-    test->loadURI(httpsServer->getURIForPath("/proxy/auth-test.html").legacyCStringPointer());
+    test->loadURI(httpsServer->getURIForPath("/proxy/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, test->m_proxyServer.baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, test->m_proxyServer.port());
