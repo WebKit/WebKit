@@ -35,6 +35,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "NavigationScheduler.h"
 #include "NodeDocument.h"
@@ -445,5 +446,24 @@ TextStream& operator<<(TextStream& ts, const Frame& frame)
     return ts;
 }
 
+template<>
+LocalFrame* FrameAncestorIterator<LocalFrame>::firstOfType(Frame* frame)
+{
+    for (RefPtr current = frame; current; current = current->tree().parent()) {
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(*current))
+            return localFrame;
+    }
+    return nullptr;
+}
+
+template<>
+LocalFrame* FrameDescendantIterator<LocalFrame>::firstOfType(Frame* frame, Frame* root)
+{
+    for (RefPtr current = frame; current; current = current->tree().traverseNext(root)) {
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(*current))
+            return localFrame;
+    }
+    return nullptr;
+}
 
 } // namespace WebCore

@@ -49,6 +49,7 @@ class FrameLoaderClient;
 class FrameLoadRequest;
 class FrameView;
 class HTMLFrameOwnerElement;
+class LocalFrame;
 class NavigationScheduler;
 class Page;
 class RenderWidget;
@@ -219,29 +220,21 @@ public:
 
     FrameAncestorIterator& operator++()
     {
-        RefPtr<Frame> parent = m_current->tree().parent();
-        m_current = firstOfType(parent);
+        RefPtr parent = m_current->tree().parent();
+        m_current = firstOfType(parent.get());
         return *this;
     }
 
     void operator++(int) { ++*this; }
 
 private:
-    static FrameType* firstOfType(Frame* frame)
-    {
-        if constexpr (std::is_same_v<FrameType, Frame>)
-            return frame;
-        else {
-            for (RefPtr current = frame; current; current = current->tree().parent()) {
-                if (auto* typedFrame = dynamicDowncast<FrameType>(*current))
-                    return typedFrame;
-            }
-            return nullptr;
-        }
-    }
+    static FrameType* firstOfType(Frame*);
 
     RefPtr<FrameType> m_current;
 };
+
+template<> inline Frame* FrameAncestorIterator<Frame>::firstOfType(Frame* frame) { return frame; }
+template<> WEBCORE_EXPORT LocalFrame* FrameAncestorIterator<LocalFrame>::firstOfType(Frame*);
 
 template<typename FrameType>
 class FrameAncestorRange {
@@ -276,30 +269,22 @@ public:
 
     FrameDescendantIterator& operator++()
     {
-        RefPtr<Frame> next = m_current->tree().traverseNext(m_root.get());
-        m_current = firstOfType(next, m_root.get());
+        RefPtr next = m_current->tree().traverseNext(m_root.get());
+        m_current = firstOfType(next.get(), m_root.get());
         return *this;
     }
 
     void operator++(int) { ++*this; }
 
 private:
-    static FrameType* firstOfType(Frame* frame, Frame* root)
-    {
-        if constexpr (std::is_same_v<FrameType, Frame>)
-            return frame;
-        else {
-            for (RefPtr current = frame; current; current = current->tree().traverseNext(root)) {
-                if (auto* typedFrame = dynamicDowncast<FrameType>(*current))
-                    return typedFrame;
-            }
-            return nullptr;
-        }
-    }
+    static FrameType* firstOfType(Frame*, Frame* root);
 
     RefPtr<Frame> m_root;
     RefPtr<FrameType> m_current;
 };
+
+template<> inline Frame* FrameDescendantIterator<Frame>::firstOfType(Frame* frame, Frame*) { return frame; }
+template<> WEBCORE_EXPORT LocalFrame* FrameDescendantIterator<LocalFrame>::firstOfType(Frame*, Frame* root);
 
 template<typename FrameType>
 class FrameDescendantRange {
