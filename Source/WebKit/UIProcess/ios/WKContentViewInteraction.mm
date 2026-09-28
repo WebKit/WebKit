@@ -10799,7 +10799,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self cleanUpDragSourceSessionState];
 }
 
-- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item nodeID:(std::optional<WebCore::NodeIdentifier>)nodeID
+- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item nodeID:(std::optional<WebCore::NodeIdentifier>)nodeID frameID:(std::optional<WebCore::FrameIdentifier>)frameID
 {
     ASSERT(item.sourceAction);
 
@@ -10808,7 +10808,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (item.modelLayerID && _page) {
         if (RefPtr portalPresentationManager = _page->portalPresentationManagerProxy()) {
             if (RetainPtr viewForDragPreview = portalPresentationManager->startDragForModel(*item.modelLayerID)) {
-                _dragDropInteractionState.stageDragItem(item, viewForDragPreview);
+                _dragDropInteractionState.stageDragItem(item, viewForDragPreview, frameID);
                 return;
             }
         }
@@ -10819,7 +10819,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self _prepareToDragPromisedAttachment:item.promisedAttachmentInfo];
 
     auto dragImage = adoptNS([[UIImage alloc] initWithCGImage:image.get() scale:protect(_page)->deviceScaleFactor() orientation:UIImageOrientationUp]);
-    _dragDropInteractionState.stageDragItem(item, dragImage.get());
+    _dragDropInteractionState.stageDragItem(item, dragImage.get(), frameID);
 }
 
 - (void)_didHandleAdditionalDragItemsRequest:(BOOL)added
@@ -10844,7 +10844,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     completion(dragItemsToAdd);
 
     if (dragItemsToAdd.count)
-        protect(_page)->didStartDrag();
+        protect(_page)->didStartDrag(stagedDragSource.frameID);
 }
 
 - (void)_didHandleDragStartRequest:(BOOL)started
@@ -11399,7 +11399,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     auto *registrationLists = [[WebItemProviderPasteboard sharedInstance] takeRegistrationLists];
     NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
     if (![dragItems count])
-        protect(_page)->dragCancelled();
+        protect(_page)->dragCancelled(stagedDragSource.frameID);
     else
         [self _cancelLongPressGestureRecognizer];
 
@@ -11459,7 +11459,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     [protect(_actionSheetAssistant) cleanupSheet];
     _dragDropInteractionState.dragSessionWillBegin();
-    protect(_page)->didStartDrag();
+    protect(_page)->didStartDrag(_dragDropInteractionState.initialDragSourceFrameID());
 }
 
 - (void)dragInteraction:(UIDragInteraction *)interaction session:(id<UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
@@ -11498,12 +11498,13 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     for (auto& previewView : previewViews)
         [previewView setAlpha:0];
 
-    [animator addCompletion:[protectedSelf = retainPtr(self), previewViews = WTF::move(previewViews), page = _page] (UIViewAnimatingPosition finalPosition) mutable {
+    auto frameID = _dragDropInteractionState.dragSourceFrameIDForItem(item);
+    [animator addCompletion:[protectedSelf = retainPtr(self), previewViews = WTF::move(previewViews), page = _page, frameID] (UIViewAnimatingPosition finalPosition) mutable {
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
         for (auto& previewView : previewViews)
             [previewView setAlpha:1];
 
-        page->dragCancelled();
+        page->dragCancelled(frameID);
 
         page->callAfterNextPresentationUpdate([previewViews = WTF::move(previewViews), protectedSelf = WTF::move(protectedSelf)] {
             for (auto& previewView : previewViews)

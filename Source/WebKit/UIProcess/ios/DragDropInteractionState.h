@@ -30,6 +30,7 @@
 #import "UIKitSPI.h"
 #import <WebCore/DragActions.h>
 #import <WebCore/DragData.h>
+#import <WebCore/FrameIdentifier.h>
 #import <WebCore/Path.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/WebItemProviderPasteboard.h>
@@ -59,6 +60,7 @@ struct DragSourceState {
     bool containsSelection { false };
 
     NSInteger itemIdentifier { 0 };
+    std::optional<WebCore::FrameIdentifier> frameID;
 };
 
 using DragItemToPreviewMap = HashMap<RetainPtr<UIDragItem>, RetainPtr<UITargetedDragPreview>>;
@@ -72,7 +74,7 @@ public:
     // These helper methods are unique to UIDragInteraction.
     void prepareForDragSession(id <UIDragSession>, dispatch_block_t completionHandler);
     void dragSessionWillBegin();
-    void stageDragItem(const WebCore::DragItem&, DragSourceState::DragPreviewContentType);
+    void stageDragItem(const WebCore::DragItem&, DragSourceState::DragPreviewContentType, const std::optional<WebCore::FrameIdentifier>&);
     bool hasStagedDragSource() const;
     const DragSourceState& stagedDragSource() const LIFETIME_BOUND { return m_stagedDragSource.value(); }
     enum class DidBecomeActive : bool { No, Yes };
@@ -99,6 +101,8 @@ public:
     BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTF::move(m_addDragItemCompletionBlock); }
     Vector<RetainPtr<UIView>> takePreviewViewsForDragCancel() { return std::exchange(m_previewViewsForDragCancel, { }); }
     std::optional<WebCore::NodeIdentifier> nodeIdentifier() const { return m_nodeIdentifier; }
+    std::optional<WebCore::FrameIdentifier> initialDragSourceFrameID() const;
+    std::optional<WebCore::FrameIdentifier> dragSourceFrameIDForItem(UIDragItem *) const;
 
     void addDefaultDropPreview(UIDragItem *, UITargetedDragPreview *);
     UITargetedDragPreview *finalDropPreview(UIDragItem *) const;

@@ -1181,12 +1181,12 @@ void PageClientImpl::didPerformDragOperation(bool handled)
     [contentView() _didPerformDragOperation:handled];
 }
 
-void PageClientImpl::startDrag(const DragItem& item, ShareableBitmap::Handle&& image, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>&)
+void PageClientImpl::startDrag(const DragItem& item, ShareableBitmap::Handle&& image, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
 {
     auto bitmap = ShareableBitmap::create(WTF::move(image));
     if (!bitmap)
         return;
-    [contentView() _startDrag:bitmap->createPlatformImage() item:item nodeID:nodeID];
+    [contentView() _startDrag:bitmap->createPlatformImage() item:item nodeID:nodeID frameID:frameID];
 }
 
 void PageClientImpl::willReceiveEditDragSnapshot()

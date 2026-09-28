@@ -6177,6 +6177,32 @@ void WebPage::dragEnded(std::optional<FrameIdentifier> frameID, IntPoint clientP
     m_isStartingDrag = false;
 }
 
+void WebPage::dragSourceEnded(FrameIdentifier frameID, IntPoint clientPositionInMainFrameView, IntPoint globalPosition, OptionSet<DragOperation> dragOperationMask)
+{
+    IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController().dragOffset().x(), globalPosition.y() + m_page->dragController().dragOffset().y());
+
+    m_isStartingDrag = false;
+    m_page->dragController().dragEnded();
+
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    RefPtr localFrame = frame->coreLocalFrame();
+    if (!localFrame)
+        return;
+
+    RefPtr localRootView = localFrame->rootFrame().view();
+    if (!localRootView)
+        return;
+
+    auto clientPosition = roundedIntPoint(localRootView->convertFromRootViewAcrossIsolatedFrames(FloatPoint { clientPositionInMainFrameView }));
+
+    // FIXME: These are fake modifier keys here, but they should be real ones instead.
+    PlatformMouseEvent event(clientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), 0, WebCore::SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    localFrame->eventHandler().dragSourceEnded(event, dragOperationMask);
+}
+
 void WebPage::willPerformLoadDragDestinationAction()
 {
     if (auto pendingDropSandboxExtensionHandle = std::exchange(m_pendingDropSandboxExtensionHandle, std::nullopt))
@@ -6206,11 +6232,14 @@ void WebPage::didStartDrag(std::optional<FrameIdentifier> frameID)
     }
 }
 
-void WebPage::dragCancelled()
+void WebPage::dragCancelled(std::optional<FrameIdentifier> frameID)
 {
     m_isStartingDrag = false;
-    if (RefPtr localMainFrame = this->localMainFrame())
-        localMainFrame->eventHandler().dragCancelled();
+
+    if (RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame()) {
+        if (RefPtr localFrame = frame->coreLocalFrame())
+            localFrame->eventHandler().dragCancelled();
+    }
 }
 
 #if ENABLE(MODEL_PROCESS)

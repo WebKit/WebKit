@@ -4784,6 +4784,12 @@ std::optional<RemoteUserInputEventData> EventHandler::dragSourceEndedAt(const Pl
         return userInputEventDataForRemoteFrame(remoteSubframe.get(), pointInFrame);
     }
 
+    dragSourceEnded(event, dragOperationMask, mayExtendDragSession);
+    return std::nullopt;
+}
+
+void EventHandler::dragSourceEnded(const PlatformMouseEvent& event, OptionSet<DragOperation> dragOperationMask, MayExtendDragSession mayExtendDragSession)
+{
     if (shouldDispatchEventsToDragSourceElement()) {
         protect(dragState().dataTransfer)->setDestinationOperationMask(dragOperationMask);
         dispatchEventToDragSourceElement(eventNames().dragendEvent, event);
@@ -4799,7 +4805,6 @@ std::optional<RemoteUserInputEventData> EventHandler::dragSourceEndedAt(const Pl
     // In case the drag was ended due to an escape key press we need to ensure
     // that consecutive mousemove events don't reinitiate the drag and drop.
     m_mouseDownMayStartDrag = false;
-    return std::nullopt;
 }
 
 void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement)

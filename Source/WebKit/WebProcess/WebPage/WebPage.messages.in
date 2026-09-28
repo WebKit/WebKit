@@ -406,7 +406,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if ENABLE(DRAG_SUPPORT)
     DidStartDrag(std::optional<WebCore::FrameIdentifier> frameID)
     DragEnded(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask) -> (struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
-    DragCancelled()
+    DragCancelled(std::optional<WebCore::FrameIdentifier> frameID)
+    DragSourceEnded(WebCore::FrameIdentifier frameID, WebCore::IntPoint clientPositionInMainFrameView, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
 #endif
 
 #if ENABLE(MODEL_PROCESS)

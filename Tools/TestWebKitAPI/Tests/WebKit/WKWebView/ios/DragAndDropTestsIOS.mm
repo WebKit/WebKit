@@ -2567,6 +2567,76 @@ TEST(DragAndDropTests, DragStartScreenCoordinatesInCrossOriginOffsetIframe)
     EXPECT_WK_STREQ("150,200 100,150", [dragStartScreenCoordinatesInOffsetIframe("https://webkit.org/inner"_s) UTF8String] ?: "");
 }
 
+// Drags an element out of an iframe and drops it on the main frame twice, and returns the drag
+// events the element received. The drop lands in the main frame, so with Site Isolation the process
+// handling the end of the drag is not the one that started it.
+static RetainPtr<NSString> dragEventsForDraggingOutOfIframeTwice(ASCIILiteral innerFrameSource)
+{
+    HTTPServer server({
+        { "/main"_s, { makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'>"
+            "<iframe style='position: absolute; left: 0; top: 0; width: 300px; height: 300px; border: none;' src='"_s, innerFrameSource, "'></iframe>"
+            "<div id='target' style='position: absolute; left: 0; top: 350px; width: 500px; height: 200px;'></div>"
+            "<script>"
+            "target.addEventListener('dragover', (event) => event.preventDefault());"
+            "target.addEventListener('drop', (event) => event.preventDefault());"
+            "</script>"
+            "</body>"_s) } },
+        { "/inner"_s, { "<body style='margin: 0'>"
+            "<div id='source' draggable='true' style='position: absolute; left: 0; top: 0; width: 200px; height: 200px; background: silver;'>Drag me</div>"
+            "<script>"
+            "source.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', 'hello'));"
+            "for (let type of ['dragstart', 'dragend'])"
+            "    source.addEventListener(type, () => window.webkit.messageHandlers.testHandler.postMessage(type));"
+            "window.webkit.messageHandlers.testHandler.postMessage('inner frame loaded');"
+            "</script>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool innerFrameLoaded = false;
+    [webView performAfterReceivingMessage:@"inner frame loaded" action:^{
+        innerFrameLoaded = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    TestWebKitAPI::Util::run(&innerFrameLoaded);
+
+    // Registered only now so that it cannot catch the load notification above.
+    RetainPtr events = adoptNS([NSMutableArray new]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [events addObject:message];
+    }];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    for (unsigned i = 0; i < 2; ++i) {
+        [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(250, 450)];
+        bool receivedDragEnd = TestWebKitAPI::Util::waitFor([&] {
+            return [events count] >= 2 * (i + 1);
+        });
+        if (!receivedDragEnd)
+            break;
+    }
+    return [events componentsJoinedByString:@", "];
+}
+
+TEST(DragAndDropTests, DragOutOfSameSiteIframeTwice)
+{
+    EXPECT_WK_STREQ("dragstart, dragend, dragstart, dragend", [dragEventsForDraggingOutOfIframeTwice("https://example.com/inner"_s) UTF8String] ?: "");
+}
+
+TEST(DragAndDropTests, DragOutOfCrossOriginIframeTwice)
+{
+    // The second drag used to hit an assertion in the iframe's process, which never learned that the first
+    // drag had started or ended, and the iframe never received dragend.
+    EXPECT_WK_STREQ("dragstart, dragend, dragstart, dragend", [dragEventsForDraggingOutOfIframeTwice("https://webkit.org/inner"_s) UTF8String] ?: "");
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
