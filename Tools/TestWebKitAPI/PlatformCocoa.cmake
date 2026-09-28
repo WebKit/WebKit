@@ -9,30 +9,40 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Mirror Xcode's "Embed Testing.framework" phase
+# Mirror Xcode's "Embed Testing.framework" phase. ditto merges into whatever is already there;
+# use a stamp to record a rewrite in case of $_testing_platform_id change
 set(_testing_staged)
+set(_testing_stamp_dir "${CMAKE_BINARY_DIR}/DerivedSources/TestWebKitAPI")
+string(MD5 _testing_platform_id "${_platform_dir}")
 foreach (_fw Testing _Testing_AppKit _Testing_CoreGraphics _Testing_CoreImage
         _Testing_CoreTransferable _Testing_Foundation _Testing_UIKit)
     set(_src "${_platform_dir}/Developer/Library/Frameworks/${_fw}.framework")
     set(_dst "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${_fw}.framework")
+    set(_stamp "${_testing_stamp_dir}/staged-${_fw}-${_testing_platform_id}.stamp")
 
     if (EXISTS "${_src}")
-        add_custom_command(OUTPUT "${_dst}"
+        add_custom_command(OUTPUT "${_stamp}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${_testing_stamp_dir}"
+            COMMAND ${CMAKE_COMMAND} -E rm -rf "${_dst}"
             COMMAND ditto "${_src}" "${_dst}"
+            COMMAND ${CMAKE_COMMAND} -E touch "${_stamp}"
             COMMENT "Staging ${_fw}.framework"
             VERBATIM
         )
-        list(APPEND _testing_staged "${_dst}")
+        list(APPEND _testing_staged "${_stamp}")
     endif ()
 endforeach ()
 if (EXISTS "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib")
-    add_custom_command(OUTPUT "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib"
+    set(_stamp "${_testing_stamp_dir}/staged-lib_TestingInterop-${_testing_platform_id}.stamp")
+    add_custom_command(OUTPUT "${_stamp}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_testing_stamp_dir}"
         COMMAND ditto "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib"
             "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib"
+        COMMAND ${CMAKE_COMMAND} -E touch "${_stamp}"
         VERBATIM
     )
-    list(APPEND _testing_staged "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib")
+    list(APPEND _testing_staged "${_stamp}")
 endif ()
 add_custom_target(TestWebKitAPIStageTesting DEPENDS ${_testing_staged})
 
