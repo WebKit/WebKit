@@ -224,6 +224,13 @@ class GlobalVariablesTest(unittest.TestCase):
         assertNoCheck(os.path.join('Source', 'WebCore', 'css', 'CSSParser.cpp'),
                       "readability/naming")
 
+        assertNoCheck(os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WTF', 'Deque.cpp'),
+                      "runtime/construct_and_append")
+        assertNoCheck(os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WTF', 'Vector.cpp'),
+                      "runtime/construct_and_append")
+        assertCheck(os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WTF', 'HashMap.cpp'),
+                    "runtime/construct_and_append")
+
         assertNoCheck(os.path.join('Source', 'WebCore', 'ForwardingHeaders', 'debugger', 'Debugger.h'),
                       "build/header_guard")
 

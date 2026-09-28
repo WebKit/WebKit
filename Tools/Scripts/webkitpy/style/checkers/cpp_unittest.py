@@ -6365,6 +6365,131 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_to_array] [4]",
             'foo.cpp')
 
+    def _construct_and_append_message(self, type_name):
+        return ("If this is a WTF::Vector, SegmentedVector, or Deque of '%s', use 'constructAndAppend()'; if its element type is a "
+                "WTF::Variant with a '%s' alternative, use 'constructAndAppend(WTF::InPlaceType<%s>)'.  Either constructs the element in place "
+                "instead of constructing, moving from, and destroying a '%s' temporary, which costs code size and caller stack space."
+                "  [runtime/construct_and_append] [4]" % (type_name, type_name, type_name, type_name))
+
+    _construct_and_append_empty_braces_message = (
+        "If this is a WTF::Vector or Deque, use 'constructAndAppend()' to construct the element in place "
+        "instead of constructing, moving from, and destroying a value-initialized temporary, which costs code size and caller stack space."
+        "  [runtime/construct_and_append] [4]")
+
+    def test_construct_and_append(self):
+        expected_message = self._construct_and_append_message
+
+        self.assert_lint('vector.append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('vector.append(Foo{});', [
+            expected_message('Foo'),
+            'Missing space before {  [whitespace/braces] [5]',
+            'Missing space inside { }.  [whitespace/braces] [5]'], 'foo.cpp')
+        self.assert_lint('vector.append(Foo());', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('m_stack.append(NestingContext { });', expected_message('NestingContext'), 'foo.cpp')
+        self.assert_lint('m_stack.append(NestingContext { });', expected_message('NestingContext'), 'foo.mm')
+        self.assert_lint('vector->append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('segments().append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('v.append(WTF::Foo { });', expected_message('WTF::Foo'), 'foo.cpp')
+        self.assert_lint('v.append(::Foo());', expected_message('::Foo'), 'foo.cpp')
+        self.assert_lint('v.append(Foo<Bar> { });', expected_message('Foo<Bar>'), 'foo.cpp')
+        self.assert_lint('v.append(Foo<Bar>());', expected_message('Foo<Bar>'), 'foo.cpp')
+        self.assert_lint('v.append(Vector<Foo<Bar>, 4>());', expected_message('Vector<Foo<Bar>, 4>'), 'foo.cpp')
+        self.assert_lint('v.append(WTF::Vector<WebCore::Foo> { });', expected_message('WTF::Vector<WebCore::Foo>'), 'foo.cpp')
+        self.assert_lint('return m_stack.append(Foo { });', expected_message('Foo'), 'foo.cpp')
+
+    def test_construct_and_append_empty_braces(self):
+        self.assert_lint('vector.append({ });', self._construct_and_append_empty_braces_message, 'foo.cpp')
+        self.assert_lint('m_fetchedRecords.append({ });', self._construct_and_append_empty_braces_message, 'foo.cpp')
+        self.assert_lint('data.views->append({ });', self._construct_and_append_empty_braces_message, 'foo.mm')
+        self.assert_lint('vector.append({});', [
+            self._construct_and_append_empty_braces_message,
+            'Missing space inside { }.  [whitespace/braces] [5]'], 'foo.cpp')
+        self.assert_lint('append({ });', self._construct_and_append_empty_braces_message, 'foo.cpp')
+
+    def test_construct_and_append_std_types(self):
+        expected_message = self._construct_and_append_message
+
+        # std::optional and std::pair are the only lowercase type names recognized.
+        self.assert_lint('v.append(std::pair<int, int>());', expected_message('std::pair<int, int>'), 'foo.cpp')
+        self.assert_lint('v.append(std::pair<int, int> { });', expected_message('std::pair<int, int>'), 'foo.cpp')
+        self.assert_lint('v.append(std::optional<Foo> { });', expected_message('std::optional<Foo>'), 'foo.cpp')
+        self.assert_lint('v.append(std::optional<Foo>());', expected_message('std::optional<Foo>'), 'foo.cpp')
+        self.assert_lint('v.append(std::optional<std::pair<int, int>> { });', expected_message('std::optional<std::pair<int, int>>'), 'foo.cpp')
+
+    def test_construct_and_append_without_receiver(self):
+        expected_message = self._construct_and_append_message
+
+        # Calls from inside a Vector-derived class: a bare or base-qualified append() that is not a declaration.
+        self.assert_lint('append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('    append(Foo());', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('return append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('foo(append(Foo { }));', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('foo(x, append(Foo { }));', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('auto result = append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('if (x) { append(Foo { }); }', [
+            expected_message('Foo'),
+            'More than one command on the same line in if  [whitespace/parens] [4]'], 'foo.cpp')
+        self.assert_lint('x ? append(Foo { }) : void();', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('foo(); append(Foo { });', [
+            'More than one command on the same line  [whitespace/newline] [4]',
+            expected_message('Foo')], 'foo.cpp')
+        self.assert_lint('Vector::append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('Base::append(Foo());', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('WTF::Vector<Foo, 4>::append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('return Base::append(Foo { });', expected_message('Foo'), 'foo.cpp')
+        self.assert_lint('append(std::optional<Foo> { });', expected_message('std::optional<Foo>'), 'foo.cpp')
+
+    def test_construct_and_append_allowed(self):
+        # Constructing in place, or appending a temporary built from arguments, is fine.
+        self.assert_lint('vector.constructAndAppend();', '', 'foo.cpp')
+        self.assert_lint('vector.constructAndAppend(Foo { });', '', 'foo.cpp')
+        self.assert_lint('vector.constructAndAppend({ });', '', 'foo.cpp')
+        self.assert_lint('vector.uncheckedConstructAndAppend();', '', 'foo.cpp')
+        self.assert_lint('vector.constructAndAppend(WTF::InPlaceType<Foo>);', '', 'foo.cpp')
+        self.assert_lint('vector.append(WTF::InPlaceType<Foo>);', '', 'foo.cpp')
+        self.assert_lint('vector.append(Foo { 1 });', '', 'foo.cpp')
+        self.assert_lint('vector.append(Foo { x, y });', '', 'foo.cpp')
+        self.assert_lint('vector.append(Foo(x));', '', 'foo.cpp')
+        self.assert_lint('vector.append(Foo { }, 1);', '', 'foo.cpp')
+        self.assert_lint('vector.append(Foo { }.bar());', '', 'foo.cpp')
+        self.assert_lint('vector.append({ 1, 2 });', '', 'foo.cpp')
+        self.assert_lint('vector.append({ x });', '', 'foo.cpp')
+        self.assert_lint('vector.append(Foo::create());', '', 'foo.cpp')
+        self.assert_lint('vector.append(makeFoo<Bar>());', '', 'foo.cpp')
+        # A lowercase callee is a function call, not a type.
+        self.assert_lint('vector.append(foo());', '', 'foo.cpp')
+        self.assert_lint('builder.append(ContainerNode::description());', '', 'foo.cpp')
+        self.assert_lint('builder.append(WebCore::CharacterData::debugDescription());', '', 'foo.cpp')
+        self.assert_lint('builder.append(Foo<Bar>::create());', '', 'foo.cpp')
+        self.assert_lint('vector.append(WTF::move(x));', '', 'foo.cpp')
+        self.assert_lint('vector.append(x);', '', 'foo.cpp')
+        self.assert_lint('vector.appendVector(Foo());', '', 'foo.cpp')
+        self.assert_lint('vector.unsafeAppendWithoutCapacityCheck(Foo());', '', 'foo.cpp')
+        # Other std:: names are not recognized as types, and std:: function calls are not temporaries.
+        self.assert_lint('v.append(std::tuple<int>());', '', 'foo.cpp')
+        self.assert_lint('v.append(std::unique_ptr<Foo>());', '', 'foo.cpp')
+        self.assert_lint('v.append(std::numeric_limits<int>::max());', '', 'foo.cpp')
+        self.assert_lint('v.append(std::rand());',
+                         'Consider using rand_r(...) instead of rand(...) for improved thread safety.  [runtime/threadsafe_fn] [2]', 'foo.cpp')
+        self.assert_lint('v.append(std::this_thread::get_id());', '', 'foo.cpp')
+        self.assert_lint('v.append(std::make_pair(a, b));', '', 'foo.cpp')
+        self.assert_lint('v.append(std::optional<Foo>(x));', '', 'foo.cpp')
+        self.assert_lint('v.append(std::pair<int, int> { 1, 2 });', '', 'foo.cpp')
+        # Declarations of append() with an unnamed function-type or default-constructed parameter are not calls.
+        self.assert_lint('void append(Foo());', '', 'foo.cpp')
+        self.assert_lint('ALWAYS_INLINE void append(Foo());', '', 'foo.cpp')
+        self.assert_lint('bool append(Foo { });', '', 'foo.cpp')
+        self.assert_lint('void Base::append(Foo());', '', 'foo.cpp')
+        self.assert_lint('appendFoo(Foo());', '', 'foo.cpp')
+        self.assert_lint('myappend(Foo { });', '', 'foo.cpp')
+        # Comments and strings are ignored.
+        self.assert_lint('// vector.append(Foo { });', '', 'foo.cpp')
+        self.assert_lint('const char* s = "vector.append(Foo { });";', '', 'foo.cpp')
+        # C and Objective-C files have no WTF::Vector.
+        self.assert_lint('vector.append(Foo { });', '', 'foo.c')
+        self.assert_lint('vector.append(Foo { });', '', 'foo.m')
+        self.assert_lint('vector.append({ });', '', 'foo.m')
+
     def test_protected_getter(self):
         # Regular getter is fine.
         self.assert_lint(

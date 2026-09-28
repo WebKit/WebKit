@@ -25,12 +25,14 @@
 
 #include "config.h"
 
+#include "Helpers/Counters.h"
 #include "MoveOnly.h"
 #include <ranges>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -386,6 +388,76 @@ TEST(WTF_Vector, AppendList)
     EXPECT_EQ(vector[3], 4U);
     EXPECT_EQ(vector[4], 5U);
     EXPECT_EQ(vector[5], 6U);
+}
+
+TEST(WTF_Vector, AppendDefaultConstructedTemporaryMovesFromIt)
+{
+    Vector<CopyMoveCounter> vector;
+    CopyMoveCounter::TestingScope scope;
+    vector.append(CopyMoveCounter { });
+    EXPECT_EQ(1U, vector.size());
+    EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
+    EXPECT_EQ(0U, CopyMoveCounter::copyCount);
+    EXPECT_EQ(1U, CopyMoveCounter::moveCount);
+}
+
+TEST(WTF_Vector, ConstructAndAppendConstructsInPlace)
+{
+    for (bool reserveCapacity : { false, true }) {
+        Vector<CopyMoveCounter> vector;
+        if (reserveCapacity)
+            vector.reserveInitialCapacity(1);
+        CopyMoveCounter::TestingScope scope;
+        vector.constructAndAppend();
+        EXPECT_EQ(1U, vector.size());
+        EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
+        EXPECT_EQ(0U, CopyMoveCounter::copyCount);
+        EXPECT_EQ(0U, CopyMoveCounter::moveCount);
+    }
+}
+
+TEST(WTF_Vector, AppendEmptyBracesAppendsOneValueInitializedElement)
+{
+    Vector<int> ints { 1 };
+    ints.append({ });
+    EXPECT_EQ(2U, ints.size());
+    EXPECT_EQ(0, ints[1]);
+
+    Vector<Vector<int>> vectors;
+    vectors.append({ });
+    EXPECT_EQ(1U, vectors.size());
+    EXPECT_TRUE(vectors[0].isEmpty());
+
+    Vector<CopyMoveCounter> counters;
+    CopyMoveCounter::TestingScope scope;
+    counters.append({ });
+    EXPECT_EQ(1U, counters.size());
+    EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
+    EXPECT_EQ(1U, CopyMoveCounter::moveCount);
+}
+
+TEST(WTF_Vector, ConstructAndAppendVariantAlternativeInPlace)
+{
+    using CounterVariant = Variant<int, CopyMoveCounter>;
+    for (bool reserveCapacity : { false, true }) {
+        Vector<CounterVariant> vector;
+        if (reserveCapacity)
+            vector.reserveInitialCapacity(2);
+        CopyMoveCounter::TestingScope scope;
+        vector.constructAndAppend(WTF::InPlaceType<CopyMoveCounter>);
+        vector.append(WTF::InPlaceType<CopyMoveCounter>);
+        EXPECT_EQ(2U, vector.size());
+        EXPECT_TRUE(std::holds_alternative<CopyMoveCounter>(vector[0]));
+        EXPECT_TRUE(std::holds_alternative<CopyMoveCounter>(vector[1]));
+        EXPECT_EQ(2U, CopyMoveCounter::constructionCount);
+        EXPECT_EQ(0U, CopyMoveCounter::copyCount);
+        EXPECT_EQ(0U, CopyMoveCounter::moveCount);
+    }
+
+    // Without an in-place type, the first alternative is constructed.
+    Vector<CounterVariant> vector;
+    vector.constructAndAppend();
+    EXPECT_TRUE(std::holds_alternative<int>(vector[0]));
 }
 
 TEST(WTF_Vector, AppendContainerWithMapping)

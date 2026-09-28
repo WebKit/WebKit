@@ -2938,6 +2938,60 @@ def check_wtf_to_array(clean_lines, line_number, file_state, error):
         error(line_number, 'runtime/wtf_to_array', 4, "Use 'WTF::toArray()' instead of 'std::to_array()'.")
 
 
+# Matches '.append(T { })', '->append(T())', 'append(Foo::Bar<Baz>{})', 'append({ })', etc.
+# The call is either through a receiver ('.' or '->'), or bare / base-qualified ('append(',
+# 'Base::append(') where it cannot be a declaration such as 'void append(Foo());': at the start
+# of the line, after 'return', or after one of '(', ',', '=', '{', '?', ';'.  A lowercase final
+# name component is a function call such as 'append(foo())', not a type; 'std::optional' and
+# 'std::pair' are the only lowercase type names recognized.
+_RE_PATTERN_APPEND_DEFAULT_CONSTRUCTED_TEMPORARY = re.compile(
+    r'(?:(?:\.|->)\s*|(?:^|(?<=[(,={?;])|\breturn\b)\s*(?:::)?(?:\w+(?:\s*<[^;()]*>)?::)*)'
+    r'append\s*\(\s*'
+    r'(?:(?P<type>(?:::)?(?:\w+::)*[A-Z]\w*(?:\s*<[^;()]*>)?|std::(?:optional|pair)(?:\s*<[^;()]*>)?)\s*(?:\{\s*\}|\(\s*\))'
+    r'|(?P<empty_braces>\{\s*\}))'
+    r'\s*\)')
+
+
+def check_construct_and_append(clean_lines, line_number, file_state, error):
+    """Looks for 'append(T { })', 'append(T())', or 'append({ })' which should be replaced with 'constructAndAppend()'.
+
+    append() constructs a default-constructed temporary in the caller's stack frame,
+    moves it into the container, and destroys it, while constructAndAppend() constructs
+    the element in place.  The receiver's type is unknown here, so the message is
+    conditional on it being a container that has constructAndAppend().  When the element
+    type is a WTF::Variant with a 'T' alternative, a bare constructAndAppend() would construct
+    the first alternative instead, so the message also names 'constructAndAppend(WTF::InPlaceType<T>)'.
+    'append({ })' always constructs the element type itself, so only constructAndAppend()
+    is suggested for it.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    for append_match in _RE_PATTERN_APPEND_DEFAULT_CONSTRUCTED_TEMPORARY.finditer(line):
+        if append_match.group('empty_braces'):
+            error(line_number, 'runtime/construct_and_append', 4,
+                  "If this is a WTF::Vector or Deque, use 'constructAndAppend()' to construct the element in place "
+                  "instead of constructing, moving from, and destroying a value-initialized temporary, which costs code size and caller stack space.")
+            continue
+        type_name = append_match.group('type')
+        error(line_number, 'runtime/construct_and_append', 4,
+              "If this is a WTF::Vector, SegmentedVector, or Deque of '%s', use 'constructAndAppend()'; if its element type is a "
+              "WTF::Variant with a '%s' alternative, use 'constructAndAppend(WTF::InPlaceType<%s>)'.  Either constructs the element in place "
+              "instead of constructing, moving from, and destroying a '%s' temporary, which costs code size and caller stack space."
+              % (type_name, type_name, type_name, type_name))
+
+
 def check_unsafe_get(clean_lines, line_number, file_state, error):
     """Looks for use of 'unsafeGet()' or 'unsafePtr()' which should be avoided.
 
@@ -4063,6 +4117,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_to_array(clean_lines, line_number, file_state, error)
+    check_construct_and_append(clean_lines, line_number, file_state, error)
     check_unsafe_get(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
@@ -5357,6 +5412,7 @@ class CppChecker(object):
         'runtime/bitfields',
         'runtime/callonmainthread',
         'runtime/casting',
+        'runtime/construct_and_append',
         'runtime/ctype_function',
         'runtime/dispatch_queue_autorelease_pool',
         'runtime/dispatch_set_target_queue',
