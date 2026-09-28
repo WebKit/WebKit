@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #import "GPUVideoDecoderVTBAV1.h"
+#import "GPUVideoDecoderVTBH264.h"
 #import "GPUVideoDecoderVTBH265.h"
 #import "GPUVideoDecoderVTBVP9.h"
 #import <WebCore/CMUtilities.h>
@@ -82,8 +83,7 @@ std::unique_ptr<GPUVideoDecoder> GPUVideoDecoder::create(VideoCodecType decoderT
 
     switch (decoderType) {
     case VideoCodecType::H264:
-        // FIXME: Support H264 decoding in WebCore.
-        return makeUnique<GPULocalVideoDecoder>(webrtc::createLocalH264Decoder(callback), WTF::move(colorSpaceOverride));
+        return makeUnique<GPUVideoDecoderVTBH264>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
     case VideoCodecType::H265:
         return makeUnique<GPUVideoDecoderVTBH265>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
     case VideoCodecType::VP9:

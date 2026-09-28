@@ -26,9 +26,14 @@
 #import "config.h"
 #import "H264UtilitiesCocoa.h"
 
+#import "AnnexBUtilities.h"
 #import "BitReader.h"
 #import "CMUtilities.h"
+#import "FormatDescriptionUtilities.h"
+#import "H264Utilities.h"
+#import "Logging.h"
 #import "TrackInfo.h"
+#import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -114,6 +119,59 @@ RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t> avcc)
 Vector<uint8_t> convertAVCCMSampleBufferToAnnexB(CMSampleBufferRef avccSampleBuffer, bool isKeyframe)
 {
     return convertParameterSetsCMSampleBufferToAnnexB(avccSampleBuffer, isKeyframe, PAL::CMVideoFormatDescriptionGetH264ParameterSetAtIndex);
+}
+
+static bool h264AnnexBSpsIsFollowedByPps(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices, size_t spsIndex)
+{
+    if (spsIndex + 1 >= naluIndices.size())
+        return false;
+
+    auto& ppsIndex = naluIndices[spsIndex + 1];
+    return ppsIndex.payloadSize && h264NaluType(data[ppsIndex.payloadStartOffset]) == H264NaluType::Pps;
+}
+
+RefPtr<VideoInfo> createVideoInfoFromAVCAnnexBStream(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
+{
+    auto spsIndex = findH264AnnexBSpsIndex(data, naluIndices);
+    if (spsIndex == notFound)
+        return nullptr;
+
+    if (!h264AnnexBSpsIsFollowedByPps(data, naluIndices, spsIndex)) {
+        RELEASE_LOG_ERROR(WebRTC, "createVideoInfoFromAVCAnnexBStream NAL unit following SPS is not PPS");
+        return nullptr;
+    }
+
+    std::array<std::span<const uint8_t>, 2> paramSets {
+        data.subspan(naluIndices[spsIndex].payloadStartOffset, naluIndices[spsIndex].payloadSize),
+        data.subspan(naluIndices[spsIndex + 1].payloadStartOffset, naluIndices[spsIndex + 1].payloadSize)
+    };
+    std::array<const uint8_t*, 2> paramSetPointers { paramSets[0].data(), paramSets[1].data() };
+    std::array<size_t, 2> paramSetSizes { paramSets[0].size(), paramSets[1].size() };
+
+    CMFormatDescriptionRef rawDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreateFromH264ParameterSets(kCFAllocatorDefault, paramSetPointers.size(), paramSetPointers.data(), paramSetSizes.data(), 4, &rawDescription) != noErr)
+        return nullptr;
+    RetainPtr description = adoptCF(rawDescription);
+    return createVideoInfoFromFormatDescription(description);
+}
+
+Vector<uint8_t> convertAVCAnnexBToLengthPrefixed(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
+{
+    // We skip all NAL units up to and including the SPS/PPS pair, if present, as parameter sets belong in the format description, not in the per-sample data.
+    size_t startIndex = 0;
+    auto spsIndex = findH264AnnexBSpsIndex(data, naluIndices);
+    if (spsIndex != notFound) {
+        // If we only have a Sps, we skip it and log an error.
+        // FIXME: We should probably align convertAVCAnnexBToLengthPrefixed and convertHEVCAnnexBToLengthPrefixed on the exact same behaviour in case of missing sps/pps/vps.
+        if (h264AnnexBSpsIsFollowedByPps(data, naluIndices, spsIndex))
+            startIndex = spsIndex + 2;
+        else {
+            RELEASE_LOG_ERROR(WebRTC, "convertAVCAnnexBToLengthPrefixed NAL unit following SPS is not PPS");
+            startIndex = spsIndex + 1;
+        }
+    }
+
+    return annexBToLengthPrefixed(data, naluIndices.subspan(startIndex));
 }
 
 } // namespace WebCore

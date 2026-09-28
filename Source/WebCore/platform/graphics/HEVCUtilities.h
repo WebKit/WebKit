@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <WebCore/AnnexBUtilities.h>
 #include <array>
 #include <optional>
 #include <span>
@@ -40,6 +39,7 @@ namespace WebCore {
 class BitReader;
 class SharedBuffer;
 struct FourCC;
+struct NaluIndex;
 
 struct AVCParameters {
     uint8_t profileIDC { 0 };

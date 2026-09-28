@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HEVCUtilities.h"
 
+#include "AnnexBUtilities.h"
 #include "BitReader.h"
 #include "FourCC.h"
 #include "Logging.h"

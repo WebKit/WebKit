@@ -118,14 +118,26 @@ GPUVideoDecoderVTB::GPUVideoDecoderVTB(GPUVideoDecoderCallback callback, Ref<Wor
 
 GPUVideoDecoderVTB::~GPUVideoDecoderVTB() = default;
 
-static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVideoDecoderCallback callback, RefPtr<GPUVideoDecoderVTBQueue>&& queue, uint8_t reorderSize)
+static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer)
 {
-    return makeBlockPtr([callback = makeBlockPtr(callback), queue = WTF::move(queue), reorderSize](OSStatus, VTDecodeInfoFlags, CVImageBufferRef pixelBuffer, CMTaggedBufferGroupRef, CMTime presentationTime, CMTime) mutable {
+    CVBufferRemoveAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey);
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_sRGB, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+}
+
+static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVideoDecoderCallback callback, RefPtr<GPUVideoDecoderVTBQueue>&& queue, uint8_t reorderSize, bool shouldOverrideColorSpaceAttachments)
+{
+    return makeBlockPtr([callback = makeBlockPtr(callback), queue = WTF::move(queue), reorderSize, shouldOverrideColorSpaceAttachments](OSStatus, VTDecodeInfoFlags, CVImageBufferRef pixelBuffer, CMTaggedBufferGroupRef, CMTime presentationTime, CMTime) mutable {
         UNUSED_PARAM(reorderSize);
         if (!pixelBuffer) {
             callback(nil, 0, 0, false);
             return;
         }
+
+        // FIXME: We should remove this override: https://bugs.webkit.org/show_bug.cgi?id=325262.
+        if (shouldOverrideColorSpaceAttachments)
+            overrideColorSpaceAttachments(pixelBuffer);
 
         if (!queue) {
             callback((CVPixelBufferRef)pixelBuffer, presentationTime.value, 0, false);
@@ -166,7 +178,7 @@ int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<con
 
     PAL::CMSampleBufferSetOutputPresentationTimeStamp(sample.get(), PAL::CMTimeMake(timeStamp, 1));
     VTDecodeInfoFlags decodeInfoFlags = kVTDecodeFrame_EnableAsynchronousDecompression;
-    protect(m_decoder)->decodeMultiImageFrame(sample.get(), decodeInfoFlags, createMultiImageCallback(m_callback.get(), m_queue.get(), m_reorderSize));
+    protect(m_decoder)->decodeMultiImageFrame(sample.get(), decodeInfoFlags, createMultiImageCallback(m_callback.get(), m_queue.get(), m_reorderSize, shouldOverrideColorSpaceAttachments()));
     return 0;
 }
 
