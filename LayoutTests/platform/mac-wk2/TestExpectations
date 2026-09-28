@@ -2595,7 +2595,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] fast/quirks/active-quirks-by-domain.html [ Failure ]
 [ GoldenGate Debug ] fast/webgpu/nocrash/fuzz-281778.html [ Failure ]
 [ GoldenGate Debug ] fast/webgpu/nocrash/repro_274977.html [ Failure ]
-[ GoldenGate Debug ] http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Failure ]
 [ GoldenGate Debug ] http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
 [ GoldenGate Debug ] http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 [ GoldenGate Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
@@ -2620,3 +2619,5 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
 [ GoldenGate Debug ] storage/websql/sql-error-codes.html [ Failure ]
 [ GoldenGate Debug ] storage/websql/test-authorizer.html [ Failure ]
+
+webkit.org/b/325521 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Pass Failure ]
