@@ -6129,137 +6129,130 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
     }
     generator.emitRequireObjectCoercibleForDestructuring(rhs, firstPropertyName);
 
-    BytecodeGenerator::PreservedTDZStack preservedTDZStack;
-    generator.preserveTDZStack(preservedTDZStack);
-
-    {
-        RefPtr<RegisterID> restElementBase;
-        RefPtr<RegisterID> restElementPropertyName;
-        RefPtr<RegisterID> newObject;
-        IdentifierSet excludedSet;
-        std::optional<CallArguments> args;
-        unsigned numberOfComputedProperties = 0;
-        unsigned indexInArguments = 2;
-        if (m_containsRestElement) {
-            if (m_containsComputedProperty) {
-                for (const auto& target : m_targetPatterns) {
-                    if (target.bindingType == BindingType::Element) {
-                        if (target.propertyExpression)
-                            ++numberOfComputedProperties;
-                    }
+    RefPtr<RegisterID> restElementBase;
+    RefPtr<RegisterID> restElementPropertyName;
+    RefPtr<RegisterID> newObject;
+    IdentifierSet excludedSet;
+    std::optional<CallArguments> args;
+    unsigned numberOfComputedProperties = 0;
+    unsigned indexInArguments = 2;
+    if (m_containsRestElement) {
+        if (m_containsComputedProperty) {
+            for (const auto& target : m_targetPatterns) {
+                if (target.bindingType == BindingType::Element) {
+                    if (target.propertyExpression)
+                        ++numberOfComputedProperties;
                 }
             }
-            restElementBase = generator.newTemporary();
-            restElementPropertyName = generator.newTemporary();
-            newObject = generator.newTemporary();
-            args.emplace(generator, nullptr, indexInArguments + numberOfComputedProperties);
         }
-
-        for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-            const auto& target = m_targetPatterns[i];
-            if (target.bindingType == BindingType::Element) {
-                // If the destructuring becomes get_by_id and mov, then we should store results directly to the local's binding.
-                // From
-                //     get_by_id          dst:loc10, base:loc9, property:0
-                //     mov                dst:loc6, src:loc10
-                // To
-                //     get_by_id          dst:loc6, base:loc9, property:0
-                auto writableDirectBindingIfPossible = [&]() -> RegisterID* {
-                    // The following pattern is possible. In that case, after setting |data| local variable, we need to store property name into the set.
-                    // So, old property name |data| result must be kept before setting it into |data|.
-                    //     ({ [data]: data, ...obj } = object);
-                    if (m_containsRestElement && m_containsComputedProperty && target.propertyExpression)
-                        return nullptr;
-                    // default value can include a reference to local variable. So filling value to a local variable can differ result.
-                    // We give up fast path if default value includes non constant.
-                    // For example,
-                    //     ({ data = data } = object);
-                    if (target.defaultValue && !target.defaultValue->isConstant())
-                        return nullptr;
-                    return target.pattern->writableDirectBindingIfPossible(generator);
-                };
-
-                auto finishDirectBindingAssignment = [&]() {
-                    ASSERT(writableDirectBindingIfPossible());
-                    target.pattern->finishDirectBindingAssignment(generator);
-                };
-
-                RefPtr<RegisterID> temp;
-                RegisterID* directBinding = writableDirectBindingIfPossible();
-                if (directBinding)
-                    temp = directBinding;
-                else
-                    temp = generator.newTemporary();
-
-                std::optional<BaseAndPropertyName> targetBaseAndPropertyName;
-                if (!target.propertyExpression) {
-                    if (target.pattern->isAssignmentElementNode())
-                        targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
-                    std::optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
-                    if (!optionalIndex)
-                        generator.emitGetById(temp.get(), rhs, target.propertyName);
-                    else {
-                        RefPtr<RegisterID> propertyIndex = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
-                        generator.emitGetByVal(temp.get(), rhs, propertyIndex.get());
-                    }
-                    if (m_containsRestElement)
-                        excludedSet.add(target.propertyName.impl());
-                } else {
-                    RefPtr<RegisterID> propertyName;
-                    if (m_containsRestElement)
-                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments), target.propertyExpression);
-                    else
-                        propertyName = generator.emitNodeForProperty(target.propertyExpression);
-                    if (!target.propertyExpression->isNumber() && !target.propertyExpression->isString()) {
-                        // ToPropertyKey(Number | String) does not have side-effect.
-                        // And for Number case, passing it to GetByVal is better for performance.
-                        propertyName = generator.emitToPropertyKeyOrNumber(m_containsRestElement ? args->argumentRegister(indexInArguments) : generator.newTemporary(), propertyName.get());
-                    }
-                    if (m_containsRestElement)
-                        indexInArguments++;
-                    if (target.pattern->isAssignmentElementNode())
-                        targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
-                    generator.emitGetByVal(temp.get(), rhs, propertyName.get());
-                }
-
-                if (target.defaultValue)
-                    assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
-
-                if (directBinding) {
-                    ASSERT(!targetBaseAndPropertyName);
-                    finishDirectBindingAssignment();
-                } else if (targetBaseAndPropertyName)
-                    static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), temp.get());
-                else
-                    target.pattern->bindValue(generator, temp.get());
-            } else {
-                ASSERT(target.bindingType == BindingType::RestElement);
-                ASSERT(i == m_targetPatterns.size() - 1);
-
-                std::optional<BaseAndPropertyName> targetBaseAndPropertyName;
-                if (target.pattern->isAssignmentElementNode())
-                    targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator, restElementBase.get(), restElementPropertyName.get());
-
-                generator.emitNewObject(newObject.get());
-
-                // load and call @copyDataProperties
-                RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
-
-                // This must be non-tail-call because @copyDataProperties accesses caller-frame.
-                generator.move(args->thisRegister(), newObject.get());
-                generator.move(args->argumentRegister(0), rhs);
-                generator.emitLoad(args->argumentRegister(1), WTF::move(excludedSet));
-                generator.emitCallIgnoreResult(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args.value(), divot(), divotStart(), divotEnd(), DebuggableCall::No);
-
-                if (targetBaseAndPropertyName)
-                    static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), newObject.get());
-                else
-                    target.pattern->bindValue(generator, newObject.get());
-            }
-        }
+        restElementBase = generator.newTemporary();
+        restElementPropertyName = generator.newTemporary();
+        newObject = generator.newTemporary();
+        args.emplace(generator, nullptr, indexInArguments + numberOfComputedProperties);
     }
 
-    generator.restoreTDZStack(preservedTDZStack);
+    for (size_t i = 0; i < m_targetPatterns.size(); i++) {
+        const auto& target = m_targetPatterns[i];
+        if (target.bindingType == BindingType::Element) {
+            // If the destructuring becomes get_by_id and mov, then we should store results directly to the local's binding.
+            // From
+            //     get_by_id          dst:loc10, base:loc9, property:0
+            //     mov                dst:loc6, src:loc10
+            // To
+            //     get_by_id          dst:loc6, base:loc9, property:0
+            auto writableDirectBindingIfPossible = [&]() -> RegisterID* {
+                // The following pattern is possible. In that case, after setting |data| local variable, we need to store property name into the set.
+                // So, old property name |data| result must be kept before setting it into |data|.
+                //     ({ [data]: data, ...obj } = object);
+                if (m_containsRestElement && m_containsComputedProperty && target.propertyExpression)
+                    return nullptr;
+                // default value can include a reference to local variable. So filling value to a local variable can differ result.
+                // We give up fast path if default value includes non constant.
+                // For example,
+                //     ({ data = data } = object);
+                if (target.defaultValue && !target.defaultValue->isConstant())
+                    return nullptr;
+                return target.pattern->writableDirectBindingIfPossible(generator);
+            };
+
+            auto finishDirectBindingAssignment = [&]() {
+                ASSERT(writableDirectBindingIfPossible());
+                target.pattern->finishDirectBindingAssignment(generator);
+            };
+
+            RefPtr<RegisterID> temp;
+            RegisterID* directBinding = writableDirectBindingIfPossible();
+            if (directBinding)
+                temp = directBinding;
+            else
+                temp = generator.newTemporary();
+
+            std::optional<BaseAndPropertyName> targetBaseAndPropertyName;
+            if (!target.propertyExpression) {
+                if (target.pattern->isAssignmentElementNode())
+                    targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
+                std::optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
+                if (!optionalIndex)
+                    generator.emitGetById(temp.get(), rhs, target.propertyName);
+                else {
+                    RefPtr<RegisterID> propertyIndex = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
+                    generator.emitGetByVal(temp.get(), rhs, propertyIndex.get());
+                }
+                if (m_containsRestElement)
+                    excludedSet.add(target.propertyName.impl());
+            } else {
+                RefPtr<RegisterID> propertyName;
+                if (m_containsRestElement)
+                    propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments), target.propertyExpression);
+                else
+                    propertyName = generator.emitNodeForProperty(target.propertyExpression);
+                if (!target.propertyExpression->isNumber() && !target.propertyExpression->isString()) {
+                    // ToPropertyKey(Number | String) does not have side-effect.
+                    // And for Number case, passing it to GetByVal is better for performance.
+                    propertyName = generator.emitToPropertyKeyOrNumber(m_containsRestElement ? args->argumentRegister(indexInArguments) : generator.newTemporary(), propertyName.get());
+                }
+                if (m_containsRestElement)
+                    indexInArguments++;
+                if (target.pattern->isAssignmentElementNode())
+                    targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
+                generator.emitGetByVal(temp.get(), rhs, propertyName.get());
+            }
+
+            if (target.defaultValue)
+                assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
+
+            if (directBinding) {
+                ASSERT(!targetBaseAndPropertyName);
+                finishDirectBindingAssignment();
+            } else if (targetBaseAndPropertyName)
+                static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), temp.get());
+            else
+                target.pattern->bindValue(generator, temp.get());
+        } else {
+            ASSERT(target.bindingType == BindingType::RestElement);
+            ASSERT(i == m_targetPatterns.size() - 1);
+
+            std::optional<BaseAndPropertyName> targetBaseAndPropertyName;
+            if (target.pattern->isAssignmentElementNode())
+                targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator, restElementBase.get(), restElementPropertyName.get());
+
+            generator.emitNewObject(newObject.get());
+
+            // load and call @copyDataProperties
+            RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
+
+            // This must be non-tail-call because @copyDataProperties accesses caller-frame.
+            generator.move(args->thisRegister(), newObject.get());
+            generator.move(args->argumentRegister(0), rhs);
+            generator.emitLoad(args->argumentRegister(1), WTF::move(excludedSet));
+            generator.emitCallIgnoreResult(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args.value(), divot(), divotStart(), divotEnd(), DebuggableCall::No);
+
+            if (targetBaseAndPropertyName)
+                static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), newObject.get());
+            else
+                target.pattern->bindValue(generator, newObject.get());
+        }
+    }
 }
 
 void ObjectPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
