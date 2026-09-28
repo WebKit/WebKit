@@ -712,7 +712,7 @@ private:
             return;
         }
 
-        CString name = UTF8CString { byteCast<char8_t>(std::span { token }) };
+        CString name = UTF8CString::fromUTF8(std::span { token });
         Address address = snapshot->symbol(name.legacyCStringPointer());
         if (!address) {
             SAFE_FPRINTF(stderr, "mya: No symbol '%s' in snapshot #%u\n", name, snapshot->id());

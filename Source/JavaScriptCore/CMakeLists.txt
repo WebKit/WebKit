@@ -1629,6 +1629,27 @@ if (USE_INSPECTOR_SOCKET_SERVER)
     )
 endif ()
 
+# Without liblldb's headers, WTF turns mya_heap off.
+if (ENABLE_MYA_HEAP)
+    if (APPLE)
+        set(_LLDB_INSTALL_HINT "Unpack the lib/liblldb* and include/lldb of "
+            "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-macOS-ARM64.tar.xz "
+            "into ~/Library/Developer")
+    else ()
+        set(_LLDB_INSTALL_HINT "Install liblldb-21-dev from apt.llvm.org")
+    endif ()
+    find_package(LLDB)
+    # FIXME: There are bugs in lldb22+ that we can't work around.
+    if (LLDB_FOUND AND NOT LLDB_VERSION MATCHES "^21(\\.|$)")
+        message(FATAL_ERROR "mya_heap needs liblldb 21, but found liblldb '${LLDB_VERSION}' (${LLDB_LIBRARY}). "
+            "${_LLDB_INSTALL_HINT} or set LLDB_ROOT to an install of it, then run cmake -ULLDB_INCLUDE_DIR -ULLDB_LIBRARY on the build directory.")
+    endif ()
+    if (NOT LLDB_FOUND)
+        message(WARNING "mya_heap is off because liblldb 21 was not found. "
+            "${_LLDB_INSTALL_HINT}, or set LLDB_ROOT to an install of it.")
+    endif ()
+endif ()
+
 if (ENABLE_MYA)
     list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
         "${JAVASCRIPTCORE_DIR}/corpse"

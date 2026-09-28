@@ -295,7 +295,8 @@ function(WEBKIT_REUSE_PREFIX_HEADER _target _from _header)
 endfunction()
 
 function(_WEBKIT_ADD_PCH_OBJECT _target)
-    if (NOT (COMPILER_IS_CLANG AND APPLE))
+    # PCH objects break debug info for mya
+    if (NOT (COMPILER_IS_CLANG AND APPLE) OR ENABLE_MYA_HEAP)
         return ()
     endif ()
     cmake_parse_arguments(PARSE_ARGV 1 _PO "PREFIX_NO_CODEGEN" "" "PREFIX_LANGUAGES")
@@ -511,6 +512,21 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
 
     if (${_logical_name}_DEPENDENCIES)
         add_dependencies(${_target} ${${_logical_name}_DEPENDENCIES})
+    endif ()
+
+    # Without a dSYM, liblldb reads the object files through the image's debug map,
+    # and then types only one of the copies of an internal constant that several
+    # compile units get from the same header. liblldb looks for Foo.dSYM beside the
+    # image Foo, and for Foo.framework/Versions/A/Foo, for Foo.framework.dSYM beside
+    # the bundle.
+    if (APPLE AND ENABLE_MYA_HEAP)
+        get_target_property(_webkit_target_type ${_target} TYPE)
+        if (_webkit_target_type MATCHES "^(SHARED_LIBRARY|MODULE_LIBRARY|EXECUTABLE)$")
+            # WEBKIT_FRAMEWORK sets FRAMEWORK after this macro runs, so read it at generate time.
+            add_custom_command(TARGET ${_target} POST_BUILD
+                COMMAND dsymutil $<TARGET_FILE:${_target}> -o $<IF:$<BOOL:$<TARGET_PROPERTY:${_target},FRAMEWORK>>,$<TARGET_FILE_DIR:${_target}>/../../../$<TARGET_FILE_NAME:${_target}>.framework.dSYM,$<TARGET_FILE:${_target}>.dSYM>
+                VERBATIM)
+        endif ()
     endif ()
 endmacro()
 

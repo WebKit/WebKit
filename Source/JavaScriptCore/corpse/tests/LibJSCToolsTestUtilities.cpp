@@ -389,4 +389,12 @@ void analyzeInAndOutOfProcess(CreateTargetObject create, NOESCAPE const Function
 
 #endif // ENABLE(MYA)
 
+
+#if ENABLE(MYA_HEAP)
+const ASCIILiteral* copiedHeaderConstantInUtilities()
+{
+    return &copiedHeaderConstant;
+}
+#endif
+
 } // namespace JSCToolsTest

@@ -80,6 +80,15 @@ void testMemory();
 void testSnapshot();
 void testThreads();
 void fuzzExportsTrie(uint64_t seed, unsigned iterations);
+void testTypeinfo();
+
+#if ENABLE(MYA_HEAP)
+// Each compile unit that includes this header has its own copy, so a heap walk
+// must find each copy's type in the compile unit that defines it.
+constinit const ASCIILiteral copiedHeaderConstant = "copied header constant"_s;
+const ASCIILiteral* copiedHeaderConstantInUtilities();
+#endif
+
 void testVM();
 
 // Announces a suite, times it, and reports on the way out. Destroyed on every path out
