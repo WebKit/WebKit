@@ -1,0 +1,10 @@
+Test target-wide font-data invalidation after in-memory font activation.
+
+A
+
+== Running test suite: CSS.getFontDataForNode.FontDataChanged
+-- Running test case: CSS.getFontDataForNode.FontDataChanged.InMemoryFontActivation
+PASS: The in-memory font should not be active initially.
+PASS: CSS.fontDataChanged should invalidate cached font data.
+PASS: Refreshing should report the activated in-memory font.
+

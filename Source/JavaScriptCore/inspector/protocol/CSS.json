@@ -264,14 +264,25 @@
             ]
         },
         {
+            "id": "CharacterRange",
+            "type": "object",
+            "description": "An inclusive range of Unicode scalar values.",
+            "properties": [
+                { "name": "start", "type": "integer", "description": "The first Unicode scalar value in the range." },
+                { "name": "end", "type": "integer", "description": "The last Unicode scalar value in the range." }
+            ]
+        },
+        {
             "id": "Font",
             "type": "object",
             "description": "A representation of WebCore::Font. Conceptually this is backed by either a font file on disk or from the network.",
             "properties": [
                 { "name": "displayName", "type": "string", "description": "The display name defined by the font." },
-                { "name": "variationAxes", "type": "array", "items": { "$ref": "FontVariationAxis" }, "description": "The variation axes defined by the font." },
+                { "name": "url", "type": "string", "optional": true, "description": "The absolute final URL of the resource backing the font." },
+                { "name": "variationAxes", "type": "array", "items": { "$ref": "FontVariationAxis" }, "optional": true, "description": "The variation axes defined by the font." },
                 { "name": "synthesizedBold", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its boldness or not." },
-                { "name": "synthesizedOblique", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its obliqueness or not" }
+                { "name": "synthesizedOblique", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its obliqueness or not." },
+                { "name": "characterRanges", "type": "array", "items": { "$ref": "CharacterRange" }, "optional": true, "description": "The nonempty ranges of Unicode scalar values rendered with this font." }
             ]
         },
         {
@@ -355,13 +366,15 @@
         },
         {
             "name": "getFontDataForNode",
-            "description": "Returns the primary font of the computed font cascade for a DOM node identified by <code>nodeId</code>.",
+            "description": "Returns the primary font of the computed font cascade for a DOM node identified by <code>nodeId</code> and the fonts used to render text in its subtree.",
             "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId" }
             ],
             "returns": [
-                { "name": "primaryFont", "$ref": "Font", "description": "Computed primary font for the specified DOM node." }
+                { "name": "primaryFont", "$ref": "Font", "description": "Computed primary font for the specified DOM node." },
+                { "name": "renderedFonts", "type": "array", "items": { "$ref": "Font" }, "optional": true, "description": "Fonts that rendered at least one character in the specified DOM node's subtree." },
+                { "name": "missingCharacterRanges", "type": "array", "items": { "$ref": "CharacterRange" }, "optional": true, "description": "Ranges of Unicode scalar values for which no font supplied a glyph." }
             ]
         },
         {
@@ -491,6 +504,11 @@
         }
     ],
     "events": [
+        {
+            "name": "fontDataChanged",
+            "description": "Fired when font data previously returned by this target may have changed.",
+            "targetTypes": ["frame", "page"]
+        },
         {
             "name": "mediaQueryResultChanged",
             "description": "Fires whenever a MediaQuery result changes (for example, after a browser window has been resized.) The current implementation considers only viewport-dependent media features."

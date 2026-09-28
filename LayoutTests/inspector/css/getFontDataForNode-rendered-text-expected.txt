@@ -1,0 +1,64 @@
+Test for rendered and missing character data from CSS.getFontDataForNode.
+
+ABBAC¥
+AC
+AB
+AB
+􏿽
+A
+D
+H
+𝐼
+BC
+
+== Running test suite: CSS.getFontDataForNode.RenderedText
+-- Running test setup.
+PASS: Test fonts should be loaded.
+-- Running test case: CSS.getFontDataForNode.RenderedText.NoText
+PASS: The computed primary font should omit characterRanges.
+PASS: A font without variation axes should omit variationAxes.
+PASS: renderedFonts should be omitted when no text is painted.
+PASS: missingCharacterRanges should be omitted when no characters are missing.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.FallbackRangesAndTextNode
+PASS: The computed primary font should omit rendered character ranges.
+PASS: Every rendered font should have nonempty characterRanges.
+PASS: missingCharacterRanges should be omitted when every character has a glyph.
+PASS: Adjacent and repeated Latin scalars should be coalesced and deduplicated.
+PASS: The actual fallback font should own the yen scalar.
+PASS: A direct Text-node query should match its parent element.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.VisibleDescendantsAndGeneratedText
+PASS: Only the displayed A, transformed B, generated C, and generated yen should be reported.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.EquivalentFontMetadata
+PASS: Equivalent concrete fonts should produce one rendered-font record.
+PASS: The shared rendered-font record should contain characters from every concrete font.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.SelectedText
+PASS: Selected text should report the same characters as unselected text.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.FontSourceURL
+PASS: The primary downloadable font should expose an absolute URL.
+PASS: The primary downloadable font should expose its final resource URL.
+PASS: The primary rendered font should expose an absolute URL.
+PASS: The primary rendered font should expose its final resource URL.
+PASS: A rendered font without variation axes should omit variationAxes.
+PASS: The fallback downloadable font should expose an absolute URL.
+PASS: The fallback downloadable font should expose its final resource URL.
+PASS: A rendered variable font should expose variationAxes.
+PASS: A system primary font should omit url.
+PASS: The system-font fixture should report at least one rendered font.
+PASS: Rendered system fonts should omit url.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.LigatureAndMissingGlyph
+PASS: The scalar starting the AB ligature glyph should be attributed to its actual font.
+PASS: A missing supplementary character should be reported as one Unicode scalar.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.UnsupportedContentDoesNotCrash
+PASS: The command should succeed for a subtree containing unsupported specialized renderers.
+PASS: Ordinary text alongside unsupported specialized renderers should still be reported.
+
+-- Running test case: CSS.getFontDataForNode.RenderedText.ForcesCurrentLayout
+PASS: The diagnostic paint should use current style and layout.
+

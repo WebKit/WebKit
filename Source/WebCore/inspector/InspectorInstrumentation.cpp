@@ -305,6 +305,17 @@ void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& ins
         consoleAgent->frameWindowDiscarded(*window);
 }
 
+void InspectorInstrumentation::fontDataChangedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
+{
+    if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->fontDataChanged();
+
+    if (RefPtr frame = document.frame()) {
+        if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
+            frameCSSAgent->fontDataChanged();
+    }
+}
+
 void InspectorInstrumentation::mediaQueryResultChangedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
 {
     if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())

@@ -351,6 +351,10 @@ localizedStrings["Changes"] = "Changes";
 /* Title for Channels row in Media Sidebar */
 localizedStrings["Channels @ Media Sidebar"] = "Channels";
 localizedStrings["Character Data"] = "Character Data";
+/* Property title for character ranges for which no font glyph was found. */
+localizedStrings["Characters @ Missing Font Details Sidebar Property"] = "Characters";
+/* Property title for character ranges rendered by a font. */
+localizedStrings["Characters @ Rendered Font Details Sidebar Property"] = "Characters";
 localizedStrings["Charge \u201C%s\u201D to Callers"] = "Charge \u201C%s\u201D to Callers";
 localizedStrings["Checked"] = "Checked";
 /* A submenu item of 'Add' to append DOM nodes to the selected DOM node */
@@ -1119,6 +1123,8 @@ localizedStrings["Microtask Dispatched"] = "Microtask Dispatched";
 localizedStrings["Microtask Fired"] = "Microtask Fired";
 /* Min axis value @ Font Details Sidebar */
 localizedStrings["Minimum value of variation axis"] = "Minimum value of variation axis";
+/* Section title for characters for which no font glyph was found. */
+localizedStrings["Missing Characters @ Font Details Sidebar Section"] = "Missing Characters";
 localizedStrings["Missing result level"] = "Missing result level";
 localizedStrings["Mixed"] = "Mixed";
 localizedStrings["Modifications are saved automatically and will apply the next time the Console Snippet is run."] = "Modifications are saved automatically and will apply the next time the Console Snippet is run.";
@@ -1131,6 +1137,8 @@ localizedStrings["Multi-Entry"] = "Multi-Entry";
 localizedStrings["Name"] = "Name";
 /* Property title for the family name of the font. */
 localizedStrings["Name @ Font Details Sidebar Property"] = "Name";
+/* Property title for the family name of a rendered font. */
+localizedStrings["Name @ Rendered Font Details Sidebar Property"] = "Name";
 /* Label for the navigation sidebar. */
 localizedStrings["Navigation @ Sidebar"] = "Navigation";
 localizedStrings["Network"] = "Network";
@@ -1430,6 +1438,8 @@ localizedStrings["Remove Recording"] = "Remove Recording";
 localizedStrings["Removed ancestor "] = "Removed ancestor ";
 localizedStrings["Removed descendant "] = "Removed descendant ";
 localizedStrings["Render Pipeline %d"] = "Render Pipeline %d";
+/* Section title for text grouped by rendered font. */
+localizedStrings["Rendered Text @ Font Details Sidebar Section"] = "Rendered Text";
 localizedStrings["Rendering Frames"] = "Rendering Frames";
 localizedStrings["Repeating Conic Gradient"] = "Repeating Conic Gradient";
 localizedStrings["Repeating Linear Gradient"] = "Repeating Linear Gradient";
@@ -1669,8 +1679,12 @@ localizedStrings["Some examples of ways to use this script include (but are not 
 localizedStrings["Sort Ascending"] = "Sort Ascending";
 localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
+/* Property title for the source URL of the font. */
+localizedStrings["Source @ Font Details Sidebar Property"] = "Source";
 /* Title for Source row in Media Sidebar */
 localizedStrings["Source @ Media Sidebar"] = "Source";
+/* Property title for the source URL of a rendered font. */
+localizedStrings["Source @ Rendered Font Details Sidebar Property"] = "Source";
 localizedStrings["Source Map \u0022%s\u0022 has %s"] = "Source Map \u0022%s\u0022 has %s";
 localizedStrings["Source Map loading errors"] = "Source Map loading errors";
 localizedStrings["Source Maps:"] = "Source Maps:";

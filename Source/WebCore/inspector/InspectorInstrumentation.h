@@ -150,6 +150,7 @@ public:
     static void didInvalidateStyleAttr(Element&);
     static void documentDetached(Document&);
     static void frameWindowDiscarded(LocalFrame&, LocalDOMWindow*);
+    static void fontDataChanged(Document&);
     static void mediaQueryResultChanged(Document&);
     static void activeStyleSheetsUpdated(Document&);
     static void didPushShadowRoot(Element& host, ShadowRoot&);
@@ -396,6 +397,7 @@ private:
     static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
     static void documentDetachedImpl(InstrumentingAgents&, Document&);
     static void frameWindowDiscardedImpl(InstrumentingAgents&, LocalDOMWindow*);
+    static void fontDataChangedImpl(InstrumentingAgents&, Document&);
     static void mediaQueryResultChangedImpl(InstrumentingAgents&, Document&);
     static void activeStyleSheetsUpdatedImpl(InstrumentingAgents&, Document&);
     static void didPushShadowRootImpl(InstrumentingAgents&, Element& host, ShadowRoot&);
@@ -719,6 +721,13 @@ inline void InspectorInstrumentation::documentDetached(Document& document)
 inline void InspectorInstrumentation::frameWindowDiscarded(LocalFrame& frame, LocalDOMWindow* domWindow)
 {
     frameWindowDiscardedImpl(protect(instrumentingAgents(frame)), domWindow);
+}
+
+inline void InspectorInstrumentation::fontDataChanged(Document& document)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(document))
+        fontDataChangedImpl(*agents, document);
 }
 
 inline void InspectorInstrumentation::mediaQueryResultChanged(Document& document)
