@@ -186,7 +186,7 @@ void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concr
     auto headroom = options.headroom();
     if (headroom == Headroom::FromImage && hasHDRContentForTesting())
         fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
-    else if (context.drawLuminanceMask())
+    else if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options);
     else
         Image::drawPattern(context, concreteObjectSize, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
@@ -195,7 +195,7 @@ void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concr
 void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     ASSERT(!tileRect.isEmpty());
-    ASSERT(context.drawLuminanceMask());
+    ASSERT(options.drawLuminanceMask() == DrawLuminanceMask::Yes);
 
     auto buffer = context.createImageBuffer(expandedIntSize(tileRect.size()));
     if (!buffer)
@@ -210,7 +210,6 @@ void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const Float
 
     buffer->convertToLuminanceMask();
 
-    context.setDrawLuminanceMask(false);
     context.drawPattern(*buffer, destinationRect, bufferRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 

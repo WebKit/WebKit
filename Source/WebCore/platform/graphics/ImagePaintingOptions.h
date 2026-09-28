@@ -44,6 +44,7 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, ImageOrientation::Orientation>
         || std::is_same_v<Type, InterpolationQuality>
         || std::is_same_v<Type, AllowImageSubsampling>
+        || std::is_same_v<Type, DrawLuminanceMask>
 #if USE(SKIA)
         || std::is_same_v<Type, StrictImageClamping>
 #endif
@@ -99,6 +100,7 @@ struct ImagePaintingOptions {
     ImageOrientation orientation() const { return m_orientation; }
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
     AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
+    DrawLuminanceMask drawLuminanceMask() const { return m_drawLuminanceMask; }
 #if USE(SKIA)
     StrictImageClamping strictImageClamping() const { return m_strictImageClamping; }
 #endif
@@ -116,6 +118,7 @@ private:
     void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
     void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
+    void setOption(DrawLuminanceMask drawLuminanceMask) { m_drawLuminanceMask = drawLuminanceMask; }
 #if USE(SKIA)
     void setOption(StrictImageClamping strictImageClamping) { m_strictImageClamping = strictImageClamping; }
 #endif
@@ -131,6 +134,7 @@ private:
     ImageOrientation::Orientation m_orientation : 4 { ImageOrientation::Orientation::None };
     InterpolationQuality m_interpolationQuality : 4 { InterpolationQuality::Default };
     AllowImageSubsampling m_allowImageSubsampling : 1 { AllowImageSubsampling::No };
+    DrawLuminanceMask m_drawLuminanceMask : 1 { DrawLuminanceMask::No };
 #if USE(SKIA)
     StrictImageClamping m_strictImageClamping: 1 { StrictImageClamping::Yes };
 #endif

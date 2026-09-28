@@ -97,6 +97,11 @@ enum class ShowDebugBackground : bool {
     Yes
 };
 
+enum class DrawLuminanceMask : bool {
+    No,
+    Yes
+};
+
 enum class AllowImageSubsampling : bool {
     No,
     Yes

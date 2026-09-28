@@ -61,7 +61,6 @@ messages -> RemoteGraphicsContext Stream {
     SetShouldSmoothFonts(bool shouldSmooth) StreamBatched
     SetShouldSubpixelQuantizeFonts(bool shouldQuantize) StreamBatched
     SetShadowsIgnoreTransforms(bool shouldIgnore) StreamBatched
-    SetDrawLuminanceMask(bool shouldDraw) StreamBatched
     SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
     SetLineDash(FixedVector<double> dashArray, float dashOffset) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched

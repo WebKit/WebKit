@@ -362,7 +362,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const Container
         return;
 
     drawForContainer(buffer->context(), containerContext, imageBufferSize, zoomedContainerRect);
-    if (context.drawLuminanceMask())
+    if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         buffer->convertToLuminanceMask();
 
     // Adjust the source rect and transform due to the image buffer's scaling.
@@ -371,7 +371,6 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const Container
     AffineTransform unscaledPatternTransform(patternTransform);
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
-    context.setDrawLuminanceMask(false);
     context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 

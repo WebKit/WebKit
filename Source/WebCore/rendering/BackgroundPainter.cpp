@@ -546,8 +546,6 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         RefPtr<Image> image;
         bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox()->isFirst();
         if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize, context, isFirstLine))) {
-            context.setDrawLuminanceMask(layer.layer.maskMode() == Style::MaskMode::Luminance);
-
             // image-orientation does not apply to mask images (https://drafts.csswg.org/css-images-3/#propdef-image-orientation).
             auto orientation = [&] {
                 if constexpr (std::is_same_v<Layer, Style::MaskLayer>)
@@ -562,6 +560,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
                 orientation,
                 m_renderer.chooseInterpolationQuality(context, *image, &layer.layer, geometry.tileSize),
+                layer.layer.maskMode() == Style::MaskMode::Luminance ? DrawLuminanceMask::Yes : DrawLuminanceMask::No,
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
                 document().settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
                 document().settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,

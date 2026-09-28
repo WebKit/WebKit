@@ -275,11 +275,6 @@ void RemoteGraphicsContext::setShadowsIgnoreTransforms(bool value)
     context().setShadowsIgnoreTransforms(value);
 }
 
-void RemoteGraphicsContext::setDrawLuminanceMask(bool value)
-{
-    context().setDrawLuminanceMask(value);
-}
-
 void RemoteGraphicsContext::setLineCap(LineCap lineCap)
 {
     context().setLineCap(lineCap);

@@ -171,11 +171,10 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, ConcreteObjectS
         return;
     doCustomPaint(buffer->context(), adjustedSize);
 
-    if (destContext.drawLuminanceMask())
+    if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         buffer->convertToLuminanceMask();
 
     destContext.drawPattern(*buffer, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
-    destContext.setDrawLuminanceMask(false);
 }
 
 } // namespace WebCore

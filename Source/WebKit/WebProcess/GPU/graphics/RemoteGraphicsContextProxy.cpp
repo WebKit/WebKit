@@ -961,8 +961,6 @@ void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
         send(Messages::RemoteGraphicsContext::SetShouldSmoothFonts(state.shouldSmoothFonts()));
     if (changes.contains(GraphicsContextState::Change::ShouldSubpixelQuantizeFonts))
         send(Messages::RemoteGraphicsContext::SetShouldSubpixelQuantizeFonts(state.shouldSubpixelQuantizeFonts()));
-    if (changes.contains(GraphicsContextState::Change::DrawLuminanceMask))
-        send(Messages::RemoteGraphicsContext::SetDrawLuminanceMask(state.drawLuminanceMask()));
 
     commitStateChanges(pendingChanges);
 }

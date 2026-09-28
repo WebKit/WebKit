@@ -83,7 +83,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, ConcreteObjectSize
         m_cachedAdjustedSize = adjustedSize;
         m_cachedScaleFactor = destContext.scaleFactor();
 
-        if (destContext.drawLuminanceMask())
+        if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
             imageBuffer->convertToLuminanceMask();
 
         m_cachedImage = WTF::move(imageBuffer);
@@ -91,7 +91,6 @@ void GradientImage::drawPattern(GraphicsContext& destContext, ConcreteObjectSize
             return;
     }
 
-    destContext.setDrawLuminanceMask(false);
     destContext.drawPattern(Ref { *m_cachedImage }, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
 
 }
