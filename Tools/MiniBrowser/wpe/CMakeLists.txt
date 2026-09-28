@@ -1,9 +1,12 @@
 set(MiniBrowser_SOURCES
+    ${TOOLS_DIR}/MiniBrowser/glib/BrowserLoggingInputMethodContext.c
+    ${TOOLS_DIR}/MiniBrowser/glib/BrowserLoggingInputMethodContext.h
     main.cpp
 )
 
 set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
+    ${TOOLS_DIR}/MiniBrowser/glib
     ${DERIVED_SOURCES_WPE_API_DIR}
     ${FORWARDING_HEADERS_WPE_DIR}
     ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}

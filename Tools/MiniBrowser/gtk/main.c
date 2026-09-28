@@ -27,6 +27,7 @@
 
 #include "cmakeconfig.h"
 
+#include "BrowserLoggingInputMethodContext.h"
 #include "BrowserWindow.h"
 #include "BuildRevision.h"
 #include <errno.h>
@@ -67,6 +68,7 @@ static gboolean darkMode;
 static char* timeZone;
 static gboolean enableITP;
 static gboolean exitAfterLoad;
+static gboolean logInputMethod;
 static gboolean webProcessCrashed;
 static gboolean printVersion;
 static char *configFile;
@@ -112,6 +114,11 @@ static WebKitWebView *createBrowserTab(BrowserWindow *window, WebKitSettings *we
 
     if (editorMode)
         webkit_web_view_set_editable(webView, TRUE);
+
+    if (logInputMethod) {
+        g_autoptr(WebKitInputMethodContext) context = browser_logging_input_method_context_new();
+        webkit_web_view_set_input_method_context(webView, context);
+    }
 
     browser_window_append_view(window, webView);
     return webView;
@@ -175,6 +182,7 @@ static const GOptionEntry commandLineOptions[] =
     { "enable-sandbox", 0, 0, G_OPTION_ARG_NONE, &enableSandbox, "Enable web process sandbox support", NULL },
 #endif
     { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
+    { "log-input-method", 0, 0, G_OPTION_ARG_NONE, &logInputMethod, "Log what WebKit reports to the input method. Disables composition", NULL },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
     { "config", 'C', 0, G_OPTION_ARG_FILENAME, &configFile, "Path to a configuration file", "PATH" },
