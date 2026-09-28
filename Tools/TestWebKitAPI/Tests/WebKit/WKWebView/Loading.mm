@@ -162,4 +162,60 @@ TEST(WebKit, NavigateToInFlightPrefetchWithCrossOriginRedirect)
     }
 }
 
+TEST(WebKit, NavigateToInFlightPrefetchWithErrorResponse)
+{
+    static constexpr auto main =
+    "<script type='speculationrules'>{\"prefetch\":[{\"source\":\"list\",\"urls\":[\"/product\"]}]}</script>"
+    "<a id='link' href='/product'>link</a>"_s;
+
+    std::optional<Connection> prefetchConnection;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/product"_s) {
+                if (contains(request.span(), "Sec-Purpose: prefetch"_span)) {
+                    // Hold the prefetch response so the navigation has a chance to join the in-flight prefetch.
+                    prefetchConnection = connection;
+                    co_return;
+                }
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, "product"_s).serialize());
+                continue;
+            }
+            co_await connection.awaitableSend(HTTPResponse(main).serialize());
+        }
+    }, HTTPServer::Protocol::Https);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate];
+
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+    while (!prefetchConnection)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    __block RetainPtr<NSMutableArray<NSURLResponse *>> productResponses = adoptNS([NSMutableArray new]);
+    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *navigationResponse, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        if ([navigationResponse.response.URL.path isEqualToString:@"/product"])
+            [productResponses addObject:navigationResponse.response];
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
+    [delegate waitForDidStartProvisionalNavigation];
+
+    prefetchConnection->send("HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/octet-stream\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"_s);
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(@"/product", [webView URL].path);
+
+    EXPECT_EQ([productResponses count], 1u);
+    for (NSURLResponse *response in productResponses.get()) {
+        EXPECT_EQ(static_cast<NSHTTPURLResponse *>(response).statusCode, 200);
+        EXPECT_WK_STREQ(@"text/html", response.MIMEType);
+    }
+}
+
 } // namespace TestWebKitAPI

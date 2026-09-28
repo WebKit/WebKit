@@ -1044,6 +1044,11 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
             frameLoader->notifier().dispatchDidReceiveResponse(this, *m_identifierForLoadWithoutResourceLoader, m_response, 0);
     }
 
+    // Don't ask the client about error responses from failed prefetches. The response will
+    // not be committed, and the navigation will be retried with a fresh request when the load finishes.
+    if (m_prefetchResponseFailed)
+        return;
+
     ASSERT(!m_waitingForContentPolicy);
     ASSERT(frameLoader());
     m_waitingForContentPolicy = true;
