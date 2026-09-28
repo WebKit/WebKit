@@ -276,7 +276,7 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
         auto& acceleratedBuffer = static_cast<CoordinatedAcceleratedTileBuffer&>(buffer);
         acceleratedBuffer.serverWait();
 
-        if (auto displayList = acceleratedBuffer.displayList()) {
+        if (auto displayList = acceleratedBuffer.takeDisplayList()) {
             ASSERT(!m_texture);
             ASSERT(!m_cachedImage);
 

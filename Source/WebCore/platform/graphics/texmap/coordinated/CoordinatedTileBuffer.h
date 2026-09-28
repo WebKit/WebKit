@@ -150,7 +150,7 @@ public:
     WEBCORE_EXPORT virtual ~CoordinatedAcceleratedTileBuffer();
 
     RefPtr<BitmapTexture> texture() const { return m_texture; }
-    sk_sp<GrDeferredDisplayList> displayList() const { return m_displayList; }
+    sk_sp<GrDeferredDisplayList> takeDisplayList() { return std::exchange(m_displayList, nullptr); }
     void serverWait();
 
 private:
