@@ -33,22 +33,49 @@ namespace WebKit {
 
 void WebSocketChannelManager::addChannel(WebSocketChannel& channel)
 {
+    Locker locker { m_lock };
     ASSERT(!m_channels.contains(channel.identifier()));
-    m_channels.add(channel.identifier(), channel);
+    m_channels.add(channel.identifier(), ThreadSafeWeakPtr<WebSocketChannel> { channel });
+}
+
+void WebSocketChannelManager::removeChannel(WebSocketChannel& channel)
+{
+    Locker locker { m_lock };
+    m_channels.remove(channel.identifier());
+}
+
+bool WebSocketChannelManager::hasReachedSocketLimit() const
+{
+    Locker locker { m_lock };
+    return m_channels.size() >= maximumSocketCount;
 }
 
 void WebSocketChannelManager::networkProcessCrashed()
 {
-    auto channels = WTF::move(m_channels);
-    for (RefPtr channel : channels.values())
-        channel->networkProcessCrashed();
+    auto channels = [&] {
+        Locker locker { m_lock };
+        return WTF::move(m_channels);
+    }();
+
+    for (auto& weakChannel : channels.values()) {
+        if (RefPtr channel = weakChannel.get())
+            channel->networkProcessCrashed();
+    }
 }
 
 void WebSocketChannelManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto iterator = m_channels.find(AtomicObjectIdentifier<WebCore::WebSocketIdentifierType>(decoder.destinationID()));
-    if (iterator != m_channels.end())
-        Ref { *iterator->value }->didReceiveMessage(connection, decoder);
+    RefPtr<WebSocketChannel> channel;
+    {
+        Locker locker { m_lock };
+        auto iterator = m_channels.find(AtomicObjectIdentifier<WebCore::WebSocketIdentifierType>(decoder.destinationID()));
+        if (iterator == m_channels.end())
+            return;
+        channel = iterator->value.get();
+    }
+
+    if (channel)
+        channel->didReceiveMessage(connection, decoder);
 }
 
 } // namespace WebKit

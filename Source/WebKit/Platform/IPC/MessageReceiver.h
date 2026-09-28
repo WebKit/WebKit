@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Assertions.h>
 #include <wtf/WeakPtr.h>
 
@@ -78,6 +79,12 @@ private:
 #if ASSERT_ENABLED
     unsigned m_messageReceiverMapCount { 0 };
 #endif
+};
+
+class ThreadSafeMessageReceiver : public MessageReceiver, public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
+public:
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 } // namespace IPC

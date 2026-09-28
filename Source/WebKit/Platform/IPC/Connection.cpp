@@ -436,6 +436,20 @@ void Connection::removeMessageReceiver(ReceiverName receiverName, uint64_t desti
     removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
 }
 
+void Connection::addScriptExecutionContextMessageReceiver(ReceiverName receiverName, WebCore::ScriptExecutionContextIdentifier contextIdentifier, ThreadSafeMessageReceiver& receiver, uint64_t destinationID)
+{
+    auto receiverMatcher = ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID);
+    auto receiveQueue = makeUnique<ScriptExecutionContextQueue>(contextIdentifier, receiver);
+    Locker incomingMessagesLocker { m_incomingMessagesLock };
+    enqueueMatchingMessagesToMessageReceiveQueue(*receiveQueue, receiverMatcher);
+    m_receiveQueues.add(WTF::move(receiveQueue), receiverMatcher);
+}
+
+void Connection::removeScriptExecutionContextMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
+{
+    removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
+}
+
 template<typename MessageReceiverType>
 void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageReceiver, UniqueRef<Decoder>&& decoder)
 {
@@ -475,6 +489,7 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageRece
 
 template void Connection::dispatchMessageReceiverMessage<MessageReceiver>(MessageReceiver&, UniqueRef<Decoder>&&);
 template void Connection::dispatchMessageReceiverMessage<WorkQueueMessageReceiverBase>(WorkQueueMessageReceiverBase&, UniqueRef<Decoder>&&);
+template void Connection::dispatchMessageReceiverMessage<ThreadSafeMessageReceiver>(ThreadSafeMessageReceiver&, UniqueRef<Decoder>&&);
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
 {
