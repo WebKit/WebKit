@@ -25,8 +25,10 @@
 
 #include "config.h"
 
+#include "Helpers/Counters.h"
 #include "MoveOnly.h"
 #include <wtf/Deque.h>
+#include <wtf/Variant.h>
 
 namespace TestWebKitAPI {
 
@@ -142,6 +144,55 @@ TEST(WTF_Deque, MoveOnly)
 
     auto last = deque.takeLast();
     EXPECT_EQ(1U, last.value());
+}
+
+TEST(WTF_Deque, ConstructAndAppendConstructsInPlace)
+{
+    Deque<CopyMoveCounter> deque;
+    CopyMoveCounter::TestingScope scope;
+    deque.constructAndAppend();
+    EXPECT_EQ(1U, deque.size());
+    EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
+    EXPECT_EQ(0U, CopyMoveCounter::copyCount);
+    EXPECT_EQ(0U, CopyMoveCounter::moveCount);
+}
+
+TEST(WTF_Deque, ConstructAndAppendWithArguments)
+{
+    Deque<MoveOnly, 4> deque;
+    deque.constructAndAppend(0U);
+    deque.constructAndAppend(1U);
+    deque.removeFirst();
+
+    // Wrap around the inline buffer, then expand past it.
+    for (unsigned i = 2; i < 20; ++i)
+        deque.constructAndAppend(i);
+
+    EXPECT_EQ(19U, deque.size());
+    unsigned expected = 1;
+    for (auto& element : deque)
+        EXPECT_EQ(expected++, element.value());
+}
+
+TEST(WTF_Deque, ConstructAndAppendVariantAlternativeInPlace)
+{
+    Deque<Variant<int, CopyMoveCounter>> deque;
+    CopyMoveCounter::TestingScope scope;
+    deque.constructAndAppend(WTF::InPlaceType<CopyMoveCounter>);
+    EXPECT_EQ(1U, deque.size());
+    EXPECT_TRUE(std::holds_alternative<CopyMoveCounter>(deque.first()));
+    EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
+    EXPECT_EQ(0U, CopyMoveCounter::copyCount);
+    EXPECT_EQ(0U, CopyMoveCounter::moveCount);
+}
+
+TEST(WTF_Deque, AppendEmptyBracesAppendsOneValueInitializedElement)
+{
+    Deque<int> deque;
+    deque.append(1);
+    deque.append({ });
+    EXPECT_EQ(2U, deque.size());
+    EXPECT_EQ(0, deque.last());
 }
 
 TEST(WTF_Deque, MoveConstructor)

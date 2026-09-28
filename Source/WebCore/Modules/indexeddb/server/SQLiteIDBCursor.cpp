@@ -431,7 +431,7 @@ bool SQLiteIDBCursor::fetch()
 {
     ASSERT(m_fetchedRecords.isEmpty() || !m_fetchedRecords.last().isTerminalRecord());
 
-    m_fetchedRecords.append({ });
+    m_fetchedRecords.constructAndAppend();
 
     bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::Nextunique || m_cursorDirection == IndexedDB::CursorDirection::Prevunique;
     if (!isUnique) {

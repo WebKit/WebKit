@@ -2555,7 +2555,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
 
 void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assembler::JumpList& failureCases, const SelectorFragmentList& selectorFragmentList)
 {
-    m_backtrackingLevels.append(BacktrackingLevel());
+    m_backtrackingLevels.constructAndAppend();
 
     for (const SelectorFragment& fragment : selectorFragmentList) {
         switch (fragment.relationToRightFragment) {

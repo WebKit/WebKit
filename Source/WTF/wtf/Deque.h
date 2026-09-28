@@ -88,6 +88,7 @@ public:
 
     void append(T&& value) { append<T>(std::forward<T>(value)); }
     template<typename U> void append(U&&);
+    template<typename... Args> void constructAndAppend(Args&&...);
     template<typename U> void prepend(U&&);
     void removeFirst();
     void removeLast();
@@ -495,9 +496,15 @@ inline auto Deque<T, inlineCapacity>::takeLast() -> T
 template<typename T, size_t inlineCapacity> template<typename U>
 inline void Deque<T, inlineCapacity>::append(U&& value)
 {
+    constructAndAppend(std::forward<U>(value));
+}
+
+template<typename T, size_t inlineCapacity> template<typename... Args>
+inline void Deque<T, inlineCapacity>::constructAndAppend(Args&&... args)
+{
     checkValidity();
     expandCapacityIfNeeded();
-    new (NotNull, std::addressof(m_buffer.capacitySpan()[m_end])) T(std::forward<U>(value));
+    new (NotNull, std::addressof(m_buffer.capacitySpan()[m_end])) T(std::forward<Args>(args)...);
     m_end = (m_end + 1) & m_capacityMask;
     checkValidity();
 }

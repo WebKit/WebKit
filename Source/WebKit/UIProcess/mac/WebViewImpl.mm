@@ -6000,7 +6000,7 @@ void WebViewImpl::interpretKeyEvent(NSEvent *event, void(^completionHandler)(BOO
         // released keyup dispatches handleEventByInputMethod: directly (bypassing the
         // tank-check) so it doesn't re-tank when other keydowns are still in flight.
         if ([event type] == NSEventTypeKeyDown)
-            m_collectedKeypressCommands.append(Vector<WebCore::KeypressCommand> { });
+            m_collectedKeypressCommands.constructAndAppend();
         else if (!m_collectedKeypressCommands.isEmpty()) {
             m_interpretKeyEventHoldingTank.append([weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event), capturedBlock = makeBlockPtr(completionHandler)] {
                 CheckedPtr checkedThis = weakThis.get();
