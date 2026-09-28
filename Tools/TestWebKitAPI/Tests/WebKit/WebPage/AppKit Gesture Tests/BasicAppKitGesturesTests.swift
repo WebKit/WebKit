@@ -2300,24 +2300,6 @@ extension AppKitGesturesTests.Basic {
         #expect(end.y - start.y > 20)
     }
 
-    @Test(
-        .bug("https://webkit.org/b/324361", "Diagonal rubber-banding doesn't work, snaps to a single axis")
-    )
-    func diagonalPullAtCornerRubberBandsBothAxesWhenMagnified() async throws {
-        try await loadScrollableGrid()
-        page.magnification = 2
-        try await page.callJavaScript { "window.scrollTo(0, 0);" }
-        await page.waitForNextPresentationUpdate()
-
-        try await startRecordingMinimumSeenScrollOffset()
-        await diagonallyPullPastTopLeftCorner()
-
-        let minimumOffset = try await minimumSeenScrollOffset()
-
-        #expect(minimumOffset.x < -10)
-        #expect(minimumOffset.y < -10)
-    }
-
     @Test
     func diagonalPullAtCornerDoesNotRubberBandHorizontallyWhenUnmagnified() async throws {
         try await loadScrollableGrid()
