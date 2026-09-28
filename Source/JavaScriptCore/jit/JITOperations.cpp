@@ -32,6 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
+#include "BytecodeOperandsForCheckpoint.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlockInlines.h"
 #include "CommonSlowPathsInlines.h"
@@ -4749,6 +4750,16 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationOSRWriteBarrier, void, (VM* vmPointer
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     vm.writeBarrier(cell);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationOSRExitReportGeneratorLocals, void, (CodeBlock* profiledBlock, const JSInstruction* instruction, JSLexicalEnvironment* scope))
+{
+    auto bytecode = instruction->as<OpRestoreGeneratorLocals>();
+    unsigned valueProfile = bytecode.m_valueProfile;
+    forEachLiveGeneratorLocal(profiledBlock, bytecode, [&](VirtualRegister, ScopeOffset offset) {
+        JSValue value = scope->variableAt(offset).get();
+        profiledBlock->valueProfileForOffset(valueProfile++).computeUpdatedPredictionForExtraValue(value);
+    });
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWriteBarrierSlowPath, void, (VM* vmPointer, JSCell* cell))

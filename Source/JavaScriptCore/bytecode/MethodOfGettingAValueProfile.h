@@ -45,6 +45,7 @@ class UnaryArithProfile;
 class BinaryArithProfile;
 class CCallHelpers;
 class CodeBlock;
+class VM;
 struct ValueProfile;
 
 namespace DFG {
@@ -100,10 +101,19 @@ public:
         return result;
     }
 
+    static MethodOfGettingAValueProfile generatorLocalValueProfiles(CodeOrigin codeOrigin)
+    {
+        MethodOfGettingAValueProfile result;
+        result.m_kind = Kind::GeneratorLocalValueProfiles;
+        result.m_codeOrigin = codeOrigin;
+        return result;
+    }
+
     explicit operator bool() const { return m_kind != Kind::None; }
 
     // The temporary register is only needed on 64-bits builds (for testing BigInt32).
     void emitReportValue(CCallHelpers&, CodeBlock* optimizedCodeBlock, GPRReg, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters) const;
+    void emitReportGeneratorLocals(CCallHelpers&, VM&, const CodeOrigin& exitOrigin) const;
 
 private:
     friend class DFG::OSRExitStream;
@@ -115,9 +125,10 @@ private:
         BytecodeValueProfile,
         ArgumentValueProfile,
         LazyOperandValueProfile,
+        GeneratorLocalValueProfiles,
     };
     static constexpr unsigned bitsOfKind = 3;
-    static_assert(static_cast<unsigned>(Kind::LazyOperandValueProfile) <= ((1U << bitsOfKind) - 1));
+    static_assert(static_cast<unsigned>(Kind::GeneratorLocalValueProfiles) < (1U << bitsOfKind));
 
     CodeOrigin m_codeOrigin;
     uint64_t m_rawOperand : Operand::maxBits { 0 };

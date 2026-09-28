@@ -861,6 +861,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // Reify inlined call frames.
 
     reifyInlinedCallFrames(jit, exit);
+    exit.m_valueProfile.emitReportGeneratorLocals(jit, vm, exit.m_codeOrigin);
 
     // And finish.
     adjustAndJumpToTarget(vm, jit, exit);

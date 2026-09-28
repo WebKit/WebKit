@@ -37,6 +37,7 @@
 #include "JITThunks.h"
 #include "JSCast.h"
 #include "JSFunction.h"
+#include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JumpTable.h"
 #include "LinkBuffer.h"
@@ -1961,6 +1962,40 @@ void JIT::emit_op_create_lexical_environment(const JSInstruction* currentInstruc
     emitGetVirtualRegister(scope, argumentGPR1);
     emitGetVirtualRegister(symbolTable, argumentGPR2);
     callOperationNoExceptionCheck(value == jsUndefined() ? operationCreateLexicalEnvironmentUndefined : operationCreateLexicalEnvironmentTDZ, dst, argumentGPR0, argumentGPR1, argumentGPR2);
+}
+
+void JIT::emit_op_save_generator_locals(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpSaveGeneratorLocals>();
+    constexpr GPRReg scopeGPR = regT2;
+    constexpr GPRReg valueGPR = regT0;
+    static_assert(noOverlap(scopeGPR, valueGPR));
+
+    emitGetVirtualRegister(bytecode.m_scope, scopeGPR);
+    forEachLiveGeneratorLocal(m_unlinkedCodeBlock, bytecode, [&](VirtualRegister local, ScopeOffset offset) {
+        emitGetVirtualRegister(local, valueGPR);
+        storeValue(valueGPR, Address(scopeGPR, JSLexicalEnvironment::offsetOfVariable(offset)));
+    });
+    forEachClearedGeneratorSlot(m_unlinkedCodeBlock, bytecode, [&](ScopeOffset offset) {
+        storeTrustedValue(jsUndefined(), Address(scopeGPR, JSLexicalEnvironment::offsetOfVariable(offset)));
+    });
+    emitWriteBarrier(scopeGPR);
+}
+
+void JIT::emit_op_restore_generator_locals(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpRestoreGeneratorLocals>();
+    constexpr GPRReg scopeGPR = regT2;
+    constexpr GPRReg valueGPR = regT0;
+    static_assert(noOverlap(scopeGPR, valueGPR));
+
+    emitGetVirtualRegister(bytecode.m_scope, scopeGPR);
+    unsigned valueProfile = bytecode.m_valueProfile;
+    forEachLiveGeneratorLocal(m_unlinkedCodeBlock, bytecode, [&](VirtualRegister local, ScopeOffset offset) {
+        loadValue(Address(scopeGPR, JSLexicalEnvironment::offsetOfVariable(offset)), valueGPR);
+        emitPutVirtualRegister(local, valueGPR);
+        emitValueProfilingSite(valueProfile++, valueGPR);
+    });
 }
 
 void JIT::emit_op_create_direct_arguments(const JSInstruction* currentInstruction)
