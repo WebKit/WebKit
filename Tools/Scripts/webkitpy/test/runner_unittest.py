@@ -185,16 +185,18 @@ class RunnerTest(unittest.TestCase):
     def test_failing_subtest_failure_message_identifies_the_subtest(self):
         runner = self._run('_test_two_subtests_fail')
         _, failures = runner.failures[0]
+        expected_test_name = str(_Test_Runner('_test_two_subtests_fail'))
         self.assertEqual(failures[0].splitlines()[0],
-                         '_test_two_subtests_fail (webkitpy.test.runner_unittest._Test_Runner) (i=0)')
+                         f'{expected_test_name} (i=0)')
         self.assertEqual(failures[0].splitlines()[-1], 'AssertionError: boom 0')
         self.assertEqual(failures[1].splitlines()[0],
-                         '_test_two_subtests_fail (webkitpy.test.runner_unittest._Test_Runner) (i=1)')
+                         f'{expected_test_name} (i=1)')
         self.assertEqual(failures[1].splitlines()[-1], 'AssertionError: boom 1')
 
     def test_plain_failure_message_still_includes_the_traceback(self):
         runner = self._run('_test_plain_failure')
         _, failures = runner.failures[0]
+        expected_test_name = str(_Test_Runner('_test_plain_failure'))
         self.assertEqual(failures[0].splitlines()[0],
-                         '_test_plain_failure (webkitpy.test.runner_unittest._Test_Runner)')
+                         expected_test_name)
         self.assertEqual(failures[0].splitlines()[-1], 'AssertionError: boom')
