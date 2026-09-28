@@ -228,7 +228,7 @@ void CachedImage::allClientsRemoved()
         image->resetAnimation();
 }
 
-std::pair<WeakPtr<BitmapImage>, float> CachedImage::brokenImage(float deviceScaleFactor) const
+std::pair<WeakPtr<BitmapImage>, float> CachedImage::brokenImage(float deviceScaleFactor)
 {
     if (deviceScaleFactor >= 3) {
         static NeverDestroyed<BitmapImage*> brokenImageVeryHiRes(&ImageAdapter::loadPlatformResource("missingImage@3x").leakRef());

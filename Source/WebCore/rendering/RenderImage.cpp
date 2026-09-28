@@ -215,7 +215,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 
     FloatSize imageSize;
     if (newImage->willPaintBrokenImage()) {
-        auto brokenImageAndImageScaleFactor = newImage->brokenImage(protect(document())->deviceScaleFactor());
+        auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(protect(document())->deviceScaleFactor());
         imageSize = brokenImageAndImageScaleFactor.first->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
     } else
@@ -561,7 +561,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
 
     if (shouldDisplayBrokenImageIcon() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
         // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
-        auto brokenImageAndImageScaleFactor = protect(cachedImage())->brokenImage(deviceScaleFactor);
+        auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(deviceScaleFactor);
         RefPtr brokenImage = brokenImageAndImageScaleFactor.first.get();
         FloatSize imageSize = brokenImage->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
