@@ -49,7 +49,7 @@ public:
     RenderingFlags flags() const override { return BoundedRectRendering; }
     void render(const RenderState*) override;
     void releaseResources() override;
-    void syncFrame();
+    void advanceFrame();
 
 private:
     WPEQtView* m_qtView { nullptr };
