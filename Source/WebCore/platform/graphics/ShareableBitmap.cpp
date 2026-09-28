@@ -132,7 +132,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& 
 
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const ColorSpace& colorSpace, const IntSize& destinationSize, const IntSize& sourceSize)
 {
-    auto bitmap = ShareableBitmap::create({ destinationSize, colorSpace });
+    auto bitmap = ShareableBitmap::create({ destinationSize, colorSpace, unspecifiedPixelFormat, Headroom::None, !image.hasAlpha() });
     if (!bitmap)
         return nullptr;
 
