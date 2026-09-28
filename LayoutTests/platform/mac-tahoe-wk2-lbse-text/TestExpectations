@@ -91,9 +91,6 @@ svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 # Non-scaling stroke issues
 svg/repaint/non-scaling-stroke-transform-animation.html               [ ImageOnlyFailure ]
 
-# SMIL animation issues
-svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
-
 # SVG <image> (buffered-rendering) issues
 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 

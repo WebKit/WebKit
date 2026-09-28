@@ -687,8 +687,7 @@ bool SVGSVGElement::hasTransformRelatedAttributes() const
     if (isOutermostSVGSVGElement() ? !!supplementalTransform() : SVGGraphicsElement::hasTransformRelatedAttributes())
         return true;
 
-    // 'x' / 'y' / 'viewBox' lead to a non-identity supplementalLayerTransform in RenderSVGViewportContainer
-    return (hasAttribute(SVGNames::xAttr) || hasAttribute(SVGNames::yAttr)) || (hasAttribute(SVGNames::viewBoxAttr) && !hasEmptyViewBox());
+    return x().valueInSpecifiedUnits() || y().valueInSpecifiedUnits() || !viewBox().isEmpty();
 }
 
 static bool isEmbeddedThroughSVGImage(const SVGSVGElement& element)
