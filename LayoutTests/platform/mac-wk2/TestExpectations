@@ -2599,7 +2599,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 [ GoldenGate Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]
 [ GoldenGate Debug ] http/tests/media/media-source/media-source-video-fit-fill.html [ Failure ]
-[ GoldenGate Debug ] http/tests/navigation/javascriptlink-frames.html [ Failure ]
 [ GoldenGate Debug ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure ]
 [ GoldenGate Debug ] http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
 [ GoldenGate Debug ] http/wpt/background-fetch/background-fetch-click.window.html [ Failure ]
