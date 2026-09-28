@@ -229,20 +229,17 @@ void GPUVideoEncoderVTB::configureCompressionSession()
     encoder->setProperty(PAL::kVTCompressionPropertyKey_RealTime, m_creationInfo.isLowLatencyEnabled ? kCFBooleanTrue : kCFBooleanFalse);
     encoder->setProperty(PAL::kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanFalse);
 
-    // FIXME: Enable color space handling for H264 once the H.264 decoder is able to handle it.
-    if (codecType() != kCMVideoCodecType_H264) {
-        if (m_colorSpace.primaries) {
-            if (RetainPtr primaries = convertToCMColorPrimaries(*m_colorSpace.primaries))
-                encoder->setProperty(PAL::kVTCompressionPropertyKey_ColorPrimaries, primaries);
-        }
-        if (m_colorSpace.transfer) {
-            if (RetainPtr transferFunction = convertToCMTransferFunction(*m_colorSpace.transfer))
-                encoder->setProperty(PAL::kVTCompressionPropertyKey_TransferFunction, transferFunction);
-        }
-        if (m_colorSpace.matrix) {
-            if (RetainPtr matrix = convertToCMYCbCRMatrix(*m_colorSpace.matrix))
-                encoder->setProperty(PAL::kVTCompressionPropertyKey_YCbCrMatrix, matrix);
-        }
+    if (m_colorSpace.primaries) {
+        if (RetainPtr primaries = convertToCMColorPrimaries(*m_colorSpace.primaries))
+            encoder->setProperty(PAL::kVTCompressionPropertyKey_ColorPrimaries, primaries);
+    }
+    if (m_colorSpace.transfer) {
+        if (RetainPtr transferFunction = convertToCMTransferFunction(*m_colorSpace.transfer))
+            encoder->setProperty(PAL::kVTCompressionPropertyKey_TransferFunction, transferFunction);
+    }
+    if (m_colorSpace.matrix) {
+        if (RetainPtr matrix = convertToCMYCbCRMatrix(*m_colorSpace.matrix))
+            encoder->setProperty(PAL::kVTCompressionPropertyKey_YCbCrMatrix, matrix);
     }
 
     setEncoderBitrateBps(m_targetBitrateBps);
