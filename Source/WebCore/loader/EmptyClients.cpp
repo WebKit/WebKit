@@ -1265,6 +1265,7 @@ public:
 class EmptySocketProvider final : public SocketProvider {
 public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) final { return nullptr; }
+    RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) final { return nullptr; }
 
     Ref<WebTransportSession> createWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&) { return adoptRef(*new EmptyWebTransportSession()); }
 };

@@ -49,6 +49,12 @@ RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Doc
     return WebKit::WebSocketChannel::create(m_webPageProxyID, document, client, isInitiatedByDedicatedWorker);
 }
 
+RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(WorkerGlobalScope& scope, WebSocketChannelClient& client, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+{
+    ASSERT(!RunLoop::isMain());
+    return WebKit::WebSocketChannel::create(m_webPageProxyID, scope, client, isInitiatedByDedicatedWorker, networkProcessConnectionFromWorker());
+}
+
 void WebSocketProvider::countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&& completionHandler)
 {
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CountWebSocketChannelsForTesting { }, WTF::move(completionHandler));
@@ -64,23 +70,9 @@ Ref<WebCore::WebTransportSession> WebSocketProvider::createWebTransportSession(S
 {
     if (RefPtr scope = dynamicDowncast<WorkerGlobalScope>(context)) {
         ASSERT(!RunLoop::isMain());
+
         Ref workerSession = WorkerWebTransportSession::create(context.identifier(), client);
-
-        auto getConnection = [protectedThis = Ref { *this }] {
-            Locker locker { protectedThis->m_networkProcessConnectionLock };
-            return protectedThis->m_networkProcessConnection.copyRef();
-        };
-        Ref connection = getConnection();
-        if (!connection->isValid()) {
-            WorkQueue::mainSingleton().dispatchSync([protectedThis = Ref { *this }] {
-                ASSERT(RunLoop::isMain());
-                Locker locker { protectedThis->m_networkProcessConnectionLock };
-                protectedThis->m_networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-            });
-            connection = getConnection();
-        }
-
-        Ref session = WebKit::WebTransportSession::create(WTF::move(connection), workerSession, m_webPageProxyID);
+        Ref session = WebKit::WebTransportSession::create(networkProcessConnectionFromWorker(), workerSession, m_webPageProxyID);
         workerSession->attachSession(session);
         return workerSession;
     }
@@ -88,6 +80,28 @@ Ref<WebCore::WebTransportSession> WebSocketProvider::createWebTransportSession(S
     Ref document = downcast<Document>(context);
     ASSERT(RunLoop::isMain());
     return WebKit::WebTransportSession::create(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, m_webPageProxyID);
+}
+
+Ref<IPC::Connection> WebSocketProvider::networkProcessConnectionFromWorker()
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto currentConnection = [&] {
+        Locker locker { m_networkProcessConnectionLock };
+        return m_networkProcessConnection.copyRef();
+    };
+
+    Ref connection = currentConnection();
+    if (connection->isValid())
+        return connection;
+
+    WorkQueue::mainSingleton().dispatchSync([protectedThis = Ref { *this }] {
+        ASSERT(RunLoop::isMain());
+        Locker locker { protectedThis->m_networkProcessConnectionLock };
+        protectedThis->m_networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    });
+
+    return currentConnection();
 }
 
 } // namespace WebKit

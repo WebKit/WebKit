@@ -28,7 +28,9 @@
 #include "Connection.h"
 #include "MessageReceiveQueue.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/ScriptExecutionContext.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
 namespace IPC {
@@ -73,6 +75,29 @@ public:
 private:
     const Ref<WorkQueue> m_queue;
     const Ref<WorkQueueMessageReceiverBase> m_receiver;
+};
+
+class ScriptExecutionContextQueue final : public MessageReceiveQueue {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ScriptExecutionContextQueue);
+public:
+    ScriptExecutionContextQueue(WebCore::ScriptExecutionContextIdentifier contextIdentifier, ThreadSafeMessageReceiver& receiver)
+        : m_contextIdentifier(contextIdentifier)
+        , m_receiver(receiver)
+    {
+    }
+    ~ScriptExecutionContextQueue() final = default;
+
+    void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
+    {
+        WebCore::ScriptExecutionContext::postTaskTo(m_contextIdentifier, [connection = protect(connection), message = WTF::move(message), receiver = m_receiver](WebCore::ScriptExecutionContext&) mutable {
+            if (RefPtr protectedReceiver = receiver.get())
+                connection->dispatchMessageReceiverMessage(*protectedReceiver, WTF::move(message));
+        });
+    }
+
+private:
+    const WebCore::ScriptExecutionContextIdentifier m_contextIdentifier;
+    const ThreadSafeWeakPtr<ThreadSafeMessageReceiver> m_receiver;
 };
 
 } // namespace IPC

@@ -38,12 +38,14 @@ class ThreadableWebSocketChannel;
 class WebSocketChannelClient;
 class WebTransportSession;
 class WebTransportSessionClient;
+class WorkerGlobalScope;
 
 enum class IsInitiatedByDedicatedWorker : bool;
 
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
     virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) = 0;
+    virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) = 0;
     virtual Ref<WebTransportSession> createWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&) = 0;
 
     virtual void countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&& completionHandler) { completionHandler(0); }

@@ -50,7 +50,7 @@ enum class IsUpgradable : bool { No, Yes, };
 
 bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Destination, Initiator, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
-bool shouldBlockRequest(Frame&, const URL&, IsUpgradable = IsUpgradable::No, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
+WEBCORE_EXPORT bool shouldBlockRequest(Frame&, const URL&, IsUpgradable = IsUpgradable::No, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
 WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
