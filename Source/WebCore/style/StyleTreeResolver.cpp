@@ -1343,7 +1343,7 @@ void TreeResolver::resolveComposedTree()
             auto inheritedDisplayContentsStyle = isDisplayContentsParent ? createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle()) : nullptr;
 
             auto needsTextUpdate = [&] {
-                if ((text->hasInvalidRenderer() && parent.changes != Change::Renderer) || inheritedDisplayContentsStyle)
+                if ((text->hasInvalidRenderer() && !parent.changes.contains(Change::Renderer)) || inheritedDisplayContentsStyle)
                     return true;
 
                 auto* textRenderer = text->renderer();
