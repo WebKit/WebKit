@@ -89,7 +89,6 @@ private:
     bool hasServedTicket(GCRequest::Ticket ticket) const { return m_lastServedTicket >= ticket; }
 
     bool shouldCollectInCollectorThread(const AbstractLocker&);
-    void startThread();
     void collectInCollectorThread();
 
     void startCollectingContinuously();

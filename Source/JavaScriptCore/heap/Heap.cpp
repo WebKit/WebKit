@@ -44,7 +44,6 @@
 #include "GCTypeMap.h"
 #include "GigacageAlignedMemoryAllocator.h"
 #include "HasOwnPropertyCache.h"
-#include "HeapHelperPool.h"
 #include "HeapIterationScope.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshot.h"
@@ -87,8 +86,6 @@
 #include "ProxyObject.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
-#include "SpaceTimeMutatorScheduler.h"
-#include "StochasticSpaceTimeMutatorScheduler.h"
 #include "StopIfNecessaryTimer.h"
 #include "StringSplitCache.h"
 #include "StructureAlignedMemoryAllocator.h"
@@ -96,7 +93,6 @@
 #include "SuperSampler.h"
 #include "SweepingScope.h"
 #include "SymbolTableInlines.h"
-#include "SynchronousStopTheWorldMutatorScheduler.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedEvalCodeBlock.h"
@@ -393,37 +389,12 @@ Heap::Heap(VM& vm, HeapType heapType)
 
     m_worldState.store(0);
 
-    // FIXME: move Collector related initialization into Collector
-
-    for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
-        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*m_collector, toASCIICString("P", i + 1));
-        if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
-            visitor->optimizeForStoppedMutator();
-        m_collector->m_availableParallelSlotVisitors.append(visitor.get());
-        m_collector->m_parallelSlotVisitors.append(WTF::move(visitor));
-    }
-    
-    if (Options::useConcurrentGC()) {
-        if (Options::useStochasticMutatorScheduler())
-            m_collector->m_scheduler = makeUnique<StochasticSpaceTimeMutatorScheduler>(*this);
-        else
-            m_collector->m_scheduler = makeUnique<SpaceTimeMutatorScheduler>(*this);
-    } else {
-        // We simulate turning off concurrent GC by making the scheduler say that the world
-        // should always be stopped when the collector is running.
-        m_collector->m_scheduler = makeUnique<SynchronousStopTheWorldMutatorScheduler>();
-    }
-    
     if (Options::verifyHeap())
         m_verifier = makeUnique<HeapVerifier>(this, Options::numberOfGCCyclesToRecordForVerification());
-    
-    m_collector->m_collectorSlotVisitor->optimizeForStoppedMutator();
 
     // When memory is critical, allow allocating 25% of the amount above the critical threshold before collecting.
     size_t memoryAboveCriticalThreshold = static_cast<size_t>(static_cast<double>(m_ramSize) * (1.0 - Options::criticalGCMemoryThreshold()));
     m_maxEdenSizeWhenCritical = memoryAboveCriticalThreshold / 4;
-
-    m_collector->startThread();
 }
 
 #undef INIT_SERVER_ISO_SUBSPACE
@@ -434,13 +405,8 @@ Heap::~Heap()
     // Scribble m_worldState to make it clear that the heap has already been destroyed if we crash in checkConn
     m_worldState.store(0xbadbeeffu);
 
-    m_collector->forEachSlotVisitor(
-        [&] (SlotVisitor& visitor) {
-            visitor.clearMarkStacks();
-        });
     m_mutatorMarkStack->clear();
-    m_collector->m_raceMarkStack->clear();
-    
+
     while (WeakBlock* block = m_detachedWeakBlocks.removeHead())
         WeakBlock::destroy(*this, block);
     destroyAllPooledWeakBlocks();

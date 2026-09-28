@@ -34,6 +34,9 @@
 #include "JSCInlines.h"
 #include "MarkingConstraintSet.h"
 #include "MutatorScheduler.h"
+#include "SpaceTimeMutatorScheduler.h"
+#include "StochasticSpaceTimeMutatorScheduler.h"
+#include "SynchronousStopTheWorldMutatorScheduler.h"
 #include "TypeProfiler.h"
 #include <wtf/ListDump.h>
 #include <wtf/ParkingLot.h>
@@ -120,9 +123,35 @@ Collector::Collector(Heap& heap)
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
 {
+    for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
+        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toASCIICString("P", i + 1));
+        if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
+            visitor->optimizeForStoppedMutator();
+        m_availableParallelSlotVisitors.append(visitor.get());
+        m_parallelSlotVisitors.append(WTF::move(visitor));
+    }
+
+    if (Options::useConcurrentGC()) {
+        if (Options::useStochasticMutatorScheduler())
+            m_scheduler = makeUnique<StochasticSpaceTimeMutatorScheduler>(heap);
+        else
+            m_scheduler = makeUnique<SpaceTimeMutatorScheduler>(heap);
+    } else {
+        // We simulate turning off concurrent GC by making the scheduler say that the world
+        // should always be stopped when the collector is running.
+        m_scheduler = makeUnique<SynchronousStopTheWorldMutatorScheduler>();
+    }
+
+    m_collectorSlotVisitor->optimizeForStoppedMutator();
+
+    Locker locker { *m_threadLock };
+    lazyInitialize(m_thread, adoptRef(*new CollectorThread(locker, *this)));
 }
 
-Collector::~Collector() = default;
+Collector::~Collector()
+{
+    m_raceMarkStack->clear();
+}
 
 void Collector::assertMarkStacksEmpty()
 {
@@ -148,12 +177,6 @@ void Collector::assertMarkStacksEmpty()
         });
 
     RELEASE_ASSERT(ok);
-}
-
-void Collector::startThread()
-{
-    Locker locker { *m_threadLock };
-    lazyInitialize(m_thread, adoptRef(*new CollectorThread(locker, *this)));
 }
 
 GCRequest::Ticket Collector::requestCollection(GCRequest request)
