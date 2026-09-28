@@ -127,7 +127,7 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (m_isEmpty)
         return 0;
 
-    Style::Extractor::updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
+    Style::Extractor::updateStyleIfNeededForProperty(m_element.get(), m_pseudoElementIdentifier, CSSPropertyCustom);
 
     CheckedPtr style = protect(element())->computedStyle(m_pseudoElementIdentifier);
     if (!style)
