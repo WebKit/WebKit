@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -297,12 +297,11 @@ private:
     WTF::BitSet<cssPropertyIDEnumValueCount> m_invalidAtComputedValueTimeProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
-    SelectorChecker::LinkMatchMask m_linkMatch { };
     const PropertyCascade* m_currentRollbackCascade { nullptr };
-
-    bool m_fontDirty { false };
     Vector<RegisteredSubstitutionAttribute> m_registeredSubstitutionAttributes;
 
+    SelectorChecker::LinkMatchMask m_linkMatch { };
+    bool m_fontDirty { false };
     bool m_isBuildingKeyframeStyle { false };
     bool m_hasRevertRuleOrLayerInKeyframeStyle { false };
     bool m_isResolvingContainerQueries { false };
