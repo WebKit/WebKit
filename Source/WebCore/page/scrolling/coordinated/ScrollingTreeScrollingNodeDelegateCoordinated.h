@@ -40,8 +40,6 @@ public:
     explicit ScrollingTreeScrollingNodeDelegateCoordinated(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
     virtual ~ScrollingTreeScrollingNodeDelegateCoordinated();
 
-    FloatPoint adjustedScrollPosition(const FloatPoint&) const override;
-
     void updateVisibleLengths();
     bool handleWheelEvent(const PlatformWheelEvent&);
 
