@@ -454,22 +454,34 @@ void JIT::emitSlow_op_async_iterator_open(const JSInstruction* instruction, Vect
 void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 {
     auto bytecode = instruction->as<OpIteratorNext>();
-    using BaselineJITRegisters::GetById::baseGPR;
-    using BaselineJITRegisters::GetById::resultGPR;
-    using BaselineJITRegisters::GetById::propertyCacheGPR;
+    using BaselineJITRegisters::IteratorNext::baseGPR;
+    using BaselineJITRegisters::IteratorNext::resultGPR;
+    using BaselineJITRegisters::IteratorNext::propertyCacheGPR;
+    using BaselineJITRegisters::IteratorNext::nextGPR;
+    using BaselineJITRegisters::IteratorNext::indexGPR;
+    using BaselineJITRegisters::IteratorNext::arrayGPR;
+    using BaselineJITRegisters::IteratorNext::valueGPR;
+    using BaselineJITRegisters::IteratorNext::scratch1GPR;
+    using BaselineJITRegisters::IteratorNext::scratch2GPR;
 
-    constexpr GPRReg nextGPR = baseGPR; // Used as temporary register
     emitGetVirtualRegister(bytecode.m_next, nextGPR);
     JumpList genericCases;
     Jump nextIsNotCell = branchIfNotCell(nextGPR);
     genericCases.append(branchIfNotType(nextGPR, SentinelType));
 
     JumpList doneCases;
-    loadGlobalObject(argumentGPR0);
-    emitGetVirtualRegister(bytecode.m_iterator, argumentGPR1);
-    emitGetVirtualRegister(bytecode.m_iterable, argumentGPR2);
-    materializePointerIntoMetadata(bytecode, 0, argumentGPR3);
-    callOperation(operationIteratorNextTryFast, argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3);
+    {
+        using BaselineJITRegisters::IteratorNext::TryFast::globalObjectGPR;
+        using BaselineJITRegisters::IteratorNext::TryFast::iteratorGPR;
+        using BaselineJITRegisters::IteratorNext::TryFast::iterableGPR;
+        using BaselineJITRegisters::IteratorNext::TryFast::metadataGPR;
+
+        loadGlobalObject(globalObjectGPR);
+        emitGetVirtualRegister(bytecode.m_iterator, iteratorGPR);
+        emitGetVirtualRegister(bytecode.m_iterable, iterableGPR);
+        materializePointerIntoMetadata(bytecode, 0, metadataGPR);
+        callOperation(operationIteratorNextTryFast, globalObjectGPR, iteratorGPR, iterableGPR, metadataGPR);
+    }
     Label storeResult = label();
     emitPutVirtualRegister(bytecode.m_done, returnValueGPR);
     emitPutVirtualRegister(bytecode.m_value, returnValueGPR2);
@@ -478,26 +490,61 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     doneCases.append(jump());
 
     nextIsNotCell.link(this);
-    emitGetVirtualRegister(bytecode.m_iterator, regT0);
-    genericCases.append(branchIfNotCell(regT0));
-    genericCases.append(branchIfNotType(regT0, SentinelType));
-    loadGlobalObject(argumentGPR0);
-    emitGetVirtualRegister(bytecode.m_iterable, argumentGPR1);
-    addPtr(TrustedImm32(bytecode.m_next.offset() * static_cast<int>(sizeof(Register))), callFrameRegister, argumentGPR2);
-    materializePointerIntoMetadata(bytecode, 0, argumentGPR3);
-    callOperation(operationIteratorNextFastArray, argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3);
+    move(nextGPR, indexGPR);
+    emitGetVirtualRegister(bytecode.m_iterator, scratch1GPR);
+    genericCases.append(branchIfNotCell(scratch1GPR));
+    genericCases.append(branchIfNotType(scratch1GPR, SentinelType));
+
+    JumpList slowCases;
+    slowCases.append(branchIfNotInt32(indexGPR));
+    emitGetVirtualRegister(bytecode.m_iterable, arrayGPR);
+    slowCases.append(branchIfNotCell(arrayGPR));
+    load8(Address(arrayGPR, JSCell::indexingTypeAndMiscOffset()), scratch1GPR);
+    and32(TrustedImm32(IndexingTypeMask), scratch1GPR);
+    Jump isInt32 = branch32(Equal, scratch1GPR, TrustedImm32(ArrayWithInt32));
+    slowCases.append(branch32(NotEqual, scratch1GPR, TrustedImm32(ArrayWithContiguous)));
+    isInt32.link(this);
+    loadPtr(Address(arrayGPR, JSObject::butterflyOffset()), scratch1GPR);
+    slowCases.append(branch32(AboveOrEqual, indexGPR, Address(scratch1GPR, Butterfly::offsetOfPublicLength())));
+    zeroExtend32ToWord(indexGPR, indexGPR);
+    load64(BaseIndex(scratch1GPR, indexGPR, TimesEight), valueGPR);
+    slowCases.append(branchIfEmpty(valueGPR));
+
+    emitArrayProfilingSiteWithCell(bytecode, OpIteratorNext::Metadata::offsetOfIterableProfile() + ArrayProfile::offsetOfLastSeenStructureID(), arrayGPR, scratch1GPR);
+    load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), scratch1GPR);
+    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::FastArray)), scratch1GPR);
+    store16ToMetadata(scratch1GPR, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+    emitPutVirtualRegister(bytecode.m_value, valueGPR);
+    emitValueProfilingSite(bytecode, m_bytecodeIndex.withCheckpoint(OpIteratorNext::getValue), valueGPR);
+    storeTrustedValue(jsBoolean(false), addressFor(bytecode.m_done));
+    add32(TrustedImm32(1), indexGPR);
+    boxInt32(indexGPR, indexGPR);
+    emitPutVirtualRegister(bytecode.m_next, indexGPR);
+    doneCases.append(jump());
+
+    slowCases.link(this);
+    {
+        using BaselineJITRegisters::IteratorNext::FastArray::globalObjectGPR;
+        using BaselineJITRegisters::IteratorNext::FastArray::iterableGPR;
+        using BaselineJITRegisters::IteratorNext::FastArray::indexInFrameGPR;
+        using BaselineJITRegisters::IteratorNext::FastArray::metadataGPR;
+
+        loadGlobalObject(globalObjectGPR);
+        emitGetVirtualRegister(bytecode.m_iterable, iterableGPR);
+        addPtr(TrustedImm32(bytecode.m_next.offset() * static_cast<int>(sizeof(Register))), callFrameRegister, indexInFrameGPR);
+        materializePointerIntoMetadata(bytecode, 0, metadataGPR);
+        callOperation(operationIteratorNextFastArray, globalObjectGPR, iterableGPR, indexInFrameGPR, metadataGPR);
+    }
     jump().linkTo(storeResult, this);
 
     genericCases.link(this);
-    load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
-    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::Generic)), regT0);
-    store16ToMetadata(regT0, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+    load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), scratch1GPR);
+    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::Generic)), scratch1GPR);
+    store16ToMetadata(scratch1GPR, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
     compileOpCall<OpIteratorNext>(instruction);
     advanceToNextCheckpoint();
 
     // call result ({ done, value } JSObject) in regT0
-    static_assert(noOverlap(resultGPR, propertyCacheGPR));
-
     move(returnValueGPR, baseGPR);
 
     addSlowCase(branchIfNotCell(baseGPR));
@@ -522,12 +569,8 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     }
 
     {
-        auto usedRegisters = RegisterSet(resultGPR);
-        ScratchRegisterAllocator scratchAllocator(usedRegisters);
-        GPRReg scratch1 = scratchAllocator.allocateScratchGPR();
-        GPRReg scratch2 = scratchAllocator.allocateScratchGPR();
         const bool shouldCheckMasqueradesAsUndefined = false;
-        JumpList iterationDone = branchIfTruthy(vm(), resultGPR, scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, CCallHelpers::LazyBaselineGlobalObject);
+        JumpList iterationDone = branchIfTruthy(vm(), resultGPR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, CCallHelpers::LazyBaselineGlobalObject);
 
         emitGetVirtualRegister(bytecode.m_value, baseGPR);
         auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();

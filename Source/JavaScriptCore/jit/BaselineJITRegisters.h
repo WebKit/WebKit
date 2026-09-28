@@ -157,6 +157,42 @@ namespace GetById {
     static_assert(noOverlap(baseGPR, propertyCacheGPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR, scratch5GPR), "Required for HandlerIC");
 }
 
+namespace IteratorNext {
+    using GetById::resultGPR;
+    using GetById::baseGPR;
+    using GetById::propertyCacheGPR;
+
+    static constexpr GPRReg nextGPR { baseGPR };
+    static constexpr GPRReg indexGPR { GPRInfo::regT0 };
+    static constexpr GPRReg arrayGPR { GPRInfo::regT1 };
+    static constexpr GPRReg valueGPR { GPRInfo::regT3 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT2 };
+    static constexpr GPRReg scratch2GPR { GPRInfo::regT4 };
+    static_assert(noOverlap(indexGPR, arrayGPR, valueGPR, scratch1GPR), "Required for the FastArray path");
+    static_assert(noOverlap(resultGPR, scratch1GPR, scratch2GPR));
+    static_assert(noOverlap(resultGPR, propertyCacheGPR));
+
+    namespace TryFast {
+        using SlowOperation = decltype(operationIteratorNextTryFast);
+
+        static constexpr GPRReg globalObjectGPR { preferredArgumentGPR<SlowOperation, 0>() };
+        static constexpr GPRReg iteratorGPR { preferredArgumentGPR<SlowOperation, 1>() };
+        static constexpr GPRReg iterableGPR { preferredArgumentGPR<SlowOperation, 2>() };
+        static constexpr GPRReg metadataGPR { preferredArgumentGPR<SlowOperation, 3>() };
+        static_assert(noOverlap(globalObjectGPR, iteratorGPR, iterableGPR, metadataGPR), "Required for call to slow operation");
+    }
+
+    namespace FastArray {
+        using SlowOperation = decltype(operationIteratorNextFastArray);
+
+        static constexpr GPRReg globalObjectGPR { preferredArgumentGPR<SlowOperation, 0>() };
+        static constexpr GPRReg iterableGPR { preferredArgumentGPR<SlowOperation, 1>() };
+        static constexpr GPRReg indexInFrameGPR { preferredArgumentGPR<SlowOperation, 2>() };
+        static constexpr GPRReg metadataGPR { preferredArgumentGPR<SlowOperation, 3>() };
+        static_assert(noOverlap(globalObjectGPR, iterableGPR, indexInFrameGPR, metadataGPR), "Required for call to slow operation");
+    }
+}
+
 namespace GetByIdWithThis {
     // Registers used on both Fast and Slow paths
     using SlowOperation = decltype(operationGetByIdWithThisOptimize);
