@@ -84,7 +84,7 @@ void RenderInline::styleDidChange(Style::Difference diff, const Style::ComputedS
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
 
-    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
+    propagateStyleToAnonymousChildren(StylePropagationType::BlockAndRubyChildren);
 }
 
 ASCIILiteral RenderInline::renderName() const
