@@ -45,6 +45,7 @@
 #include <WebCore/NotImplemented.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
@@ -234,17 +235,17 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
 
 static String computeContentHash(const String& content, bool base64Encoded)
 {
-    GUniquePtr<char> digest;
+    GMallocString digest;
     if (base64Encoded) {
         auto decoded = base64Decode(content);
         if (decoded)
-            digest.reset(g_compute_checksum_for_data(G_CHECKSUM_SHA256, decoded->span().data(), decoded->size()));
+            digest = GMallocString::unsafeAdoptFromUTF8(g_compute_checksum_for_data(G_CHECKSUM_SHA256, decoded->span().data(), decoded->size()));
     } else {
         auto utf8 = content.utf8();
-        digest.reset(g_compute_checksum_for_string(G_CHECKSUM_SHA256, utf8.legacyCStringPointer(), utf8.length()));
+        digest = GMallocString::unsafeAdoptFromUTF8(g_compute_checksum_for_string(G_CHECKSUM_SHA256, utf8.legacyCStringPointer(), utf8.length()));
     }
 
-    return String::fromUTF8(digest.get());
+    return String::fromUTF8(digest.span());
 }
 
 void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)

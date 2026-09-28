@@ -27,6 +27,7 @@
 #include "JSStringRefPtr.h"
 #include "StrongInlines.h"
 #include <glib/gprintf.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -44,12 +45,12 @@ struct _JSCExceptionPrivate {
     GWeakPtr<JSCContext> context;
     JSC::Strong<JSC::JSObject> jsException;
     bool cached;
-    GUniquePtr<char> errorName;
-    GUniquePtr<char> message;
+    GMallocString errorName;
+    GMallocString message;
     unsigned lineNumber;
     unsigned columnNumber;
-    GUniquePtr<char> sourceURI;
-    GUniquePtr<char> backtrace;
+    GMallocString sourceURI;
+    GMallocString backtrace;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(JSCException, jsc_exception, G_TYPE_OBJECT, GObject)
@@ -88,10 +89,10 @@ void jscExceptionEnsureProperties(JSCException* exception)
     auto value = jscContextGetOrCreateValue(priv->context.get(), toRef(priv->jsException.get()));
     auto propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "name"));
     if (!jsc_value_is_undefined(propertyValue.get()))
-        priv->errorName.reset(jsc_value_to_string(propertyValue.get()));
+        priv->errorName = GMallocString::unsafeAdoptFromUTF8(jsc_value_to_string(propertyValue.get()));
     propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "message"));
     if (!jsc_value_is_undefined(propertyValue.get()))
-        priv->message.reset(jsc_value_to_string(propertyValue.get()));
+        priv->message = GMallocString::unsafeAdoptFromUTF8(jsc_value_to_string(propertyValue.get()));
     propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "line"));
     if (!jsc_value_is_undefined(propertyValue.get()))
         priv->lineNumber = jsc_value_to_int32(propertyValue.get());
@@ -100,10 +101,10 @@ void jscExceptionEnsureProperties(JSCException* exception)
         priv->columnNumber = jsc_value_to_int32(propertyValue.get());
     propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "sourceURL"));
     if (!jsc_value_is_undefined(propertyValue.get()))
-        priv->sourceURI.reset(jsc_value_to_string(propertyValue.get()));
+        priv->sourceURI = GMallocString::unsafeAdoptFromUTF8(jsc_value_to_string(propertyValue.get()));
     propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "stack"));
     if (!jsc_value_is_undefined(propertyValue.get()))
-        priv->backtrace.reset(jsc_value_to_string(propertyValue.get()));
+        priv->backtrace = GMallocString::unsafeAdoptFromUTF8(jsc_value_to_string(propertyValue.get()));
 }
 
 /**
@@ -253,7 +254,7 @@ const char* jsc_exception_get_name(JSCException* exception)
     g_return_val_if_fail(priv->context, nullptr);
 
     jscExceptionEnsureProperties(exception);
-    return priv->errorName.get();
+    return priv->errorName.utf8();
 }
 
 /**
@@ -272,7 +273,7 @@ const char* jsc_exception_get_message(JSCException* exception)
     g_return_val_if_fail(priv->context, nullptr);
 
     jscExceptionEnsureProperties(exception);
-    return priv->message.get();
+    return priv->message.utf8();
 }
 
 /**
@@ -329,7 +330,7 @@ const char* jsc_exception_get_source_uri(JSCException* exception)
     g_return_val_if_fail(priv->context, nullptr);
 
     jscExceptionEnsureProperties(exception);
-    return priv->sourceURI.get();
+    return priv->sourceURI.utf8();
 }
 
 /**
@@ -348,7 +349,7 @@ const char* jsc_exception_get_backtrace_string(JSCException* exception)
     g_return_val_if_fail(priv->context, nullptr);
 
     jscExceptionEnsureProperties(exception);
-    return priv->backtrace.get();
+    return priv->backtrace.utf8();
 }
 
 /**
@@ -389,21 +390,21 @@ char* jsc_exception_report(JSCException* exception)
     jscExceptionEnsureProperties(exception);
     auto report = StringBuilder();
     if (priv->sourceURI)
-        report.append(unsafeSpan(priv->sourceURI.get()));
+        report.append(priv->sourceURI.span());
     if (priv->lineNumber)
         report.append(':', priv->lineNumber);
     if (priv->columnNumber)
         report.append(':', priv->columnNumber);
     report.append(' ');
-    GUniquePtr<char> errorMessage(jsc_exception_to_string(exception));
+    auto errorMessage = GMallocString::unsafeAdoptFromUTF8(jsc_exception_to_string(exception));
     if (errorMessage)
-        report.append(unsafeSpan(errorMessage.get()));
+        report.append(errorMessage.span());
     report.append('\n');
 
     if (priv->backtrace) {
-        for (auto line : StringView::fromLatin1(priv->backtrace.get()).split('\n'))
+        for (auto line : String::fromUTF8(priv->backtrace.span()).split('\n'))
             report.append("  "_s, line, '\n');
     }
 
-    return g_strdup(report.toString().utf8().legacyCStringPointer());
+    return GMallocString { report.toString().utf8() }.leakUTF8();
 }
