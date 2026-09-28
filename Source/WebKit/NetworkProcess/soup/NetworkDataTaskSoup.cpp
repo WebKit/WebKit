@@ -51,6 +51,7 @@
 #include <WebCore/TimingAllowOrigin.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/MakeString.h>
 
@@ -1184,8 +1185,8 @@ void NetworkDataTaskSoup::didGetHeaders()
         additionalMetrics.connectionIdentifier = String::number(soup_message_get_connection_id(m_soupMessage.get()));
         auto* address = soup_message_get_remote_address(m_soupMessage.get());
         if (G_IS_INET_SOCKET_ADDRESS(address)) {
-            GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
-            additionalMetrics.remoteAddress = makeString(unsafeSpan(ipAddress.get()), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address)));
+            auto ipAddress = GMallocString::unsafeAdoptFromUTF8(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
+            additionalMetrics.remoteAddress = makeString(ipAddress.span(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address)));
         }
         additionalMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
         additionalMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));

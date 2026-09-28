@@ -24,6 +24,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
 #include <wtf/SetForScope.h>
+#include <wtf/glib/GMallocString.h>
 
 #if PLATFORM(GTK)
 #include "Display.h"
@@ -275,17 +276,18 @@ void InputMethodFilter::preeditChanged()
     if (m_filteringContext.isActive)
         m_filteringContext.preeditChanged = true;
 
-    GUniqueOutPtr<gchar> newPreedit;
+    GUniqueOutPtr<gchar> preeditText;
     GList* underlines = nullptr;
     unsigned cursorOffset;
-    webkit_input_method_context_get_preedit(m_context.get(), &newPreedit.outPtr(), &underlines, &cursorOffset);
+    webkit_input_method_context_get_preedit(m_context.get(), &preeditText.outPtr(), &underlines, &cursorOffset);
 
-    if (m_preedit.text.utf8() == UTF8CString { byteCast<char8_t>(newPreedit.get()) }) {
+    auto newPreedit = GMallocString::unsafeAdoptFromUTF8(WTF::move(preeditText));
+    if (newPreedit == m_preedit.text.utf8()) {
         g_list_free_full(underlines, reinterpret_cast<GDestroyNotify>(webkit_input_method_underline_free));
         return;
     }
 
-    m_preedit.text = String::fromUTF8(newPreedit.get());
+    m_preedit.text = String::fromUTF8(newPreedit.span());
     m_preedit.cursorOffset = std::min(cursorOffset, m_preedit.text.length());
     if (underlines) {
         for (auto* it = underlines; it; it = g_list_next(it)) {

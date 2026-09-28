@@ -29,6 +29,7 @@
 #include <WebCore/LocalizedStrings.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -45,8 +46,8 @@ WebExtension::WebExtension(GFile* resourcesFile, RefPtr<API::Error>& outError)
 
     outError = nullptr;
 
-    GUniquePtr<char> baseURL(g_file_get_uri(resourcesFile));
-    m_resourceBaseURL = URL { makeString(String::fromUTF8(baseURL.get()), "/"_s) };
+    auto baseURL = GMallocString::unsafeAdoptFromUTF8(g_file_get_uri(resourcesFile));
+    m_resourceBaseURL = URL { makeString(baseURL.span(), '/') };
 
     if (m_resourceBaseURL.isValid()) {
         auto isDirectory = g_file_query_file_type(resourcesFile, G_FILE_QUERY_INFO_NONE, nullptr) == G_FILE_TYPE_DIRECTORY;
