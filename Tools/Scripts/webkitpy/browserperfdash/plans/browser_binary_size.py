@@ -72,7 +72,7 @@ def get_browser_relevant_objects_glib(browser_driver):
     browser_relevant_objects = []
     port_name = 'gtk' if browser_driver.browser_name == 'minibrowser-gtk' else 'wpe'
     port_driver = factory.PortFactory(Host()).get(port_name)
-    browser_path = port_driver.get_browser_path('cog' if browser_driver.browser_name == 'cog' else 'MiniBrowser')
+    browser_path = port_driver.get_browser_path('MiniBrowser')
     browser_relevant_objects.append(browser_path)
     browser_env = port_driver.setup_environ_for_server()
     if not os.path.isfile(browser_path):
@@ -86,7 +86,7 @@ def get_browser_relevant_objects_glib(browser_driver):
 
 
 def run(browser_driver, results_file):
-    if browser_driver.platform == "linux" and (browser_driver.browser_name.startswith('minibrowser-wpe') or browser_driver.browser_name in ['cog', 'minibrowser-gtk']):
+    if browser_driver.platform == "linux" and (browser_driver.browser_name.startswith('minibrowser-wpe') or browser_driver.browser_name == 'minibrowser-gtk'):
         browser_relevant_objects = get_browser_relevant_objects_glib(browser_driver)
     else:
         raise NotImplementedError(f'Getting the browser size data for browser "{browser_driver.browser_name}" and platform "{browser_driver.platform}" is not implemented')

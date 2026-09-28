@@ -44,11 +44,6 @@ class WPEPortTest(port_testcase.PortTestCase):
     port_name = 'wpe'
     port_maker = WPEPort
 
-    def _mock_port_cog_is_built(self, port):
-        port._filesystem = MockFileSystem({
-            '/mock-build/Tools/cog-prefix/src/cog-build/launcher/cog': '',
-        })
-
     def test_default_baseline_search_path(self):
         port = self.make_port()
         self.assertEqual(port.default_baseline_search_path(),
@@ -120,89 +115,12 @@ class WPEPortTest(port_testcase.PortTestCase):
         self.assertEqual(configuration['version'], '2.51')
         self.assertNotIn('version_name', configuration)
 
-    def test_browser_name_default_wihout_cog_built(self):
-        port = self.make_port()
-        self.assertEqual(port.browser_name(), "minibrowser")
-
-    def test_browser_name_default_with_cog_built(self):
-        port = self.make_port()
-        self._mock_port_cog_is_built(port)
-        with patch('os.environ', {}):
-            self.assertEqual(port.browser_name(), "minibrowser")
-
-    def test_browser_name_override_minibrowser_with_cog_built(self):
-        with patch('os.environ', {'WPE_BROWSER': 'MiniBrowser'}):
-            port = self.make_port()
-            self._mock_port_cog_is_built(port)
-            self.assertEqual(port.browser_name(), "minibrowser")
-
-    def test_browser_name_override_cog_without_cog_built(self):
-        with patch('os.environ', {'WPE_BROWSER': 'Cog'}):
-            port = self.make_port()
-            self.assertEqual(port.browser_name(), "cog")
-
-    def test_browser_name_override_unknown_without_cog_built(self):
-        with patch('os.environ', {'WPE_BROWSER': 'Mosaic'}):
-            port = self.make_port()
-            self.assertEqual(port.browser_name(), "minibrowser")
-
-    def test_browser_name_override_unknown_with_cog_built(self):
-        with patch('os.environ', {'WPE_BROWSER': 'Mosaic'}):
-            port = self.make_port()
-            self._mock_port_cog_is_built(port)
-            self.assertEqual(port.browser_name(), "minibrowser")
-
-    def test_browser_cog_parameters_platform_default(self):
-        with patch('os.environ', {'WPE_BROWSER': 'cog'}):
-            port = self.make_port()
-            port._executive = MockExecutive(should_log=True)
-            self._mock_port_cog_is_built(port)
-            self.assertEqual(port.browser_name(), "cog")
-            with OutputCapture(level=logging.DEBUG) as captured:
-                url = 'https://url.com'
-                port.run_minibrowser([url])
-                mock_command = captured.root.log.getvalue()
-                self.assertTrue(url in mock_command)
-                self.assertTrue('--platform=gtk4' in mock_command)
-
-    def test_browser_cog_parameters_platform_override_via_cmdline(self):
-        with patch('os.environ', {'WPE_BROWSER': 'cog'}):
-            port = self.make_port()
-            port._executive = MockExecutive(should_log=True)
-            self._mock_port_cog_is_built(port)
-            self.assertEqual(port.browser_name(), "cog")
-            with OutputCapture(level=logging.DEBUG) as captured:
-                url = 'https://url.com'
-                port.run_minibrowser(['-P', 'drm', url])
-                mock_command = captured.root.log.getvalue()
-                self.assertTrue(url in mock_command)
-                self.assertFalse('--platform' in mock_command)
-                self.assertTrue('-P' in mock_command)
-                self.assertTrue('drm' in mock_command)
-
-    def test_browser_cog_parameters_platform_override_via_environ(self):
-        with patch('os.environ', {'WPE_BROWSER': 'cog', 'COG_PLATFORM_NAME': 'drm'}):
-            port = self.make_port()
-            port._executive = MockExecutive(should_log=True)
-            self._mock_port_cog_is_built(port)
-            self.assertEqual(port.browser_name(), "cog")
-            with OutputCapture(level=logging.DEBUG) as captured:
-                url = 'https://url.com'
-                port.run_minibrowser([url])
-                mock_command = captured.root.log.getvalue()
-                self.assertTrue(url in mock_command)
-                self.assertFalse('--platform' in mock_command)
-                self.assertFalse('-P' in mock_command)
-
     def test_get_browser_path(self):
         port = self.make_port()
-        self._mock_port_cog_is_built(port)
         # do not rename or remove port.get_browser_path() without also
         # updating webkitpy/browserperfdash/plans/browser_binary_size.py
         mb_path = port.get_browser_path('MiniBrowser')
         self.assertTrue(mb_path.endswith('/MiniBrowser'))
-        cog_path = port.get_browser_path('cog')
-        self.assertTrue(cog_path.endswith('/cog'))
 
     def test_setup_environ_for_test_wpe_prefix(self):
         environment_user = {'WPE_PLATFORM':  'drm',

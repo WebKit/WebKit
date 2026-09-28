@@ -101,7 +101,6 @@ def parse_args(argument_list):
                         help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                              '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session. '
                              '"headless": Headless mode in current session. (default: xvfb for gtk and headless for wpe)')
-    parser.add_argument("--browser-name", choices=['MiniBrowser', 'cog'], default='MiniBrowser', help="Select the browser to use via 'run-minibrowser'.")
     parser.add_argument('--log-level', dest='log_level', choices=['minimal', 'info', 'debug'], default='info')
     parser.add_argument('--', dest='extra_browser_args', help='Pass extra arguments to the browser (run-minibrowser) after two dashes (--)')
 
@@ -559,12 +558,7 @@ def main(argument_list):
 
     # Enable WPE headless mode
     if args.platform == 'wpe' and args.display_server == 'headless':
-        if args.browser_name == 'MiniBrowser':
-            args.extra_browser_args.append("--headless")
-        elif args.browser_name == 'cog':
-            os.environ['COG_PLATFORM_NAME'] = 'headless'
-        else:
-            raise NotImplementedError(f'Unknown wpe browser: {browser_name}')
+        args.extra_browser_args.append("--headless")
 
     # Set a default timeout for all the urllib3 requests (avoid hangs)
     set_urllib3_request_default_timeout(args.timeout_to_load)
