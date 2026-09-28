@@ -12,6 +12,7 @@ isolate) crashing tests. Defaults to the Debug build directory; pass
 Examples:
     run-angle-tests
     run-angle-tests --release
+    run-angle-tests --cmake --product ANGLEUnitTests
     run-angle-tests --gtest_filter='ClearTestES3.*'
     run-angle-tests --maccatalyst --gtest_filter='WebGLTransformFeedbackTest.*'
     run-angle-tests --simulator --gtest_list_tests
@@ -43,14 +44,16 @@ END_OF_RUN_RE = re.compile(r"^\[==========\].*ran\.", re.MULTILINE)
 NO_BANNER_EXIT = -999
 
 
-def default_paths(config, product="ANGLEEnd2EndTests"):
+def default_paths(config, product="ANGLEEnd2EndTests", cmake=False):
     """Return mode → default path mapping for the given build config + product.
 
-    `product` selects the test runner: ANGLEEnd2EndTests (default), or the dEQP
-    runners ANGLEDeqpGLES2Tests / ANGLEDeqpGLES3Tests (Mac-only command-line
-    tools; they have no .app wrapper, so the app-bundle modes don't apply)."""
+    `product` selects the test runner: ANGLEEnd2EndTests (default),
+    ANGLEUnitTests, or the dEQP runners ANGLEDeqpGLES2Tests /
+    ANGLEDeqpGLES3Tests (Mac-only command-line tools; they have no .app
+    wrapper, so the app-bundle modes don't apply). `cmake` selects the CMake
+    build directory, which only has the Mac command-line tools."""
     return {
-        "mac":          f"WebKitBuild/{config}/{product}",
+        "mac":          f"WebKitBuild/cmake-mac/{config}/{product}" if cmake else f"WebKitBuild/{config}/{product}",
         "maccatalyst":  f"WebKitBuild/{config}-maccatalyst/{product}App.app",
         "simulator":    f"WebKitBuild/{config}-iphonesimulator/{product}App.app",
         "ios":          f"WebKitBuild/{config}-iphoneos/{product}App.app",
@@ -478,6 +481,9 @@ def main():
         help="Use Release build directory."
     )
     parser.set_defaults(config="Debug")
+    parser.add_argument("--cmake", action="store_true",
+        help="Use the CMake build directory (WebKitBuild/cmake-mac/<Debug|Release>). "
+             "Build the tests with the ANGLETests target. macOS mode only.")
     parser.add_argument("--app", default=None,
         help="Path to test binary or .app bundle. Defaults to "
              "WebKitBuild/<Debug|Release>[-maccatalyst|-iphonesimulator|"
@@ -501,9 +507,9 @@ def main():
              "and the test binary's stdout/stderr that would otherwise be "
              "captured silently.")
     parser.add_argument("--product", default="ANGLEEnd2EndTests",
-        choices=["ANGLEEnd2EndTests", "ANGLEDeqpGLES2Tests", "ANGLEDeqpGLES3Tests"],
+        choices=["ANGLEEnd2EndTests", "ANGLEUnitTests", "ANGLEDeqpGLES2Tests", "ANGLEDeqpGLES3Tests"],
         help="Which test runner to run (default: ANGLEEnd2EndTests). The "
-             "ANGLEDeqp* runners are Mac-only command-line tools.")
+             "ANGLEUnitTests and ANGLEDeqp* runners are Mac-only command-line tools.")
     args, gtest_args = parser.parse_known_args()
 
     # Default to local mac mode if no mode flag was given.
@@ -511,7 +517,10 @@ def main():
             and args.ios_device is None and args.xros_device is None):
         args.mac = True
 
-    paths = default_paths(args.config, args.product)
+    if args.cmake and not args.mac:
+        parser.error("--cmake only supports macOS mode")
+
+    paths = default_paths(args.config, args.product, args.cmake)
 
     if args.mac:
         target_path = Path(args.app) if args.app else Path(paths["mac"])
