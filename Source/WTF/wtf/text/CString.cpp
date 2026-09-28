@@ -31,10 +31,13 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/SuperFastHash.h>
 
 namespace WTF {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CStringBase);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
 

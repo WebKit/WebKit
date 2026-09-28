@@ -35,6 +35,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/Latin1Character.h>
 #include <wtf/unicode/UTF8Conversion.h>
@@ -80,7 +81,7 @@ private:
 // encoding in the type. Its constructors, assignments and destructor are protected, so a const CStringBase& is the only
 // way to handle one directly, and neither slicing nor assigning through it can change a string's encoding.
 class CStringBase {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CStringBase);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CStringBase, WTF_EXPORT_PRIVATE);
 public:
     const char* data() const LIFETIME_BOUND; // Any encoding
 
@@ -188,7 +189,7 @@ inline const char* safePrintfType(const CStringBase& cstring) { return cstring.d
 // Latin-1 restricted to 0..127, and every operation treats it that way. A stray non-ASCII byte is then merely
 // a mislabeled Latin-1 byte, with no ill-defined behavior; the constructor asserts against it in debug builds.
 template<typename CharacterType> class CString final : public CStringBase {
-    // Heap allocation policy is inherited from CStringBase.
+    WTF_MAKE_INHERITED_TZONE_ALLOCATED(CString);
     static_assert(std::same_as<CharacterType, char8_t> || std::same_as<CharacterType, Latin1Character> || std::same_as<CharacterType, char>);
 public:
     CString() = default;
