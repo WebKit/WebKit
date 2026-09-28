@@ -41,8 +41,10 @@ bool eliminateWasmGCAllocations(Procedure& proc)
 {
     PhaseScope phaseScope(proc, "eliminateWasmGCAllocations"_s);
 
-    // Key insight is that we only need to handle WasmStructSet, since a non-escaping struct's
-    // WasmStructGet reads have already been forwarded away by CSE.
+    // Only allocations whose every use is a WasmStructSet into the allocation itself are removed.
+    // ReduceStrength forwards a WasmStructGet only from an access that dominates it, so a read
+    // left behind, such as one after an if-then-else whose arms both store the field, is a use
+    // that keeps the allocation alive.
     //
     // Map every WasmStructNew to its users, looking through Identity nodes (which just
     // forward the pointer) via foldIdentity. Each user is classified as we record it: an

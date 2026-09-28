@@ -159,6 +159,7 @@ set(WTF_PUBLIC_HEADERS
     LEBEncoder.h
     LLVMProfilingUtils.h
     Language.h
+    LayeredHashMap.h
     LazyRef.h
     LazyUniqueRef.h
     LikelyDenseUnsignedIntegerSet.h

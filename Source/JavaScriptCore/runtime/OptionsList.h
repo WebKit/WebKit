@@ -540,6 +540,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useB3CanonicalizePrePostIncrements, false, Normal, nullptr) \
     v(Bool, useB3EliminateWasmGCAllocations, true, Normal, "eliminate non-escaping wasm-GC struct allocations in B3"_s) \
     v(Bool, useB3ReduceStrengthFixpoint, false, Normal, "iterate B3 reduceStrength to a fixpoint instead of a single pass (for debugging)"_s) \
+    v(Unsigned, maxB3WasmGCEpochSnapshotEntries, 1024 * 1024, Normal, "blocks times version counters above which B3 reduceStrength gives all wasm-GC struct fields one shared counter rather than one each"_s) \
     v(Bool, useB3SpecializeSelect, true, Normal, "turn Selects consumed by a nearby Check into control flow in B3"_s) \
     v(Bool, useAirOptimizePairedLoadStore, true, Normal, nullptr) \
     \
