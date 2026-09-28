@@ -1780,6 +1780,11 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
     if (!pageClient)
         return WebCore::Color::white;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (auto color = axCustomColorModeUnderPageBackgroundColor(); color.isValid())
+        return color;
+#endif
+
     if (auto contentViewBackgroundColor = pageClient->contentViewBackgroundColor(); contentViewBackgroundColor.isValid())
         return contentViewBackgroundColor;
 
