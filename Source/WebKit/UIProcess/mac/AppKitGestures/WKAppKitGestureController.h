@@ -72,6 +72,8 @@ NS_SWIFT_UI_ACTOR
 - (void)didEndSyntheticMomentumScrolling;
 - (void)reset;
 
+@property (nonatomic, readonly) BOOL everMagnifiedDuringCurrentGesture;
+
 #if ENABLE(TWO_PHASE_CLICKS)
 
 @property (nonatomic, readonly, getter=isPotentialClickInProgress) BOOL potentialClickInProgress;
