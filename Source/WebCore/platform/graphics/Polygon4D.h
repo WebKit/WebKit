@@ -79,8 +79,7 @@ public:
 
     Polygon4D(const FloatRect&, const TransformationMatrix&);
 
-    static Vertices clipToFrontOfCamera(const FloatRect&, const TransformationMatrix&);
-    static Vertices clipToPlane(std::span<const Point4D>, const Point4D& plane);
+    static Vertices clipToFrontOfCamera(const FloatRect&, const TransformationMatrix&, std::span<const Point4D> clipPlanes = { });
 
     unsigned numberOfVertices() const { return m_vertices.size(); }
     const Point4D& vertexAt(unsigned index) const LIFETIME_BOUND { return m_vertices[index]; }

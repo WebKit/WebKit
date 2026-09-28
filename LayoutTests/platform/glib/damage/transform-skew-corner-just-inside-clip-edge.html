@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          overflow: hidden;
+      }
+      /* A 1px high strip, slightly tilted, that lies just below the bottom of the view. Only its right
+         end reaches into the last row: the top right corner sits at y = 599.97, and the top edge
+         crosses y = 600 at x = 377.36. */
+      #strip {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 400px;
+          height: 1px;
+          transform-origin: 0 0;
+          transform: matrix(1, -0.001325, 0, 1, 0, 600.5);
+          will-change: transform;
+          background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="strip"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var strip = document.getElementById("strip");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { strip.style.backgroundColor = "green"; },
+          // The part in the last row must be damaged.
+          () => {
+              const damage = latestFrameDamage();
+              if (!assert(damage, "no damage was recorded for the frame"))
+                  return;
+              assertRectsEq(damage.rects, [[377, 599, 23, 1]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

@@ -31,13 +31,12 @@
 #include "FloatRect.h"
 #include "TransformationMatrix.h"
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <span>
 
 namespace WebCore {
 
-static std::pair<Polygon4D::Vertices, Polygon4D::Vertices> splitPolygon(std::span<const Point4D> polygon, const Point4D& plane)
+static std::pair<Polygon4D::Vertices, Polygon4D::Vertices> splitPolygon(std::span<const Point4D> polygon, const Point4D& plane, double tolerance)
 {
     // Splits a convex polygon along the plane into the parts on its negative and positive side, as when
     // building a BSP tree. The signed distance is linear in the undivided coordinates, so an edge crosses
@@ -57,14 +56,20 @@ static std::pair<Polygon4D::Vertices, Polygon4D::Vertices> splitPolygon(std::spa
         const auto& next = isLast ? polygon[0] : polygon[i + 1];
         const double nextDistance = isLast ? firstDistance : signedDistanceToPlane(plane, next);
 
-        const double currentTolerance = Polygon4D::planeTolerance * current.w;
-        const double nextTolerance = Polygon4D::planeTolerance * next.w;
+        const double currentTolerance = tolerance * current.w;
+        const double nextTolerance = tolerance * next.w;
 
         // Unlike cur + t * (next - cur), this yields exactly w = 0 on the camera plane.
         auto intersectEdgeWithPlane = [&] {
-            auto point = (currentDistance * next - nextDistance * current) / (currentDistance - nextDistance);
-            point.w = std::abs(point.w);
-            return point;
+            auto interpolate = [&](double a, double b) {
+                return a == b ? a : (currentDistance * b - nextDistance * a) / (currentDistance - nextDistance);
+            };
+            return Point4D {
+                interpolate(current.x, next.x),
+                interpolate(current.y, next.y),
+                interpolate(current.z, next.z),
+                std::abs(interpolate(current.w, next.w))
+            };
         };
 
         if (currentDistance > currentTolerance) {
@@ -92,7 +97,7 @@ static std::pair<Polygon4D::Vertices, Polygon4D::Vertices> splitPolygon(std::spa
     return { WTF::move(negativeVertices), WTF::move(positiveVertices) };
 }
 
-auto Polygon4D::clipToFrontOfCamera(const FloatRect& rect, const TransformationMatrix& transform) -> Vertices
+auto Polygon4D::clipToFrontOfCamera(const FloatRect& rect, const TransformationMatrix& transform, std::span<const Point4D> clipPlanes) -> Vertices
 {
     auto mapCorner = [&](const FloatPoint& corner) {
         Point4D point { corner.x(), corner.y(), 0, 1 };
@@ -100,25 +105,24 @@ auto Polygon4D::clipToFrontOfCamera(const FloatRect& rect, const TransformationM
         return point;
     };
 
-    const std::array<Point4D, 4> corners {
+    Vertices vertices {
         mapCorner(rect.minXMinYCorner()),
         mapCorner(rect.maxXMinYCorner()),
         mapCorner(rect.maxXMaxYCorner()),
         mapCorner(rect.minXMaxYCorner())
     };
 
-    if (std::ranges::all_of(corners, [](const auto& corner) { return corner.w > 0; }))
-        return { std::span { corners } };
+    if (!std::ranges::all_of(vertices, [](const auto& vertex) { return vertex.w > 0; }))
+        vertices = splitPolygon(vertices, { 0, 0, 0, 1 }, planeTolerance).second;
 
-    return splitPolygon(corners, { 0, 0, 0, 1 }).second;
-}
+    // Clip exactly, so no visible part is dropped.
+    constexpr double clipPlaneTolerance = 0;
+    for (const auto& plane : clipPlanes) {
+        if (!std::ranges::all_of(vertices, [&](const auto& vertex) { return signedDistanceToPlane(plane, vertex) >= 0; }))
+            vertices = splitPolygon(vertices, plane, clipPlaneTolerance).second;
+    }
 
-auto Polygon4D::clipToPlane(std::span<const Point4D> vertices, const Point4D& plane) -> Vertices
-{
-    if (vertices.empty())
-        return { };
-
-    return splitPolygon(vertices, plane).second;
+    return vertices;
 }
 
 Polygon4D::Polygon4D(const FloatRect& rect, const TransformationMatrix& transform)
@@ -167,7 +171,7 @@ Polygon4D::Polygon4D(Vertices&& vertices, const Point4D& plane)
 
 std::pair<Polygon4D, Polygon4D> Polygon4D::split(const Point4D& plane) const
 {
-    auto [negativeVertices, positiveVertices] = splitPolygon(m_vertices, plane);
+    auto [negativeVertices, positiveVertices] = splitPolygon(m_vertices, plane, planeTolerance);
     return { { WTF::move(negativeVertices), m_plane }, { WTF::move(positiveVertices), m_plane } };
 }
 
