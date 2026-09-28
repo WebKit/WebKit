@@ -296,7 +296,12 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     }
 
     bool hasWordSpacingOrLetterSpacing = wordSpacing() || letterSpacing();
+#ifdef RC_REMOVE_SEC_ACCEL_3
     float* cacheEntry = glyphOverflow ? nullptr : fonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, !textAutospace().isNoAutospace());
+#else
+    Ref fonts = *this->fonts();
+    float* cacheEntry = glyphOverflow ? nullptr : fonts->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, !textAutospace().isNoAutospace());
+#endif // RC_REMOVE_SEC_ACCEL_3
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
