@@ -86,7 +86,7 @@ public:
 
     void replayCommands(RenderPassEncoder&) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
-    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
+    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
     bool NODELETE validatePipeline(const RenderPipeline*);
     uint64_t NODELETE drawCount() const;
     NSString* NODELETE lastError() const;

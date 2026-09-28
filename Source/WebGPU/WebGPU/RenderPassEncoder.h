@@ -206,9 +206,6 @@ private:
     uint32_t m_memoryBarrierCount { 0 };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_attachmentsToClear { nil };
     id<MTLTexture> m_depthStencilAttachmentToClear { nil };
-    WGPURenderPassDescriptor m_descriptor;
-    Vector<WGPURenderPassColorAttachment> m_descriptorColorAttachments;
-    WGPURenderPassDepthStencilAttachment m_descriptorDepthStencilAttachment;
     Vector<TextureOrTextureView> m_colorAttachmentViews;
     std::optional<TextureOrTextureView> m_depthStencilView;
     struct BufferAndOffset {

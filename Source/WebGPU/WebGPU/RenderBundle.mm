@@ -114,7 +114,7 @@ uint64_t RenderBundle::drawCount() const
     return m_commandCount;
 }
 
-bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor, const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
+bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
 {
     if (depthReadOnly && !m_depthReadOnly)
         return false;
@@ -122,13 +122,13 @@ bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, 
     if (stencilReadOnly && !m_stencilReadOnly)
         return false;
 
-    if (m_colorFormats.size() != descriptor.colorAttachmentCount)
+    if (m_colorFormats.size() != colorAttachmentViews.size())
         return false;
 
     uint32_t defaultRasterSampleCount = 0;
-    for (size_t i = 0, colorFormatCount = std::max(descriptor.colorAttachmentCount, m_colorFormats.size()); i < colorFormatCount; ++i) {
+    for (size_t i = 0, colorFormatCount = std::max(colorAttachmentViews.size(), m_colorFormats.size()); i < colorFormatCount; ++i) {
         auto descriptorColorFormat = i < m_colorFormats.size() ? m_colorFormats[i] : WGPUTextureFormat_Undefined;
-        if (i >= descriptor.colorAttachmentCount) {
+        if (i >= colorAttachmentViews.size()) {
             if (descriptorColorFormat == WGPUTextureFormat_Undefined)
                 continue;
             return false;
@@ -144,8 +144,8 @@ bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, 
         defaultRasterSampleCount = attachmentView.sampleCount();
     }
 
-    if (descriptor.depthStencilAttachment) {
-        if (!depthStencilView || !*depthStencilView) {
+    if (depthStencilView) {
+        if (!*depthStencilView) {
             if (m_depthStencilFormat != WGPUTextureFormat_Undefined)
                 return false;
         } else {
