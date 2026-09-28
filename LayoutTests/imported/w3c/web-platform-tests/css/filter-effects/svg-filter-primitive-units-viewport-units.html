@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Filter Effects: viewport units resolve in a filter primitive subregion referenced from an HTML element</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects/#element-attrdef-filter-primitiveunits">
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#viewport-relative-lengths">
+<link rel="match" href="reference/svg-filter-primitive-units-viewport-units-ref.html">
+<meta name="assert" content="Each row's feFlood sizes its subregion with a viewport-relative length (vw/vh/vi/vb/vmin/vmax and their small/large/dynamic variants). The SVG filter is referenced from a non-SVG (HTML) element, so there is no SVGElement context, yet each length must still resolve against the document viewport (100 units exceeds the cell) rather than collapsing to 0, so every cell floods fully green.">
+<style>
+  body { margin: 0; }
+  .cell { width: 100px; height: 20px; overflow: hidden; }
+  .box { width: 100px; height: 20px; }
+  .box { background: red; }
+</style>
+</head>
+<body>
+  <div class="cell"><div class="box" style="filter: url(#flood-vw)" title="vw"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-vh)" title="vh"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-vi)" title="vi"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-vb)" title="vb"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-vmin)" title="vmin"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-vmax)" title="vmax"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-svw)" title="svw"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-svh)" title="svh"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-svi)" title="svi"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-svb)" title="svb"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-svmin)" title="svmin"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-svmax)" title="svmax"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-lvw)" title="lvw"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-lvh)" title="lvh"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-lvi)" title="lvi"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-lvb)" title="lvb"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-lvmin)" title="lvmin"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-lvmax)" title="lvmax"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-dvw)" title="dvw"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-dvh)" title="dvh"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-dvi)" title="dvi"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-dvb)" title="dvb"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-dvmin)" title="dvmin"></div></div>
+  <div class="cell"><div class="box" style="filter: url(#flood-dvmax)" title="dvmax"></div></div>
+  <svg width="0" height="0" aria-hidden="true">
+      <filter id="flood-vw" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100vw" height="100vw"/>
+      </filter>
+      <filter id="flood-vh" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100vh" height="100vh"/>
+      </filter>
+      <filter id="flood-vi" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100vi" height="100vi"/>
+      </filter>
+      <filter id="flood-vb" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100vb" height="100vb"/>
+      </filter>
+      <filter id="flood-vmin" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100vmin" height="100vmin"/>
+      </filter>
+      <filter id="flood-vmax" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100vmax" height="100vmax"/>
+      </filter>
+      <filter id="flood-svw" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100svw" height="100svw"/>
+      </filter>
+      <filter id="flood-svh" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100svh" height="100svh"/>
+      </filter>
+      <filter id="flood-svi" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100svi" height="100svi"/>
+      </filter>
+      <filter id="flood-svb" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100svb" height="100svb"/>
+      </filter>
+      <filter id="flood-svmin" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100svmin" height="100svmin"/>
+      </filter>
+      <filter id="flood-svmax" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100svmax" height="100svmax"/>
+      </filter>
+      <filter id="flood-lvw" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100lvw" height="100lvw"/>
+      </filter>
+      <filter id="flood-lvh" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100lvh" height="100lvh"/>
+      </filter>
+      <filter id="flood-lvi" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100lvi" height="100lvi"/>
+      </filter>
+      <filter id="flood-lvb" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100lvb" height="100lvb"/>
+      </filter>
+      <filter id="flood-lvmin" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100lvmin" height="100lvmin"/>
+      </filter>
+      <filter id="flood-lvmax" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100lvmax" height="100lvmax"/>
+      </filter>
+      <filter id="flood-dvw" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100dvw" height="100dvw"/>
+      </filter>
+      <filter id="flood-dvh" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100dvh" height="100dvh"/>
+      </filter>
+      <filter id="flood-dvi" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100dvi" height="100dvi"/>
+      </filter>
+      <filter id="flood-dvb" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100dvb" height="100dvb"/>
+      </filter>
+      <filter id="flood-dvmin" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100dvmin" height="100dvmin"/>
+      </filter>
+      <filter id="flood-dvmax" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+        <feFlood flood-color="green" x="0" y="0" width="100dvmax" height="100dvmax"/>
+      </filter>
+  </svg>
+</body>
+</html>

@@ -61,14 +61,25 @@ namespace WebCore {
 static constexpr float initialFontSizePx = 16.0f;
 
 SVGLengthContext::SVGLengthContext(const SVGElement* context, const std::optional<FloatSize>& viewportSize)
+    : SVGLengthContext(context, context ? SVGUserSpace::Inside : SVGUserSpace::Outside, viewportSize)
+{
+}
+
+SVGLengthContext SVGLengthContext::outsideSVGUserSpace(const SVGElement& lengthOwner, FloatSize viewportSize)
+{
+    return SVGLengthContext(&lengthOwner, SVGUserSpace::Outside, viewportSize);
+}
+
+SVGLengthContext::SVGLengthContext(const SVGElement* context, SVGUserSpace userSpace, const std::optional<FloatSize>& viewportSize)
     : m_context(context)
-    , m_viewportSize(!m_context ? viewportSize : std::nullopt)
+    , m_userSpace(userSpace)
+    , m_viewportSize(userSpace == SVGUserSpace::Outside ? viewportSize : std::nullopt)
 {
 }
 
 SVGLengthContext::~SVGLengthContext() = default;
 
-FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height)
+FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height, SVGUserSpace userSpace)
 {
     ASSERT(type != SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN);
     if (type != SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) {
@@ -80,7 +91,9 @@ FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitT
             clampTo<float>(convertValueFromPercentageToUserUnits(height.valueAsPercentage(), height.lengthMode(), viewportSize)));
     }
 
-    SVGLengthContext lengthContext(context, viewport.size());
+    SVGLengthContext lengthContext = userSpace == SVGUserSpace::Outside
+        ? outsideSVGUserSpace(*context, viewport.size())
+        : SVGLengthContext(context);
     return FloatRect(x.value(lengthContext), y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
 }
 
@@ -192,7 +205,7 @@ float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit u
     auto conversionData = cssConversionData();
     if (!conversionData) {
         // No associated element: fall back to initialFontSizePx for font-relative units.
-        if (!m_context && CSS::isFontRelativeLength(unit))
+        if (m_userSpace == SVGUserSpace::Outside && CSS::isFontRelativeLength(unit))
             return inputValue * initialFontSizePx;
 
         return 0.0f;
@@ -266,7 +279,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float
     auto viewportSize = this->viewportSize();
     if (!viewportSize) {
         // No associated element: percentage basis is 100 per SVG2 spec.
-        if (m_context)
+        if (m_userSpace == SVGUserSpace::Inside)
             return Exception { ExceptionCode::NotSupportedError };
         return value;
     }
@@ -282,7 +295,7 @@ ExceptionOr<double> SVGLengthContext::convertValueFromPercentageToUserUnits(doub
     auto viewportSize = this->viewportSize();
     if (!viewportSize) {
         // No associated element: percentage basis is 100 per SVG2 spec.
-        if (m_context)
+        if (m_userSpace == SVGUserSpace::Inside)
             return Exception { ExceptionCode::NotSupportedError };
         return value * 100;
     }
@@ -352,7 +365,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
     auto* style = renderStyleForLengthResolving(m_context.get());
     if (!style) {
         // No associated element: x-height falls back to 0.5em per CSS Values spec.
-        if (m_context)
+        if (m_userSpace == SVGUserSpace::Inside)
             return Exception { ExceptionCode::NotSupportedError };
         constexpr float initialXHeightPx = initialFontSizePx * 0.5f;
         return value / initialXHeightPx;
@@ -370,7 +383,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value)
     auto* style = renderStyleForLengthResolving(m_context.get());
     if (!style) {
         // No associated element: x-height falls back to 0.5em per CSS Values spec.
-        if (m_context)
+        if (m_userSpace == SVGUserSpace::Inside)
             return Exception { ExceptionCode::NotSupportedError };
         constexpr float initialXHeightPx = initialFontSizePx * 0.5f;
         return value * initialXHeightPx;
@@ -381,12 +394,12 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value)
 
 std::optional<FloatSize> SVGLengthContext::viewportSize() const
 {
-    if (!m_context)
+    if (m_userSpace == SVGUserSpace::Outside)
         return m_viewportSize;
 
     if (!m_viewportSize)
         m_viewportSize = computeViewportSize();
-    
+
     return m_viewportSize;
 }
 
