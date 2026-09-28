@@ -128,7 +128,13 @@ struct WebCore::ApplePaySetupConfiguration {
     Vector<String> signedFields;
 };
 
-[Nested] enum class WebCore::ApplePayLineItem::Type : bool;
+[Nested] enum class WebCore::ApplePayLineItem::Type : uint8_t {
+    Pending,
+    Final,
+#if ENABLE(APPLE_PAY_ESTIMATED_LINE_ITEM)
+    Estimated,
+#endif
+};
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
 [Nested] enum class WebCore::ApplePayLineItem::DisbursementLineItemType : uint8_t {
     Disbursement,

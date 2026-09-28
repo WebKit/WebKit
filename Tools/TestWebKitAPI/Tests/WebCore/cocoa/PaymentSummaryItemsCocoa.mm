@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,61 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
 #if ENABLE(APPLE_PAY)
 
-#include <WebCore/ApplePayPaymentTiming.h>
-#include <WebCore/ApplePayRecurringPaymentDateUnit.h>
-#include <optional>
-#include <wtf/WallTime.h>
-#include <wtf/text/WTFString.h>
+#import "Helpers/Test.h"
+#import <WebCore/ApplePayLineItem.h>
+#import <WebCore/PaymentSummaryItems.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 
-namespace WebCore {
+namespace TestWebKitAPI {
 
-struct ApplePayLineItem final {
-    enum class Type : uint8_t {
-        Pending,
-        Final,
+using Type = WebCore::ApplePayLineItem::Type;
+
+static WebCore::ApplePayLineItem makeLineItem(Type type)
+{
+    WebCore::ApplePayLineItem lineItem;
+    lineItem.type = type;
+    lineItem.label = "Shipping"_s;
+    lineItem.amount = "4.99"_s;
+    return lineItem;
+}
+
+// WebCore and PassKit order Pending and Final differently, so the mapping must not be a cast.
+TEST(PaymentSummaryItems, LineItemType)
+{
+    EXPECT_EQ([WebCore::platformSummaryItem(makeLineItem(Type::Pending)) type], PKPaymentSummaryItemTypePending);
+    EXPECT_EQ([WebCore::platformSummaryItem(makeLineItem(Type::Final)) type], PKPaymentSummaryItemTypeFinal);
 #if ENABLE(APPLE_PAY_ESTIMATED_LINE_ITEM)
-        Estimated,
+    EXPECT_EQ([WebCore::platformSummaryItem(makeLineItem(Type::Estimated)) type], PKPaymentSummaryItemTypeEstimated);
 #endif
-    };
+}
 
-    Type type { Type::Final };
-    String label;
-    String amount;
+} // namespace TestWebKitAPI
 
-    ApplePayPaymentTiming paymentTiming { ApplePayPaymentTiming::Immediate };
-
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-    WallTime recurringPaymentStartDate { WallTime::nan() };
-    ApplePayRecurringPaymentDateUnit recurringPaymentIntervalUnit { ApplePayRecurringPaymentDateUnit::Month };
-    unsigned recurringPaymentIntervalCount = 1;
-    WallTime recurringPaymentEndDate { WallTime::nan() };
-#endif
-
-#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-    WallTime deferredPaymentDate { WallTime::nan() };
-#endif
-
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
-    String automaticReloadPaymentThresholdAmount; /* required */
-#endif
-
-#if ENABLE(APPLE_PAY_DISBURSEMENTS)
-
-    enum class DisbursementLineItemType : uint8_t {
-        Disbursement,
-        InstantFundsOutFee,
-    };
-
-    std::optional<DisbursementLineItemType> disbursementLineItemType;
-
-#endif
-
-};
-
-} // namespace WebCore
-
-#endif
+#endif // ENABLE(APPLE_PAY)

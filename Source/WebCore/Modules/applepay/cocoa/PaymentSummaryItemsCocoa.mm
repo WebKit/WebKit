@@ -47,6 +47,10 @@ static PKPaymentSummaryItemType NODELETE toPKPaymentSummaryItemType(ApplePayLine
         return PKPaymentSummaryItemTypeFinal;
     case ApplePayLineItem::Type::Pending:
         return PKPaymentSummaryItemTypePending;
+#if ENABLE(APPLE_PAY_ESTIMATED_LINE_ITEM)
+    case ApplePayLineItem::Type::Estimated:
+        return PKPaymentSummaryItemTypeEstimated;
+#endif
     }
 }
 

@@ -170,6 +170,8 @@ static ExceptionOr<ApplePayLineItem> convertAndValidate(const PaymentItem& item,
 
     ApplePayLineItem lineItem;
     lineItem.amount = item.amount.value;
+    // PaymentItem only has a `pending` boolean, so standard display items can never be estimated.
+    // Estimated line items are only available through ApplePayModifier.
     lineItem.type = item.pending ? ApplePayLineItem::Type::Pending : ApplePayLineItem::Type::Final;
     lineItem.label = item.label;
     return { WTF::move(lineItem) };
