@@ -47,6 +47,7 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPixmap.h>
@@ -344,8 +345,8 @@ static const char* applicationIcon()
             }
 #endif
 
-            GUniquePtr<char> desktopFileID(g_strdup_printf("%s.desktop", applicationID.legacyCStringPointer()));
-            GRefPtr<GDesktopAppInfo> appInfo = adoptGRef(g_desktop_app_info_new(desktopFileID.get()));
+            auto desktopFileID = makeString(applicationID.span(), ".desktop"_s).utf8();
+            GRefPtr<GDesktopAppInfo> appInfo = adoptGRef(g_desktop_app_info_new(desktopFileID.legacyCStringPointer()));
             if (!appInfo)
                 return { };
 

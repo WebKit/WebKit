@@ -224,8 +224,8 @@ void WebInspectorUIProxy::platformInspectedURLChanged(const String& url)
     if (!m_inspectorWindow)
         return;
 
-    GUniquePtr<char> title(g_strdup_printf("Web Inspector — %s", url.utf8().legacyCStringPointer()));
-    wpe_toplevel_set_title(m_inspectorWindow.get(), title.get());
+    auto title = makeString(u8"Web Inspector — "_span, url).utf8();
+    wpe_toplevel_set_title(m_inspectorWindow.get(), title.legacyCStringPointer());
 }
 
 void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo&)

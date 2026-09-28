@@ -32,6 +32,7 @@
 #include "APIObject.h"
 #include "WebKitContextMenuGAction.h"
 #include <gio/gio.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(GTK) && !USE(GTK4)
 #include <gtk/gtk.h>
@@ -102,14 +103,14 @@ void WebContextMenuItemGlib::createActionIfNeeded()
         return;
 
     if (!m_gAction) {
-        const char* name = nullptr;
+        UTF8CString name;
 #if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (m_gtkAction) // NOLINT
-            name = gtk_action_get_name(m_gtkAction);
+            name = UTF8CString { byteCast<char8_t>(gtk_action_get_name(m_gtkAction)) };
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
-        m_gAction = adoptGRef(webkitContextMenuGActionNew(name, *this));
+        m_gAction = adoptGRef(webkitContextMenuGActionNew(WTF::move(name), *this));
     }
 
 #if PLATFORM(GTK) && !USE(GTK4)

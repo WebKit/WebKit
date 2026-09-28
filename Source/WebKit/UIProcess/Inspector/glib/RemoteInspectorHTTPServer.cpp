@@ -31,8 +31,10 @@
 #include "RemoteInspectorClient.h"
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/UTF8CStringView.h>
 
@@ -69,13 +71,9 @@ bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, u
         }, this, nullptr);
 
     auto* inetAddress = g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(socketAddress.get()));
-    GUniquePtr<char> host(g_inet_address_to_string(inetAddress));
-    GUniquePtr<char> inspectorServerAddress;
-    if (g_inet_address_get_family(inetAddress) == G_SOCKET_FAMILY_IPV6)
-        inspectorServerAddress.reset(g_strdup_printf("[%s]:%u", host.get(), inspectorPort));
-    else
-        inspectorServerAddress.reset(g_strdup_printf("%s:%u", host.get(), inspectorPort));
-    lazyInitialize(m_client, makeUnique<RemoteInspectorClient>(String::fromUTF8(inspectorServerAddress.get()), *this));
+    auto host = GMallocString::unsafeAdoptFromUTF8(g_inet_address_to_string(inetAddress));
+    auto inspectorServerAddress = g_inet_address_get_family(inetAddress) == G_SOCKET_FAMILY_IPV6 ? makeString('[', host.span(), "]:"_s, inspectorPort) : makeString(host.span(), ':', inspectorPort);
+    lazyInitialize(m_client, makeUnique<RemoteInspectorClient>(WTF::move(inspectorServerAddress), *this));
 
     return true;
 }

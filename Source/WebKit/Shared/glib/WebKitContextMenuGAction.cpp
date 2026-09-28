@@ -25,15 +25,16 @@
 #include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebKit;
 
 static void webkitContextMenuGActionGActionInterfaceInit(GActionInterface*);
 
 struct _WebKitContextMenuGActionPrivate {
-    GUniquePtr<char> name;
+    UTF8CString name;
     WebContextMenuItemData item;
     GRefPtr<GVariant> state;
     WeakPtr<WebPageProxy> page;
@@ -57,7 +58,7 @@ enum {
 static const char* webkitContextMenuGActionGetName(GAction* action)
 {
     auto* priv = WEBKIT_CONTEXT_MENU_GACTION(action)->priv;
-    return priv->name.get();
+    return priv->name.legacyCStringPointer();
 }
 
 static const GVariantType* webkitContextMenuGActionGetParameterType(GAction*)
@@ -179,15 +180,15 @@ static void webkit_context_menu_gaction_class_init(WebKitContextMenuGActionClass
     g_object_class_override_property(objectClass, PROP_STATE, "state");
 }
 
-GAction* webkitContextMenuGActionNew(const char* name, const WebContextMenuItemData& item)
+GAction* webkitContextMenuGActionNew(UTF8CString&& name, const WebContextMenuItemData& item)
 {
     RELEASE_ASSERT(item.type() == WebCore::ContextMenuItemType::Action || item.type() == WebCore::ContextMenuItemType::CheckableAction);
     auto* action = WEBKIT_CONTEXT_MENU_GACTION(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_GACTION, nullptr));
-    if (name)
-        action->priv->name.reset(g_strdup(name));
+    if (!name.isNull())
+        action->priv->name = WTF::move(name);
     else {
         static uint64_t actionID = 0;
-        action->priv->name.reset(g_strdup_printf("action-%" PRIu64, ++actionID));
+        action->priv->name = makeString("action-"_s, ++actionID).utf8();
     }
     if (item.type() == WebCore::ContextMenuItemType::CheckableAction)
         action->priv->state = g_variant_new_boolean(item.checked());

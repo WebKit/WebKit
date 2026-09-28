@@ -1293,8 +1293,8 @@ void NetworkDataTaskSoup::download()
         return;
     }
 
-    GUniquePtr<char> intermediatePath(g_strdup_printf("%s.wkdownload", downloadDestinationPath.legacyCStringPointer()));
-    m_downloadIntermediateFile = adoptGRef(g_file_new_for_path(intermediatePath.get()));
+    auto intermediatePath = makeString(m_pendingDownloadLocation, ".wkdownload"_s).utf8();
+    m_downloadIntermediateFile = adoptGRef(g_file_new_for_path(intermediatePath.legacyCStringPointer()));
     outputStream = adoptGRef(g_file_replace(m_downloadIntermediateFile.get(), nullptr, TRUE, G_FILE_CREATE_NONE, nullptr, &error.outPtr()));
     if (!outputStream) {
         didFailDownload(downloadDestinationError(m_response, String::fromUTF8(error->message)));

@@ -33,6 +33,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebDriver {
 
@@ -107,7 +108,7 @@ bool SessionHost::isConnected() const
 
 struct ConnectToBrowserAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ConnectToBrowserAsyncData);
-    ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& inspectorAddress, GCancellable* cancellable, Function<void(std::optional<String>)>&& completionHandler)
+    ConnectToBrowserAsyncData(SessionHost* sessionHost, UTF8CString&& inspectorAddress, GCancellable* cancellable, Function<void(std::optional<String>)>&& completionHandler)
         : sessionHost(sessionHost)
         , inspectorAddress(WTF::move(inspectorAddress))
         , cancellable(cancellable)
@@ -116,7 +117,7 @@ struct ConnectToBrowserAsyncData {
     }
 
     SessionHost* sessionHost;
-    GUniquePtr<char> inspectorAddress;
+    UTF8CString inspectorAddress;
     GRefPtr<GCancellable> cancellable;
     Function<void (std::optional<String> error)> completionHandler;
     unsigned connectionAttemptCount { 0 };
@@ -148,18 +149,16 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
     }
 
     m_cancellable = adoptGRef(g_cancellable_new());
-    GUniquePtr<char> inspectorAddress(
-        g_strdup_printf("%s:%u", targetIp.isEmpty() ? "127.0.0.1" : targetIp.utf8().legacyCStringPointer(), targetPort > 0 ? targetPort : freePort())
-    );
+    auto inspectorAddress = makeString(targetIp.isEmpty() ? "127.0.0.1"_s : StringView(targetIp), ':', targetPort > 0 ? targetPort : freePort()).utf8();
     if (!targetIp.isEmpty()) {
         m_isRemoteBrowser = true;
-        RELEASE_LOG_INFO(SessionHost, "Attaching to already running RemoteInspector at %s", inspectorAddress.get());
+        RELEASE_LOG_INFO(SessionHost, "Attaching to already running RemoteInspector at %s", inspectorAddress);
         connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTF::move(inspectorAddress), m_cancellable.get(), WTF::move(completionHandler)));
         return;
     }
 
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_NONE));
-    g_subprocess_launcher_setenv(launcher.get(), "WEBKIT_INSPECTOR_SERVER", inspectorAddress.get(), TRUE);
+    g_subprocess_launcher_setenv(launcher.get(), "WEBKIT_INSPECTOR_SERVER", inspectorAddress.legacyCStringPointer(), TRUE);
 #if PLATFORM(GTK)
     g_subprocess_launcher_setenv(launcher.get(), "GTK_OVERLAY_SCROLLING", m_capabilities.useOverlayScrollbars.value() ? "1" : "0", TRUE);
 #endif
@@ -204,7 +203,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
         return;
 
     if (!data->connectionAttemptCount)
-        RELEASE_LOG_INFO(SessionHost, "Connecting to RemoteInspector at %s", data->inspectorAddress.get());
+        RELEASE_LOG_INFO(SessionHost, "Connecting to RemoteInspector at %s", data->inspectorAddress);
 
     RunLoop::mainSingleton().dispatchAfter(100_ms, [connectToBrowserData = WTF::move(data)]() mutable {
         auto* data = connectToBrowserData.release();
@@ -212,7 +211,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
             return;
 
         GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-        g_socket_client_connect_to_host_async(socketClient.get(), data->inspectorAddress.get(), 0, data->cancellable.get(),
+        g_socket_client_connect_to_host_async(socketClient.get(), data->inspectorAddress.legacyCStringPointer(), 0, data->cancellable.get(),
             [](GObject* client, GAsyncResult* result, gpointer userData) {
                 auto data = std::unique_ptr<ConnectToBrowserAsyncData>(static_cast<ConnectToBrowserAsyncData*>(userData));
                 GUniqueOutPtr<GError> error;
@@ -224,16 +223,16 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
                         data->connectionAttemptCount++;
                         if (!(data->connectionAttemptCount % 10))
-                            RELEASE_LOG_INFO(SessionHost, "Still attempting connection to %s (attempt %u)", data->inspectorAddress.get(), data->connectionAttemptCount);
+                            RELEASE_LOG_INFO(SessionHost, "Still attempting connection to %s (attempt %u)", data->inspectorAddress, data->connectionAttemptCount);
                         data->sessionHost->connectToBrowser(WTF::move(data));
                         return;
                     }
-                    RELEASE_LOG_ERROR(SessionHost, "Failed to connect to %s: %s", data->inspectorAddress.get(), error->message);
+                    RELEASE_LOG_ERROR(SessionHost, "Failed to connect to %s: %s", data->inspectorAddress, error->message);
                     data->completionHandler(String::fromUTF8(error->message));
                     return;
                 }
 
-                RELEASE_LOG_INFO(SessionHost, "Connected to RemoteInspector at %s after %u attempt(s)", data->inspectorAddress.get(), data->connectionAttemptCount + 1);
+                RELEASE_LOG_INFO(SessionHost, "Connected to RemoteInspector at %s after %u attempt(s)", data->inspectorAddress, data->connectionAttemptCount + 1);
                 data->sessionHost->setupConnection(SocketConnection::create(WTF::move(connection), messageHandlers(), data->sessionHost));
                 data->completionHandler(std::nullopt);
         }, data);

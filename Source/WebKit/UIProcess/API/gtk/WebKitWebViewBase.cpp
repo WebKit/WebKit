@@ -94,6 +94,7 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
@@ -3560,11 +3561,9 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
     auto plugBusName = tokens[0].utf8();
     RELEASE_ASSERT(g_dbus_is_name(plugBusName.legacyCStringPointer()));
 
-    auto* busNamePrefix = !g_dbus_is_unique_name(plugBusName.legacyCStringPointer()) ? "" : ":";
+    auto busName = makeString(g_dbus_is_unique_name(plugBusName.legacyCStringPointer()) ? ":"_s : ""_s, tokens[0]).utf8();
 
-    GUniquePtr<char> busName(g_strdup_printf("%s%s", busNamePrefix, plugBusName.legacyCStringPointer()));
-
-    priv->socketAccessible = adoptGRef(gtk_at_spi_socket_new(busName.get(), tokens[1].utf8().legacyCStringPointer(), &error.outPtr()));
+    priv->socketAccessible = adoptGRef(gtk_at_spi_socket_new(busName.legacyCStringPointer(), tokens[1].utf8().legacyCStringPointer(), &error.outPtr()));
 
     if (priv->socketAccessible) {
         auto* widget = gtk_widget_get_first_child(GTK_WIDGET(webViewBase));

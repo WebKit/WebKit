@@ -35,6 +35,7 @@
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 
 /**
  * JSCClass:
@@ -478,9 +479,9 @@ GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass
 
     priv->jsClass = JSClassCreate(&definition);
 
-    GUniquePtr<char> prototypeName(g_strdup_printf("%sPrototype", priv->name.legacyCStringPointer()));
+    auto prototypeName = makeString(priv->name.span(), "Prototype"_s).utf8();
     JSClassDefinition prototypeDefinition = kJSClassDefinitionEmpty;
-    prototypeDefinition.className = prototypeName.get();
+    prototypeDefinition.className = prototypeName.legacyCStringPointer();
     RefPtr prototypeClass = JSClassCreate(&prototypeDefinition);
     priv->prototype = jscContextGetOrCreateJSWrapper(context, prototypeClass.get());
     JSClassRelease(prototypeClass.get());

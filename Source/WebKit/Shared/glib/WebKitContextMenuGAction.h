@@ -22,6 +22,7 @@
 #if ENABLE(CONTEXT_MENUS)
 #include "WebKitDefines.h"
 #include <gio/gio.h>
+#include <wtf/Forward.h>
 
 #if PLATFORM(GTK) && !USE(GTK4)
 #include <gtk/gtk.h>
@@ -47,7 +48,7 @@ struct _WebKitContextMenuGActionClass {
 
 WEBKIT_DECLARE_FINAL_TYPE(WebKitContextMenuGAction, webkit_context_menu_gaction, WEBKIT, CONTEXT_MENU_GACTION, GObject)
 
-GAction* webkitContextMenuGActionNew(const char*, const WebKit::WebContextMenuItemData&);
+GAction* webkitContextMenuGActionNew(UTF8CString&&, const WebKit::WebContextMenuItemData&);
 void webkitContextMenuGActionSetPage(WebKitContextMenuGAction*, WebKit::WebPageProxy*);
 
 #if PLATFORM(GTK) && !USE(GTK4)

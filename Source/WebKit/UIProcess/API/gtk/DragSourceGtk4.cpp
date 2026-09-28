@@ -34,6 +34,7 @@
 #include <WebCore/NativeImage.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -89,11 +90,9 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     }
 
     if (m_selectionData->hasURL()) {
-        auto urlString = m_selectionData->url().string().utf8();
-        gchar* url = g_strdup_printf("%s\n%s", urlString.legacyCStringPointer(), m_selectionData->hasText() ? m_selectionData->text().utf8().legacyCStringPointer() : urlString.legacyCStringPointer());
-        IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_take(url, strlen(url)));
-        IGNORE_CLANG_WARNINGS_END
+        const auto& urlString = m_selectionData->url().string();
+        auto url = makeString(urlString, '\n', m_selectionData->hasText() ? m_selectionData->text() : urlString).utf8();
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(url.span().data(), url.length()));
         providers.append(gdk_content_provider_new_for_bytes("_NETSCAPE_URL", bytes.get()));
     }
 
