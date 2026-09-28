@@ -2079,7 +2079,12 @@ void WebPageProxy::close()
     // Delay sending close message to next runloop cycle to avoid white flash.
     RunLoop::currentSingleton().dispatch([processesToClose = WTF::move(processesToClose), pageProxyID = identifier()] {
         for (auto [process, pageID, scope] : processesToClose) {
-            protect(process)->sendPageCloseMessage(std::nullopt, pageID, [scope = WTF::move(scope), pageProxyID, weakProcess = WeakPtr { process }] {
+            auto boxedScope = Box<WebProcessProxy::ShutdownPreventingScopeCounter::Token>::create(WTF::move(scope));
+            RunLoop::mainSingleton().dispatchAfter(WebFrameProxy::unloadEventsExpirationDelay, [boxedScope] {
+                *boxedScope = nullptr;
+            });
+            protect(process)->sendPageCloseMessage(std::nullopt, pageID, [boxedScope, pageProxyID, weakProcess = WeakPtr { process }] {
+                *boxedScope = nullptr;
                 if (RefPtr process = weakProcess.get())
                     process->removePagePendingClose(pageProxyID);
             });

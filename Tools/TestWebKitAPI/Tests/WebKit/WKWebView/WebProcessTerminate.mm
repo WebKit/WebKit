@@ -28,11 +28,13 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
 
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <signal.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WebKit, WebProcessTerminate)
@@ -143,4 +145,29 @@ TEST(WebKit, TerminateAllProcessesDuringLaunch)
     // The WKWebView should be able to recover from the WebProcess termination and navigation should succeed.
     [webView loadHTMLString:@"test" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
+}
+
+TEST(WebKit, CloseWebViewTerminatesHungProcess)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    __block bool isHanging = false;
+    [webView performAfterReceivingMessage:@"hanging" action:^{
+        isHanging = true;
+    }];
+    [webView synchronouslyLoadHTMLString:@"<script>function hang() { window.webkit.messageHandlers.testHandler.postMessage('hanging'); while (true) { } }</script>"];
+
+    pid_t pid = [webView _webProcessIdentifier];
+    EXPECT_NE(pid, 0);
+
+    [webView evaluateJavaScript:@"setTimeout(hang, 0)" completionHandler:nil];
+    TestWebKitAPI::Util::run(&isHanging);
+
+    [webView _close];
+
+    bool didExit = TestWebKitAPI::Util::waitFor([&] {
+        return kill(pid, 0) && errno == ESRCH;
+    });
+    EXPECT_TRUE(didExit);
+    if (!didExit)
+        kill(pid, SIGKILL);
 }
