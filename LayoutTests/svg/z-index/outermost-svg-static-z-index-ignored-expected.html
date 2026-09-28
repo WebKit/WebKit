@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>z-index does not apply to a statically-positioned outermost svg element</title>
+<style>
+.container { position: relative; z-index: 0; width: 100px; height: 100px; }
+svg { display: block; }
+.red { position: absolute; left: 0; top: 0; width: 100px; height: 100px; background: green; }
+</style>
+<p>Test passes if there is a red square and no green below.</p>
+<div class="container">
+  <svg width="100" height="100"><rect width="100" height="100" fill="red"/></svg>
+  <div class="red"></div>
+</div>
