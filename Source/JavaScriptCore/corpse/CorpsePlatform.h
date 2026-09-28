@@ -35,6 +35,12 @@
 #include <mach/mach.h>
 #endif
 
+#if ENABLE(MYA_HEAP) && __has_include(<lldb/API/LLDB.h>)
+#define HAVE_LLDB 1
+#else
+#define HAVE_LLDB 0
+#endif
+
 namespace JSC {
 namespace Corpse {
 

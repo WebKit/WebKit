@@ -1635,6 +1635,16 @@ if (USE_INSPECTOR_SOCKET_SERVER)
     )
 endif ()
 
+# A machine without liblldb still builds, but the mya_heap tests fail.
+if (ENABLE_MYA_HEAP)
+    find_package(LLDB)
+    if (NOT LLDB_FOUND)
+        message(WARNING "mya_heap is on but liblldb was not found. "
+            "Install liblldb-dev (Debian, Ubuntu), lldb-devel (Fedora) or llvm (Homebrew), "
+            "set LLDB_ROOT, or turn off ENABLE_MYA_HEAP.")
+    endif ()
+endif ()
+
 if (ENABLE_MYA)
     list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
         "${JAVASCRIPTCORE_DIR}/corpse"

@@ -80,6 +80,7 @@ void testMemory();
 void testSnapshot();
 void testThreads();
 void fuzzExportsTrie(uint64_t seed, unsigned iterations);
+void testTypeinfo();
 void testVM();
 
 // Announces a suite, times it, and reports on the way out. Destroyed on every path out
