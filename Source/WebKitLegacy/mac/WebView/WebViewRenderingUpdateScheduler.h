@@ -53,8 +53,8 @@ private:
 
     WebView* m_webView;
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
-    std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;
 
     bool m_insideCallback { false };
     bool m_rescheduledInsideCallback { false };

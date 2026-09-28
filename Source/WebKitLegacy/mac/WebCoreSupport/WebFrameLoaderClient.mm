@@ -1935,8 +1935,8 @@ RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLo
         }
 
     private:
-        RetainPtr<NSString> m_filePath;
-        RetainPtr<NSFileHandle> m_fileHandle;
+        const RetainPtr<NSString> m_filePath;
+        const RetainPtr<NSFileHandle> m_fileHandle;
 
         void didReceiveData(const WebCore::SharedBuffer& buffer) override
         {

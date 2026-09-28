@@ -50,7 +50,7 @@ private:
     {
     }
 
-    RetainPtr<id <DOMNodeFilter> > m_filter;
+    const RetainPtr<id <DOMNodeFilter> > m_filter;
 };
 
 } // namespace WebCore

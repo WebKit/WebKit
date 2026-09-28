@@ -59,7 +59,7 @@ private:
     HashSet<WebView *> m_webViews;
 
     String m_localStorageDatabasePath;
-    RefPtr<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
+    const RefPtr<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
 
     const Ref<WebCore::UserContentController> m_userContentController;
     const Ref<WebVisitedLinkStore> m_visitedLinkStore;

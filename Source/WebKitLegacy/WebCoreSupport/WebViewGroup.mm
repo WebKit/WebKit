@@ -97,7 +97,7 @@ void WebViewGroup::removeWebView(WebView *webView)
 WebCore::StorageNamespaceProvider& WebViewGroup::storageNamespaceProvider()
 {
     if (!m_storageNamespaceProvider)
-        m_storageNamespaceProvider = WebKit::WebStorageNamespaceProvider::create(m_localStorageDatabasePath);
+        lazyInitialize(m_storageNamespaceProvider, WebKit::WebStorageNamespaceProvider::create(m_localStorageDatabasePath));
 
     return *m_storageNamespaceProvider;
 }

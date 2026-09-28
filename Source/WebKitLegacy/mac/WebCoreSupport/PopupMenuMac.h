@@ -41,7 +41,7 @@ private:
     void populate();
 
     RefPtr<WebCore::PopupMenuClient> m_client;
-    RetainPtr<NSPopUpButtonCell> m_popup;
+    const RetainPtr<NSPopUpButtonCell> m_popup;
 };
 
 #endif // PopupMenuMac_h

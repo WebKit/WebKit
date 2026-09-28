@@ -41,6 +41,6 @@ public:
 
     id webDocumentView() { return m_webDocumentView.get(); }
 private:
-    RetainPtr<id> m_webDocumentView;
+    const RetainPtr<id> m_webDocumentView;
 };
 

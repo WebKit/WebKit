@@ -197,7 +197,7 @@ private:
 #endif
 
     WebView *m_webView;
-    RetainPtr<WebEditorUndoTarget> m_undoTarget;
+    const RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations { false };
     
     HashMap<WebCore::TextCheckingRequestIdentifier, Ref<WebCore::TextCheckingRequest>> m_requestsInFlight;

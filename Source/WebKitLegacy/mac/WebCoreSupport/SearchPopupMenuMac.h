@@ -40,7 +40,7 @@ public:
     bool enabled() override;
 
 private:
-    RefPtr<PopupMenuMac> m_popup;
+    const RefPtr<PopupMenuMac> m_popup;
     String m_directory;
 };
 

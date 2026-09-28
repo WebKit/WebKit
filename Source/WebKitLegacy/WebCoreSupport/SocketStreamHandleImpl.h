@@ -102,10 +102,10 @@ private:
     RetainPtr<CFReadStreamRef> m_readStream;
     RetainPtr<CFWriteStreamRef> m_writeStream;
 
-    RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
+    const RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
     String m_credentialPartition;
     SourceApplicationAuditToken m_auditData;
-    RefPtr<const StorageSessionProvider> m_storageSessionProvider;
+    const RefPtr<const StorageSessionProvider> m_storageSessionProvider;
 
     StreamBuffer<uint8_t, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;

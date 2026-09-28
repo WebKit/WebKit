@@ -104,7 +104,7 @@ private:
     std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();
 
     WeakObjCPtr<WebView> m_inspectedWebView;
-    RetainPtr<WebNodeHighlighter> m_highlighter;
+    const RetainPtr<WebNodeHighlighter> m_highlighter;
     WeakPtr<WebCore::Page> m_frontendPage;
     std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
 };
@@ -166,7 +166,7 @@ private:
 #if !PLATFORM(IOS_FAMILY)
     WeakObjCPtr<WebView> m_inspectedWebView;
     WeakPtr<LegacyWebPageInspectorController> m_webPageInspectorController;
-    RetainPtr<WebInspectorWindowController> m_frontendWindowController;
+    const RetainPtr<WebInspectorWindowController> m_frontendWindowController;
     String m_inspectedURL;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     WebCore::FloatRect m_sheetRect;

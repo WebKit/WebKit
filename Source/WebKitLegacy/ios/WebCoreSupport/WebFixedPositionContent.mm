@@ -57,7 +57,7 @@ struct ViewportConstrainedLayerData {
         : m_enclosingAcceleratedScrollLayer(nil)
     { }
     CALayer* m_enclosingAcceleratedScrollLayer; // May be nil.
-    std::unique_ptr<ViewportConstraints> m_viewportConstraints;
+    const std::unique_ptr<ViewportConstraints> m_viewportConstraints;
 };
 
 typedef HashMap<RetainPtr<CALayer>, std::unique_ptr<ViewportConstrainedLayerData>> LayerInfoMap;
@@ -181,7 +181,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData() = default;
         auto layerData = makeUnique<ViewportConstrainedLayerData>();
 
         layerData->m_enclosingAcceleratedScrollLayer = stickyContainers.get(layer);
-        layerData->m_viewportConstraints = WTF::move(layerAndConstraints.value);
+        lazyInitialize(layerData->m_viewportConstraints, WTF::move(layerAndConstraints.value));
 
         _private->m_viewportConstrainedLayers.set(layer, WTF::move(layerData));
     }

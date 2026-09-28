@@ -54,7 +54,7 @@ namespace WebCore {
         bool operator==(const EventListener&) const override;
         void handleEvent(ScriptExecutionContext&, Event&) override;
 
-        RetainPtr<ObjCListener> m_listener;
+        const RetainPtr<ObjCListener> m_listener;
     };
 
 } // namespace WebCore

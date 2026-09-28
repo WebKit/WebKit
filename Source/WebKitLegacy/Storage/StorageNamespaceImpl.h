@@ -72,7 +72,7 @@ private:
 
     // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
     String m_path;
-    RefPtr<WebCore::StorageSyncManager> m_syncManager;
+    const RefPtr<WebCore::StorageSyncManager> m_syncManager;
 
     // The default quota for each new storage area.
     unsigned m_quota;

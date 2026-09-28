@@ -61,7 +61,7 @@ void PopupMenuMac::populate()
     if (m_popup)
         clear();
     else {
-        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:!protect(m_client)->shouldPopOver()]);
+        lazyInitialize(m_popup, adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:!protect(m_client)->shouldPopOver()]));
         [m_popup setUsesItemFromMenu:NO];
         [m_popup setAutoenablesItems:NO];
     }

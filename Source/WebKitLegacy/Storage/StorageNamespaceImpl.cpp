@@ -73,7 +73,7 @@ StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String
     , m_sessionID(sessionID)
 {
     if (isLocalStorage(m_storageType) && !m_path.isEmpty())
-        m_syncManager = StorageSyncManager::create(m_path);
+        lazyInitialize(m_syncManager, StorageSyncManager::create(m_path));
 }
 
 StorageNamespaceImpl::~StorageNamespaceImpl()
@@ -130,7 +130,7 @@ void StorageNamespaceImpl::close()
         protect(it->value)->close();
 
     if (m_syncManager)
-        protect(m_syncManager)->close();
+        m_syncManager->close();
 
     m_isShutdown = true;
 }

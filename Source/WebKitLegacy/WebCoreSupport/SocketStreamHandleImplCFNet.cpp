@@ -91,7 +91,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     ASSERT(url.protocolIs("ws"_s) || url.protocolIs("wss"_s));
 
     URL httpsURL { makeString("https://"_s, m_url.host()) };
-    m_httpsURL = httpsURL.createCFURL();
+    lazyInitialize(m_httpsURL, httpsURL.createCFURL());
 
     // Don't check for HSTS violation for ephemeral sessions since
     // HSTS state should not transfer between regular and private browsing.
@@ -358,7 +358,7 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
 
     // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
     Credential storedCredential;
-    if (auto* storageSession = m_storageSessionProvider ? protect(m_storageSessionProvider)->storageSession() : nullptr) {
+    if (auto* storageSession = m_storageSessionProvider ? m_storageSessionProvider->storageSession() : nullptr) {
         storedCredential = CredentialStorage::getFromPersistentStorage(protectionSpace);
         if (storedCredential.isEmpty())
             storedCredential = storageSession->credentialStorage().get(m_credentialPartition, protectionSpace);

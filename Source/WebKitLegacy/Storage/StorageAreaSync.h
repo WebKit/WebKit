@@ -66,7 +66,7 @@ private:
     bool m_finalSyncScheduled;
 
     RefPtr<StorageAreaImpl> m_storageArea;
-    RefPtr<WebCore::StorageSyncManager> m_syncManager;
+    const RefPtr<WebCore::StorageSyncManager> m_syncManager;
 
     // The database handle will only ever be opened and used on the background thread.
     const UniqueRef<WebCore::SQLiteDatabase> m_database;
