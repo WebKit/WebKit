@@ -109,6 +109,7 @@ private:
 
     void didConnect(GRefPtr<GDBusConnection>&&);
     void didOwnName();
+    void didLoseName(const char*);
     void initializeRegistry();
     void addEventListener(const ASCIICString& dbusName, UTF8CStringView eventName);
     void removeEventListener(const ASCIICString& dbusName, UTF8CStringView eventName);

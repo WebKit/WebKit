@@ -87,7 +87,10 @@ void AccessibilityAtspi::didConnect(GRefPtr<GDBusConnection>&& connection)
             auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
             atspi.didOwnName();
         },
-        nullptr, this, nullptr);
+        [](GDBusConnection*, const char* name, gpointer userData) {
+            auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
+            atspi.didLoseName(name);
+        }, this, nullptr);
 }
 
 void AccessibilityAtspi::disconnect()
@@ -125,6 +128,15 @@ void AccessibilityAtspi::didOwnName()
     m_pendingRootRegistrations.clear();
 
     initializeRegistry();
+}
+
+void AccessibilityAtspi::didLoseName(const char* name)
+{
+    // This happens when the name can't be acquired, for example, when the web process isn't
+    // allowed to own it because it's not sandboxed. Accessibility can't work without the
+    // name because object references are built with it, so give up.
+    g_warning("Can't own name %s on a11y bus", name);
+    disconnect();
 }
 
 void AccessibilityAtspi::initializeRegistry()
