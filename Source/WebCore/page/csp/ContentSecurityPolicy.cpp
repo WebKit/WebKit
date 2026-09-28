@@ -946,7 +946,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         blockedURI = createURLForReporting(preRedirectURL.isNull() ? URL { blockedURLString } : preRedirectURL, effectiveViolatedDirective, usesReportTo);
     }
 
-    info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer().string : blockedURI;
+    info.url = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer().string : blockedURI;
     info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.toString() : emptyString();
 
     // Line number and column number are only included when source file is set.
@@ -956,11 +956,14 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
 
     if (!m_client) {
-        RefPtr<Document> document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
-        if (!document || !document->frame())
+        RefPtr scriptExecutionContext = m_scriptExecutionContext;
+        if (!isAnyOf<Document, WorkerGlobalScope>(scriptExecutionContext))
+            return;
+        if (auto* document = dynamicDowncast<Document>(*scriptExecutionContext); document && !document->frame())
             return;
 
-        info.documentURI = shouldReportProtocolOnly(document->url()) ? document->url().protocol().toString() : document->url().strippedForUseAsReferrer().string;
+        auto& contextURL = scriptExecutionContext->url();
+        info.url = shouldReportProtocolOnly(contextURL) ? contextURL.protocol().toString() : contextURL.strippedForUseAsReferrer().string;
 
         auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
@@ -970,7 +973,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
             info.columnNumber = callFrame->columnNumber();
         }
     }
-    ASSERT(m_client || is<Document>(m_scriptExecutionContext.get()));
+    ASSERT((m_client || isAnyOf<Document, WorkerGlobalScope>(m_scriptExecutionContext.get())));
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
@@ -983,7 +986,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     // 1. Dispatch violation event.
     SecurityPolicyViolationEventInit violationEventInit;
-    violationEventInit.documentURI = info.documentURI;
+    violationEventInit.documentURI = info.url;
     violationEventInit.referrer = m_referrer;
     violationEventInit.blockedURI = blockedURI;
     violationEventInit.violatedDirective = effectiveViolatedDirective; // Historical alias to effectiveDirective: https://www.w3.org/TR/CSP3/#violation-events.
@@ -1005,20 +1008,20 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     auto reportBody = CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit });
 
     if (usesReportTo && m_reportingClient) {
-        m_reportingClient->notifyReportObservers(Report::create(reportBody->type(), info.documentURI, reportBody.copyRef()));
+        m_reportingClient->notifyReportObservers(Report::create(reportBody->type(), info.url, reportBody.copyRef()));
         endpointTokens = violatedDirectiveList.reportToTokens();
     } else
         endpointURIs = violatedDirectiveList.reportURIs();
 
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
-    else {
-        Ref document = downcast<Document>(*m_scriptExecutionContext);
-        if (element && &element->document() == document.ptr())
+    else if (RefPtr document = dynamicDowncast<Document>(*m_scriptExecutionContext)) {
+        if (element && &element->document() == document.get())
             element->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
         else
             document->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
-    }
+    } else
+        protect(downcast<WorkerGlobalScope>(*m_scriptExecutionContext))->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
 
     // 2. Send violation report (if applicable).
     if (endpointURIs.isEmpty() && endpointTokens.isEmpty())
