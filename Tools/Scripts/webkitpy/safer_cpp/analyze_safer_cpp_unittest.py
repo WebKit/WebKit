@@ -22,6 +22,7 @@
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -63,6 +64,55 @@ class AnalyzeSaferCppTest(unittest.TestCase):
             self.assertNotEqual(proc.returncode, 0,
                                 'a compile failure must not exit 0:\n' + output)
             self.assertIn('did not compile', output)
+
+
+def write_fake_clang(path, checkers):
+    # Answers `-cc1 -analyzer-checker-help` with the given checkers, and exits
+    # cleanly with no diagnostics for any other invocation.
+    with open(path, 'w') as f:
+        f.write('#!/bin/sh\n'
+                'case "$*" in *-analyzer-checker-help*)\n')
+        for checker in checkers:
+            f.write('    echo "  {}"\n'.format(checker))
+        f.write('    ;;\n'
+                'esac\n'
+                'exit 0\n')
+    os.chmod(path, 0o755)
+
+
+@unittest.skipIf(sys.platform.startswith('win') or sys.platform == 'darwin', 'Linux analyzer discovery')
+class AnalyzeSaferCppLinuxTest(unittest.TestCase):
+    def test_picks_the_clang_with_the_most_checkers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            binDir = os.path.join(directory, 'bin')
+            os.mkdir(binDir)
+            write_fake_clang(os.path.join(binDir, 'clang++'), ['webkit.NoUncountedMemberChecker'])
+            write_fake_clang(os.path.join(binDir, 'clang++-23'), ['webkit.NoUncountedMemberChecker', 'alpha.webkit.UncountedCallArgsChecker'])
+            write_fake_clang(os.path.join(binDir, 'clang++-22'), ['webkit.NoUncountedMemberChecker'])
+            write_fake_clang(os.path.join(binDir, 'g++'), [])
+
+            source = os.path.join(directory, 'repro.cpp')
+            with open(source, 'w') as f:
+                f.write('int main() { return 0; }\n')
+
+            compileCommands = os.path.join(directory, 'compile_commands.json')
+            with open(compileCommands, 'w') as f:
+                json.dump([{'directory': directory, 'file': source,
+                            'command': 'g++ -c {} -o {}.o'.format(source, source)}], f)
+
+            # Only the fake compilers (and git) are visible, so a real clang in PATH cannot win.
+            git = shutil.which('git')
+            if git:
+                os.symlink(git, os.path.join(binDir, 'git'))
+            env = dict(os.environ, PATH=binDir)
+            env.pop('CXX', None)
+            proc = subprocess.run(
+                [sys.executable, ANALYZE_SAFER_CPP, source, '--compile-commands', compileCommands],
+                capture_output=True, text=True, env=env)
+
+            output = proc.stdout + proc.stderr
+            self.assertEqual(proc.returncode, 0, output)
+            self.assertIn('Using analyzer: {}'.format(os.path.join(binDir, 'clang++-23')), output)
 
 
 if __name__ == '__main__':

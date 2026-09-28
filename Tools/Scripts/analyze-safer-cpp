@@ -24,10 +24,11 @@
 """Run the SaferCPP clang static-analyzer checkers against your local changes
 without performing a full WebKit build.
 
-Downloads a recent toolchain from swift.org if needed.
+On macOS, downloads a recent toolchain from swift.org if needed. On Linux,
+uses the clang++ in PATH that implements the most SaferCPP checkers.
 
 Uses CMake for fast generation of compile_commands.json. Or you can supply
-your own.
+your own, or point at a GTK or WPE build-webkit tree with --gtk or --wpe.
 """
 
 import argparse
@@ -37,6 +38,7 @@ import json
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -92,6 +94,8 @@ TOOLCHAIN_DIRS = [
 ]
 SWIFT_LATEST_URL = 'https://download.swift.org/development/xcode/latest-build.yml'
 SWIFT_DOWNLOAD_BASE = 'https://download.swift.org/development/xcode'
+LINUX_CLANG_NAMES = ['clang++'] + ['clang++-{}'.format(v) for v in range(30, 17, -1)]
+WEBKIT_BUILD_DIRECTORY = os.path.join(SCRIPT_DIR, 'webkit-build-directory')
 
 # Ordered so that PAL (which lives under WebCore) is matched before WebCore.
 PROJECT_ROOTS = [
@@ -523,12 +527,49 @@ def download_swift_toolchain():
     sys.exit('error: installed toolchain not found at {}'.format(expected))
 
 
-def resolve_analyzer_clang(args):
+def find_linux_clang(db):
+    """Return the clang++ that implements the most SaferCPP checkers, or None.
+
+    Ties go to the first candidate: $CXX, then the compiler that produced the
+    compile database (so the recorded flags are known to be accepted), then
+    clang++ and the versioned clang++-N names in PATH.
+    """
+    names = [os.environ.get('CXX', '')]
+    if db.byFile:
+        names.append(shlex.split(next(iter(db.byFile.values()))['command'])[0])
+    names += LINUX_CLANG_NAMES
+
+    candidates = []
+    seen = set()
+    for name in names:
+        if 'clang' not in os.path.basename(name):
+            continue
+        path = shutil.which(name)
+        if not path or os.path.realpath(path) in seen:
+            continue
+        seen.add(os.path.realpath(path))
+        available = available_checkers(path)
+        if available:
+            candidates.append((len(available.intersection(WEBKIT_CHECKERS)), path))
+    candidates = [c for c in candidates if c[0]]
+    return max(candidates, key=lambda c: c[0])[1] if candidates else None
+
+
+def resolve_analyzer_clang(args, db):
     if args.clang:
         if not os.path.isfile(args.clang):
             sys.exit("error: --clang path '{}' does not exist".format(args.clang))
         print('Using analyzer: {}'.format(args.clang), file=sys.stderr)
         return args.clang
+
+    if sys.platform != 'darwin':
+        if args.download_toolchain:
+            sys.exit('error: --download-toolchain installs an Xcode toolchain and only works on macOS; pass --clang PATH')
+        clang = find_linux_clang(db)
+        if not clang:
+            sys.exit('error: no clang++ implementing the SaferCPP checkers found in $CXX or PATH; pass --clang PATH')
+        print('Using analyzer: {}'.format(clang), file=sys.stderr)
+        return clang
 
     if args.download_toolchain:
         clang, display = download_swift_toolchain()
@@ -570,12 +611,13 @@ def parse_args():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         usage='%(prog)s [-h] [--base BASE] [--clang CLANG] [--download-toolchain]\n'
-              '                         [--cmake-preset CMAKE_PRESET | --compile-commands PATH]\n'
+              '                         [--cmake-preset CMAKE_PRESET | --compile-commands PATH | --gtk | --wpe]\n'
               '                         [--checker NAME] [--ignore-expectations] [-j N] [-v]\n'
               '                         [--changed-files | FILE ...]',
         epilog='examples:\n'
                '  analyze-safer-cpp Source/WebCore/dom/Document.cpp\n'
-               '  analyze-safer-cpp --changed-files -j 12\n')
+               '  analyze-safer-cpp --changed-files -j 12\n'
+               '  analyze-safer-cpp --wpe --changed-files\n')
     parser.add_argument('files', nargs='*', metavar='FILE',
                         help='source or header files to analyze')
     parser.add_argument('--changed-files', action='store_true',
@@ -585,14 +627,18 @@ def parse_args():
                              "(default: auto = merge-base of origin/main and HEAD)")
     parser.add_argument('--clang', default=None,
                         help='clang with alpha.webkit.* checkers '
-                             '(default: newest installed swift.org toolchain)')
+                             '(default: newest installed swift.org toolchain on macOS; '
+                             'the clang++ in $CXX or PATH with the most checkers on Linux)')
     parser.add_argument('--download-toolchain', action='store_true',
                         help='download and install the latest swift.org development '
-                             'snapshot without prompting')
+                             'snapshot without prompting (macOS only)')
     where = parser.add_mutually_exclusive_group()
     where.add_argument('--cmake-preset', help='CMake configure preset name')
     where.add_argument('--compile-commands', metavar='PATH',
                        help='path to a compile_commands.json file')
+    for port in ('gtk', 'wpe'):
+        where.add_argument('--' + port, action='store_const', const=port, dest='port',
+                           help='use the {} build-webkit tree (honors set-webkit-configuration and WEBKIT_OUTPUTDIR)'.format(port.upper()))
     parser.add_argument('--checker', action='append', dest='checkers', metavar='NAME',
                         help='restrict to one checker (repeatable; short or full name)')
     parser.add_argument('--ignore-expectations', action='store_true',
@@ -612,21 +658,33 @@ def parse_args():
     return args
 
 
+def resolve_port_build_dir(port):
+    proc = subprocess.run(['perl', WEBKIT_BUILD_DIRECTORY, '--configuration', '--' + port],
+                          capture_output=True, text=True)
+    if proc.returncode != 0 or not proc.stdout.strip():
+        sys.exit('error: webkit-build-directory --{} failed:\n{}'.format(port, proc.stderr.strip()))
+    return proc.stdout.strip().splitlines()[-1]
+
+
 def main():
     args = parse_args()
-    clang = resolve_analyzer_clang(args)
-    args.checkers = drop_unavailable_checkers(args.checkers, clang, args.explicit_checkers)
 
     if args.compile_commands:
         compileCommandsPath = os.path.abspath(args.compile_commands)
     elif args.cmake_preset:
         compileCommandsPath = os.path.join(resolve_preset_build_dir(args.cmake_preset), 'compile_commands.json')
+    elif args.port:
+        compileCommandsPath = os.path.join(resolve_port_build_dir(args.port), 'compile_commands.json')
+    elif sys.platform != 'darwin':
+        sys.exit('error: specify --gtk, --wpe, --cmake-preset or --compile-commands')
     else:
         compileCommandsPath = os.path.join(DEFAULT_BUILD_DIR, 'compile_commands.json')
     if not os.path.isfile(compileCommandsPath):
-        sys.exit("error: compile_commands.json not found at '{}' (run cmake --preset ... first)".format(compileCommandsPath))
+        sys.exit("error: compile_commands.json not found at '{}' (run cmake --preset ... or build-webkit first)".format(compileCommandsPath))
 
     db = CompileDB(compileCommandsPath)
+    clang = resolve_analyzer_clang(args, db)
+    args.checkers = drop_unavailable_checkers(args.checkers, clang, args.explicit_checkers)
     expectations = Expectations()
 
     requested = collect_input_files(args)
