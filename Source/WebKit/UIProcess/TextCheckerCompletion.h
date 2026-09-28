@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IdentifierTypes.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/TextChecking.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
@@ -35,10 +36,11 @@ namespace WebKit {
 using SpellDocumentTag = int64_t;
 
 class WebPageProxy;
+class WebProcessProxy;
 
 class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
 public:
-    static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&);
+    static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&, WebProcessProxy& requestingProcess, WebCore::PageIdentifier pageIDInRequestingProcess);
 
     const WebCore::TextCheckingRequestData& NODELETE textCheckingRequestData() const;
     SpellDocumentTag spellDocumentTag();
@@ -46,11 +48,14 @@ public:
     void didCancelCheckingText() const;
 
 private:
-    TextCheckerCompletion(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&);
+    TextCheckerCompletion(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&, WebProcessProxy& requestingProcess, WebCore::PageIdentifier pageIDInRequestingProcess);
 
     const TextCheckerRequestID m_requestID;
     const WebCore::TextCheckingRequestData m_requestData;
     WeakPtr<WebPageProxy> m_page;
+    // The request is pending only in the web process that made it, so the reply must go there.
+    WeakPtr<WebProcessProxy> m_requestingProcess;
+    const WebCore::PageIdentifier m_pageIDInRequestingProcess;
 };
 
 } // namespace WebKit

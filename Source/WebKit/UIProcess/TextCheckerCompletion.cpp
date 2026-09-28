@@ -26,20 +26,24 @@
 #include "config.h"
 #include "TextCheckerCompletion.h"
 
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page)
+Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page, WebProcessProxy& requestingProcess, PageIdentifier pageIDInRequestingProcess)
 {
-    return adoptRef(*new TextCheckerCompletion(requestID, requestData, page));
+    return adoptRef(*new TextCheckerCompletion(requestID, requestData, page, requestingProcess, pageIDInRequestingProcess));
 }
 
-TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page)
+TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page, WebProcessProxy& requestingProcess, PageIdentifier pageIDInRequestingProcess)
     : m_requestID(requestID)
     , m_requestData(requestData)
     , m_page(page)
+    , m_requestingProcess(requestingProcess)
+    , m_pageIDInRequestingProcess(pageIDInRequestingProcess)
 {
 }
 
@@ -65,7 +69,8 @@ void TextCheckerCompletion::didFinishCheckingText(const Vector<TextCheckingResul
     if (result.isEmpty())
         didCancelCheckingText();
 
-    page->didFinishCheckingText(m_requestID, result);
+    if (RefPtr process = m_requestingProcess.get())
+        process->send(Messages::WebPage::DidFinishCheckingText(m_requestID, result), m_pageIDInRequestingProcess);
 }
 
 void TextCheckerCompletion::didCancelCheckingText() const
@@ -74,7 +79,8 @@ void TextCheckerCompletion::didCancelCheckingText() const
     if (!page)
         return;
 
-    page->didCancelCheckingText(m_requestID);
+    if (RefPtr process = m_requestingProcess.get())
+        process->send(Messages::WebPage::DidCancelCheckingText(m_requestID), m_pageIDInRequestingProcess);
 }
 
 } // namespace WebKit

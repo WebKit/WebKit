@@ -13794,28 +13794,19 @@ void WebPageProxy::ignoreWord(IPC::Connection& connection, const String& word)
     TextChecker::ignoreWord(spellDocumentTag(), word);
 }
 
-void WebPageProxy::requestCheckingOfString(TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
+void WebPageProxy::requestCheckingOfString(IPC::Connection& connection, TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
 {
-    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, *this), insertionPoint);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, *this, process, webPageIDInProcess(process)), insertionPoint);
 }
 
 
-void WebPageProxy::requestExtendedCheckingOfString(TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
+void WebPageProxy::requestExtendedCheckingOfString(IPC::Connection& connection, TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
 {
 #if PLATFORM(COCOA)
-    TextChecker::requestExtendedCheckingOfString(TextCheckerCompletion::create(requestID, request, *this), insertionPoint);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    TextChecker::requestExtendedCheckingOfString(TextCheckerCompletion::create(requestID, request, *this, process, webPageIDInProcess(process)), insertionPoint);
 #endif
-}
-
-
-void WebPageProxy::didFinishCheckingText(TextCheckerRequestID requestID, const Vector<WebCore::TextCheckingResult>& result)
-{
-    send(Messages::WebPage::DidFinishCheckingText(requestID, result));
-}
-
-void WebPageProxy::didCancelCheckingText(TextCheckerRequestID requestID)
-{
-    send(Messages::WebPage::DidCancelCheckingText(requestID));
 }
 
 void WebPageProxy::focusFromServiceWorker(CompletionHandler<void()>&& callback)

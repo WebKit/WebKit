@@ -46,6 +46,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKAttachment.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -59,6 +60,7 @@
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
 
 // Stands in for the font panel's attribute converter, and always adds a single underline.
 @interface SiteIsolationUnderlineAttributeConverter : NSObject
@@ -680,5 +682,110 @@ TEST(SiteIsolation, AttachmentIconInCrossOriginIframe)
 #endif // PLATFORM(MAC)
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+// Replies to a text checking request must go to the web process that made it. Only that process has the
+// pending request; any other process drops the reply.
+
+#if PLATFORM(MAC)
+
+static unsigned synchronousTextCheckCount;
+static RetainPtr<NSString> pendingExtendedCheckString;
+static BlockPtr<void(NSInteger, NSArray<NSTextCheckingResult *> *)> pendingExtendedCheckCompletion;
+
+static NSArray<NSTextCheckingResult *> *swizzledCheckStringCountingChecks(id, SEL, NSString *, NSRange, NSTextCheckingTypes, NSDictionary *, NSInteger, NSOrthography **, NSInteger *)
+{
+    ++synchronousTextCheckCount;
+    return @[ ];
+}
+
+static NSInteger swizzledRequestGrammarCheckingDeferringCompletion(id, SEL, NSString *stringToCheck, NSRange, NSString *, NSDictionary *, void (^completionHandler)(NSInteger, NSArray<NSTextCheckingResult *> *))
+{
+    pendingExtendedCheckString = stringToCheck;
+    pendingExtendedCheckCompletion = makeBlockPtr(completionHandler);
+    return 0;
+}
+
+// Types into the editable body of the frame (the main frame if nil), then replies to the extended proofreading
+// request that follows with a grammar result the synchronous check didn't report. The web process that made the
+// request responds by checking the paragraph again, so this returns whether another synchronous check arrives.
+// Setup problems are reported as separate failures, so a bare false means the reply never reached the requester.
+static bool extendedProofreadingReplyTriggersRecheck(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    synchronousTextCheckCount = 0;
+    pendingExtendedCheckString = nil;
+    pendingExtendedCheckCompletion = nullptr;
+
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body)" inFrame:frame];
+    [(id<NSTextInputClient>)webView insertText:@"Let's go in then store\n" replacementRange:NSMakeRange(NSNotFound, 0)];
+    if (!Util::waitFor([] { return !!pendingExtendedCheckCompletion; })) {
+        ADD_FAILURE() << "No extended proofreading request was made";
+        return false;
+    }
+
+    // Let every check caused by the insertion finish, so that any check after the reply is the re-check.
+    [webView waitForNextPresentationUpdate];
+    auto checkCountBeforeReply = synchronousTextCheckCount;
+
+    NSRange phraseRange = [pendingExtendedCheckString rangeOfString:@"go in then"];
+    if (phraseRange.location == NSNotFound) {
+        ADD_FAILURE() << "The extended proofreading request didn't include the typed text: " << [pendingExtendedCheckString UTF8String];
+        return false;
+    }
+    NSDictionary *detail = @{
+        NSGrammarRange: [NSValue valueWithRange:NSMakeRange(0, phraseRange.length)],
+        NSGrammarCorrections: @[ @"go in the" ],
+    };
+    auto completion = std::exchange(pendingExtendedCheckCompletion, nullptr);
+    completion(0, @[ [NSTextCheckingResult grammarCheckingResultWithRange:phraseRange details:@[ detail ]] ]);
+
+    return Util::waitFor([&] {
+        return synchronousTextCheckCount > checkCountBeforeReply;
+    });
+}
+
+TEST(SiteIsolation, ExtendedProofreadingReplyReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/control"_s, { "<body contenteditable></body>"_s } },
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    InstanceMethodSwizzler checkStringSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:),
+        reinterpret_cast<IMP>(swizzledCheckStringCountingChecks)
+    };
+    InstanceMethodSwizzler requestGrammarCheckingSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(requestGrammarCheckingOfString:range:language:options:completionHandler:),
+        reinterpret_cast<IMP>(swizzledRequestGrammarCheckingDeferringCompletion)
+    };
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"ExtendedProofreadingEnabled", true);
+
+    // Check the whole mechanism in a main frame first, so that a failure below can only be the routing of the reply.
+    {
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/control"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+        [webView _setGrammarCheckingEnabledForTesting:YES];
+        [webView objectByEvaluatingJavaScript:@"document.body.focus()"];
+        EXPECT_TRUE(extendedProofreadingReplyTriggersRecheck(webView.get(), nil));
+    }
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configuration.get());
+    [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+    [webView _setGrammarCheckingEnabledForTesting:YES];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.body.focus()" inFrame:childFrame.get()];
+    EXPECT_TRUE(extendedProofreadingReplyTriggersRecheck(webView.get(), childFrame.get()));
+
+    pendingExtendedCheckCompletion = nullptr;
+    pendingExtendedCheckString = nil;
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI
