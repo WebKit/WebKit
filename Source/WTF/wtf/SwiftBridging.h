@@ -30,7 +30,7 @@
 #include <swift/bridging>
 
 #ifndef SWIFT_REFCOUNTED_PTR
-#define SWIFT_REFCOUNTED_PTR
+#define SWIFT_REFCOUNTED_PTR(_toRawPointer)
 #endif
 
 #ifndef SWIFT_NONESCAPABLE

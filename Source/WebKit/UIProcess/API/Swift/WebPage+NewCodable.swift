@@ -39,9 +39,15 @@ extension WebPage {
         returning outputType: Output.Type,
         _ script: () -> Swift.String
     ) async throws -> Output {
+        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        guard let page = backingWebView._protectedPage() else {
+            fatalError()
+        }
+        #else
         guard let page = backingWebView._protectedPage().get() else {
             fatalError()
         }
+        #endif
 
         guard let transferString = Optional(fromCxx: IPC.TransferString.create(script())) else {
             fatalError()

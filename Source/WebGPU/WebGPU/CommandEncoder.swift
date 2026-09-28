@@ -48,6 +48,16 @@ import WebGPU_Private.WebGPU
 
 typealias String = Swift.String
 
+#if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+typealias RenderPassEncoderResult = WebGPU.RenderPassEncoder
+typealias ComputePassEncoderResult = WebGPU.ComputePassEncoder
+typealias CommandBufferResult = WebGPU.CommandBuffer
+#else
+typealias RenderPassEncoderResult = CxxBridging.RefRenderPassEncoder
+typealias ComputePassEncoderResult = CxxBridging.RefComputePassEncoder
+typealias CommandBufferResult = CxxBridging.RefCommandBuffer
+#endif
+
 @_expose(Cxx)
 func commandEncoderClearBuffer(
     _ commandEncoder: WebGPU.Metal.CommandEncoder,
@@ -129,7 +139,11 @@ func commandEncoderBeginRenderPass(
     _ commandEncoder: WebGPU.Metal.CommandEncoder,
     descriptor: WGPURenderPassDescriptor,
 ) -> CxxBridging.RefRenderPassEncoder {
+    #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+    CxxBridging.RefRenderPassEncoder(commandEncoder.beginRenderPass(descriptor: descriptor))
+    #else
     commandEncoder.beginRenderPass(descriptor: descriptor)
+    #endif
 }
 
 @_expose(Cxx)
@@ -137,7 +151,11 @@ func commandEncoderBeginComputePass(
     _ commandEncoder: WebGPU.Metal.CommandEncoder,
     descriptor: WGPUComputePassDescriptor,
 ) -> CxxBridging.RefComputePassEncoder {
+    #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+    CxxBridging.RefComputePassEncoder(commandEncoder.beginComputePass(descriptor: descriptor))
+    #else
     commandEncoder.beginComputePass(descriptor: descriptor)
+    #endif
 }
 
 @_expose(Cxx)
@@ -176,7 +194,11 @@ func commandEncoderFinish(
     _ commandEncoder: WebGPU.Metal.CommandEncoder,
     descriptor: WGPUCommandBufferDescriptor
 ) -> CxxBridging.RefCommandBuffer {
+    #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+    CxxBridging.RefCommandBuffer(commandEncoder.finish(descriptor: descriptor))
+    #else
     commandEncoder.finish(descriptor: descriptor)
+    #endif
 }
 
 extension WGPURenderPassColorAttachment {
@@ -234,7 +256,7 @@ extension WebGPU.Metal.CommandEncoder {
         return nil
     }
 
-    func finish(descriptor: WGPUCommandBufferDescriptor) -> CxxBridging.RefCommandBuffer {
+    func finish(descriptor: WGPUCommandBufferDescriptor) -> CommandBufferResult {
         if !isValid() || (m_existingCommandEncoder != nil && m_existingCommandEncoder !== m_blitCommandEncoder) {
             setEncoderState(WebGPU.Metal.CommandsMixin.EncoderState.Ended)
             discardCommandBuffer()
@@ -293,11 +315,16 @@ extension WebGPU.Metal.CommandEncoder {
         #endif // arch(x86_64) && (WTF_PLATFORM_MAC || WTF_PLATFORM_MACCATALYST)
 
         let result = createCommandBuffer(commandBuffer, m_device.ptr(), m_sharedEvent, m_sharedEventSignalValue)
+        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        let resultBuffer = result
+        #else
+        let resultBuffer = result.ptr()
+        #endif
         m_sharedEvent = nil
-        m_cachedCommandBuffer = CxxBridging.commandBufferThreadSafeWeakPtr(result.ptr())
-        result.ptr().setBufferMapCount(m_bufferMapCount)
+        m_cachedCommandBuffer = CxxBridging.commandBufferThreadSafeWeakPtr(resultBuffer)
+        resultBuffer.setBufferMapCount(m_bufferMapCount)
         if m_makeSubmitInvalid {
-            result.ptr().makeInvalid(m_lastErrorString as? String ?? "Invalid CommandEncoder")
+            resultBuffer.makeInvalid(m_lastErrorString as? String ?? "Invalid CommandEncoder")
         }
 
         return result
@@ -598,7 +625,11 @@ extension WebGPU.Metal.CommandEncoder {
         }
         clearRenderCommandEncoder?.setCullMode(.none)
         clearRenderCommandEncoder?.drawPrimitives(type: .point, vertexStart: 0, vertexCount: 1, instanceCount: 1, baseInstance: 0)
+        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        m_device.ptr().getQueue().endEncoding(clearRenderCommandEncoder, m_commandBuffer)
+        #else
         m_device.ptr().getQueue().ptr().endEncoding(clearRenderCommandEncoder, m_commandBuffer)
+        #endif
         setExistingEncoder(nil)
     }
 
@@ -1059,7 +1090,7 @@ extension WebGPU.Metal.CommandEncoder {
         texture.textureType == .type2DMultisample || texture.textureType == .type2DMultisampleArray
     }
 
-    func beginRenderPass(descriptor: WGPURenderPassDescriptor) -> CxxBridging.RefRenderPassEncoder {
+    func beginRenderPass(descriptor: WGPURenderPassDescriptor) -> RenderPassEncoderResult {
         let collection = CollectionOfOne(descriptor)
         let descriptorSpan = collection.span
         let maxDrawCount = descriptorSpan[0].maxDrawCount
@@ -2610,7 +2641,7 @@ extension WebGPU.Metal.CommandEncoder {
         }
     }
 
-    func beginComputePass(descriptor: WGPUComputePassDescriptor) -> CxxBridging.RefComputePassEncoder {
+    func beginComputePass(descriptor: WGPUComputePassDescriptor) -> ComputePassEncoderResult {
         let collection = CollectionOfOne(descriptor)
 
         guard prepareTheEncoderState() else {

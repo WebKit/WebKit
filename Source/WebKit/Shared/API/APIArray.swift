@@ -34,7 +34,11 @@ extension API.Array {
         for item in list {
             vec.append(consuming: API.RefPtrAPIObject(item))
         }
+        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        return API.RefAPIArray(API.Array.create(consuming: vec))
+        #else
         return API.Array.create(consuming: vec)
+        #endif
     }
 }
 
