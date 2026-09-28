@@ -59,10 +59,18 @@ void SourceProvider::unlockUnderlyingBuffer()
         unlockUnderlyingBufferImpl();
 }
 
-CodeBlockHash SourceProvider::codeBlockHashConcurrently(int startOffset, int endOffset, CodeSpecializationKind kind)
+CodeBlockHash SourceProvider::codeBlockHashConcurrently(int startOffset, int endOffset, CodeSpecializationKind kind) const
 {
-    auto entireSourceCode = source();
-    return CodeBlockHash { entireSourceCode.substring(startOffset, endOffset - startOffset), entireSourceCode, kind };
+    CodeBlockHash result;
+    withSourceConcurrently([&](StringView entireSourceCode) {
+        result = CodeBlockHash { entireSourceCode.substring(startOffset, endOffset - startOffset), entireSourceCode, kind };
+    });
+    return result;
+}
+
+void SourceProvider::withSourceConcurrently(const ScopedLambda<void(StringView)>& function) const
+{
+    function(source());
 }
 
 void SourceProvider::lockUnderlyingBufferImpl() { }
@@ -191,28 +199,43 @@ static unsigned lineEndFor(StringView text, const Vector<unsigned>& lineStarts, 
     return lineEnd;
 }
 
-LineStartTable::PositionInfo LineStartTable::positionInfoForOffset(StringView text, unsigned offset)
+// An offset past the end of the text clamps to the last line rather than being refused.
+static LineColumn zeroBasedLineColumnInTable(const Vector<unsigned>& lineStarts, unsigned offset)
 {
-    Locker locker { m_lock };
-    const Vector<unsigned>& lineStarts = ensureBuilt(text);
-
-    // An offset past the end of the text clamps to the last line rather than being refused, because
-    // callers reach here from error reporting, where an approximate answer beats none.
     size_t line0Based = lineStarts.size() - 1;
     if (offset < lineStarts.last()) {
         auto it = std::upper_bound(lineStarts.begin(), lineStarts.end(), offset);
         ASSERT(it != lineStarts.begin());
         line0Based = static_cast<size_t>(it - lineStarts.begin()) - 1;
     }
-
     unsigned lineStart = lineStarts[line0Based];
+    return { static_cast<unsigned>(line0Based), offset > lineStart ? offset - lineStart : 0 };
+}
 
+LineStartTable::PositionInfo LineStartTable::positionInfoForOffset(StringView text, unsigned offset)
+{
+    Locker locker { m_lock };
+    const Vector<unsigned>& lineStarts = ensureBuilt(text);
+
+    auto position = zeroBasedLineColumnInTable(lineStarts, offset);
     return {
-        static_cast<unsigned>(line0Based),
-        offset > lineStart ? offset - lineStart : 0,
-        lineStart,
-        lineEndFor(text, lineStarts, line0Based),
+        position.line,
+        position.column,
+        lineStarts[position.line],
+        lineEndFor(text, lineStarts, position.line),
     };
+}
+
+LineColumn LineStartTable::zeroBasedLineColumnForOffset(const SourceProvider& provider, unsigned offset)
+{
+    Locker locker { m_lock };
+    if (!m_lineStarts) {
+        provider.withSourceConcurrently([&](StringView text) {
+            assertIsHeld(m_lock);
+            ensureBuilt(text);
+        });
+    }
+    return zeroBasedLineColumnInTable(*m_lineStarts, offset);
 }
 
 unsigned LineStartTable::offsetForPosition(StringView text, unsigned line0Based, unsigned column0Based)

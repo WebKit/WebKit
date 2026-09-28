@@ -76,11 +76,10 @@ public:
         m_contiguousBuffer = nullptr;
     }
 
-    JSC::CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind kind) override
+    void withSourceConcurrently(const ScopedLambda<void(StringView)>& function) const final
     {
         Locker locker { m_lock };
-        auto view = sourceImpl(locker);
-        return JSC::CodeBlockHash { view.substring(startOffset, endOffset - startOffset), view, kind };
+        function(sourceImpl(locker));
     }
 
 private:

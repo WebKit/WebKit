@@ -50,10 +50,10 @@ public:
     unsigned hash() const final;
     StringView source() const final;
 
-    JSC::CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind kind) override
+    void withSourceConcurrently(const ScopedLambda<void(StringView)>& function) const final
     {
-        // We cannot protect m_cachedScript here since this function gets called on the GC thread.
-        SUPPRESS_UNCOUNTED_ARG return m_cachedScript->codeBlockHashConcurrently(startOffset, endOffset, kind, isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
+        // This can be called on any thread, including GC threads, so m_cachedScript cannot be protected here.
+        SUPPRESS_UNCOUNTED_ARG m_cachedScript->withScriptConcurrently(isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No, function);
     }
 
 private:
