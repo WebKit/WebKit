@@ -28,6 +28,7 @@
 #include "LiteralParser.h"
 
 #include "CodeBlock.h"
+#include "GCMemoryOperations.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSONCacheInlines.h"
@@ -1513,8 +1514,22 @@ JSArray* LiteralParser<CharType, reviverMode>::materializeArray(VM& vm, unsigned
         ObjectInitializationScope initializationScope(vm);
         Structure* structure = m_globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
         if (JSArray* array = JSArray::tryCreateUninitializedRestricted(initializationScope, structure, length)) [[likely]] {
-            for (unsigned i = 0; i < length; ++i)
-                array->initializeIndex(initializationScope, i, values[i]);
+            // The structure can have a different shape than requested, for example when double arrays are disabled.
+            IndexingType shape = array->indexingType() & IndexingShapeMask;
+            if (shape == DoubleShape) {
+                // JSON has no NaN, so every element can be stored as a double.
+                double* data = array->butterfly()->contiguousDouble().data();
+                for (unsigned i = 0; i < length; ++i)
+                    data[i] = values[i].asNumber();
+            } else if (shape == Int32Shape)
+                memcpy(std::bit_cast<JSValue*>(array->butterfly()->contiguous().data()), values, length * sizeof(JSValue));
+            else if (shape == ContiguousShape) {
+                gcSafeMemcpy(std::bit_cast<JSValue*>(array->butterfly()->contiguous().data()), values, length * sizeof(JSValue));
+                vm.writeBarrier(array);
+            } else {
+                for (unsigned i = 0; i < length; ++i)
+                    array->initializeIndex(initializationScope, i, values[i]);
+            }
             return array;
         }
     }
