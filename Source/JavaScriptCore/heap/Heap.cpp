@@ -61,6 +61,7 @@
 #include "JSIterator.h"
 #include "JSMicrotaskDispatcher.h"
 #include "JSModuleLoader.h"
+#include "JSONCache.h"
 #include "JSPromiseCombinatorsContext.h"
 #include "JSPromiseCombinatorsGlobalContext.h"
 #include "JSPromiseReaction.h"
@@ -1735,14 +1736,14 @@ void Heap::runCollectionEpilogue()
         cache->age(m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full ? CollectionScope::Full : CollectionScope::Eden);
 
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full) {
-        vm().jsonAtomStringCache.clear();
+        vm().jsonCache().clearStrings();
         vm().numericStrings.clearOnGarbageCollection();
         vm().stringReplaceCache.clear();
     }
     vm().keyAtomStringCache.clear();
     if (auto* cache = vm().stringSplitCache())
         cache->clear();
-    vm().jsonAtomStringCache.clearJSStrings();
+    vm().jsonCache().clearJSStrings();
 
     m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.removeAllMatching([&](const auto& iter) {
         return !m_discoveredAccessedStringsFromGCOwnedDataScope.contains(iter.first);

@@ -1281,8 +1281,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSModuleNamespaceObject.h
     runtime/JSModuleRecord.h
     runtime/JSNativeStdFunction.h
-    runtime/JSONAtomStringCache.h
-    runtime/JSONTransitionCache.h
+    runtime/JSONCache.h
     runtime/JSObject.h
     runtime/JSObjectInlines.h
     runtime/JSONObject.h

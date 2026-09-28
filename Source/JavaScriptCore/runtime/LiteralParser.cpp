@@ -30,13 +30,13 @@
 #include "CodeBlock.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
-#include "JSONAtomStringCacheInlines.h"
-#include "JSONTransitionCacheInlines.h"
+#include "JSONCacheInlines.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
 #include "SourceCharacters.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Range.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/MakeString.h>
 
@@ -45,6 +45,8 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSONCache);
 
 template<typename CharType, JSONReviverMode reviverMode>
 inline const CharType* LiteralParser<CharType, reviverMode>::Lexer::currentTokenStart() const
@@ -60,6 +62,16 @@ inline const CharType* LiteralParser<CharType, reviverMode>::Lexer::currentToken
     if constexpr (reviverMode == JSONReviverMode::Enabled)
         return m_currentTokenEnd;
     return nullptr;
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+LiteralParser<CharType, reviverMode>::LiteralParser(JSGlobalObject* globalObject, std::span<const CharType> characters, ParserMode mode, CodeBlock* nullOrCodeBlock)
+    : m_globalObject(globalObject)
+    , m_nullOrCodeBlock(nullOrCodeBlock)
+    , m_jsonCache(globalObject->vm().jsonCache())
+    , m_lexer(characters, mode)
+    , m_mode(mode)
+{
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
@@ -175,30 +187,30 @@ template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE AtomStringImpl* LiteralParser<CharType, reviverMode>::existingIdentifier(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
     if (token->type == TokIdentifier)
-        return vm.jsonAtomStringCache.existingIdentifier(token->identifier());
+        return m_jsonCache.existingIdentifier(vm, token->identifier());
     ASSERT(token->type == TokString);
     if (token->stringIs8Bit)
-        return vm.jsonAtomStringCache.existingIdentifier(token->string8());
-    return vm.jsonAtomStringCache.existingIdentifier(token->string16());
+        return m_jsonCache.existingIdentifier(vm, token->string8());
+    return m_jsonCache.existingIdentifier(vm, token->string16());
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE Identifier LiteralParser<CharType, reviverMode>::makeIdentifier(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
     if (token->type == TokIdentifier)
-        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->identifier()));
+        return Identifier::fromString(vm, m_jsonCache.makeIdentifier(vm, token->identifier()));
     ASSERT(token->type == TokString);
     if (token->stringIs8Bit)
-        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->string8()));
-    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->string16()));
+        return Identifier::fromString(vm, m_jsonCache.makeIdentifier(vm, token->string8()));
+    return Identifier::fromString(vm, m_jsonCache.makeIdentifier(vm, token->string16()));
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE JSString* LiteralParser<CharType, reviverMode>::makeJSString(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
     if (token->stringIs8Bit)
-        return vm.jsonAtomStringCache.makeJSString(token->string8());
-    return vm.jsonAtomStringCache.makeJSString(token->string16());
+        return m_jsonCache.makeJSString(vm, token->string8());
+    return m_jsonCache.makeJSString(vm, token->string16());
 }
 
 [[maybe_unused]] static ALWAYS_INLINE bool NODELETE cannotBeIdentPartOrEscapeStart(Latin1Character)
@@ -1433,7 +1445,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursivelyEntry(VM& vm)
         return parse(vm, StartParseExpression, nullptr);
     TokenType type = m_lexer.currentToken()->type;
     if (type == TokLBrace || type == TokLBracket) {
-        JSONTransitionCache::ParsingScope parsingScope(vm.jsonTransitionCache);
+        JSONCache::ParsingScope parsingScope(m_jsonCache);
         return parseRecursively<ParserMode::StrictJSON>(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
     }
     return parsePrimitiveValue(vm);
@@ -1644,7 +1656,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                         auto token = m_lexer.currentToken();
                         auto tryCachedTransition = [&]<typename KeyCharacterType>(std::span<const KeyCharacterType> key) ALWAYS_INLINE_LAMBDA -> Structure* {
                             isCacheable = true;
-                            Structure* transition = vm.jsonTransitionCache.get(originalStructure, key);
+                            Structure* transition = m_jsonCache.getTransition(originalStructure, key);
 #if ASSERT_ENABLED
                             if (transition) {
                                 PropertyOffset expectedOffset = 0;
@@ -1675,9 +1687,9 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                                 if (isCacheable) {
                                     auto token = m_lexer.currentToken();
                                     if (sizeof(CharType) == 1 || token->stringIs8Bit)
-                                        vm.jsonTransitionCache.add(originalStructure, newStructure, token->string8());
+                                        m_jsonCache.addTransition(originalStructure, newStructure, token->string8());
                                     else
-                                        vm.jsonTransitionCache.add(originalStructure, newStructure, token->string16());
+                                        m_jsonCache.addTransition(originalStructure, newStructure, token->string16());
                                 }
                                 return ExistingProperty { newStructure, offset };
                             } else if (newStructure->transitionPropertyName() != vm.propertyNames->underscoreProto && m_visitedUnderscoreProto.isEmpty())

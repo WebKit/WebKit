@@ -40,8 +40,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/Integrity.h>
 #include <JavaScriptCore/Interpreter.h>
 #include <JavaScriptCore/JSDateMath.h>
-#include <JavaScriptCore/JSONAtomStringCache.h>
-#include <JavaScriptCore/JSONTransitionCache.h>
 #include <JavaScriptCore/KeyAtomStringCache.h>
 #include <JavaScriptCore/NativeFunction.h>
 #include <JavaScriptCore/NumericStrings.h>
@@ -132,6 +130,7 @@ class JSPropertyNameEnumerator;
 class JITSizeStatistics;
 class JITThunks;
 class MegamorphicCache;
+class JSONCache;
 class MicrotaskCallCache;
 class MicrotaskQueue;
 class NativeExecutable;
@@ -629,8 +628,6 @@ public:
     WriteBarrier<JSString> lastCachedString;
     Ref<StringImpl> lastAtomizedIdentifierStringImpl { *StringImpl::empty() };
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
-    JSONAtomStringCache jsonAtomStringCache;
-    JSONTransitionCache jsonTransitionCache;
     KeyAtomStringCache keyAtomStringCache;
     Vector<unsigned> stringSplitIndice;
     StringReplaceCache stringReplaceCache;
@@ -943,6 +940,9 @@ public:
     LazyUniqueRef<VM, StringSplitCache> m_stringSplitCache;
     ALWAYS_INLINE StringSplitCache* stringSplitCache() { return m_stringSplitCache.getIfExists(); }
     StringSplitCache& ensureStringSplitCache() { return m_stringSplitCache.get(*this); }
+
+    const UniqueRef<JSONCache> m_jsonCache;
+    JSONCache& jsonCache() { return m_jsonCache.get(); }
 
     const UniqueRef<MicrotaskCallCache> m_syncResumeCallCache;
     MicrotaskCallCache& syncResumeCallCache() { return m_syncResumeCallCache.get(); }

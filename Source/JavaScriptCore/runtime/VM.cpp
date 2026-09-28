@@ -82,7 +82,7 @@
 #include "JSMicrotask.h"
 #include "JSMicrotaskDispatcher.h"
 #include "JSModuleLoaderInlines.h"
-#include "JSONTransitionCacheInlines.h"
+#include "JSONCacheInlines.h"
 #include "JSPromise.h"
 #include "JSPromiseCombinatorsContextInlines.h"
 #include "JSPromiseCombinatorsGlobalContext.h"
@@ -275,6 +275,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 #endif
     , m_regExpCache(makeUnique<RegExpCache>())
     , m_compactVariableMap(adoptRef(*new CompactTDZEnvironmentMap))
+    , m_jsonCache(makeUniqueRef<JSONCache>())
     , m_syncResumeCallCache(makeUniqueRef<MicrotaskCallCache>())
     , m_codeCache(makeUnique<CodeCache>())
     , m_intlCache(makeUnique<IntlCache>())
@@ -1908,7 +1909,7 @@ void VM::beginMarking()
 void VM::reconcileWeakReferencesAtGCEnd()
 {
     m_syncResumeCallCache->reconcileWeakReferencesAtGCEnd(*this);
-    jsonTransitionCache.reconcileAtGCEnd();
+    m_jsonCache->reconcileTransitionsAtGCEnd();
 }
 
 void VM::clearMicrotaskCallCaches()
@@ -1923,7 +1924,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
         microtaskQueue->visitAggregate(visitor);
     });
     numericStrings.visitAggregate(visitor);
-    jsonTransitionCache.visitAggregate(visitor);
+    m_jsonCache->visitAggregate(visitor);
     m_builtinExecutables->visitAggregate(visitor);
     m_regExpCache->visitAggregate(visitor);
 

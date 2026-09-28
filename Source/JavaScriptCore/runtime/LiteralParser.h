@@ -41,6 +41,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 class JSArray;
+class JSONCache;
 
 enum ParserMode : uint8_t { StrictJSON, SloppyJSON, JSONP };
 enum class JSONReviverMode : uint8_t { Disabled, Enabled };
@@ -136,13 +137,7 @@ ALWAYS_INLINE void NODELETE setParserTokenString(LiteralParserToken<CharType>&, 
 template <typename CharType, JSONReviverMode reviverMode>
 class LiteralParser {
 public:
-    LiteralParser(JSGlobalObject* globalObject, std::span<const CharType> characters, ParserMode mode, CodeBlock* nullOrCodeBlock = nullptr)
-        : m_globalObject(globalObject)
-        , m_nullOrCodeBlock(nullOrCodeBlock)
-        , m_lexer(characters, mode)
-        , m_mode(mode)
-    {
-    }
+    LiteralParser(JSGlobalObject*, std::span<const CharType> characters, ParserMode, CodeBlock* nullOrCodeBlock = nullptr);
     
     String getErrorMessage()
     { 
@@ -306,14 +301,15 @@ private:
     JSArray* materializeArray(VM&, unsigned stackBase);
 
     static ALWAYS_INLINE bool equalIdentifier(UniquedStringImpl*, typename Lexer::LiteralParserTokenPtr);
-    static ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
-    static ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
-    static ALWAYS_INLINE JSString* makeJSString(VM&, typename Lexer::LiteralParserTokenPtr);
+    ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
+    ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
+    ALWAYS_INLINE JSString* makeJSString(VM&, typename Lexer::LiteralParserTokenPtr);
 
     void setErrorMessageForToken(TokenType);
 
     JSGlobalObject* const m_globalObject;
     CodeBlock* const m_nullOrCodeBlock;
+    JSONCache& m_jsonCache;
     Lexer m_lexer;
     const ParserMode m_mode;
     String m_parseErrorMessage;
