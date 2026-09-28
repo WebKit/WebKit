@@ -43,7 +43,7 @@ template<typename StringType> concept HasNSStringConstructor = requires(NSString
     StringType { string };
 };
 
-TEST(WTF, CStringWithEncodingFromNSString)
+TEST(WTF, CStringFromNSString)
 {
     UTF8CString utf8String { @"Water🍉Melon" };
     EXPECT_TRUE(utf8String == UTF8CString { u8"Water🍉Melon"_span });
@@ -62,7 +62,7 @@ TEST(WTF, CStringWithEncodingFromNSString)
     static_assert(!HasNSStringConstructor<ASCIICString>);
 }
 
-TEST(WTF, CStringWithEncodingCreateNSString)
+TEST(WTF, CStringCreateNSString)
 {
     // The encoding is in the type, so each alias picks the right NSStringEncoding.
     UTF8CString utf8String { u8"Water🍉Melon"_span };

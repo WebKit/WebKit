@@ -122,7 +122,7 @@ template<typename> struct DefaultRefDerefTraits;
 
 template<typename> class Awaitable;
 template<typename> class Borrow;
-template<typename> class CStringWithEncoding;
+template<typename> class CString;
 template<typename> class CompactPtr;
 template<typename> class CompletionHandler;
 template<typename, size_t = 0> class Deque;
@@ -172,9 +172,9 @@ template<typename T> struct NoTaggingTraits;
 template<typename T> class ThreadSafeWeakPtr;
 template<typename T> class ThreadSafeWeakRef;
 
-using UTF8CString = CStringWithEncoding<char8_t>;
-using Latin1CString = CStringWithEncoding<Latin1Character>;
-using ASCIICString = CStringWithEncoding<char>;
+using UTF8CString = CString<char8_t>;
+using Latin1CString = CString<Latin1Character>;
+using ASCIICString = CString<char>;
 
 template <typename T>
 using SaSegmentedVector = SegmentedVector<T, 8, 0, SegmentedVectorGrowthPolicy::Constant, SequesteredArenaMalloc>;
@@ -266,7 +266,7 @@ using WTF::Awaitable;
 using WTF::Borrow;
 using WTF::BinarySemaphore;
 using WTF::CStringBase;
-using WTF::CStringWithEncoding;
+using WTF::CString;
 using WTF::CompletionHandler;
 using WTF::ConcurrencyTag;
 using WTF::ConcurrentWorkQueue;

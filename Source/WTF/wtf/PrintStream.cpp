@@ -104,7 +104,7 @@ void printInternal(PrintStream& out, StringView string)
 }
 
 // The stream's bytes are read back as UTF-8, so only ASCII and UTF-8 can be written through
-// unchanged. This mirrors CStringWithEncoding::legacyCStringPointer(), which is offered for those
+// unchanged. This mirrors CString::legacyCStringPointer(), which is offered for those
 // two encodings and withheld from Latin-1 for the same reason.
 template<typename CharacterType>
 static void printCStringSpan(PrintStream& out, std::span<const CharacterType> characters)

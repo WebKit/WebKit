@@ -577,7 +577,7 @@ public:
     {
     }
 
-    template<typename CharacterType> uintptr_t add(const CStringWithEncoding<CharacterType>& str)
+    template<typename CharacterType> uintptr_t add(const CString<CharacterType>& str)
     {
         if (str.isEmpty())
             return 0;
@@ -609,7 +609,7 @@ public:
     }
 
 private:
-    template<typename CharacterType> void writeString(const CStringWithEncoding<CharacterType>& str)
+    template<typename CharacterType> void writeString(const CString<CharacterType>& str)
     {
         for (auto c : str.span())
             m_writer->write(c);

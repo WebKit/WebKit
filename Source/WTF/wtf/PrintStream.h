@@ -116,7 +116,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, StringView);
 // A PrintStream's contents are read back as UTF-8 (see StringPrintStream::toString()), so Latin-1
 // is transcoded on the way in. A CStringBase does not know its encoding and therefore cannot be
-// printed: use one of the CStringWithEncoding aliases below.
+// printed: use one of the CString aliases below.
 void printInternal(PrintStream&, const CStringBase&) = delete;
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const UTF8CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const Latin1CString&);

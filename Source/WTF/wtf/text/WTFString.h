@@ -78,7 +78,7 @@ public:
     // Construct a string from a CString that knows its encoding, decoding it as that encoding.
     // Unlike CStringBase, which would have to be decoded by the caller, and unlike fromUTF8(), which
     // will happily reinterpret Latin-1 bytes as UTF-8, the character type picks the decoding.
-    template<OneByteCharacterType CharacterType> String(const CStringWithEncoding<CharacterType>&);
+    template<OneByteCharacterType CharacterType> String(const CString<CharacterType>&);
 
     // Construct a string referencing an existing StringImpl.
     String(StringImpl&);
@@ -453,7 +453,7 @@ inline String::String(StaticStringImpl* string)
 {
 }
 
-template<OneByteCharacterType CharacterType> inline String::String(const CStringWithEncoding<CharacterType>& string)
+template<OneByteCharacterType CharacterType> inline String::String(const CString<CharacterType>& string)
     : String(string.span())
 {
 }
