@@ -179,33 +179,16 @@ void InlineBoxPainter::paintMask()
     auto& maskBorder = renderer().style().maskBorder();
     auto maskBorderSource = maskBorder.source().tryStyleImage();
 
-    // Figure out if we need to push a transparency layer to render our mask.
-    bool pushTransparencyLayer = false;
-    bool compositedMask = renderer().hasLayer() && renderer().layer()->hasCompositedMask();
-    bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
-    CompositeOperator compositeOp = CompositeOperator::SourceOver;
-    if (!compositedMask || flattenCompositingLayers) {
-        if ((maskBorderSource && Style::hasImageInAnyLayer(renderer().style().maskLayers())) || renderer().style().maskLayers().usedLength() > 1)
-            pushTransparencyLayer = true;
-
-        compositeOp = CompositeOperator::DestinationIn;
-        if (pushTransparencyLayer) {
-            m_paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
-            m_paintInfo.context().beginTransparencyLayer(1.0f);
-            compositeOp = CompositeOperator::SourceOver;
-        }
-    }
+    // RenderLayer::paintMaskForFragments() composites the mask of all the fragments at once.
+    auto compositeOp = CompositeOperator::SourceOver;
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, localRect.size());
 
     paintFillLayers(Color(), renderer().style().maskLayers(), renderer().style().usedZoomForLength(), paintRect, compositeOp);
 
     bool hasBoxImage = maskBorderSource && maskBorderSource->canRender(&renderer(), renderer().style().usedZoom());
-    if (!hasBoxImage || !maskBorderSource->isLoaded(&renderer())) {
-        if (pushTransparencyLayer)
-            m_paintInfo.context().endTransparencyLayer();
+    if (!hasBoxImage || !maskBorderSource->isLoaded(&renderer()))
         return; // Don't paint anything while we wait for the image to load.
-    }
 
     BorderPainter borderPainter { renderer(), m_paintInfo };
 
@@ -219,9 +202,6 @@ void InlineBoxPainter::paintMask()
         m_paintInfo.context().clip(clipRect);
         borderPainter.paintNinePieceImage(imageStrip, renderer().style(), maskBorder, compositeOp);
     }
-
-    if (pushTransparencyLayer)
-        m_paintInfo.context().endTransparencyLayer();
 }
 
 void InlineBoxPainter::paintDecorations()

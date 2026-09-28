@@ -4444,7 +4444,16 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
         // Paint the mask.
         // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::Mask, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        // An inline box paints its mask one line fragment at a time; render all of them into one transparency layer (see RenderBox::paintMaskImages()).
+        bool paintsMaskInTransparencyLayer = renderer().isInlineBox() && (!hasCompositedMask() || paintBehavior.contains(PaintBehavior::FlattenCompositingLayers));
+        GraphicsContextStateSaver maskStateSaver(context, paintsMaskInTransparencyLayer);
+        if (paintsMaskInTransparencyLayer) {
+            context.setCompositeOperation(CompositeOperator::DestinationIn);
+            context.beginTransparencyLayer(1);
+        }
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
+        if (paintsMaskInTransparencyLayer)
+            context.endTransparencyLayer();
     }
 }
 

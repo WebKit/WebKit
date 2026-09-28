@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Masking: mask-repeat: no-repeat on an inline box masks out the area outside the mask image</title>
+<link rel="help" href="https://drafts.fxtf.org/css-masking/#the-mask-repeat">
+<link rel="match" href="mask-image-inline-no-repeat-ref.html">
+<style>
+span {
+    padding: 50px 100px;
+    background-color: red;
+    color: red;
+    mask-image: linear-gradient(black, black);
+    mask-repeat: no-repeat;
+    mask-position: -1000px 0;
+}
+</style>
+<p>You should see no red below.</p>
+<div style="margin-top: 100px"><span>FAIL</span></div>
