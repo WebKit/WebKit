@@ -6193,12 +6193,12 @@ ThreadedScrollingEnabled:
 
 ThreadedTimeBasedAnimationsAtHighFrameRateEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: animation
   humanReadableName: "Threaded Time-based Animations at High Frame Rate"
   humanReadableDescription: "Run qualifying time-based animations on a separate thread at a high frame rate"
   condition: ENABLE(THREADED_ANIMATIONS) && PLATFORM(IOS_FAMILY)
-  defaultValue: false
+  defaultValue: true
 
 ThreadedTimeBasedAnimationsEnabled:
   type: bool
