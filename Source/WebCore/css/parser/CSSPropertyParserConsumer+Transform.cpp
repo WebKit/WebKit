@@ -321,6 +321,10 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
         return value && !*value;
     };
 
+    auto knownToBeNegative = [](std::optional<bool> value) -> bool {
+        return value && *value;
+    };
+
     if (list.size() == 3) {
         // The first valid case is if we have 3 items in the list, meaning we parsed three consecutive number values
         // to specify the rotation axis. In that case, we must not also have encountered an axis identifier.
@@ -328,16 +332,30 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
 
         // Now we must check the values since if we have a vector in the x, y or z axis alone we must serialize to the
         // matching identifier.
-        auto xIsZero = downcast<CSSPrimitiveValue>(list[0].get()).isZero();
-        auto yIsZero = downcast<CSSPrimitiveValue>(list[1].get()).isZero();
-        auto zIsZero = downcast<CSSPrimitiveValue>(list[2].get()).isZero();
+        Ref x = downcast<CSSPrimitiveValue>(list[0].get());
+        Ref y = downcast<CSSPrimitiveValue>(list[1].get());
+        Ref z = downcast<CSSPrimitiveValue>(list[2].get());
+        auto xIsZero = x->isZero();
+        auto yIsZero = y->isZero();
+        auto zIsZero = z->isZero();
+
+        // If the axis points in the reverse direction of a named axis, it still serializes to the matching keyword
+        // (or is omitted, for z), but the angle is negated so that the same rotation is represented.
+        // https://drafts.csswg.org/css-transforms-2/#individual-transform-serialization
+        auto angleAlong = [&](const CSSPrimitiveValue& axis) -> Ref<CSSPrimitiveValue> {
+            if (knownToBeNegative(axis.isNegative())) {
+                if (auto raw = angle->raw())
+                    return CSSPrimitiveValue::create(-raw->value, raw->unit);
+            }
+            return angle.releaseNonNull();
+        };
 
         if (knownToBeNotZero(xIsZero) && knownToBeZero(yIsZero) && knownToBeZero(zIsZero))
-            return CSSValueList::createSpaceSeparated(CSSKeywordValue::create(CSSValueX), angle.releaseNonNull());
+            return CSSValueList::createSpaceSeparated(CSSKeywordValue::create(CSSValueX), angleAlong(x));
         if (knownToBeZero(xIsZero) && knownToBeNotZero(yIsZero) && knownToBeZero(zIsZero))
-            return CSSValueList::createSpaceSeparated(CSSKeywordValue::create(CSSValueY), angle.releaseNonNull());
+            return CSSValueList::createSpaceSeparated(CSSKeywordValue::create(CSSValueY), angleAlong(y));
         if (knownToBeZero(xIsZero) && knownToBeZero(yIsZero) && knownToBeNotZero(zIsZero))
-            return CSSValueList::createSpaceSeparated(angle.releaseNonNull());
+            return CSSValueList::createSpaceSeparated(angleAlong(z));
 
         list.append(angle.releaseNonNull());
         return CSSValueList::createSpaceSeparated(WTF::move(list));

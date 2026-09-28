@@ -74,12 +74,20 @@ template<typename... F> decltype(auto) Rotate::Function::switchOn(F&&... f) cons
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
     Ref protectedValue = value;
+
+    // https://drafts.csswg.org/css-transforms-2/#individual-transform-serialization
+    // If the axis is parallel with a named axis but points in the reverse direction, the axis
+    // serializes as the matching keyword (or is omitted, for z) and the angle is negated.
+    auto angleAlong = [&](const Number<>& axis) {
+        return axis.isNegative() ? Angle<> { -protectedValue->angle().value } : protectedValue->angle();
+    };
+
     if (!protectedValue->is3DOperation() || (protectedValue->x().isZero() && protectedValue->y().isZero() && !protectedValue->z().isZero()))
-        return visitor(protectedValue->angle());
+        return visitor(angleAlong(protectedValue->z()));
     if (!protectedValue->x().isZero() && protectedValue->y().isZero() && protectedValue->z().isZero())
-        return visitor(SpaceSeparatedTuple { CSS::Keyword::X { }, protectedValue->angle() });
+        return visitor(SpaceSeparatedTuple { CSS::Keyword::X { }, angleAlong(protectedValue->x()) });
     if (protectedValue->x().isZero() && !protectedValue->y().isZero() && protectedValue->z().isZero())
-        return visitor(SpaceSeparatedTuple { CSS::Keyword::Y { }, protectedValue->angle() });
+        return visitor(SpaceSeparatedTuple { CSS::Keyword::Y { }, angleAlong(protectedValue->y()) });
     return visitor(
         SpaceSeparatedTuple {
             protectedValue->x(),
