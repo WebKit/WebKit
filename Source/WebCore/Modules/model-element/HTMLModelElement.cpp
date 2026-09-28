@@ -2161,7 +2161,7 @@ bool HTMLModelElement::virtualHasPendingActivity() const
     // but the player can still resolve or reject the ready promise / fire its first frame.
     return m_resource || m_pendingModelPlayer;
 #else
-    return m_resource;
+    return !!m_resource;
 #endif
 }
 

@@ -218,7 +218,7 @@ public:
 
     void clear();
 
-    operator bool() const;
+    explicit operator bool() const;
 
     HTMLToken& operator*() const LIFETIME_BOUND;
     HTMLToken* operator->() const LIFETIME_BOUND;

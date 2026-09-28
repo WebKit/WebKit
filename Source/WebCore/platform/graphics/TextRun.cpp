@@ -50,7 +50,7 @@ static_assert(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun should be
 TextStream& operator<<(TextStream& ts, const TextRun& textRun)
 {
     ts.dumpProperty("text"_s, textRun.text());
-    ts.dumpProperty("tab-size"_s, textRun.tabSize());
+    ts.dumpProperty("tab-size"_s, textRun.tabSize().value());
     ts.dumpProperty("x-pos"_s, textRun.xPos());
     ts.dumpProperty("horizontal-glyph-streatch"_s, textRun.horizontalGlyphStretch());
     ts.dumpProperty("expansion"_s, textRun.expansion());

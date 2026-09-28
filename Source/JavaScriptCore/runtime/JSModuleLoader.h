@@ -140,7 +140,7 @@ public:
 
         bool isEvaluationError(const Identifier& expectedSpecifier, ScriptFetchParameters::Type expectedType) const;
 
-        operator bool() const;
+        explicit operator bool() const;
 
         AbstractModuleRecord* m_source { nullptr };
         Identifier m_key;

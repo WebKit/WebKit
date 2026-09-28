@@ -40,7 +40,7 @@ public:
     }
     ~ImageGStreamer();
 
-    operator bool() const { return !!m_image; }
+    explicit operator bool() const { return !!m_image; }
 
     PlatformImagePtr image() const { return m_image; }
 

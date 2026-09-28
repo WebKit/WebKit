@@ -115,7 +115,7 @@ public:
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
     WTF_EXPORT_PRIVATE String toString() const;
 
-    constexpr operator bool() const { return !!m_data; }
+    constexpr explicit operator bool() const { return !!m_data; }
     bool isValid() const { return m_data != emptyValue && m_data != deletedValue; }
 
     UInt128 data() const { return m_data; }

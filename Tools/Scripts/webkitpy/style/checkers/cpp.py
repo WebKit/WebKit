@@ -1559,6 +1559,11 @@ def check_for_non_standard_constructs(clean_lines, line_number,
     # For the rest, work with both comments and strings removed.
     line = clean_lines.elided[line_number]
 
+    operator_bool_match = search(r'(?P<explicit>\bexplicit\b.*)?(?<![\w:.>])operator\s+bool\s*\(\s*\)(?P<deleted>.*=\s*delete\b)?', line)
+    if operator_bool_match and not operator_bool_match.group('explicit') and not operator_bool_match.group('deleted'):
+        error(line_number, 'runtime/explicit', 5,
+              'operator bool should be marked explicit.')
+
     if search(r'\b(const|constexpr|constinit|consteval|volatile|'
               r'void|char|short|int|long'
               r'|float|double|signed|unsigned'

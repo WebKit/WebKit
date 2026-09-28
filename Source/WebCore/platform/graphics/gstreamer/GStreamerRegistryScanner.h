@@ -65,7 +65,7 @@ public:
         bool isUsingHardware { false };
         GRefPtr<GstElementFactory> factory;
 
-        operator bool() const { return isSupported; }
+        explicit operator bool() const { return isSupported; }
 
         static RegistryLookupResult merge(const RegistryLookupResult& a, const RegistryLookupResult& b)
         {
@@ -92,7 +92,7 @@ public:
         {
         }
 
-        operator bool() const { return isSupported; }
+        explicit operator bool() const { return isSupported; }
 
         bool isSupported { false };
         GRefPtr<GstElementFactory> factory;

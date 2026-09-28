@@ -87,7 +87,7 @@ public:
 
     size_t size() const { ASSERT(isValid()); return m_originalSize - m_buffer.size(); }
     bool isValid() const { return !!m_buffer.data(); }
-    operator bool() const { return isValid(); }
+    explicit operator bool() const { return isValid(); }
 private:
     std::span<uint8_t> m_buffer;
     const size_t m_originalSize;

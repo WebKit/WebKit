@@ -51,7 +51,7 @@ struct AXTextRunLineID {
         , lineIndex(lineIndex)
     { }
     bool operator==(const AXTextRunLineID&) const = default;
-    operator bool() const { return containingBlock; }
+    explicit operator bool() const { return containingBlock; }
     String debugDescription() const
     {
         TextStream stream;

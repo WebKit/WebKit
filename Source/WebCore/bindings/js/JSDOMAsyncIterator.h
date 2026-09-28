@@ -154,7 +154,7 @@ protected:
     public:
         static Ref<IsFinished> create() { return adoptRef(*new IsFinished); }
 
-        operator bool() { return m_value; }
+        explicit operator bool() { return m_value; }
         void markAsFinished() { m_value = true; }
 
     private:
@@ -376,7 +376,7 @@ JSC::EncodedJSValue JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>::fulfill(J
     if (m_isFinished.get())
         m_iterator = nullptr;
 
-    return JSC::JSValue::encode(WebCore::createIteratorResultObject(globalObject, result, m_isFinished.get()));
+    return JSC::JSValue::encode(WebCore::createIteratorResultObject(globalObject, result, !!m_isFinished.get()));
 }
 
 template<typename JSWrapper, typename IteratorTraits>

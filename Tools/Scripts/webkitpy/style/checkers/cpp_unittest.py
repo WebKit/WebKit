@@ -1096,7 +1096,7 @@ class CppStyleTest(CppStyleTestBase):
                 : a(int()) { } // default Constructor, o.k.''',
             '')
         self.assert_lint(
-            'operator bool(); // Conversion operator, o.k.',
+            'explicit operator bool(); // Conversion operator, o.k.',
             '')
 
     # The second parameter to a gMock method definition is a function signature
@@ -1144,7 +1144,7 @@ class CppStyleTest(CppStyleTestBase):
         code = 'std::vector<int> foo;'
         self.assertEqual('Add #include <vector> for vector<>'
                           '  [build/include_what_you_use] [4]',
-                          self.perform_include_what_you_use(code, 'foo.h'))
+                          self.perform_include_what_you_use(code, 'Source/WebCore/foo.h'))
         self.assertEqual('',
                           self.perform_include_what_you_use(code, 'foo.cpp'))
 
@@ -1547,6 +1547,30 @@ class CppStyleTest(CppStyleTestBase):
                 Foo(Foo&);
             };''',
             '')
+
+    def test_explicit_operator_bool(self):
+        message = 'operator bool should be marked explicit.  [runtime/explicit] [5]'
+        self.assert_lint('operator bool() const;', message)
+        self.assert_lint('operator bool() const { return m_value; }', message)
+        self.assert_lint('operator bool() { return m_value; }', message)
+        self.assert_lint('constexpr operator bool() const { return m_value; }', message)
+        self.assert_lint('WEBCORE_EXPORT operator bool() const;', message, 'Source/WebCore/foo.h')
+        self.assert_multi_line_lint(
+            '''\
+            class Foo {
+                operator bool() const { return m_value; }
+            };''',
+            message)
+        self.assert_lint('explicit operator bool() const;', '')
+        self.assert_lint('explicit constexpr operator bool() const { return m_value; }', '')
+        self.assert_lint('constexpr explicit operator bool() const { return m_value; }', '')
+        self.assert_lint('WEBCORE_EXPORT explicit operator bool() const;', '', 'Source/WebCore/foo.h')
+        self.assert_lint('operator bool() const = delete;', '')
+        self.assert_lint('Foo::operator bool() const', '')
+        self.assert_lint('bool result = foo.operator bool();', '')
+        self.assert_lint('bool result = foo->operator bool();', '')
+        self.assert_lint('// operator bool() const;', '')
+        self.assert_lint('operator int() const;', '')
 
     def test_slash_star_comment_on_single_line(self):
         self.assert_multi_line_lint(

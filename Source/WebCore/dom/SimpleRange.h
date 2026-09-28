@@ -144,7 +144,7 @@ public:
     Node& operator*() const { return *m_node; }
     Node* operator->() const { ASSERT(m_node); return m_node.get(); }
 
-    operator bool() const { return m_node; }
+    explicit operator bool() const { return m_node; }
     bool operator!() const { return !m_node; }
     bool operator==(const std::nullptr_t) const { return !m_node; }
 

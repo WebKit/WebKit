@@ -60,7 +60,7 @@ template<typename T>
 struct WebXRImageSet {
     T colorBuffer;
 
-    operator bool() const
+    explicit operator bool() const
     {
         return !!colorBuffer;
     }

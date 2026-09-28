@@ -632,7 +632,7 @@ private:
             return *this;
         }
 
-        operator bool() const { return m_state.has_value(); }
+        explicit operator bool() const { return m_state.has_value(); }
         InabilityReason inabilityReason() const { return m_state.error(); }
 
     private:

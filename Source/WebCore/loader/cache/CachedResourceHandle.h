@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT CachedResource* NODELETE get() const;
     
     bool operator!() const { return !m_resource; }
-    operator bool() const { return !!m_resource; }
+    explicit operator bool() const { return !!m_resource; }
 
 protected:
     WEBCORE_EXPORT CachedResourceHandleBase();

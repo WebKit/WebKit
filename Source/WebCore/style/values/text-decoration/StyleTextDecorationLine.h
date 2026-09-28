@@ -191,7 +191,7 @@ struct TextDecorationLine {
             m_packed = packFlags(flags);
     }
 
-    constexpr operator bool() const { return !isNone(); }
+    constexpr explicit operator bool() const { return !isNone(); }
     constexpr bool operator==(const TextDecorationLine&) const = default;
 
     static constexpr uint8_t packFlags(OptionSet<TextDecorationLine::Flag> flags)
