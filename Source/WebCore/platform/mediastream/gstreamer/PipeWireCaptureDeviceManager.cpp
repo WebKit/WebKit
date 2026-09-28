@@ -64,15 +64,7 @@ void PipeWireCaptureDeviceManager::notifyDevicesComputed()
 
 void PipeWireCaptureDeviceManager::provisionDevices(int fd)
 {
-    // pw_context_connect_fd() closes the socket it is given when it disconnects, so the provider
-    // gets a copy each time and the one the portal handed over stays good for the next enumeration.
-    int providerFd = dup(fd);
-    if (providerFd == -1) {
-        GST_WARNING("Unable to duplicate the PipeWire remote fd: %s", g_strerror(errno));
-        return;
-    }
-
-    g_object_set(m_pipewireDeviceProvider.get(), "fd", providerFd, nullptr);
+    g_object_set(m_pipewireDeviceProvider.get(), "fd", fd, nullptr);
     gst_device_provider_start(m_pipewireDeviceProvider.get());
 
     GList* devices = gst_device_provider_get_devices(m_pipewireDeviceProvider.get());
