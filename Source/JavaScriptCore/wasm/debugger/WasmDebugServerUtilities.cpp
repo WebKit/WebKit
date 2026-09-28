@@ -33,8 +33,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "InlineCallFrame.h"
+#include "JSFunction.h"
 #include "JSWebAssemblyInstance.h"
 #include "NativeCallee.h"
+#include "NativeExecutable.h"
 #include "VM.h"
 #include "VMEntryRecord.h"
 #include "WasmCallee.h"
@@ -155,6 +157,17 @@ static const uint8_t* savedWasmToWasmPC(CallFrame* frame)
 static const uint8_t* savedWasmToJSPC(CallFrame* wasmToJSFrame)
 {
     return WTF::unalignedLoad<const uint8_t*>(reinterpret_cast<const uint8_t*>(wasmToJSFrame) + Wasm::WasmToJSIPIntReturnPCSlot);
+}
+
+static String hostFunctionNameOf(CallFrame* frame)
+{
+    auto* callee = frame->jsCallee();
+    if (callee && callee->inherits<JSFunction>()) {
+        auto* function = uncheckedDowncast<JSFunction>(callee);
+        if (function->isHostFunction())
+            return uncheckedDowncast<NativeExecutable>(function->executable())->name();
+    }
+    return "<no code block>"_str;
 }
 
 // Null for a JS frame including a host function, which is an ordinary cell callee -- or an IC.
@@ -307,7 +320,12 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
                 });
             } else {
 #endif
-                dataLogLnIf(Options::verboseWasmDebugger(), "  [", frames.size(), "] [JS] ", frame->codeBlock()->inferredNameWithHash());
+                if (Options::verboseWasmDebugger()) [[unlikely]] {
+                    if (auto* codeBlock = frame->codeBlock())
+                        dataLogLn("  [", frames.size(), "] [JS] ", codeBlock->inferredNameWithHash());
+                    else
+                        dataLogLn("  [", frames.size(), "] [JS][Host] ", hostFunctionNameOf(frame));
+                }
                 frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { }, 0 });
 #if ENABLE(DFG_JIT)
             }

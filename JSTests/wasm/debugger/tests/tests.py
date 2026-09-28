@@ -693,6 +693,37 @@ class TailCallToImportTestCase:
         self.session.cmd("br del -f", patterns=["All breakpoints removed."])
 
 
+class HostFrameCallStackTestCase:
+    test_file = "resources/wasm/host-frame-call-stack.js"
+    extra_jsc_options = ["--verboseWasmDebugger=1"]
+
+    def execute(self):
+        # JSON.stringify is C++ and calls the export as toJSON: the general shape, no JSPI needed.
+        self.session.cmd("b 0x4000000000000037", patterns=["address = 0x4000000000000037"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000037"])
+        self.session.cmd("bt", patterns=["frame #0: 0x4000000000000037", "frame #1: 0xc000000000000000"])
+
+        # Still alive and answering, which is the regression.
+        self.session.cmd("process plugin packet send qWasmCallStack:1", patterns=["response: 37"])
+
+
+class JSPICallStackTestCase:
+    test_file = "resources/wasm/jspi-call-stack.js"
+    extra_jsc_options = ["--useJSPI=1", "--verboseWasmDebugger=1"]
+
+    def execute(self):
+        # The reported case; here the host function is WebAssembly.promising.
+        self.session.cmd("b 0x4000000000000037", patterns=["address = 0x4000000000000037"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000037"])
+        self.session.cmd("bt", patterns=["frame #0: 0x4000000000000037", "frame #1: 0xc000000000000000"])
+        self.session.cmd("process plugin packet send qWasmCallStack:1", patterns=["response: 37"])
+
+        # After the suspension resumes, since JSPI relocates stacks.
+        self.session.cmd("b 0x400000000000003b", patterns=["address = 0x400000000000003b"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000003b"])
+        self.session.cmd("dis", patterns=["->  0x400000000000003b: i32.const 30"])
+
+
 class CrossInstanceTailCallImportTestCase:
     test_file = "resources/wasm/cross-instance-tail-call-import.js"
 
@@ -2764,6 +2795,8 @@ ALL_TESTS = [
     OperandStackDepthReturnCallTestCase,
     CrossInstanceTailCallTestCase,
     OperandStackDepthImportMultiResultTestCase,
+    HostFrameCallStackTestCase,
+    JSPICallStackTestCase,
     CrossInstanceTailCallImportTestCase,
     TailCallToImportTestCase,
     OperandStackDepthCallRefTestCase,
