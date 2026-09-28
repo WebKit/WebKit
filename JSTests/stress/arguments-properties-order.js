@@ -59,8 +59,8 @@ noInline(forIn);
         mappedArguments.bar = 2;
         shouldBeArray(forIn(mappedArguments), ["0", "foo", "bar"]);
         shouldBeArray(Object.keys(mappedArguments), ["0", "foo", "bar"]);
-        // FIXME: Symbol.iterator should come after "foo" and "bar" 
-        // shouldBeArray(Reflect.ownKeys(mappedArguments), ["0", "length", "callee", "foo", "bar", Symbol.iterator]);
+        shouldBeArray(Object.getOwnPropertyNames(mappedArguments), ["0", "length", "callee", "foo", "bar"]);
+        shouldBeArray(Reflect.ownKeys(mappedArguments), ["0", "length", "callee", "foo", "bar", Symbol.iterator]);
 
         var unmappedArguments = getUnmappedArguments(0, 1, 2);
         unmappedArguments.foo = 1;
@@ -72,8 +72,29 @@ noInline(forIn);
     }
 })();
 
-// FIXME: Add more tests, covering:
-// * added symbol properties;
-// * added together index, non-index, and symbol properties;
-// * deleted, re-added, and redefined as DontEnum index properties, both within and beyond "length";
-// * deleted, re-added, and redefined as DontEnum "length", "callee", and Symbol.iterator properties.
+function getScopedArguments(a) {
+    function capture() { return a; }
+    return arguments;
+}
+noInline(getScopedArguments);
+
+(function() {
+    var symbol = Symbol("s");
+    for (var i = 0; i < 1e4; ++i) {
+        var mappedArguments = getMappedArguments();
+        mappedArguments[symbol] = 1;
+        mappedArguments.z = 2;
+        shouldBeArray(Object.keys(mappedArguments), ["z"]);
+        shouldBeArray(Object.getOwnPropertyNames(mappedArguments), ["length", "callee", "z"]);
+        shouldBeArray(Reflect.ownKeys(mappedArguments), ["length", "callee", "z", Symbol.iterator, symbol]);
+
+        var scopedArguments = getScopedArguments();
+        scopedArguments[symbol] = 1;
+        scopedArguments.z = 2;
+        shouldBeArray(Object.keys(scopedArguments), ["z"]);
+        shouldBeArray(Object.getOwnPropertyNames(scopedArguments), ["length", "callee", "z"]);
+        shouldBeArray(Reflect.ownKeys(scopedArguments), ["length", "callee", "z", Symbol.iterator, symbol]);
+    }
+})();
+
+// FIXME: Ordering once length, callee, or @@iterator have been materialized, deleted, or redefined.

@@ -109,11 +109,28 @@ void GenericArgumentsImpl<Type>::getOwnPropertyNames(JSObject* object, JSGlobalO
         thisObject->getOwnIndexedPropertyNames(globalObject, array, mode);
     }
 
+    // length, callee, and @@iterator stay off the structure until overrideThings().
     if (mode == DontEnumPropertiesMode::Include && !thisObject->overrodeThings()) {
-        array.add(vm.propertyNames->length);
-        array.add(vm.propertyNames->callee);
-        array.add(vm.propertyNames->iteratorSymbol);
+        PropertyNameArrayBuilder storedNames(vm, array.propertyNameMode(), array.privateSymbolMode());
+        thisObject->getOwnNonIndexPropertyNames(globalObject, storedNames, mode);
+        if (array.includeStringProperties()) {
+            array.add(vm.propertyNames->length);
+            array.add(vm.propertyNames->callee);
+            for (const Identifier& propertyName : storedNames) {
+                if (!propertyName.isSymbol())
+                    array.add(propertyName);
+            }
+        }
+        if (array.includeSymbolProperties()) {
+            array.add(vm.propertyNames->iteratorSymbol);
+            for (const Identifier& propertyName : storedNames) {
+                if (propertyName.isSymbol())
+                    array.add(propertyName);
+            }
+        }
+        return;
     }
+
     thisObject->getOwnNonIndexPropertyNames(globalObject, array, mode);
 }
 
