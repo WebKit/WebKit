@@ -2304,7 +2304,11 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         && !(isRequestFromClientOrUserInput || siteIsolationEnabled))
         return { WTF::move(sourceProcess), nullptr, "Browsing context has opened other windows"_s };
 
-    if (RefPtr targetItem = navigation.targetItem(); targetItem && !siteIsolationEnabled) {
+    // Only allow the target back/forward item to influence process selection when the navigation is within the same site.
+    // Otherwise the targeted process might get some undeserved first party privileges.
+    // Compare two Sites rather than using Site::matches(): matches() derives the registrable domain from
+    // URL::host(), which is empty for a blob URL, so a blob-URL item would not even match itself.
+    if (RefPtr targetItem = navigation.targetItem(); targetItem && !siteIsolationEnabled && Site { URL { targetItem->url() } } == targetSite) {
         if (CheckedPtr suspendedPage = targetItem->suspendedPage()) {
             if (suspendedPage->protectedProcess()->state() != AuxiliaryProcessProxy::State::Terminated)
                 return { suspendedPage->process(), suspendedPage.get(), "Using target back/forward item's process and suspended page"_s };
