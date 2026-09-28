@@ -234,7 +234,7 @@ QSGNode* WPEQtView::updatePaintNode(QSGNode* node, UpdatePaintNodeData*)
         renderNode = new WPEQtUnderlayRenderNode();
     renderNode->setView(this, WPE_VIEW_QTQUICK(wpeView));
     renderNode->setRect(boundingRect());
-    renderNode->syncFrame();
+    renderNode->advanceFrame();
     return renderNode;
 }
 
