@@ -236,7 +236,7 @@ WebClipCache& WebPushDaemon::ensureWebClipCache()
         RELEASE_ASSERT(MKBDeviceUnlockedSinceBoot() == 1);
 #endif
 
-        m_webClipCache = makeUnique<WebClipCache>(m_webClipCachePath);
+        lazyInitialize(m_webClipCache, makeUnique<WebClipCache>(m_webClipCachePath));
     }
 
     return *m_webClipCache;
@@ -669,7 +669,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // This function doesn't actually follow the create rule, therefore we don't use adoptNS on it.
     if (!m_openService)
-        m_openService = SBSCreateOpenApplicationService();
+        lazyInitialize(m_openService, retainPtr(SBSCreateOpenApplicationService()));
 
     [m_openService openApplication:bundleIdentifier.createNSString().get() withOptions:options completion:^(BSProcessHandle *process, NSError *error) {
         if (error)

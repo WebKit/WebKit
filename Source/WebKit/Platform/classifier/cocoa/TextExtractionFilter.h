@@ -63,7 +63,7 @@ private:
 
     const Ref<WorkQueue> m_modelQueue;
     RetainPtr<MLModel> m_model;
-    RetainPtr<NLTokenizer> m_tokenizer;
+    const RetainPtr<NLTokenizer> m_tokenizer;
     bool m_failedInitialization { false };
 
     HashMap<unsigned /* String hash */, bool> m_cache WTF_GUARDED_BY_LOCK(m_cacheLock);

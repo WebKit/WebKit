@@ -48,7 +48,7 @@ public:
 private:
     WPEDisplayWayland* m_display { nullptr };
     struct wl_surface* m_surface { nullptr };
-    std::unique_ptr<WaylandCursorTheme> m_theme;
+    const std::unique_ptr<WaylandCursorTheme> m_theme;
     UTF8CString m_name;
     struct {
         int32_t x { 0 };

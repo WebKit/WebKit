@@ -59,8 +59,8 @@ public:
 private:
     void loadCursor(UTF8CStringView, double, std::optional<uint32_t> maxImages, Vector<WaylandCursorTheme::Image>&);
 
-    std::unique_ptr<CursorTheme> m_theme;
-    std::unique_ptr<WaylandSHMPool> m_pool;
+    const std::unique_ptr<CursorTheme> m_theme;
+    const std::unique_ptr<WaylandSHMPool> m_pool;
     HashMap<std::pair<UTF8CString, uint32_t>, Vector<Image>> m_cursors;
 };
 

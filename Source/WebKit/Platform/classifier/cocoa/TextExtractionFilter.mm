@@ -105,7 +105,7 @@ void TextExtractionFilter::initializeModelIfNeeded()
     [configuration setComputeUnits:MLComputeUnitsAll];
 
     m_model = [MLModel modelWithContentsOfURL:compiledModelURL.get() configuration:configuration.get() error:&error];
-    m_tokenizer = adoptNS([[NLTokenizer alloc] initWithUnit:NLTokenUnitWord]);
+    lazyInitialize(m_tokenizer, adoptNS([[NLTokenizer alloc] initWithUnit:NLTokenUnitWord]));
     m_failedInitialization = !m_model || !m_tokenizer;
 }
 

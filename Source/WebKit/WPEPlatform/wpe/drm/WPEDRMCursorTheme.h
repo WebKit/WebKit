@@ -59,7 +59,7 @@ public:
 private:
     void loadCursor(UTF8CStringView, double, std::optional<uint32_t> maxImages, Vector<CursorTheme::Image>&);
 
-    std::unique_ptr<WPE::CursorTheme> m_theme;
+    const std::unique_ptr<WPE::CursorTheme> m_theme;
     HashMap<std::pair<UTF8CString, uint32_t>, Vector<Image>> m_cursors;
 };
 

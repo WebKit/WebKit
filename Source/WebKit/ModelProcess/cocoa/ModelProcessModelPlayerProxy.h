@@ -268,7 +268,7 @@ private:
     WebCore::ModelPlayerIdentifier m_id;
     Markable<WebCore::NodeIdentifier> m_nodeID;
     bool m_isVisible { true };
-    Ref<IPC::Connection> m_webProcessConnection;
+    const Ref<IPC::Connection> m_webProcessConnection;
     WeakPtr<ModelProcessModelPlayerManagerProxy> m_manager;
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
@@ -284,7 +284,7 @@ private:
     REPtr<REEntityRef> m_containerEntity;
     RetainPtr<WKRKEntity> m_containerEntityWrapper;
 #endif
-    RetainPtr<WKModelProcessModelPlayerProxyObjCAdapter> m_objCAdapter;
+    const RetainPtr<WKModelProcessModelPlayerProxyObjCAdapter> m_objCAdapter;
 
     float m_pitch { 0 };
 

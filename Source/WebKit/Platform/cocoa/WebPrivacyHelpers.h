@@ -98,7 +98,7 @@ protected:
     virtual void updateList(CompletionHandler<void()>&&) = 0;
     virtual unsigned resourceTypeValue() const = 0;
 
-    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    const RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     WeakHashSet<ListDataObserver> m_observers;
     bool m_wasInitialized { false };
 };
@@ -182,7 +182,7 @@ private:
     void scheduleNextUpdate(ContinuousApproximateTime);
     void update();
 
-    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    const RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
     ContinuousApproximateTime m_nextScheduledUpdateTime;
 };
@@ -200,7 +200,7 @@ private:
     void scheduleNextUpdate(ContinuousApproximateTime);
     void update();
 
-    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    const RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     HashSet<WebCore::RegistrableDomain> m_domains;
     ContinuousApproximateTime m_nextScheduledUpdateTime;
     bool m_didReceiveInitialData { false };

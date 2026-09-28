@@ -130,13 +130,13 @@ private:
 
     static uint64_t gObjectCountForTesting;
 
-    Ref<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
+    const Ref<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
 
-    RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
 
-    Ref<IPC::Connection> m_connection;
+    const Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
-    Ref<ModelProcess> m_modelProcess;
+    const Ref<ModelProcess> m_modelProcess;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
     const WebCore::ProcessIdentity m_webProcessIdentity;
     PAL::SessionID m_sessionID;

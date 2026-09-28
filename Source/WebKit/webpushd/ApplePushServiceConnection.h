@@ -60,8 +60,8 @@ public:
 private:
     ApplePushServiceConnection(const String& incomingPushServiceName);
 
-    RetainPtr<APSConnection> m_connection;
-    RetainPtr<id<APSConnectionDelegate>> m_delegate;
+    const RetainPtr<APSConnection> m_connection;
+    const RetainPtr<id<APSConnectionDelegate>> m_delegate;
     unsigned m_handlerIdentifier { 0 };
     HashMap<unsigned, SubscribeHandler> m_subscribeHandlers;
     HashMap<unsigned, UnsubscribeHandler> m_unsubscribeHandlers;

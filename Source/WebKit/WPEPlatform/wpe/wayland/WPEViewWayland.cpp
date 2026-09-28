@@ -245,7 +245,7 @@ public:
     WPE::WaylandSHMPool* wlPool() const { return m_wlPool.get(); }
 
 private:
-    std::unique_ptr<WPE::WaylandSHMPool> m_wlPool;
+    const std::unique_ptr<WPE::WaylandSHMPool> m_wlPool;
 };
 
 static const struct wl_buffer_listener bufferListener = {

@@ -175,7 +175,7 @@ bool ModelConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 Logger& ModelConnectionToWebProcess::logger()
 {
     if (!m_logger) {
-        m_logger = Logger::create(this);
+        lazyInitialize(m_logger, Logger::create(this));
         m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
     }
 

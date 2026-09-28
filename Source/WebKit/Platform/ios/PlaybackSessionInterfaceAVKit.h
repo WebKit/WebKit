@@ -68,7 +68,7 @@ public:
 private:
     explicit PlaybackSessionInterfaceAVKit(WebCore::PlaybackSessionModel&);
 
-    RetainPtr<WKAVContentSource> m_contentSource;
+    const RetainPtr<WKAVContentSource> m_contentSource;
     const Ref<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;
 };
 

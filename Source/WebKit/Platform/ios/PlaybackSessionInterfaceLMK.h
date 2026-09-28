@@ -76,7 +76,7 @@ private:
     PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel&);
 
     RetainPtr<WKSLinearMediaPlayer> m_player;
-    RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
+    const RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
     const Ref<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;
     WebCore::VideoReceiverEndpoint m_videoReceiverEndpoint;
 };

@@ -81,7 +81,7 @@ private:
     URL m_webPageURL;
     Kind m_kind;
     State m_state { State::Inactive };
-    RetainPtr<BEMediaEnvironment> m_mediaEnvironment;
+    const RetainPtr<BEMediaEnvironment> m_mediaEnvironment;
 };
 
 } // namespace WebKit

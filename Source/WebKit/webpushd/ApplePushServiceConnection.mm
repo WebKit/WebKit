@@ -71,15 +71,15 @@ namespace WebPushD {
 
 ApplePushServiceConnection::ApplePushServiceConnection(const String& incomingPushServiceName)
 {
-    m_connection = adoptNS([[APSConnection alloc] initWithEnvironmentName:APSEnvironmentProduction namedDelegatePort:incomingPushServiceName.createNSString().get() queue:mainDispatchQueueSingleton()]);
+    lazyInitialize(m_connection, adoptNS([[APSConnection alloc] initWithEnvironmentName:APSEnvironmentProduction namedDelegatePort:incomingPushServiceName.createNSString().get() queue:mainDispatchQueueSingleton()]));
     RetainPtr delegate = adoptNS([[_WKAPSConnectionDelegate alloc] initWithConnection:this]);
-    m_delegate = delegate;
-    [protect(m_connection) setDelegate:delegate.get()];
+    lazyInitialize(m_delegate, RetainPtr { delegate });
+    [m_connection setDelegate:delegate.get()];
 }
 
 ApplePushServiceConnection::~ApplePushServiceConnection()
 {
-    [protect(m_connection) setDelegate:nil];
+    [m_connection setDelegate:nil];
 }
 
 static RetainPtr<APSURLTokenInfo> makeTokenInfo(const String& topic, const Vector<uint8_t>& vapidPublicKey)
@@ -95,7 +95,7 @@ void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uin
     auto identifier = ++m_handlerIdentifier;
     m_subscribeHandlers.add(identifier, WTF::move(subscribeHandler));
 
-    [protect(m_connection) requestURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (APSURLToken *token, NSError *error) {
+    [m_connection requestURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (APSURLToken *token, NSError *error) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -113,7 +113,7 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
     auto identifier = ++m_handlerIdentifier;
     m_unsubscribeHandlers.add(identifier, WTF::move(unsubscribeHandler));
 
-    [protect(m_connection) invalidateURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (BOOL success, NSError *error) {
+    [m_connection invalidateURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (BOOL success, NSError *error) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -125,47 +125,47 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
 
 Vector<String> ApplePushServiceConnection::enabledTopics()
 {
-    return makeVector<String>(retainPtr([protect(m_connection) enabledTopics]).get());
+    return makeVector<String>(retainPtr([m_connection enabledTopics]).get());
 }
 
 Vector<String> ApplePushServiceConnection::ignoredTopics()
 {
-    return makeVector<String>(retainPtr([protect(m_connection) ignoredTopics]).get());
+    return makeVector<String>(retainPtr([m_connection ignoredTopics]).get());
 }
 
 Vector<String> ApplePushServiceConnection::opportunisticTopics()
 {
-    return makeVector<String>(retainPtr([protect(m_connection) opportunisticTopics]).get());
+    return makeVector<String>(retainPtr([m_connection opportunisticTopics]).get());
 }
 
 Vector<String> ApplePushServiceConnection::nonWakingTopics()
 {
-    return makeVector<String>(retainPtr([protect(m_connection) nonWakingTopics]).get());
+    return makeVector<String>(retainPtr([m_connection nonWakingTopics]).get());
 }
 
 void ApplePushServiceConnection::setEnabledTopics(Vector<String>&& topics)
 {
-    [protect(m_connection) _setEnabledTopics:createNSArray(WTF::move(topics)).get()];
+    [m_connection _setEnabledTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setIgnoredTopics(Vector<String>&& topics)
 {
-    [protect(m_connection) _setIgnoredTopics:createNSArray(WTF::move(topics)).get()];
+    [m_connection _setIgnoredTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setOpportunisticTopics(Vector<String>&& topics)
 {
-    [protect(m_connection) _setOpportunisticTopics:createNSArray(WTF::move(topics)).get()];
+    [m_connection _setOpportunisticTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setNonWakingTopics(Vector<String>&& topics)
 {
-    [protect(m_connection) _setNonWakingTopics:createNSArray(WTF::move(topics)).get()];
+    [m_connection _setNonWakingTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setTopicLists(TopicLists&& topicLists)
 {
-    [protect(m_connection) setEnabledTopics:createNSArray(WTF::move(topicLists.enabledTopics)).get() ignoredTopics:createNSArray(WTF::move(topicLists.ignoredTopics)).get() opportunisticTopics:createNSArray(WTF::move(topicLists.opportunisticTopics)).get() nonWakingTopics:createNSArray(WTF::move(topicLists.nonWakingTopics)).get()];
+    [m_connection setEnabledTopics:createNSArray(WTF::move(topicLists.enabledTopics)).get() ignoredTopics:createNSArray(WTF::move(topicLists.ignoredTopics)).get() opportunisticTopics:createNSArray(WTF::move(topicLists.opportunisticTopics)).get() nonWakingTopics:createNSArray(WTF::move(topicLists.nonWakingTopics)).get()];
 }
 
 } // namespace WebPushD

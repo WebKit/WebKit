@@ -111,7 +111,7 @@ Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& 
 {
     ASSERT(RunLoop::isMain());
     if (!m_notificationListener) {
-        m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(resourceTypeValue()) callback:^{
+        lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(resourceTypeValue()) callback:^{
             updateList([weakThis = WeakPtr { *this }] {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
@@ -120,7 +120,7 @@ Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& 
                     observer.invokeCallback();
                 });
             });
-        }]);
+        }]));
     }
     Ref observer = ListDataObserver::create(WTF::move(callback));
     m_observers.add(observer.get());
@@ -352,9 +352,9 @@ RestrictedOpenerDomainsController::RestrictedOpenerDomainsController()
     scheduleNextUpdate(ContinuousApproximateTime::now());
     update();
 
-    m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeRestrictedOpenerDomains) callback:^{
+    lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeRestrictedOpenerDomains) callback:^{
         update();
-    }]);
+    }]));
 }
 
 static RestrictedOpenerType NODELETE restrictedOpenerType(WPRestrictedOpenerType type)
@@ -426,9 +426,9 @@ HighValueFraudTargetDomainsController::HighValueFraudTargetDomainsController()
     scheduleNextUpdate(ContinuousApproximateTime::now());
     update();
 
-    m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeHighValueFraudTargetDomains) callback:^{
+    lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeHighValueFraudTargetDomains) callback:^{
         update();
-    }]);
+    }]));
 }
 
 void HighValueFraudTargetDomainsController::scheduleNextUpdate(ContinuousApproximateTime now)

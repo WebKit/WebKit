@@ -144,8 +144,8 @@ private:
         return m_entity;
     }
 
-    Ref<Model> m_model;
-    RetainPtr<WKRKEntity> m_entity;
+    const Ref<Model> m_model;
+    const RetainPtr<WKRKEntity> m_entity;
 };
 
 class RKModelLoaderUSD final : public WebCore::REModelLoader, public CanMakeWeakPtr<RKModelLoaderUSD> {
@@ -331,7 +331,7 @@ ModelProcessModelPlayerProxy::ModelProcessModelPlayerProxy(ModelProcessModelPlay
     , m_unloadModelTimer(RunLoop::mainSingleton(), "ModelProcessModelPlayerProxy::UnloadModelTimer"_s, this, &ModelProcessModelPlayerProxy::unloadModelTimerFired)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy initialized id=%" PRIu64, this, identifier.toUInt64());
-    m_objCAdapter = adoptNS([[WKModelProcessModelPlayerProxyObjCAdapter alloc] initWithModelProcessModelPlayerProxy:*this]);
+    lazyInitialize(m_objCAdapter, adoptNS([[WKModelProcessModelPlayerProxyObjCAdapter alloc] initWithModelProcessModelPlayerProxy:*this]));
     ++gObjectCountForTesting;
 }
 
@@ -1139,7 +1139,7 @@ public:
 private:
     explicit SimpleREModel(RetainPtr<WKRKEntity>&& entity)
         : m_entity(WTF::move(entity)) { }
-    RetainPtr<WKRKEntity> m_entity;
+    const RetainPtr<WKRKEntity> m_entity;
 };
 #endif
 
