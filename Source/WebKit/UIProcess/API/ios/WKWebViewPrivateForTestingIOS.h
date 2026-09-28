@@ -114,6 +114,8 @@
 @property (nonatomic, readonly) BOOL _hasPendingVisibleContentRectUpdateTimerForTesting;
 @property (nonatomic, readonly) CGRect _fixedClippingViewBoundsForTesting;
 
+- (void)_screenIsBeingCapturedForFrame:(_WKFrameHandle *)frameHandle completionHandler:(void (^)(BOOL))completionHandler;
+
 @end
 
 #endif // TARGET_OS_IPHONE

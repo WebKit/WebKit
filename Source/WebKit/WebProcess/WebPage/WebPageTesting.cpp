@@ -116,6 +116,13 @@ void WebPageTesting::isEditingCommandEnabled(const String& commandName, Completi
     completionHandler(command.isSupported() && command.isEnabled());
 }
 
+#if PLATFORM(IOS_FAMILY)
+void WebPageTesting::screenIsBeingCaptured(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_page && m_page->screenIsBeingCaptured());
+}
+#endif
+
 #if ENABLE(NOTIFICATIONS)
 void WebPageTesting::clearNotificationPermissionState()
 {
