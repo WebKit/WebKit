@@ -110,3 +110,10 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(hotbit_medium_segregated,
 PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(jit_small_segregated,
                                        JIT_HEAP_CONFIG.small_segregated_config)
 #endif
+
+#if PAS_ENABLE_JS_MARKED_BLOCK
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(js_marked_block_small_segregated,
+                                       JS_MARKED_BLOCK_HEAP_CONFIG.small_segregated_config)
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(js_marked_block_medium_segregated,
+                                       JS_MARKED_BLOCK_HEAP_CONFIG.medium_segregated_config)
+#endif

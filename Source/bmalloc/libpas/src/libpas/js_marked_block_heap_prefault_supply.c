@@ -27,11 +27,11 @@
 
 #if LIBPAS_ENABLED
 
-#include "bmalloc_prefault_supply.h"
+#include "js_marked_block_heap_prefault_supply.h"
 
-#if PAS_ENABLE_BMALLOC
+#if PAS_ENABLE_JS_MARKED_BLOCK && PAS_ENABLE_BMALLOC
 
-#include "bmalloc_heap_inlines.h"
+#include "js_marked_block_heap_inlines.h"
 #include "pas_dyld_state.h"
 #include "pas_page_malloc.h"
 #include "pas_thread.h"
@@ -46,26 +46,21 @@
 
 PAS_BEGIN_EXTERN_C;
 
-unsigned bmalloc_prefault_supply_target;
-double bmalloc_prefault_supply_idle_timeout_in_milliseconds = 10. * 1000.;
-bool bmalloc_prefault_supply_allocation_should_fail_for_testing;
+unsigned js_marked_block_heap_prefault_supply_target;
+double js_marked_block_heap_prefault_supply_idle_timeout_in_milliseconds = 10. * 1000.;
+bool js_marked_block_heap_prefault_supply_allocation_should_fail_for_testing;
 
 static pthread_mutex_t supply_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t supply_cond = PTHREAD_COND_INITIALIZER;
 
-/* Read on every take and written only while configuring, so it is kept clear of the line the take
-   path writes: otherwise recording demand evicts it from every other core on every take. */
-static PAS_ALIGNED(64) size_t supply_block_size;
-
 /* On its own cache line, so that a taker claiming a slot does not also take away the line holding
    the counters the filler reads on every pass. */
-static PAS_ALIGNED(64) void* slots[BMALLOC_PREFAULT_SUPPLY_MAX_BLOCKS];
+static PAS_ALIGNED(64) void* slots[JS_MARKED_BLOCK_HEAP_PREFAULT_SUPPLY_MAX_BLOCKS];
 
 /* One struct rather than three objects because the layout is the point: num_blocks and demand_count
-   are both written by every take and want one line between them, and neither may share a line with
-   supply_block_size. Separate objects cannot express that, since the compiler groups them by
-   alignment rather than by which thread touches them. thread_is_running rides along, being touched
-   only on the slow path, under supply_lock. */
+   are both written by every take and want one line between them. Separate objects cannot express
+   that, since the compiler groups them by alignment rather than by which thread touches them.
+   thread_is_running rides along, being touched only on the slow path, under supply_lock. */
 static PAS_ALIGNED(64) struct {
     unsigned num_blocks;
     /* Counted rather than flagged: a flag has to be cleared, and a take landing next to the clear
@@ -83,35 +78,37 @@ static PAS_ALIGNED(64) struct {
 
 static unsigned supply_target(void)
 {
-    if (!supply_block_size)
-        return 0;
-    return PAS_MIN(bmalloc_prefault_supply_target, (unsigned)BMALLOC_PREFAULT_SUPPLY_MAX_BLOCKS);
+    return PAS_MIN(js_marked_block_heap_prefault_supply_target, (unsigned)JS_MARKED_BLOCK_HEAP_PREFAULT_SUPPLY_MAX_BLOCKS);
 }
 
-void bmalloc_prefault_supply_set_block_size(size_t block_size)
+static void* allocate_block(void)
 {
-    PAS_ASSERT(pas_is_power_of_2(block_size));
-    PAS_ASSERT(!supply_block_size || supply_block_size == block_size);
-    supply_block_size = block_size;
+    return js_marked_block_heap_try_allocate_inline();
 }
 
-unsigned bmalloc_prefault_supply_block_count(void)
+static void deallocate_block(void* block)
+{
+    js_marked_block_heap_deallocate_inline(block);
+}
+
+unsigned js_marked_block_heap_prefault_supply_block_count(void)
 {
     return __atomic_load_n(&supply_state.num_blocks, __ATOMIC_RELAXED);
 }
 
-void bmalloc_prefault_supply_scavenge(void)
+void js_marked_block_heap_prefault_supply_scavenge(void)
 {
     unsigned index;
 
-    for (index = 0; index < BMALLOC_PREFAULT_SUPPLY_MAX_BLOCKS; ++index) {
+    for (index = 0; index < JS_MARKED_BLOCK_HEAP_PREFAULT_SUPPLY_MAX_BLOCKS; ++index) {
         void* block = __atomic_exchange_n(&slots[index], (void*)NULL, __ATOMIC_ACQUIRE);
         if (!block)
             continue;
         __atomic_fetch_sub(&supply_state.num_blocks, 1, __ATOMIC_RELAXED);
 
-        /* An ordinary bmalloc block, so this hands the memory back the way the client would. */
-        bmalloc_deallocate_inline(block);
+        /* An ordinary block of whichever heap filled the supply, so this hands the memory back the
+           way the client would. */
+        deallocate_block(block);
     }
 }
 
@@ -123,7 +120,7 @@ static bool refill(void)
     unsigned index;
     bool should_fail_for_testing;
 
-    should_fail_for_testing = __atomic_load_n(&bmalloc_prefault_supply_allocation_should_fail_for_testing, __ATOMIC_RELAXED);
+    should_fail_for_testing = __atomic_load_n(&js_marked_block_heap_prefault_supply_allocation_should_fail_for_testing, __ATOMIC_RELAXED);
 
     target = supply_target();
     for (index = 0; index < target; ++index) {
@@ -136,11 +133,11 @@ static bool refill(void)
         if (PAS_UNLIKELY(should_fail_for_testing))
             return false;
 
-        block = bmalloc_try_allocate_with_alignment_inline(supply_block_size, supply_block_size, pas_always_compact_allocation_mode);
+        block = allocate_block();
         if (!block)
             return false;
 
-        pas_page_malloc_populate(block, supply_block_size);
+        pas_page_malloc_populate(block, JS_MARKED_BLOCK_SIZE);
 
         /* Counted before it is reachable, so that a taker's decrement can never be ordered ahead
            of this increment and wrap the count below zero. */
@@ -174,7 +171,7 @@ static void compute_idle_deadline(struct timespec* deadline)
 
     /* Clamped rather than trusted: an interval that lands outside what a timespec can hold makes
        pthread_cond_timedwait fail rather than wait, which would spin the filling thread. */
-    milliseconds = bmalloc_prefault_supply_idle_timeout_in_milliseconds;
+    milliseconds = js_marked_block_heap_prefault_supply_idle_timeout_in_milliseconds;
     if (!(milliseconds > MIN_IDLE_TIMEOUT_IN_MILLISECONDS))
         milliseconds = MIN_IDLE_TIMEOUT_IN_MILLISECONDS;
     else if (milliseconds > MAX_IDLE_TIMEOUT_IN_MILLISECONDS)
@@ -247,7 +244,7 @@ static void* supply_thread_main(void* arg)
         if (!should_exit)
             continue;
 
-        bmalloc_prefault_supply_scavenge();
+        js_marked_block_heap_prefault_supply_scavenge();
 
         pthread_mutex_lock(&supply_lock);
         /* thread_is_running stays set until the blocks are gone, so that a replacement filler
@@ -293,15 +290,11 @@ static void create_filling_thread(void)
     pthread_detach(thread);
 }
 
-void* bmalloc_prefault_supply_try_allocate(void)
+void* js_marked_block_heap_prefault_supply_try_allocate(void)
 {
     void* result;
     unsigned target;
     unsigned index;
-
-    /* Without a size there is nothing to hand back, not even an ordinary allocation. */
-    if (!supply_block_size)
-        return NULL;
 
     result = NULL;
     target = supply_target();
@@ -341,11 +334,11 @@ void* bmalloc_prefault_supply_try_allocate(void)
     if (result)
         return result;
 
-    return bmalloc_try_allocate_with_alignment_inline(supply_block_size, supply_block_size, pas_always_compact_allocation_mode);
+    return allocate_block();
 }
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_ENABLE_BMALLOC */
+#endif /* PAS_ENABLE_JS_MARKED_BLOCK && PAS_ENABLE_BMALLOC */
 
 #endif /* LIBPAS_ENABLED */

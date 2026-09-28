@@ -145,6 +145,7 @@
 #define PAS_ENABLE_BMALLOC               1
 #define PAS_ENABLE_HOTBIT                0
 #define PAS_ENABLE_JIT                   1
+#define PAS_ENABLE_JS_MARKED_BLOCK       1
 #elif defined(PAS_LIBMALLOC)
 #define PAS_ENABLE_THINGY                0
 #define PAS_ENABLE_ISO                   1
@@ -154,6 +155,7 @@
 #define PAS_ENABLE_BMALLOC               0
 #define PAS_ENABLE_HOTBIT                0
 #define PAS_ENABLE_JIT                   0
+#define PAS_ENABLE_JS_MARKED_BLOCK       0
 #else /* PAS_LIBMALLOC -> so !defined(PAS_BMALLOC) && !defined(PAS_LIBMALLOC) */
 #define PAS_ENABLE_THINGY                1
 #define PAS_ENABLE_ISO                   1
@@ -163,6 +165,7 @@
 #define PAS_ENABLE_BMALLOC               1
 #define PAS_ENABLE_HOTBIT                1
 #define PAS_ENABLE_JIT                   1
+#define PAS_ENABLE_JS_MARKED_BLOCK       1
 #endif /* PAS_LIBMALLOC -> so end of !defined(PAS_BMALLOC) && !defined(PAS_LIBMALLOC) */
 
 #define PAS_COMPACT_PTR_SIZE             3llu
