@@ -131,6 +131,24 @@ void OSAllocator::hintMemoryNotNeededSoon(void*, size_t)
 {
 }
 
+static bool tryCommitWithRetry(void* address, size_t bytes, DWORD protection)
+{
+    // A commit that hits the commit limit is retried the way libpas does it, with the same numbers
+    // (virtual_alloc_with_retry in pas_page_malloc.c).
+    constexpr unsigned maxRetries = 10;
+    constexpr DWORD retryDelayMS = 50;
+    for (unsigned retry = 0; ; ++retry) {
+        if (VirtualAlloc(address, bytes, MEM_COMMIT, protection))
+            return true;
+        DWORD error = GetLastError();
+        if (error != ERROR_COMMITMENT_LIMIT && error != ERROR_NOT_ENOUGH_MEMORY)
+            return false;
+        if (retry == maxRetries)
+            return false;
+        Sleep(retryDelayMS);
+    }
+}
+
 bool OSAllocator::tryProtect(void* address, size_t bytes, bool readable, bool writable)
 {
     if (!bytes)
@@ -180,7 +198,7 @@ bool OSAllocator::tryProtect(void* address, size_t bytes, bool readable, bool wr
         ASSERT(memInfo.RegionSize > 0);
         ASSERT(static_cast<char*>(memInfo.BaseAddress) == currentPtr);
         size_t chunkSize = std::min(static_cast<size_t>(memInfo.RegionSize), bytes - totalSeen);
-        if (!VirtualAlloc(currentPtr, chunkSize, MEM_COMMIT, protection))
+        if (!tryCommitWithRetry(currentPtr, chunkSize, protection))
             return false;
         currentPtr += chunkSize;
         totalSeen += chunkSize;

@@ -159,6 +159,18 @@ void BufferMemoryManager::freeGrowableBoundsCheckingMemory(void* basePtr, size_t
     dataLogLnIf(Options::logWasmMemory(), "Freed virtual; state: ", *this);
 }
 
+bool BufferMemoryManager::tryMakeReadableAndWritable(void* address, size_t bytes)
+{
+    constexpr bool readable = true;
+    constexpr bool writable = true;
+#if OS(WINDOWS)
+    return OSAllocator::tryProtect(address, bytes, readable, writable);
+#else
+    OSAllocator::protect(address, bytes, readable, writable);
+    return true;
+#endif
+}
+
 bool BufferMemoryManager::isInGrowableOrFastMemory(void* address)
 {
     // NOTE: This can be called from a signal handler, but only after we proved that we're in JIT code or IPInt code.

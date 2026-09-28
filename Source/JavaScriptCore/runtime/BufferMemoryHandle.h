@@ -102,6 +102,9 @@ public:
 
     void freeGrowableBoundsCheckingMemory(void* basePtr, size_t mappedCapacity);
 
+    // Windows commits the range at this point, so this fails there when the commit limit is reached.
+    static bool tryMakeReadableAndWritable(void* address, size_t bytes);
+
     bool isInGrowableOrFastMemory(void* address);
 
     // We allow people to "commit" more wasm memory than there is on the system since most of the time

@@ -140,8 +140,11 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
     }
 
 #if OS(WINDOWS)
-    if (initialBytes)
-        OSAllocator::commit(slowMemory, initialBytes, /* writable */ true, /* executable */ false);
+    if (!BufferMemoryManager::tryMakeReadableAndWritable(slowMemory, initialBytes)) {
+        BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(slowMemory, maximumBytes);
+        BufferMemoryManager::singleton().freePhysicalBytes(initialBytes);
+        return nullptr;
+    }
 #endif
     constexpr bool readable = false;
     constexpr bool writable = false;
@@ -603,9 +606,10 @@ std::expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByt
             uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
 
             dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
-            constexpr bool readable = true;
-            constexpr bool writable = true;
-            OSAllocator::protect(startAddress, bytesToAdd, readable, writable);
+            if (!BufferMemoryManager::tryMakeReadableAndWritable(startAddress, bytesToAdd)) {
+                BufferMemoryManager::singleton().freePhysicalBytes(bytesToAdd);
+                return makeUnexpected(GrowFailReason::OutOfMemory);
+            }
         } else {
             size_t bytesToSubtract = memoryHandle->size() - desiredSize;
             ASSERT(bytesToSubtract);
@@ -736,9 +740,10 @@ std::expected<int64_t, GrowFailReason> SharedArrayBufferContents::tryGrow(const 
         uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
 
         dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
-        constexpr bool readable = true;
-        constexpr bool writable = true;
-        OSAllocator::protect(startAddress, extraBytes, readable, writable);
+        if (!BufferMemoryManager::tryMakeReadableAndWritable(startAddress, extraBytes)) {
+            BufferMemoryManager::singleton().freePhysicalBytes(extraBytes);
+            return makeUnexpected(GrowFailReason::OutOfMemory);
+        }
         memoryHandle->updateSize(desiredSize);
     }
 
