@@ -95,9 +95,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyInstance.h"
+#include "WasmCallee.h"
+#include "WasmCalleeGroup.h"
 #include "WasmModuleInformation.h"
 #include "WasmStreamingCompiler.h"
 #include "WasmStreamingParser.h"
+#include "WebAssemblyFunctionBase.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -2239,6 +2243,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionCurrentCPUTime);
 static JSC_DECLARE_HOST_FUNCTION(functionTotalGCTime);
 static JSC_DECLARE_HOST_FUNCTION(functionParseCount);
 static JSC_DECLARE_HOST_FUNCTION(functionIsWasmSupported);
+static JSC_DECLARE_HOST_FUNCTION(functionWasmCalleeIDs);
 static JSC_DECLARE_HOST_FUNCTION(functionMake16BitStringIfPossible);
 static JSC_DECLARE_HOST_FUNCTION(functionGetStructureTransitionList);;
 static JSC_DECLARE_HOST_FUNCTION(functionGetConcurrently);
@@ -3948,6 +3953,66 @@ JSC_DEFINE_HOST_FUNCTION(functionIsWasmSupported, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsBoolean(Wasm::isSupported()));
 }
 
+// Returns the BBQ and OMG callees currently installed for an exported wasm function, as opaque
+// IDs, with 0 meaning "that tier is not installed". Only equality is meaningful: comparing IDs
+// tells you whether a tier has been published, and whether it is still the same callee as
+// before. This lets a test wait for a specific tier-up to actually land instead of sleeping for
+// an arbitrary amount of time and hoping the concurrent compile finished.
+// The third element is true when the BBQ callee has been retired by releaseBBQCallee() but is
+// not destroyed yet, which is the state a test needs to observe to know a re-tier is possible.
+// Usage: [bbqID, omgID, bbqIsRetired] = $vm.wasmCalleeIDs(instance.exports.foo)
+JSC_DEFINE_HOST_FUNCTION(functionWasmCalleeIDs, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+#if ENABLE(WEBASSEMBLY)
+    auto* function = jsDynamicCast<WebAssemblyFunctionBase*>(callFrame->argument(0));
+    if (!function)
+        return throwVMTypeError(globalObject, scope, "Expected an exported WebAssembly function"_s);
+
+    auto* instance = function->instance();
+    RefPtr calleeGroup = instance ? instance->calleeGroup() : nullptr;
+    if (!calleeGroup)
+        return throwVMTypeError(globalObject, scope, "Exported function has no callee group yet"_s);
+
+    auto* wasmCallee = static_cast<Wasm::Callee*>(function->boxedCallee().asNativeCallee());
+    auto functionIndex = calleeGroup->toCodeIndex(wasmCallee->index());
+
+    uintptr_t bbqID = 0;
+    uintptr_t omgID = 0;
+    bool bbqIsRetired = false;
+    {
+        Locker locker { calleeGroup->m_lock };
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+        if (RefPtr bbqCallee = calleeGroup->bbqCallee(locker, functionIndex)) {
+            bbqID = std::bit_cast<uintptr_t>(bbqCallee.get());
+            // Indeterminate means the callee group only holds a weak reference to it, i.e. it has
+            // been retired but has not been destroyed yet.
+            bbqIsRetired = calleeGroup->calleeIsReferenced(locker, bbqCallee.get()) == TriState::Indeterminate;
+        }
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        if (auto* omgCallee = calleeGroup->omgCallee(locker, functionIndex))
+            omgID = std::bit_cast<uintptr_t>(omgCallee);
+#endif
+    }
+
+    JSArray* result = constructEmptyArray(globalObject, nullptr, 3);
+    RETURN_IF_EXCEPTION(scope, { });
+    result->putDirectIndex(globalObject, 0, jsNumber(static_cast<double>(bbqID)));
+    RETURN_IF_EXCEPTION(scope, { });
+    result->putDirectIndex(globalObject, 1, jsNumber(static_cast<double>(omgID)));
+    RETURN_IF_EXCEPTION(scope, { });
+    result->putDirectIndex(globalObject, 2, jsBoolean(bbqIsRetired));
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSValue::encode(result);
+#else
+    UNUSED_PARAM(callFrame);
+    return throwVMTypeError(globalObject, scope, "WebAssembly is not enabled"_s);
+#endif
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -4578,6 +4643,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "parseCount"_s, functionParseCount, 0);
 
     addFunction(vm, "isWasmSupported"_s, functionIsWasmSupported, 0);
+    addFunction(vm, "wasmCalleeIDs"_s, functionWasmCalleeIDs, 1);
     addFunction(vm, "make16BitStringIfPossible"_s, functionMake16BitStringIfPossible, 1);
 
     addFunction(vm, "getStructureTransitionList"_s, functionGetStructureTransitionList, 1);

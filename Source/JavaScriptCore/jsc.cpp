@@ -64,6 +64,7 @@
 #include "JSTypedArrays.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyMemory.h"
+#include "JSWebAssemblyModule.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "NativeCallee.h"
@@ -85,6 +86,7 @@
 #include "WasmCapabilities.h"
 #include "WasmDebugServer.h"
 #include "WasmFaultSignalHandler.h"
+#include "WasmModule.h"
 #include "WebAssemblyMemoryConstructor.h"
 #include <span>
 #include <stdio.h>
@@ -237,7 +239,9 @@ static void checkException(GlobalObject*, bool isLastFile, bool hasException, JS
 class Message : public ThreadSafeRefCounted<Message> {
 public:
 #if ENABLE(WEBASSEMBLY)
-    using Content = Variant<ArrayBufferContents, RefPtr<SharedArrayBufferContents>>;
+    // A WebAssembly.Module is shared by handing the receiving agent a reference to the same
+    // Wasm::Module, which is what WebCore's structured clone does for cross-Worker transfers.
+    using Content = Variant<ArrayBufferContents, RefPtr<SharedArrayBufferContents>, RefPtr<Wasm::Module>>;
 #else
     using Content = Variant<ArrayBufferContents>;
 #endif
@@ -2632,6 +2636,10 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
             jsMemory->adopt(memory.releaseNonNull());
             return jsMemory;
         }
+        if (std::holds_alternative<RefPtr<Wasm::Module>>(content)) {
+            RefPtr module = std::get<RefPtr<Wasm::Module>>(WTF::move(content));
+            return JSWebAssemblyModule::create(vm, globalObject->webAssemblyModuleStructure(), module.releaseNonNull());
+        }
 #endif
         return jsUndefined();
     })();
@@ -2698,6 +2706,16 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
             [&] (const AbstractLocker& locker, Worker& worker) {
                 RefPtr<SharedArrayBufferContents> contents { memory->memory().shared() };
                 RefPtr<Message> message = adoptRef(new Message(WTF::move(contents), index));
+                worker.enqueue(locker, message);
+            });
+        return JSValue::encode(jsUndefined());
+    }
+
+    if (JSWebAssemblyModule* jsModule = jsDynamicCast<JSWebAssemblyModule*>(callFrame->argument(0))) {
+        Workers::singleton().broadcast(
+            [&] (const AbstractLocker& locker, Worker& worker) {
+                RefPtr<Wasm::Module> module { &jsModule->module() };
+                RefPtr<Message> message = adoptRef(new Message(WTF::move(module), index));
                 worker.enqueue(locker, message);
             });
         return JSValue::encode(jsUndefined());

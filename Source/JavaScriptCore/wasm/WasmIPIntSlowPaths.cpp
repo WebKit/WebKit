@@ -146,10 +146,20 @@ static inline RefPtr<Wasm::JITCallee> jitCompileAndSetHeuristics(Wasm::IPIntCall
                 return calleeGroup.tryGetReplacementConcurrently(functionIndex);
             return nullptr;
         }
+#ifdef RC_REMOVE_SEC_ACCEL_3
         case OSRFor::Epilogue: {
             return nullptr;
         }
         case OSRFor::Loop: {
+#else
+        case OSRFor::Epilogue:
+        case OSRFor::Loop: {
+            // If there's a retired but not-yet-collected BBQCallee, use it. For both Loop and
+            // Epilogue OSR, it can be the case that such retired BBQCallees still need to be
+            // patched in some callers. Not using it means a new BBQ compilation can be triggered,
+            // which can overwrite the retired BBQCallee, leaving updateCallsitesToCallUs() unable
+            // to patch those callers.
+#endif
             return calleeGroup.tryGetBBQCalleeForLoopOSRConcurrently(instance->vm(), functionIndex);
         }
         }
