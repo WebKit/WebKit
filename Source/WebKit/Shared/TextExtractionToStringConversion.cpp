@@ -1599,6 +1599,12 @@ static TextExtractionParts partsForItem(const TextExtraction::Item& item, const 
         if (streamlined && value == "false"_s)
             continue;
 
+        if (outputKey == "disabled"_s && value == "true"_s) {
+            parts.append("disabled"_s);
+            cachedParts.append("disabled"_s);
+            continue;
+        }
+
         if (streamlined && outputKey == "label"_s) {
             auto trimmed = firstChildText.trim(isASCIIWhitespace);
             if (!trimmed.isEmpty() && trimmed.contains(value))
@@ -2267,7 +2273,7 @@ static bool isIdentityFreeContainer(const TextExtraction::Item& item, const std:
         return false;
 
     bool hasEmittedAriaAttribute = std::ranges::any_of(item.ariaAttributes, [](auto& entry) {
-        return entry.value != "false"_s;
+        return entry.key != "aria-disabled"_s && entry.value != "false"_s;
     });
     if (hasEmittedAriaAttribute || !item.clientAttributes.isEmpty())
         return false;
