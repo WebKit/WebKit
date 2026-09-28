@@ -61,6 +61,8 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         flatpakArgs.appendList({
             "--sandbox"_s,
+            // The current working directory might not be visible in the sub-sandbox.
+            "--directory=/"_s,
             "--no-network"_s,
             "--sandbox-flag=share-gpu"_s,
             "--sandbox-flag=share-display"_s,
