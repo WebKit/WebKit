@@ -119,11 +119,11 @@ decltype(auto) convertAXLogArg(T&& arg)
 }
 
 // WTFLogAlways is raw varargs, so a converted string has to arrive as a pointer. Only UTF-8 is offered:
-// the conversions above all produce one, and the generic overload below excludes every CString so that a
+// the conversions above all produce one, and the generic overload below excludes every CStringBase so that a
 // Latin-1 or encoding-erased one is rejected rather than logged as bytes.
 inline const char* extractAXLogArg(const UTF8CString& string) { return safePrintfType(string); }
 
-template<typename T> requires (!std::derived_from<std::remove_cvref_t<T>, CString>)
+template<typename T> requires (!std::derived_from<std::remove_cvref_t<T>, CStringBase>)
 decltype(auto) extractAXLogArg(T&& arg) { return std::forward<T>(arg); }
 
 // Used like WTFLogAlways, but auto-converts String and AXCoreObject arguments for use with the %s format specifier.

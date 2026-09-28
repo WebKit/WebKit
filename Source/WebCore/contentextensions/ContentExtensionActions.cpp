@@ -48,7 +48,7 @@ static void append(Vector<uint8_t>& vector, size_t length)
     vector.append(asByteSpan(integer));
 }
 
-static void append(Vector<uint8_t>& vector, const CString& string)
+static void append(Vector<uint8_t>& vector, const CStringBase& string)
 {
     vector.append(string.span());
 }
@@ -560,7 +560,7 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
         | hasUsername << 1
         | hasQuery << 0
     );
-    auto appendLengthAndString = [&] (const CString& string) {
+    auto appendLengthAndString = [&] (const CStringBase& string) {
         append(vector, string.length());
         append(vector, string);
     };

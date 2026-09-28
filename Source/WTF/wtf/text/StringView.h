@@ -74,7 +74,7 @@ public:
     StringView(const void* string LIFETIME_BOUND, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
 
-    ALWAYS_INLINE static StringView fromLatin1(std::span<const Latin1Character> span LIFETIME_BOUND) { return StringView { span }; } // FIXME: This can become span<const char> once CString::span() changes to match
+    ALWAYS_INLINE static StringView fromLatin1(std::span<const Latin1Character> span LIFETIME_BOUND) { return StringView { span }; } // FIXME: This can become span<const char> once CStringBase::span() changes to match
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
     unsigned length() const;

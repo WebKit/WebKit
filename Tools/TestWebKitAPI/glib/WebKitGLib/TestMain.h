@@ -82,7 +82,7 @@
     }
 
 inline const char* assertCmpCStringPointer(const char* string) { return string; }
-inline const char* assertCmpCStringPointer(const CString& string) { return string.legacyCStringPointer(); }
+inline const char* assertCmpCStringPointer(const CStringBase& string) { return string.legacyCStringPointer(); }
 inline const char* assertCmpCStringPointer(const UTF8CStringView& string) { return string.utf8(); }
 
 #define ASSERT_CMP_CSTRING(s1, cmp, s2) \

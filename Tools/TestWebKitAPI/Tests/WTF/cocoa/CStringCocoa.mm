@@ -81,11 +81,11 @@ TEST(WTF, CStringWithEncodingCreateNSString)
     UTF8CString emptyString { u8""_span };
     EXPECT_TRUE([emptyString.createNSString().get() isEqualToString:@""]);
 
-    // An untyped CString has no encoding to convert from, so it has no createNSString().
+    // An untyped CStringBase has no encoding to convert from, so it has no createNSString().
     static_assert(HasCreateNSString<UTF8CString>);
     static_assert(HasCreateNSString<Latin1CString>);
     static_assert(HasCreateNSString<ASCIICString>);
-    static_assert(!HasCreateNSString<CString>);
+    static_assert(!HasCreateNSString<CStringBase>);
 }
 
 } // namespace TestWebKitAPI

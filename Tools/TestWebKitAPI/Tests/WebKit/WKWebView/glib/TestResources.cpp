@@ -598,9 +598,9 @@ public:
             return;
 
         if (redirectResponse)
-            g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURIAfterRedirection.data());
+            g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURIAfterRedirection.legacyCStringPointer());
         else
-            g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURI.data());
+            g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURI.legacyCStringPointer());
         g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, webkit_web_resource_get_uri(resource));
 
         SingleResourceLoadTest::resourceSentRequest(resource, request, redirectResponse);
@@ -611,30 +611,30 @@ public:
         if (resource != m_resource)
             return;
 
-        g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, m_expectedCancelledResourceURI.data());
+        g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, m_expectedCancelledResourceURI.legacyCStringPointer());
         g_assert_error(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED);
 
         SingleResourceLoadTest::resourceFailed(resource, error);
     }
 
-    void setExpectedNewResourceURI(const CString& uri)
+    void setExpectedNewResourceURI(const UTF8CString& uri)
     {
         m_expectedNewResourceURI = uri;
     }
 
-    void setExpectedCancelledResourceURI(const CString& uri)
+    void setExpectedCancelledResourceURI(const UTF8CString& uri)
     {
         m_expectedCancelledResourceURI = uri;
     }
 
-    void setExpectedNewResourceURIAfterRedirection(const CString& uri)
+    void setExpectedNewResourceURIAfterRedirection(const UTF8CString& uri)
     {
         m_expectedNewResourceURIAfterRedirection = uri;
     }
 
-    CString m_expectedNewResourceURI;
-    CString m_expectedCancelledResourceURI;
-    CString m_expectedNewResourceURIAfterRedirection;
+    UTF8CString m_expectedNewResourceURI;
+    UTF8CString m_expectedCancelledResourceURI;
+    UTF8CString m_expectedNewResourceURIAfterRedirection;
 };
 
 static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)

@@ -222,7 +222,7 @@ static void append(Vector<char>& vector, const char* string)
     vector.append(unsafeSpan(string));
 }
 
-static void append(Vector<char>& vector, const CString& string)
+static void append(Vector<char>& vector, const CStringBase& string)
 {
     vector.append(string.span());
 }

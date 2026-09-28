@@ -76,7 +76,7 @@ public:
     String(const char8_t* characters) : String(unsafeSpan(characters)) { }
 
     // Construct a string from a CString that knows its encoding, decoding it as that encoding.
-    // Unlike CString, which would have to be decoded by the caller, and unlike fromUTF8(), which
+    // Unlike CStringBase, which would have to be decoded by the caller, and unlike fromUTF8(), which
     // will happily reinterpret Latin-1 bytes as UTF-8, the character type picks the decoding.
     template<OneByteCharacterType CharacterType> String(const CStringWithEncoding<CharacterType>&);
 
