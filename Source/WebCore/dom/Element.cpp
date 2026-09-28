@@ -2700,12 +2700,8 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
     auto newElements = copyToVectorOf<WeakPtr<Element, WeakPtrImplWithEventTargetData>>(*elements);
     explicitlySetAttrElementsMap().set(attributeName, WTF::move(newElements));
 
-    if (CheckedPtr cache = protect(document())->existingAXObjectCache()) {
-        for (auto element : elements.value()) {
-            // FIXME: Should this pass `element` instead of `*this`?
-            cache->updateRelations(*this, attributeName);
-        }
-    }
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+        cache->updateRelations(*this, attributeName);
 }
 
 void Element::classAttributeChanged(const AtomString& newClassString, AttributeModificationReason reason)
