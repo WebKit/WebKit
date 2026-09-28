@@ -27,6 +27,9 @@
 
 #include "StyleCalculationValue.h"
 #include <wtf/HashMap.h>
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include <wtf/Lock.h>
+#endif
 
 namespace WebCore {
 namespace Style {
@@ -34,6 +37,8 @@ namespace Calculation {
 
 class ValueMap {
 public:
+    // ValueMap::calculationValues() returns a process-global ValuesMap registry used
+    // by Style::PrimitiveData to keep calc() values out of its (float-sized) payload.
     static ValueMap& calculationValues();
 
     unsigned insert(Ref<Value>&&);
@@ -53,8 +58,14 @@ private:
         Entry(Ref<Value>&&);
     };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     unsigned m_nextAvailableHandle { 1 };
     HashMap<unsigned, Entry> m_map;
+#else
+    mutable Lock m_lock;
+    unsigned m_nextAvailableHandle WTF_GUARDED_BY_LOCK(m_lock) { 1 };
+    HashMap<unsigned, Entry> m_map WTF_GUARDED_BY_LOCK(m_lock);
+#endif
 };
 
 inline ValueMap::Entry::Entry(Ref<Value>&& value)
@@ -64,9 +75,11 @@ inline ValueMap::Entry::Entry(Ref<Value>&& value)
 
 inline unsigned ValueMap::insert(Ref<Value>&& value)
 {
-    ASSERT(m_nextAvailableHandle);
-
     Entry entry(WTF::move(value));
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_lock };
+#endif
+    ASSERT(m_nextAvailableHandle);
 
     // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
     // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489
@@ -78,6 +91,9 @@ inline unsigned ValueMap::insert(Ref<Value>&& value)
 
 inline Value& ValueMap::get(unsigned handle) const
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_lock };
+#endif
     ASSERT(m_map.contains(handle));
 
     return *m_map.find(handle)->value.value;
@@ -85,6 +101,9 @@ inline Value& ValueMap::get(unsigned handle) const
 
 inline void ValueMap::ref(unsigned handle)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_lock };
+#endif
     ASSERT(m_map.contains(handle));
 
     ++m_map.find(handle)->value.referenceCountMinusOne;
@@ -92,6 +111,9 @@ inline void ValueMap::ref(unsigned handle)
 
 inline void ValueMap::deref(unsigned handle)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_lock };
+#endif
     ASSERT(m_map.contains(handle));
 
     auto it = m_map.find(handle);
@@ -100,7 +122,15 @@ inline void ValueMap::deref(unsigned handle)
         return;
     }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    RefPtr<Value> valueHold = WTF::move(it->value.value);
+#endif
     m_map.remove(it);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    locker.unlockEarly();
+    // Destroying Calculation::Value can run arbitrary `Calculation::Tree` teardown,
+    // so drop the last reference (valueHold) after unlocking.
+#endif
 }
 
 } // namespace Calculation
