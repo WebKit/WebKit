@@ -34,7 +34,9 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
+#include <QCoreApplication>
 #include <QOpenGLContext>
 #include <QCursor>
 #include <QQuickWindow>
@@ -198,6 +200,14 @@ WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outIma
     GUniqueOutPtr<GError> bufferError;
     auto eglImage = static_cast<EGLImage>(wpe_buffer_import_to_egl_image(frameBuffer.get(), &bufferError.outPtr()));
     if (!eglImage) {
+        if (frameBuffer == priv->pendingBuffer) {
+            GRefPtr<WPEBuffer> failedBuffer = WTF::move(priv->pendingBuffer);
+            QMetaObject::invokeMethod(QCoreApplication::instance(),
+                [view = GRefPtr<WPEViewQtQuick>(view), buffer = WTF::move(failedBuffer)] {
+                wpe_view_buffer_rendered(WPE_VIEW(view.get()), buffer.get());
+                wpe_view_buffer_released(WPE_VIEW(view.get()), buffer.get());
+            }, Qt::QueuedConnection);
+        }
         if (error && bufferError)
             g_propagate_error(error, bufferError.release());
         else if (error)
@@ -230,9 +240,6 @@ void wpe_view_qtquick_rollback_frame(WPEViewQtQuick* view)
     priv->pendingBuffer = WTF::move(failedBuffer);
     priv->committedBuffer = WTF::move(priv->previousCommittedBuffer);
     priv->bufferAwaitingAck = nullptr;
-
-    if (priv->wpeQtView)
-        priv->wpeQtView->triggerUpdateScene();
 }
 
 void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)

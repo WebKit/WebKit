@@ -45,7 +45,7 @@ public:
     bool initialize();
     void invalidate();
     bool importEGLImage(EGLImage);
-    bool draw(const QMatrix4x4& matrix, float opacity, std::optional<QRect> scissorRect, std::optional<int> stencilValue);
+    bool draw(const QMatrix4x4&, float opacity, std::optional<QRect> scissorRect, std::optional<int> stencilValue);
     bool isInitialized() const { return m_program; }
 
 private:

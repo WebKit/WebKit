@@ -208,15 +208,6 @@ void WPEQtView::notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const 
     Q_EMIT view->loadingChanged(loadRequest.get());
 }
 
-void WPEQtView::didUpdateScene()
-{
-    Q_D(WPEQtView);
-    if (!d->m_webView)
-        return;
-    auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-    wpe_view_qtquick_did_update_scene(WPE_VIEW_QTQUICK(wpeView));
-}
-
 QSGNode* WPEQtView::updatePaintNode(QSGNode* node, UpdatePaintNodeData*)
 {
     Q_D(WPEQtView);
@@ -232,7 +223,7 @@ QSGNode* WPEQtView::updatePaintNode(QSGNode* node, UpdatePaintNodeData*)
     auto* renderNode = static_cast<WPEQtUnderlayRenderNode*>(node);
     if (!renderNode)
         renderNode = new WPEQtUnderlayRenderNode();
-    renderNode->setView(this, WPE_VIEW_QTQUICK(wpeView));
+    renderNode->setView(window(), WPE_VIEW_QTQUICK(wpeView));
     renderNode->setRect(boundingRect());
     renderNode->advanceFrame();
     return renderNode;
