@@ -889,6 +889,7 @@ sub runJSCStressTests
             "LayoutTests/jsc-layout-tests.yaml",
             "JSTests/typeProfiler.yaml",
             "JSTests/controlFlowProfiler.yaml",
+            "JSTests/heapProfiler.yaml",
             "JSTests/es6.yaml",
             "JSTests/modules.yaml",
             "JSTests/complex.yaml",
