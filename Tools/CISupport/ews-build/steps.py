@@ -8134,12 +8134,23 @@ class ParseStaticAnalyzerResultsWithoutChange(ParseStaticAnalyzerResults):
 
 class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
     name = 'find-modified-safer-cpp-expectations'
-    RE_FILE = r'^(\+|-)(?P<file>[^/+/-].+(?:\.cpp|\.mm|\.h|\.m|\.c))$'
+    RE_FILE = r'^(?P<sign>\+|-)(\s*\[\s*(?P<platform>\w+)\s*\]\s*)?(?P<file>[^/+\-\[].+(?:\.cpp|\.mm|\.h|\.m|\.c))$'
     RE_EXPECTATIONS = r'^(\+\+\+).+(Source/(?P<project>.+)/SaferCPPExpectations/(?P<checker>.+)Expectations)$'
     command = ['git', 'diff', 'HEAD~1', '--', '*Expectations']
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
+
+    @staticmethod
+    def normalize_platform(platform):
+        if not platform:
+            return None
+        platform = platform.lower()
+        if platform == 'mac' or platform == 'macos':
+            return 'macOS'
+        elif platform == 'ios':
+            return 'iOS'
+        return None
 
     @defer.inlineCallbacks
     def run(self):
@@ -8156,6 +8167,8 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
             yield self._addToLog('stdio', 'This change does not modify Safer CPP expectations.\n')
             return defer.returnValue(rc)
 
+        builder_platform = self.normalize_platform(self.getProperty('platform', ''))
+
         yield self._addToLog('stdio', '\nLooking for changes to Safer CPP expectations...\n')
         removed_tests = []
         added_tests = []
@@ -8167,13 +8180,23 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
                 yield self._addToLog('stdio', f'Changes for {project}/{checker}...\n')
             file_match = re.search(self.RE_FILE, line, re.IGNORECASE)
             if file_match:
+                line_platform = self.normalize_platform(file_match.group('platform'))
+                if line_platform and builder_platform and line_platform != builder_platform:
+                    continue
                 test_name = f"{project}/{file_match.group('file')}/{checker}"
-                if file_match.group(1) == '+':
+                if file_match.group('sign') == '+':
                     added_tests.append(test_name)
                     yield self._addToLog('stdio', f'    {test_name} was added to {checker} expectations.\n')
-                elif file_match.group(1) == '-':
+                elif file_match.group('sign') == '-':
                     removed_tests.append(test_name)
                     yield self._addToLog('stdio', f'    {test_name} was removed from {checker} expectations.\n')
+
+        added_set, removed_set = set(added_tests), set(removed_tests)
+        cancelled = added_set & removed_set
+        if cancelled:
+            yield self._addToLog('stdio', f'\nThe following retagged tests had no net expectation change and will be ignored: {sorted(cancelled)}\n')
+        added_tests = [t for t in dict.fromkeys(added_tests) if t not in removed_set]
+        removed_tests = [t for t in dict.fromkeys(removed_tests) if t not in added_set]
 
         self.setProperty('user_removed_tests', removed_tests)
         self.setProperty('user_added_tests', added_tests)
