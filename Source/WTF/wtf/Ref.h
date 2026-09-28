@@ -206,7 +206,7 @@ private:
     }
 
     typename PtrTraits::StorageType m_ptr;
-} SWIFT_SELF_CONTAINED;
+} SWIFT_SELF_CONTAINED SWIFT_REFCOUNTED_PTR(.get);
 
 // Template deduction guide.
 template<typename X, typename Y> Ref(const WeakRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;

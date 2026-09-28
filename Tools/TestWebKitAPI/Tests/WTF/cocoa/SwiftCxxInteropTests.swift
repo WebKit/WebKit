@@ -110,6 +110,12 @@ private final class Recorder {
     var values: [CInt] = []
 }
 
+// FIXME(rdar://130765784): We should be able use the built-in ===, but AnyObject currently excludes foreign reference types
+private func isSameSharedProbe(_ lhs: Cxx.SharedProbe?, _ rhs: Cxx.SharedProbe?) -> Bool {
+    // Safety: Swift represents all reference types, including foreign reference types, as raw pointers
+    unsafe unsafeBitCast(lhs, to: UnsafeRawPointer?.self) == unsafeBitCast(rhs, to: UnsafeRawPointer?.self)
+}
+
 // MARK: - Tests
 
 @Suite(.serialized)
@@ -589,6 +595,99 @@ struct SwiftCxxInteropTests {
             "a noncopyable value must be relocated with its move constructor, not by copying its bytes"
         )
         #expect(valueThroughInteriorPointer == 7)
+    }
+
+    // MARK: Ref and RefPtr
+
+    @Test
+    func returnedRefBridgesToTheSharedReference() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let probe: Cxx.SharedProbe = Cxx.makeSharedProbeRef()
+
+            // Sampled before the last use of `probe`, so its reference is certainly still held here.
+            let countWhileHeld = Cxx.sharedProbeRefCount()
+            withExtendedLifetime(probe) {}
+
+            #expect(countWhileHeld == 2, "Swift should hold the returned reference and nothing more")
+        }
+
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "bridging the Ref must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive the bridge")
+    }
+
+    @Test
+    func returnedRefPtrBridgesToAnOptionalSharedReference() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let probe: Cxx.SharedProbe? = Cxx.makeSharedProbeRefPtr()
+            let nullProbe: Cxx.SharedProbe? = Cxx.makeNullSharedProbeRefPtr()
+
+            // See returnedRefBridgesToTheSharedReference().
+            let countWhileHeld = Cxx.sharedProbeRefCount()
+            withExtendedLifetime(probe) {}
+
+            #expect(probe != nil)
+            #expect(nullProbe == nil, "a null RefPtr should bridge to nil")
+            #expect(countWhileHeld == 2, "Swift should hold the returned reference and nothing more")
+        }
+
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "bridging the RefPtr must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive the bridge")
+    }
+
+    @Test
+    func sharedReferencePassedByValueIsRetainedForTheCall() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let probe: Cxx.SharedProbe = Cxx.makeSharedProbeRef()
+
+            let countBefore = Cxx.sharedProbeRefCount()
+            let countWhileHoldingRef = Cxx.sharedProbeRefCountWhileHoldingRef(probe)
+            let countWhileHoldingRefPtr = Cxx.sharedProbeRefCountWhileHoldingRefPtr(probe)
+            let countWhileHoldingNullRefPtr = Cxx.sharedProbeRefCountWhileHoldingRefPtr(nil)
+            withExtendedLifetime(probe) {}
+
+            #expect(countWhileHoldingRef > countBefore, "the Ref argument should hold a reference of its own")
+            #expect(countWhileHoldingRefPtr > countBefore, "the RefPtr argument should hold a reference of its own")
+            #expect(countWhileHoldingNullRefPtr == 0, "nil should bridge to a null RefPtr")
+        }
+
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "bridging the arguments must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive the calls")
+    }
+
+    @Test
+    func smartPointersConvertToAndFromTheSharedReference() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let probe: Cxx.SharedProbe = Cxx.makeSharedProbeRef()
+            let ref = Cxx.SharedProbeRef(probe)
+            let refPtr = Cxx.SharedProbeRefPtr(probe)
+
+            #expect(isSameSharedProbe(ref.asReference, probe))
+            #expect(isSameSharedProbe(refPtr.asReference, probe))
+            #expect(Cxx.SharedProbeRefPtr().asReference == nil, "a null RefPtr should convert to nil")
+        }
+
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "converting must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive the conversions")
     }
 }
 

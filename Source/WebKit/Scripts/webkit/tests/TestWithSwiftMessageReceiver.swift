@@ -377,10 +377,15 @@ extension WebKit.TestWithSwiftMessageForwarder {
         // Safety: we're creating a pointer which will immediately be stored in a
         // proper ref-counted reference on the C++ side before this call returns.
         // Workaround for rdar://163107752.
-        return unsafe WebKit.TestWithSwiftMessageForwarder.createFromWeak(
+        let forwarder = unsafe WebKit.TestWithSwiftMessageForwarder.createFromWeak(
             OpaquePointer(
                 Unmanaged.passRetained(weakRefContainer).toOpaque()
             )
         )
+        #if compiler(>=6.4)
+        return RefTestWithSwiftMessageForwarder(forwarder)
+        #else
+        return forwarder
+        #endif
     }
 }
