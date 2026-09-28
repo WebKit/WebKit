@@ -30,6 +30,7 @@
 ] interface WebExtensionAPINotifications {
 
     [ProcessArgumentsLeftToRight, RaisesException, ImplementedAs=createNotification, Conditional=WK_WEB_EXTENSIONS_NOTIFICATIONS] void create([Optional] DOMString notificationId, [NSDictionary=NullAllowed] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException, Conditional=WK_WEB_EXTENSIONS_NOTIFICATIONS] void update(DOMString notificationId, [NSDictionary=NullAllowed] any options, [Optional, CallbackHandler] function callback);
 
     readonly attribute WebExtensionAPIEvent onClicked;
     readonly attribute WebExtensionAPIEvent onButtonClicked;

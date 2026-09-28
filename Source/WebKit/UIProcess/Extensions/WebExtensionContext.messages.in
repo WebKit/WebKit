@@ -114,7 +114,8 @@ messages -> WebExtensionContext {
 
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
     // Notifications APIs
-    [Validator=isNotificationsMessageAllowed] NotificationsCreate(struct WebKit::WebExtensionNotificationParameters parameters) -> ()
+    [Validator=isNotificationsMessageAllowed] NotificationsCreate(struct WebKit::WebExtensionNotificationParameters parameters) -> (std::expected<void, WebKit::WebExtensionError> result)
+    [Validator=isNotificationsMessageAllowed] NotificationsUpdate(String identifier, struct WebKit::WebExtensionNotificationParameters parameters) -> (std::expected<bool, WebKit::WebExtensionError> result)
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
