@@ -875,7 +875,7 @@ public:
     Awaitable<std::optional<FrameTreeNodeData>> getFrameTree();
     Awaitable<std::optional<FrameTreeNodeData>> getFrameTreeForBackForwardCacheEntry(WebCore::BackForwardFrameItemIdentifier);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
-    void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
+    void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
 
     void topDocumentSyncDataChangedInAnotherProcess(const WebCore::DocumentSyncSerializationData&);
     void allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&&);
