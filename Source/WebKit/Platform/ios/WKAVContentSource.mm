@@ -337,10 +337,9 @@ static RetainPtr<AVPlaybackUserInterfacePlaybackPosition> playbackPosition(CMTim
 
 - (AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioOption
 {
-    if (_currentAudioOptionIndex == NSNotFound)
-        return nil;
-
-    return [_audioOptions objectAtIndex:_currentAudioOptionIndex];
+    if (_currentAudioOptionIndex < [_audioOptions count])
+        return [_audioOptions objectAtIndex:_currentAudioOptionIndex];
+    return nil;
 }
 
 - (void)setCurrentAudioOption:(AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioOption
@@ -366,10 +365,9 @@ static RetainPtr<AVPlaybackUserInterfacePlaybackPosition> playbackPosition(CMTim
 
 - (AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioDescriptionOption
 {
-    if (_currentAudioDescriptionOptionIndex == NSNotFound)
-        return nil;
-
-    return [_audioDescriptionOptions objectAtIndex:_currentAudioDescriptionOptionIndex];
+    if (_currentAudioDescriptionOptionIndex < [_audioDescriptionOptions count])
+        return [_audioDescriptionOptions objectAtIndex:_currentAudioDescriptionOptionIndex];
+    return nil;
 }
 
 - (void)setCurrentAudioDescriptionOption:(AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioDescriptionOption
@@ -388,10 +386,9 @@ static RetainPtr<AVPlaybackUserInterfacePlaybackPosition> playbackPosition(CMTim
 
 - (AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentLegibleOption
 {
-    if (_currentLegibleOptionIndex == NSNotFound)
-        return nil;
-
-    return [_legibleOptions objectAtIndex:_currentLegibleOptionIndex];
+    if (_currentLegibleOptionIndex < [_legibleOptions count])
+        return [_legibleOptions objectAtIndex:_currentLegibleOptionIndex];
+    return nil;
 }
 
 - (void)setCurrentLegibleOption:(AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentLegibleOption
