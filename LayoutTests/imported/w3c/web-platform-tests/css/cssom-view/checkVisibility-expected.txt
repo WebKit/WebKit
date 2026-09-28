@@ -2,6 +2,8 @@ hello
 hello
 hello
 slotted
+summary
+summary
 spacer
 
 PASS checkVisibility on visibility:hidden element.
@@ -10,6 +12,10 @@ PASS checkVisibility on element slotted in content-visibility: hidden shadow hos
 PASS checkVisibility on content-visibility:auto element.
 PASS checkVisibility on content-visibility:auto element which is outside the viewport.
 PASS checkVisibility on display:none element.
+PASS checkVisibility on element not assigned to a slot.
+PASS checkVisibility on element not assigned to the only named slot.
+PASS checkVisibility on content of a closed details element.
+PASS checkVisibility on content of an open details element nested in a closed one.
 PASS checkVisibility on element slotted in display:none shadow host.
 PASS checkVisibility on display:contents element.
 PASS checkVisibility on opacity:0 element.
