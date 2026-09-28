@@ -412,7 +412,7 @@ private:
     WebCore::MediaPlayerClientIdentifier m_clientIdentifier;
     RefPtr<SandboxExtension> m_sandboxExtension;
     const Ref<IPC::Connection> m_webProcessConnection;
-    RefPtr<WebCore::MediaPlayer> m_player;
+    const RefPtr<WebCore::MediaPlayer> m_player;
     WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
@@ -439,7 +439,7 @@ private:
 #endif
 
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
-    RefPtr<RemoteAudioSourceProviderProxy> m_remoteAudioSourceProvider;
+    const RefPtr<RemoteAudioSourceProviderProxy> m_remoteAudioSourceProvider;
 #endif
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 

@@ -111,7 +111,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     uint64_t m_logIdentifier { 0 };
-    Ref<Logger> m_logger;
+    const Ref<Logger> m_logger;
 #endif
 };
 

@@ -272,7 +272,7 @@ private:
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
 #if PLATFORM(COCOA)
-    RetainPtr<NSMutableSet> m_subscribedDomainsForCookieChanges;
+    const RetainPtr<NSMutableSet> m_subscribedDomainsForCookieChanges;
     bool m_didRegisterCookieListeners { false };
 #elif USE(SOUP)
     void notifyCookie(SoupCookie*, bool added);

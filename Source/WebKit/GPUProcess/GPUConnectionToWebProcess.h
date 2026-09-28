@@ -379,7 +379,7 @@ private:
 
     static uint64_t gObjectCountForTesting;
 
-    RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
 
     const Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
@@ -389,10 +389,10 @@ private:
 #if ENABLE(WEB_AUDIO)
     const std::unique_ptr<RemoteAudioDestinationManager> m_remoteAudioDestinationManager;
 #endif
-    RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
+    const RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
 #if ENABLE(VIDEO)
     const RefPtr<RemoteAudioVideoRendererProxyManager> m_remoteAudioVideoRendererProxyManager;
-    Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
+    const Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     const LazyUniqueRef<GPUConnectionToWebProcess, VideoReceiverEndpointManager> m_videoReceiverEndpointManager;
@@ -433,7 +433,7 @@ private:
     using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
     RemoteGPUMap m_remoteGPUMap;
 #if ENABLE(ENCRYPTED_MEDIA)
-    RefPtr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
+    const RefPtr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif
 #if USE(AUDIO_SESSION)
     RefPtr<RemoteAudioSessionProxy> m_audioSessionProxy;
@@ -442,7 +442,7 @@ private:
     const std::unique_ptr<RemoteMediaSessionHelperProxy> m_mediaSessionHelperProxy;
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
+    const RefPtr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
 #endif
 #if HAVE(AVASSETREADER)
     const std::unique_ptr<RemoteImageDecoderAVFProxy> m_imageDecoderAVFProxy;

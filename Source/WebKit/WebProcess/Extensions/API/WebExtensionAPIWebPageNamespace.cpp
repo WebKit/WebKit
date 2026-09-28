@@ -70,7 +70,7 @@ WebExtensionAPITest& WebExtensionAPIWebPageNamespace::test()
     // Documentation: None (Testing Only)
 
     if (!m_test)
-        m_test = WebExtensionAPITest::create(*this);
+        lazyInitialize(m_test, WebExtensionAPITest::create(*this));
 
     return *m_test;
 }

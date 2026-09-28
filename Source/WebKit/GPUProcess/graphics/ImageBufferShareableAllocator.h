@@ -55,7 +55,7 @@ private:
 
     const WebCore::ProcessIdentity m_resourceOwner;
 #if HAVE(IOSURFACE)
-    RefPtr<WebCore::IOSurfacePool> m_ioSurfacePool;
+    const RefPtr<WebCore::IOSurfacePool> m_ioSurfacePool;
 #endif
 };
 

@@ -150,7 +150,7 @@ private:
 #if ENABLE(SCROLLING_THREAD)
     bool m_compositionRequiredInScrollingThread { false };
 #endif
-    RefPtr<ThreadedCompositor> m_compositor;
+    const RefPtr<ThreadedCompositor> m_compositor;
     std::unique_ptr<WebCore::SkiaPaintingEngine> m_skiaPaintingEngine;
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 

@@ -200,8 +200,7 @@ bool UserMediaPermissionRequestManagerProxy::isMonitoringCaptureDeviceRotation(c
 {
     if (persistentId.isEmpty())
         return false;
-    RetainPtr observer = m_objcObserver;
-    return [observer isMonitoringCaptureDeviceRotation:persistentId];
+    return [m_objcObserver isMonitoringCaptureDeviceRotation:persistentId];
 }
 
 void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(const String& persistentId)
@@ -218,7 +217,7 @@ void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotatio
     }
 
     if (!m_objcObserver)
-        m_objcObserver = adoptNS([[WKRotationCoordinatorObserver alloc] initWithRequestManagerProxy:*this]);
+        lazyInitialize(m_objcObserver, adoptNS([[WKRotationCoordinatorObserver alloc] initWithRequestManagerProxy:*this]));
 
     if (auto currentRotation = [m_objcObserver start:persistentId layer:layer])
         rotationAngleForCaptureDeviceChanged(persistentId, *currentRotation);

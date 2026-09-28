@@ -47,7 +47,7 @@ public:
     void swapBuffers();
 
 private:
-    std::unique_ptr<WebCore::GLContext> m_glContext;
+    const std::unique_ptr<WebCore::GLContext> m_glContext;
 };
 
 } // namespace WebKit

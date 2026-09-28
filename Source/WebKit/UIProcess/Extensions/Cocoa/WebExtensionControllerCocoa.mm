@@ -109,7 +109,7 @@ namespace WebKit {
 void WebExtensionController::initializePlatform()
 {
     ASSERT(!m_webExtensionControllerHelper);
-    m_webExtensionControllerHelper = [[_WKWebExtensionControllerHelper alloc] initWithWebExtensionController:*this];
+    lazyInitialize(m_webExtensionControllerHelper, adoptNS([[_WKWebExtensionControllerHelper alloc] initWithWebExtensionController:*this]));
 }
 
 void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> dataTypes, CompletionHandler<void(Vector<Ref<WebExtensionDataRecord>>)>&& completionHandler)

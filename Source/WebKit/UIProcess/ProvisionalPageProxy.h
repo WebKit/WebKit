@@ -230,7 +230,7 @@ private:
 
     RefPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebFrameProxy> m_mainFrame;
-    RefPtr<WebsiteDataStore> m_replacedDataStoreForWebArchiveLoad;
+    const RefPtr<WebsiteDataStore> m_replacedDataStoreForWebArchiveLoad;
     WebCore::NavigationIdentifier m_navigationID;
     bool m_isServerRedirect;
     WebCore::ResourceRequest m_request;
@@ -246,7 +246,7 @@ private:
     RefPtr<WebCore::DocumentSyncData> m_deferredTopDocumentSyncData;
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
-    RefPtr<API::WebsitePolicies> m_mainFrameWebsitePolicies;
+    const RefPtr<API::WebsitePolicies> m_mainFrameWebsitePolicies;
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_accessibilityToken;

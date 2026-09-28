@@ -47,7 +47,7 @@ Ref<LaunchServicesDatabaseObserver> LaunchServicesDatabaseObserver::create()
 LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver()
 {
 #if HAVE(LSDATABASECONTEXT) && !HAVE(SYSTEM_CONTENT_LS_DATABASE)
-    m_observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
+    lazyInitialize(m_observer, RetainPtr<id> { [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
         OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
@@ -57,7 +57,7 @@ LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver()
             RELEASE_ASSERT(xpc_get_type(connection.get()) == XPC_TYPE_CONNECTION);
             xpc_connection_send_message(connection.get(), message.get());
         }
-    }];
+    }] });
 #endif
 }
 

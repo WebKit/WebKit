@@ -81,7 +81,7 @@ private:
     void releaseMemory(WTF::Critical) override;
 
     const WeakRef<WebPage> m_webPage;
-    Ref<AcceleratedSurface> m_surface;
+    const Ref<AcceleratedSurface> m_surface;
     std::unique_ptr<WebCore::GLContext> m_context;
     bool m_pendingNotifyFrame { false };
     bool m_isWaitingForFrameComplete { false };

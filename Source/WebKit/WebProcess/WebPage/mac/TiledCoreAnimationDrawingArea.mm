@@ -82,19 +82,19 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     : DrawingArea(parameters.drawingAreaIdentifier, webPage)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
-    m_hostingLayer = [CALayer layer];
+    lazyInitialize(m_hostingLayer, RetainPtr { [CALayer layer] });
     [m_hostingLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_hostingLayer setFrame:webPage.bounds()];
     [m_hostingLayer setOpaque:YES];
     [m_hostingLayer setGeometryFlipped:YES];
 
-    m_renderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
+    lazyInitialize(m_renderingUpdateRunLoopObserver, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
         this->renderingUpdateRunLoopCallback();
-    });
+    }));
 
-    m_postRenderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
+    lazyInitialize(m_postRenderingUpdateRunLoopObserver, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
         this->postRenderingUpdateRunLoopCallback();
-    });
+    }));
 
     updateLayerHostingContext();
     

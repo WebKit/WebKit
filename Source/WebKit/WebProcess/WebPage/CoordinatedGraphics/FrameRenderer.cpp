@@ -36,9 +36,9 @@ using namespace WebCore;
 
 FrameRenderer::FrameRenderer()
 {
-    m_renderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
+    lazyInitialize(m_renderingUpdateRunLoopObserver, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
         renderingUpdateRunLoopObserverFired();
-    });
+    }));
 }
 
 FrameRenderer::~FrameRenderer()

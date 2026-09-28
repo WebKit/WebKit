@@ -85,7 +85,7 @@ private:
     void setState(State&&);
 
     WeakHashSet<EndowmentStateTrackerClient> m_clients;
-    RetainPtr<RBSProcessMonitor> m_processMonitor;
+    const RetainPtr<RBSProcessMonitor> m_processMonitor;
     mutable std::optional<State> m_state;
 };
 

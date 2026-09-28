@@ -242,7 +242,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     Ref pageConfiguration = configuration.copy();
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
     WebProcessPool& processPool = pageConfiguration->processPool();
-    m_page = processPool.createWebPage(*m_pageClient, WTF::move(pageConfiguration));
+    lazyInitialize(m_page, processPool.createWebPage(*m_pageClient, WTF::move(pageConfiguration)));
 
     auto& configurationFromPage = m_page->configuration();
     m_page->initializeWebPage(configurationFromPage.openedSite(), configurationFromPage.initialSandboxFlags(), configurationFromPage.initialReferrerPolicy());

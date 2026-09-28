@@ -110,7 +110,7 @@ RefPtr<WebExtensionSQLiteRow> WebExtensionSQLiteRowEnumerator::next()
     switch (sqlite3_step(m_statement->handle())) {
     case SQLITE_ROW:
         if (!m_row)
-            m_row = WebExtensionSQLiteRow::create(Ref { m_statement });
+            lazyInitialize(m_row, WebExtensionSQLiteRow::create(Ref { m_statement }));
         return m_row;
 
     default:

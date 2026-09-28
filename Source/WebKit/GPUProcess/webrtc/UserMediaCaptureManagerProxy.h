@@ -142,7 +142,7 @@ private:
     HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<UserMediaCaptureManagerProxySourceProxy>> m_proxies;
     const UniqueRef<ConnectionProxy> m_connectionProxy;
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
-    Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };
+    const Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };
 
     struct PageSources {
 #if PLATFORM(IOS_FAMILY)

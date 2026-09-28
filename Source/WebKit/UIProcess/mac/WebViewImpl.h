@@ -970,19 +970,19 @@ private:
     bool m_isCustomizingTouchBar { false };
 
     RetainPtr<NSTouchBar> m_currentTouchBar;
-    RetainPtr<NSTouchBar> m_richTextTouchBar;
-    RetainPtr<NSTouchBar> m_plainTextTouchBar;
-    RetainPtr<NSTouchBar> m_passwordTextTouchBar;
-    RetainPtr<WKTextTouchBarItemController> m_textTouchBarItemController;
-    RetainPtr<NSCandidateListTouchBarItem> m_richTextCandidateListTouchBarItem;
-    RetainPtr<NSCandidateListTouchBarItem> m_plainTextCandidateListTouchBarItem;
-    RetainPtr<NSCandidateListTouchBarItem> m_passwordTextCandidateListTouchBarItem;
-    RetainPtr<WebPlaybackControlsManager> m_playbackControlsManager;
-    RetainPtr<NSCustomTouchBarItem> m_exitFullScreenButton;
+    const RetainPtr<NSTouchBar> m_richTextTouchBar;
+    const RetainPtr<NSTouchBar> m_plainTextTouchBar;
+    const RetainPtr<NSTouchBar> m_passwordTextTouchBar;
+    const RetainPtr<WKTextTouchBarItemController> m_textTouchBarItemController;
+    const RetainPtr<NSCandidateListTouchBarItem> m_richTextCandidateListTouchBarItem;
+    const RetainPtr<NSCandidateListTouchBarItem> m_plainTextCandidateListTouchBarItem;
+    const RetainPtr<NSCandidateListTouchBarItem> m_passwordTextCandidateListTouchBarItem;
+    const RetainPtr<WebPlaybackControlsManager> m_playbackControlsManager;
+    const RetainPtr<NSCustomTouchBarItem> m_exitFullScreenButton;
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    RetainPtr<AVTouchBarPlaybackControlsProvider> m_mediaTouchBarProvider;
-    RetainPtr<AVTouchBarScrubber> m_mediaPlaybackControlsView;
+    const RetainPtr<AVTouchBarPlaybackControlsProvider> m_mediaTouchBarProvider;
+    const RetainPtr<AVTouchBarScrubber> m_mediaPlaybackControlsView;
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #endif // HAVE(TOUCH_BAR)
 
@@ -1080,7 +1080,7 @@ private:
     CGSize m_lastRequestedFixedLayoutSize { 0, 0 };
 
     bool m_inSecureInputState { false };
-    RetainPtr<WKEditorUndoTarget> m_undoTarget;
+    const RetainPtr<WKEditorUndoTarget> m_undoTarget;
 
     ValidationMap m_validationMap;
 
@@ -1103,8 +1103,8 @@ private:
     RetainPtr<WKDigitalCredentialsPicker> _digitalCredentialsPicker;
 #endif
 
-    RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;
-    RetainPtr<WKAccessibilitySettingsObserver> m_accessibilitySettingsObserver;
+    const RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;
+    const RetainPtr<WKAccessibilitySettingsObserver> m_accessibilitySettingsObserver;
 
     bool m_shouldDeferViewInWindowChanges { false };
     bool m_viewInWindowChangeWasDeferred { false };
@@ -1114,7 +1114,7 @@ private:
     id m_flagsChangedEventMonitor { nullptr };
 
     const UniqueRef<PAL::HysteresisActivity> m_contentRelativeViewsHysteresis;
-    std::unique_ptr<PAL::HysteresisActivity> m_pageScrollingHysteresis;
+    const std::unique_ptr<PAL::HysteresisActivity> m_pageScrollingHysteresis;
     bool m_contentRelativeViewsNeedToBeRepositioned { false };
     bool m_cursorOverlapsSelection { false };
 
@@ -1130,21 +1130,21 @@ private:
     bool m_ignoresAllEvents { false };
     bool m_ignoresMouseDraggedEvents { false };
 
-    RetainPtr<WKImmediateActionController> m_immediateActionController;
-    RetainPtr<NSImmediateActionGestureRecognizer> m_immediateActionGestureRecognizer;
+    const RetainPtr<WKImmediateActionController> m_immediateActionController;
+    const RetainPtr<NSImmediateActionGestureRecognizer> m_immediateActionGestureRecognizer;
 
     bool m_allowsLinkPreview { true };
 
-    RetainPtr<WKMouseTrackingObserver> m_mouseTrackingObserver;
+    const RetainPtr<WKMouseTrackingObserver> m_mouseTrackingObserver;
     RetainPtr<NSTrackingArea> m_primaryTrackingArea;
-    RetainPtr<NSTrackingArea> m_flagsChangedEventMonitorTrackingArea;
+    const RetainPtr<NSTrackingArea> m_flagsChangedEventMonitorTrackingArea;
 
     NSToolTipTag m_lastToolTipTag { 0 };
     WeakObjCPtr<id> m_trackingRectOwner;
     void* m_trackingRectUserData { nullptr };
 
     RetainPtr<CALayer> m_rootLayer;
-    RetainPtr<NSView> m_layerHostingView;
+    const RetainPtr<NSView> m_layerHostingView;
 
     RetainPtr<CALayer> m_headerBannerLayer;
     RetainPtr<CALayer> m_footerBannerLayer;
@@ -1201,9 +1201,9 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    RetainPtr<WKTextAnimationManager> m_textAnimationTypeManager;
+    const RetainPtr<WKTextAnimationManager> m_textAnimationTypeManager;
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
-    RetainPtr<WKTextEffectManager> m_textEffectManager;
+    const RetainPtr<WKTextEffectManager> m_textEffectManager;
 #endif
 #endif
 
@@ -1247,12 +1247,12 @@ private:
 #endif
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
-    RetainPtr<_WKWebViewTextInputNotifications> m_textInputNotifications;
+    const RetainPtr<_WKWebViewTextInputNotifications> m_textInputNotifications;
 #endif
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     RetainPtr<NSScrollPocket> m_topScrollPocket;
-    RetainPtr<NSHashTable<NSView *>> m_viewsAboveScrollPocket;
+    const RetainPtr<NSHashTable<NSView *>> m_viewsAboveScrollPocket;
     bool m_clientImplicitlyRequestedTopScrollPocket { false };
 #endif
 
@@ -1283,12 +1283,12 @@ private:
 
     // FIXME: Perhaps merge these types at some point?
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    RetainPtr<WKAppKitGestureController> m_appKitGestureController;
-    RetainPtr<WKTextSelectionController> m_textSelectionController;
+    const RetainPtr<WKAppKitGestureController> m_appKitGestureController;
+    const RetainPtr<WKTextSelectionController> m_textSelectionController;
 #endif
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    RetainPtr<WKAXCustomColorModePreferencesController> m_axCustomColorModeControlsController;
+    const RetainPtr<WKAXCustomColorModePreferencesController> m_axCustomColorModeControlsController;
 #endif
 } SWIFT_SHARED_REFERENCE(incrementCheckedPtrCountOnWebViewImpl, decrementCheckedPtrCountOnWebViewImpl) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 

@@ -187,18 +187,18 @@ private:
     void createPasswordEntryForm();
     void teardownPasswordEntryForm() override;
 
-    RetainPtr<CALayer> m_containerLayer;
-    RetainPtr<CALayer> m_contentLayer;
+    const RetainPtr<CALayer> m_containerLayer;
+    const RetainPtr<CALayer> m_contentLayer;
     RetainPtr<CALayer> m_horizontalScrollbarLayer;
     RetainPtr<CALayer> m_verticalScrollbarLayer;
-    RetainPtr<CALayer> m_scrollCornerLayer;
+    const RetainPtr<CALayer> m_scrollCornerLayer;
     const RetainPtr<PDFLayerController> m_pdfLayerController;
     const RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
     
     RefPtr<PDFPluginPasswordField> m_passwordField;
 
 
-    RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
+    const RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 
     URL m_sourceURL;
 };

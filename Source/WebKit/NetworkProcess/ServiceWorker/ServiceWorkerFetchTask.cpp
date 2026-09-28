@@ -130,7 +130,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
 
     // We only do the timeout logic for main document navigations because it is not Web-compatible to do so for subresources.
     if (loader.parameters().request.requester() == WebCore::ResourceRequestRequester::Main) {
-        m_timeoutTimer = makeUnique<Timer>(*this, &ServiceWorkerFetchTask::timeoutTimerFired);
+        lazyInitialize(m_timeoutTimer, makeUnique<Timer>(*this, &ServiceWorkerFetchTask::timeoutTimerFired));
         m_timeoutTimer->startOneShot(protect(loader.connectionToWebProcess().networkProcess())->serviceWorkerFetchTimeout());
     }
 

@@ -150,7 +150,7 @@ private:
     Markable<WebCore::SWServerConnectionIdentifier> m_serverConnectionIdentifier;
     Markable<WebCore::ServiceWorkerIdentifier> m_serviceWorkerIdentifier;
     WebCore::ResourceRequest m_currentRequest;
-    std::unique_ptr<WebCore::Timer> m_timeoutTimer;
+    const std::unique_ptr<WebCore::Timer> m_timeoutTimer;
     Markable<WebCore::ServiceWorkerRegistrationIdentifier> m_serviceWorkerRegistrationIdentifier;
     RefPtr<ServiceWorkerNavigationPreloader> m_preloader;
     const bool m_shouldRaceNetworkAndFetchHandler { false };

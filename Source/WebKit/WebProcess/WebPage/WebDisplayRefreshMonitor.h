@@ -59,7 +59,7 @@ private:
 
     DisplayLinkObserverID m_observerID;
 #if PLATFORM(MAC)
-    std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
     bool m_firstCallbackInCurrentRunloop { false };
 #endif
 

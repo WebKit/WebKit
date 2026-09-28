@@ -189,7 +189,7 @@ private:
     WebCore::PageIdentifier m_pageIdentifier;
     const WeakPtr<WebProcessPool> m_processPool;
 
-    std::unique_ptr<WebCore::WheelEventDeltaFilter> m_wheelEventDeltaFilter;
+    const std::unique_ptr<WebCore::WheelEventDeltaFilter> m_wheelEventDeltaFilter;
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;

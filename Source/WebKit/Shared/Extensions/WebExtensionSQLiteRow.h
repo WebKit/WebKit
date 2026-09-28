@@ -60,7 +60,7 @@ private:
 
     bool isNullAtIndex(int index);
 
-    Ref<WebExtensionSQLiteStatement> m_statement;
+    const Ref<WebExtensionSQLiteStatement> m_statement;
     sqlite3_stmt* m_handle;
 };
 
@@ -81,8 +81,8 @@ public:
 private:
     explicit WebExtensionSQLiteRowEnumerator(Ref<WebExtensionSQLiteStatement>&&);
 
-    Ref<WebExtensionSQLiteStatement> m_statement;
-    RefPtr<WebExtensionSQLiteRow> m_row;
+    const Ref<WebExtensionSQLiteStatement> m_statement;
+    const RefPtr<WebExtensionSQLiteRow> m_row;
 };
 
 }; // namespace WebKit

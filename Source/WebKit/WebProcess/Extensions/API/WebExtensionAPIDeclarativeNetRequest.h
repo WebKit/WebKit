@@ -67,7 +67,7 @@ public:
     WebExtensionAPIEvent& onRuleMatchedDebug();
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onRuleMatchedDebug;
+    const RefPtr<WebExtensionAPIEvent> m_onRuleMatchedDebug;
 #endif
 #endif // PLATFORM(COCOA)
 };

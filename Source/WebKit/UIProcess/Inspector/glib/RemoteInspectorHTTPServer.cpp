@@ -75,7 +75,7 @@ bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, u
         inspectorServerAddress.reset(g_strdup_printf("[%s]:%u", host.get(), inspectorPort));
     else
         inspectorServerAddress.reset(g_strdup_printf("%s:%u", host.get(), inspectorPort));
-    m_client = makeUnique<RemoteInspectorClient>(String::fromUTF8(inspectorServerAddress.get()), *this);
+    lazyInitialize(m_client, makeUnique<RemoteInspectorClient>(String::fromUTF8(inspectorServerAddress.get()), *this));
 
     return true;
 }

@@ -432,7 +432,7 @@ private:
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
 #if ENABLE(VIDEO)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+    const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
     GCGLint m_maxCombinedTextureImageUnits { 0 };
     GCGLint m_maxVertexAttribs { 0 };
@@ -450,7 +450,7 @@ private:
     uint32_t m_nextObjectName { 0 };
     WebCore::ColorSpace m_drawingBufferColorSpace { WebCore::ColorSpace::SRGB() };
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
-    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
+    const RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

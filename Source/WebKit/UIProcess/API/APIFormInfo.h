@@ -49,8 +49,8 @@ public:
 private:
     FormInfo(API::FrameInfo&, API::FrameInfo& sourceFrame, const WTF::URL& submissionURL, const WTF::String& httpMethod, const Vector<std::pair<WTF::String, WTF::String>>& formValues);
 
-    Ref<API::FrameInfo> m_targetFrame;
-    Ref<API::FrameInfo> m_sourceFrame;
+    const Ref<API::FrameInfo> m_targetFrame;
+    const Ref<API::FrameInfo> m_sourceFrame;
     WTF::URL m_submissionURL;
     WTF::String m_httpMethod;
     Vector<std::pair<WTF::String, WTF::String>> m_formValues;

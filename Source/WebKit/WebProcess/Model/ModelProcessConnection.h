@@ -103,7 +103,7 @@ private:
     void didUnloadModelPlayer(WebCore::ModelPlayerIdentifier);
 
     // The connection from the web process to the model process.
-    Ref<IPC::Connection> m_connection;
+    const Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_hasInitialized { false };
 #if HAVE(AUDIT_TOKEN)

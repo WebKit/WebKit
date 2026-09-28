@@ -257,7 +257,7 @@ private:
     uint64_t NODELETE logIdentifier() const { return m_logIdentifier; }
     Logger& NODELETE logger() const { return m_logger; }
 
-    Ref<Logger> m_logger;
+    const Ref<Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 

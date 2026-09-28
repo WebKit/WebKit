@@ -228,7 +228,7 @@ private:
     } m_damage;
 #endif
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_didCompositeRunLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_didCompositeRunLoopObserver;
 };
 
 } // namespace WebKit

@@ -61,8 +61,8 @@ private:
     bool m_lastSentHasSelectionServices;
     bool m_lastSentHasRichContentServices;
 
-    RetainPtr<id> m_extensionWatcher;
-    RetainPtr<id> m_uiExtensionWatcher;
+    const RetainPtr<id> m_extensionWatcher;
+    const RetainPtr<id> m_uiExtensionWatcher;
 };
 
 } // namespace WebKit

@@ -830,7 +830,7 @@ const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) co
 WebCore::NowPlayingManager& GPUProcess::nowPlayingManager()
 {
     if (!m_nowPlayingManager)
-        m_nowPlayingManager = makeUnique<WebCore::NowPlayingManager>();
+        lazyInitialize(m_nowPlayingManager, makeUnique<WebCore::NowPlayingManager>());
     return *m_nowPlayingManager;
 }
 
@@ -847,7 +847,7 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
 WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 {
     if (!m_videoMediaStreamTrackRendererQueue)
-        m_videoMediaStreamTrackRendererQueue = WorkQueue::create("RemoteVideoMediaStreamTrackRenderer"_s, WorkQueue::QOS::UserInitiated);
+        lazyInitialize(m_videoMediaStreamTrackRendererQueue, WorkQueue::create("RemoteVideoMediaStreamTrackRenderer"_s, WorkQueue::QOS::UserInitiated));
     return *m_videoMediaStreamTrackRendererQueue;
 }
 #endif
@@ -856,7 +856,7 @@ WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 WorkQueue& GPUProcess::libWebRTCCodecsQueue()
 {
     if (!m_libWebRTCCodecsQueue)
-        m_libWebRTCCodecsQueue = WorkQueue::create("LibWebRTCCodecsQueue"_s, WorkQueue::QOS::UserInitiated);
+        lazyInitialize(m_libWebRTCCodecsQueue, WorkQueue::create("LibWebRTCCodecsQueue"_s, WorkQueue::QOS::UserInitiated));
     return *m_libWebRTCCodecsQueue;
 }
 #endif

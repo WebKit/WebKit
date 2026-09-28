@@ -687,10 +687,10 @@ private:
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
-    RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
-    RefPtr<WebCore::GraphicsLayer> m_scrolledContentsLayer;
+    const RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
+    const RefPtr<WebCore::GraphicsLayer> m_scrolledContentsLayer;
 
-    RefPtr<WebCore::GraphicsLayer> m_overflowControlsContainer;
+    const RefPtr<WebCore::GraphicsLayer> m_overflowControlsContainer;
     RefPtr<WebCore::GraphicsLayer> m_layerForHorizontalScrollbar;
     RefPtr<WebCore::GraphicsLayer> m_layerForVerticalScrollbar;
     RefPtr<WebCore::GraphicsLayer> m_layerForScrollCorner;
@@ -745,9 +745,9 @@ private:
     RetainPtr<PDFSelection> m_initialSelection;
     PageAndPoint m_initialSelectionStart;
 
-    RefPtr<WebCore::ShadowRoot> m_shadowRoot;
+    const RefPtr<WebCore::ShadowRoot> m_shadowRoot;
 
-    std::unique_ptr<WebCore::ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> m_prohibitScrollingDueToContentSizeChanges;
+    const std::unique_ptr<WebCore::ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> m_prohibitScrollingDueToContentSizeChanges;
 
     // FIXME: We should rationalize these with the values in ViewGestureController.
     // For now, we'll leave them differing as they do in PDFPlugin.

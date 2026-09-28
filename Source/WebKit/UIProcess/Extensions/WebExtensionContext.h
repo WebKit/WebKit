@@ -1151,7 +1151,7 @@ private:
     String m_uniqueIdentifier = WTF::UUID::createVersion4().toString();
     bool m_customUniqueIdentifier { false };
 
-    RefPtr<WebExtensionLocalization> m_localization;
+    const RefPtr<WebExtensionLocalization> m_localization;
 
     bool m_inspectable { false };
 
@@ -1202,7 +1202,7 @@ private:
 #endif
 #endif
 
-    RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
+    const RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
 #elif ENABLE(2022_GLIB_API)
     GRefPtr<WebKitWebView> m_backgroundWebView;
     GWeakPtr<WebKitWebExtensionContext> m_delegate;
@@ -1259,7 +1259,7 @@ private:
     PopupPageActionMap m_popupPageActionMap;
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSMapTable> m_tabDelegateToIdentifierMap;
+    const RetainPtr<NSMapTable> m_tabDelegateToIdentifierMap;
 #endif
 
     CommandsVector m_commands;

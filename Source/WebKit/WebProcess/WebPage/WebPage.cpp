@@ -876,7 +876,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
     if (parameters.webExtensionControllerParameters)
-        m_webExtensionController = WebExtensionControllerProxy::getOrCreate(parameters.webExtensionControllerParameters.value(), this);
+        lazyInitialize(m_webExtensionController, WebExtensionControllerProxy::getOrCreate(parameters.webExtensionControllerParameters.value(), this));
 #endif
 
     m_corsDisablingPatterns = WTF::move(parameters.corsDisablingPatterns);
@@ -1242,9 +1242,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID contextID = 0;
 #if !HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
-    m_contextForVisibilityPropagation = LayerHostingContext::create({
+    lazyInitialize(m_contextForVisibilityPropagation, LayerHostingContext::create({
         canShowWhileLocked()
-    });
+    }));
     WEBPAGE_RELEASE_LOG(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
     contextID = m_contextForVisibilityPropagation->cachedContextID();
 #endif // !HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
@@ -1827,11 +1827,11 @@ WebPage::~WebPage()
 #endif // ENABLE(MODEL_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (RefPtr playbackSessionManager = m_playbackSessionManager)
-        playbackSessionManager->invalidate();
+    if (m_playbackSessionManager)
+        m_playbackSessionManager->invalidate();
 
-    if (RefPtr videoPresentationManager = m_videoPresentationManager)
-        videoPresentationManager->invalidate();
+    if (m_videoPresentationManager)
+        m_videoPresentationManager->invalidate();
 #endif
 
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
@@ -3991,8 +3991,7 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // When the browser is in the background, we should not freeze the layer tree
     // if the page has a video playing in picture-in-picture.
-    RefPtr videoPresentationManager = m_videoPresentationManager;
-    if (videoPresentationManager && videoPresentationManager->hasVideoPlayingInPictureInPicture() && m_layerTreeFreezeReasons.hasExactlyOneBitSet() && m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::BackgroundApplication)) {
+    if (m_videoPresentationManager && m_videoPresentationManager->hasVideoPlayingInPictureInPicture() && m_layerTreeFreezeReasons.hasExactlyOneBitSet() && m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::BackgroundApplication)) {
         drawingArea->setLayerTreeStateIsFrozen(false);
         return;
     }
@@ -4121,7 +4120,7 @@ private:
     // Owning: the previous event is alive in an outer scope, and holding a reference is cheaper than
     // a weak pointer here. g_currentEvent itself stays raw so that dispatching an event, which
     // happens for every mouse move, does not touch a refcount.
-    RefPtr<const WebEvent> m_previousCurrentEvent;
+    const RefPtr<const WebEvent> m_previousCurrentEvent;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -4672,7 +4671,7 @@ void WebPage::setControlledByAutomation(bool controlled)
 CheckedRef<PageInspectorTarget> WebPage::ensureInspectorTarget()
 {
     if (!m_inspectorTarget)
-        m_inspectorTarget = makeUnique<PageInspectorTarget>(*this);
+        lazyInitialize(m_inspectorTarget, makeUnique<PageInspectorTarget>(*this));
     return *m_inspectorTarget;
 }
 
@@ -5800,7 +5799,7 @@ WebInspectorUI* WebPage::inspectorUI()
     if (m_isClosed)
         return nullptr;
     if (!m_inspectorUI)
-        m_inspectorUI = WebInspectorUI::create(*this);
+        lazyInitialize(m_inspectorUI, WebInspectorUI::create(*this));
     return m_inspectorUI.get();
 }
 
@@ -5809,7 +5808,7 @@ RemoteWebInspectorUI* WebPage::remoteInspectorUI()
     if (m_isClosed)
         return nullptr;
     if (!m_remoteInspectorUI)
-        m_remoteInspectorUI = RemoteWebInspectorUI::create(*this);
+        lazyInitialize(m_remoteInspectorUI, RemoteWebInspectorUI::create(*this));
     return m_remoteInspectorUI.get();
 }
 
@@ -5822,14 +5821,14 @@ void WebPage::inspectorFrontendCountChanged(unsigned count)
 PlaybackSessionManager& WebPage::playbackSessionManager()
 {
     if (!m_playbackSessionManager)
-        m_playbackSessionManager = PlaybackSessionManager::create(*this);
+        lazyInitialize(m_playbackSessionManager, PlaybackSessionManager::create(*this));
     return *m_playbackSessionManager;
 }
 
 VideoPresentationManager& WebPage::videoPresentationManager()
 {
     if (!m_videoPresentationManager)
-        m_videoPresentationManager = VideoPresentationManager::create(*this, protect(playbackSessionManager()));
+        lazyInitialize(m_videoPresentationManager, VideoPresentationManager::create(*this, protect(playbackSessionManager())));
     return *m_videoPresentationManager;
 }
 
@@ -6040,7 +6039,7 @@ NotificationPermissionRequestManager* WebPage::notificationPermissionRequestMana
     if (m_notificationPermissionRequestManager)
         return m_notificationPermissionRequestManager.get();
 
-    m_notificationPermissionRequestManager = NotificationPermissionRequestManager::create(this);
+    lazyInitialize(m_notificationPermissionRequestManager, NotificationPermissionRequestManager::create(this));
     return m_notificationPermissionRequestManager.get();
 }
 
@@ -7116,8 +7115,8 @@ void WebPage::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUser
 {
     protect(corePage())->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
 
-    if (RefPtr inspectorUI = m_inspectorUI)
-        inspectorUI->effectiveAppearanceDidChange(useDarkAppearance ? WebCore::InspectorFrontendClient::Appearance::Dark : WebCore::InspectorFrontendClient::Appearance::Light);
+    if (m_inspectorUI)
+        m_inspectorUI->effectiveAppearanceDidChange(useDarkAppearance ? WebCore::InspectorFrontendClient::Appearance::Dark : WebCore::InspectorFrontendClient::Appearance::Light);
 
 #if ENABLE(PDF_PLUGIN)
     for (Ref pluginView : m_pluginViews)

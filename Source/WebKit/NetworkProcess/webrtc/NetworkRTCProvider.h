@@ -163,7 +163,7 @@ private:
 
     StdMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>, SocketComparator> m_sockets;
     WeakPtr<NetworkConnectionToWebProcess> m_connection;
-    Ref<IPC::Connection> m_ipcConnection;
+    const Ref<IPC::Connection> m_ipcConnection;
     bool m_isStarted { true };
 
     NetworkRTCMonitor m_rtcMonitor;
@@ -178,7 +178,7 @@ private:
 #endif
 
 #if !PLATFORM(COCOA)
-    UniqueRef<webrtc::BasicPacketSocketFactory> m_packetSocketFactory;
+    const UniqueRef<webrtc::BasicPacketSocketFactory> m_packetSocketFactory;
 #endif
 };
 

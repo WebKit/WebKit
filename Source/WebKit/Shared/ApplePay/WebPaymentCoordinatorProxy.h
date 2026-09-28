@@ -250,7 +250,7 @@ private:
     } m_merchantValidationState { MerchantValidationState::Idle };
 
     RefPtr<PaymentAuthorizationPresenter> m_authorizationPresenter;
-    Ref<WorkQueue> m_canMakePaymentsQueue;
+    const Ref<WorkQueue> m_canMakePaymentsQueue;
 
 #if PLATFORM(MAC)
     uint64_t m_showPaymentUIRequestSeed { 0 };

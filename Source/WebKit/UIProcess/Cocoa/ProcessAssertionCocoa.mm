@@ -449,7 +449,7 @@ void ProcessAssertion::init(const String& environmentIdentifier)
         target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier.createNSString().get()];
 
     RetainPtr domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
-    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]);
+    lazyInitialize(m_rbsAssertion, adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]));
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];

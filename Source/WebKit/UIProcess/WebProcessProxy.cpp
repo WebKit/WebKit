@@ -3446,7 +3446,7 @@ Logger& WebProcessProxy::logger()
 {
     if (!m_logger) {
         Ref logger = Logger::create(this);
-        m_logger = logger.copyRef();
+        lazyInitialize(m_logger, logger.copyRef());
         logger->setEnabled(this, isAlwaysOnLoggingAllowed());
     }
     return *m_logger;

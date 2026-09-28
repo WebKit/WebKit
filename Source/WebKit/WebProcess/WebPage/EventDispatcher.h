@@ -176,14 +176,14 @@ private:
     Lock m_scrollingTreesLock;
     HashMap<WebCore::PageIdentifier, Ref<WebCore::ThreadedScrollingTree>> m_scrollingTrees WTF_GUARDED_BY_LOCK(m_scrollingTreesLock);
 #endif
-    std::unique_ptr<WebCore::WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
+    const std::unique_ptr<WebCore::WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
 #if ENABLE(IOS_TOUCH_EVENTS)
     Lock m_touchEventsLock;
     HashMap<WebCore::PageIdentifier, UniqueRef<TouchEventQueue>> m_touchEvents WTF_GUARDED_BY_LOCK(m_touchEventsLock);
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
+    const std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
     DisplayLinkObserverID m_observerID;
 #endif
 };

@@ -64,7 +64,7 @@ public:
 
 private:
     WebCore::UserStyleSheet m_userStyleSheet;
-    Ref<ContentWorld> m_world;
+    const Ref<ContentWorld> m_world;
     WeakPtr<WebKit::WebPageProxy> m_page;
     bool m_isPageScoped { false };
 };

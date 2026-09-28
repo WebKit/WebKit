@@ -101,8 +101,8 @@ private:
     {
     }
 
-    RefPtr<FrameInfo> m_sourceFrame;
-    RefPtr<FrameInfo> m_targetFrame;
+    const RefPtr<FrameInfo> m_sourceFrame;
+    const RefPtr<FrameInfo> m_targetFrame;
     WTF::String m_targetFrameName;
 
     WebCore::ResourceRequest m_request;
@@ -113,10 +113,10 @@ private:
     bool m_shouldPerformSOAuthorization { true };
 #endif
 
-    RefPtr<UserInitiatedAction> m_userInitiatedAction;
+    const RefPtr<UserInitiatedAction> m_userInitiatedAction;
 
     const WebKit::NavigationActionData m_navigationActionData;
-    RefPtr<Navigation> m_mainFrameNavigation;
+    const RefPtr<Navigation> m_mainFrameNavigation;
     std::optional<WebCore::FrameIdentifier> m_mainFrameIDBeforeNavigationDecision;
 };
 

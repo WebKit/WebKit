@@ -38,7 +38,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(bool)>&& completionHandler)
 {
-    protect(m_canMakePaymentsQueue)->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationControllerClassSingleton()), completionHandler = WTF::move(completionHandler)]() mutable {
+    m_canMakePaymentsQueue->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationControllerClassSingleton()), completionHandler = WTF::move(completionHandler)]() mutable {
         RunLoop::mainSingleton().dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(canMakePayments);
         });

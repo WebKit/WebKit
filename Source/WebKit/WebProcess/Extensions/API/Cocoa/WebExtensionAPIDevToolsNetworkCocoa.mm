@@ -45,7 +45,7 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
 
     if (!m_onNavigated)
-        m_onNavigated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsNetworkOnNavigated);
+        lazyInitialize(m_onNavigated, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsNetworkOnNavigated));
 
     return *m_onNavigated;
 }

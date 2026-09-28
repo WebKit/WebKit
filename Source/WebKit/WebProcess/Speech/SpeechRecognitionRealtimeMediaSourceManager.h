@@ -75,9 +75,9 @@ private:
     HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<Source>> m_sources;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    RefPtr<SandboxExtension> m_machBootstrapExtension;
-    RefPtr<SandboxExtension> m_sandboxExtensionForTCCD;
-    RefPtr<SandboxExtension> m_sandboxExtensionForMicrophone;
+    const RefPtr<SandboxExtension> m_machBootstrapExtension;
+    const RefPtr<SandboxExtension> m_sandboxExtensionForTCCD;
+    const RefPtr<SandboxExtension> m_sandboxExtensionForMicrophone;
 #endif
 };
 

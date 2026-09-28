@@ -157,7 +157,7 @@ private:
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
 
-    RetainPtr<CALayer> m_hostingLayer;
+    const RetainPtr<CALayer> m_hostingLayer;
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_debugInfoLayer;
     RetainPtr<CALayer> m_pendingRootLayer;
@@ -175,8 +175,8 @@ private:
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
     Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
-    std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;
 
     bool m_isPaintingSuspended { false };
     bool m_inUpdateGeometry { false };

@@ -108,7 +108,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
         rootLayer.setSize(m_webPage->size());
     }
 
-    m_compositor = ThreadedCompositor::create(webPage, *this, m_sceneState.get());
+    lazyInitialize(m_compositor, ThreadedCompositor::create(webPage, *this, m_sceneState.get()));
 #if USE(TEXTURE_MAPPER)
     m_skiaPaintingEngine = SkiaPaintingEngine::create(nullptr);
 #else

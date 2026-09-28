@@ -926,7 +926,7 @@ private:
     MediaCaptureSandboxExtensions m_mediaCaptureSandboxExtensions { SandboxExtensionType::None };
     MachSendRight m_taskNamePort;
 #endif
-    RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
 
     struct RemoteWorkerInformation {
         WebPageProxyIdentifier remoteWorkerPageProxyID;

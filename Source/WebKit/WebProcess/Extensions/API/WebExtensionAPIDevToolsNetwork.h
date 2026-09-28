@@ -42,7 +42,7 @@ public:
 #endif
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onNavigated;
+    const RefPtr<WebExtensionAPIEvent> m_onNavigated;
 };
 
 } // namespace WebKit

@@ -111,7 +111,7 @@ private:
 
     uint64_t m_lastHandledMessageIdentifier { 0 };
     WeakRef<StorageNamespaceImpl> m_namespace;
-    Ref<const WebCore::SecurityOrigin> m_securityOrigin;
+    const Ref<const WebCore::SecurityOrigin> m_securityOrigin;
     std::unique_ptr<WebCore::StorageMap> m_map;
     std::optional<StorageAreaIdentifier> m_remoteAreaIdentifier;
     HashCountedSet<String> m_pendingValueChanges;

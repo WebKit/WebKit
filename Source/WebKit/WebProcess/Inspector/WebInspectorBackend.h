@@ -162,7 +162,7 @@ private:
     bool m_resourceCachingDisabled { false };
 
     HashMap<WebCore::FrameIdentifier, std::unique_ptr<FrameNetworkAgentProxy>> m_frameNetworkAgentProxies;
-    UniqueRef<BackendResourceDataStore> m_resourceDataStore;
+    const UniqueRef<BackendResourceDataStore> m_resourceDataStore;
     bool m_networkInstrumentationEnabled { false };
 
     HashMap<WebCore::FrameIdentifier, std::unique_ptr<PageAgentProxy>> m_framePageAgentProxies;

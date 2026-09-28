@@ -85,7 +85,7 @@ RemoteGPU::~RemoteGPU() = default;
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
-    protect(m_workQueue)->dispatch([protectedThis = protect(*this)]() mutable {
+    m_workQueue->dispatch([protectedThis = protect(*this)]() mutable {
         protectedThis->workQueueInitialize();
     });
 }
@@ -93,11 +93,10 @@ void RemoteGPU::initialize()
 void RemoteGPU::stopListeningForIPC()
 {
     assertIsMainRunLoop();
-    Ref workQueue = m_workQueue;
-    workQueue->dispatch([protectedThis = protect(*this)]() {
+    m_workQueue->dispatch([protectedThis = protect(*this)]() {
         protectedThis->workQueueUninitialize();
     });
-    workQueue->stopAndWaitForCompletion();
+    m_workQueue->stopAndWaitForCompletion();
 }
 
 void RemoteGPU::workQueueInitialize()
@@ -116,7 +115,7 @@ void RemoteGPU::workQueueInitialize()
     // The retain cycle is broken in workQueueUninitialize().
     auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();
     auto backing = WebCore::WebGPU::create([protectedThis = protect(*this)](WebCore::WebGPU::WorkItem&& workItem) {
-        protect(protectedThis->m_workQueue)->dispatch(WTF::move(workItem));
+        protectedThis->m_workQueue->dispatch(WTF::move(workItem));
     }, gpuProcessConnection ? &gpuProcessConnection->webProcessIdentity() : nullptr);
 #else
     RefPtr<WebCore::WebGPU::GPU> backing;
@@ -135,8 +134,8 @@ void RemoteGPU::workQueueUninitialize()
     streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     streamConnection->invalidate();
     m_streamConnection = nullptr;
-    protect(m_objectHeap)->clear();
-    protect(m_modelObjectHeap)->clear();
+    m_objectHeap->clear();
+    m_modelObjectHeap->clear();
     m_backing = nullptr;
 }
 
@@ -395,7 +394,7 @@ void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool
         return;
     }
 
-    auto result = protect(m_objectHeap)->objectExistsAndValid(*gpu, identifier);
+    auto result = m_objectHeap->objectExistsAndValid(*gpu, identifier);
     completionHandler(result.valid, result.exists);
 }
 

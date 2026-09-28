@@ -141,7 +141,7 @@ private:
     PlatformPopupMenuData m_data;
     int m_newSelectedIndex { 0 };
 
-    RefPtr<WebCore::Scrollbar> m_scrollbar;
+    const RefPtr<WebCore::Scrollbar> m_scrollbar;
 #if USE(CAIRO)
     GDIObject<HDC> m_DC;
     GDIObject<HBITMAP> m_bmp;

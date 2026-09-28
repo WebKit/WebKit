@@ -72,7 +72,7 @@ private:
     }
 
     WebExtensionDataType m_type { WebExtensionDataType::Local };
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
+    const RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };
 

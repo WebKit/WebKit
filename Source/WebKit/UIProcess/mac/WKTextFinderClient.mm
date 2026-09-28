@@ -103,7 +103,7 @@ private:
         [m_textFinderClient didFindStringMatchesWithRects:{ } didWrapAround:NO];
     }
 
-    RetainPtr<WKTextFinderClient> m_textFinderClient;
+    const RetainPtr<WKTextFinderClient> m_textFinderClient;
 };
     
 }

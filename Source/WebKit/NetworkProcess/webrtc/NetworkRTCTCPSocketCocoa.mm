@@ -117,7 +117,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     if (hostName.empty())
         hostName = remoteAddress.ipaddr().ToString();
     bool isTLS = options & webrtc::PacketSocketFactory::OPT_TLS;
-    m_nwConnection = createNWConnection(rtcProvider, UTF8CStringView::unsafeFromUTF8(hostName.c_str()), String::number(remoteAddress.port()).utf8(), isTLS, attributedBundleIdentifier, flags, domain);
+    lazyInitialize(m_nwConnection, createNWConnection(rtcProvider, UTF8CStringView::unsafeFromUTF8(hostName.c_str()), String::number(remoteAddress.port()).utf8(), isTLS, attributedBundleIdentifier, flags, domain));
 
     nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueueSingleton());
     nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([weakNWConnection = WeakObjCPtr { m_nwConnection.get() }, identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {

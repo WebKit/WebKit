@@ -127,9 +127,9 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
         Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection->createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTF::move(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
-        m_sharedResourceCache = gpuProcessConnection->sharedResourceCache();
+        lazyInitialize(m_sharedResourceCache, gpuProcessConnection->sharedResourceCache());
 #if ENABLE(VIDEO)
-        m_videoFrameObjectHeapProxy = gpuProcessConnection->videoFrameObjectHeapProxy();
+        lazyInitialize(m_videoFrameObjectHeapProxy, Ref { gpuProcessConnection->videoFrameObjectHeapProxy() });
 #endif
     });
 
@@ -277,7 +277,7 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::videoFrameToNativeImage(WebCor
 #if PLATFORM(COCOA)
     RefPtr<NativeImage> nativeImage;
     callOnMainRunLoopAndWait([&] {
-        nativeImage = protect(m_videoFrameObjectHeapProxy)->getNativeImage(frame);
+        nativeImage = m_videoFrameObjectHeapProxy->getNativeImage(frame);
     });
     return nativeImage;
 #else

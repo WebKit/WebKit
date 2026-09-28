@@ -113,13 +113,13 @@ private:
     WKMenuDelegate *menuDelegate();
 
     RetainPtr<NSMenu> m_menu;
-    RetainPtr<WKMenuDelegate> m_menuDelegate;
+    const RetainPtr<WKMenuDelegate> m_menuDelegate;
     WeakObjCPtr<NSView> m_webView;
 #if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<CGImageRef> m_copySubjectResult;
 #endif
 #if ENABLE(VIDEO)
-    RetainPtr<WKCaptionStyleMenuController> m_captionStyleMenuController;
+    const RetainPtr<WKCaptionStyleMenuController> m_captionStyleMenuController;
 #endif
 };
 

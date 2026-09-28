@@ -86,8 +86,8 @@ RemoteGPUProxy::~RemoteGPUProxy()
 
 void RemoteGPUProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RemoteRenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle)
 {
-    m_streamConnection = WTF::move(streamConnection);
-    protect(m_streamConnection)->open(*this, *this);
+    lazyInitialize(m_streamConnection, WTF::move(streamConnection));
+    m_streamConnection->open(*this, *this);
     callOnMainRunLoopAndWait([&]() {
         Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection->createGPU(m_backing, renderingBackend, WTF::move(serverHandle));
@@ -99,7 +99,7 @@ void RemoteGPUProxy::disconnectGpuProcessIfNeeded()
 {
     if (m_lost)
         return;
-    protect(m_streamConnection)->invalidate();
+    m_streamConnection->invalidate();
     // FIXME: deallocate m_streamConnection once the children work without the connection.
     ensureOnMainRunLoop([identifier = m_backing, weakGPUProcessConnection = WTF::move(m_gpuProcessConnection)]() {
         RefPtr gpuProcessConnection = weakGPUProcessConnection.get();
@@ -117,7 +117,7 @@ void RemoteGPUProxy::didClose(IPC::Connection&)
 
 void RemoteGPUProxy::abandonGPUProcess()
 {
-    protect(m_streamConnection)->invalidate();
+    m_streamConnection->invalidate();
     m_lost = true;
 }
 
@@ -145,7 +145,7 @@ void RemoteGPUProxy::waitUntilInitialized()
 {
     if (m_didInitialize)
         return;
-    if (protect(m_streamConnection)->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing) == IPC::Error::NoError)
+    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing) == IPC::Error::NoError)
         return;
     abandonGPUProcess();
 }

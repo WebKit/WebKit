@@ -112,11 +112,11 @@ public:
 
     void flush() final
     {
-        Ref { m_flushState }->waitFor(RemoteRenderingBackendProxy::defaultTimeout);
+        m_flushState->waitFor(RemoteRenderingBackendProxy::defaultTimeout);
     }
 
 private:
-    Ref<RemoteImageBufferProxyFlushFence> m_flushState;
+    const Ref<RemoteImageBufferProxyFlushFence> m_flushState;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferProxyFlusher);

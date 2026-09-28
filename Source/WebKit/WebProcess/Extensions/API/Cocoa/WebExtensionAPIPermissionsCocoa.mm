@@ -254,7 +254,7 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded()
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onAdded
 
     if (!m_onAdded)
-        m_onAdded = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PermissionsOnAdded);
+        lazyInitialize(m_onAdded, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PermissionsOnAdded));
 
     return *m_onAdded;
 }
@@ -264,7 +264,7 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onRemoved()
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onRemoved
 
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PermissionsOnRemoved);
+        lazyInitialize(m_onRemoved, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PermissionsOnRemoved));
 
     return *m_onRemoved;
 }

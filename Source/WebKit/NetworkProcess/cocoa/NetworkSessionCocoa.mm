@@ -1655,7 +1655,7 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 #if HAVE(DEVICE_MANAGEMENT)
     ASSERT(m_deviceManagementRestrictionsEnabled);
     if (!m_deviceManagementPolicyMonitor)
-        m_deviceManagementPolicyMonitor = adoptNS([allocDMFWebsitePolicyMonitorInstance() initWithPolicyChangeHandler:nil]);
+        lazyInitialize(m_deviceManagementPolicyMonitor, adoptNS([allocDMFWebsitePolicyMonitorInstance() initWithPolicyChangeHandler:nil]));
     return m_deviceManagementPolicyMonitor.get();
 #else
     RELEASE_ASSERT_NOT_REACHED();

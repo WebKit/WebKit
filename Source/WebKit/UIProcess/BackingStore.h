@@ -75,7 +75,7 @@ private:
     WebCore::IntSize m_size;
     float m_deviceScaleFactor { 1 };
 #if USE(CAIRO)
-    RefPtr<cairo_surface_t> m_surface;
+    const RefPtr<cairo_surface_t> m_surface;
     RefPtr<cairo_surface_t> m_scrollSurface;
     PAL::HysteresisActivity m_scrolledHysteresis;
 #elif USE(SKIA)

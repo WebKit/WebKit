@@ -74,8 +74,8 @@ private:
     void trackIdentifierChanged(const String&) final;
 
     const Ref<GroupActivitiesSession> m_session;
-    RetainPtr<WKGroupActivitiesCoordinatorDelegate> m_delegate;
-    RetainPtr<AVDelegatingPlaybackCoordinator> m_playbackCoordinator;
+    const RetainPtr<WKGroupActivitiesCoordinatorDelegate> m_delegate;
+    const RetainPtr<AVDelegatingPlaybackCoordinator> m_playbackCoordinator;
 
     std::optional<WebCore::MediaPositionState> m_positionState;
     std::optional<WebCore::MediaSessionReadyState> m_readyState;

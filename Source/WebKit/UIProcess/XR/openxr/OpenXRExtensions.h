@@ -89,7 +89,7 @@ private:
     friend class NeverDestroyed<OpenXRExtensions>;
     OpenXRExtensions();
     Vector<XrExtensionProperties> m_extensions;
-    std::unique_ptr<OpenXRExtensionMethods> m_methods;
+    const std::unique_ptr<OpenXRExtensionMethods> m_methods;
 };
 
 } // namespace WebKit

@@ -168,7 +168,7 @@ void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
 RefPtr<WebExtensionLocalization> WebExtensionContext::localization()
 {
     if (!m_localization)
-        m_localization = WebExtensionLocalization::create(protect(extension())->localization()->localizationJSON(), baseURL().host().toString());
+        lazyInitialize(m_localization, WebExtensionLocalization::create(protect(extension())->localization()->localizationJSON(), baseURL().host().toString()));
     return m_localization;
 }
 

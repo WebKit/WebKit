@@ -183,9 +183,9 @@ protected:
     WebCore::GraphicsContext& m_context;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
     const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
-    RefPtr<WebCore::ControlFactory> m_controlFactory;
+    const RefPtr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;
+    const std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;
 #endif
 };
 

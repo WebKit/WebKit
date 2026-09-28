@@ -135,7 +135,7 @@ private:
     HashMap<VideoEncoderIdentifier, UniqueRef<Encoder>> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };
 
-    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
+    const std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
 };
 
 }

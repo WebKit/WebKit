@@ -137,7 +137,7 @@ private:
     RefPtr<WebIDBConnectionToServer> m_webIDBConnection;
 
     RefPtr<WebSWClientConnection> m_swConnection;
-    RefPtr<WebSharedWorkerObjectConnection> m_sharedWorkerConnection;
+    const RefPtr<WebSharedWorkerObjectConnection> m_sharedWorkerConnection;
     WebCore::HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
 };
 

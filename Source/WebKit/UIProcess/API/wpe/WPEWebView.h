@@ -118,7 +118,7 @@ protected:
 
     std::unique_ptr<API::ViewClient> m_client;
     const std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
-    RefPtr<WebKit::WebPageProxy> m_pageProxy;
+    const RefPtr<WebKit::WebPageProxy> m_pageProxy;
 #if ENABLE(DRAG_SUPPORT)
     std::optional<WebCore::SelectionData> m_dragData;
     OptionSet<WebCore::DragOperation> m_dragMask;

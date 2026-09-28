@@ -93,7 +93,7 @@ protected:
     void invalidateRenderingUpdateRunLoopObserver();
     void renderingUpdateRunLoopObserverFired();
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
     bool m_layerTreeStateIsFrozen { false };
     bool m_isSuspended { false };
     bool m_isUpdatingRendering { false };

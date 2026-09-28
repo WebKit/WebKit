@@ -302,10 +302,10 @@ NetworkProcessProxy::NetworkProcessProxy()
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::sharedSingleton().observeUpdates([weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_storageAccessPromptQuirksDataUpdateObserver, StorageAccessPromptQuirkController::sharedSingleton().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(StorageAccessPromptQuirkController::sharedSingleton().cachedListData()), 0);
-    });
+    }));
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

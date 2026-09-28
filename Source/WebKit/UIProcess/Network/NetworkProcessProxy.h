@@ -483,7 +483,7 @@ private:
 
     const std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 
-    UniqueRef<API::CustomProtocolManagerClient> m_customProtocolManagerClient;
+    const UniqueRef<API::CustomProtocolManagerClient> m_customProtocolManagerClient;
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
@@ -491,7 +491,7 @@ private:
     RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
 #endif
 
     struct UploadActivity {
@@ -529,8 +529,8 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<id> m_backgroundObserver;
-    RetainPtr<id> m_foregroundObserver;
+    const RetainPtr<id> m_backgroundObserver;
+    const RetainPtr<id> m_foregroundObserver;
 #endif
 };
 

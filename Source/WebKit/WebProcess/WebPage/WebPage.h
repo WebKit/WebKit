@@ -2970,7 +2970,7 @@ private:
 #endif
 
 #if USE(ATSPI)
-    RefPtr<WebCore::AccessibilityRootAtspi> m_accessibilityRootObject;
+    const RefPtr<WebCore::AccessibilityRootAtspi> m_accessibilityRootObject;
 #endif
 
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
@@ -3003,13 +3003,13 @@ private:
     const UniqueRef<WebFoundTextRangeController> m_foundTextRangeController;
 
     RefPtr<WebInspectorBackend> m_inspector;
-    RefPtr<WebInspectorUI> m_inspectorUI;
-    RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
-    std::unique_ptr<PageInspectorTarget> m_inspectorTarget;
+    const RefPtr<WebInspectorUI> m_inspectorUI;
+    const RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
+    const std::unique_ptr<PageInspectorTarget> m_inspectorTarget;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    RefPtr<PlaybackSessionManager> m_playbackSessionManager;
-    RefPtr<VideoPresentationManager> m_videoPresentationManager;
+    const RefPtr<PlaybackSessionManager> m_playbackSessionManager;
+    const RefPtr<VideoPresentationManager> m_videoPresentationManager;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -3035,12 +3035,12 @@ private:
     WeakPtr<WebDateTimeChooser> m_activeDateTimeChooser;
 
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
-    RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
+    const RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
 
     const Ref<WebUserContentController> m_userContentController;
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    RefPtr<WebExtensionControllerProxy> m_webExtensionController;
+    const RefPtr<WebExtensionControllerProxy> m_webExtensionController;
 #endif
 
     const UniqueRef<WebScreenOrientationManager> m_screenOrientationManager;
@@ -3333,7 +3333,7 @@ private:
     std::optional<WebCore::IntSize> m_pendingIntrinsicContentSize;
     WebCore::IntSize m_lastSentIntrinsicContentSize;
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
+    const std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
 #endif
 
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
@@ -3395,7 +3395,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    RefPtr<WebCore::MediaSessionCoordinator> m_mediaSessionCoordinator;
+    const RefPtr<WebCore::MediaSessionCoordinator> m_mediaSessionCoordinator;
 #endif
 
 #if ENABLE(GPU_PROCESS)

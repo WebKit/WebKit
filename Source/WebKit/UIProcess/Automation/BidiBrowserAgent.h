@@ -69,7 +69,7 @@ private:
     std::unique_ptr<BidiUserContext> platformCreateUserContext(String& error);
 
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiBrowserBackendDispatcher> m_browserDomainDispatcher;
+    const Ref<Inspector::BidiBrowserBackendDispatcher> m_browserDomainDispatcher;
     HashMap<String, std::unique_ptr<BidiUserContext>> m_userContexts;
     HashMap<String, std::unique_ptr<BidiUserContextDeletionRecord>> m_userContextsPendingDeletion;
 };

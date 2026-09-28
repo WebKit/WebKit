@@ -206,7 +206,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<UIView> m_uiView;
+    const RetainPtr<UIView> m_uiView;
 #endif
 
     WebCore::EventRegion m_eventRegion;

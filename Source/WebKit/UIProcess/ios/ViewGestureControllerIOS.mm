@@ -196,7 +196,7 @@ bool ViewGestureController::isNavigationSwipeGestureRecognizer(UIGestureRecogniz
 void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView)
 {
     ASSERT(!m_swipeInteractiveTransitionDelegate);
-    m_swipeInteractiveTransitionDelegate = adoptNS([[WKSwipeTransitionController alloc] initWithViewGestureController:this gestureRecognizerView:gestureRecognizerView]);
+    lazyInitialize(m_swipeInteractiveTransitionDelegate, adoptNS([[WKSwipeTransitionController alloc] initWithViewGestureController:this gestureRecognizerView:gestureRecognizerView]));
     m_liveSwipeView = swipingView;
 }
 

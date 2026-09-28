@@ -138,7 +138,7 @@ private:
     std::unique_ptr<BackingStore> m_backingStore;
     RunLoop::Timer m_discardBackingStoreTimer;
 #endif
-    std::unique_ptr<DrawingMonitor> m_drawingMonitor;
+    const std::unique_ptr<DrawingMonitor> m_drawingMonitor;
 };
 
 } // namespace WebKit

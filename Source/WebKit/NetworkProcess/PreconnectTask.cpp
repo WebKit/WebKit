@@ -69,7 +69,7 @@ void PreconnectTask::start(CompletionHandler<void(const WebCore::ResourceError&,
         if (completionHandler)
             completionHandler(error, metrics);
     };
-    m_timeoutTimer = makeUnique<WebCore::Timer>(*this, &PreconnectTask::didTimeout);
+    lazyInitialize(m_timeoutTimer, makeUnique<WebCore::Timer>(*this, &PreconnectTask::didTimeout));
     m_timeoutTimer->startOneShot(timeout);
     m_networkLoad->start();
 }

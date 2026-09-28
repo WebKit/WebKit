@@ -178,8 +178,8 @@ private:
     URL m_url;
     DocumentURL m_documentURL;
     RefPtr<WebCore::SecurityOrigin> m_origin;
-    RefPtr<WebCore::SecurityOrigin> m_topOrigin;
-    RefPtr<WebCore::SecurityOrigin> m_parentOrigin;
+    const RefPtr<WebCore::SecurityOrigin> m_topOrigin;
+    const RefPtr<WebCore::SecurityOrigin> m_parentOrigin;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
     WebCore::CrossOriginEmbedderPolicy m_parentCrossOriginEmbedderPolicy;
     WebCore::CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
@@ -192,7 +192,7 @@ private:
     RefPtr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
     bool m_isSameOriginRequest { true };
     bool m_isSimpleRequest { true };
-    std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
+    const std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
     size_t m_redirectCount { 0 };
     URL m_previousURL;
     WebCore::PreflightPolicy m_preflightPolicy;

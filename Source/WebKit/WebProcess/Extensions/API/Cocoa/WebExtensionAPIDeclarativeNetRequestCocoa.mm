@@ -403,7 +403,7 @@ void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionar
 WebExtensionAPIEvent& WebExtensionAPIDeclarativeNetRequest::onRuleMatchedDebug()
 {
     if (!m_onRuleMatchedDebug)
-        m_onRuleMatchedDebug = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug);
+        lazyInitialize(m_onRuleMatchedDebug, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug));
 
     return *m_onRuleMatchedDebug;
 }

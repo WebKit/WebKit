@@ -73,7 +73,7 @@ void PDFPluginAnnotation::attach(Element* parent)
 
     m_parent = parent;
     Ref element = createAnnotationElement();
-    m_element = element.copyRef();
+    lazyInitialize(m_element, element.copyRef());
 
     if (!element->hasClass())
         element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);

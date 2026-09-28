@@ -122,7 +122,7 @@ private:
     static std::optional<RealmIdentifier> parseRealmIdentifier(const String& realmID);
     std::optional<String> browsingContextForRealm(RealmIdentifier) const;
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiScriptBackendDispatcher> m_scriptDomainDispatcher;
+    const Ref<Inspector::BidiScriptBackendDispatcher> m_scriptDomainDispatcher;
 
     // Track current realm identifier for each browsing context.
     HashMap<String, RealmIdentifier> m_browsingContextToRealmId;

@@ -466,7 +466,7 @@ private:
     RetainPtr<UIView> m_liveSwipeViewClippingView;
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;
-    RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
+    const RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
     bool m_didCallWillEndSwipeGesture { false };

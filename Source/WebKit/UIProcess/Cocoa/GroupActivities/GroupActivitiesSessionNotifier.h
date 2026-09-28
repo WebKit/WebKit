@@ -60,7 +60,7 @@ private:
     void sessionStateChanged(const GroupActivitiesSession&, GroupActivitiesSession::State);
 
     HashMap<URL, Ref<GroupActivitiesSession>> m_sessions;
-    RetainPtr<WKGroupSessionObserver> m_sessionObserver;
+    const RetainPtr<WKGroupSessionObserver> m_sessionObserver;
     WeakHashSet<WebPageProxy> m_webPages;
     const Ref<GroupActivitiesSession::StateChangeObserver> m_stateChangeObserver;
 };

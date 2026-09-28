@@ -85,7 +85,7 @@ private:
     std::atomic<size_t> m_approximateSize { 0 };
 
 #if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
-    std::unique_ptr<MemoryCache> m_memoryCache;
+    const std::unique_ptr<MemoryCache> m_memoryCache;
 #endif
 };
 

@@ -938,7 +938,7 @@ WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
     if (error)
         WTFLogAlways("Could not initialize USD renderer"); // NOLINT
 
-    m_meshIdentifier = [[NSUUID alloc] init];
+    lazyInitialize(m_meshIdentifier, adoptNS([[NSUUID alloc] init]));
 #endif
 }
 

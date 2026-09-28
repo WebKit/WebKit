@@ -70,7 +70,7 @@ private:
 
     const Ref<NetworkLoad> m_networkLoad;
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)> m_completionHandler;
-    std::unique_ptr<WebCore::Timer> m_timeoutTimer;
+    const std::unique_ptr<WebCore::Timer> m_timeoutTimer;
 };
 
 } // namespace WebKit

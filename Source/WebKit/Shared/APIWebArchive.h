@@ -67,7 +67,7 @@ private:
     WebArchive(RefPtr<WebCore::LegacyWebArchive>&&);
 
     const RefPtr<WebCore::LegacyWebArchive> m_legacyWebArchive;
-    RefPtr<WebArchiveResource> m_cachedMainResource;
+    const RefPtr<WebArchiveResource> m_cachedMainResource;
     const RefPtr<API::Array> m_cachedSubresources;
     const RefPtr<API::Array> m_cachedSubframeArchives;
 };

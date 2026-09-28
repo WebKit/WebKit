@@ -91,7 +91,7 @@ private:
     void releaseGraphicsContext() final { /* Do nothing. This is only relevant for IOSurface backends */ }
 
     const Ref<WebCore::ShareableBitmap> m_bitmap;
-    std::unique_ptr<WebCore::GraphicsContext> m_context;
+    const std::unique_ptr<WebCore::GraphicsContext> m_context;
 };
 
 } // namespace WebKit

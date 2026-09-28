@@ -68,7 +68,7 @@ private:
 
     bool m_allowsNativeZoom { true };
     Kind m_kind;
-    RetainPtr<NSEvent> m_nativeEvent;
+    const RetainPtr<NSEvent> m_nativeEvent;
     WebCore::IntPoint m_positionInRootView;
 };
 

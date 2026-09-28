@@ -286,7 +286,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     m_drawingArea = drawingArea.copyRef();
 
     if (websitePolicies)
-        m_mainFrameWebsitePolicies = websitePolicies->copy();
+        lazyInitialize(m_mainFrameWebsitePolicies, websitePolicies->copy());
 
     if (preferences->siteIsolationEnabled() && !isRestoringFromBFCache) {
         if (RefPtr existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page, process)) {

@@ -83,7 +83,7 @@ private:
 
 #if ENABLE(GPU_PROCESS_MODEL)
     RetainPtr<WKBridgeReceiver> m_receiver;
-    RetainPtr<NSUUID> m_meshIdentifier;
+    const RetainPtr<NSUUID> m_meshIdentifier;
     mutable bool m_meshDataExists { false };
     std::optional<simd_float4x4> m_transform;
 #endif

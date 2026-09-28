@@ -308,7 +308,7 @@ WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()
 WebSharedWorkerObjectConnection& NetworkProcessConnection::sharedWorkerConnection()
 {
     if (!m_sharedWorkerConnection)
-        m_sharedWorkerConnection = WebSharedWorkerObjectConnection::create();
+        lazyInitialize(m_sharedWorkerConnection, WebSharedWorkerObjectConnection::create());
     return *m_sharedWorkerConnection;
 }
 

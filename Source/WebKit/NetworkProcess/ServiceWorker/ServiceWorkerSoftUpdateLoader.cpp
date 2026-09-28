@@ -77,7 +77,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
 
             request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
             if (entry) {
-                protectedThis->m_cacheEntry = WTF::move(entry);
+                lazyInitialize(protectedThis->m_cacheEntry, WTF::move(entry));
 
                 String eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
                 if (!eTag.isEmpty())
@@ -187,9 +187,9 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSh
 {
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
-            m_decoder = TextResourceDecoder::create("text/javascript"_s, m_responseEncoding);
+            lazyInitialize(m_decoder, TextResourceDecoder::create("text/javascript"_s, m_responseEncoding));
         else
-            m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
+            lazyInitialize(m_decoder, TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s));
     }
 
     buffer.forEachSegment([&](auto segment) {
@@ -200,8 +200,8 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSh
 
 void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadMetrics&)
 {
-    if (RefPtr decoder = m_decoder)
-        m_script.append(decoder->flush());
+    if (m_decoder)
+        m_script.append(m_decoder->flush());
     m_completionHandler({ ScriptBuffer { m_script.toString() }, m_jobData.scriptURL, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, { } });
     didComplete();
 }

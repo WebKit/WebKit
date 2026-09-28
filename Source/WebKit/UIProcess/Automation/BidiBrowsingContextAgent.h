@@ -74,7 +74,7 @@ private:
     Inspector::Protocol::BidiBrowsingContext::BrowsingContext getBrowsingContextID(const WebCore::FrameIdentifier&) const;
 
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiBrowsingContextBackendDispatcher> m_browsingContextDomainDispatcher;
+    const Ref<Inspector::BidiBrowsingContextBackendDispatcher> m_browsingContextDomainDispatcher;
 };
 
 } // namespace WebKit

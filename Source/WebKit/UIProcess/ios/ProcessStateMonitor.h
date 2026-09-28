@@ -58,7 +58,7 @@ private:
     State m_state { State::Running };
     Function<void(bool)> m_becomeSuspendedHandler;
     RunLoop::Timer m_suspendTimer;
-    RetainPtr<RBSProcessMonitor> m_rbsMonitor;
+    const RetainPtr<RBSProcessMonitor> m_rbsMonitor;
 };
 
 } // namespace WebKit

@@ -45,7 +45,7 @@ public:
 private:
     ShareablePixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntSize&, Ref<WebCore::SharedMemory>&&);
 
-    Ref<WebCore::SharedMemory> m_data;
+    const Ref<WebCore::SharedMemory> m_data;
 };
 
 } // namespace WebKit

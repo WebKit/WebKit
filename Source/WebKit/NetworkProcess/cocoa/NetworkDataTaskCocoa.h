@@ -113,7 +113,7 @@ private:
 
     WeakPtr<SessionWrapper> m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;
-    RetainPtr<NSURLSessionDataTask> m_task;
+    const RetainPtr<NSURLSessionDataTask> m_task;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     Markable<WebCore::FrameIdentifier> m_frameID;
     Markable<WebCore::PageIdentifier> m_pageID;
@@ -121,7 +121,7 @@ private:
 
     bool m_isForMainResourceNavigationForAnyFrame { false };
     bool m_navigationLosesFrameSpecificStorageAccess { false };
-    RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
+    const RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
     uint64_t m_requiredCookiesVersion { 0 };
 };
 

@@ -673,10 +673,10 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
 void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 {
-    m_debugIndicatorLayerTreeHost = makeUnique<RemoteLayerTreeHost>(*this);
+    lazyInitialize(m_debugIndicatorLayerTreeHost, makeUnique<RemoteLayerTreeHost>(*this));
     m_debugIndicatorLayerTreeHost->setIsDebugLayerTreeHost(true);
 
-    m_tileMapHostLayer = adoptNS([[CALayer alloc] init]);
+    lazyInitialize(m_tileMapHostLayer, adoptNS([[CALayer alloc] init]));
     [m_tileMapHostLayer setName:@"Tile map host"];
     [m_tileMapHostLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_tileMapHostLayer setAnchorPoint:CGPointZero];
@@ -695,7 +695,7 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
         [m_tileMapHostLayer setBorderColor:borderColor.get()];
     }
     
-    m_exposedRectIndicatorLayer = adoptNS([[CALayer alloc] init]);
+    lazyInitialize(m_exposedRectIndicatorLayer, adoptNS([[CALayer alloc] init]));
     [m_exposedRectIndicatorLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_exposedRectIndicatorLayer setAnchorPoint:CGPointZero];
 
@@ -708,7 +708,7 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 
 void RemoteLayerTreeDrawingAreaProxy::initializeSlowFrameIndicator()
 {
-    m_slowFrameIndicatorLayer= adoptNS([[_WKSlowFrameHUDLayer alloc] initWithDrawingArea:this]);
+    lazyInitialize(m_slowFrameIndicatorLayer, adoptNS([[_WKSlowFrameHUDLayer alloc] initWithDrawingArea:this]));
     [m_slowFrameIndicatorLayer setName:@"Slow frame indicator"];
     [m_slowFrameIndicatorLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_slowFrameIndicatorLayer setAnchorPoint:CGPointZero];

@@ -1146,7 +1146,7 @@ RetainPtr<NSArray> WebContextMenuProxyMac::platformData() const
 WKCaptionStyleMenuController *WebContextMenuProxyMac::captionStyleMenuController()
 {
     if (!m_captionStyleMenuController) {
-        m_captionStyleMenuController = [WKCaptionStyleMenuController menuController];
+        lazyInitialize(m_captionStyleMenuController, retainPtr([WKCaptionStyleMenuController menuController]));
         [m_captionStyleMenuController setDelegate:RetainPtr { menuDelegate() }.get()];
     }
     return m_captionStyleMenuController.get();
@@ -1155,7 +1155,7 @@ WKCaptionStyleMenuController *WebContextMenuProxyMac::captionStyleMenuController
 WKMenuDelegate *WebContextMenuProxyMac::menuDelegate()
 {
     if (!m_menuDelegate)
-        m_menuDelegate = adoptNS([[WKMenuDelegate alloc] initWithMenuProxy:*this]);
+        lazyInitialize(m_menuDelegate, adoptNS([[WKMenuDelegate alloc] initWithMenuProxy:*this]));
     return m_menuDelegate.get();
 }
 

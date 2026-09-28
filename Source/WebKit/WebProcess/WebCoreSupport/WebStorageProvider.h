@@ -47,7 +47,7 @@ private:
         ASSERT(WTF::isMainRunLoop());
 
         if (!m_connection)
-            m_connection = WebStorageConnection::create();
+            lazyInitialize(m_connection, WebStorageConnection::create());
         
         return *m_connection;
     }
@@ -68,7 +68,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    RefPtr<WebStorageConnection> m_connection;
+    const RefPtr<WebStorageConnection> m_connection;
     String m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 };

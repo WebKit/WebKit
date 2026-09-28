@@ -71,7 +71,7 @@ Ref<Element> PDFPluginPasswordForm::createAnnotationElement()
     element->appendChild(titleElement);
 
     Ref subtitleElement = document->createElement(pTag, false);
-    m_subtitleElement = subtitleElement.copyRef();
+    lazyInitialize(m_subtitleElement, subtitleElement.copyRef());
     subtitleElement->setTextContent(pdfPasswordFormSubtitle());
     subtitleElement->setAttributeWithoutSynchronization(classAttr, "subtitle"_s);
     element->appendChild(subtitleElement);
@@ -81,7 +81,7 @@ Ref<Element> PDFPluginPasswordForm::createAnnotationElement()
 
 void PDFPluginPasswordForm::unlockFailed()
 {
-    protect(m_subtitleElement)->setTextContent(pdfPasswordFormInvalidPasswordSubtitle());
+    m_subtitleElement->setTextContent(pdfPasswordFormInvalidPasswordSubtitle());
 }
 
 void PDFPluginPasswordForm::updateGeometry()

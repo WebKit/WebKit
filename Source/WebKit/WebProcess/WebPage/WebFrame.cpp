@@ -1871,7 +1871,7 @@ void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandl
 CheckedRef<FrameInspectorTarget> WebFrame::ensureInspectorTarget()
 {
     if (!m_inspectorTarget)
-        m_inspectorTarget = makeUnique<FrameInspectorTarget>(*this);
+        lazyInitialize(m_inspectorTarget, makeUnique<FrameInspectorTarget>(*this));
     return *m_inspectorTarget;
 }
 

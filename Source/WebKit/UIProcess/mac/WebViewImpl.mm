@@ -1388,7 +1388,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
         if (RetainPtr layerHostingView = dynamic_objc_cast<WKFlippedView>(subview)) {
             // A layer hosting view may have already been created and added to the view hierarchy
             // in the process of initializing the WKWebView from an NSCoder.
-            m_layerHostingView = layerHostingView.get();
+            lazyInitialize(m_layerHostingView, retainPtr(layerHostingView.get()));
             [layerHostingView setFrame:[m_view.get() bounds]];
             break;
         }
@@ -1396,7 +1396,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
 
     if (!m_layerHostingView) {
         // Create an NSView that will host our layer tree.
-        m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[m_view.get() bounds]]);
+        lazyInitialize(m_layerHostingView, adoptNS([[WKFlippedView alloc] initWithFrame:[m_view.get() bounds]]));
         [view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
     }
 
@@ -1415,8 +1415,8 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
-        m_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]);
-        m_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:m_page.get() view:view viewImpl:*this recognizer:m_immediateActionGestureRecognizer.get()]);
+        lazyInitialize(m_immediateActionGestureRecognizer, adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]));
+        lazyInitialize(m_immediateActionController, adoptNS([[WKImmediateActionController alloc] initWithPage:m_page.get() view:view viewImpl:*this recognizer:m_immediateActionGestureRecognizer.get()]));
         [m_immediateActionGestureRecognizer setDelegate:m_immediateActionController.get()];
         [m_immediateActionGestureRecognizer setDelaysPrimaryMouseButtonEvents:NO];
     }
@@ -1444,17 +1444,17 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     m_lastScrollViewFrame = scrollViewFrame();
 
 #if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
-    m_textInputNotifications = subscribeToTextInputNotifications(this);
+    lazyInitialize(m_textInputNotifications, subscribeToTextInputNotifications(this));
 #endif
 
-    m_pageScrollingHysteresis = makeUnique<PAL::HysteresisActivity>([weakThis = WeakPtr { *this }](auto state) {
+    lazyInitialize(m_pageScrollingHysteresis, makeUnique<PAL::HysteresisActivity>([weakThis = WeakPtr { *this }](auto state) {
         if (CheckedPtr checkedImpl = weakThis.get())
             checkedImpl->pageScrollingHysteresisFired(state);
-    }, viewStateHysteresis);
+    }, viewStateHysteresis));
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    m_appKitGestureController = adoptNS([[WKAppKitGestureController alloc] initWithView:view]);
-    m_textSelectionController = adoptNS([[WKTextSelectionController alloc] initWithView:view]);
+    lazyInitialize(m_appKitGestureController, adoptNS([[WKAppKitGestureController alloc] initWithView:view]));
+    lazyInitialize(m_textSelectionController, adoptNS([[WKTextSelectionController alloc] initWithView:view]));
 #endif
 
     WebProcessPool::statistics().wkViewCount++;
@@ -3992,7 +3992,7 @@ void WebViewImpl::updateAXCustomColorModeControlsVisibility()
     }
 
     if (!m_axCustomColorModeControlsController)
-        m_axCustomColorModeControlsController = adoptNS([[WKAXCustomColorModePreferencesController alloc] initWithPreferences:m_page->preferences()]);
+        lazyInitialize(m_axCustomColorModeControlsController, adoptNS([[WKAXCustomColorModePreferencesController alloc] initWithPreferences:m_page->preferences()]));
 
     [m_axCustomColorModeControlsController attachToView:m_view.getAutoreleased() topInset:obscuredContentInsets().top()];
 }
@@ -5596,7 +5596,7 @@ void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::
         return;
 
     if (!m_textAnimationTypeManager)
-        m_textAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
+        lazyInitialize(m_textAnimationTypeManager, adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]));
 
     [m_textAnimationTypeManager addTextAnimationForAnimationID:uuid.createNSUUID().get() withData:data];
 }
@@ -5621,7 +5621,7 @@ void WebViewImpl::addTextEffectForID(NSUUID *uuid, const WebCore::TextEffectData
         return;
 
     if (!m_textEffectManager)
-        m_textEffectManager = adoptNS([[WKTextEffectManager alloc] initWithWebView:view()]);
+        lazyInitialize(m_textEffectManager, adoptNS([[WKTextEffectManager alloc] initWithWebView:view()]));
 
     [m_textEffectManager addTextEffectForID:uuid withData:data];
 }
@@ -7435,7 +7435,7 @@ void WebViewImpl::updateTextTouchBar()
     SetForScope isUpdatingTextFunctionBar(m_isUpdatingTextTouchBar, true);
 
     if (!m_textTouchBarItemController)
-        m_textTouchBarItemController = adoptNS([[WKTextTouchBarItemController alloc] initWithWebViewImpl:this]);
+        lazyInitialize(m_textTouchBarItemController, adoptNS([[WKTextTouchBarItemController alloc] initWithWebViewImpl:this]));
 
     if (!m_startedListeningToCustomizationEvents) {
         [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarDidExitCustomization:) name:NSTouchBarDidExitCustomization object:nil];
@@ -7446,23 +7446,23 @@ void WebViewImpl::updateTextTouchBar()
     }
 
     if (!m_richTextCandidateListTouchBarItem || !m_plainTextCandidateListTouchBarItem || !m_passwordTextCandidateListTouchBarItem) {
-        m_richTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        lazyInitialize(m_richTextCandidateListTouchBarItem, adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]));
         [m_richTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
-        m_plainTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        lazyInitialize(m_plainTextCandidateListTouchBarItem, adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]));
         [m_plainTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
-        m_passwordTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        lazyInitialize(m_passwordTextCandidateListTouchBarItem, adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]));
         [m_passwordTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
         requestCandidatesForSelectionIfNeeded();
     }
 
     if (!m_richTextTouchBar) {
-        m_richTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+        lazyInitialize(m_richTextTouchBar, adoptNS([[NSTouchBar alloc] init]));
         setUpTextTouchBar(m_richTextTouchBar.get());
         [m_richTextTouchBar setCustomizationIdentifier:@"WKRichTextTouchBar"];
     }
 
     if (!m_plainTextTouchBar) {
-        m_plainTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+        lazyInitialize(m_plainTextTouchBar, adoptNS([[NSTouchBar alloc] init]));
         setUpTextTouchBar(m_plainTextTouchBar.get());
         [m_plainTextTouchBar setCustomizationIdentifier:@"WKPlainTextTouchBar"];
     }
@@ -7476,7 +7476,7 @@ void WebViewImpl::updateTextTouchBar()
 
     if (m_page->editorState().isInPasswordField) {
         if (!m_passwordTextTouchBar) {
-            m_passwordTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+            lazyInitialize(m_passwordTextTouchBar, adoptNS([[NSTouchBar alloc] init]));
             setUpTextTouchBar(m_passwordTextTouchBar.get());
         }
         [m_passwordTextCandidateListTouchBarItem setCandidates:@[ ] forSelectedRange:NSMakeRange(0, 0) inString:nil];
@@ -7562,7 +7562,7 @@ void WebViewImpl::updateMediaPlaybackControlsManager()
         return;
 
     if (!m_playbackControlsManager) {
-        m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
+        lazyInitialize(m_playbackControlsManager, adoptNS([[WebPlaybackControlsManager alloc] init]));
         [m_playbackControlsManager setAllowsPictureInPicturePlayback:protect(m_page->preferences())->allowsPictureInPictureMediaPlayback()];
         [m_playbackControlsManager setCanTogglePictureInPicture:NO];
     }
@@ -7595,11 +7595,11 @@ void WebViewImpl::updateMediaTouchBar()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (!m_mediaTouchBarProvider) {
-        m_mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]);
+        lazyInitialize(m_mediaTouchBarProvider, adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]));
     }
 
     if (!m_mediaPlaybackControlsView) {
-        m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
+        lazyInitialize(m_mediaPlaybackControlsView, adoptNS([allocAVTouchBarScrubberInstance() init]));
         // FIXME: Remove this once setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
         if ([m_mediaPlaybackControlsView respondsToSelector:@selector(setCanShowMediaSelectionButton:)])
             [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
@@ -7617,7 +7617,7 @@ void WebViewImpl::updateMediaTouchBar()
         RetainPtr touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
         if (hasFullScreenWindowController() && [m_fullScreenWindowController isFullScreen]) {
             if (!m_exitFullScreenButton) {
-                m_exitFullScreenButton = adoptNS([[NSCustomTouchBarItem alloc] initWithIdentifier:WKMediaExitFullScreenItem]);
+                lazyInitialize(m_exitFullScreenButton, adoptNS([[NSCustomTouchBarItem alloc] initWithIdentifier:WKMediaExitFullScreenItem]));
 
                 RetainPtr image = [NSImage imageNamed:NSImageNameTouchBarExitFullScreenTemplate];
                 [image setTemplate:YES];
@@ -8289,7 +8289,7 @@ void WebViewImpl::registerViewAboveScrollPocket(NSView *containerView)
         return;
 
     if (!m_viewsAboveScrollPocket)
-        m_viewsAboveScrollPocket = [NSHashTable<NSView *> weakObjectsHashTable];
+        lazyInitialize(m_viewsAboveScrollPocket, retainPtr([NSHashTable<NSView *> weakObjectsHashTable]));
 
     [m_viewsAboveScrollPocket addObject:containerView];
     [m_topScrollPocket addElementContainer:containerView];

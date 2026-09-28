@@ -921,7 +921,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             : WebKit::MediaSessionCoordinatorProxyPrivate()
             , m_clientCoordinator(clientCoordinator)
         {
-            m_coordinatorDelegate = adoptNS([[WKMediaSessionCoordinatorHelper alloc] initWithCoordinator:this]);
+            lazyInitialize(m_coordinatorDelegate, adoptNS([[WKMediaSessionCoordinatorHelper alloc] initWithCoordinator:this]));
             [m_clientCoordinator setDelegate:m_coordinatorDelegate.get()];
         }
 
@@ -1082,8 +1082,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         }
 
     private:
-        RetainPtr<id <_WKMediaSessionCoordinator>> m_clientCoordinator;
-        RetainPtr<WKMediaSessionCoordinatorHelper> m_coordinatorDelegate;
+        const RetainPtr<id<_WKMediaSessionCoordinator>> m_clientCoordinator;
+        const RetainPtr<WKMediaSessionCoordinatorHelper> m_coordinatorDelegate;
     };
 
     ASSERT(!_impl->mediaSessionCoordinatorForTesting());

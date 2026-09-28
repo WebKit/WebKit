@@ -57,7 +57,7 @@ private:
     void drawSnapshotFrame(WebCore::FrameIdentifier);
 
     const Ref<RemoteSnapshot> m_snapshot;
-    UniqueRef<WebCore::DisplayList::RecorderImpl> m_recorder;
+    const UniqueRef<WebCore::DisplayList::RecorderImpl> m_recorder;
     const RemoteSnapshotRecorderIdentifier m_identifier;
 };
 

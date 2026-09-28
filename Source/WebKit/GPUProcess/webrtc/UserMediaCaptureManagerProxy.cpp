@@ -435,13 +435,12 @@ private:
         if (m_resourceOwner)
             frame.setOwnershipIdentity(m_resourceOwner);
 
-        RefPtr videoFrameObjectHeap = m_videoFrameObjectHeap;
-        if (!videoFrameObjectHeap) {
+        if (!m_videoFrameObjectHeap) {
             m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailableCV(m_id, frame.pixelBuffer(), frame.rotation(), frame.isMirrored(), frame.presentationTime(), metadata), 0);
             return;
         }
 
-        auto properties = videoFrameObjectHeap->add(frame);
+        auto properties = m_videoFrameObjectHeap->add(frame);
         m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata), 0);
     }
 
@@ -462,14 +461,14 @@ private:
     const Ref<RealtimeMediaSource> m_source;
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     std::optional<CAAudioStreamDescription> m_description;
-    std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
+    const std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
     std::unique_ptr<IPC::Semaphore> m_captureSemaphore;
     std::optional<ConsumerSharedCARingBufferHandle> m_audioHandle;
     int64_t m_writeOffset { 0 };
     int64_t m_remainingFrameCount { 0 };
     size_t m_frameChunkSize { 0 };
     MediaTime m_startTime;
-    RefPtr<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
+    const RefPtr<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #if PLATFORM(IOS_FAMILY)
     Function<void()> m_providePresentingApplicationPIDFunction;
 #endif

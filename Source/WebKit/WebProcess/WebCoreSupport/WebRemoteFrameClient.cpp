@@ -110,7 +110,7 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
     }
 
     if (!m_pendingPostMessages)
-        m_pendingPostMessages = PendingPostMessages::create();
+        lazyInitialize(m_pendingPostMessages, PendingPostMessages::create());
 
     RefPtr pendingPostMessages = m_pendingPostMessages;
     pendingPostMessages->append(PendingPostMessages::PendingPostMessage { source, sourceOrigin, target, targetOrigin, message, userGestureToken });

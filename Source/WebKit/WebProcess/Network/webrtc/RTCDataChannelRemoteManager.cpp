@@ -81,14 +81,14 @@ bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelI
 WebCore::RTCDataChannelRemoteHandlerConnection& RTCDataChannelRemoteManager::remoteHandlerConnection()
 {
     if (!m_remoteHandlerConnection)
-        m_remoteHandlerConnection = RemoteHandlerConnection::create(m_queue.copyRef());
+        lazyInitialize(m_remoteHandlerConnection, RemoteHandlerConnection::create(m_queue.copyRef()));
     return *m_remoteHandlerConnection;
 }
 
 WebCore::RTCDataChannelRemoteSourceConnection& RTCDataChannelRemoteManager::remoteSourceConnection()
 {
     if (!m_remoteSourceConnection)
-        m_remoteSourceConnection = RemoteSourceConnection::create();
+        lazyInitialize(m_remoteSourceConnection, RemoteSourceConnection::create());
     return *m_remoteSourceConnection;
 }
 

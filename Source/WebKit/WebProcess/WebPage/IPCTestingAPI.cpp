@@ -243,7 +243,7 @@ private:
     static JSValueRef waitForAsyncReplyAndDispatchImmediately(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WeakPtr<JSIPC> m_jsIPC;
-    RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    const RefPtr<IPC::StreamClientConnection> m_streamConnection;
 
     // Current tests expect that actions and their induced messages are waited on during same
     // run loop invocation (in JS). This means that messages of interest do not ever enter here.
@@ -268,7 +268,7 @@ private:
     private:
         WeakRef<JSIPCStreamClientConnection> m_connection;
     };
-    UniqueRef<MessageReceiver> m_dummyMessageReceiver;
+    const UniqueRef<MessageReceiver> m_dummyMessageReceiver;
 };
 
 class JSIPCStreamServerConnectionHandle : public RefCounted<JSIPCStreamServerConnectionHandle> {

@@ -178,7 +178,7 @@ private:
     PauseState m_pauseState { PauseState::None };
     std::optional<WebCore::LayoutPoint> m_initialPoint;
     std::optional<Ref<WebCore::SharedBuffer>> m_environmentMap;
-    RetainPtr<WKStageModeOrbitSimulator> m_orbitSimulator;
+    const RetainPtr<WKStageModeOrbitSimulator> m_orbitSimulator;
     MonotonicTime m_lastUpdateTime;
     std::optional<WebCore::ModelPlayerAnimationState> m_cachedAnimationState;
     std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> m_cachedTransformState;
@@ -193,7 +193,7 @@ private:
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     using ScreenPropertiesChangedObserver = Observer<void(WebCore::PlatformDisplayID)>;
-    RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
+    const RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
     RefPtr<WebCore::Model> m_cachedModelSource;
     WebCore::LayoutSize m_lastLayoutSize;
     float m_currentEDRHeadroom { 1.f };

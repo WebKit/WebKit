@@ -156,7 +156,7 @@ private:
     bool m_usesOffscreenRendering { false };
 
     const std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
-    RefPtr<WebPageProxy> m_page;
+    const RefPtr<WebPageProxy> m_page;
     WebCore::IntSize m_viewSize;
 };
 

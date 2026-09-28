@@ -106,8 +106,8 @@ private:
 
     const Ref<WorkQueue> m_queue;
     const Ref<IPC::Connection> m_connection;
-    RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
-    RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
+    const RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
+    const RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
     HashMap<WebCore::RTCDataChannelLocalIdentifier, Ref<WebCore::RTCDataChannelRemoteSource>> m_sources;
     HashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers;
 };

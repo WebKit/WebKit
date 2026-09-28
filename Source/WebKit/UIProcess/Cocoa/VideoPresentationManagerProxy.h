@@ -150,7 +150,7 @@ private:
 #endif
 
     WeakPtr<VideoPresentationManagerProxy> m_manager;
-    Ref<PlaybackSessionModelContext> m_playbackSessionModel;
+    const Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     PlaybackSessionContextIdentifier m_contextId;
 
     WeakHashSet<WebCore::VideoPresentationModelClient> m_clients;

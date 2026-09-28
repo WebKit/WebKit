@@ -54,11 +54,11 @@ private:
 
     WebExtensionAPIStorageArea& storageAreaForType(WebExtensionDataType);
 
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
+    const RefPtr<WebExtensionAPIStorageArea> m_local;
+    const RefPtr<WebExtensionAPIStorageArea> m_session;
+    const RefPtr<WebExtensionAPIStorageArea> m_sync;
 
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
+    const RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };
 

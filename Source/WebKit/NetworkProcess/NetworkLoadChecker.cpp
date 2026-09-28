@@ -259,8 +259,8 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     }
 
     if (m_options.mode == FetchOptions::Mode::Navigate || m_isSameOriginRequest) {
-        if (RefPtr parentOrigin = m_parentOrigin; parentOrigin && m_options.mode == FetchOptions::Mode::Navigate) {
-            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, *parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
+        if (m_parentOrigin && m_options.mode == FetchOptions::Mode::Navigate) {
+            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, *m_parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
                 return WTF::move(*error);
         }
         response.setTainting(ResourceResponse::Tainting::Basic);
@@ -678,7 +678,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_cspResponseHeaders) {
         // FIXME: Pass the URL of the protected resource instead of its origin.
-        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { protect(origin())->toRawString() }, nullptr, m_networkResourceLoader.get());
+        lazyInitialize(m_contentSecurityPolicy, makeUnique<ContentSecurityPolicy>(URL { protect(origin())->toRawString() }, nullptr, m_networkResourceLoader.get()));
         CheckedPtr checkedContentSecurityPolicy = m_contentSecurityPolicy.get();
         checkedContentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
         if (!m_documentURL.isEmpty())

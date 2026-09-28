@@ -195,8 +195,8 @@ public:
 private:
     explicit WebBackForwardListWrapper(WebPageProxy&);
 
-    std::unique_ptr<WebBackForwardList> m_impl;
-    Ref<WebBackForwardListMessageForwarder> m_messageForwarder;
+    const std::unique_ptr<WebBackForwardList> m_impl;
+    const Ref<WebBackForwardListMessageForwarder> m_messageForwarder;
 };
 
 #endif // ENABLE(BACK_FORWARD_LIST_SWIFT)

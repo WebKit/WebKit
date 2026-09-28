@@ -144,7 +144,7 @@ private:
     }
 
     ImageBufferSetIdentifier m_identifier;
-    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_imageBufferFlusher;
+    const std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_imageBufferFlusher;
     std::unique_ptr<BufferSetBackendHandle> m_handles;
 };
 

@@ -255,7 +255,7 @@ private:
     CachedState m_cachedState WTF_GUARDED_BY_LOCK(m_lock);
     MonotonicTime m_lastPlaybackQualityMetricsQueryTime WTF_GUARDED_BY_LOCK(m_lock);
     Seconds m_videoPlaybackMetricsUpdateInterval WTF_GUARDED_BY_LOCK(m_lock);
-    std::unique_ptr<WebCore::SharedTimebaseReader> m_sharedTimebaseReader WTF_GUARDED_BY_LOCK(m_lock);
+    const std::unique_ptr<WebCore::SharedTimebaseReader> m_sharedTimebaseReader WTF_GUARDED_BY_LOCK(m_lock);
     // Upper bound on currentTime() so the SharedTimebaseReader's wall-clock
     // extrapolation can't overshoot a stall boundary (e.g. the start of a
     // buffered gap). Set by notifyTimeReachedAndStall, cleared by

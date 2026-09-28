@@ -116,7 +116,7 @@ private:
     RefPtr<__CVDisplayLink> m_displayLink;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;
+    const std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;
     unsigned m_fpsThrottleRatio { 1 };
     unsigned m_fpsThrottleCallCounter { 0 };
 #endif

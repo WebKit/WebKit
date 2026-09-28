@@ -112,7 +112,7 @@ private:
 #if USE(APPKIT)
     NativeWebKeyboardEvent(WebKeyboardEventInit&&, NSEvent *);
 
-    RetainPtr<NSEvent> m_nativeEvent;
+    const RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)
     NativeWebKeyboardEvent(WebKeyboardEventInit&&, GdkEvent*);
 
@@ -124,7 +124,7 @@ private:
 #elif PLATFORM(IOS_FAMILY)
     NativeWebKeyboardEvent(WebKeyboardEventInit&&, ::WebEvent *);
 
-    RetainPtr<::WebEvent> m_nativeEvent;
+    const RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(WebKeyboardEventInit&&, const MSG&, Vector<MSG>&&);
 

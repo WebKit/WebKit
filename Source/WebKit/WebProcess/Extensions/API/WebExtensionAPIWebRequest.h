@@ -51,15 +51,15 @@ public:
     WebExtensionAPIWebRequestEvent& onErrorOccurred();
 
 private:
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeRequestEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeSendHeadersEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onSendHeadersEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onHeadersReceivedEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onAuthRequiredEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeRedirectEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onResponseStartedEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onCompletedEvent;
-    RefPtr<WebExtensionAPIWebRequestEvent> m_onErrorOccurredEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeRequestEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeSendHeadersEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onSendHeadersEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onHeadersReceivedEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onAuthRequiredEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeRedirectEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onResponseStartedEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onCompletedEvent;
+    const RefPtr<WebExtensionAPIWebRequestEvent> m_onErrorOccurredEvent;
 
 #endif
 };

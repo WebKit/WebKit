@@ -54,7 +54,7 @@ public:
     static std::error_code parseRuleList(const WTF::String&, WebCore::ContentExtensions::CSSSelectorsAllowed);
 
 private:
-    Ref<WebKit::WebCompiledContentRuleList> m_compiledRuleList;
+    const Ref<WebKit::WebCompiledContentRuleList> m_compiledRuleList;
     WebKit::NetworkCache::Data m_mappedFile;
 #endif // ENABLE(CONTENT_EXTENSIONS)
 };

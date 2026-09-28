@@ -48,7 +48,7 @@ public:
     WebExtensionAPIEvent& onAlarm();
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onAlarm;
+    const RefPtr<WebExtensionAPIEvent> m_onAlarm;
 };
 
 } // namespace WebKit

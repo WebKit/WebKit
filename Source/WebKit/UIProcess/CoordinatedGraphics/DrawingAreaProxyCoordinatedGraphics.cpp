@@ -369,7 +369,7 @@ void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(Completio
     }
 
     if (!m_drawingMonitor)
-        m_drawingMonitor = makeUnique<DrawingAreaProxyCoordinatedGraphics::DrawingMonitor>(*page);
+        lazyInitialize(m_drawingMonitor, makeUnique<DrawingAreaProxyCoordinatedGraphics::DrawingMonitor>(*page));
     m_drawingMonitor->start(WTF::move(callbackFunction));
 }
 

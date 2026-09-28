@@ -117,16 +117,16 @@ private:
     String m_customLocalStoragePath;
     String m_resolvedLocalStoragePath;
     std::unique_ptr<SessionStorageManager> m_sessionStorageManager;
-    std::unique_ptr<IDBStorageManager> m_idbStorageManager;
+    const std::unique_ptr<IDBStorageManager> m_idbStorageManager;
     String m_customIDBStoragePath;
     String m_resolvedIDBStoragePath;
     RefPtr<CacheStorageManager> m_cacheStorageManager;
     String m_customCacheStoragePath;
     String m_resolvedCacheStoragePath;
     UnifiedOriginStorageLevel m_level;
-    RefPtr<BackgroundFetchStoreManager> m_backgroundFetchManager;
+    const RefPtr<BackgroundFetchStoreManager> m_backgroundFetchManager;
     String m_resolvedBackgroundFetchStoragePath;
-    std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
+    const std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OriginStorageManager::StorageBucket);
@@ -241,7 +241,7 @@ SessionStorageManager& OriginStorageManager::StorageBucket::sessionStorageManage
 IDBStorageManager& OriginStorageManager::StorageBucket::idbStorageManager(IDBStorageRegistry& registry, IDBStorageManager::QuotaCheckFunction&& quotaCheckFunction, bool useSQLiteMemoryBackingStore)
 {
     if (!m_idbStorageManager)
-        m_idbStorageManager = makeUnique<IDBStorageManager>(resolvedIDBStoragePath(), registry, WTF::move(quotaCheckFunction), useSQLiteMemoryBackingStore);
+        lazyInitialize(m_idbStorageManager, makeUnique<IDBStorageManager>(resolvedIDBStoragePath(), registry, WTF::move(quotaCheckFunction), useSQLiteMemoryBackingStore));
     return *m_idbStorageManager;
 }
 
@@ -258,7 +258,7 @@ CacheStorageManager& OriginStorageManager::StorageBucket::cacheStorageManager(Ca
 BackgroundFetchStoreManager& OriginStorageManager::StorageBucket::backgroundFetchManager(Ref<WorkQueue>&& queue, BackgroundFetchStoreManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_backgroundFetchManager)
-        m_backgroundFetchManager = BackgroundFetchStoreManager::create(resolvedBackgroundFetchStoragePath(), WTF::move(queue), WTF::move(quotaCheckFunction));
+        lazyInitialize(m_backgroundFetchManager, BackgroundFetchStoreManager::create(resolvedBackgroundFetchStoragePath(), WTF::move(queue), WTF::move(quotaCheckFunction)));
 
     return *m_backgroundFetchManager;
 }
@@ -268,7 +268,7 @@ ServiceWorkerStorageManager& OriginStorageManager::StorageBucket::serviceWorkerS
     RELEASE_ASSERT(m_level >= UnifiedOriginStorageLevel::Standard);
 
     if (!m_serviceWorkerStorageManager)
-        m_serviceWorkerStorageManager = makeUnique<ServiceWorkerStorageManager>(resolvedPath(WebsiteDataType::ServiceWorkerRegistrations));
+        lazyInitialize(m_serviceWorkerStorageManager, makeUnique<ServiceWorkerStorageManager>(resolvedPath(WebsiteDataType::ServiceWorkerRegistrations)));
 
     return *m_serviceWorkerStorageManager;
 }
@@ -674,7 +674,7 @@ void OriginStorageManager::connectionClosed(IPC::Connection::UniqueID connection
 OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
 {
     if (!m_defaultBucket)
-        m_defaultBucket = makeUnique<StorageBucket>(m_path, "default"_s, m_customLocalStoragePath, m_customIDBStoragePath, m_customCacheStoragePath, m_level);
+        lazyInitialize(m_defaultBucket, makeUnique<StorageBucket>(m_path, "default"_s, m_customLocalStoragePath, m_customIDBStoragePath, m_customCacheStoragePath, m_level));
 
     return *m_defaultBucket;
 }

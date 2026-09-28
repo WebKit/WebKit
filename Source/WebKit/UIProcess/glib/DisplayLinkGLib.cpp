@@ -35,7 +35,7 @@ using namespace WebCore;
 void DisplayLink::platformInitialize()
 {
     // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case DisplayVBlankMonitor defaults to the main screen.
-    m_vblankMonitor = DisplayVBlankMonitor::create(m_displayID);
+    lazyInitialize(m_vblankMonitor, DisplayVBlankMonitor::create(m_displayID));
     m_vblankMonitor->setHandler([this] {
         m_fpsThrottleCallCounter++;
         if (m_fpsThrottleCallCounter >= m_fpsThrottleRatio) {

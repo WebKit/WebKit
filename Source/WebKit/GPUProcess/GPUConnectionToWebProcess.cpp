@@ -408,7 +408,7 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 Ref<RemoteSharedResourceCache> GPUConnectionToWebProcess::sharedResourceCache()
 {
     if (!m_sharedResourceCache)
-        m_sharedResourceCache = RemoteSharedResourceCache::create(*this);
+        lazyInitialize(m_sharedResourceCache, RemoteSharedResourceCache::create(*this));
     return *m_sharedResourceCache;
 }
 
@@ -462,8 +462,8 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     m_libWebRTCCodecsProxy = nullptr;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (RefPtr cdmFactoryProxy = m_cdmFactoryProxy)
-        cdmFactoryProxy->clear();
+    if (m_cdmFactoryProxy)
+        m_cdmFactoryProxy->clear();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
@@ -575,7 +575,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 Logger& GPUConnectionToWebProcess::logger()
 {
     if (!m_logger) {
-        m_logger = Logger::create(this);
+        lazyInitialize(m_logger, Logger::create(this));
         m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
     }
 
@@ -595,8 +595,8 @@ void GPUConnectionToWebProcess::terminateWebProcess(IPC::MessageName invalidMess
 
 void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
-    if (RefPtr sharedResourceCache = m_sharedResourceCache)
-        sharedResourceCache->lowMemoryHandler();
+    if (m_sharedResourceCache)
+        m_sharedResourceCache->lowMemoryHandler();
 #if ENABLE(VIDEO)
     protect(videoFrameObjectHeap())->lowMemoryHandler();
 #endif
@@ -655,7 +655,7 @@ void GPUConnectionToWebProcess::canDecodeExtendedType(PlatformMediaDecodingType 
 RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 {
     if (!m_cdmFactoryProxy)
-        m_cdmFactoryProxy = RemoteCDMFactoryProxy::create(*this);
+        lazyInitialize(m_cdmFactoryProxy, RemoteCDMFactoryProxy::create(*this));
 
     return *m_cdmFactoryProxy;
 }
@@ -961,7 +961,7 @@ void GPUConnectionToWebProcess::ensureMediaSessionHelper()
 RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
 {
     if (!m_legacyCdmFactoryProxy)
-        m_legacyCdmFactoryProxy = RemoteLegacyCDMFactoryProxy::create(*this);
+        lazyInitialize(m_legacyCdmFactoryProxy, RemoteLegacyCDMFactoryProxy::create(*this));
 
     return *m_legacyCdmFactoryProxy;
 }

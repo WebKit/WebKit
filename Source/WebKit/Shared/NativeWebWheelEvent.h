@@ -94,7 +94,7 @@ private:
 #if USE(APPKIT)
     NativeWebWheelEvent(WebWheelEventInit&&, NSEvent *);
 
-    RetainPtr<NSEvent> m_nativeEvent;
+    const RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)
     NativeWebWheelEvent(WebWheelEventInit&&, GdkEvent*);
 

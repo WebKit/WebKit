@@ -84,14 +84,14 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, std::unique_ptr<Sub
     : Navigation(processID)
 {
     ASSERT(substituteData);
-    m_substituteData = WTF::move(substituteData);
+    lazyInitialize(m_substituteData, WTF::move(substituteData));
 }
 
 Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, RefPtr<WebKit::WebBackForwardListItem>&& fromItem)
     : Navigation(processID, WTF::move(simulatedRequest), WTF::move(fromItem))
 {
     ASSERT(substituteData);
-    m_substituteData = WTF::move(substituteData);
+    lazyInitialize(m_substituteData, WTF::move(substituteData));
 }
 
 Navigation::~Navigation() = default;

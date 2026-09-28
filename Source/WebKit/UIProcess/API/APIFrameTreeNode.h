@@ -52,7 +52,7 @@ private:
         , m_page(page) { }
 
     const WebKit::FrameTreeNodeData m_data;
-    Ref<WebKit::WebPageProxy> m_page;
+    const Ref<WebKit::WebPageProxy> m_page;
 };
 
 } // namespace API

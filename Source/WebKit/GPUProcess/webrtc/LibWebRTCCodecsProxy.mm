@@ -466,7 +466,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
             .fullRange = false
         };
         if (!m_pixelBufferConformer) {
-            m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) });
+            lazyInitialize(m_pixelBufferConformer, makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) }));
         }
         pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
         if (!pixelBuffer) {

@@ -77,7 +77,7 @@ private:
     const WebPageProxyIdentifier m_webPageID;
     const bool m_debugEnabledForTesting { false };
     const WebCore::CertificateInfo m_serverTrust;
-    RefPtr<QualifiedServerTrustFetch> m_selfReference;
+    const RefPtr<QualifiedServerTrustFetch> m_selfReference;
     WebCore::SharedBufferBuilder m_buffer;
 };
 

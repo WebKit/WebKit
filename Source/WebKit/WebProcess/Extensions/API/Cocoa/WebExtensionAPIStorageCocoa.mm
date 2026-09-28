@@ -57,7 +57,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/local
 
     if (!m_local)
-        m_local = WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Local);
+        lazyInitialize(m_local, WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Local));
 
     return *m_local;
 }
@@ -67,7 +67,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::session()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
 
     if (!m_session)
-        m_session = WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Session);
+        lazyInitialize(m_session, WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Session));
 
     return *m_session;
 }
@@ -77,7 +77,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
 
     if (!m_sync)
-        m_sync = WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Sync);
+        lazyInitialize(m_sync, WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Sync));
 
     return *m_sync;
 }
@@ -102,7 +102,7 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/onChanged
 
     if (!m_onChanged)
-        m_onChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::StorageOnChanged);
+        lazyInitialize(m_onChanged, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::StorageOnChanged));
 
     return *m_onChanged;
 }

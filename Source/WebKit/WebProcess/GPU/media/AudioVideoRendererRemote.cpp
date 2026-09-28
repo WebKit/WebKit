@@ -128,7 +128,7 @@ AudioVideoRendererRemote::AudioVideoRendererRemote(LoggerHelper* loggerHelper, G
             return;
         }
         Locker locker { protectedThis->m_lock };
-        protectedThis->m_sharedTimebaseReader = WTF::move(reader);
+        lazyInitialize(protectedThis->m_sharedTimebaseReader, WTF::move(reader));
     }, 0);
 }
 

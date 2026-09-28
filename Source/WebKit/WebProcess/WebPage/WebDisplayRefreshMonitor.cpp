@@ -88,9 +88,9 @@ bool WebDisplayRefreshMonitor::startNotificationMechanism()
         // The RunLoopObserver repeats.
         // FIXME: Double check whether the value of `DisplayRefreshMonitor` (1) is the appropriate runloop order here,
         // and also whether we should be specifying `RunLoopObserver::Activity::Entry` when scheduling the observer below.
-        m_runLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::DisplayRefreshMonitor, [this] {
+        lazyInitialize(m_runLoopObserver, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::DisplayRefreshMonitor, [this] {
             m_firstCallbackInCurrentRunloop = true;
-        });
+        }));
     }
 
     m_runLoopObserver->schedule(retainPtr(CFRunLoopGetCurrent()).get());

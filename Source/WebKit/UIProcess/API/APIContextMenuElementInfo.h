@@ -54,7 +54,7 @@ private:
     ContextMenuElementInfo(const WebKit::InteractionInformationAtPosition&, NSDictionary *);
     
     WebKit::InteractionInformationAtPosition m_interactionInformation;
-    RetainPtr<NSDictionary> m_userInfo;
+    const RetainPtr<NSDictionary> m_userInfo;
 };
 
 } // namespace API

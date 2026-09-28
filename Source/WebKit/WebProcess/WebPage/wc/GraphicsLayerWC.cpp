@@ -157,7 +157,7 @@ GraphicsLayerWC::GraphicsLayerWC(Type layerType, GraphicsLayerClient& client, Ob
     : GraphicsLayer(layerType, client)
     , m_observer(&observer)
 {
-    m_tiledBacking = makeUnique<WCTiledBacking>(*this);
+    lazyInitialize(m_tiledBacking, makeUnique<WCTiledBacking>(*this));
     if (layerType == Type::Normal)
         client.tiledBackingUsageChanged(this, true);
     m_observer->graphicsLayerAdded(*this);

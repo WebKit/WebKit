@@ -43,14 +43,14 @@ public:
     WebCore::SpeechRecognitionConnection& speechRecognitionConnection() final
     {
         if (!m_connection)
-            m_connection = WebSpeechRecognitionConnection::create(m_pageIdentifier);
+            lazyInitialize(m_connection, WebSpeechRecognitionConnection::create(m_pageIdentifier));
 
         return *m_connection;
     }
 
 private:
     WebCore::PageIdentifier m_pageIdentifier;
-    RefPtr<WebSpeechRecognitionConnection> m_connection;
+    const RefPtr<WebSpeechRecognitionConnection> m_connection;
 };
 
 } // namespace WebKit

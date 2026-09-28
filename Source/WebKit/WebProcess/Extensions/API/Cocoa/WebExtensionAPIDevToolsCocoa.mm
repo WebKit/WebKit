@@ -46,7 +46,7 @@ WebExtensionAPIDevToolsInspectedWindow& WebExtensionAPIDevTools::inspectedWindow
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow
 
     if (!m_inspectedWindow)
-        m_inspectedWindow = WebExtensionAPIDevToolsInspectedWindow::create(*this);
+        lazyInitialize(m_inspectedWindow, WebExtensionAPIDevToolsInspectedWindow::create(*this));
 
     return *m_inspectedWindow;
 }
@@ -56,7 +56,7 @@ WebExtensionAPIDevToolsNetwork& WebExtensionAPIDevTools::network()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network
 
     if (!m_network)
-        m_network = WebExtensionAPIDevToolsNetwork::create(*this);
+        lazyInitialize(m_network, WebExtensionAPIDevToolsNetwork::create(*this));
 
     return *m_network;
 }
@@ -66,7 +66,7 @@ WebExtensionAPIDevToolsPanels& WebExtensionAPIDevTools::panels()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels
 
     if (!m_panels)
-        m_panels = WebExtensionAPIDevToolsPanels::create(*this);
+        lazyInitialize(m_panels, WebExtensionAPIDevToolsPanels::create(*this));
 
     return *m_panels;
 }

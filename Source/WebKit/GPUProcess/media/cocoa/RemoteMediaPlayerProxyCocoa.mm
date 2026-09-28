@@ -69,7 +69,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
         false;
 #endif
 
-    if (auto hostingContext = m_layerHostingContextManager->createHostingContextIfNeeded(protect(m_player)->platformLayer(), canShowWhileLocked))
+    if (auto hostingContext = m_layerHostingContextManager->createHostingContextIfNeeded(m_player->platformLayer(), canShowWhileLocked))
         protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(*hostingContext, m_layerHostingContextManager->videoLayerSize()), m_id);
 
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
@@ -92,7 +92,7 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
 
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
     m_layerHostingContextManager->setVideoLayerSizeFenced(size, WTF::MachSendRightAnnotated { sendRightAnnotated }, [&] {
-        protect(m_player)->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
+        m_player->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
     });
 }
 
@@ -111,13 +111,12 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
 {
     using namespace WebCore;
 
-    RefPtr player = m_player;
-    if (!player) {
+    if (!m_player) {
         completionHandler(std::nullopt, ColorSpace::SRGB());
         return;
     }
 
-    auto nativeImage = player->nativeImageForCurrentTime();
+    auto nativeImage = m_player->nativeImageForCurrentTime();
     if (!nativeImage) {
         completionHandler(std::nullopt, ColorSpace::SRGB());
         return;
@@ -140,13 +139,12 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
 
 void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::ColorSpace)>&& completionHandler)
 {
-    RefPtr player = m_player;
-    if (!player) {
+    if (!m_player) {
         completionHandler(WebCore::ColorSpace::SRGB());
         return;
     }
 
-    completionHandler(player->colorSpace());
+    completionHandler(m_player->colorSpace());
 }
 
 } // namespace WebKit

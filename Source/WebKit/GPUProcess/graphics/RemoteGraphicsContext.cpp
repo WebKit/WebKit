@@ -69,7 +69,7 @@ RemoteGraphicsContext::~RemoteGraphicsContext() = default;
 Ref<ControlFactory> RemoteGraphicsContext::controlFactory()
 {
     if (!m_controlFactory)
-        m_controlFactory = ControlFactory::create();
+        lazyInitialize(m_controlFactory, ControlFactory::create());
     return *m_controlFactory;
 }
 
@@ -611,7 +611,7 @@ SharedVideoFrameReader& RemoteGraphicsContext::sharedVideoFrameReader()
 {
     if (!m_sharedVideoFrameReader) {
         Ref gpuConnectionToWebProcess = m_renderingBackend->gpuConnectionToWebProcess();
-        m_sharedVideoFrameReader = makeUnique<SharedVideoFrameReader>(Ref { gpuConnectionToWebProcess->videoFrameObjectHeap() }, gpuConnectionToWebProcess->webProcessIdentity());
+        lazyInitialize(m_sharedVideoFrameReader, makeUnique<SharedVideoFrameReader>(Ref { gpuConnectionToWebProcess->videoFrameObjectHeap() }, gpuConnectionToWebProcess->webProcessIdentity()));
     }
     return *m_sharedVideoFrameReader;
 }

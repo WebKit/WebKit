@@ -115,7 +115,7 @@ private:
     Vector<String> copyAccessibilityAttributeNames(WebCore::PageOverlay&, bool /* parameterizedNames */) override;
 
     RefPtr<WebCore::PageOverlay> m_overlay;
-    std::unique_ptr<Client> m_client;
+    const std::unique_ptr<Client> m_client;
 };
 
 } // namespace WebKit

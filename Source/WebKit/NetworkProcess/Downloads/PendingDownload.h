@@ -115,7 +115,7 @@ private:
 
     const Ref<NetworkLoad> m_networkLoad;
     DownloadID m_downloadID;
-    RefPtr<IPC::Connection> m_parentProcessConnection;
+    const RefPtr<IPC::Connection> m_parentProcessConnection;
     bool m_isAllowedToAskUserForCredentials;
     bool m_isDownloadCancelled = false;
     WebCore::FromDownloadAttribute m_fromDownloadAttribute;
@@ -133,7 +133,7 @@ private:
 #endif
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    RefPtr<WebCore::ParentalControlsURLFilter> m_urlFilter;
+    const RefPtr<WebCore::ParentalControlsURLFilter> m_urlFilter;
     bool m_wasBlockedDueToContentFilter : 1 { false };
 #endif
 };

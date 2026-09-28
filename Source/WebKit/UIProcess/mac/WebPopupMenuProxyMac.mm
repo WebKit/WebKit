@@ -61,7 +61,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
     if (m_popup)
         [m_popup removeAllItems];
     else {
-        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        lazyInitialize(m_popup, adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]));
         [m_popup setUsesItemFromMenu:NO];
         [m_popup setAutoenablesItems:NO];
     }

@@ -56,7 +56,7 @@ private:
     ASCIILiteral xpcEndpointNameKey() const override;
     void handleEvent(xpc_connection_t, xpc_object_t) override;
 
-    RetainPtr<id> m_observer;
+    const RetainPtr<id> m_observer;
     Lock m_connectionsLock;
     Vector<OSObjectPtr<xpc_connection_t>> m_connections WTF_GUARDED_BY_LOCK(m_connectionsLock);
 };

@@ -99,10 +99,10 @@ public:
 private:
     RetainPtr<CALayer> m_scrollLayer;
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    RetainPtr<CALayer> m_interactionRegionsLayer;
+    const RetainPtr<CALayer> m_interactionRegionsLayer;
 #endif
-    RetainPtr<CALayer> m_scrolledContentsLayer;
-    RetainPtr<WKScrollingNodeScrollViewDelegate> m_scrollViewDelegate;
+    const RetainPtr<CALayer> m_scrolledContentsLayer;
+    const RetainPtr<WKScrollingNodeScrollViewDelegate> m_scrollViewDelegate;
     OptionSet<WebCore::TouchAction> m_activeTouchActions { };
     bool m_updatingFromStateNode { false };
 };

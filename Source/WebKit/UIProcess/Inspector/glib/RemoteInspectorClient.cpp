@@ -65,7 +65,7 @@ public:
 
     void initialize(Inspector::DebuggableType debuggableType)
     {
-        m_proxy = RemoteWebInspectorUIProxy::create();
+        lazyInitialize(m_proxy, RemoteWebInspectorUIProxy::create());
         m_proxy->setClient(this);
         // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
@@ -113,7 +113,7 @@ public:
     }
 
 private:
-    RefPtr<RemoteWebInspectorUIProxy> m_proxy;
+    const RefPtr<RemoteWebInspectorUIProxy> m_proxy;
     RemoteInspectorClient& m_inspectorClient;
     uint64_t m_connectionID;
     uint64_t m_targetID;

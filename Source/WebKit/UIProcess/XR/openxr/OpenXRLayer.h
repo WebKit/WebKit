@@ -52,7 +52,7 @@ public:
 protected:
     OpenXRLayer(UniqueRef<OpenXRSwapchain>&&);
 
-    UniqueRef<OpenXRSwapchain> m_swapchain;
+    const UniqueRef<OpenXRSwapchain> m_swapchain;
 
     uint64_t m_renderingFrameIndex { 0 };
     using ReusableTextureIndex = uint64_t;
@@ -161,7 +161,7 @@ private:
     static constexpr uint32_t faceCount = 6;
 
     Vector<XrCompositionLayerCubeKHR> m_layers;
-    std::unique_ptr<OpenXRSwapchain> m_rightSwapchain;
+    const std::unique_ptr<OpenXRSwapchain> m_rightSwapchain;
 };
 #endif
 

@@ -75,7 +75,7 @@ private:
 
     WKDisplayLinkHandler *displayLinkHandler();
 
-    RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
+    const RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
 
     bool m_needsDisplayRefreshCallbacksForMonotonicAnimations { false };
     bool m_hasHighImpactMonotonicAnimations { false };

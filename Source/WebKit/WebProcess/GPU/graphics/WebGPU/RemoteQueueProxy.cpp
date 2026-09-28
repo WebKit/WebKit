@@ -51,7 +51,7 @@ RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, ConvertToBackingC
         videoFrameObjectHeapProxy = protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy();
     });
 
-    m_videoFrameObjectHeapProxy = videoFrameObjectHeapProxy;
+    lazyInitialize(m_videoFrameObjectHeapProxy, videoFrameObjectHeapProxy.releaseNonNull());
 #endif
 }
 

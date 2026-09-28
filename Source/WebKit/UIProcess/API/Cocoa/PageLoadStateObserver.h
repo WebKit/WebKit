@@ -124,7 +124,7 @@ private:
     }
 
     WeakObjCPtr<id> m_object;
-    RetainPtr<NSString> m_activeURLKey;
+    const RetainPtr<NSString> m_activeURLKey;
 };
 
 }

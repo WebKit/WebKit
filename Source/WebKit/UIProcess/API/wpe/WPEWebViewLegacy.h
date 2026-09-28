@@ -76,7 +76,7 @@ private:
     bool m_horizontalScrollActive { false };
     bool m_verticalScrollActive { false };
 #if ENABLE(TOUCH_EVENTS)
-    std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
+    const std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
 #endif
 #if USE(ATK)
     mutable GRefPtr<WebKitWebViewAccessible> m_accessible;

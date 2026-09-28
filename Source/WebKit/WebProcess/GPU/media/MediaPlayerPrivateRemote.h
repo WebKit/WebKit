@@ -513,7 +513,7 @@ private:
     WebCore::PlatformTimeRanges m_cachedBufferedTimeRanges;
 
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
-    RefPtr<RemoteAudioSourceProvider> m_audioSourceProvider;
+    const RefPtr<RemoteAudioSourceProvider> m_audioSourceProvider;
 #endif
 
     mutable Lock m_lock;

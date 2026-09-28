@@ -179,7 +179,7 @@ private:
     bool m_allowOverwriteDownload { false };
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     bool m_isBlockingCookies { false };
-    RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
+    const RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
 #if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
     std::optional<CompressionDictionaryParameters> m_compressionDictionary;
 #endif

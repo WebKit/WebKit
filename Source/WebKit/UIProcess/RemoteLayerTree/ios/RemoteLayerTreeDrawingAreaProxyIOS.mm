@@ -413,7 +413,7 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyIOS::delegatedScrollingMod
 WKDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
 {
     if (!m_displayLinkHandler)
-        m_displayLinkHandler = adoptNS([[WKDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
+        lazyInitialize(m_displayLinkHandler, adoptNS([[WKDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]));
     return m_displayLinkHandler.get();
 }
 

@@ -38,8 +38,8 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WCSceneContext);
 
 WCSceneContext::WCSceneContext(uint64_t nativeWindow)
+    : m_glContext(WebCore::GLContext::create(WebCore::PlatformDisplay::sharedDisplay(), reinterpret_cast<GLNativeWindowType>(nativeWindow)))
 {
-    m_glContext = WebCore::GLContext::create(WebCore::PlatformDisplay::sharedDisplay(), reinterpret_cast<GLNativeWindowType>(nativeWindow));
 }
 
 WCSceneContext::~WCSceneContext() = default;

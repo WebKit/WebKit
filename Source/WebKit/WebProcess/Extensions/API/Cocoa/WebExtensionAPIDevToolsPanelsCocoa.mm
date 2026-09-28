@@ -83,7 +83,7 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsPanels::onThemeChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/onThemeChanged
 
     if (!m_onThemeChanged)
-        m_onThemeChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged);
+        lazyInitialize(m_onThemeChanged, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged));
 
     return *m_onThemeChanged;
 }

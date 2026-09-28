@@ -108,7 +108,7 @@ private:
 #if USE(APPKIT)
     NativeWebMouseEvent(WebMouseEventInit&&, NSEvent *);
 
-    RetainPtr<NSEvent> m_nativeEvent;
+    const RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)
     NativeWebMouseEvent(WebMouseEventInit&&, GdkEvent*);
 
@@ -120,7 +120,7 @@ private:
 #elif PLATFORM(IOS_FAMILY)
     NativeWebMouseEvent(WebMouseEventInit&&, ::WebEvent *);
 
-    RetainPtr<::WebEvent> m_nativeEvent;
+    const RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     NativeWebMouseEvent(WebMouseEventInit&&, const MSG&);
 

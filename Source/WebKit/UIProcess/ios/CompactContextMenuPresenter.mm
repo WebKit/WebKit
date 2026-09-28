@@ -126,9 +126,9 @@ CompactContextMenuPresenter::CompactContextMenuPresenter(UIView *rootView, id<UI
     : m_rootView(rootView)
 {
     if (showsMenuFromSource == ShowsMenuFromSource::Yes)
-        m_control = [WKCompactContextMenuPresenterButton buttonWithType:UIButtonTypeSystem];
+        lazyInitialize(m_control, retainPtr([WKCompactContextMenuPresenterButton buttonWithType:UIButtonTypeSystem]));
     else
-        m_control = adoptNS([[WKCompactContextMenuPresenterControl alloc] init]);
+        lazyInitialize(m_control, adoptNS([[WKCompactContextMenuPresenterControl alloc] init]));
 
     [m_control setExternalDelegate:delegate];
     [m_control layer].zPosition = CGFLOAT_MIN;

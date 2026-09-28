@@ -57,7 +57,7 @@ View::~View()
 void View::createWebPage(const API::PageConfiguration& configuration)
 {
     auto& pool = configuration.processPool();
-    m_pageProxy = pool.createWebPage(*m_pageClient, configuration.copy());
+    lazyInitialize(m_pageProxy, pool.createWebPage(*m_pageClient, configuration.copy()));
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))

@@ -3894,7 +3894,7 @@ private:
     const Ref<WebUserContentControllerProxy> m_userContentController;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    RefPtr<WebExtensionController> m_webExtensionController;
+    const RefPtr<WebExtensionController> m_webExtensionController;
     WeakPtr<WebExtensionController> m_weakWebExtensionController;
 #endif
 
@@ -3918,7 +3918,7 @@ private:
     String m_overrideContentSecurityPolicy;
     String m_openedMainFrameName;
 
-    RefPtr<WebInspectorUIProxy> m_inspector;
+    const RefPtr<WebInspectorUIProxy> m_inspector;
 
     struct PendingUndoRedo {
         WebUndoStepID stepID;
@@ -3941,7 +3941,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_USAGE)
-    std::unique_ptr<MediaUsageManager> m_mediaUsageManager;
+    const std::unique_ptr<MediaUsageManager> m_mediaUsageManager;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -4106,7 +4106,7 @@ private:
     bool m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision { false };
 #endif
 
-    std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
+    const std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
 
     std::optional<WebCore::PlatformDisplayID> m_displayID;
 
@@ -4194,7 +4194,7 @@ private:
     bool m_madeViewBlankDueToLackOfRenderingUpdate { false };
 
 #if PLATFORM(COCOA)
-    std::unique_ptr<WebCore::RunLoopObserver> m_activityStateChangeDispatcher;
+    const std::unique_ptr<WebCore::RunLoopObserver> m_activityStateChangeDispatcher;
 
     std::unique_ptr<RemoteLayerTreeScrollingPerformanceData> m_scrollingPerformanceData;
     bool m_scrollPerformanceDataCollectionEnabled { false };
@@ -4362,14 +4362,14 @@ private:
     bool m_usingOverrideHardwareConcurrency { false };
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    RefPtr<ListDataObserver> m_linkDecorationFilteringDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_linkDecorationFilteringDataUpdateObserver;
     bool m_needsInitialLinkDecorationFilteringData { true };
     bool m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections { false };
     OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtectionsPolicies;
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    RetainPtr<SYNotesActivationObserver> m_appHighlightsObserver;
+    const RetainPtr<SYNotesActivationObserver> m_appHighlightsObserver;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)

@@ -405,7 +405,7 @@ private:
     MatchPatternSet m_externallyConnectableMatchPatterns;
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSBundle> m_bundle;
+    const RetainPtr<NSBundle> m_bundle;
     mutable RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
 #endif
 

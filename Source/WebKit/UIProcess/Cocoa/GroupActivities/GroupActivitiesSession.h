@@ -70,7 +70,7 @@ private:
     GroupActivitiesSession(RetainPtr<WKGroupSession>&&);
     WKGroupSession* groupSession() { return m_groupSession.get(); }
 
-    RetainPtr<WKGroupSession> m_groupSession;
+    const RetainPtr<WKGroupSession> m_groupSession;
     WeakHashSet<StateChangeObserver> m_stateChangeObservers;
     WeakHashSet<FallbackURLObserver> m_fallbackURLObservers;
 };

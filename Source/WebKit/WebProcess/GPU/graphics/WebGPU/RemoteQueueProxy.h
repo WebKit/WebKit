@@ -129,7 +129,7 @@ private:
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteAdapterProxy> m_parent;
 #if ENABLE(VIDEO)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+    const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;

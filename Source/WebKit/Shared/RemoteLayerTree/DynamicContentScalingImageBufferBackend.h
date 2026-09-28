@@ -67,7 +67,7 @@ protected:
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     mutable std::unique_ptr<WebCore::GraphicsContextCG> m_context;
-    RetainPtr<id> m_resourceCache;
+    const RetainPtr<id> m_resourceCache;
     WebCore::RenderingMode m_renderingMode;
 };
 

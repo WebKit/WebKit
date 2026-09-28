@@ -73,9 +73,9 @@ public:
     JSValueRef runTests(JSContextRef, Vector<Protected<JSValueRef>> testFunctions);
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onMessage;
-    RefPtr<WebExtensionAPIEvent> m_onTestStarted;
-    RefPtr<WebExtensionAPIEvent> m_onTestFinished;
+    const RefPtr<WebExtensionAPIEvent> m_onMessage;
+    const RefPtr<WebExtensionAPIEvent> m_onTestStarted;
+    const RefPtr<WebExtensionAPIEvent> m_onTestFinished;
 
     struct Test {
         String testName;

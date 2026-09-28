@@ -506,7 +506,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onCreated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onCreated
 
     if (!m_onCreated)
-        m_onCreated = WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnCreated);
+        lazyInitialize(m_onCreated, WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnCreated));
 
     return *m_onCreated;
 }
@@ -516,7 +516,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onRemoved()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onRemoved
 
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnRemoved);
+        lazyInitialize(m_onRemoved, WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnRemoved));
 
     return *m_onRemoved;
 }
@@ -526,7 +526,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onFocusChanged
 
     if (!m_onFocusChanged)
-        m_onFocusChanged = WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnFocusChanged);
+        lazyInitialize(m_onFocusChanged, WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnFocusChanged));
 
     return *m_onFocusChanged;
 }

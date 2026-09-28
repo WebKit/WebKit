@@ -87,7 +87,7 @@ DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend
     // FIXME: We should make callers always specify a cache and have an assertion here instead
     // of making a temporary one. RemoteLayerWithRemoteRenderingBackingStore currently does not.
     if (!m_resourceCache)
-        m_resourceCache = bridge_id_cast(adoptCF(RECGCommandsCacheCreate(nullptr)));
+        lazyInitialize(m_resourceCache, bridge_id_cast(adoptCF(RECGCommandsCacheCreate(nullptr))));
 }
 
 DynamicContentScalingImageBufferBackend::~DynamicContentScalingImageBufferBackend() = default;

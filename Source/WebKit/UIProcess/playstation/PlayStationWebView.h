@@ -84,7 +84,7 @@ private:
 
     std::unique_ptr<API::ViewClient> m_client;
     const std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
-    RefPtr<WebPageProxy> m_page;
+    const RefPtr<WebPageProxy> m_page;
     OptionSet<WebCore::ActivityState> m_viewStateFlags;
 
     WebCore::IntSize m_viewSize;

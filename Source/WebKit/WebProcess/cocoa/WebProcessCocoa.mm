@@ -220,7 +220,7 @@ void WebProcess::platformSetCacheModel(CacheModel)
 void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data)
 {
     if (!m_accessibilityRemoteFrameTokenCache)
-        m_accessibilityRemoteFrameTokenCache = adoptNS([[NSMutableDictionary alloc] init]);
+        lazyInitialize(m_accessibilityRemoteFrameTokenCache, adoptNS([[NSMutableDictionary alloc] init]));
 
     auto frameInt = frameID.toUInt64();
     [m_accessibilityRemoteFrameTokenCache setObject:toNSData(data).get() forKey:@(frameInt)];
@@ -1078,7 +1078,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
     }
 
     if (!m_cpuMonitor) {
-        m_cpuMonitor = makeUnique<CPUMonitor>(cpuMonitoringInterval, [weakThis = WeakPtr { *this }](double cpuUsage) {
+        lazyInitialize(m_cpuMonitor, makeUnique<CPUMonitor>(cpuMonitoringInterval, [weakThis = WeakPtr { *this }](double cpuUsage) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -1088,7 +1088,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
             else
                 WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(protectedThis.get(), ProcessSuspension, "updateCPUMonitorState: WebProcess exceeded CPU limit of %.1f%% (was using %.1f%%) hasVisiblePages? %d", protectedThis->m_cpuLimit.value() * 100, cpuUsage * 100, protectedThis->hasVisibleWebPage());
             protect(protectedThis->parentProcessConnection())->send(Messages::WebProcessProxy::DidExceedCPULimit(), 0);
-        });
+        }));
     } else if (reason == CPUMonitorUpdateReason::VisibilityHasChanged) {
         // If the visibility has changed, stop the CPU monitor before setting its limit. This is needed because the CPU usage can vary wildly based on visibility and we would
         // not want to report that a process has exceeded its background CPU limit even though most of the CPU time was used while the process was visible.

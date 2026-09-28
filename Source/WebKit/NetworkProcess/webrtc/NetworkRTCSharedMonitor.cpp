@@ -108,18 +108,17 @@ void NetworkRTCSharedMonitor::updateNetworks()
     auto aggregator = IPAddressCallbackAggregator::create([] (auto&& ipv4, auto&& ipv6, auto&& networkList) mutable {
         NetworkRTCSharedMonitor::singleton().onGatheredNetworks(WTF::move(ipv4), WTF::move(ipv6), WTF::move(networkList));
     });
-    Ref protectedQueue = m_queue;
-    protectedQueue->dispatch([aggregator] {
+    m_queue->dispatch([aggregator] {
         bool useIPv4 = true;
         if (auto address = NetworkRTCMonitor::getDefaultIPAddress(useIPv4))
             aggregator->setIPv4(WTF::move(*address));
     });
-    protectedQueue->dispatch([aggregator] {
+    m_queue->dispatch([aggregator] {
         bool useIPv4 = false;
         if (auto address = NetworkRTCMonitor::getDefaultIPAddress(useIPv4))
             aggregator->setIPv6(WTF::move(*address));
     });
-    protectedQueue->dispatch([aggregator] {
+    m_queue->dispatch([aggregator] {
         aggregator->setNetworkMap(NetworkRTCMonitor::gatherNetworkMap());
     });
 }

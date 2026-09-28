@@ -207,7 +207,7 @@ public:
         ASSERT(!m_existingEntry);
         ASSERT(!m_didRetrieveExistingEntry);
 
-        m_existingEntry = WTF::move(entry);
+        lazyInitialize(m_existingEntry, WTF::move(entry));
         m_didRetrieveExistingEntry = true;
         saveToDiskIfReady();
     }
@@ -264,7 +264,7 @@ private:
     Vector<std::unique_ptr<SubresourceLoad>> m_subresourceLoads;
     WTF::Function<void()> m_loadCompletionHandler;
     PAL::HysteresisActivity m_loadHysteresisActivity;
-    std::unique_ptr<SubresourcesEntry> m_existingEntry;
+    const std::unique_ptr<SubresourcesEntry> m_existingEntry;
     Vector<Function<void()>> m_postMainResourceResponseTasks;
     bool m_didFinishLoad { false };
     bool m_didRetrieveExistingEntry { false };

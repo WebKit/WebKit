@@ -128,7 +128,7 @@ private:
     GraphicsLayerWC* m_next;
     WebCore::PlatformLayerIdentifier m_layerID { WebCore::PlatformLayerIdentifier::generate() };
     Observer* m_observer;
-    std::unique_ptr<WCTiledBacking> m_tiledBacking;
+    const std::unique_ptr<WCTiledBacking> m_tiledBacking;
     PlatformLayer* m_platformLayer { nullptr };
     Markable<WebCore::LayerHostingContextIdentifier> m_hostIdentifier;
     WebCore::Color m_solidColor;

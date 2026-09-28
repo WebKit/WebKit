@@ -51,7 +51,7 @@ private:
 #if PLATFORM(COCOA)
     mutable RefPtr<WebExtensionAPIWebPageRuntime> m_runtime;
 #endif
-    RefPtr<WebExtensionAPITest> m_test;
+    const RefPtr<WebExtensionAPITest> m_test;
 };
 
 } // namespace WebKit

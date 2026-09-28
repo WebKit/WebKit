@@ -102,7 +102,7 @@ private:
 
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_parent;
 
-    RefPtr<WebCore::Element> m_element;
+    const RefPtr<WebCore::Element> m_element;
     const RetainPtr<PDFAnnotation> m_annotation;
 
     const RefPtr<PDFPluginAnnotationEventListener> m_eventListener;

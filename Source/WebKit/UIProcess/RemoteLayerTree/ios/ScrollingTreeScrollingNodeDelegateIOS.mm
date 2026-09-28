@@ -377,7 +377,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
         RetainPtr scrollView = this->scrollView();
         if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
             if (!m_scrollViewDelegate)
-                m_scrollViewDelegate = adoptNS([[WKScrollingNodeScrollViewDelegate alloc] initWithScrollingTreeNodeDelegate:*this]);
+                lazyInitialize(m_scrollViewDelegate, adoptNS([[WKScrollingNodeScrollViewDelegate alloc] initWithScrollingTreeNodeDelegate:*this]));
 
             scrollView.get().scrollsToTop = NO;
             scrollView.get().delegate = m_scrollViewDelegate.get();

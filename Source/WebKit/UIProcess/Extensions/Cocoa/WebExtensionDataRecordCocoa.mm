@@ -44,7 +44,7 @@ NSArray *WebExtensionDataRecord::errors()
 void WebExtensionDataRecord::addError(NSString *debugDescription, WebExtensionDataType type)
 {
     if (!m_errors)
-        m_errors = [[NSMutableArray alloc] init];
+        lazyInitialize(m_errors, adoptNS([[NSMutableArray alloc] init]));
 
     switch (type) {
     case WebExtensionDataType::Local:

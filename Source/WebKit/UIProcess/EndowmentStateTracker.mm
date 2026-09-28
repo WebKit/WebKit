@@ -111,7 +111,7 @@ void EndowmentStateTracker::registerMonitorIfNecessary()
     if (m_processMonitor)
         return;
 
-    m_processMonitor = [RBSProcessMonitor monitorWithConfiguration:[this] (id<RBSProcessMonitorConfiguring> config) {
+    lazyInitialize(m_processMonitor, retainPtr([RBSProcessMonitor monitorWithConfiguration:[this] (id<RBSProcessMonitorConfiguring> config) {
         [config setPredicates:@[[RBSProcessPredicate predicateMatchingHandle:[RBSProcessHandle currentProcess]]]];
 
         RBSProcessStateDescriptor *stateDescriptor = [RBSProcessStateDescriptor descriptor];
@@ -126,7 +126,7 @@ void EndowmentStateTracker::registerMonitorIfNecessary()
                 setState(WTF::move(state));
             });
         }];
-    }];
+    }]));
 }
 
 void EndowmentStateTracker::addClient(EndowmentStateTrackerClient& client)

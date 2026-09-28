@@ -313,7 +313,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         return;
     }
 
-    m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
+    lazyInitialize(m_task, retainPtr([m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()]));
 
 #if HAVE(CFNETWORK_HOSTOVERRIDE)
     // Avoid setting host override for WPT, since we are using a local DNS resolver then.

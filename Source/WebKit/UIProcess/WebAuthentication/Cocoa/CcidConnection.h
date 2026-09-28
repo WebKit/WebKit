@@ -59,13 +59,13 @@ private:
     void processPendingRequests();
 
     const RetainPtr<TKSmartCard> m_smartCard;
-    RetainPtr<TKSmartCardSlot> m_slot;
+    const RetainPtr<TKSmartCardSlot> m_slot;
     WeakPtr<CcidService> m_service;
     Deque<std::pair<Vector<uint8_t>, DataReceivedCallback>> m_pendingRequests;
     bool m_contactless { false };
     bool m_hasSession { false };
     bool m_sessionPending { false };
-    RetainPtr<WKSmartCardObserver> m_observer;
+    const RetainPtr<WKSmartCardObserver> m_observer;
 };
 
 } // namespace WebKit

@@ -279,7 +279,7 @@ private:
     const Ref<WebExtensionControllerConfiguration> m_configuration;
 
 #if PLATFORM(COCOA)
-    RetainPtr<_WKWebExtensionControllerHelper> m_webExtensionControllerHelper;
+    const RetainPtr<_WKWebExtensionControllerHelper> m_webExtensionControllerHelper;
 #endif
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;

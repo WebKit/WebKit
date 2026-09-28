@@ -162,7 +162,7 @@ private:
     const Ref<ModelConvertToBackingContext> m_modelConvertToBackingContext;
     ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    const RefPtr<IPC::StreamClientConnection> m_streamConnection;
     WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };

@@ -518,7 +518,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage
 
     if (!m_onMessage)
-        m_onMessage = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnMessage);
+        lazyInitialize(m_onMessage, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnMessage));
 
     return *m_onMessage;
 }
@@ -528,7 +528,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onConnect
 
     if (!m_onConnect)
-        m_onConnect = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnConnect);
+        lazyInitialize(m_onConnect, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnConnect));
 
     return *m_onConnect;
 }
@@ -538,7 +538,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onInstalled()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
 
     if (!m_onInstalled)
-        m_onInstalled = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnInstalled);
+        lazyInitialize(m_onInstalled, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnInstalled));
 
     return *m_onInstalled;
 }
@@ -548,7 +548,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onStartup()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onStartup
 
     if (!m_onStartup)
-        m_onStartup = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnStartup);
+        lazyInitialize(m_onStartup, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnStartup));
 
     return *m_onStartup;
 }
@@ -558,7 +558,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnectExternal()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onConnectExternal
 
     if (!m_onConnectExternal)
-        m_onConnectExternal = WebExtensionAPIEvent::create(*this,  WebExtensionEventListenerType::RuntimeOnConnectExternal);
+        lazyInitialize(m_onConnectExternal, WebExtensionAPIEvent::create(*this,  WebExtensionEventListenerType::RuntimeOnConnectExternal));
 
     return *m_onConnectExternal;
 }
@@ -568,7 +568,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessageExternal()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessageExternal
 
     if (!m_onMessageExternal)
-        m_onMessageExternal = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnMessageExternal);
+        lazyInitialize(m_onMessageExternal, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::RuntimeOnMessageExternal));
 
     return *m_onMessageExternal;
 }

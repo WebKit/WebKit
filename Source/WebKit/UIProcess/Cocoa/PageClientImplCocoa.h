@@ -196,7 +196,7 @@ protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
 
     WeakObjCPtr<WKWebView> m_webView;
-    std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
+    const std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 #if ENABLE(FULLSCREEN_API)
     std::unique_ptr<WebFullScreenManagerProxyClient> m_fullscreenClientForTesting;
 #endif

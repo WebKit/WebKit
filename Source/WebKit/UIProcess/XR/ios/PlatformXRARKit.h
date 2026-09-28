@@ -67,7 +67,7 @@ protected:
 
 private:
     XRDeviceIdentifier m_deviceIdentifier = XRDeviceIdentifier::generate();
-    RetainPtr<ARSession> m_session;
+    const RetainPtr<ARSession> m_session;
 
     struct Idle {
     };

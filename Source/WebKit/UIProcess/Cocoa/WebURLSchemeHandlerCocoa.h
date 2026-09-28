@@ -50,7 +50,7 @@ private:
     void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final;
 
-    RetainPtr<id<WKURLSchemeHandler>> m_apiHandler;
+    const RetainPtr<id<WKURLSchemeHandler>> m_apiHandler;
 
 }; // class WebURLSchemeHandler
 

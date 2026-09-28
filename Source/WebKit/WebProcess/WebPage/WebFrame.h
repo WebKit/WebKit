@@ -367,7 +367,7 @@ private:
     Markable<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
     Markable<WebCore::FrameIdentifier> m_frameIDBeforeProvisionalNavigation;
 
-    std::unique_ptr<FrameInspectorTarget> m_inspectorTarget;
+    const std::unique_ptr<FrameInspectorTarget> m_inspectorTarget;
 };
 
 RefPtr<WebCore::ShareableBitmap> shareableBitmapFromImageData(WebCore::ImageData&);

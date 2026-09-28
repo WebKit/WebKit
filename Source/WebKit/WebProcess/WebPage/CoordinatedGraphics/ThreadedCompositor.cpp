@@ -90,9 +90,9 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 {
     ASSERT(RunLoop::isMain());
 
-    m_didCompositeRunLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::GraphicsCommit, [this] {
+    lazyInitialize(m_didCompositeRunLoopObserver, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::GraphicsCommit, [this] {
         this->didCompositeRunLoopObserverFired();
-    });
+    }));
 
     initializeFPSCounter();
 #if ENABLE(DAMAGE_TRACKING)

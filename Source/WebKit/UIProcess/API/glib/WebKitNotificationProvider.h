@@ -70,7 +70,7 @@ private:
 
     WebKitWebContext* m_webContext;
     HashMap<WTF::String, bool> m_notificationPermissions;
-    RefPtr<WebNotificationManagerProxy> m_notificationManager;
+    const RefPtr<WebNotificationManagerProxy> m_notificationManager;
     HashMap<WebNotificationIdentifier, GRefPtr<WebKitNotification>> m_apiNotifications;
     bool m_observerRegistered { false };
 };

@@ -67,9 +67,9 @@ private:
     void updateIconTimestamp(int64_t iconID, int64_t timestamp);
     void deleteIcon(int64_t);
 
-    Ref<WorkQueue> m_workQueue;
+    const Ref<WorkQueue> m_workQueue;
     AllowDatabaseWrite m_allowDatabaseWrite { AllowDatabaseWrite::Yes };
-    UniqueRef<WebCore::SQLiteDatabase> m_db;
+    const UniqueRef<WebCore::SQLiteDatabase> m_db;
     HashMap<String, ListHashSet<String>> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
     HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);

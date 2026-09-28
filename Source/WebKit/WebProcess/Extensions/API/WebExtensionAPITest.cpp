@@ -131,7 +131,7 @@ void WebExtensionAPITest::sendMessage(JSContextRef context, const String& messag
 WebExtensionAPIEvent& WebExtensionAPITest::onMessage()
 {
     if (!m_onMessage)
-        m_onMessage = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnMessage);
+        lazyInitialize(m_onMessage, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnMessage));
 
     return *m_onMessage;
 }
@@ -139,7 +139,7 @@ WebExtensionAPIEvent& WebExtensionAPITest::onMessage()
 WebExtensionAPIEvent& WebExtensionAPITest::onTestStarted()
 {
     if (!m_onTestStarted)
-        m_onTestStarted = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnTestStarted);
+        lazyInitialize(m_onTestStarted, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnTestStarted));
 
     return *m_onTestStarted;
 }
@@ -147,7 +147,7 @@ WebExtensionAPIEvent& WebExtensionAPITest::onTestStarted()
 WebExtensionAPIEvent& WebExtensionAPITest::onTestFinished()
 {
     if (!m_onTestFinished)
-        m_onTestFinished = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnTestFinished);
+        lazyInitialize(m_onTestFinished, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnTestFinished));
 
     return *m_onTestFinished;
 }

@@ -71,7 +71,7 @@ private:
     void abortPendingHandler(const String& contextID, ASCIILiteral message);
 
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiDigitalCredentialsBackendDispatcher> m_digitalCredentialsDomainDispatcher;
+    const Ref<Inspector::BidiDigitalCredentialsBackendDispatcher> m_digitalCredentialsDomainDispatcher;
     HashMap<String, VirtualWalletBehavior> m_browsingContextToWalletBehaviors;
     std::optional<VirtualWalletBehavior> m_defaultBehavior;
     HashMap<String, DigitalCredentialsPickerCompletionHandler> m_browsingContextToPendingWaitHandlers;

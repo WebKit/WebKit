@@ -53,7 +53,7 @@ PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const A
 {
     auto configuration = conf.copy();
     auto& pool = configuration->processPool();
-    m_page = pool.createWebPage(*m_pageClient, WTF::move(configuration));
+    lazyInitialize(m_page, pool.createWebPage(*m_pageClient, WTF::move(configuration)));
 
     wpe_view_backend_initialize(m_backend);
 
@@ -74,7 +74,7 @@ PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
 {
     auto configuration = conf.copy();
     auto& pool = configuration->processPool();
-    m_page = pool.createWebPage(*m_pageClient, WTF::move(configuration));
+    lazyInitialize(m_page, pool.createWebPage(*m_pageClient, WTF::move(configuration)));
 
     auto& pageConfiguration = m_page->configuration();
     m_page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags(), pageConfiguration.initialReferrerPolicy());

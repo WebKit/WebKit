@@ -111,38 +111,38 @@ public:
 #endif
 
 private:
-    RefPtr<WebExtensionAPIAction> m_action;
-    RefPtr<WebExtensionAPIAlarms> m_alarms;
-    RefPtr<WebExtensionAPICommands> m_commands;
-    RefPtr<WebExtensionAPICookies> m_cookies;
-    RefPtr<WebExtensionAPIDeclarativeNetRequest> m_declarativeNetRequest;
+    const RefPtr<WebExtensionAPIAction> m_action;
+    const RefPtr<WebExtensionAPIAlarms> m_alarms;
+    const RefPtr<WebExtensionAPICommands> m_commands;
+    const RefPtr<WebExtensionAPICookies> m_cookies;
+    const RefPtr<WebExtensionAPIDeclarativeNetRequest> m_declarativeNetRequest;
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    RefPtr<WebExtensionAPIDevTools> m_devtools;
+    const RefPtr<WebExtensionAPIDevTools> m_devtools;
 #endif
-    RefPtr<WebExtensionAPIDOM> m_dom;
-    RefPtr<WebExtensionAPIExtension> m_extension;
-    RefPtr<WebExtensionAPILocalization> m_i18n;
-    RefPtr<WebExtensionAPIMenus> m_menus;
-    RefPtr<WebExtensionAPINotifications> m_notifications;
+    const RefPtr<WebExtensionAPIDOM> m_dom;
+    const RefPtr<WebExtensionAPIExtension> m_extension;
+    const RefPtr<WebExtensionAPILocalization> m_i18n;
+    const RefPtr<WebExtensionAPIMenus> m_menus;
+    const RefPtr<WebExtensionAPINotifications> m_notifications;
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    RefPtr<WebExtensionAPIOffscreen> m_offscreen;
+    const RefPtr<WebExtensionAPIOffscreen> m_offscreen;
 #endif
-    RefPtr<WebExtensionAPIPermissions> m_permissions;
+    const RefPtr<WebExtensionAPIPermissions> m_permissions;
     mutable RefPtr<WebExtensionAPIRuntime> m_runtime;
-    RefPtr<WebExtensionAPIScripting> m_scripting;
+    const RefPtr<WebExtensionAPIScripting> m_scripting;
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    RefPtr<WebExtensionAPISidePanel> m_sidePanel;
-    RefPtr<WebExtensionAPISidebarAction> m_sidebarAction;
+    const RefPtr<WebExtensionAPISidePanel> m_sidePanel;
+    const RefPtr<WebExtensionAPISidebarAction> m_sidebarAction;
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-    RefPtr<WebExtensionAPIBookmarks> m_bookmarks;
+    const RefPtr<WebExtensionAPIBookmarks> m_bookmarks;
 #endif
-    RefPtr<WebExtensionAPIStorage> m_storage;
-    RefPtr<WebExtensionAPITabs> m_tabs;
-    RefPtr<WebExtensionAPITest> m_test;
-    RefPtr<WebExtensionAPIWindows> m_windows;
-    RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
-    RefPtr<WebExtensionAPIWebRequest> m_webRequest;
+    const RefPtr<WebExtensionAPIStorage> m_storage;
+    const RefPtr<WebExtensionAPITabs> m_tabs;
+    const RefPtr<WebExtensionAPITest> m_test;
+    const RefPtr<WebExtensionAPIWindows> m_windows;
+    const RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
+    const RefPtr<WebExtensionAPIWebRequest> m_webRequest;
 };
 
 } // namespace WebKit

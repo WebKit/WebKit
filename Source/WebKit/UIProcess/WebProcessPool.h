@@ -847,20 +847,20 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    RetainPtr<NSObject> m_enhancedAccessibilityObserver;
-    RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
-    RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;
-    RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
-    RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
-    RetainPtr<NSObject> m_smartListsNotificationObserver;
-    RetainPtr<NSObject> m_accessibilityDisplayOptionsNotificationObserver;
-    RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
-    RetainPtr<NSObject> m_deactivationObserver;
-    RetainPtr<NSObject> m_didChangeScreenParametersNotificationObserver;
+    const RetainPtr<NSObject> m_enhancedAccessibilityObserver;
+    const RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
+    const RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;
+    const RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
+    const RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
+    const RetainPtr<NSObject> m_smartListsNotificationObserver;
+    const RetainPtr<NSObject> m_accessibilityDisplayOptionsNotificationObserver;
+    const RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
+    const RetainPtr<NSObject> m_deactivationObserver;
+    const RetainPtr<NSObject> m_didChangeScreenParametersNotificationObserver;
     bool m_smartListsEnabled { false };
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
-    RetainPtr<NSObject> m_didBeginSuppressingHighDynamicRange;
-    RetainPtr<NSObject> m_didEndSuppressingHighDynamicRange;
+    const RetainPtr<NSObject> m_didBeginSuppressingHighDynamicRange;
+    const RetainPtr<NSObject> m_didEndSuppressingHighDynamicRange;
 #endif
 
     const UniqueRef<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
@@ -872,10 +872,10 @@ private:
 
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::PowerSourceNotifier> m_powerSourceNotifier;
-    RetainPtr<NSObject> m_activationObserver;
-    RetainPtr<NSObject> m_accessibilityEnabledObserver;
-    RetainPtr<NSObject> m_applicationLaunchObserver;
-    RetainPtr<NSObject> m_finishedMobileAssetFontDownloadObserver;
+    const RetainPtr<NSObject> m_activationObserver;
+    const RetainPtr<NSObject> m_accessibilityEnabledObserver;
+    const RetainPtr<NSObject> m_applicationLaunchObserver;
+    const RetainPtr<NSObject> m_finishedMobileAssetFontDownloadObserver;
 
     RetainPtr<WKProcessPoolWeakObserver> m_weakObserver;
 #endif
@@ -906,7 +906,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSMutableDictionary> m_bundleParameters;
+    const RetainPtr<NSMutableDictionary> m_bundleParameters;
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -998,7 +998,7 @@ private:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    RefPtr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
+    const RefPtr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1007,15 +1007,15 @@ private:
 #if !USE(EXTENSIONKIT)
     String m_cachedWebContentTempDirectory;
 #endif
-    RetainPtr<NSObject> m_screenDidConnectObserver;
-    RetainPtr<NSObject> m_screenDidDisconnectObserver;
+    const RetainPtr<NSObject> m_screenDidConnectObserver;
+    const RetainPtr<NSObject> m_screenDidDisconnectObserver;
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    RefPtr<ListDataObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
-    RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
-    RefPtr<ListDataObserver> m_scriptTrackingPrivacyDataUpdateObserver;
-    RefPtr<ListDataObserver> m_consistentPrivacyQuirkDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_scriptTrackingPrivacyDataUpdateObserver;
+    const RefPtr<ListDataObserver> m_consistentPrivacyQuirkDataUpdateObserver;
 #endif
 
     bool m_webProcessStateUpdatesForPageClientEnabled { false };

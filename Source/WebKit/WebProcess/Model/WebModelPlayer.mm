@@ -145,14 +145,14 @@ WebModelPlayer::WebModelPlayer(WebCore::Page& page, WebCore::ModelPlayerClient& 
     updateScreenHeadroomFromPage();
 
     if (RefPtr document = page.localTopDocument()) {
-        m_screenPropertiesChangedObserver = ScreenPropertiesChangedObserver::create([weakThis = ThreadSafeWeakPtr { *this }](WebCore::PlatformDisplayID displayID) {
+        lazyInitialize(m_screenPropertiesChangedObserver, ScreenPropertiesChangedObserver::create([weakThis = ThreadSafeWeakPtr { *this }](WebCore::PlatformDisplayID displayID) {
             RefPtr protectedThis { weakThis };
             if (!protectedThis)
                 return;
             auto platformScreen = WebCore::PlatformScreen::singleton();
             if (auto* data = platformScreen->screenData(displayID))
                 protectedThis->updateScreenHeadroom(data->currentEDRHeadroom, data->suppressEDR);
-        });
+        }));
 
         document->addScreenPropertiesChangedObserver(*m_screenPropertiesChangedObserver);
     }
@@ -383,7 +383,7 @@ void WebModelPlayer::handleMouseDown(const WebCore::LayoutPoint& startingPoint, 
 {
     m_initialPoint = startingPoint;
     if (!m_orbitSimulator) {
-        m_orbitSimulator = adoptNS([[WKStageModeOrbitSimulator alloc] init]);
+        lazyInitialize(m_orbitSimulator, adoptNS([[WKStageModeOrbitSimulator alloc] init]));
         // Seed from the current pose so a gesture after reload doesn't snap to default.
         if (m_nodeID) {
             if (auto transform = entityTransform(*m_nodeID)) {

@@ -79,7 +79,7 @@ private:
     void didNotifyUserActivation(MonotonicTime) final;
     void didConsumeUserActivation() final;
 
-    RefPtr<PendingPostMessages> m_pendingPostMessages;
+    const RefPtr<PendingPostMessages> m_pendingPostMessages;
 };
 
 }

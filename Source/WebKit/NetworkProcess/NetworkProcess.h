@@ -690,12 +690,12 @@ private:
 #endif
 
 #if USE(RUNNINGBOARD)
-    Ref<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+    const Ref<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
     
 #if ENABLE(WEB_RTC)
-    RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;
+    const RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;
 #endif
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;

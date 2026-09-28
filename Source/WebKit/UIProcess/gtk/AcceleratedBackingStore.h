@@ -249,7 +249,7 @@ private:
         RefPtr<WebCore::NativeImage> asNativeImageForTesting() const override;
         void release() override;
 
-        RefPtr<WebCore::ShareableBitmap> m_bitmap;
+        const RefPtr<WebCore::ShareableBitmap> m_bitmap;
 #if GTK_CHECK_VERSION(4, 16, 0)
         GRefPtr<GdkMemoryTextureBuilder> m_builder;
         GRefPtr<GdkTexture> m_texture;

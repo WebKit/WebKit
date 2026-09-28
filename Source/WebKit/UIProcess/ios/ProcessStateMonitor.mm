@@ -58,7 +58,7 @@ ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedH
     RELEASE_LOG(ProcessSuspension, "%p - ProcessStateMonitor::ProcessStateMonitor", this);
     RELEASE_ASSERT(RunLoop::isMain());
 
-    m_rbsMonitor = [RBSProcessMonitor monitorWithConfiguration:[weakThis = WeakPtr { *this }](id<RBSProcessMonitorConfiguring> config) mutable {
+    lazyInitialize(m_rbsMonitor, retainPtr([RBSProcessMonitor monitorWithConfiguration:[weakThis = WeakPtr { *this }](id<RBSProcessMonitorConfiguring> config) mutable {
         RBSProcessStateDescriptor *descriptor = [RBSProcessStateDescriptor descriptor];
         [descriptor setValues:RBSProcessStateValueLegacyAssertions | RBSProcessStateValueModernAssertions];
         [config setStateDescriptor:descriptor];
@@ -69,7 +69,7 @@ ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedH
                     weakThis->checkRemainingRunTime();
             });
         }];
-    }];
+    }]));
 
     checkRemainingRunTime();
 }

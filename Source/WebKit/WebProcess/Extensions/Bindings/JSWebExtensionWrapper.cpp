@@ -137,8 +137,8 @@ void WebExtensionCallbackHandler::reportError(const String& message)
     if (!m_globalContext)
         return;
 
-    if (RefPtr runtime = m_runtime) {
-        runtime->reportError(message, *this);
+    if (m_runtime) {
+        m_runtime->reportError(message, *this);
         return;
     }
 

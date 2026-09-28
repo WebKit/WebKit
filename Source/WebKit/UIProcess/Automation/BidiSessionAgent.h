@@ -73,7 +73,7 @@ private:
     void unsubscribeByEventName(RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&&);
 
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiSessionBackendDispatcher> m_sessionDomainDispatcher;
+    const Ref<Inspector::BidiSessionBackendDispatcher> m_sessionDomainDispatcher;
 
     // https://w3c.github.io/webdriver-bidi/#events
     HashMap<AtomString, unsigned> m_eventSubscriptionCounts;

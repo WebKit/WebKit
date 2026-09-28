@@ -48,7 +48,7 @@ public:
 #endif
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onResourceAdded;
+    const RefPtr<WebExtensionAPIEvent> m_onResourceAdded;
 };
 
 } // namespace WebKit

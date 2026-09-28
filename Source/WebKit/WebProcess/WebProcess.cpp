@@ -1597,7 +1597,7 @@ void WebProcess::gpuProcessConnectionDidBecomeUnresponsive()
 LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
 {
     if (!m_libWebRTCCodecs)
-        m_libWebRTCCodecs = LibWebRTCCodecs::create();
+        lazyInitialize(m_libWebRTCCodecs, LibWebRTCCodecs::create());
     return *m_libWebRTCCodecs;
 }
 #endif
@@ -1606,7 +1606,7 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
 AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTrackRendererInternalUnitManager()
 {
     if (!m_audioMediaStreamTrackRendererInternalUnitManager)
-        m_audioMediaStreamTrackRendererInternalUnitManager = makeUnique<AudioMediaStreamTrackRendererInternalUnitManager>();
+        lazyInitialize(m_audioMediaStreamTrackRendererInternalUnitManager, makeUnique<AudioMediaStreamTrackRendererInternalUnitManager>());
     return *m_audioMediaStreamTrackRendererInternalUnitManager;
 }
 #endif

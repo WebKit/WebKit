@@ -398,7 +398,7 @@ void NetworkTransportSession::setupDatagramConnection(CompletionHandler<void(std
     MAYBE_SOFT_LINK(nw_webtransport_options_set_is_datagram)(webtransportOptions.get(), true);
     MAYBE_SOFT_LINK(nw_webtransport_options_set_allow_joining_before_ready)(webtransportOptions.get(), true);
 
-    m_datagramConnection = adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get()));
+    lazyInitialize(m_datagramConnection, adoptNS(nw_connection_group_extract_connection(m_connectionGroup.get(), nil, webtransportOptions.get())));
     if (!m_datagramConnection) {
         ASSERT_NOT_REACHED();
         return completionHandler(std::nullopt);

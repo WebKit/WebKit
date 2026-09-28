@@ -791,7 +791,7 @@ void WebPageProxy::didCreateContextInModelProcessForVisibilityPropagation(LayerH
 MediaUsageManager& WebPageProxy::mediaUsageManager()
 {
     if (!m_mediaUsageManager)
-        m_mediaUsageManager = MediaUsageManager::create();
+        lazyInitialize(m_mediaUsageManager, MediaUsageManager::create());
 
     return *m_mediaUsageManager;
 }
@@ -997,7 +997,7 @@ void WebPageProxy::setUpHighlightsObserver()
         });
     };
     
-    m_appHighlightsObserver = adoptNS([allocSYNotesActivationObserverInstance() initWithHandler:updateAppHighlightsVisibility]);
+    lazyInitialize(m_appHighlightsObserver, adoptNS([allocSYNotesActivationObserverInstance() initWithHandler:updateAppHighlightsVisibility]));
 }
 
 #endif

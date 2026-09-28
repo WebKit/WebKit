@@ -1041,7 +1041,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         webExtensionController->addPage(*this);
 #endif
 
-    m_inspector = WebInspectorUIProxy::create(*this);
+    lazyInitialize(m_inspector, WebInspectorUIProxy::create(*this));
 
     if (hasRunningProcess())
         didAttachToRunningProcess();
@@ -1056,10 +1056,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
 
 #if PLATFORM(COCOA)
-    m_activityStateChangeDispatcher = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::ActivityStateChange, [weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_activityStateChangeDispatcher, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::ActivityStateChange, [weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis)
             protectedThis->dispatchActivityStateChange();
-    });
+    }));
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1090,10 +1090,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_pageToCloneSessionStorageFrom = configuration->pageToCloneSessionStorageFrom();
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    m_linkDecorationFilteringDataUpdateObserver = LinkDecorationFilteringController::sharedSingleton().observeUpdates([weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_linkDecorationFilteringDataUpdateObserver, LinkDecorationFilteringController::sharedSingleton().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendCachedLinkDecorationFilteringData();
-    });
+    }));
 
     if (protect(preferences())->scriptTrackingPrivacyProtectionsEnabled())
         protect(process.processPool())->observeScriptTrackingPrivacyUpdatesIfNeeded();
@@ -1489,7 +1489,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
     // In case we are currently connected to the dummy process, we need to make sure the inspector proxy
     // disconnects from the dummy process first. Do not call inspector() since it returns null after the
     // page has closed.
-    protect(m_inspector)->reset();
+    m_inspector->reset();
 
     protect(legacyMainFrameProcess())->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
     removeAllMessageReceivers();
@@ -2010,8 +2010,8 @@ void WebPageProxy::close()
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = m_webExtensionController)
-        webExtensionController->removePage(*this);
+    if (m_webExtensionController)
+        m_webExtensionController->removePage(*this);
     if (RefPtr webExtensionController = m_weakWebExtensionController.get())
         webExtensionController->removePage(*this);
 #endif
@@ -2026,7 +2026,7 @@ void WebPageProxy::close()
     m_pageForTesting = nullptr;
 
     // Do not call inspector() since it returns null after the page has closed.
-    protect(m_inspector)->invalidate();
+    m_inspector->invalidate();
 
     backForwardList().pageClosed();
     m_inspectorController->pageClosed();
@@ -5239,7 +5239,7 @@ void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 WebWheelEventCoalescer& WebPageProxy::wheelEventCoalescer()
 {
     if (!m_wheelEventCoalescer)
-        m_wheelEventCoalescer = makeUnique<WebWheelEventCoalescer>();
+        lazyInitialize(m_wheelEventCoalescer, makeUnique<WebWheelEventCoalescer>());
 
     return *m_wheelEventCoalescer;
 }
@@ -14484,7 +14484,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     closeOverlayedViews();
 
     // Do not call inspector() since it returns null after the page has closed.
-    protect(m_inspector)->reset();
+    m_inspector->reset();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenManager) {
@@ -15045,8 +15045,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.portsForUpgradingInsecureSchemeForTesting = m_configuration->portsForUpgradingInsecureSchemeForTesting();
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = m_webExtensionController)
-        parameters.webExtensionControllerParameters = webExtensionController->parameters(m_configuration, process);
+    if (m_webExtensionController)
+        parameters.webExtensionControllerParameters = m_webExtensionController->parameters(m_configuration, process);
 
     if (RefPtr weakWebExtensionController = m_weakWebExtensionController.get())
         parameters.webExtensionControllerParameters = weakWebExtensionController->parameters(m_configuration, process);

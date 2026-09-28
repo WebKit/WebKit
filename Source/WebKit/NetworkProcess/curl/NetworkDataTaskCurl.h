@@ -102,7 +102,7 @@ private:
 
     Markable<WebCore::FrameIdentifier> m_frameID;
     Markable<WebPageProxyIdentifier> m_webPageProxyID;
-    RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
+    const RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
 
     State m_state { State::Suspended };
 

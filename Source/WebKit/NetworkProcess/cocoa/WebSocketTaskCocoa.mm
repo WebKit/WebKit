@@ -75,7 +75,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
         blockCookies();
 
     // Enforcing SameSite cookie policy for WebSocket upgrade requests, independently of ITP.
-    updateTaskWithFirstPartyForSameSiteCookies(protect(m_task.get()).get(), request);
+    updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 
     readNextMessage();
 

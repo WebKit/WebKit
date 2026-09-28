@@ -64,7 +64,7 @@ SOAuthorizationCoordinator::SOAuthorizationCoordinator()
     if (!m_hasAppSSO)
         return;
 #endif
-    m_soAuthorizationDelegate = adoptNS([[WKSOAuthorizationDelegate alloc] init]);
+    lazyInitialize(m_soAuthorizationDelegate, adoptNS([[WKSOAuthorizationDelegate alloc] init]));
     [NSURLSession _disableAppSSO];
 }
 

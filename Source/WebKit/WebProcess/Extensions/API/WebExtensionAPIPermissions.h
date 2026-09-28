@@ -48,8 +48,8 @@ public:
     WebExtensionAPIEvent& onRemoved();
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onAdded;
-    RefPtr<WebExtensionAPIEvent> m_onRemoved;
+    const RefPtr<WebExtensionAPIEvent> m_onAdded;
+    const RefPtr<WebExtensionAPIEvent> m_onRemoved;
 
     bool parseDetailsDictionary(NSDictionary *, HashSet<String>& permissions, HashSet<String>& origins, NSString *callingAPIName, NSString **outExceptionString);
     bool verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);

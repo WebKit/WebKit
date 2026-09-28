@@ -61,7 +61,7 @@ private:
 
     void initSecretWebView();
 
-    Ref<API::PageConfiguration> m_configuration;
+    const Ref<API::PageConfiguration> m_configuration;
     NewPageCallback m_newPageCallback;
     UIClientCallback m_uiClientCallback;
 

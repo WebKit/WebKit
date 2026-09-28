@@ -50,7 +50,7 @@ private:
 
     Ref<WebCore::Element> createAnnotationElement() override;
 
-    RefPtr<WebCore::Element> m_subtitleElement;
+    const RefPtr<WebCore::Element> m_subtitleElement;
 };
 
 } // namespace WebKit

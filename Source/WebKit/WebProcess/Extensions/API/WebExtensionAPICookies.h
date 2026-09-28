@@ -55,7 +55,7 @@ private:
     using ParsedDetails = std::tuple<std::optional<PAL::SessionID>, String, URL>;
     static std::optional<ParsedDetails> parseCookieDetails(NSDictionary *details, NSArray *requiredKeys, NSString **outExceptionString);
 
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
+    const RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };
 

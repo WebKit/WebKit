@@ -44,7 +44,7 @@ protected:
     void* data() final { return byteCast<Byte>(m_storage->mutableSpan().subspan(sizeof(TimeBoundsBuffer)).data()); }
     TimeBoundsBuffer& timeBoundsBuffer() final { return spanReinterpretCast<TimeBoundsBuffer>(m_storage->mutableSpan().first(sizeof(TimeBoundsBuffer))).front(); }
 
-    Ref<WebCore::SharedMemory> m_storage;
+    const Ref<WebCore::SharedMemory> m_storage;
 };
 
 struct ConsumerSharedCARingBufferHandle {

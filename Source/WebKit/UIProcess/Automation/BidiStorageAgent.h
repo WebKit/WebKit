@@ -48,7 +48,7 @@ public:
 
 private:
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiStorageBackendDispatcher> m_storageDomainDispatcher;
+    const Ref<Inspector::BidiStorageBackendDispatcher> m_storageDomainDispatcher;
 };
 
 } // namespace WebKit

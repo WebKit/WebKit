@@ -57,7 +57,7 @@ protected:
     void releaseGraphicsContext() final;
 
     mutable std::unique_ptr<WebCore::BifurcatedGraphicsContext> m_context;
-    std::unique_ptr<DynamicContentScalingImageBufferBackend> m_dynamicContentScalingBackend;
+    const std::unique_ptr<DynamicContentScalingImageBufferBackend> m_dynamicContentScalingBackend;
 };
 
 }

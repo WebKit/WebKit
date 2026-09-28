@@ -393,7 +393,7 @@ private:
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 
     WeakObjCPtr<WKContentView> m_contentView;
-    RetainPtr<WKEditorUndoTarget> m_undoTarget;
+    const RetainPtr<WKEditorUndoTarget> m_undoTarget;
     std::optional<WebCore::ColorSpace> m_colorSpace;
 };
 } // namespace WebKit

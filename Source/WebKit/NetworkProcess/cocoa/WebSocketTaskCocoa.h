@@ -92,7 +92,7 @@ private:
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
     WeakPtr<NetworkSocketChannel> m_channel;
-    RetainPtr<NSURLSessionWebSocketTask> m_task;
+    const RetainPtr<NSURLSessionWebSocketTask> m_task;
     bool m_didReportHandshakeRequest { false };
     bool m_receivedDidClose { false };
     bool m_receivedDidConnect { false };

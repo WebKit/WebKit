@@ -50,11 +50,11 @@ public:
     void getFrame(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
 private:
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_onBeforeNavigateEvent;
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_onCommittedEvent;
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_onDOMContentLoadedEvent;
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_onCompletedEvent;
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_onErrorOccurredEvent;
+    const RefPtr<WebExtensionAPIWebNavigationEvent> m_onBeforeNavigateEvent;
+    const RefPtr<WebExtensionAPIWebNavigationEvent> m_onCommittedEvent;
+    const RefPtr<WebExtensionAPIWebNavigationEvent> m_onDOMContentLoadedEvent;
+    const RefPtr<WebExtensionAPIWebNavigationEvent> m_onCompletedEvent;
+    const RefPtr<WebExtensionAPIWebNavigationEvent> m_onErrorOccurredEvent;
 #endif
 };
 

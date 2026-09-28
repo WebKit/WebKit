@@ -75,7 +75,7 @@ private:
 
     WeakHashSet<NetworkRTCMonitor> m_observers;
 
-    Ref<ConcurrentWorkQueue> m_queue;
+    const Ref<ConcurrentWorkQueue> m_queue;
     WebCore::Timer m_updateNetworksTimer;
 
     bool m_didReceiveResults { false };

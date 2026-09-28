@@ -77,7 +77,7 @@ private:
 
     static std::expected<void, String> parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&);
 
-    RefPtr<WebExtensionAPIEvent> m_onClicked;
+    const RefPtr<WebExtensionAPIEvent> m_onClicked;
 #endif
 };
 

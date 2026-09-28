@@ -48,7 +48,7 @@ private:
     RemoteDisplayListRecorder(UniqueRef<WebCore::DisplayList::RecorderImpl>&&, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
     void startListeningForIPC();
 
-    UniqueRef<WebCore::DisplayList::RecorderImpl> m_recorder;
+    const UniqueRef<WebCore::DisplayList::RecorderImpl> m_recorder;
     const RemoteDisplayListRecorderIdentifier m_identifier;
 };
 

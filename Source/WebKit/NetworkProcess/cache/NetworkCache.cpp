@@ -125,14 +125,14 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
     , m_storageDirectory(storageDirectory)
 {
     if (options.contains(CacheOption::SpeculativeRevalidation)) {
-        m_lowPowerModeNotifier = makeUnique<WebCore::LowPowerModeNotifier>([weakThis = WeakPtr { *this }](bool) {
+        lazyInitialize(m_lowPowerModeNotifier, makeUnique<WebCore::LowPowerModeNotifier>([weakThis = WeakPtr { *this }](bool) {
             if (RefPtr protectedThis = weakThis)
                 protectedThis->updateSpeculativeLoadManagerEnabledState();
-        });
-        m_thermalMitigationNotifier = WebCore::ThermalMitigationNotifier::create([weakThis = WeakPtr { *this }](bool) {
+        }));
+        lazyInitialize(m_thermalMitigationNotifier, WebCore::ThermalMitigationNotifier::create([weakThis = WeakPtr { *this }](bool) {
             if (RefPtr protectedThis = weakThis)
                 protectedThis->updateSpeculativeLoadManagerEnabledState();
-        });
+        }));
         if (shouldUseSpeculativeLoadManager())
             m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, protect(m_storage));
     }

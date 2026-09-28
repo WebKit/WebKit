@@ -252,7 +252,7 @@ private:
     {
     }
 
-    std::unique_ptr<ThreadSafeImageBufferFlusher> m_flusher;
+    const std::unique_ptr<ThreadSafeImageBufferFlusher> m_flusher;
 };
 
 void GraphicsLayerCARemote::setLayerContentsToImageBuffer(PlatformCALayer& layer, ImageBuffer* image)

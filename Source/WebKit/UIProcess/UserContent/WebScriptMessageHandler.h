@@ -68,7 +68,7 @@ public:
 private:
     WebScriptMessageHandler(std::unique_ptr<Client>, const String&, API::ContentWorld&);
 
-    std::unique_ptr<Client> m_client;
+    const std::unique_ptr<Client> m_client;
     String m_name;
     const Ref<API::ContentWorld> m_world;
 };

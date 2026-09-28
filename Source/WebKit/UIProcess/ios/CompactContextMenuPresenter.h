@@ -56,7 +56,7 @@ public:
 
 private:
     __weak UIView *m_rootView { nil };
-    RetainPtr<UIControl<WKCompactContextMenuPresenter>> m_control;
+    const RetainPtr<UIControl<WKCompactContextMenuPresenter>> m_control;
 };
 
 } // namespace WebKit

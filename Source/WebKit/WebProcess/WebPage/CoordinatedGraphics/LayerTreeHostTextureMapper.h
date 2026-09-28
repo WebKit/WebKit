@@ -96,13 +96,13 @@ private:
     void applyDeviceScaleFactor();
 
     WebPage& m_webPage;
-    std::unique_ptr<WebCore::GLContext> m_context;
+    const std::unique_ptr<WebCore::GLContext> m_context;
     LayerTreeContext m_layerTreeContext;
     WebCore::PlatformDisplayID m_displayID;
-    RefPtr<WebCore::GraphicsLayer> m_rootLayer;
+    const RefPtr<WebCore::GraphicsLayer> m_rootLayer;
     WebCore::GraphicsLayer* m_rootCompositingLayer { nullptr };
     WebCore::GraphicsLayer* m_overlayCompositingLayer { nullptr };
-    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
+    const std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     WebCore::TextureMapperFPSCounter m_fpsCounter;
     WebCore::Timer m_layerFlushTimer;
     bool m_isSuspended { false };

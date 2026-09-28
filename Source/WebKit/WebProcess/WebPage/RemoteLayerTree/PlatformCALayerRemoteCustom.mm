@@ -77,7 +77,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(WebCore::HTMLVide
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType layerType, LayerHostingContextID hostedContextIdentifier, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemote(layerType, owner, context)
 {
-    m_layerHostingContext = LayerHostingContext::createTransportLayerForRemoteHosting(hostedContextIdentifier);
+    lazyInitialize(m_layerHostingContext, LayerHostingContext::createTransportLayerForRemoteHosting(hostedContextIdentifier));
 }
 
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -90,18 +90,18 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& video
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType layerType, Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemoteCustom(layerType, modelContext->modelContentsLayerHostingContextIdentifier().toUInt64(), owner, context)
 {
-    m_modelContext = modelContext.ptr();
+    lazyInitialize(m_modelContext, WTF::move(modelContext));
 }
 #endif
 
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, PlatformLayer * customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemote(layerType, owner, context)
 {
-    m_layerHostingContext = LayerHostingContext::create({
+    lazyInitialize(m_layerHostingContext, LayerHostingContext::create({
 #if PLATFORM(IOS_FAMILY)
         context.canShowWhileLocked()
 #endif
-    });
+    }));
 
     m_layerHostingContext->setRootLayer(customLayer);
     [customLayer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];

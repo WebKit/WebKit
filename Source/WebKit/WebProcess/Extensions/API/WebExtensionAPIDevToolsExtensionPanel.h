@@ -43,8 +43,8 @@ public:
 #endif
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onShown;
-    RefPtr<WebExtensionAPIEvent> m_onHidden;
+    const RefPtr<WebExtensionAPIEvent> m_onShown;
+    const RefPtr<WebExtensionAPIEvent> m_onHidden;
 };
 
 } // namespace WebKit

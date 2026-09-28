@@ -79,9 +79,9 @@ private:
     bool parseWindowCreateOptions(NSDictionary *, WebExtensionWindowParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseWindowUpdateOptions(NSDictionary *, WebExtensionWindowParameters&, NSString *sourceKey, NSString **outExceptionString);
 
-    RefPtr<WebExtensionAPIWindowsEvent> m_onCreated;
-    RefPtr<WebExtensionAPIWindowsEvent> m_onRemoved;
-    RefPtr<WebExtensionAPIWindowsEvent> m_onFocusChanged;
+    const RefPtr<WebExtensionAPIWindowsEvent> m_onCreated;
+    const RefPtr<WebExtensionAPIWindowsEvent> m_onRemoved;
+    const RefPtr<WebExtensionAPIWindowsEvent> m_onFocusChanged;
 #endif
 };
 

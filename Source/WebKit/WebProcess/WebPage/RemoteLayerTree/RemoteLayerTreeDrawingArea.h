@@ -188,7 +188,7 @@ private:
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
     const Ref<WorkQueue> m_commitQueue;
-    RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
+    const RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
 
     TransactionID m_currentTransactionID { TransactionID::generateMonotonic() };
     Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;

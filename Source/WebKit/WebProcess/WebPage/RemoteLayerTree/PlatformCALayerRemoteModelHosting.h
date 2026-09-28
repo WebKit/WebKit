@@ -49,7 +49,7 @@ private:
     
     void dumpAdditionalProperties(TextStream&, OptionSet<WebCore::PlatformLayerTreeAsTextFlags>) final;
 
-    Ref<WebCore::Model> m_model;
+    const Ref<WebCore::Model> m_model;
 };
 
 } // namespace WebKit

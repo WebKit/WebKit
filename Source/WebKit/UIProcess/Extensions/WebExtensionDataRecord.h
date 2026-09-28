@@ -81,7 +81,7 @@ private:
     String m_uniqueIdentifier;
     HashMap<Type, size_t> m_typeSizes;
 #if PLATFORM(COCOA)
-    RetainPtr<NSMutableArray> m_errors;
+    const RetainPtr<NSMutableArray> m_errors;
 #endif
 };
 

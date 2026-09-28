@@ -184,26 +184,25 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
         m_cache = session->cache();
 
     NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-    m_networkLoadChecker = NetworkLoadChecker::create(Ref { connection.networkProcess() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
+    lazyInitialize(m_networkLoadChecker, NetworkLoadChecker::create(Ref { connection.networkProcess() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
         sessionID(), webPageProxyID(), HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
         URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
         m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
-        shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+        shouldCaptureExtraNetworkLoadMetrics(), requestLoadType));
 
-    RefPtr networkLoadChecker = m_networkLoadChecker;
     if (m_parameters.cspResponseHeaders)
-        networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
-    networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
-    networkLoadChecker->setCrossOriginEmbedderPolicy(m_parameters.crossOriginEmbedderPolicy);
+        m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
+    m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
+    m_networkLoadChecker->setCrossOriginEmbedderPolicy(m_parameters.crossOriginEmbedderPolicy);
 #if ENABLE(CONTENT_EXTENSIONS)
-    networkLoadChecker->setContentExtensionController(URL { m_parameters.mainDocumentURL }, URL { m_parameters.frameURL }, m_parameters.userContentControllerIdentifier);
+    m_networkLoadChecker->setContentExtensionController(URL { m_parameters.mainDocumentURL }, URL { m_parameters.frameURL }, m_parameters.userContentControllerIdentifier);
 #endif
     if (synchronousReply)
-        m_synchronousLoadData = makeUnique<SynchronousLoadData>(WTF::move(synchronousReply));
+        lazyInitialize(m_synchronousLoadData, makeUnique<SynchronousLoadData>(WTF::move(synchronousReply)));
 
     if (RefPtr body = m_parameters.request.httpBody()) {
         if (body->isPendingStream()) {
-            m_pendingStreamState = PendingStreamState::create();
+            lazyInitialize(m_pendingStreamState, PendingStreamState::create());
             body->setPendingStreamState(*m_pendingStreamState);
         }
     }
@@ -264,16 +263,15 @@ void NetworkResourceLoader::start()
 void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
 {
     ASSERT(RunLoop::isMain());
-    RefPtr networkLoadChecker = m_networkLoadChecker;
-    LOADER_RELEASE_LOG("startRequest: hasNetworkLoadChecker=%d", !!networkLoadChecker);
+    LOADER_RELEASE_LOG("startRequest: hasNetworkLoadChecker=%d", !!m_networkLoadChecker);
 
     m_networkActivityTracker = protect(connectionToWebProcess())->startTrackingResourceLoad(pageID(), coreIdentifier(), isMainFrameLoad());
 
     ASSERT(!m_wasStarted);
     m_wasStarted = true;
 
-    if (networkLoadChecker) {
-        networkLoadChecker->check(ResourceRequest { newRequest }, this, [weakThis = WeakPtr { *this }] (auto&& result) {
+    if (m_networkLoadChecker) {
+        m_networkLoadChecker->check(ResourceRequest { newRequest }, this, [weakThis = WeakPtr { *this }] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -1287,10 +1285,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         m_firstResponseURL = m_response.url();
 
     Ref connection = m_connection;
-    RefPtr networkLoadChecker = m_networkLoadChecker;
 
-    if (shouldCaptureExtraNetworkLoadMetrics() && networkLoadChecker) {
-        auto information = networkLoadChecker->takeNetworkLoadInformation();
+    if (shouldCaptureExtraNetworkLoadMetrics() && m_networkLoadChecker) {
+        auto information = m_networkLoadChecker->takeNetworkLoadInformation();
         information.response = m_response;
         connection->addNetworkLoadInformation(coreIdentifier(), WTF::move(information));
     }
@@ -1356,8 +1353,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_cacheEntryForValidation)
         return completionHandler(PolicyAction::Use);
 
-    if (networkLoadChecker) {
-        auto error = networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
+    if (m_networkLoadChecker) {
+        auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
         if (!error.isNull()) {
             LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8(), error.errorCode());
             RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTF::move(error)] {
@@ -1366,7 +1363,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
             });
             return completionHandler(PolicyAction::Ignore);
         }
-        if (RefPtr networkLoad = m_networkLoad; networkLoad && networkLoadChecker->timingAllowFailedFlag())
+        if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
             networkLoad->setTimingAllowFailedFlag();
     }
 
@@ -1832,16 +1829,16 @@ void NetworkResourceLoader::continueWillSendRedirectedRequestAfterLocalNetworkAc
         redirectRequest.resetTimeoutInterval();
     }
 
-    if (RefPtr networkLoadChecker = m_networkLoadChecker) {
+    if (m_networkLoadChecker) {
         if (privateClickMeasurementAttributionTriggerData)
-            networkLoadChecker->enableContentExtensionsCheck();
-        networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
+            m_networkLoadChecker->enableContentExtensionsCheck();
+        m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
 
         LOADER_RELEASE_LOG("willSendRedirectedRequest: Checking redirect using NetworkLoadChecker");
         auto continueAfterRedirectionCheck = [
             this,
             protectedThis = Ref { *this },
-            storedCredentialsPolicy = networkLoadChecker->storedCredentialsPolicy(),
+            storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(),
             privateClickMeasurementAttributionTriggerData = WTF::move(privateClickMeasurementAttributionTriggerData),
             completionHandler = WTF::move(completionHandler)
         ] (auto&& result) mutable {
@@ -1882,7 +1879,7 @@ void NetworkResourceLoader::continueWillSendRedirectedRequestAfterLocalNetworkAc
             m_shouldRestartLoad = storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy();
             this->continueWillSendRedirectedRequest(WTF::move(result->request), WTF::move(result->redirectRequest), WTF::move(result->redirectResponse), WTF::move(privateClickMeasurementAttributionTriggerData), WTF::move(completionHandler));
         };
-        networkLoadChecker->checkRedirection(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), this, WTF::move(continueAfterRedirectionCheck));
+        m_networkLoadChecker->checkRedirection(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), this, WTF::move(continueAfterRedirectionCheck));
         return;
     }
     continueWillSendRedirectedRequest(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), WTF::move(privateClickMeasurementAttributionTriggerData), WTF::move(completionHandler));
@@ -2191,21 +2188,21 @@ void NetworkResourceLoader::pendingStreamAppendData(IPC::SharedBufferReference&&
     RefPtr buffer = chunk.unsafeBuffer();
     if (!buffer)
         return;
-    protect(m_pendingStreamState)->appendData(buffer.releaseNonNull());
+    m_pendingStreamState->appendData(buffer.releaseNonNull());
 }
 
 void NetworkResourceLoader::pendingStreamEnd()
 {
     ASSERT(m_pendingStreamState);
-    if (RefPtr state = m_pendingStreamState)
-        state->endStream();
+    if (m_pendingStreamState)
+        m_pendingStreamState->endStream();
 }
 
 void NetworkResourceLoader::pendingStreamError()
 {
     ASSERT(m_pendingStreamState);
-    if (RefPtr state = m_pendingStreamState)
-        state->errorStream(-1);
+    if (m_pendingStreamState)
+        m_pendingStreamState->errorStream(-1);
 }
 
 void NetworkResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
@@ -2380,8 +2377,8 @@ void NetworkResourceLoader::continueDidRetrieveCacheEntryAfterLocalNetworkAccess
         send(Messages::WebResourceLoader::StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied { response });
         return;
     }
-    if (RefPtr networkLoadChecker = m_networkLoadChecker) {
-        auto error = networkLoadChecker->validateResponse(originalRequest(), response);
+    if (m_networkLoadChecker) {
+        auto error = m_networkLoadChecker->validateResponse(originalRequest(), response);
         if (!error.isNull()) {
             LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Failing load due to NetworkLoadChecker::validateResponse");
             didFailLoading(error);

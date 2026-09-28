@@ -1134,7 +1134,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onActivated
 
     if (!m_onActivated)
-        m_onActivated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnActivated);
+        lazyInitialize(m_onActivated, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnActivated));
 
     return *m_onActivated;
 }
@@ -1144,7 +1144,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onAttached()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onAttached
 
     if (!m_onAttached)
-        m_onAttached = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnAttached);
+        lazyInitialize(m_onAttached, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnAttached));
 
     return *m_onAttached;
 }
@@ -1154,7 +1154,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onCreated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onCreated
 
     if (!m_onCreated)
-        m_onCreated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnCreated);
+        lazyInitialize(m_onCreated, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnCreated));
 
     return *m_onCreated;
 }
@@ -1164,7 +1164,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onDetached()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onDetached
 
     if (!m_onDetached)
-        m_onDetached = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnDetached);
+        lazyInitialize(m_onDetached, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnDetached));
 
     return *m_onDetached;
 }
@@ -1174,7 +1174,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onHighlighted()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onHighlighted
 
     if (!m_onHighlighted)
-        m_onHighlighted = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnHighlighted);
+        lazyInitialize(m_onHighlighted, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnHighlighted));
 
     return *m_onHighlighted;
 }
@@ -1184,7 +1184,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onMoved()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onMoved
 
     if (!m_onMoved)
-        m_onMoved = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnMoved);
+        lazyInitialize(m_onMoved, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnMoved));
 
     return *m_onMoved;
 }
@@ -1194,7 +1194,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onRemoved()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onRemoved
 
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnRemoved);
+        lazyInitialize(m_onRemoved, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnRemoved));
 
     return *m_onRemoved;
 }
@@ -1204,7 +1204,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onReplaced()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onReplaced
 
     if (!m_onReplaced)
-        m_onReplaced = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnReplaced);
+        lazyInitialize(m_onReplaced, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnReplaced));
 
     return *m_onReplaced;
 }
@@ -1214,7 +1214,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onUpdated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onUpdated
 
     if (!m_onUpdated)
-        m_onUpdated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnUpdated);
+        lazyInitialize(m_onUpdated, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnUpdated));
 
     return *m_onUpdated;
 }

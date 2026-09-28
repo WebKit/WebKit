@@ -105,15 +105,15 @@ private:
     static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, WebExtensionMessageTargetParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseScriptOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
 
-    RefPtr<WebExtensionAPIEvent> m_onActivated;
-    RefPtr<WebExtensionAPIEvent> m_onAttached;
-    RefPtr<WebExtensionAPIEvent> m_onCreated;
-    RefPtr<WebExtensionAPIEvent> m_onDetached;
-    RefPtr<WebExtensionAPIEvent> m_onHighlighted;
-    RefPtr<WebExtensionAPIEvent> m_onMoved;
-    RefPtr<WebExtensionAPIEvent> m_onRemoved;
-    RefPtr<WebExtensionAPIEvent> m_onReplaced;
-    RefPtr<WebExtensionAPIEvent> m_onUpdated;
+    const RefPtr<WebExtensionAPIEvent> m_onActivated;
+    const RefPtr<WebExtensionAPIEvent> m_onAttached;
+    const RefPtr<WebExtensionAPIEvent> m_onCreated;
+    const RefPtr<WebExtensionAPIEvent> m_onDetached;
+    const RefPtr<WebExtensionAPIEvent> m_onHighlighted;
+    const RefPtr<WebExtensionAPIEvent> m_onMoved;
+    const RefPtr<WebExtensionAPIEvent> m_onRemoved;
+    const RefPtr<WebExtensionAPIEvent> m_onReplaced;
+    const RefPtr<WebExtensionAPIEvent> m_onUpdated;
 #endif
 };
 

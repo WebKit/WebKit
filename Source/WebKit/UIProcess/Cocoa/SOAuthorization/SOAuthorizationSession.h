@@ -119,7 +119,7 @@ private:
 
     virtual bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) { return false; }
     State m_state  { State::Idle };
-    RetainPtr<SOAuthorization> m_soAuthorization;
+    const RetainPtr<SOAuthorization> m_soAuthorization;
     RefPtr<API::NavigationAction> m_navigationAction;
     WeakPtr<WebPageProxy> m_page;
     InitiatingAction m_action;

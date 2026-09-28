@@ -46,9 +46,9 @@ public:
 #endif
 
 private:
-    RefPtr<WebExtensionAPIDevToolsInspectedWindow> m_inspectedWindow;
-    RefPtr<WebExtensionAPIDevToolsNetwork> m_network;
-    RefPtr<WebExtensionAPIDevToolsPanels> m_panels;
+    const RefPtr<WebExtensionAPIDevToolsInspectedWindow> m_inspectedWindow;
+    const RefPtr<WebExtensionAPIDevToolsNetwork> m_network;
+    const RefPtr<WebExtensionAPIDevToolsPanels> m_panels;
 };
 
 } // namespace WebKit

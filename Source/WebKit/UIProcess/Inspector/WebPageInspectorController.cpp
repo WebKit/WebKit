@@ -118,10 +118,10 @@ void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& fro
 
     if (connectingFirstFrontend) {
         m_agents.didCreateFrontendAndBackend();
-        if (RefPtr networkAgent = m_networkAgent)
-            networkAgent->didCreateFrontendAndBackend();
-        if (RefPtr pageAgent = m_pageAgent)
-            pageAgent->didCreateFrontendAndBackend();
+        if (m_networkAgent)
+            m_networkAgent->didCreateFrontendAndBackend();
+        if (m_pageAgent)
+            m_pageAgent->didCreateFrontendAndBackend();
     }
 
     Ref inspectedPage = m_inspectedPage.get();
@@ -140,10 +140,10 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
     bool disconnectingLastFrontend = !m_frontendRouter->hasFrontends();
     if (disconnectingLastFrontend) {
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
-        if (RefPtr networkAgent = m_networkAgent)
-            networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
-        if (RefPtr pageAgent = m_pageAgent)
-            pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+        if (m_networkAgent)
+            m_networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+        if (m_pageAgent)
+            m_pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
     }
 
     Ref inspectedPage = m_inspectedPage.get();
@@ -164,10 +164,10 @@ void WebPageInspectorController::disconnectAllFrontends()
 
     // Notify agents first, since they may need to use InspectorBackendClient.
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
-    if (RefPtr networkAgent = m_networkAgent)
-        networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
-    if (RefPtr pageAgent = m_pageAgent)
-        pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
+    if (m_networkAgent)
+        m_networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
+    if (m_pageAgent)
+        m_pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
     // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();
@@ -337,18 +337,16 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
     RefPtr oldProcess = WebProcessProxy::processForIdentifier(oldProcessID);
     Ref newProcess = protect(m_inspectedPage)->mainFrame()->process();
 
-    RefPtr pageAgent = m_pageAgent;
-    if (pageAgent && pageAgent->isEnabled()) {
+    if (m_pageAgent && m_pageAgent->isEnabled()) {
         if (oldProcess)
-            pageAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
-        pageAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
+            m_pageAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
+        m_pageAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
     }
 
-    RefPtr networkAgent = m_networkAgent;
-    if (networkAgent && networkAgent->isEnabled()) {
+    if (m_networkAgent && m_networkAgent->isEnabled()) {
         if (oldProcess)
-            networkAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
-        networkAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
+            m_networkAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
+        m_networkAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
     }
 }
 
@@ -361,16 +359,14 @@ void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
     Ref process = frame.process();
     addTarget(makeUnique<FrameInspectorTargetProxy>(frame.frameID(), process, isProvisional));
 
-    RefPtr networkAgent = m_networkAgent;
-    if (networkAgent && networkAgent->isEnabled()) {
+    if (m_networkAgent && m_networkAgent->isEnabled()) {
         if (auto pageID = frame.webPageIDInCurrentProcess())
-            networkAgent->enableInstrumentationForProcess(process, *pageID);
+            m_networkAgent->enableInstrumentationForProcess(process, *pageID);
     }
 
-    RefPtr pageAgent = m_pageAgent;
-    if (pageAgent && pageAgent->isEnabled()) {
+    if (m_pageAgent && m_pageAgent->isEnabled()) {
         if (auto pageID = frame.webPageIDInCurrentProcess())
-            pageAgent->enableInstrumentationForProcess(process, *pageID);
+            m_pageAgent->enableInstrumentationForProcess(process, *pageID);
     }
 }
 
@@ -381,21 +377,19 @@ void WebPageInspectorController::willDestroyFrame(const WebFrameProxy& frame)
 
     Ref process = frame.process();
 
-    RefPtr networkAgent = m_networkAgent;
-    if (networkAgent && networkAgent->isEnabled()) {
+    if (m_networkAgent && m_networkAgent->isEnabled()) {
         if (auto pageID = frame.webPageIDInCurrentProcess())
-            networkAgent->disableInstrumentationForProcess(process, *pageID);
+            m_networkAgent->disableInstrumentationForProcess(process, *pageID);
     }
 
-    RefPtr pageAgent = m_pageAgent;
-    if (pageAgent && pageAgent->isEnabled()) {
+    if (m_pageAgent && m_pageAgent->isEnabled()) {
         if (auto pageID = frame.webPageIDInCurrentProcess())
-            pageAgent->disableInstrumentationForProcess(process, *pageID);
+            m_pageAgent->disableInstrumentationForProcess(process, *pageID);
 
         // A WebFrameProxy is destroyed only when the frame is genuinely removed (never on a
         // process swap, where it persists), so this is the authoritative point to report the
         // frame's removal to the frontend. See webkit.org/b/308896.
-        pageAgent->frameDestroyed(frame.frameID());
+        m_pageAgent->frameDestroyed(frame.frameID());
     }
 
     removeTarget(getTargetID(frame));
@@ -413,11 +407,10 @@ void WebPageInspectorController::didCreateProvisionalFrame(ProvisionalFrameProxy
     // process *before* it commits, so the UIProcess ProxyingPageAgent has a message receiver ready
     // when the child's initial frameNavigated fires. didCommitProvisionalFrame is too late: the
     // child commits (and emits frameNavigated) in its own process before then. See webkit.org/b/308896.
-    RefPtr pageAgent = m_pageAgent;
     Ref process = provisionalFrame.process();
     auto pageID = protect(m_inspectedPage)->webPageIDInProcess(process);
-    if (pageAgent && pageAgent->isEnabled())
-        pageAgent->enableInstrumentationForProcess(process, pageID);
+    if (m_pageAgent && m_pageAgent->isEnabled())
+        m_pageAgent->enableInstrumentationForProcess(process, pageID);
 }
 
 void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFrameProxy& provisionalFrame)
@@ -438,11 +431,10 @@ void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFr
     // provisional frame that is being discarded WITHOUT committing. (On commit, this destructor
     // early-returns because takeFrameProcess() already nulled m_frameProcess, and the registration
     // is instead carried forward by didCommitProvisionalFrame.) See webkit.org/b/308896.
-    RefPtr pageAgent = m_pageAgent;
     Ref process = provisionalFrame.process();
     auto pageID = protect(m_inspectedPage)->webPageIDInProcess(process);
-    if (pageAgent && pageAgent->isEnabled())
-        pageAgent->disableInstrumentationForProcess(process, pageID);
+    if (m_pageAgent && m_pageAgent->isEnabled())
+        m_pageAgent->disableInstrumentationForProcess(process, pageID);
 }
 
 void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame, WebCore::ProcessIdentifier oldProcessID, std::optional<WebCore::PageIdentifier> oldPageID, WebCore::ProcessIdentifier newProcessID)
@@ -476,18 +468,16 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
     RefPtr oldProcess = WebProcessProxy::processForIdentifier(oldProcessID);
     Ref process = frame.process();
 
-    RefPtr networkAgent = m_networkAgent;
-    if (networkAgent && networkAgent->isEnabled()) {
+    if (m_networkAgent && m_networkAgent->isEnabled()) {
         if (oldProcess && oldPageID)
-            networkAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
+            m_networkAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
         if (auto pageID = frame.webPageIDInCurrentProcess())
-            networkAgent->enableInstrumentationForProcess(process, *pageID);
+            m_networkAgent->enableInstrumentationForProcess(process, *pageID);
     }
 
-    RefPtr pageAgent = m_pageAgent;
-    if (pageAgent && pageAgent->isEnabled()) {
+    if (m_pageAgent && m_pageAgent->isEnabled()) {
         if (oldProcess && oldPageID)
-            pageAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
+            m_pageAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
         // Unlike the network agent, the page agent already registered the new (committing)
         // process in didCreateProvisionalFrame -- so the frame's initial Page.frameNavigated
         // is delivered. Re-registering here would double-count the receiver, so we only
@@ -526,8 +516,8 @@ void WebPageInspectorController::createLazyAgents()
         // so they can't be stored in AgentRegistry which expects UniqueRef ownership.
         // Their lifecycle (didCreateFrontendAndBackend / willDestroyFrontendAndBackend) is
         // managed explicitly in connectFrontend / disconnectFrontend / disconnectAllFrontends.
-        m_networkAgent = adoptRef(*new Inspector::ProxyingNetworkAgent(webPageContext));
-        m_pageAgent = adoptRef(*new Inspector::ProxyingPageAgent(webPageContext));
+        lazyInitialize(m_networkAgent, adoptRef(*new Inspector::ProxyingNetworkAgent(webPageContext)));
+        lazyInitialize(m_pageAgent, adoptRef(*new Inspector::ProxyingPageAgent(webPageContext)));
     }
 }
 
@@ -563,8 +553,8 @@ bool WebPageInspectorController::isPageInstrumentationEnabled() const
 
 void WebPageInspectorController::setShowPaintRects(bool show)
 {
-    if (RefPtr pageAgent = m_pageAgent)
-        std::ignore = pageAgent->setShowPaintRects(show);
+    if (m_pageAgent)
+        std::ignore = m_pageAgent->setShowPaintRects(show);
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)

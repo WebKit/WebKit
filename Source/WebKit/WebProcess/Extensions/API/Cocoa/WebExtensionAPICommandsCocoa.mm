@@ -82,7 +82,7 @@ WebExtensionAPIEvent& WebExtensionAPICommands::onCommand()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onCommand
 
     if (!m_onCommand)
-        m_onCommand = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CommandsOnCommand);
+        lazyInitialize(m_onCommand, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CommandsOnCommand));
 
     return *m_onCommand;
 }
@@ -92,7 +92,7 @@ WebExtensionAPIEvent& WebExtensionAPICommands::onChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onChanged
 
     if (!m_onChanged)
-        m_onChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CommandsOnChanged);
+        lazyInitialize(m_onChanged, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CommandsOnChanged));
 
     return *m_onChanged;
 }

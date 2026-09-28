@@ -308,12 +308,12 @@ private:
     };
     HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
+    const RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
     WebCore::IntDegrees m_orientation { 0 };
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-    RefPtr<WorkQueue> m_libWebRTCCodecsQueue;
+    const RefPtr<WorkQueue> m_libWebRTCCodecsQueue;
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
@@ -340,7 +340,7 @@ private:
     };
     HashMap<PAL::SessionID, GPUSession> m_sessions;
     WebCore::Timer m_idleExitTimer;
-    std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
+    const std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
     SecurityFlags m_securityFlags;
     struct NowPlayingOwner {
         WebCore::ProcessIdentifier process;

@@ -114,7 +114,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 {
     m_layerTreeContext.contextID = reinterpret_cast<uint64_t>(this);
 
-    m_rootLayer = GraphicsLayer::create(nullptr, *this);
+    lazyInitialize(m_rootLayer, GraphicsLayer::create(nullptr, *this));
     m_rootLayer->setDrawsContent(true);
     m_rootLayer->setContentsOpaque(true);
     m_rootLayer->setSize(m_webPage.size());
@@ -125,14 +125,14 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     applyDeviceScaleFactor();
 
     // The creation of the TextureMapper needs an active OpenGL context.
-    m_context = GLContext::create(PlatformDisplay::sharedDisplay(), window());
+    lazyInitialize(m_context, GLContext::create(PlatformDisplay::sharedDisplay(), window()));
 
     if (!m_context)
         return;
 
     m_context->makeContextCurrent();
 
-    m_textureMapper = TextureMapper::create();
+    lazyInitialize(m_textureMapper, TextureMapper::create());
 }
 
 LayerTreeHost::~LayerTreeHost() = default;

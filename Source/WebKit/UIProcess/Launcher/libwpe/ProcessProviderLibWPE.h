@@ -50,7 +50,7 @@ public:
 private:
     ProcessProviderLibWPE();
 
-    std::unique_ptr<struct wpe_process_provider, void (*)(struct wpe_process_provider*)> m_provider;
+    const std::unique_ptr<struct wpe_process_provider, void (*)(struct wpe_process_provider*)> m_provider;
 
     static int wpeProcessType(ProcessLauncher::ProcessType);
 };

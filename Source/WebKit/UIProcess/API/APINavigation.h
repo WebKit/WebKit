@@ -231,10 +231,10 @@ private:
     Vector<WTF::URL> m_redirectChain;
 
     const RefPtr<WebKit::WebBackForwardListFrameItem> m_targetFrameItem;
-    RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
-    RefPtr<WebKit::WebBackForwardListItem> m_reloadItem;
+    const RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
+    const RefPtr<WebKit::WebBackForwardListItem> m_reloadItem;
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
-    std::unique_ptr<SubstituteData> m_substituteData;
+    const std::unique_ptr<SubstituteData> m_substituteData;
     std::optional<WebKit::NavigationActionData> m_lastNavigationAction;
     std::optional<WebKit::FrameInfoData> m_originatingFrameInfo;
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;

@@ -243,11 +243,11 @@ private:
     WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
     WebCore::IntSize m_lastSentSizeToContentAutoSizeMaximumSize;
 
-    std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
-    RetainPtr<CALayer> m_tileMapHostLayer;
-    RetainPtr<CALayer> m_exposedRectIndicatorLayer;
+    const std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
+    const RetainPtr<CALayer> m_tileMapHostLayer;
+    const RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
-    RetainPtr<CALayer> m_slowFrameIndicatorLayer;
+    const RetainPtr<CALayer> m_slowFrameIndicatorLayer;
     Deque<Seconds> m_frameDurations;
 
     Markable<IPC::AsyncReplyID> m_replyForUnhidingContent;

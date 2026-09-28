@@ -49,8 +49,8 @@ public:
     WebExtensionAPIEvent& onButtonClicked();
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onClicked;
-    RefPtr<WebExtensionAPIEvent> m_onButtonClicked;
+    const RefPtr<WebExtensionAPIEvent> m_onClicked;
+    const RefPtr<WebExtensionAPIEvent> m_onButtonClicked;
 #endif
 };
 

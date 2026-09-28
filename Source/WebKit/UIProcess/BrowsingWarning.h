@@ -86,7 +86,7 @@ private:
     String m_warning;
     bool m_forMainFrameNavigation { false };
 #if PLATFORM(COCOA)
-    RetainPtr<NSAttributedString> m_details;
+    const RetainPtr<NSAttributedString> m_details;
 #endif
     const Data m_data;
 };

@@ -101,7 +101,7 @@ private:
 #endif
 
     RemoteLegacyCDMSessionIdentifier m_identifier;
-    RefPtr<WebCore::LegacyCDMSession> m_session;
+    const RefPtr<WebCore::LegacyCDMSession> m_session;
     String m_mediaKeysHashSalt;
 };
 

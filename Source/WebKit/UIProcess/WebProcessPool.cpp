@@ -346,13 +346,13 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     Ref storageAccessUserAgentStringQuirkController = StorageAccessUserAgentStringQuirkController::sharedSingleton();
     Ref storageAccessPromptQuirkController = StorageAccessPromptQuirkController::sharedSingleton();
 
-    m_storageAccessUserAgentStringQuirksDataUpdateObserver = storageAccessUserAgentStringQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_storageAccessUserAgentStringQuirksDataUpdateObserver, storageAccessUserAgentStringQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
         // FIXME: Filter by process's site when site isolation is enabled
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::sharedSingleton().cachedListData()));
-    });
+    }));
 
-    m_storageAccessPromptQuirksDataUpdateObserver = storageAccessPromptQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_storageAccessPromptQuirksDataUpdateObserver, storageAccessPromptQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             HashSet<WebCore::RegistrableDomain> domainSet;
             for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
@@ -366,7 +366,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             }
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
         }
-    });
+    }));
     storageAccessPromptQuirkController->initializeIfNeeded();
     storageAccessUserAgentStringQuirkController->initializeIfNeeded();
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
@@ -2865,14 +2865,14 @@ void WebProcessPool::observeScriptTrackingPrivacyUpdatesIfNeeded()
         return;
 
     Ref controller = ScriptTrackingPrivacyController::sharedSingleton();
-    m_scriptTrackingPrivacyDataUpdateObserver = controller->observeUpdates([weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_scriptTrackingPrivacyDataUpdateObserver, controller->observeUpdates([weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         if (auto data = ScriptTrackingPrivacyController::sharedSingleton().cachedListData(); !data.isEmpty())
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateScriptTrackingPrivacyFilter(WTF::move(data)));
-    });
+    }));
     controller->initializeIfNeeded();
 }
 
@@ -2882,14 +2882,14 @@ void WebProcessPool::observeConsistentQueryParameterFilteringQuirkUpdatesIfNeede
         return;
 
     Ref controller = ConsistentPrivacyQuirkController::sharedSingleton();
-    m_consistentPrivacyQuirkDataUpdateObserver = controller->observeUpdates([weakThis = WeakPtr { *this }] {
+    lazyInitialize(m_consistentPrivacyQuirkDataUpdateObserver, controller->observeUpdates([weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         if (auto data = ConsistentPrivacyQuirkController::sharedSingleton().cachedListData(); !data.isEmpty())
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateConsistentPrivacyQuirkFilter(WTF::move(data)));
-    });
+    }));
     controller->initializeIfNeeded();
 }
 

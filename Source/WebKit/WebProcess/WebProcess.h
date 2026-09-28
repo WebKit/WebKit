@@ -823,13 +823,13 @@ private:
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
+    const RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
 #if ENABLE(WEB_CODECS)
     RemoteVideoCodecFactory m_remoteVideoCodecFactory;
 #endif
 #endif
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
+    const std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
 #endif
 
@@ -879,7 +879,7 @@ private:
     bool m_loggedProcessLimitCriticalMemoryStatistics { false };
     bool m_wasVisibleSinceLastProcessSuspensionEvent { false };
 #if PLATFORM(MAC)
-    std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
+    const std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     std::optional<double> m_cpuLimit;
 
     String m_uiProcessName;
@@ -934,7 +934,7 @@ private:
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;
     std::optional<audit_token_t> m_auditTokenForSelf;
-    RetainPtr<NSMutableDictionary> m_accessibilityRemoteFrameTokenCache;
+    const RetainPtr<NSMutableDictionary> m_accessibilityRemoteFrameTokenCache;
 #endif
 
     bool m_childProcessDebuggabilityEnabled { false };

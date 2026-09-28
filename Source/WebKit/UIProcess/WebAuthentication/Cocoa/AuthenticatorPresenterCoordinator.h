@@ -75,9 +75,9 @@ private:
     AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
 
     WeakPtr<AuthenticatorManager> m_manager;
-    RetainPtr<ASCAuthorizationPresentationContext> m_context;
-    RetainPtr<ASCAuthorizationPresenter> m_presenter;
-    RetainPtr<WKASCAuthorizationPresenterDelegate> m_presenterDelegate;
+    const RetainPtr<ASCAuthorizationPresentationContext> m_context;
+    const RetainPtr<ASCAuthorizationPresenter> m_presenter;
+    const RetainPtr<WKASCAuthorizationPresenterDelegate> m_presenterDelegate;
     Function<void()> m_delayedPresentation;
 #if HAVE(ASC_AUTH_UI)
     bool m_delayedPresentationNeedsSecurityKey { false };

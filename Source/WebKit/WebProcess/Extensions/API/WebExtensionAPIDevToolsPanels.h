@@ -52,7 +52,7 @@ public:
 #endif
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
+    const RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
     HashMap<Inspector::ExtensionTabID, Ref<WebExtensionAPIDevToolsExtensionPanel>> m_extensionPanels;
 };
 

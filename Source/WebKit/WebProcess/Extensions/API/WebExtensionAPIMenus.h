@@ -61,7 +61,7 @@ private:
     bool parseCreateAndUpdateProperties(ForUpdate, NSDictionary *, const URL& baseURL, std::optional<WebExtensionMenuItemParameters>&, RefPtr<WebExtensionCallbackHandler>&, NSString **outExceptionString);
 
     Markable<WebCore::FrameIdentifier> m_frameIdentifier;
-    RefPtr<WebExtensionAPIEvent> m_onClicked;
+    const RefPtr<WebExtensionAPIEvent> m_onClicked;
     ClickHandlerMap m_clickHandlerMap;
 #endif
 };

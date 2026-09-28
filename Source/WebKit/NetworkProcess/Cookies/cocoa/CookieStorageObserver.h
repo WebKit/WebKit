@@ -58,7 +58,7 @@ public:
     void registerInternalsForNotifications(bool isReregistering);
 
 private:
-    RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
+    const RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
     bool m_hasRegisteredInternalsForNotifications { false };
     RetainPtr<WKCookieObserverAdapter> m_observerAdapter;
     Function<void()> m_cookieChangeCallback;

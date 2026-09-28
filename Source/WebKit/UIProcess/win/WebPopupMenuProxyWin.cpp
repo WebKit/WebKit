@@ -207,7 +207,7 @@ void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, dou
     HWND hostWindow = m_webView->window();
 
     if (!m_scrollbar && visibleItems() < m_items.size()) {
-        m_scrollbar = Scrollbar::createNativeScrollbar(*this, ScrollbarOrientation::Vertical, ScrollbarWidth::Thin);
+        lazyInitialize(m_scrollbar, Scrollbar::createNativeScrollbar(*this, ScrollbarOrientation::Vertical, ScrollbarWidth::Thin));
         m_scrollbar->styleChanged();
     }
 

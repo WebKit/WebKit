@@ -106,7 +106,7 @@ private:
     WeakObjCPtr<UIScene> m_scene;
     WeakObjCPtr<UIViewController> m_viewController;
 
-    RetainPtr<WKUIWindowSceneObserver> m_observer;
+    const RetainPtr<WKUIWindowSceneObserver> m_observer;
 
     ApplicationType m_applicationType { ApplicationType::Application };
 

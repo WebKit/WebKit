@@ -97,7 +97,7 @@ public:
 private:
     WebExtensionContentWorldType m_contentWorldType { WebExtensionContentWorldType::Main };
     const RefPtr<WebExtensionAPIRuntimeBase> m_runtime;
-    RefPtr<WebExtensionContextProxy> m_extensionContext;
+    const RefPtr<WebExtensionContextProxy> m_extensionContext;
     String m_propertyPath;
 };
 

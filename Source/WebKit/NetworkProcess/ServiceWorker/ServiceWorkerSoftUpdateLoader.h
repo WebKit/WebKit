@@ -87,8 +87,8 @@ private:
     WebCore::ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     WebCore::CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
 
-    std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
-    RefPtr<WebCore::TextResourceDecoder> m_decoder;
+    const std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
+    const RefPtr<WebCore::TextResourceDecoder> m_decoder;
     StringBuilder m_script;
     WebCore::CertificateInfo m_certificateInfo;
 };

@@ -99,7 +99,7 @@ private:
     WeakRef<WebPageProxy> m_webPageProxy;
     const Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
 #if !RELEASE_LOG_DISABLED
-    Ref<const WTF::Logger> m_logger;
+    const Ref<const WTF::Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

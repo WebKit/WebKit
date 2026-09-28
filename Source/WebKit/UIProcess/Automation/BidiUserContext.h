@@ -61,8 +61,8 @@ public:
 
 private:
 
-    Ref<WebsiteDataStore> m_dataStore;
-    Ref<WebProcessPool> m_processPool;
+    const Ref<WebsiteDataStore> m_dataStore;
+    const Ref<WebProcessPool> m_processPool;
 #if USE(GLIB)
     GRefPtr<WebKitWebContext> m_context;
 #endif

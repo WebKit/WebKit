@@ -80,10 +80,10 @@ private:
     void setContents(CFTypeRef) override;
 
     bool m_hasVideo { false };
-    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
+    const std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     const RetainPtr<PlatformLayer> m_platformLayer;
 #if ENABLE(MODEL_PROCESS)
-    RefPtr<WebCore::ModelContext> m_modelContext;
+    const RefPtr<WebCore::ModelContext> m_modelContext;
 #endif
 };
 

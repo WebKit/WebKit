@@ -293,7 +293,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
             {
             }
 
-            RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
+            const RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
             uint64_t m_replyID = 0;
             bool m_didCallReplyBlock = false;
         };

@@ -79,7 +79,7 @@ void WebPage::platformInitialize(const WebPageCreationParameters&)
     // process to connect the two worlds through the accessibility
     // object there specifically placed for that purpose (the socket).
     if (RefPtr page = corePage()) {
-        m_accessibilityRootObject = AccessibilityRootAtspi::create(*page);
+        lazyInitialize(m_accessibilityRootObject, AccessibilityRootAtspi::create(*page));
         m_accessibilityRootObject->registerObject([&](const String& plugID) {
             if (!plugID.isEmpty())
                 send(Messages::WebPageProxy::BindAccessibilityTree(plugID));

@@ -100,7 +100,7 @@ CcidConnection::CcidConnection(RetainPtr<TKSmartCard>&& smartCard, RetainPtr<TKS
 {
     CCID_RELEASE_LOG("created, smartCard=%p, slot=%p", m_smartCard.get(), m_slot.get());
 
-    m_observer = adoptNS([[WKSmartCardObserver alloc]
+    lazyInitialize(m_observer, adoptNS([[WKSmartCardObserver alloc]
         initWithCard:m_smartCard.get()
         invalidationHandler:[weakThis = ThreadSafeWeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get()) {
@@ -112,7 +112,7 @@ CcidConnection::CcidConnection(RetainPtr<TKSmartCard>&& smartCard, RetainPtr<TKS
                     protectedThis->m_hasSession = false;
                 }
             }
-        }]);
+        }]));
 
     startPolling();
 }

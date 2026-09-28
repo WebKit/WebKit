@@ -97,7 +97,7 @@ struct _WebKitCookieManagerPrivate {
 
     WebKitWebsiteDataManager* dataManager;
 
-    RefPtr<CookieStoreObserver> m_observer;
+    const RefPtr<CookieStoreObserver> m_observer;
 };
 
 static std::array<unsigned, LAST_SIGNAL> signals;
@@ -168,9 +168,9 @@ WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager* dataMan
 {
     WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, nullptr));
     manager->priv->dataManager = dataManager;
-    manager->priv->m_observer = CookieStoreObserver::create([manager] {
+    lazyInitialize(manager->priv->m_observer, CookieStoreObserver::create([manager] {
         g_signal_emit(manager, signals[CHANGED], 0);
-    });
+    }).releaseNonNull());
     manager->priv->cookieStore().registerObserver(*manager->priv->m_observer);
     return manager;
 }

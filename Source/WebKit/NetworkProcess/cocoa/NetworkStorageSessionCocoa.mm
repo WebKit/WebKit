@@ -515,7 +515,7 @@ bool NetworkStorageSession::startListeningForCookieChangeNotifications(CookieCha
     observers.add(observer);
 
     if (!m_subscribedDomainsForCookieChanges)
-        m_subscribedDomainsForCookieChanges = adoptNS([[NSMutableSet alloc] init]);
+        lazyInitialize(m_subscribedDomainsForCookieChanges, adoptNS([[NSMutableSet alloc] init]));
     else if ([m_subscribedDomainsForCookieChanges containsObject:host.createNSString().get()])
         return true;
 

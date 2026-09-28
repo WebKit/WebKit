@@ -231,8 +231,8 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
 {
     m_extension = extension.ptr();
     m_baseURL = URL { makeString("webkit-extension://"_s, uniqueIdentifier(), '/') };
-    m_delegate = [[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this];
-    m_tabDelegateToIdentifierMap = [NSMapTable weakToStrongObjectsMapTable];
+    lazyInitialize(m_delegate, adoptNS([[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this]));
+    lazyInitialize(m_tabDelegateToIdentifierMap, retainPtr([NSMapTable weakToStrongObjectsMapTable]));
 }
 
 void WebExtensionContext::recordError(Ref<API::Error> error)

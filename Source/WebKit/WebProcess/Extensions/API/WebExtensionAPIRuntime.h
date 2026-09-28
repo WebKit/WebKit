@@ -95,12 +95,12 @@ private:
 
     static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<String>& name, const String& sourceKey, String& outExceptionString);
 
-    RefPtr<WebExtensionAPIEvent> m_onConnect;
-    RefPtr<WebExtensionAPIEvent> m_onInstalled;
-    RefPtr<WebExtensionAPIEvent> m_onMessage;
-    RefPtr<WebExtensionAPIEvent> m_onStartup;
-    RefPtr<WebExtensionAPIEvent> m_onConnectExternal;
-    RefPtr<WebExtensionAPIEvent> m_onMessageExternal;
+    const RefPtr<WebExtensionAPIEvent> m_onConnect;
+    const RefPtr<WebExtensionAPIEvent> m_onInstalled;
+    const RefPtr<WebExtensionAPIEvent> m_onMessage;
+    const RefPtr<WebExtensionAPIEvent> m_onStartup;
+    const RefPtr<WebExtensionAPIEvent> m_onConnectExternal;
+    const RefPtr<WebExtensionAPIEvent> m_onMessageExternal;
 };
 
 class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {

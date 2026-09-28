@@ -44,8 +44,8 @@ public:
     WebExtensionAPIEvent& onChanged();
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onCommand;
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
+    const RefPtr<WebExtensionAPIEvent> m_onCommand;
+    const RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };
 
