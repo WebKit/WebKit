@@ -34,7 +34,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Adapter);
 
@@ -132,7 +132,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     if (descriptor.requiredLimits) {
         limits = fromAPI(descriptor.requiredLimits->limits);
 
-        if (!WebGPU::isValid(limits)) {
+        if (!WebGPU::Metal::isValid(limits)) {
             callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
             return;
         }
@@ -167,55 +167,55 @@ bool Adapter::isXRCompatible() const
     return m_xrCompatible;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuAdapterAddRef(WGPUAdapter adapter)
 {
-    WebGPU::fromAPI(adapter).ref();
+    WebGPU::Metal::fromAPI(adapter).ref();
 }
 
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
-    WebGPU::fromAPI(adapter).deref();
+    WebGPU::Metal::fromAPI(adapter).deref();
 }
 
 size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
 {
-    return protect(WebGPU::fromAPI(adapter))->enumerateFeatures(features);
+    return protect(WebGPU::Metal::fromAPI(adapter))->enumerateFeatures(features);
 }
 
 WGPUBool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
-    return WebGPU::fromAPI(adapter).getLimits(*limits);
+    return WebGPU::Metal::fromAPI(adapter).getLimits(*limits);
 }
 
 void wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo* info)
 {
-    protect(WebGPU::fromAPI(adapter))->getInfo(*info);
+    protect(WebGPU::Metal::fromAPI(adapter))->getInfo(*info);
 }
 
 WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
-    return protect(WebGPU::fromAPI(adapter))->hasFeature(feature);
+    return protect(WebGPU::Metal::fromAPI(adapter))->hasFeature(feature);
 }
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    protect(WebGPU::fromAPI(adapter))->requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
-        callback(status, WebGPU::releaseToAPI(WTF::move(device)), message.utf8().legacyCStringPointer(), userdata);
+    protect(WebGPU::Metal::fromAPI(adapter))->requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, Ref<WebGPU::Metal::Device>&& device, String&& message) {
+        callback(status, WebGPU::Metal::releaseToAPI(WTF::move(device)), message.utf8().legacyCStringPointer(), userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
-    protect(WebGPU::fromAPI(adapter))->requestDevice(*descriptor, [callback = WebGPU::fromAPI(WTF::move(callback))](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
-        callback(status, WebGPU::releaseToAPI(WTF::move(device)), message.utf8().legacyCStringPointer());
+    protect(WebGPU::Metal::fromAPI(adapter))->requestDevice(*descriptor, [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPURequestDeviceStatus status, Ref<WebGPU::Metal::Device>&& device, String&& message) {
+        callback(status, WebGPU::Metal::releaseToAPI(WTF::move(device)), message.utf8().legacyCStringPointer());
     });
 }
 
 WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter)
 {
-    return WebGPU::fromAPI(adapter).isXRCompatible();
+    return WebGPU::Metal::fromAPI(adapter).isXRCompatible();
 }

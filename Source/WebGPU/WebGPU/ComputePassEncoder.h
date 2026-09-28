@@ -28,11 +28,11 @@
 #import "CommandEncoder.h"
 #import "CommandsMixin.h"
 #import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
@@ -41,7 +41,7 @@
 struct WGPUComputePassEncoderImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroup;
 class Buffer;
@@ -52,7 +52,7 @@ class QuerySet;
 struct BindableResources;
 
 // https://gpuweb.github.io/gpuweb/#gpucomputepassencoder
-class ComputePassEncoder : public WGPUComputePassEncoderImpl, public RefCounted<ComputePassEncoder>, public CommandsMixin {
+class ComputePassEncoder final : public WebGPU::ComputePassEncoder, public WGPUComputePassEncoderImpl, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(ComputePassEncoder);
 public:
     static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
@@ -81,11 +81,11 @@ public:
 
     void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<Vector<uint32_t>>&& dynamicOffsets);
     void setPipeline(const ComputePipeline&);
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
     Device& device() const { return m_device; }
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
     id<MTLComputeCommandEncoder> NODELETE computeCommandEncoder() const;
 
     // A pass begun while its command encoder was not open never took the encoder over, so it can
@@ -122,14 +122,14 @@ private:
 } SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refComputePassEncoder(WebGPU::ComputePassEncoder* obj)
+inline void refComputePassEncoder(WebGPU::Metal::ComputePassEncoder* obj)
 {
     obj->ref();
 }
 
-inline void derefComputePassEncoder(WebGPU::ComputePassEncoder* obj)
+inline void derefComputePassEncoder(WebGPU::Metal::ComputePassEncoder* obj)
 {
     obj->deref();
 }

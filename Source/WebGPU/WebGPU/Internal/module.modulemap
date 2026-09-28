@@ -172,6 +172,11 @@ module WebGPU_Internal [system] {
         export *
     }
 
+    explicit module WebGPUCppConversions {
+        header "../WebGPUCppConversions.h"
+        export *
+    }
+
     explicit module XRBinding {
         header "../XRBinding.h"
         export *

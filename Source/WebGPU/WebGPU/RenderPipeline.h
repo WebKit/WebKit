@@ -28,18 +28,18 @@
 #import "Pipeline.h"
 #import "PipelineLayout.h"
 
+#import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPURenderPipelineImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroupLayout;
 class Device;
@@ -47,7 +47,7 @@ class TextureOrTextureView;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpipeline
-class RenderPipeline : public RefCountedAndCanMakeWeakPtr<RenderPipeline>, public WGPURenderPipelineImpl {
+class RenderPipeline final : public WebGPU::RenderPipeline, public WGPURenderPipelineImpl {
     WTF_MAKE_TZONE_ALLOCATED(RenderPipeline);
 public:
     struct BufferData {
@@ -70,9 +70,9 @@ public:
     ~RenderPipeline();
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
-    void NODELETE setLabel(String&&);
+    void NODELETE setLabel(String&&) final;
 
-    bool isValid() const { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }
+    bool isValid() const final { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }
 
     MTLRenderPipelineDescriptor* renderPipelineDescriptor() const { return m_renderPipelineDescriptor; }
     id<MTLRenderPipelineState> renderPipelineState() const;
@@ -147,4 +147,4 @@ private:
     const bool m_writesStencil { false };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

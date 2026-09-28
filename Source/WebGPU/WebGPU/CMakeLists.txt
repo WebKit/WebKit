@@ -8,12 +8,14 @@ set(WebGPU_PUBLIC_FRAMEWORK_HEADERS
 )
 
 set(WebGPU_PRIVATE_FRAMEWORK_HEADERS
+    ${WebGPU_CPP_API_HEADERS}
     CxxBridgingPublic.h
     WGPUBufferImpl.h
     WGPUQuerySetImpl.h
     WGPUTextureImpl.h
     WGPUTextureViewImpl.h
     WebGPU.h
+    WebGPUCppBridge.h
     WebGPUExt.h
 )
 

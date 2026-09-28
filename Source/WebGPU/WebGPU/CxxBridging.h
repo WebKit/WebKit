@@ -40,37 +40,37 @@ inline uint32_t roundUpToMultipleOfNonPowerOfTwoUInt32UInt32(uint32_t a, uint32_
 
 namespace CxxBridging {
 
-using RefComputePassEncoder = Ref<WebGPU::ComputePassEncoder>;
-using RefRenderPassEncoder = Ref<WebGPU::RenderPassEncoder>;
-using RefCommandBuffer = Ref<WebGPU::CommandBuffer>;
+using RefComputePassEncoder = Ref<WebGPU::Metal::ComputePassEncoder>;
+using RefRenderPassEncoder = Ref<WebGPU::Metal::RenderPassEncoder>;
+using RefCommandBuffer = Ref<WebGPU::Metal::CommandBuffer>;
 
-inline bool isValidToUseWithTextureViewCommandEncoder(const WebGPU::TextureView& texture, const WebGPU::CommandEncoder& commandEncoder)
+inline bool isValidToUseWithTextureViewCommandEncoder(const WebGPU::Metal::TextureView& texture, const WebGPU::Metal::CommandEncoder& commandEncoder)
 {
-    return WebGPU::isValidToUseWith(texture, commandEncoder);
+    return WebGPU::Metal::isValidToUseWith(texture, commandEncoder);
 }
 
-inline bool isValidToUseWithQuerySetCommandEncoder(const WebGPU::QuerySet& querySet, const WebGPU::CommandEncoder& commandEncoder)
+inline bool isValidToUseWithQuerySetCommandEncoder(const WebGPU::Metal::QuerySet& querySet, const WebGPU::Metal::CommandEncoder& commandEncoder)
 {
-    return WebGPU::isValidToUseWith(querySet, commandEncoder);
+    return WebGPU::Metal::isValidToUseWith(querySet, commandEncoder);
 }
 
-inline bool isValidToUseWithBufferCommandEncoder(const WebGPU::Buffer& buffer, const WebGPU::CommandEncoder& commandEncoder)
+inline bool isValidToUseWithBufferCommandEncoder(const WebGPU::Metal::Buffer& buffer, const WebGPU::Metal::CommandEncoder& commandEncoder)
 {
-    return WebGPU::isValidToUseWith(buffer, commandEncoder);
+    return WebGPU::Metal::isValidToUseWith(buffer, commandEncoder);
 }
 
-inline bool isValidToUseWithTextureCommandEncoder(const WebGPU::Texture& texture, const WebGPU::CommandEncoder& commandEncoder)
+inline bool isValidToUseWithTextureCommandEncoder(const WebGPU::Metal::Texture& texture, const WebGPU::Metal::CommandEncoder& commandEncoder)
 {
-    return WebGPU::isValidToUseWith(texture, commandEncoder);
+    return WebGPU::Metal::isValidToUseWith(texture, commandEncoder);
 }
 
-inline bool isValidToUseWith(const WebGPU::TextureOrTextureView& texture, const WebGPU::CommandEncoder& commandEncoder)
+inline bool isValidToUseWith(const WebGPU::Metal::TextureOrTextureView& texture, const WebGPU::Metal::CommandEncoder& commandEncoder)
 {
-    return WebGPU::isValidToUseWith(texture, commandEncoder);
+    return WebGPU::Metal::isValidToUseWith(texture, commandEncoder);
 }
 
 // FIXME: rdar://138415945
-inline bool areBuffersEqual(const WebGPU::Buffer& a, const WebGPU::Buffer& b)
+inline bool areBuffersEqual(const WebGPU::Metal::Buffer& a, const WebGPU::Metal::Buffer& b)
 {
     return &a == &b;
 }
@@ -80,7 +80,7 @@ inline NSString * convertWTFStringToNSString(const String& input)
     return nsStringNilIfEmpty(input).autorelease();
 }
 
-inline ThreadSafeWeakPtr<WebGPU::CommandBuffer> commandBufferThreadSafeWeakPtr(const WebGPU::CommandBuffer* input)
+inline ThreadSafeWeakPtr<WebGPU::Metal::CommandBuffer> commandBufferThreadSafeWeakPtr(const WebGPU::Metal::CommandBuffer* input)
 {
     return ThreadSafeWeakPtr(input);
 }

@@ -28,12 +28,12 @@ import WebGPU_Private.WebGPUExt
 private let largeBufferSize = Int(WGPU_LARGE_BUFFER_SIZE)
 
 @_expose(Cxx)
-func queueWriteBuffer(_ queue: WebGPU.Queue, buffer: any MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {
+func queueWriteBuffer(_ queue: WebGPU.Metal.Queue, buffer: any MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {
     // FIXME (rdar://161269480): We should be able to declare 'data' as MutableSpan<UInt8>, which will remove this use of 'unsafe'.
     queue.writeBuffer(buffer: buffer, bufferOffset: bufferOffset, data: unsafe MutableSpan(_unsafeCxxSpan: data))
 }
 
-extension WebGPU.Queue {
+extension WebGPU.Metal.Queue {
     func writeBuffer(buffer: any MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
         guard self.metalDevice() != nil else {
             return

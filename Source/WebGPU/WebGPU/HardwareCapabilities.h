@@ -27,11 +27,12 @@
 
 #include <Metal/Metal.h>
 #include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUCpp.h>
 #include <WebGPU/WebGPUExt.h>
 #include <optional>
 #include <wtf/Vector.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 // The limits of WGPULimits, as plain values.
 struct Limits {
@@ -97,4 +98,4 @@ bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Ve
 bool isShaderValidationEnabled(id<MTLDevice>);
 bool NODELETE isWebGPUSwiftEnabled();
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

@@ -30,7 +30,7 @@
 #import "Instance.h"
 #import <wtf/TZoneMallocInlines.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandBuffer);
 
@@ -157,21 +157,21 @@ bool CommandBuffer::waitForCompletion()
     return true;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuCommandBufferAddRef(WGPUCommandBuffer commandBuffer)
 {
-    WebGPU::fromAPI(commandBuffer).ref();
+    WebGPU::Metal::fromAPI(commandBuffer).ref();
 }
 
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {
-    WebGPU::fromAPI(commandBuffer).deref();
+    WebGPU::Metal::fromAPI(commandBuffer).deref();
 }
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(commandBuffer))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(commandBuffer))->setLabel(WebGPU::Metal::fromAPI(label));
 }

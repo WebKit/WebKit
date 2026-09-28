@@ -37,7 +37,7 @@
 #import "WGSL.h"
 #import <wtf/Scope.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 static MTLComputePipelineDescriptor *createComputePipelineDescriptor(id<MTLFunction> function, const PipelineLayout& pipelineLayout, NSString *label, GPUShaderValidation validationState)
 {
@@ -66,7 +66,7 @@ static std::optional<MTLSize> metalSize(WGSL::ShaderModule& shaderModule, auto w
     return MTLSizeMake(width->integerValue(), height->integerValue(), depth->integerValue());
 }
 
-static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
+static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(WebGPU::Metal::Device &object, bool isAsync, NSString* error = nil)
 {
     if (!isAsync)
         object.generateAValidationError(error ?: @"createComputePipeline failed");
@@ -86,12 +86,12 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
 
 void Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync, const ComputePipeline* pipelineToReplace, LibraryCompilation libraryCompilation, CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)>&& callback)
 {
-    Ref shaderModule = WebGPU::fromAPI(descriptor.compute.module);
+    Ref shaderModule = WebGPU::Metal::fromAPI(descriptor.compute.module);
     RefPtr<PipelineLayout> pipelineLayout;
     if (pipelineToReplace)
         pipelineLayout = &pipelineToReplace->pipelineLayout();
     else if (descriptor.layout)
-        pipelineLayout = &WebGPU::fromAPI(descriptor.layout);
+        pipelineLayout = &WebGPU::Metal::fromAPI(descriptor.layout);
 
     if (!shaderModule->isValid() || &shaderModule->device() != this || !pipelineLayout)
         return callback(returnInvalidComputePipeline(*this, isAsync));
@@ -262,26 +262,26 @@ const BufferBindingSizesForBindGroup* ComputePipeline::minimumBufferSizes(uint32
     return it == m_minimumBufferSizes.end() ? nullptr : &it->value;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuComputePipelineAddRef(WGPUComputePipeline computePipeline)
 {
-    WebGPU::fromAPI(computePipeline).ref();
+    WebGPU::Metal::fromAPI(computePipeline).ref();
 }
 
 void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 {
-    WebGPU::fromAPI(computePipeline).deref();
+    WebGPU::Metal::fromAPI(computePipeline).deref();
 }
 
 WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline computePipeline, uint32_t groupIndex)
 {
-    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(computePipeline))->getBindGroupLayout(groupIndex));
+    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(computePipeline))->getBindGroupLayout(groupIndex));
 }
 
 void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, WGPUStringView label)
 {
-    WebGPU::fromAPI(computePipeline).setLabel(WebGPU::fromAPI(label));
+    WebGPU::Metal::fromAPI(computePipeline).setLabel(WebGPU::Metal::fromAPI(label));
 }

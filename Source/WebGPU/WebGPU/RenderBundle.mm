@@ -32,7 +32,7 @@
 #import <wtf/TZoneMallocInlines.h>
 
 @implementation ResourceUsageAndRenderStage
-- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::BindGroupEntryUsageData::Resource)resource
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::Metal::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::Metal::BindGroupEntryUsageData::Resource)resource
 {
     if (!(self = [super init]))
         return nil;
@@ -47,11 +47,11 @@
 }
 @end
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBundle);
 
-RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::BindableResources>&& bindableResources, RefPtr<RenderBundleEncoder> encoder, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
+RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::Metal::BindableResources>&& bindableResources, RefPtr<RenderBundleEncoder> encoder, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
     : m_device(device)
     , m_renderBundleEncoder(encoder)
     , m_renderBundlesResources(resources)
@@ -187,21 +187,21 @@ bool RenderBundle::rebindSamplersIfNeeded() const
     return result;
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuRenderBundleAddRef(WGPURenderBundle renderBundle)
 {
-    WebGPU::fromAPI(renderBundle).ref();
+    WebGPU::Metal::fromAPI(renderBundle).ref();
 }
 
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {
-    WebGPU::fromAPI(renderBundle).deref();
+    WebGPU::Metal::fromAPI(renderBundle).deref();
 }
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label)
 {
-    protect(WebGPU::fromAPI(renderBundle))->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::Metal::fromAPI(renderBundle))->setLabel(WebGPU::Metal::fromAPI(label));
 }

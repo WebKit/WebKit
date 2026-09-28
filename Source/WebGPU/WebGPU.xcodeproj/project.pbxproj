@@ -251,6 +251,10 @@
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 		DD5697FE2DC1316A00050321 /* rdar150228472.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5697FC2DC1311D00050321 /* rdar150228472.swift */; };
 		DDE748802F7B4337008013AB /* WorkAround173516139.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE7487F2F7B4331008013AB /* WorkAround173516139.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */; };
+		C58AE38494420555CFC65614 /* WebGPUCppBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -611,6 +615,10 @@
 		DD7181322E21D3C800A096B7 /* AllowedSPI-legacy.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AllowedSPI-legacy.toml"; sourceTree = "<group>"; };
 		DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		DDE7487F2F7B4331008013AB /* WorkAround173516139.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkAround173516139.h; sourceTree = "<group>"; };
+		B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCpp.h; sourceTree = "<group>"; };
+		34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppBridge.h; sourceTree = "<group>"; };
+		83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppConversions.h; sourceTree = "<group>"; };
+		4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGPUCppBridge.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -663,6 +671,7 @@
 			children = (
 				DD5697FD2DC1311D00050321 /* Derived Sources */,
 				1CEBD8242716C81400A5254D /* Info.plist */,
+				B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */,
 				1CEBD7F92716B38600A5254D /* Configurations */,
 				1CEBD7F62716B33100A5254D /* WGSL */,
 				1CEBD7E52716AFBA00A5254D /* WebGPU */,
@@ -758,6 +767,9 @@
 				1CEBD7E62716AFBA00A5254D /* WebGPU.h */,
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				07607E0D2EFC966700A2F311 /* WebGPU_Private.modulemap */,
+				34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */,
+				4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */,
+				83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */,
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
 				1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */,
 				075BAAB92EEFBCA2008765CE /* WGPUBufferImpl.h */,
@@ -1064,6 +1076,9 @@
 				07D291812EC9CF2200A32120 /* Texture.h in Headers */,
 				0D164A3A2E8EE14700864EA1 /* TextureOrTextureView.h in Headers */,
 				07D291822EC9CF2A00A32120 /* TextureView.h in Headers */,
+				596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */,
+				CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */,
+				1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 				07D291832EC9CF3100A32120 /* WebGPUInternal.h in Headers */,
 				075BAABA2EEFBCA2008765CE /* WGPUBufferImpl.h in Headers */,
@@ -1446,6 +1461,7 @@
 				14C834402EBA7CBB003B591A /* StdLibExtras.swift in Sources */,
 				1C5ACACF273A426E0095F8D5 /* Texture.mm in Sources */,
 				1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */,
+				C58AE38494420555CFC65614 /* WebGPUCppBridge.mm in Sources */,
 				0D943C102C6571BC00D33BA5 /* XRBinding.mm in Sources */,
 				0DD5FD362C66947B004AF552 /* XRProjectionLayer.mm in Sources */,
 				0D943C232C65E46400D33BA5 /* XRSubImage.mm in Sources */,

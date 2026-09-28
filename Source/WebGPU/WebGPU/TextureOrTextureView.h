@@ -31,7 +31,7 @@
 #import <WebGPU/WebGPU.h>
 #import <wtf/Ref.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class TextureOrTextureView {
 public:

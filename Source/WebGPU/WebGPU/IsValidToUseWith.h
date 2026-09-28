@@ -25,7 +25,7 @@
 
 #pragma once
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 template <typename T, typename U>
 bool isValidToUseWith(const T& object, const U& targetObject)
@@ -68,4 +68,4 @@ bool isValidToUseWith(const Ref<T>& object, const U& targetObject)
 }
 
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

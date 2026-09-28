@@ -43,7 +43,7 @@
 #include <wtf/text/StringBuilder.h>
 #endif
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
 static bool enablePsoLogging();
@@ -278,7 +278,7 @@ void Device::compileLibrary(const LibraryCompileRequest& request, LibraryCompila
     }
 
     NSError *error = nil;
-    id<MTLLibrary> library = WebGPU::compileLibrary(m_device, request, &error);
+    id<MTLLibrary> library = WebGPU::Metal::compileLibrary(m_device, request, &error);
     callback(library, error);
 }
 
@@ -695,4 +695,4 @@ void clearMetalPSORepro()
 
 #endif
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

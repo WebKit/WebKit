@@ -34,7 +34,7 @@
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 XRSubImage::XRSubImage(bool, Device& device)
     : m_device(device)
@@ -149,26 +149,26 @@ RefPtr<XRSubImage> XRBinding::getViewSubImage(XRProjectionLayer& projectionLayer
     return device().getXRViewSubImage(projectionLayer);
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuXRSubImageAddRef(WGPUXRSubImage subImage)
 {
-    WebGPU::fromAPI(subImage).ref();
+    WebGPU::Metal::fromAPI(subImage).ref();
 }
 
 void wgpuXRSubImageRelease(WGPUXRSubImage subImage)
 {
-    WebGPU::fromAPI(subImage).deref();
+    WebGPU::Metal::fromAPI(subImage).deref();
 }
 
 WGPUTexture wgpuXRSubImageGetColorTexture(WGPUXRSubImage subImage)
 {
-    return protect(WebGPU::fromAPI(subImage))->colorTexture();
+    return protect(WebGPU::Metal::fromAPI(subImage))->colorTexture();
 }
 
 WGPUTexture wgpuXRSubImageGetDepthStencilTexture(WGPUXRSubImage subImage)
 {
-    return protect(WebGPU::fromAPI(subImage))->depthTexture();
+    return protect(WebGPU::Metal::fromAPI(subImage))->depthTexture();
 }

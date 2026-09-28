@@ -34,7 +34,7 @@
 #import <wtf/PageBlock.h>
 #import <wtf/StdLibExtras.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 // FIXME: these two limits should be 30 and 30, but they fail the tests
 // due to https://github.com/gpuweb/cts/issues/3376
@@ -258,13 +258,13 @@ bool isWebGPUSwiftEnabled()
 
 static HardwareCapabilities apple4(id<MTLDevice> device)
 {
-    auto baseCapabilities = WebGPU::baseCapabilities(device);
+    auto baseCapabilities = WebGPU::Metal::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
     baseCapabilities.memoryBarrierLimit = isShaderValidationEnabled(device) ? 0u : std::numeric_limits<decltype(baseCapabilities.memoryBarrierLimit)>::max();
 
-    auto features = WebGPU::baseFeatures(device, baseCapabilities);
+    auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
     features.append(WGPUFeatureName_TextureCompressionETC2);
     features.append(WGPUFeatureName_TextureCompressionASTC);
@@ -281,12 +281,12 @@ static HardwareCapabilities apple4(id<MTLDevice> device)
 
 static HardwareCapabilities apple5(id<MTLDevice> device)
 {
-    auto baseCapabilities = WebGPU::baseCapabilities(device);
+    auto baseCapabilities = WebGPU::Metal::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
 
-    auto features = WebGPU::baseFeatures(device, baseCapabilities);
+    auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
     features.append(WGPUFeatureName_TextureCompressionETC2);
     features.append(WGPUFeatureName_TextureCompressionASTC);
@@ -304,13 +304,13 @@ static HardwareCapabilities apple5(id<MTLDevice> device)
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static HardwareCapabilities apple6(id<MTLDevice> device)
 {
-    auto baseCapabilities = WebGPU::baseCapabilities(device);
+    auto baseCapabilities = WebGPU::Metal::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
     baseCapabilities.supportsResidencySets = false;
 
-    auto features = WebGPU::baseFeatures(device, baseCapabilities);
+    auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
     features.append(WGPUFeatureName_TextureCompressionETC2);
     features.append(WGPUFeatureName_TextureCompressionASTC);
@@ -365,13 +365,13 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
 
 static HardwareCapabilities apple7(id<MTLDevice> device)
 {
-    auto baseCapabilities = WebGPU::baseCapabilities(device);
+    auto baseCapabilities = WebGPU::Metal::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
     baseCapabilities.supportsResidencySets = false;
 
-    auto features = WebGPU::baseFeatures(device, baseCapabilities);
+    auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
     features.append(WGPUFeatureName_TextureCompressionETC2);
     features.append(WGPUFeatureName_TextureCompressionASTC);
@@ -427,7 +427,7 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
 
 static HardwareCapabilities mac2(id<MTLDevice> device)
 {
-    auto baseCapabilities = WebGPU::baseCapabilities(device);
+    auto baseCapabilities = WebGPU::Metal::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = false;
     baseCapabilities.canPresentRGB10A2PixelFormats = true;
@@ -436,7 +436,7 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
     else if (![device supportsFamily:MTLGPUFamilyApple8])
         baseCapabilities.memoryBarrierLimit = 512;
 
-    auto features = WebGPU::baseFeatures(device, baseCapabilities);
+    auto features = WebGPU::Metal::baseFeatures(device, baseCapabilities);
 
     std::ranges::sort(features);
 
@@ -857,9 +857,9 @@ WGPULimits toAPI(const Limits& limits)
     };
 }
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
 WGPULimits NODELETE wgpuDefaultLimits()
 {
-    return WebGPU::toAPI(WebGPU::defaultLimits());
+    return WebGPU::Metal::toAPI(WebGPU::Metal::defaultLimits());
 }

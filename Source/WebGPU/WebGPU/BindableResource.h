@@ -40,7 +40,7 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Buffer;
 class ExternalTexture;
@@ -173,4 +173,4 @@ struct TrackedResource {
     }
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

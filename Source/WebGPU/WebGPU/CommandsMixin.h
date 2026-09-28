@@ -25,7 +25,7 @@
 
 #pragma once
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Buffer;
 class Device;
@@ -47,4 +47,4 @@ protected:
     EncoderState m_state { EncoderState::Open };
 };
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal

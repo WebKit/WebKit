@@ -30,11 +30,11 @@
 #import "CommandsMixin.h"
 #import "Device.h"
 #import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/SwiftCXXThunk.h>
 #import <wtf/TZoneMalloc.h>
@@ -55,7 +55,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 struct WGPUCommandEncoderImpl {
 };
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class BindGroup;
 class Buffer;
@@ -69,7 +69,7 @@ class Texture;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandencoder
-class CommandEncoder : public CommandsMixin, public RefCountedAndCanMakeWeakPtr<CommandEncoder>, public WGPUCommandEncoderImpl {
+class CommandEncoder final : public WebGPU::CommandEncoder, public CommandsMixin, public WGPUCommandEncoderImpl {
     WTF_MAKE_TZONE_ALLOCATED(CommandEncoder);
 public:
     static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device, uint64_t uniqueId)
@@ -103,11 +103,11 @@ public:
     void pushDebugGroup(String&& groupLabel);
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(QuerySet&, uint32_t queryIndex);
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
     Device& device() const { return m_device; }
 
-    bool isValid() const { return m_commandBuffer; }
+    bool isValid() const final { return m_commandBuffer; }
     void lock(bool);
     bool isLocked() const { return m_state == EncoderState::Locked; }
 
@@ -214,14 +214,14 @@ private:
 #endif
 } SWIFT_SHARED_REFERENCE(refCommandEncoder, derefCommandEncoder) SWIFT_PRIVATE_FILEID("WebGPU/CommandEncoder.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refCommandEncoder(WebGPU::CommandEncoder* obj)
+inline void refCommandEncoder(WebGPU::Metal::CommandEncoder* obj)
 {
     obj->ref();
 }
 
-inline void derefCommandEncoder(WebGPU::CommandEncoder* obj)
+inline void derefCommandEncoder(WebGPU::Metal::CommandEncoder* obj)
 {
     obj->deref();
 }

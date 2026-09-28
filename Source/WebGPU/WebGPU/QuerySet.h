@@ -28,27 +28,27 @@
 #import "BindableResource.h"
 #import <WebGPU/WGPUQuerySetImpl.h>
 #import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
 #import <optional>
 #import <wtf/FastMalloc.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebGPU {
+namespace WebGPU::Metal {
 
 class Buffer;
 class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueryset
-class QuerySet : public WGPUQuerySetImpl, public RefCountedAndCanMakeWeakPtr<QuerySet>, public TrackedResource {
+class QuerySet final : public WebGPU::QuerySet, public WGPUQuerySetImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(QuerySet);
 public:
     struct CounterSampleBuffer {
@@ -72,9 +72,9 @@ public:
     ~QuerySet();
 
     void destroy();
-    void setLabel(String&&);
+    void setLabel(String&&) final;
 
-    bool NODELETE isValid() const;
+    bool NODELETE isValid() const final;
 
     void NODELETE setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex);
 
@@ -120,14 +120,14 @@ private:
     static std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> m_counterSampleBufferFreeRanges WTF_GUARDED_BY_LOCK(querySetLock);
 } SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-} // namespace WebGPU
+} // namespace WebGPU::Metal
 
-inline void refQuerySet(WebGPU::QuerySet* obj)
+inline void refQuerySet(WebGPU::Metal::QuerySet* obj)
 {
     obj->ref();
 }
 
-inline void derefQuerySet(WebGPU::QuerySet* obj)
+inline void derefQuerySet(WebGPU::Metal::QuerySet* obj)
 {
     obj->deref();
 }
