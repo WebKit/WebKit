@@ -3098,6 +3098,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/LineClampUpdater.h
     rendering/MarkedText.h
     rendering/MotionPath.h
+    rendering/NinePieceGeometry.h
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
     rendering/Pagination.h

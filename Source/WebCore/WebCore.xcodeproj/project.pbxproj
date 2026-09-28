@@ -4181,6 +4181,7 @@
 		9ACC07A825C8110D00DC6386 /* MediaKeySystemClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07A725C8110D00DC6386 /* MediaKeySystemClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9ACC07AF25C8141D00DC6386 /* MediaKeySystemController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07AE25C8141C00DC6386 /* MediaKeySystemController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AEBF919AAC54D083C5923A8 /* NaturalDimensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 760041D7205CBE677C0EC732 /* NaturalDimensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EDCBD2C43FF775B2FF40A33D /* NinePieceGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0C8235EAD2A004044B2 /* TextManipulationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0C3235E76AA004044B2 /* TextManipulationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B0ABCAE236BB43100B45085 /* TaskSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0ABCAC236BB40A00B45085 /* TaskSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B1229C423FE4BD2008CA751 /* AudioDestinationCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 413151862357745E00115E6E /* AudioDestinationCocoa.h */; };
@@ -21050,6 +21051,7 @@
 		BCEE71B42C8A918100CF2D31 /* CSSColorConversion+Normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSColorConversion+Normalize.h"; sourceTree = "<group>"; };
 		BCEEF6752C6A865C00468D58 /* CSSCalcTree+NumericIdentity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSCalcTree+NumericIdentity.h"; sourceTree = "<group>"; };
 		BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NinePieceImagePainter.h; sourceTree = "<group>"; };
+		424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinePieceGeometry.h; sourceTree = "<group>"; };
 		BCEF43DF0E674110001C1287 /* NinePieceImagePainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NinePieceImagePainter.cpp; sourceTree = "<group>"; };
 		BCEF453F0E676AC1001C1287 /* TextMetrics.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextMetrics.idl; sourceTree = "<group>"; };
 		BCEF45E80E687767001C1287 /* TextMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextMetrics.h; sourceTree = "<group>"; };
@@ -42781,6 +42783,7 @@
 				CE1866431F72E5B400A0CAB6 /* MarkedText.h */,
 				1A897BC22A903B1D00C12DAA /* MotionPath.cpp */,
 				1A897BC12A903B1C00C12DAA /* MotionPath.h */,
+				424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */,
 				BCEF43DF0E674110001C1287 /* NinePieceImagePainter.cpp */,
 				BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */,
 				CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */,
@@ -48198,6 +48201,7 @@
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				269397241A4A5B6400E8349D /* NFA.h in Headers */,
 				267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */,
+				EDCBD2C43FF775B2FF40A33D /* NinePieceGeometry.h in Headers */,
 				14115B5209F84B7100CA4FC1 /* Node.h in Headers */,
 				CD06644D2E72415A00B7D658 /* NodeDocument.h in Headers */,
 				854FE7310A2297BE0058D7AD /* NodeFilter.h in Headers */,
