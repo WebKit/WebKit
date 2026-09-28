@@ -91,7 +91,7 @@ void WPEQtUnderlayRenderNode::releaseResources()
     m_frameReadyForAck = false;
 }
 
-void WPEQtUnderlayRenderNode::syncFrame()
+void WPEQtUnderlayRenderNode::advanceFrame()
 {
     if (!m_wpeView)
         return;

@@ -258,8 +258,9 @@ void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)
 
 void wpe_view_qtquick_set_frame_release_fence(WPEViewQtQuick* view, int fd)
 {
+    WTF::UnixFileDescriptor fence { fd, WTF::UnixFileDescriptor::Adopt };
     if (view->priv->committedBuffer)
-        wpe_buffer_set_release_fence(view->priv->committedBuffer.get(), fd);
+        wpe_buffer_set_release_fence(view->priv->committedBuffer.get(), fence.release());
 }
 
 void wpe_view_qtquick_did_update_scene(WPEViewQtQuick* view)
