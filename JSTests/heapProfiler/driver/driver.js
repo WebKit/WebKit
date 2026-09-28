@@ -161,7 +161,7 @@ function createCheapHeapSnapshot() {
     let json = generateHeapSnapshot();
 
     let {version, nodes, nodeClassNames, edges, edgeTypes} = json;
-    assert(version === 2, "Heap Snapshot payload should be version 2");
+    assert(version === 3, "Heap Snapshot payload should be version 3");
     assert(nodes.length, "Heap Snapshot should have nodes");
     assert(nodeClassNames.length, "Heap Snapshot should have nodeClassNames");
     assert(edges.length, "Heap Snapshot should have edges");
@@ -264,7 +264,7 @@ function createHeapSnapshot() {
     let json = generateHeapSnapshot();
 
     let {version, nodes, nodeClassNames, edges, edgeTypes} = json;
-    assert(version === 2, "Heap Snapshot payload should be version 2");
+    assert(version === 3, "Heap Snapshot payload should be version 3");
     assert(nodes.length, "Heap Snapshot should have nodes");
     assert(nodeClassNames.length, "Heap Snapshot should have nodeClassNames");
     assert(edges.length, "Heap Snapshot should have edges");

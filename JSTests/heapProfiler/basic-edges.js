@@ -10,8 +10,24 @@ function excludeStructure(edges) {
 let simpleObject1NodeId;
 let simpleObject2NodeId;
 
-let simpleObject1 = new SimpleObject;
-let simpleObject2 = new SimpleObject;
+let simpleObject1;
+let simpleObject2;
+
+// Create and link the objects in helpers rather than at top level. The top-level frame stays
+// live for the whole test, so a stale copy left in one of its temporaries would be found by the
+// conservative stack scan and keep the objects alive after the variables are cleared.
+function createSimpleObjects() {
+    simpleObject1 = new SimpleObject;
+    simpleObject2 = new SimpleObject;
+}
+noInline(createSimpleObjects);
+
+function linkSimpleObjects() {
+    setHiddenValue(simpleObject1, simpleObject2);
+}
+noInline(linkSimpleObjects);
+
+createSimpleObjects();
 
 (function() {
     let snapshot = createCheapHeapSnapshot();
@@ -23,7 +39,7 @@ let simpleObject2 = new SimpleObject;
     assert(simpleObject2Node.outgoingEdges.length === 1, "'simpleObject2' should reference only its structure");
 })();
 
-setHiddenValue(simpleObject1, simpleObject2);
+linkSimpleObjects();
 
 (function() {
     let snapshot = createCheapHeapSnapshot();

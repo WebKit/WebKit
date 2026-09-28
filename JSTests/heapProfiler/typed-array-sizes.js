@@ -1,5 +1,16 @@
 load("./driver/driver.js");
 
+// ArrayBuffer.prototype and SharedArrayBuffer.prototype are also named "ArrayBuffer".
+function excludePrototypes(snapshot, nodes) {
+    let prototypeIds = new Set;
+    for (let i = 0; i < snapshot.edges.length; i += edgeFieldCount) {
+        let edge = new CheapHeapSnapshotEdge(snapshot, i);
+        if (edge.type === "Property" && edge.data === "prototype")
+            prototypeIds.add(edge.toId);
+    }
+    return nodes.filter((node) => !prototypeIds.has(node.id));
+}
+
 (function() {
     const bufferBytes = 4 * 2000;
     const typedArraySize = 1000;
@@ -12,7 +23,7 @@ load("./driver/driver.js");
 
     let snapshot = createCheapHeapSnapshot();
 
-    let arrayBufferNodes = snapshot.nodesWithClassName("ArrayBuffer");
+    let arrayBufferNodes = excludePrototypes(snapshot, snapshot.nodesWithClassName("ArrayBuffer"));
     let viewNodes = snapshot.nodesWithClassName("Float32Array");
     let typedArrayNodes = snapshot.nodesWithClassName("Uint32Array");
     assert(arrayBufferNodes.length === 1, "Snapshot should contain 1 'ArrayBuffer' instance");
