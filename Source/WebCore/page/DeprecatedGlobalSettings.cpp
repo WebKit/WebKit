@@ -91,6 +91,13 @@ void DeprecatedGlobalSettings::setTrackingPreventionEnabled(bool flag)
     singleton().m_trackingPreventionEnabled = flag;
 }
 
+#if PLATFORM(COCOA)
+void DeprecatedGlobalSettings::setMediaResourceLoadTimeoutForTesting(unsigned milliseconds)
+{
+    singleton().m_mediaResourceLoadTimeoutForTesting.store(milliseconds, std::memory_order_relaxed);
+}
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionCategory)
 {

@@ -302,6 +302,11 @@ CoreAudioCaptureUnit::defaultSingleton().setStatusBarWasTappedCallback([weakProc
 
 void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
 {
+#if PLATFORM(COCOA)
+    if (preferences.mediaResourceLoadTimeoutForTesting != std::exchange(m_preferences.mediaResourceLoadTimeoutForTesting, preferences.mediaResourceLoadTimeoutForTesting))
+        WebCore::DeprecatedGlobalSettings::setMediaResourceLoadTimeoutForTesting(m_preferences.mediaResourceLoadTimeoutForTesting.value_or(0));
+#endif
+
 #if ENABLE(VP9)
     if (updatePreference(m_preferences.vp9DecoderEnabled, preferences.vp9DecoderEnabled)) {
         VP9TestingOverrides::singleton().setShouldEnableVP9Decoder(*m_preferences.vp9DecoderEnabled);

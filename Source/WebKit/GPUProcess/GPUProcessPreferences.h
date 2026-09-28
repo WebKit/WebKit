@@ -36,6 +36,10 @@ class WebPreferences;
 struct GPUProcessPreferences {
     void copyEnabledWebPreferences(const WebPreferences&);
 
+#if PLATFORM(COCOA)
+    std::optional<uint32_t> mediaResourceLoadTimeoutForTesting;
+#endif
+
 #if ENABLE(VP9)
     std::optional<bool> vp9DecoderEnabled;
     bool swVPDecodersAlwaysEnabled { false };
