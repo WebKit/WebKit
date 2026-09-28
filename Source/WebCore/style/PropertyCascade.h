@@ -122,6 +122,7 @@ public:
 
 private:
     void buildCascade();
+    static IncludedProperties rollbackProperties(const PropertyCascade& parent);
     bool addNormalMatches(Origin);
     void addImportantMatches(Origin);
     bool addMatch(const MatchedProperties&, Origin, IsImportant);
