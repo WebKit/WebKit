@@ -2417,11 +2417,6 @@ webkit.org/b/317857 [ Debug ] http/tests/site-isolation/frame-index.html [ Skip 
 webkit.org/b/318150 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/318150 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape.html [ ImageOnlyFailure ]
 
-webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Failure ]
-webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.worker.html [ Failure ]
-webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.serviceworker.html [ Failure ]
-webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.sharedworker.html [ Failure ]
-
 webkit.org/b/318450 [ Debug ] accessibility/mac/input-replacevalue-userinfo.html [ Timeout ]
 
 # webkit.org/b/305671 3x fast/animation/* (layout-tests) are flaky failures.
@@ -2601,12 +2596,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
 [ GoldenGate Debug ] http/wpt/background-fetch/background-fetch-click.window.html [ Failure ]
 [ GoldenGate Debug ] http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Failure ]
-[ GoldenGate Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.html [ Failure ]
-[ GoldenGate Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.html [ Failure ]
-[ GoldenGate Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.worker.html [ Failure ]
-[ GoldenGate Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.serviceworker.html [ Failure ]
-[ GoldenGate Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.sharedworker.html [ Failure ]
-[ GoldenGate Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.worker.html [ Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html [ Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-path-ignored.window.html [ Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/css/css-anchor-position/transform-016.html [ Failure ]
@@ -2624,3 +2613,16 @@ fast/webgpu/nocrash/fuzz-281778.html [ Pass Failure ]
 fast/webgpu/nocrash/repro_274977.html [ Pass Failure ]
 fast/webgpu/nocrash/fuzz-283071.html [ Pass Failure ]
 fast/webgpu/nocrash/fuzz-277928.html [ Pass Failure ]
+
+# webkit.org/b/318157 11x imported/w3c/web-platform-tests/IndexedDB/* (layout-tests) are constant text failures.
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.worker.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.html [ Failure Timeout ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.serviceworker.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.sharedworker.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.worker.html [ Failure ]
+[ Debug x86_64 ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.serviceworker.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.sharedworker.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.worker.html [ Failure ]
