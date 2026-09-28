@@ -20,9 +20,11 @@ Examples:
     run-angle-tests --lldb --gtest_filter='ClearTestES3.ClearMaxAttachments/ES3_Metal'
     run-angle-tests --per-suite
     run-angle-tests --ios-device --per-suite --suites-only
+    run-angle-tests --bot-mode --json-output=results.json
 """
 
 import argparse
+import csv
 import json
 import os
 import plistlib
@@ -31,7 +33,12 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
+
+# webkitpy, to report results to results.webkit.org the way run-api-tests does.
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "Tools" / "Scripts"))
+from webkitpy.results.options import upload_args
 
 DEFAULT_TIMEOUT = 120
 
@@ -373,6 +380,234 @@ def status_for(code):
     return f"ok (exit {code})"
 
 
+# Columns of the results file TestSuite writes when ANGLE is built without
+# RapidJSON, which is how WebKit builds it.
+CSV_HEADER = "testSuiteName,testName,result,flakyFailures,elapsedTimeSeconds"
+
+# ANGLE result -> the actual/expected names the WebKit test steps parse. Any
+# other result that is neither a pass nor a skip is reported as FAIL.
+RESULT_TO_ACTUAL = {
+    "Fail": "FAIL",
+    "Crash": "CRASH",
+    "Timeout": "TIMEOUT",
+}
+ACTUAL_TO_STATUS = {
+    "FAIL": "Failed",
+    "CRASH": "Crashed",
+    "TIMEOUT": "Timedout",
+}
+
+# Reported in place of a run's results when it leaves none to read, so the
+# WebKit test steps still get a failure to show.
+NO_RESULTS_TEST = "NO_RESULTS"
+
+# The results.webkit.org suite each product reports to, unless --suite is given.
+UPLOAD_SUITES = {
+    "ANGLEEnd2EndTests": "angle-end2end-tests",
+    "ANGLEDeqpGLES2Tests": "angle-deqp-gles2-tests",
+    "ANGLEDeqpGLES3Tests": "angle-deqp-gles3-tests",
+}
+
+
+def read_results_csv(path):
+    """Return [(test_name, result, seconds), ...] from a bot-mode results file."""
+    results = []
+    with open(path, newline="") as f:
+        for row in csv.reader(f):
+            if not row or ",".join(row) == CSV_HEADER or len(row) < 5:
+                continue
+            suite, name, result, _flaky, times = row[0], row[1], row[2], row[3], row[4]
+            first_time = times.split(";")[0] if times else ""
+            try:
+                seconds = float(first_time)
+            except ValueError:
+                seconds = 0.0
+            results.append((f"{suite}.{name}", result, seconds))
+    return results
+
+
+def results_file_from_args(gtest_args):
+    """Return the --results-file path in gtest_args, if the caller passed one."""
+    for arg in gtest_args:
+        if arg.startswith("--results-file="):
+            return arg.split("=", 1)[1]
+    return None
+
+
+def has_arg(gtest_args, prefix):
+    return any(arg.startswith(prefix) for arg in gtest_args)
+
+
+def run_bot_mode(runner, args, gtest_args):
+    """Run the whole suite in bot mode, then report it the way the WebKit test
+    steps expect. They parse the summary line for the number of tests that
+    failed and read the tests that did not pass from the JSON file.
+
+    The test binary's own output still streams through, so failing tests keep
+    their GTest snippet in the log.
+    """
+    no_results_test = f"{args.product}.{NO_RESULTS_TEST}"
+    # Don't leave an earlier run's file for the test step to read.
+    if args.json_output and os.path.exists(args.json_output):
+        os.remove(args.json_output)
+
+    gtest_args = list(gtest_args)
+    # Re-run the whole suite in place of a run that left no results.
+    if args.tests and no_results_test not in args.tests:
+        gtest_args.append(f"--gtest_filter={':'.join(args.tests)}")
+    if args.exit_after_n_failures is not None:
+        gtest_args.append(f"--max-failures={args.exit_after_n_failures}")
+
+    start_time = time.time()
+    with tempfile.TemporaryDirectory(prefix="run-angle-tests-") as tempdir:
+        # The results file is only needed to report the run, so keep it out of
+        # the working directory unless the caller asked for it.
+        results_file = results_file_from_args(gtest_args)
+        if results_file is None:
+            results_file = str(Path(tempdir) / "results.csv")
+            gtest_args.append(f"--results-file={results_file}")
+        elif os.path.exists(results_file):
+            os.remove(results_file)
+
+        # The dEQP runners write a .qpa log per batch into the working
+        # directory unless told otherwise. Move them as well.
+        if not has_arg(gtest_args, "--render-test-output-dir=") and not has_arg(
+                gtest_args, "--isolated-outdir="):
+            gtest_args.append(f"--render-test-output-dir={tempdir}")
+
+        code = runner.launch(["--bot-mode", *gtest_args])
+        results = read_results_csv(results_file) if os.path.isfile(results_file) else None
+    end_time = time.time()
+
+    # A non-zero exit must name a failing test, or EWS retries the build rather
+    # than failing it.
+    ended = f"was killed by signal {-code}" if code < 0 else f"exited with status {code}"
+    no_results_reason = None
+    if results is None:
+        no_results_reason = f"{args.product} {ended} without writing a results file."
+        if code == 1:
+            no_results_reason += (" It omits the file when more tests fail than --max-failures"
+                                  " allows; they are listed earlier in the log.")
+    elif not results and not has_arg(gtest_args, "--gtest_filter="):
+        no_results_reason = f"{args.product} {ended} without running any tests."
+    elif code != 0 and all(result in ("Pass", "Skip") for _name, result, _seconds in results):
+        no_results_reason = f"{args.product} {ended} although no test failed."
+    if no_results_reason:
+        results = [(no_results_test, "Fail", 0.0)]
+
+    failed = report_results(results, args.json_output, no_results_reason)
+
+    if args.report_urls:
+        if no_results_reason:
+            print("No results to upload.")
+        elif not upload_results(args, results, start_time, end_time):
+            return 1
+
+    return 1 if failed else code
+
+
+def report_results(results, json_output, no_results_reason):
+    """Print the summary and write the JSON file, matching run-api-tests. Return
+    whether any test failed."""
+    skipped = []
+    failures = []
+    passed = 0
+    for name, result, _seconds in results:
+        if result == "Pass":
+            passed += 1
+        elif result == "Skip":
+            skipped.append(name)
+        else:
+            failures.append((name, ACTUAL_TO_STATUS[RESULT_TO_ACTUAL.get(result, "FAIL")]))
+
+    # Skipped tests are not counted as run, so they can't read as failures. The
+    # blank line ends any output that was cut off mid-line.
+    print("")
+    print(f"Ran {len(results) - len(skipped)} tests of {len(results)} with {passed} successful")
+    report = {
+        "Skipped": [{"name": name, "output": None} for name in skipped],
+        "Failed": [],
+        "Crashed": [],
+        "Timedout": [],
+        "UnexpectedFailures": [{"name": name, "status": status} for name, status in failures],
+        "ExpectedFailures": [],
+        "UnexpectedPasses": [],
+    }
+    for name, status in failures:
+        report[status].append({"name": name})
+    # Passing tests are omitted, matching run-api-tests' json output.
+    report["results"] = {
+        name: {
+            "expected": "PASS",
+            "actual": RESULT_TO_ACTUAL.get(result, "FAIL"),
+            "time": int(seconds * 1000),
+        }
+        for name, result, seconds in results
+        if result not in ("Pass", "Skip")
+    }
+
+    if json_output:
+        with open(json_output, "w") as f:
+            json.dump(report, f, indent=4)
+
+    # The test steps show only the lines from the summary on.
+    print("-" * 30)
+    print("Test suite failed" if failures else "All tests successfully passed!")
+    print("")
+    if skipped:
+        print(f"Skipped {len(skipped)} tests")
+        print("")
+    if failures:
+        print("** UNEXPECTED FAILURES **")
+        print("")
+        for name, status in failures:
+            print(f"    {name} ({status})")
+        if no_results_reason:
+            print(f"        {no_results_reason}")
+        print("")
+
+    return bool(failures)
+
+
+def upload_results(args, results, start_time, end_time):
+    """Upload the run to each --report URL, as run-api-tests does. Return
+    whether every upload succeeded."""
+    from webkitpy.common.host import Host
+    from webkitpy.results.upload import Upload
+
+    port_options = argparse.Namespace(**vars(args), platform=None, configuration=args.config)
+    port = Host().port_factory.get(port_options.platform, port_options)
+
+    # A passing test has no actual result, and skipped tests are only counted.
+    test_results = {
+        name: Upload.create_test_result(
+            actual=None if result == "Pass" else RESULT_TO_ACTUAL.get(result, Upload.Expectations.FAIL),
+            time=int(seconds * 1000),
+        )
+        for name, result, seconds in results
+        if result != "Skip"
+    }
+    upload = Upload(
+        suite=args.suite or UPLOAD_SUITES[args.product],
+        configuration=port.configuration_for_upload(port.target_host(0)),
+        details=Upload.create_details(options=args),
+        commits=port.commits_for_upload(),
+        run_stats=Upload.create_run_stats(
+            start_time=start_time,
+            end_time=end_time,
+            tests_skipped=len(results) - len(test_results),
+        ),
+        results=test_results,
+    )
+
+    succeeded = True
+    for url in args.report_urls:
+        print(f"Uploading to {url} ...")
+        if not upload.upload(url, log_line_func=print):
+            succeeded = False
+    return succeeded
+
+
 def run_per_suite(runner, timeout, suites_only, list_args=()):
     print("Listing tests ...")
     suites = list_tests(runner, timeout=max(timeout, 60), extra_args=list_args)
@@ -442,6 +677,7 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        parents=[upload_args()],
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument(
@@ -504,6 +740,16 @@ def main():
         choices=["ANGLEEnd2EndTests", "ANGLEDeqpGLES2Tests", "ANGLEDeqpGLES3Tests"],
         help="Which test runner to run (default: ANGLEEnd2EndTests). The "
              "ANGLEDeqp* runners are Mac-only command-line tools.")
+    parser.add_argument("--bot-mode", action="store_true",
+        help="Run the whole suite in batches across several processes and "
+             "report it the way WebKit's test steps expect.")
+    parser.add_argument("--json-output", default=None, metavar="PATH",
+        help="With --bot-mode: write the results of tests that did not pass "
+             "to PATH.")
+    parser.add_argument("--exit-after-n-failures", type=int, default=None, metavar="N",
+        help="With --bot-mode: stop running tests once more than N have failed.")
+    parser.add_argument("tests", nargs="*", metavar="TEST",
+        help="With --bot-mode: run only these tests.")
     args, gtest_args = parser.parse_known_args()
 
     # Default to local mac mode if no mode flag was given.
@@ -558,6 +804,18 @@ def main():
         parser.error("--suites-only requires --per-suite")
     if args.per_suite and args.lldb:
         parser.error("--per-suite is incompatible with --lldb")
+    for option, given in (("--json-output", args.json_output),
+                          ("--report", args.report_urls),
+                          ("--exit-after-n-failures", args.exit_after_n_failures is not None),
+                          ("TEST", args.tests)):
+        if given and not args.bot_mode:
+            parser.error(f"{option} requires --bot-mode")
+    if args.bot_mode and (args.per_suite or args.lldb):
+        parser.error("--bot-mode is incompatible with --per-suite and --lldb")
+    if args.tests and has_arg(gtest_args, "--gtest_filter="):
+        parser.error("TEST is incompatible with --gtest_filter")
+    if args.exit_after_n_failures is not None and has_arg(gtest_args, "--max-failures"):
+        parser.error("--exit-after-n-failures is incompatible with --max-failures")
 
     runner.verbose = args.verbose
 
@@ -567,6 +825,9 @@ def main():
     if args.per_suite:
         sys.exit(run_per_suite(runner, args.timeout, args.suites_only,
                                list_args=gtest_args))
+
+    if args.bot_mode:
+        sys.exit(run_bot_mode(runner, args, gtest_args))
 
     if args.lldb:
         # Replaces this process (mac / simulator path execs lldb).
