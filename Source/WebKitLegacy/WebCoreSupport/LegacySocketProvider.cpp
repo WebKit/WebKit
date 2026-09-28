@@ -26,12 +26,21 @@
 #import "LegacySocketProvider.h"
 
 #import "WebSocketChannel.h"
+#import <WebCore/Document.h>
 #import <WebCore/EmptyClients.h>
 #import <WebCore/WebTransportSession.h>
+#import <WebCore/WorkerGlobalScope.h>
 #import <wtf/CompletionHandler.h>
 
-RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocketChannel(WebCore::Document& document, WebCore::WebSocketChannelClient& client, WebCore::IsInitiatedByDedicatedWorker)
+RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocketChannel(WebCore::ScriptExecutionContext& context, WebCore::WebSocketChannelClient& client, WebCore::IsInitiatedByDedicatedWorker)
 {
+    if (is<WebCore::WorkerGlobalScope>(context)) {
+        // When context is a WorkerGlobalScope we return nullptr so that the main thread bridge fallback is
+        // used which calls this again with a Document.
+        return nullptr;
+    }
+
+    Ref document = downcast<WebCore::Document>(context);
     return WebCore::WebSocketChannel::create(document, client, *this);
 }
 
