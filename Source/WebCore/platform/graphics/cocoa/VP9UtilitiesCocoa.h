@@ -53,6 +53,8 @@ std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformM
 bool NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
 RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord&, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
 WEBCORE_EXPORT Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
+// FIXME: createVideoInfoFromVP9Stream should take optional width/height parameters.
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromVP9Stream(std::span<const uint8_t>, uint16_t width, uint16_t height);
 
 struct VP8FrameHeader {
     bool keyframe { false };

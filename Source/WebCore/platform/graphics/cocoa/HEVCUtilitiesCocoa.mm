@@ -253,7 +253,7 @@ RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t> d
     if (!description)
         return nullptr;
 
-    return createVideoInfoFromFormatDescription(description);
+    return createVideoInfoFromFormatDescription(description, findHEVCAnnexBMaxNumReorderPics(data, naluIndices));
 }
 
 Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
@@ -294,7 +294,7 @@ RefPtr<VideoInfo> createVideoInfoFromHVCC(const HVCCParameterSets& parameterSets
     if (!description)
         return nullptr;
 
-    return createVideoInfoFromFormatDescription(description);
+    return createVideoInfoFromFormatDescription(description, findHVCCMaxNumReorderPics(parameterSets));
 }
 
 }
