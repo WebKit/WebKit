@@ -133,7 +133,6 @@ public:
 
     bool wasUserInitiated() const { return m_lastNavigationAction && !!m_lastNavigationAction->userGestureTokenIdentifier; }
     bool NODELETE isRequestFromClientOrUserInput() const;
-    bool isFromAPIClientRequest() const { return m_requestIsFromClientInput; }
     void NODELETE markRequestAsFromClientInput();
     void markAsFromLoadData() { m_isFromLoadData = true; }
     bool isFromLoadData() const { return m_isFromLoadData; }
