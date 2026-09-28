@@ -2753,6 +2753,31 @@ class SwiftWasmFatalErrorTestCase:
         self.session.cmd("bt", patterns=["main.swift:4"])
 
 
+class MemoryRegionInfoTestCase:
+    test_file = "resources/c-wasm/add/main.js"
+
+    def execute(self):
+        # Start is the window base, not the queried address.
+        self.session.cmd("process plugin packet send qMemoryRegionInfo:10", patterns=["response: start:0;size:1010000;permissions:rw;"])
+        self.session.cmd("process plugin packet send qMemoryRegionInfo:4000000000000010", patterns=["response: start:4000000000000000;", "type:module;"])
+
+        # Never an error: one latches qMemoryRegionInfo off for the whole session.
+        self.session.cmd("process plugin packet send qMemoryRegionInfo:c000000000000000", patterns=["response: start:c000000000000000;size:4000000000000000;"])
+        self.session.cmd("process plugin packet send qMemoryRegionInfo:8000000000000000", patterns=["response: start:8000000000000000;size:8000000000000000;"])
+
+        # INVALID_END is the last byte, so a region ending there is one short. The module gap walk
+        # and the Invalid branch size it separately, so assert both.
+        self.session.cmd("process plugin packet send qMemoryRegionInfo:40000000000014e0", patterns=["response: start:40000000000014e0;size:bfffffffffffeb20;"])
+        self.session.cmd("process plugin packet send qMemoryRegionInfo:ffffffffffffffff", patterns=["response: start:ffffffffffffffff;size:1;"])
+
+        # With any of the above erroring, this enumerates nothing.
+        self.session.cmd("memory region --all", patterns=[
+            "[0x0000000000000000-0x0000000001010000) rw- wasm_memory_0",
+            "[0x4000000000000000-0x40000000000014e0) r-x wasm_module_0",
+            "[0x40000000000014e0-0xffffffffffffffff) ---",
+        ])
+
+
 ALL_TESTS = [
     CWasmTestCase,
     SwiftWasmTestCase,
@@ -2831,6 +2856,7 @@ ALL_TESTS = [
     StreamingModuleSourceURLTestCase,
     StreamingModuleLoadTestCase,
     SwiftWasmFatalErrorTestCase,
+    MemoryRegionInfoTestCase,
 ]
 
 # Tests that are runnable by name but excluded from a default sweep, because they need something the

@@ -192,9 +192,10 @@ void MemoryHandler::handleMemoryRegionInfo(StringView packet)
         handleWasmModuleRegionInfo(address, instanceId, offset);
         break;
     default:
-        // Invalid address type - send error
-        dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] Invalid address type for memory region: ", (int)addressType);
-        m_debugServer.sendErrorReply(ProtocolError::InvalidAddress);
+        // Never error: one reply latches region-info off in LLDB for the whole session.
+        dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] Unmapped address type for memory region: ", (int)addressType);
+        RELEASE_ASSERT(address.value() >= VirtualAddress::INVALID_BASE);
+        sendUnmappedRegionReply(address.value(), VirtualAddress::INVALID_END - address.value() + 1);
         break;
     }
 }
@@ -208,7 +209,7 @@ void MemoryHandler::handleWasmMemoryRegionInfo(VirtualAddress address, uint32_t 
         if (offset < memorySize) {
             // Address is within WASM memory - return the memory region
             String name = makeString("wasm_memory_"_s, instanceId);
-            sendMemoryRegionReply(address, memorySize, "rw"_s, name);
+            sendMemoryRegionReply(VirtualAddress::createMemory(instanceId).value(), memorySize, "rw"_s, name);
             return;
         }
     }
@@ -238,7 +239,7 @@ void MemoryHandler::handleWasmModuleRegionInfo(VirtualAddress address, uint32_t 
         if (offset < source.size()) {
             // Address is within module bounds - return info for the entire WASM module region
             String name = makeString("wasm_module_"_s, instanceId);
-            sendMemoryRegionReply(address, source.size(), "rx"_s, name, "module"_s);
+            sendMemoryRegionReply(VirtualAddress::createModule(instanceId).value(), source.size(), "rx"_s, name, "module"_s);
             return;
         }
     }
@@ -247,8 +248,8 @@ void MemoryHandler::handleWasmModuleRegionInfo(VirtualAddress address, uint32_t 
     uint32_t nextValidID = instanceId;
     do {
         if (++nextValidID >= idUpperBoundary) {
-            // No more instances - return unmapped region to end of address space
-            uint64_t unmappedSize = VirtualAddress::INVALID_END - address.value();
+            // No more instances - unmapped to the end. INVALID_END is the last byte, hence +1.
+            uint64_t unmappedSize = VirtualAddress::INVALID_END - address.value() + 1;
             sendUnmappedRegionReply(address, unmappedSize);
             return;
         }
