@@ -39,6 +39,9 @@ if (ENABLE_MYA)
     if (APPLE)
         list(APPEND mya_LIBRARIES edit)
     endif ()
+    if (TARGET LLDB::LLDB)
+        list(APPEND mya_LIBRARIES LLDB::LLDB)
+    endif ()
 endif ()
 
 WEBKIT_EXECUTABLE_DECLARE(jsc)
@@ -118,6 +121,7 @@ if (DEVELOPER_MODE)
             ../corpse/tests/CorpseThreadTest.cpp
             ../corpse/tests/CorpseVMTest.cpp
             ../corpse/tests/LibJSCToolsTestUtilities.cpp
+            ../corpse/tests/TypeinfoTest.cpp
             ../corpse/tests/testLibJSCTools.cpp
         )
         set(testLibJSCTools_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
@@ -127,6 +131,10 @@ if (DEVELOPER_MODE)
         )
         set(testLibJSCTools_FRAMEWORKS ${jsc_FRAMEWORKS})
         set(testLibJSCTools_LIBRARIES JavaScriptCoreTools)
+
+        if (TARGET LLDB::LLDB)
+            list(APPEND testLibJSCTools_LIBRARIES LLDB::LLDB)
+        endif ()
     endif ()
 
     set(testwasmdebugger_SOURCES

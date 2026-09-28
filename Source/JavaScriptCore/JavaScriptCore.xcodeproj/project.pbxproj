@@ -1862,6 +1862,7 @@
 		7E83C40E17D785F3003DC41B /* CorpseSymbolTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40817D785F3003DC41B /* CorpseSymbolTest.cpp */; };
 		7E83C40A17D785F3003DC41B /* testLibJSCTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */; };
 		1AB0DEAD00000006000D0001 /* CorpseVMTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB0DEAD00000007000D0001 /* CorpseVMTest.cpp */; };
+		1AB0DEAD00000004000D0001 /* TypeinfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */; };
 		7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		56C6C2B7EBDCC63B6ECEA9AD /* CorpseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 211E3D6CA97F31CEB385A75A /* CorpseThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EF648B9EEAF54C44048B416A /* CorpseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960BD2B783EAEBE3233F91BF /* CorpseThread.cpp */; };
@@ -4531,6 +4532,7 @@
 		7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testLibJSCTools.cpp; sourceTree = "<group>"; };
 		7E83C40917D785F3003DC41B /* testLibJSCTools */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testLibJSCTools; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB0DEAD00000007000D0001 /* CorpseVMTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseVMTest.cpp; sourceTree = "<group>"; };
+		1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeinfoTest.cpp; sourceTree = "<group>"; };
 		44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCoreFramework.cpp; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
@@ -6966,6 +6968,7 @@
 				7E83C40417D785F3003DC41B /* LibJSCToolsTestUtilities.cpp */,
 				7E83C40317D785F3003DC41B /* LibJSCToolsTestUtilities.h */,
 				7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */,
+				1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -14786,6 +14789,7 @@
 				1AB0DEAD00000006000D0001 /* CorpseVMTest.cpp in Sources */,
 				7E83C40C17D785F3003DC41B /* LibJSCToolsTestUtilities.cpp in Sources */,
 				7E83C40A17D785F3003DC41B /* testLibJSCTools.cpp in Sources */,
+				1AB0DEAD00000004000D0001 /* TypeinfoTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
