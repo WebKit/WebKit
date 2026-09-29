@@ -531,7 +531,7 @@ void SQLiteDatabase::clearAllTables()
         tables.append(statement->columnText(0));
     for (auto& table : tables) {
         if (!executeCommandSlow(makeString("DROP TABLE "_s, table)))
-            LOG(SQLDatabase, "Unable to drop table %s", table.ascii().data());
+            LOG(SQLDatabase, "Unable to drop table %s", table.utf8());
     }
 }
 

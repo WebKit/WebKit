@@ -101,7 +101,7 @@ void IconLoader::startLoading()
     if (RefPtr resource = m_resource)
         resource->addClient(*this);
     else
-        LOG_ERROR("Failed to start load for icon at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8());
+        LOG_ERROR("Failed to start load for icon at url %s (error: %s)", resourceRequestURL.string().utf8(), cachedResource.error().localizedDescription().utf8());
 }
 
 void IconLoader::stopLoading()
@@ -123,11 +123,11 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
 
     constexpr std::array<uint8_t, 4> pdfMagicNumber { '%', 'P', 'D', 'F' };
     if (data && data->startsWith(pdfMagicNumber)) {
-        LOG(IconDatabase, "IconLoader::finishLoading() - Ignoring icon at %s because it appears to be a PDF", resource.url().string().ascii().data());
+        LOG(IconDatabase, "IconLoader::finishLoading() - Ignoring icon at %s because it appears to be a PDF", resource.url().string().utf8());
         data = nullptr;
     }
 
-    LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", resource.url().string().ascii().data());
+    LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", resource.url().string().utf8());
 
     // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
     // trigger IconLoader::stopLoading() during destruction, so we should just return here.

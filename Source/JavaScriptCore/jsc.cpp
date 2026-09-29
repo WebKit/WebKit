@@ -1366,7 +1366,7 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
     struct stat statBuf;
     auto fileNameUTF = fileName.tryGetUTF8();
     if (!fileNameUTF.has_value()) {
-        fprintf(stderr, "Error when parsing file name: %s\n", fileName.ascii().data());
+        SAFE_FPRINTF(stderr, "Error when parsing file name: %s\n", fileName.utf8());
         return false;
     }
     if (FileSystem::statFile(fileNameUTF->spanIncludingNullTerminator(), statBuf) == -1) {

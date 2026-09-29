@@ -62,7 +62,7 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
         else
             out.printf("%s%#16llx: failed-to-format", prefix, static_cast<unsigned long long>(std::bit_cast<uintptr_t>(data + offset)));
         if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(std::bit_cast<uintptr_t>(data + offset))))
-            out.printf("; %s\n", str->ascii().data());
+            out.print("; ", *str, "\n");
         else
             out.printf("\n");
         offset += instruction.length;

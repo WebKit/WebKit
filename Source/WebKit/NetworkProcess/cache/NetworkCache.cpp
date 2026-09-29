@@ -424,7 +424,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().stringWithoutFragmentIdentifier().ascii().data(), static_cast<int>(request.priority()));
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().stringWithoutFragmentIdentifier().utf8(), static_cast<int>(request.priority()));
 
     Key storageKey = makeCacheKey(RecordType::Resource, request);
     auto priority = static_cast<unsigned>(request.priority());
@@ -520,10 +520,10 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
         auto useDecision = info.useDecision ? static_cast<int>(*info.useDecision) : -1;
 
         if (entry) {
-            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().ascii().data(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
             WTFEndSignpostAlways(&info, NetworkCacheHit);
         } else {
-            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().ascii().data(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
             WTFEndSignpostAlways(&info, NetworkCacheMiss);
         }
     }
@@ -649,7 +649,7 @@ static bool isBetterCompressionDictionaryMatch(const CompressionDictionaryEntry&
 // https://fetch.spec.whatwg.org/#find-the-best-matching-dictionary
 void Cache::retrieveCompressionDictionaryBestMatch(WebCore::ResourceRequest&& request, WebCore::FetchOptions::Destination destination, Function<void(WebCore::ResourceRequest&&, std::optional<CompressionDictionaryMatch>&&)>&& completionHandler)
 {
-    LOG(NetworkCache, "(NetworkProcess) retrieving best compression dictionary for %s", request.url().string().latin1().data());
+    LOG(NetworkCache, "(NetworkProcess) retrieving best compression dictionary for %s", request.url().string().utf8());
 
     auto partition = request.cachePartition();
     traverseCompressionDictionaryRecords(partition, [request = WTF::move(request), destination, bestMatch = std::unique_ptr<CompressionDictionaryEntry> { }, completionHandler = WTF::move(completionHandler)](const TraversalRecord* traversalRecord) mutable {

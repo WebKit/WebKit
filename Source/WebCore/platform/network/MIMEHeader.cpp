@@ -62,7 +62,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
         // New key/value, store the previous one if any.
         if (!key.isEmpty()) {
             if (keyValuePairs.find(key) != keyValuePairs.end())
-                LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", key.ascii().data());
+                LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", key.utf8());
             keyValuePairs.add(key, value.toString().trim(deprecatedIsSpaceOrNewline));
             key = String();
             value.clear();

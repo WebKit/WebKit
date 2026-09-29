@@ -96,7 +96,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     if (m_resource)
         m_resource->addClient(*this);
     else {
-        LOG_ERROR("Failed to start load for media at url %s", URL(CFURLRequestGetURL(urlRequest.get())).string().ascii().data());
+        LOG_ERROR("Failed to start load for media at url %s", URL(CFURLRequestGetURL(urlRequest.get())).string().utf8());
         RetainPtr<CFErrorRef> error = adoptCF(CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorUnknown, nullptr));
         AVCFAssetResourceLoadingRequestFinishLoadingWithError(m_avRequest.get(), error.get());
     }

@@ -295,7 +295,7 @@ bool CookieJarDB::checkDatabaseValidity()
     String resultText = integrity->columnText(0);
 
     if (resultText != "ok"_s) {
-        LOG_ERROR("Cookie database integrity check failed - %s", resultText.ascii().data());
+        LOG_ERROR("Cookie database integrity check failed - %s", resultText.utf8());
         return false;
     }
 

@@ -143,7 +143,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
                 auto finalResult = adoptGRef(g_dbus_proxy_call_finish(proxy, result, &error.outPtr()));
                 if (!finalResult) {
                     if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                        LOG_ERROR("Unable to register MDNS address %s to Avahi: %s", request->name.ascii().data(), error->message);
+                        LOG_ERROR("Unable to register MDNS address %s to Avahi: %s", request->name.utf8(), error->message);
                     request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                     return;
                 }
@@ -157,7 +157,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
                     auto finalResult = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(object), result, &error.outPtr()));
                     if (!finalResult) {
                         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                            LOG_ERROR("Unable to commit MDNS address %s to Avahi: %s", request->name.ascii().data(), error->message);
+                            LOG_ERROR("Unable to commit MDNS address %s to Avahi: %s", request->name.utf8(), error->message);
                         request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                         return;
                     }

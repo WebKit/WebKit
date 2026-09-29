@@ -125,7 +125,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
         request = ResourceRequest();
 #if !LOG_DISABLED
     if (request != originalRequest)
-        LOG(ContentFiltering, "ContentFilter changed request url to <%{sensitive}s>.\n", originalRequest.url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter changed request url to <%{sensitive}s>.\n", originalRequest.url().string().utf8());
 #endif
     return !request.isNull();
 }
@@ -205,7 +205,7 @@ void ContentFilter::startFilteringMainResource(const URL& url)
     if (m_state != State::Stopped)
         return;
 
-    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", url.string().ascii().data());
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", url.string().utf8());
     m_state = State::Filtering;
     ASSERT(m_mainResourceURL.isEmpty());
     m_mainResourceURL = url;
@@ -216,7 +216,7 @@ void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
     if (m_state != State::Stopped)
         return;
 
-    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", resource.url().string().ascii().data());
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", resource.url().string().utf8());
     m_state = State::Filtering;
     ASSERT(!m_mainResource);
     m_mainResource = resource;
@@ -236,7 +236,7 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
         return false;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received response from <%{sensitive}s>.\n", response.url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter received response from <%{sensitive}s>.\n", response.url().string().utf8());
         forEachContentFilterUntilBlocked([&response](PlatformContentFilter& contentFilter) {
             contentFilter.responseReceived(response);
         });
@@ -254,7 +254,7 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, FromDocu
         return false;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().utf8());
 
         forEachContentFilterUntilBlocked([data = Ref { data }](auto& contentFilter) {
             contentFilter.addData(data);
@@ -286,7 +286,7 @@ bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
     ASSERT_UNUSED(resourceURL, resourceURL == m_mainResourceURL);
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().utf8());
         forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
             contentFilter.finishedAddingData();
         });
@@ -313,7 +313,7 @@ bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
         return true;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().utf8());
         forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
             contentFilter.finishedAddingData();
         });
@@ -366,7 +366,7 @@ void ContentFilter::didDecide(State state)
     ASSERT(m_state != State::Blocked);
     ASSERT(state == State::Allowed || state == State::Blocked);
 #if !LOG_DISABLED
-    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%{sensitive}s>.\n", state == State::Allowed ? "allowed" : "blocked", url().string().ascii().data());
+    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%{sensitive}s>.\n", state == State::Allowed ? "allowed" : "blocked", url().string().utf8());
 #endif // !LOG_DISABLED
     m_state = state;
     if (m_state != State::Blocked)

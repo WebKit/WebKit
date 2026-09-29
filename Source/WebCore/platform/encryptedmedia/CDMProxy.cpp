@@ -213,7 +213,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
     auto stopWaitingForKeyOnReturn = makeScopeExit([this, protectedThis = Ref { *this }] {
         stoppedWaitingForKey();
     });
-    LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", vectorToHexString(keyID).ascii().data());
+    LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", vectorToHexString(keyID).utf8());
     bool wasKeyAvailable = false;
     {
         Locker locker { m_keysLock };
@@ -230,11 +230,11 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
 
     if (wasKeyAvailable) {
         RefPtr<KeyHandle> handle = keyHandle(keyID);
-        LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", vectorToHexString(keyID).ascii().data());
+        LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", vectorToHexString(keyID).utf8());
         return std::make_optional(handle.releaseNonNull());
     }
 
-    LOG(EME, "EME - CDMProxy - key ID %s not available or operation aborted", vectorToHexString(keyID).ascii().data());
+    LOG(EME, "EME - CDMProxy - key ID %s not available or operation aborted", vectorToHexString(keyID).utf8());
     return std::nullopt;
 }
 
@@ -252,7 +252,7 @@ bool CDMProxy::isKeyAvailable(const KeyIDType& keyID) const
 std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     if (!isKeyAvailable(keyID)) {
-        LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
+        LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).utf8());
         return tryWaitForKeyHandle(keyID, WTF::move(client));
     }
 

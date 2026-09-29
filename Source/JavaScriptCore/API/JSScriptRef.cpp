@@ -113,7 +113,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
     auto sourceURL = urlString ? URL({ }, urlString->string()) : URL();
     auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURL }, sourceURL.string(), startingLineNumber, String(StringImpl::createWithoutCopying({ source, length })));
 
-    WTFBeginSignpost(source, JSScriptRef, "createImmortal: %" PRIVATE_LOG_STRING " (%u bytes)", result->debugDescription().ascii().data(), result->source().length());
+    WTFBeginSignpost(source, JSScriptRef, "createImmortal: %" PRIVATE_LOG_STRING " (%u bytes)", result->debugDescription().utf8(), result->source().length());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(source, JSScriptRef);
     });
@@ -140,7 +140,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
     auto sourceURL = urlString ? URL({ }, urlString->string()) : URL();
     auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURL }, sourceURL.string(), startingLineNumber, source->string());
 
-    WTFBeginSignpost(source, JSScriptRef, "createFromString: %" PRIVATE_LOG_STRING " (%u bytes)", result->debugDescription().ascii().data(), result->source().length());
+    WTFBeginSignpost(source, JSScriptRef, "createFromString: %" PRIVATE_LOG_STRING " (%u bytes)", result->debugDescription().utf8(), result->source().length());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(source, JSScriptRef);
     });
@@ -179,7 +179,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
         return nullptr;
     }
 
-    WTFBeginSignpost(script, JSScriptRef, "evaluate: %" PRIVATE_LOG_STRING " (%u bytes)", script->debugDescription().ascii().data(), script->source().length());
+    WTFBeginSignpost(script, JSScriptRef, "evaluate: %" PRIVATE_LOG_STRING " (%u bytes)", script->debugDescription().utf8(), script->source().length());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(script, JSScriptRef);
     });

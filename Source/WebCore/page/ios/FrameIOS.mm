@@ -208,10 +208,8 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
     while (renderer && !renderer->isBody() && !renderer->isDocumentElementRenderer()) {
 #if RECT_LOGGING
         CGRect rect = renderer->absoluteBoundingBoxRect(true);
-        if (renderer->node()) {
-            const char *nodeName = renderer->node()->nodeName().ascii().data();
-            printf("%s %f %f %f %f\n", nodeName, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-        }
+        if (renderer->node())
+            SAFE_PRINTF("%s %f %f %f %f\n", renderer->node()->nodeName().utf8(), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 #endif
         if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInlineLevelBox() || renderer->isBlockLevelReplacedOrAtomicInline()) {
             *isReplaced = renderer->isBlockLevelReplacedOrAtomicInline();

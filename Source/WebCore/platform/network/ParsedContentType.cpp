@@ -127,7 +127,7 @@ bool ParsedContentType::parseContentType()
     unsigned contentTypeLength = m_contentType.length();
     skipSpaces(m_contentType, index);
     if (index >= contentTypeLength)  {
-        LOG_ERROR("Invalid Content-Type string '%s'", m_contentType.ascii().data());
+        LOG_ERROR("Invalid Content-Type string '%s'", m_contentType.utf8());
         return false;
     }
 

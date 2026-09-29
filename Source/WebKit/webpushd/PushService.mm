@@ -614,7 +614,7 @@ void PushService::subscribe(const PushSubscriptionSetIdentifier& identifier, con
     }
 
     if (m_topicCount >= maxTopicCount) {
-        RELEASE_LOG_ERROR(Push, "Subscribe request from %{public}s and scope %{sensitive}s failed: reached max push topic count", identifier.debugDescription().ascii().data(), scope.ascii().data());
+        RELEASE_LOG_ERROR(Push, "Subscribe request from %{public}s and scope %{sensitive}s failed: reached max push topic count", identifier.debugDescription().utf8(), scope.utf8());
         return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Reached maximum push subscription count"_s }));
     }
 
@@ -728,7 +728,7 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
 
 void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&& handler)
 {
-    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s | ds: %{public}s", bundleIdentifier.utf8(), dataStoreIdentifier ? dataStoreIdentifier->toString().ascii().data() : "default");
+    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s | ds: %{public}s", bundleIdentifier.utf8(), dataStoreIdentifier ? dataStoreIdentifier->toString().utf8() : UTF8CString { "default"_s });
     m_database->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [weakThis = WeakPtr { *this }, handler = WTF::move(handler)](auto&& removedRecords) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)

@@ -91,7 +91,7 @@ JSC::JSValue WebKitNamespace::evaluateScript(JSC::JSGlobalObject& globalObject, 
     RefPtr frame = this->frame();
     if (!frame)
         return JSC::jsNull();
-    WTFBeginSignpost(this, EvaluateJavaScriptFromBuffer, "evaluateScript(url: %" PRIVATE_LOG_STRING ")", url.ascii().data());
+    WTFBeginSignpost(this, EvaluateJavaScriptFromBuffer, "evaluateScript(url: %" PRIVATE_LOG_STRING ")", url.utf8());
     auto result = protect(frame->script())->evaluateInWorldIgnoringException(ScriptSourceCode { source, JSC::SourceTaintedOrigin::Untainted, URL { url } }, world);
     WTFEndSignpost(this, EvaluateJavaScriptFromBuffer);
     return result;

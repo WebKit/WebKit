@@ -53,7 +53,7 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     : m_unblockURLHost { WTF::move(unblockURLHost) }
     , m_unblockRequester { WTF::move(unblockRequester) }
 {
-    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", m_unblockURLHost.ascii().data());
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", m_unblockURLHost.utf8());
 }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -66,7 +66,7 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     : m_unblockURLHost { WTF::move(unblockURLHost) }
     , m_webFilterEvaluator { WTF::move(evaluator) }
 {
-    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", m_unblockURLHost.ascii().data());
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", m_unblockURLHost.utf8());
 }
 #endif
 
@@ -152,7 +152,7 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
     bool isUnblockRequest = request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringASCIICase(request.url().host(), m_unblockURLHost);
 #if !LOG_DISABLED
     if (isUnblockRequest)
-        LOG(ContentFiltering, "ContentFilterUnblockHandler will handle <%s> as an unblock request.\n", request.url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilterUnblockHandler will handle <%s> as an unblock request.\n", request.url().string().utf8());
 #endif
     return isUnblockRequest;
 }
