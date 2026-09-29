@@ -11,6 +11,7 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 43.55: "Passed"
 layer at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,0) size 800x600
-    RenderSVGViewportContainer {svg} at (0,0) size 800x600
-      RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (0,0) size 800x600
+    RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
 caret: position 0 of child 9 {text} of child 1 {svg} of document

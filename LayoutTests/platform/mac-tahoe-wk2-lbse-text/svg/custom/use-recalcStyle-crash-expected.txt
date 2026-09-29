@@ -8,4 +8,5 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {g} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,0) size 800x600
-    RenderSVGViewportContainer {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (0,0) size 800x600

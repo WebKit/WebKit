@@ -33,7 +33,7 @@ namespace WebCore {
 
 inline bool RenderSVGModelObject::clipsSubtree(const RenderElement& renderer)
 {
-    return renderer.hasClipPath() || renderer.hasMask();
+    return renderer.hasClipPath() || renderer.hasMask() || renderer.hasNonVisibleOverflow();
 }
 
 inline SVGElement& RenderSVGModelObject::element() const

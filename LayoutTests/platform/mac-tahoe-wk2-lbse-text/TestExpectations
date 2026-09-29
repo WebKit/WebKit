@@ -96,7 +96,6 @@ svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 svg/text/adding-id-on-pending-path.html            [ ImageOnlyFailure ]
 
 # Hit testing
-svg/custom/image-clipped-hit.svg               [ Failure ]
 svg/hittest/svg-ellipse-non-scale-stroke.xhtml [ Failure ]
 svg/hittest/svg-ellipse-rect-stroke.xhtml      [ Failure ]
 svg/hittest/svg-shapes-non-scale-stroke.html   [ Failure ]

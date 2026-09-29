@@ -279,6 +279,12 @@ RenderLayer::HitLayer RenderLayer::hitTestChildrenForSVG(RenderLayer* rootLayer,
             return { };
     }
 
+    // Ignore points outside a nested <svg> viewport. hitTestLayer() would only clip them after the children were tested.
+    if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer())) {
+        if (SVGRenderSupport::isOverflowHidden(*viewportContainer) && !hitTestLocation.intersects(viewportContainer->overflowClipRect({ })))
+            return { };
+    }
+
     return hitTestChildrenInDOMOrderForSVG(rootLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffsetForDescendants);
 }
 
@@ -864,7 +870,7 @@ void RenderLayer::paintSubtreeWithinTransformScopeForSVG(GraphicsContext& contex
         if (!viewportContainer->hasSelfPaintingLayer() && SVGRenderSupport::isOverflowHidden(*viewportContainer)) {
             clipSaver.save();
             auto clipOffset = viewportContainer->isTransformed() ? LayoutPoint() : paintOffset;
-            context.clip(FloatRect(static_cast<const RenderSVGModelObject&>(*viewportContainer).overflowClipRect(clipOffset)));
+            context.clip(FloatRect(viewportContainer->overflowClipRect(clipOffset)));
         }
     }
 
