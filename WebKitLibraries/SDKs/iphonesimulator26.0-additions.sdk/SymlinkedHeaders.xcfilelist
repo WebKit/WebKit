@@ -12,5 +12,4 @@ $(SDK_DIR_iphoneos)/System/Library/Frameworks/AVKit.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/AudioToolbox.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/MediaAccessibility.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/Metal.framework
-$(SDK_DIR_iphoneos)/System/Library/Frameworks/OpenGLES.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/UIKit.framework
