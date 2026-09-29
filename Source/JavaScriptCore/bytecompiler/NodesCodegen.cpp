@@ -366,7 +366,12 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
     ExpectedFunction expectedFunction = NoExpectedFunction;
     RefPtr<RegisterID> tag = nullptr;
     RefPtr<RegisterID> base = nullptr;
-    if (!m_tag->isLocation()) {
+    OptionalChainNode* optionalChain = m_tag->isOptionalChain() ? static_cast<OptionalChainNode*>(m_tag) : nullptr;
+    if (optionalChain && optionalChain->expr()->isLocation()) {
+        tag = generator.newTemporary();
+        base = generator.newTemporary();
+        optionalChain->emitCallee(generator, tag.get(), base.get());
+    } else if (!m_tag->isLocation()) {
         tag = generator.newTemporary();
         tag = generator.emitNode(tag.get(), m_tag);
     } else if (m_tag->isResolveNode()) {
