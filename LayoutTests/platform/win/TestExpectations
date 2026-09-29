@@ -4835,3 +4835,77 @@ fast/text/font-face/css-font-face-setstatus-reentrancy-crash.html [ Skip ] # Tim
 http/wpt/user-activation/bless-edge-cases.sub.html [ Skip ] # Crash, in 17 of the 20 runs
 http/wpt/user-activation/bless-nested.sub.html [ Skip ] # Crash, unmasked once bless-edge-cases.sub.html above is skipped
 http/wpt/web-locks/lock-name-length-restriction.https.html [ Skip ] # Flaky Crash
+
+# webkit.org/b/325566 Pre-existing failures on Win-Tests-EWS, 2026-09-28
+
+# Consistent text failures, in every run
+compositing/layer-creation/no-compositing-for-overlapping-negative-z-siblings.html [ Failure ]
+fast/forms/select/base/select-multiple-picker-keyboard.html [ Failure ]
+http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-short-frequency-with-user-interaction-7-days-ago.html [ Failure ]
+http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-30-days-ago.html [ Failure ]
+http/tests/websocket/tests/hybi/websocket-samesite-lax-not-sent-cross-site.html [ Failure ]
+http/tests/websocket/tests/hybi/websocket-samesite-strict-not-sent-cross-site.html [ Failure ]
+http/wpt/fetch/local-network-access/address-space-overrides-apply-to-both-host-forms.html [ Failure ]
+http/wpt/fetch/local-network-access/document-address-space.html [ Failure ]
+imported/w3c/web-platform-tests/audio-session/audiosession-default-values.https.html [ Failure ]
+imported/w3c/web-platform-tests/audio-session/audiosession-type-setter.https.html [ Failure ]
+imported/w3c/web-platform-tests/audio-session/idlharness.window.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/attributes/expires.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/attributes/httponly-overwrite.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/path/match-percent-encoded.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.explicit-path.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-delete-selection.html [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-backspace.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-in-list-items.tentative.html?Backspace,ol [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-in-list-items.tentative.html?Backspace,ul [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-in-list-items.tentative.html?Delete,ol [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-in-list-items.tentative.html?Delete,ul [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-range-across-editing-host-boundaries.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-during-and-after-dispatch.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-forwarddelete.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-element-and-another-list.tentative.html?Backspace [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-element-and-another-list.tentative.html?Delete [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-elements.tentative.html?Backspace [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-elements.tentative.html?Delete [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-non-collapsed-selection.tentative.html?Backspace [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-non-collapsed-selection.tentative.html?Delete [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-non-collapsed-selection.tentative.html?TypingA [ Failure ]
+imported/w3c/web-platform-tests/input-events/input-events-typing.html [ Failure ]
+imported/w3c/web-platform-tests/xml/xml-bom.html [ Failure ]
+
+# Consistent text failure, in every run since build 101688
+compositing/backing/backing-store-attachment-animating-pseudo-element-outside-viewport.html [ Failure ]
+
+# Consistent image failures, in every run
+fast/canvas/webgl/composited-alpha-modes-match-drawImage.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-overflow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter.html [ ImageOnlyFailure ]
+transforms/3d/general/preserve-3d-intersecting-planes-across-camera-plane.html [ ImageOnlyFailure ]
+transforms/3d/general/preserve-3d-plane-across-camera-plane.html [ ImageOnlyFailure ]
+
+# Consistent crashes, in every run (or nearly every run, as noted)
+fast/css/corner-shorthands.html [ Skip ] # Crash
+http/tests/web-locks/web-lock-in-third-party-serviceworker.html [ Skip ] # Crash
+http/tests/web-locks/web-lock-in-third-party-sharedworker.html [ Skip ] # Crash
+http/wpt/site-isolation/navigation-api/preventdefault-cancels-cross-site-swap-subframe.sub.html [ Skip ] # Crash, in 28 of the 29 runs
+http/wpt/site-isolation/navigation-api/preventdefault-cancels-cross-site-swap.sub.html [ Skip ] # Crash, in 27 of the 29 runs
+http/wpt/site-isolation/navigation-api/preventdefault-reentrant-navigation.sub.html [ Skip ] # Crash, in 26 of the 29 runs
+http/wpt/site-isolation/overlapping-navigations-and-traversals/cross-document-traversal-cross-document-nav.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-block-start-computed.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-block-start-valid.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-computed.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-computed.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-computed.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-valid.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-valid.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-valid.html [ Skip ] # Crash
+
+# Consistent timeouts, in every run
+imported/w3c/web-platform-tests/css/selectors/active-observable.html [ Skip ] # Timeout
+
+# Flaky
+fast/css/content-visibility-zoom.html [ Pass Failure ]
+http/tests/inspector/network/cross-origin-iframe-get-response-body-binary.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904409.html [ Skip ] # Flaky Crash
+js/dom/promise-stack-overflow.html [ Pass Failure ]
+webgl/2.0.y/conformance2/query/occlusion-query-scissor.html [ Pass Timeout ]
