@@ -47,6 +47,8 @@
 
 typedef struct __IOSurface *IOSurfaceRef;
 
+static const long WKBridgeMaximumTextureDimension = 16384;
+
 #ifdef __OBJC__
 
 #include <Foundation/Foundation.h>

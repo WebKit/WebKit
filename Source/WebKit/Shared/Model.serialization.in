@@ -197,8 +197,8 @@ header: <WebKit/ModelTypes.h>
 header: <WebKit/ModelTypes.h>
 [CustomHeader, RValue] struct WebModel::ImageAsset {
     std::optional<WebCore::SharedMemory::Handle> dataHandle;
-    long width;
-    long height;
+    [Validator='*width > 0 && *width <= WKBridgeMaximumTextureDimension'] long width;
+    [Validator='*height > 0 && *height <= WKBridgeMaximumTextureDimension'] long height;
     long depth;
     WebCore::WebGPU::TextureViewDimension textureType;
     WebCore::WebGPU::TextureFormat pixelFormat;

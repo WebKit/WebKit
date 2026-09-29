@@ -71,6 +71,14 @@ private func makeMTLTextureFromImageAsset(
         "imageAssetData = \(imageAssetData)  -  width = \(imageAsset.width)  -  height = \(imageAsset.height)  - imageAsset.pixelFormat:  \(imageAsset.pixelFormat)"
     )
 
+    let maximumDimension = WKBridgeMaximumTextureDimension
+    guard
+        imageAsset.width > 0, imageAsset.width <= maximumDimension,
+        imageAsset.height > 0, imageAsset.height <= maximumDimension
+    else {
+        fatalError("unsupported image asset dimensions \(imageAsset.width)x\(imageAsset.height)")
+    }
+
     let pixelFormat = imageAsset.pixelFormat
 
     let (textureDescriptor, sliceCount) =
