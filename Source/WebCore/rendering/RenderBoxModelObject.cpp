@@ -168,6 +168,14 @@ void RenderBoxModelObject::styleWillChange(Style::Difference diff, const Style::
     RenderLayerModelObject::styleWillChange(diff, newStyle);
 }
 
+void RenderBoxModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderLayerModelObject::styleDidChange(diff, oldStyle);
+
+    if (isInlineBox())
+        propagateStyleToAnonymousChildren(StylePropagationType::BlockAndRubyChildren);
+}
+
 void RenderBoxModelObject::setSelectionState(HighlightState state)
 {
     if (state == HighlightState::Inside && selectionState() != HighlightState::None)
