@@ -6467,6 +6467,107 @@ TEST(SiteIsolation, GoBackReloadsDynamicallyCreatedCrossSiteIframe)
     EXPECT_WK_STREQ("https://webkit.org/a2", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[webView firstChildFrame]]);
 }
 
+static void testGoBackToCrossSiteIframeCommittedAfterSameSiteSibling(SessionRestoreMethod restoreMethod)
+{
+    auto mainHTML = "<script>"
+        "let messages = [];"
+        "onmessage = (event) => {"
+        "    let index = [0, 1].find((i) => event.source === frames[i]) ?? '?';"
+        "    messages.push(index + ':' + event.data);"
+        "    if (messages.length == 2)"
+        "        alert(messages.sort().join(' '));"
+        "};"
+        "</script>"
+        "<iframe src='https://webkit.org/cross'></iframe>"
+        "<iframe src='https://example.com/same'></iframe>"_s;
+    auto subframeHTML = "<script>parent.postMessage(location.href, '*')</script>"_s;
+
+    bool sameSiteIframeCommitted = false;
+    std::optional<Connection> delayedCrossSiteConnection;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/main"_s) {
+                co_await connection.awaitableSend(HTTPResponse(mainHTML).serialize());
+                continue;
+            }
+            if (path == "/cross"_s) {
+                // Make the cross-site iframe commit after its later same-site sibling, so
+                // the UI process adds their back/forward items in reverse frame tree order.
+                if (!sameSiteIframeCommitted) {
+                    delayedCrossSiteConnection = connection;
+                    continue;
+                }
+                co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
+                continue;
+            }
+            if (path == "/same"_s) {
+                co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
+                continue;
+            }
+            if (path == "/other"_s) {
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPoolWithBackForwardCacheDisabled().get()];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    navigationDelegate.get().didCommitLoadWithRequestInFrame = makeBlockPtr([&](WKWebView *, NSURLRequest *request, WKFrameInfo *) {
+        if (![request.URL.absoluteString isEqualToString:@"https://example.com/same"])
+            return;
+        sameSiteIframeCommitted = true;
+        if (auto connection = std::exchange(delayedCrossSiteConnection, std::nullopt))
+            connection->send(HTTPResponse(subframeHTML).serialize());
+    }).get();
+
+    // The main frame can finish loading before or after the alert, so listen for it before loading.
+    __block bool finishedLoadingMainPage = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedLoadingMainPage = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    EXPECT_WK_STREQ("0:https://webkit.org/cross 1:https://example.com/same", [webView _test_waitForAlert]);
+    Util::run(&finishedLoadingMainPage);
+    navigationDelegate.get().didFinishNavigation = nil;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/other"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    if (restoreMethod == SessionRestoreMethod::NewWebView) {
+        RetainPtr sessionState = [webView _sessionState];
+        auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+        [newWebView _restoreSessionState:sessionState.get() andNavigate:YES];
+        [newNavigationDelegate waitForDidFinishNavigation];
+        webView = WTF::move(newWebView);
+        navigationDelegate = WTF::move(newNavigationDelegate);
+    }
+
+    [webView goBack];
+    EXPECT_WK_STREQ("0:https://webkit.org/cross 1:https://example.com/same", [webView _test_waitForAlert]);
+
+    RetainPtr mainFrame = [webView mainFrame];
+    pid_t mainFramePID = [mainFrame info]._processIdentifier;
+    EXPECT_WK_STREQ("webkit.org", [mainFrame childFrames][0].info.securityOrigin.host);
+    EXPECT_NE(mainFramePID, [mainFrame childFrames][0].info._processIdentifier);
+    EXPECT_WK_STREQ("example.com", [mainFrame childFrames][1].info.securityOrigin.host);
+    EXPECT_EQ(mainFramePID, [mainFrame childFrames][1].info._processIdentifier);
+}
+
+TEST(SiteIsolation, GoBackToCrossSiteIframeCommittedAfterSameSiteSibling)
+{
+    testGoBackToCrossSiteIframeCommittedAfterSameSiteSibling(SessionRestoreMethod::None);
+}
+
+TEST(SiteIsolation, GoBackToCrossSiteIframeCommittedAfterSameSiteSiblingAfterSessionRestoreToNewWebView)
+{
+    testGoBackToCrossSiteIframeCommittedAfterSameSiteSibling(SessionRestoreMethod::NewWebView);
+}
+
 TEST(SiteIsolation, GoBackToCrossSiteIframeAfterPersistedSessionRestore)
 {
     HTTPServer server({

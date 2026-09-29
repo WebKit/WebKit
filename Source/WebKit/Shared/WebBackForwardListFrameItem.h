@@ -79,6 +79,7 @@ private:
     WebBackForwardListFrameItem(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
 
     String loggingStringAtIndent(size_t);
+    size_t insertionIndexForChild(std::optional<WebCore::FrameIdentifier>) const;
 
     static HashMap<std::pair<WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& NODELETE allItems();
 
