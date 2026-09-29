@@ -7381,12 +7381,12 @@ WebRTCVP9Profile2CodecEnabled:
 
 WebRTCWebCoreVideoCodecsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "WebRTC WebCore Video Codecs"
   humanReadableDescription: "Use WebCore's native video codecs instead of libwebrtc's for WebRTC codecs that support it"
   condition: ENABLE(WEB_RTC)
-  defaultValue: false
+  defaultValue: true
   sharedPreferenceForWebProcess: true
 
 WebSQLEnabled:
