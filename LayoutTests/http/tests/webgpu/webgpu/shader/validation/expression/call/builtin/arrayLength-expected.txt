@@ -1,5 +1,7 @@
 
 PASS :bool_type:
+PASS :buffer_type:sized=false
+PASS :buffer_type:sized=true
 PASS :type:type="i32"
 PASS :type:type="u32"
 PASS :type:type="f32"

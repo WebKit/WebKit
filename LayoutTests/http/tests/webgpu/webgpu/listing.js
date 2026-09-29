@@ -729,7 +729,25 @@ export const listing = [
       "validation",
       "capability_checks",
       "features",
+      "subgroup_size_control"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "capability_checks",
+      "features",
       "texture_component_swizzle"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "capability_checks",
+      "features",
+      "texture_compression_unaligned"
     ]
   },
   {
@@ -1466,6 +1484,13 @@ export const listing = [
       "api",
       "validation",
       "layout_shader_compat"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "min_buffer_binding_size"
     ]
   },
   {
@@ -2641,6 +2666,28 @@ export const listing = [
       "call",
       "builtin",
       "atomics",
+      "atomicStoreMax"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "call",
+      "builtin",
+      "atomics",
+      "atomicStoreMin"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "call",
+      "builtin",
+      "atomics",
       "atomicSub"
     ]
   },
@@ -2663,6 +2710,36 @@ export const listing = [
       "call",
       "builtin",
       "bitcast"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "call",
+      "builtin",
+      "bufferArrayView"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "call",
+      "builtin",
+      "bufferLength"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "call",
+      "builtin",
+      "bufferView"
     ]
   },
   {
@@ -4198,6 +4275,15 @@ export const listing = [
       "shader",
       "execution",
       "statement",
+      "assignment",
+      "vector"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "statement",
       "compound"
     ]
   },
@@ -4299,6 +4385,14 @@ export const listing = [
       "validation",
       "decl",
       "context_dependent_resolution"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "decl",
+      "immediate"
     ]
   },
   {
@@ -4541,6 +4635,16 @@ export const listing = [
       "expression",
       "call",
       "builtin",
+      "atomicStoreMinMax"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
       "atomics"
     ]
   },
@@ -4562,6 +4666,36 @@ export const listing = [
       "call",
       "builtin",
       "bitcast"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "bufferArrayView"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "bufferLength"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "bufferView"
     ]
   },
   {
@@ -5714,6 +5848,14 @@ export const listing = [
     "file": [
       "shader",
       "validation",
+      "extension",
+      "subgroup_size_control"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
       "functions",
       "alias_analysis"
     ]
@@ -6092,6 +6234,14 @@ export const listing = [
       "validation",
       "types",
       "atomics"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "types",
+      "buffer"
     ]
   },
   {

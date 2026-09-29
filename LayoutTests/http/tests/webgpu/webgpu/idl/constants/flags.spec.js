@@ -46,7 +46,7 @@ const kTextureUsageExp =
   TRANSIENT_ATTACHMENT: 0x20
 };
 g.test('TextureUsage,count').fn((t) => {
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if (!('TRANSIENT_ATTACHMENT' in GPUTextureUsage)) {
     delete kTextureUsageExp.TRANSIENT_ATTACHMENT;
   }
@@ -57,7 +57,7 @@ params((u) => u.combine('key', Object.keys(kTextureUsageExp))).
 fn((t) => {
   const { key } = t.params;
 
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   t.skipIf(key === 'TRANSIENT_ATTACHMENT' && !('TRANSIENT_ATTACHMENT' in GPUTextureUsage));
 
   t.assertMember(GPUTextureUsage, kTextureUsageExp, key);

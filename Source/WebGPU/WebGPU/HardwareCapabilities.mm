@@ -105,6 +105,9 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
         .statisticCounterSet = statisticCounterSet,
         .memoryBarrierLimit = std::numeric_limits<decltype(HardwareCapabilities::BaseCapabilities::memoryBarrierLimit)>::max(),
         .supportsNonPrivateDepthStencilTextures = false, // To be filled in by the caller.
+        // MTLStorageModeMemoryless needs tile memory, which only Apple-family GPUs have, so a
+        // transient attachment has to fall back to a private texture on an Intel or AMD GPU.
+        .supportsMemorylessTextures = !![device supportsFamily:MTLGPUFamilyApple1],
         .canPresentRGB10A2PixelFormats = false, // To be filled in by the caller.
         .supportsResidencySets = false,
     };
@@ -562,6 +565,7 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
         .statisticCounterSet = previous.statisticCounterSet,
         .memoryBarrierLimit = std::min(previous.memoryBarrierLimit, next.memoryBarrierLimit),
         .supportsNonPrivateDepthStencilTextures = previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
+        .supportsMemorylessTextures = previous.supportsMemorylessTextures || next.supportsMemorylessTextures,
         .canPresentRGB10A2PixelFormats = previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
         .supportsResidencySets = previous.supportsResidencySets || next.supportsResidencySets,
     };

@@ -96,7 +96,13 @@ fn((t) => {
     { x: 0, y: 0, z: 0 },
     { width, height, depthOrArrayLayers: 1 },
     { actTexelView, expTexelView },
-    { maxDiffULPsForNormFormat: 0 }
+    // The canvas 2D side of this comparison is produced by the implementation's color
+    // management system, which typically quantizes to 8 bits internally, so its result
+    // may differ from this file's double-precision reference math by one unit in the
+    // last place. Several of the reference values here land within 0.05/255 of a
+    // round-to-nearest boundary (e.g. display-p3 (0x80, 0, 0x80) converts to an exact
+    // sRGB blue of 132.551/255), so requiring bit-exact agreement is not meaningful.
+    { maxDiffULPsForNormFormat: 1 }
   );
 
   if (failedPixelsMessage !== undefined) {

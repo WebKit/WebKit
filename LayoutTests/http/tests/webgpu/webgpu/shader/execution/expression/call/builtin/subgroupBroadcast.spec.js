@@ -463,11 +463,8 @@ fn(async (t) => {
   const testcase = kPredicateCases[t.params.predicate];
   const wgThreads = t.params.wgSize[0] * t.params.wgSize[1] * t.params.wgSize[2];
 
-
-
-
-
-  const { subgroupMinSize, subgroupMaxSize } = t.device.adapterInfo;
+  const subgroupMinSize = t.device.adapterInfo.subgroupMinSize;
+  const subgroupMaxSize = t.device.adapterInfo.subgroupMaxSize;
   for (let size = subgroupMinSize; size <= subgroupMaxSize; size *= 2) {
     t.skipIf(!testcase.filter(t.params.id, size), 'Skipping potential undefined behavior');
   }
@@ -696,10 +693,7 @@ combineWithParams([{ format: 'rgba32uint' }])
 fn(async (t) => {
   t.skipIfDeviceDoesNotHaveFeature('subgroups');
   const innerTexels = (t.params.size[0] - 1) * (t.params.size[1] - 1);
-
-
-
-  const { subgroupMaxSize } = t.device.adapterInfo;
+  const subgroupMaxSize = t.device.adapterInfo.subgroupMaxSize;
   t.skipIf(innerTexels < subgroupMaxSize, 'Too few texels to be reliable');
 
   const broadcast =

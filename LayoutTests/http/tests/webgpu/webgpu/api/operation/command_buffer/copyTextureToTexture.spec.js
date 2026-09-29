@@ -94,7 +94,8 @@ class F extends AllFeaturesMaxLimitsGPUTest {
 
 
   srcCopyLevel,
-  dstCopyLevel)
+  dstCopyLevel,
+  requestedMipLevelCount)
   {
     this.skipIfTextureFormatNotSupported(srcFormat, dstFormat);
     this.skipIfCopyTextureToTextureNotSupportedForFormat(srcFormat, dstFormat);
@@ -107,7 +108,7 @@ class F extends AllFeaturesMaxLimitsGPUTest {
     isCompressedTextureFormat(dstFormat) && this.isCompatibility ?
     GPUTextureUsage.TEXTURE_BINDING :
     0;
-    const mipLevelCount = dimension === '1d' ? 1 : 4;
+    const mipLevelCount = requestedMipLevelCount ?? (dimension === '1d' ? 1 : 4);
 
     // Create srcTexture and dstTexture
     const srcTextureDesc = applyTextureBindingViewDimensionForTest({
@@ -969,6 +970,68 @@ fn((t) => {
     copyBoxOffsets,
     srcCopyLevel,
     dstCopyLevel
+  );
+});
+
+g.test('color_textures,compressed,unaligned,non_array').
+desc(
+  `
+  Validate the correctness of copyTextureToTexture for block-compressed textures whose mip level 0
+  size is NOT a multiple of the texel block size, using the 'texture-compression-unaligned' feature.
+
+  This mirrors color_textures,compressed,non_array but creates textures with an unaligned mip level 0
+  (so the top mip level itself has partial edge blocks) and copies at mip level 0. As with non-zero
+  mip levels, the copy is validated and performed against the physical (rounded-up) size, so the copy
+  accesses the texture blocks at the edge which are not fully inside the texture.
+
+  Tests for all pairs of valid source/destination formats, with the partial edge block in the width,
+  height, or both dimensions.
+  `
+).
+params((u) =>
+u.
+combine('srcFormat', kCompressedTextureFormats).
+combine('dstFormat', kCompressedTextureFormats).
+filter(({ srcFormat, dstFormat }) => {
+  const srcBaseFormat = getBaseFormatForTextureFormat(srcFormat);
+  const dstBaseFormat = getBaseFormatForTextureFormat(dstFormat);
+  return (
+    srcFormat === dstFormat ||
+    srcBaseFormat !== undefined &&
+    dstBaseFormat !== undefined &&
+    srcBaseFormat === dstBaseFormat);
+
+}).
+beginSubcases()
+// Which dimension(s) of mip level 0 have a partial edge block.
+.combine('partialEdge', ['width', 'height', 'both']).
+combine('copyBoxOffsets', kCopyBoxOffsetsForWholeDepth)
+).
+fn((t) => {
+  const { partialEdge, srcFormat, dstFormat, copyBoxOffsets } = t.params;
+  t.skipIfDeviceDoesNotHaveFeature('texture-compression-unaligned');
+  t.skipIfCopyTextureToTextureNotSupportedForFormat(srcFormat, dstFormat);
+
+  // The source and destination formats share the same base format, so they have the same texel
+  // block size.
+  const { blockWidth, blockHeight } = getBlockInfoForColorTextureFormat(srcFormat);
+
+  // Mip level 0 size: a few full blocks plus a one-texel partial edge block in the selected
+  // dimension(s). An unaligned mip level 0 is only valid with 'texture-compression-unaligned'.
+  const width = partialEdge === 'height' ? 4 * blockWidth : 3 * blockWidth + 1;
+  const height = partialEdge === 'width' ? 4 * blockHeight : 3 * blockHeight + 1;
+  const size = { width, height, depthOrArrayLayers: 1 };
+
+  t.doCopyTextureToTextureTest(
+    '2d',
+    size,
+    size,
+    srcFormat,
+    dstFormat,
+    copyBoxOffsets,
+    0, // srcCopyLevel: the top (and only) mip level.
+    0, // dstCopyLevel
+    1 // mipLevelCount: a single, unaligned mip level.
   );
 });
 

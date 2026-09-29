@@ -129,4 +129,6 @@ PASS :depth_compare_func:format="depth32float-stencil8";depthCompare="always";de
 PASS :depth_compare_func:format="depth32float-stencil8";depthCompare="always";depthClearValue=0
 PASS :reverse_depth:reversed=false
 PASS :reverse_depth:reversed=true
+PASS :fragment_depth_qualifiers:mode="less"
+PASS :fragment_depth_qualifiers:mode="greater"
 

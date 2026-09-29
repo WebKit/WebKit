@@ -67,7 +67,7 @@ desc(
         When a struct variable is statically used, all non-padding bytes of the entire struct must be set,
         even if only one member is accessed. In this test, data.b.v is accessed, but both data.a and data.b
         must be set (excluding padding).
-      - dynamic_indexing: Array with dynamic indexing.
+      - dynamic_indexing: Vector with dynamic indexing.
     - Usage:
       - full: Set all declared bytes.
       - split: Set all declared bytes in multiple calls.
@@ -156,7 +156,7 @@ fn((t) => {
       break;
     case 'dynamic_indexing':
       layoutImmediateSize = 16;
-      declarations = 'var<immediate> data: array<u32, 4>;';
+      declarations = 'var<immediate> data: vec4u;';
       helpers = 'fn use_data(i: u32) { _ = data[i]; }';
       computeArgs = '@builtin(local_invocation_index) i: u32';
       callCompute = 'use_data(i);';

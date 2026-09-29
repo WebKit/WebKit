@@ -326,6 +326,13 @@ fn(async (t) => {
   const wgThreads = t.params.wgSize[0] * t.params.wgSize[1] * t.params.wgSize[2];
   const testcase = kPredicateCases[t.params.predicate];
 
+  // Quad operations require a fully active quad. If the implementation
+  // selects a subgroup size < 8 for this workgroup, the split predicate
+  // (`id < subgroupSize / 2`) bisects the only quad, leaving no fully
+  // active quad (undefined behavior). The shader reads subgroupSize and
+  // skips the quad call when it would be unsafe; the checker observes
+  // the actual selected size in metadata and skips the test entirely so
+  // it doesn't get flagged as a regression.
   const wgsl = `
 enable subgroups;
 
@@ -363,9 +370,13 @@ fn main(
   metadata.id[lid] = id;
   metadata.subgroup_size[lid] = subgroupSize;
 
-  if ${testcase.cond} {
-    let b = quadBroadcast(lid, ${t.params.id});
-    output.results[lid] = b;
+  // Only run the quad op when a (subgroupSize / 2) split predicate is
+  // guaranteed to keep every quad fully active. See checker for skip.
+  if subgroupSize >= 8u {
+    if ${testcase.cond} {
+      let b = quadBroadcast(lid, ${t.params.id});
+      output.results[lid] = b;
+    }
   }
 }`;
 
@@ -377,6 +388,15 @@ fn main(
     uintsPerOutput,
     new Uint32Array([0]), // unused
     (metadata, output) => {
+      const bound = Math.floor(output.length / 2);
+      // metadata layout: [id, ..., subgroup_size, ...]. The first entry
+      // of the second half is the subgroupSize of invocation 0.
+      if (metadata[bound] < 8) {
+        t.skip(
+          `Implementation selected subgroup size ${metadata[bound]}; a split ` +
+          `predicate would leave no fully active quad (undefined behavior).`
+        );
+      }
       return checkBroadcastCompute(metadata, output, t.params.id, testcase.filter);
     }
   );

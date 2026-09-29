@@ -1,7 +1,6 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { loadMetadataForSuite } from '../framework/metadata.js';import { globalTestConfig } from '../framework/test_config.js';
-import { assert, now } from '../util/util.js';
+**/import { globalTestConfig } from '../framework/test_config.js';import { assert, now } from '../util/util.js';
 
 
 
@@ -101,21 +100,8 @@ export class TestTree {
     );
   }
 
-  static async create(
-  forQuery,
-  root,
-  maxChunkTime)
-  {
-    const suite = forQuery.suite;
-
-    let chunking = undefined;
-    if (Number.isFinite(maxChunkTime)) {
-      const metadata = loadMetadataForSuite(`./src/${suite}`);
-      assert(metadata !== null, `metadata for ${suite} is missing, but maxChunkTime was requested`);
-      chunking = { metadata, maxChunkTime };
-    }
-    await TestTree.propagateCounts(root, chunking);
-
+  static async create(forQuery, root) {
+    await TestTree.propagateCounts(root);
     return new TestTree(forQuery, root);
   }
 
@@ -206,46 +192,19 @@ export class TestTree {
 
   /** Propagate the subtreeTODOs/subtreeTests state upward from leaves to parent nodes. */
   static async propagateCounts(
-  subtree,
-  chunking)
+  subtree)
   {
     subtree.subtreeCounts ??= { tests: 0, nodesWithTODO: 0, totalTimeMS: 0 };
     subtree.subcaseCount = 0;
     for (const [, child] of subtree.children) {
       if ('children' in child) {
-        const counts = await TestTree.propagateCounts(child, chunking);
+        const counts = await TestTree.propagateCounts(child);
         subtree.subtreeCounts.tests += counts.tests;
         subtree.subtreeCounts.nodesWithTODO += counts.nodesWithTODO;
         subtree.subtreeCounts.totalTimeMS += counts.totalTimeMS;
         subtree.subcaseCount += counts.subcaseCount;
       } else {
         subtree.subcaseCount = child.subcaseCount;
-      }
-    }
-
-    // If we're chunking based on a maxChunkTime, then at each
-    // TestQueryMultiCase node of the tree we look at its total time. If the
-    // total time is larger than the maxChunkTime, we set collapsible=false to
-    // make sure it gets split up in the output. Note:
-    // - TestQueryMultiTest and higher nodes are never set to collapsible anyway, so we ignore them.
-    // - TestQuerySingleCase nodes can't be collapsed, so we ignore them.
-    if (chunking && subtree.query instanceof TestQueryMultiCase) {
-      const testLevelQuery = new TestQueryMultiCase(
-        subtree.query.suite,
-        subtree.query.filePathParts,
-        subtree.query.testPathParts,
-        {}
-      ).toString();
-
-      const metadata = chunking.metadata;
-
-      const subcaseTiming = metadata[testLevelQuery]?.subcaseMS;
-      if (subcaseTiming !== undefined) {
-        const totalTiming = subcaseTiming * subtree.subcaseCount;
-        subtree.subtreeCounts.totalTimeMS = totalTiming;
-        if (totalTiming > chunking.maxChunkTime) {
-          subtree.collapsible = false;
-        }
       }
     }
 
@@ -286,8 +245,7 @@ loader,
 queryToLoad,
 {
   subqueriesToExpand,
-  fullyExpandSubtrees = [],
-  maxChunkTime = Infinity
+  fullyExpandSubtrees = []
 })
 {
   const suite = queryToLoad.suite;
@@ -454,7 +412,7 @@ queryToLoad,
   }
   assert(foundCase, `Query \`${queryToLoad.toString()}\` does not match any cases`);
 
-  return TestTree.create(queryToLoad, subtreeL0, maxChunkTime);
+  return TestTree.create(queryToLoad, subtreeL0);
 }
 
 function setSubtreeDescriptionAndCountTODOs(

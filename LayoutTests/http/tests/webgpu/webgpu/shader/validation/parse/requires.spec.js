@@ -2,6 +2,7 @@
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = `Parser validation tests for requires`;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { keysOf } from '../../../../common/util/data_tables.js';
+import { assert } from '../../../../common/util/util.js';
 import { kKnownWGSLLanguageFeatures } from '../../../capability_info.js';
 import { ShaderValidationTest } from '../shader_validation_test.js';
 
@@ -95,4 +96,18 @@ params((u) => u.combine('feature', kKnownWGSLLanguageFeatures)).
 fn((t) => {
   const code = `requires ${t.params.feature};`;
   t.expectCompileResult(t.hasLanguageFeature(t.params.feature), code);
+});
+
+g.test('have_all_language_features').
+desc(
+  `The spec technically requires support for all WGSL language features listed in the spec.
+    This test enforces that. It should be the ONLY test that fails when a new feature is
+    unavailable - others should skip themselves.`
+).
+params((u) => u.combine('feature', kKnownWGSLLanguageFeatures)).
+fn((t) => {
+  // First check that the API exposes the feature.
+  assert(t.hasLanguageFeature(t.params.feature));
+  // If it does, then also check that WGSL allows it.
+  t.expectCompileResult(true, `requires ${t.params.feature};`);
 });
