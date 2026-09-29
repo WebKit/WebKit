@@ -820,13 +820,11 @@ MediaTime fromGstClockTime(GstClockTime time)
 
 RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(GRefPtr<GstBuffer>&& buffer)
 {
-    auto* mappedBuffer = new GstMappedOwnedBuffer(WTF::move(buffer));
-    if (!mappedBuffer->isValid()) {
-        delete mappedBuffer;
+    Ref mappedBuffer = adoptRef(*new GstMappedOwnedBuffer(WTF::move(buffer)));
+    if (!mappedBuffer->isValid())
         return nullptr;
-    }
 
-    return adoptRef(mappedBuffer);
+    return mappedBuffer;
 }
 
 RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(const GRefPtr<GstBuffer>& buffer)
