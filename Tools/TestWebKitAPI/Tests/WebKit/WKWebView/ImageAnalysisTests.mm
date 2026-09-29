@@ -28,11 +28,14 @@
 #if ENABLE(IMAGE_ANALYSIS)
 
 #import "Helpers/cocoa/CGImagePixelReader.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/ImageAnalysisTestingUtilities.h"
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/PasteboardUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "TestInputDelegate.h"
 #import "Helpers/ios/TestUIMenuBuilder.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -200,6 +203,31 @@ TEST(ImageAnalysisTests, AvoidRedundantTextRecognitionRequests)
 
     // FIXME: If we cache visual look up results as well in the future, we can bring this down to 0 (that is, no new requests).
     EXPECT_LT([webView simulateImageAnalysisGesture:CGPointMake(150, 250)], 2U);
+}
+
+TEST(ImageAnalysisTests, TextRecognitionInCrossOriginIframe)
+{
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
+
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 200px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><img style='display: block; width: 200px; height: 200px;' src='large-red-square.png'></body>"_s } },
+        { "/large-red-square.png"_s, { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration setWebsiteDataStore:[server.httpsProxyConfiguration() websiteDataStore]];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 400));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [webView simulateImageAnalysisGesture:CGPointMake(200, 200)];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"internals.shadowRoot(document.images[0])?.getElementById('image-overlay')?.textContent ?? ''" inFrame:childFrame.get()] isEqualToString:@"Foo bar"];
+    }));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -482,6 +510,28 @@ TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
     [webView buildMenuWithBuilder:menuBuilder.get()];
 
     EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
+}
+
+TEST(ImageAnalysisTests, PerformRemoveBackgroundInCrossOriginIframe)
+{
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable><img src='large-red-square.png'></body>"_s } },
+        { "/large-red-square.png"_s, { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoveBackgroundEnabled", true);
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configuration.get());
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+    [webView waitForNextPresentationUpdate];
+
+    invokeRemoveBackgroundAction(webView.get());
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width" inFrame:childFrame.get()] intValue] == 215;
+    }));
 }
 
 #endif // PLATFORM(IOS_FAMILY)

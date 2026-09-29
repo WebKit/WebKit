@@ -10212,14 +10212,17 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
         return;
     }
 
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
-    if (!localMainFrame) {
+    RefPtr frame = htmlElementToUpdate->document().frame();
+    RefPtr localRoot = frame ? &frame->rootFrame() : nullptr;
+    RefPtr localRootView = localRoot ? localRoot->view() : nullptr;
+    if (!localRootView) {
         completionHandler(TextRecognitionUpdateResult::NoText);
         return;
     }
 
     ImageOverlay::updateWithTextRecognitionResult(*htmlElementToUpdate, result);
-    auto hitTestResult = localMainFrame->eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
+    auto locationInLocalRootView = localRootView->convertFromRootViewAcrossIsolatedFrames(location);
+    auto hitTestResult = localRoot->eventHandler().hitTestResultAtPoint(localRootView->rootViewToContents(roundedIntPoint(locationInLocalRootView)), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
         HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
@@ -10231,7 +10234,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
             return TextRecognitionUpdateResult::NoText;
 
 #if ENABLE(DATA_DETECTION)
-        if (DataDetection::findDataDetectionResultElementInImageOverlay(location, *htmlElementToUpdate))
+        if (DataDetection::findDataDetectionResultElementInImageOverlay(locationInLocalRootView, *htmlElementToUpdate))
             return TextRecognitionUpdateResult::DataDetector;
 #endif
 
