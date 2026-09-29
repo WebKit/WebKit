@@ -4605,6 +4605,7 @@ void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NS
         filenameWithExtension = filename;
     else
         filenameWithExtension = [retainPtr([filename stringByAppendingString:@"."]) stringByAppendingString:extension];
+    filenameWithExtension = filenameByFixingIllegalCharacters(filenameWithExtension.get());
 
     [pasteboard setString:visibleURL forType:WebCore::legacyStringPasteboardTypeSingleton()];
     [pasteboard setString:visibleURL forType:PasteboardTypes::WebURLPboardType];
