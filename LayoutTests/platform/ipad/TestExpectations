@@ -148,3 +148,23 @@ scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Skip ]
 webkit.org/b/307451 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-keyboard-behavior.optional.html [ Pass Failure ]
 
 webkit.org/b/307488 media/volume-activate-audio-session.html [ Failure ]
+
+webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
+
+webkit.org/b/325011 imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.html [ Failure ]
+webkit.org/b/325011 imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.html [ Failure ]
+
+webkit.org/b/325030 fast/web-share/share-with-files-feature-disabled.html [ Failure ]
+webkit.org/b/325030 fast/web-share/share-with-no-url.html [ Failure ]
+webkit.org/b/325030 fast/web-share/share-transient-activation.html [ Failure ]
+webkit.org/b/325030 fast/web-share/share-with-files.html [ Failure ]
+webkit.org/b/325030 fast/web-share/share-transient-activation-expired.html [ Failure ]
+webkit.org/b/325030 fast/web-share/share.html [ Failure ]
+webkit.org/b/325030 fast/viewport/viewport-33.html [ Failure ]
+webkit.org/b/325030 fast/viewport/viewport-42.html [ Failure ]
+webkit.org/b/325030 editing/selection/ios/hide-selection-when-scrolling-overflow-container.html [ Failure ]
+webkit.org/b/325030 editing/input/cocoa/untrusted-text-event-does-not-trigger-text-replacement.html [ Failure ]
+webkit.org/b/325030 fast/css/cocoa/content-visibility-with-obscured-insets.html [ Failure ]
+webkit.org/b/325030 fast/events/ios/viewport-zooms-from-element-to-initial-scale.html [ Failure ]
+
+imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Pass ]

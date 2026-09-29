@@ -2530,7 +2530,8 @@ accessibility/aria-multiline.html [ Pass ]
 accessibility/aria-namefrom-author.html [ Pass ]
 accessibility/aria-owns-crash-after-subtree-update.html [ Pass ]
 accessibility/aria-owns-cycles.html [ Pass ]
-accessibility/aria-owns-deep-chain-no-timeout.html [ Pass ]
+webkit.org/b/325014 [ Debug ] accessibility/aria-owns-deep-chain-no-timeout.html [ Timeout ]
+[ Release ] accessibility/aria-owns-deep-chain-no-timeout.html [ Pass ]
 accessibility/aria-owns-grid-parts.html [ Pass ]
 accessibility/aria-owns-hierarchy-remap.html [ Pass ]
 accessibility/aria-readonly-updates-after-dynamic-change.html [ Pass Timeout ] # rdar://178168616
@@ -2645,7 +2646,8 @@ accessibility/hidden-elements-with-aria-attributes.html [ Pass ]
 accessibility/hidden-label.html [ Pass ]
 accessibility/hidden-object-text-value-crash.html [ Pass ]
 accessibility/hidden-slot.html [ Pass ]
-accessibility/hidden-until-found-programmatically-revealed.html [ Pass ]
+webkit.org/b/325016 [ Debug ] accessibility/hidden-until-found-programmatically-revealed.html [ Crash ]
+[ Release ] accessibility/hidden-until-found-programmatically-revealed.html [ Pass ]
 accessibility/html-element-aria-hidden.html [ Pass ]
 accessibility/html5-required-attribute.html [ Pass ]
 accessibility/iframe-bastardization.html [ Pass ]
@@ -3271,7 +3273,8 @@ imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies
 
 http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Pass ]
 http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Pass ]
-http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Pass ]
+webkit.org/b/325035 [ Release ] http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Pass Timeout ]
+[ Debug ] http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Pass ]
 http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Pass Slow ]
 http/tests/cookies/multiple-cookies.https.html [ Pass ]
 http/tests/cookies/multiple-cookies-iframes.https.html [ Pass Slow ]
@@ -8859,7 +8862,7 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-off
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard-snap-interruption.html [ Skip ] # timeout
 
 compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Pass Failure ] # rdar://178675997
-compositing/color-matching/image-color-matching.html [ Pass Crash ] # rdar://178675338
+webkit.org/b/325025 compositing/color-matching/image-color-matching.html [ Pass Failure Crash ]
 editing/editable-region/hit-test-fixed.html [ Pass Failure ] # rdar://178675880
 editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible.html [ Pass Failure ] # rdar://178172917
 editing/input/cocoa/autocorrect-on.html [ Pass Timeout ]
@@ -9083,14 +9086,14 @@ fast/events/touch/ios/touch-event-regions-layer-tree/input/input-type-change.htm
 fast/events/touch/ios/touch-event-regions/complex.html [ Failure ] # rdar://176399234
 fast/events/touch/ios/touch-event-regions-layer-tree/scrolling/scrolled-overflow.html [ Failure ] # rdar://176399234
 
-fast/events/touch/ios/selection-handles-after-touch-end.html [ Failure ] # rdar://176400500
+webkit.org/b/325026 fast/events/touch/ios/selection-handles-after-touch-end.html [ Failure Timeout ]
 
 fast/events/touch/ios/touch-event-regions-layer-tree/input/switch.html [ Failure ] # rdar://176399234
 fast/events/touch/ios/touch-event-regions-layer-tree/input/range-sliders.html [ Failure ] # rdar://176399234
 fast/events/touch/ios/touch-event-regions-layer-tree/input/range-enablement.html [ Failure ] # rdar://176399234
 fast/events/touch/ios/touch-event-regions-layer-tree/input/switch-enablement.html [ Failure ] # rdar://176399234
 
-http/tests/fast/events/touch/ios/selection-handles-after-touch-end.html [ Failure ] # rdar://176400500
+webkit.org/b/325027 http/tests/fast/events/touch/ios/selection-handles-after-touch-end.html [ Failure Timeout ]
 
 media/modern-media-controls/tracks-support/on-off-text-track.html [ Failure ] # rdar://174859933
 
@@ -9736,7 +9739,8 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ Crash ImageOnlyFailure ] # rdar://178169321
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_crash_empty_src.html [ Crash ] # rdar://178169321
 
-http/tests/fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text.html [ Pass Timeout ] # rdar://178172419
+webkit.org/b/325041 [ Release ] http/tests/fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text.html [ Pass Failure Timeout ]
+[ Debug ] http/tests/fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/dom/traversal/TreeWalker-basic.html [ Pass Timeout ] # rdar://178172326
 imported/w3c/web-platform-tests/dom/traversal/TreeWalker-currentNode.html [ Pass Timeout ] # rdar://178172326
@@ -9925,13 +9929,13 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-noopener-al
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?5-6 [ Pass Failure ] # rdar://178215295
 
 http/tests/fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start-with-non-0px-end.html [ Pass Crash ] # rdar://178339823
-http/tests/fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-touch-start.html [ Pass Crash ] # rdar://178339823
+webkit.org/b/325040 http/tests/fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-touch-start.html [ Pass Crash Timeout ]
 http/tests/fast/events/touch/ios/content-observation/visibility-change-happens-while-in-mousemoved.html [ Pass Crash ] # rdar://178339823
 http/tests/fast/events/touch/ios/content-observation/visibility-change-happens-at-the-second-timer.html [ Pass Crash ] # rdar://178339823
 http/tests/fast/events/touch/ios/content-observation/hover-when-style-change-is-async.html [ Pass Crash ] # rdar://178339823
 http/tests/fast/events/touch/ios/content-observation/add-mouseout-event-listener-on-hover-quirk.html [ Pass Crash ] # rdar://178339823
 http/tests/fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove-no-clickable.html [ Pass Crash ] # rdar://178339823
-http/tests/fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start.html [ Pass Crash ] # rdar://178339823
+webkit.org/b/325040 http/tests/fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start.html [ Pass Crash Timeout ]
 http/tests/fast/events/touch/ios/content-observation/350ms-hover-intent.html [ Pass Crash ] # rdar://178339823
 http/tests/fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition3.html [ Pass Crash ] # rdar://178339823
 
@@ -10267,11 +10271,11 @@ imported/w3c/web-platform-tests/css/css-content/element-replacement-dynamic.html
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-data-url-to-https.html [ Pass ImageOnlyFailure ] # rdar://178677088
 
-imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.sub.html [ Pass Timeout ]
+webkit.org/b/321411 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.sub.html [ Pass Failure Timeout ]
 
 imported/w3c/web-platform-tests/fetch/content-length/parsing.window.html [ Pass Timeout Failure ] # rdar://179387887
 
-imported/w3c/web-platform-tests/svg/interact/use-instance-hover.html [ Pass Timeout ]
+webkit.org/b/325038 imported/w3c/web-platform-tests/svg/interact/use-instance-hover.html [ Pass ImageOnlyFailure Timeout ]
 
 fast/parser/xml-parser-detach-crash.html [ Pass Timeout ] # rdar://178675335
 
@@ -10375,3 +10379,43 @@ imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-t
 webkit.org/b/325197 css3/filters/backdrop/backdrop-filter-fractional-translation-edge.html [ ImageOnlyFailure ]
 
 webkit.org/b/325521 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Pass Failure ]
+
+[ Release ] imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-mixed-srl-016.xht [ Pass ImageOnlyFailure ]
+[ Debug ] imported/w3c/web-platform-tests/shadow-dom/cross-shadow-boundary-selection-splittext-crash.html [ Pass Timeout ]
+[ Debug ] imported/w3c/web-platform-tests/web-locks/acquire.https.any.sharedworker.html [ Pass Failure ]
+
+webkit.org/b/246372 [ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Pass Failure ]
+
+webkit.org/b/322847 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ Crash ]
+webkit.org/b/322847 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ Crash ]
+webkit.org/b/322847 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-004.html [ Crash ]
+
+webkit.org/b/321524 [ Debug ] imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ Pass Crash ]
+
+webkit.org/b/325011 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
+
+webkit.org/b/325013 [ Debug ] ipc/webgpu-command-encoder-cross-thread-destruction-race.html [ Timeout ]
+webkit.org/b/325013 [ Debug ] ipc/webgpu-instance-cross-thread-destruction-race.html [ Timeout ]
+
+webkit.org/b/325017 [ Debug ] fast/text/out-of-flow-line-break-crash.html [ Crash ]
+
+webkit.org/b/325019 [ Debug ] imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Failure ]
+webkit.org/b/325019 [ Release ] imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Pass Failure ]
+
+webkit.org/b/325021 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-invoker-inside-popover.html [ Failure ]
+
+webkit.org/b/325022 [ Debug ] ipc/ios/pasteboard-read-disallowed-uikit-type.html [ Failure ]
+
+webkit.org/b/325023 [ Debug ] ipc/legacy-cdm-session-avcontentkeysession-destruction-race.html [ Crash ]
+
+webkit.org/b/325024 [ Debug ] platform/ios/media/media-element-does-not-eagerly-create-media-session-helper.html [ Failure ]
+
+webkit.org/b/325029 [ Release ] http/wpt/user-activation/bless.html [ Pass Failure ]
+webkit.org/b/325029 [ Release ] http/wpt/user-activation/bless-edge-cases.sub.html [ Pass Failure ]
+webkit.org/b/325029 [ Release ] http/wpt/user-activation/bless-nested.sub.html [ Pass Failure ]
+
+webkit.org/b/325036 [ Release ] http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https.html [ Pass Timeout ]
+
+webkit.org/b/325037 [ Debug ] imported/w3c/web-platform-tests/editing/crashtests/inserthtml-in-li-in-option.html [ Pass Crash ]
+
+webkit.org/b/325039 [ Debug ] ipc/cocoa/LocalSampleBufferDisplayLayer-non-finite-bounds-crash.html [ Crash ]
