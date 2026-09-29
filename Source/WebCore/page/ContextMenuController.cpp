@@ -1079,12 +1079,6 @@ void ContextMenuController::populate()
     if (!frame)
         return;
 
-#if ENABLE(SERVICE_CONTROLS)
-    // The default image control menu gets populated solely by the platform.
-    if (m_context.controlledImage())
-        return;
-#endif
-
     auto addSelectedTextActionsIfNeeded = [&] (const String& selectedText) {
         if (selectedText.isEmpty())
             return;

@@ -69,11 +69,6 @@ public:
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }
     bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
 
-#if ENABLE(SERVICE_CONTROLS)
-    void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
-    Image* controlledImage() const { return m_controlledImage.get(); }
-#endif
-
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     void setPotentialQRCodeNodeSnapshotImage(BitmapImage* image) { m_potentialQRCodeNodeSnapshotImage = image; }
     BitmapImage* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
@@ -95,10 +90,6 @@ private:
     bool m_hasEntireImage { false };
     bool m_allowsFollowingLink { false };
     bool m_allowsFollowingImageURL { false };
-
-#if ENABLE(SERVICE_CONTROLS)
-    RefPtr<Image> m_controlledImage;
-#endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     RefPtr<BitmapImage> m_potentialQRCodeNodeSnapshotImage;

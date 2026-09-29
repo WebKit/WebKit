@@ -47,11 +47,7 @@ ContextMenuContextData::ContextMenuContextData()
 }
 
 ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
-#if ENABLE(SERVICE_CONTROLS)
-    : m_type(context.controlledImage() ? Type::ServicesMenu : context.type())
-#else
     : m_type(context.type())
-#endif
     , m_menuLocation(menuLocation)
     , m_menuItems(menuItems)
     , m_webHitTestResultData({ context.hitTestResult(), true })
@@ -63,10 +59,6 @@ ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, con
     , m_selectionIsEditable(false)
 #endif
 {
-#if ENABLE(SERVICE_CONTROLS)
-    if (RefPtr image = context.controlledImage())
-        setImage(*image);
-#endif
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     if (RefPtr image = context.potentialQRCodeNodeSnapshotImage())
         setPotentialQRCodeNodeSnapshotImage(*image);
