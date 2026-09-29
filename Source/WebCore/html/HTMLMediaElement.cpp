@@ -290,6 +290,12 @@ static constexpr double maximumHLSPlaybackRate = 2;
 static constexpr auto mediaSourceBlobProtocol = "blob"_s;
 #endif
 
+#if ENABLE(REMOVE_ALL_RESTRICTIONS_ON_AUDIBILITY_CHANGE)
+static constexpr MediaElementSession::BehaviorRestrictions restrictionsToRemoveOnAudibilityChange = MediaElementSession::AllRestrictions;
+#else
+static constexpr MediaElementSession::BehaviorRestrictions restrictionsToRemoveOnAudibilityChange = MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager;
+#endif
+
 using namespace HTMLNames;
 
 String convertEnumerationToString(HTMLMediaElement::ReadyState enumerationValue)
@@ -2641,7 +2647,7 @@ void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack& track)
     if (m_audioTracks && m_audioTracks->contains(track))
         m_audioTracks->scheduleChangeEvent();
     if (processingUserGestureForMedia())
-        removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+        removeBehaviorRestrictionsAfterFirstUserGesture(restrictionsToRemoveOnAudibilityChange);
     checkForAudioAndVideo();
 }
 
@@ -4840,7 +4846,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
 
     if (!m_volumeLocked) {
         if (volume && processingUserGestureForMedia())
-            removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+            removeBehaviorRestrictionsAfterFirstUserGesture(restrictionsToRemoveOnAudibilityChange);
 
         m_volume = volume;
         m_volumeInitialized = true;
@@ -4900,7 +4906,7 @@ void HTMLMediaElement::setMutedInternal(bool muted, ForceMuteChange forceChange)
     if (mutedStateChanged || !m_explicitlyMuted) {
 
         if (processingUserGestureForMedia()) {
-            removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+            removeBehaviorRestrictionsAfterFirstUserGesture(restrictionsToRemoveOnAudibilityChange);
 
             if (hasAudio() && muted)
                 userDidInterfereWithAutoplay();
