@@ -38,6 +38,7 @@
 #include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
@@ -98,8 +99,15 @@ void RenderHTMLCanvas::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderReplaced::layout();
 
-    if (CheckedPtr innerRenderer = this->innerRenderer())
+    if (CheckedPtr innerRenderer = this->innerRenderer()) {
+        for (CheckedRef child : childrenOfType<RenderElement>(*innerRenderer)) {
+            if (child->everHadLayout())
+                continue;
+            if (RefPtr drawableElement = child->element())
+                protect(canvasElement())->drawableElementDidChange(*drawableElement);
+        }
         innerRenderer->layoutIfNeeded();
+    }
 
     m_canvasDrawableRecorderMap.clear();
 }
@@ -168,6 +176,29 @@ std::optional<CanvasElementSnapshot> RenderHTMLCanvas::canvasDrawableSnapshot(Re
         return { { snapshotRecorder->copyDisplayList(), snapshotRecorder->initialClip().size() } };
 
     return std::nullopt;
+}
+
+void RenderHTMLCanvas::requestPaintEventIfNeeded(const RenderObject& repaintedRenderer) const
+{
+    if (!canHaveChildren())
+        return;
+
+    CheckedPtr innerRenderer = this->innerRenderer();
+    if (!innerRenderer)
+        return;
+
+    for (CheckedRef drawableRenderer : lineageOfType<RenderElement>(repaintedRenderer)) {
+        if (drawableRenderer.ptr() == this)
+            return;
+
+        // FIXME: Only consider the drawable descendants of the canvas, i.e. elements with the drawable attribute.
+        if (drawableRenderer->parent() != innerRenderer.get())
+            continue;
+
+        if (RefPtr drawableElement = drawableRenderer->element())
+            protect(canvasElement())->drawableElementDidChange(*drawableElement);
+        return;
+    }
 }
 
 bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
