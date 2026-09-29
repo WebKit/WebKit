@@ -103,7 +103,6 @@ private:
 struct Quirk {
     QuirkURLMatch match;
     QuirkBehaviorList behaviors { };
-    std::optional<QuirkSite> site { };
     bool isAvailable { true };
 
     void apply(QuirksData&) const;

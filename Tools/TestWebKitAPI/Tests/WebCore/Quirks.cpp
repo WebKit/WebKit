@@ -144,11 +144,7 @@ TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.airindiaexpress.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk));
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsReuseLiveRangeForSelectionUpdateQuirk));
 
-    EXPECT_TRUE(resolveQuirksForTopURL("https://www.bankofamerica.com/"_s).isSite(WebCore::QuirkSite::BankOfAmerica));
-
-    auto unrelatedSiteQuirks = resolveQuirksForTopURL("https://www.example.com/"_s);
-    EXPECT_FALSE(unrelatedSiteQuirks.hasBehaviors());
-    EXPECT_FALSE(unrelatedSiteQuirks.isSite(WebCore::QuirkSite::BankOfAmerica));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).hasBehaviors());
 }
 
 static Vector<String> scriptsForScriptURL(const WebCore::QuirksData& quirks, ASCIILiteral scriptURLString)
@@ -261,8 +257,8 @@ TEST_F(QuirksTest, EveryMatchingRowContributesWhenSeveralSupplyTheSameBehavior)
 static Vector<String> elementSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
 {
     return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<String> {
-        if (behavior.id == id && behavior.elementSelectorCondition)
-            return *behavior.elementSelectorCondition;
+        if (behavior.id == id && behavior.conditions.elementSelector)
+            return *behavior.conditions.elementSelector;
         return std::nullopt;
     });
 }
@@ -272,8 +268,8 @@ TEST_F(QuirksTest, AnElementSelectorConditionIsRecordedOnTheBehavior)
     using namespace WebCore::QuirkBehaviorConditions;
     static constexpr auto behavior = WebCore::QuirkBehaviors::shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(".target, .target *"_s));
 
-    ASSERT_TRUE(behavior.elementSelectorCondition.has_value());
-    EXPECT_EQ(String { *behavior.elementSelectorCondition }, ".target, .target *"_str);
+    ASSERT_TRUE(behavior.conditions.elementSelector.has_value());
+    EXPECT_EQ(String { *behavior.conditions.elementSelector }, ".target, .target *"_str);
     EXPECT_FALSE(behavior.parameters.has_value());
 }
 
@@ -284,12 +280,12 @@ TEST_F(QuirksTest, ASecondaryURLConditionIsRecordedOnTheBehavior)
     static constexpr auto behavior = WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("script"_s)).when(secondaryURLMatches(scriptURL));
 
     ASSERT_TRUE(behavior.parameters.has_value());
-    ASSERT_TRUE(behavior.secondaryURLCondition.has_value());
+    ASSERT_TRUE(behavior.conditions.secondaryURL.has_value());
     EXPECT_TRUE(behavior.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://cdn.example.com/a.js"_s } }));
     EXPECT_FALSE(behavior.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
 
     static constexpr auto unscoped = WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("script"_s));
-    EXPECT_FALSE(unscoped.secondaryURLCondition.has_value());
+    EXPECT_FALSE(unscoped.conditions.secondaryURL.has_value());
     EXPECT_TRUE(unscoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
 }
 
@@ -312,6 +308,20 @@ TEST_F(QuirksTest, MediaRangeRewriteAppliesOnlyToBingRequestURLs)
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_s }));
 }
+
+#if PLATFORM(IOS_FAMILY)
+TEST_F(QuirksTest, FacebookStoriesCreationFormAppliesOnlyToTheStoriesCreationPath)
+{
+    constexpr auto id = WebCore::QuirkBehaviorID::NeedsFacebookStoriesCreationFormQuirk;
+
+    auto facebook = resolveQuirksForTopURL("https://www.facebook.com/"_s);
+    EXPECT_TRUE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/stories/create/"_s }));
+    EXPECT_FALSE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/stories/"_s }));
+    EXPECT_FALSE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/"_s }));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://www.example.com/stories/create/"_s }));
+}
+#endif
 
 TEST_F(QuirksTest, LogoutCookieCleanupAppliesOnlyToTheLogoutEndpoint)
 {
@@ -394,7 +404,7 @@ TEST_F(QuirksTest, AddingAndRemovingBehaviorsKeepsTheEnabledFlagInSync)
     EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<String> { ".second"_str });
 }
 
-TEST_F(QuirksTest, MergeUnionsFlagsAndSitesAndConcatenatesBehaviors)
+TEST_F(QuirksTest, MergeUnionsFlagsAndConcatenatesBehaviors)
 {
     using namespace WebCore::QuirkBehaviorConditions;
     static constexpr auto onFirst = WebCore::QuirkBehaviors::shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(".first"_s));
@@ -402,19 +412,15 @@ TEST_F(QuirksTest, MergeUnionsFlagsAndSitesAndConcatenatesBehaviors)
 
     WebCore::QuirksData quirks;
     quirks.addBehavior(onFirst);
-    quirks.addSite(WebCore::QuirkSite::Vimeo);
 
     WebCore::QuirksData other;
     other.addBehavior(onSecond);
     other.addBehavior(WebCore::QuirkBehaviors::needsAirIndiaExpressLayeringQuirk);
-    other.addSite(WebCore::QuirkSite::BankOfAmerica);
 
     quirks.merge(other);
 
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk));
-    EXPECT_TRUE(quirks.isSite(WebCore::QuirkSite::Vimeo));
-    EXPECT_TRUE(quirks.isSite(WebCore::QuirkSite::BankOfAmerica));
     EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<String> { ".first"_str, ".second"_str }));
 }
 
@@ -550,6 +556,62 @@ TEST_F(QuirksTest, TheSameSelectorIsEvaluatedPerDocument)
 
     EXPECT_TRUE(matchesSelector(onDockPanelTabBar, quirksModePage.getElementById("tabBar"_s).get()));
     EXPECT_FALSE(matchesSelector(onDockPanelTabBar, standardsModePage.getElementById("tabBar"_s).get()));
+}
+
+static Vector<String> documentSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
+{
+    return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<String> {
+        if (behavior.id == id && behavior.conditions.documentSelector)
+            return *behavior.conditions.documentSelector;
+        return std::nullopt;
+    });
+}
+
+TEST_F(QuirksTest, BackForwardCacheBypassSitesCarryTheirDocumentSelector)
+{
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://www.bing.com/images"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk), Vector<String> { String { onBingImageSearchDialog } });
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://secure.bankofamerica.com/"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk), Vector<String> { String { onBankOfAmericaLoadingSignInButton } });
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://docs.google.com/"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenElementMatchesQuirk), Vector<String> { String { onGoogleDocsHomescreenFreezeOverlay } });
+
+    auto vimeo = resolveQuirksForTopURL("https://vimeo.com/"_s);
+    EXPECT_TRUE(vimeo.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheForNoStoreQuirk));
+    EXPECT_TRUE(documentSelectorsFor(vimeo, WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheForNoStoreQuirk).isEmpty());
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST_F(QuirksTest, OnlyRedditScopesScrollAnchoringToADocumentSelector)
+{
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://www.reddit.com/"_s), WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk), Vector<String> { String { onRedditSinkItBackToTop } });
+
+    auto appleRetail = resolveQuirksForTopURL("https://www.apple.com/retail/"_s);
+    EXPECT_TRUE(appleRetail.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk));
+    EXPECT_TRUE(documentSelectorsFor(appleRetail, WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk).isEmpty());
+}
+#endif
+
+TEST_F(QuirksTest, DocumentSelectorsFindElementsAnywhereInTheDocument)
+{
+    auto page = TestPageHarness::create();
+    page.loadHTML("<!DOCTYPE html><div><span><b id='sink-it-back-to-top'></b></span></div><button id='signIn' class='loading'></button>"_s);
+
+    EXPECT_EQ(WebCore::Quirks::firstElementMatchingSelectorCondition(onRedditSinkItBackToTop, page.document()), page.getElementById("sink-it-back-to-top"_s));
+    EXPECT_EQ(WebCore::Quirks::firstElementMatchingSelectorCondition(onBankOfAmericaLoadingSignInButton, page.document()), page.getElementById("signIn"_s));
+    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(onBingImageSearchDialog, page.document()));
+}
+
+TEST_F(QuirksTest, GoogleDocsOverlaySelectorRequiresTheFirstElementInTheBody)
+{
+    auto overlayFirst = TestPageHarness::create();
+    overlayFirst.loadHTML("<!DOCTYPE html><body><div class='docs-homescreen-freeze-el-full'></div><div></div></body>"_s);
+    EXPECT_TRUE(WebCore::Quirks::firstElementMatchingSelectorCondition(onGoogleDocsHomescreenFreezeOverlay, overlayFirst.document()));
+
+    auto overlaySecond = TestPageHarness::create();
+    overlaySecond.loadHTML("<!DOCTYPE html><body><div></div><div class='docs-homescreen-freeze-el-full'></div></body>"_s);
+    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(onGoogleDocsHomescreenFreezeOverlay, overlaySecond.document()));
+
+    auto overlayNested = TestPageHarness::create();
+    overlayNested.loadHTML("<!DOCTYPE html><body><main><div class='docs-homescreen-freeze-el-full'></div></main></body>"_s);
+    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(onGoogleDocsHomescreenFreezeOverlay, overlayNested.document()));
 }
 
 static Vector<String> selectorsFor(ASCIILiteral urlString, WebCore::QuirkBehaviorID id)

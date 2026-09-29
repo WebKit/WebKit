@@ -32,19 +32,6 @@
 
 namespace WebCore {
 
-enum class QuirkSite : uint8_t {
-    BankOfAmerica,
-    Bing,
-    Facebook,
-    GoogleProperty,
-    Reddit,
-    Vimeo,
-
-    NumberOfSites
-};
-
-using QuirkSiteBitSet = WTF::BitSet<static_cast<size_t>(QuirkSite::NumberOfSites)>;
-
 namespace BuildCondition {
 
 constexpr bool always = true;
@@ -179,7 +166,6 @@ enum class QuirkBehaviorID {
     IsMicrosoftTeamsRedirectURLQuirk,
     IsNeverRichlyEditableForTouchBarQuirk,
     IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk,
-    MaybeBypassBackForwardCache,
     MayNeedToIgnoreContentObservation,
     NeedsAirIndiaExpressLayeringQuirk,
     NeedsBodyScrollbarWidthNoneDisabledQuirk,
@@ -196,6 +182,7 @@ enum class QuirkBehaviorID {
     NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk,
     NeedsDisableDOMPasteAccessQuirk,
     NeedsFacebookRemoveNotSupportedQuirk,
+    NeedsFacebookStoriesCreationFormQuirk,
     NeedsAnchorToBeMouseFocusableQuirk,
     NeedsFormControlToBeMouseFocusableQuirk,
     NeedsFullscreenDisplayNoneQuirk,
@@ -247,6 +234,10 @@ enum class QuirkBehaviorID {
     ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk,
     ShouldBlockFetchWithNewlineAndLessThan,
     ShouldBypassAsyncScriptDeferring,
+    ShouldBypassBackForwardCacheForNoStoreQuirk,
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk,
+    ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk,
+    ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk,
     ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions,
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk,
     ShouldDelayReloadWhenRegisteringServiceWorker,
@@ -380,6 +371,7 @@ enum class QuirkParametersNeeded : uint8_t {
 enum class QuirkConditionsSupported : uint8_t {
     ElementSelector = 1 << 0,
     SecondaryURL = 1 << 1,
+    DocumentSelector = 1 << 2,
 };
 
 namespace QuirkBehaviorConditions {
@@ -389,6 +381,10 @@ struct ElementMatchesSelector {
 
 struct SecondaryURLMatches {
     URLMatch match;
+};
+
+struct DocumentHasElementMatching {
+    ASCIILiteral selector;
 };
 
 constexpr ElementMatchesSelector elementMatchesSelector(ASCIILiteral selector)
@@ -401,7 +397,18 @@ constexpr SecondaryURLMatches secondaryURLMatches(URLMatch match)
     return SecondaryURLMatches { match };
 }
 
+constexpr DocumentHasElementMatching documentHasElementMatching(ASCIILiteral selector)
+{
+    return DocumentHasElementMatching { selector };
+}
+
 } // namespace QuirkBehaviorConditions
+
+struct QuirkConditions {
+    std::optional<ASCIILiteral> elementSelector { std::nullopt };
+    std::optional<URLMatch> secondaryURL { std::nullopt };
+    std::optional<ASCIILiteral> documentSelector { std::nullopt };
+};
 
 struct QuirkBehavior {
     QuirkBehaviorID id;
@@ -409,13 +416,12 @@ struct QuirkBehavior {
     OptionSet<QuirkParametersNeeded> quirkParametersNeeded { };
     OptionSet<QuirkConditionsSupported> quirkConditionsSupported { };
     OptionSet<QuirkConditionsSupported> quirkConditionsNeeded { };
-    std::optional<ASCIILiteral> elementSelectorCondition { std::nullopt };
-    std::optional<URLMatch> secondaryURLCondition { std::nullopt };
+    QuirkConditions conditions { };
     std::optional<QuirkParameters> parameters { std::nullopt };
 
     bool secondaryURLConditionMatches(const URLMatchContext& context) const
     {
-        return !secondaryURLCondition || secondaryURLCondition->matches(context);
+        return !conditions.secondaryURL || conditions.secondaryURL->matches(context);
     }
 
     consteval QuirkBehavior operator()(QuirkParameters params) const
@@ -437,15 +443,22 @@ struct QuirkBehavior {
     consteval void applyCondition(QuirkBehavior& behavior, QuirkBehaviorConditions::ElementMatchesSelector elementMatchesSelector) const
     {
         RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::ElementSelector));
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!behavior.elementSelectorCondition);
-        behavior.elementSelectorCondition = elementMatchesSelector.selector;
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!behavior.conditions.elementSelector);
+        behavior.conditions.elementSelector = elementMatchesSelector.selector;
     }
 
     consteval void applyCondition(QuirkBehavior& behavior, QuirkBehaviorConditions::SecondaryURLMatches secondaryURLMatches) const
     {
         RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::SecondaryURL));
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!behavior.secondaryURLCondition);
-        behavior.secondaryURLCondition = secondaryURLMatches.match;
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!behavior.conditions.secondaryURL);
+        behavior.conditions.secondaryURL = secondaryURLMatches.match;
+    }
+
+    consteval void applyCondition(QuirkBehavior& behavior, QuirkBehaviorConditions::DocumentHasElementMatching documentHasElementMatching) const
+    {
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::DocumentSelector));
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!behavior.conditions.documentSelector);
+        behavior.conditions.documentSelector = documentHasElementMatching.selector;
     }
 };
 
@@ -462,7 +475,6 @@ inline constexpr QuirkBehavior inputMethodMustUseCompositionEvents { WebCore::Qu
 inline constexpr QuirkBehavior isMicrosoftTeamsRedirectURLQuirk { WebCore::QuirkBehaviorID::IsMicrosoftTeamsRedirectURLQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior isNeverRichlyEditableForTouchBarQuirk { WebCore::QuirkBehaviorID::IsNeverRichlyEditableForTouchBarQuirk, BuildCondition::mac };
 inline constexpr QuirkBehavior isTouchBarUpdateSuppressedForHiddenContentEditableQuirk { WebCore::QuirkBehaviorID::IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk, BuildCondition::mac };
-inline constexpr QuirkBehavior maybeBypassBackForwardCache { WebCore::QuirkBehaviorID::MaybeBypassBackForwardCache, BuildCondition::always };
 inline constexpr QuirkBehavior mayNeedToIgnoreContentObservation { .id = WebCore::QuirkBehaviorID::MayNeedToIgnoreContentObservation, .isAvailable = BuildCondition::twoPhaseClicks, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
 inline constexpr QuirkBehavior needsAirIndiaExpressLayeringQuirk { WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsBodyScrollbarWidthNoneDisabledQuirk { WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk, BuildCondition::always };
@@ -479,6 +491,7 @@ inline constexpr QuirkBehavior needsCustomUserAgentData { WebCore::QuirkBehavior
 inline constexpr QuirkBehavior needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk { WebCore::QuirkBehaviorID::NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsDisableDOMPasteAccessQuirk { WebCore::QuirkBehaviorID::NeedsDisableDOMPasteAccessQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsFacebookRemoveNotSupportedQuirk { WebCore::QuirkBehaviorID::NeedsFacebookRemoveNotSupportedQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior needsFacebookStoriesCreationFormQuirk { .id = WebCore::QuirkBehaviorID::NeedsFacebookStoriesCreationFormQuirk, .isAvailable = BuildCondition::iOSFamily, .quirkConditionsSupported = QuirkConditionsSupported::SecondaryURL, .quirkConditionsNeeded = QuirkConditionsSupported::SecondaryURL };
 inline constexpr QuirkBehavior needsAnchorToBeMouseFocusableQuirk { .id = WebCore::QuirkBehaviorID::NeedsAnchorToBeMouseFocusableQuirk, .isAvailable = BuildCondition::cocoa, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
 inline constexpr QuirkBehavior needsFormControlToBeMouseFocusableQuirk { WebCore::QuirkBehaviorID::NeedsFormControlToBeMouseFocusableQuirk, BuildCondition::mac };
 inline constexpr QuirkBehavior needsFullscreenDisplayNoneQuirk { WebCore::QuirkBehaviorID::NeedsFullscreenDisplayNoneQuirk, BuildCondition::iOSFamily };
@@ -530,6 +543,10 @@ inline constexpr QuirkBehavior shouldAvoidResizingWhenInputViewBoundsChangeQuirk
 inline constexpr QuirkBehavior shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk { WebCore::QuirkBehaviorID::ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldBlockFetchWithNewlineAndLessThan { WebCore::QuirkBehaviorID::ShouldBlockFetchWithNewlineAndLessThan, BuildCondition::always };
 inline constexpr QuirkBehavior shouldBypassAsyncScriptDeferring { WebCore::QuirkBehaviorID::ShouldBypassAsyncScriptDeferring, BuildCondition::always };
+inline constexpr QuirkBehavior shouldBypassBackForwardCacheForNoStoreQuirk { WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheForNoStoreQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior shouldBypassBackForwardCacheWhenElementMatchesQuirk { .id = WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenElementMatchesQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::DocumentSelector, .quirkConditionsNeeded = QuirkConditionsSupported::DocumentSelector };
+inline constexpr QuirkBehavior shouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk { .id = WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::DocumentSelector, .quirkConditionsNeeded = QuirkConditionsSupported::DocumentSelector };
+inline constexpr QuirkBehavior shouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk { .id = WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::DocumentSelector, .quirkConditionsNeeded = QuirkConditionsSupported::DocumentSelector };
 inline constexpr QuirkBehavior shouldComparareUsedValuesForBorderWidthForTriggeringTransitions { WebCore::QuirkBehaviorID::ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions, BuildCondition::always };
 inline constexpr QuirkBehavior shouldComputeSimulatedMouseEventMovementDeltaQuirk { WebCore::QuirkBehaviorID::ShouldComputeSimulatedMouseEventMovementDeltaQuirk, BuildCondition::touchEvents || BuildCondition::touchEventRegions };
 inline constexpr QuirkBehavior shouldDelayReloadWhenRegisteringServiceWorker { WebCore::QuirkBehaviorID::ShouldDelayReloadWhenRegisteringServiceWorker, BuildCondition::always };
@@ -546,7 +563,7 @@ inline constexpr QuirkBehavior shouldDisableLazyIframeLoadingQuirk { WebCore::Qu
 inline constexpr QuirkBehavior shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk { WebCore::QuirkBehaviorID::ShouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldDisablePointerEventsQuirk { WebCore::QuirkBehaviorID::ShouldDisablePointerEventsQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior shouldDisablePushStateFilePathRestrictions { WebCore::QuirkBehaviorID::ShouldDisablePushStateFilePathRestrictions, BuildCondition::always };
-inline constexpr QuirkBehavior shouldDisableScrollAnchoringQuirk { WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior shouldDisableScrollAnchoringQuirk { .id = WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::DocumentSelector };
 inline constexpr QuirkBehavior shouldDisableThreadedAnimationsQuirk { WebCore::QuirkBehaviorID::ShouldDisableThreadedAnimationsQuirk, BuildCondition::threadedAnimations };
 inline constexpr QuirkBehavior shouldDisableWritingSuggestionsByDefaultQuirk { WebCore::QuirkBehaviorID::ShouldDisableWritingSuggestionsByDefaultQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldDispatchPlayPauseEventsOnResume { WebCore::QuirkBehaviorID::ShouldDispatchPlayPauseEventsOnResume, BuildCondition::always };

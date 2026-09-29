@@ -185,9 +185,8 @@ static constexpr Quirk fullTable[] = {
     // Login issue on bankofamerica.com (rdar://104938789).
     { .match = URLMatch::domain("bankofamerica.com"_s),
         .behaviors = {
-            maybeBypassBackForwardCache,
-        },
-        .site = QuirkSite::BankOfAmerica },
+            shouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk.when(documentHasElementMatching(onBankOfAmericaLoadingSignInButton)),
+        } },
 
     // bbc.co.uk rdar://126494734
     // bbc.com rdar://157499149
@@ -206,12 +205,11 @@ static constexpr Quirk fullTable[] = {
 
     { .match = URLMatch::domain("bing.com"_s),
         .behaviors = {
-            // bing.com rdar://133223599
-            maybeBypassBackForwardCache,
+            // Spinner issue from image search for bing.com rdar://133223599
+            shouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk.when(documentHasElementMatching(onBingImageSearchDialog)),
             // bing.com rdar://126573838
             needsMediaRewriteRangeRequestQuirk.when(secondaryURLMatches(URLMatch::domain("bing.com"_s))),
-        },
-        .site = QuirkSite::Bing },
+        } },
 
     // bungalow.com rdar://61658940
     { .match = URLMatch::domain("bungalow.com"_s),
@@ -352,8 +350,10 @@ static constexpr Quirk fullTable[] = {
             shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onSliderRole)),
             // facebook.com rdar://174179871
             shouldComputeSimulatedMouseEventMovementDeltaQuirk,
-        },
-        .site = QuirkSite::Facebook },
+            // facebook.com rdar://141103350
+            // Matched against the live top URL because quirks are not re-resolved on same-document navigations.
+            needsFacebookStoriesCreationFormQuirk.when(secondaryURLMatches(URLMatch::anyURL().when(pathStartsWith("/stories/create"_s)))),
+        } },
 
     // facebook.com and messenger.com group calls fall back to an unsupported-browser page for Safari.
     // The site serves "/groupcall/ROOM:", but pathStartsWith() requires a lowercased pattern.
@@ -381,12 +381,14 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("gizmodo.com"_s),
         .behaviors = { needsFullscreenDisplayNoneQuirk } },
 
+    // Google Docs used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
+    // We started caching such content in r250437 but the Google Docs index page unfortunately is not currently compatible
+    // because it puts an overlay over the page when navigating away and fails to remove it when coming back from the
+    // back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/57670064>.
+    // Note that this does not check for docs.google.com host because of hosted G Suite apps.
+    // docs.google.com rdar://59893415
     { .match = URLMatch::anyTopLevelDomain("google"_s),
-        .behaviors = {
-            // docs.google.com rdar://59893415
-            maybeBypassBackForwardCache,
-        },
-        .site = QuirkSite::GoogleProperty },
+        .behaviors = { shouldBypassBackForwardCacheWhenElementMatchesQuirk.when(documentHasElementMatching(onGoogleDocsHomescreenFreezeOverlay)) } },
 
     // google.com https://bugs.webkit.org/show_bug.cgi?id=323851 rdar://181740296
     { .match = URLMatch::anyTopLevelDomain("google"_s).when(pathIs("/search"_s)),
@@ -674,12 +676,11 @@ static constexpr Quirk fullTable[] = {
     // reddit.com: rdar://80550715
     { .match = URLMatch::domain("reddit.com"_s),
         .behaviors = { requiresUserGestureToPauseInPictureInPictureQuirk },
-        .site = QuirkSite::Reddit,
         .isAvailable = videoPresentationMode || iOSFamily },
 
     // reddit.com with Sink It extension: rdar://176377447.
     { .match = URLMatch::domain("reddit.com"_s),
-        .behaviors = { shouldDisableScrollAnchoringQuirk },
+        .behaviors = { shouldDisableScrollAnchoringQuirk.when(documentHasElementMatching(onRedditSinkItBackToTop)) },
         .isAvailable = iOSFamily },
 
     // FIXME: Remove this quirk when <rdar://problem/61733101> is complete.
@@ -812,8 +813,11 @@ static constexpr Quirk fullTable[] = {
 
     { .match = URLMatch::domain("vimeo.com"_s),
         .behaviors = {
-            // vimeo.com rdar://56996057
-            maybeBypassBackForwardCache,
+            // Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
+            // We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
+            // because it changes the opacity of its body to 0 when navigating away and fails to restore the original opacity
+            // when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/56996057>.
+            shouldBypassBackForwardCacheForNoStoreQuirk,
             // vimeo.com rdar://55759025
             needsPreloadAutoQuirk,
             // vimeo.com: rdar://problem/73227900
@@ -822,8 +826,7 @@ static constexpr Quirk fullTable[] = {
             blocksEnteringStandardFullscreenFromPictureInPictureQuirk,
             // vimeo.com: rdar://problem/70788878
             blocksReturnToFullscreenFromPictureInPictureQuirk,
-        },
-        .site = QuirkSite::Vimeo },
+        } },
 
     // rdar://116531089
     { .match = URLMatch::domain("vimeo.com"_s).when(smallScreen()),
@@ -1024,16 +1027,25 @@ consteval bool everyQuirkCarriesWhatItDeclares()
                     return false;
             }
 
-            if (behavior.elementSelectorCondition && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::ElementSelector))
+            if (behavior.conditions.elementSelector && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::ElementSelector))
                 return false;
 
-            if (behavior.secondaryURLCondition && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::SecondaryURL))
+            if (behavior.conditions.secondaryURL && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::SecondaryURL))
                 return false;
 
-            if (behavior.quirkConditionsNeeded.contains(QuirkConditionsSupported::SecondaryURL) && !behavior.secondaryURLCondition)
+            if (behavior.conditions.documentSelector && !behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::DocumentSelector))
                 return false;
 
-            if (behavior.quirkConditionsSupported.containsAll({ QuirkConditionsSupported::ElementSelector, QuirkConditionsSupported::SecondaryURL }))
+            if (behavior.quirkConditionsNeeded.contains(QuirkConditionsSupported::ElementSelector) && !behavior.conditions.elementSelector)
+                return false;
+
+            if (behavior.quirkConditionsNeeded.contains(QuirkConditionsSupported::SecondaryURL) && !behavior.conditions.secondaryURL)
+                return false;
+
+            if (behavior.quirkConditionsNeeded.contains(QuirkConditionsSupported::DocumentSelector) && !behavior.conditions.documentSelector)
+                return false;
+
+            if (!behavior.quirkConditionsSupported.hasExactlyOneBitSet() && !behavior.quirkConditionsSupported.isEmpty())
                 return false;
         }
     }
@@ -1045,14 +1057,7 @@ static_assert(everyQuirkCarriesWhatItDeclares(), "A quirk in fullTable does not 
 
 consteval bool shouldEmit(const Quirk& quirk)
 {
-    if (!quirk.isAvailable)
-        return false;
-
-    const bool quirkWillSetSiteOnQuirkData = quirk.site.has_value();
-    if (quirkWillSetSiteOnQuirkData)
-        return true;
-
-    return !quirk.behaviors.span().empty();
+    return quirk.isAvailable && !quirk.behaviors.span().empty();
 }
 
 consteval size_t emittedQuirkCount()
@@ -1108,9 +1113,6 @@ void Quirk::apply(QuirksData& quirksData) const
 {
     for (const auto& behavior : behaviors.span())
         quirksData.addBehavior(behavior);
-
-    if (site)
-        quirksData.addSite(*site);
 }
 
 static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)

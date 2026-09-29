@@ -39,12 +39,12 @@ https://codepen.io/
 https://www.codepen.io/
     (none)
 https://www.bankofamerica.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk
 https://www.bestbuy.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.bing.com/
-    MaybeBypassBackForwardCache
     NeedsMediaRewriteRangeRequestQuirk
+    ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk
 https://bungalow.com/
     ShouldBypassAsyncScriptDeferring
 https://www.capitalgroup.com/
@@ -93,36 +93,36 @@ https://gizmodo.com/
 https://play.geforcenow.com/
     NeedsGeforcenowWarningDisplayNoneQuirk
 https://www.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/search
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/search/howsearchworks
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.co.jp/search
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/maps/
-    MaybeBypassBackForwardCache
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
 https://maps.google.com/maps/
-    MaybeBypassBackForwardCache
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
 https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://translate.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://mail.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://sites.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldPreventTouchEndDispatchQuirk
 https://meet.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldEnableCameraBackgroundPlayback
 https://www.google.co.uk/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.hbomax.com/
     ShouldEnableFontLoadingAPIQuirk
 https://play.hbomax.com/
@@ -292,7 +292,7 @@ https://tympanus.net/
 https://www.victoriassecret.com/
     ShouldDisableFetchMetadata
 https://vimeo.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheForNoStoreQuirk
 https://www.walmart.com/
     (none)
 https://en.wikipedia.org/

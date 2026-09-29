@@ -40,12 +40,12 @@ https://codepen.io/
 https://www.codepen.io/
     (none)
 https://www.bankofamerica.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk
 https://www.bestbuy.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.bing.com/
-    MaybeBypassBackForwardCache
     NeedsMediaRewriteRangeRequestQuirk
+    ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk
 https://bungalow.com/
     ShouldBypassAsyncScriptDeferring
 https://www.capitalgroup.com/
@@ -84,6 +84,7 @@ https://www.espn.com/
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.facebook.com/
     NeedsFacebookRemoveNotSupportedQuirk
+    NeedsFacebookStoriesCreationFormQuirk
     RequiresUserGestureToPauseInPictureInPictureQuirk
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
@@ -100,48 +101,48 @@ https://gizmodo.com/
 https://play.geforcenow.com/
     NeedsGeforcenowWarningDisplayNoneQuirk
 https://www.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/search
-    MaybeBypassBackForwardCache
     NeedsAnchorToBeMouseFocusableQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/search/howsearchworks
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.co.jp/search
-    MaybeBypassBackForwardCache
     NeedsAnchorToBeMouseFocusableQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/maps/
     MayNeedToIgnoreContentObservation
-    MaybeBypassBackForwardCache
     NeedsGoogleMapsScrollingQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
 https://maps.google.com/maps/
     MayNeedToIgnoreContentObservation
-    MaybeBypassBackForwardCache
     NeedsGoogleMapsScrollingQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
 https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldOpenAsAboutBlankQuirk
     ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
 https://translate.google.com/
-    MaybeBypassBackForwardCache
     NeedsGoogleTranslateScrollingQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://mail.google.com/
-    MaybeBypassBackForwardCache
     NeedsGMailOverflowScrollQuirk
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://sites.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldPreventTouchEndDispatchQuirk
 https://meet.google.com/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
     ShouldEnableCameraBackgroundPlayback
 https://www.google.co.uk/
-    MaybeBypassBackForwardCache
+    ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.hbomax.com/
     ShouldEnableFontLoadingAPIQuirk
 https://play.hbomax.com/
@@ -322,8 +323,8 @@ https://www.victoriassecret.com/
 https://vimeo.com/
     BlocksEnteringStandardFullscreenFromPictureInPictureQuirk
     BlocksReturnToFullscreenFromPictureInPictureQuirk
-    MaybeBypassBackForwardCache
     NeedsPreloadAutoQuirk
+    ShouldBypassBackForwardCacheForNoStoreQuirk
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.walmart.com/
     MayNeedToIgnoreContentObservation
@@ -362,6 +363,7 @@ https://www.youtube.com/
     NeedsYouTubeCaptionQuirk
     NeedsYouTubeMouseOutQuirk
     NeedsYouTubeOverflowScrollQuirk
+    ShouldDisableThreadedAnimationsQuirk
     ShouldSilenceResizeObservers
 https://www.youtube-nocookie.com/
     (none)

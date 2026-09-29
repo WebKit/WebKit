@@ -40,11 +40,6 @@ public:
         return m_behaviorFlags.get(static_cast<size_t>(id));
     }
 
-    inline bool isSite(QuirkSite site) const
-    {
-        return m_sites.get(static_cast<size_t>(site));
-    }
-
     inline bool hasBehaviors() const
     {
         return !m_behaviorFlags.isEmpty();
@@ -73,11 +68,6 @@ public:
         });
     }
 
-    inline void addSite(QuirkSite site)
-    {
-        m_sites.set(static_cast<size_t>(site));
-    }
-
     inline void setEnabled(const QuirkBehavior& behavior, bool state)
     {
         if (state)
@@ -100,15 +90,13 @@ public:
 
     void merge(const QuirksData& other)
     {
-        auto& [otherBehaviorFlags, otherSites, otherBehaviors] = other;
+        auto& [otherBehaviorFlags, otherBehaviors] = other;
         m_behaviorFlags.merge(otherBehaviorFlags);
-        m_sites.merge(otherSites);
         m_behaviors.appendVector(otherBehaviors);
     }
 
 private:
     QuirkBitSet m_behaviorFlags;
-    QuirkSiteBitSet m_sites;
     Vector<QuirkBehavior> m_behaviors;
 };
 

@@ -51,7 +51,6 @@
 #include "HTMLArticleElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
-#include "HTMLDivElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
@@ -192,14 +191,57 @@ bool Quirks::behaviorAppliesToNode(QuirkBehaviorID id, const Node* node) const
         if (behavior.id != id)
             continue;
 
-        if (!behavior.elementSelectorCondition)
+        if (!behavior.conditions.elementSelector)
             return true;
 
-        if (elementMatchesSelectorCondition(*behavior.elementSelectorCondition, node))
+        if (elementMatchesSelectorCondition(*behavior.conditions.elementSelector, node))
             return true;
     }
 
     return false;
+}
+
+RefPtr<Element> Quirks::firstElementMatchingSelectorCondition(ASCIILiteral selector, Document& document)
+{
+    auto* query = SelectorQueryCache::singleton().add(selector, document);
+    if (!query) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    return query->queryFirst(document);
+}
+
+RefPtr<Element> Quirks::elementMatchingDocumentSelectorCondition(QuirkBehaviorID id) const
+{
+    if (!m_quirksData.isBehaviorEnabled(id))
+        return nullptr;
+
+    RefPtr document = m_document.get();
+    if (!document)
+        return nullptr;
+
+    for (const auto& behavior : m_quirksData.behaviors()) {
+        if (behavior.id != id || !behavior.conditions.documentSelector)
+            continue;
+
+        if (RefPtr element = firstElementMatchingSelectorCondition(*behavior.conditions.documentSelector, *document))
+            return element;
+    }
+
+    return nullptr;
+}
+
+bool Quirks::behaviorAppliesToDocument(QuirkBehaviorID id) const
+{
+    if (!m_quirksData.isBehaviorEnabled(id))
+        return false;
+
+    bool appliesUnconditionally = std::ranges::any_of(m_quirksData.behaviors(), [&](const auto& behavior) {
+        return behavior.id == id && !behavior.conditions.documentSelector;
+    });
+
+    return appliesUnconditionally || elementMatchingDocumentSelectorCondition(id);
 }
 
 Quirks::Quirks(Document& document)
@@ -859,53 +901,27 @@ bool Quirks::needsSuppressedPauseEventOnFullscreenExitQuirk() const
 // vimeo.com rdar://56996057
 // docs.google.com rdar://59893415
 // bing.com rdar://133223599
+// bankofamerica.com rdar://104938789
 bool Quirks::shouldBypassBackForwardCache() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::MaybeBypassBackForwardCache))
-        return false;
-
     RefPtr document = m_document.get();
 
-    // Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
-    // We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
-    // because it changes the opacity of its body to 0 when navigating away and fails to restore the original opacity
-    // when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/56996057>.
-    if (m_quirksData.isSite(QuirkSite::Vimeo) && topDocumentURL().protocolIs("https"_s)) {
-        if (RefPtr documentLoader = document->frame() ? document->frame()->loader().documentLoader() : nullptr)
-            return documentLoader->response().cacheControlContainsNoStore();
+    if (m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldBypassBackForwardCacheForNoStoreQuirk) && topDocumentURL().protocolIs("https"_s)) {
+        if (RefPtr documentLoader = document->frame() ? document->frame()->loader().documentLoader() : nullptr; documentLoader && documentLoader->response().cacheControlContainsNoStore())
+            return true;
     }
 
-    // Spinner issue from image search for bing.com.
-    if (m_quirksData.isSite(QuirkSite::Bing)) {
-        static MainThreadNeverDestroyed<const AtomString> imageSearchDialogID("sb_sbidialog"_s);
-        if (RefPtr element = document->getElementById(imageSearchDialogID.get()))
-            return element->renderer();
-    }
+    if (RefPtr element = elementMatchingDocumentSelectorCondition(QuirkBehaviorID::ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk); element && element->renderer())
+        return true;
 
-    // Login issue on bankofamerica.com (rdar://104938789).
-    if (m_quirksData.isSite(QuirkSite::BankOfAmerica)) {
-        if (RefPtr window = document->window()) {
-            if (window->hasEventListeners(eventNames().unloadEvent)) {
-                static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
-                static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
-                RefPtr signinButton = document->getElementById(signInId.get());
-                return signinButton && signinButton->hasClassName(loadingClass.get());
-            }
-        }
-    }
+    if (behaviorAppliesToDocument(QuirkBehaviorID::ShouldBypassBackForwardCacheWhenElementMatchesQuirk))
+        return true;
 
-    if (m_quirksData.isSite(QuirkSite::GoogleProperty)) {
-        // Google Docs used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
-        // We started caching such content in r250437 but the Google Docs index page unfortunately is not currently compatible
-        // because it puts an overlay (with class "docs-homescreen-freeze-el-full") over the page when navigating away and fails
-        // to remove it when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/57670064>.
-        // Note that this does not check for docs.google.com host because of hosted G Suite apps.
-        static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full"_s);
-        RefPtr firstChildInBody = document->body() ? document->body()->firstChild() : nullptr;
-        if (RefPtr div = dynamicDowncast<HTMLDivElement>(firstChildInBody))
-            return div->hasClassName(googleDocsOverlayDivClass);
+    if (m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk)) {
+        if (RefPtr window = document->window(); window && window->hasEventListeners(eventNames().unloadEvent))
+            return behaviorAppliesToDocument(QuirkBehaviorID::ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk);
     }
 
     return false;
@@ -1436,22 +1452,7 @@ bool Quirks::shouldDisableScrollAnchoringQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk))
-        return false;
-
-#if PLATFORM(IOS_FAMILY)
-    // reddit.com only disables scroll anchoring while the Sink It extension's element is present.
-    if (m_quirksData.isSite(QuirkSite::Reddit)) {
-        RefPtr document = m_document.get();
-        if (!document)
-            return false;
-
-        static MainThreadNeverDestroyed<const AtomString> sinkItBackToTopID("sink-it-back-to-top"_s);
-        return !!document->getElementById(sinkItBackToTopID.get());
-    }
-#endif
-
-    return true;
+    return behaviorAppliesToDocument(QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk);
 }
 
 // Breaks express checkout on victoriassecret.com (rdar://104818312).
@@ -1978,10 +1979,7 @@ bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const
 #if PLATFORM(IOS_FAMILY)
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.isSite(QuirkSite::Facebook))
-        return false;
-
-    if (!topDocumentURL().path().startsWith("/stories/create"_s)) {
+    if (!m_quirksData.behaviorAppliesToURL(QuirkBehaviorID::NeedsFacebookStoriesCreationFormQuirk, topDocumentURL())) {
         m_facebookStoriesCreationFormContainer = { };
         return false;
     }

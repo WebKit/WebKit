@@ -85,6 +85,7 @@ public:
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
 
     WEBCORE_EXPORT static bool elementMatchesSelectorCondition(ASCIILiteral selector, const Node*);
+    WEBCORE_EXPORT static RefPtr<Element> firstElementMatchingSelectorCondition(ASCIILiteral selector, Document&);
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
@@ -361,6 +362,8 @@ private:
     URL topDocumentURL() const;
 
     bool behaviorAppliesToNode(QuirkBehaviorID, const Node*) const;
+    bool behaviorAppliesToDocument(QuirkBehaviorID) const;
+    RefPtr<Element> elementMatchingDocumentSelectorCondition(QuirkBehaviorID) const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;
