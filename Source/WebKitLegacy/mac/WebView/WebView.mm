@@ -6409,7 +6409,6 @@ static bool needsWebViewInitThreadWorkaround()
 
         size_t fileCount = files.count;
         Vector<String> *fileNames = new Vector<String>;
-        RetainPtr<id<NSDraggingInfo>> protectedDraggingInfo = draggingInfo;
         NSURL *dropDestination = [NSURL fileURLWithPath:dropDestinationPath.get() isDirectory:YES];
         [draggingInfo enumerateDraggingItemsWithOptions:0 forView:self classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) {
             NSFilePromiseReceiver *item = draggingItem.item;
@@ -6420,7 +6419,7 @@ static bool needsWebViewInitThreadWorkaround()
                 if (errorOrNil)
                     return;
 
-                RunLoop::mainSingleton().dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData, protectedDraggingInfo] {
+                RunLoop::mainSingleton().dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         dragData->setFileNames(*fileNames);

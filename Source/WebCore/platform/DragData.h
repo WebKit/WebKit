@@ -33,18 +33,19 @@
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 
-#ifdef __OBJC__ 
+#ifdef __OBJC__
 #import <Foundation/Foundation.h>
 #import <AppKit/NSDragging.h>
-typedef id <NSDraggingInfo> DragDataRef;
-#else
-typedef void* DragDataRef;
 #endif
+
+OBJC_PROTOCOL(NSDraggingInfo);
+typedef NSDraggingInfo* DragDataRef;
 
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
@@ -102,7 +103,11 @@ public:
     const IntPoint& globalPosition() const LIFETIME_BOUND { return m_globalPosition; }
     void setClientPosition(const IntPoint& clientPosition) { m_clientPosition = clientPosition; }
     OptionSet<DragApplicationFlags> flags() const { return m_applicationFlags; }
+#if PLATFORM(MAC)
+    DragDataRef platformData() const { return m_platformDragData.get(); }
+#else
     DragDataRef platformData() const { return m_platformDragData; }
+#endif
     OptionSet<DragOperation> draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
     bool containsURL(FilenameConversionPolicy = ConvertFilenames) const;
     bool containsPlainText() const;
@@ -136,7 +141,11 @@ public:
 private:
     IntPoint m_clientPosition;
     IntPoint m_globalPosition;
+#if PLATFORM(MAC)
+    RetainPtr<NSDraggingInfo> m_platformDragData;
+#else
     DragDataRef m_platformDragData { NULL };
+#endif
     OptionSet<DragOperation> m_draggingSourceOperationMask;
     OptionSet<DragApplicationFlags> m_applicationFlags;
     Vector<String> m_fileNames;
