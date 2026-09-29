@@ -2048,6 +2048,24 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
     GLuint glLevel               = index.getLevelIndex();
     ImageDefinitionMtl &imageDef = mTexImageDefs[cubeFaceOrZero][glLevel];
 
+    // Discarding the image below leaves the render targets that point at it holding an expired
+    // weak reference. A framebuffer can also keep the discarded image alive through its cached
+    // render pass, which hides the expiry. Clear those render targets so that the next use
+    // recreates them from the new image.
+    for (auto &samplesMapRenderTargets : mRenderTargets)
+    {
+        const gl::ImageIndex &rttIndex = samplesMapRenderTargets.first;
+        if (rttIndex.getLevelIndex() != static_cast<GLint>(glLevel) ||
+            GetImageCubeFaceIndexOrZeroFrom(rttIndex) != cubeFaceOrZero)
+        {
+            continue;
+        }
+        for (RenderTargetMtl &perSampleCountRenderTarget : samplesMapRenderTargets.second)
+        {
+            perSampleCountRenderTarget.reset();
+        }
+    }
+
     if (mNativeTextureStorage && mNativeTextureStorage->isGLLevelSupported(glLevel))
     {
         // mNativeTextureStorage stores the complete mipmap chain when present.
