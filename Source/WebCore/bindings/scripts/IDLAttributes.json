@@ -489,6 +489,10 @@
                 "url": "https://webidl.spec.whatwg.org/#PutForwards"
             }
         },
+        "QuirksCanChangeAtRuntime": {
+            "contextsAllowed": ["interface", "attribute", "operation", "constant"],
+            "note": "The quirks gating this member are not known when the interface prototype is first created. Emits JS<Interface>::reevaluateQuirkDependentPrototypeProperties(), which ScriptController::reevaluateQuirkDependentProperties() calls whenever the quirks change. Re-evaluation removes the member when it becomes disabled and reinstates it when it becomes enabled again, but never overwrites a value the page installed itself."
+        },
         "RaisesException": {
             "contextsAllowed": ["operation"],
             "notes": "Should only be used on indexed getters that have to throw an exception in some cases"

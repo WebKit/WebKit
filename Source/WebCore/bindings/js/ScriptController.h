@@ -146,6 +146,10 @@ public:
 
     void updateDocument();
 
+    // Re-runs the runtime-enable conditions for interface members whose controlling quirk is resolved
+    // after the prototype may already have been created, and removes any that are no longer enabled.
+    void reevaluateQuirkDependentProperties();
+
     void namedItemAdded(HTMLDocument*, const AtomString&) { }
     void namedItemRemoved(HTMLDocument*, const AtomString&) { }
 
