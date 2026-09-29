@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKContentView.h"
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandle.h"
 #import <wtf/Condition.h>
@@ -53,7 +54,7 @@
 
 - (BOOL)requiresMainThread
 {
-    return self._webView._printProvider._wk_printFormatterRequiresMainThread;
+    return NO;
 }
 
 - (_WKFrameHandle *)frameToPrint
@@ -73,12 +74,16 @@
     return static_cast<WKWebView *>(view);
 }
 
+// The content view is never replaced after init, so this is safe off the main thread.
+- (WKContentView *)_contentView
+{
+    WKWebView *webView = self._webView;
+    return webView->_contentView.get();
+}
+
 - (BOOL)_shouldDrawUsingBitmap
 {
     if (self.snapshotFirstPage)
-        return NO;
-
-    if (![self._webView._printProvider respondsToSelector:@selector(_wk_requestImageForPrintFormatter:)])
         return NO;
 
     if (self.printPageRenderer.requestedRenderingQuality == UIPrintRenderingQualityBest)
@@ -89,20 +94,12 @@
 
 - (CGPDFDocumentRef)_printedDocument
 {
-    if (self.requiresMainThread)
-        return _printedDocument.get();
-
     Locker locker { _printLock };
     return _printedDocument.get();
 }
 
 - (void)_setPrintedDocument:(CGPDFDocumentRef)printedDocument
 {
-    if (self.requiresMainThread) {
-        _printedDocument = printedDocument;
-        return;
-    }
-
     Locker locker { _printLock };
     _printedDocument = printedDocument;
     _printCompletionCondition.notifyOne();
@@ -110,20 +107,12 @@
 
 - (CGImageRef)_printPreviewImage
 {
-    if (self.requiresMainThread)
-        return _printPreviewImage.get();
-
     Locker locker { _printLock };
     return _printPreviewImage.get();
 }
 
 - (void)_setPrintPreviewImage:(CGImageRef)printPreviewImage
 {
-    if (self.requiresMainThread) {
-        _printPreviewImage = printPreviewImage;
-        return;
-    }
-
     Locker locker { _printLock };
     _printPreviewImage = printPreviewImage;
     _printCompletionCondition.notifyOne();
@@ -152,8 +141,8 @@
 - (NSInteger)_recalcPageCount
 {
     [self _invalidatePrintRenderingState];
-    NSUInteger pageCount = [self._webView._printProvider _wk_pageCountForPrintFormatter:self];
-    RELEASE_LOG(Printing, "Recalculated page count. Page count = %zu", pageCount);
+    NSUInteger pageCount = [self._contentView _wk_pageCountForPrintFormatter:self];
+    RELEASE_LOG(Printing, "Recalculated page count. Page count = %zu", static_cast<size_t>(pageCount));
     return std::min<NSUInteger>(pageCount, NSIntegerMax);
 }
 
@@ -182,7 +171,7 @@
 {
     RetainPtr printPreviewImage = [self _printPreviewImage];
     if (!printPreviewImage) {
-        [self._webView._printProvider _wk_requestImageForPrintFormatter:self];
+        [self._contentView _wk_requestImageForPrintFormatter:self];
         printPreviewImage = [self _printPreviewImage];
         if (!printPreviewImage)
             return;
@@ -194,17 +183,15 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
 
-    CGImageRef documentImage = _printPreviewImage.get();
-
-    CGFloat pageImageWidth = CGImageGetWidth(documentImage);
-    CGFloat pageImageHeight = CGImageGetHeight(documentImage) / self.pageCount;
+    CGFloat pageImageWidth = CGImageGetWidth(printPreviewImage.get());
+    CGFloat pageImageHeight = CGImageGetHeight(printPreviewImage.get()) / self.pageCount;
 
     if (!pageImageWidth || !pageImageHeight) {
         CGContextRestoreGState(context);
         return;
     }
 
-    RetainPtr pageImage = adoptCF(CGImageCreateWithImageInRect(documentImage, CGRectMake(0, pageIndex * pageImageHeight, pageImageWidth, pageImageHeight)));
+    RetainPtr pageImage = adoptCF(CGImageCreateWithImageInRect(printPreviewImage.get(), CGRectMake(0, pageIndex * pageImageHeight, pageImageWidth, pageImageHeight)));
 
     CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMaxY(rect));
     CGContextScaleCTM(context, 1, -1);
@@ -218,7 +205,7 @@
 {
     RetainPtr<CGPDFDocumentRef> printedDocument = [self _printedDocument];
     if (!printedDocument) {
-        [self._webView._printProvider _wk_requestDocumentForPrintFormatter:self];
+        [self._contentView _wk_requestDocumentForPrintFormatter:self];
         printedDocument = [self _printedDocument];
         if (!printedDocument)
             return;

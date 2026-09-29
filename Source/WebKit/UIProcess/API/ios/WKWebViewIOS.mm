@@ -5036,14 +5036,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return [_WKWebViewPrintFormatter class];
 }
 
-- (id <_WKWebViewPrintProvider>)_printProvider
-{
-    id printProvider = _customContentView ? _customContentView.get() : _contentView.get();
-    if ([printProvider conformsToProtocol:@protocol(_WKWebViewPrintProvider)])
-        return printProvider;
-    return nil;
-}
-
 @end
 
 #undef WKWEBVIEW_RELEASE_LOG
