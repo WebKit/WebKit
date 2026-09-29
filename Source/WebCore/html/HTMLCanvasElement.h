@@ -85,6 +85,7 @@ public:
 
     void requestPaint();
     void dispatchPaintEvent();
+    void drawableElementDidChange(Element&);
 
     ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&);
     std::optional<CanvasElementSnapshot> drawableElementSnapshot(Element&) const;
@@ -202,6 +203,7 @@ private:
     bool m_isSnapshotting { false };
 
     std::unique_ptr<CanvasRenderingContext> m_context;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_changedDrawableElements;
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
     mutable RefPtr<Image> m_copiedImage; // For CSSCanvasValue.
 };

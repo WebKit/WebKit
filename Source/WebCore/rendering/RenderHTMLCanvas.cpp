@@ -37,9 +37,11 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderObjectInlines.h"
@@ -164,6 +166,27 @@ std::optional<CanvasElementSnapshot> RenderHTMLCanvas::drawableRendererSnapshot(
     if (auto* snapshotRecorder = m_drawableRendererSnapshotRecorderMap.get(drawableRenderer))
         return { { snapshotRecorder->copyDisplayList(), snapshotRecorder->initialClip().size() } };
     return std::nullopt;
+}
+
+void RenderHTMLCanvas::requestPaintEventIfNeeded(const RenderObject& renderer)
+{
+    CheckedPtr canvasRenderer = ancestorsOfType<RenderHTMLCanvas>(renderer).first();
+    if (!canvasRenderer || !canvasRenderer->canHaveChildren())
+        return;
+
+    CheckedPtr innerRenderer = canvasRenderer->innerRenderer();
+    if (!innerRenderer)
+        return;
+
+    for (CheckedRef drawableRenderer : lineageOfType<RenderElement>(renderer)) {
+        // FIXME: Only consider the drawable descendants of the canvas, i.e. elements with the drawable attribute.
+        if (drawableRenderer->parent() != innerRenderer.get())
+            continue;
+
+        if (RefPtr drawableElement = drawableRenderer->element())
+            protect(canvasRenderer->canvasElement())->drawableElementDidChange(*drawableElement);
+        return;
+    }
 }
 
 bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

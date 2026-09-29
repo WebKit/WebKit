@@ -63,6 +63,7 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -976,10 +977,21 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     ASSERT_NOT_REACHED();
 }
 
+static bool isInsideDrawableCanvas(const RenderObject& renderer)
+{
+    CheckedPtr element = dynamicDowncast<RenderElement>(renderer);
+    if (!element)
+        element = renderer.parent();
+    return element && element->isInsideDrawableCanvas();
+}
+
 void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, ClipRepaintToLayer clipRepaintToLayer, RepaintRectIsPartial rectIsPartial) const
 {
     if (r.isEmpty())
         return;
+
+    if (isInsideDrawableCanvas(*this))
+        RenderHTMLCanvas::requestPaintEventIfNeeded(*this);
 
     if (!repaintContainer)
         repaintContainer = &view();
@@ -1040,8 +1052,11 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     if (!repaintContainer.renderer)
         repaintContainer = { fullRepaintIsScheduled(*this), &view() };
 
-    if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No)
+    if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No) {
+        if (isInsideDrawableCanvas(*this))
+            RenderHTMLCanvas::requestPaintEventIfNeeded(*this);
         return;
+    }
 
     LayoutRect repaintRect;
 
