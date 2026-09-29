@@ -69,7 +69,7 @@ bool WebContextMenu::show()
     RefPtr<API::Object> userData;
     menuItemsWithUserData(menuItems, userData);
 
-    auto menuLocation = view->contentsToRootView(controller.hitTestResult().roundedPointInInnerNodeFrame());
+    auto menuLocation = view->contentsToMainFrameView(controller.hitTestResult().roundedPointInInnerNodeFrame());
 
     ContextMenuContextData contextMenuContextData(menuLocation, menuItems, controller.context());
 

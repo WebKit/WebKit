@@ -132,6 +132,7 @@ public:
     WEBCORE_EXPORT FloatRect convertToRootViewAcrossIsolatedFrames(FloatRect) const;
     WEBCORE_EXPORT FloatQuad convertToRootViewAcrossIsolatedFrames(const FloatQuad&) const;
     WEBCORE_EXPORT IntRect convertToRootViewAcrossIsolatedFrames(IntRect) const;
+    WEBCORE_EXPORT IntPoint convertToRootViewAcrossIsolatedFrames(IntPoint) const;
 
     WEBCORE_EXPORT FloatRect rootViewToContentsAcrossIsolatedFrames(FloatRect) const;
 

@@ -12186,6 +12186,89 @@ TEST(SiteIsolation, SelectPopupMenuLocationInScrolledCrossSiteIframeWithScrolled
     EXPECT_EQ(rect, NSMakeRect(150, 150, 100, 30));
 }
 
+const ASCIILiteral contextMenuLocationTestMainPage =
+    "<body style='margin: 0'>"_s
+    "  <iframe style='margin: 100px; width: 300px; height: 300px;' src='https://webkit.org/iframe'></iframe>"_s
+    "</body>"_s;
+
+const ASCIILiteral contextMenuLocationTestScrolledMainPage =
+    "<body style='margin: 0'>"_s
+    "  <div style='height: 1000px'></div>"_s
+    "  <iframe style='margin: 100px; width: 300px; height: 300px;' src='https://webkit.org/iframe'></iframe>"_s
+    "  <div style='height: 1000px'></div>"_s
+    "</body>"_s;
+
+const ASCIILiteral contextMenuLocationTestIframePage =
+    "<p style='font-size: 100px'>Iframe</p>"_s
+    "<script>onload = alert('loaded');</script>"_s;
+
+const ASCIILiteral contextMenuLocationTestScrolledIframePage =
+    "<div style='height: 1000px'></div>"_s
+    "<p style='font-size: 100px'>Iframe</p>"_s
+    "<div style='height: 1000px'></div>"_s
+    "<script>onload = alert('loaded');</script>"_s;
+
+static void testContextMenuLocationInCrossSiteIframe(ASCIILiteral mainframeHTML, ASCIILiteral iframeHTML, int mainFrameScrollY = 0, int iframeScrollY = 0)
+{
+    // Invariant: subframe is at (100, 100) of the main frame, with size (300, 300)
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/iframe"_s, { iframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webViewBinding, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    RetainPtr webView = webViewBinding;
+
+    __block bool done = false;
+    __block NSPoint contextMenuActualLocation = NSZeroPoint;
+    InstanceMethodSwizzler popUpSwizzler {
+        NSMenu.class,
+        NSSelectorFromString(@"_popUpContextMenu:withEvent:forView:"),
+        imp_implementationWithBlock(^(id, NSMenu *, NSEvent *event, NSView *) {
+            contextMenuActualLocation = [event locationInWindow];
+            done = true;
+        })
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    EXPECT_WK_STREQ("loaded", [webView _test_waitForAlert]);
+
+    if (mainFrameScrollY)
+        scrollFrameAndWait(webView, nil, mainFrameScrollY);
+    if (iframeScrollY)
+        scrollFrameAndWait(webView, [webView firstChildFrame], iframeScrollY);
+    [webView waitForNextPresentationUpdate];
+
+    // Right click on point (200, 200) in the main frame's view (Y flipped for window coordinate)
+    // This should be the "Iframe" text inside the iframe.
+    auto contextMenuExpectedLocation = NSMakePoint(200, 600 - 200);
+    [webView rightClickAtPoint:contextMenuExpectedLocation];
+    Util::run(&done);
+
+    // Context menu should be shown where the right click is.
+    EXPECT_EQ(contextMenuActualLocation, contextMenuExpectedLocation);
+}
+
+TEST(SiteIsolation, ContextMenuLocationInCrossSiteIframe)
+{
+    testContextMenuLocationInCrossSiteIframe(contextMenuLocationTestMainPage, contextMenuLocationTestIframePage);
+}
+
+TEST(SiteIsolation, ContextMenuLocationInScrolledCrossSiteIframe)
+{
+    testContextMenuLocationInCrossSiteIframe(contextMenuLocationTestMainPage, contextMenuLocationTestScrolledIframePage, 0, 1000);
+}
+
+TEST(SiteIsolation, ContextMenuLocationInCrossSiteIframeWithScrolledMainPage)
+{
+    testContextMenuLocationInCrossSiteIframe(contextMenuLocationTestScrolledMainPage, contextMenuLocationTestIframePage, 1000, 0);
+}
+
+TEST(SiteIsolation, ContextMenuLocationInScrolledCrossSiteIframeWithScrolledMainPage)
+{
+    testContextMenuLocationInCrossSiteIframe(contextMenuLocationTestScrolledMainPage, contextMenuLocationTestScrolledIframePage, 1000, 1000);
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -13639,11 +13722,37 @@ TEST(SiteIsolation, IframeImageTranslationIfIframeIsAddedAfterTranslationCall)
 
 #if ENABLE(SERVICE_CONTROLS)
 
-TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
+const ASCIILiteral imageServiceControlTestMainPage =
+    "<body style='margin: 0'>"_s
+    "  <iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe>"_s
+    "</body>"_s;
+
+const ASCIILiteral imageServiceControlTestScrolledMainPage =
+    "<body style='margin: 0'>"_s
+    "  <div style='height: 1000px'></div>"_s
+    "  <iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe>"_s
+    "  <div style='height: 1000px'></div>"_s
+    "</body>"_s;
+
+const ASCIILiteral imageServiceControlTestIframePage =
+    "<!DOCTYPE html>"_s
+    "<body style='margin: 0'>"_s
+    "  <img style='margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'>"_s
+    "</body>"_s;
+
+const ASCIILiteral imageServiceControlTestScrolledIframePage =
+    "<!DOCTYPE html>"_s
+    "<body style='margin: 0'>"_s
+    "  <div style='height: 1000px'></div>"_s
+    "  <img style='margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'>"_s
+    "  <div style='height: 1000px'></div>"_s
+    "</body>"_s;
+
+static void testImageServiceControlledImageBounds(const ASCIILiteral& mainFrameHTML, const ASCIILiteral& iframeHTML, int mainFrameScrollY = 0, int iframeScrollY = 0)
 {
     HTTPServer server({
-        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
-        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><img style='margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'></body>"_s } },
+        { "/mainframe"_s, mainFrameHTML },
+        { "/iframe"_s, iframeHTML },
         { "/image.png"_s, { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } }
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -13663,6 +13772,11 @@ TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
+
+    if (mainFrameScrollY)
+        scrollFrameAndWait(webView, nil, mainFrameScrollY);
+    if (iframeScrollY)
+        scrollFrameAndWait(webView, [webView firstChildFrame], iframeScrollY);
     [webView waitForNextPresentationUpdate];
 
     // Capture the screen-space rect that controlledImageBounds is converted to in setupServicesMenu().
@@ -13718,6 +13832,26 @@ TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
     EXPECT_NEAR(capturedSourceFrame.origin.y, expectedOnScreen.origin.y, 1);
     EXPECT_NEAR(capturedSourceFrame.size.width, expectedOnScreen.size.width, 1);
     EXPECT_NEAR(capturedSourceFrame.size.height, expectedOnScreen.size.height, 1);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframe)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestMainPage, imageServiceControlTestIframePage);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInScrolledCrossOriginIframe)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestMainPage, imageServiceControlTestScrolledIframePage, 0, 1000);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInCrossOriginIframeWithScrolledMainPage)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestScrolledMainPage, imageServiceControlTestIframePage, 1000, 0);
+}
+
+TEST(SiteIsolation, ImageServiceControlledImageBoundsInScrolledCrossOriginIframeWithScrolledMainPage)
+{
+    testImageServiceControlledImageBounds(imageServiceControlTestScrolledMainPage, imageServiceControlTestScrolledIframePage, 1000, 1000);
 }
 
 #endif // ENABLE(SERVICE_CONTROLS)

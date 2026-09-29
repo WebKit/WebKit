@@ -661,7 +661,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
     if (!frameView)
         return;
 
-    IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
+    IntPoint windowPoint = frameView->contentsToMainFrameView(clickPoint);
 
     RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
