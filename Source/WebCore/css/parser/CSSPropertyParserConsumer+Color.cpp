@@ -77,11 +77,6 @@ template<typename T> static CSS::Color makeCSSColor(T&& unresolvedColorKind)
     return CSS::Color { std::forward<T>(unresolvedColorKind) };
 }
 
-template<typename T> static std::optional<CSS::Color> makeCSSColor(std::optional<T>&& unresolvedColorKind)
-{
-    return unresolvedColorKind ? std::make_optional(makeCSSColor(std::forward<T>(*unresolvedColorKind))) : std::nullopt;
-}
-
 // State passed to internal color consumer functions. Used to pass information
 // down the stack and levels of color parsing nesting.
 struct ColorParserState {

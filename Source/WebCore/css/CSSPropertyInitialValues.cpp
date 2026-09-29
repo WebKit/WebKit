@@ -69,21 +69,6 @@ SUPPRESS_NODELETE static bool NODELETE isNumber(const CSSPrimitiveValue& value, 
     );
 }
 
-// FIXME: SUPPRESS_NODELETE shouldn't be necessary.
-template<auto unit>
-SUPPRESS_NODELETE static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSS::ValueLiteral<unit> literal)
-{
-    return WTF::switchOn(value,
-        [&](const CSSPrimitiveValue::Calc&) {
-            return false;
-        },
-        [&](const CSSPrimitiveValue::Raw& raw) {
-            return raw.unit == toCSSUnitType(literal.unit)
-                && raw.value == literal.value;
-        }
-    );
-}
-
 static bool NODELETE isNumber(const CSSPrimitiveValue* value, auto number)
 {
     return value && isNumber(*value, number);

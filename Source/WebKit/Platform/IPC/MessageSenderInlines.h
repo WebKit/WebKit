@@ -69,7 +69,7 @@ template<typename MessageType> inline bool MessageSender::sendWithoutUsingIPCCon
 }
 
 template<typename T, typename C>
-static void cancelReplyWithoutUsingConnection(C&& completionHandler)
+void cancelReplyWithoutUsingConnection(C&& completionHandler)
 {
     [&]<size_t... Indices>(std::index_sequence<Indices...>)
     {
@@ -78,7 +78,7 @@ static void cancelReplyWithoutUsingConnection(C&& completionHandler)
 }
 
 template<typename T, typename Decoder, typename C>
-static void callReplyWithoutUsingConnection(Decoder& decoder, C&& completionHandler)
+void callReplyWithoutUsingConnection(Decoder& decoder, C&& completionHandler)
 {
     if constexpr (!std::tuple_size_v<typename T::ReplyArguments>)
         completionHandler();

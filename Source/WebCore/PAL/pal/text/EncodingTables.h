@@ -48,8 +48,8 @@ template<typename CollectionType> void sortByFirst(CollectionType&);
 template<typename CollectionType> void stableSortByFirst(CollectionType&);
 template<typename CollectionType> bool isSortedByFirst(const CollectionType&);
 template<typename CollectionType> bool sortedFirstsAreUnique(const CollectionType&);
-template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& sortedPairsCollection, const KeyType&) -> std::optional<decltype(std::begin(sortedPairsCollection)->second)>;
-template<typename CollectionType, typename KeyType> static auto findInSortedPairs(const CollectionType& sortedPairsCollection, const KeyType&) -> std::span<std::remove_reference_t<decltype(*std::begin(sortedPairsCollection))>>;
+template<typename CollectionType, typename KeyType> auto findFirstInSortedPairs(const CollectionType& sortedPairsCollection, const KeyType&) -> std::optional<decltype(std::begin(sortedPairsCollection)->second)>;
+template<typename CollectionType, typename KeyType> auto findInSortedPairs(const CollectionType& sortedPairsCollection, const KeyType&) -> std::span<std::remove_reference_t<decltype(*std::begin(sortedPairsCollection))>>;
 
 #if !ASSERT_ENABLED
 inline void checkEncodingTableInvariants() { }
@@ -112,7 +112,7 @@ template<typename CollectionType> bool sortedFirstsAreUnique(const CollectionTyp
     return std::adjacent_find(std::begin(collection), std::end(collection), EqualFirst { }) == std::end(collection);
 }
 
-template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& collection, const KeyType& key) -> std::optional<decltype(std::begin(collection)->second)>
+template<typename CollectionType, typename KeyType> auto findFirstInSortedPairs(const CollectionType& collection, const KeyType& key) -> std::optional<decltype(std::begin(collection)->second)>
 {
     if constexpr (std::is_integral_v<KeyType>) {
         if (key != decltype(std::begin(collection)->first)(key))
@@ -124,7 +124,7 @@ template<typename CollectionType, typename KeyType> static auto findFirstInSorte
     return iterator->second;
 }
 
-template<typename CollectionType, typename KeyType> static auto findInSortedPairs(const CollectionType& collection, const KeyType& key) -> std::span<std::remove_reference_t<decltype(*std::begin(collection))>> {
+template<typename CollectionType, typename KeyType> auto findInSortedPairs(const CollectionType& collection, const KeyType& key) -> std::span<std::remove_reference_t<decltype(*std::begin(collection))>> {
     if constexpr (std::is_integral_v<KeyType>) {
         if (key != decltype(std::begin(collection)->first)(key))
             return { };

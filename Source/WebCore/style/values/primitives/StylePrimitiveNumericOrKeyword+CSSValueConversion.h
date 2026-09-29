@@ -40,7 +40,7 @@ namespace Style {
 // MARK: Keyword conversion
 
 template<PrimitiveNumericOrKeywordDerived StyleType, typename K>
-static auto processKeywordForCSSValueConversion(const K& keyword, CSSValueID valueID, std::optional<StyleType>& result) -> bool
+auto processKeywordForCSSValueConversion(const K& keyword, CSSValueID valueID, std::optional<StyleType>& result) -> bool
 {
     if (valueID == keyword.value) {
         result = StyleType { keyword };
@@ -70,7 +70,7 @@ static auto processKeywordForCSSValueConversion(const K& keyword, CSSValueID val
 }
 
 template<PrimitiveNumericOrKeywordDerived StyleType>
-static auto convertKeywordIDForCSSValueConversion(CSSValueID valueID) -> std::optional<StyleType>
+auto convertKeywordIDForCSSValueConversion(CSSValueID valueID) -> std::optional<StyleType>
 {
     constexpr auto keywordsTuple = StyleType::Keywords::tuple;
 

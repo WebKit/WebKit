@@ -306,18 +306,6 @@ void UpdateDefaultUniformBlockWithElementSize(GLsizei count,
         }
     }
 }
-template <typename T>
-void ReadFromDefaultUniformBlock(int componentCount,
-                                 uint32_t arrayIndex,
-                                 T *dst,
-                                 size_t elementSize,
-                                 const sh::BlockMemberInfo &layoutInfo,
-                                 const angle::MemoryBuffer *uniformData)
-{
-    ReadFromDefaultUniformBlockWithElementSize(componentCount, arrayIndex, dst, sizeof(T),
-                                               layoutInfo, uniformData);
-}
-
 void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
                                                 uint32_t arrayIndex,
                                                 void *dst,

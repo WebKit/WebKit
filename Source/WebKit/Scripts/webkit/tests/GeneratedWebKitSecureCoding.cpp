@@ -50,7 +50,7 @@ static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingTypeFromWKKeyedCod
     return dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(object);
 }
 
-template<typename T> static RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<String, RetainPtr<T>>>& vector)
+template<typename T> RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<String, RetainPtr<T>>>& vector)
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:vector.size()];
     for (auto& pair : vector)
@@ -58,14 +58,14 @@ template<typename T> static RetainPtr<NSDictionary> dictionaryFromVector(const V
     return dictionary;
 }
 
-template<typename T> static RetainPtr<NSDictionary> dictionaryFromOptionalVector(const std::optional<Vector<std::pair<String, RetainPtr<T>>>>& vector)
+template<typename T> RetainPtr<NSDictionary> dictionaryFromOptionalVector(const std::optional<Vector<std::pair<String, RetainPtr<T>>>>& vector)
 {
     if (!vector)
         return nil;
     return dictionaryFromVector<T>(*vector);
 }
 
-template<typename T> static Vector<std::pair<String, RetainPtr<T>>> vectorFromDictionary(NSDictionary *dictionary)
+template<typename T> Vector<std::pair<String, RetainPtr<T>>> vectorFromDictionary(NSDictionary *dictionary)
 {
     if (![dictionary isKindOfClass:NSDictionary.class])
         return { };
@@ -77,28 +77,28 @@ template<typename T> static Vector<std::pair<String, RetainPtr<T>>> vectorFromDi
     return result;
 }
 
-template<typename T> static std::optional<Vector<std::pair<String, RetainPtr<T>>>> optionalVectorFromDictionary(NSDictionary *dictionary)
+template<typename T> std::optional<Vector<std::pair<String, RetainPtr<T>>>> optionalVectorFromDictionary(NSDictionary *dictionary)
 {
     if (![dictionary isKindOfClass:NSDictionary.class])
         return std::nullopt;
     return vectorFromDictionary<T>(dictionary);
 }
 
-template<typename T> static RetainPtr<NSArray> arrayFromVector(const Vector<RetainPtr<T>>& vector)
+template<typename T> RetainPtr<NSArray> arrayFromVector(const Vector<RetainPtr<T>>& vector)
 {
     return createNSArray(vector, [] (auto& t) {
         return t.get();
     });
 }
 
-template<typename T> static RetainPtr<NSArray> arrayFromOptionalVector(const std::optional<Vector<RetainPtr<T>>>& vector)
+template<typename T> RetainPtr<NSArray> arrayFromOptionalVector(const std::optional<Vector<RetainPtr<T>>>& vector)
 {
     if (!vector)
         return nil;
     return arrayFromVector<T>(*vector);
 }
 
-template<typename T> static Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
+template<typename T> Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
 {
     if (![array isKindOfClass:NSArray.class])
         return { };
@@ -110,7 +110,7 @@ template<typename T> static Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
     return result;
 }
 
-template<typename T> static std::optional<Vector<RetainPtr<T>>> optionalVectorFromArray(NSArray *array)
+template<typename T> std::optional<Vector<RetainPtr<T>>> optionalVectorFromArray(NSArray *array)
 {
     if (![array isKindOfClass:NSArray.class])
         return std::nullopt;

@@ -126,7 +126,9 @@ static void checkFrameworkVersion(xpc_object_t message)
 }
 #endif // PLATFORM(MAC)
 
+#if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
 static bool s_isWebProcess = false;
+#endif
 
 static void setUserDirSuffix(String&& suffix)
 {
@@ -213,7 +215,9 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
             CFStringRef entryPointFunctionName = nullptr;
             if (serviceName.startsWith(webContentServiceName)) {
+#if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
                 s_isWebProcess = true;
+#endif
 #if USE(EXTENSIONKIT)
                 setUserDirSuffix(WTF::move(uiProcessName));
 #else

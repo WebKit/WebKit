@@ -253,10 +253,17 @@ static WorkQueue& photoQueueSingleton()
     return queue.get();
 }
 
+#if PLATFORM(IOS_FAMILY)
 static bool s_useAVCaptureDeviceRotationCoordinatorAPI = false;
+#endif
+
 void AVVideoCaptureSource::setUseAVCaptureDeviceRotationCoordinatorAPI(bool value)
 {
+#if PLATFORM(IOS_FAMILY)
     s_useAVCaptureDeviceRotationCoordinatorAPI = value;
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)

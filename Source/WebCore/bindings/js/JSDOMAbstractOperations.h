@@ -39,7 +39,7 @@ enum class LegacyOverrideBuiltIns : bool { No, Yes };
 // An implementation of the 'named property visibility algorithm'
 // https://webidl.spec.whatwg.org/#dfn-named-property-visibility
 template<LegacyOverrideBuiltIns overrideBuiltins, class JSClass>
-static bool isVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSClass& thisObject, JSC::PropertyName propertyName)
+bool isVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSClass& thisObject, JSC::PropertyName propertyName)
 {
     // FIXME: It seems unfortunate that have to do two lookups for the property name,
     // one for isSupportedPropertyName and one by the user of this algorithm to access

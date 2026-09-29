@@ -73,14 +73,14 @@ typedef UInt16 GlyphID;
 typedef uint32_t Tag;
 #define OT_MAKE_TAG(ch1, ch2, ch3, ch4) ((((uint32_t)(ch4)) << 24) | (((uint32_t)(ch3)) << 16) | (((uint32_t)(ch2)) << 8) | ((uint32_t)(ch1)))
 
-template<typename T> static const T* validateTableSingle(const RefPtr<SharedBuffer>& buffer)
+template<typename T> const T* validateTableSingle(const RefPtr<SharedBuffer>& buffer)
 {
     if (!buffer || buffer->size() < sizeof(T))
         return nullptr;
     return &reinterpretCastSpanStartTo<const T>(buffer->span());
 }
 
-template<typename T> static std::span<const T> validateTable(const RefPtr<SharedBuffer>& buffer, size_t count)
+template<typename T> std::span<const T> validateTable(const RefPtr<SharedBuffer>& buffer, size_t count)
 {
     if (!buffer || (buffer->size() / sizeof(T)) < count)
         return { };

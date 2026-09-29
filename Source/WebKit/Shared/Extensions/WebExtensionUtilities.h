@@ -85,7 +85,7 @@ JSValueRef toWebAPI(JSContextRef context, const std::optional<T>& result, UseNul
 }
 
 template <typename T>
-static JSObjectRef toWebAPI(JSContextRef context, const Vector<T>& data)
+JSObjectRef toWebAPI(JSContextRef context, const Vector<T>& data)
 {
     if (data.isEmpty())
         return JSObjectMakeArray(context, 0, nullptr, nullptr);

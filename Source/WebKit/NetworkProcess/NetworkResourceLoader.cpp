@@ -2586,12 +2586,6 @@ static String escapeIDForJSON(const std::optional<ObjectIdentifierGeneric<Identi
     return value ? String::number(value->toUInt64()) : "None"_str;
 }
 
-template<typename IdentifierType, typename ThreadSafety>
-static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifierGeneric<IdentifierType, ThreadSafety>>>& value)
-{
-    return value ? String::number(value->object().toUInt64()) : "None"_str;
-}
-
 void NetworkResourceLoader::logCookieInformation() const
 {
     ASSERT(shouldLogCookieInformation(protect(m_connection), sessionID()));

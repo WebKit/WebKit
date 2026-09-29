@@ -34,20 +34,6 @@ typedef TIntermNode *AssignFunc(const unsigned int index,
                                 TIntermSymbol *right,
                                 const TIntermTyped *enableFlags);
 
-template <typename Variable>
-const Variable *FindVariable(const std::vector<Variable> &mVars, const ImmutableString &name)
-{
-    for (const Variable &var : mVars)
-    {
-        if (name == var.instanceName)
-        {
-            return &var;
-        }
-    }
-
-    return nullptr;
-}
-
 // Traverse the tree and collect the redeclaration and all constant index references of
 // gl_ClipDistance/gl_CullDistance
 class GLClipCullDistanceReferenceTraverser : public TIntermTraverser

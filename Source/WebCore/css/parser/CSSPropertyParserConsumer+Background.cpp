@@ -60,16 +60,6 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename ElementType> static void NODELETE complete4Sides(std::array<ElementType, 4>& sides)
-{
-    if (!sides[1])
-        sides[1] = sides[0];
-    if (!sides[2])
-        sides[2] = sides[0];
-    if (!sides[3])
-        sides[3] = sides[1];
-}
-
 // MARK: - Border Radius
 
 enum class SupportWebKitBorderRadiusQuirk : bool { No, Yes };

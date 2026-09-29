@@ -47,14 +47,6 @@ FEComponentTransferCoreImageApplier::FEComponentTransferCoreImageApplier(const F
 }
 
 template<ComponentTransferType... Types>
-static bool isNullOr(const ComponentTransferFunction& function)
-{
-    if (function.type == ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN)
-        return true;
-    return ((function.type == Types) || ...);
-}
-
-template<ComponentTransferType... Types>
 static bool NODELETE isType(const ComponentTransferFunction& function)
 {
     return ((function.type == Types) || ...);

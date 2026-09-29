@@ -22,19 +22,19 @@ namespace priv
 {
 
 template <typename T>
-static inline T *GetPixel(uint8_t *data, size_t x, size_t y, size_t z, size_t rowPitch, size_t depthPitch)
+inline T *GetPixel(uint8_t *data, size_t x, size_t y, size_t z, size_t rowPitch, size_t depthPitch)
 {
     return reinterpret_cast<T*>(data + (x * sizeof(T)) + (y * rowPitch) + (z * depthPitch));
 }
 
 template <typename T>
-static inline const T *GetPixel(const uint8_t *data, size_t x, size_t y, size_t z, size_t rowPitch, size_t depthPitch)
+inline const T *GetPixel(const uint8_t *data, size_t x, size_t y, size_t z, size_t rowPitch, size_t depthPitch)
 {
     return reinterpret_cast<const T*>(data + (x * sizeof(T)) + (y * rowPitch) + (z * depthPitch));
 }
 
 template <typename T>
-static void GenerateMip_Y(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_Y(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                           const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                           size_t destWidth, size_t destHeight, size_t destDepth,
                           uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -54,7 +54,7 @@ static void GenerateMip_Y(size_t sourceWidth, size_t sourceHeight, size_t source
 }
 
 template <typename T>
-static void GenerateMip_X(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_X(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                           const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                           size_t destWidth, size_t destHeight, size_t destDepth,
                           uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -74,7 +74,7 @@ static void GenerateMip_X(size_t sourceWidth, size_t sourceHeight, size_t source
 }
 
 template <typename T>
-static void GenerateMip_Z(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_Z(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                           const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                           size_t destWidth, size_t destHeight, size_t destDepth,
                           uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -94,7 +94,7 @@ static void GenerateMip_Z(size_t sourceWidth, size_t sourceHeight, size_t source
 }
 
 template <typename T>
-static void GenerateMip_XY(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_XY(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                            const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                            size_t destWidth, size_t destHeight, size_t destDepth,
                            uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -123,7 +123,7 @@ static void GenerateMip_XY(size_t sourceWidth, size_t sourceHeight, size_t sourc
 }
 
 template <typename T>
-static void GenerateMip_YZ(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_YZ(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                            const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                            size_t destWidth, size_t destHeight, size_t destDepth,
                            uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -152,7 +152,7 @@ static void GenerateMip_YZ(size_t sourceWidth, size_t sourceHeight, size_t sourc
 }
 
 template <typename T>
-static void GenerateMip_XZ(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_XZ(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                            const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                            size_t destWidth, size_t destHeight, size_t destDepth,
                            uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -181,7 +181,7 @@ static void GenerateMip_XZ(size_t sourceWidth, size_t sourceHeight, size_t sourc
 }
 
 template <typename T>
-static void GenerateMip_XYZ(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
+inline void GenerateMip_XYZ(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth,
                             const uint8_t *sourceData, size_t sourceRowPitch, size_t sourceDepthPitch,
                             size_t destWidth, size_t destHeight, size_t destDepth,
                             uint8_t *destData, size_t destRowPitch, size_t destDepthPitch)
@@ -229,7 +229,7 @@ typedef void (*MipGenerationFunction)(size_t sourceWidth, size_t sourceHeight, s
                                       uint8_t *destData, size_t destRowPitch, size_t destDepthPitch);
 
 template <typename T>
-static MipGenerationFunction GetMipGenerationFunction(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth)
+inline MipGenerationFunction GetMipGenerationFunction(size_t sourceWidth, size_t sourceHeight, size_t sourceDepth)
 {
     uint8_t index = ((sourceWidth > 1)  ? 1 : 0) |
                     ((sourceHeight > 1) ? 2 : 0) |
