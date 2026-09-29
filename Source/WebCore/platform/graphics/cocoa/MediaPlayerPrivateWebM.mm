@@ -1216,21 +1216,18 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, TrackID tr
     }
     auto mediaType = PAL::CMFormatDescriptionGetMediaType(formatDescription);
 
-    if (isEnabledVideoTrackID(trackId)) {
-        // AVSampleBufferDisplayLayer will throw an un-documented exception if passed a sample
-        // whose media type is not kCMMediaType_Video. This condition is exceptional; we should
-        // never enqueue a non-video sample in a AVSampleBufferDisplayLayer.
-        ASSERT(mediaType == kCMMediaType_Video);
-        if (mediaType != kCMMediaType_Video) {
-            ERROR_LOG(logSiteIdentifier, "Expected sample of type '", FourCC(kCMMediaType_Video), "', got '", FourCC(mediaType), "'. Bailing.");
-            return;
-        }
+    // Route by the sample's actual media type rather than by a single "enabled" track id. A
+    // multi-segment WebM can re-declare (or add) tracks over its lifetime, so each sample must
+    // reach the renderer track that matches its media type regardless of which track is currently
+    // the selected one.
+    if (mediaType == kCMMediaType_Video) {
         m_renderer->enqueueSample(trackIdentifierFor(trackId), WTF::move(sample));
         return;
     }
+
     // AVSampleBufferAudioRenderer will throw an un-documented exception if passed a sample
     // whose media type is not kCMMediaType_Audio. This condition is exceptional; we should
-    // never enqueue a non-video sample in a AVSampleBufferAudioRenderer.
+    // never enqueue a non-audio sample in a AVSampleBufferAudioRenderer.
     ASSERT(mediaType == kCMMediaType_Audio);
     if (mediaType != kCMMediaType_Audio) {
         ERROR_LOG(logSiteIdentifier, "Expected sample of type '", FourCC(kCMMediaType_Audio), "', got '", FourCC(mediaType), "'. Bailing.");
@@ -1478,12 +1475,21 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
         });
     }
 
-    clearTracks();
+    // A multi-segment WebM (e.g. two concatenated streams, or a MediaRecorder file) re-fires the
+    // initialization segment, typically re-using the same track IDs. Reconcile against the existing
+    // tracks instead of tearing them down: discarding a track's buffer and renderer registration
+    // would drop the new segment's samples (routed to a track no longer registered with the
+    // renderer) and would also break seeking back into the earlier segment. Track buffers therefore
+    // persist for the lifetime of the load so every segment stays seekable; a re-declared track just
+    // keeps accumulating samples into its existing buffer.
+    bool isInitialSegment = m_trackBufferMap.empty();
 
     for (auto videoTrackInfo : segment.videoTracks) {
         if (videoTrackInfo.track) {
             // FIXME: Use downcast instead.
             auto track = unsafeRefPtrDowncast<VideoTrackPrivateWebM>(videoTrackInfo.track);
+            if (m_trackBufferMap.contains(track->id()))
+                continue; // Re-declared track: keep its existing buffer and renderer track.
 #if PLATFORM(IOS_FAMILY)
             if (shouldCheckHardwareSupport() && (videoTrackInfo.description->codec() == "vp8"_s || (videoTrackInfo.description->codec() == "vp9"_s && !vp9HardwareDecoderAvailable()))) {
                 m_errored = true;
@@ -1529,6 +1535,8 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
         if (audioTrackInfo.track) {
             // FIXME: Use downcast instead.
             auto track = unsafeRefPtrDowncast<AudioTrackPrivateWebM>(audioTrackInfo.track);
+            if (m_trackBufferMap.contains(track->id()))
+                continue; // Re-declared track: keep its existing buffer and renderer track.
             addTrackBuffer(track->id(), WTF::move(audioTrackInfo.description));
 
             track->setEnabledChangedCallback([weakThis = ThreadSafeWeakPtr { *this }] (AudioTrackPrivate& track, bool enabled) {
@@ -1561,10 +1569,14 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
     if (segment.duration.isValid())
         setDuration(WTF::move(segment.duration));
 
-    ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
-    });
+    // Only the first initialization segment advances readyState to HaveMetadata; a re-init mid-load
+    // must not downgrade a higher readyState (which would stall playback).
+    if (isInitialSegment) {
+        ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        });
+    }
 }
 
 void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType)
@@ -1678,6 +1690,12 @@ void MediaPlayerPrivateWebM::clearTracks() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         });
     }
     m_audioTracks.clear();
+
+    m_trackIdentifiers.clear();
+    m_enabledVideoTrackID.reset();
+    m_readyForMoreSamplesMap.clear();
+    m_trackBufferMap.clear();
+    m_requestReadyForMoreSamplesSetMap.clear();
 }
 
 void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()

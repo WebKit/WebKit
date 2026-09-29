@@ -244,7 +244,7 @@ private:
 
     void addTrackBuffer(TrackID, RefPtr<MediaDescription>&&);
 
-    void clearTracks(); // Called from destructor (main thread) or running queue
+    void clearTracks(); // Full teardown; called from the destructor.
 
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
