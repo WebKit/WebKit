@@ -46,7 +46,7 @@ class RenderSVGShape : public RenderSVGModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGShape);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGShape);
 public:
-    friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&);
+    friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&, StrokeBoundingBoxPurpose);
 
     enum class ShapeType : uint8_t {
         Empty,
@@ -125,6 +125,7 @@ private:
     // Hit-detection separated for the fill and the stroke
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = WindRule::NonZero);
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
+    FloatRect hitTestStrokeBoundingBox() const;
 
     bool canHaveChildren() const final { return false; }
     ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
@@ -157,6 +158,7 @@ protected:
     FloatRect m_fillBoundingBox;
     mutable Markable<FloatRect> m_strokeBoundingBox;
     mutable Markable<FloatRect> m_approximateStrokeBoundingBox;
+    mutable Markable<FloatRect> m_hitTestStrokeBoundingBox;
 private:
     bool m_needsShapeUpdate { true };
     mutable bool m_fillRequiresClip : 1 { true };

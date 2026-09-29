@@ -644,14 +644,14 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
     }
 }
 
-FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement& renderer)
+FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement& renderer, StrokeBoundingBoxPurpose purpose)
 {
     auto calculateApproximateScalingStrokeBoundingBox = [&]<typename Renderer>(const Renderer& renderer, FloatRect fillBoundingBox) -> FloatRect {
         // Implementation of
-        // https://drafts.fxtf.org/css-masking/#compute-stroke-bounding-box
+        // https://drafts.csswg.org/css-masking-1/#compute-stroke-bounding-box
         // except that we ignore whether the stroke is none.
 
-        ASSERT(!renderer.style().stroke().isNone());
+        ASSERT(purpose == StrokeBoundingBoxPurpose::HitTesting || !renderer.style().stroke().isNone());
 
         auto strokeBoundingBox = fillBoundingBox;
         const float strokeWidth = renderer.strokeWidth();
@@ -697,7 +697,7 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
 
     auto calculateApproximateNonScalingStrokeBoundingBox = [&](const auto& renderer, FloatRect fillBoundingBox) -> FloatRect {
         ASSERT(renderer.hasPath());
-        ASSERT(!renderer.style().stroke().isNone());
+        ASSERT(purpose == StrokeBoundingBoxPurpose::HitTesting || !renderer.style().stroke().isNone());
         ASSERT(renderer.hasNonScalingStroke());
 
         auto strokeBoundingBox = fillBoundingBox;
@@ -713,18 +713,25 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
     };
 
     auto calculate = [&](const auto& renderer) {
-        if (renderer.style().stroke().isNone())
+        if (renderer.style().stroke().isNone() && purpose == StrokeBoundingBoxPurpose::Painting)
             return renderer.objectBoundingBox();
         if (renderer.hasNonScalingStroke())
             return calculateApproximateNonScalingStrokeBoundingBox(renderer, renderer.objectBoundingBox());
         return calculateApproximateScalingStrokeBoundingBox(renderer, renderer.objectBoundingBox());
     };
 
-    if (CheckedPtr shape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
-        return shape->adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(*shape));
+    if (CheckedPtr shape = dynamicDowncast<LegacyRenderSVGShape>(renderer)) {
+        auto strokeBoundingBox = calculate(*shape);
+        if (purpose == StrokeBoundingBoxPurpose::HitTesting)
+            return strokeBoundingBox;
+        return shape->adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, strokeBoundingBox);
+    }
 
     const auto& shape = downcast<RenderSVGShape>(renderer);
-    return shape.adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(shape));
+    auto strokeBoundingBox = calculate(shape);
+    if (purpose == StrokeBoundingBoxPurpose::HitTesting)
+        return strokeBoundingBox;
+    return shape.adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation::Fast, strokeBoundingBox);
 }
 
 }
