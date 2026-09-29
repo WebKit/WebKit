@@ -84,6 +84,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "ProbeContext.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
+#include "SetupVarargsFrame.h"
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include "WeakMapImpl.h"
@@ -8442,6 +8443,41 @@ void SpeculativeJIT::compileVarargsLength(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
 
+    bool argumentsIsCellButterfly = m_graph.isContiguousCellButterfly(m_state.forNode(node->argumentsChild()));
+    if (argumentsIsCellButterfly || m_graph.isLikelyArray(node->argumentsChild(), m_state.forNode(node->argumentsChild()))) {
+        JSValueOperand arguments(this, node->argumentsChild());
+        GPRTemporary length(this);
+        GPRReg argumentsGPR = arguments.gpr();
+        GPRReg lengthGPR = length.gpr();
+
+        JumpList slowCases;
+        if (argumentsIsCellButterfly) {
+            load32(Address(argumentsGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR);
+            speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, lengthGPR, TrustedImm32(maxArguments)));
+        } else {
+            GPRTemporary butterfly(this);
+            GPRTemporary indexingShape(this);
+            if (needsTypeCheck(node->argumentsChild(), SpecCell))
+                slowCases.append(branchIfNotCell(argumentsGPR));
+            if (needsTypeCheck(node->argumentsChild(), SpecArray))
+                slowCases.append(branchIfNotType(argumentsGPR, ArrayType));
+            emitLoadVarargsLengthFromArray(*this, argumentsGPR, butterfly.gpr(), indexingShape.gpr(), lengthGPR, slowCases);
+            slowCases.append(branch32(Above, lengthGPR, TrustedImm32(maxArguments)));
+        }
+        if (data->offset) {
+            Jump sufficientLength = branch32(Above, lengthGPR, TrustedImm32(data->offset));
+            move(TrustedImm32(data->offset), lengthGPR);
+            sufficientLength.link(this);
+            sub32(TrustedImm32(data->offset), lengthGPR);
+        }
+        if (!slowCases.empty())
+            addSlowPathGenerator(slowPathCall(slowCases, this, operationSizeOfVarargs, lengthGPR, LinkableConstant::globalObject(*this, node), argumentsGPR, data->offset));
+        add32(TrustedImm32(1), lengthGPR);
+
+        strictInt32Result(lengthGPR, node);
+        return;
+    }
+
     GPRReg argumentsGPR = InvalidGPRReg;
     lock(GPRInfo::returnValueGPR);
     JSValueOperand arguments(this, node->argumentsChild());
@@ -8477,6 +8513,51 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
     case UntypedUse: {
         speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
         speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
+
+        if (m_graph.isContiguousCellButterfly(m_state.forNode(node->argumentsChild()))) {
+            GPRTemporary length(this);
+            GPRTemporary temp(this);
+            GPRReg lengthGPR = length.gpr();
+            GPRReg tempGPR = temp.gpr();
+
+            store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
+            sub32(argumentCountIncludingThis, TrustedImm32(1), lengthGPR);
+            emitFillUndefinedForMissingVarargs(data, lengthGPR, tempGPR);
+            emitLoadVarargsFromContiguousStorage(data, Address(argumentsGPR, JSCellButterfly::offsetOfData() + data->offset * sizeof(EncodedJSValue)), lengthGPR, tempGPR);
+            noResult(node);
+            break;
+        }
+
+        if (m_graph.isLikelyArray(node->argumentsChild(), m_state.forNode(node->argumentsChild()))) {
+            GPRTemporary length(this);
+            GPRTemporary temp(this);
+            GPRTemporary butterfly(this);
+            GPRTemporary indexingShape(this);
+            FPRTemporary doubleTemp(this);
+            GPRReg lengthGPR = length.gpr();
+            GPRReg tempGPR = temp.gpr();
+            GPRReg butterflyGPR = butterfly.gpr();
+            GPRReg indexingShapeGPR = indexingShape.gpr();
+
+            store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
+
+            JumpList slowCases;
+            if (needsTypeCheck(node->argumentsChild(), SpecCell))
+                slowCases.append(branchIfNotCell(argumentsGPR));
+            if (needsTypeCheck(node->argumentsChild(), SpecArray))
+                slowCases.append(branchIfNotType(argumentsGPR, ArrayType));
+            emitLoadVarargsLengthFromArray(*this, argumentsGPR, butterflyGPR, indexingShapeGPR, lengthGPR, slowCases);
+            add32(TrustedImm32(static_cast<int32_t>(data->offset) - 1), argumentCountIncludingThis, tempGPR);
+            slowCases.append(branch32(Below, lengthGPR, tempGPR));
+
+            sub32(argumentCountIncludingThis, TrustedImm32(1), lengthGPR);
+            emitFillUndefinedForMissingVarargs(data, lengthGPR, tempGPR);
+            emitLoadVarargsFromArray(*this, butterflyGPR, indexingShapeGPR, lengthGPR, doubleTemp.fpr(), data->offset, addressFor(data->machineStart), slowCases);
+
+            addSlowPathGenerator(slowPathCall(slowCases, this, operationLoadVarargs, NoResult, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsGPR, data->offset, argumentCountIncludingThis, data->mandatoryMinimum));
+            noResult(node);
+            break;
+        }
 
         flushRegisters();
         store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
@@ -8538,10 +8619,18 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
     store32(lengthGPR, lowWordFor(data->machineCount));
         
     VirtualRegister sourceStart = argumentsStart(inlineCallFrame) + data->offset;
-    VirtualRegister targetStart = data->machineStart;
 
     sub32(TrustedImm32(1), lengthGPR);
-        
+    emitFillUndefinedForMissingVarargs(data, lengthGPR, tempGPR);
+    emitLoadVarargsFromContiguousStorage(data, addressFor(sourceStart), lengthGPR, tempGPR);
+
+    noResult(node);
+}
+
+void SpeculativeJIT::emitFillUndefinedForMissingVarargs(LoadVarargsData* data, GPRReg lengthGPR, GPRReg tempGPR)
+{
+    VirtualRegister targetStart = data->machineStart;
+
     // First have a loop that fills in the undefined slots in case of an arity check failure.
     move(TrustedImm32(data->mandatoryMinimum), tempGPR);
     Jump done = branch32(BelowOrEqual, tempGPR, lengthGPR);
@@ -8555,17 +8644,18 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
             targetStart.offset() * sizeof(EncodedJSValue)));
     branch32(Above, tempGPR, lengthGPR).linkTo(loop, this);
     done.link(this);
-        
+}
+
+void SpeculativeJIT::emitLoadVarargsFromContiguousStorage(LoadVarargsData* data, Address sourceStart, GPRReg lengthGPR, GPRReg tempGPR)
+{
+    VirtualRegister targetStart = data->machineStart;
+
     // And then fill in the actual argument values.
-    done = branchTest32(Zero, lengthGPR);
+    Jump done = branchTest32(Zero, lengthGPR);
         
-    loop = label();
+    Label loop = label();
     sub32(TrustedImm32(1), lengthGPR);
-    loadValue(
-        BaseIndex(
-            GPRInfo::callFrameRegister, lengthGPR, TimesEight,
-            sourceStart.offset() * sizeof(EncodedJSValue)),
-        tempGPR);
+    loadValue(BaseIndex(sourceStart.base, lengthGPR, TimesEight, sourceStart.offset), tempGPR);
     storeValue(
         tempGPR,
         BaseIndex(
@@ -8574,8 +8664,6 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
     branchTest32(NonZero, lengthGPR).linkTo(loop, this);
         
     done.link(this);
-        
-    noResult(node);
 }
 
 void SpeculativeJIT::compileCreateActivation(Node* node)
