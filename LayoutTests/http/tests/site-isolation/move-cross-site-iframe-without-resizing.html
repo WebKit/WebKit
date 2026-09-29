@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<iframe id="frame" style="position: absolute; left: 0; top: 0; width: 200px; height: 200px; border: none"></iframe>
+<script>
+const frame = document.getElementById("frame");
+
+function nextMessage()
+{
+    return new Promise(resolve => window.addEventListener("message", event => resolve(event.data), { once: true }));
+}
+
+async function settle()
+{
+    for (let i = 0; i < 3; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function sendToFrame(message)
+{
+    const reply = nextMessage();
+    frame.contentWindow.postMessage(message, "*");
+    return reply;
+}
+
+async function renderingUpdatesInFrameDuring(action)
+{
+    await settle();
+    assert_equals(await sendToFrame("start"), "started");
+    await action();
+    return sendToFrame("count");
+}
+
+promise_test(async () => {
+    const loaded = nextMessage();
+    frame.src = "http://localhost:8000/site-isolation/resources/rendering-update-counter-frame.html";
+    assert_equals(await loaded, "loaded");
+
+    const renderingUpdatesWhileMoving = await renderingUpdatesInFrameDuring(async () => {
+        for (let i = 1; i <= 5; ++i) {
+            frame.style.left = `${i * 10}px`;
+            await settle();
+        }
+    });
+    assert_equals(renderingUpdatesWhileMoving, 0, "moving a cross-site iframe without resizing it should not cause rendering updates in the iframe's process");
+
+    const renderingUpdatesWhileResizing = await renderingUpdatesInFrameDuring(async () => {
+        frame.style.width = "250px";
+        await settle();
+    });
+    assert_greater_than(renderingUpdatesWhileResizing, 0, "resizing a cross-site iframe should cause a rendering update in the iframe's process");
+}, "Moving a cross-site iframe within its parent doesn't cause rendering updates in the iframe's process");
+</script>
+</body>

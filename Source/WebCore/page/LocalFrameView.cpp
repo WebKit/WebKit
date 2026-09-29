@@ -458,16 +458,16 @@ void LocalFrameView::setFrameRect(const IntRect& newRect)
 
     updateScrollableAreaSet();
 
-    if (CheckedPtr renderView = this->renderView()) {
-        if (renderView->usesCompositing())
+    if (oldRect.size() != newRect.size()) {
+        if (CheckedPtr renderView = this->renderView(); renderView && renderView->usesCompositing())
             renderView->compositor().frameViewDidChangeSize();
+
+        if (m_frame->isMainFrame() && m_frame->page())
+            m_frame->page()->pageOverlayController().didChangeViewSize();
+
+        if (RefPtr document = m_frame->document())
+            document->didChangeViewSize();
     }
-
-    if (m_frame->isMainFrame() && m_frame->page())
-        m_frame->page()->pageOverlayController().didChangeViewSize();
-
-    if (RefPtr document = m_frame->document())
-        document->didChangeViewSize();
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     // When an iframe's position changes in its parent (e.g. containing div moved),
