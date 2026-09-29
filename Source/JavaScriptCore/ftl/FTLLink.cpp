@@ -69,7 +69,7 @@ void link(State& state)
 
         state.jitCode->initializeB3Code(b3CodeRef);
         state.jitCode->common.m_jumpReplacements = WTF::move(state.jumpReplacements);
-        state.jitCode->m_osrExits = OSRExitStream(state.osrExits);
+        state.jitCode->m_osrExits = OSRExitStream(state.osrExits, state.osrExitValueReps.span());
     }
 
     state.finalizer->m_codeSize = state.b3CodeLinkBuffer->size();

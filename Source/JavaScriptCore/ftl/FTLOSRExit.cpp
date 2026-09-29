@@ -103,25 +103,6 @@ B3::ValueRep decodeValueRep(std::span<const uint8_t> bytes, size_t& offset)
 
 } // anonymous namespace
 
-unsigned OSRExitValueReps::append(std::span<const B3::ValueRep> reps)
-{
-    unsigned offset = m_bytes.size();
-    WTF::LEBEncoder::encodeUInt32(m_bytes, reps.size());
-    for (const B3::ValueRep& rep : reps)
-        encodeValueRep(m_bytes, rep);
-    return offset;
-}
-
-FixedVector<B3::ValueRep> OSRExitValueReps::decode(unsigned offset) const
-{
-    std::span<const uint8_t> bytes = m_bytes.span();
-    size_t position = offset;
-    unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, position);
-    return FixedVector<B3::ValueRep>::createWithSizeFromGenerator(count, [&](size_t) {
-        return decodeValueRep(bytes, position);
-    });
-}
-
 void OSRExitValues::encode(const Operands<ExitValue>& values, const Bag<ExitTimeObjectMaterialization>& materializationBag, JITCode& jitCode)
 {
     m_numberOfArguments = values.numberOfArguments();
@@ -271,7 +252,11 @@ Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
     const StackmapGenerationParams& params, uint32_t dfgNodeIndex, unsigned offset)
 {
-    unsigned valueRepsOffset = state.jitCode->osrExitValueReps.append(params.reps().subspan(offset));
+    unsigned valueRepsOffset = state.osrExitValueReps.size();
+    std::span<const B3::ValueRep> reps = params.reps().subspan(offset);
+    WTF::LEBEncoder::encodeUInt32(state.osrExitValueReps, reps.size());
+    for (const B3::ValueRep& rep : reps)
+        encodeValueRep(state.osrExitValueReps, rep);
     OSRExit exit(this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted, dfgNodeIndex, valueRepsOffset);
     if (exitKind == WillThrowOutOfMemoryError)
         exit.m_exitCallSiteIndex = callSiteIndexForCodeOrigin(state, nodeOrigin.semantic);
@@ -290,14 +275,14 @@ OSRExit::OSRExit(const OSRExitDescriptor* descriptor, ExitKind exitKind, CodeOri
 
 FixedVector<B3::ValueRep> OSRExit::valueReps(const JITCode& jitCode) const
 {
-    return jitCode.osrExitValueReps.decode(m_valueRepsOffset);
+    return jitCode.m_osrExits.valueReps(m_valueRepsOffset);
 }
 
 static constexpr unsigned codeOriginTagShift = 0;
 static constexpr unsigned profileOriginTagShift = 2;
 static constexpr unsigned wasHoistedBit = 1 << 4;
 
-OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits)
+OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits, std::span<const uint8_t> valueReps)
     : m_chunkOffsets(divideRoundedUp(exits.size(), static_cast<size_t>(exitsPerChunk)))
     , m_size(exits.size())
 {
@@ -327,15 +312,15 @@ OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits)
         previous.dfgNodeIndex = exit.m_dfgNodeIndex;
         WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_descriptor->m_index - previous.descriptorIndex));
         previous.descriptorIndex = exit.m_descriptor->m_index;
-        // FIXME: Store the ValueReps after the exit in this stream instead of their offset.
-        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_valueRepsOffset - previous.valueRepsOffset));
-        previous.valueRepsOffset = exit.m_valueRepsOffset;
         WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_entranceOffset - previous.entranceOffset));
         previous.entranceOffset = exit.m_entranceOffset;
         if (exit.m_kind == WillThrowOutOfMemoryError)
             WTF::LEBEncoder::encodeUInt32(bytes, exit.m_exitCallSiteIndex.bits());
         if (exit.isGenericUnwindHandler())
-            exceptionHandlerExits.append({ exit.m_exceptionHandlerCallSiteIndex, exit.m_valueRepsOffset });
+            exceptionHandlerExits.append({ exit.m_exceptionHandlerCallSiteIndex, static_cast<uint32_t>(bytes.size()) });
+        size_t valueRepsEnd = index + 1 < exits.size() ? exits[index + 1].m_valueRepsOffset : valueReps.size();
+        RELEASE_ASSERT(exit.m_valueRepsOffset < valueRepsEnd);
+        bytes.append(valueReps.subspan(exit.m_valueRepsOffset, valueRepsEnd - exit.m_valueRepsOffset));
     }
     m_bytes = WTF::move(bytes);
     m_exceptionHandlerExits = WTF::move(exceptionHandlerExits);
@@ -350,14 +335,27 @@ OSRExit OSRExitStream::decode(size_t& offset, PreviousExit& previous, const JITC
     CodeOrigin codeOriginForExitProfile = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, profileOriginTagShift), previous.codeOrigin);
     previous.dfgNodeIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
     previous.descriptorIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
-    previous.valueRepsOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
     previous.entranceOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
-
-    OSRExit exit(&jitCode.osrExitDescriptors[previous.descriptorIndex], kind, previous.codeOrigin, WTF::move(codeOriginForExitProfile), !!(flags & wasHoistedBit), previous.dfgNodeIndex, previous.valueRepsOffset);
-    exit.m_entranceOffset = previous.entranceOffset;
+    CallSiteIndex exitCallSiteIndex;
     if (kind == WillThrowOutOfMemoryError)
-        exit.m_exitCallSiteIndex = CallSiteIndex(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+        exitCallSiteIndex = CallSiteIndex(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+
+    OSRExit exit(&jitCode.osrExitDescriptors[previous.descriptorIndex], kind, previous.codeOrigin, WTF::move(codeOriginForExitProfile), !!(flags & wasHoistedBit), previous.dfgNodeIndex, static_cast<unsigned>(offset));
+    exit.m_entranceOffset = previous.entranceOffset;
+    exit.m_exitCallSiteIndex = exitCallSiteIndex;
+    for (unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset); count--;)
+        decodeValueRep(bytes, offset);
     return exit;
+}
+
+FixedVector<B3::ValueRep> OSRExitStream::valueReps(unsigned offset) const
+{
+    std::span<const uint8_t> bytes = m_bytes.span();
+    size_t position = offset;
+    unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, position);
+    return FixedVector<B3::ValueRep>::createWithSizeFromGenerator(count, [&](size_t) {
+        return decodeValueRep(bytes, position);
+    });
 }
 
 OSRExit OSRExitStream::at(unsigned index, const JITCode& jitCode) const

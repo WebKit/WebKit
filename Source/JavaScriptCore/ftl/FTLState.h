@@ -89,6 +89,7 @@ public:
     B3::Air::StackSlot* capturedValue { nullptr };
     Vector<DFG::JumpReplacement> jumpReplacements;
     Vector<OSRExit> osrExits;
+    Vector<uint8_t> osrExitValueReps;
 };
 
 } } // namespace JSC::FTL

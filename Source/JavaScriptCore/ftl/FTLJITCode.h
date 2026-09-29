@@ -108,7 +108,6 @@ public:
     RegisterAtOffsetList m_calleeSaveRegisters;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
     Vector<EncodedJSValue> osrExitConstants;
-    OSRExitValueReps osrExitValueReps;
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:

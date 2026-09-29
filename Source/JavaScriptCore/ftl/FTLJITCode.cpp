@@ -143,7 +143,6 @@ void JITCode::shrinkToFit()
     common.shrinkToFit();
     osrExitDescriptors.shrinkToFit();
     osrExitConstants.shrinkToFit();
-    osrExitValueReps.shrinkToFit();
     lazySlowPaths.shrinkToFit();
 }
 
@@ -161,7 +160,7 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
 {
     for (const OSRExitStream::ExceptionHandlerExit& handler : m_osrExits.exceptionHandlerExits()) {
         if (handler.callSiteIndex.bits() == callSiteIndex.bits())
-            return ValueRep::usedRegisters(/* isSIMDContext = */ false, osrExitValueReps.decode(handler.valueRepsOffset));
+            return ValueRep::usedRegisters(/* isSIMDContext = */ false, m_osrExits.valueReps(handler.valueRepsOffset));
     }
     return { };
 }
