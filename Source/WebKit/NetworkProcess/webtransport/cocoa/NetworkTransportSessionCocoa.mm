@@ -161,7 +161,7 @@ static void didReceiveServerTrustChallenge(NetworkConnectionToWebProcess& connec
         RELEASE_ASSERT_NOT_REACHED();
     };
 
-    CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID()));
+    CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(NetworkProcess::singleton().networkSession(connectionToWebProcess.sessionID()));
 
     if (sessionCocoa && sessionCocoa->fastServerTrustEvaluationEnabled()) {
         auto decisionHandler = makeBlockPtr([
@@ -175,7 +175,7 @@ static void didReceiveServerTrustChallenge(NetworkConnectionToWebProcess& connec
                 return;
             }
 
-            protect(connectionToWebProcess->networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess->sessionID(), pageID, &clientOrigin.topOrigin, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
+            protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess->sessionID(), pageID, &clientOrigin.topOrigin, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
         });
 
 
@@ -183,7 +183,7 @@ static void didReceiveServerTrustChallenge(NetworkConnectionToWebProcess& connec
         return;
     }
 
-    protect(connectionToWebProcess.networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess.sessionID(), pageID, &clientOrigin.topOrigin, challenge.get(), NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
+    protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess.sessionID(), pageID, &clientOrigin.topOrigin, challenge.get(), NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
 }
 
 static String joinProtocolStrings(const Vector<String>& protocols)
