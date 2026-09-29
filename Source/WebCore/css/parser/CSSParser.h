@@ -230,7 +230,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=265566
     unsigned m_ruleListNestingLevel { 0 };
     Vector<CSSParserEnum::NestedContextType, 16> m_ancestorRuleTypeStack;
-    Vector<NestingContext, 16> m_nestingContextStack { NestingContext { } };
+    Vector<NestingContext, 16> m_nestingContextStack { 1 };
 
     std::optional<CSSParserEnum::NestedContextType> lastAncestorRuleType() const
     {

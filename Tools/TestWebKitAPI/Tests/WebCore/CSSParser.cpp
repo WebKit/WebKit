@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia, S.L. All rights reserved.
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,12 @@
 #include <WebCore/CSSValueList.h>
 #include <WebCore/Color.h>
 #include <WebCore/MutableStyleProperties.h>
+#include <WebCore/ProcessWarming.h>
+#include <WebCore/StyleRule.h>
+#include <WebCore/StyleSheetContents.h>
+#include <wtf/StackPointer.h>
+#include <wtf/Threading.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -157,6 +163,73 @@ TEST(CSSParser, ParseTextTransformPropertyWithNewlineBetweenTwoIdentInput)
     ASSERT_TRUE(CSSParser::parseDeclarationList(properties2, decl, strictCSSParserContext()));
     check(properties2);
 }
+
+#if !ASAN_ENABLED
+
+static constexpr uint8_t stackPaintByte = 0xA5;
+
+// Paints from 1 KB below this frame down to paintSize below stackTop, clamped inside the stack; returns the lowest painted address.
+NEVER_INLINE static uintptr_t paintStackBelow(uintptr_t stackTop, size_t paintSize)
+{
+    auto paintTop = reinterpret_cast<uintptr_t>(currentStackPointer()) - 1 * KB;
+    auto stackLimit = reinterpret_cast<uintptr_t>(Thread::currentSingleton().stack().end()) + 64 * KB;
+    auto paintBottom = std::max(stackTop - paintSize, stackLimit);
+    memsetSpan(unsafeMakeSpan(reinterpret_cast<uint8_t*>(paintBottom), paintTop - paintBottom), stackPaintByte);
+    WTF::compilerFence();
+    return paintBottom;
+}
+
+NEVER_INLINE static void parseStyleSheet(StyleSheetContents& styleSheet, const String& text)
+{
+    styleSheet.parseString(text);
+}
+
+// Returns the distance from stackTop down to the lowest byte above paintBottom that no longer holds stackPaintByte.
+NEVER_INLINE static size_t deepestStackUseBelow(uintptr_t stackTop, uintptr_t paintBottom)
+{
+    auto stack = unsafeMakeSpan(reinterpret_cast<const volatile uint8_t*>(paintBottom), stackTop - paintBottom);
+    for (size_t i = 0; i < stack.size(); ++i) {
+        if (stack[i] != stackPaintByte)
+            return stackTop - (paintBottom + i);
+    }
+    return 0;
+}
+
+TEST(CSSParser, ParseMediaAndStyleRulesNestedToRuleListLimitStackUse)
+{
+    // 64 pairs nest 128 rule lists, the parser's maximumRuleListNestingLevel.
+    constexpr unsigned nestingPairs = 64;
+    // The default size of a secondary thread's stack on macOS.
+    constexpr size_t stackUseLimit = 512 * KB;
+
+    ProcessWarming::initializeNames();
+
+    StringBuilder builder;
+    for (unsigned i = 0; i < nestingPairs; ++i)
+        builder.append("@media all { a { "_s);
+    builder.append("color: green; "_s);
+    for (unsigned i = 0; i < nestingPairs; ++i)
+        builder.append("} } "_s);
+    builder.append("b { color: red; }"_s);
+    auto styleSheetText = builder.toString();
+
+    Ref styleSheet = StyleSheetContents::create(strictCSSParserContext());
+
+    auto stackTop = reinterpret_cast<uintptr_t>(currentStackPointer());
+    auto paintBottom = paintStackBelow(stackTop, 1 * MB);
+    parseStyleSheet(styleSheet, styleSheetText);
+    auto stackUse = deepestStackUseBelow(stackTop, paintBottom);
+
+    ASSERT_GT(stackTop - paintBottom, stackUseLimit);
+    EXPECT_LT(stackUse, stackUseLimit);
+
+    auto& rules = styleSheet->childRules();
+    ASSERT_EQ(2u, rules.size());
+    EXPECT_TRUE(rules.first()->isMediaRule());
+    EXPECT_TRUE(rules.last()->isStyleRule());
+}
+
+#endif // !ASAN_ENABLED
 
 static unsigned computeNumberOfTracks(const SpaceSeparatedVector<Variant<CSS::GridLineNames, CSS::GridTrackSize>>& repeatedTracks)
 {
