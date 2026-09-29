@@ -203,6 +203,17 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
         );
     }
 
+    // backdrop-filter: url() needs a client too, so it repaints when the referenced filter changes.
+    for (auto& value : style.backdropFilter()) {
+        WTF::switchOn(value,
+            [&](const Style::FilterReference& filterReference) {
+                if (!filterReference.cachedFragment.isEmpty())
+                    referencedResources.append({ filterReference.cachedFragment, { SVGNames::filterTag } });
+            },
+            []<CSSValueID C, typename T>(const FunctionNotation<C, T>&) { }
+        );
+    }
+
     if (!document.settings().layerBasedSVGEngineEnabled())
         return referencedResources;
 
