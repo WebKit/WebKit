@@ -83,8 +83,6 @@ private:
 class CStringBase {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CStringBase, WTF_EXPORT_PRIVATE);
 public:
-    const char* data() const LIFETIME_BOUND; // Any encoding
-
     std::string toStdString() const;
 
     std::span<const char> span() const LIFETIME_BOUND; // Any encoding
@@ -101,6 +99,9 @@ public:
     WTF_EXPORT_PRIVATE unsigned NODELETE hash() const;
 
 protected:
+    // Any encoding. CString below exposes it typed; the encoding-erased base offers no pointer.
+    const char* data() const LIFETIME_BOUND;
+
     CStringBase() = default;
     CStringBase(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
     CStringBase(const CStringBase&) = default;
@@ -169,7 +170,7 @@ inline std::string CStringBase::toStdString() const
 }
 
 // CStringBase is null terminated
-inline const char* safePrintfType(const CStringBase& cstring) { return cstring.data(); }
+inline const char* safePrintfType(const CStringBase& cstring) { return cstring.spanIncludingNullTerminator().data(); }
 
 // A C string that remembers the encoding of its bytes. Binds to const CStringBase&, which erases the encoding.
 // The character type carries the encoding, following WTF convention: char8_t is UTF-8, Latin1Character is

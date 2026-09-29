@@ -43,7 +43,7 @@ TEST(WTF, CStringNullStringConstructor)
     constexpr size_t zeroLength = 0;
     ASSERT_TRUE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
-    ASSERT_EQ(string.data(), static_cast<const char*>(0));
+    ASSERT_EQ(typedString.data(), static_cast<const char*>(0));
     ASSERT_EQ(string.length(), zeroLength);
 
     ASCIICString stringFromCharPointer { static_cast<const char*>(0) };
@@ -141,7 +141,7 @@ TEST(WTF, CStringLegacyCStringPointer)
     EXPECT_EQ(nullString.legacyCStringPointer(), static_cast<const char*>(nullptr));
 
     UTF8CString string { u8"WebKit"_span };
-    EXPECT_EQ(string.legacyCStringPointer(), static_cast<const CStringBase&>(string).data());
+    EXPECT_EQ(string.legacyCStringPointer(), byteCast<char>(string.data()));
     EXPECT_STREQ(string.legacyCStringPointer(), "WebKit");
 }
 
@@ -320,6 +320,15 @@ static_assert(HasSafePrintfType<CStringBase>);
 static_assert(HasSafePrintfType<UTF8CString>);
 static_assert(HasSafePrintfType<ASCIICString>);
 static_assert(!HasSafePrintfType<Latin1CString>);
+// The encoding-erased CStringBase hands out no untyped pointer; each typed string's data() carries its encoding.
+template<typename StringType> concept HasData = requires(const StringType& string)
+{
+    string.data();
+};
+static_assert(!HasData<CStringBase>);
+static_assert(HasData<UTF8CString>);
+static_assert(HasData<Latin1CString>);
+static_assert(HasData<ASCIICString>);
 // A typed string binds to const CStringBase&, but nothing implicitly converts the other way or between encodings.
 static_assert(std::is_convertible_v<const UTF8CString&, const CStringBase&>);
 static_assert(!std::is_convertible_v<const CStringBase&, const UTF8CString&>);
