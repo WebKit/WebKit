@@ -572,8 +572,8 @@ TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
             "\t2\tB\n"_s,
         } },
         DecomposedAttributedText::UnorderedList { {
-            "\t•\tC\n"_s,
-            "\t•\tD\n"_s,
+            String::fromUTF8("\t•\tC\n"),
+            String::fromUTF8("\t•\tD\n"),
         } },
     } };
 
