@@ -253,7 +253,7 @@ public:
 #if defined(RC_REMOVE_SEC_ACCEL_3)
     Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 #else
-    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No, AllowInlineResourceURLs = AllowInlineResourceURLs::Yes);
+    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No, AllowInlineResourceURLs = AllowInlineResourceURLs::No);
 #endif
 
     RefPtr<WebExtensionLocalization> localization();

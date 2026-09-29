@@ -409,6 +409,34 @@ TEST(WKWebExtension, SVGIconViaIconsKeyLoads)
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
 }
 
+#if PLATFORM(MAC)
+TEST(WKWebExtension, PDFIconLoadsAsDataURL)
+{
+    auto *iconPDFData = Util::makePDFData(CGSizeMake(128, 128), @selector(blackColor));
+    auto *iconPDFDataURL = [@"data:application/pdf;base64," stringByAppendingString:[iconPDFData base64EncodedStringWithOptions:0]];
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"128": iconPDFDataURL },
+        @"action": @{ @"default_icon": @{ @"128": iconPDFDataURL } }
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(128, 128)];
+    EXPECT_NOT_NULL(icon);
+    if (icon)
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor blackColor]));
+
+    EXPECT_NOT_NULL([testExtension actionIconForSize:CGSizeMake(128, 128)]);
+
+    EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+#endif // PLATFORM(MAC)
+
 TEST(WKWebExtension, SymbolImageIcon)
 {
     auto *testManifestDictionary = @{
