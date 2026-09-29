@@ -353,6 +353,7 @@ public:
 
     // This updates layout, and has custom handling for SVG.
     WEBCORE_EXPORT IntRect boundsInRootViewSpace();
+    IntRect boundsInMainFrameViewSpace();
     // This does not update layout, and uses absoluteBoundingBoxRect().
     WEBCORE_EXPORT IntRect boundingBoxInRootViewCoordinates() const;
     WEBCORE_EXPORT IntRect boundingBoxInMainFrameViewCoordinates() const;

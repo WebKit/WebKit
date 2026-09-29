@@ -378,7 +378,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, DragSourceSta
     m_adjustedPositionForDragEnd = item.eventPositionInContentCoordinates;
     m_stagedDragSource = {{
         item.sourceAction,
-        item.dragPreviewFrameInRootViewCoordinates,
+        item.dragPreviewFrameInMainFrameViewCoordinates,
         dragPreviewContent,
         item.textIndicator,
         item.visiblePath,
