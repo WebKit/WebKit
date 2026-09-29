@@ -14,7 +14,18 @@ platform/ios/media/media-element-does-not-eagerly-create-media-session-helper.ht
 # -- New failure expectations below this point only!! --
 
 
-
+# webkit.org/b/324372 [ EWS UAT ] [ iOS 27 ] 11X fast/text-extraction/ (layout-tests) are constant timeouts
+fast/text-extraction/debug-text-extraction-all-container-uids.html [ Pass ]
+fast/text-extraction/debug-text-extraction-basic.html [ Pass ]
+fast/text-extraction/debug-text-extraction-click-offscreen-element.html [ Pass ]
+fast/text-extraction/debug-text-extraction-data-detectors.html [ Pass ]
+fast/text-extraction/debug-text-extraction-form-controls-2.html [ Pass ]
+fast/text-extraction/debug-text-extraction-hidden-radio-checkbox.html [ Pass ]
+fast/text-extraction/debug-text-extraction-markdown.html [ Pass ]
+fast/text-extraction/debug-text-extraction-max-depth-no-crash.html [ Pass ]
+fast/text-extraction/debug-text-extraction-offscreen-password-fields.html [ Pass ]
+fast/text-extraction/debug-text-extraction-shorten-urls.html [ Pass ]
+fast/text-extraction/text-extraction-scroll-to-next-page.html [ Pass ]
 
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 26,
