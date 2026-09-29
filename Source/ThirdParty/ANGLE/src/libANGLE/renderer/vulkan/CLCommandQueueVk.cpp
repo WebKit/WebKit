@@ -1589,7 +1589,8 @@ angle::Result CLCommandQueueVk::addMemoryDependencies(const CLKernelArgument *ar
                                                              : MemoryHandleAccess::Writeable);
 }
 
-angle::Result CLCommandQueueVk::addMemoryDependencies(cl::Memory *clMem, MemoryHandleAccess access)
+angle::Result CLCommandQueueVk::addMemoryDependencies(const cl::Memory *clMem,
+                                                      MemoryHandleAccess access)
 {
     bool isWritable       = access == MemoryHandleAccess::Writeable;
     cl::Memory *parentMem = clMem->getParent().get();

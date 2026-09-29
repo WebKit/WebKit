@@ -12,10 +12,12 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <string_view>
 
 namespace angle
 {
@@ -285,5 +287,22 @@ uint32_t GetANGLEDeviceTypeFromArg(const char *useANGLEArg, uint32_t defaultDevi
         }
     }
     return defaultDeviceType;
+}
+
+bool IsStackTraceDisabled()
+{
+    // Allow suppressing stack backtraces in large test sweeps to avoid slow
+    // symbol resolution (addr2line on POSIX, StackWalker on Windows) on each
+    // test failure. Uses raw getenv() to avoid heap allocation in crash and
+    // signal handling contexts.
+    // Treats empty or "0" as enabled, and any other non-null value (e.g. "1")
+    // as disabled.
+    const char *env = getenv("ANGLE_DISABLE_STACK_TRACES");
+    if (env == nullptr)
+    {
+        return false;
+    }
+    std::string_view envView(env);
+    return !envView.empty() && envView != "0";
 }
 }  // namespace angle

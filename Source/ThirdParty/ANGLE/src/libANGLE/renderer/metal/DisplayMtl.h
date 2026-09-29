@@ -40,7 +40,18 @@ class ContextMtl;
 
 struct DefaultShaderAsyncInfoMtl;
 
-class DisplayMtl : public DisplayImpl
+class ThreadSafeDisplayMtl : public ThreadSafeDisplayImpl
+{
+  public:
+    ThreadSafeDisplayMtl()           = default;
+    ~ThreadSafeDisplayMtl() override = default;
+
+    EGLSyncImpl *createSync() override;
+
+  private:
+};
+
+class DisplayMtl : public DisplayImpl, public ThreadSafeDisplayMtl
 {
   public:
     DisplayMtl(const egl::DisplayState &state);
@@ -52,7 +63,7 @@ class DisplayMtl : public DisplayImpl
     egl::Display *getDisplay() const { return mDisplay; }
 
     bool testDeviceLost() override;
-    egl::Error restoreLostDevice(const egl::Display *display) override;
+    egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
 
     std::string getRendererDescription() override;
     std::string getVendorString() override;
@@ -100,8 +111,6 @@ class DisplayMtl : public DisplayImpl
                                                          const egl::AttributeMap &attribs) override;
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
-
-    EGLSyncImpl *createSync() override;
 
     egl::Error makeCurrent(egl::Display *display,
                            egl::Surface *drawSurface,
@@ -177,6 +186,8 @@ class DisplayMtl : public DisplayImpl
     }
 
     angle::ObjCPtr<MTLSharedEventListener> getOrCreateSharedEventListener();
+
+    ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
 
   protected:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

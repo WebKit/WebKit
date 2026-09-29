@@ -426,18 +426,6 @@ egl::ConfigSet DisplayCGL::generateConfigs()
     return configs;
 }
 
-bool DisplayCGL::testDeviceLost()
-{
-    // TODO(cwallez) investigate implementing this
-    return false;
-}
-
-egl::Error DisplayCGL::restoreLostDevice(const egl::Display *display)
-{
-    UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_DISPLAY);
-}
-
 bool DisplayCGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
     NSObject *layer = reinterpret_cast<NSObject *>(window);

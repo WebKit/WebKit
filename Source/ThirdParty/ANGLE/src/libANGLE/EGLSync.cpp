@@ -12,14 +12,14 @@
 
 #include "common/utilities.h"
 #include "libANGLE/Display.h"
-#include "libANGLE/renderer/EGLImplFactory.h"
+#include "libANGLE/renderer/DisplayImpl.h"
 #include "libANGLE/renderer/EGLReusableSync.h"
 #include "libANGLE/renderer/EGLSyncImpl.h"
 
 namespace egl
 {
 
-Sync::Sync(rx::EGLImplFactory *factory, EGLenum type)
+Sync::Sync(rx::ThreadSafeDisplayImpl *factory, EGLenum type)
     : mLabel(nullptr), mId({0}), mType(type), mCondition(0), mNativeFenceFD(0)
 {
     switch (mType)
@@ -41,7 +41,7 @@ Sync::Sync(rx::EGLImplFactory *factory, EGLenum type)
     }
 }
 
-void Sync::onDestroy(const Display *display)
+void Sync::onDestroy(const ThreadSafeDisplay *display)
 {
     ASSERT(mFence);
     mFence->onDestroy(display);
@@ -49,7 +49,7 @@ void Sync::onDestroy(const Display *display)
 
 Sync::~Sync() {}
 
-Error Sync::initialize(const Display *display,
+Error Sync::initialize(const ThreadSafeDisplay *display,
                        const gl::Context *context,
                        const SyncID &id,
                        const AttributeMap &attribs)
@@ -90,7 +90,7 @@ EGLLabelKHR Sync::getLabel() const
     return mLabel;
 }
 
-Error Sync::clientWait(const Display *display,
+Error Sync::clientWait(const ThreadSafeDisplay *display,
                        const gl::Context *context,
                        EGLint flags,
                        EGLTime timeout,
@@ -99,27 +99,27 @@ Error Sync::clientWait(const Display *display,
     return mFence->clientWait(display, context, flags, timeout, outResult);
 }
 
-Error Sync::serverWait(const Display *display, const gl::Context *context, EGLint flags)
+Error Sync::serverWait(const ThreadSafeDisplay *display, const gl::Context *context, EGLint flags)
 {
     return mFence->serverWait(display, context, flags);
 }
 
-Error Sync::signal(const Display *display, const gl::Context *context, EGLint mode)
+Error Sync::signal(const ThreadSafeDisplay *display, const gl::Context *context, EGLint mode)
 {
     return mFence->signal(display, context, mode);
 }
 
-Error Sync::getStatus(const Display *display, EGLint *outStatus) const
+Error Sync::getStatus(const ThreadSafeDisplay *display, EGLint *outStatus) const
 {
     return mFence->getStatus(display, outStatus);
 }
 
-Error Sync::copyMetalSharedEventANGLE(const Display *display, void **result) const
+Error Sync::copyMetalSharedEventANGLE(const ThreadSafeDisplay *display, void **result) const
 {
     return mFence->copyMetalSharedEventANGLE(display, result);
 }
 
-Error Sync::dupNativeFenceFD(const Display *display, EGLint *result) const
+Error Sync::dupNativeFenceFD(const ThreadSafeDisplay *display, EGLint *result) const
 {
     return mFence->dupNativeFenceFD(display, result);
 }

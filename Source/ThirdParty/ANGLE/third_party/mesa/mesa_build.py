@@ -255,8 +255,6 @@ def Meson(build_dir, command, args, extra_env={}, stdout=None):
     env = MakeEnv()
     for k, v in extra_env.items():
         env[k] = v
-    # TODO: Remove when crbug.com/1373441 is fixed.
-    env['VPYTHON_DEFAULT_SPEC'] = os.path.join(ANGLE_DIR, '.vpython3')
     logging.info(' '.join(['%s=%s' % (k, v) for (k, v) in extra_env.items()] + meson_cmd))
     completed = subprocess.run(meson_cmd, env=env, stdout=stdout)
     if completed.returncode != EXIT_SUCCESS:

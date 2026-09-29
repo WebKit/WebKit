@@ -66,10 +66,8 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
     HDC getDC() const override;
     const angle::Format *getClientBufferTextureColorFormat() const override;
 
-    egl::Error attachToFramebuffer(const gl::Context *context,
-                                   gl::Framebuffer *framebuffer) override;
-    egl::Error detachFromFramebuffer(const gl::Context *context,
-                                     gl::Framebuffer *framebuffer) override;
+    void attachToFramebuffer(const gl::Context *context, gl::Framebuffer *framebuffer) override;
+    void detachFromFramebuffer(gl::Framebuffer *framebuffer) override;
 
   private:
     EGLenum mBuftype;

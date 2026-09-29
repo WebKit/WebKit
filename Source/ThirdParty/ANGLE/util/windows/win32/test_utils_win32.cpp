@@ -14,6 +14,7 @@
 
 #include <windows.h>
 #include <array>
+#include <cstdlib>
 
 #include "util/windows/third_party/StackWalker/src/StackWalker.h"
 
@@ -79,6 +80,11 @@ class CustomStackWalker : public StackWalker
 
 void PrintBacktrace(CONTEXT *c)
 {
+    if (IsStackTraceDisabled())
+    {
+        return;
+    }
+
     printf("Backtrace:\n");
     OutputDebugStringA("Backtrace:\n");
 
@@ -145,6 +151,11 @@ bool StabilizeCPUForBenchmarking()
 
 void PrintStackBacktrace()
 {
+    if (IsStackTraceDisabled())
+    {
+        return;
+    }
+
     CONTEXT context;
     ZeroMemory(&context, sizeof(CONTEXT));
     RtlCaptureContext(&context);

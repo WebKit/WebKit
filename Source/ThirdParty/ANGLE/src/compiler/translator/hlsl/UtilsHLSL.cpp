@@ -858,7 +858,7 @@ TString DecorateVariableIfNeeded(const TVariable &variable)
               qualifier == EvqParamIn || qualifier == EvqParamOut || qualifier == EvqParamInOut ||
               qualifier == EvqParamConst))
     {
-        return Decorate(variable.name()) + str(variable.uniqueId().get());
+        return Decorate(variable.name()) + '_' + str(variable.uniqueId().get());
     }
     else
     {

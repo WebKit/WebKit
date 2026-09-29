@@ -1746,14 +1746,18 @@ bool ValidateES2TexImageParameters(const Context *context,
             return false;
         }
 
-        const gl::InternalFormat &internalFormatInfo =
-            gl::GetInternalFormatInfo(internalformat, type);
+        const InternalFormat &internalFormatInfo = GetInternalFormatInfo(internalformat, type);
         if (!ValidImageAllocationSize(context, entryPoint, width, height, 1, 0,
                                       internalFormatInfo.sizedInternalFormat))
         {
             // Error already generated
             return false;
         }
+
+        // No need to take disallowNonZeroBaseLevelAndIncompatibleLevelsOnHardenedContexts into
+        // account as BASE_LEVEL is a feature of ES3, and this is an ES2-specific validation
+        // function.
+        ASSERT(texture->getState().getEffectiveBaseLevel() == 0);
     }
 
     // From GL_CHROMIUM_color_buffer_float_rgb[a]:
@@ -1837,6 +1841,8 @@ bool ValidateCompressedTexImage(const Context *context,
         ASSERT(maxDimension > 0);
     }
 
+    const InternalFormat &internalFormatInfo = GetSizedInternalFormatInfo(internalformat);
+
     // Texture bound to target can be redefined.
     {
         Texture *texture = context->getTextureByType(texType);
@@ -1854,9 +1860,15 @@ bool ValidateCompressedTexImage(const Context *context,
             // Error already generated.
             return false;
         }
-    }
 
-    const InternalFormat &internalFormatInfo = GetSizedInternalFormatInfo(internalformat);
+        if (context->isHardenedContext() &&
+            !ValidateHardenedContextTextureLevelRedefine(context, entryPoint, texture, level, width,
+                                                         height, depth, internalFormatInfo))
+        {
+            // Error already generated
+            return false;
+        }
+    }
 
     // Format is known and supported in the current context.
     {
@@ -3666,8 +3678,8 @@ bool ValidateCopyTextureCHROMIUM(const Context *context,
         return false;
     }
 
-    GLsizei sourceWidth  = static_cast<GLsizei>(source->getWidth(sourceTarget, sourceLevel));
-    GLsizei sourceHeight = static_cast<GLsizei>(source->getHeight(sourceTarget, sourceLevel));
+    const GLsizei sourceWidth  = static_cast<GLsizei>(source->getWidth(sourceTarget, sourceLevel));
+    const GLsizei sourceHeight = static_cast<GLsizei>(source->getHeight(sourceTarget, sourceLevel));
     if (sourceWidth == 0 || sourceHeight == 0)
     {
         ANGLE_VALIDATION_ERRORF(GL_INVALID_OPERATION, kInvalidInternalFormat, internalFormat);
@@ -3749,6 +3761,14 @@ bool ValidateCopyTextureCHROMIUM(const Context *context,
     if (source == dest && sourceLevel == destLevel)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidSourceTextureSameAsDestTexture);
+        return false;
+    }
+
+    if (context->isHardenedContext() && !ValidateHardenedContextTextureLevelRedefine(
+                                            context, entryPoint, dest, destLevel, sourceWidth,
+                                            sourceHeight, 1, destInternalFormatInfo))
+    {
+        // Error already generated
         return false;
     }
 
@@ -3927,8 +3947,9 @@ bool ValidateCompressedCopyTextureCHROMIUM(const Context *context,
         return false;
     }
 
-    if (source->getWidth(TextureTarget::_2D, 0) == 0 ||
-        source->getHeight(TextureTarget::_2D, 0) == 0)
+    const GLsizei sourceWidth  = static_cast<GLsizei>(source->getWidth(TextureTarget::_2D, 0));
+    const GLsizei sourceHeight = static_cast<GLsizei>(source->getHeight(TextureTarget::_2D, 0));
+    if (sourceWidth == 0 || sourceHeight == 0)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kSourceTextureLevelZeroDefined);
         return false;
@@ -3963,6 +3984,14 @@ bool ValidateCompressedCopyTextureCHROMIUM(const Context *context,
     if (source == dest)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidSourceTextureSameAsDestTexture);
+        return false;
+    }
+
+    if (context->isHardenedContext() &&
+        !ValidateHardenedContextTextureLevelRedefine(context, entryPoint, dest, 0, sourceWidth,
+                                                     sourceHeight, 1, *sourceFormat.info))
+    {
+        // Error already generated
         return false;
     }
 

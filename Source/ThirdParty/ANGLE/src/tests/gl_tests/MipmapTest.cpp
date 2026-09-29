@@ -1855,10 +1855,8 @@ TEST_P(MipmapTestES3, GenerateMipmapPreservesOutOfRangeMips)
                               kLevel1Data[0]);
     }
 
-    // Verify that level 0 is red.  TODO: setting MAX_LEVEL should be unnecessary, but is needed to
-    // work around a bug in the Vulkan backend.  http://anglebug.com/40096706
+    // Verify that level 0 is red.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     clearAndDrawQuad(m2DProgram, getWindowWidth(), getWindowHeight());
@@ -1870,6 +1868,81 @@ TEST_P(MipmapTestES3, GenerateMipmapPreservesOutOfRangeMips)
 
     clearAndDrawQuad(m2DProgram, getWindowWidth(), getWindowHeight());
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, kLevel6Data[0]);
+}
+
+// Test generating mipmap from a non-zero BASE_LEVEL texture to the maximum level of an immutable
+// texture set via MAX_LEVEL.
+TEST_P(MipmapTestES3, GenerateMipmapImmutableTextureNonZeroBaseLevel)
+{
+    GLint maxTextureSize = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+
+    const uint32_t levelCount = std::log2(maxTextureSize) + 1;
+    const uint32_t maxLevel   = levelCount - 1;
+    const uint32_t baseLevel  = maxLevel - 1;
+    const std::vector<GLColor> kInitData(maxTextureSize, GLColor::green);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, levelCount, GL_RGBA8, maxTextureSize, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, baseLevel, 0, 0, maxTextureSize >> baseLevel, 1, GL_RGBA,
+                    GL_UNSIGNED_BYTE, kInitData.data());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, baseLevel);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel);
+    ASSERT_GL_NO_ERROR();
+
+    // Generate mipmap and verify MAX_LEVEL
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, maxLevel);
+    EXPECT_PIXEL_RECT_EQ(0, 0, maxTextureSize >> maxLevel, 1, kInitData[0]);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test generating mipmap from a non-zero BASE_LEVEL texture to the maximum level of an immutable
+// texture set via MAX_LEVEL.
+TEST_P(MipmapTestES3, GenerateMipmapImmutableTextureNonZeroBaseLevel2)
+{
+    constexpr uint32_t kLevelCount = 5;
+    constexpr uint32_t kCheckLevel = kLevelCount - 1;
+    constexpr uint32_t kBaseLevel  = kCheckLevel - 2;
+    const std::vector<GLColor> kInitData(128, GLColor::green);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, kLevelCount, GL_RGBA8, 128, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, kBaseLevel, 0, 0, 128 >> kBaseLevel, 1, GL_RGBA,
+                    GL_UNSIGNED_BYTE, kInitData.data());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, kBaseLevel);
+    // Use a large max level, it must be capped to texture levels internally when generating
+    // mipmaps.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 200);
+    ASSERT_GL_NO_ERROR();
+
+    // Generate mipmap and verify MAX_LEVEL
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                           kCheckLevel);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 128 >> kCheckLevel, 1, kInitData[0]);
+    EXPECT_GL_NO_ERROR();
+
+    // Check that the last level has defined contents.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                           kLevelCount - 1);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    drawQuad(drawRed, essl3_shaders::PositionAttrib(), 1.0f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 128 >> (kLevelCount - 1), 1, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Create a cube map with levels 0-2, call GenerateMipmap with base level 1 so that level 0 stays

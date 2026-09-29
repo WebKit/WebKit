@@ -83,6 +83,17 @@ std::string SanitizeVersionString(std::string versionString, bool isES, bool inc
     return result.str();
 }
 
+bool ThreadSafeDisplayGL::testDeviceLost()
+{
+    return false;
+}
+
+egl::Error ThreadSafeDisplayGL::restoreLostDevice(const egl::ThreadSafeDisplay *display)
+{
+    UNIMPLEMENTED();
+    return egl::Error(EGL_BAD_DISPLAY);
+}
+
 DisplayGL::DisplayGL(const egl::DisplayState &state) : DisplayImpl(state) {}
 
 DisplayGL::~DisplayGL() {}

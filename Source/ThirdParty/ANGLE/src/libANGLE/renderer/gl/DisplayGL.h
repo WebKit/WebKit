@@ -29,6 +29,20 @@ class ShareGroupGL : public ShareGroupImpl
 
 class RendererGL;
 
+class ThreadSafeDisplayGL : public ThreadSafeDisplayImpl
+{
+  public:
+    ThreadSafeDisplayGL()           = default;
+    ~ThreadSafeDisplayGL() override = default;
+
+    // None of the GL backends can lose the device, so device loss is never reported and the
+    // device can never be restored.
+    bool testDeviceLost() override final;
+    egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override final;
+
+  private:
+};
+
 class DisplayGL : public DisplayImpl
 {
   public:

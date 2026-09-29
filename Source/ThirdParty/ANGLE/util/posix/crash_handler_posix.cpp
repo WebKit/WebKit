@@ -99,6 +99,10 @@ CrashCallback *gCrashHandlerCallback;
 
 void PrintStackBacktrace()
 {
+    if (IsStackTraceDisabled())
+    {
+        return;
+    }
     printf("Backtrace:\n");
 
     unw_context_t context;
@@ -496,6 +500,11 @@ std::string RemoveOverlappingPath(const std::string &resolvedModule)
 
 void PrintStackBacktrace()
 {
+    if (IsStackTraceDisabled())
+    {
+        return;
+    }
+
     printf("Backtrace:\n");
 
     void *stack[64];

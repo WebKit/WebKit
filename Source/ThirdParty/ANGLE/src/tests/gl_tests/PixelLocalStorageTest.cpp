@@ -4929,6 +4929,135 @@ TEST_P(PixelLocalStorageTest, RedefineBoundAttachmentsConflict)
     }
 }
 
+// Check that redefining textures or renderbuffers bound to the current framebuffer with
+// EGL sources while pixel local storage is active generates GL_INVALID_OPERATION.
+TEST_P(PixelLocalStorageTest, EGLRedefineBoundAttachmentsConflict)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    const EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_EGL_image"));
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(window->getDisplay(), "EGL_KHR_gl_texture_2D_image"));
+
+    // Support is implied by the extensions checked above.
+    ASSERT(IsEGLDisplayExtensionEnabled(window->getDisplay(), "EGL_KHR_image_base"));
+
+    // Create a source texture.
+    GLTexture eglSrcTex;
+    glBindTexture(GL_TEXTURE_2D, eglSrcTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 4);
+    ASSERT_GL_NO_ERROR();
+
+    // Create an EGL image from the texture.
+    constexpr EGLint attribs[] = {EGL_NONE};
+    const EGLImageKHR image    = eglCreateImageKHR(
+        window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+        (reinterpret_cast<EGLClientBuffer>(static_cast<size_t>(eglSrcTex))), attribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Case 1: Texture attachment
+    {
+        GLTexture texFB;
+        glBindTexture(GL_TEXTURE_2D, texFB);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture texNonFB;
+        glBindTexture(GL_TEXTURE_2D, texNonFB);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texFB, 0);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture texPLS;
+        glBindTexture(GL_TEXTURE_2D, texPLS);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
+        glFramebufferTexturePixelLocalStorageANGLE(0, texPLS, 0, 0, 0);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        // Attempt to redefine texFB (bound to FB)
+        glBindTexture(GL_TEXTURE_2D, texFB);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // Attempt to redefine texNonFB (NOT bound to FB)
+        glBindTexture(GL_TEXTURE_2D, texNonFB);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        EXPECT_GL_NO_ERROR();
+
+        if (EnsureGLExtensionEnabled("GL_EXT_EGL_image_storage"))
+        {
+            // Attempt to redefine texFB (bound to FB)
+            glBindTexture(GL_TEXTURE_2D, texFB);
+            glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, image, nullptr);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            // Attempt to redefine texNonFB (NOT bound to FB)
+            glBindTexture(GL_TEXTURE_2D, texNonFB);
+            glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, image, nullptr);
+            EXPECT_GL_NO_ERROR();
+        }
+
+        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Case 2: Renderbuffer attachment
+    {
+        GLRenderbuffer rboFB;
+        glBindRenderbuffer(GL_RENDERBUFFER, rboFB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, W, H);
+        ASSERT_GL_NO_ERROR();
+
+        GLRenderbuffer rboNonFB;
+        glBindRenderbuffer(GL_RENDERBUFFER, rboNonFB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, W, H);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboFB);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture texPLS;
+        glBindTexture(GL_TEXTURE_2D, texPLS);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
+        glFramebufferTexturePixelLocalStorageANGLE(0, texPLS, 0, 0, 0);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        // Attempt to redefine rboFB (bound to FB)
+        glBindRenderbuffer(GL_RENDERBUFFER, rboFB);
+        glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, image);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // Attempt to redefine rboNonFB (NOT bound to FB)
+        glBindRenderbuffer(GL_RENDERBUFFER, rboNonFB);
+        glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, image);
+        EXPECT_GL_NO_ERROR();
+
+        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 #define PLATFORM(API, BACKEND) API##_##BACKEND()
 #define PLS_INSTANTIATE_RENDERING_TEST_AND(TEST, API, ...)                                \

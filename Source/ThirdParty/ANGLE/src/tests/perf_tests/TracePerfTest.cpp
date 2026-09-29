@@ -1321,6 +1321,11 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         addExtensionPrerequisite("GL_EXT_sRGB_write_control");
     }
 
+    if (traceNameIs("tiles_hop"))
+    {
+        addIntegerPrerequisite(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, 1024);
+    }
+
     // GL_KHR_debug does not work on Android for GLES1
     if (IsAndroid() && mParams->traceInfo.contextClientMajorVersion == 1)
     {

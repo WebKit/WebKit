@@ -18,7 +18,7 @@
 namespace egl
 {
 class AttributeMap;
-class Display;
+class ThreadSafeDisplay;
 }  // namespace egl
 
 namespace gl
@@ -34,25 +34,27 @@ class EGLSyncImpl : angle::NonCopyable
     EGLSyncImpl() {}
     virtual ~EGLSyncImpl() {}
 
-    virtual void onDestroy(const egl::Display *display) {}
+    virtual void onDestroy(const egl::ThreadSafeDisplay *display) {}
 
-    virtual egl::Error initialize(const egl::Display *display,
+    virtual egl::Error initialize(const egl::ThreadSafeDisplay *display,
                                   const gl::Context *context,
                                   EGLenum type,
                                   const egl::AttributeMap &attribs) = 0;
-    virtual egl::Error clientWait(const egl::Display *display,
+    virtual egl::Error clientWait(const egl::ThreadSafeDisplay *display,
                                   const gl::Context *context,
                                   EGLint flags,
                                   EGLTime timeout,
                                   EGLint *outResult)                = 0;
-    virtual egl::Error serverWait(const egl::Display *display,
+    virtual egl::Error serverWait(const egl::ThreadSafeDisplay *display,
                                   const gl::Context *context,
                                   EGLint flags)                     = 0;
-    virtual egl::Error signal(const egl::Display *display, const gl::Context *context, EGLint mode);
-    virtual egl::Error getStatus(const egl::Display *display, EGLint *outStatus) = 0;
-    virtual egl::Error copyMetalSharedEventANGLE(const egl::Display *display,
+    virtual egl::Error signal(const egl::ThreadSafeDisplay *display,
+                              const gl::Context *context,
+                              EGLint mode);
+    virtual egl::Error getStatus(const egl::ThreadSafeDisplay *display, EGLint *outStatus) = 0;
+    virtual egl::Error copyMetalSharedEventANGLE(const egl::ThreadSafeDisplay *display,
                                                  void **outEvent) const;
-    virtual egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *fdOut) const;
+    virtual egl::Error dupNativeFenceFD(const egl::ThreadSafeDisplay *display, EGLint *fdOut) const;
 };
 }  // namespace rx
 

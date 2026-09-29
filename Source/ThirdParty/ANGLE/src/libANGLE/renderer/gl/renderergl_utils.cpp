@@ -2170,6 +2170,11 @@ void GenerateCaps(const FunctionsGL *functions,
     {
         limitations->maxBufferBytes = 1 << 30;
     }
+
+    if (features.roundUp3dTextureSizeToPOTForLimit.enabled)
+    {
+        limitations->roundUp3DTextureSizeToPOTForLimit = true;
+    }
 }
 
 bool GetSystemInfoVendorIDAndDeviceID(const FunctionsGL *functions,
@@ -2384,6 +2389,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, disableMSAASampleCount1, isHuaweiMaleoon);
     ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024,
                             isIntelLinuxLessThanKernelVersion5);
+    ANGLE_FEATURE_CONDITION(features, roundUp3dTextureSizeToPOTForLimit,
+                            isPowerVRDriver && powerVRVersion < (std::array<int, 2>{26, 2}));
 
     ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, IsApple());
 
@@ -2403,7 +2410,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, resetTexImage2DBaseLevel,
                             IsApple() && isIntel && GetMacOSVersion() >= OSVersion(10, 12, 4));
 
-    ANGLE_FEATURE_CONDITION(features, resetBaseLevelForASTCSubImage, IsPowerVR(vendor));
+    ANGLE_FEATURE_CONDITION(features, resetBaseLevelForASTCImage, IsPowerVR(vendor));
     ANGLE_FEATURE_CONDITION(features, recreateImmutableTextureOnBaseLevelIncrease,
                             IsPowerVR(vendor));
     ANGLE_FEATURE_CONDITION(features, resetTexStorage2DBaseLevel, IsPowerVR(vendor));
@@ -2758,8 +2765,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // Disable EXT_clear_texture entirely on IMG as a speculative fix for driver crashes.
     ANGLE_FEATURE_CONDITION(features, disableClearTexture, IsPowerVR(vendor));
 
-    // Forces a flush before generating a mipmap, which avoids a bad state in the IMG driver if
-    // the texture's base level is still bound to an active FBO.
+    // Forces a flush before generating a mipmap, which avoids bad states in the IMG driver.
     ANGLE_FEATURE_CONDITION(features, flushBeforeGenerateMipmap, IsPowerVR(vendor));
 
     // IMG GL drivers crash while compiling shaders with more than the limit of uniform blocks.

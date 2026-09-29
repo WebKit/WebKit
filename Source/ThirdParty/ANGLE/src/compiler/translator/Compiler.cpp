@@ -297,6 +297,26 @@ struct UniformSortComparator
     }
 };
 
+// To make CollectVariable's recursive algorithms more efficient, turn the "(uniform, field_chain)"
+// tuples into a map of uniform to set of (nested) fields.
+SamplersStaticallyUsedWithTexelFetch PreprocessSamplersStaticallyUsedWithTexelFetch(
+    const TUnorderedSet<SamplerAccess> samplersStaticallyUsedWithTexelFetch)
+{
+    SamplersStaticallyUsedWithTexelFetch result;
+
+    for (const SamplerAccess &access : samplersStaticallyUsedWithTexelFetch)
+    {
+        SelectedFields *fields = &result[access.uniform];
+        for (uint32_t fieldIndex : access.fields)
+        {
+            // operator[] inserts a new empty element in subfields, which is what makes this
+            // algorithm work.
+            fields = &fields->subfields[fieldIndex];
+        }
+    }
+
+    return result;
+}
 }  // anonymous namespace
 
 bool IsGLSL150OrNewer(ShShaderOutput output)
@@ -1013,7 +1033,10 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         return false;
     }
 
-    collectVariables(root);
+    const SamplersStaticallyUsedWithTexelFetch samplersStaticallyUsedWithTexelFetch =
+        PreprocessSamplersStaticallyUsedWithTexelFetch(
+            parseContext.getSamplersStaticallyUsedWithTexelFetch());
+    collectVariables(root, samplersStaticallyUsedWithTexelFetch);
 
     if (compileOptions.useUnusedStandardSharedBlocks)
     {
@@ -1437,7 +1460,9 @@ void TCompiler::setResourceString()
     mBuiltInResourcesString = strstream.str();
 }
 
-void TCompiler::collectVariables(TIntermBlock *root)
+void TCompiler::collectVariables(
+    TIntermBlock *root,
+    const SamplersStaticallyUsedWithTexelFetch &samplersStaticallyUsedWithTexelFetch)
 {
     // Variable collection is done from the IR already.
     ASSERT(!mCompileOptions.useIR);
@@ -1445,7 +1470,8 @@ void TCompiler::collectVariables(TIntermBlock *root)
     CollectVariables(root, &mAttributes, &mOutputVariables, &mUniforms, &mInputVaryings,
                      &mOutputVaryings, &mSharedVariables, &mUniformBlocks, &mShaderStorageBlocks,
                      mResources.HashFunction, &mNameMap, &mSymbolTable, mShaderType,
-                     mExtensionBehavior, mCompileOptions.transformFloatUniformTo16Bits);
+                     mExtensionBehavior, mCompileOptions.transformFloatUniformTo16Bits,
+                     samplersStaticallyUsedWithTexelFetch);
     collectInterfaceBlocks();
     mVariablesCollected = true;
 }

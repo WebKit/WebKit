@@ -33,6 +33,7 @@ namespace egl
 class AttributeMap;
 class BlobCache;
 class Display;
+class ThreadSafeDisplay;
 struct DisplayState;
 struct Config;
 class Surface;
@@ -47,11 +48,32 @@ class Context;
 
 namespace rx
 {
+class EGLSyncImpl;
 class SurfaceImpl;
 class ImageImpl;
 struct ConfigDesc;
 class DeviceImpl;
 class StreamProducerImpl;
+
+// The subset of the display implementation that is reachable from egl::ThreadSafeDisplay, i.e.
+// from EGL entry points that hold only a display reference and not the display lock.
+class ThreadSafeDisplayImpl : angle::NonCopyable
+{
+  public:
+    ThreadSafeDisplayImpl()          = default;
+    virtual ~ThreadSafeDisplayImpl() = default;
+
+    virtual bool testDeviceLost()                                               = 0;
+    virtual egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) = 0;
+
+    virtual EGLSyncImpl *createSync();
+};
+
+inline EGLSyncImpl *ThreadSafeDisplayImpl::createSync()
+{
+    UNREACHABLE();
+    return nullptr;
+}
 
 class DisplayImpl : public EGLImplFactory, public angle::Subject
 {
@@ -69,9 +91,6 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
                                    gl::Context *context) = 0;
 
     virtual egl::ConfigSet generateConfigs() = 0;
-
-    virtual bool testDeviceLost()                                     = 0;
-    virtual egl::Error restoreLostDevice(const egl::Display *display) = 0;
 
     virtual bool isValidNativeWindow(EGLNativeWindowType window) const = 0;
     virtual egl::Error validateClientBuffer(const egl::Config *configuration,
@@ -134,6 +153,8 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
                                                       EGLint *rates,
                                                       EGLint rate_size,
                                                       EGLint *num_rates) const;
+
+    virtual ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() = 0;
 
   protected:
     const egl::DisplayState &mState;

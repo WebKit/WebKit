@@ -23,7 +23,21 @@ class FunctionsEGL;
 class FunctionsEGLDL;
 class RendererEGL;
 
-class DisplayEGL : public DisplayGL
+// The native EGL function table is loaded during DisplayEGL::initialize() and is immutable
+// afterwards, so creating sync objects out of it does not require the display lock.
+class ThreadSafeDisplayEGL : public ThreadSafeDisplayGL
+{
+  public:
+    ThreadSafeDisplayEGL()           = default;
+    ~ThreadSafeDisplayEGL() override = default;
+
+    EGLSyncImpl *createSync() override;
+
+  protected:
+    FunctionsEGLDL *mEGL = nullptr;
+};
+
+class DisplayEGL : public DisplayGL, public ThreadSafeDisplayEGL
 {
   public:
     DisplayEGL(const egl::DisplayState &state);
@@ -33,8 +47,6 @@ class DisplayEGL : public DisplayGL
                            const gl::Context *context,
                            EGLenum target,
                            const egl::AttributeMap &attribs) override;
-
-    EGLSyncImpl *createSync() override;
 
     void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) override;
 
@@ -63,9 +75,6 @@ class DisplayEGL : public DisplayGL
                                const egl::AttributeMap &attribs) override;
 
     egl::ConfigSet generateConfigs() override;
-
-    bool testDeviceLost() override;
-    egl::Error restoreLostDevice(const egl::Display *display) override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
     egl::Error validateClientBuffer(const egl::Config *configuration,
@@ -111,6 +120,8 @@ class DisplayEGL : public DisplayGL
                                     EGLBoolean *externalOnly,
                                     EGLint *numModifiers) override;
 
+    ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
+
   protected:
     virtual EGLint fixSurfaceType(EGLint surfaceType) const;
 
@@ -148,8 +159,7 @@ class DisplayEGL : public DisplayGL
     std::shared_ptr<RendererEGL> mRenderer;
     std::map<EGLAttrib, std::weak_ptr<RendererEGL>> mVirtualizationGroups;
 
-    FunctionsEGLDL *mEGL = nullptr;
-    EGLConfig mConfig    = EGL_NO_CONFIG_KHR;
+    EGLConfig mConfig = EGL_NO_CONFIG_KHR;
     egl::AttributeMap mDisplayAttributes;
     std::vector<EGLint> mConfigAttribList;
 

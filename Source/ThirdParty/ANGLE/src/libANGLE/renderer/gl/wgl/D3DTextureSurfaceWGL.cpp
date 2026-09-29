@@ -406,8 +406,8 @@ const angle::Format *D3DTextureSurfaceWGL::getClientBufferTextureColorFormat() c
     return mColorFormat;
 }
 
-egl::Error D3DTextureSurfaceWGL::attachToFramebuffer(const gl::Context *context,
-                                                     gl::Framebuffer *framebuffer)
+void D3DTextureSurfaceWGL::attachToFramebuffer(const gl::Context *context,
+                                               gl::Framebuffer *framebuffer)
 {
     FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
     ASSERT(framebufferGL->getFramebufferID() == 0);
@@ -431,16 +431,13 @@ egl::Error D3DTextureSurfaceWGL::attachToFramebuffer(const gl::Context *context,
         mFramebufferID = framebufferID;
     }
     framebufferGL->setFramebufferID(mFramebufferID);
-    return egl::NoError();
 }
 
-egl::Error D3DTextureSurfaceWGL::detachFromFramebuffer(const gl::Context *context,
-                                                       gl::Framebuffer *framebuffer)
+void D3DTextureSurfaceWGL::detachFromFramebuffer(gl::Framebuffer *framebuffer)
 {
     FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
     ASSERT(framebufferGL->getFramebufferID() == mFramebufferID);
     framebufferGL->setFramebufferID(0);
-    return egl::NoError();
 }
 
 }  // namespace rx

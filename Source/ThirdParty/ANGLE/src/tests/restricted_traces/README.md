@@ -701,6 +701,17 @@ Verify using a spreadsheet that the values are relatively the same.
 If you notice a marked difference, spend some time understanding it.
 For instance, you may see memory decrease due to fixed in the upgrade.
 
+## Measuring cold-start performance
+
+The numbers above are steady-state. To measure a cold cache run instead:
+
+```
+vpython3 restricted_trace_perf.py --cold-run --loop-count 5 --build-dir ../../../out/AndroidPerformance --renderer vulkan --filter ${TRACE_NAME}
+```
+
+Each iteration clears the shader/pipeline cache and runs one pass with no warmup, so
+`--loop-count N` gives N cold samples. Works with either renderer.
+
 ## Part 3: Test the upgraded traces under an experimental prefix
 
 To test the trace on all platforms, we first upload them to a temporary CIPD

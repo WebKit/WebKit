@@ -581,6 +581,14 @@ class Allocation final : public WrappedObject<Allocation, VmaAllocation>
     friend class ImageMemorySuballocator;
 };
 
+class Pool final : public WrappedObject<Pool, VmaPool>
+{
+  public:
+    Pool() = default;
+    void destroy(const Allocator &allocator);
+    VkResult init(const Allocator &allocator, uint32_t memoryTypeIndex, VkDeviceSize blockSize);
+};
+
 class RenderPass final : public WrappedObject<RenderPass, VkRenderPass>
 {
   public:
@@ -1867,6 +1875,24 @@ ANGLE_INLINE void Allocation::invalidate(const Allocator &allocator,
 {
     ASSERT(valid());
     vma::InvalidateAllocation(allocator.getHandle(), mHandle, offset, size);
+}
+
+// Pool implementation.
+ANGLE_INLINE void Pool::destroy(const Allocator &allocator)
+{
+    if (valid())
+    {
+        vma::DestroyPool(allocator.getHandle(), mHandle);
+        mHandle = VK_NULL_HANDLE;
+    }
+}
+
+ANGLE_INLINE VkResult Pool::init(const Allocator &allocator,
+                                 uint32_t memoryTypeIndex,
+                                 VkDeviceSize blockSize)
+{
+    ASSERT(!valid());
+    return vma::CreatePool(allocator.getHandle(), memoryTypeIndex, blockSize, &mHandle);
 }
 
 // RenderPass implementation.

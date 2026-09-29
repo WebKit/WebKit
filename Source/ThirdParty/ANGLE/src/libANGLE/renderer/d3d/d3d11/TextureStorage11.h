@@ -62,8 +62,8 @@ class TextureStorage11 : public TextureStorage
                                const d3d11::SharedSRV **outSRV);
     angle::Result generateSwizzles(const gl::Context *context,
                                    const gl::TextureState &textureState);
-    void markLevelDirty(int mipLevel);
-    void markDirty();
+    void markLevelDirty(int mipLevel) override;
+    void markDirty() override;
 
     angle::Result updateSubresourceLevel(const gl::Context *context,
                                          const TextureHelper11 &texture,
@@ -83,6 +83,10 @@ class TextureStorage11 : public TextureStorage
     bool isManaged() const override;
     bool supportsNativeMipmapFunction() const override;
     int getLevelCount() const override;
+    int getLevelWidth(int mipLevel) const override;
+    int getLevelHeight(int mipLevel) const override;
+    int getLevelDepth(int mipLevel) const override;
+    GLenum getFormat() const override { return mFormatInfo.internalFormat; }
     bool isUnorderedAccess() const override { return mBindFlags & D3D11_BIND_UNORDERED_ACCESS; }
     bool isMultiplanar(const gl::Context *context) override;
     bool requiresTypelessTextureFormat() const;
@@ -128,9 +132,6 @@ class TextureStorage11 : public TextureStorage
                      UINT miscFlags,
                      GLenum internalFormat,
                      const std::string &label);
-    int getLevelWidth(int mipLevel) const;
-    int getLevelHeight(int mipLevel) const;
-    int getLevelDepth(int mipLevel) const;
 
     virtual angle::Result getSwizzleTexture(const gl::Context *context,
                                             const TextureHelper11 **outTexture)          = 0;
@@ -191,7 +192,9 @@ class TextureStorage11 : public TextureStorage
                                             const TextureHelper11 &texture,
                                             d3d11::SharedUAV *outUAV) = 0;
 
-    void verifySwizzleExists(const gl::SwizzleState &swizzleState);
+    void verifySwizzleExists(const gl::SwizzleState &swizzleState,
+                             unsigned int baseLevel,
+                             unsigned int mipLevels);
 
     // Clear all cached non-swizzle SRVs and invalidate the swizzle cache.
     void clearSRVCache();
@@ -683,6 +686,7 @@ class TextureStorage11_2DArray : public TextureStorage11
                                          const gl::ImageIndex &index,
                                          Image11 *incomingImage) override;
     void onLabelUpdate() override;
+    int getLevelDepth(int mipLevel) const override { return mTextureDepth; }
 
     struct LevelLayerRangeKey
     {
@@ -835,6 +839,7 @@ class TextureStorage11_2DMultisampleArray final : public TextureStorage11Immutab
 
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
     void onLabelUpdate() override;
+    int getLevelDepth(int mipLevel) const override { return mTextureDepth; }
 
   protected:
     angle::Result getSwizzleTexture(const gl::Context *context,

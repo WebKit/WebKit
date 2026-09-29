@@ -309,6 +309,7 @@ namespace egl
 {
 struct Config;
 class Display;
+class ThreadSafeDisplay;
 class Surface;
 class Sync;
 
@@ -322,7 +323,10 @@ egl::Error QuerySurfaceAttrib(const Display *display,
                               EGLint attribute,
                               EGLint *value);
 egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value);
-Error GetSyncAttrib(Display *display, const Sync *syncObject, EGLint attribute, EGLint *value);
+Error GetSyncAttrib(const ThreadSafeDisplay *display,
+                    const Sync *syncObject,
+                    EGLint attribute,
+                    EGLint *value);
 egl::Error QuerySurfaceAttrib64KHR(const Display *display,
                                    const gl::Context *context,
                                    Surface *surface,

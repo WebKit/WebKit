@@ -34,6 +34,9 @@ using CrashCallback = std::function<void()>;
 void InitCrashHandler(CrashCallback *callback);
 void TerminateCrashHandler();
 
+// Check whether stack back traces are disabled via environment variable.
+bool IsStackTraceDisabled();
+
 // Print a stack back trace.
 void PrintStackBacktrace();
 

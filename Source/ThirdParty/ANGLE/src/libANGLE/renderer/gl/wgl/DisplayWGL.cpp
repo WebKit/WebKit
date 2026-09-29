@@ -571,16 +571,6 @@ egl::ConfigSet DisplayWGL::generateConfigs()
     return configs;
 }
 
-bool DisplayWGL::testDeviceLost()
-{
-    return false;
-}
-
-egl::Error DisplayWGL::restoreLostDevice(const egl::Display *display)
-{
-    return egl::Error(EGL_BAD_DISPLAY);
-}
-
 bool DisplayWGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
     return (IsWindow(window) == TRUE);

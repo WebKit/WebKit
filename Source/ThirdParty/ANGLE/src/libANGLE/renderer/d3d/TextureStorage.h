@@ -51,6 +51,10 @@ class TextureStorage : public angle::Subject
     virtual bool isManaged() const                    = 0;
     virtual bool supportsNativeMipmapFunction() const = 0;
     virtual int getLevelCount() const                 = 0;
+    virtual int getLevelWidth(int mipLevel) const     = 0;
+    virtual int getLevelHeight(int mipLevel) const    = 0;
+    virtual int getLevelDepth(int mipLevel) const     = 0;
+    virtual GLenum getFormat() const                  = 0;
 
     virtual bool isMultiplanar(const gl::Context *context) = 0;
 
@@ -75,6 +79,9 @@ class TextureStorage : public angle::Subject
                                   const uint8_t *pixelData)          = 0;
 
     virtual void invalidateTextures() {}
+
+    virtual void markLevelDirty(int mipLevel) {}
+    virtual void markDirty() {}
 
     // Called by outer object when label has changed via KHR_debug extension
     void setLabel(const std::string &newLabel);

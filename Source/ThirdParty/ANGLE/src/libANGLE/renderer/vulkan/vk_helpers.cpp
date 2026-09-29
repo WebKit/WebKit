@@ -3960,7 +3960,17 @@ angle::Result DynamicDescriptorPool::getOrAllocateDescriptorSet(
     ASSERT(context->getFeatures().descriptorSetCache.enabled);
     bool success;
 
-    // First scan the descriptorSet cache.
+    // If desc matches the most recently resolved entry, reuse it directly without hashing
+    // desc or probing mDescriptorSetCache.
+    if (!mLRUList.empty() && mLRUList.front().sharedCacheKey->getDesc() == desc)
+    {
+        *descriptorSetOut = mLRUList.front().descriptorSet;
+        ASSERT(!(*newSharedCacheKeyOut));
+        mCacheStats.hit();
+        return angle::Result::Continue;
+    }
+
+    // Scan the descriptorSet cache.
     DescriptorSetLRUListIterator listIterator;
     if (mDescriptorSetCache.getDescriptorSet(desc, &listIterator))
     {
@@ -7932,11 +7942,18 @@ void ImageHelper::updateLayoutAndBarrier(Context *context,
             // If we are transition into shaderRead layout, remember the last non-shaderRead layout
             // here.
             const bool isCurrentAccessShaderReadOnly = IsShaderReadOnlyAccess(mCurrentAccess);
-            if (isNewAccessShaderReadOnly && !isCurrentAccessShaderReadOnly)
+            if (isNewAccessShaderReadOnly)
             {
-                mLastNonShaderReadOnlyEvent.release(context);
-                mLastNonShaderReadOnlyAccess = mCurrentAccess;
-                mCurrentShaderReadStageMask  = dstStageMask;
+                if (!isCurrentAccessShaderReadOnly)
+                {
+                    mLastNonShaderReadOnlyEvent.release(context);
+                    mLastNonShaderReadOnlyAccess = mCurrentAccess;
+                    mCurrentShaderReadStageMask  = dstStageMask;
+                }
+                else
+                {
+                    mCurrentShaderReadStageMask |= dstStageMask;
+                }
             }
 
             if (barrierType == BarrierType::Event)
@@ -8301,8 +8318,9 @@ angle::Result ImageHelper::generateMipmapsWithBlit(ContextVk *contextVk,
 
     CommandResources resources;
     gl::OwnerLevel baseLevelGL = toGLLevel(baseLevel);
-    resources.onImageTransferWrite(baseLevelGL + 1, maxLevel.get(), gl::OwnerLayer(0), mLayerCount,
-                                   VK_IMAGE_ASPECT_COLOR_BIT, this);
+    resources.onImageTransferWrite(baseLevelGL + 1,
+                                   std::min(mLevelCount - 1, maxLevel.get()) - baseLevel.get(),
+                                   gl::OwnerLayer(0), mLayerCount, VK_IMAGE_ASPECT_COLOR_BIT, this);
 
     OutsideRenderPassCommandBuffer *commandBuffer;
     ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
@@ -8427,11 +8445,9 @@ angle::Result ImageHelper::generateMipmapsWithBlit(ContextVk *contextVk,
     }
     else
     {
-        // Make sure the following commands know a transfer operation has happened since the last
-        // barrier, and what subresource it has affected.
+        // onImageTransferWrite already declares that the image is being written to.  Set the access
+        // to TransferSrcDst for correct future synchronization.
         setCurrentImageAccess(renderer, ImageAccess::TransferSrcDst);
-        onWrite(baseLevelGL + 1, mLevelCount - 1, gl::OwnerLayer(0), mLayerCount,
-                VK_IMAGE_ASPECT_COLOR_BIT);
     }
 
     contextVk->trackImageWithOutsideRenderPassEvent(this);

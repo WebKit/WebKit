@@ -2460,6 +2460,19 @@ impl AdvancedBlendEquations {
     }
 }
 
+#[cfg_attr(debug_assertions, derive(Debug))]
+pub struct FieldsUsedWithTexelFetch {
+    // If subfields is empty, this variable/field is itself a sampler that is statically used with
+    // `texelFetch`.  Otherwise, the subfields are used with `texelFetch`.
+    pub subfields: HashMap<u32, FieldsUsedWithTexelFetch>,
+}
+
+impl FieldsUsedWithTexelFetch {
+    fn new() -> FieldsUsedWithTexelFetch {
+        FieldsUsedWithTexelFetch { subfields: HashMap::new() }
+    }
+}
+
 // The entire IR.  At a high level, the IR is:
 //
 // - A set of types
@@ -2548,6 +2561,7 @@ pub struct IRMeta {
     // Shader reflection info
     reflection_info: reflection::Info,
     uses_secondary_frag_data: bool,
+    samplers_used_with_texel_fetch: HashMap<VariableId, FieldsUsedWithTexelFetch>,
 }
 
 impl IRMeta {
@@ -2694,6 +2708,7 @@ impl IRMeta {
             variables_pending_zero_initialization: HashSet::new(),
             reflection_info: reflection::Info::new(),
             uses_secondary_frag_data: false,
+            samplers_used_with_texel_fetch: HashMap::new(),
         }
     }
 
@@ -3541,6 +3556,16 @@ impl IRMeta {
         self.uses_secondary_frag_data
     }
 
+    pub fn mark_texel_fetch_use(&mut self, variable_id: VariableId, fields: &[u32]) {
+        let mut subfields = self
+            .samplers_used_with_texel_fetch
+            .entry(variable_id)
+            .or_insert(FieldsUsedWithTexelFetch::new());
+        for &field in fields {
+            subfields = subfields.subfields.entry(field).or_insert(FieldsUsedWithTexelFetch::new());
+        }
+    }
+
     pub fn take_reflection_info(&mut self) -> reflection::Info {
         std::mem::replace(&mut self.reflection_info, reflection::Info::new())
     }
@@ -3601,8 +3626,12 @@ impl IR {
         options: &reflection::Options,
         active_interface_variables: &HashSet<VariableId>,
     ) {
-        self.meta.reflection_info =
-            reflection::collect_info(self, options, active_interface_variables);
+        self.meta.reflection_info = reflection::collect_info(
+            self,
+            options,
+            active_interface_variables,
+            &self.meta.samplers_used_with_texel_fetch,
+        );
     }
 }
 

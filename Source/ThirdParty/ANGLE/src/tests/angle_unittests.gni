@@ -152,3 +152,7 @@ if (!is_android && !is_fuchsia && !is_ios) {
 if (is_linux || is_chromeos) {
   angle_unittests_sources += [ "../common/linux/window_system_unittest.cpp" ]
 }
+
+if (angle_enable_vulkan) {
+  angle_unittests_sources += [ "../common/vulkan/vulkan_icd_unittest.cpp" ]
+}

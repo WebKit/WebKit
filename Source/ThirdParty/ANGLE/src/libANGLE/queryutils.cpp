@@ -4987,7 +4987,10 @@ egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value)
     return NoError();
 }
 
-Error GetSyncAttrib(Display *display, const Sync *syncObject, EGLint attribute, EGLint *value)
+Error GetSyncAttrib(const ThreadSafeDisplay *display,
+                    const Sync *syncObject,
+                    EGLint attribute,
+                    EGLint *value)
 {
     switch (attribute)
     {

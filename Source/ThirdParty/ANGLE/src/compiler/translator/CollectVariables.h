@@ -10,6 +10,7 @@
 
 #include <GLSLANG/ShaderLang.h>
 
+#include "compiler/translator/Common.h"
 #include "compiler/translator/ExtensionBehavior.h"
 
 namespace sh
@@ -17,23 +18,33 @@ namespace sh
 
 class TIntermBlock;
 class TSymbolTable;
+class TVariable;
 class NameMap;
 
-void CollectVariables(TIntermBlock *root,
-                      std::vector<ShaderVariable> *attributes,
-                      std::vector<ShaderVariable> *outputVariables,
-                      std::vector<ShaderVariable> *uniforms,
-                      std::vector<ShaderVariable> *inputVaryings,
-                      std::vector<ShaderVariable> *outputVaryings,
-                      std::vector<ShaderVariable> *sharedVariables,
-                      std::vector<InterfaceBlock> *uniformBlocks,
-                      std::vector<InterfaceBlock> *shaderStorageBlocks,
-                      ShHashFunction64 hashFunction,
-                      NameMap *nameMap,
-                      TSymbolTable *symbolTable,
-                      GLenum shaderType,
-                      const TExtensionBehavior &extensionBehavior,
-                      bool transformFloatUniformToFP16);
+struct SelectedFields
+{
+    TUnorderedMap<uint32_t, SelectedFields> subfields;
+};
+
+using SamplersStaticallyUsedWithTexelFetch = TUnorderedMap<const TVariable *, SelectedFields>;
+
+void CollectVariables(
+    TIntermBlock *root,
+    std::vector<ShaderVariable> *attributes,
+    std::vector<ShaderVariable> *outputVariables,
+    std::vector<ShaderVariable> *uniforms,
+    std::vector<ShaderVariable> *inputVaryings,
+    std::vector<ShaderVariable> *outputVaryings,
+    std::vector<ShaderVariable> *sharedVariables,
+    std::vector<InterfaceBlock> *uniformBlocks,
+    std::vector<InterfaceBlock> *shaderStorageBlocks,
+    ShHashFunction64 hashFunction,
+    NameMap *nameMap,
+    TSymbolTable *symbolTable,
+    GLenum shaderType,
+    const TExtensionBehavior &extensionBehavior,
+    bool transformFloatUniformToFP16,
+    const SamplersStaticallyUsedWithTexelFetch &samplersStaticallyUsedWithTexelFetch);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_COLLECTVARIABLES_H_

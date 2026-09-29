@@ -184,7 +184,7 @@ fn is_unsupported_argument(ir_meta: &IRMeta, arg: TypedId, options: &Options) ->
 
     // Now that the variable is found, see if it's unsupported.
     let type_info = ir_meta.get_type(ir_meta.get_pointee_type(base_variable.type_id));
-    if options.array_of_array_of_sampler_or_image {
+    if options.array_of_array_of_sampler_or_image || options.struct_containing_samplers {
         // Monomorphize if:
         //
         // - The opaque uniform is a sampler in a struct (which can create an array-of-array

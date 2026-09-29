@@ -1078,6 +1078,9 @@ impl Builder {
     fn mark_variable_precise(&mut self, variable_id: VariableId) {
         self.ir.meta.get_variable_mut(variable_id).precise = true;
     }
+    fn mark_texel_fetch_use(&mut self, variable_id: VariableId, fields: &[u32]) {
+        self.ir.meta.mark_texel_fetch_use(variable_id, fields);
+    }
 
     // When a function prototype is encountered, the following functions are called:
     //
@@ -3242,6 +3245,7 @@ pub mod ffi {
         fn rescope_as_for_loop_variable(self: &mut BuilderWrapper, variable_id: VariableId);
         fn mark_variable_invariant(self: &mut BuilderWrapper, variable_id: VariableId);
         fn mark_variable_precise(self: &mut BuilderWrapper, variable_id: VariableId);
+        fn mark_texel_fetch_use(self: &mut BuilderWrapper, variable_id: VariableId, fields: &[u32]);
         fn new_function(
             self: &mut BuilderWrapper,
             name: &'static str,
@@ -4544,6 +4548,10 @@ impl BuilderWrapper {
 
     fn mark_variable_precise(&mut self, variable_id: ffi::VariableId) {
         self.builder.mark_variable_precise(variable_id.into());
+    }
+
+    fn mark_texel_fetch_use(&mut self, variable_id: ffi::VariableId, fields: &[u32]) {
+        self.builder.mark_texel_fetch_use(variable_id.into(), fields);
     }
 
     fn function_param_direction(qualifier: ffi::ASTQualifier) -> FunctionParamDirection {

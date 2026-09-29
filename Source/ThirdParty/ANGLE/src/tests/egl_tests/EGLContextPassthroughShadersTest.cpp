@@ -225,6 +225,84 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 }
 
+// Test creating two programs with the same vertex shader (but not the same fragment shader) in two
+// different contexts, one passthrough and one not.  There shouldn't be a cache hit in the second
+// program creation.
+TEST_P(EGLContextPassthroughShadersTest, SameShaderWithAndWithoutPassthrough)
+{
+    ANGLE_SKIP_TEST_IF(!supportsPassthroughShadersExtension());
+
+    // When passthrough is enabled, some extensions are automatically disabled.  To remove
+    // differences between the two contexts, mark all extensions disabled.
+    //
+    // Also, make sure a GLES2 context is created so that even more extensions that cannot normally
+    // be disabled are disabled.
+    std::vector<EGLint> ctxAttribs = {EGL_CONTEXT_MAJOR_VERSION, 2};
+    if (IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_create_context_extensions_enabled"))
+    {
+        ctxAttribs.push_back(EGL_EXTENSIONS_ENABLED_ANGLE);
+        ctxAttribs.push_back(EGL_FALSE);
+    }
+    if (IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_create_context_backwards_compatible"))
+    {
+        ctxAttribs.push_back(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        ctxAttribs.push_back(EGL_FALSE);
+    }
+    ctxAttribs.push_back(EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE);
+    ctxAttribs.push_back(EGL_FALSE);
+    ctxAttribs.push_back(EGL_NONE);
+
+    // Create two identical contexts who only differe in EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE.
+    EGLContext noPassthroughContext =
+        eglCreateContext(mDisplay, mConfig, nullptr, ctxAttribs.data());
+    EXPECT_NE(noPassthroughContext, EGL_NO_CONTEXT);
+
+    ctxAttribs[ctxAttribs.size() - 2] = EGL_TRUE;
+    EGLContext passthroughContext = eglCreateContext(mDisplay, mConfig, nullptr, ctxAttribs.data());
+    EXPECT_NE(passthroughContext, EGL_NO_CONTEXT);
+
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec4 color;
+void main()
+{
+    gl_Position = position;
+    color = vec4(1, 0, 0, 1);
+})";
+
+    constexpr char kFS1[] = R"(precision highp float;
+varying vec4 color;
+void main()
+{
+    gl_FragColor = color;
+})";
+
+    constexpr char kFS2[] = R"(precision highp float;
+varying vec4 color;
+void main()
+{
+    gl_FragColor = color + vec4(0, 1, 0, 0);
+})";
+
+    // Draw VS + FS1 in one context
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mSurface, mSurface, noPassthroughContext));
+    {
+        ANGLE_GL_PROGRAM(program1, kVS, kFS1);
+        drawQuad(program1, "position", 0);
+    }
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw VS + FS2 in the other context
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mSurface, mSurface, passthroughContext));
+    {
+        ANGLE_GL_PROGRAM(program2, kVS, kFS2);
+        drawQuad(program2, "position", 0);
+    }
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextPassthroughShadersTest);
 ANGLE_INSTANTIATE_TEST(EGLContextPassthroughShadersTest,
                        WithNoFixture(ES2_D3D11()),

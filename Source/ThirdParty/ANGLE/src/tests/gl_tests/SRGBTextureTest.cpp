@@ -361,6 +361,93 @@ void main() {
     EXPECT_PIXEL_COLOR_NEAR(0, 0, decodedToLinearColor, 1.0);
 }
 
+// Test interaction between SRGB decode and texelFetch.  If texelFetch is statically used with a
+// sampler, SRGB SKIP_DECODE should be ignored in texture calls as well.
+TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchAndTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLColor srgbColor(64, 127, 191, 255);
+    constexpr GLColor decodedToLinearColor(13, 54, 133, 255);
+
+    constexpr char kTexelFetchFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+
+uniform highp sampler2D tex;
+
+in vec4 v_position;
+out vec4 my_FragColor;
+
+void main() {
+    ivec2 sampleCoords = ivec2(v_position.xy * 0.5 + 0.5);
+    my_FragColor = texelFetch(tex, sampleCoords, 0) * 0. +
+                   texture(tex, vec2(0));
+}
+)";
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
+    glUseProgram(texelFetchProgram);
+    GLint texLocation = glGetUniformLocation(texelFetchProgram, "tex");
+    ASSERT_GE(texLocation, 0);
+    glUniform1i(texLocation, 0);
+
+    drawQuad(texelFetchProgram, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, decodedToLinearColor, 1.0);
+}
+
+// Test interaction between SRGB decode and texelFetch.  If texelFetch is statically used with a
+// sampler, SRGB SKIP_DECODE should be ignored in texture calls as well.
+TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchInDeadCodeAndTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLColor srgbColor(64, 127, 191, 255);
+    constexpr GLColor decodedToLinearColor(13, 54, 133, 255);
+
+    constexpr char kTexelFetchFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+
+uniform highp sampler2D tex;
+
+in vec4 v_position;
+out vec4 my_FragColor;
+
+void dead_code()
+{
+    texelFetch(tex, ivec2(0), 0);
+}
+
+void main() {
+    my_FragColor = texture(tex, vec2(0));
+}
+)";
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
+    glUseProgram(texelFetchProgram);
+    GLint texLocation = glGetUniformLocation(texelFetchProgram, "tex");
+    ASSERT_GE(texLocation, 0);
+    glUniform1i(texLocation, 0);
+
+    drawQuad(texelFetchProgram, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, decodedToLinearColor, 1.0);
+}
+
 // Test interaction between SRGB decode and texelFetch of an array of textures
 TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchArray)
 {
@@ -462,8 +549,11 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchWithSamplerInStruct)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
 
-    constexpr GLColor srgbColor(64, 127, 191, 255);
-    constexpr GLColor decodedToLinearColor(13, 54, 133, 255);
+    constexpr GLColor srgbColor1(64, 127, 191, 255);
+    constexpr GLColor decodedToLinearColor1(13, 54, 133, 255);
+
+    constexpr GLColor srgbColor2(32, 96, 160, 0);
+    constexpr GLColor decodedToLinearColor2(4, 30, 90, 0);
 
     constexpr char kTexelFetchFS[] = R"(#version 300 es
 precision highp float;
@@ -473,6 +563,7 @@ struct S
 {
     int data;
     highp sampler2D tex;
+    highp sampler2D tex2;
 };
 
 uniform S s;
@@ -482,7 +573,403 @@ out vec4 my_FragColor;
 
 void main() {
     ivec2 sampleCoords = ivec2(v_position.xy * 0.5 + 0.5);
-    my_FragColor = texelFetch(s.tex, sampleCoords, 0);
+    my_FragColor = texelFetch(s.tex, sampleCoords, 0) + texelFetch(s.tex2, sampleCoords, 0);
+}
+)";
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
+    glUseProgram(texelFetchProgram);
+
+    GLTexture tex1;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor1.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    glUniform1i(glGetUniformLocation(texelFetchProgram, "s.tex"), 0);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture tex2;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex2);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor2.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    glUniform1i(glGetUniformLocation(texelFetchProgram, "s.tex2"), 1);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLColor kExpect(decodedToLinearColor1.R + decodedToLinearColor2.R,
+                              decodedToLinearColor1.G + decodedToLinearColor2.G,
+                              decodedToLinearColor1.B + decodedToLinearColor2.B, 255);
+    drawQuad(texelFetchProgram, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 2.0);
+}
+
+// Test interaction between SRGB decode and texelFetch where the sampler is part of a struct and
+// passed to functions.
+TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchWithSamplerInStructPassedToFunctions)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLColor srgbColor1(64, 127, 191, 255);
+    constexpr GLColor decodedToLinearColor1(13, 54, 133, 255);
+
+    constexpr GLColor srgbColor2(32, 96, 160, 0);
+    constexpr GLColor decodedToLinearColor2(4, 30, 90, 0);
+
+    constexpr char kTexelFetchFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+
+struct S1
+{
+    int unused;
+    highp sampler2D tex;
+    float unused2;
+};
+
+struct S2
+{
+    int unused;
+    S1 s;
+};
+
+struct S3
+{
+    int unused;
+    uint unused3;
+    S2 s;
+    float unused2;
+};
+
+struct S4
+{
+    S3 s;
+};
+
+uniform S4 s;
+uniform S3 s2;
+
+out vec4 my_FragColor;
+
+void k(int, int, highp sampler2D t);
+void g(int, int, int, int, S1 s1);
+void f(int, S3 s3, S1 s1, float)
+{
+    g(0, 0, 0, 0, s3.s.s);
+    g(0, 0, 0, 0, s1);
+}
+
+vec4 h(highp sampler2D t, int)
+{
+    return texelFetch(t, ivec2(0), 0);
+}
+
+void g(int, int, int, int, S1 s1)
+{
+    // Call h first, then k which forwards to h.  If topological sorting is needed, k should be
+    // visited before h.
+    h(s1.tex, 0);
+    k(0, 0, s1.tex);
+}
+
+void k(int, int, highp sampler2D t)
+{
+    h(t, 0);
+}
+
+void main() {
+    // Both textures are statically used with texelFetch through the call to f(), so sRGB
+    // SKIP_DECODE should be ignored when sampling via texture().
+    f(0, s.s, s2.s.s, 1.);
+    my_FragColor = texture(s.s.s.s.tex, vec2(0)) + texture(s2.s.s.tex, vec2(0));
+}
+)";
+
+    GLTexture tex;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor1.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture tex2;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex2);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor2.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
+    glUseProgram(texelFetchProgram);
+    const GLint texLocation = glGetUniformLocation(texelFetchProgram, "s.s.s.s.tex");
+    ASSERT_GE(texLocation, 0);
+    glUniform1i(texLocation, 0);
+    const GLint tex2Location = glGetUniformLocation(texelFetchProgram, "s2.s.s.tex");
+    ASSERT_GE(tex2Location, 0);
+    glUniform1i(tex2Location, 1);
+
+    constexpr GLColor kExpect(decodedToLinearColor1.R + decodedToLinearColor2.R,
+                              decodedToLinearColor1.G + decodedToLinearColor2.G,
+                              decodedToLinearColor1.B + decodedToLinearColor2.B, 255);
+    drawQuad(texelFetchProgram, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 2.0);
+}
+
+// Test interaction between SRGB decode and texelFetch where there are functions that pass around
+// sampelrs, but they are never called.
+TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchWithSamplersPassedInDeadFunctions)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLColor srgbColor1(64, 127, 191, 255);
+    constexpr GLColor srgbColor2(32, 96, 160, 0);
+
+    constexpr char kTexelFetchFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+
+struct S1
+{
+    int unused;
+    highp sampler2D tex;
+    float unused2;
+};
+
+struct S2
+{
+    int unused;
+    S1 s;
+};
+
+struct S3
+{
+    int unused;
+    uint unused3;
+    S2 s;
+    float unused2;
+};
+
+struct S4
+{
+    S3 s;
+};
+
+uniform S4 s;
+uniform S3 s2;
+
+out vec4 my_FragColor;
+
+void k(int, int, highp sampler2D t);
+void g(int, int, int, int, S1 s1);
+void f(int, S3 s3, S1 s1, float)
+{
+    g(0, 0, 0, 0, s3.s.s);
+    g(0, 0, 0, 0, s1);
+}
+
+vec4 h(highp sampler2D t, int)
+{
+    return texelFetch(t, ivec2(0), 0);
+}
+
+void g(int, int, int, int, S1 s1)
+{
+    // Call h first, then k which forwards to h.  If topological sorting is needed, k should be
+    // visited before h.
+    h(s1.tex, 0);
+    k(0, 0, s1.tex);
+}
+
+void k(int, int, highp sampler2D t)
+{
+    h(t, 0);
+}
+
+void main() {
+    // Neither texture is statically used with texelFetch as none of the functions above are called.
+    my_FragColor = texture(s.s.s.s.tex, vec2(0)) + texture(s2.s.s.tex, vec2(0));
+}
+)";
+
+    GLTexture tex;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor1.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture tex2;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex2);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor2.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
+    glUseProgram(texelFetchProgram);
+    const GLint texLocation = glGetUniformLocation(texelFetchProgram, "s.s.s.s.tex");
+    ASSERT_GE(texLocation, 0);
+    glUniform1i(texLocation, 0);
+    const GLint tex2Location = glGetUniformLocation(texelFetchProgram, "s2.s.s.tex");
+    ASSERT_GE(tex2Location, 0);
+    glUniform1i(tex2Location, 1);
+
+    constexpr GLColor kExpect(srgbColor1.R + srgbColor2.R, srgbColor1.G + srgbColor2.G,
+                              // B and A channels saturate to 255
+                              255, 255);
+    drawQuad(texelFetchProgram, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 2.0);
+}
+
+// Test interaction between SRGB decode and texelFetch where textures are passed to functions as RHS
+// of comma, or ignored as LHS of comma.
+TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchVsComma)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLColor srgbColor1(64, 127, 191, 255);
+    constexpr GLColor decodedToLinearColor1(13, 54, 133, 255);
+
+    constexpr GLColor srgbColor2(32, 96, 160, 0);
+
+    constexpr char kTexelFetchFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+
+struct S1
+{
+    int unused;
+    highp sampler2D tex;
+    float unused2;
+};
+
+struct S2
+{
+    int unused;
+    S1 s;
+};
+
+struct S3
+{
+    int unused;
+    uint unused3;
+    S2 s;
+    float unused2;
+};
+
+struct S4
+{
+    S3 s;
+};
+
+uniform S4 s;
+uniform S3 s2;
+
+out vec4 my_FragColor;
+
+vec4 f(int, highp sampler2D t, int)
+{
+    return texelFetch((0, 0, s2.s.s.tex, t), ivec2(0), 0);
+}
+
+void main() {
+    // s's texture is statically used with texelFetch via the call to f, but s2's isn't.
+    f(0, (0, s2.s.s.tex, 0, s.s.s.s.tex), 0);
+    my_FragColor = texture(s.s.s.s.tex, vec2(0)) + texture(s2.s.s.tex, vec2(0));
+}
+)";
+
+    GLTexture tex;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor1.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture tex2;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex2);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, srgbColor2.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
+    glUseProgram(texelFetchProgram);
+    const GLint texLocation = glGetUniformLocation(texelFetchProgram, "s.s.s.s.tex");
+    ASSERT_GE(texLocation, 0);
+    glUniform1i(texLocation, 0);
+    const GLint tex2Location = glGetUniformLocation(texelFetchProgram, "s2.s.s.tex");
+    ASSERT_GE(tex2Location, 0);
+    glUniform1i(tex2Location, 1);
+
+    constexpr GLColor kExpect(decodedToLinearColor1.R + srgbColor2.R,
+                              decodedToLinearColor1.G + srgbColor2.G,
+                              // B and A channels saturate to 255
+                              255, 255);
+    drawQuad(texelFetchProgram, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 2.0);
+}
+
+// Test interaction between SRGB decode and texelFetch where texture arrays are passed to functions.
+TEST_P(SRGBTextureTestES3, SRGBDecodeTexelFetchWithSamplerArraysInStruct)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLColor srgbColor(64, 127, 191, 255);
+    constexpr GLColor decodedToLinearColor(13, 54, 133, 255);
+
+    constexpr char kTexelFetchFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+
+struct S1
+{
+    int unused;
+    highp sampler2D tex[2];
+    float unused2;
+};
+
+struct S2
+{
+    int unused;
+    S1 s[3];
+};
+
+uniform S2 s[4];
+
+out vec4 my_FragColor;
+
+vec4 h(int, int, highp sampler2D texture[2])
+{
+    return texelFetch(texture[1], ivec2(0), 0);
+}
+
+vec4 g(S1 s1[3], int, int)
+{
+    return h(0, 0, s1[2].tex);
+}
+
+vec4 f(int, S2 s2[4], int)
+{
+    return g(s2[3].s, 0, 0);
+}
+
+void main() {
+    // s[3].s[2].tex[1] is statically used with texelFetch.  The rest aren't, but that's not
+    // tested.  ANGLE, mesa, and multiple other vendors all track texelFetch use for the whole array
+    // instead of per individual elements, so they would have failed this test.
+    //
+    // The SRGBDecodeTexelFetchArrayInconsistent test reproduces the bug, so it's unnecessary to
+    // repeat that here.
+    f(0, s, 0);
+    my_FragColor = texture(s[3].s[2].tex[1], vec2(0));
 }
 )";
 
@@ -495,7 +982,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(texelFetchProgram, essl3_shaders::vs::Passthrough(), kTexelFetchFS);
     glUseProgram(texelFetchProgram);
-    GLint texLocation = glGetUniformLocation(texelFetchProgram, "s.tex");
+    const GLint texLocation = glGetUniformLocation(texelFetchProgram, "s[3].s[2].tex[1]");
     ASSERT_GE(texLocation, 0);
     glUniform1i(texLocation, 0);
 

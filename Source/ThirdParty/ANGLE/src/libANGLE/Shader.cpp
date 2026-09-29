@@ -1023,7 +1023,10 @@ void Shader::setShaderKey(const Context *context,
                   angle::GetANGLEShaderProgramVersionHashSize());
 
     angle::UpdateHashWithValue(hasher, Compiler::SelectShaderSpec(context->getState()));
-    angle::UpdateHashWithValue(hasher, outputType);
+    // If using passthrough shaders, use SH_NULL_OUTPUT as key just to differentiate between them
+    // and non-passthrough shaders.
+    angle::UpdateHashWithValue(
+        hasher, context->getState().usesPassthroughShaders() ? SH_NULL_OUTPUT : outputType);
     hasher.Update(reinterpret_cast<const uint8_t *>(&compileOptions), sizeof(compileOptions));
 
     // Include the ShBuiltInResources, which represent the extensions and constants used by the

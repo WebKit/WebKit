@@ -72,15 +72,4 @@ bool SurfaceGL::hasEmulatedAlphaChannel() const
     return false;
 }
 
-egl::Error SurfaceGL::attachToFramebuffer(const gl::Context *context, gl::Framebuffer *framebuffer)
-{
-    return egl::NoError();
-}
-
-egl::Error SurfaceGL::detachFromFramebuffer(const gl::Context *context,
-                                            gl::Framebuffer *framebuffer)
-{
-    return egl::NoError();
-}
-
 }  // namespace rx

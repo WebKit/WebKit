@@ -215,4 +215,7 @@ bool SurfaceImpl::supportsSingleRenderBuffer() const
     return false;
 }
 
+void SurfaceImpl::attachToFramebuffer(const gl::Context *context, gl::Framebuffer *framebuffer) {}
+void SurfaceImpl::detachFromFramebuffer(gl::Framebuffer *framebuffer) {}
+
 }  // namespace rx

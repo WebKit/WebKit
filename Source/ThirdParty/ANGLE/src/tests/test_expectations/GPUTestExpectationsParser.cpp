@@ -376,9 +376,11 @@ bool GPUTestExpectationsParser::loadTestExpectationsImpl(const GPUTestConfig *co
                                                          InputStream &dataStream)
 {
     mEntries.clear();
+    mExactEntriesIndex.clear();
+    mWildcardEntriesIndex.clear();
     mErrorMessages.clear();
 
-    bool rt                        = true;
+    bool rt = true;
 
     size_t lineNumber = 1;
     std::string line;
@@ -394,6 +396,20 @@ bool GPUTestExpectationsParser::loadTestExpectationsImpl(const GPUTestConfig *co
     {
         mEntries.clear();
         rt = false;
+    }
+    else
+    {
+        for (size_t i = 0; i < mEntries.size(); ++i)
+        {
+            if (mEntries[i].testName.find('*') != std::string::npos)
+            {
+                mWildcardEntriesIndex.push_back(i);
+            }
+            else
+            {
+                mExactEntriesIndex[mEntries[i].testName].push_back(i);
+            }
+        }
     }
 
     return rt;
@@ -416,6 +432,8 @@ bool GPUTestExpectationsParser::loadTestExpectationsFromFileImpl(const GPUTestCo
                                                                  const std::string &path)
 {
     mEntries.clear();
+    mExactEntriesIndex.clear();
+    mWildcardEntriesIndex.clear();
     mErrorMessages.clear();
 
     std::ifstream fileStream(path);
@@ -448,8 +466,26 @@ int32_t GPUTestExpectationsParser::getTestExpectationImpl(const GPUTestConfig *c
     const GPUTestConfig::ConditionArray &configConditions =
         config ? config->getConditions() : kDefaultConditions;
 
-    for (GPUTestExpectationEntry &entry : mEntries)
+    // 1. Check exact match index first. If found and conditions match, exact match wins.
+    auto exactIt = mExactEntriesIndex.find(testName);
+    if (exactIt != mExactEntriesIndex.end())
     {
+        for (size_t entryIndex : exactIt->second)
+        {
+            GPUTestExpectationEntry &entry = mEntries[entryIndex];
+            if ((configConditions & entry.conditions) == entry.conditions)
+            {
+                entry.used = true;
+                return entry.testExpectation;
+            }
+        }
+    }
+
+    // 2. If no matching exact expectation found, check wildcard entries.
+    for (size_t wildcardIndex : mWildcardEntriesIndex)
+    {
+        GPUTestExpectationEntry &entry = mEntries[wildcardIndex];
+
         // Entry condition bits must be a subset of the config condition bits.
         if ((configConditions & entry.conditions) != entry.conditions)
         {

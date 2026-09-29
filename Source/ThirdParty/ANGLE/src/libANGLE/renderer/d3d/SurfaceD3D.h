@@ -71,11 +71,6 @@ class SurfaceD3D : public SurfaceImpl
 
     const angle::Format *getClientBufferTextureColorFormat() const override;
 
-    egl::Error attachToFramebuffer(const gl::Context *context,
-                                   gl::Framebuffer *framebuffer) override;
-    egl::Error detachFromFramebuffer(const gl::Context *context,
-                                     gl::Framebuffer *framebuffer) override;
-
   protected:
     SurfaceD3D(const egl::SurfaceState &state,
                RendererD3D *renderer,

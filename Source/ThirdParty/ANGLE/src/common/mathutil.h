@@ -17,12 +17,13 @@
 #include <array>
 #include <limits>
 #include <ostream>
-#include "common/unsafe_buffers.h"
 
 #include <anglebase/numerics/safe_math.h>
 
 #include "common/debug.h"
 #include "common/platform.h"
+#include "common/span.h"
+#include "common/span_util.h"
 
 namespace angle
 {
@@ -194,7 +195,8 @@ destType bitCast(const sourceType &source)
 {
     size_t copySize = std::min(sizeof(destType), sizeof(sourceType));
     destType output;
-    ANGLE_UNSAFE_TODO(memcpy(&output, &source, copySize));
+    angle::SpanMemcpy(angle::byte_span_from_ref(output).first(copySize),
+                      angle::byte_span_from_ref(source).first(copySize));
     return output;
 }
 
@@ -1012,13 +1014,13 @@ inline uint32_t PackUnorm4x8(float f1, float f2, float f3, float f4)
 // Unpacks 4 normalized unsigned floating-point values from a single 32-bit unsigned integer into f.
 // Works similarly to unpackUnorm2x16. The floats are unpacked starting from the least significant
 // bits.
-inline void UnpackUnorm4x8(uint32_t u, float *f)
+inline void UnpackUnorm4x8(uint32_t u, angle::Span<float, 4> f)
 {
     for (int i = 0; i < 4; ++i)
     {
         int shift    = i * 8;
         uint8_t bits = static_cast<uint8_t>((u >> shift) & 0xFF);
-        ANGLE_UNSAFE_TODO(f[i]) = static_cast<float>(bits) / 255.0f;
+        f[i]         = static_cast<float>(bits) / 255.0f;
     }
 }
 
@@ -1036,13 +1038,13 @@ inline uint32_t PackSnorm4x8(float f1, float f2, float f3, float f4)
 // Unpacks 4 normalized signed floating-point values from a single 32-bit unsigned integer into f.
 // Works similarly to unpackSnorm2x16. The floats are unpacked starting from the least significant
 // bits, and clamped to the range -1.0 to 1.0.
-inline void UnpackSnorm4x8(uint32_t u, float *f)
+inline void UnpackSnorm4x8(uint32_t u, angle::Span<float, 4> f)
 {
     for (int i = 0; i < 4; ++i)
     {
         int shift   = i * 8;
         int8_t bits = static_cast<int8_t>((u >> shift) & 0xFF);
-        ANGLE_UNSAFE_TODO(f[i]) = clamp(static_cast<float>(bits) / 127.0f, -1.0f, 1.0f);
+        f[i]        = clamp(static_cast<float>(bits) / 127.0f, -1.0f, 1.0f);
     }
 }
 

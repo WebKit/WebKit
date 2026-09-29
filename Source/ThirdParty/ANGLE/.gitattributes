@@ -9,7 +9,9 @@
 *.sh                                       eol=lf
 *.gn                                       eol=lf
 *.gni                                      eol=lf
+*.lock                                     eol=lf
 *.star                                     eol=lf
+*.toml                                     eol=lf
 infra/config/generated/*.cfg               eol=lf
 infra/config/generated/*.pyl               eol=lf
 src/compiler/preprocessor/preprocessor_*.* eol=lf

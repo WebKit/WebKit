@@ -25,7 +25,6 @@ import argparse
 import concurrent.futures
 import contextlib
 import difflib
-import distutils.util
 import getpass
 import glob
 import json

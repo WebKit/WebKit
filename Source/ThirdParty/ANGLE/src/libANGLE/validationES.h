@@ -379,6 +379,15 @@ bool ValidateCopyTexImageParametersBase(const Context *context,
                                         GLint border,
                                         Format *textureFormatOut);
 
+bool ValidateHardenedContextTextureLevelRedefine(const Context *context,
+                                                 angle::EntryPoint entryPoint,
+                                                 const Texture *texture,
+                                                 GLint level,
+                                                 GLsizei width,
+                                                 GLsizei height,
+                                                 GLsizei depth,
+                                                 const InternalFormat &format);
+
 void RecordDrawModeError(const Context *context, angle::EntryPoint entryPoint, PrimitiveMode mode);
 const char *ValidateDrawElementsStates(const Context *context);
 

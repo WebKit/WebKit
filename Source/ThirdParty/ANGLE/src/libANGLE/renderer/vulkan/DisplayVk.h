@@ -17,7 +17,24 @@
 
 namespace rx
 {
-class DisplayVk : public DisplayImpl, public vk::ErrorContext, public vk::GlobalOps
+class ThreadSafeDisplayVk : public ThreadSafeDisplayImpl, public vk::ErrorContext
+{
+  public:
+    ThreadSafeDisplayVk(vk::Renderer *renderer) : vk::ErrorContext(renderer) {}
+    ~ThreadSafeDisplayVk() override = default;
+
+    bool testDeviceLost() override;
+    egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
+
+    EGLSyncImpl *createSync() override;
+
+    void handleError(VkResult result,
+                     const char *file,
+                     const char *function,
+                     unsigned int line) override;
+};
+
+class DisplayVk : public DisplayImpl, public vk::GlobalOps, public ThreadSafeDisplayVk
 {
   public:
     DisplayVk(const egl::DisplayState &state);
@@ -31,12 +48,11 @@ class DisplayVk : public DisplayImpl, public vk::ErrorContext, public vk::Global
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
-    bool testDeviceLost() override;
-    egl::Error restoreLostDevice(const egl::Display *display) override;
-
     std::string getRendererDescription() override;
     std::string getVendorString() override;
     std::string getVersionString(bool includeFullVersion) override;
+
+    vk::Renderer *getRenderer() const { return mRenderer; }
 
     DeviceImpl *createDevice() override;
 
@@ -70,8 +86,6 @@ class DisplayVk : public DisplayImpl, public vk::ErrorContext, public vk::Global
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
 
-    EGLSyncImpl *createSync() override;
-
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
 
@@ -94,11 +108,6 @@ class DisplayVk : public DisplayImpl, public vk::ErrorContext, public vk::Global
 
     angle::ScratchBuffer *getScratchBuffer() { return &mScratchBuffer; }
 
-    void handleError(VkResult result,
-                     const char *file,
-                     const char *function,
-                     unsigned int line) override;
-
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     void populateFeatureList(angle::FeatureList *features) override;
@@ -118,6 +127,8 @@ class DisplayVk : public DisplayImpl, public vk::ErrorContext, public vk::Global
                                               EGLint *rates,
                                               EGLint rate_size,
                                               EGLint *num_rates) const override;
+
+    ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
 
   protected:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

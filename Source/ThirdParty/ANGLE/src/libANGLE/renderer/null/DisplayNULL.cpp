@@ -92,12 +92,12 @@ egl::ConfigSet DisplayNULL::generateConfigs()
     return configSet;
 }
 
-bool DisplayNULL::testDeviceLost()
+bool ThreadSafeDisplayNULL::testDeviceLost()
 {
     return false;
 }
 
-egl::Error DisplayNULL::restoreLostDevice(const egl::Display *display)
+egl::Error ThreadSafeDisplayNULL::restoreLostDevice(const egl::ThreadSafeDisplay *display)
 {
     return egl::NoError();
 }

@@ -264,6 +264,8 @@ def run_trace(trace, args, screenshot_device_dir, extra_args):
     ]
     if mode != '':
         flags.append('--' + mode)
+    if args.cold_run:
+        flags += ['--trials', '1', '--captured-framecount-only']
     if args.maxsteps != '':
         flags += ['--max-steps-performed', args.maxsteps]
     if args.fixedtime != '':
@@ -1985,8 +1987,16 @@ def main():
         help='Include CPU/GPU memory used per trace',
         action='store_true',
         default=False)
-    parser.add_argument('--maxsteps', help='Run for fixed set of frames', default='')
-    parser.add_argument('--fixedtime', help='Run for fixed set of time', default='')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--maxsteps', help='Run for fixed set of frames', default='')
+    group.add_argument('--fixedtime', help='Run for fixed set of time', default='')
+    group.add_argument(
+        '--cold-run',
+        help='Measure cold-start performance. Clears the shader/pipeline cache for every '
+        'iteration, running exactly one pass through the trace with no warmup. Use '
+        '--loop-count N to collect N cold samples.',
+        action='store_true',
+        default=False)
     parser.add_argument(
         '--minimizegpuwork',
         help='Whether to run with minimized GPU work',

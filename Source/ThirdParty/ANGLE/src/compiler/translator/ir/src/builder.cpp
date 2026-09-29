@@ -268,6 +268,14 @@ void Builder::markVariablePrecise(VariableId id)
     }
 }
 
+void Builder::markTexelFetchUse(VariableId id, const angle::Span<const uint32_t> &fields)
+{
+    if (!mHasError)
+    {
+        mBuilder->mark_texel_fetch_use(id, Slice(fields));
+    }
+}
+
 void Builder::initialize(VariableId id)
 {
     if (!mHasError)

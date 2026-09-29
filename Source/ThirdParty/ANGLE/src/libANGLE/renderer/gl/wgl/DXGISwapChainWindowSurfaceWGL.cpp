@@ -279,8 +279,8 @@ HDC DXGISwapChainWindowSurfaceWGL::getDC() const
     return mWGLDevice;
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::attachToFramebuffer(const gl::Context *context,
-                                                              gl::Framebuffer *framebuffer)
+void DXGISwapChainWindowSurfaceWGL::attachToFramebuffer(const gl::Context *context,
+                                                        gl::Framebuffer *framebuffer)
 {
     FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
     ASSERT(framebufferGL->getFramebufferID() == 0);
@@ -312,16 +312,13 @@ egl::Error DXGISwapChainWindowSurfaceWGL::attachToFramebuffer(const gl::Context 
         mFramebufferID = framebufferID;
     }
     framebufferGL->setFramebufferID(mFramebufferID);
-    return egl::NoError();
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::detachFromFramebuffer(const gl::Context *context,
-                                                                gl::Framebuffer *framebuffer)
+void DXGISwapChainWindowSurfaceWGL::detachFromFramebuffer(gl::Framebuffer *framebuffer)
 {
     FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
     ASSERT(framebufferGL->getFramebufferID() == mFramebufferID);
     framebufferGL->setFramebufferID(0);
-    return egl::NoError();
 }
 
 egl::Error DXGISwapChainWindowSurfaceWGL::setObjectsLocked(bool locked)

@@ -20,6 +20,7 @@
 namespace rx
 {
 class EGLSyncImpl;
+class ThreadSafeDisplayImpl;
 }  // namespace rx
 
 namespace gl
@@ -32,7 +33,7 @@ namespace egl
 class Sync final : public LabeledObject
 {
   public:
-    Sync(rx::EGLImplFactory *factory, EGLenum type);
+    Sync(rx::ThreadSafeDisplayImpl *factory, EGLenum type);
     ~Sync() override;
 
     void setLabel(EGLLabelKHR label) override;
@@ -40,23 +41,23 @@ class Sync final : public LabeledObject
 
     const SyncID &id() const { return mId; }
 
-    void onDestroy(const Display *display);
+    void onDestroy(const ThreadSafeDisplay *display);
 
-    Error initialize(const Display *display,
+    Error initialize(const ThreadSafeDisplay *display,
                      const gl::Context *context,
                      const SyncID &id,
                      const AttributeMap &attribs);
-    Error clientWait(const Display *display,
+    Error clientWait(const ThreadSafeDisplay *display,
                      const gl::Context *context,
                      EGLint flags,
                      EGLTime timeout,
                      EGLint *outResult);
-    Error serverWait(const Display *display, const gl::Context *context, EGLint flags);
-    Error signal(const Display *display, const gl::Context *context, EGLint mode);
-    Error getStatus(const Display *display, EGLint *outStatus) const;
+    Error serverWait(const ThreadSafeDisplay *display, const gl::Context *context, EGLint flags);
+    Error signal(const ThreadSafeDisplay *display, const gl::Context *context, EGLint mode);
+    Error getStatus(const ThreadSafeDisplay *display, EGLint *outStatus) const;
 
-    Error copyMetalSharedEventANGLE(const Display *display, void **result) const;
-    Error dupNativeFenceFD(const Display *display, EGLint *result) const;
+    Error copyMetalSharedEventANGLE(const ThreadSafeDisplay *display, void **result) const;
+    Error dupNativeFenceFD(const ThreadSafeDisplay *display, EGLint *result) const;
 
     EGLenum getType() const { return mType; }
     const AttributeMap &getAttributeMap() const { return mAttributeMap; }
@@ -85,15 +86,16 @@ class [[nodiscard]] ScopedSyncRef final
 {
   public:
     ScopedSyncRef() = default;
-    ScopedSyncRef(Display &display, Sync *sync) : mDisplay(display), mSync(sync)
+    ScopedSyncRef(ThreadSafeDisplay &display, Sync *sync) : mDisplay(display), mSync(sync)
     {
         // Callers only invoke this with valid Sync* objects; if lookup fails, ScopedSyncRef() is
         // used instead.
         ASSERT(mSync != nullptr);
         mSync->addRef();
     }
-    ScopedSyncRef(Display *display, Sync *sync)
-        : mDisplay(display ? ScopedDisplayRef(*display) : ScopedDisplayRef()), mSync(sync)
+    ScopedSyncRef(ThreadSafeDisplay *display, Sync *sync)
+        : mDisplay(display ? ScopedThreadSafeDisplayRef(*display) : ScopedThreadSafeDisplayRef()),
+          mSync(sync)
     {
         if (mSync)
         {
@@ -123,7 +125,9 @@ class [[nodiscard]] ScopedSyncRef final
     Sync *get() const { return mSync; }
 
   private:
-    ScopedDisplayRef mDisplay;
+    // Use ScopedThreadSafeDisplayRef here because we need to be able to hold onto a
+    // ThreadSafeDisplay and release it when the SyncRef goes out of scope.
+    ScopedThreadSafeDisplayRef mDisplay;
     Sync *mSync = nullptr;
 };
 

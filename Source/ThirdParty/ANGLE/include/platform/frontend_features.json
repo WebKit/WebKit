@@ -23,6 +23,14 @@
             ]
         },
         {
+            "name": "disallow_non_zero_base_level_and_incompatible_levels_on_hardened_contexts",
+            "category": "Workarounds",
+            "description": [
+                "On hardened contexts, disallow redeclaring mutable texture levels incompatibly and changing ",
+                "the base level to something other than zero"
+            ]
+        },
+        {
             "name": "disable_program_caching_for_transform_feedback",
             "category": "Workarounds",
             "description": [

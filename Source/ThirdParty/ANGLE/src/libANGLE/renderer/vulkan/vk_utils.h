@@ -54,6 +54,7 @@
 
 namespace egl
 {
+class ThreadSafeDisplay;
 class Display;
 class Image;
 class ShareGroup;
@@ -74,6 +75,7 @@ ANGLE_GL_OBJECTS_X(ANGLE_PRE_DECLARE_OBJECT)
 
 namespace rx
 {
+class ThreadSafeDisplayVk;
 class DisplayVk;
 class ImageVk;
 class ProgramExecutableVk;
@@ -347,6 +349,7 @@ class [[nodiscard]] ScopedQueueSerialIndex final : angle::NonCopyable
 };
 
 class RefCountedEventsGarbageRecycler;
+
 // Abstracts error handling. Implemented by ContextVk for GL, DisplayVk for EGL, worker threads,
 // CLContextVk etc.
 class ErrorContext : angle::NonCopyable
@@ -434,6 +437,12 @@ struct ImplTypeHelper<gl::OBJ>         \
 // clang-format on
 
 ANGLE_GL_OBJECTS_X(ANGLE_IMPL_TYPE_HELPER_GL)
+
+template <>
+struct ImplTypeHelper<egl::ThreadSafeDisplay>
+{
+    using ImplType = ThreadSafeDisplayVk;
+};
 
 template <>
 struct ImplTypeHelper<egl::Display>

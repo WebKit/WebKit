@@ -49,8 +49,8 @@ class MockSurfaceImpl : public rx::SurfaceImpl
                                const gl::ImageIndex &,
                                GLsizei,
                                rx::FramebufferAttachmentRenderTarget **));
-    MOCK_METHOD2(attachToFramebuffer, egl::Error(const gl::Context *, gl::Framebuffer *));
-    MOCK_METHOD2(detachFromFramebuffer, egl::Error(const gl::Context *, gl::Framebuffer *));
+    MOCK_METHOD2(attachToFramebuffer, void(const gl::Context *, gl::Framebuffer *));
+    MOCK_METHOD1(detachFromFramebuffer, void(gl::Framebuffer *));
     MOCK_METHOD0(destructor, void());
 
     egl::SurfaceState mockState;

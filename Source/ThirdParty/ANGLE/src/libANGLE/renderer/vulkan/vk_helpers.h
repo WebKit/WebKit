@@ -2826,7 +2826,6 @@ class ImageHelper final : public Resource, public angle::Subject
                               DeviceQueueIndex newDeviceQueueIndex,
                               OutsideRenderPassCommandBuffer *commandBuffer);
 
-    // Returns true if barrier has been generated
     void updateLayoutAndBarrier(Context *context,
                                 VkImageAspectFlags aspectMask,
                                 ImageAccess newAccess,

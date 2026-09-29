@@ -75,6 +75,21 @@ class ContextMap final : public priv::ObjectMap<gl::Context, angle::SimpleMutex>
         ASSERT(contextSetSizeBeforeInvalidation ==
                this->mObjects.size() + invalidContextMap->mObjects.size());
     }
+
+    template <typename ConditionType>
+    void notifyDeviceLost(ConditionType *deviceLost) const
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        if (*deviceLost)
+        {
+            return;
+        }
+        for (const auto &pair : this->mObjects)
+        {
+            pair.second->markContextLost(gl::GraphicsResetStatus::UnknownContextReset);
+        }
+        *deviceLost = true;
+    }
 };
 
 class UnlockedContextMap final : public priv::ObjectMap<gl::Context, angle::NoOpMutex>

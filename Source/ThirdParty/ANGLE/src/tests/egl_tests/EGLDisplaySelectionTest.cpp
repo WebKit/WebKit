@@ -10,6 +10,9 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
+#include <set>
+
 #include "common/debug.h"
 #include "common/string_utils.h"
 #include "gpu_info_util/SystemInfo.h"
@@ -29,7 +32,9 @@ class EGLDisplaySelectionTest : public ANGLETest<>
     int findGPU(bool lowPower) const
     {
         if (lowPower)
+        {
             return FindLowPowerGPU(mSystemInfo);
+        }
         return FindHighPowerGPU(mSystemInfo);
     }
 
@@ -671,6 +676,144 @@ TEST_P(EGLDisplaySelectionTestDisplayKey, ConcurentDisplayKey)
     terminateWindow();
 }
 
+class EGLDisplaySelectionTestVulkanDeviceUuid : public EGLDisplaySelectionTestNoFixture
+{
+
+  protected:
+    static constexpr size_t kVulkanUuidSize = 16;
+    using VulkanUuid                        = std::array<uint8_t, kVulkanUuidSize>;
+
+    static VulkanUuid MakeUuid(uint8_t seed)
+    {
+        VulkanUuid uuid;
+        uuid.fill(seed);
+        return uuid;
+    }
+
+    // Deliberately does not call eglInitialize.  Display creation is lazy, so no
+    // physical device is selected here and the test does not depend on the
+    // running system having a device that matches |deviceUuid|.  The cache key
+    // is built by eglGetPlatformDisplay alone, which is exactly what is under
+    // test.
+    EGLDisplay getDisplayWithDeviceUuid(const VulkanUuid &deviceUuid)
+    {
+        std::vector<EGLAttrib> displayAttributes;
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE);
+        displayAttributes.push_back(reinterpret_cast<EGLAttrib>(deviceUuid.data()));
+        displayAttributes.push_back(EGL_NONE);
+
+        EGLDisplay display = eglGetPlatformDisplay(
+            GetEglPlatform(), reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
+            displayAttributes.data());
+        EXPECT_EGL_SUCCESS();
+        return display;
+    }
+};
+
+// Test that displays requesting different Vulkan device UUIDs are distinct, and
+// that a UUID supplied through a different buffer still maps to the display
+// already cached for those bytes.
+TEST_P(EGLDisplaySelectionTestVulkanDeviceUuid, DistinctDeviceUuidsAreNotShared)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_vulkan_device_uuid"));
+
+    initializeWindow();
+
+    constexpr size_t kDisplayCount = 4;
+
+    // Built up front so that no reallocation can move the bytes a display was
+    // keyed on: the UUID must outlive the display that references it.
+    std::vector<VulkanUuid> uuids;
+    uuids.reserve(kDisplayCount);
+    for (size_t i = 0; i < kDisplayCount; i++)
+    {
+        uuids.push_back(MakeUuid(static_cast<uint8_t>(i + 1)));
+    }
+
+    std::set<EGLDisplay> uniqueDisplays;
+    std::vector<EGLDisplay> displays;
+    for (const VulkanUuid &uuid : uuids)
+    {
+        EGLDisplay display = getDisplayWithDeviceUuid(uuid);
+        ASSERT_TRUE(display != EGL_NO_DISPLAY);
+
+        // Test that this display is unique
+        EXPECT_TRUE(uniqueDisplays.insert(display).second);
+
+        displays.push_back(display);
+    }
+
+    // Test that the key holds the UUID bytes rather than the caller's pointer,
+    // by requesting the same UUIDs again through a separate buffer.
+    for (size_t i = 0; i < kDisplayCount; i++)
+    {
+        const VulkanUuid sameBytesOtherBuffer = uuids[i];
+        EXPECT_EQ(displays[i], getDisplayWithDeviceUuid(sameBytesOtherBuffer));
+    }
+
+    // Test mutating UUID contents in-place with the same buffer address:
+    // the mutated contents must produce a new unique display.
+    VulkanUuid mutableUuid           = MakeUuid(0xFE);
+    EGLDisplay displayBeforeMutation = getDisplayWithDeviceUuid(mutableUuid);
+    ASSERT_TRUE(displayBeforeMutation != EGL_NO_DISPLAY);
+    EXPECT_TRUE(uniqueDisplays.insert(displayBeforeMutation).second);
+
+    mutableUuid[0] += 1;
+    EGLDisplay displayAfterMutation = getDisplayWithDeviceUuid(mutableUuid);
+    ASSERT_TRUE(displayAfterMutation != EGL_NO_DISPLAY);
+    EXPECT_TRUE(uniqueDisplays.insert(displayAfterMutation).second);
+
+    for (EGLDisplay display : uniqueDisplays)
+    {
+        terminateDisplay(display);
+    }
+
+    terminateWindow();
+}
+
+// Test that the caller's UUID buffer does not have to outlive
+// eglGetPlatformDisplay.  The physical device is chosen later, during
+// eglInitialize, and must be chosen from the display's own copy of the bytes.
+// Reading the caller's buffer there is a use-after-free that only a sanitizer
+// build reports, so this test guards the contract rather than demonstrating a
+// visible failure.
+TEST_P(EGLDisplaySelectionTestVulkanDeviceUuid, DeviceUuidNeedNotOutliveDisplayCreation)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_vulkan_device_uuid"));
+
+    initializeWindow();
+
+    EGLDisplay display = EGL_NO_DISPLAY;
+    {
+        // Heap allocated so that a sanitizer poisons the bytes when the buffer
+        // goes out of scope, the way a caller's stack array would be reused.
+        std::vector<uint8_t> deviceUuid(kVulkanUuidSize, 0xAB);
+
+        std::vector<EGLAttrib> displayAttributes;
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE);
+        displayAttributes.push_back(EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE);
+        displayAttributes.push_back(reinterpret_cast<EGLAttrib>(deviceUuid.data()));
+        displayAttributes.push_back(EGL_NONE);
+
+        display = eglGetPlatformDisplay(GetEglPlatform(),
+                                        reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
+                                        displayAttributes.data());
+        ASSERT_EGL_SUCCESS();
+    }
+    ASSERT_TRUE(display != EGL_NO_DISPLAY);
+
+    // No device carries this UUID, so the implementation falls back to another
+    // device and initialization still succeeds.
+    EXPECT_TRUE(eglInitialize(display, nullptr, nullptr) == EGL_TRUE);
+    EXPECT_EGL_SUCCESS();
+
+    terminateDisplay(display);
+    terminateWindow();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLDisplaySelectionTest);
 ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTest,
                        WithLowPowerGPU(ES2_METAL()),
@@ -706,3 +849,8 @@ ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTestDisplayKey,
                        WithNoFixture(WithLowPowerGPU(ES3_METAL())),
                        WithNoFixture(WithHighPowerGPU(ES2_METAL())),
                        WithNoFixture(WithHighPowerGPU(ES3_METAL())));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLDisplaySelectionTestVulkanDeviceUuid);
+ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTestVulkanDeviceUuid,
+                       WithNoFixture(ES2_VULKAN()),
+                       WithNoFixture(ES3_VULKAN()));

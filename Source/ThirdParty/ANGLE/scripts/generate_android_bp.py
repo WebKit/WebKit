@@ -387,7 +387,7 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
         elif dep == '//third_party/zlib/google:compression_utils_portable':
             # Replace zlib by Android's zlib, compression_utils_portable is the root dependency
             shared_libs.append('libz')
-            static_libs.extend(['zlib_google_compression_utils_portable', 'cpufeatures'])
+            static_libs.extend(['zlib_google_compression_utils_portable'])
         elif dep == '//testing/gtest:gtest':
             static_libs.append('libgtest_ndk_c++')
         elif dep == '//testing/gmock:gmock':

@@ -25,7 +25,7 @@ class FunctionsGLX;
 
 struct SwapControlData;
 
-class DisplayGLX : public DisplayGL
+class DisplayGLX : public DisplayGL, public ThreadSafeDisplayGL
 {
   public:
     DisplayGLX(const egl::DisplayState &state);
@@ -64,9 +64,6 @@ class DisplayGLX : public DisplayGL
 
     egl::ConfigSet generateConfigs() override;
 
-    bool testDeviceLost() override;
-    egl::Error restoreLostDevice(const egl::Display *display) override;
-
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
 
     egl::Error waitClient(const gl::Context *context) override;
@@ -101,6 +98,8 @@ class DisplayGLX : public DisplayGL
     RendererGL *getRenderer() const override;
 
     angle::NativeWindowSystem getWindowSystem() const override;
+
+    ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
 
   private:
     egl::Error initializeContext(glx::Context shareContext,

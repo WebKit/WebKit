@@ -15,20 +15,22 @@
 namespace rx
 {
 
-egl::Error EGLSyncImpl::signal(const egl::Display *display, const gl::Context *context, EGLint mode)
+egl::Error EGLSyncImpl::signal(const egl::ThreadSafeDisplay *display,
+                               const gl::Context *context,
+                               EGLint mode)
 {
     UNREACHABLE();
     return egl::Error(EGL_BAD_MATCH);
 }
 
-egl::Error EGLSyncImpl::copyMetalSharedEventANGLE(const egl::Display *display,
+egl::Error EGLSyncImpl::copyMetalSharedEventANGLE(const egl::ThreadSafeDisplay *display,
                                                   void **eventOut) const
 {
     UNREACHABLE();
     return egl::Error(EGL_BAD_MATCH);
 }
 
-egl::Error EGLSyncImpl::dupNativeFenceFD(const egl::Display *display, EGLint *fdOut) const
+egl::Error EGLSyncImpl::dupNativeFenceFD(const egl::ThreadSafeDisplay *display, EGLint *fdOut) const
 {
     UNREACHABLE();
     return egl::Error(EGL_BAD_MATCH);

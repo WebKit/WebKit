@@ -102,6 +102,7 @@ class Builder
     void rescopeAsForLoopVariable(VariableId id);
     void markVariableInvariant(VariableId id);
     void markVariablePrecise(VariableId id);
+    void markTexelFetchUse(VariableId id, const angle::Span<const uint32_t> &fields);
     void initialize(VariableId id);
 
     FunctionId newFunction(const ImmutableString &name,
@@ -257,6 +258,7 @@ class Builder
     void rescopeAsForLoopVariable(VariableId id) {}
     void markVariableInvariant(VariableId id) {}
     void markVariablePrecise(VariableId id) {}
+    void markTexelFetchUse(VariableId id, const angle::Span<const uint32_t> &fields) {}
     void initialize(VariableId id) {}
 
     FunctionId newFunction(const ImmutableString &name,

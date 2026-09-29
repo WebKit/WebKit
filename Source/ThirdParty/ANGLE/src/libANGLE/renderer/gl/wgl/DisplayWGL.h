@@ -21,7 +21,7 @@ namespace rx
 class FunctionsWGL;
 class RendererWGL;
 
-class DisplayWGL : public DisplayGL
+class DisplayWGL : public DisplayGL, public ThreadSafeDisplayGL
 {
   public:
     DisplayWGL(const egl::DisplayState &state);
@@ -52,9 +52,6 @@ class DisplayWGL : public DisplayGL
 
     egl::ConfigSet generateConfigs() override;
 
-    bool testDeviceLost() override;
-    egl::Error restoreLostDevice(const egl::Display *display) override;
-
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
     egl::Error validateClientBuffer(const egl::Config *configuration,
                                     EGLenum buftype,
@@ -81,6 +78,8 @@ class DisplayWGL : public DisplayGL
     void populateFeatureList(angle::FeatureList *features) override;
 
     RendererGL *getRenderer() const override;
+
+    ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
 
   private:
     egl::Error initializeImpl(egl::Display *display);

@@ -2828,6 +2828,8 @@ angle::Result Renderer11::copyCompressedTexture(const gl::Context *context,
     mDeviceContext->CopySubresourceRegion(destResource->get(), destSubresource, 0, 0, 0,
                                           sourceResource->get(), sourceSubresource, nullptr);
 
+    destStorage11->markLevelDirty(destLevel);
+
     return angle::Result::Continue;
 }
 
@@ -3269,6 +3271,12 @@ angle::Result Renderer11::generateMipmapUsingD3D(const gl::Context *context,
                                       textureState.getEffectiveMaxLevel(), false, &srv));
 
     mDeviceContext->GenerateMips(srv->get());
+
+    for (size_t level = textureState.getEffectiveBaseLevel() + 1;
+         level <= textureState.getEffectiveMaxLevel(); ++level)
+    {
+        storage11->markLevelDirty(static_cast<int>(level));
+    }
 
     return angle::Result::Continue;
 }

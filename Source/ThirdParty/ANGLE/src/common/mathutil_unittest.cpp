@@ -11,8 +11,6 @@
 
 #include <array>
 
-#include "common/unsafe_buffers.h"
-
 #include <gtest/gtest.h>
 
 using namespace gl;
@@ -167,7 +165,7 @@ TEST(MathUtilTest, packAndUnpackUnorm4x8)
     for (size_t i = 0; i < 5; i++)
     {
         UnpackUnorm4x8(PackUnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
-                       outputVals.data());
+                       outputVals);
         for (size_t j = 0; j < 4; j++)
         {
             float expected = input[i][j] < 0.0f ? 0.0f : input[i][j];
@@ -194,7 +192,7 @@ TEST(MathUtilTest, packAndUnpackSnorm4x8)
     for (size_t i = 0; i < 5; i++)
     {
         UnpackSnorm4x8(PackSnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
-                       outputVals.data());
+                       outputVals);
         for (size_t j = 0; j < 4; j++)
         {
             float expected = input[i][j];

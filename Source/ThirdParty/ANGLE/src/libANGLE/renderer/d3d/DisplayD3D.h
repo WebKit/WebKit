@@ -23,7 +23,15 @@ class ShareGroupD3D : public ShareGroupImpl
     ShareGroupD3D(const egl::ShareGroupState &state) : ShareGroupImpl(state) {}
 };
 
-class DisplayD3D : public DisplayImpl, public d3d::Context
+// testDeviceLost() and restoreLostDevice() are implemented by DisplayD3D
+class ThreadSafeDisplayD3D : public ThreadSafeDisplayImpl
+{
+  public:
+    ThreadSafeDisplayD3D()           = default;
+    ~ThreadSafeDisplayD3D() override = default;
+};
+
+class DisplayD3D : public DisplayImpl, public d3d::Context, public ThreadSafeDisplayD3D
 {
   public:
     DisplayD3D(const egl::DisplayState &state);
@@ -74,7 +82,7 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
     egl::ConfigSet generateConfigs() override;
 
     bool testDeviceLost() override;
-    egl::Error restoreLostDevice(const egl::Display *display) override;
+    egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
     egl::Error validateClientBuffer(const egl::Config *configuration,
@@ -108,6 +116,8 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     void populateFeatureList(angle::FeatureList *features) override;
+
+    ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
 
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

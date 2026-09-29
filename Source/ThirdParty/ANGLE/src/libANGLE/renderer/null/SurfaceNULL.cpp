@@ -94,16 +94,4 @@ angle::Result SurfaceNULL::initializeContents(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-egl::Error SurfaceNULL::attachToFramebuffer(const gl::Context *context,
-                                            gl::Framebuffer *framebuffer)
-{
-    return egl::NoError();
-}
-
-egl::Error SurfaceNULL::detachFromFramebuffer(const gl::Context *context,
-                                              gl::Framebuffer *framebuffer)
-{
-    return egl::NoError();
-}
-
 }  // namespace rx

@@ -199,7 +199,7 @@ class CommandsStateMap
         std::unique_lock<angle::SimpleMutex> ul(mMutex);
         mCommandsState[queueSerial].mPrintfBuffer = printfBuffer;
     }
-    void addMemory(const QueueSerial queueSerial, cl::Memory *mem)
+    void addMemory(const QueueSerial queueSerial, const cl::Memory *mem)
     {
         std::unique_lock<angle::SimpleMutex> ul(mMutex);
         mCommandsState[queueSerial].mMemories.emplace_back(mem);
@@ -248,7 +248,7 @@ class CommandsStateMap
     struct CommandsState
     {
         cl::EventPtrs mEvents;
-        cl::MemoryPtrs mMemories;
+        cl::ConstMemoryPtrs mMemories;
         cl::KernelPtrs mKernels;
         cl::SamplerPtrs mSamplers;
         cl::BufferPtr mPrintfBuffer;
@@ -533,7 +533,7 @@ class CLCommandQueueVk : public CLCommandQueueImpl
         ReadOnly,
         Writeable,
     };
-    angle::Result addMemoryDependencies(cl::Memory *mem, MemoryHandleAccess access);
+    angle::Result addMemoryDependencies(const cl::Memory *mem, MemoryHandleAccess access);
 
     angle::Result submitEmptyCommand();
 
@@ -560,8 +560,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     cl::EventPtrs mExternalEvents;
 
     // Keep track of kernel resources on prior kernel enqueues
-    angle::HashSet<cl::Object *> mWriteDependencyTracker;
-    angle::HashSet<cl::Object *> mReadDependencyTracker;
+    angle::HashSet<const cl::Object *> mWriteDependencyTracker;
+    angle::HashSet<const cl::Object *> mReadDependencyTracker;
 
     CommandsStateMap mCommandsStateMap;
 

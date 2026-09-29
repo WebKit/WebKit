@@ -18,7 +18,7 @@ namespace rx
 
 ReusableSync::ReusableSync() : EGLSyncImpl(), mStatus(0) {}
 
-void ReusableSync::onDestroy(const egl::Display *display) {}
+void ReusableSync::onDestroy(const egl::ThreadSafeDisplay *display) {}
 
 ReusableSync::~ReusableSync()
 {
@@ -26,7 +26,7 @@ ReusableSync::~ReusableSync()
     mCondVar.notify_all();
 }
 
-egl::Error ReusableSync::initialize(const egl::Display *display,
+egl::Error ReusableSync::initialize(const egl::ThreadSafeDisplay *display,
                                     const gl::Context *context,
                                     EGLenum type,
                                     const egl::AttributeMap &attribs)
@@ -36,7 +36,7 @@ egl::Error ReusableSync::initialize(const egl::Display *display,
     return egl::NoError();
 }
 
-egl::Error ReusableSync::clientWait(const egl::Display *display,
+egl::Error ReusableSync::clientWait(const egl::ThreadSafeDisplay *display,
                                     const gl::Context *context,
                                     EGLint flags,
                                     EGLTime timeout,
@@ -82,7 +82,7 @@ egl::Error ReusableSync::clientWait(const egl::Display *display,
     return egl::NoError();
 }
 
-egl::Error ReusableSync::serverWait(const egl::Display *display,
+egl::Error ReusableSync::serverWait(const egl::ThreadSafeDisplay *display,
                                     const gl::Context *context,
                                     EGLint flags)
 {
@@ -90,7 +90,7 @@ egl::Error ReusableSync::serverWait(const egl::Display *display,
     return egl::Error(EGL_BAD_MATCH);
 }
 
-egl::Error ReusableSync::signal(const egl::Display *display,
+egl::Error ReusableSync::signal(const egl::ThreadSafeDisplay *display,
                                 const gl::Context *context,
                                 EGLint mode)
 {
@@ -110,7 +110,7 @@ egl::Error ReusableSync::signal(const egl::Display *display,
     return egl::NoError();
 }
 
-egl::Error ReusableSync::getStatus(const egl::Display *display, EGLint *outStatus)
+egl::Error ReusableSync::getStatus(const egl::ThreadSafeDisplay *display, EGLint *outStatus)
 {
     *outStatus = mStatus;
     return egl::NoError();

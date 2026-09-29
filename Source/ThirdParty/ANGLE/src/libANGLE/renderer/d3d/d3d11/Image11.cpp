@@ -420,8 +420,12 @@ angle::Result Image11::copyFromTexStorage(const gl::Context *context,
     ANGLE_TRY(storage11->getSubresourceIndex(context, imageIndex, &subresourceIndex));
 
     gl::Box sourceBox(0, 0, 0, mWidth, mHeight, mDepth);
-    return copyWithoutConversion(context, gl::Offset(), sourceBox, *textureHelper,
-                                 subresourceIndex);
+    ANGLE_TRY(
+        copyWithoutConversion(context, gl::Offset(), sourceBox, *textureHelper, subresourceIndex));
+
+    disassociateStorage();
+
+    return angle::Result::Continue;
 }
 
 angle::Result Image11::copyFromFramebuffer(const gl::Context *context,

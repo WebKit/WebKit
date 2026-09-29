@@ -184,7 +184,7 @@ bool DisplayMtl::testDeviceLost()
 #endif
 }
 
-egl::Error DisplayMtl::restoreLostDevice(const egl::Display *display)
+egl::Error DisplayMtl::restoreLostDevice(const egl::ThreadSafeDisplay *display)
 {
 #if ANGLE_METAL_LOSE_CONTEXT_ON_ERROR == ANGLE_ENABLED
     // A Metal device cannot be restored, the entire context would have to be
@@ -458,7 +458,7 @@ gl::Version DisplayMtl::getMaxConformantESVersion() const
     return std::min(getMaxSupportedESVersion(), gl::Version(3, 0));
 }
 
-EGLSyncImpl *DisplayMtl::createSync()
+EGLSyncImpl *ThreadSafeDisplayMtl::createSync()
 {
     return new EGLSyncMtl();
 }

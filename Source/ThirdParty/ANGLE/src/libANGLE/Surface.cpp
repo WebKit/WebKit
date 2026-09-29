@@ -280,10 +280,6 @@ Error Surface::initialize(const Display *display)
 
 Error Surface::makeCurrent(const gl::Context *context)
 {
-    if (isLocked())
-    {
-        return egl::Error(EGL_BAD_ACCESS);
-    }
     ANGLE_TRY(mImplementation->makeCurrent(context));
     mIsCurrentOnAnyContext = true;
     addRef();

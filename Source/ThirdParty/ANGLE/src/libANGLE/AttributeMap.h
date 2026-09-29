@@ -18,11 +18,12 @@
 namespace egl
 {
 class Display;
+class ThreadSafeDisplay;
 struct ValidationContext;
 
 // Validates {key, value} for each attribute. Generates an error and returns false on invalid usage.
 using AttributeValidationFunc =
-    std::function<bool(const ValidationContext *, const Display *, EGLAttrib)>;
+    std::function<bool(const ValidationContext *, const ThreadSafeDisplay *, EGLAttrib)>;
 
 enum AttributeMapType
 {
@@ -74,7 +75,7 @@ class AttributeMap final
     const_iterator end() const;
 
     [[nodiscard]] bool validate(const ValidationContext *val,
-                                const egl::Display *display,
+                                const egl::ThreadSafeDisplay *display,
                                 AttributeValidationFunc validationFunc) const;
 
     // TODO: remove this and validate at every call site. http://anglebug.com/42265167

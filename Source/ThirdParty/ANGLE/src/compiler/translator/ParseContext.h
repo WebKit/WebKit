@@ -7,6 +7,7 @@
 #define COMPILER_TRANSLATOR_PARSECONTEXT_H_
 
 #include "common/hash_containers.h"
+#include "common/hash_utils.h"
 #include "common/span.h"
 #include "compiler/preprocessor/Preprocessor.h"
 #include "compiler/translator/Compiler.h"
@@ -61,6 +62,65 @@ struct VariableAndLocation
 {
     TSourceLoc line           = {};
     const TVariable *variable = nullptr;
+};
+
+struct SamplerAccess
+{
+    const TVariable *uniform;
+    // Accessed fields in order.  For example `u.field2[3].field0.field1` will contain `[2, 0, 1]`,
+    TVector<uint32_t> fields;
+
+    bool operator==(const SamplerAccess &other) const
+    {
+        return uniform == other.uniform && fields == other.fields;
+    }
+};
+
+struct SamplerAsFunctionArg
+{
+    SamplerAccess access;
+    const TFunction *callee;
+    uint32_t calleeArgIndex;
+    bool operator==(const SamplerAsFunctionArg &other) const
+    {
+        return access == other.access && callee == other.callee &&
+               calleeArgIndex == other.calleeArgIndex;
+    }
+};
+}  // namespace sh
+
+namespace std
+{
+template <>
+struct hash<sh::SamplerAccess>
+{
+    size_t operator()(const sh::SamplerAccess &s) const
+    {
+        size_t hash = angle::HashMultiple(s.uniform, s.fields.size());
+        for (uint32_t field : s.fields)
+        {
+            angle::HashCombine(hash, field);
+        }
+        return hash;
+    }
+};
+template <>
+struct hash<sh::SamplerAsFunctionArg>
+{
+    size_t operator()(const sh::SamplerAsFunctionArg &s) const
+    {
+        return angle::HashMultiple(s.access, s.callee, s.calleeArgIndex);
+    }
+};
+}  // namespace std
+
+namespace sh
+{
+struct FunctionSamplerAccess
+{
+    TUnorderedSet<SamplerAsFunctionArg> uniformsPassedToCallee;
+    TVector<TUnorderedSet<SamplerAccess>> paramsStaticallyUsedWithTexelFetch;
+    TVector<TUnorderedSet<SamplerAsFunctionArg>> paramsPassedToCallee;
 };
 
 //
@@ -513,6 +573,7 @@ class TParseContext : angle::NonCopyable
 
     void checkTextureGather(TIntermAggregate *functionCall);
     void checkTextureOffset(TIntermAggregate *functionCall);
+    void checkTexelFetch(TIntermAggregate *functionCall);
     void checkImageMemoryAccessForBuiltinFunctions(TIntermAggregate *functionCall);
     void checkImageMemoryAccessForUserDefinedFunctions(const TFunction *functionDefinition,
                                                        const TIntermAggregate *functionCall);
@@ -574,6 +635,11 @@ class TParseContext : angle::NonCopyable
     TLayoutTessEvaluationType getTessEvaluationShaderInputPointType() const
     {
         return mTessEvaluationShaderInputPointType;
+    }
+
+    const TUnorderedSet<SamplerAccess> &getSamplersStaticallyUsedWithTexelFetch() const
+    {
+        return mSamplersStaticallyUsedWithTexelFetch;
     }
 
     void markShaderHasPrecise() { mHasAnyPreciseType = true; }
@@ -761,6 +827,9 @@ class TParseContext : angle::NonCopyable
 
     bool parseTessControlShaderOutputLayoutQualifier(const TTypeQualifier &typeQualifier);
     bool parseTessEvaluationShaderInputLayoutQualifier(const TTypeQualifier &typeQualifier);
+
+    void trackSamplersPassedToFunction(const TFunction *fnCandidate, TIntermAggregate *fnCall);
+    void postParseTrackSamplersPassedToFunction();
 
     bool checkVariableSize(const TSourceLoc &line,
                            const ImmutableString &identifier,
@@ -1030,6 +1099,27 @@ class TParseContext : angle::NonCopyable
 
     // Track when we add new scope for func body in ESSL 1.00 spec
     bool mFunctionBodyNewScope;
+
+    // Track static usage of samplers with texelFetch.  Such samplers are required to ignore
+    // sRGB SKIP_DECODE, and are gathered in a set, namely S.  When a function F is declared, there
+    // are four possibilities considered:
+    //
+    // 1. Uniform sampler used in texelFetch: "Uniform + selected fields" is added to S.
+    // 2. Uniform sampler (or struct with sampler) is passed to function F: "Uniform + selected
+    //    fields so far + F + F's arg index" is tracked globally.
+    // 3. Function arg used in texelFetch: "Arg index + selected fields" is tracked for this
+    //    function.
+    // 4. Function arg (containing sampler) is passed to another function F2: "Arg index + selected
+    //    fields so far + F2 + F2's arg index" is tracked for this function.
+    //
+    // At the end of parse, the functions are traversed in reverse DAG order, and the uniform->arg
+    // information (#2) is propagated from caller to callee functions (by combining with #3 and #4),
+    // augmenting the global set S (#1) and the callee's tracking (#2).
+    //
+    // Set S is used when collecting reflection info to communicate with the backend which samplers
+    // are statically used with texelFetch.
+    TUnorderedSet<SamplerAccess> mSamplersStaticallyUsedWithTexelFetch;
+    TUnorderedMap<const TFunction *, FunctionSamplerAccess> mFunctionsSamplerAccess;
 
     ShShaderOutput mOutputType;
 

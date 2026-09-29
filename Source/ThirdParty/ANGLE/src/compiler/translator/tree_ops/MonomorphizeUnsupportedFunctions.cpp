@@ -199,9 +199,11 @@ const TFunction *MonomorphizeFunction(TSymbolTable *symbolTable,
         if (nextReplacedArg >= replacedArguments->size() ||
             paramIndex != (*replacedArguments)[nextReplacedArg].argumentIndex)
         {
-            TVariable *substituteArgument =
-                new TVariable(symbolTable, originalParam->name(), &originalParam->getType(),
-                              originalParam->symbolType());
+            TVariable *substituteArgument = new TVariable(
+                symbolTable,
+                originalParam->symbolType() == SymbolType::Empty ? kEmptyImmutableString
+                                                                 : originalParam->name(),
+                &originalParam->getType(), originalParam->symbolType());
             // Not replaced, add an identical parameter.
             substituteFunction->addParameter(substituteArgument);
             (*argumentMapOut)[originalParam->uniqueId()] = new TIntermSymbol(substituteArgument);

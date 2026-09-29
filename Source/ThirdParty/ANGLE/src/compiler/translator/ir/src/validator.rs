@@ -26,9 +26,13 @@
 //     validate_interface_variables_have_unique_names()
 //   - NameSource::ShaderInterface and NameSource::Internal are never found inside body blocks,
 //     those should always be Temporary: validate_block_variable_name_sources_are_temporary()
+//   - NameSource::Internal names don't start with the user and temporary name prefixes (*_PREFIX
+//     constants): validate_internal_name_prefixes()
 //
 // Types:
 //   - Validate that ImageType fields are valid in combination with ImageDimension:
+//     validate_image_types()
+//   - Images with the Rect dimension can only be 2D samplers (not storage image, array, msaa, etc).
 //     validate_image_types()
 //   - Variables are Pointers: validate_all_alive_variables_are_pointers()
 //   - No pointer->pointer type: validate_no_pointer_to_pointer_type()
@@ -78,6 +82,8 @@
 //     applicable (including uniforms and samplers for example).  Needs to work to make sure
 //     precision is always assigned: validate_precision(),
 //     validate_glsl_result_precision_and_propagation_rules()
+//   - Check for invalid texture* combinations, like non-shadow samplers with TextureCompare ops, or
+//     is_proj is false for cubemaps: validate_sampler_operand_is_compatable_with_textureop()
 //
 // Functions:
 //   - Check that function parameter variables don't have an initializer:
@@ -88,16 +94,10 @@
 // TODO(http://anglebug.com/349994211): to validate:
 //   - If there's a cached "has side effect", that it's correct.
 //   - Loop blocks ends in the appropriate instructions.
-//   - NameSource::Internal names don't start with the user and temporary name prefixes (_u, t and f
-//     respectively).
 //   - Type matches?
 //   - Whatever else is in the AST validation currently.
 //   - Validate built-ins that accept an out or inout parameter, that the corresponding parameter is
 //     passed a Pointer at the call site.  For that matter, do the same for user function calls too.
-//   - Check for invalid texture* combinations, like non-shadow samplers with TextureCompare ops, or
-//     is_proj is false for cubemaps.
-//   - Images with the Rect dimension can only have a Float base type and be 2D samplers (not
-//     storage image, array, msaa, etc).
 //   - Instruction result / operand types are correct and consistent. For example:
 //     BinaryOpCode::Equal should return a bool type.
 
@@ -304,6 +304,7 @@ impl<'a> Validator<'a> {
         self.validate_misuse_of_builtin_names();
         self.validate_interface_variables_have_unique_names();
         self.validate_block_variable_name_sources_are_temporary();
+        self.validate_internal_name_prefixes();
         self.validate_decorations();
         self.validate_no_pointer_to_pointer_type();
         self.validate_all_variables_are_declared_in_scope();
@@ -1293,144 +1294,540 @@ impl<'a> Validator<'a> {
     fn validate_image_types(&self) {
         for ir_type in self.ir.meta.all_types() {
             if let Type::Image(basic_type, image_type) = ir_type {
-                let invalid_combo = match image_type.dimension {
-                    ImageDimension::D2 => {
-                        if *basic_type == ImageBasicType::Float
-                            && image_type.is_sampled
-                            && image_type.is_ms
-                            && image_type.is_shadow
-                        {
-                            Some("float 2D multisampled shadow sampler")
-                        } else if (*basic_type == ImageBasicType::Int
-                            || *basic_type == ImageBasicType::Uint)
-                            && image_type.is_sampled
-                            && image_type.is_shadow
-                        {
-                            Some("int 2D shadow sampler or uint 2D shadow sampler")
-                        } else if !image_type.is_sampled
-                            && (image_type.is_ms || image_type.is_shadow)
-                        {
-                            Some("2D multisampled storage image or 2D shadow storage image")
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::D3 => {
-                        if image_type.is_array || image_type.is_ms || image_type.is_shadow {
-                            Some("3D array, 3D multisampled or 3D shadow image types")
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::Cube => {
-                        if image_type.is_ms {
-                            Some("multisampled cube image types")
-                        } else if (*basic_type == ImageBasicType::Int
-                            || *basic_type == ImageBasicType::Uint)
-                            && image_type.is_sampled
-                            && image_type.is_shadow
-                        {
-                            Some("int or uint cube shadow sampler")
-                        } else if !image_type.is_sampled && image_type.is_shadow {
-                            Some("cube shadow storage image")
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::External => {
-                        if *basic_type == ImageBasicType::Int
-                            || *basic_type == ImageBasicType::Uint
-                            || !image_type.is_sampled
-                            || image_type.is_array
-                            || image_type.is_ms
-                            || image_type.is_shadow
-                        {
-                            Some(
-                                "int external image, uint external image, storage external image, \
-                                 array external image, multismpled external image, shadow \
-                                 external image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::ExternalY2Y => {
-                        if *basic_type == ImageBasicType::Int
-                            || *basic_type == ImageBasicType::Uint
-                            || !image_type.is_sampled
-                            || image_type.is_array
-                            || image_type.is_ms
-                            || image_type.is_shadow
-                        {
-                            Some(
-                                "int external y2y image, uint external y2y image, storage \
-                                 external y2y image, array external y2y image, multismpled \
-                                 external y2y image, shadow external y2y image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::Rect => {
-                        if !image_type.is_sampled
-                            || image_type.is_array
-                            || image_type.is_ms
-                            || image_type.is_shadow
-                        {
-                            Some(
-                                "storage rect image, array rect image, multisampled rect image, \
-                                 shadow rect image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::Buffer => {
-                        if image_type.is_array || image_type.is_ms || image_type.is_shadow {
-                            Some(
-                                "array buffer image, multisampled buffer image, shadow buffer \
-                                 image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::PixelLocal => {
-                        if image_type.is_sampled
-                            || image_type.is_array
-                            || image_type.is_ms
-                            || image_type.is_shadow
-                        {
-                            Some(
-                                "pixel local image sampler, array pixel local image, multisample \
-                                 pixel local image, shadow pixel local image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
-                    ImageDimension::Subpass => {
-                        if image_type.is_sampled
-                            || image_type.is_array
-                            || image_type.is_ms
-                            || image_type.is_shadow
-                        {
-                            Some(
-                                "subpass image sampler, array subpass image, multisample subpass \
-                                 image, shadow subpass image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
-                };
-                if let Some(invalid_combo) = invalid_combo {
+                // 1. Shadow: float only, sampled only, 2D/Cube only
+                if image_type.is_shadow
+                    && (*basic_type != ImageBasicType::Float
+                        || !image_type.is_sampled
+                        || !matches!(
+                            image_type.dimension,
+                            ImageDimension::D2 | ImageDimension::Cube
+                        ))
+                {
                     self.on_error(format_args!(
-                        "invalid image type {:?}, {} is not supported in GLSL",
-                        ir_type, invalid_combo
+                        "invalid image type {:?}, if is_shadow is true, then the image_type must \
+                         be float and 2D/Cube sampler",
+                        ir_type
+                    ));
+                }
+
+                // 2. Multisample: 2D only, sampled only, non-shadow
+                if image_type.is_ms
+                    && (image_type.dimension != ImageDimension::D2
+                        || !image_type.is_sampled
+                        || image_type.is_shadow)
+                {
+                    self.on_error(format_args!(
+                        "invalid image type {:?}, if is_ms is true, then the image_type must be \
+                         2D sampler or 2D array sampler",
+                        ir_type
+                    ));
+                }
+                // 3. Array: 2D and Cube only
+                if image_type.is_array
+                    && !matches!(image_type.dimension, ImageDimension::D2 | ImageDimension::Cube)
+                {
+                    self.on_error(format_args!(
+                        "invalid image type {:?}, if is_array is true, then the dimension must be \
+                         2D or Cube",
+                        ir_type
+                    ));
+                }
+                // 4. Texture: not PixelLocal or Subpass
+                if image_type.is_sampled {
+                    if matches!(
+                        image_type.dimension,
+                        ImageDimension::PixelLocal | ImageDimension::Subpass
+                    ) {
+                        self.on_error(format_args!(
+                            "invalid image type {:?}, if is_sampled is true, then the dimension \
+                             must not be PixelLocal or Subpass",
+                            ir_type
+                        ));
+                    }
+                } else if matches!(
+                    // 5. Image: not Rect, External, or ExternalY2Y
+                    image_type.dimension,
+                    ImageDimension::Rect | ImageDimension::External | ImageDimension::ExternalY2Y
+                ) {
+                    self.on_error(format_args!(
+                        "invalid image type {:?}, if is_sampled is false, then the dimension must \
+                         not be Rect, External, ExternalY2Y",
+                        ir_type
+                    ));
+                }
+                // 6. Basic type restrictions for special dimensions (Rect and External are
+                //    Float-only)
+                if matches!(
+                    image_type.dimension,
+                    ImageDimension::External | ImageDimension::ExternalY2Y
+                ) && *basic_type != ImageBasicType::Float
+                {
+                    self.on_error(format_args!(
+                        "invalid image type {:?}, and External and ExternalY2Y samplers must have \
+                         Float basic type",
+                        ir_type
                     ));
                 }
             }
+        }
+    }
+
+    fn validate_sampler_operand_is_compatible_with_textureop(&self, opcode: &OpCode) {
+        match opcode {
+            OpCode::Texture(texture_opcode, sampler, _) => {
+                let sampler_type = self.ir.meta.get_type(sampler.type_id);
+                // Validate the first typedid operand must be Image Type
+                let (basic_type, image_type) = match *sampler_type {
+                    Type::Image(basic, image_type) => (basic, image_type),
+                    _ => {
+                        self.on_error(format_args!(
+                            "sampler operand {:?} in texture instruction {:?} must be Image type, \
+                             got {:?}",
+                            sampler, opcode, sampler_type
+                        ));
+                    }
+                };
+
+                // Validate the first typedId operand must be a singlesampled sampler
+                if !image_type.is_sampled || image_type.is_ms {
+                    self.on_error(format_args!(
+                        "sampler operand {:?} in texture instruction {:?} must be sampled and not \
+                         multisampled",
+                        sampler, opcode
+                    ));
+                }
+
+                match texture_opcode {
+                    // gvec4 texture(gsampler2D, vec2);
+                    // float texture(sampler2DShadow, vec3);
+                    // gvec4 texture(gsampler2DArray, vec3);
+                    // float texture(sampler2DArrayShadow, vec4);
+                    // gvec4 texture(gsampler3D, vec3);
+                    // gvec4 texture(gsamplerCube, vec3);
+                    // float texture(samplerCubeShadow, vec4);
+                    // gvec4 texture(gsamplerCubeArray, vec4);
+                    // vec4 texture(sampler2DRect, vec2);
+                    // vec4 texture(samplerExternalOES, vec2);
+                    // vec4 texture(samplerExternal2DY2YEXT, vec2);
+                    TextureOpCode::Implicit { is_proj: false, offset: None } => {
+                        if !matches!(
+                            image_type.dimension,
+                            ImageDimension::D2
+                                | ImageDimension::D3
+                                | ImageDimension::Cube
+                                | ImageDimension::Rect
+                                | ImageDimension::External
+                                | ImageDimension::ExternalY2Y
+                        ) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, only D2, D3,
+                                 Cube, Rect, External, ExternalY2Y dimentions are allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.dimension == ImageDimension::Rect
+                            && basic_type != ImageBasicType::Float
+                        {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, for rect
+                                 dimension only Float basic type is allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow
+                            && image_type.is_array
+                            && image_type.dimension == ImageDimension::Cube
+                        {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, \
+                                 SamplerCubeArrayShadow is not allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // float texture(samplerCubeArrayShadow, vec4, float);
+                    // float texture(samplerCubeArrayShadow, vec4, float, float);
+                    // float textureLod(samplerCubeArrayShadow, vec4, float, float);
+                    TextureOpCode::Compare { .. }
+                    | TextureOpCode::CompareBias { .. }
+                    | TextureOpCode::CompareLod { .. } => {
+                        if !(image_type.dimension == ImageDimension::Cube
+                            && image_type.is_array
+                            && image_type.is_shadow)
+                        {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, only \
+                                 SamplerCubeArrayShadow is allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureProj(gsampler2D, vec3);
+                    // gvec4 textureProj(gsampler2D, vec4);
+                    // float textureProj(sampler2DShadow, vec4);
+                    // gvec4 textureProj(gsampler3D, vec4);
+                    // vec4 textureProj(sampler2DRect, vec3);
+                    // vec4 textureProj(sampler2DRect, vec4);
+                    // vec4 textureProj(samplerExternalOES, vec3);
+                    // vec4 textureProj(samplerExternalOES, vec4);
+                    // vec4 textureProj(samplerExternal2DY2YEXT, vec3);
+                    // vec4 textureProj(samplerExternal2DY2YEXT, vec4);
+                    TextureOpCode::Implicit { is_proj: true, offset: None } => {
+                        if !matches!(
+                            image_type.dimension,
+                            ImageDimension::D2
+                                | ImageDimension::D3
+                                | ImageDimension::Rect
+                                | ImageDimension::External
+                                | ImageDimension::ExternalY2Y
+                        ) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D, 3D, Rect, External, or ExternalY2Y",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.dimension == ImageDimension::Rect
+                            && basic_type != ImageBasicType::Float
+                        {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, for rect
+                                 dimension only Float basic type is allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_array {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, array sampler \
+                                 is not allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow && image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow is \
+                                 only allowed for 2D float sampler",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureLod(gsampler2D, vec2, float);
+                    // gvec4 textureLod(gsampler2DArray, vec3, float);
+                    // float textureLod(sampler2DShadow, vec3, float);
+                    // gvec4 textureLod(gsampler3D, vec3, float);
+                    // gvec4 textureLod(gsamplerCube, vec3, float);
+                    // gvec4 textureLod(gsamplerCubeArray, vec4, float);
+                    // float textureLod(samplerCubeShadow, vec4, float);
+                    // float textureLod(sampler2DArrayShadow, vec4, float);
+                    // gvec4 textureGrad(gsampler2D, vec2, vec2, vec2);
+                    // gvec4 textureGrad(gsampler2DArray, vec3, vec2, vec2);
+                    // float textureGrad(sampler2DShadow, vec3, vec2, vec2);
+                    // gvec4 textureGrad(gsampler3D, vec3, vec3, vec3);
+                    // gvec4 textureGrad(gsamplerCube, vec3, vec3, vec3);
+                    // gvec4 textureGrad(gsamplerCubeArray, vec4, vec3, vec3);
+                    // float textureGrad(samplerCubeShadow, vec4, vec3, vec3);
+                    // float textureGrad(sampler2DArrayShadow, vec4, vec2, vec2);
+                    TextureOpCode::Lod { is_proj: false, offset: None, .. }
+                    | TextureOpCode::Grad { is_proj: false, offset: None, .. } => {
+                        if !matches!(
+                            image_type.dimension,
+                            ImageDimension::D2 | ImageDimension::D3 | ImageDimension::Cube
+                        ) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D, 3D, or Cube",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow
+                            && image_type.dimension == ImageDimension::Cube
+                            && image_type.is_array
+                        {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, \
+                                 SamplerCubeArrayShadow is not allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureProjLod(gsampler2D, vec3, float);
+                    // gvec4 textureProjLod(gsampler2D, vec4, float);
+                    // float textureProjLod(sampler2DShadow, vec4, float);
+                    // gvec4 textureProjLod(gsampler3D, vec4, float);
+                    // gvec4 textureProjGrad(gsampler2D, vec3, vec2, vec2);
+                    // gvec4 textureProjGrad(gsampler2D, vec4, vec2, vec2);
+                    // float textureProjGrad(sampler2DShadow, vec4, vec2, vec2);
+                    // gvec4 textureProjGrad(gsampler3D, vec4, vec3, vec3);
+                    // gvec4 textureProjOffset(gsampler2D, vec3, ivec2);
+                    // gvec4 textureProjOffset(gsampler2D, vec4, ivec2);
+                    // float textureProjOffset(sampler2DShadow, vec4, ivec2);
+                    // gvec4 textureProjOffset(gsampler3D, vec4, ivec3);
+                    // gvec4 textureProjLodOffset(gsampler2D, vec3, float, ivec2);
+                    // gvec4 textureProjLodOffset(gsampler2D, vec4, float, ivec2);
+                    // float textureProjLodOffset(sampler2DShadow, vec4, float, ivec2);
+                    // gvec4 textureProjLodOffset(gsampler3D, vec4, float, ivec3);
+                    // gvec4 textureProjGradOffset(gsampler2D, vec3, vec2, vec2, ivec2);
+                    // gvec4 textureProjGradOffset(gsampler2D, vec4, vec2, vec2, ivec2);
+                    // float textureProjGradOffset(sampler2DShadow, vec4, vec2, vec2, ivec2);
+                    // gvec4 textureProjGradOffset(gsampler3D, vec4, vec3, vec3, ivec3);
+                    // gvec4 textureProjOffset(gsampler2D, vec3, ivec2, float);
+                    // gvec4 textureProjOffset(gsampler2D, vec4, ivec2, float);
+                    // float textureProjOffset(sampler2DShadow, vec4, ivec2, float);
+                    // gvec4 textureProjOffset(gsampler3D, vec4, ivec3, float);
+                    TextureOpCode::Lod { is_proj: true, offset: None, .. }
+                    | TextureOpCode::Grad { is_proj: true, offset: None, .. }
+                    | TextureOpCode::Implicit { is_proj: true, offset: Some(_) }
+                    | TextureOpCode::Lod { is_proj: true, offset: Some(_), .. }
+                    | TextureOpCode::Grad { is_proj: true, offset: Some(_), .. }
+                    | TextureOpCode::Bias { is_proj: true, offset: Some(_), .. } => {
+                        if !(matches!(
+                            image_type.dimension,
+                            ImageDimension::D2 | ImageDimension::D3
+                        )) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D or 3D",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_array {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, array is not \
+                                 allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow && image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow is \
+                                 only allowed for 2D float sampler",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 texture(gsampler2D, vec2, float);
+                    // float texture(sampler2DShadow, vec3, float);
+                    // gvec4 texture(gsampler2DArray, vec3, float);
+                    // float texture(sampler2DArrayShadow, vec4, float);
+                    // gvec4 texture(gsampler3D, vec3, float);
+                    // gvec4 texture(gsamplerCube, vec3, float);
+                    // float texture(samplerCubeShadow, vec4, float);
+                    // gvec4 texture(gsamplerCubeArray, vec4, float);
+                    // vec4 texture(samplerExternalOES, vec2, float);
+                    // vec4 texture(samplerExternal2DY2YEXT, vec2, float);
+                    TextureOpCode::Bias { is_proj: false, offset: None, .. } => {
+                        if !(matches!(
+                            image_type.dimension,
+                            ImageDimension::D2
+                                | ImageDimension::D3
+                                | ImageDimension::Cube
+                                | ImageDimension::External
+                                | ImageDimension::ExternalY2Y
+                        )) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D, 3D, Cube, External, or ExternalY2Y",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow
+                            && image_type.dimension == ImageDimension::Cube
+                            && image_type.is_array
+                        {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, \
+                                 SamplerCubeArrayShadow is not allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureProj(gsampler2D, vec3, float);
+                    // gvec4 textureProj(gsampler2D, vec4, float);
+                    // float textureProj(sampler2DShadow, vec4, float);
+                    // gvec4 textureProj(gsampler3D, vec4, float);
+                    // vec4 textureProj(samplerExternalOES, vec3, float);
+                    // vec4 textureProj(samplerExternalOES, vec4, float);
+                    // vec4 textureProj(samplerExternal2DY2YEXT, vec3, float);
+                    // vec4 textureProj(samplerExternal2DY2YEXT, vec4, float);
+                    TextureOpCode::Bias { is_proj: true, offset: None, .. } => {
+                        if !(matches!(
+                            image_type.dimension,
+                            ImageDimension::D2
+                                | ImageDimension::D3
+                                | ImageDimension::External
+                                | ImageDimension::ExternalY2Y
+                        )) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, only 2D, 3D, \
+                                 External, or ExternalY2Y dimension is allowed",
+                                sampler, texture_opcode
+                            ));
+                        };
+                        if image_type.is_array {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, array not \
+                                 allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow && image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow is \
+                                 only allowed for 2D float dimension",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureOffset(gsampler2D, vec2, ivec2);
+                    // float textureOffset(sampler2DShadow, vec3, ivec2);
+                    // gvec4 textureOffset(gsampler2DArray, vec3, ivec2);
+                    // float textureOffset(sampler2DArrayShadow, vec4, ivec2);
+                    // gvec4 textureOffset(gsampler3D, vec3, ivec3);
+                    // gvec4 textureLodOffset(gsampler2D, vec2, float, ivec2);
+                    // float textureLodOffset(sampler2DShadow, vec3, float, ivec2);
+                    // gvec4 textureLodOffset(gsampler2DArray, vec3, float, ivec2);
+                    // float textureLodOffset(sampler2DArrayShadow, vec4, float, ivec2);
+                    // gvec4 textureLodOffset(gsampler3D, vec3, float, ivec3);
+                    // gvec4 textureGradOffset(gsampler2D, vec2, vec2, vec2, ivec2);
+                    // float textureGradOffset(sampler2DShadow, vec3, vec2, vec2, ivec2);
+                    // gvec4 textureGradOffset(gsampler2DArray, vec3, vec2, vec2, ivec2);
+                    // float textureGradOffset(sampler2DArrayShadow, vec4, vec2, vec2, ivec2);
+                    // gvec4 textureGradOffset(gsampler3D, vec3, vec3, vec3, ivec3);
+                    // gvec4 textureOffset(gsampler2D, vec2, ivec2, float);
+                    // float textureOffset(sampler2DShadow, vec3, ivec2, float);
+                    // gvec4 textureOffset(gsampler2DArray, vec3, ivec2, float);
+                    // float textureOffset(sampler2DArrayShadow, vec4, ivec2, float);
+                    // gvec4 textureOffset(gsampler3D, vec3, ivec3, float);
+                    TextureOpCode::Implicit { is_proj: false, offset: Some(_) }
+                    | TextureOpCode::Lod { is_proj: false, offset: Some(_), .. }
+                    | TextureOpCode::Grad { is_proj: false, offset: Some(_), .. }
+                    | TextureOpCode::Bias { is_proj: false, offset: Some(_), .. } => {
+                        if !(matches!(
+                            image_type.dimension,
+                            ImageDimension::D2 | ImageDimension::D3
+                        )) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D or 3D",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_array && image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, array is only \
+                                 allowed for 2D dimension",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow && image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow is \
+                                 only allowed for 2D float sampler and 2D array float sampler",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureGather(gsampler2D, vec2);
+                    // gvec4 textureGather(gsampler2DArray, vec3);
+                    // gvec4 textureGather(gsamplerCube, vec3);
+                    // gvec4 textureGather(gsamplerCubeArray, vec4);
+                    // gvec4 textureGather(gsampler2D, vec2, int);
+                    // gvec4 textureGather(gsampler2DArray, vec3, int);
+                    // gvec4 textureGather(gsamplerCube, vec3, int);
+                    // gvec4 textureGather(gsamplerCubeArray, vec4, int);
+                    TextureOpCode::Gather { offset: None }
+                    | TextureOpCode::GatherComponent { offset: None, .. } => {
+                        if !(matches!(
+                            image_type.dimension,
+                            ImageDimension::D2 | ImageDimension::Cube
+                        )) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D or Cube",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow \
+                                 sampler is not allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // vec4 textureGather(sampler2DShadow, vec2, float);
+                    // vec4 textureGather(sampler2DArrayShadow, vec3, float);
+                    // vec4 textureGather(samplerCubeShadow, vec3, float);
+                    // vec4 textureGather(samplerCubeArrayShadow, vec4, float);
+                    TextureOpCode::GatherRef { offset: None, .. } => {
+                        if !(matches!(
+                            image_type.dimension,
+                            ImageDimension::D2 | ImageDimension::Cube
+                        )) {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D or Cube",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if !image_type.is_shadow {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow \
+                                 sampler type must be used",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // gvec4 textureGatherOffset(gsampler2D, vec2, ivec2);
+                    // gvec4 textureGatherOffset(gsampler2DArray, vec3, ivec2);
+                    // gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4]);
+                    // gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
+                    // gvec4 textureGatherOffset(gsampler2D, vec2, ivec2, int);
+                    // gvec4 textureGatherOffset(gsampler2DArray, vec3, ivec2, int);
+                    // gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
+                    // gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
+                    TextureOpCode::Gather { offset: Some(_) }
+                    | TextureOpCode::GatherComponent { offset: Some(_), .. } => {
+                        if image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if image_type.is_shadow {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow is not \
+                                 allowed",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                    // vec4 textureGatherOffset(sampler2DShadow, vec2, float, ivec2);
+                    // vec4 textureGatherOffset(sampler2DArrayShadow, vec3, float, ivec2);
+                    // vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
+                    // vec4 textureGatherOffsets(sampler2DArrayShadow, vec3, float, ivec2[4]);
+                    TextureOpCode::GatherRef { offset: Some(_), .. } => {
+                        if image_type.dimension != ImageDimension::D2 {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, dimension \
+                                 must be 2D",
+                                sampler, texture_opcode
+                            ));
+                        }
+                        if !image_type.is_shadow {
+                            self.on_error(format_args!(
+                                "Incompatible sampler {:?} for texture opcode {:?}, shadow \
+                                 sampler type must be used",
+                                sampler, texture_opcode
+                            ));
+                        }
+                    }
+                }
+            }
+            // TODO(http://anglebug.com/349994211): add validation for BuiltInOpCode::TexelFetch, BuiltInOpCode::TexelFetchOffset,
+            // BuiltInOpCode::Image*
+            _ => return,
         }
     }
 
@@ -1993,6 +2390,53 @@ impl<'a> Validator<'a> {
         );
     }
 
+    fn validate_internal_name_prefixes(&self) {
+        let validate_name_prefix = |name: Name, user_prefix: &str, temp_prefix: &str| {
+            if name.source != NameSource::Internal {
+                return;
+            }
+            if name.name.starts_with(user_prefix) {
+                self.on_error(format_args!(
+                    "invalid name {:?} internal name should not starts with user name prefix",
+                    name
+                ));
+            }
+            if name.name.starts_with(temp_prefix) {
+                self.on_error(format_args!(
+                    "invalid name {:?} internal name should not starts with temporary name prefix",
+                    name
+                ));
+            }
+        };
+        // Check all variable names
+        for variable in
+            self.ir.meta.all_variables().iter().filter(|variable| !variable.is_dead_code_eliminated)
+        {
+            validate_name_prefix(variable.name, USER_VARIABLE_PREFIX, TEMP_VARIABLE_PREFIX);
+        }
+        // Check all struct and field names
+        for ir_type in self.ir.meta.all_types().iter().filter(|t| !t.is_dead_code_eliminated()) {
+            if let &Type::Struct(struct_name, ref fields, specialization) = ir_type {
+                let user_prefix = match specialization {
+                    StructSpecialization::Struct => USER_VARIABLE_PREFIX,
+                    StructSpecialization::InterfaceBlock => USER_BLOCK_PREFIX,
+                };
+                validate_name_prefix(struct_name, user_prefix, TEMP_STRUCT_PREFIX);
+                for field in fields {
+                    validate_name_prefix(
+                        field.name,
+                        USER_VARIABLE_PREFIX,
+                        TEMP_STRUCT_FIELD_PREFIX,
+                    );
+                }
+            }
+        }
+        // Check all function names
+        for function in self.ir.meta.all_functions() {
+            validate_name_prefix(function.name, USER_VARIABLE_PREFIX, TEMP_FUNCTION_PREFIX);
+        }
+    }
+
     fn validate_all_instructions(&self) {
         // All validation that can be done on an instruction in isolation is done in one pass.
         traverser::visitor::for_each_instruction(
@@ -2009,6 +2453,7 @@ impl<'a> Validator<'a> {
                 self.validate_pointer_types_for_operands(opcode);
                 self.validate_pointer_types_for_result(opcode, result);
                 self.validate_no_identity_swizzles(opcode);
+                self.validate_sampler_operand_is_compatible_with_textureop(opcode);
             },
         );
     }

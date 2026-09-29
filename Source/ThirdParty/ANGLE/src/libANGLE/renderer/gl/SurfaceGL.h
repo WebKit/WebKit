@@ -28,11 +28,6 @@ class SurfaceGL : public SurfaceImpl
                                      const gl::ImageIndex &imageIndex) override;
 
     virtual bool hasEmulatedAlphaChannel() const;
-
-    egl::Error attachToFramebuffer(const gl::Context *context,
-                                   gl::Framebuffer *framebuffer) override;
-    egl::Error detachFromFramebuffer(const gl::Context *context,
-                                     gl::Framebuffer *framebuffer) override;
 };
 
 }  // namespace rx

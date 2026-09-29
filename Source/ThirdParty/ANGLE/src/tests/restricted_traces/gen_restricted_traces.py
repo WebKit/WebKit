@@ -102,7 +102,7 @@ def update_deps(trace_pairs, representative_traces, cq_extra_traces):
     return True
 
 
-def update_star(smoke_traces, representative_traces):
+def update_star(smoke_traces, representative_traces, cq_extra_traces):
     star_content = '''\
 # Copyright 2026 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
@@ -116,8 +116,9 @@ SMOKE_TRACES = [
 REPRESENTATIVE_TRACES = [
 {representative_traces}]
 '''
-    smoke_list = "".join([f'    "{trace}",\n' for trace in smoke_traces])
-    rep_list = "".join([f'    "{trace}",\n' for trace in representative_traces])
+    combined_representative = sorted(list(set(representative_traces + cq_extra_traces)))
+    smoke_list = "".join([f'    "{trace}",\n' for trace in sorted(smoke_traces)])
+    rep_list = "".join([f'    "{trace}",\n' for trace in combined_representative])
 
     with open(STAR_PATH, 'w') as f:
         f.write(star_content.format(smoke_traces=smoke_list, representative_traces=rep_list))
@@ -187,7 +188,7 @@ def main():
         print('DEPS file update failed')
         return 1
 
-    if not update_star(smoke_traces, representative_traces):
+    if not update_star(smoke_traces, representative_traces, cq_extra_traces):
         print('representative_traces.star update failed')
         return 1
 

@@ -116,20 +116,6 @@ angle::Result OffscreenSurfaceWgpu::initializeContents(const gl::Context *contex
     return angle::Result::Continue;
 }
 
-egl::Error OffscreenSurfaceWgpu::attachToFramebuffer(const gl::Context *context,
-                                                     gl::Framebuffer *framebuffer)
-{
-    UNIMPLEMENTED();
-    return egl::NoError();
-}
-
-egl::Error OffscreenSurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
-                                                       gl::Framebuffer *framebuffer)
-{
-    UNIMPLEMENTED();
-    return egl::NoError();
-}
-
 angle::Result OffscreenSurfaceWgpu::getAttachmentRenderTarget(
     const gl::Context *context,
     GLenum binding,
@@ -286,20 +272,17 @@ angle::Result WindowSurfaceWgpu::initializeContents(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-egl::Error WindowSurfaceWgpu::attachToFramebuffer(const gl::Context *context,
-                                                  gl::Framebuffer *framebuffer)
+void WindowSurfaceWgpu::attachToFramebuffer(const gl::Context *context,
+                                            gl::Framebuffer *framebuffer)
 {
     FramebufferWgpu *framebufferWgpu = GetImplAs<FramebufferWgpu>(framebuffer);
     framebufferWgpu->setFlipY(true);
-    return egl::NoError();
 }
 
-egl::Error WindowSurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
-                                                    gl::Framebuffer *framebuffer)
+void WindowSurfaceWgpu::detachFromFramebuffer(gl::Framebuffer *framebuffer)
 {
     FramebufferWgpu *framebufferWgpu = GetImplAs<FramebufferWgpu>(framebuffer);
     framebufferWgpu->setFlipY(false);
-    return egl::NoError();
 }
 
 angle::Result WindowSurfaceWgpu::getAttachmentRenderTarget(

@@ -133,6 +133,141 @@ class EGLMultiContextTest : public ANGLETest<>
     GLuint mTexture;
 };
 
+// Test that a failed eglMakeCurrent to a new context does not leave that context bound to the
+// thread, and that subsequently destroying multiple contexts does not touch stale state.
+// https://crbug.com/536645892
+TEST_P(EGLMultiContextTest, ThreadStateResetAfterMakeCurrentFailure)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_lock_surface3"));
+
+    const EGLint clientVersion   = EGL_OPENGL_ES3_BIT;
+    const EGLint configAttribs[] = {EGL_RED_SIZE,
+                                    8,
+                                    EGL_GREEN_SIZE,
+                                    8,
+                                    EGL_BLUE_SIZE,
+                                    8,
+                                    EGL_ALPHA_SIZE,
+                                    8,
+                                    EGL_RENDERABLE_TYPE,
+                                    clientVersion,
+                                    EGL_SURFACE_TYPE,
+                                    (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
+                                    EGL_NONE};
+    EGLint count                 = 0;
+    EGLConfig config             = EGL_NO_CONFIG_KHR;
+    EXPECT_EGL_TRUE(eglChooseConfig(dpy, configAttribs, &config, 1, &count));
+    ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
+
+    const EGLint pbufferAttribs[] = {EGL_WIDTH, 4, EGL_HEIGHT, 4, EGL_NONE};
+    EGLSurface pbufferSurface     = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_NE(pbufferSurface, EGL_NO_SURFACE);
+
+    const EGLint ctxAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, 3, EGL_NONE};
+    mContexts[0]              = eglCreateContext(dpy, config, nullptr, ctxAttribs);
+    ASSERT_NE(mContexts[0], EGL_NO_CONTEXT);
+    mContexts[1] = eglCreateContext(dpy, config, nullptr, ctxAttribs);
+    ASSERT_NE(mContexts[1], EGL_NO_CONTEXT);
+
+    // Ensure nothing is current on this thread.
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    ASSERT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+
+    // Lock the surface so that eglMakeCurrent fails with EGL_BAD_ACCESS.
+    const EGLint lockAttribs[] = {EGL_LOCK_USAGE_HINT_KHR, EGL_WRITE_SURFACE_BIT_KHR, EGL_NONE};
+    ASSERT_EGL_TRUE(eglLockSurfaceKHR(dpy, pbufferSurface, lockAttribs));
+
+    // eglMakeCurrent is expected to fail because the surface is locked.
+    EXPECT_EGL_FALSE(eglMakeCurrent(dpy, pbufferSurface, pbufferSurface, mContexts[0]));
+    EXPECT_EGL_ERROR(EGL_BAD_ACCESS);
+
+    // The failed eglMakeCurrent must not have left the new context bound to the thread.
+    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+
+    EXPECT_EGL_TRUE(eglUnlockSurfaceKHR(dpy, pbufferSurface));
+
+    // Destroying the two contexts must not touch stale state left over from the failed
+    // eglMakeCurrent above.
+    EXPECT_EGL_TRUE(SafeDestroyContext(dpy, mContexts[0]));
+    EXPECT_EGL_SUCCESS();
+    EXPECT_EGL_TRUE(SafeDestroyContext(dpy, mContexts[1]));
+    EXPECT_EGL_SUCCESS();
+
+    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+
+    EXPECT_EGL_TRUE(eglDestroySurface(dpy, pbufferSurface));
+}
+
+// Test that a failed eglMakeCurrent with separate draw and read surfaces (where read surface
+// is locked) correctly fails validation and leaves no stale surface/thread state.
+// https://crbug.com/536645892
+TEST_P(EGLMultiContextTest, SeparateReadSurfaceFailureCleansUp)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_lock_surface3"));
+
+    const EGLint clientVersion   = EGL_OPENGL_ES3_BIT;
+    const EGLint configAttribs[] = {EGL_RED_SIZE,
+                                    8,
+                                    EGL_GREEN_SIZE,
+                                    8,
+                                    EGL_BLUE_SIZE,
+                                    8,
+                                    EGL_ALPHA_SIZE,
+                                    8,
+                                    EGL_RENDERABLE_TYPE,
+                                    clientVersion,
+                                    EGL_SURFACE_TYPE,
+                                    (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
+                                    EGL_NONE};
+    EGLint count                 = 0;
+    EGLConfig config             = EGL_NO_CONFIG_KHR;
+    EXPECT_EGL_TRUE(eglChooseConfig(dpy, configAttribs, &config, 1, &count));
+    ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
+
+    const EGLint pbufferAttribs[] = {EGL_WIDTH, 4, EGL_HEIGHT, 4, EGL_NONE};
+    EGLSurface drawSurface        = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_NE(drawSurface, EGL_NO_SURFACE);
+    EGLSurface readSurface = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_NE(readSurface, EGL_NO_SURFACE);
+
+    const EGLint ctxAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, 3, EGL_NONE};
+    mContexts[0]              = eglCreateContext(dpy, config, nullptr, ctxAttribs);
+    ASSERT_NE(mContexts[0], EGL_NO_CONTEXT);
+
+    // Ensure nothing is current on this thread.
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    ASSERT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+
+    // Lock ONLY the read surface so that eglMakeCurrent fails.
+    const EGLint lockAttribs[] = {EGL_LOCK_USAGE_HINT_KHR, EGL_WRITE_SURFACE_BIT_KHR, EGL_NONE};
+    ASSERT_EGL_TRUE(eglLockSurfaceKHR(dpy, readSurface, lockAttribs));
+
+    // eglMakeCurrent is expected to fail because the read surface is locked.
+    EXPECT_EGL_FALSE(eglMakeCurrent(dpy, drawSurface, readSurface, mContexts[0]));
+    EXPECT_EGL_ERROR(EGL_BAD_ACCESS);
+
+    // Thread state must be clean.
+    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+    EXPECT_EQ(eglGetCurrentSurface(EGL_DRAW), EGL_NO_SURFACE);
+    EXPECT_EQ(eglGetCurrentSurface(EGL_READ), EGL_NO_SURFACE);
+
+    EXPECT_EGL_TRUE(eglUnlockSurfaceKHR(dpy, readSurface));
+
+    // Context and surfaces can now be safely destroyed without assertions or UAF.
+    EXPECT_EGL_TRUE(SafeDestroyContext(dpy, mContexts[0]));
+    EXPECT_EGL_SUCCESS();
+
+    EXPECT_EGL_TRUE(eglDestroySurface(dpy, drawSurface));
+    EXPECT_EGL_TRUE(eglDestroySurface(dpy, readSurface));
+    EXPECT_EGL_SUCCESS();
+}
+
 // Test that calling eglDeleteContext on a context that is not current succeeds.
 TEST_P(EGLMultiContextTest, TestContextDestroySimple)
 {
@@ -782,4 +917,6 @@ TEST_P(EGLMultiContextTest, NonSharedContextsReuseDescritorSetLayoutHandle)
 }  // anonymous namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLMultiContextTest);
-ANGLE_INSTANTIATE_TEST_ES31(EGLMultiContextTest);
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    EGLMultiContextTest,
+    ES31_VULKAN_SWIFTSHADER().enable(Feature::SupportsLockSurfaceExtension));

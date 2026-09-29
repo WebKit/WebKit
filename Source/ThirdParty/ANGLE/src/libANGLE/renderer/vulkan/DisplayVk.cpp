@@ -153,7 +153,7 @@ void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
     : DisplayImpl(state),
-      vk::ErrorContext(new vk::Renderer()),
+      ThreadSafeDisplayVk(new vk::Renderer()),
       mScratchBuffer(1000u),
       mSupportedColorspaceFormatsMap{}
 {}
@@ -174,10 +174,10 @@ egl::Error DisplayVk::initialize(egl::Display *display)
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
     const uint32_t preferredDeviceId =
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
-    const uint8_t *preferredDeviceUuid = reinterpret_cast<const uint8_t *>(
-        attribs.get(EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE, 0));
-    const uint8_t *preferredDriverUuid = reinterpret_cast<const uint8_t *>(
-        attribs.get(EGL_PLATFORM_ANGLE_VULKAN_DRIVER_UUID_ANGLE, 0));
+    const uint8_t *preferredDeviceUuid =
+        mState.vulkanDeviceUUID.has_value() ? mState.vulkanDeviceUUID->data() : nullptr;
+    const uint8_t *preferredDriverUuid =
+        mState.vulkanDriverUUID.has_value() ? mState.vulkanDriverUUID->data() : nullptr;
     const VkDriverId preferredDriverId =
         static_cast<VkDriverId>(attribs.get(EGL_PLATFORM_ANGLE_VULKAN_DRIVER_ID_ANGLE, 0));
 
@@ -213,12 +213,12 @@ egl::Error DisplayVk::makeCurrent(egl::Display *display,
     return egl::NoError();
 }
 
-bool DisplayVk::testDeviceLost()
+bool ThreadSafeDisplayVk::testDeviceLost()
 {
     return mRenderer->isDeviceLost();
 }
 
-egl::Error DisplayVk::restoreLostDevice(const egl::Display *display)
+egl::Error ThreadSafeDisplayVk::restoreLostDevice(const egl::ThreadSafeDisplay *display)
 {
     // A vulkan device cannot be restored, the entire renderer would have to be re-created along
     // with any other EGL objects that reference it.
@@ -428,7 +428,7 @@ StreamProducerImpl *DisplayVk::createStreamProducerD3DTexture(
     return static_cast<StreamProducerImpl *>(0);
 }
 
-EGLSyncImpl *DisplayVk::createSync()
+EGLSyncImpl *ThreadSafeDisplayVk::createSync()
 {
     return new EGLSyncVk();
 }
@@ -632,10 +632,10 @@ const char *DisplayVk::getWSILayer() const
     return nullptr;
 }
 
-void DisplayVk::handleError(VkResult result,
-                            const char *file,
-                            const char *function,
-                            unsigned int line)
+void ThreadSafeDisplayVk::handleError(VkResult result,
+                                      const char *file,
+                                      const char *function,
+                                      unsigned int line)
 {
     ASSERT(result != VK_SUCCESS);
 

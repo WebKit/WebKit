@@ -173,7 +173,7 @@ bool ValidateCreateImageMipLevelCommon(const ValidationContext *val,
 }
 
 bool ValidateConfigAttribute(const ValidationContext *val,
-                             const Display *display,
+                             const ThreadSafeDisplay *display,
                              EGLAttrib attribute)
 {
     switch (attribute)
@@ -1178,7 +1178,7 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
     return true;
 }
 
-bool ValidateDisplay(const ValidationContext *val, const Display *display)
+bool ValidateDisplay(const ValidationContext *val, const ThreadSafeDisplay *display)
 {
     if (display == nullptr)
     {
@@ -1188,9 +1188,8 @@ bool ValidateDisplay(const ValidationContext *val, const Display *display)
         }
         return false;
     }
-    ASSERT(Display::isValidDisplay(display));
 
-    if (!display->isInitialized())
+    if (!display->isInitializedAndNotTerminating())
     {
         if (val)
         {
@@ -1493,11 +1492,18 @@ bool ValidateSurfaceBadAccess(const ValidationContext *val,
         val->setError(EGL_BAD_ACCESS, "Surface can only be current on one thread");
         return false;
     }
+
+    if (surface->isLocked())
+    {
+        val->setError(EGL_BAD_ACCESS, "<surface> is locked");
+        return false;
+    }
+
     return true;
 }
 
 bool ValidateSyncAttribute(const ValidationContext *val,
-                           const Display *display,
+                           const ThreadSafeDisplay *display,
                            EGLAttrib attribute)
 {
     switch (attribute)
@@ -1518,7 +1524,7 @@ bool ValidateSyncAttribute(const ValidationContext *val,
 }
 
 bool ValidateCreateSyncBase(const ValidationContext *val,
-                            const Display *display,
+                            const ThreadSafeDisplay *display,
                             EGLenum type,
                             const AttributeMap &attribs,
                             bool isExt)
@@ -1739,7 +1745,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
 }
 
 bool ValidateGetSyncAttribBase(const ValidationContext *val,
-                               const Display *display,
+                               const ThreadSafeDisplay *display,
                                const Sync *sync,
                                EGLint attribute)
 {
@@ -1811,7 +1817,7 @@ bool ValidateQueryDisplayAttribBase(const ValidationContext *val,
 }
 
 bool ValidateCreateContextAttribute(const ValidationContext *val,
-                                    const Display *display,
+                                    const ThreadSafeDisplay *display,
                                     EGLAttrib attribute)
 {
     switch (attribute)
@@ -2344,7 +2350,7 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
 }
 
 bool ValidateCreatePbufferSurfaceAttribute(const ValidationContext *val,
-                                           const Display *display,
+                                           const ThreadSafeDisplay *display,
                                            EGLAttrib attribute)
 {
     const DisplayExtensions &displayExtensions = display->getExtensions();
@@ -2549,7 +2555,7 @@ bool ValidateConfig(const ValidationContext *val, const Display *display, const 
 }
 
 bool ValidateThreadContext(const ValidationContext *val,
-                           const Display *display,
+                           const ThreadSafeDisplay *display,
                            EGLenum noContextError)
 {
     ASSERT(val);
@@ -2619,7 +2625,7 @@ bool ValidateDevice(const ValidationContext *val, const Device *device)
     return true;
 }
 
-bool ValidateSync(const ValidationContext *val, const Display *display, const Sync *sync)
+bool ValidateSync(const ValidationContext *val, const ThreadSafeDisplay *display, const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
@@ -2847,24 +2853,34 @@ ScopedDisplayRef GetDisplayIfValid(Display *display)
     return ScopedDisplayRef(*display);
 }
 
-ScopedConstDisplayRefAndLock GetDisplayAndLockIfValid(const Display *display)
+ScopedThreadSafeDisplayRef GetThreadSafeDisplayIfValid(ThreadSafeDisplay *display)
 {
-    if (!ValidateDisplayPointer(nullptr, display))
+    if (!ValidateDisplayPointer(nullptr, static_cast<const Display *>(display)))
     {
-        return ScopedConstDisplayRefAndLock();
+        return ScopedThreadSafeDisplayRef();
     }
 
-    return ScopedConstDisplayRefAndLock(*display);
+    return ScopedThreadSafeDisplayRef(*display);
 }
 
-ScopedDisplayRefAndLock GetDisplayAndLockIfValid(Display *display)
+ScopedConstDisplayLockAndRef GetDisplayAndLockIfValid(const Display *display)
 {
     if (!ValidateDisplayPointer(nullptr, display))
     {
-        return ScopedDisplayRefAndLock();
+        return ScopedConstDisplayLockAndRef();
     }
 
-    return ScopedDisplayRefAndLock(*display);
+    return ScopedConstDisplayLockAndRef(*display);
+}
+
+ScopedDisplayLockAndRef GetDisplayAndLockIfValid(Display *display)
+{
+    if (!ValidateDisplayPointer(nullptr, display))
+    {
+        return ScopedDisplayLockAndRef();
+    }
+
+    return ScopedDisplayLockAndRef(*display);
 }
 
 const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID)
@@ -2900,7 +2916,7 @@ const Device *GetDeviceIfValid(const Device *device)
     return ValidateDevice(nullptr, device) ? device : nullptr;
 }
 
-ScopedSyncRef GetSyncIfValid(const Display *display, SyncID syncID)
+ScopedSyncRef GetSyncIfValid(const ThreadSafeDisplay *display, SyncID syncID)
 {
     // display->getSync() - validates syncID
     return ValidateDisplay(nullptr, display) ? display->getSync(syncID) : ScopedSyncRef();
@@ -3685,7 +3701,7 @@ bool ValidateMakeCurrent(const ValidationContext *val,
     }
 
     // EGL 1.5 spec: dpy can be uninitialized if all other parameters are null
-    if (!display->isInitialized() && (!noContext || !noDraw || !noRead))
+    if (!display->isInitializedAndNotTerminating() && (!noContext || !noDraw || !noRead))
     {
         val->setError(EGL_NOT_INITIALIZED, "<display> not initialized");
         return false;
@@ -3699,7 +3715,7 @@ bool ValidateMakeCurrent(const ValidationContext *val,
     // Allow "un-make" the lost context:
     // If the context is lost, but EGLContext passed to eglMakeCurrent is EGL_NO_CONTEXT, we should
     // not return EGL_CONTEXT_LOST error code.
-    if (display->isInitialized() && display->isDeviceLost() && !noContext)
+    if (display->isInitializedAndNotTerminating() && display->isDeviceLost() && !noContext)
     {
         val->setError(EGL_CONTEXT_LOST, "Context was lost");
         return false;
@@ -4619,7 +4635,7 @@ bool ValidateReleaseDeviceANGLE(const ValidationContext *val, const Device *devi
 }
 
 bool ValidateCreateSync(const ValidationContext *val,
-                        const Display *display,
+                        const ThreadSafeDisplay *display,
                         EGLenum type,
                         const AttributeMap &attribs)
 {
@@ -4627,28 +4643,30 @@ bool ValidateCreateSync(const ValidationContext *val,
 }
 
 bool ValidateCreateSyncKHR(const ValidationContext *val,
-                           const Display *display,
+                           const ThreadSafeDisplay *display,
                            EGLenum type,
                            const AttributeMap &attribs)
 {
     return ValidateCreateSyncBase(val, display, type, attribs, true);
 }
 
-bool ValidateDestroySync(const ValidationContext *val, const Display *display, const Sync *sync)
+bool ValidateDestroySync(const ValidationContext *val,
+                         const ThreadSafeDisplay *display,
+                         const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateSync(val, display, sync));
     return true;
 }
 
 bool ValidateDestroySyncKHR(const ValidationContext *val,
-                            const Display *dpyPacked,
+                            const ThreadSafeDisplay *dpyPacked,
                             const Sync *syncPacked)
 {
     return ValidateDestroySync(val, dpyPacked, syncPacked);
 }
 
 bool ValidateClientWaitSync(const ValidationContext *val,
-                            const Display *display,
+                            const ThreadSafeDisplay *display,
                             const Sync *sync,
                             EGLint flags,
                             EGLTime timeout)
@@ -4658,7 +4676,7 @@ bool ValidateClientWaitSync(const ValidationContext *val,
 }
 
 bool ValidateClientWaitSyncKHR(const ValidationContext *val,
-                               const Display *dpyPacked,
+                               const ThreadSafeDisplay *dpyPacked,
                                const Sync *syncPacked,
                                EGLint flags,
                                EGLTimeKHR timeout)
@@ -4667,7 +4685,7 @@ bool ValidateClientWaitSyncKHR(const ValidationContext *val,
 }
 
 bool ValidateWaitSync(const ValidationContext *val,
-                      const Display *display,
+                      const ThreadSafeDisplay *display,
                       const Sync *sync,
                       EGLint flags)
 {
@@ -4702,7 +4720,7 @@ bool ValidateWaitSync(const ValidationContext *val,
 }
 
 bool ValidateWaitSyncKHR(const ValidationContext *val,
-                         const Display *dpyPacked,
+                         const ThreadSafeDisplay *dpyPacked,
                          const Sync *syncPacked,
                          EGLint flags)
 {
@@ -4710,7 +4728,7 @@ bool ValidateWaitSyncKHR(const ValidationContext *val,
 }
 
 bool ValidateGetSyncAttrib(const ValidationContext *val,
-                           const Display *display,
+                           const ThreadSafeDisplay *display,
                            const Sync *sync,
                            EGLint attribute,
                            const EGLAttrib *value)
@@ -4724,7 +4742,7 @@ bool ValidateGetSyncAttrib(const ValidationContext *val,
 }
 
 bool ValidateGetSyncAttribKHR(const ValidationContext *val,
-                              const Display *display,
+                              const ThreadSafeDisplay *display,
                               const Sync *sync,
                               EGLint attribute,
                               const EGLint *value)
@@ -6724,7 +6742,7 @@ bool ValidateCreateNativeClientBufferANDROID(const ValidationContext *val,
 }
 
 bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
-                                       const Display *display,
+                                       const ThreadSafeDisplay *display,
                                        const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
@@ -6741,7 +6759,7 @@ bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
 }
 
 bool ValidateDupNativeFenceFDANDROID(const ValidationContext *val,
-                                     const Display *display,
+                                     const ThreadSafeDisplay *display,
                                      const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
@@ -6765,7 +6783,7 @@ bool ValidatePrepareSwapBuffersANGLE(const ValidationContext *val,
 }
 
 bool ValidateSignalSyncKHR(const ValidationContext *val,
-                           const Display *display,
+                           const ThreadSafeDisplay *display,
                            const Sync *sync,
                            EGLenum mode)
 {

@@ -11,8 +11,10 @@
 #ifndef LIBANGLE_DISPLAY_H_
 #define LIBANGLE_DISPLAY_H_
 
+#include <array>
 #include <atomic>
 #include <mutex>
+#include <optional>
 #include <vector>
 
 #include "common/SimpleMutex.h"
@@ -51,6 +53,7 @@ class SemaphoreManager;
 
 namespace rx
 {
+class ThreadSafeDisplayImpl;
 class DisplayImpl;
 class EGLImplFactory;
 }  // namespace rx
@@ -64,11 +67,16 @@ class Surface;
 class Sync;
 class ScopedSyncRef;
 class Thread;
+class ThreadSafeDisplay;
 
 template <typename DisplayT>
 class ScopedDisplayRefT;
 using ScopedDisplayRef      = ScopedDisplayRefT<Display>;
 using ScopedConstDisplayRef = ScopedDisplayRefT<const Display>;
+// Only the non-const instantiation is needed: every holder of a ThreadSafeDisplay reference (the
+// generated EGL entry points and ScopedSyncRef) uses it to create, look up or destroy sync
+// objects, all of which mutate the display's SyncSet.
+using ScopedThreadSafeDisplayRef = ScopedDisplayRefT<ThreadSafeDisplay>;
 
 class ScopedDisplayMutexLock;
 
@@ -76,11 +84,14 @@ template <typename DisplayT>
 class ScopedDisplayLockAndRefT;
 using ScopedDisplayLockAndRef      = ScopedDisplayLockAndRefT<Display>;
 using ScopedConstDisplayLockAndRef = ScopedDisplayLockAndRefT<const Display>;
-using ScopedDisplayRefAndLock      = ScopedDisplayLockAndRef;
-using ScopedConstDisplayRefAndLock = ScopedConstDisplayLockAndRef;
 
 using SurfaceMap = priv::ObjectMap<Surface, angle::SimpleMutex>;
 using ThreadSet  = angle::HashSet<Thread *>;
+
+// Size of a Vulkan device or driver UUID, matching VK_UUID_SIZE.  Spelled out
+// here because this header must not depend on the Vulkan headers.
+constexpr size_t kVulkanUUIDSize = 16;
+using VulkanUUID                 = std::array<uint8_t, kVulkanUUIDSize>;
 
 struct DisplayState final : private angle::NonCopyable
 {
@@ -95,12 +106,28 @@ struct DisplayState final : private angle::NonCopyable
     angle::FeatureOverrides featureOverrides;
     EGLNativeDisplayType displayId;
 
+    // EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE and
+    // EGL_PLATFORM_ANGLE_VULKAN_DRIVER_UUID_ANGLE name caller-owned buffers
+    // that EGL does not require to outlive eglGetPlatformDisplay, so their
+    // bytes are copied here while that call is still running.  Unset means the
+    // attribute was absent, which is not the same as an all-zero UUID.
+    std::optional<VulkanUUID> vulkanDeviceUUID;
+    std::optional<VulkanUUID> vulkanDriverUUID;
+
     // Single-threaded and multithread pools for use by various parts of ANGLE, such as shader
     // compilation.  These pools are internally synchronized.
     std::shared_ptr<angle::WorkerThreadPool> singleThreadPool;
     std::shared_ptr<angle::WorkerThreadPool> multiThreadPool;
 
-    mutable bool deviceLost;
+    // Written by the backend thread that detects device loss and read by any thread performing EGL
+    // validation, with no lock in common: atomic is required to avoid a data race.  Relaxed
+    // ordering is sufficient because the flag only ever goes false -> true via notifyDeviceLost()
+    // for the lifetime of an initialized Display; the single false write is in Display::terminate()
+    // and is ordered after waitUntilUnreferenced(), so it cannot be observed by an in-flight
+    // reader.  A stale read is therefore always a stale false: the caller misses EGL_CONTEXT_LOST
+    // on this call and sees it on the next one.  A lock would not help, since device loss is
+    // detected asynchronously on another thread and the check is inherently racy regardless.
+    mutable std::atomic<bool> deviceLost;
 };
 
 // Constant coded here as a reasonable limit.
@@ -137,16 +164,18 @@ class SyncSet final : angle::NonCopyable
     SyncSet();
     ~SyncSet();
 
-    Error createSync(Display *display,
+    Error createSync(const ThreadSafeDisplay *display,
                      const gl::Context *currentContext,
                      EGLenum type,
                      const AttributeMap &attribs,
                      Sync **outSync);
 
-    ScopedSyncRef getSync(Display *display, SyncID syncID) const;
+    // The returned ScopedSyncRef holds a reference to the display and releases the sync through it
+    // when it goes out of scope, so a mutable display is required here.
+    ScopedSyncRef getSync(ThreadSafeDisplay *display, SyncID syncID) const;
 
-    void destroySync(Display *display, SyncID syncID);
-    void releaseSync(Display *display, Sync *sync);
+    void destroySync(const ThreadSafeDisplay *display, SyncID syncID);
+    void releaseSync(const ThreadSafeDisplay *display, Sync *sync);
 
     void invalidateAllSyncs();
     void destroyAllInvalidSyncs(Display *display);
@@ -158,7 +187,7 @@ class SyncSet final : angle::NonCopyable
     static constexpr size_t kMaxSyncPoolSizePerType = 32;
     using SyncPool = angle::FixedVector<std::unique_ptr<Sync>, kMaxSyncPoolSizePerType>;
 
-    void releaseSyncImpl(Display *display, Sync *sync);
+    void releaseSyncImpl(const ThreadSafeDisplay *display, Sync *sync);
 
     mutable angle::SimpleMutex mMutex;
     SyncMap mSyncMap;
@@ -167,9 +196,97 @@ class SyncSet final : angle::NonCopyable
     gl::HandleAllocator mHandleAllocator;
 };
 
-class Display final : public LabeledObject,
-                      public angle::ObserverInterface,
-                      public angle::NonCopyable
+// Access to this class is thread safe, i.e. can be called from multiple threads without holding the
+// display's mutex lock.
+class ThreadSafeDisplay : public LabeledObject, public angle::NonCopyable
+{
+  public:
+    ThreadSafeDisplay(EGLNativeDisplayType displayId)
+        : mState(displayId), mThreadSafeImpl(nullptr), mRefCount(0)
+    {}
+    ~ThreadSafeDisplay() override = default;
+
+    // Returns whether the display is initialized and is not concurrently being terminated.  This
+    // is what callers outside the display want: a display that is being terminated must already be
+    // treated as no longer initialized.
+    bool isInitializedAndNotTerminating() const;
+    bool isDeviceLost() const;
+
+    const DisplayExtensions &getExtensions() const { return mDisplayExtensions; }
+
+    // Note that Display::getImplementation() hides this one and returns the rx::DisplayImpl
+    // instead, so the impl that is retrieved depends on the static type of the display.
+    rx::ThreadSafeDisplayImpl *getImplementation() const { return mThreadSafeImpl; }
+
+    Error createSync(const gl::Context *currentContext,
+                     EGLenum type,
+                     const AttributeMap &attribs,
+                     Sync **outSync);
+    void destroySync(Sync *sync);
+    void releaseSync(Sync *sync);
+
+    ScopedSyncRef getSync(egl::SyncID syncID) const;
+    ScopedSyncMap getSyncsForCapture() const { return mSyncSet.getSyncsForCapture(); }
+    bool isValidSync(SyncID sync) const;
+
+  protected:
+    [[nodiscard]] bool addRefIfNotTerminating() const
+    {
+        // std::memory_order_relaxed might be sufficient here, but std::memory_order_acquire is used
+        // for safety since there is no performance difference.
+        uint32_t count = mRefCount.load(std::memory_order_acquire);
+        while (!(count & kTerminatingBit))
+        {
+            if (mRefCount.compare_exchange_weak(count, count + 1, std::memory_order_acquire,
+                                                std::memory_order_acquire))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    void releaseRef() const
+    {
+        uint32_t prev = mRefCount.fetch_sub(1, std::memory_order_release);
+        ASSERT((prev & kRefCountMask) > 0);
+    }
+    bool isTerminating() const;
+
+    // Returns whether the display has been initialized, disregarding whether it is currently being
+    // terminated.  This remains stable for as long as a display reference is held, since
+    // terminate() only clears the bit after waitUntilUnreferenced().  Callers that must also
+    // account for a concurrent terminate() want isInitializedAndNotTerminating() instead.
+    bool isInitialized() const;
+    // Both of these must be called with mDisplayMutex held.
+    void setInitialized();
+    void setUninitialized();
+
+    Error restoreLostDevice() const;
+
+    // The high bits of mRefCount hold flags; the remaining bits hold the reference count itself.
+    // Keeping the initialized flag in the same word as the terminating flag lets
+    // isInitializedAndNotTerminating() observe the two as a consistent pair with a single load.
+    static constexpr uint32_t kTerminatingBit = 1u << 31;
+    static constexpr uint32_t kInitializedBit = 1u << 30;
+    static constexpr uint32_t kRefCountMask   = ~(kTerminatingBit | kInitializedBit);
+
+    DisplayState mState;
+
+    rx::ThreadSafeDisplayImpl *mThreadSafeImpl;
+
+    DisplayExtensions mDisplayExtensions;
+
+    SyncSet mSyncSet;
+
+    // Only these ScopedDisplay classes could directly access the RefCount.
+    template <typename DisplayT>
+    friend class ScopedDisplayLockAndRefT;
+    template <typename DisplayT>
+    friend class ScopedDisplayRefT;
+    mutable std::atomic<uint32_t> mRefCount;
+};
+
+class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
 {
   public:
     ~Display() override;
@@ -240,11 +357,6 @@ class Display final : public LabeledObject,
                         const AttributeMap &attribs,
                         gl::Context **outContext);
 
-    Error createSync(const gl::Context *currentContext,
-                     EGLenum type,
-                     const AttributeMap &attribs,
-                     Sync **outSync);
-
     Error makeCurrent(Thread *thread,
                       gl::Context *previousContext,
                       Surface *drawSurface,
@@ -256,15 +368,11 @@ class Display final : public LabeledObject,
     void destroyStream(Stream *stream);
     Error destroyContext(Thread *thread, gl::Context *context);
 
-    void destroySync(Sync *sync);
-
-    bool isInitialized() const;
     bool isValidConfig(const Config *config) const;
     bool isValidContext(gl::ContextID contextID) const;
     bool isValidSurface(SurfaceID surfaceID) const;
     bool isValidImage(ImageID imageID) const;
     bool isValidStream(const Stream *stream) const;
-    bool isValidSync(SyncID sync) const;
     bool isValidNativeWindow(EGLNativeWindowType window) const;
 
     Error validateClientBuffer(const Config *configuration,
@@ -283,7 +391,6 @@ class Display final : public LabeledObject,
     static bool isValidNativeDisplay(EGLNativeDisplayType display);
     static bool hasExistingWindowSurface(EGLNativeWindowType window);
 
-    bool isDeviceLost() const;
     bool testDeviceLost();
     void notifyDeviceLost();
 
@@ -300,7 +407,6 @@ class Display final : public LabeledObject,
 
     const Caps &getCaps() const;
 
-    const DisplayExtensions &getExtensions() const;
     const std::string &getExtensionString() const;
     const std::string &getVendorString() const;
     const std::string &getVersionString() const;
@@ -389,14 +495,10 @@ class Display final : public LabeledObject,
     const gl::Context *getContext(gl::ContextID contextID) const;
     const egl::Surface *getSurface(egl::SurfaceID surfaceID) const;
     const egl::Image *getImage(egl::ImageID imageID) const;
-    ScopedSyncRef getSync(egl::SyncID syncID) const;
     gl::Context *getContext(gl::ContextID contextID);
     egl::Surface *getSurface(egl::SurfaceID surfaceID);
     egl::Image *getImage(egl::ImageID imageID);
-    ScopedSyncRef getSync(egl::SyncID syncID);
-    void releaseSync(Sync *sync);
 
-    ScopedSyncMap getSyncsForCapture() const { return mSyncSet.getSyncsForCapture(); }
     const ImageMap &getImagesForCapture() const { return mImageMap; }
 
     // Initialize thread-local variables used by the Display and its backing implementations.  This
@@ -416,7 +518,6 @@ class Display final : public LabeledObject,
     void setAttributes(const AttributeMap &attribMap) { mAttributeMap = attribMap; }
     void setupDisplayPlatform(rx::DisplayImpl *impl);
 
-    Error restoreLostDevice();
     Error releaseContext(gl::Context *context, Thread *thread);
     Error releaseContextImpl(std::unique_ptr<gl::Context> &&context);
     std::unique_ptr<gl::Context> eraseContextImpl(gl::Context *context, ContextMap *contexts);
@@ -440,33 +541,8 @@ class Display final : public LabeledObject,
     void initFromDevice(Device *device, const AttributeMap &attribMap);
     bool initFromNativeDisplay(const AttributeMap &attribMap, const EGLAttrib nativePlatformType);
 
-    [[nodiscard]] bool addRefIfNotTerminating() const
-    {
-        // std::memory_order_relaxed might be sufficient here, but std::memory_order_acquire is used
-        // for safety since there is no performance difference.
-        uint32_t count = mRefCount.load(std::memory_order_acquire);
-        while (!(count & kTerminatingBit))
-        {
-            if (mRefCount.compare_exchange_weak(count, count + 1, std::memory_order_acquire,
-                                                std::memory_order_acquire))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    void releaseRef() const
-    {
-        uint32_t prev = mRefCount.fetch_sub(1, std::memory_order_release);
-        ASSERT((prev & kRefCountMask) > 0);
-    }
     void waitUntilUnreferenced(uint32_t expectedCount);
-    bool isTerminating() const;
 
-    static constexpr uint32_t kTerminatingBit = 1u << 31;
-    static constexpr uint32_t kRefCountMask   = ~kTerminatingBit;
-
-    DisplayState mState;
     rx::DisplayImpl *mImplementation;
     angle::ObserverBinding mGPUSwitchedBinding;
 
@@ -477,18 +553,13 @@ class Display final : public LabeledObject,
     ImageMap mImageMap;
     StreamSet mStreamSet;
 
-    SyncSet mSyncSet;
-
     ContextMap mInvalidContextMap;
     ImageMap mInvalidImageMap;
     StreamSet mInvalidStreamSet;
     SurfaceMap mInvalidSurfaceMap;
 
-    std::atomic<bool> mInitialized;
-
     Caps mCaps;
 
-    DisplayExtensions mDisplayExtensions;
     std::string mDisplayExtensionString;
 
     std::string mVendorString;
@@ -524,13 +595,8 @@ class Display final : public LabeledObject,
 
     bool mTerminatedByApi;
 
-    // Only these ScopedDisplay classes could directly access the lock and RefCount.
+    // Only this ScopedDisplay class could directly access the lock.
     friend class ScopedDisplayMutexLock;
-    template <typename DisplayT>
-    friend class ScopedDisplayLockAndRefT;
-    template <typename DisplayT>
-    friend class ScopedDisplayRefT;
-    mutable std::atomic<uint32_t> mRefCount;
     mutable angle::SimpleMutex mDisplayMutex;
 };
 
