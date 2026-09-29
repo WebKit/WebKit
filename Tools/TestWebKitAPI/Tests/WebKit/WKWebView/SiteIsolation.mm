@@ -15703,10 +15703,7 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalForwardInSubframeAfterGoMinus2)
     EXPECT_EQ([webView mainFrame].childFrames.count, 2u);
 
     [webView evaluateJavaScript:@"history.go(-2)" completionHandler:nil];
-
-    int spins = 0;
-    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/a"] && spins++ < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
+    [navigationDelegate waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
 
@@ -15715,10 +15712,7 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalForwardInSubframeAfterGoMinus2)
     auto childFrames = [webView mainFrame].childFrames;
     EXPECT_EQ(childFrames.count, 2u);
     [webView evaluateJavaScript:@"history.forward()" inFrame:childFrames[1].info completionHandler:nil];
-
-    spins = 0;
-    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/b"] && spins++ < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
+    [navigationDelegate waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ(@"https://example.com/b", [[webView URL] absoluteString]);
     EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)1);
