@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Clipping split layers of intersecting planes that cross the camera plane</title>
+  <link rel="help" href="https://drafts.csswg.org/css-transforms-2/#3d-rendering-contexts">
+  <link rel="match" href="preserve-3d-intersecting-planes-across-camera-plane-expected.html">
+  <style>
+    body { margin: 0; background: white; }
+    .stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 400px;
+        height: 400px;
+        overflow: hidden;
+        perspective: 400px;
+        perspective-origin: 50% 50%;
+        background: gray;
+    }
+    .world {
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        transform-style: preserve-3d;
+        transform: translateZ(-100px);
+    }
+    .plane {
+        position: absolute;
+        width: 2400px;
+        height: 1200px;
+        margin-left: -1200px;
+        margin-top: -600px;
+    }
+    #a { background: blue; transform: rotateY(30deg); }
+    #b { background: green; transform: rotateY(-30deg); }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="world">
+      <div class="plane" id="a"></div>
+      <div class="plane" id="b"></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -210,6 +210,25 @@ private:
         sk_sp<SkImageFilter> filter;
         IntOutsets outsets;
     };
+
+    enum class IncludesReplica : bool { No, Yes };
+    enum class IncludesFilterOutsets : bool { No, Yes };
+
+    struct AnimationsState {
+        std::optional<TransformationMatrix> transform;
+        std::optional<TransformationMatrix> futureTransform;
+        std::optional<float> opacity;
+        std::optional<Filter> filter;
+        std::optional<FilterOperations> filterOperations;
+        bool isRunning { false };
+    };
+
+    struct DebugBorder {
+        Color color;
+        float width { 0 };
+
+        friend bool operator==(const DebugBorder&, const DebugBorder&) = default;
+    };
     using PaintFunction = Function<void(SkCanvas&, PaintContext&)>;
 
     void recursivePaint(SkCanvas&, PaintContext&);
@@ -240,15 +259,12 @@ private:
     TransformationMatrix replicaTransform() const;
     TransformationMatrix combinedTransform(const PaintContext&) const;
     sk_sp<SkImage> maskImage();
-    FloatPolygon3D geometryFor3DRenderingContext() const;
+    Polygon4D geometryFor3DRenderingContext() const;
     FloatRect transformedFlattenedBounds() const;
     void collect3DRenderingContextLayers(Vector<SkiaCompositingLayer3DRenderingContext::Layer>&);
     void recursiveCleanUpAfterPaint();
 
     void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
-
-    enum class IncludesReplica : bool { No, Yes };
-    enum class IncludesFilterOutsets : bool { No, Yes };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes, IncludesFilterOutsets = IncludesFilterOutsets::Yes);
 
     void damageWholeLayer()
@@ -278,15 +294,6 @@ private:
     bool hasDamageInSubtree() const;
     void trackLayerRect(PaintContext&, const FloatRect& layerRectInFrame);
 #endif
-
-    struct AnimationsState {
-        std::optional<TransformationMatrix> transform;
-        std::optional<TransformationMatrix> futureTransform;
-        std::optional<float> opacity;
-        std::optional<Filter> filter;
-        std::optional<FilterOperations> filterOperations;
-        bool isRunning { false };
-    };
     std::optional<AnimationsState> syncAnimations(MonotonicTime);
 
     const TransformationMatrix& localTransform() const;
@@ -295,13 +302,6 @@ private:
     float opacityForAnimationsState(const AnimationsState*) const;
     const std::optional<Filter> filter() const;
     IntOutsets unclippedFilterOutsets() const;
-
-    struct DebugBorder {
-        Color color;
-        float width { 0 };
-
-        friend bool operator==(const DebugBorder&, const DebugBorder&) = default;
-    };
 
     Vector<Ref<SkiaCompositingLayer>> m_children;
     WeakPtr<SkiaCompositingLayer> m_parent;

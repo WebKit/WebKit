@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { margin: 0; background: white; }
+    .stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 400px;
+        height: 400px;
+        overflow: hidden;
+        perspective: 400px;
+        perspective-origin: 50% 50%;
+        background: gray;
+    }
+    .world {
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        transform-style: preserve-3d;
+        transform: translateZ(-100px);
+    }
+    .half {
+        position: absolute;
+        width: 1200px;
+        height: 1200px;
+        margin-top: -600px;
+        transform-origin: 0 50%;
+    }
+    #a1 { background: blue; transform: rotateY(30deg); }
+    #a2 { background: blue; transform: rotateY(210deg); }
+    #b1 { background: green; transform: rotateY(-30deg); }
+    #b2 { background: green; transform: rotateY(150deg); }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="world">
+      <div class="half" id="a1"></div>
+      <div class="half" id="a2"></div>
+      <div class="half" id="b1"></div>
+      <div class="half" id="b2"></div>
+    </div>
+  </div>
+</body>
+</html>
