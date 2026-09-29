@@ -45,7 +45,7 @@
               const damage = latestFrameDamage();
               if (!assert(damage, "no damage was recorded for the frame"))
                   return;
-              assertRectsEq(damage.rects, [[0, 124, 800, 476]]);
+              assertRectsEq(damage.rects, [[80, 124, 720, 476]]);
           },
       ], 0);
     </script>

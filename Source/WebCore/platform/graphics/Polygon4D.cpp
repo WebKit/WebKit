@@ -113,6 +113,14 @@ auto Polygon4D::clipToFrontOfCamera(const FloatRect& rect, const TransformationM
     return splitPolygon(corners, { 0, 0, 0, 1 }).second;
 }
 
+auto Polygon4D::clipToPlane(std::span<const Point4D> vertices, const Point4D& plane) -> Vertices
+{
+    if (vertices.empty())
+        return { };
+
+    return splitPolygon(vertices, plane).second;
+}
+
 Polygon4D::Polygon4D(const FloatRect& rect, const TransformationMatrix& transform)
     : m_vertices(clipToFrontOfCamera(rect, transform))
 {

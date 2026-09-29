@@ -64,10 +64,20 @@ IntRect projectedBoundingBox(const TransformationMatrix& transform, const FloatR
     if (clipBounds.isEmpty())
         return { };
 
-    // Vertices on the camera plane project to infinity, which clamps to the clip bounds.
+    // Clip before dividing by w, so edges running to infinity stop at the clip bounds.
+    auto vertices = Polygon4D::clipToFrontOfCamera(rect, transform);
+    const std::array<Point4D, 4> clipPlanes {
+        Point4D { 1, 0, 0, -static_cast<double>(clipBounds.x()) },
+        Point4D { -1, 0, 0, static_cast<double>(clipBounds.maxX()) },
+        Point4D { 0, 1, 0, -static_cast<double>(clipBounds.y()) },
+        Point4D { 0, -1, 0, static_cast<double>(clipBounds.maxY()) }
+    };
+    for (const auto& plane : clipPlanes)
+        vertices = Polygon4D::clipToPlane(vertices, plane);
+
     MinMax<double> xMinMax { std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity() };
     MinMax<double> yMinMax = xMinMax;
-    for (const auto& point : Polygon4D::clipToFrontOfCamera(rect, transform)) {
+    for (const auto& point : vertices) {
         const double x = point.x / point.w;
         const double y = point.y / point.w;
         xMinMax = { std::min(xMinMax.min, x), std::max(xMinMax.max, x) };
