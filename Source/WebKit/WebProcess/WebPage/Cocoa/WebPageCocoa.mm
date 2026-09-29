@@ -470,8 +470,10 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
 void WebPage::addDictationAlternative(const String& text, DictationContext context, CompletionHandler<void(bool)>&& completion)
 {
     RefPtr frame = corePage()->focusController().focusedOrMainFrame();
-    if (!frame)
+    if (!frame) {
+        completion(false);
         return;
+    }
 
     RefPtr document = frame->document();
     if (!document) {
@@ -509,8 +511,10 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
 {
     RefPtr frame = corePage()->focusController().focusedOrMainFrame();
-    if (!frame)
+    if (!frame) {
+        completion({ });
         return;
+    }
 
     RefPtr document = frame->document();
     if (!document) {

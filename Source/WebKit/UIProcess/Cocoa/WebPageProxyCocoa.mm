@@ -610,10 +610,10 @@ void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternativ
 
     RetainPtr nsAlternatives = alternative.alternatives.get();
     auto context = pageClient->addDictationAlternatives(nsAlternatives.get());
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::AddDictationAlternative { nsAlternatives.get().primaryString, *context }, [context, weakThis = WeakPtr { *this }](bool success) {
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::AddDictationAlternative { nsAlternatives.get().primaryString, *context }, Messages::WebPage::AddDictationAlternative::Reply { [context, weakThis = WeakPtr { *this }](bool success) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && !success)
             protectedThis->removeDictationAlternatives(*context);
-    }, webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebPageProxy::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
@@ -623,7 +623,7 @@ void WebPageProxy::dictationAlternativesAtSelection(CompletionHandler<void(Vecto
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::DictationAlternativesAtSelection(), WTF::move(completion), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::DictationAlternativesAtSelection(), Messages::WebPage::DictationAlternativesAtSelection::Reply { WTF::move(completion) });
 }
 
 void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alternativesToClear)
@@ -631,7 +631,7 @@ void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alterna
     if (!hasRunningProcess() || alternativesToClear.isEmpty())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::ClearDictationAlternatives(WTF::move(alternativesToClear)), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ClearDictationAlternatives(WTF::move(alternativesToClear)));
 }
 
 void WebPageProxy::setDictationStreamingOpacity(const String& hypothesisText, WebCore::CharacterRange streamingRangeInHypothesis, float opacity)
@@ -639,7 +639,7 @@ void WebPageProxy::setDictationStreamingOpacity(const String& hypothesisText, We
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetDictationStreamingOpacity(hypothesisText, streamingRangeInHypothesis, opacity), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetDictationStreamingOpacity(hypothesisText, streamingRangeInHypothesis, opacity));
 }
 
 void WebPageProxy::clearDictationStreamingOpacity()
@@ -647,7 +647,12 @@ void WebPageProxy::clearDictationStreamingOpacity()
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::ClearDictationStreamingOpacity(), webPageIDInMainFrameProcess());
+    // A dictation session can outlive a focus change, which could leave a marker behind in
+    // a non-focused frame.
+    // So notify everybody.
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::ClearDictationStreamingOpacity(), pageID);
+    });
 }
 
 ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const URL& url)

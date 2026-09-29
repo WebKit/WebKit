@@ -38,6 +38,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
+#import "TestInputDelegate.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -54,6 +55,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIKitSPIForTesting.h"
 #import <WebKit/_WKTextInputContext.h>
 #endif
 
@@ -80,6 +82,13 @@
 }
 @end
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY)
+@interface UIView (SiteIsolationDictationStreamingOpacity)
+- (void)_setDictationStreamingOpacity:(CGFloat)opacity forHypothesisText:(NSString *)hypothesisText streamingRange:(NSRange)streamingRange;
+- (void)_clearDictationStreamingOpacity;
+@end
+#endif // PLATFORM(IOS_FAMILY)
 
 @interface SiteIsolationFontAttributesListener : NSObject <WKUIDelegatePrivate>
 - (NSDictionary<NSString *, id> *)lastFontAttributes;
@@ -877,5 +886,167 @@ TEST(SiteIsolation, AddAppHighlightWithoutSelectionDoesNotCrashWhenWebProcessesE
 }
 
 #endif // ENABLE(APP_HIGHLIGHTS)
+
+#if PLATFORM(IOS_FAMILY)
+
+// Dictation alternatives and dictation streaming opacity are all scoped to the focused frame's selection
+// and are recorded as document markers in that frame's document, so each of these messages must reach the
+// focused frame's process.
+
+struct SiteIsolationDictationWebView {
+    RetainPtr<TestWKWebView> webView;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestInputDelegate> inputDelegate;
+    RetainPtr<WKFrameInfo> childFrame;
+};
+
+// Loads https://example.com/mainframe, whose cross-origin iframe must hold an editable body, focuses that
+// body with a user gesture and waits for the input session to start. window.internals is available in both
+// processes so the tests can count document markers inside the iframe.
+static SiteIsolationDictationWebView siteIsolatedViewWithFocusedEditableIframe(const HTTPServer& server)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    bool didStartInputSession = false;
+    RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) {
+        didStartInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focusInWindow];
+
+    // Element::focus() is a no-op for a cross-origin iframe without a user gesture.
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.body.focus()" inFrame:childFrame.get()];
+    Util::run(&didStartInputSession);
+    while (![childFrame _isFocused]) {
+        Util::spinRunLoop();
+        childFrame = [webView firstChildFrame];
+    }
+
+    // The handler above captures a local, so replace it before returning.
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    return { WTF::move(webView), WTF::move(navigationDelegate), WTF::move(inputDelegate), WTF::move(childFrame) };
+}
+
+static NSUInteger siteIsolationMarkerCount(TestWKWebView *webView, WKFrameInfo *frame, NSString *markerType)
+{
+    RetainPtr script = [NSString stringWithFormat:@"internals.markerCountForNode(document.body.childNodes[0], '%@')", markerType];
+    return [[webView objectByEvaluatingJavaScript:script.get() inFrame:frame] unsignedIntegerValue];
+}
+
+TEST(SiteIsolation, AddDictationAlternativeInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable>hello world&nbsp;</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, inputDelegate, childFrame] = siteIsolatedViewWithFocusedEditableIframe(server);
+
+    // addDictationAlternative searches back from the selection for the primary string, so put the caret
+    // after "hello world".
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)" inFrame:childFrame.get()];
+
+    RetainPtr alternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:@"hello world" alternativeStrings:@[ @"👋🌎" ]]);
+    [[webView textInputContentView] addTextAlternatives:alternatives.get()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return siteIsolationMarkerCount(webView.get(), childFrame.get(), @"dictationalternatives") == 1;
+    }));
+}
+
+TEST(SiteIsolation, RemoveDictationAlternativesInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, inputDelegate, childFrame] = siteIsolatedViewWithFocusedEditableIframe(server);
+
+    // InsertDictatedTextAsync is already routed to the focused frame, so this marks the iframe's text.
+    [webView insertText:@"hello world" alternatives:@[ @"👋🌎" ]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return siteIsolationMarkerCount(webView.get(), childFrame.get(), @"dictationalternatives") == 1;
+    }));
+
+    // Move the caret inside the marked text so that the expanded selection intersects the marker.
+    [[webView textInputContentView] moveByOffset:-1];
+    [webView waitForNextPresentationUpdate];
+
+    // Every alternative here is emoji-only, so this reads the dictation contexts at the selection and then
+    // clears them. Both halves have to reach the iframe's process.
+    [[webView textInputContentView] removeEmojiAlternatives];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !siteIsolationMarkerCount(webView.get(), childFrame.get(), @"dictationalternatives");
+    }));
+}
+
+TEST(SiteIsolation, FinalDictationResultScopeInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, inputDelegate, childFrame] = siteIsolatedViewWithFocusedEditableIframe(server);
+
+    // Outside the will/did window a range selection in the iframe does reach the UI process, so the
+    // assertion below is about the scope and not about how long an editor state update takes.
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 3)", _WKSelectionAttributeIsCaret);
+
+    // While a final dictation result is being inserted, the focused frame's process must report its
+    // selection changes as ignorable, so the UI process doesn't update its selection UI mid-insertion.
+    [[webView textInputContentView] willInsertFinalDictationResult];
+    [webView objectByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)" inFrame:childFrame.get()];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [webView _selectionAttributes]);
+
+    // Finishing the insertion makes that process report its current selection again.
+    [[webView textInputContentView] didInsertFinalDictationResult];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView _selectionAttributes] == _WKSelectionAttributeIsRange;
+    }));
+}
+
+TEST(SiteIsolation, DictationStreamingOpacityInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable>hello world</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, inputDelegate, childFrame] = siteIsolatedViewWithFocusedEditableIframe(server);
+
+    // The hypothesis text is matched against the text immediately before the caret.
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)" inFrame:childFrame.get()];
+
+    [[webView textInputContentView] _setDictationStreamingOpacity:0.5 forHypothesisText:@"hello world" streamingRange:NSMakeRange(0, 5)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return siteIsolationMarkerCount(webView.get(), childFrame.get(), @"dictationstreamingopacity") == 1;
+    }));
+
+    [[webView textInputContentView] _clearDictationStreamingOpacity];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !siteIsolationMarkerCount(webView.get(), childFrame.get(), @"dictationstreamingopacity");
+    }));
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI
