@@ -748,8 +748,11 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
     ASSERT(accommodatedItemsIndexes.size() == sizeContributions.size());
 
     // 1. Maintain separately for each affected track a planned increase, initially set to 0. The
-    // vector is keyed by track index.
+    // vector is keyed by track index. Non-affected tracks that receive space in 2.3 also get a
+    // planned increase, per https://github.com/w3c/csswg-drafts/issues/3648.
     Vector<LayoutUnit> plannedIncreases(unsizedTracks.size());
+
+    TrackIndexes nonAffectedTracksIndexes;
 
     // 2. For each accommodated item...
     for (auto [contributionIndex, gridItemIndex] : WTF::indexedRange(accommodatedItemsIndexes)) {
@@ -757,7 +760,7 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
         auto itemSpan = gridItemSpanList[gridItemIndex];
 
         // Partition the spanned tracks into the affected tracks, which receive space in 2.2, and
-        // the non-affected tracks, which never receive space but reduce spaceToDistribute in 2.3.
+        // the non-affected tracks, which can only receive space in 2.3.
         Vector<size_t> spannedAffectedTracks;
         Vector<size_t> spannedNonAffectedTracks;
         for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex) {
@@ -796,12 +799,12 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
         // the item spans both affected tracks and non-affected tracks, distribute space as for the
         // previous step, but into the non-affected tracks instead."
         if (spaceToDistribute > 0 && !spannedAffectedTracks.isEmpty() && !spannedNonAffectedTracks.isEmpty()) {
-            // These tracks are not affected, so we don't need to track their item-incurred increases for later.
-            // The purpose of this step is to reduce spaceToDistribute, so we can just use a throwaway vector.
-            Vector<LayoutUnit> unappliedIncreases(unsizedTracks.size());
-            // In step 2.1. we subtracted the size of non-affected tracks from the item's size contribution.
-            // In this step, we are subtracting extra space up to the growth limit of the non-affected tracks.
-            distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedNonAffectedTracks, unsizedTracks, unappliedIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+            distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedNonAffectedTracks, unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+            // Several items can span the same non-affected track, so only record it once.
+            for (auto trackIndex : spannedNonAffectedTracks) {
+                if (itemIncurredIncreases[trackIndex])
+                    nonAffectedTracksIndexes.appendIfNotContains(trackIndex);
+            }
         }
 
         // 2.4. Distribute space beyond limits: if extra space still remains, unfreeze and continue
@@ -810,8 +813,9 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
             distributeSpaceEquallyAmongTracks(spaceToDistribute, tracksToGrowBeyondGrowthLimits(spannedAffectedTracks, unsizedTracks, affectedTrackSizingFunction, spaceDistributionTarget), unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::BeyondGrowthLimit);
 
         // 2.5. For each affected track, if its item-incurred increase is larger than its planned
-        // increase, set the planned increase to that value.
-        for (auto trackIndex : spannedAffectedTracks)
+        // increase, set the planned increase to that value. This covers every spanned track, since
+        // non-affected tracks can also have received space in 2.3.
+        for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex)
             plannedIncreases[trackIndex] = std::max(plannedIncreases[trackIndex], itemIncurredIncreases[trackIndex]);
     }
 
@@ -820,11 +824,13 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
     if (spaceDistributionTarget == ExtraSpaceDistributionTarget::BaseSizes) {
         for (auto trackIndex : affectedTracksIndexes)
             unsizedTracks[trackIndex].baseSize += plannedIncreases[trackIndex];
+        for (auto trackIndex : nonAffectedTracksIndexes)
+            unsizedTracks[trackIndex].baseSize += plannedIncreases[trackIndex];
         return { };
     } else {
         ASSERT(spaceDistributionTarget == ExtraSpaceDistributionTarget::GrowthLimits);
         TrackIndexes tracksWhoseGrowthLimitBecameFinite;
-        for (auto trackIndex : affectedTracksIndexes) {
+        auto updateGrowthLimit = [&](size_t trackIndex) {
             auto& track = unsizedTracks[trackIndex];
             auto plannedIncrease = plannedIncreases[trackIndex];
             if (track.growthLimit != LayoutUnit::max())
@@ -835,7 +841,11 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
                 if (affectedTrackSizingFunction == AffectedTrackSizingFunction::IntrinsicMaximum)
                     tracksWhoseGrowthLimitBecameFinite.append(trackIndex);
             }
-        }
+        };
+        for (auto trackIndex : affectedTracksIndexes)
+            updateGrowthLimit(trackIndex);
+        for (auto trackIndex : nonAffectedTracksIndexes)
+            updateGrowthLimit(trackIndex);
         if (affectedTrackSizingFunction != AffectedTrackSizingFunction::IntrinsicMaximum)
             ASSERT(tracksWhoseGrowthLimitBecameFinite.isEmpty());
         return tracksWhoseGrowthLimitBecameFinite;
