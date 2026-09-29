@@ -138,12 +138,12 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
     }
 
     if (event.type() == PlatformEvent::Type::MousePressed && mouseIsOverActiveDataDetectorHighlightButton)
-        return handleDataDetectorAction(*activeDataDetectorElement, flooredIntPoint(mousePositionInContents));
+        return handleDataDetectorAction(*activeDataDetectorElement, flooredIntPoint(event.position()));
 
     return false;
 }
 
-bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element, const IntPoint& locationInContents)
+bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element, const IntPoint& locationInWindow)
 {
     RefPtr frame = element.document().frame();
     if (!frame)
@@ -171,7 +171,7 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!renderer)
         return false;
 
-    m_page->chrome().client().handleClickForDataDetectionResult({ WTF::move(dataDetectionResult), frameView->contentsToWindow(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToWindow(locationInContents));
+    m_page->chrome().client().handleClickForDataDetectionResult({ WTF::move(dataDetectionResult), frameView->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToMainFrameView(frameView->windowToContents(locationInWindow)));
     return true;
 }
 
