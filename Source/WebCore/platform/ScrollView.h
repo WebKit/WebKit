@@ -236,6 +236,7 @@ public:
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
     // content size. Explicitly setting a layout size value will cause webkit to layout the contents using this size instead.
     WEBCORE_EXPORT IntSize layoutSize() const;
+    IntSize layoutSizeIncludingScrollbars() const;
     int layoutWidth() const { return layoutSize().width(); }
     int layoutHeight() const { return layoutSize().height(); }
 
