@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Reference: Grid item text and backgrounds are not interleaved</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<style>
+.container {
+    background-color: grey;
+}
+.element {
+    background: lime;
+    width: 100px;
+}
+</style>
+
+<p>This test checks that grid items text and background are not interleaved.</p>
+<p>The test passes if you see only "PASS" text and not "FAIL".</p>
+<div class="container">
+    <div class="element">PASS</div>
+</div>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Reference: Grid item whose margin box overflows its grid area is painted</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+
+<p>Test PASS if you see two adjacent iframes with a 50x50 green square.</p>
+
+<iframe height="120px" width="300px" srcdoc="
+     <div style='background: green;  width: 50px; height: 50px; margin-left: 100px;'></div>
+     ">
+</iframe>
+
+<iframe height="120px" width="300px" srcdoc="
+     <div style='background: green; width: 50px; height: 50px; margin-left: 134px;'></div>
+     ">
+</iframe>
+
