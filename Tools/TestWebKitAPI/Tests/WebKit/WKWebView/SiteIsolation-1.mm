@@ -379,6 +379,54 @@ TEST(SiteIsolation, CenterSelectionInVisibleAreaInCrossOriginIframe)
     }));
 }
 
+TEST(SiteIsolation, CandidateRectInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin: 300px 0 0 100px; width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+
+    auto selectTextAndWaitForCandidateRect = [&] {
+        [webView objectByEvaluatingJavaScript:@"getSelection().removeAllRanges()" inFrame:childFrame.get()];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return NSIsEmptyRect([webView _candidateRect]);
+        }));
+        [webView objectByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)" inFrame:childFrame.get()];
+        NSRect rect = NSZeroRect;
+        EXPECT_TRUE(Util::waitFor([&] {
+            rect = [webView _candidateRect];
+            return !NSIsEmptyRect(rect);
+        }));
+        [webView waitForNextPresentationUpdate];
+        return rect;
+    };
+
+    auto selectionRectInView = [&] {
+        auto rectInWindow = [[webView window] convertRectFromScreen:[(id<NSTextInputClient>)webView.get() unionRectInVisibleSelectedRange]];
+        return [webView convertRect:rectInWindow fromView:nil];
+    };
+
+    // The iframe is at (100, 300) in the main frame, so rects left relative to the iframe would be near the origin.
+    auto candidateRect = selectTextAndWaitForCandidateRect();
+    EXPECT_NEAR(NSMinX(candidateRect), 100, 2);
+    EXPECT_NEAR(NSMinY(candidateRect), 300, 2);
+    EXPECT_NEAR(NSMinY(selectionRectInView()), 300, 2);
+
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 200)"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 200;
+    }));
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NEAR(NSMinY(selectionRectInView()), 100, 2);
+
+    candidateRect = selectTextAndWaitForCandidateRect();
+    EXPECT_NEAR(NSMinX(candidateRect), 100, 2);
+    EXPECT_NEAR(NSMinY(candidateRect), 100, 2);
+    EXPECT_NEAR(NSMinY(selectionRectInView()), 100, 2);
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
