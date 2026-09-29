@@ -1981,6 +1981,8 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 }
                 case op_call_ignore_result:
                     return { };
+                case op_restore_generator_locals:
+                    return MethodOfGettingAValueProfile::generatorLocalValueProfiles(node->origin.semantic);
                 default: {
                     auto* valueProfile = profiledBlock->tryGetValueProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex());
                     if (!valueProfile)

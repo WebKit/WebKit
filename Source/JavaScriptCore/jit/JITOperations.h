@@ -395,6 +395,7 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationReallocateButterflyAndTransition, vo
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWriteBarrierSlowPath, void, (VM*, JSCell*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationOSRWriteBarrier, void, (VM*, JSCell*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationOSRExitReportGeneratorLocals, void, (CodeBlock*, const JSInstruction*, JSLexicalEnvironment*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationExceptionFuzz, void, (JSGlobalObject*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationExceptionFuzzWithCallFrame, void, (VM*));

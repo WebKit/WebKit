@@ -300,6 +300,7 @@ namespace JSC {
         void emitWriteBarrier(JSCell* owner);
         void emitWriteBarrier(GPRReg owner);
 
+        void emitValueProfilingSite(unsigned profileOffset, GPRReg);
         template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, GPRReg);
         template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, BytecodeIndex, GPRReg);
 
@@ -472,6 +473,8 @@ namespace JSC {
         void emit_op_new_object(const JSInstruction*);
         void emit_op_new_reg_exp(const JSInstruction*);
         void emit_op_create_lexical_environment(const JSInstruction*);
+        void emit_op_save_generator_locals(const JSInstruction*);
+        void emit_op_restore_generator_locals(const JSInstruction*);
         void emit_op_create_direct_arguments(const JSInstruction*);
         void emit_op_create_scoped_arguments(const JSInstruction*);
         void emit_op_create_cloned_arguments(const JSInstruction*);
