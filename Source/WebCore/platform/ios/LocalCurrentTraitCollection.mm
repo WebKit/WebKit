@@ -58,13 +58,13 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
         traits.userInterfaceLevel = useElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase;
     }];
 
-    [PAL::getUITraitCollectionClassSingleton() setCurrentTraitCollection:traitCollectionWithAdjustedIdiomForSystemColors(combinedTraits.get())];
+    [PAL::getUITraitCollectionClassSingleton() setCurrentTraitCollection:protect(traitCollectionWithAdjustedIdiomForSystemColors(combinedTraits))];
 }
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
 {
     m_savedTraitCollection = [PAL::getUITraitCollectionClassSingleton() currentTraitCollection];
-    auto newTraitCollection = traitCollectionWithAdjustedIdiomForSystemColors(traitCollection);
+    RetainPtr newTraitCollection = traitCollectionWithAdjustedIdiomForSystemColors(traitCollection);
     [PAL::getUITraitCollectionClassSingleton() setCurrentTraitCollection:newTraitCollection];
 }
 

@@ -24,8 +24,6 @@ platform/PODRedBlackTree.h
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/graphics/ca/PlatformCALayer.h
 platform/graphics/ca/TileController.cpp
-[ iOS ] platform/ios/DeviceMotionClientIOS.h
-[ iOS ] platform/ios/LegacyTileCache.h
 platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp

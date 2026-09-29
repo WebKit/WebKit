@@ -84,6 +84,8 @@ DeviceMotionData* DeviceMotionClientIOS::lastMotion() const
 
 void DeviceMotionClientIOS::deviceMotionControllerDestroyed()
 {
+    m_controller = nullptr;
+
     if (m_deviceOrientationUpdateProvider) {
         m_deviceOrientationUpdateProvider->stopUpdatingDeviceMotion(*this);
         return;
@@ -122,7 +124,7 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
 #endif // PLATFORM(IOS_FAMILY_SIMULATOR)
 
     m_currentDeviceMotionData = DeviceMotionData::create(WTF::move(acceleration), WTF::move(accelerationIncludingGravity), WTF::move(rotationRate), kMotionUpdateInterval);
-    m_controller->didChangeDeviceMotion(m_currentDeviceMotionData.get());
+    protect(m_controller)->didChangeDeviceMotion(m_currentDeviceMotionData.get());
 }
 
 } // namespace WebCore

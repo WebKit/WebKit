@@ -67,8 +67,8 @@ static const double kGravity = 9.80665;
 
 + (WebCoreMotionManager *)sharedManager
 {
-    static WebCoreMotionManager *sharedMotionManager = [[WebCoreMotionManager alloc] init];
-    return sharedMotionManager;
+    static NeverDestroyed<RetainPtr<WebCoreMotionManager>> sharedMotionManager = adoptNS([[WebCoreMotionManager alloc] init]);
+    return sharedMotionManager.get();
 }
 
 - (id)init

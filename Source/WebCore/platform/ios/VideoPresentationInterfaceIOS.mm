@@ -92,13 +92,13 @@ static const char* boolString(bool val)
 static const Seconds defaultWatchdogTimerInterval { 1_s };
 static bool ignoreWatchdogForDebugging = false;
 
-static UIViewController *fallbackViewController(UIView *view)
+static RetainPtr<UIViewController> fallbackViewController(UIView *view)
 {
     // FIXME: This logic to find a fallback view controller should move out of WebCore,
     // and into the client layer.
     for (UIView *currentView = view; currentView; currentView = currentView.superview) {
-        if (auto controller = viewController(currentView)) {
-            if (!controller.parentViewController)
+        if (RetainPtr controller = viewController(currentView)) {
+            if (![controller parentViewController])
                 return controller;
         }
     }
@@ -107,10 +107,10 @@ static UIViewController *fallbackViewController(UIView *view)
     return nil;
 }
 
-UIViewController *VideoPresentationInterfaceIOS::presentingViewController()
+RetainPtr<UIViewController> VideoPresentationInterfaceIOS::presentingViewController()
 {
     auto model = videoPresentationModel();
-    auto *controller = model ? model->presentingViewController() : nil;
+    RetainPtr controller = model ? model->presentingViewController() : nil;
     if (!controller)
         controller = fallbackViewController(m_parentView.get());
 
@@ -159,11 +159,13 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
     }
 
     @try {
-        RetainPtr pipPlacard = adoptNS([PAL::allocUIViewInstance() initWithFrame:[layerHostView() bounds]]);
-        [pipPlacard setBackgroundColor:blackUIColor()];
+        RetainPtr layerHostView = this->layerHostView();
+        RetainPtr greyColor = greyUIColor();
+        RetainPtr pipPlacard = adoptNS([PAL::allocUIViewInstance() initWithFrame:[layerHostView bounds]]);
+        [pipPlacard setBackgroundColor:protect(blackUIColor())];
         [pipPlacard setTranslatesAutoresizingMaskIntoConstraints:NO];
 
-        RetainPtr image = [[[PAL::getUIImageClassSingleton() systemImageNamed:@"pip"] imageWithTintColor:greyUIColor() renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:[PAL::getUIImageSymbolConfigurationClassSingleton() configurationWithWeight:UIImageSymbolWeightThin]];
+        RetainPtr image = [[[PAL::getUIImageClassSingleton() systemImageNamed:@"pip"] imageWithTintColor:greyColor renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:[PAL::getUIImageSymbolConfigurationClassSingleton() configurationWithWeight:UIImageSymbolWeightThin]];
 
         RetainPtr imageView = adoptNS([PAL::allocUIImageViewInstance() initWithImage:image.get()]);
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
@@ -174,7 +176,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         auto pipLabel = adoptNS([PAL::allocUILabelInstance() init]);
         [pipLabel setText:@"This video is playing in picture in picture."];
         [pipLabel setTextAlignment:NSTextAlignmentCenter];
-        [pipLabel setTextColor:greyUIColor()];
+        [pipLabel setTextColor:greyColor];
         [pipLabel setFont:static_cast<UIFont *>([PAL::getUIFontClassSingleton() systemFontOfSize:16])];
         [pipLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
 
@@ -197,7 +199,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         if (placardHeight < 100)
             [pipLabel setHidden:YES];
 
-        if (UIView *parentView = layerHostView().superview) {
+        if (UIView *parentView = [layerHostView superview]) {
             [parentView.superview insertSubview:pipPlacard.get() atIndex:0];
             [NSLayoutConstraint activateConstraints:@[
                 [parentView.leadingAnchor constraintEqualToAnchor:[pipPlacard leadingAnchor]],
@@ -275,11 +277,11 @@ void VideoPresentationInterfaceIOS::requestHideAndExitFullscreen()
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::requestHideAndExitFullscreen(%p)", this);
 
     [m_window setHidden:YES];
-    playerViewController().view.hidden = YES;
+    [[protect(playerViewController()) view] setHidden:YES];
 
     auto model = videoPresentationModel();
-    if (playbackSessionModel() && model) {
-        playbackSessionModel()->pause();
+    if (CheckedPtr playbackSessionModel = this->playbackSessionModel(); playbackSessionModel && model) {
+        playbackSessionModel->pause();
         model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
     }
 }
@@ -289,9 +291,10 @@ void VideoPresentationInterfaceIOS::preparedToReturnToInline(bool visible, const
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::preparedToReturnToInline(%p) - visible(%s)", this, boolString(visible));
     setInlineRect(inlineRect, visible);
     [m_window setHidden:NO];
-    playerViewController().view.hidden = NO;
-    [playerViewController().view setNeedsLayout];
-    [playerViewController().view layoutIfNeeded];
+    RetainPtr playerViewController = this->playerViewController();
+    [[playerViewController view] setHidden:NO];
+    [[playerViewController view] setNeedsLayout];
+    [[playerViewController view] layoutIfNeeded];
     if (m_prepareToInlineCallback) {
         WTF::Function<void(bool)> callback = WTF::move(m_prepareToInlineCallback);
         callback(visible);
@@ -325,10 +328,12 @@ void VideoPresentationInterfaceIOS::doSetup()
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
+    RetainPtr clearColor = clearUIColor();
+
 #if !PLATFORM(WATCHOS)
     if (shouldCreateWindow()) {
         m_window = adoptNS([PAL::allocUIWindowInstance() initWithWindowScene:[[m_parentView window] windowScene]]);
-        [m_window setBackgroundColor:clearUIColor()];
+        [m_window setBackgroundColor:clearColor];
         [m_window setValue:@"WebCore::VideoPresentationInterfaceIOS" forKey:@"_debugName"];
         if (!m_viewController)
             m_viewController = adoptNS([PAL::allocUIViewControllerInstance() init]);
@@ -346,28 +351,28 @@ void VideoPresentationInterfaceIOS::doSetup()
 
     RetainPtr playerLayerView = this->playerLayerView();
     [playerLayerView setHidden:isExternalPlaybackActive()];
-    [playerLayerView setBackgroundColor:clearUIColor()];
+    [playerLayerView setBackgroundColor:clearColor];
 
     setupPlayerViewController();
 
-    if (UIViewController *playerViewController = this->playerViewController()) {
+    if (RetainPtr playerViewController = this->playerViewController()) {
         if (m_viewController) {
             [m_viewController addChildViewController:playerViewController];
-            [[m_viewController view] addSubview:playerViewController.view];
+            [[m_viewController view] addSubview:[playerViewController view]];
             [playerViewController didMoveToParentViewController:m_viewController.get()];
         } else
-            [m_parentView addSubview:playerViewController.view];
+            [m_parentView addSubview:[playerViewController view]];
 
-        playerViewController.view.frame = [m_parentView convertRect:m_inlineRect toView:playerViewController.view.superview];
-        playerViewController.view.backgroundColor = clearUIColor();
-        playerViewController.view.autoresizingMask = (UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin);
+        [[playerViewController view] setFrame:[m_parentView convertRect:m_inlineRect toView:[[playerViewController view] superview]]];
+        [[playerViewController view] setBackgroundColor:clearColor];
+        [[playerViewController view] setAutoresizingMask:(UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin)];
 
-        [playerViewController.view setNeedsLayout];
-        [playerViewController.view layoutIfNeeded];
+        [[playerViewController view] setNeedsLayout];
+        [[playerViewController view] layoutIfNeeded];
 
         if (m_targetStandby && !m_currentMode.hasVideo() && !m_returningToStandby) {
             [m_window setHidden:YES];
-            [playerViewController.view setHidden:YES];
+            [[playerViewController view] setHidden:YES];
         }
     }
 
@@ -381,21 +386,23 @@ void VideoPresentationInterfaceIOS::videoDimensionsChanged(const FloatSize& vide
     if (videoDimensions.isZero())
         return;
 
-    playerLayer().videoDimensions = videoDimensions;
+    RetainPtr playerLayer = this->playerLayer();
+    [playerLayer setVideoDimensions:videoDimensions];
     setContentDimensions(videoDimensions);
-    [playerLayerView() setNeedsLayout];
+    RetainPtr playerLayerView = this->playerLayerView();
+    [playerLayerView setNeedsLayout];
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-    WebAVPictureInPicturePlayerLayerView *pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView() pictureInPicturePlayerLayerView];
+    RetainPtr pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView pictureInPicturePlayerLayerView];
     WebAVPlayerLayer *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
-    [pipPlayerLayer setVideoDimensions:playerLayer().videoDimensions];
+    [pipPlayerLayer setVideoDimensions:[playerLayer videoDimensions]];
     [pipView setNeedsLayout];
 #endif
 }
 
 void VideoPresentationInterfaceIOS::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&)
 {
-    [playerLayerView() setHidden:enabled];
+    [protect(playerLayerView()) setHidden:enabled];
 }
 
 void VideoPresentationInterfaceIOS::enterExternalPlayback(CompletionHandler<void(bool, UIViewController *)>&& enterHandler, CompletionHandler<void(bool)>&& exitHandler)
@@ -414,10 +421,10 @@ void VideoPresentationInterfaceIOS::setInlineRect(const FloatRect& inlineRect, b
     m_inlineIsVisible = visible;
     m_hasUpdatedInlineRect = true;
 
-    if (playerViewController() && m_parentView) {
+    if (RetainPtr playerViewController = this->playerViewController(); playerViewController && m_parentView) {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        playerViewController().view.frame = [m_parentView convertRect:inlineRect toView:playerViewController().view.superview];
+        [[playerViewController view] setFrame:[m_parentView convertRect:inlineRect toView:[[playerViewController view] superview]]];
         [CATransaction commit];
     }
 
@@ -450,7 +457,7 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
 {
     m_standby = m_targetStandby;
 
-    [playerViewController().view layoutIfNeeded];
+    [[protect(playerViewController()) view] layoutIfNeeded];
     if (m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen()) {
         [m_window setHidden:NO];
         presentFullscreen(true, [this, protectedThis = Ref { *this }](BOOL success, NSError *error) {
@@ -487,7 +494,7 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
     FloatSize size;
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     if (m_currentMode.hasPictureInPicture()) {
-        auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView() pictureInPicturePlayerLayerView];
+        RetainPtr pipView = (WebAVPictureInPicturePlayerLayerView *)[protect(playerLayerView()) pictureInPicturePlayerLayerView];
         auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
         auto videoFrame = [pipPlayerLayer calculateTargetVideoFrame];
         size = FloatSize(videoFrame.size());
@@ -601,14 +608,16 @@ void VideoPresentationInterfaceIOS::exitFullscreenHandler(BOOL success, NSError*
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard, VideoPresentationModel::ShouldNotifyMediaElement::No);
 
+    RetainPtr playerViewController = this->playerViewController();
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
         [m_window setHidden:YES];
-        [playerViewController().view setHidden:YES];
+        [[playerViewController view] setHidden:YES];
     } else {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        [playerLayerView() setBackgroundColor:clearUIColor()];
-        [playerViewController().view setBackgroundColor:clearUIColor()];
+        RetainPtr clearColor = clearUIColor();
+        [protect(playerLayerView()) setBackgroundColor:clearColor];
+        [[playerViewController view] setBackgroundColor:clearColor];
         [CATransaction commit];
     }
 
@@ -725,7 +734,7 @@ void VideoPresentationInterfaceIOS::willStartPictureInPicture()
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         [m_window setHidden:NO];
-        playerViewController().view.hidden = NO;
+        [[protect(playerViewController()) view] setHidden:NO];
         transferVideoViewToFullscreen();
         [CATransaction commit];
     }
@@ -745,9 +754,10 @@ void VideoPresentationInterfaceIOS::didStartPictureInPicture()
     setShowsPlaybackControls(true);
     [m_viewController _setIgnoreAppSupportedOrientations:NO];
 
+    RetainPtr playerViewController = this->playerViewController();
     if (m_currentMode.hasFullscreen()) {
         m_shouldReturnToFullscreenWhenStoppingPictureInPicture = true;
-        [playerViewController().view layoutIfNeeded];
+        [[playerViewController view] layoutIfNeeded];
         dismissFullscreen(true, [this, protectedThis = Ref { *this }](BOOL success, NSError *error) {
             exitFullscreenHandler(success, error);
         });
@@ -756,7 +766,7 @@ void VideoPresentationInterfaceIOS::didStartPictureInPicture()
             m_shouldReturnToFullscreenWhenStoppingPictureInPicture = true;
 
         [m_window setHidden:YES];
-        playerViewController().view.hidden = YES;
+        [[playerViewController view] setHidden:YES];
     }
 
     if (m_enterFullscreenNeedsEnterPictureInPicture)
@@ -833,8 +843,9 @@ void VideoPresentationInterfaceIOS::didStopPictureInPicture()
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture, m_exitFullscreenNeedsExitPictureInPicture ? VideoPresentationModel::ShouldNotifyMediaElement::No : VideoPresentationModel::ShouldNotifyMediaElement::Yes);
 
-    [playerLayerView() setBackgroundColor:clearUIColor()];
-    playerViewController().view.backgroundColor = clearUIColor();
+    RetainPtr clearColor = clearUIColor();
+    [protect(playerLayerView()) setBackgroundColor:clearColor];
+    [[protect(playerViewController()) view] setBackgroundColor:clearColor];
 
     if (m_enterFullscreenNeedsExitPictureInPicture)
         doEnterFullscreen();
@@ -857,9 +868,10 @@ void VideoPresentationInterfaceIOS::prepareForPictureInPictureStopWithCompletion
         m_shouldReturnToFullscreenWhenStoppingPictureInPicture = false;
 
         [m_window setHidden:NO];
-        playerViewController().view.hidden = NO;
+        RetainPtr playerViewController = this->playerViewController();
+        [[playerViewController view] setHidden:NO];
 
-        [playerViewController().view layoutIfNeeded];
+        [[playerViewController view] layoutIfNeeded];
         presentFullscreen(true, [this, protectedThis = Ref { *this }, completionHandler = makeBlockPtr(completionHandler)](BOOL success, NSError *error) {
             enterFullscreenHandler(success, error);
             completionHandler(success);
@@ -895,8 +907,8 @@ bool VideoPresentationInterfaceIOS::shouldExitFullscreenWithReason(VideoPresenta
     if (reason == ExitFullScreenReason::PictureInPictureStarted)
         return false;
 
-    if (playbackSessionModel() && (reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::RemoteControlStopEventReceived))
-        playbackSessionModel()->pause();
+    if (CheckedPtr playbackSessionModel = this->playbackSessionModel(); playbackSessionModel && (reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::RemoteControlStopEventReceived))
+        playbackSessionModel->pause();
 
     if (!m_watchdogTimer.isActive() && !ignoreWatchdogForDebugging)
         m_watchdogTimer.startOneShot(defaultWatchdogTimerInterval);
@@ -917,7 +929,7 @@ NO_RETURN_DUE_TO_ASSERT void VideoPresentationInterfaceIOS::watchdogTimerFired()
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::watchdogTimerFired(%p) - no exit fullscreen response in %gs; forcing fullscreen hidden.", this, defaultWatchdogTimerInterval.value());
     ASSERT_NOT_REACHED();
     [m_window setHidden:YES];
-    playerViewController().view.hidden = YES;
+    [[protect(playerViewController()) view] setHidden:YES];
 }
 
 void VideoPresentationInterfaceIOS::setHasVideoContentLayer(bool value)

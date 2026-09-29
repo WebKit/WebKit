@@ -87,7 +87,7 @@ static IntRect elementRectInWindow(HTMLVideoElement* videoElement)
 {
     if (!videoElement)
         return { };
-    auto* renderer = videoElement->renderer();
+    CheckedPtr renderer = videoElement->renderer();
     RefPtr view = videoElement->document().view();
     if (!renderer || !view)
         return { };
@@ -249,7 +249,7 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
 {
     auto notifyClientsModelWasDestroyed = [this] {
         while (!m_playbackClients.isEmpty())
-            (*m_playbackClients.begin())->modelDestroyed();
+            protect(*m_playbackClients.begin())->modelDestroyed();
     };
     if (isUIThread()) {
         WebThreadLock();

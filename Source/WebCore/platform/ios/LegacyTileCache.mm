@@ -66,12 +66,12 @@ namespace WebCore {
 
 void LegacyTileCache::ref() const
 {
-    [m_window retain];
+    [protect(m_window) retain];
 }
 
 void LegacyTileCache::deref() const
 {
-    [m_window release];
+    [protect(m_window) release];
 }
 
 LegacyTileCache::LegacyTileCache(WAKWindow* window)
@@ -80,7 +80,7 @@ LegacyTileCache::LegacyTileCache(WAKWindow* window)
     , m_zoomedOutTileGrid(makeUnique<LegacyTileGrid>(*this, m_tileSize))
     , m_tileCreationTimer(*this, &LegacyTileCache::tileCreationTimerFired)
 {
-    [hostLayer() insertSublayer:m_zoomedOutTileGrid->tileHostLayer() atIndex:0];
+    [protect(hostLayer()) insertSublayer:protect(m_zoomedOutTileGrid->tileHostLayer()) atIndex:0];
     hostLayerSizeChanged();
 }
 
@@ -91,20 +91,22 @@ LegacyTileCache::~LegacyTileCache()
 
 CGFloat LegacyTileCache::screenScale() const
 {
-    return [m_window screenScale];
+    return [protect(m_window) screenScale];
 }
 
 CALayer* LegacyTileCache::hostLayer() const
 {
-    return [m_window hostLayer];
+    return [protect(m_window) hostLayer];
 }
 
 FloatRect LegacyTileCache::visibleRectInLayer(CALayer *layer) const
 {
+    RetainPtr window = m_window.get();
+    RetainPtr hostLayer = [window hostLayer];
     if (m_overrideVisibleRect)
-        return [layer convertRect:m_overrideVisibleRect.value() fromLayer:hostLayer()];
+        return [layer convertRect:m_overrideVisibleRect.value() fromLayer:hostLayer];
 
-    return [layer convertRect:[m_window extendedVisibleRect] fromLayer:hostLayer()];
+    return [layer convertRect:[window extendedVisibleRect] fromLayer:hostLayer];
 }
 
 bool LegacyTileCache::setOverrideVisibleRect(const FloatRect& rect)
@@ -240,7 +242,7 @@ void LegacyTileCache::commitScaleChange()
     if (m_currentScale != m_zoomedOutTileGrid->scale()) {
         if (!m_zoomedInTileGrid) {
             lazyInitialize(m_zoomedInTileGrid, makeUnique<LegacyTileGrid>(*this, m_tileSize));
-            [hostLayer() addSublayer:m_zoomedInTileGrid->tileHostLayer()];
+            [protect(hostLayer()) addSublayer:protect(m_zoomedInTileGrid->tileHostLayer())];
             hostLayerSizeChanged();
         }
         m_zoomedInTileGrid->setScale(m_currentScale);
@@ -260,14 +262,14 @@ void LegacyTileCache::bringActiveTileGridToFront()
     LegacyTileGrid* otherGrid = inactiveTileGrid();
     if (!otherGrid)
         return;
-    CALayer* frontLayer = activeGrid->tileHostLayer();
-    CALayer* otherLayer = otherGrid->tileHostLayer();
-    [hostLayer() insertSublayer:frontLayer above:otherLayer];
+    RetainPtr frontLayer = activeGrid->tileHostLayer();
+    RetainPtr otherLayer = otherGrid->tileHostLayer();
+    [protect(hostLayer()) insertSublayer:frontLayer above:otherLayer];
 }
     
 void LegacyTileCache::adjustTileGridTransforms()
 {
-    CALayer* zoomedOutHostLayer = m_zoomedOutTileGrid->tileHostLayer();
+    RetainPtr zoomedOutHostLayer = m_zoomedOutTileGrid->tileHostLayer();
     float transformScale = currentScale() / zoomedOutScale();
     [zoomedOutHostLayer setTransform:CATransform3DMakeScale(transformScale, transformScale, 1.0f)];
     m_zoomedOutTileGrid->updateHostLayerSize();
@@ -279,7 +281,7 @@ void LegacyTileCache::layoutTiles()
         return;
     m_hasPendingLayoutTiles = true;
 
-    LegacyTileCacheTombstone *tombstone = m_tombstone.get();
+    RetainPtr tombstone = m_tombstone;
     WebThreadRun(^{
         if ([tombstone isDead])
             return;
@@ -510,15 +512,17 @@ void LegacyTileCache::drawReplacementImage(LegacyTileLayer* layer, CGContextRef 
 
 void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef context, CGRect dirtyRect, DrawingFlags drawingFlags)
 {
+    RetainPtr window = m_window.get();
     CGRect frame = [layer frame];
-    FontAntialiasingStateSaver fontAntialiasingState(context, [m_window useOrientationDependentFontAntialiasing] && [layer isOpaque]);
+    FontAntialiasingStateSaver fontAntialiasingState(context, [window useOrientationDependentFontAntialiasing] && [layer isOpaque]);
     fontAntialiasingState.setup([WAKWindow hasLandscapeOrientation]);
 
     if (drawingFlags == DrawingFlags::Snapshotting)
-        [m_window setIsInSnapshottingPaint:YES];
+        [window setIsInSnapshottingPaint:YES];
         
-    CGSRegionObj drawRegion = (CGSRegionObj)[layer regionBeingDrawn];
+    RetainPtr drawRegion = (CGSRegionObj)[layer regionBeingDrawn];
     CGFloat contentsScale = [layer contentsScale];
+    RetainPtr hostLayer = [window hostLayer];
     
     if (drawRegion && shouldRepaintInPieces(dirtyRect, drawRegion, contentsScale)) {
         // Use fine grained repaint rectangles to minimize the amount of painted pixels.
@@ -531,18 +535,18 @@ void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef con
             adjustedSubRect.size.width /= contentsScale;
             adjustedSubRect.size.height /= contentsScale;
 
-            CGRect subRectInSuper = [hostLayer() convertRect:adjustedSubRect fromLayer:layer];
-            [m_window displayRect:subRectInSuper];
+            CGRect subRectInSuper = [hostLayer convertRect:adjustedSubRect fromLayer:layer];
+            [window displayRect:subRectInSuper];
         }
         CGSReleaseRegionEnumerator(enumerator);
     } else {
         // Simple repaint
-        CGRect dirtyRectInSuper = [hostLayer() convertRect:dirtyRect fromLayer:layer];
-        [m_window displayRect:dirtyRectInSuper];
+        CGRect dirtyRectInSuper = [hostLayer convertRect:dirtyRect fromLayer:layer];
+        [window displayRect:dirtyRectInSuper];
     }
     
     if (drawingFlags == DrawingFlags::Snapshotting)
-        [m_window setIsInSnapshottingPaint:NO];
+        [window setIsInSnapshottingPaint:NO];
 }
 
 void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, DrawingFlags drawingFlags)
@@ -558,7 +562,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
     CGRect dirtyRect = CGContextGetClipBoundingBox(context);
     CGRect frame = [layer frame];
     CGContextTranslateCTM(context, -frame.origin.x, -frame.origin.y);
-    CGRect scaledFrame = [hostLayer() convertRect:[layer bounds] fromLayer:layer];
+    CGRect scaledFrame = [protect(hostLayer()) convertRect:[layer bounds] fromLayer:layer];
     CGContextScaleCTM(context, frame.size.width / scaledFrame.size.width, frame.size.height / scaledFrame.size.height);
 
     if (RetainPtr<CGImage> contentReplacementImage = this->contentReplacementImage())
@@ -599,7 +603,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
         CGContextRestoreGState(context);        
     }
 
-    WAKView* view = [m_window contentView];
+    RetainPtr view = [protect(m_window) contentView];
     [view performSelector:@selector(_dispatchTileDidDraw:) withObject:layer afterDelay:0.0];
 }
 
@@ -610,7 +614,7 @@ void LegacyTileCache::setNeedsDisplay()
 
 void LegacyTileCache::scheduleRenderingUpdateForPendingRepaint()
 {
-    WAKView* view = [m_window contentView];
+    RetainPtr view = [protect(m_window) contentView];
     [view _scheduleRenderingUpdateForPendingTileCacheRepaint];
 }
 
@@ -673,7 +677,7 @@ void LegacyTileCache::updateTilingMode()
 {
     ASSERT(WebThreadIsCurrent() || !WebThreadIsEnabled());
 
-    WAKView* view = [m_window contentView];
+    RetainPtr view = [protect(m_window) contentView];
 
     if (m_tilingMode == Zooming || m_tilingMode == Panning || m_tilingMode == ScrollToTop) {
         if (!m_didCallWillStartScrollingOrZooming) {
@@ -714,7 +718,7 @@ void LegacyTileCache::setTilingMode(TilingMode tilingMode)
         return;
     m_hasPendingUpdateTilingMode = true;
 
-    LegacyTileCacheTombstone *tombstone = m_tombstone.get();
+    RetainPtr tombstone = m_tombstone;
     WebThreadRun(^{
         if ([tombstone isDead])
             return;
@@ -770,7 +774,7 @@ void LegacyTileCache::setSpeculativeTileCreationEnabled(bool enabled)
 void LegacyTileCache::prepareToDraw()
 {
     // This will trigger document relayout if needed.
-    [[m_window contentView] viewWillDraw];
+    [[protect(m_window) contentView] viewWillDraw];
 
     if (!m_savedDisplayRects.isEmpty()) {
         Locker locker { m_tileMutex };

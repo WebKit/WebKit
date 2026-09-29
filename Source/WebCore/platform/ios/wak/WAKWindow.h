@@ -67,20 +67,13 @@ extern NSString * const WAKWindowVisibilityDidChangeNotification;
 
 WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 {
-    CALayer *_hostLayer;
-    LegacyTileCache* _tileCache;
     CGRect _frozenVisibleRect;
-    CALayer *_rootLayer;
 
     CGSize _screenSize;
     CGSize _availableScreenSize;
     CGFloat _screenScale;
 
     CGRect _frame;
-
-    WAKView *_contentView;
-    WAKView *_responderView;
-    WAKView *_nextResponder;
 
     BOOL _visible;
     BOOL _isInSnapshottingPaint;

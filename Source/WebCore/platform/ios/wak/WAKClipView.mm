@@ -30,10 +30,12 @@
 
 #import "WAKViewInternal.h"
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
-@implementation WAKClipView
+@implementation WAKClipView {
+    RetainPtr<WAKView> _documentView;
+}
 
-@synthesize documentView = _documentView;
 @synthesize copiesOnScroll = _copiesOnScroll;
 
 - (id)initWithFrame:(CGRect)rect
@@ -44,10 +46,9 @@
     return self;
 }
 
-- (void)dealloc
+- (WAKView *)documentView
 {
-    [_documentView release];
-    [super dealloc];
+    return _documentView;
 }
 
 // WAK internal function for WAKScrollView.
@@ -57,8 +58,7 @@
         return;
 
     [_documentView removeFromSuperview];
-    [_documentView release];
-    _documentView = [aView retain];
+    _documentView = aView;
     [self addSubview:_documentView];
 }
 

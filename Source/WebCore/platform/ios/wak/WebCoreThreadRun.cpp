@@ -158,7 +158,7 @@ static void _WebThreadRun(void (^block)(void), bool synchronous)
     }
 
     CFRunLoopSourceSignal(runSource().get());
-    CFRunLoopWakeUp(WebThreadRunLoop());
+    CFRunLoopWakeUp(protect(WebThreadRunLoop()));
 
     if (synchronous) {
         state->waitForCompletion();
@@ -182,7 +182,7 @@ void WebThreadInitRunQueue()
 
         CFRunLoopSourceContext runSourceContext = { 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, HandleRunSource };
         runSource() = adoptCF(CFRunLoopSourceCreate(nullptr, -1, &runSourceContext));
-        CFRunLoopAddSource(WebThreadRunLoop(), runSource().get(), kCFRunLoopDefaultMode);
+        CFRunLoopAddSource(protect(WebThreadRunLoop()), runSource().get(), kCFRunLoopDefaultMode);
     });
 }
 

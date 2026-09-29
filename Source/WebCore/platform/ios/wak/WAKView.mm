@@ -40,6 +40,7 @@
 #import "WebEvent.h"
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 WEBCORE_EXPORT NSString *WAKViewFrameSizeDidChangeNotification =   @"WAKViewFrameSizeDidChangeNotification";
 WEBCORE_EXPORT NSString *WAKViewDidScrollNotification =            @"WAKViewDidScrollNotification";
@@ -62,7 +63,7 @@ static WAKScrollView *enclosingScrollView(WAKView *view)
     view = [view superview];
     while (view && ![view isKindOfClass:[WAKScrollView class]])
         view = [view superview];
-    return (WAKScrollView *)view;
+    return checked_objc_cast<WAKScrollView>(view);
 }
 
 @interface WAKScrollView()
@@ -75,10 +76,10 @@ static WAKScrollView *enclosingScrollView(WAKView *view)
 
 @implementation WAKView
 
-static NSInvocation* invocationForPostNotification(NSString *name, id object, id userInfo)
+static RetainPtr<NSInvocation> invocationForPostNotification(NSString *name, id object, id userInfo)
 {
     NSNotificationCenter *target = [NSNotificationCenter defaultCenter];
-    NSInvocation *invocation = WebThreadMakeNSInvocation(target, @selector(postNotificationName:object:userInfo:));
+    RetainPtr invocation = WebThreadMakeNSInvocation(target, @selector(postNotificationName:object:userInfo:));
     [invocation setArgument:&name atIndex:2];
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&userInfo atIndex:4];
@@ -96,20 +97,20 @@ static void notificationCallback (WKViewRef v, WKViewNotificationType type, void
         }
         case WKViewNotificationViewFrameSizeChanged: {
             [view frameSizeChanged];
-            if (WAKScrollView *scrollView = enclosingScrollView(view))
+            if (RetainPtr scrollView = enclosingScrollView(view))
                 [scrollView _adjustScrollers];
 
             // Posting a notification to the main thread can cause the WebThreadLock to be
             // relinquished, which gives the main thread a change to run (and possible try
             // to paint). We don't want this to happen if we've updating view sizes in the middle
             // of layout, so use an async notification. <rdar://problem/6745974>
-            NSInvocation *invocation = invocationForPostNotification(WAKViewFrameSizeDidChangeNotification, view, nil);
+            RetainPtr invocation = invocationForPostNotification(protect(WAKViewFrameSizeDidChangeNotification), view, nil);
             WebThreadCallDelegateAsync(invocation);
             break;
         }
         case WKViewNotificationViewDidScroll: {
             WebThreadRunOnMainThread(^ {
-                 [[NSNotificationCenter defaultCenter] postNotificationName:WAKViewDidScrollNotification object:view userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:protect(WAKViewDidScrollNotification) object:view userInfo:nil];
             });
             break;
         }            
@@ -122,7 +123,7 @@ static void notificationCallback (WKViewRef v, WKViewNotificationType type, void
 - (void)handleEvent:(WebEvent *)event
 {
     ASSERT(event);
-    WAKView *view = self;
+    RetainPtr<WAKView> view = self;
     while (view) {
         if ([view _selfHandleEvent:event])
             break;
@@ -187,12 +188,12 @@ static bool responderCallback(WKViewRef, WKViewResponderCallbackType type, void 
 
 static void willRemoveSubviewCallback(WKViewRef view, WKViewRef subview)
 {
-    [WAKViewForWKViewRef(view) willRemoveSubview:WAKViewForWKViewRef(subview)];
+    [protect(WAKViewForWKViewRef(view)) willRemoveSubview:protect(WAKViewForWKViewRef(subview))];
 }
 
 static void invalidateGStateCallback(WKViewRef view)
 {
-    [WAKViewForWKViewRef(view) invalidateGState];
+    [protect(WAKViewForWKViewRef(view)) invalidateGState];
 }
 
 + (WAKView *)_wrapperForViewRef:(WKViewRef)_viewRef
@@ -247,7 +248,7 @@ static void invalidateGStateCallback(WKViewRef view)
         WAKRelease (viewRef);
     }
     
-    [subviewReferences release];
+    subviewReferences = nullptr;
 
     [super dealloc];
 }
@@ -265,7 +266,7 @@ static void invalidateGStateCallback(WKViewRef view)
 - (NSMutableSet *)_subviewReferences
 {
     if (!subviewReferences)
-        subviewReferences = [[NSMutableSet alloc] init];
+        subviewReferences = adoptNS([[NSMutableSet alloc] init]);
     return subviewReferences;
 }
 
@@ -277,14 +278,14 @@ static void _WAKCopyWrapper(const void *value, void *context)
         return;
     
     NSMutableArray *array = (NSMutableArray *)context;
-    WAKView *view = WAKViewForWKViewRef(static_cast<WKViewRef>(const_cast<void*>(value)));
+    RetainPtr view = WAKViewForWKViewRef(static_cast<WKViewRef>(const_cast<void*>(value)));
     if (view)
         [array addObject:view];
 }
 
 - (NSArray *)subviews
 {
-    CFArrayRef subviews = WKViewGetSubviews([self _viewRef]);
+    RetainPtr subviews = WKViewGetSubviews([self _viewRef]);
     if (!subviews)
         return @[ ];
     
@@ -308,12 +309,12 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 - (WAKView *)lastScrollableAncestor
 {
-    WAKView *view = nil;
-    WAKScrollView *scrollView = enclosingScrollView(self);
+    RetainPtr<WAKView> view;
+    RetainPtr scrollView = enclosingScrollView(self);
     
     while (scrollView) {
         
-        CGSize scrollViewSize = WKViewGetFrame((WKViewRef)scrollView).size;
+        CGSize scrollViewSize = WKViewGetFrame((WKViewRef)scrollView.get()).size;
 
         WAKView *documentView = [scrollView documentView];
         scrollView = enclosingScrollView(scrollView);
@@ -325,7 +326,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
             view = documentView;
     }
     
-    return view;
+    return view.autorelease();
 }
 
 - (void)addSubview:(WAKView *)subview
@@ -508,7 +509,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 - (void)displayRect:(NSRect)rect
 {
-    CGContextRef context = WKGetCurrentGraphicsContext();
+    RetainPtr context = WKGetCurrentGraphicsContext();
     if (!context) {
         WTFLogAlways("displayRect: unable to get context for view");
         return;
@@ -529,7 +530,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
         return;
     }
 
-    CGContextRef previousContext = WKGetCurrentGraphicsContext();
+    RetainPtr previousContext = WKGetCurrentGraphicsContext();
     if (context != previousContext)
         WKSetCurrentGraphicsContext(context);
 
@@ -581,12 +582,12 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 - (void)lockFocus
 {
-    [self _lockFocusViewInContext:WKGetCurrentGraphicsContext()];
+    [self _lockFocusViewInContext:protect(WKGetCurrentGraphicsContext())];
 }
 
 - (void)unlockFocus
 {
-    [self _unlockFocusViewInContext:WKGetCurrentGraphicsContext()];
+    [self _unlockFocusViewInContext:protect(WKGetCurrentGraphicsContext())];
 }
 
 - (WAKView *)hitTest:(NSPoint)point
@@ -677,7 +678,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 - (void)scrollPoint:(NSPoint)point 
 {
-    if (WAKScrollView *scrollView = enclosingScrollView(self)) {
+    if (RetainPtr scrollView = enclosingScrollView(self)) {
         CGPoint scrollViewPoint = [self convertPoint:point toView:scrollView];
         [scrollView scrollPoint:scrollViewPoint];
     }

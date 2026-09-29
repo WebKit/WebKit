@@ -95,7 +95,7 @@ PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConv
 HashSet<String, ASCIICaseInsensitiveHash> PreviewConverter::platformSupportedMIMETypes()
 {
     HashSet<String, ASCIICaseInsensitiveHash> supportedMIMETypes;
-    for (NSString *mimeType in QLPreviewGetSupportedMIMETypesSet())
+    for (NSString *mimeType in QLPreviewGetSupportedMIMETypesSetSingleton())
         supportedMIMETypes.add(mimeType);
     return supportedMIMETypes;
 }
@@ -152,7 +152,7 @@ static NSDictionary *optionsWithPassword(const String& password)
 
 void PreviewConverter::platformUnlockWithPassword(const String& password)
 {
-    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:protect(m_originalResponse.nsURLResponse()).get() options:optionsWithPassword(password)]);
+    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:protect(m_originalResponse.nsURLResponse()).get() options:protect(optionsWithPassword(password))]);
 }
 
 } // namespace WebCore

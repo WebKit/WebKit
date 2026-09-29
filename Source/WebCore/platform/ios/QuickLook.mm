@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-NSSet *QLPreviewGetSupportedMIMETypesSet()
+NSSet *QLPreviewGetSupportedMIMETypesSetSingleton()
 {
     static NeverDestroyed<RetainPtr<NSSet>> set = PAL::softLink_QuickLook_QLPreviewGetSupportedMIMETypes();
     return set.get().get();
@@ -46,23 +46,23 @@ NSSet *QLPreviewGetSupportedMIMETypesSet()
 
 static Lock qlPreviewConverterDictionaryLock;
 
-static NSMutableDictionary *QLPreviewConverterDictionary() WTF_REQUIRES_LOCK(qlPreviewConverterDictionaryLock)
+static NSMutableDictionary *QLPreviewConverterDictionarySingleton() WTF_REQUIRES_LOCK(qlPreviewConverterDictionaryLock)
 {
-    static NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-    return dictionary;
+    static NeverDestroyed<RetainPtr<NSMutableDictionary>> dictionary = adoptNS([[NSMutableDictionary alloc] init]);
+    return dictionary.get();
 }
 
-static NSMutableDictionary *QLContentDictionary()
+static NSMutableDictionary *QLContentDictionarySingleton()
 {
-    static NSMutableDictionary *contentDictionary = [[NSMutableDictionary alloc] init];
-    return contentDictionary;
+    static NeverDestroyed<RetainPtr<NSMutableDictionary>> contentDictionary = adoptNS([[NSMutableDictionary alloc] init]);
+    return contentDictionary.get();
 }
 
 void removeQLPreviewConverterForURL(NSURL *url)
 {
     Locker locker { qlPreviewConverterDictionaryLock };
-    [QLPreviewConverterDictionary() removeObjectForKey:url];
-    [QLContentDictionary() removeObjectForKey:url];
+    [QLPreviewConverterDictionarySingleton() removeObjectForKey:url];
+    [QLContentDictionarySingleton() removeObjectForKey:url];
 }
 
 static void addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSString *fileName)
@@ -70,15 +70,15 @@ static void addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSStri
     ASSERT(url);
     ASSERT(converter);
     Locker locker { qlPreviewConverterDictionaryLock };
-    [QLPreviewConverterDictionary() setObject:converter forKey:url];
-    [QLContentDictionary() setObject:(fileName ? fileName : @"") forKey:url];
+    [QLPreviewConverterDictionarySingleton() setObject:converter forKey:url];
+    [QLContentDictionarySingleton() setObject:(fileName ? fileName : @"") forKey:url];
 }
 
 RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *url, NSString *mimeType, NSData *data)
 {
     RetainPtr<NSString> updatedMIMEType = adoptNS(PAL::softLink_QuickLook_QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType));
 
-    if ([QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
+    if ([QLPreviewGetSupportedMIMETypesSetSingleton() containsObject:updatedMIMEType.get()]) {
         RetainPtr<NSString> uti = adoptNS(PAL::softLink_QuickLook_QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
         auto converter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti.get() options:nil]);
@@ -99,7 +99,7 @@ bool isQuickLookPreviewURL(const URL& url)
     return url.protocolIs(QLPreviewProtocol);
 }
 
-static NSDictionary *temporaryFileAttributes()
+static NSDictionary *temporaryFileAttributesSingleton()
 {
     static NeverDestroyed<RetainPtr<NSDictionary>> attributes = @{
         NSFileOwnerAccountName : NSUserName(),
@@ -108,7 +108,7 @@ static NSDictionary *temporaryFileAttributes()
     return attributes.get().get();
 }
 
-static NSDictionary *temporaryDirectoryAttributes()
+static NSDictionary *temporaryDirectoryAttributesSingleton()
 {
     static NeverDestroyed<RetainPtr<NSDictionary>> attributes = @{
         NSFileOwnerAccountName : NSUserName(),
@@ -120,20 +120,20 @@ static NSDictionary *temporaryDirectoryAttributes()
 
 NSString *createTemporaryFileForQuickLook(NSString *fileName)
 {
-    NSString *downloadDirectory = FileSystem::createTemporaryDirectory(@"QuickLookContent");
+    RetainPtr downloadDirectory = FileSystem::createTemporaryDirectory(@"QuickLookContent");
     if (!downloadDirectory)
         return nil;
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     NSError *error;
-    if (![fileManager setAttributes:temporaryDirectoryAttributes() ofItemAtPath:downloadDirectory error:&error]) {
-        LOG_ERROR("Failed to set attribute NSFileProtectionCompleteUnlessOpen on directory %@ with error: %@.", downloadDirectory, error.localizedDescription);
+    if (![fileManager setAttributes:temporaryDirectoryAttributesSingleton() ofItemAtPath:downloadDirectory error:&error]) {
+        LOG_ERROR("Failed to set attribute NSFileProtectionCompleteUnlessOpen on directory %@ with error: %@.", downloadDirectory.get(), error.localizedDescription);
         return nil;
     }
 
     NSString *contentPath = [downloadDirectory stringByAppendingPathComponent:fileName.lastPathComponent];
-    if (![fileManager _web_createFileAtPath:contentPath contents:nil attributes:temporaryFileAttributes()]) {
+    if (![fileManager _web_createFileAtPath:contentPath contents:nil attributes:temporaryFileAttributesSingleton()]) {
         LOG_ERROR("Failed to create QuickLook temporary file at path %@.", contentPath);
         return nil;
     }

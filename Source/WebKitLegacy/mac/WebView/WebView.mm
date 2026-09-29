@@ -3882,7 +3882,7 @@ IGNORE_WARNINGS_END
 + (NSArray *)_productivityDocumentMIMETypes
 {
 #if USE(QUICK_LOOK)
-    return [WebCore::QLPreviewGetSupportedMIMETypesSet() allObjects];
+    return [WebCore::QLPreviewGetSupportedMIMETypesSetSingleton() allObjects];
 #else
     return nil;
 #endif

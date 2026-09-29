@@ -19,7 +19,6 @@ page/LocalFrameView.cpp
 [ iOS ] page/ios/FrameIOS.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-[ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/CounterNode.cpp

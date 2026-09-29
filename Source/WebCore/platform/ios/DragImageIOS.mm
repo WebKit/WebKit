@@ -199,12 +199,12 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
 
     Ref image = *textIndicator->contentImage();
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
-    UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
+    RetainPtr finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
         context.drawBitmapImage(image, FloatPoint());
     }];
 
-    return finalImage.CGImage;
+    return [finalImage CGImage];
 }
 
 DragImageRef createDragImageForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
@@ -213,7 +213,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect& elemen
     FloatRoundedRect swatch { imageRect, CornerRadii(ColorSwatchCornerRadius * pageScaleFactor) };
 
     auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
-    UIImage *image = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    RetainPtr image = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context { rendererContext.CGContext };
         context.translate(0, CGRectGetHeight(imageRect));
         context.scale({ 1, -1 });
@@ -221,7 +221,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect& elemen
     }];
 
     visiblePath.addRoundedRect(swatch);
-    return image.CGImage;
+    return [image CGImage];
 }
 
 #else

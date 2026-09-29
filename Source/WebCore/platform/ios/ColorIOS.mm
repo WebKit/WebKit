@@ -53,7 +53,7 @@ Color colorFromCocoaColor(UIColor *color)
         uint8_t pixel[4];
         auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, 4, sRGBColorSpaceSingleton(), kCGImageAlphaPremultipliedLast));
 
-        CGContextSetFillColorWithColor(bitmapContext.get(), color.CGColor);
+        CGContextSetFillColorWithColor(bitmapContext.get(), protect(color.CGColor));
         CGContextFillRect(bitmapContext.get(), CGRectMake(0, 0, 1, 1));
 
         return makeFromComponentsClamping<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);

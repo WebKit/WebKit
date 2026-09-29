@@ -144,7 +144,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     
     RetainPtr view = outerView();
 
-    CGContextRef cgContext = p.platformContext();
+    RetainPtr cgContext = p.platformContext();
     CGContextSaveGState(cgContext);
 
     NSRect viewFrame = [view frame];
@@ -195,7 +195,7 @@ IntPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, Int
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     NSPoint convertedPoint;
     if (WAKView *documentView = [view documentView])
         convertedPoint = [documentView convertPoint:point toView:nil];
@@ -214,7 +214,7 @@ FloatPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, F
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     NSPoint convertedPoint;
     if (WAKView *documentView = [view documentView])
         convertedPoint = [documentView convertPoint:point toView:nil];
@@ -232,7 +232,7 @@ IntRect Widget::convertFromRootToContainingWindow(const Widget* rootWidget, cons
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     if (WAKView *documentView = [view documentView])
         return enclosingIntRect([documentView convertRect:rect toView:nil]);
     return enclosingIntRect([view convertRect:rect toView:nil]);
@@ -247,7 +247,7 @@ FloatRect Widget::convertFromRootToContainingWindow(const Widget* rootWidget, co
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     if (WAKView *documentView = [view documentView])
         return enclosingIntRect([documentView convertRect:rect toView:nil]);
     return [view convertRect:rect toView:nil];
@@ -264,7 +264,7 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, Int
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     NSPoint convertedPoint;
     if (WAKView *documentView = [view documentView])
         convertedPoint = IntPoint([documentView convertPoint:point fromView:nil]);
@@ -282,7 +282,7 @@ FloatPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, F
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     NSPoint convertedPoint;
     if (WAKView *documentView = [view documentView])
         convertedPoint = IntPoint([documentView convertPoint:point fromView:nil]);
@@ -316,7 +316,7 @@ IntRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, cons
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     if (WAKView *documentView = [view documentView])
         return enclosingIntRect([documentView convertRect:rect fromView:nil]);
     return enclosingIntRect([view convertRect:rect fromView:nil]);
@@ -331,7 +331,7 @@ FloatRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, co
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
+    RetainPtr view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     if (WAKView *documentView = [view documentView])
         return enclosingIntRect([documentView convertRect:rect fromView:nil]);
     return [view convertRect:rect fromView:nil];

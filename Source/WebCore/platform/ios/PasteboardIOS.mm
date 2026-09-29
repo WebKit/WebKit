@@ -199,7 +199,7 @@ static NSArray* supportedImageTypes()
 static bool isTypeAllowedByReadingPolicy(NSString *type, WebContentReadingPolicy policy)
 {
     return policy == WebContentReadingPolicy::AnyType
-        || [type isEqualToString:WebArchivePboardType]
+        || [type isEqualToString:protect(WebArchivePboardType)]
         || [type isEqualToString:UTTypeWebArchive.identifier]
         || [type isEqualToString:UTTypeHTML.identifier]
         || [type isEqualToString:UTTypeRTF.identifier]
@@ -208,7 +208,7 @@ static bool isTypeAllowedByReadingPolicy(NSString *type, WebContentReadingPolicy
 
 Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, NSString *type, const PasteboardItemInfo& itemInfo, int itemIndex)
 {
-    if ([type isEqualToString:WebArchivePboardType] || [type isEqualToString:UTTypeWebArchive.identifier]) {
+    if ([type isEqualToString:protect(WebArchivePboardType)] || [type isEqualToString:UTTypeWebArchive.identifier]) {
         auto buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
@@ -246,7 +246,7 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
     }
 #endif // !PLATFORM(MACCATALYST)
 
-    if ([supportedImageTypes() containsObject:type]) {
+    if ([protect(supportedImageTypes()) containsObject:type]) {
         RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
@@ -295,7 +295,7 @@ static void readURLAlongsideAttachmentIfNecessary(PasteboardWebContentReader& re
 static bool shouldTreatAsAttachmentByDefault(const String& typeIdentifier)
 {
     if (RetainPtr type = [UTType typeWithIdentifier:typeIdentifier.createNSString().get()]) {
-        for (UTType *attachmentType : std::array { UTTypeVCard, UTTypePDF, UTTypeCalendarEvent }) {
+        for (RetainPtr attachmentType : std::array { UTTypeVCard, UTTypePDF, UTTypeCalendarEvent }) {
             if ([type conformsToType:attachmentType])
                 return true;
         }

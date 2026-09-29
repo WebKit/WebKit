@@ -172,12 +172,6 @@ platform/graphics/ca/TileCoverageMap.cpp
 platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
 platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
-[ iOS ] platform/ios/DeviceMotionClientIOS.mm
-[ iOS ] platform/ios/DeviceOrientationClientIOS.mm
-platform/ios/PlaybackSessionInterfaceIOS.mm
-[ iOS ] platform/ios/TileControllerMemoryHandlerIOS.cpp
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
-[ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 platform/text/cocoa/LocalizedDateCache.mm
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AttachmentLayout.mm

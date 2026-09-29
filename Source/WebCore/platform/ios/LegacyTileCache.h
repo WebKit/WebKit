@@ -35,6 +35,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS CALayer;
@@ -169,7 +170,7 @@ private:
     void drawReplacementImage(LegacyTileLayer *, CGContextRef, CGImageRef);
     void drawWindowContent(LegacyTileLayer *, CGContextRef, CGRect dirtyRect, DrawingFlags);
 
-    WAKWindow *m_window { nullptr };
+    WeakObjCPtr<WAKWindow> m_window;
 
     RetainPtr<CGImageRef> m_contentReplacementImage;
 

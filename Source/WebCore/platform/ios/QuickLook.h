@@ -35,7 +35,7 @@ OBJC_CLASS NSURLRequest;
 
 namespace WebCore {
 
-WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
+WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSetSingleton();
 WEBCORE_EXPORT void removeQLPreviewConverterForURL(NSURL *);
 WEBCORE_EXPORT RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *, NSString *mimeType, NSData *);
 WEBCORE_EXPORT bool isQuickLookPreviewURL(const URL&);

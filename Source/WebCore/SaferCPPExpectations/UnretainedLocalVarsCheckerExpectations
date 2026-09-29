@@ -39,29 +39,6 @@ platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 [ Mac ] platform/graphics/mac/controls/SliderTrackMac.mm
 [ Mac ] platform/graphics/mac/controls/SwitchMac.mm
 [ Mac ] platform/graphics/mac/controls/SwitchMacUtilities.mm
-[ iOS ] platform/ios/DragImageIOS.mm
-[ iOS ] platform/ios/LegacyTileCache.mm
-[ iOS ] platform/ios/LegacyTileGrid.mm
-[ iOS ] platform/ios/LegacyTileGridTile.mm
-[ iOS ] platform/ios/LocalCurrentTraitCollection.mm
-[ iOS ] platform/ios/PasteboardIOS.mm
-[ iOS ] platform/ios/PlatformPasteboardIOS.mm
-[ iOS ] platform/ios/PlatformScreenIOS.mm
-platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm
-[ iOS ] platform/ios/QuickLook.mm
-[ iOS ] platform/ios/ScrollViewIOS.mm
-[ iOS ] platform/ios/UIViewControllerUtilities.mm
-[ iOS ] platform/ios/ValidationBubbleIOS.mm
-[ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
-[ iOS ] platform/ios/WebItemProviderPasteboard.mm
-[ iOS ] platform/ios/WidgetIOS.mm
-[ iOS ] platform/ios/wak/WAKScrollView.mm
-[ iOS ] platform/ios/wak/WAKView.mm
-[ iOS ] platform/ios/wak/WAKViewInternal.h
-[ iOS ] platform/ios/wak/WAKWindow.mm
-[ iOS ] platform/ios/wak/WKView.mm
-[ iOS ] platform/ios/wak/WebCoreThread.mm
 platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
 platform/mediastream/cocoa/CoreAudioCaptureUnit.mm
 platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm

@@ -234,7 +234,7 @@ FloatRect screenRect(Widget* widget)
     if (!widget)
         return FloatRect();
 
-    if (NSView *platformWidget = widget->platformWidget()) {
+    if (RetainPtr platformWidget = widget->platformWidget()) {
         // WebKit1
         WAKWindow *window = [platformWidget window];
         if (!window)
@@ -250,7 +250,7 @@ FloatRect screenAvailableRect(Widget* widget)
     if (!widget)
         return FloatRect();
 
-    if (NSView *platformWidget = widget->platformWidget()) {
+    if (RetainPtr platformWidget = widget->platformWidget()) {
         // WebKit1
         WAKWindow *window = [platformWidget window];
         if (!window)

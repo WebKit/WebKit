@@ -92,18 +92,16 @@ void PlaybackSessionInterfaceAVKitLegacy::invalidate()
 
 void PlaybackSessionInterfaceAVKitLegacy::durationChanged(double duration)
 {
-    WebAVPlayerController* playerController = m_playerController.get();
-
-    playerController.contentDuration = duration;
-    playerController.contentDurationWithinEndTimes = duration;
+    [m_playerController setContentDuration:duration];
+    [m_playerController setContentDurationWithinEndTimes:duration];
 
     // FIXME: we take this as an indication that playback is ready.
-    playerController.canPlay = YES;
-    playerController.canPause = YES;
-    playerController.canTogglePlayback = YES;
-    playerController.hasEnabledAudio = YES;
-    playerController.canSeek = YES;
-    playerController.status = AVPlayerControllerStatusReadyToPlay;
+    [m_playerController setCanPlay:YES];
+    [m_playerController setCanPause:YES];
+    [m_playerController setCanTogglePlayback:YES];
+    [m_playerController setHasEnabledAudio:YES];
+    [m_playerController setCanSeek:YES];
+    [m_playerController setStatus:AVPlayerControllerStatusReadyToPlay];
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::currentTimeChanged(double currentTime, double anchorTime)
@@ -120,14 +118,13 @@ void PlaybackSessionInterfaceAVKitLegacy::currentTimeChanged(double currentTime,
 
 void PlaybackSessionInterfaceAVKitLegacy::bufferedTimeChanged(double bufferedTime)
 {
-    WebAVPlayerController* playerController = m_playerController.get();
-    double duration = playerController.contentDuration;
+    double duration = [m_playerController contentDuration];
     double normalizedBufferedTime;
     if (!duration)
         normalizedBufferedTime = 0;
     else
         normalizedBufferedTime = bufferedTime / duration;
-    playerController.loadedTimeRanges = @[@0, @(normalizedBufferedTime)];
+    [m_playerController setLoadedTimeRanges:@[@0, @(normalizedBufferedTime)]];
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
@@ -224,10 +221,9 @@ void PlaybackSessionInterfaceAVKitLegacy::externalPlaybackChanged(bool enabled, 
     if (localizedRouteName.isEmpty())
         airPlayDeviceLocalizedName = localizedDeviceName.createNSString();
 
-    WebAVPlayerController* playerController = m_playerController.get();
-    playerController.externalPlaybackAirPlayDeviceLocalizedName = airPlayDeviceLocalizedName.get();
-    playerController.externalPlaybackType = externalPlaybackType;
-    playerController.externalPlaybackActive = enabled;
+    [m_playerController setExternalPlaybackAirPlayDeviceLocalizedName:airPlayDeviceLocalizedName];
+    [m_playerController setExternalPlaybackType:externalPlaybackType];
+    [m_playerController setExternalPlaybackActive:enabled];
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::wirelessVideoPlaybackDisabledChanged(bool disabled)

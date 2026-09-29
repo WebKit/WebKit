@@ -82,7 +82,7 @@ void PlaybackSessionInterfaceIOS::invalidate()
 {
     if (!m_playbackSessionModel)
         return;
-    m_playbackSessionModel->removeClient(*this);
+    protect(m_playbackSessionModel)->removeClient(*this);
     m_playbackSessionModel = nullptr;
 }
 
@@ -131,12 +131,12 @@ WKAVContentSource *PlaybackSessionInterfaceIOS::contentSource() const
 #if !RELEASE_LOG_DISABLED
 uint64_t PlaybackSessionInterfaceIOS::logIdentifier() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : 0;
+    return m_playbackSessionModel ? protect(m_playbackSessionModel)->logIdentifier() : 0;
 }
 
 const Logger* PlaybackSessionInterfaceIOS::loggerPtr() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->loggerPtr() : nullptr;
+    return m_playbackSessionModel ? protect(m_playbackSessionModel)->loggerPtr() : nullptr;
 }
 
 WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const

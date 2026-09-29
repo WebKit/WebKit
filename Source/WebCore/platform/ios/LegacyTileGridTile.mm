@@ -63,10 +63,10 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
 #endif
         m_tileLayer = adoptNS([[LegacyTileLayer alloc] init]);
     }
-    LegacyTileLayer* layer = m_tileLayer.get();
+    RetainPtr layer = m_tileLayer;
 
-    if (NSString *formatString = contentsFormatString(PlatformCALayer::contentsFormatForLayer()))
-        layer.contentsFormat = formatString;
+    if (RetainPtr formatString = contentsFormatString(PlatformCALayer::contentsFormatForLayer()))
+        [layer setContentsFormat:formatString];
 
     [layer setTileGrid:tileGrid];
     [layer setOpaque:tileCache->tilesOpaque()];
@@ -77,7 +77,7 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
 
     // Host layer may have other sublayers. Keep the tile layers at the beginning of the array
     // so they are painted behind everything else.
-    [tileGrid->tileHostLayer() insertSublayer:layer atIndex:tileGrid->tileCount()];
+    [protect(tileGrid->tileHostLayer()) insertSublayer:layer atIndex:tileGrid->tileCount()];
     [layer setFrame:m_rect];
     invalidateRect(m_rect);
     showBorder(tileCache->tileBordersVisible());
@@ -90,9 +90,10 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
 
 LegacyTileGridTile::~LegacyTileGridTile() 
 {
-    [tileLayer() setTileGrid:0];
-    [tileLayer() removeFromSuperlayer];
-    LegacyTileLayerPool::sharedPool()->addLayer(tileLayer());
+    RetainPtr tileLayer = this->tileLayer();
+    [tileLayer setTileGrid:0];
+    [tileLayer removeFromSuperlayer];
+    LegacyTileLayerPool::sharedPool()->addLayer(tileLayer);
 #if LOG_TILING
     --totalTileCount;
     NSLog(@"delete Tile (%d,%d) %d %d, count %d", m_rect.x(), m_rect.y(), m_rect.width(), m_rect.height(), totalTileCount);
@@ -105,10 +106,11 @@ void LegacyTileGridTile::invalidateRect(const IntRect& windowDirtyRect)
     if (dirtyRect.isEmpty())
         return;
     dirtyRect.move(IntPoint() - m_rect.location());
-    [tileLayer() setNeedsDisplayInRect:dirtyRect];
+    RetainPtr tileLayer = this->tileLayer();
+    [tileLayer setNeedsDisplayInRect:dirtyRect];
 
     if (m_tileGrid->tileCache().tilePaintCountersVisible())
-        [tileLayer() setNeedsDisplayInRect:CGRectMake(0, 0, 46, 25)];
+        [tileLayer setNeedsDisplayInRect:CGRectMake(0, 0, 46, 25)];
 }
 
 void LegacyTileGridTile::setRect(const IntRect& tileRect)
@@ -116,14 +118,14 @@ void LegacyTileGridTile::setRect(const IntRect& tileRect)
     if (m_rect == tileRect)
         return;
     m_rect = tileRect;
-    LegacyTileLayer* layer = m_tileLayer.get();
+    RetainPtr layer = m_tileLayer;
     [layer setFrame:m_rect];
     [layer setNeedsDisplay];
 }
 
 void LegacyTileGridTile::showBorder(bool flag)
 {
-    LegacyTileLayer* layer = m_tileLayer.get();
+    RetainPtr layer = m_tileLayer;
     if (flag) {
         [layer setBorderColor:cachedCGColor(protect(m_tileGrid->tileCache())->colorForGridTileBorder(m_tileGrid)).get()];
         [layer setBorderWidth:0.5f];
