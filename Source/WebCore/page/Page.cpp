@@ -3865,6 +3865,14 @@ void Page::clearSampledPageTopColor()
         chrome().client().sampledPageTopColorChanged();
 }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+void Page::invalidateColorsSampledFromPaintedContent()
+{
+    clearSampledPageTopColor();
+    chrome().client().setNeedsFixedContainerEdgesUpdate();
+}
+#endif
+
 #if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
 void NODELETE Page::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
 {

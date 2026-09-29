@@ -970,6 +970,10 @@ public:
     const FixedContainerEdges& fixedContainerEdges() const LIFETIME_BOUND { return m_fixedContainerEdgesAndElements.first; }
     Element* NODELETE lastFixedContainer(BoxSide) const;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void invalidateColorsSampledFromPaintedContent();
+#endif
+
 #if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
     WEBCORE_EXPORT void NODELETE setAppUsesCustomAccentColor(bool);
     WEBCORE_EXPORT bool NODELETE appUsesCustomAccentColor() const;
