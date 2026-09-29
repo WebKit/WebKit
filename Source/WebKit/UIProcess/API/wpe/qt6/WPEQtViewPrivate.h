@@ -30,6 +30,7 @@ public:
     ~WPEQtViewPrivate() { }
 
     GRefPtr<WebKitWebView> m_webView;
+    GRefPtr<WebKitFileChooserRequest> m_currentFileChooserRequest;
     QUrl m_url;
     QString m_html;
     QUrl m_baseUrl;

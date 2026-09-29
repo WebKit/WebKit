@@ -76,6 +76,8 @@ public Q_SLOTS:
     void stop();
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
     void runJavaScript(const QString& script, const QJSValue& callback = QJSValue());
+    void selectFiles(const QStringList& paths);
+    void cancelFileChooser();
 
 Q_SIGNALS:
     void webViewCreated();
@@ -83,10 +85,12 @@ Q_SIGNALS:
     void titleChanged();
     void loadingChanged(WPEQtViewLoadRequest* loadRequest);
     void loadProgressChanged();
+    void fileChooserRequested(bool selectMultiple, const QStringList& mimeTypes);
 
 protected:
     bool errorOccured() const;
     void setErrorOccured(bool);
+    void setCurrentFileChooserRequest(WebKitFileChooserRequest*);
 
     bool event(QEvent*) override;
     void geometryChange(const QRectF&, const QRectF&) override;
@@ -123,6 +127,8 @@ private:
     static void notifyLoadProgressCallback(WPEQtView*);
     static void notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent, WPEQtView*);
     static void notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const gchar* failingURI, GError*, WPEQtView*);
+    static gboolean runFileChooserCallback(WebKitWebView*, WebKitFileChooserRequest*, WPEQtView*);
+    bool useCustomFileChooserHandling() const;
 
     Q_DECLARE_PRIVATE(WPEQtView)
     QScopedPointer<WPEQtViewPrivate> d_ptr;
