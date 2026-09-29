@@ -323,8 +323,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
     # FIXME: https://bugs.webkit.org/show_bug.cgi?id=299689
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-character-conversion)
 
-    # -Wunused-templates seems to be outright broken with Clang 23.1. There are way too many false positives.
-    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-unused-templates)
+    # -Wunused-template seems to be outright broken with Clang 23.1. There are way too many false positives.
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-unused-template)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
