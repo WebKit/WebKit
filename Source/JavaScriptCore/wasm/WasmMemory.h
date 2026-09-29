@@ -105,7 +105,11 @@ private:
 
     Expected<PageCount, GrowFailReason> growShared(VM&, PageCount);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Ref<BufferMemoryHandle> m_handle;
+#else
+    const Ref<BufferMemoryHandle> m_handle;
+#endif // RC_REMOVE_SEC_ACCEL_3
     RefPtr<SharedArrayBufferContents> m_shared;
     WTF::Function<void(GrowSuccess, PageCount, PageCount)> m_growSuccessCallback;
     // FIXME: If/When merging this into JSWebAssemblyMemory we should just use an unconditionalFinalizer.
