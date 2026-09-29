@@ -1,0 +1,5 @@
+PASS workgroup storage in a compute entry point still compiles
+PASS a shadowing local does not drop the dependency on the declaration it shadows
+PASS the same module compiles when the dependency is already declared first
+PASS a shadowing local does not drop the dependency on a later module-scope variable
+

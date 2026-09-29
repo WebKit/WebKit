@@ -216,14 +216,24 @@ GraphBuilder::GraphBuilder(Graph& graph, Graph::Node& node)
 
 void GraphBuilder::visit(AST::Parameter& parameter)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Base::visit(parameter);
+    introduceVariable(parameter.name());
+#else
     introduceVariable(parameter.name());
     Base::visit(parameter);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 void GraphBuilder::visit(AST::VariableStatement& variable)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Base::visit(variable);
+    introduceVariable(variable.variable().name());
+#else
     introduceVariable(variable.variable().name());
     Base::visit(variable);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 void GraphBuilder::visit(AST::Expression& expression)

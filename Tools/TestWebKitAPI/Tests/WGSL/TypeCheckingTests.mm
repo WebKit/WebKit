@@ -36,6 +36,8 @@ inline void expectTypeError(const String& wgsl, const String& errorMessage)
 {
     auto result = WGSL::staticCheck(wgsl, std::nullopt, { 8 });
     EXPECT_TRUE(std::holds_alternative<WGSL::FailedCheck>(result));
+    if (!std::holds_alternative<WGSL::FailedCheck>(result))
+        return;
     auto error = std::get<WGSL::FailedCheck>(result);
     EXPECT_EQ(error.errors.size(), 1u);
     EXPECT_EQ(error.errors[0].message(), errorMessage);
@@ -708,6 +710,26 @@ TEST(WGSLTypeCheckingTests, RequiredAlignment)
         "@group(0) @binding(1) var<uniform> x1: S1;"_s,
         "uniform address space requires that the number of bytes between S1::y3 and S1::z3 must be at least 16 bytes, but it is 8 bytes"_s);
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+TEST(WGSLTypeCheckingTests, DeclarationScope)
+{
+    expectNoError(
+        "fn f() -> u32 { var g: u32 = g(); return g; }"
+        "fn g() -> u32 { return 7u; }"
+        "@compute @workgroup_size(1) fn main() { _ = f(); }"_s);
+
+    expectNoError(
+        "fn f() -> u32 { var g: u32 = g; return g; }"
+        "var<private> g: u32 = 7u;"
+        "@compute @workgroup_size(1) fn main() { _ = f(); }"_s);
+
+    expectTypeError(
+        "fn f() -> u32 { var f: u32 = f(); return f; }"
+        "@compute @workgroup_size(1) fn main() { _ = f(); }"_s,
+        "encountered a dependency cycle: f -> f"_s);
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 TEST(WGSLTypeCheckingTests, Return)
 {
