@@ -120,6 +120,11 @@ void CursorImage::setContainerContextForRenderer(const RenderElement& renderer, 
     protect(cachedImage())->setContainerContextForClient(renderer.cachedImageClient(), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_originalURL.resolved, renderer.style().linkParameters());
 }
 
+ImageDrawingExtras CursorImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
+{
+    return { !url.isNull() ? url : m_originalURL.resolved, renderer.style().linkParameters() };
+}
+
 bool CursorImage::usesDataProtocol() const
 {
     return m_originalURL.resolved.protocolIsData();

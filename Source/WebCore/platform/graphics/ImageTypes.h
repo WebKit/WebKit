@@ -92,6 +92,14 @@ enum class ImageDrawResult {
     DidDraw
 };
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+enum class InvertContent : uint8_t {
+    FromResource,
+    No,
+    Yes
+};
+#endif
+
 enum class ShowDebugBackground : bool {
     No,
     Yes

@@ -222,7 +222,7 @@ void Image::drawPattern(GraphicsContext& ctxt, ConcreteObjectSize concreteObject
         observer->didDraw(*this);
 }
 
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (auto color = singlePixelSolidColor()) {
         fillWithSolidColor(ctxt, destRect, *color, options.compositeOperator());
@@ -252,7 +252,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
         visibleSrcRect.setWidth(destRect.width() / scale.width());
         visibleSrcRect.setHeight(destRect.height() / scale.height());
-        return draw(ctxt, ConcreteObjectSize::fixed(size()), destRect, visibleSrcRect, options);
+        return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
     }
 
     // When using accelerated drawing, it's faster to stretch an image than to tile it.
@@ -263,7 +263,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            return draw(ctxt, ConcreteObjectSize::fixed(size()), destRect, visibleSrcRect, options);
+            return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
         }
         if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
             FloatRect visibleSrcRect;
@@ -271,7 +271,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            return draw(ctxt, ConcreteObjectSize::fixed(size()), destRect, visibleSrcRect, options);
+            return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
         }
     }
 
@@ -302,7 +302,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                result = draw(ctxt, ConcreteObjectSize::fixed(size()), toRect, fromRect, options);
+                result = draw(ctxt, concreteObjectSize, toRect, fromRect, options, extras);
                 if (result == ImageDrawResult::DidRequestDecoding)
                     return result;
                 toX += currentTileRect.width();
@@ -316,13 +316,13 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
 
     AffineTransform patternTransform = AffineTransform().scaleNonUniform(scale.width(), scale.height());
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);
-    drawPattern(ctxt, ConcreteObjectSize::fixed(size()), destRect, tileRect, patternTransform, oneTileRect.location(), spacing, options);
+    drawPattern(ctxt, concreteObjectSize, destRect, tileRect, patternTransform, oneTileRect.location(), spacing, options, extras);
     startAnimation();
     return ImageDrawResult::DidDraw;
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions options)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {    
     if (auto color = singlePixelSolidColor()) {
         fillWithSolidColor(ctxt, dstRect, *color, options.compositeOperator());
@@ -399,7 +399,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
         vPhase -= (dstRect.height() - scaledTileHeight) / 2;
 
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
-    drawPattern(ctxt, ConcreteObjectSize::fixed(size()), dstRect, srcRect, patternTransform, patternPhase, spacing, options);
+    drawPattern(ctxt, concreteObjectSize, dstRect, srcRect, patternTransform, patternPhase, spacing, options, extras);
     startAnimation();
     return ImageDrawResult::DidDraw;
 }

@@ -29,6 +29,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/StyleImageDrawingExtras.h>
 #include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
@@ -100,6 +101,7 @@ public:
     // Rendering.
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
     virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) = 0;
+    virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const { return { }; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
     // Derived type.

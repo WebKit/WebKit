@@ -44,8 +44,13 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleImageDrawingExtras.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 
 namespace WebCore {
 
@@ -191,6 +196,17 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
+IntSize LegacyRenderSVGImage::imageContainerSize() const
+{
+    // https://w3c.github.io/svgwg/svg2-draft/coords.html#PreserveAspectRatioAttribute
+    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
+        if (RefPtr cachedImage = imageResource().cachedImage())
+            return roundedIntSize(cachedImage->imageSizeForRenderer(nullptr, style().usedZoom()));
+    }
+
+    return enclosingIntRect(m_objectBoundingBox).size();
+}
+
 void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
     RefPtr<Image> image = imageResource().image();
@@ -198,7 +214,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         return;
 
     FloatRect destRect = m_objectBoundingBox;
-    FloatRect srcRect(0, 0, image->width(), image->height());
+    FloatRect srcRect { { }, image->drawsSVGImage() ? FloatSize { imageContainerSize() } : image->size() };
 
     imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
 
@@ -206,6 +222,9 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         imageOrientation(),
         ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        AXCustomColorModeController::shouldInvertSVGImage(*this) ? InvertContent::Yes : InvertContent::No,
+#endif
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
         settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
         paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
@@ -213,7 +232,13 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     };
 
     auto& context = paintInfo.context();
-    context.drawImage(*image, ConcreteObjectSize::fixed(image->size()), destRect, srcRect, options);
+    auto usedZoom = style().usedZoom();
+    auto containerSize = FloatSize { imageContainerSize() };
+    auto concreteObjectSize = image->drawsSVGImage()
+        ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
+        : ConcreteObjectSize::fixed(image->size());
+    auto extras = imageResource().drawingExtras(protect(document())->encodingParseURL(protect(imageElement())->imageSourceURL()));
+    context.drawImage(*image, concreteObjectSize, destRect, srcRect, options, &extras);
 
     RefPtr cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())

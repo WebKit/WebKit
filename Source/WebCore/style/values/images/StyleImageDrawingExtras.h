@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,49 +24,38 @@
 
 #pragma once
 
-#include <WebCore/CSSVariableData.h>
-#include <WebCore/StyleValueTypes.h>
-#include <wtf/Ref.h>
+#include <WebCore/ImageDrawingExtras.h>
+#include <WebCore/StyleLinkParameters.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
-
-namespace CSS {
-struct DeclarationValue;
-}
-
 namespace Style {
 
-// <declaration-value> = <any value>
-// https://drafts.csswg.org/css-syntax/#typedef-declaration-value
-//
-// Computed form of CSS::DeclarationValue. The tokens are carried through
-// unchanged; there is nothing to compute until whatever consumes them decides
-// how to interpret them.
-struct DeclarationValue {
-    Ref<CSSVariableData> value;
+class WEBCORE_EXPORT ImageDrawingExtras final : public WebCore::ImageDrawingExtras {
+public:
+    ImageDrawingExtras(WTF::URL fragmentURL = { }, LinkParameters linkParameters = { CSS::Keyword::None { } })
+        : WebCore::ImageDrawingExtras(Type::Style)
+        , m_fragmentURL(WTF::move(fragmentURL))
+        , m_linkParameters(WTF::move(linkParameters))
+    {
+    }
 
-    WEBCORE_EXPORT bool operator==(const DeclarationValue&) const;
+    const WTF::URL& fragmentURL() const { return m_fragmentURL; }
+    const LinkParameters& linkParameters() const { return m_linkParameters; }
+
+    std::unique_ptr<WebCore::ImageDrawingExtras> copy() const final;
+
+private:
+    bool equals(const WebCore::ImageDrawingExtras&) const final;
+
+    WTF::URL m_fragmentURL;
+    LinkParameters m_linkParameters;
 };
-
-// MARK: - Conversion
-
-template<> struct ToCSS<DeclarationValue> {
-    auto operator()(const DeclarationValue&, const Style::ComputedStyle&) -> CSS::DeclarationValue;
-};
-
-template<> struct ToStyle<CSS::DeclarationValue> {
-    auto operator()(const CSS::DeclarationValue&, const BuilderState&) -> DeclarationValue;
-};
-
-// MARK: - Serialization
-
-template<> struct Serialize<DeclarationValue> {
-    void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const DeclarationValue&);
-};
-
-// MARK: - Logging
-
-WTF::TextStream& operator<<(WTF::TextStream&, const DeclarationValue&);
 
 } // namespace Style
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Style::ImageDrawingExtras)
+    static bool isType(const WebCore::ImageDrawingExtras& extras) { return extras.type() == WebCore::ImageDrawingExtras::Type::Style; }
+SPECIALIZE_TYPE_TRAITS_END()

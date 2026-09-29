@@ -71,6 +71,7 @@
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include "StyleImageDrawingExtras.h"
 #include "TextPainter.h"
 #include <wtf/StackStats.h>
 #include <wtf/TypeCasts.h>
@@ -90,6 +91,10 @@
 
 #if ENABLE(SMART_IMAGE_RESIZER)
 #include <WebKitAdditions/RenderImageAdditions.cpp>
+#endif
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
 #endif
 
 namespace WebCore {
@@ -348,13 +353,24 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
     setIntrinsicSize(newSize);
 }
 
-void RenderImage::updateInnerContentRect()
+IntSize RenderImage::imageContainerSize() const
 {
-    // Propagate container size to image resource.
-    IntSize containerSize = isDimensionlessSVG()
+    return isDimensionlessSVG()
         ? flooredIntSize(contentBoxRect().size())
         : flooredIntSize(replacedContentRect().size());
+}
 
+Style::ImageDrawingExtras RenderImage::imageDrawingExtras() const
+{
+    URL imageSourceURL;
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        imageSourceURL = imageElement->currentURL();
+    return imageResource().drawingExtras(imageSourceURL);
+}
+
+void RenderImage::updateInnerContentRect()
+{
+    auto containerSize = imageContainerSize();
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
@@ -803,6 +819,9 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         image ? chooseInterpolationQuality(paintInfo.context(), *image, image.get(), LayoutSize(rect.size())) : InterpolationQuality::Default,
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        AXCustomColorModeController::shouldInvertSVGImage(*this) ? InvertContent::Yes : InvertContent::No,
+#endif
 #if USE(SKIA)
         StrictImageClamping::No,
 #endif
@@ -817,8 +836,17 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         drawResult = paintInfo.context().drawMultiRepresentationHEIC(*img, style().fontCascade().primaryFont(), rect, options);
 #endif
 
-    if (drawResult == ImageDrawResult::DidNothing)
-        drawResult = paintInfo.context().drawImage(*img, ConcreteObjectSize::fixed(img->size(options.orientation())), rect, options);
+    if (drawResult == ImageDrawResult::DidNothing) {
+        auto usedZoom = style().usedZoom();
+        auto containerSize = FloatSize(imageContainerSize());
+        auto drawsSVG = img->drawsSVGImage();
+        auto concreteObjectSize = drawsSVG
+            ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
+            : ConcreteObjectSize::fixed(img->size());
+        auto sourceRect = drawsSVG ? FloatRect { { }, containerSize } : FloatRect { { }, img->size(options.orientation()) };
+        auto extras = imageDrawingExtras();
+        drawResult = paintInfo.context().drawImage(*img, concreteObjectSize, rect, sourceRect, options, &extras);
+    }
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));

@@ -321,6 +321,14 @@ void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, 
     protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, imageURL, linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), imageURL.fragmentIdentifier())));
 }
 
+ImageDrawingExtras CachedImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
+{
+    // MemoryCache::removeFragmentIdentifierIfNeeded strips the fragment from m_url for HTTP.
+    // We read from the element's URL.
+    auto& imageURL = !url.isNull() ? url : m_url.resolved;
+    return { imageURL, linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), imageURL.fragmentIdentifier())) };
+}
+
 void CachedImage::addClient(RenderElement& renderer)
 {
     ASSERT(!m_isPending);

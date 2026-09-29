@@ -34,7 +34,12 @@
 #include "RenderStyleConstants.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImage.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 
 namespace WebCore {
 
@@ -227,12 +232,22 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
 
     InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
 
+    auto usedZoom = style.usedZoom();
+    auto concreteObjectSize = image->drawsSVGImage()
+        ? ConcreteObjectSize::fixed(FloatSize(source) / usedZoom, usedZoom)
+        : ConcreteObjectSize::fixed(image->size());
+    auto extras = renderer ? styleImage->drawingExtrasForRenderer(*renderer) : Style::ImageDrawingExtras { };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (renderer)
+        options = { options, AXCustomColorModeController::shouldInvertSVGImage(*renderer) ? InvertContent::Yes : InvertContent::No };
+#endif
+
     for (auto piece : allImagePieces) {
         if (geometry.shouldSkipPiece(piece))
             continue;
 
         if (isCornerPiece(piece)) {
-            graphicsContext.drawImage(*image, ConcreteObjectSize::fixed(image->size()), geometry.destinationRects[piece], geometry.sourceRects[piece], options);
+            graphicsContext.drawImage(*image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], options, &extras);
             continue;
         }
 
@@ -244,7 +259,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
             ? static_cast<Image::TileRule>(geometry.verticalRule)
             : Image::StretchTile;
 
-        graphicsContext.drawTiledImage(*image, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, options);
+        graphicsContext.drawTiledImage(*image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, options, &extras);
     }
 }
 

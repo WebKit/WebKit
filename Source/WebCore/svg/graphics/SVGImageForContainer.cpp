@@ -28,9 +28,10 @@
 
 namespace WebCore {
 
-SVGImageForContainer::SVGImageForContainer(SVGImage* image, SVGImage::ContainerContext&& containerContext)
+SVGImageForContainer::SVGImageForContainer(SVGImage* image, SVGImage::ContainerContext&& containerContext, Style::ImageDrawingExtras&& extras)
     : m_image(image)
     , m_containerContext(WTF::move(containerContext))
+    , m_extras(WTF::move(extras))
 {
 }
 
@@ -41,15 +42,15 @@ FloatSize SVGImageForContainer::size(ImageOrientation) const
     return FloatSize(roundedIntSize(scaledContainerSize));
 }
 
-ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras*)
+ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    return protect(m_image)->drawForContainer(context, m_containerContext, dstRect, srcRect, options);
+    return protect(m_image)->drawForContainer(context, m_containerContext, dstRect, srcRect, options, extras ? extras : &m_extras);
 }
 
 void SVGImageForContainer::drawPattern(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras*)
+    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    protect(m_image)->drawPatternForContainer(context, m_containerContext, srcRect, patternTransform, phase, spacing, dstRect, options);
+    protect(m_image)->drawPatternForContainer(context, m_containerContext, srcRect, patternTransform, phase, spacing, dstRect, options, extras ? extras : &m_extras);
 }
 
 // Rasterized at the container's size, as it is drawn.

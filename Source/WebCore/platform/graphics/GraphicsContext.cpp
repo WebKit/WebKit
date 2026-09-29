@@ -362,20 +362,20 @@ ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const Float
     return image.draw(*this, ConcreteObjectSize::fixed(image.size()), destination, source, imagePaintingOptions);
 }
 
-ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options)
+ImageDrawResult GraphicsContext::drawTiledImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    return image.drawTiled(*this, destination, source, tileSize, spacing, options);
+    return image.drawTiled(*this, concreteObjectSize, destination, source, tileSize, spacing, options, extras);
 }
 
-ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
-    Image::TileRule hRule, Image::TileRule vRule, ImagePaintingOptions options)
+ImageDrawResult GraphicsContext::drawTiledImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
+    Image::TileRule hRule, Image::TileRule vRule, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.
-        return drawImage(image, ConcreteObjectSize::fixed(image.size()), destination, source, options);
+        return drawImage(image, concreteObjectSize, destination, source, options, extras);
     }
 
-    return image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, { options.compositeOperator(), options.interpolationQuality() });
+    return image.drawTiled(*this, concreteObjectSize, destination, source, tileScaleFactor, hRule, vRule, { options.compositeOperator(), options.interpolationQuality() }, extras);
 }
 
 RefPtr<NativeImage> GraphicsContext::nativeImageForDrawing(ImageBuffer& imageBuffer)

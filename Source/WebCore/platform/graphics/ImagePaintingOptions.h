@@ -45,6 +45,9 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, InterpolationQuality>
         || std::is_same_v<Type, AllowImageSubsampling>
         || std::is_same_v<Type, DrawLuminanceMask>
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        || std::is_same_v<Type, InvertContent>
+#endif
 #if USE(SKIA)
         || std::is_same_v<Type, StrictImageClamping>
 #endif
@@ -101,6 +104,9 @@ struct ImagePaintingOptions {
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
     AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
     DrawLuminanceMask drawLuminanceMask() const { return m_drawLuminanceMask; }
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    InvertContent invertContent() const { return m_invertContent; }
+#endif
 #if USE(SKIA)
     StrictImageClamping strictImageClamping() const { return m_strictImageClamping; }
 #endif
@@ -119,6 +125,9 @@ private:
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
     void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
     void setOption(DrawLuminanceMask drawLuminanceMask) { m_drawLuminanceMask = drawLuminanceMask; }
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void setOption(InvertContent invertContent) { m_invertContent = invertContent; }
+#endif
 #if USE(SKIA)
     void setOption(StrictImageClamping strictImageClamping) { m_strictImageClamping = strictImageClamping; }
 #endif
@@ -135,6 +144,9 @@ private:
     InterpolationQuality m_interpolationQuality : 4 { InterpolationQuality::Default };
     AllowImageSubsampling m_allowImageSubsampling : 1 { AllowImageSubsampling::No };
     DrawLuminanceMask m_drawLuminanceMask : 1 { DrawLuminanceMask::No };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    InvertContent m_invertContent : 2 { InvertContent::FromResource };
+#endif
 #if USE(SKIA)
     StrictImageClamping m_strictImageClamping: 1 { StrictImageClamping::Yes };
 #endif

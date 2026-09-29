@@ -129,7 +129,7 @@ TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
 
     auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
 
-    ctx.drawTiledImage(gradientImage.get(), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 }, FloatSize { 1, 1 }, Image::RepeatTile, Image::RepeatTile);
+    ctx.drawTiledImage(gradientImage.get(), WebCore::ConcreteObjectSize::fixed(gradientImage->size()), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 }, FloatSize { 1, 1 }, Image::RepeatTile, Image::RepeatTile);
 
     // The primary context should be red.
     CGContextFlush(primaryCGContext.get());

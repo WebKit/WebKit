@@ -66,6 +66,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
 #include "StyleEnvironmentVariables.h"
+#include "StyleImageDrawingExtras.h"
 #include "StyleLinkParameters.h"
 #include "StyleScope.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -230,7 +231,7 @@ IntSize SVGImage::containerSize() const
     return IntSize(currentSize);
 }
 
-ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -254,10 +255,12 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
-    applyLinkParameters(containerContext.linkParameters);
-    protect(frameView())->scrollToFragment(containerContext.initialFragmentURL);
+    return draw(context, ConcreteObjectSize::fixed(size()), dstRect, scaledSrc, options, extras);
+}
 
-    return draw(context, ConcreteObjectSize::fixed(size()), dstRect, scaledSrc, options);
+void SVGImage::applyFragmentURL(const URL& fragmentURL)
+{
+    protect(frameView())->scrollToFragment(fragmentURL);
 }
 
 void SVGImage::applyLinkParameters(const Style::LinkParameters& parameters)
@@ -343,7 +346,7 @@ RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSiz
 }
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& srcRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions options)
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerContext.containerSize);
     zoomedContainerRect.scale(containerContext.containerZoom);
@@ -361,7 +364,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const Container
     if (!buffer)
         return;
 
-    drawForContainer(buffer->context(), containerContext, imageBufferSize, zoomedContainerRect);
+    drawForContainer(buffer->context(), containerContext, imageBufferSize, zoomedContainerRect, { }, extras);
     if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         buffer->convertToLuminanceMask();
 
@@ -374,10 +377,20 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const Container
     context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
-ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras*)
+ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (options.invertContent() != InvertContent::FromResource)
+        applyInvertContent(options.invertContent() == InvertContent::Yes);
+#endif
+
+    if (auto* styleExtras = dynamicDowncast<Style::ImageDrawingExtras>(extras)) {
+        applyLinkParameters(styleExtras->linkParameters());
+        applyFragmentURL(styleExtras->fragmentURL());
+    }
 
     RefPtr view = frameView();
     ASSERT(view);

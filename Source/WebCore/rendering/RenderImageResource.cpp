@@ -34,6 +34,7 @@
 #include "RenderObjectDocument.h"
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImageDrawingExtras.h"
 #include "StyleInvalidImage.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -150,6 +151,13 @@ void RenderImageResource::setContainerContext(const IntSize& imageContainerSize,
     if (!m_styleImage || !m_renderer)
         return;
     protect(m_styleImage)->setContainerContextForRenderer(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), url);
+}
+
+Style::ImageDrawingExtras RenderImageResource::drawingExtras(const URL& url) const
+{
+    if (!m_styleImage || !m_renderer)
+        return { };
+    return protect(m_styleImage)->drawingExtrasForRenderer(*m_renderer, url);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const

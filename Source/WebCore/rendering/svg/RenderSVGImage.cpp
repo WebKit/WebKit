@@ -46,8 +46,13 @@
 #include "SVGImageIntrinsicSizing.h"
 #include "SVGVisitedRendererTracking.h"
 #include "Settings.h"
+#include "StyleImageDrawingExtras.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 
 namespace WebCore {
 
@@ -158,13 +163,22 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         imageOrientation(),
         ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        AXCustomColorModeController::shouldInvertSVGImage(*this) ? InvertContent::Yes : InvertContent::No,
+#endif
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
         settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
         paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
     };
 
-    auto drawResult = paintInfo.context().drawImage(*image, ConcreteObjectSize::fixed(image->size()), rect, sourceRect, options);
+    auto usedZoom = style().usedZoom();
+    auto containerSize = FloatSize { imageContainerSize() };
+    auto concreteObjectSize = image->drawsSVGImage()
+        ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
+        : ConcreteObjectSize::fixed(image->size());
+    auto extras = imageDrawingExtras();
+    auto drawResult = paintInfo.context().drawImage(*image, concreteObjectSize, rect, sourceRect, options, &extras);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 
@@ -192,7 +206,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
     }
 
     FloatRect contentBoxRect = borderBoxRectEquivalent();
-    FloatRect replacedContentRect(0, 0, image->width(), image->height());
+    FloatRect replacedContentRect { { }, image->drawsSVGImage() ? FloatSize { imageContainerSize() } : image->size() };
     imageElement().preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
 
     contentBoxRect.moveBy(paintOffset);
@@ -255,6 +269,22 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     }
 
     return false;
+}
+
+IntSize RenderSVGImage::imageContainerSize() const
+{
+    // https://w3c.github.io/svgwg/svg2-draft/coords.html#PreserveAspectRatioAttribute
+    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
+        if (RefPtr cachedImage = imageResource().cachedImage())
+            return roundedIntSize(cachedImage->imageSizeForRenderer(nullptr, style().usedZoom()));
+    }
+
+    return enclosingIntRect(m_objectBoundingBox).size();
+}
+
+Style::ImageDrawingExtras RenderSVGImage::imageDrawingExtras() const
+{
+    return imageResource().drawingExtras(protect(document())->encodingParseURL(imageElement().imageSourceURL()));
 }
 
 bool RenderSVGImage::updateImageViewport()

@@ -281,7 +281,14 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             auto physicalImageSize = writingMode.isHorizontal() ? logicalImageSize : logicalImageSize.transposedSize();
 
             RefPtr image = styleImage->image(const_cast<RenderBox*>(&renderer), physicalImageSize, NullGraphicsContext());
-            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin);
+
+            auto usedZoom = style.usedZoom();
+            auto drawsSVG = image && image->drawsSVGImage();
+            auto sourceSize = drawsSVG ? FloatSize(roundedIntSize(logicalImageSize)) : (image ? image->size() : FloatSize { });
+            auto concreteObjectSize = drawsSVG
+                ? ConcreteObjectSize::fixed(FloatSize(logicalImageSize) / usedZoom, usedZoom)
+                : ConcreteObjectSize::fixed(sourceSize);
+            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, concreteObjectSize, sourceSize);
         },
         [&](const Style::ShapeOutside::ShapeBox&) {
             auto geometry = computeGeometryForBoxShape(shapeOutside.effectiveCSSBox(), renderer);

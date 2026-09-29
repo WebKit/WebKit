@@ -51,6 +51,7 @@
 #include "TextBoxPainter.h"
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
 #include <WebKitAdditions/BackgroundPainterAdditions.cpp>
 #endif
 
@@ -562,13 +563,21 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 m_renderer.chooseInterpolationQuality(context, *image, &layer.layer, geometry.tileSize),
                 layer.layer.maskMode() == Style::MaskMode::Luminance ? DrawLuminanceMask::Yes : DrawLuminanceMask::No,
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+                AXCustomColorModeController::shouldInvertSVGImage(clientForBackgroundImage) ? InvertContent::Yes : InvertContent::No,
+#endif
                 document().settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
                 document().settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
                 m_paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
+            auto usedZoom = m_renderer.style().usedZoom();
+            auto concreteObjectSize = image->drawsSVGImage()
+                ? ConcreteObjectSize::fixed(geometry.tileSizeWithoutPixelSnapping / usedZoom, usedZoom)
+                : ConcreteObjectSize::fixed(image->size());
+            auto extras = bgImage->drawingExtrasForRenderer(clientForBackgroundImage);
+            auto drawResult = context.drawTiledImage(*image, concreteObjectSize, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options, &extras);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());

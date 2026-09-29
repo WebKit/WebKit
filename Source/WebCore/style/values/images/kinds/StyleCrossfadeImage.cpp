@@ -186,19 +186,19 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
 
     if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
         auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
-        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL
+        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
             , .invertContent = invertContent
 #endif
-        });
+        }, { fromURL });
     }
     if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
         auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
-        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL
+        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
             , .invertContent = invertContent
 #endif
-        });
+        }, { toURL });
     }
 
     return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), size);

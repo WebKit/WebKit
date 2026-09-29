@@ -49,8 +49,6 @@ public:
     struct ContainerContext {
         FloatSize containerSize { };
         float containerZoom { 1 };
-        URL initialFragmentURL { };
-        Style::LinkParameters linkParameters { CSS::Keyword::None { } };
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         std::optional<bool> invertContent { };
 #endif
@@ -127,9 +125,10 @@ private:
 
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
     ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
-    ImageDrawResult drawForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
-    void drawPatternForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions = { });
+    ImageDrawResult drawForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
+    void drawPatternForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
 
+    void applyFragmentURL(const URL&);
     void applyLinkParameters(const Style::LinkParameters&);
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     void applyInvertContent(std::optional<bool>);

@@ -28,6 +28,7 @@
 #include <WebCore/CachedImage.h>
 #include <WebCore/CachedResourceHandle.h>
 #include <WebCore/StyleImage.h>
+#include <WebCore/StyleImageDrawingExtras.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -61,6 +62,7 @@ public:
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
 
     void setContainerContext(const IntSize&, const URL&);
+    Style::ImageDrawingExtras drawingExtras(const URL& = { }) const;
 
     bool imageHasRelativeWidth() const { return m_styleImage && m_styleImage->imageHasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_styleImage && m_styleImage->imageHasRelativeHeight(); }
