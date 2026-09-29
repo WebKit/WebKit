@@ -5173,7 +5173,7 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
         [placeholderWriter setData:[NSData data] forType:UTTypeData.identifier];
         RetainPtr contextDraggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:placeholderWriter]);
         [contextDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
-        [view _web_draggingItemsForDraggingItem:contextDraggingItem atLocation:item.eventPositionInRootViewCoordinates completionHandler:startDraggingSessionWithItems.get()];
+        [view _web_draggingItemsForDraggingItem:contextDraggingItem atLocation:item.eventPositionInMainFrameViewCoordinates completionHandler:startDraggingSessionWithItems.get()];
     } else
 #endif
         startDraggingSessionWithItems(nil);

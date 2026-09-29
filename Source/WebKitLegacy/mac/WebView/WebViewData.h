@@ -250,7 +250,7 @@ class WebSelectionServiceController;
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     RetainPtr<WebUITextIndicatorData> textIndicatorData;
     RetainPtr<WebUITextIndicatorData> dataOperationTextIndicator;
-    CGRect dragPreviewFrameInRootViewCoordinates;
+    CGRect dragPreviewFrameInMainFrameViewCoordinates;
     WebDragSourceAction dragSourceAction;
     RetainPtr<NSURL> draggedLinkURL;
     RetainPtr<NSString> draggedLinkTitle;

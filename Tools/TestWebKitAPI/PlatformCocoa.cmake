@@ -809,6 +809,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift
     Tests/WebKit/WKWebView/SiteIsolationCookieTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDataDetectionTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationDragPreviewTests.swift
     Tests/WebKit/WKWebView/SiteIsolationEditableRegionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationEditingTests.swift
     Tests/WebKit/WKWebView/SiteIsolationFullscreenTests.swift

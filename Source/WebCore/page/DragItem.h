@@ -50,13 +50,12 @@ struct DragItem final {
     std::optional<DragSourceAction> sourceAction;
     std::optional<FrameIdentifier> rootFrameID;
     IntPoint eventPositionInContentCoordinates;
-    IntPoint eventPositionInRootViewCoordinates;
+    IntPoint eventPositionInMainFrameViewCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
     String title;
     URL url;
-    // FIXME: rdar://160803165 dragPreviewFrameInRootViewCoordinates is calculated using convertToRootView, which is incorrect with Site Isolation.
-    IntRect dragPreviewFrameInRootViewCoordinates;
+    IntRect dragPreviewFrameInMainFrameViewCoordinates;
     bool containsSelection { false };
 
     PromisedAttachmentInfo promisedAttachmentInfo;
