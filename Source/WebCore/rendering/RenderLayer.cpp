@@ -3843,11 +3843,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         bool rootLayerShiftedFilterBuffer = currentRootLayer && currentRootLayer != this
             && currentRootLayer->hasFilter() && currentRootLayer->renderer().isSVGLayerAwareRenderer()
             && !currentRootLayer->renderer().isRenderSVGRoot();
-        bool appliesFilterChildCorrection = filterContext && filtersInSVGUserSpace
-            && (currentRootLayer == this || rootLayerShiftedFilterBuffer);
 
         // This applies to this layer's immediate child layers only, and a nested filter re-derives its own.
-        auto svgFilterChildLayerCorrection = appliesFilterChildCorrection ? svgFilterOffset : LayoutSize();
+        LayoutSize svgFilterChildLayerCorrection;
+        if (filterContext && filtersInSVGUserSpace)
+            svgFilterChildLayerCorrection = rootLayerShiftedFilterBuffer ? svgFilterOffset : svgFilterOffset - columnAwareOffsetFromRoot;
 
         // Per the SVG spec a referenced but unappliable filter (missing reference, empty filter)
         // produces transparent black, so the element is not rendered. CSS Filter Effects instead
