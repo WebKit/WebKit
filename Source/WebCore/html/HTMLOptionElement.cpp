@@ -182,9 +182,22 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
             select->invalidateButtonText();
         if (m_shadowTreeNeedsUpdate)
             protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
+        if (m_ownerSelect)
+            result = NeedsPostConnectionSteps::Yes;
     }
 
     return result;
+}
+
+void HTMLOptionElement::postConnectionSteps()
+{
+    RefPtr select = m_ownerSelect;
+    if (!select || !select->hasSelectedContentDescendants())
+        return;
+
+    bool isSelected = select->isFinishedParsingChildren() ? selected() : selectedWithoutUpdate();
+    if (isSelected)
+        select->updateSelectedContent(this);
 }
 
 void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -205,6 +218,8 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     if (RefPtr select = std::exchange(m_ownerSelect, nullptr).get()) {
         select->setRecalcListItems();
         select->invalidateButtonText();
+        if (m_isSelected)
+            select->queueSelectedContentUpdate();
         invalidateShadowTree();
     }
 }
@@ -212,9 +227,6 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
 void HTMLOptionElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(isSubtreeRoot, oldParent);
-
-    if (isSubtreeRoot == IsSubtreeRoot::No)
-        return;
 
     if (!document().settings().htmlEnhancedSelectParsingEnabled())
         return;
@@ -234,11 +246,15 @@ void HTMLOptionElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& 
     if (oldSelect) {
         oldSelect->setRecalcListItems();
         oldSelect->invalidateButtonText();
+        if (m_isSelected)
+            oldSelect->queueSelectedContentUpdate();
     }
 
     if (newSelect) {
         newSelect->setRecalcListItems();
         newSelect->invalidateButtonText();
+        if (m_isSelected)
+            newSelect->queueSelectedContentUpdate();
     }
 
     invalidateShadowTree();

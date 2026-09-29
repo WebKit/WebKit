@@ -37,7 +37,7 @@ class HTMLSelectedContentElement final : public HTMLElement {
 public:
     static Ref<HTMLSelectedContentElement> create(const QualifiedName&, Document&);
 
-    bool isDisabled() { return m_isDisabled; }
+    bool isDisabled() const { return m_isDisabled; }
 
 private:
     HTMLSelectedContentElement(const QualifiedName&, Document&);
@@ -45,6 +45,9 @@ private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
     void removingSteps(RemovalType, ContainerNode&) final;
+    void movingSteps(IsSubtreeRoot, ContainerNode&) final;
+
+    RefPtr<HTMLSelectElement> recalculateDisabledness();
 
     bool m_isDisabled { false };
     WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> m_owningSelect;

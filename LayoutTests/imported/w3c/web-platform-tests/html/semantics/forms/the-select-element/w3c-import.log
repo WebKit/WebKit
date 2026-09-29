@@ -32,7 +32,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add-optgroup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add-option-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ancestor-subtree-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-attribute-change-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-attribute-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-clear-reappend.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-click-does-not-open-picker.html

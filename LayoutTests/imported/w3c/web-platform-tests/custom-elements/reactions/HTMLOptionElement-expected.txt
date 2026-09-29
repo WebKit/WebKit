@@ -1,3 +1,4 @@
 
 PASS text on HTMLOptionElement must enqueue disconnectedCallback when removing a custom element
+PASS selected on HTMLOptionElement must enqueue connectedCallback when cloning a custom element into selectedcontent
 

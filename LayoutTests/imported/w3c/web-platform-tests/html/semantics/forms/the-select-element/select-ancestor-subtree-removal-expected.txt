@@ -1,0 +1,5 @@
+
+PASS Removing an ancestor of a select keeps its options associated with it.
+PASS Selecting an option in a select whose ancestor was removed deselects the others.
+PASS Removing an option from a select whose ancestor was removed runs the selectedness setting algorithm.
+

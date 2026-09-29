@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class HTMLOptionsCollection;
+class HTMLSelectedContentElement;
 class MouseEvent;
 class SelectPopoverElement;
 class ShadowRoot;
@@ -201,9 +202,12 @@ public:
     bool isDevolvableWidget() const override { return true; }
 
     void updateSelectedContent(HTMLOptionElement* = nullptr) const;
+    void updateSelectedContent(HTMLSelectedContentElement&) const;
+    void queueSelectedContentUpdate();
 
     void NODELETE registerSelectedContentElement();
     void NODELETE unregisterSelectedContentElement();
+    bool hasSelectedContentDescendants() const { return m_selectedContentDescendantCount; }
 
     bool usesBaseAppearancePicker() const;
     WEBCORE_EXPORT bool optionsAreRenderedWithBaseAppearance() const;
@@ -286,6 +290,7 @@ private:
         DeselectOtherOptions = 1 << 0,
         DispatchChangeEvent = 1 << 1,
         UserDriven = 1 << 2,
+        SkipSelectedContentUpdate = 1 << 3,
     };
     void selectOption(int optionIndex, OptionSet<SelectOptionFlag> = { });
     void deselectItemsWithoutValidation(HTMLElement* elementToExclude = nullptr);
@@ -295,6 +300,7 @@ private:
     void menuListDefaultEventHandler(Event&);
     void baseAppearanceListBoxDefaultEventHandler(Event&);
     void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr) const;
+    RefPtr<HTMLOptionElement> firstSelectedOption() const;
     void closePickerIfNoLongerSupported(bool hadOpenPicker);
     void optionDeselectedByUser(HTMLOptionElement&);
     bool handleImplicitSubmissionKeypress(KeyboardEvent&);
@@ -344,6 +350,7 @@ private:
     bool m_isCapturingMouseEvents { false };
     mutable bool m_shouldRecalcListItems;
     unsigned m_selectedContentDescendantCount { 0 };
+    bool m_hasQueuedSelectedContentUpdate { false };
 
     std::optional<int> m_lastActiveIndex;
 

@@ -728,6 +728,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 # Untriaged.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-restore.optional.html [ Skip ]
 
+# moveBefore() of a <select> double-registers the named slot in its shadow tree.
+webkit.org/b/325616 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-subtree-mutations.html [ Skip ]
+
 # Our selectedcontent avoids overflow, but test expects it.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-button-text-and-icon-clipping.html [ ImageOnlyFailure ]
 # Overflow handling differences.
@@ -6265,7 +6268,6 @@ imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creatio
 # Needs moveBefore support
 webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/fieldset-child-date-input-blur-event.html [ Skip ]
 webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/role-updates-after-move.html [ Skip ]
-webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/select-option-optgroup.html [ Skip ]
 webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/selection-preserve.html [ Skip ]
 webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-iframe-crash.html [ Skip ]
 webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-legend-input-crash.html [ Skip ]

@@ -26,10 +26,10 @@
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
-    [CEReactions=NotNeeded, Reflect] attribute boolean multiple;
+    [CEReactions=Needed, Reflect] attribute boolean multiple;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute boolean required;
-    [CEReactions=NotNeeded] attribute unsigned long size;
+    [CEReactions=Needed] attribute unsigned long size;
 
     readonly attribute DOMString type;
 
@@ -43,8 +43,8 @@
     [CEReactions=Needed] setter undefined (unsigned long index, HTMLOptionElement? option);
 
     [SameObject] readonly attribute HTMLCollection selectedOptions;
-    attribute long selectedIndex;
-    attribute DOMString value;
+    [CEReactions=Needed] attribute long selectedIndex;
+    [CEReactions=Needed] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

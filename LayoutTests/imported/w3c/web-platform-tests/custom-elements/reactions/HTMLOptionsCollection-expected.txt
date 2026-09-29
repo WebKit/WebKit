@@ -4,4 +4,5 @@ PASS The indexed setter on HTMLOptionsCollection must enqueue connectedCallback 
 PASS The indexed setter on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element
 PASS add on HTMLOptionsCollection must enqueue connectedCallback when inserting a custom element
 PASS remove on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element
+PASS selectedIndex on HTMLOptionsCollection must enqueue connectedCallback when cloning a custom element into selectedcontent
 

@@ -4,4 +4,6 @@ PASS The indexed setter on HTMLSelectElement must enqueue connectedCallback when
 PASS The indexed setter on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element
 PASS add on HTMLSelectElement must enqueue connectedCallback when inserting a custom element
 PASS remove on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element
+PASS selectedIndex on HTMLSelectElement must enqueue connectedCallback when cloning a custom element into selectedcontent
+PASS value on HTMLSelectElement must enqueue connectedCallback when cloning a custom element into selectedcontent
 

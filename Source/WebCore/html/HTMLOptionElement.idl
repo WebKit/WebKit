@@ -24,11 +24,11 @@
     LegacyFactoryFunctionCallWith=CurrentDocument,
     LegacyFactoryFunction=Option(optional DOMString text = "", optional [AtomString] DOMString value, optional boolean defaultSelected = false, optional boolean selected = false),
 ] interface HTMLOptionElement : HTMLElement {
-    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
+    [CEReactions=Needed, Reflect] attribute boolean disabled;
     [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString label;
-    [CEReactions=NotNeeded, Reflect="selected"] attribute boolean defaultSelected;
-    [ImplementedAs=selectedForBindings] attribute boolean selected;
+    [CEReactions=Needed, Reflect="selected"] attribute boolean defaultSelected;
+    [CEReactions=Needed, ImplementedAs=selectedForBindings] attribute boolean selected;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString value;
 
     [CEReactions=Needed] attribute DOMString text;

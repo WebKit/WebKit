@@ -86,6 +86,7 @@ private:
     HTMLOptionElement(const QualifiedName&, Document&);
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
+    void postConnectionSteps() final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void movingSteps(IsSubtreeRoot, ContainerNode&) final;
 

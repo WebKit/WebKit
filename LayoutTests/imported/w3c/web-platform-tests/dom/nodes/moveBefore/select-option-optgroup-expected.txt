@@ -1,7 +1,9 @@
 
 B
 
+one
+two
 
 PASS Option selectedness is updated on option and optgroup DOM moves
-FAIL Moving options between select elements. assert_true: option two should become selected after moving into an empty select. expected true got false
+PASS Moving options between select elements.
 

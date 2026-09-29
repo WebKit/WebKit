@@ -831,7 +831,7 @@ CompletionHandlerCallingScope HTMLSelectElement::optionToSelectFromChildChangeSc
 
     return CompletionHandlerCallingScope { [optionToSelect = WTF::move(optionToSelect), isInsertion = change.isInsertion(), select = Ref { *this }] {
         if (optionToSelect)
-            select->optionSelectionStateChanged(*optionToSelect, true);
+            select->selectOption(optionToSelect->index(), SelectOptionFlag::SkipSelectedContentUpdate);
         else if (isInsertion)
             select->scrollToSelection();
     } };
@@ -1524,7 +1524,8 @@ void HTMLSelectElement::selectOption(int optionIndex, OptionSet<SelectOptionFlag
     // Update the button text element to display the new selection and ensure it picks up the new
     // selection's direction and unicode-bidi.
     updateButtonText(selectedOption.get(), optionIndex);
-    updateSelectedContentIfEnabled(selectedOption.get());
+    if (!flags.contains(SelectOptionFlag::SkipSelectedContentUpdate))
+        updateSelectedContentIfEnabled(selectedOption.get());
 
     scrollToSelection();
 
@@ -1740,6 +1741,7 @@ void HTMLSelectElement::reset()
     invalidateStyleForSubtree();
     updateValidity();
     invalidateButtonText();
+    updateSelectedContentIfEnabled();
 }
 
 #if !PLATFORM(WIN)
@@ -2564,6 +2566,8 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
 
 void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* selectedOption) const
 {
+    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+
     auto& settings = document().settings();
     if (settings.htmlEnhancedSelectParsingEnabled() && settings.htmlEnhancedSelectEnabled() && !settings.mutationEventsEnabled())
         updateSelectedContent(selectedOption);
@@ -2571,6 +2575,7 @@ void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* select
 
 void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption) const
 {
+    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!document().settings().mutationEventsEnabled());
@@ -2579,16 +2584,8 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
         return;
 
     RefPtr selectedOptionRef = selectedOption;
-    if (!selectedOptionRef) {
-        for (auto& element : listItems()) {
-            if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*element)) {
-                if (option->selected()) {
-                    selectedOptionRef = option;
-                    break;
-                }
-            }
-        }
-    }
+    if (!selectedOptionRef)
+        selectedOptionRef = firstSelectedOption();
 
     Vector<Ref<HTMLSelectedContentElement>> selectedContentElements;
     for (Ref selectedContent : descendantsOfType<HTMLSelectedContentElement>(*const_cast<HTMLSelectElement*>(this))) {
@@ -2602,6 +2599,45 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
         else
             selectedOptionRef->cloneIntoSelectedContent(selectedContent);
     }
+}
+
+// https://html.spec.whatwg.org/#update-a-selectedcontent
+void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& selectedContent) const
+{
+    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+
+    if (selectedContent.isDisabled())
+        return;
+
+    if (RefPtr selectedOption = firstSelectedOption())
+        selectedOption->cloneIntoSelectedContent(selectedContent);
+    else
+        selectedContent.removeChildren();
+}
+
+void HTMLSelectElement::queueSelectedContentUpdate()
+{
+    if (m_hasQueuedSelectedContentUpdate || m_multiple || !m_selectedContentDescendantCount)
+        return;
+
+    m_hasQueuedSelectedContentUpdate = true;
+    Ref document = this->document();
+    protect(document->eventLoop())->queueMicrotask(document->vm(), [weakThis = WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> { *this }] {
+        RefPtr select = weakThis;
+        if (!select)
+            return;
+        select->m_hasQueuedSelectedContentUpdate = false;
+        select->updateSelectedContentIfEnabled();
+    });
+}
+
+RefPtr<HTMLOptionElement> HTMLSelectElement::firstSelectedOption() const
+{
+    for (auto& element : listItems()) {
+        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*element); option && option->selected())
+            return option;
+    }
+    return nullptr;
 }
 
 void HTMLSelectElement::registerSelectedContentElement()
