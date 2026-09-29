@@ -2,3 +2,4 @@ streams/transform-stream-poisoned-iterator-crash.html [ Failure ]
 http/wpt/webrtc/av1-packetizer-large-encoded-frame-no-crash.html [ Pass ]
 http/wpt/webrtc/script-transform-oversized-frame.html [ Pass ]
 
+[ Debug ] sar3/ipc/restrictedendpoints/deny-oversized-writeBufferWithCopy.html [ Skip ]
