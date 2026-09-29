@@ -335,6 +335,13 @@ void IDBDatabase::stop()
     if (!m_closedInServer) {
         m_closedInServer = true;
         m_connectionProxy->databaseConnectionClosed(*this);
+
+        // Closing the connection in the server means it will no longer deliver a completion for a
+        // transaction that was still committing. Finalize those transactions locally so they do not
+        // remain in the committing state forever, which would leak the transaction and its requests.
+        IDBError error { ExceptionCode::UnknownError, "Database connection was closed"_s };
+        for (auto& transaction : copyToVector(m_committingTransactions.values()))
+            transaction->connectionClosedFromServer(error);
     }
 }
 
