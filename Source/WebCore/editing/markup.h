@@ -101,7 +101,8 @@ enum class SerializeComposedTree : bool { No, Yes };
 enum class IgnoreUserSelectNone : bool { No, Yes };
 enum class PreserveBaseElement : bool { No, Yes };
 enum class PreserveDirectionForInlineText : bool { No, Yes };
-WEBCORE_EXPORT String serializePreservingVisualAppearance(const SimpleRange&, Vector<Ref<Node>>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy);
+enum class PreserveWhiteSpace : bool { No, Yes };
+WEBCORE_EXPORT String serializePreservingVisualAppearance(const SimpleRange&, Vector<Ref<Node>>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy, PreserveWhiteSpace = PreserveWhiteSpace::No);
 String serializePreservingVisualAppearance(const VisibleSelection&, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy, SerializeComposedTree = SerializeComposedTree::No,
     IgnoreUserSelectNone = IgnoreUserSelectNone::Yes, PreserveBaseElement = PreserveBaseElement::No, PreserveDirectionForInlineText = PreserveDirectionForInlineText::No, Vector<Ref<Node>>* = nullptr);
 
