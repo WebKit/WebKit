@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<script>
+
+const crossSiteURL = "http://localhost:8000/site-isolation/resources/frame-with-text.html";
+
+let queryCount = 0;
+
+if (window.IPC) {
+    IPC.addIncomingMessageListener("UI", message => {
+        if (message.description === "WebPage_GetLocalFrameGeometry")
+            queryCount++;
+    });
+}
+
+async function settle()
+{
+    for (let i = 0; i < 3; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+function loadIframe(iframe, url)
+{
+    return new Promise(resolve => {
+        iframe.onload = resolve;
+        iframe.src = url;
+    });
+}
+
+promise_test(async t => {
+    // IPC interception only works in debug builds.
+    if (!window.IPC)
+        return;
+
+    const iframe = document.createElement("iframe");
+    t.add_cleanup(() => iframe.remove());
+
+    let loaded = loadIframe(iframe, crossSiteURL);
+    document.body.appendChild(iframe);
+    await loaded;
+    await settle();
+    assert_equals(queryCount, 1, "a frame that commits in a new process should collect geometry from other processes");
+
+    await loadIframe(iframe, `${crossSiteURL}?navigated`);
+    await settle();
+    assert_equals(queryCount, 1, "a same-site navigation should not collect geometry from other processes");
+}, "Frame geometry is only collected from other processes when a frame commits in a new process");
+
+</script>

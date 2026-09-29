@@ -1,0 +1,87 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<script>
+
+const crossSiteURL = "http://localhost:8000/site-isolation/resources/frame-with-text.html";
+const sameSiteURL = "http://127.0.0.1:8000/site-isolation/resources/frame-with-text.html";
+
+let broadcastCount = 0;
+let broadcastingFrameIDs = new Set;
+
+if (window.IPC) {
+    IPC.addOutgoingMessageListener("UI", message => {
+        if (message.description !== "WebPageProxy_BroadcastFrameTreeSyncData")
+            return;
+        broadcastCount++;
+        broadcastingFrameIDs.add(String(message.arguments[0].value));
+    });
+}
+
+async function settle()
+{
+    for (let i = 0; i < 3; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+// Adding a frame keeps broadcasting geometry for a few rendering updates as the layout and frame
+// rects propagate. Wait for that to stop.
+async function settleUntilQuiescent()
+{
+    for (let i = 0; i < 20; i++) {
+        await settle();
+        const countBeforeSettling = broadcastCount;
+        await settle();
+        if (broadcastCount === countBeforeSettling)
+            return;
+    }
+    assert_unreached("frame geometry never stopped being broadcast");
+}
+
+let nextTop = 0;
+
+function addIframe(url, parentDocument = document)
+{
+    return new Promise(resolve => {
+        const iframe = parentDocument.createElement("iframe");
+        iframe.style.cssText = `position: absolute; left: 0; top: ${nextTop}px; width: 100px; height: 100px; border: none`;
+        nextTop += 100;
+        iframe.onload = () => resolve(iframe);
+        iframe.src = url;
+        parentDocument.body.appendChild(iframe);
+    });
+}
+
+promise_test(async t => {
+    // IPC interception only works in debug builds.
+    if (!window.IPC)
+        return;
+
+    t.add_cleanup(() => document.querySelectorAll("iframe").forEach(iframe => iframe.remove()));
+
+    // This same-site frame is in this process and has a cross-site child, so it broadcasts its own
+    // geometry.
+    const sameSiteIframe = await addIframe(sameSiteURL);
+    await addIframe(crossSiteURL, sameSiteIframe.contentDocument);
+    const sameSiteFrameID = String(sameSiteIframe.contentWindow.IPC.frameID[0]);
+
+    await settleUntilQuiescent();
+    broadcastingFrameIDs = new Set;
+    await addIframe(crossSiteURL);
+    await settleUntilQuiescent();
+
+    // Adding a cross-site iframe to the main frame causes the main frame's FrameGeometry to change
+    // (since it contains geometry for direct children). This change should be broadcast.
+    const mainFrameID = String(IPC.frameID[0]);
+    assert_true(broadcastingFrameIDs.has(mainFrameID),
+        "adding a cross-site frame should broadcast the geometry of its parent");
+
+    // The sibling frame's geometry shouldn't be broadcast after adding the new frame.
+    assert_false(broadcastingFrameIDs.has(sameSiteFrameID),
+        "adding a cross-site frame should not rebroadcast the geometry of an unrelated frame");
+}, "Adding a frame doesn't make every other frame rebroadcast its geometry");
+
+</script>

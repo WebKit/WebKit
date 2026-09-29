@@ -1,0 +1,3 @@
+
+PASS Frame geometry is only collected from other processes when a frame commits in a new process
+

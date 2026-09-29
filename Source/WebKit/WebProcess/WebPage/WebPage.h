@@ -880,8 +880,10 @@ public:
     void topDocumentSyncDataChangedInAnotherProcess(const WebCore::DocumentSyncSerializationData&);
     void allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&&);
 
-    void frameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    void frameTreeSyncDataChangedInAnotherProcess(Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>&&);
     void allFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, Ref<WebCore::FrameTreeSyncData>&&);
+    void getLocalFrameGeometry(CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>&&)>&&);
+    std::optional<WebCore::FrameTreeSyncDataType> applyFrameTreeSyncDataFromAnotherProcess(WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
 
     // Updates visible rect state (e.g. windowClipRect and exposedContentRect) in this process using
     // clipping rects from a parent frame process.

@@ -52,6 +52,9 @@ public:
     ~WebLocalFrameLoaderClient();
 
     void clearLastBroadcastFrameTreeSyncData();
+    const std::optional<WebCore::FrameGeometrySyncData>& lastBroadcastFrameGeometry() const { return m_lastBroadcastFrameGeometry; }
+    const std::optional<WebCore::FrameViewportInfo>& lastBroadcastFrameViewportInfo() const { return m_lastBroadcastFrameViewportInfo; }
+    void clearLastBroadcastFrameViewportInfo() { m_lastBroadcastFrameViewportInfo = std::nullopt; }
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
