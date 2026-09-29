@@ -10159,9 +10159,6 @@ fast/css/object-position/object-position-embed.html [ Pass ImageOnlyFailure ] # 
 
 fast/css/view-transitions-scrolling-position-fixed.html [ Pass ImageOnlyFailure ] # rdar://178676264
 
-imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-with-single-handler-reject.html [ Pass Crash ] # rdar://178676289
-imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-with-single-handler.html [ Pass Crash ] # rdar://178676289
-
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-ctor.html [ Pass Crash ] # rdar://178676235
 
 imported/w3c/web-platform-tests/css/css-viewport/zoom/scroll-margin.html [ Pass Crash ] # rdar://178676250
