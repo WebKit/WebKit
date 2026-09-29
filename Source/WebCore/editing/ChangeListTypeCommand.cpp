@@ -76,9 +76,9 @@ std::optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversion
 static void removeSourceListAttributes(const HTMLElement& listToReplace, HTMLElement& list, ChangeListTypeCommand::Type type)
 {
     bool convertToUnorderedList = type == ChangeListTypeCommand::Type::ConvertToUnorderedList;
+    list.removeAttribute(HTMLNames::typeAttr);
     if (convertToUnorderedList) {
         list.removeAttribute(HTMLNames::startAttr);
-        list.removeAttribute(HTMLNames::typeAttr);
         list.removeAttribute(HTMLNames::reversedAttr);
     }
     list.removeInlineStyleProperty(CSSPropertyListStyleType);
