@@ -294,7 +294,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
     static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
     SVGVisitedRendererTracking recursionTracking(s_visitedSet);
-    auto targetBoundingBox = object.objectBoundingBox();
+    auto targetBoundingBox = object.objectBoundingBoxForResources();
     if (recursionTracking.isVisiting(*this))
         return targetBoundingBox;
 

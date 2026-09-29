@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml" width="400" height="100">
+  <metadata>
+    <h:title>objectBoundingBox gradient units on a tspan resolve against the whole text element</h:title>
+    <h:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#ObjectBoundingBoxUnitsTextObjects"/>
+    <h:link rel="match" href="gradient-objectBoundingBox-tspan-expected.svg"/>
+    <h:link rel="stylesheet" type="text/css" href="/fonts/ahem.css"/>
+  </metadata>
+  <!-- The text element spans x=0 to x=400, the tspan only x=200 to x=400. Resolving the
+       gradient against the text puts the hard stop at x=200, so the tspan is entirely blue.
+       Resolving it against the tspan would put the stop at x=300. -->
+  <linearGradient id="split" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0.5" stop-color="green"/>
+    <stop offset="0.5" stop-color="blue"/>
+  </linearGradient>
+  <text x="0" y="80" font-family="Ahem" font-size="100" fill="green">AA<tspan fill="url(#split)">AA</tspan></text>
+</svg>
