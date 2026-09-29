@@ -41,8 +41,26 @@ class SelectionGeometry {
 public:
     WEBCORE_EXPORT explicit SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, bool isHorizontal, int columnNumber);
 
-    // FIXME: We should move some of these arguments to an auxillary struct.
-    SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, int);
+    struct Options {
+        SelectionRenderingBehavior behavior;
+        TextDirection direction;
+        int minX;
+        int maxX;
+        int maxY;
+        int lineNumber;
+        bool isLineBreak;
+        bool isFirstOnLine;
+        bool isLastOnLine;
+        bool containsStart;
+        bool containsEnd;
+        bool isHorizontal;
+        bool isInFixedPosition;
+        int pageNumber;
+    };
+
+    WEBCORE_EXPORT SelectionGeometry(const FloatQuad&, Options&&);
+    // FIXME: This flat constructor exists so the generated IPC decoder can reconstruct a SelectionGeometry from its
+    // serialized members; keep its argument order in sync with WebCoreArgumentCodersPlatform.serialization.in.
     WEBCORE_EXPORT SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool);
     SelectionGeometry() = default;
     ~SelectionGeometry() = default;
