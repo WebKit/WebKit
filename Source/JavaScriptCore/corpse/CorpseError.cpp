@@ -26,28 +26,121 @@
 #include "config.h"
 #include "CorpseError.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseClient.h"
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace Corpse {
 
+thread_local unsigned Error::s_reportCount = 0;
+thread_local Diagnostics* Diagnostics::s_current = nullptr;
+
 void Error::report(const char* format, ...)
 {
-    fprintf(stderr, "%s: ", Client::name().characters());
+    ++s_reportCount;
 
+    StringPrintStream out;
+    out.print(Client::name(), ": ");
     va_list args;
     va_start(args, format);
-    vfprintf(stderr, format, args);
+    out.vprintf(format, args);
     va_end(args);
+    out.print("\n", Diagnostics::context());
 
-    fputc('\n', stderr);
+    SAFE_FPRINTF(stderr, "%s", out.toUTF8CString());
+}
+
+UTF8CString Diagnostics::describe(const char* format, ...)
+{
+    StringPrintStream out;
+    va_list args;
+    va_start(args, format);
+    out.vprintf(format, args);
+    va_end(args);
+    return out.toUTF8CString();
+}
+
+Diagnostics::Diagnostics(UTF8CString&& operation)
+    : m_operation(WTF::move(operation))
+    , m_parent(s_current)
+{
+    s_current = this;
+}
+
+Diagnostics::~Diagnostics()
+{
+    ASSERT(s_current == this);
+    s_current = m_parent;
+}
+
+static ASCIILiteral label(DiagnosticCounter counter)
+{
+    switch (counter) {
+    case DiagnosticCounter::ImagesListed:
+        return "images listed"_s;
+    case DiagnosticCounter::ImageHeadersRead:
+        return "image headers read"_s;
+    case DiagnosticCounter::ImagesInSharedCache:
+        return "images in the shared cache"_s;
+    case DiagnosticCounter::ExportsTriesSearched:
+        return "exports tries searched"_s;
+    case DiagnosticCounter::UnreadableImageHeaders:
+        return "unreadable image headers"_s;
+    case DiagnosticCounter::ImplausibleLoadCommandSizes:
+        return "implausible load command sizes"_s;
+    case DiagnosticCounter::UnreadableLoadCommands:
+        return "unreadable load commands"_s;
+    case DiagnosticCounter::ImagesWithoutExportsTrie:
+        return "images without an exports trie"_s;
+    case DiagnosticCounter::ImplausibleExportsTrieSizes:
+        return "implausible exports trie sizes"_s;
+    case DiagnosticCounter::ExportsTriesOutsideLinkedit:
+        return "exports tries outside __LINKEDIT"_s;
+    case DiagnosticCounter::UnreadableExportsTries:
+        return "unreadable exports tries"_s;
+    case DiagnosticCounter::ImagesSkippedForReadBudget:
+        return "images skipped for the read budget"_s;
+    case DiagnosticCounter::ReExports:
+        return "re-exports, which are not followed"_s;
+    case DiagnosticCounter::ExportsWithoutSingleAddress:
+        return "exports without a single address"_s;
+    case DiagnosticCounter::ThreadsListed:
+        return "threads listed"_s;
+    case DiagnosticCounter::ThreadStatesRead:
+        return "thread states read"_s;
+    case DiagnosticCounter::UnreadableThreadStates:
+        return "threads with unreadable state"_s;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+UTF8CString Diagnostics::context()
+{
+    StringPrintStream out;
+    for (const Diagnostics* scope = s_current; scope; scope = scope->m_parent)
+        scope->print(out);
+    return out.toUTF8CString();
+}
+
+void Diagnostics::print(PrintStream& out) const
+{
+    out.print(Client::name(), ":   while ", m_operation);
+    ASCIILiteral separator = ": "_s;
+    for (size_t i = 0; i < numberOfDiagnosticCounters; ++i) {
+        if (!m_counts[i])
+            continue;
+        out.print(separator, label(static_cast<DiagnosticCounter>(i)), " ", m_counts[i]);
+        separator = ", "_s;
+    }
+    out.print("\n");
 }
 
 } // namespace Corpse
@@ -55,4 +148,4 @@ void Error::report(const char* format, ...)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

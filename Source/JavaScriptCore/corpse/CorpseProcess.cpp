@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +27,33 @@
 #include "config.h"
 #include "CorpseProcess.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseError.h"
+#include <array>
+#include <span>
 
+#if OS(DARWIN)
 #include <errno.h>
+#include <libproc.h>
 #include <mach/mach.h>
 #include <mach/mach_error.h>
 #include <mach/mach_traps.h>
 #include <signal.h>
 #include <sys/proc.h>
 #include <sys/sysctl.h>
+#else
+#include <limits.h>
+#include <unistd.h>
+#include <wtf/text/MakeString.h>
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace Corpse {
+
+#if OS(DARWIN)
 
 // A task port name outlives the task it named: when the target exits, the right we
 // hold becomes a dead name while the name itself is unchanged. MACH_PORT_VALID only
@@ -51,10 +63,10 @@ namespace Corpse {
 // process that inherited the same pid.
 bool Process::holdsLiveTask() const
 {
-    if (!MACH_PORT_VALID(m_taskPort))
+    if (!isAttached())
         return false;
     int pid = -1;
-    return pid_for_task(m_taskPort, &pid) == KERN_SUCCESS && pid == m_pid;
+    return pid_for_task(taskPort(), &pid) == KERN_SUCCESS && pid == m_pid;
 }
 
 bool Process::isTranslated() const
@@ -81,7 +93,7 @@ bool Process::attach()
     mach_port_t taskPort = MACH_PORT_NULL;
     kern_return_t kr = task_for_pid(mach_task_self(), m_pid, &taskPort);
     if (kr == KERN_SUCCESS) {
-        m_taskPort = taskPort;
+        m_taskPort = OwnedTaskHandle::adopt(taskPort);
         return true;
     }
 
@@ -95,16 +107,50 @@ bool Process::attach()
     return false;
 }
 
-void Process::detach()
+UTF8CString Process::executablePath() const
 {
-    if (MACH_PORT_VALID(m_taskPort))
-        mach_port_deallocate(mach_task_self(), m_taskPort);
-    m_taskPort = MACH_PORT_NULL;
+    std::array<char, PROC_PIDPATHINFO_MAXSIZE> path;
+    int length = proc_pidpath(m_pid, path.data(), path.size());
+    if (length <= 0)
+        return { };
+    return UTF8CString(byteCast<char8_t>(std::span { path }.first(length)));
 }
+
+#else
+
+bool Process::holdsLiveTask() const
+{
+    return isAttached();
+}
+
+bool Process::isTranslated() const { return false; }
+
+// FIXME: Attach to processes other than this one.
+bool Process::attach()
+{
+    if (m_pid != getpid()) {
+        Error::report("Could not attach to PID %d: only this process can be attached to", static_cast<int>(m_pid));
+        return false;
+    }
+    m_taskPort = OwnedTaskHandle::adopt(m_pid);
+    return true;
+}
+
+UTF8CString Process::executablePath() const
+{
+    std::array<char, PATH_MAX> path;
+    ASCIICString link = makeString("/proc/"_s, m_pid, "/exe"_s).ascii();
+    ssize_t length = readlink(link.data(), path.data(), path.size());
+    if (length <= 0 || static_cast<size_t>(length) >= path.size())
+        return { };
+    return UTF8CString(byteCast<char8_t>(std::span { path }.first(length)));
+}
+
+#endif // OS(DARWIN)
 
 } // namespace Corpse
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

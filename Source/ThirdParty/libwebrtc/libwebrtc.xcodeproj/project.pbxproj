@@ -25778,7 +25778,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [ \"${ENABLE_LIBFUZZER}\" = \"YES\" ]; then\n    exit 0;\nfi\n\nEXP_GENERATED=\"${SCRIPT_OUTPUT_FILE_0}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\ncat \"${SCRIPT_INPUT_FILE_0}\" > \"${EXP_GENERATED}\"\n\nif [[ \"${WK_EXPORT_SYMBOLS_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_1}\" >> \"${EXP_GENERATED}\"\nfi\n\nif [[ \"${WK_EXPORT_DEBUG_SYMBOLS}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_2}\" >> \"${EXP_GENERATED}\"\nelse\n    cat \"${SCRIPT_INPUT_FILE_3}\" >> \"${EXP_GENERATED}\"\nfi\n";
+			shellScript = "set -e\n\nif [ \"${WEBRTC_EXPORT_ALL_SYMBOLS}\" = \"YES\" ]; then\n    exit 0;\nfi\n\nEXP_GENERATED=\"${SCRIPT_OUTPUT_FILE_0}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\ncat \"${SCRIPT_INPUT_FILE_0}\" > \"${EXP_GENERATED}\"\n\nif [[ \"${WK_EXPORT_SYMBOLS_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_1}\" >> \"${EXP_GENERATED}\"\nfi\n\nif [[ \"${WK_EXPORT_DEBUG_SYMBOLS}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_2}\" >> \"${EXP_GENERATED}\"\nelse\n    cat \"${SCRIPT_INPUT_FILE_3}\" >> \"${EXP_GENERATED}\"\nfi\n";
 		};
 		5CD286461E6E154E0094FDC8 /* Check for Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;

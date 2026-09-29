@@ -24,47 +24,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CorpseByteParser.h"
+#pragma once
+
+#include <JavaScriptCore/CorpsePlatform.h>
 
 #if ENABLE(MYA)
 
-#include <wtf/LEBDecoder.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 namespace Corpse {
 
-std::optional<uint8_t> ByteParser::consumeByte()
-{
-    if (m_position >= m_data.size())
-        return std::nullopt;
-    return m_data[m_position++];
-}
+// Sizes and counts read out of a corpse are used to bound loops and to size
+// allocations, so they are checked against these limits first. Each one is a
+// sanity check on a single value: it says the struct we read was not what we
+// thought it was, in which case the addresses in it are not worth chasing. They
+// are not a bound on the work a lookup can do, because the per-image limits
+// multiply by the image count. maxTotalBytesRead below is that bound.
+//
+// The values sit above what was empirically measured: across every Mach-O image
+// installed on a sample system the largest load commands were 7.4 KB and the
+// largest exports trie 2.1 MB, and a process that dlopens every framework on the
+// system reaches about 2,800 images.
+constexpr size_t maxLoadCommandsSize = 128 * KB; // About 17× the measured maximum.
+constexpr size_t maxExportsTrieSize = 16 * MB; // About 8× the measured maximum.
+constexpr uint32_t maxImageCount = 16 * 1024; // About 6× the measured maximum.
 
-std::optional<uint64_t> ByteParser::consumeULEB128()
-{
-    size_t start = m_position;
-    uint64_t result = 0;
-    if (WTF::LEBDecoder::decodeUInt64(m_data, m_position, result))
-        return result;
-    m_position = start;
-    return std::nullopt;
-}
-
-std::optional<std::string_view> ByteParser::consumeCString()
-{
-    size_t start = m_position;
-    while (m_position < m_data.size() && m_data[m_position])
-        ++m_position;
-    if (m_position >= m_data.size()) {
-        m_position = start;
-        return std::nullopt;
-    }
-    std::string_view result(spanReinterpretCast<const char>(m_data.subspan(start, m_position - start)));
-    ++m_position; // Consume the null terminator.
-    return result;
-}
+// A lookup that finds nothing will read every image's load commands and exports
+// trie, which measured 101 MB for the ~2,800 image process above and 0.4 MB for
+// a small one. This caps the total for one lookup, so a corpse claiming many
+// large images cannot turn a single symbol lookup into unbounded mapping.
+constexpr size_t maxTotalBytesRead = 256 * MB; // About 2.5× the measured maximum.
 
 } // namespace Corpse
 } // namespace JSC
