@@ -272,6 +272,38 @@ TEST(H264UtilitiesCocoa, ConvertsAnnexBToLengthPrefixedSkippingLeadingParameterS
     EXPECT_EQ(lengthPrefixed[4], 0x65);
 }
 
+// SPS-followed-immediately-by-a-slice (i.e., no PPS between them).
+static constexpr uint8_t kH264AnnexBSpsThenSlice[] = {
+    // SPS (13 payload bytes, copied from kH264AnnexBChunk).
+    0x00, 0x00, 0x00, 0x01, 0x67, 0x42, 0x80, 0x20, 0xda, 0x01, 0x40, 0x16,
+    0xe8, 0x06, 0xd0, 0xa1, 0x35,
+    // IDR slice (4 payload bytes) — deliberately not a PPS.
+    0x00, 0x00, 0x00, 0x01, 0x65, 0xb8, 0x40, 0xf0,
+};
+
+TEST(H264UtilitiesCocoa, CreateVideoInfoFromAnnexBReturnsNullptrWhenSpsIsNotFollowedByPps)
+{
+    auto naluIndices = findNaluIndices(std::span { kH264AnnexBSpsThenSlice });
+    ASSERT_EQ(naluIndices.size(), 2u);
+    EXPECT_FALSE(!!createVideoInfoFromAVCAnnexBStream(std::span { kH264AnnexBSpsThenSlice }, naluIndices));
+}
+
+TEST(H264UtilitiesCocoa, ConvertsAnnexBToLengthPrefixedKeepsSpsWhenPpsMissing)
+{
+    auto naluIndices = findNaluIndices(std::span { kH264AnnexBSpsThenSlice });
+    ASSERT_EQ(naluIndices.size(), 2u);
+
+    auto lengthPrefixed = convertAVCAnnexBToLengthPrefixed(std::span { kH264AnnexBSpsThenSlice }, naluIndices);
+
+    constexpr size_t spsSize = 13;
+    constexpr size_t sliceSize = 4;
+    ASSERT_EQ(lengthPrefixed.size(), 4 + spsSize + 4 + sliceSize);
+    EXPECT_EQ(lengthPrefixed[3], spsSize);
+    EXPECT_EQ(lengthPrefixed[4], 0x67);
+    EXPECT_EQ(lengthPrefixed[4 + spsSize + 3], sliceSize);
+    EXPECT_EQ(lengthPrefixed[4 + spsSize + 4], 0x65);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(COCOA)

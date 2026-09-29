@@ -233,7 +233,10 @@ static bool hevcAnnexBVpsIsFollowedBySpsAndPps(std::span<const uint8_t> data, co
 RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
 {
     auto vpsIndex = findHEVCAnnexBVpsIndex(data, naluIndices);
-    if (vpsIndex == notFound || !hevcAnnexBVpsIsFollowedBySpsAndPps(data, naluIndices, vpsIndex)) {
+    if (vpsIndex == notFound)
+        return nullptr;
+
+    if (!hevcAnnexBVpsIsFollowedBySpsAndPps(data, naluIndices, vpsIndex)) {
         RELEASE_LOG_ERROR(WebRTC, "createVideoInfoFromHEVCAnnexBStream NAL units following VPS are not SPS/PPS");
         return nullptr;
     }
@@ -255,7 +258,9 @@ RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t> d
 
 Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices)
 {
-    // We skip all NAL units up to and including the VPS/SPS/PPS triplet, if present, as parameter sets belong in the format description, not in the per-sample data.
+    // FIXME: We basically assume that VPS is first, SPS is second and  PPS is thitd. But there may be nalus between them, and VPS/SPS/PPS order is not guaranteed.
+    // We also need to validate what to do for a frame with a VPS, or a SPS or a PPS but not all three of them.
+    // For now, we skip all NAL units up to and including the VPS/SPS/PPS triplet, if present, as parameter sets belong in the format description, not in the per-sample data.
     size_t startIndex = 0;
     auto vpsIndex = findHEVCAnnexBVpsIndex(data, naluIndices);
     if (vpsIndex != notFound) {

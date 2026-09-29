@@ -27,7 +27,9 @@
 
 #if PLATFORM(COCOA)
 
+#import <WebCore/AnnexBUtilities.h>
 #import <WebCore/HEVCUtilitiesCocoa.h>
+#import <WebCore/TrackInfo.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -217,6 +219,62 @@ TEST(HEVCUtilitiesCocoa, TruncatedNALULengthReturnsEmpty)
     RetainPtr sample = adoptCF(rawSampleBuffer);
 
     EXPECT_TRUE(convertHEVCCMSampleBufferToAnnexB(sample, false).isEmpty());
+}
+
+// Annex B stream carrying an SPS and an IDR slice but no VPS.
+static constexpr uint8_t kHEVCAnnexBSpsThenSlice[] = {
+    0x00, 0x00, 0x00, 0x01, 0x42, 0x01, 0xaa, 0xbb, 0xcc,
+    0x00, 0x00, 0x00, 0x01, 0x26, 0x01, 0x11, 0x22, 0x33,
+};
+
+TEST(HEVCUtilitiesCocoa, CreateVideoInfoFromAnnexBReturnsNullptrForSpsOnlyFrame)
+{
+    auto naluIndices = findNaluIndices(std::span { kHEVCAnnexBSpsThenSlice });
+    ASSERT_EQ(naluIndices.size(), 2u);
+    EXPECT_FALSE(!!createVideoInfoFromHEVCAnnexBStream(std::span { kHEVCAnnexBSpsThenSlice }, naluIndices));
+}
+
+TEST(HEVCUtilitiesCocoa, ConvertsAnnexBToLengthPrefixedKeepsAllNalusWhenVpsMissing)
+{
+    auto naluIndices = findNaluIndices(std::span { kHEVCAnnexBSpsThenSlice });
+    ASSERT_EQ(naluIndices.size(), 2u);
+
+    auto lengthPrefixed = convertHEVCAnnexBToLengthPrefixed(std::span { kHEVCAnnexBSpsThenSlice }, naluIndices);
+    constexpr size_t spsSize = 5;
+    constexpr size_t sliceSize = 5;
+    ASSERT_EQ(lengthPrefixed.size(), 4 + spsSize + 4 + sliceSize);
+    EXPECT_EQ(lengthPrefixed[3], spsSize);
+    EXPECT_EQ(lengthPrefixed[4], 0x42);
+    EXPECT_EQ(lengthPrefixed[4 + spsSize + 3], sliceSize);
+    EXPECT_EQ(lengthPrefixed[4 + spsSize + 4], 0x26);
+}
+
+// VPS present but not followed by SPS/PPS.
+static constexpr uint8_t kHEVCAnnexBVpsThenSlice[] = {
+    0x00, 0x00, 0x00, 0x01, 0x40, 0x01, 0xaa, 0xbb,
+    0x00, 0x00, 0x00, 0x01, 0x26, 0x01, 0x11, 0x22, 0x33,
+};
+
+TEST(HEVCUtilitiesCocoa, CreateVideoInfoFromAnnexBReturnsNullptrWhenVpsNotFollowedBySpsAndPps)
+{
+    auto naluIndices = findNaluIndices(std::span { kHEVCAnnexBVpsThenSlice });
+    ASSERT_EQ(naluIndices.size(), 2u);
+    EXPECT_FALSE(!!createVideoInfoFromHEVCAnnexBStream(std::span { kHEVCAnnexBVpsThenSlice }, naluIndices));
+}
+
+TEST(HEVCUtilitiesCocoa, ConvertsAnnexBToLengthPrefixedKeepsVpsWhenSpsAndPpsMissing)
+{
+    auto naluIndices = findNaluIndices(std::span { kHEVCAnnexBVpsThenSlice });
+    ASSERT_EQ(naluIndices.size(), 2u);
+
+    auto lengthPrefixed = convertHEVCAnnexBToLengthPrefixed(std::span { kHEVCAnnexBVpsThenSlice }, naluIndices);
+    constexpr size_t vpsSize = 4;
+    constexpr size_t sliceSize = 5;
+    ASSERT_EQ(lengthPrefixed.size(), 4 + vpsSize + 4 + sliceSize);
+    EXPECT_EQ(lengthPrefixed[3], vpsSize);
+    EXPECT_EQ(lengthPrefixed[4], 0x40);
+    EXPECT_EQ(lengthPrefixed[4 + vpsSize + 3], sliceSize);
+    EXPECT_EQ(lengthPrefixed[4 + vpsSize + 4], 0x26);
 }
 
 } // namespace TestWebKitAPI
