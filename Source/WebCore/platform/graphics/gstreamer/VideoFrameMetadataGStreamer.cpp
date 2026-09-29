@@ -74,6 +74,10 @@ static std::pair<GRefPtr<GstBuffer>, VideoFrameMetadataGStreamer*> ensureVideoFr
     IGNORE_WARNINGS_BEGIN("cast-align");
     GRefPtr modifiedBuffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
     IGNORE_WARNINGS_END;
+    if (!modifiedBuffer) {
+        GST_ERROR("Failed to make buffer writable");
+        return { nullptr, nullptr };
+    }
     meta = VIDEO_FRAME_METADATA_CAST(gst_buffer_add_meta(modifiedBuffer.get(), videoFrameMetadataGetInfo(), nullptr));
     return { WTF::move(modifiedBuffer), meta };
 }
@@ -150,6 +154,10 @@ GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameMetadata(GRefPtr<GstBuffer>&& buf
     IGNORE_WARNINGS_BEGIN("cast-align");
     GRefPtr modifiedBuffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
     IGNORE_WARNINGS_END;
+    if (!modifiedBuffer) {
+        GST_ERROR("Failed to make buffer writable");
+        return nullptr;
+    }
     webkitGstBufferAddVideoFrameMetadata(modifiedBuffer.get(), metadata, rotation, isMirrored, hint, colorSpace);
     return modifiedBuffer;
 }
@@ -181,6 +189,8 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
             return GST_PAD_PROBE_REMOVE;
 
         auto [modifiedBuffer, meta] = ensureVideoFrameMetadata(GRefPtr(GST_PAD_PROBE_INFO_BUFFER(info)));
+        if (!modifiedBuffer || !meta)
+            return GST_PAD_PROBE_OK;
         gst_pad_probe_info_set_buffer(info, modifiedBuffer.leakRef());
 
         Locker locker { meta->priv->lock };

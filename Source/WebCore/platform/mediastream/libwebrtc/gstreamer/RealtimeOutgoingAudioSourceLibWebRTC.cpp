@@ -170,6 +170,10 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
         }
 
         GRefPtr inBuffer = adoptGRef(gst_buffer_make_writable(gst_adapter_take_buffer(m_adapter.get(), inChunkSampleCount * m_inputStreamDescription.bpf)));
+        if (!inBuffer) {
+            GST_ERROR("Could not take writable buffer from adapter.");
+            return;
+        }
         if (silenced) {
             GST_TRACE("Audio buffer will contain silence");
             webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.mutableSpan().data(), outBufferSize);

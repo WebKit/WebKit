@@ -481,11 +481,15 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         info = infoFromCaps(outputCaps);
         GRefPtr buffer = gst_sample_get_buffer(sample.get());
         auto outputBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), options.timeMetadata, options.rotation, options.isMirrored, options.contentHint);
+        if (!outputBuffer)
+            return nullptr;
         setBufferFields(outputBuffer.get(), options.presentationTime, frameRate);
         sample = adoptGRef(gst_sample_make_writable(sample.leakRef()));
         gst_sample_set_buffer(sample.get(), outputBuffer.get());
     } else {
         auto outputBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), options.timeMetadata, options.rotation, options.isMirrored, options.contentHint);
+        if (!outputBuffer)
+            return nullptr;
         gst_buffer_add_video_meta(outputBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
         setBufferFields(outputBuffer.get(), options.presentationTime, frameRate);
         sample = adoptGRef(gst_sample_new(outputBuffer.get(), caps.get(), nullptr, nullptr));
@@ -569,6 +573,8 @@ void VideoFrameGStreamer::setMetadata(std::optional<VideoFrameTimeMetadata> meta
     GRefPtr buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
     auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(WTF::move(buffer), metadata, rotation(), isMirrored(), hint, colorSpace);
+    if (!modifiedBuffer)
+        return;
     m_sample = adoptGRef(gst_sample_make_writable(m_sample.leakRef()));
     gst_sample_set_buffer(m_sample.get(), modifiedBuffer.get());
 }
