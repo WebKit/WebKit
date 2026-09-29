@@ -360,6 +360,11 @@ static double toDouble(std::span<const CharacterType> characters)
     if (characters.empty())
         return 0.0;
 
+    // Only these characters can start a StrNumericLiteral once white space is skipped.
+    auto first = characters.front();
+    if (!isASCIIDigit(first) && first != '.' && first != '+' && first != '-' && first != 'I')
+        return PNaN;
+
     double number;
     if (characters.front() == '0' && characters.size() > 2) {
         if ((characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
