@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 50px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 50px;
+          background-color: green;
+          animation-name: animate;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+      }
+      /* Only the colour animates, so the filter outsets stay the same for the whole animation and the
+         layer's painted rect never changes. The damage has to come from the filter value changing. */
+      @keyframes animate {
+          from {
+              filter: drop-shadow(0 0 5px red);
+          }
+          to {
+              filter: drop-shadow(0 0 5px blue);
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var framesBeforeAnimation = 0;
+
+      // Wait for the animation to be started instead of for a fixed amount of time, and then look at
+      // the frames that were produced while it was running.
+      document.getAnimations()[0].ready.then(() => {
+          processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+              () => { framesBeforeAnimation = allFramesDamages().length; },
+              () => { },
+              () => {
+                  const damages = allFramesDamages().slice(framesBeforeAnimation);
+                  if (!assertGt(damages.length, 0, "the running animation produced no frame at all"))
+                      return;
+                  for (const damage of damages) {
+                      if (!assertGt(damage.rects.length, 0, "a running filter animation must damage every frame")
+                          || !assertContains([37, 37, 90, 90], damage.bounds))
+                          return;
+                  }
+              },
+          ], 0);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      #x {
+          position: fixed;
+          left: 50px;
+          top: 50px;
+          width: 100px;
+          height: 100px;
+          background: green;
+          filter: blur(10px);
+      }
+      #y {
+          position: absolute;
+          left: 10px;
+          top: 10px;
+          width: 20px;
+          height: 20px;
+          background: red;
+          will-change: transform;
+      }
+    </style>
+  </head>
+  <body>
+    <div id=x><div id=y></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { document.getElementById('y').style.background = 'blue'; },
+          // The blur samples the whole subtree, so a change in the child changes the filtered output well
+          // outside the child's own bounds. The damage has to cover the blurred layer plus its outsets,
+          // not just the 20x20 the child repainted.
+          () => { assertRectsEq([latestFrameDamage().bounds], [[22, 22, 156, 156]]); },
+      ], 0);
+    </script>
+  </body>
+</html>
