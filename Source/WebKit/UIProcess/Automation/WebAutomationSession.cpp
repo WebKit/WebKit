@@ -1320,7 +1320,7 @@ void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNod
     String contextHandle;
     String originalOpenerHandle = "null"_s;
 
-    if (tree.info.isMainFrame) {
+    if (frame->isMainFrame()) {
         contextHandle = handleForWebPageProxy(*page);
         if (RefPtr openerPage = this->getOpenerPage(*page))
             originalOpenerHandle = handleForWebPageProxy(*openerPage);

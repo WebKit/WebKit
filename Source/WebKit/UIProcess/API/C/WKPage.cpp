@@ -2371,7 +2371,8 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
 
         void didFailProvisionalNavigationWithError(WebPageProxy& page, FrameInfoData&& frameInfo, API::Navigation* navigation, const URL&, const WebCore::ResourceError& error, API::Object* userData) override
         {
-            if (frameInfo.isMainFrame) {
+            RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+            if (frame && frame->isMainFrame()) {
                 if (m_client.didFailProvisionalNavigation)
                     m_client.didFailProvisionalNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
             } else {

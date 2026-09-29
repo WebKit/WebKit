@@ -2387,7 +2387,10 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
                 return;
             auto requestURL = request.url();
             auto error = cannotShowURLError(request);
-            protectedThis->m_navigationClient->didFailProvisionalNavigationWithError(*protectedThis, legacyEmptyFrameInfo(WTF::move(request)), navigation.ptr(), requestURL, error, nullptr);
+            auto frameInfo = legacyEmptyFrameInfo(WTF::move(request));
+            if (RefPtr mainFrame = protectedThis->m_mainFrame)
+                frameInfo.frameID = mainFrame->frameID();
+            protectedThis->m_navigationClient->didFailProvisionalNavigationWithError(*protectedThis, WTF::move(frameInfo), navigation.ptr(), requestURL, error, nullptr);
         });
         return;
     }
@@ -8636,7 +8639,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     if (m_loaderClient)
         m_loaderClient->didStartProvisionalLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(protect(userData.object()).get()).get());
     else {
-        if (frameInfo.isMainFrame)
+        if (frame->isMainFrame())
             m_navigationClient->didStartProvisionalNavigation(*this, request, navigation.get(), process->transformHandlesToObjects(protect(userData.object()).get()).get());
         m_navigationClient->didStartProvisionalLoadForFrame(*this, WTF::move(request), WTF::move(frameInfo));
     }
@@ -9204,7 +9207,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (m_loaderClient)
         m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation, process->transformHandlesToObjects(protect(userData.object()).get()).get());
     else {
-        if (frameInfo.isMainFrame)
+        if (frame->isMainFrame())
             m_navigationClient->didCommitNavigation(*this, navigation, process->transformHandlesToObjects(protect(userData.object()).get()).get());
         m_navigationClient->didCommitLoadForFrame(*this, WTF::move(request), WTF::move(frameInfo));
     }
@@ -9582,7 +9585,7 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
     if (m_loaderClient)
         m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(protect(userData.object()).get()).get());
     else {
-        if (frameInfo.isMainFrame)
+        if (frame->isMainFrame())
             m_navigationClient->didFinishNavigation(*this, navigation.get(), process->transformHandlesToObjects(protect(userData.object()).get()).get());
         m_navigationClient->didFinishLoadForFrame(*this, WTF::move(request), WTF::move(frameInfo));
     }
@@ -9661,7 +9664,7 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
     if (m_loaderClient)
         m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, process->transformHandlesToObjects(protect(userData.object()).get()).get());
     else {
-        if (frameInfo.isMainFrame)
+        if (frame->isMainFrame())
             m_navigationClient->didFailNavigationWithError(*this, frameInfo, navigation.get(), request.url(), error, process->transformHandlesToObjects(protect(userData.object()).get()).get());
         m_navigationClient->didFailLoadWithErrorForFrame(*this, WTF::move(request), error, WTF::move(frameInfo));
     }
@@ -10666,7 +10669,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     RefPtr navigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
 
     // COOP only applies to top-level browsing contexts.
-    if (frameInfo.isMainFrame && coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank ? WebCore::IsInitialAboutBlank::Yes : WebCore::IsInitialAboutBlank::No, activeDocumentCOOPValue, frameInfo.securityOrigin.securityOrigin().get(), obtainCrossOriginOpenerPolicy(response).value, SecurityOrigin::create(response.url()).get())) {
+    if (frame->isMainFrame() && coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank ? WebCore::IsInitialAboutBlank::Yes : WebCore::IsInitialAboutBlank::No, activeDocumentCOOPValue, frameInfo.securityOrigin.securityOrigin().get(), obtainCrossOriginOpenerPolicy(response).value, SecurityOrigin::create(response.url()).get())) {
         mainFrame()->disownOpener();
         m_openedMainFrameName = { };
     }

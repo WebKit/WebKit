@@ -23,6 +23,7 @@
 #include "APINavigationAction.h"
 #include "APINavigationClient.h"
 #include "FrameInfoData.h"
+#include "WebFrameProxy.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitNavigationPolicyDecisionPrivate.h"
@@ -61,7 +62,8 @@ private:
 
     void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, API::Navigation*, const URL&, const ResourceError& resourceError, API::Object* /* userData */) override
     {
-        if (!frameInfo.isMainFrame)
+        RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+        if (!frame || !frame->isMainFrame())
             return;
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
@@ -84,7 +86,8 @@ private:
 
     void didFailNavigationWithError(WebPageProxy&, const FrameInfoData& frameInfo, API::Navigation*, const URL&, const ResourceError& resourceError, API::Object* /* userData */) override
     {
-        if (!frameInfo.isMainFrame)
+        RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+        if (!frame || !frame->isMainFrame())
             return;
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));

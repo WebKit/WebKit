@@ -320,7 +320,6 @@ FrameInfoData WebFrame::info() const
     }
 
     return {
-        isMainFrame(),
         frameType,
         // FIXME: This should use the full request.
         ResourceRequest(url()),

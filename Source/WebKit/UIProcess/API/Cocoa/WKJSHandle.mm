@@ -26,8 +26,8 @@
 #import "config.h"
 #import "WKJSHandleInternal.h"
 
+#import "APIFrameInfo.h"
 #import "APIJSHandle.h"
-#import "FrameInfoData.h"
 #import "WKContentWorldInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKRemoteObjectCoder.h"
@@ -49,7 +49,7 @@
 
 - (WKFrameInfo *)sourceFrame
 {
-    return wrapper(API::FrameInfo::create(WebKit::FrameInfoData { _ref->info().frameInfo })).autorelease();
+    return wrapper(_ref->sourceFrame());
 }
 
 - (WKContentWorld *)contentWorld

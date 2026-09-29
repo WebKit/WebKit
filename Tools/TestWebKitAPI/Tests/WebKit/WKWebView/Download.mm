@@ -3492,6 +3492,7 @@ TEST(WKDownload, OriginatingFrameAndUserGesture)
         EXPECT_WK_STREQ(download.originatingFrame.securityOrigin.host, "");
         EXPECT_NOT_NULL(download.originatingFrame.request);
         EXPECT_WK_STREQ(download.originatingFrame.request.URL.absoluteString, "about:blank");
+        EXPECT_TRUE(download.originatingFrame.isMainFrame);
         EXPECT_TRUE(download.isUserInitiated);
         checkedDownload = true;
     }];

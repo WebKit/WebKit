@@ -152,6 +152,42 @@ TEST(JSHandle, Reuse)
     EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return fun()" withArguments:@{ @"fun":fun } inFrame:nil inContentWorld:world.get()] isEqual:@42]);
 }
 
+TEST(JSHandle, SourceFrameAfterWebViewClosed)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    worldConfiguration.get().jsHandleCreationEnabled = YES;
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+
+    RetainPtr<WKJSHandle> mainFrameHandle;
+    RetainPtr<WKJSHandle> childFrameHandle;
+    @autoreleasepool {
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+        RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        webView.get().navigationDelegate = navigationDelegate.get();
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        RetainPtr childFrame = [webView firstChildFrame];
+        mainFrameHandle = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle({})" inFrame:nil inContentWorld:world.get()];
+        childFrameHandle = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle({})" inFrame:childFrame.get() inContentWorld:world.get()];
+        EXPECT_TRUE([mainFrameHandle isKindOfClass:WKJSHandle.class]);
+        EXPECT_TRUE([childFrameHandle isKindOfClass:WKJSHandle.class]);
+
+        [webView _close];
+    }
+
+    EXPECT_TRUE(mainFrameHandle.get().sourceFrame.isMainFrame);
+    EXPECT_WK_STREQ(mainFrameHandle.get().sourceFrame.request.URL.host, "example.com");
+    EXPECT_FALSE(childFrameHandle.get().sourceFrame.isMainFrame);
+    EXPECT_WK_STREQ(childFrameHandle.get().sourceFrame.request.URL.host, "webkit.org");
+}
+
 TEST(JSHandle, HandleDoesNotKeepDocumentAliveAfterNavigation)
 {
     HTTPServer server({
