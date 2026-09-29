@@ -1,0 +1,51 @@
+<!doctype html>
+<title>SVGPathElement.getPathData() returns plain objects</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathSegment">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// SVGPathSegment is a dictionary, so getPathData() hands back ordinary objects
+// with no identity tied to the element and no live connection to the path.
+
+test(() => {
+  const segment = createPath("M 0 0 L 10 10").getPathData()[0];
+  assert_equals(Object.getPrototypeOf(segment), Object.prototype,
+      "a plain object, not an instance of an interface");
+  assert_array_equals(Object.keys(segment).sort(), ["type", "values"]);
+}, "getPathData() segments are plain objects with type and values");
+
+test(() => {
+  const segment = createPath("M 0 0 L 10 10").getPathData()[0];
+  assert_true(Array.isArray(segment.values), "values is a real Array");
+}, "getPathData() segment values is an Array");
+
+test(() => {
+  const path = createPath("M 0 0 L 10 10");
+  const segments = path.getPathData();
+  segments[1].type = "C";
+  segments[1].values[0] = 999;
+  // The dictionary was copied out, so nothing above reached the element.
+  assert_path_data_equals(path.getPathData(),
+      [{ type: "M", values: [0, 0] }, { type: "L", values: [10, 10] }]);
+  assert_equals(path.getAttribute("d"), "M 0 0 L 10 10");
+}, "mutating a returned segment does not change the path");
+
+test(() => {
+  const path = createPath("M 0 0 L 10 10");
+  const first = path.getPathData();
+  const second = path.getPathData();
+  assert_not_equals(first, second, "a new array each call");
+  assert_not_equals(first[0], second[0], "new segment objects too");
+  assert_not_equals(first[0].values, second[0].values, "and new values arrays");
+}, "getPathData() shares nothing between calls");
+
+test(() => {
+  // SVGPathSegment is a dictionary, so it has no interface object. Feature
+  // detection has to go through the prototype instead.
+  assert_equals(typeof self.SVGPathSegment, "undefined");
+  assert_true("getPathData" in SVGPathElement.prototype);
+}, "there is no SVGPathSegment interface object");
+</script>

@@ -3752,6 +3752,8 @@ svg/SVGPathByteStreamBuilder.cpp
 svg/SVGPathByteStreamSource.cpp
 svg/SVGPathElement.cpp @header:RenderStyleGetters
 svg/SVGPathParser.cpp
+svg/SVGPathSegmentsBuilder.cpp
+svg/SVGPathSegmentsSource.cpp
 svg/SVGPathStringBuilder.cpp
 svg/SVGPathStringViewSource.cpp
 svg/SVGPathTraversalStateBuilder.cpp
@@ -5141,7 +5143,10 @@ JSSVGMatrix.cpp
 JSSVGMetadataElement.cpp
 JSSVGNumber.cpp
 JSSVGNumberList.cpp
+JSSVGPathData.cpp
+JSSVGPathDataSettings.cpp
 JSSVGPathElement.cpp
+JSSVGPathSegment.cpp
 JSSVGPatternElement.cpp
 JSSVGPoint.cpp
 JSSVGPointList.cpp

@@ -4344,6 +4344,7 @@ sub ToMethodName
     $ret =~ s/hTML/html/ if $ret =~ /^hTML/;
     $ret =~ s/hDR/hdr/ if $ret =~ /^hDR/;
     $ret =~ s/jS/js/ if $ret =~ /^jS/;
+    $ret =~ s/sVG/svg/ if $ret =~ /^sVG/;
     $ret =~ s/uRL/url/ if $ret =~ /^uRL/;
     $ret =~ s/xML/xml/ if $ret =~ /^xML/;
     $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;

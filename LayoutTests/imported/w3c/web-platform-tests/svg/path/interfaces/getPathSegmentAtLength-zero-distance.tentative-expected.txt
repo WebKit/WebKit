@@ -1,0 +1,5 @@
+
+PASS getPathSegmentAtLength(0) returns the segment after the leading moveto
+PASS getPathSegmentAtLength() with a negative distance clamps to zero
+PASS getPathSegmentAtLength() on a moveto-only path returns the moveto
+

@@ -1,0 +1,6 @@
+
+PASS getPathSegmentAtLength(15) clamps to the end and returns the last segment
+PASS getPathSegmentAtLength(15.5) clamps to the end and returns the last segment
+PASS getPathSegmentAtLength(100) clamps to the end and returns the last segment
+PASS getPathSegmentAtLength(1000000000) clamps to the end and returns the last segment
+

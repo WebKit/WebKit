@@ -1,0 +1,5 @@
+
+PASS getPathSegmentAtLength(5) on a boundary returns the later segment
+PASS getPathSegmentAtLength(10) on a boundary returns the later segment
+PASS getPathSegmentAtLength() either side of a boundary
+

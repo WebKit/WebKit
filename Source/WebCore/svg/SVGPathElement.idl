@@ -28,4 +28,7 @@
     Exposed=Window
 ] interface SVGPathElement : SVGGeometryElement {
     unsigned long getPathSegAtLength(optional unrestricted float distance = NaN);
+    [EnabledBySetting=SVGPathDataAPIEnabled] SVGPathSegment? getPathSegmentAtLength(float distance);
 };
+
+SVGPathElement includes SVGPathData;

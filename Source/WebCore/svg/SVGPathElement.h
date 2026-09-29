@@ -26,11 +26,13 @@
 #include "SVGNames.h"
 #include "SVGPath.h"
 #include "SVGPathByteStream.h"
+#include "SVGPathSegment.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGPoint;
+struct SVGPathDataSettings;
 
 class SVGPathElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGPathElement);
@@ -41,6 +43,16 @@ public:
     float getTotalLength() const final;
     ExceptionOr<Ref<SVGPoint>> getPointAtLength(float distance) const final;
     unsigned getPathSegAtLength(float distance) const;
+
+    // The SVGPathData mixin. Reads the base value of the "d" attribute, never the
+    // CSS computed value and never the animated value.
+    // https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathData
+    Vector<SVGPathSegment> getPathData(SVGPathDataSettings&&) const;
+    void setPathData(Vector<SVGPathSegment>&&);
+
+    // On the interface rather than the mixin, but it reads the same base value, as
+    // Gecko does. https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength
+    std::optional<SVGPathSegment> getPathSegmentAtLength(float distance) const;
 
     FloatRect getBBox(StyleUpdateStrategy = StyleUpdateStrategy::Allow) final;
 

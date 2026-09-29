@@ -1,0 +1,57 @@
+<!doctype html>
+<title>getPathData({normalize: true}) with relative commands</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathData">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// normalize converts to "the base set of absolute commands (M, L, C and Z), with
+// the values adjusted accordingly". getPathData-normalize.html covers the
+// absolute forms; these are the relative ones, where the current point matters.
+const CASES = [
+  ["relative lineto", "M 10 10 l 5 0",
+   [{ type: "M", values: [10, 10] }, { type: "L", values: [15, 10] }]],
+
+  ["relative horizontal", "M 10 10 h 5",
+   [{ type: "M", values: [10, 10] }, { type: "L", values: [15, 10] }]],
+
+  ["relative vertical", "M 10 10 v 5",
+   [{ type: "M", values: [10, 10] }, { type: "L", values: [10, 15] }]],
+
+  ["relative cubic", "M 10 0 c 1 2 3 4 5 6",
+   [{ type: "M", values: [10, 0] }, { type: "C", values: [11, 2, 13, 4, 15, 6] }]],
+
+  // Quadratic raised to cubic: c1 = p0 + 2/3(c - p0), c2 = p1 + 2/3(c - p1).
+  // p0 (0,0), control (3,0), end (6,0) gives (2,0) and (4,0).
+  ["relative quadratic", "M 0 0 q 3 0 6 0",
+   [{ type: "M", values: [0, 0] }, { type: "C", values: [2, 0, 4, 0, 6, 0] }]],
+
+  ["relative closepath", "M 0 0 l 10 0 z",
+   [{ type: "M", values: [0, 0] }, { type: "L", values: [10, 0] }, { type: "Z", values: [] }]],
+
+  // After a closepath the current point returns to the subpath's initial point,
+  // so the following relative lineto is measured from there.
+  ["relative lineto after closepath", "M 10 10 l 10 0 z l 0 5",
+   [{ type: "M", values: [10, 10] }, { type: "L", values: [20, 10] },
+    { type: "Z", values: [] }, { type: "L", values: [10, 15] }]]
+];
+
+for (const [label, d, expected] of CASES) {
+  test(() => {
+    assert_path_data_equals(createPath(d).getPathData({ normalize: true }), expected, 0.0005);
+  }, `normalize: ${label}`);
+}
+
+test(() => {
+  // A relative arc decomposes into cubics like an absolute one; check the shape
+  // and the end point rather than every control point.
+  const data = createPath("M 10 10 a 10 10 0 0 1 20 0").getPathData({ normalize: true });
+  assert_equals(data[0].type, "M");
+  for (let i = 1; i < data.length; i++)
+    assert_equals(data[i].type, "C", `segment ${i}`);
+  assert_array_approx_equals(data[data.length - 1].values.slice(-2), [30, 10], 0.0005,
+      "ends at the relative arc's endpoint");
+}, "normalize: relative arc decomposes into cubics");
+</script>
