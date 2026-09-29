@@ -29,6 +29,7 @@ messages -> WebFrame {
     GetFrameInfo() -> (struct std::optional<WebKit::FrameInfoData> data)
     CreateProvisionalFrame(struct WebKit::ProvisionalFrameCreationParameters creationParameters)
     DestroyProvisionalFrame();
+    UpdateSandboxFlags(WebCore::SandboxFlags sandboxFlags)
     FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
     TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);
