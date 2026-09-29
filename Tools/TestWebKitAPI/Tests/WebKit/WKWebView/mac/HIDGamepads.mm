@@ -27,12 +27,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
-#import "TestURLSchemeHandler.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/mac/VirtualGamepad.h"
+#import "InstanceMethodSwizzler.h"
+#import "TestURLSchemeHandler.h"
 #import <WebCore/GameControllerSoftLink.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 
@@ -783,6 +786,80 @@ TEST(Gamepad, DisconnectDuringInput)
     NSString *expectedName = @"\"Virtual Nimbus Extended Gamepad\"";
     NSString *expectedDisconnect = [NSString stringWithFormat:@"Disconnect: %@", expectedName];
     EXPECT_TRUE([messageHandler.get().messages[1] isEqualToString:expectedDisconnect]);
+}
+
+static constexpr auto gamepadIframeBytes = R"GAMEPADRESOURCE(
+<script>
+navigator.getGamepads();
+window.webkit.messageHandlers.gamepad.postMessage("polled");
+</script>
+)GAMEPADRESOURCE"_s;
+
+TEST(Gamepad, CrossSiteIframeReceivesInput)
+{
+    [WebCore::getGCControllerClassSingleton() setShouldMonitorBackgroundEvents:YES];
+
+    auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { gamepadIframeBytes } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr messageHandler = adoptNS([[GamepadMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gamepad"];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView.get().configuration.processPool _setUsesOnlyHIDGamepadProviderForTesting:YES];
+    keyWindowForTesting = [webView window];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [[webView window] makeFirstResponder:webView.get()];
+
+    // Resigning/reinstating the key window state triggers the "key window did change" notification that WKWebView currently
+    // needs to convince it to monitor gamepad devices
+    [[webView window] resignKeyWindow];
+    [[webView window] makeKeyWindow];
+
+    // Wait for the cross-site iframe's process to start using gamepads before a gamepad is connected.
+    EXPECT_TRUE(Util::runFor(&didReceiveMessage, 5_s));
+    didReceiveMessage = false;
+    ASSERT_EQ(messageHandler.get().messages.size(), 1u);
+    EXPECT_WK_STREQ(messageHandler.get().messages[0], "polled");
+
+    auto mapping = VirtualGamepad::steelSeriesNimbusMapping();
+    mapping.vendorID = HIDVendorID::Fake;
+    auto gamepad = makeUnique<VirtualGamepad>(mapping);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting];
+    }));
+
+    gamepad->setButtonValue(0, 1.0);
+    gamepad->publishReport();
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    bool done = false;
+    bool gotExpectedValues = false;
+    auto resultBlock = [&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        if ([result[@"gamepadCount"] isEqualToNumber:@(1)] && WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadButtons"][0][0] doubleValue], 1.0))
+            gotExpectedValues = true;
+        done = true;
+    };
+
+    NSDate *start = [NSDate date];
+    while (!gotExpectedValues) {
+        [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+        Util::run(&done);
+        done = false;
+
+        if ([[NSDate date] timeIntervalSinceDate:start] > 5.0)
+            break;
+    }
+    EXPECT_TRUE(gotExpectedValues);
 }
 
 } // namespace TestWebKitAPI

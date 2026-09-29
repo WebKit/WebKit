@@ -463,6 +463,7 @@ public:
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(const UIGamepad&);
+    bool processUsesGamepads(const WebProcessProxy& process) const { return m_processesUsingGamepads.contains(process); }
 #endif
 
 #if PLATFORM(COCOA)
