@@ -144,6 +144,24 @@ void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentif
     completionHandler();
 }
 
+#if HAVE(IOSURFACE)
+void GPUProcess::setIOSurfacePoolTileSizeHint(WebCore::ProcessIdentifier identifier, uint64_t tileBytes)
+{
+    if (RefPtr connection = m_webProcessConnections.get(identifier))
+        connection->setIOSurfacePoolTileSizeHint(tileBytes);
+}
+
+void GPUProcess::getIOSurfacePoolStateForTesting(WebCore::ProcessIdentifier identifier, CompletionHandler<void(uint64_t, uint64_t)>&& completionHandler)
+{
+    RefPtr connection = m_webProcessConnections.get(identifier);
+    if (!connection)
+        return completionHandler(0, 0);
+
+    auto [tileSizeHint, inUseBytesLimit] = connection->ioSurfacePoolStateForTesting();
+    completionHandler(tileSizeHint, inUseBytesLimit);
+}
+#endif
+
 void GPUProcess::securityFlagsDidChange(SecurityFlags&& securityFlags)
 {
     m_securityFlags.replaceWith(securityFlags);

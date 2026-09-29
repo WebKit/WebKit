@@ -94,6 +94,11 @@ void WebPageProxyTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)
     sendWithAsyncReply(Messages::WebPageTesting::NumberOfLiveDocuments(), WTF::move(completionHandler));
 }
 
+void WebPageProxyTesting::mainFrameTileSize(CompletionHandler<void(WebCore::IntSize)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageTesting::MainFrameTileSize(), WTF::move(completionHandler));
+}
+
 void WebPageProxyTesting::setDisplayForTesting(uint32_t displayID, unsigned nominalFramesPerSecond)
 {
     m_displayNominalFramesPerSecondOverride = nominalFramesPerSecond;

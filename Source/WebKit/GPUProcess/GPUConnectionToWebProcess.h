@@ -181,6 +181,11 @@ public:
     void becomeRemoteCommandFallbackTarget();
     void resignNowPlayingManagerClient();
     Ref<RemoteSharedResourceCache> sharedResourceCache();
+#if HAVE(IOSURFACE)
+    void setIOSurfacePoolTileSizeHint(uint64_t tileBytes);
+    // The stored tile size hint and the in-use limit the pool derives from it.
+    std::pair<uint64_t, uint64_t> ioSurfacePoolStateForTesting();
+#endif
 
 #if ENABLE(VIDEO)
     RemoteAudioVideoRendererProxyManager& remoteAudioVideoRendererProxyManager();
@@ -390,6 +395,9 @@ private:
     const std::unique_ptr<RemoteAudioDestinationManager> m_remoteAudioDestinationManager;
 #endif
     const RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
+#if HAVE(IOSURFACE)
+    uint64_t m_ioSurfacePoolTileSizeHint { 0 };
+#endif
 #if ENABLE(VIDEO)
     const RefPtr<RemoteAudioVideoRendererProxyManager> m_remoteAudioVideoRendererProxyManager;
     const Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;

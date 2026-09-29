@@ -97,6 +97,9 @@ public:
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
     void sharedPreferencesForWebProcessDidChange(WebProcessProxy&, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
+#if HAVE(IOSURFACE)
+    void setIOSurfacePoolTileSizeHint(WebProcessProxy&, uint64_t tileBytes);
+#endif
     void securityFlagsDidChange(const SecurityFlags&);
 
     void updateProcessAssertion();
@@ -152,6 +155,9 @@ public:
 
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
+#if HAVE(IOSURFACE)
+    void ioSurfacePoolStateForTesting(WebProcessProxy&, CompletionHandler<void(uint64_t tileSizeHint, uint64_t inUseBytesLimit)>&&);
+#endif
 
 #if PLATFORM(COCOA)
     static void setEnableMetalDebugDeviceInNewGPUProcessesForTesting(bool enable) { s_enableMetalDebugDeviceInNewGPUProcessesForTesting = enable; }

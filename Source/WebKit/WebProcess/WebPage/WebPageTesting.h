@@ -35,6 +35,10 @@ class Connection;
 class Decoder;
 }
 
+namespace WebCore {
+class IntSize;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -58,6 +62,7 @@ private:
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
     void preferredRenderingUpdateIntervalInMilliseconds(CompletionHandler<void(double)>&&);
+    void mainFrameTileSize(CompletionHandler<void(WebCore::IntSize)>&&);
     void setPermissionLevel(const String& origin, bool allowed);
     void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void resetStateBetweenTests();

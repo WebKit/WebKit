@@ -1147,6 +1147,10 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     removedPage = globalPageMap().take(webPage.identifier()).get();
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
 
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    updateIOSurfacePoolTileSizeHint();
+#endif
+
     logger().setEnabled(this, isAlwaysOnLoggingAllowed());
 
     if (endsUsingDataStore == EndsUsingDataStore::Yes)
@@ -1495,6 +1499,10 @@ void WebProcessProxy::createGPUProcessConnection(GPUProcessConnectionIdentifier 
 #if HAVE(AUDIT_TOKEN)
     parameters.presentingApplicationAuditTokens = presentingApplicationAuditTokens();
 #endif
+#if HAVE(IOSURFACE)
+    m_sentIOSurfacePoolTileSizeHint = largestIOSurfacePoolTileSizeHint();
+    parameters.ioSurfacePoolTileSizeHint = m_sentIOSurfacePoolTileSizeHint;
+#endif
     ASSERT(!m_gpuProcessConnectionIdentifier);
     m_gpuProcessConnectionIdentifier = identifier;
     protect(processPool())->createGPUProcessConnection(*this, WTF::move(connectionHandle), WTF::move(parameters));
@@ -1522,6 +1530,33 @@ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
     for (Ref page : pages())
         page->gpuProcessExited(reason);
 }
+
+#if HAVE(IOSURFACE)
+uint64_t WebProcessProxy::largestIOSurfacePoolTileSizeHint() const
+{
+    uint64_t tileBytes = 0;
+    for (Ref page : mainPages())
+        tileBytes = std::max(tileBytes, page->ioSurfacePoolTileSizeHint());
+    return tileBytes;
+}
+
+void WebProcessProxy::updateIOSurfacePoolTileSizeHint()
+{
+    if (!m_gpuProcessConnectionIdentifier)
+        return;
+
+    auto tileBytes = largestIOSurfacePoolTileSizeHint();
+    if (tileBytes == m_sentIOSurfacePoolTileSizeHint)
+        return;
+
+    RefPtr gpuProcess = processPool().gpuProcess();
+    if (!gpuProcess)
+        return;
+
+    m_sentIOSurfacePoolTileSizeHint = tileBytes;
+    gpuProcess->setIOSurfacePoolTileSizeHint(*this, tileBytes);
+}
+#endif
 #endif
 
 #if ENABLE(MODEL_PROCESS)

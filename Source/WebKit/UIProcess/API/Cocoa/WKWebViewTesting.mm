@@ -883,6 +883,43 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (uint64_t)_ioSurfacePoolTileSizeHintForTesting
+{
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    return _page->ioSurfacePoolTileSizeHint();
+#else
+    return 0;
+#endif
+}
+
+- (void)_ioSurfacePoolStateForTesting:(void(^)(uint64_t tileSizeHint, uint64_t inUseBytesLimit))completionHandler
+{
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    RefPtr gpuProcess = _page->configuration().processPool().gpuProcess();
+    if (!gpuProcess) {
+        completionHandler(0, 0);
+        return;
+    }
+
+    gpuProcess->ioSurfacePoolStateForTesting(protect(_page->legacyMainFrameProcess()), [completionHandler = makeBlockPtr(completionHandler)](uint64_t tileSizeHint, uint64_t inUseBytesLimit) {
+        completionHandler(tileSizeHint, inUseBytesLimit);
+    });
+#else
+    completionHandler(0, 0);
+#endif
+}
+
+- (void)_mainFrameTileSizeForTesting:(void(^)(CGSize tileSize))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(CGSizeZero);
+
+    pageForTesting->mainFrameTileSize([completionHandler = makeBlockPtr(completionHandler)](WebCore::IntSize tileSize) {
+        completionHandler(tileSize);
+    });
+}
+
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

@@ -304,6 +304,9 @@
 #include <WebCore/TextExtractionTypes.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextManipulationController.h>
+#if HAVE(IOSURFACE)
+#include <WebCore/TileController.h>
+#endif
 #include <WebCore/TextManipulationItem.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
@@ -7123,6 +7126,10 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 
     if (RefPtr drawingArea = m_drawingArea)
         drawingArea->deviceScaleFactorDidChange([]() { });
+
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    updateIOSurfacePoolTileSizeHint();
+#endif
 }
 
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
@@ -7164,6 +7171,27 @@ float WebPageProxy::deviceScaleFactor() const
     return m_customDeviceScaleFactor.value_or(m_intrinsicDeviceScaleFactor);
 }
 
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+uint64_t WebPageProxy::ioSurfacePoolTileSizeHint() const
+{
+    float scale = deviceScaleFactor();
+    if (!std::isfinite(scale) || scale <= 0)
+        return 0;
+
+    CheckedSize bytes = clampTo<size_t>(std::ceil(viewSize().width() * scale));
+    bytes *= clampTo<size_t>(std::ceil(WebCore::kDefaultTileSize * scale));
+    bytes *= 4u;
+    if (bytes.hasOverflowed())
+        return std::numeric_limits<uint64_t>::max();
+    return bytes.value();
+}
+
+void WebPageProxy::updateIOSurfacePoolTileSizeHint()
+{
+    protect(legacyMainFrameProcess())->updateIOSurfacePoolTileSizeHint();
+}
+#endif
+
 void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor, CompletionHandler<void()>&& completionHandler)
 {
     if (m_customDeviceScaleFactor && m_customDeviceScaleFactor.value() == customScaleFactor) {
@@ -7178,6 +7206,10 @@ void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor, Completio
         m_customDeviceScaleFactor = customScaleFactor;
     else
         m_customDeviceScaleFactor = std::nullopt;
+
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    updateIOSurfacePoolTileSizeHint();
+#endif
 
     if (!hasRunningProcess()) {
         completionHandler();

@@ -236,6 +236,10 @@ private:
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
+#if HAVE(IOSURFACE)
+    void setIOSurfacePoolTileSizeHint(WebCore::ProcessIdentifier, uint64_t tileBytes);
+    void getIOSurfacePoolStateForTesting(WebCore::ProcessIdentifier, CompletionHandler<void(uint64_t tileSizeHint, uint64_t inUseBytesLimit)>&&);
+#endif
     void securityFlagsDidChange(SecurityFlags&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);

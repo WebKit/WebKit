@@ -352,6 +352,10 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
+#if HAVE(IOSURFACE)
+    m_ioSurfacePoolTileSizeHint = parameters.ioSurfacePoolTileSizeHint;
+#endif
+
     // This must be called before any media playback function is invoked.
     enableMediaPlaybackIfNecessary();
 
@@ -407,10 +411,29 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 Ref<RemoteSharedResourceCache> GPUConnectionToWebProcess::sharedResourceCache()
 {
-    if (!m_sharedResourceCache)
+    if (!m_sharedResourceCache) {
         lazyInitialize(m_sharedResourceCache, RemoteSharedResourceCache::create(*this));
+#if HAVE(IOSURFACE)
+        if (m_ioSurfacePoolTileSizeHint)
+            m_sharedResourceCache->ioSurfacePool().setTileSizeHint(clampTo<size_t>(m_ioSurfacePoolTileSizeHint));
+#endif
+    }
     return *m_sharedResourceCache;
 }
+
+#if HAVE(IOSURFACE)
+void GPUConnectionToWebProcess::setIOSurfacePoolTileSizeHint(uint64_t tileBytes)
+{
+    m_ioSurfacePoolTileSizeHint = tileBytes;
+    if (RefPtr sharedResourceCache = m_sharedResourceCache)
+        sharedResourceCache->ioSurfacePool().setTileSizeHint(clampTo<size_t>(tileBytes));
+}
+
+std::pair<uint64_t, uint64_t> GPUConnectionToWebProcess::ioSurfacePoolStateForTesting()
+{
+    return { m_ioSurfacePoolTileSizeHint, sharedResourceCache()->ioSurfacePool().inUseBytesLimitForTesting() };
+}
+#endif
 
 uint64_t GPUConnectionToWebProcess::gObjectCountForTesting = 0;
 

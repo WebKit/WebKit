@@ -1611,6 +1611,11 @@ public:
     void setShouldScaleViewToFitDocument(bool);
     
     float NODELETE deviceScaleFactor() const;
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    // Bytes in one tile of the main frame at the current view width and device scale factor.
+    uint64_t ioSurfacePoolTileSizeHint() const;
+    void updateIOSurfacePoolTileSizeHint();
+#endif
 #if USE(GRAPHICS_LAYER_WC) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
     float intrinsicDeviceScaleFactor() const { return m_intrinsicDeviceScaleFactor; }
 #endif

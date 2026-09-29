@@ -554,6 +554,13 @@ void GPUProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& w
     sendWithAsyncReply(Messages::GPUProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
 }
 
+#if HAVE(IOSURFACE)
+void GPUProcessProxy::setIOSurfacePoolTileSizeHint(WebProcessProxy& webProcessProxy, uint64_t tileBytes)
+{
+    send(Messages::GPUProcess::SetIOSurfacePoolTileSizeHint { webProcessProxy.coreProcessIdentifier(), tileBytes }, 0);
+}
+#endif
+
 void GPUProcessProxy::securityFlagsDidChange(const SecurityFlags& securityFlags)
 {
     send(Messages::GPUProcess::SecurityFlagsDidChange { securityFlags }, 0);
@@ -625,6 +632,13 @@ void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void
 {
     sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
 }
+
+#if HAVE(IOSURFACE)
+void GPUProcessProxy::ioSurfacePoolStateForTesting(WebProcessProxy& webProcessProxy, CompletionHandler<void(uint64_t, uint64_t)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::GetIOSurfacePoolStateForTesting { webProcessProxy.coreProcessIdentifier() }, WTF::move(completionHandler));
+}
+#endif
 
 void GPUProcessProxy::didClose(IPC::Connection&)
 {

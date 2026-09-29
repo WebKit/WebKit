@@ -32,6 +32,9 @@ messages -> GPUProcess : AuxiliaryProcess {
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
     SharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier processIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess) -> ()
+#if HAVE(IOSURFACE)
+    SetIOSurfacePoolTileSizeHint(WebCore::ProcessIdentifier processIdentifier, uint64_t tileBytes)
+#endif
     SecurityFlagsDidChange(struct WebKit::SecurityFlags securityFlags)
 
     UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
@@ -90,6 +93,9 @@ messages -> GPUProcess : AuxiliaryProcess {
     UserPreferredLanguagesChanged(Vector<String> languages)
 
     WebProcessConnectionCountForTesting() -> (uint64_t count)
+#if HAVE(IOSURFACE)
+    GetIOSurfacePoolStateForTesting(WebCore::ProcessIdentifier processIdentifier) -> (uint64_t tileSizeHint, uint64_t inUseBytesLimit)
+#endif
 
 #if USE(EXTENSIONKIT)
     ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)

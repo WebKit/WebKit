@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class IntPoint;
+class IntSize;
 }
 
 namespace WebKit {
@@ -47,6 +48,7 @@ public:
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
+    void mainFrameTileSize(CompletionHandler<void(WebCore::IntSize)>&&);
 
     void setDisplayForTesting(uint32_t displayID, unsigned nominalFramesPerSecond);
     std::optional<unsigned> displayNominalFramesPerSecondOverride() const { return m_displayNominalFramesPerSecondOverride; }

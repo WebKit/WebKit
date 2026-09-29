@@ -38,12 +38,14 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
+#include <WebCore/TiledBacking.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -83,6 +85,20 @@ void WebPageTesting::preferredRenderingUpdateIntervalInMilliseconds(CompletionHa
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
     completionHandler(page ? page->preferredRenderingUpdateInterval().milliseconds() : 0);
+}
+
+void WebPageTesting::mainFrameTileSize(CompletionHandler<void(IntSize)>&& completionHandler)
+{
+    RefPtr page = m_page ? m_page->corePage() : nullptr;
+    RefPtr localMainFrame = page ? page->localMainFrame() : nullptr;
+    RefPtr frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    CheckedPtr tiledBacking = frameView ? frameView->tiledBacking() : nullptr;
+    if (!tiledBacking)
+        return completionHandler({ });
+
+    // Tiles are laid out in page-scaled coordinates and each tile layer's contents scale is the device
+    // scale factor, so this is the size of a tile's backing surface in pixels.
+    completionHandler(expandedIntSize(FloatSize(tiledBacking->tileSize()).scaled(page->deviceScaleFactor())));
 }
 
 void WebPageTesting::setPermissionLevel(const String& origin, bool allowed)

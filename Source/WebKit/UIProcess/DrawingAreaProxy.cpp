@@ -113,6 +113,10 @@ bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollDelta)
     m_size = size;
     m_scrollOffset += scrollDelta;
     sizeDidChange();
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+    if (RefPtr webPageProxy = page())
+        webPageProxy->updateIOSurfacePoolTileSizeHint();
+#endif
     return true;
 }
 

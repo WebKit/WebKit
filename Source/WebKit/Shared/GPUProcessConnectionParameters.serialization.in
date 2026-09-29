@@ -36,6 +36,9 @@
     String applicationBundleIdentifier;
 #endif
     std::optional<WebKit::GPUProcessMediaCodecCapabilities> mediaCodecCapabilities;
+#if HAVE(IOSURFACE)
+    uint64_t ioSurfacePoolTileSizeHint;
+#endif
 };
 
 #endif

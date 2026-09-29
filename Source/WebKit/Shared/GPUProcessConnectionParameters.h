@@ -53,6 +53,10 @@ struct GPUProcessConnectionParameters {
     String applicationBundleIdentifier;
 #endif
     std::optional<GPUProcessMediaCodecCapabilities> mediaCodecCapabilities;
+#if HAVE(IOSURFACE)
+    // Bytes in one main-frame tile of the web process's largest page; sizes its IOSurfacePool.
+    uint64_t ioSurfacePoolTileSizeHint { 0 };
+#endif
 };
 
 }; // namespace WebKit

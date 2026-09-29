@@ -522,6 +522,11 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
     void gpuProcessExited(ProcessTerminationReason);
+#if HAVE(IOSURFACE)
+    // Tells the GPU process the largest main-frame tile size among this process's pages, which sizes
+    // the IOSurfacePool of this process's GPU process connection.
+    void updateIOSurfacePoolTileSizeHint();
+#endif
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -986,6 +991,10 @@ private:
     CompletionHandler<void(bool success)> m_sharedPreferencesForWebProcessCompletionHandler;
 #if ENABLE(GPU_PROCESS)
     Markable<GPUProcessConnectionIdentifier> m_gpuProcessConnectionIdentifier;
+#if HAVE(IOSURFACE)
+    uint64_t largestIOSurfacePoolTileSizeHint() const;
+    uint64_t m_sentIOSurfacePoolTileSizeHint { 0 };
+#endif
 #endif
 
     ProcessThrottleState m_throttleStateForStatistics { ProcessThrottleState::Suspended };

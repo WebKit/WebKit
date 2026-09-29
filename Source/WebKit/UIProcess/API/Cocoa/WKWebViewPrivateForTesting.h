@@ -173,6 +173,13 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler;
 - (void)_gpuToWebProcessConnectionCountForTesting:(void(^)(NSUInteger))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+// The IOSurfacePool tile size hint: this page's value in the UI process, the value the GPU process holds
+// for this page's web process with the in-use limit its pool derives from it, and the main frame's real
+// tile size in pixels.
+@property (nonatomic, readonly) uint64_t _ioSurfacePoolTileSizeHintForTesting;
+- (void)_ioSurfacePoolStateForTesting:(void(^)(uint64_t tileSizeHint, uint64_t inUseBytesLimit))completionHandler;
+- (void)_mainFrameTileSizeForTesting:(void(^)(CGSize tileSize))completionHandler;
+
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_numberOfLiveDocumentsForTesting:(void (^)(NSUInteger count))completionHandler;
