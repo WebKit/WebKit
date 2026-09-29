@@ -1,0 +1,6 @@
+PASS gl.getError() is gl.NO_ERROR
+PASS LINE_LOOP draw with nothing bound to draw buffer 0 did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
