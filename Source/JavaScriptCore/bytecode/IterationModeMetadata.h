@@ -67,6 +67,8 @@ inline bool canUseFastIterationMode(uint16_t seenModes, IterationMode mode)
     return static_cast<unsigned>(std::popcount(seenFastModes)) < maxNumberOfFastIterationModes;
 }
 
+static_assert(UINT8_MAX >= static_cast<uint16_t>(IterationMode::FastArray) && UINT8_MAX >= static_cast<uint16_t>(IterationMode::FastString), "op_iterator_close_check keeps them in one byte");
+
 struct IterationModeMetadata {
     uint16_t seenModes { 0 };
     static constexpr ptrdiff_t offsetOfSeenModes() { return OBJECT_OFFSETOF(IterationModeMetadata, seenModes); }

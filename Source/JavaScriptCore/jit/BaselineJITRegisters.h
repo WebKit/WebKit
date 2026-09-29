@@ -191,6 +191,16 @@ namespace IteratorNext {
         static constexpr GPRReg metadataGPR { preferredArgumentGPR<SlowOperation, 3>() };
         static_assert(noOverlap(globalObjectGPR, iterableGPR, indexInFrameGPR, metadataGPR), "Required for call to slow operation");
     }
+
+    namespace FastString {
+        using SlowOperation = decltype(operationIteratorNextFastString);
+
+        static constexpr GPRReg globalObjectGPR { preferredArgumentGPR<SlowOperation, 0>() };
+        static constexpr GPRReg iterableGPR { preferredArgumentGPR<SlowOperation, 1>() };
+        static constexpr GPRReg indexInFrameGPR { preferredArgumentGPR<SlowOperation, 2>() };
+        static constexpr GPRReg metadataGPR { preferredArgumentGPR<SlowOperation, 3>() };
+        static_assert(noOverlap(globalObjectGPR, iterableGPR, indexInFrameGPR, metadataGPR), "Required for call to slow operation");
+    }
 }
 
 namespace GetByIdWithThis {

@@ -899,9 +899,8 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
 
     case IterationMode::FastString: {
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastString;
-        GET(bytecode.m_next) = vm.fastStringValuesSentinel();
-        auto* string = asString(iterable);
-        iterator = JSStringIterator::create(vm, globalObject->stringIteratorStructure(), string);
+        GET(bytecode.m_next) = jsNumber(0);
+        iterator = vm.fastStringSentinel();
         PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastString)));
     }
@@ -1138,20 +1137,6 @@ ALWAYS_INLINE UGPRPair iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObj
         return encodeResult(pc, reinterpret_cast<void*>(mode));
     }
 
-    if (auto stringIterator = dynamicDowncast<JSStringIterator>(iterator)) {
-        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastString;
-        JSString* value = stringIterator->nextWithAdvance(globalObject, vm);
-        CHECK_EXCEPTION();
-        bool done = !value;
-        GET(bytecode.m_done) = jsBoolean(done);
-        if (!done) {
-            PROFILE_VALUE_IN(value, m_valueValueProfile);
-            GET(bytecode.m_value) = value;
-        } else
-            GET(bytecode.m_value) = JSValue();
-        return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastString));
-    }
-
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -1173,10 +1158,10 @@ JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide32)
     return iteratorNextTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_iterator_next_fast_array)
+template<OpcodeSize width>
+ALWAYS_INLINE UGPRPair iteratorNextFastArrayImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, ThrowScope& throwScope, const JSInstruction* pc)
 {
-    BEGIN();
-    auto bytecode = pc->as<OpIteratorNext>();
+    auto bytecode = pc->asKnownWidth<OpIteratorNext, width>();
     auto& metadata = bytecode.metadata(codeBlock);
     ASSERT(GET(bytecode.m_iterator).jsValue() == vm.fastArraySentinel());
 
@@ -1198,13 +1183,75 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_iterator_next_fast_array)
     END_IMPL();
 }
 
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_fast_array_narrow)
+{
+    BEGIN();
+    return iteratorNextFastArrayImpl<Narrow>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_fast_array_wide16)
+{
+    BEGIN();
+    return iteratorNextFastArrayImpl<Wide16>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_fast_array_wide32)
+{
+    BEGIN();
+    return iteratorNextFastArrayImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+template<OpcodeSize width>
+ALWAYS_INLINE UGPRPair iteratorNextFastStringImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, ThrowScope& throwScope, const JSInstruction* pc)
+{
+    auto bytecode = pc->asKnownWidth<OpIteratorNext, width>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    ASSERT(GET(bytecode.m_iterator).jsValue() == vm.fastStringSentinel());
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastString;
+
+    auto* string = asString(GET(bytecode.m_iterable).jsValue());
+    auto [value, nextPosition] = JSStringIterator::advance(globalObject, vm, string, GET(bytecode.m_next).jsValue().asInt32());
+    CHECK_EXCEPTION();
+    GET(bytecode.m_next) = jsNumber(nextPosition);
+    GET(bytecode.m_done) = jsBoolean(!value);
+    if (value)
+        PROFILE_VALUE_IN(value, m_valueValueProfile);
+    GET(bytecode.m_value) = value;
+    END_IMPL();
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_fast_string_narrow)
+{
+    BEGIN();
+    return iteratorNextFastStringImpl<Narrow>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_fast_string_wide16)
+{
+    BEGIN();
+    return iteratorNextFastStringImpl<Wide16>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_fast_string_wide32)
+{
+    BEGIN();
+    return iteratorNextFastStringImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_iterator_close_check)
 {
     BEGIN();
     auto bytecode = pc->as<OpIteratorCloseCheck>();
-    ASSERT(GET(bytecode.m_iterator).jsValue() == vm.fastArraySentinel());
-
     JSValue iterable = GET(bytecode.m_iterable).jsValue();
+    if (GET(bytecode.m_iterator).jsValue() == vm.fastStringSentinel()) {
+        RELEASE_ASSERT(iterable.isString());
+        auto* iterator = JSStringIterator::create(vm, globalObject->stringIteratorStructure(), asString(iterable));
+        iterator->setIndex(GET(bytecode.m_next).jsValue().asInt32());
+        GET(bytecode.m_iterator) = iterator;
+        END_IMPL();
+    }
+
+    ASSERT(GET(bytecode.m_iterator).jsValue() == vm.fastArraySentinel());
     RELEASE_ASSERT(isJSArray(iterable));
     auto* iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), asArray(iterable), IterationKind::Values);
     iterator->setIndex(GET(bytecode.m_next).jsValue().asAnyInt());

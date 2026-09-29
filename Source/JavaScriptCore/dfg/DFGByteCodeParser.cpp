@@ -10306,20 +10306,44 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_iterator_close_check: {
             auto bytecode = currentInstruction->as<OpIteratorCloseCheck>();
+            auto& metadata = bytecode.metadata(codeBlock);
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin());
             Node* iterator = get(bytecode.m_iterator);
             addToGraph(Phantom, get(bytecode.m_next));
             addToGraph(Phantom, get(bytecode.m_iterable));
-            if (!bytecode.metadata(codeBlock).m_hasSeenFastArray || !globalObject->arrayIteratorProtocolWatchpointSet().isStillValid()) {
-                addToGraph(Check, Edge(iterator, ObjectUse));
-                NEXT_OPCODE(op_iterator_close_check);
+
+            Node* hasNothingToClose = nullptr;
+            auto addSentinel = [&](IterationMode mode, InlineWatchpointSet& watchpointSet, JSSentinel* sentinel) {
+                if (!(metadata.m_seenModes & mode) || !watchpointSet.isStillValid())
+                    return;
+                m_graph.watchpoints().addLazily(watchpointSet);
+                Node* isSentinel = addToGraph(CompareEqPtr, OpInfo(m_graph.freeze(sentinel)), iterator);
+                hasNothingToClose = hasNothingToClose ? addToGraph(ArithBitOr, hasNothingToClose, isSentinel) : isSentinel;
+            };
+            addSentinel(IterationMode::FastArray, globalObject->arrayIteratorProtocolWatchpointSet(), m_vm->fastArraySentinel());
+            addSentinel(IterationMode::FastString, globalObject->stringIteratorProtocolWatchpointSet(), m_vm->fastStringSentinel());
+
+            if (hasNothingToClose) {
+                emitExitOK();
+
+                BasicBlock* nothingToCloseBlock = allocateUntargetableBlock();
+                BasicBlock* closeBlock = allocateUntargetableBlock();
+                BranchData* branchData = m_graph.m_branchData.add();
+                branchData->taken = BranchTarget(nothingToCloseBlock);
+                branchData->notTaken = BranchTarget(closeBlock);
+                addToGraph(Branch, OpInfo(branchData), hasNothingToClose);
+
+                m_currentBlock = nothingToCloseBlock;
+                clearCaches();
+                addJumpTo(m_currentIndex.offset() + jumpTarget(bytecode.m_targetLabel));
+
+                m_currentBlock = closeBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
             }
 
-            m_graph.watchpoints().addLazily(globalObject->arrayIteratorProtocolWatchpointSet());
-            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
-            Node* condition = addToGraph(CompareEqPtr, OpInfo(m_graph.freeze(m_vm->fastArraySentinel())), iterator);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
-            LAST_OPCODE(op_iterator_close_check);
+            addToGraph(Check, Edge(get(bytecode.m_iterator), ObjectUse));
+            NEXT_OPCODE(op_iterator_close_check);
         }
 
         case op_jeq_ptr: {
@@ -12384,12 +12408,8 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
         }
 
-        Node* next = jsConstant(m_vm->fastStringValuesSentinel());
-        Node* iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->stringIteratorStructure())));
-        addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSStringIterator::Field::IteratedString)), iterator, get(bytecode.m_iterable));
-        set(bytecode.m_iterator, iterator);
-
-        set(bytecode.m_next, next);
+        set(bytecode.m_iterator, jsConstant(m_vm->fastStringSentinel()));
+        set(bytecode.m_next, jsConstant(jsNumber(0)));
 
         m_currentIndex = osrExitIndex;
         m_exitOK = true;
@@ -12490,8 +12510,6 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastArrayKeys);
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastArrayEntries);
     }
-    if (!globalObject->stringIteratorProtocolWatchpointSet().isStillValid())
-        seenModes &= ~static_cast<uint32_t>(IterationMode::FastString);
     if (!globalObject->mapIteratorProtocolWatchpointSet().isStillValid()) {
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastMap);
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastMapKeys);
@@ -12523,17 +12541,18 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
 
     BytecodeIndex startIndex = m_currentIndex;
 
+    auto speculatedGet = [&](VirtualRegister operand, SpeculatedType type, UseKind useKind) {
+        Node* node = addToGraph(IdentityWithProfile, OpInfo(type), get(operand));
+        addToGraph(Check, Edge(node, useKind));
+        return node;
+    };
+
     auto emitFastArrayIteratorNext = [&](IterationKind kind, JSSentinel* sentinelCell) {
         bool hasIterator = sentinelCell != m_vm->fastArraySentinel();
         VirtualRegister sentinelOperand = hasIterator ? bytecode.m_next : bytecode.m_iterator;
         if (hasIterator)
             m_graph.watchpoints().addLazily(globalObject->arrayIteratorProtocolWatchpointSet());
 
-        auto speculatedGet = [&](VirtualRegister operand, SpeculatedType type, UseKind useKind) {
-            Node* node = addToGraph(IdentityWithProfile, OpInfo(type), get(operand));
-            addToGraph(Check, Edge(node, useKind));
-            return node;
-        };
         auto getIteratedObject = [&] {
             if (hasIterator)
                 return addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), get(bytecode.m_iterator));
@@ -12999,17 +13018,15 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         emitFastSetIteratorNext(IterationKind::Entries, m_vm->fastSetEntriesSentinel());
 
     if (seenModes & IterationMode::FastString) {
-        auto& stringIteratorProtocolWatchpointSet = globalObject->stringIteratorProtocolWatchpointSet();
-        m_graph.watchpoints().addLazily(stringIteratorProtocolWatchpointSet);
         numberOfRemainingModes--;
 
         connectFailedBlock();
 
-        FrozenValue* frozenSentinel = m_graph.freeze(m_vm->fastStringValuesSentinel());
+        FrozenValue* frozenSentinel = m_graph.freeze(m_vm->fastStringSentinel());
         if (!numberOfRemainingModes)
-            addToGraph(CheckIsConstant, OpInfo(frozenSentinel), get(bytecode.m_next));
+            addToGraph(CheckIsConstant, OpInfo(frozenSentinel), get(bytecode.m_iterator));
         else {
-            Node* isFastSentinel = addToGraph(CompareEqPtr, OpInfo(frozenSentinel), get(bytecode.m_next));
+            Node* isFastSentinel = addToGraph(CompareEqPtr, OpInfo(frozenSentinel), get(bytecode.m_iterator));
 
             emitExitOK();
 
@@ -13030,13 +13047,9 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
 
-            Node* iterator = get(bytecode.m_iterator);
-            Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSStringIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
-            Node* string = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSStringIterator::Field::IteratedString)), OpInfo(SpecString), iterator);
+            Node* index = speculatedGet(bytecode.m_next, SpecInt32Only, Int32Use);
+            Node* string = speculatedGet(bytecode.m_iterable, SpecString, StringUse);
 
-            // Fold the whole next() computation into a single tuple-returning node. It consumes only
-            // the string and the position, so the iterator is referenced solely by the surrounding
-            // GetInternalField/PutInternalField pair, letting ObjectAllocationSinking eliminate it.
             Node* tuple = addToGraph(StringIteratorNext, Edge(string), Edge(index));
             Node* value = addToGraph(ExtractFromTuple, OpInfo(0), tuple);
             value->setResult(NodeResultJS);
@@ -13048,7 +13061,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
 
             set(bytecode.m_value, value);
             set(bytecode.m_done, done);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSStringIterator::Field::Index)), iterator, nextPosition);
+            set(bytecode.m_next, nextPosition);
 
             // Do our set locals. We don't want to run this again so we have to move the exit origin forward.
             m_currentIndex = osrExitIndex;

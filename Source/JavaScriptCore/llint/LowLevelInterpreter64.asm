@@ -3369,9 +3369,33 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
 .iteratorNextForNonCell:
     loadVariable(get, m_iterator, t0)
-    btqnz t0, notCellMask, .iteratorNextGeneric
-    bbneq JSCell::m_type[t0], constexpr SentinelType, .iteratorNextGeneric
-    callSlowPath(_slow_path_iterator_next_fast_array)
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
+    bpneq t0, VM::m_fastArraySentinel[t1], .iteratorNextNotFastArray
+    macro fastArrayNarrow()
+        callSlowPath(_iterator_next_fast_array_narrow)
+    end
+    macro fastArrayWide16()
+        callSlowPath(_iterator_next_fast_array_wide16)
+    end
+    macro fastArrayWide32()
+        callSlowPath(_iterator_next_fast_array_wide32)
+    end
+    size(fastArrayNarrow, fastArrayWide16, fastArrayWide32, macro (callOp) callOp() end)
+    dispatch()
+
+.iteratorNextNotFastArray:
+    bpneq t0, VM::m_fastStringSentinel[t1], .iteratorNextGeneric
+    macro fastStringNarrow()
+        callSlowPath(_iterator_next_fast_string_narrow)
+    end
+    macro fastStringWide16()
+        callSlowPath(_iterator_next_fast_string_wide16)
+    end
+    macro fastStringWide32()
+        callSlowPath(_iterator_next_fast_string_wide32)
+    end
+    size(fastStringNarrow, fastStringWide16, fastStringWide32, macro (callOp) callOp() end)
     dispatch()
 
 .iteratorNextGeneric:
@@ -3446,13 +3470,27 @@ end)
 
 llintOpWithMetadata(op_iterator_close_check, OpIteratorCloseCheck, macro (size, get, dispatch, metadata, return)
     loadVariable(get, m_iterator, t0)
-    btqnz t0, notCellMask, .iteratorCloseCheckFallThrough
-    bbneq JSCell::m_type[t0], constexpr SentinelType, .iteratorCloseCheckFallThrough
-    metadata(t5, t1)
-    storeb 1, OpIteratorCloseCheck::Metadata::m_hasSeenFastArray[t5]
     loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t2
+    bpneq t0, VM::m_fastArraySentinel[t2], .iteratorCloseCheckNotFastArray
+    metadata(t5, t3)
+    loadb OpIteratorCloseCheck::Metadata::m_seenModes[t5], t3
+    ori constexpr IterationMode::FastArray, t3
+    storeb t3, OpIteratorCloseCheck::Metadata::m_seenModes[t5]
     loadp CodeBlock::m_globalObject[t1], t1
     branchIfInlineWatchpointSetIsStillValid(JSGlobalObject::m_arrayIteratorProtocolWatchpointSet + InlineWatchpointSet::m_data[t1], t1, .iteratorCloseCheckNothingToClose)
+    jmp .iteratorCloseCheckNeedsIterator
+
+.iteratorCloseCheckNotFastArray:
+    bpneq t0, VM::m_fastStringSentinel[t2], .iteratorCloseCheckFallThrough
+    metadata(t5, t3)
+    loadb OpIteratorCloseCheck::Metadata::m_seenModes[t5], t3
+    ori constexpr IterationMode::FastString, t3
+    storeb t3, OpIteratorCloseCheck::Metadata::m_seenModes[t5]
+    loadp CodeBlock::m_globalObject[t1], t1
+    branchIfInlineWatchpointSetIsStillValid(JSGlobalObject::m_stringIteratorProtocolWatchpointSet + InlineWatchpointSet::m_data[t1], t1, .iteratorCloseCheckNothingToClose)
+
+.iteratorCloseCheckNeedsIterator:
     callSlowPath(_slow_path_iterator_close_check)
 .iteratorCloseCheckFallThrough:
     dispatch()

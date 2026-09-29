@@ -405,6 +405,7 @@ JSC_DECLARE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject*, E
 #if CPU(ARM64) || CPU(X86_64)
 JSC_DECLARE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject*, JSObject*, JSCell*, void*));
 JSC_DECLARE_JIT_OPERATION(operationIteratorNextFastArray, UGPRPair, (JSGlobalObject*, EncodedJSValue iterable, EncodedJSValue* indexInFrame, void*));
+JSC_DECLARE_JIT_OPERATION(operationIteratorNextFastString, UGPRPair, (JSGlobalObject*, JSString*, EncodedJSValue* indexInFrame, void*));
 #endif
 
 JSC_DECLARE_JIT_OPERATION(operationValueAdd, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2));

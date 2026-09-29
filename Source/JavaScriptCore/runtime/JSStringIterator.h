@@ -79,6 +79,7 @@ public:
 
     JSValue iteratedString() const { return internalField(Field::IteratedString).get(); }
     JSValue index() const { return internalField(Field::Index).get(); }
+    void setIndex(int32_t index) { internalField(Field::Index).setWithoutWriteBarrier(jsNumber(index)); }
     JSStringIterator* clone(JSGlobalObject*);
 
     static inline std::pair<JSString*, int32_t> advance(JSGlobalObject*, VM&, JSString*, int32_t position);
