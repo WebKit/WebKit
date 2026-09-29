@@ -765,7 +765,7 @@ bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) con
         },
         [&](const auto&) {
             if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
-                return referencedClipperRenderer->hitTestClipContent(objectBoundingBox(), LayoutPoint(point));
+                return referencedClipperRenderer->hitTestClipContent(objectBoundingBox(), point);
             return true;
         }
     );

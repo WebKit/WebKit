@@ -219,7 +219,7 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto localPoint = locationInContainer.point();
+    auto localPoint = locationInContainer.transformedPoint();
     auto coordinateSystemOriginTranslation = nominalSVGLayoutLocation() - adjustedLocation;
     localPoint.move(coordinateSystemOriginTranslation);
 

@@ -26,6 +26,7 @@
 
 namespace WebCore {
 
+class AffineTransform;
 class GraphicsContext;
 class SVGClipPathElement;
 class SVGGraphicsElement;
@@ -43,7 +44,7 @@ public:
 
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation);
 
-    bool hitTestClipContent(const FloatRect&, const LayoutPoint&);
+    bool hitTestClipContent(const FloatRect&, const FloatPoint&);
 
     inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
     inline SVGClipPathElement& clipPathElement() const;
@@ -64,6 +65,9 @@ private:
 
     void repaintAllClients() const final;
     void clearCacheBeforeLayout() final;
+
+    AffineTransform clipContentTransform(const FloatRect& objectBoundingBox) const;
+    const Path& cachedPathClip(RenderSVGModelObject& clipRenderer) const;
 
     mutable std::optional<Path> m_cachedPathClip;
     mutable SingleThreadWeakPtr<RenderSVGModelObject> m_cachedPathClipRenderer;
