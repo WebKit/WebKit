@@ -326,7 +326,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
         if (lineLayoutResult.endsWithLineBreak())
             contentWidthBetweenLineBreaks = { std::max(contentWidthBetweenLineBreaks.maximum, contentWidthBetweenLineBreaks.current), { } };
 
-        layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, !lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty(), layoutRange.end);
+        layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult, previousLineEnd, layoutRange.end);
         if (layoutRange.isEmpty()) {
             auto cacheLineBreakingResultForSubsequentLayoutIfApplicable = [&] {
                 m_maximumIntrinsicWidthResultForSingleLine = { };
