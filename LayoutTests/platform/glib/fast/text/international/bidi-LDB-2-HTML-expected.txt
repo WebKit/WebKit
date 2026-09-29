@@ -464,9 +464,9 @@ layer at (0,0) size 800x519
             RenderInline {BDO} at (0,1) size 97x17
               RenderText {#text} at (0,1) size 97x17
                 text run at (0,1) width 97 RTL: "ABC \x{5D3}\x{5D4}\x{5D5} DEF"
-            RenderText {#text} at (128,1) size 65x17
+            RenderText {#text} at (128,1) size 66x17
               text run at (128,1) width 40: " GHI "
-              text run at (167,1) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+              text run at (167,1) width 27 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (208,201) size 5x18
           text run at (208,201) width 5: " "
         RenderBlock {DIV} at (216,188) size 202x46 [border: (1px solid #008000)]

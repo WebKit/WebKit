@@ -27,8 +27,8 @@ layer at (0,0) size 800x680
           RenderInline {SPAN} at (0,38) size 799x84 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (0,39) size 799x82
               text run at (440,39) width 242 RTL: "laboris nisi ut aliquip ex ea commodo"
-              text run at (0,71) width 435 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
-              text run at (434,71) width 332 RTL: "consequat. Duis aute irure dolor in reprehenderit in "
+              text run at (0,71) width 436 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
+              text run at (435,71) width 332 RTL: "consequat. Duis aute irure dolor in reprehenderit in "
               text run at (45,103) width 605 RTL: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor"
               text run at (649,103) width 150 RTL: "sint occaecat cupidatat "
           RenderText {#text} at (0,135) size 577x18
@@ -53,7 +53,7 @@ layer at (0,0) size 800x680
           RenderInline {SPAN} at (-27,38) size 799x84 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (-27,39) size 799x82
               text run at (90,39) width 242 RTL: "laboris nisi ut aliquip ex ea commodo"
-              text run at (6,71) width 435 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
+              text run at (5,71) width 436 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
               text run at (441,71) width 331 RTL: "consequat. Duis aute irure dolor in reprehenderit in "
               text run at (-26,103) width 605 RTL: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor"
               text run at (578,103) width 149 RTL: "sint occaecat cupidatat "

@@ -81,8 +81,8 @@ layer at (9,116) size 498x28
       text run at (151,5) width 32: "First"
 layer at (9,181) size 498x28
   RenderBlock {DIV} at (1,1) size 498x28
-    RenderText {#text} at (5,5) size 178x18
-      text run at (5,5) width 178: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+    RenderText {#text} at (5,5) size 179x18
+      text run at (5,5) width 179: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
 layer at (9,246) size 498x28
   RenderBlock {DIV} at (1,1) size 498x28
     RenderText {#text} at (5,5) size 178x18
@@ -119,8 +119,8 @@ layer at (9,376) size 498x28
       text run at (462,5) width 31: "First"
 layer at (9,441) size 498x28
   RenderBlock {DIV} at (1,1) size 498x28
-    RenderText {#text} at (315,5) size 178x18
-      text run at (315,5) width 178: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+    RenderText {#text} at (314,5) size 179x18
+      text run at (314,5) width 179: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
 layer at (9,506) size 498x28
   RenderBlock {DIV} at (1,1) size 498x28
     RenderText {#text} at (315,5) size 178x18
