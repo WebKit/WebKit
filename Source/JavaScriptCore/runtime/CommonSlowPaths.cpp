@@ -420,13 +420,8 @@ static void NODELETE updateArithProfileForUnaryArithOp(UnaryArithProfile& profil
                 profile.setObservedNegZeroDouble();
             else {
                 profile.setObservedNonNegZeroDouble();
-                
-                // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
-                // Therefore, we will get a false positive if the result is that value. This is intentionally
-                // done to simplify the checking algorithm.
-                static const int64_t int52OverflowPoint = (1ll << 51);
-                int64_t int64Val = truncateDoubleToInt64(std::abs(doubleVal));
-                if (int64Val >= int52OverflowPoint)
+
+                if (ObservedResults::isInt52Overflow(doubleVal))
                     profile.setObservedInt52Overflow();
             }
         }
@@ -487,12 +482,7 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
             else {
                 profile.setObservedNonNegZeroDouble();
 
-                // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
-                // Therefore, we will get a false positive if the result is that value. This is intentionally
-                // done to simplify the checking algorithm.
-                static const int64_t int52OverflowPoint = (1ll << 51);
-                int64_t int64Val = truncateDoubleToInt64(std::abs(doubleVal));
-                if (int64Val >= int52OverflowPoint)
+                if (ObservedResults::isInt52Overflow(doubleVal))
                     profile.setObservedInt52Overflow();
             }
         }

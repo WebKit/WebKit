@@ -25746,8 +25746,8 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue isStrictInt52(LValue int64Value)
     {
-        LValue added = m_out.add(m_out.constInt64(0x0008000000000000ULL), int64Value);
-        return m_out.testIsZero64(added, m_out.constInt64(0xFFF0000000000000ULL));
+        LValue shiftAmount = m_out.constInt32(64 - JSValue::numberOfInt52Bits);
+        return m_out.equal(m_out.aShr(m_out.shl(int64Value, shiftAmount), shiftAmount), int64Value);
     }
 
     LValue isNotStrictInt52(LValue int64Value)

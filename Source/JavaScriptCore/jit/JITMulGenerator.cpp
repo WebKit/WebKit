@@ -175,10 +175,6 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     if (!arithProfile || !shouldEmitProfiling)
         jit.boxDouble(m_leftFPR, m_result);
     else {
-        // The Int52 overflow check below intentionally omits 1ll << 51 as a valid negative Int52 value.
-        // Therefore, we will get a false positive if the result is that value. This is intentionally
-        // done to simplify the checking algorithm.
-
         const int64_t negativeZeroBits = 1ll << 63;
         jit.moveDoubleTo64(m_leftFPR, m_result);
 
@@ -190,13 +186,10 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         notNegativeZero.link(&jit);
         arithProfile->emitUnconditionalSet(jit, ObservedResults::NonNegZeroDouble);
 
-        jit.move(m_result, m_scratchGPR);
-        jit.urshiftPtr(CCallHelpers::Imm32(52), m_scratchGPR);
-        jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
-        CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
-
-        arithProfile->emitUnconditionalSet(jit, ObservedResults::Int52Overflow);
-        noInt52Overflow.link(&jit);
+        if (!arithProfile->didObserveInt52Overflow()) {
+            jit.move(m_result, m_scratchGPR);
+            arithProfile->emitSetInt52OverflowIfNeeded(jit, m_scratchGPR);
+        }
 
         done.link(&jit);
         jit.sub64(GPRInfo::numberTagRegister, m_result); // Box the double.

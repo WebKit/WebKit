@@ -43,7 +43,19 @@ void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, GPRReg val
 
     done.append(jit.branchIfInt32(valueGPR, mode));
     CCallHelpers::Jump notDouble = jit.branchIfNotDoubleKnownNotInt32(valueGPR, mode);
-    emitSetDouble(jit, tempGPR);
+    if (shouldEmitSetDouble()) {
+        constexpr BitfieldType doubleBits = ObservedResults::Int32Overflow | ObservedResults::NegZeroDouble | ObservedResults::NonNegZeroDouble;
+        if ((m_bits & doubleBits) != doubleBits)
+            emitUnconditionalSet(jit, doubleBits);
+        if (!didObserveInt52Overflow()) {
+            if (mode == DoNotHaveTagRegisters) {
+                jit.move(CCallHelpers::TrustedImm64(JSValue::NumberTag), tempGPR);
+                jit.add64(valueGPR, tempGPR);
+            } else
+                jit.add64(GPRInfo::numberTagRegister, valueGPR, tempGPR);
+            emitSetInt52OverflowIfNeeded(jit, tempGPR);
+        }
+    }
     done.append(jit.jump());
 
     notDouble.link(&jit);
@@ -87,6 +99,19 @@ void ArithProfile<BitfieldType>::emitSetDouble(CCallHelpers& jit, GPRReg scratch
         emitUnconditionalSet(jit, ObservedResults::Int32Overflow | ObservedResults::Int52Overflow | ObservedResults::NegZeroDouble | ObservedResults::NonNegZeroDouble);
 #endif
     }
+}
+
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitSetInt52OverflowIfNeeded(CCallHelpers& jit, GPRReg doubleBitsGPR) const
+{
+    constexpr double overflowPoint = static_cast<double>(ObservedResults::int52OverflowPoint);
+    CCallHelpers::JumpList inRange;
+    inRange.append(jit.branch64(CCallHelpers::Equal, doubleBitsGPR, CCallHelpers::TrustedImm64(std::bit_cast<uint64_t>(-overflowPoint))));
+    // Shifting out the sign bit orders the remaining bits by magnitude; NaN and Infinity sort above every finite value.
+    jit.lshift64(CCallHelpers::TrustedImm32(1), doubleBitsGPR);
+    inRange.append(jit.branch64(CCallHelpers::Below, doubleBitsGPR, CCallHelpers::TrustedImm64(std::bit_cast<uint64_t>(overflowPoint) << 1)));
+    emitUnconditionalSet(jit, ObservedResults::Int52Overflow);
+    inRange.link(&jit);
 }
 
 template<typename BitfieldType>

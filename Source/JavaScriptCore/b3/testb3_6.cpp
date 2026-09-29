@@ -1441,6 +1441,46 @@ static void testSShrShl32(int32_t value, int32_t sshrAmount, int32_t shlAmount)
         == ((value << (shlAmount & 31)) >> (sshrAmount & 31)));
 }
 
+static void testSShrMulConstantInt32Operand(int32_t value, int64_t multiplier, int32_t amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SShr, Origin(),
+            root->appendNew<Value>(
+                proc, Mul, Origin(),
+                root->appendNew<Value>(proc, SExt32, Origin(), arguments[0]),
+                root->appendNew<Const64Value>(proc, Origin(), multiplier * (static_cast<int64_t>(1) << amount))),
+            root->appendNew<Const32Value>(proc, Origin(), amount)));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, value), static_cast<int64_t>(value) * multiplier);
+}
+
+static void testSShrMulConstantInt64Operand(int64_t value, int64_t multiplier, int32_t amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+
+    int64_t shiftedMultiplier = multiplier * (static_cast<int64_t>(1) << amount);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SShr, Origin(),
+            root->appendNew<Value>(
+                proc, Mul, Origin(),
+                arguments[0],
+                root->appendNew<Const64Value>(proc, Origin(), shiftedMultiplier)),
+            root->appendNew<Const32Value>(proc, Origin(), amount)));
+
+    int64_t product = static_cast<int64_t>(static_cast<uint64_t>(value) * static_cast<uint64_t>(shiftedMultiplier));
+    CHECK_EQ(compileAndRun<int64_t>(proc, value), product >> amount);
+}
+
 static void testSShrShl64(int64_t value, int32_t sshrAmount, int32_t shlAmount)
 {
     Procedure proc;
@@ -3196,6 +3236,15 @@ void addSShrShTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>&
     RUN(testSShrShl64(42000000000, 48, 48));
     RUN(testSShrShl64(-42000000000, 48, 48));
     
+    RUN(testSShrMulConstantInt32Operand(65790, 52845, 12));
+    RUN(testSShrMulConstantInt32Operand(-65790, 52845, 12));
+    RUN(testSShrMulConstantInt32Operand(0x7fffffff, 52845, 12));
+    RUN(testSShrMulConstantInt32Operand(-0x7fffffff - 1, -52845, 12));
+    RUN(testSShrMulConstantInt32Operand(0x7fffffff, 0x7fffffff, 1));
+    RUN(testSShrMulConstantInt64Operand(0x7fffffffffffll, 52845, 12));
+    RUN(testSShrMulConstantInt64Operand(-0x7fffffffffffll, 52845, 12));
+    RUN(testSShrMulConstantInt64Operand(42, 52845, 12));
+
     RUN(testSShrShl64(42, 32, 32));
     RUN(testSShrShl64(-42, 32, 32));
     RUN(testSShrShl64(4200, 32, 32));

@@ -1079,17 +1079,25 @@ public:
 
     Jump isStrictInt52(GPRReg valueGPR, GPRReg scratchGPR)
     {
-        // This moves the checking range (fail if N >= (1 << (52 - 1)) or N < -(1 << (52 - 1))) by subtracting a value.
-        // So, valid value region starts with -1 and lower. In unsigned form, which means,
-        // 0x00000000000000000 to 0x000fffffffffffff. So, by ignoring 52 bits, we can extract 0x000 part, and we can check whether it is zero.
+#if CPU(ARM64)
+        extractSignedBitfield64(valueGPR, TrustedImm32(0), TrustedImm32(JSValue::numberOfInt52Bits), scratchGPR);
+        return branch64(Equal, scratchGPR, valueGPR);
+#else
+        // Adding 2^51 maps the Int52 range onto [0, 2^52), so the value is in range iff the top 12 bits are then zero.
         add64(TrustedImm64(0x0008000000000000ULL), valueGPR, scratchGPR);
         return branchTest64(Zero, scratchGPR, TrustedImm64(0xFFF0000000000000ULL));
+#endif
     }
 
     Jump isNotStrictInt52(GPRReg valueGPR, GPRReg scratchGPR)
     {
+#if CPU(ARM64)
+        extractSignedBitfield64(valueGPR, TrustedImm32(0), TrustedImm32(JSValue::numberOfInt52Bits), scratchGPR);
+        return branch64(NotEqual, scratchGPR, valueGPR);
+#else
         add64(TrustedImm64(0x0008000000000000ULL), valueGPR, scratchGPR);
         return branchTest64(NonZero, scratchGPR, TrustedImm64(0xFFF0000000000000ULL));
+#endif
     }
 
     // Here are possible arrangements of source, target, scratch:

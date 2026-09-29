@@ -2052,6 +2052,25 @@ private:
                     break;
             }
 
+            // Turn this: SShr(Mul(value, constant << amount), amount)
+            // Into this: Mul(value, constant)
+            // This is exact when the Mul cannot overflow.
+            if (m_value->child(1)->hasInt32()
+                && m_value->child(0)->opcode() == Mul
+                && m_value->child(0)->child(1)->hasInt()) {
+                int32_t amount = m_value->child(1)->asInt32();
+                Value* multiply = m_value->child(0);
+                int64_t multiplier = multiply->child(1)->asInt();
+                if (amount > 0
+                    && static_cast<size_t>(amount) < sizeofType(m_value->type()) * 8
+                    && !(multiplier & ((static_cast<int64_t>(1) << amount) - 1))
+                    && !rangeFor(multiply->child(0)).couldOverflowMul(rangeFor(multiply->child(1)), m_value->type())) {
+                    replaceWithNew<Value>(Mul, m_value->origin(), multiply->child(0),
+                        m_insertionSet.insertIntConstant(m_index, m_value, multiplier >> amount));
+                    break;
+                }
+            }
+
             handleShiftAmount();
             break;
 
