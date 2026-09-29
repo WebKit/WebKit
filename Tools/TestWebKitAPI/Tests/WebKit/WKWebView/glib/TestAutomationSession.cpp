@@ -20,11 +20,47 @@
 #include "config.h"
 
 #include "TestMain.h"
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebKitTestServer.h"
+#endif
 #include <gio/gio.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/JSONValues.h>
+#endif
 #include <wtf/UUID.h>
 #include <wtf/glib/SocketConnection.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/UTF8CStringView.h>
+
+#if ENABLE(WEBDRIVER_BIDI)
+static std::unique_ptr<WebKitTestServer> s_dedicatedWorkerRealmServer;
+
+static void dedicatedWorkerRealmServerCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+{
+    static constexpr auto workerDocument = "<title>loading</title>"
+        "<script>"
+        "window.worker = new Worker(\"/dedicated-worker.js\");"
+        "worker.onmessage = () => document.title = \"ready\";"
+        "</script>";
+
+    const char* content = nullptr;
+    const char* contentType = "text/html";
+    if (g_str_equal(path, "/dedicated-worker.html"))
+        content = workerDocument;
+    else if (g_str_equal(path, "/dedicated-worker.js")) {
+        content = "postMessage('ready');";
+        contentType = "application/javascript";
+    } else if (g_str_equal(path, "/empty.html"))
+        content = "<title>empty</title>";
+    else {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+        return;
+    }
+
+    soup_server_message_set_response(message, contentType, SOUP_MEMORY_STATIC, content, strlen(content));
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+}
+#endif
 
 class AutomationTest: public Test {
 public:
@@ -77,6 +113,17 @@ public:
     {
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
+#if ENABLE(WEBDRIVER_BIDI)
+        auto transportValue = JSON::Value::parseJSON(String::fromUTF8(message));
+        auto transportMessage = transportValue ? transportValue->asObject() : nullptr;
+        if (transportMessage && transportMessage->getString("method"_s) == "Automation.bidiMessageSent"_s) {
+            auto parameters = transportMessage->getObject("params"_s);
+            auto bidiValue = parameters ? JSON::Value::parseJSON(parameters->getString("message"_s)) : nullptr;
+            auto bidiMessage = bidiValue ? bidiValue->asObject() : nullptr;
+            if (bidiMessage && m_expectedBidiResponseIdentifier && bidiMessage->getInteger("id"_s) == *m_expectedBidiResponseIdentifier)
+                m_bidiResponse = bidiMessage;
+        }
+#endif
         m_message = UTF8CString { byteCast<char8_t>(message) };
         g_main_loop_quit(m_mainLoop.get());
     }
@@ -91,6 +138,86 @@ public:
         messageBuilder.append('}');
         m_connection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().legacyCStringPointer()));
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    String browsingContextHandleFromLastResponse() const
+    {
+        auto responseValue = JSON::Value::parseJSON(String::fromUTF8(m_message.span()));
+        auto response = responseValue ? responseValue->asObject() : nullptr;
+        auto result = response ? response->getObject("result"_s) : nullptr;
+        auto browsingContext = result ? result->getString("handle"_s) : nullString();
+        g_assert_false(browsingContext.isEmpty());
+        return browsingContext;
+    }
+
+    void loadPageAndWaitForTitle(WebKitWebView* webView, const UTF8CString& uri, const char* expectedTitle)
+    {
+        struct LoadState {
+            GMainLoop* mainLoop;
+            const char* expectedTitle;
+            bool ready { false };
+            bool timedOut { false };
+        } loadState { m_mainLoop.get(), expectedTitle };
+
+        auto titleChangedHandler = g_signal_connect(webView, "notify::title", G_CALLBACK(+[](WebKitWebView* webView, GParamSpec*, LoadState* loadState) {
+            if (!g_strcmp0(webkit_web_view_get_title(webView), loadState->expectedTitle)) {
+                loadState->ready = true;
+                g_main_loop_quit(loadState->mainLoop);
+            }
+        }), &loadState);
+        auto timeoutID = g_timeout_add_seconds(10, [](gpointer userData) -> gboolean {
+            auto& loadState = *static_cast<LoadState*>(userData);
+            loadState.timedOut = true;
+            g_main_loop_quit(loadState.mainLoop);
+            return G_SOURCE_REMOVE;
+        }, &loadState);
+
+        webkit_web_view_load_uri(webView, uri.legacyCStringPointer());
+        while (!loadState.ready && !loadState.timedOut)
+            g_main_loop_run(m_mainLoop.get());
+        if (!loadState.timedOut)
+            g_source_remove(timeoutID);
+        g_signal_handler_disconnect(webView, titleChangedHandler);
+        g_assert_true(loadState.ready);
+    }
+
+    Ref<JSON::Array> getRealms(int commandIdentifier, Ref<JSON::Object>&& parameters)
+    {
+        auto command = JSON::Object::create();
+        command->setInteger("id"_s, commandIdentifier);
+        command->setString("method"_s, "script.getRealms"_s);
+        command->setObject("params"_s, WTF::move(parameters));
+        auto automationParameters = JSON::Object::create();
+        automationParameters->setString("message"_s, command->toJSONString());
+
+        m_bidiResponse = nullptr;
+        m_expectedBidiResponseIdentifier = commandIdentifier;
+        sendCommandToBackend("processBidiMessage"_s, automationParameters->toJSONString());
+        struct WaitState {
+            GMainLoop* mainLoop;
+            bool timedOut { false };
+        } waitState { m_mainLoop.get() };
+        auto timeoutID = g_timeout_add_seconds(10, [](gpointer userData) -> gboolean {
+            auto& waitState = *static_cast<WaitState*>(userData);
+            waitState.timedOut = true;
+            g_main_loop_quit(waitState.mainLoop);
+            return G_SOURCE_REMOVE;
+        }, &waitState);
+        while (!m_bidiResponse && !waitState.timedOut)
+            g_main_loop_run(m_mainLoop.get());
+        if (!waitState.timedOut)
+            g_source_remove(timeoutID);
+
+        g_assert_true(!!m_bidiResponse);
+        m_expectedBidiResponseIdentifier = std::nullopt;
+        g_assert_true(m_bidiResponse->getInteger("id"_s) == commandIdentifier);
+        g_assert_true(m_bidiResponse->getString("type"_s) == "success"_s);
+        auto result = m_bidiResponse->getObject("result"_s);
+        auto realms = result ? result->getArray("realms"_s) : nullptr;
+        g_assert_true(!!realms);
+        return realms.releaseNonNull();
+    }
+#endif
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
     {
@@ -250,6 +377,10 @@ public:
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
     UTF8CString m_message;
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr<JSON::Object> m_bidiResponse;
+    std::optional<int> m_expectedBidiResponseIdentifier;
+#endif
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
@@ -294,6 +425,62 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
         }}
     }
 };
+
+#if ENABLE(WEBDRIVER_BIDI)
+static void verifyDedicatedWorkerRealmEnumeration(AutomationTest& test, WebKitWebView* webView, const String& workerBrowsingContext, const String& browsingContextWithoutWorker)
+{
+    test.loadPageAndWaitForTitle(webView, s_dedicatedWorkerRealmServer->getURIForPath("/dedicated-worker.html"), "ready");
+
+    auto windowParameters = JSON::Object::create();
+    windowParameters->setString("context"_s, workerBrowsingContext);
+    windowParameters->setString("type"_s, "window"_s);
+    auto windowRealms = test.getRealms(1, WTF::move(windowParameters));
+    g_assert_cmpuint(windowRealms->length(), ==, 1);
+    auto windowRealm = windowRealms->get(0)->asObject();
+    g_assert_true(!!windowRealm);
+    auto windowRealmIdentifier = windowRealm->getString("realm"_s);
+    g_assert_false(windowRealmIdentifier.isEmpty());
+
+    auto contextWithoutWorkerParameters = JSON::Object::create();
+    contextWithoutWorkerParameters->setString("context"_s, browsingContextWithoutWorker);
+    contextWithoutWorkerParameters->setString("type"_s, "dedicated-worker"_s);
+    g_assert_cmpuint(test.getRealms(2, WTF::move(contextWithoutWorkerParameters))->length(), ==, 0);
+
+    auto workerParameters = JSON::Object::create();
+    workerParameters->setString("context"_s, workerBrowsingContext);
+    workerParameters->setString("type"_s, "dedicated-worker"_s);
+    auto workerRealms = test.getRealms(3, WTF::move(workerParameters));
+    g_assert_cmpuint(workerRealms->length(), ==, 1);
+    auto workerRealm = workerRealms->get(0)->asObject();
+    g_assert_true(!!workerRealm);
+    g_assert_true(workerRealm->getString("type"_s) == "dedicated-worker"_s);
+    g_assert_true(workerRealm->getString("origin"_s) == s_dedicatedWorkerRealmServer->baseURL().protocolHostAndPort());
+    g_assert_false(!!workerRealm->getValue("context"_s));
+    auto workerRealmIdentifier = workerRealm->getString("realm"_s);
+    g_assert_false(workerRealmIdentifier.isEmpty());
+    auto owners = workerRealm->getArray("owners"_s);
+    g_assert_true(!!owners);
+    g_assert_cmpuint(owners->length(), ==, 1);
+    g_assert_true(owners->get(0)->asString() == windowRealmIdentifier);
+
+    auto allRealms = test.getRealms(4, JSON::Object::create());
+    unsigned matchingWorkerRealmCount = 0;
+    for (size_t index = 0; index < allRealms->length(); ++index) {
+        auto realm = allRealms->get(index)->asObject();
+        if (realm && realm->getString("type"_s) == "dedicated-worker"_s) {
+            ++matchingWorkerRealmCount;
+            g_assert_true(realm->getString("realm"_s) == workerRealmIdentifier);
+        }
+    }
+    g_assert_cmpuint(matchingWorkerRealmCount, ==, 1);
+
+    test.loadPageAndWaitForTitle(webView, s_dedicatedWorkerRealmServer->getURIForPath("/empty.html"), "empty");
+    auto terminatedWorkerParameters = JSON::Object::create();
+    terminatedWorkerParameters->setString("context"_s, workerBrowsingContext);
+    terminatedWorkerParameters->setString("type"_s, "dedicated-worker"_s);
+    g_assert_cmpuint(test.getRealms(5, WTF::move(terminatedWorkerParameters))->length(), ==, 0);
+}
+#endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
@@ -349,6 +536,9 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+#if ENABLE(WEBDRIVER_BIDI)
+    auto workerBrowsingContext = test->browsingContextHandleFromLastResponse();
+#endif
 
     auto newWebViewInWindow = test->createWebView(
         "is-controlled-by-automation", TRUE,
@@ -363,6 +553,10 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(webkit_web_view_get_network_session(newWebViewInWindow.get()) == networkSession);
 #endif
     g_assert_true(test->createNewWindow(newWebViewInWindow.get()));
+#if ENABLE(WEBDRIVER_BIDI)
+    auto browsingContextWithoutWorker = test->browsingContextHandleFromLastResponse();
+    verifyDedicatedWorkerRealmEnumeration(*test, webView.get(), workerBrowsingContext, browsingContextWithoutWorker);
+#endif
 
     auto newWebViewInTab = test->createWebView(
         "is-controlled-by-automation", TRUE,
@@ -401,11 +595,19 @@ void beforeAll()
 {
     g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2229", TRUE);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    s_dedicatedWorkerRealmServer = makeUnique<WebKitTestServer>();
+    s_dedicatedWorkerRealmServer->run(dedicatedWorkerRealmServerCallback);
+#endif
+
     AutomationTest::add("WebKitAutomationSession", "request-session", testAutomationSessionRequestSession);
     Test::add("WebKitAutomationSession", "application-info", testAutomationSessionApplicationInfo);
 }
 
 void afterAll()
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    s_dedicatedWorkerRealmServer = nullptr;
+#endif
     g_unsetenv("WEBKIT_INSPECTOR_SERVER");
 }
