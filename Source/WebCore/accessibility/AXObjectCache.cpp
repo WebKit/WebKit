@@ -1898,6 +1898,8 @@ void AXObjectCache::onRemoteFrameInitialized(AXRemoteFrame& remoteFrame)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     updateIsolatedTree(remoteFrame, AXProperty::RemoteFramePlatformElement);
+    // The hosting scroll view creates its remote frame child lazily, so it may have been added to the isolated tree before it had one.
+    updateIsolatedTree(protect(remoteFrame.parentObject()).get(), AXProperty::HasRemoteFrameChild);
 #else
     UNUSED_PARAM(remoteFrame);
 #endif

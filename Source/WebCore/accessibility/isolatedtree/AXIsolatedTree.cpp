@@ -2718,6 +2718,8 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setObjectProperty(AXProperty::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
             setObjectProperty(AXProperty::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
             setProperty(AXProperty::HasRemoteFrameChild, object.hasRemoteFrameChild());
+        } else if (object.role() == AccessibilityRole::FrameHost) {
+            setProperty(AXProperty::HasRemoteFrameChild, object.hasRemoteFrameChild());
         } else if (isWebArea && !tree->isEmptyContentTree()) {
             // We expose DocumentLinks only for the web area objects when the tree is not an empty content tree. This property is expensive and makes no sense in an empty content tree.
             // FIXME: compute DocumentLinks on the AX thread instead of caching it.

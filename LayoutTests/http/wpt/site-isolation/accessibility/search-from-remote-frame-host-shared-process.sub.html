@@ -1,0 +1,116 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationSharedProcessEnabled=true ] -->
+<html>
+<head>
+<script src="/webkit-test-resources/js-test.js"></script>
+<script src="/webkit-test-resources/accessibility-helper.js"></script>
+<script>
+// Installed before the iframes are parsed so no frame can reply before we listen.
+var framePIDs = {};
+var allFramesReported = new Promise((resolve) => {
+    var pending = 2;
+    window.addEventListener("message", (event) => {
+        if (!event.data || event.data.type !== "processId")
+            return;
+        framePIDs[event.data.name] = event.data.pid;
+        if (!--pending)
+            resolve();
+    });
+});
+</script>
+</head>
+<body>
+
+<button>Before</button>
+<!-- Both iframes are cross-site to the main frame and to each other, so they share one Web process (see two-iframes-shared-process.sub.html). -->
+<iframe id="frameOne" src="http://{{hosts[][]}}:{{ports[http][0]}}/WebKit/site-isolation/accessibility/resources/frame-with-heading.html?name=One"></iframe>
+<button>Between</button>
+<iframe id="frameTwo" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/accessibility/resources/frame-with-heading.html?name=Two"></iframe>
+<button>After</button>
+
+<script>
+var output = "Tests searches that use the element hosting an out-of-process frame as the start element,\n";
+output += "with two cross-site iframes that share one Web process.\n\n";
+
+window.jsTestIsAsync = true;
+
+var mainFramePID = window.internals ? internals.processIdentifier : null;
+
+if (window.accessibilityController)
+    accessibilityController.setClientAccessibilityMode(true);
+
+function describe(elements) {
+    if (!elements)
+        return "null";
+    return "[" + elements.map((element) => {
+        var title = element.title.replace(/^AXTitle: ?/, "");
+        return element.role.replace(/^AXRole: /, "") + (title ? ` "${title}"` : "");
+    }).join(", ") + "]";
+}
+
+function search(receiver, start, isNext, key, immediateDescendantsOnly, limit) {
+    return describe(receiver.uiElementsForSearchPredicate(start, isNext, key, "", false, immediateDescendantsOnly, limit));
+}
+
+var webArea, frameHosts, hostOne, hostTwo;
+var anyType = "AXAnyTypeSearchKey";
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // A search that reaches a remote frame waits on the main thread for IPC, which deadlocks
+    // with the test runner. Instead, the anchor is returned as a stand-in for the frame's results.
+    if (window.internals)
+        internals.setShouldMockChildFrameSearchResultsForTesting(true);
+
+    document.getElementById("frameOne").contentWindow.postMessage("reportProcessId", "*");
+    document.getElementById("frameTwo").contentWindow.postMessage("reportProcessId", "*");
+    await allFramesReported;
+
+    output += expect("framePIDs.One === framePIDs.Two", "true");
+    output += expect("framePIDs.One !== mainFramePID", "true");
+
+    await waitForElements([
+        (element) => element.role.includes("Heading") && element.title.includes("Frame One"),
+        (element) => element.role.includes("Heading") && element.title.includes("Frame Two"),
+    ]);
+
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    frameHosts = [];
+    for (var i = 0; i < webArea.childrenCount; i++) {
+        var child = webArea.childAtIndex(i);
+        if (child.rawRoleForTesting.includes("FrameHost"))
+            frameHosts.push(child);
+    }
+    output += expect("frameHosts.length", "2");
+    if (frameHosts.length !== 2) {
+        debug(output);
+        finishJSTest();
+        return;
+    }
+    [hostOne, hostTwo] = frameHosts;
+
+    output += "\nReceiver and start are both the host, so there is nothing to return:\n";
+    output += expect("search(hostOne, hostOne, true, anyType, true, 1)", "'[]'");
+    output += expect("search(hostOne, hostOne, false, anyType, true, 1)", "'[]'");
+    output += expect("search(hostTwo, hostTwo, true, anyType, true, 1)", "'[]'");
+    output += expect("search(hostTwo, hostTwo, false, anyType, true, 1)", "'[]'");
+
+    output += "\nWith no start element, each host still searches its frame:\n";
+    output += expect("search(hostOne, null, true, anyType, true, 1)", "'[AXGroup]'");
+    output += expect("search(hostTwo, null, true, anyType, true, 1)", "'[AXGroup]'");
+
+    output += "\nWith the hosts' container as the receiver, the search moves past each frame:\n";
+    output += expect("search(webArea, hostOne, false, anyType, true, 1)", "'[AXButton \"Before\"]'");
+    output += expect("search(webArea, hostOne, true, anyType, true, 1)", "'[AXButton \"Between\"]'");
+    output += expect("search(webArea, hostTwo, false, anyType, true, 1)", "'[AXButton \"Between\"]'");
+    output += expect("search(webArea, hostTwo, true, anyType, true, 1)", "'[AXButton \"After\"]'");
+
+    debug(output);
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

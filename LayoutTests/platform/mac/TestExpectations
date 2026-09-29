@@ -147,11 +147,13 @@ http/tests/site-isolation/accessibility/client/absolute-position-scrolled-iframe
 http/tests/site-isolation/accessibility/client/absolute-position-nested-scrolled-iframes.html [ Pass ]
 http/tests/site-isolation/accessibility/client/walk-up-from-iframe-content.html [ Pass ]
 http/tests/site-isolation/accessibility/client/search-past-remote-frame-immediate-descendants.html [ Pass ]
+http/tests/site-isolation/accessibility/client/search-from-remote-frame-host.html [ Pass ]
 
 # Shared-process site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.
 http/wpt/site-isolation/accessibility [ Skip ]
 http/wpt/site-isolation/accessibility/two-iframes-shared-process.sub.html [ Pass ]
+http/wpt/site-isolation/accessibility/search-from-remote-frame-host-shared-process.sub.html [ Pass ]
 
 # Skip glib-only combobox accessibility tests.
 accessibility/combobox/gtk [ Skip ]

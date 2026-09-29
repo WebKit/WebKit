@@ -1,0 +1,33 @@
+Tests searches that use the element hosting an out-of-process frame as the start element.
+A client that can't pass an element inside the frame as the start (such as older VoiceOver)
+passes the host instead. When the host is also the search's receiver, returning the frame
+would leave the client stuck on it, so the search should return nothing.
+
+PASS: frameHost !== null === true
+PASS: localFrameScrollArea !== null === true
+
+Receiver and start are both the host, so there is nothing to return:
+PASS: search(frameHost, frameHost, true, anyType, true, 1) === '[]'
+PASS: search(frameHost, frameHost, true, anyType, true, 20) === '[]'
+PASS: search(frameHost, frameHost, false, anyType, true, 1) === '[]'
+PASS: search(frameHost, frameHost, false, anyType, true, 20) === '[]'
+PASS: search(frameHost, frameHost, true, keyboardFocusable, false, 1) === '[]'
+PASS: search(frameHost, frameHost, false, keyboardFocusable, false, 1) === '[]'
+
+With no start element, the host still searches the frame, so interacting into it works:
+PASS: search(frameHost, null, true, anyType, true, 1) === '[AXGroup]'
+
+With the host's container as the receiver, the search moves past the frame:
+PASS: search(webArea, frameHost, true, anyType, true, 1) === '[AXButton "Between"]'
+PASS: search(webArea, frameHost, false, anyType, true, 1) === '[AXButton "Before"]'
+PASS: search(webArea, frameHost, true, keyboardFocusable, false, 1) === '[AXButton "Between"]'
+PASS: search(webArea, frameHost, false, keyboardFocusable, false, 1) === '[AXButton "Before"]'
+
+An element whose start is itself, but that doesn't host an out-of-process frame, still returns its contents:
+PASS: search(localFrameScrollArea, localFrameScrollArea, true, anyType, true, 1) === '[AXWebArea]'
+PASS: search(webArea, webArea, true, anyType, true, 1) === '[AXButton "Before"]'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  Between  After
