@@ -160,6 +160,10 @@ public:
 
     void clear()
     {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        if (!isMainThread())
+            return;
+#endif
         m_singleCharMap.clear();
         m_map.clear();
     }
