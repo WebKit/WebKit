@@ -951,6 +951,16 @@ bool Element::isFocusable() const
             return false;
     }
 
+    // Never-rendered SVG elements (e.g. <defs>, <clipPath>, <symbol>) and any
+    // elements inside them are never rendered and should not be focusable per
+    // the SVG spec. Walk from this element's own renderer upwards so that both
+    // a hidden container and its descendants are rejected.
+    // https://w3c.github.io/svgwg/svg2-draft/render.html#Rendered-vs-NonRendered
+    for (CheckedPtr ancestor = renderer(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->isRenderSVGHiddenContainer() || ancestor->isLegacyRenderSVGHiddenContainer())
+            return false;
+    }
+
     return hasFocusableStyle();
 }
 
