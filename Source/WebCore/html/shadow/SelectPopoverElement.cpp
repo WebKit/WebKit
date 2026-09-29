@@ -55,6 +55,11 @@ HTMLSelectElement* SelectPopoverElement::selectElement() const
     return dynamicDowncast<HTMLSelectElement>(shadowRoot->host());
 }
 
+bool SelectPopoverElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base || appearance == StyleAppearance::BaseSelect;
+}
+
 void SelectPopoverElement::didAttachRenderers()
 {
     HTMLDivElement::didAttachRenderers();

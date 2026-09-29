@@ -1,0 +1,25 @@
+A list box lays out its options itself, and a dropdown box keeps them in its picker, when size or multiple switches between the two.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A dropdown box keeps its options in its picker, which is closed.
+PASS hasBox(sizedOption) is false
+PASS hasBox(sizedOption) is true
+PASS hasBox(sizedOption) is false
+
+Back in the picker, the options show when it opens.
+PASS sized.matches(':open') is true
+PASS hasBox(sizedOption) is true
+
+multiple without size makes a list box too.
+PASS hasBox(multipleOption) is false
+PASS hasBox(multipleOption) is true
+PASS hasBox(multipleOption) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+one
+two
+

@@ -184,6 +184,11 @@ inline bool ComputedStyleBase::insideSubmitButton() const
     return m_inheritedRareData->insideSubmitButton;
 }
 
+inline bool ComputedStyleBase::inBaseAppearanceSubtree() const
+{
+    return m_inheritedRareData->inBaseAppearanceSubtree;
+}
+
 inline bool ComputedStyleBase::isInSubtreeWithBlendMode() const
 {
     return m_inheritedRareData->isInSubtreeWithBlendMode;

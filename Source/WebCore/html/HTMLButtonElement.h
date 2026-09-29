@@ -58,6 +58,7 @@ private:
 
     const AtomString& formControlType() const final;
 
+    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     int defaultTabIndex() const final;

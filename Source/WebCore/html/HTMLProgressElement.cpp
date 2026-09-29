@@ -33,6 +33,7 @@
 #include "RenderProgress.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "UserAgentParts.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -54,6 +55,11 @@ Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagNam
     Ref progress = adoptRef(*new HTMLProgressElement(tagName, document));
     progress->ensureUserAgentShadowRoot();
     return progress;
+}
+
+bool HTMLProgressElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base;
 }
 
 RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)

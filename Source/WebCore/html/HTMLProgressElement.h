@@ -52,6 +52,7 @@ private:
     bool isLabelable() const final { return true; }
     bool canContainRangeEndPoint() const final { return false; }
 
+    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     RenderProgress* NODELETE renderProgress() const;
     bool childShouldCreateRenderer(const Node&) const final;

@@ -201,6 +201,11 @@ inline void ComputedStyleBase::setInsideSubmitButton(bool value)
     SET(m_inheritedRareData, insideSubmitButton, value);
 }
 
+inline void ComputedStyleBase::setInBaseAppearanceSubtree(bool value)
+{
+    SET(m_inheritedRareData, inBaseAppearanceSubtree, value);
+}
+
 inline void ComputedStyleBase::setUsedPositionOptionIndex(std::optional<size_t> index)
 {
     SET_NESTED(m_nonInheritedData, rareData, usedPositionOptionIndex, index);

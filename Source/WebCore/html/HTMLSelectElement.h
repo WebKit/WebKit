@@ -263,6 +263,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
 
     bool childShouldCreateRenderer(const Node&) const final;
+    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
 
@@ -302,6 +303,7 @@ private:
     void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr) const;
     RefPtr<HTMLOptionElement> firstSelectedOption() const;
     void closePickerIfNoLongerSupported(bool hadOpenPicker);
+    void updateOptionSlotIfNeeded(bool usedListBoxSlot);
     void optionDeselectedByUser(HTMLOptionElement&);
     bool handleImplicitSubmissionKeypress(KeyboardEvent&);
     bool platformHandleKeydownEvent(KeyboardEvent*);
@@ -355,6 +357,7 @@ private:
     std::optional<int> m_lastActiveIndex;
 
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_buttonSlot;
+    WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_listBoxSlot;
     WeakPtr<SelectPopoverElement, WeakPtrImplWithEventTargetData> m_popover;
 
 #if !PLATFORM(IOS_FAMILY)

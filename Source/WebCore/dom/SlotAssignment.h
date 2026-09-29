@@ -69,6 +69,7 @@ public:
     virtual void willRemoveAssignedNode(Node&, ShadowRoot&) = 0;
     virtual void didRemoveAllChildrenOfShadowHost(ShadowRoot&) = 0;
     virtual void didMutateTextNodesOfShadowHost(ShadowRoot&) = 0;
+    virtual void didChangeSlotNamesOfShadowHostChildren(ShadowRoot&) { }
 
 protected:
     // These flags are used by NamedSlotAssignment but it's here to avoid virtual function calls in perf critical code paths.
@@ -209,6 +210,12 @@ inline void ShadowRoot::didRemoveAllChildrenOfShadowHost()
 {
     if (m_slotAssignment) [[unlikely]]
         m_slotAssignment->didRemoveAllChildrenOfShadowHost(*this);
+}
+
+inline void ShadowRoot::didChangeSlotNamesOfShadowHostChildren()
+{
+    if (m_slotAssignment)
+        m_slotAssignment->didChangeSlotNamesOfShadowHostChildren(*this);
 }
 
 inline void ShadowRoot::didMutateTextNodesOfShadowHost()

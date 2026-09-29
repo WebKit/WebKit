@@ -1,0 +1,58 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+/* js-test grows its console at the top of the body, which would push these out of reach. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="sized"><option id="sizedOption">one</option><option>two</option></select>
+<select id="multiple"><option id="multipleOption">one</option><option>two</option></select>
+</div>
+<script>
+description("A list box lays out its options itself, and a dropdown box keeps them in its picker, when size or multiple switches between the two.");
+
+jsTestIsAsync = true;
+
+function hasBox(option)
+{
+    return option.offsetHeight > 0;
+}
+
+(async () => {
+    debug("A dropdown box keeps its options in its picker, which is closed.");
+    shouldBeFalse("hasBox(sizedOption)");
+
+    sized.size = 4;
+    shouldBeTrue("hasBox(sizedOption)");
+
+    sized.size = 1;
+    shouldBeFalse("hasBox(sizedOption)");
+
+    debug("");
+    debug("Back in the picker, the options show when it opens.");
+    await UIHelper.activateElement(sized);
+    await UIHelper.animationFrame();
+    shouldBeTrue("sized.matches(':open')");
+    shouldBeTrue("hasBox(sizedOption)");
+
+    debug("");
+    debug("multiple without size makes a list box too.");
+    shouldBeFalse("hasBox(multipleOption)");
+    multiple.multiple = true;
+    shouldBeTrue("hasBox(multipleOption)");
+    multiple.multiple = false;
+    shouldBeFalse("hasBox(multipleOption)");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

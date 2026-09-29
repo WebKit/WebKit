@@ -136,6 +136,7 @@ InheritedRareData::InheritedRareData()
     , autoRevealsWhenFound(false)
     , insideDefaultButton(false)
     , insideSubmitButton(false)
+    , inBaseAppearanceSubtree(false)
 #if ENABLE(SMART_IMAGE_RESIZER)
     , isAffectedBySmartImageResizer(false)
 #endif
@@ -249,6 +250,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , autoRevealsWhenFound(o.autoRevealsWhenFound)
     , insideDefaultButton(o.insideDefaultButton)
     , insideSubmitButton(o.insideSubmitButton)
+    , inBaseAppearanceSubtree(o.inBaseAppearanceSubtree)
 #if ENABLE(SMART_IMAGE_RESIZER)
     , isAffectedBySmartImageResizer(o.isAffectedBySmartImageResizer)
 #endif
@@ -360,6 +362,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && usedContentVisibility == o.usedContentVisibility
         && insideDefaultButton == o.insideDefaultButton
         && insideSubmitButton == o.insideSubmitButton
+        && inBaseAppearanceSubtree == o.inBaseAppearanceSubtree
 #if ENABLE(SMART_IMAGE_RESIZER)
         && isAffectedBySmartImageResizer == o.isAffectedBySmartImageResizer
 #endif
@@ -490,6 +493,7 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideDefaultButton);
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideSubmitButton);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, inBaseAppearanceSubtree);
 #if ENABLE(SMART_IMAGE_RESIZER)
     LOG_IF_DIFFERENT_WITH_CAST(bool, isAffectedBySmartImageResizer);
 #endif

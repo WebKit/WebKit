@@ -65,6 +65,7 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
+#include "SelectPopoverElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleableInlines.h"
@@ -718,6 +719,13 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     // Let the theme also have a crack at adjusting the style.
     if (style.appearance() != StyleAppearance::None && style.appearance() != StyleAppearance::Base)
         adjustThemeStyle(style, m_parentStyle);
+
+    bool hasBaseAppearance = style.usedAppearance() == StyleAppearance::Base;
+    if ((hasBaseAppearance || style.inBaseAppearanceSubtree()) && !style.pseudoElementType() && m_element && m_element->supportsBaseAppearance(StyleAppearance::Base)) {
+        if (is<SelectPopoverElement>(m_element))
+            hasBaseAppearance = hasBaseAppearance && m_parentStyle.inBaseAppearanceSubtree();
+        style.setInBaseAppearanceSubtree(hasBaseAppearance);
+    }
 
     // This should be kept in sync with requiresRenderingConsolidationForViewTransition
     if (style.usedTransformStyle3D() == TransformStyle3D::Preserve3D) {

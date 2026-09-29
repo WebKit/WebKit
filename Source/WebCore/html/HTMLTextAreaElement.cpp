@@ -48,6 +48,7 @@
 #include "RenderTextControlMultiLine.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleAppearance.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -203,6 +204,11 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
     default:
         break;
     }
+}
+
+bool HTMLTextAreaElement::supportsBaseAppearance(StyleAppearance appearance) const
+{
+    return appearance == StyleAppearance::Base;
 }
 
 RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
