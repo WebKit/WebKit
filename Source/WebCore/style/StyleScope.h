@@ -274,7 +274,10 @@ auto resolveTreeScopedReference(const Element& element, const ScopedName& refere
 
     // "If no relevant tree-scoped name is found, and the root is a shadow root, then repeat this search in the root’s host’s node tree."
     for (CheckedPtr hostScope = firstScope->hostScope(); hostScope; hostScope = hostScope->hostScope()) {
-        --scopeOrdinal;
+        if (scopeOrdinal == ScopeOrdinal::Shadow)
+            scopeOrdinal = ScopeOrdinal::Element;
+        else
+            --scopeOrdinal;
         if (auto result = function(*hostScope, ScopedName { reference.name, scopeOrdinal }))
             return result;
     }
