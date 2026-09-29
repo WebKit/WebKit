@@ -5300,7 +5300,6 @@ webkit.org/b/322641 [ Debug ] imported/w3c/web-platform-tests/web-animations/tim
 webkit.org/b/322642 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-unconnected-outputs.https.window.html [ Pass Failure ]
 webkit.org/b/322646 [ Debug ] media/track/track-readiness-state.html [ Pass Failure ]
 
-webkit.org/b/322814 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Crash Failure Pass ]
 webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html [ Pass Timeout ]
 webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Pass Timeout ]
 webkit.org/b/322816 imported/w3c/web-platform-tests/resource-timing/initiator-type/style.html [ Failure Pass ]

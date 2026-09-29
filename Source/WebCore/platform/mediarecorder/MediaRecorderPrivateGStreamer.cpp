@@ -119,6 +119,7 @@ MediaRecorderPrivateBackend::MediaRecorderPrivateBackend(MediaStreamPrivate& str
     : m_stream(stream)
     , m_options(options)
     , m_mimeType(options.mimeType)
+    , m_eosTimer(*this, &MediaRecorderPrivateBackend::eosTimerFired)
     , m_positionTimer([&] {
         positionUpdated();
     })
@@ -160,6 +161,7 @@ MediaRecorderPrivateBackend::MediaRecorderPrivateBackend(MediaStreamPrivate& str
 MediaRecorderPrivateBackend::~MediaRecorderPrivateBackend()
 {
     m_selectTracksCallback.reset();
+    didReachEOS();
     if (m_src)
         webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_src.get()));
     m_positionTimer.stop();
@@ -208,63 +210,55 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
     gst_element_get_state(m_pipeline.get(), &state, nullptr, GST_CLOCK_TIME_NONE);
     if (state != GST_STATE_VOID_PENDING && state < GST_STATE_PLAYING) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Pipeline is not in playing state, not sending EOS event");
-        Locker lock(m_eosLock);
-        m_eos = true;
         return;
     }
 
     if (!webkitMediaStreamSrcHasPrerolled(WEBKIT_MEDIA_STREAM_SRC(m_src.get()))) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Source element hasn't prerolled yet, no need to send EOS event");
-        Locker lock(m_eosLock);
-        m_eos = true;
         return;
     }
-
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Flushing");
-    gst_element_send_event(m_pipeline.get(), gst_event_new_flush_start());
-    gst_element_send_event(m_pipeline.get(), gst_event_new_flush_stop(FALSE));
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Emitting EOS event(s)");
     if (!gst_element_send_event(m_pipeline.get(), gst_event_new_eos())) {
         GST_WARNING_OBJECT(m_pipeline.get(), "EOS event wasn't handled");
-        Locker lock(m_eosLock);
-        m_eos = true;
         return;
     }
 
     if (gst_app_sink_is_eos(GST_APP_SINK(m_sink.get()))) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Sink received EOS already");
-        Locker lock(m_eosLock);
-        m_eos = true;
         return;
     }
 
+    // Data fetches wait for the EOS event to reach the sink, so that they include the last fragment.
     GST_DEBUG_OBJECT(m_pipeline.get(), "Waiting for EOS event");
-    bool isEOS = false;
-    unsigned count = 0;
-    while (!isEOS) {
-        Locker lock(m_eosLock);
-        m_eosCondition.waitFor(m_eosLock, 200_ms, [weakThis = ThreadSafeWeakPtr { *this }]() -> bool {
-            if (auto protectedThis = weakThis.get()) {
-                assertIsHeld(protectedThis->m_eosLock);
-                return protectedThis->m_eos;
-            }
-            return true;
-        });
-        isEOS = m_eos;
-        if (count++ >= 10)
-            break;
-    }
-    // FIXME: This workaround should be removed. See also https://bugs.webkit.org/show_bug.cgi?id=293124.
-    if (count >= 10) {
-        GST_WARNING_OBJECT(m_pipeline.get(), "EOS hasn't reached the sink after 2 seconds of waiting");
-        return;
-    }
-    GST_DEBUG_OBJECT(m_pipeline.get(), "EOS event received on sink");
+    m_waitingForEOS = true;
+    // The EOS event sometimes never reaches the sink, see https://bugs.webkit.org/show_bug.cgi?id=293124.
+    m_eosTimer.startOneShot(2_s);
+}
+
+void MediaRecorderPrivateBackend::eosTimerFired()
+{
+    GST_WARNING_OBJECT(m_pipeline.get(), "EOS hasn't reached the sink after 2 seconds of waiting");
+    didReachEOS();
+}
+
+void MediaRecorderPrivateBackend::didReachEOS()
+{
+    ASSERT(isMainThread());
+    m_eosTimer.stop();
+    m_waitingForEOS = false;
+    for (auto& callback : std::exchange(m_fetchDataCallbacksPendingEOS, { }))
+        fetchData(WTF::move(callback));
 }
 
 void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallback&& completionHandler)
 {
+    if (m_waitingForEOS) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Deferring data fetch until EOS");
+        m_fetchDataCallbacksPendingEOS.append(WTF::move(completionHandler));
+        return;
+    }
+
     callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler), mimeType = this->mimeType()]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis) {
@@ -535,7 +529,7 @@ bool MediaRecorderPrivateBackend::preparePipeline()
 
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [recorder = ThreadSafeWeakPtr { *this }](auto message) mutable {
-        if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_EOS)
+        if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_EOS && GST_MESSAGE_TYPE(message) != GST_MESSAGE_ERROR)
             return;
         RefPtr self = recorder.get();
         if (!self)
@@ -581,9 +575,10 @@ void MediaRecorderPrivateBackend::processSample(GRefPtr<GstSample>&& sample)
 void MediaRecorderPrivateBackend::notifyEOS()
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "EOS received");
-    Locker lock(m_eosLock);
-    m_eos = true;
-    m_eosCondition.notifyAll();
+    callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReachEOS();
+    });
 }
 
 #undef GST_CAT_DEFAULT
