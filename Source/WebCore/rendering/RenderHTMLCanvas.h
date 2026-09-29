@@ -58,6 +58,8 @@ public:
     DisplayList::RecorderImpl* canvasDrawableRecorder(RenderElement&, GraphicsContext&) const;
     std::optional<CanvasElementSnapshot> canvasDrawableSnapshot(RenderElement&) const;
 
+    void requestPaintEventIfNeeded(const RenderObject& repaintedRenderer) const;
+
 private:
     void element() const = delete;
 
