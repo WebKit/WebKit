@@ -407,7 +407,7 @@ TEST(DragAndDropTests, PromisedImageFileNameFromWebContentIsSanitized)
     RetainPtr imageBase64 = [[NSData dataWithContentsOfURL:iconURL.get()] base64EncodedStringWithOptions:0];
     RetainPtr script = [NSString stringWithFormat:@"sendPromisedImageData('%@', '%@'); sendResult", NSPasteboardNameDrag, imageBase64.get()];
 
-    EXPECT_WK_STREQ("sent", [webView stringByEvaluatingJavaScript:script]);
+    EXPECT_WK_STREQ("sent", [webView stringByEvaluatingJavaScript:script.get()]);
 
     RetainPtr<NSArray<NSURL *>> urls = [simulator receivePromisedFiles];
     EXPECT_EQ(1UL, [urls count]);
