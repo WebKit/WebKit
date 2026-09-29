@@ -1,0 +1,11 @@
+
+PASS e.style['flex-flow'] = "balance" should set flex-direction
+PASS e.style['flex-flow'] = "balance" should set flex-wrap
+PASS e.style['flex-flow'] = "balance" should not set unrelated longhands
+PASS e.style['flex-flow'] = "column wrap balance" should set flex-direction
+PASS e.style['flex-flow'] = "column wrap balance" should set flex-wrap
+PASS e.style['flex-flow'] = "column wrap balance" should not set unrelated longhands
+PASS e.style['flex-flow'] = "wrap-reverse balance row-reverse" should set flex-direction
+PASS e.style['flex-flow'] = "wrap-reverse balance row-reverse" should set flex-wrap
+PASS e.style['flex-flow'] = "wrap-reverse balance row-reverse" should not set unrelated longhands
+

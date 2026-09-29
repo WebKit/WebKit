@@ -110,6 +110,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-start-bias-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-zero-size-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-zero-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/flex-flow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/flex-flow-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/flex-flow-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/flex-line-count-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/flex-line-count-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/balance/flex-line-count-valid.html
