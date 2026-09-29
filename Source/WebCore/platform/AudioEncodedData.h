@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,19 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
-
-#include "VideoDecoder.h"
-#include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueRef.h>
+#include <WebCore/SharedBuffer.h>
+#include <optional>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class LibWebRTCVPXInternalVideoDecoder;
+struct AudioEncodedData {
+    Ref<SharedBuffer> data;
+    bool isKeyFrame { false };
+    int64_t timestamp { 0 };
+    std::optional<uint64_t> duration;
 
-class LibWebRTCVPXVideoDecoder : public VideoDecoder {
-    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCVPXVideoDecoder);
-public:
-    enum class Type {
-        VP8,
-        VP9,
-        VP9_P2,
-#if ENABLE(AV1)
-        AV1
-#endif
-    };
-    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&);
-
-    ~LibWebRTCVPXVideoDecoder();
-
-private:
-    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&);
-
-    Ref<DecodePromise> decode(VideoEncodedData&&) final;
-    Ref<GenericPromise> flush() final;
-    void reset() final;
-    void NODELETE close() final;
-
-    const Ref<LibWebRTCVPXInternalVideoDecoder> m_internalDecoder;
+    AudioEncodedData isolatedCopy() && { return { WTF::move(data), isKeyFrame, timestamp, duration }; }
 };
 
-}
-
-#endif // USE(LIBWEBRTC)
+} // namespace WebCore

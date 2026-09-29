@@ -2229,6 +2229,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/writing-tools/WritingToolsTypes.h
 
     platform/AbortableTaskQueue.h
+    platform/AudioEncodedData.h
     platform/AudioEncoderActiveConfiguration.h
     platform/AudioSampleFormat.h
     platform/BoxExtents.h
@@ -2406,6 +2407,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/UserInterfaceLayoutDirection.h
     platform/ValidationBubble.h
     platform/VideoDecoder.h
+    platform/VideoEncodedData.h
     platform/VideoEncoder.h
     platform/VideoEncoderActiveConfiguration.h
     platform/VideoEncoderScalabilityMode.h

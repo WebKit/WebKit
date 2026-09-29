@@ -30,6 +30,7 @@
 
 #include "LibWebRTCCodecs.h"
 #include "WebProcess.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -66,7 +67,7 @@ public:
 private:
     RemoteVideoDecoder(LibWebRTCCodecs::Decoder&, Ref<RemoteVideoDecoderCallbacks>&&);
 
-    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<DecodePromise> decode(VideoEncodedData&&) final;
     Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
@@ -205,7 +206,7 @@ RemoteVideoDecoder::~RemoteVideoDecoder()
     protect(WebProcess::singleton().libWebRTCCodecs())->releaseDecoder(m_internalDecoder);
 }
 
-Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(EncodedFrame&& frame)
+Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(VideoEncodedData&& frame)
 {
     if (frame.duration)
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
