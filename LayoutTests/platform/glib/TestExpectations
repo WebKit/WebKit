@@ -1049,6 +1049,7 @@ accessibility/base-select-complex-options.html [ Skip ]
 accessibility/base-select-focus-on-open.html [ Skip ]
 accessibility/base-select-option-press-closes-popover.html [ Skip ]
 accessibility/base-select-notifications.html [ Skip ]
+accessibility/base-select-list-box.html [ Skip ]
 # This one fails because it leans on a Cocoa-specific API (AccessibilityUIElement::uiElementForSearchPredicate), so
 # may be a true skip.
 accessibility/base-select-search-predicate.html [ Skip ]

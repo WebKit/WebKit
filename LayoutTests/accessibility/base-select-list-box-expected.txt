@@ -1,0 +1,31 @@
+This test verifies that a base-appearance list box exposes its options as list box options, also after size changes.
+
+PASS: axSelect.role === 'AXRole: AXList'
+PASS: axSelect.childrenCount === 4
+PASS: platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple') === true
+PASS: axSelect.childAtIndex(1).isSelected === true
+PASS: platformTextAlternatives(axSelect.childAtIndex(2)).includes('More') === true
+PASS: platformTextAlternatives(axSelect.childAtIndex(3)).includes('Cherry') === true
+PASS: axSelect.childAtIndex(3).parentElement().isEqual(axSelect) === true
+
+size=1
+PASS: accessibilityController.accessibleElementById('select').role.toLowerCase().includes('popup') === true
+
+size=4
+PASS: accessibilityController.accessibleElementById('select').role === 'AXRole: AXList'
+PASS: axSelect.role === 'AXRole: AXList'
+PASS: axSelect.childrenCount === 4
+PASS: platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple') === true
+PASS: axSelect.childAtIndex(1).isSelected === true
+PASS: platformTextAlternatives(axSelect.childAtIndex(2)).includes('More') === true
+PASS: platformTextAlternatives(axSelect.childAtIndex(3)).includes('Cherry') === true
+PASS: axSelect.childAtIndex(3).parentElement().isEqual(axSelect) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Apple
+Banana
+Cherry
+

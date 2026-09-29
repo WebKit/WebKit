@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select" size="4">
+    <option>Apple</option>
+    <option selected>Banana</option>
+    <optgroup label="More">
+        <option>Cherry</option>
+    </optgroup>
+</select>
+
+<script>
+var output = "This test verifies that a base-appearance list box exposes its options as list box options, also after size changes.\n\n";
+
+function expectListBox()
+{
+    window.axSelect = accessibilityController.accessibleElementById("select");
+    var result = expect("axSelect.role", "'AXRole: AXList'");
+    result += expect("axSelect.childrenCount", "4");
+    result += expect("platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple')", "true");
+    result += expect("axSelect.childAtIndex(1).isSelected", "true");
+    result += expect("platformTextAlternatives(axSelect.childAtIndex(2)).includes('More')", "true");
+    result += expect("platformTextAlternatives(axSelect.childAtIndex(3)).includes('Cherry')", "true");
+    result += expect("axSelect.childAtIndex(3).parentElement().isEqual(axSelect)", "true");
+    return result;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        output += expectListBox();
+
+        output += "\nsize=1\n";
+        document.getElementById("select").size = 1;
+        output += await expectAsync("accessibilityController.accessibleElementById('select').role.toLowerCase().includes('popup')", "true");
+
+        output += "\nsize=4\n";
+        document.getElementById("select").size = 4;
+        output += await expectAsync("accessibilityController.accessibleElementById('select').role", "'AXRole: AXList'");
+        output += expectListBox();
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
