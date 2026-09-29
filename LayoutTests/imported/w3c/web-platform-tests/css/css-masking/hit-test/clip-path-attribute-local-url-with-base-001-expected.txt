@@ -1,0 +1,5 @@
+
+PASS The base element changes the document base URL
+PASS An unclipped rect is hit where it is drawn (control)
+PASS clip-path presentation attribute with a fragment-only URL references the clipPath in this document
+
