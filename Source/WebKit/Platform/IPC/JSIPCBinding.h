@@ -179,7 +179,7 @@ std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObje
 }
 
 template<typename T>
-static std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
+std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     auto* array = JSC::constructEmptyArray(globalObject, nullptr);
