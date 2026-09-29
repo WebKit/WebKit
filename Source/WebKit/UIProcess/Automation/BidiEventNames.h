@@ -43,6 +43,10 @@ static constexpr auto UserPromptClosed = "browsingContext.userPromptClosed"_s;
 static constexpr auto UserPromptOpened = "browsingContext.userPromptOpened"_s;
 } // namespace BrowsingContext
 
+namespace Input {
+static constexpr auto FileDialogOpened = "input.fileDialogOpened"_s;
+} // namespace Input
+
 namespace Log {
 static constexpr auto EntryAdded = "log.entryAdded"_s;
 } // namespace Log

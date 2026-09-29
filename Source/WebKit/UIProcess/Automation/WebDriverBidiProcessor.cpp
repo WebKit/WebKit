@@ -35,6 +35,7 @@
 #include "BidiBrowserAgent.h"
 #include "BidiBrowsingContextAgent.h"
 #include "BidiDigitalCredentialsAgent.h"
+#include "BidiInputAgent.h"
 #include "BidiPermissionsAgent.h"
 #include "BidiScriptAgent.h"
 #include "BidiSessionAgent.h"
@@ -60,11 +61,13 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
     , m_browserAgent(makeUniqueRef<BidiBrowserAgent>(session, m_backendDispatcher))
     , m_browsingContextAgent(BidiBrowsingContextAgent::create(session, m_backendDispatcher))
     , m_digitalCredentialsAgent(makeUniqueRef<BidiDigitalCredentialsAgent>(session, m_backendDispatcher))
+    , m_inputAgent(makeUniqueRef<BidiInputAgent>(session, m_backendDispatcher))
     , m_permissionsAgent(makeUniqueRef<BidiPermissionsAgent>(session, m_backendDispatcher))
     , m_scriptAgent(makeUniqueRef<BidiScriptAgent>(session, m_backendDispatcher))
     , m_sessionAgent(makeUniqueRef<BidiSessionAgent>(session, m_backendDispatcher))
     , m_storageAgent(makeUniqueRef<BidiStorageAgent>(session, m_backendDispatcher))
     , m_browsingContextDomainNotifier(makeUniqueRef<BidiBrowsingContextFrontendDispatcher>(m_frontendRouter))
+    , m_inputDomainNotifier(makeUniqueRef<BidiInputFrontendDispatcher>(m_frontendRouter))
     , m_logDomainNotifier(makeUniqueRef<BidiLogFrontendDispatcher>(m_frontendRouter))
     , m_scriptDomainNotifier(makeUniqueRef<BidiScriptFrontendDispatcher>(m_frontendRouter))
 {

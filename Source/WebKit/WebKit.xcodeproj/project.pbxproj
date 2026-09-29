@@ -1650,6 +1650,8 @@
 		5CFC9C812B71809600F8D289 /* CoreIPCCFDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC9C7F2B717EFA00F8D289 /* CoreIPCCFDictionary.mm */; };
 		5EEC724C2DC1B30700D012DD /* BidiStorageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EEC724B2DC1B30700D012DD /* BidiStorageAgent.cpp */; };
 		5EEC724E2DC1B31800D012DD /* BidiStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EEC724D2DC1B31300D012DD /* BidiStorageAgent.h */; };
+		C08D230F423262D7A726C259 /* BidiInputAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 311B2F261342A4DC39DFE25B /* BidiInputAgent.cpp */; };
+		692693C7A1078ED75489C9D8 /* BidiInputAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 52407FDF0FC94F6863F2D0D1 /* BidiInputAgent.h */; };
 		5EEC72502DC1B32100D012DD /* BidiSessionAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EEC724F2DC1B32000D012DD /* BidiSessionAgent.cpp */; };
 		5EEC72522DC1B32300D012DD /* BidiSessionAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EEC72512DC1B32200D012DD /* BidiSessionAgent.h */; };
 		5EEC72542DC1B32500D012DD /* BidiEventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EEC72532DC1B32400D012DD /* BidiEventNames.h */; };
@@ -6986,6 +6988,8 @@
 		5EB592AB2DC2049A0058664B /* BidiStorage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiStorage.json; sourceTree = "<group>"; };
 		5EEC724B2DC1B30700D012DD /* BidiStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiStorageAgent.cpp; sourceTree = "<group>"; };
 		5EEC724D2DC1B31300D012DD /* BidiStorageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiStorageAgent.h; sourceTree = "<group>"; };
+		311B2F261342A4DC39DFE25B /* BidiInputAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiInputAgent.cpp; sourceTree = "<group>"; };
+		52407FDF0FC94F6863F2D0D1 /* BidiInputAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiInputAgent.h; sourceTree = "<group>"; };
 		5EEC724F2DC1B32000D012DD /* BidiSessionAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiSessionAgent.cpp; sourceTree = "<group>"; };
 		5EEC72512DC1B32200D012DD /* BidiSessionAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiSessionAgent.h; sourceTree = "<group>"; };
 		5EEC72532DC1B32400D012DD /* BidiEventNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiEventNames.h; sourceTree = "<group>"; };
@@ -15669,6 +15673,8 @@
 				277A87492B55413CB027FECA /* BidiDigitalCredentialsAgent.cpp */,
 				BA0937229E9E469B9278ED67 /* BidiDigitalCredentialsAgent.h */,
 				5EEC72532DC1B32400D012DD /* BidiEventNames.h */,
+				311B2F261342A4DC39DFE25B /* BidiInputAgent.cpp */,
+				52407FDF0FC94F6863F2D0D1 /* BidiInputAgent.h */,
 				997EB9D92E5544FC002CFED7 /* BidiPermissionsAgent.cpp */,
 				997EB9D82E5544FC002CFED7 /* BidiPermissionsAgent.h */,
 				F3272B7F2DB997C6007B3A9A /* BidiScriptAgent.cpp */,
@@ -18398,6 +18404,7 @@
 				F3272B822DB997C6007B3A9A /* BidiBrowsingContextAgent.h in Headers */,
 				99657F74FE484682A7055097 /* BidiDigitalCredentialsAgent.h in Headers */,
 				5EEC72542DC1B32500D012DD /* BidiEventNames.h in Headers */,
+				692693C7A1078ED75489C9D8 /* BidiInputAgent.h in Headers */,
 				997EB9DA2E5544FC002CFED7 /* BidiPermissionsAgent.h in Headers */,
 				F3272B832DB997C6007B3A9A /* BidiScriptAgent.h in Headers */,
 				5EEC72522DC1B32300D012DD /* BidiSessionAgent.h in Headers */,
@@ -22316,6 +22323,7 @@
 				F3EEEE5A2DB318270038CC1D /* BidiBrowserAgent.cpp in Sources */,
 				F3272B802DB997C6007B3A9A /* BidiBrowsingContextAgent.cpp in Sources */,
 				2790DB2B37644A61AA0AD21E /* BidiDigitalCredentialsAgent.cpp in Sources */,
+				C08D230F423262D7A726C259 /* BidiInputAgent.cpp in Sources */,
 				997EB9DB2E5544FC002CFED7 /* BidiPermissionsAgent.cpp in Sources */,
 				F3272B812DB997C6007B3A9A /* BidiScriptAgent.cpp in Sources */,
 				5EEC72502DC1B32100D012DD /* BidiSessionAgent.cpp in Sources */,
