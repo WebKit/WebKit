@@ -383,6 +383,7 @@ protected:
     LayoutUnit logicalHeightForGridItem(RenderBox&, RenderGridLayoutState&) const;
     bool updateOverridingContainingBlockContentSizeForGridItem(RenderBox&, Style::GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
     bool isComputingColumnIntrinsicWidthForNonOrthogonalItem(const RenderBox&) const;
+    bool shouldTreatGridAreaBlockSizeAsIndefinite(const RenderBox&) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
