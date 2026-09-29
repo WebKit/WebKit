@@ -16041,7 +16041,8 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
 
 #if ENABLE(NOTIFICATIONS)
     // Add origin to list of origins that have requested permission to use the Notifications API.
-    internals().notificationPermissionRequesters.add(origin->securityOrigin());
+    if (!origin->securityOrigin().isNull())
+        internals().notificationPermissionRequesters.add(origin->securityOrigin());
 #endif
 
     m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool allowed) mutable {
