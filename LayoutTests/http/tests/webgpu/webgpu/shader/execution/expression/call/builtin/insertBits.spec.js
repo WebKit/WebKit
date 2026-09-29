@@ -378,3 +378,46 @@ fn(async (t) => {
 
   await run(t, builtin('insertBits'), [T, T, Type.u32, Type.u32], T, cfg, cases);
 });
+
+g.test('array_index').
+desc('Test insertBits offset edge case where the result is used as an array index.').
+fn((t) => {
+  const wgsl = `
+      @group(0) @binding(0) var<storage, read_write> res: array<u32, 8>;
+
+      @compute @workgroup_size(1)
+      fn main() {
+        let count = 0u;
+        res[insertBits(5u, 1u, 32u, count)] = 42u;
+      }
+    `;
+
+  const pipeline = t.device.createComputePipeline({
+    layout: 'auto',
+    compute: {
+      module: t.device.createShaderModule({ code: wgsl }),
+      entryPoint: 'main'
+    }
+  });
+
+  const resBuffer = t.createBufferTracked({
+    size: 8 * 4,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+  });
+
+  const group = t.device.createBindGroup({
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [{ binding: 0, resource: { buffer: resBuffer } }]
+  });
+
+  const encoder = t.device.createCommandEncoder();
+  const pass = encoder.beginComputePass();
+  pass.setPipeline(pipeline);
+  pass.setBindGroup(0, group);
+  pass.dispatchWorkgroups(1);
+  pass.end();
+
+  t.queue.submit([encoder.finish()]);
+
+  t.expectGPUBufferValuesEqual(resBuffer, new Uint32Array([0, 0, 0, 0, 0, 42, 0, 0]));
+});

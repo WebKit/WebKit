@@ -507,6 +507,22 @@ NSString* RenderBundleEncoder::errorValidatingDraw() const
     return nil;
 }
 
+NSString* RenderBundleEncoder::errorValidatingStripIndexFormat() const
+{
+    RefPtr pipeline = m_pipeline.get();
+    if (!pipeline)
+        return nil;
+
+    auto topology = pipeline->primitiveTopology();
+    if (topology != WGPUPrimitiveTopology_LineStrip && topology != WGPUPrimitiveTopology_TriangleStrip)
+        return nil;
+
+    if (m_indexType != pipeline->stripIndexFormat())
+        return @"Primitive topology mismiatch with render pipeline";
+
+    return nil;
+}
+
 NSString* RenderBundleEncoder::errorValidatingDrawIndexed() const
 {
     RefPtr pipeline = m_pipeline.get();
@@ -517,13 +533,7 @@ NSString* RenderBundleEncoder::errorValidatingDrawIndexed() const
     if (!m_indexBuffer)
         return @"Index buffer is not set";
 
-    auto topology = pipeline->primitiveTopology();
-    if (topology == WGPUPrimitiveTopology_LineStrip || topology == WGPUPrimitiveTopology_TriangleStrip) {
-        if (m_indexType != pipeline->stripIndexFormat())
-            return @"Primitive topology mismiatch with render pipeline";
-    }
-
-    return nil;
+    return errorValidatingStripIndexFormat();
 }
 
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::finalizeRenderCommand(MTLIndirectCommandType commandTypes)
@@ -688,6 +698,12 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
 
+    // Checked here rather than only in errorValidatingDrawIndexed() below, which the ICB path skips.
+    if (NSString* error = errorValidatingStripIndexFormat()) {
+        makeInvalid(error);
+        return finalizeRenderCommand();
+    }
+
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
     auto firstIndexOffsetInBytes = checkedProduct<size_t>(firstIndex, indexSizeInBytes);
     auto indexBufferOffsetInBytes = checkedSum<size_t>(m_indexBufferOffset, firstIndexOffsetInBytes);
@@ -760,6 +776,11 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
+
+    if (NSString* error = errorValidatingStripIndexFormat()) {
+        makeInvalid(error);
+        return finalizeRenderCommand();
+    }
 
     id<MTLBuffer> mtlIndirectBuffer = nil;
     uint64_t modifiedIndirectOffset = 0;

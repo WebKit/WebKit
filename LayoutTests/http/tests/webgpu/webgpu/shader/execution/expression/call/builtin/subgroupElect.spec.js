@@ -186,10 +186,7 @@ fn(async (t) => {
   t.skipIfDeviceDoesNotHaveFeature('subgroups');
   const wgThreads = t.params.wgSize[0] * t.params.wgSize[1] * t.params.wgSize[2];
 
-
-
-
-  const { subgroupMaxSize } = t.device.adapterInfo;
+  const subgroupMaxSize = t.device.adapterInfo.subgroupMaxSize;
   t.skipIf(subgroupMaxSize <= t.params.id, 'No invocation selected');
 
   const wgsl = `
@@ -332,10 +329,7 @@ combineWithParams([{ format: 'rgba32uint' }])
 ).
 fn(async (t) => {
   t.skipIfDeviceDoesNotHaveFeature('subgroups');
-
-
-
-  const { subgroupMinSize } = t.device.adapterInfo;
+  const subgroupMinSize = t.device.adapterInfo.subgroupMinSize;
   const innerTexels = (t.params.size[0] - 1) * (t.params.size[1] - 1);
   t.skipIf(innerTexels < subgroupMinSize, 'Too few texels to be reliable');
 

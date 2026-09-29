@@ -108,6 +108,36 @@ const kTypeCases = {
     code: `let s : sampler_comparison = samp_comp;`,
     valid: 'texture_and_sampler_let',
     decls: `@group(0) @binding(0) var samp_comp : sampler_comparison;`
+  },
+  buffer: {
+    code: `let x : buffer = b;`,
+    valid: false,
+    decls: `@group(0) @binding(0) var<storage> b : buffer;`
+  },
+  buffer_sized: {
+    code: `let x : buffer<128> = b;`,
+    valid: false,
+    decls: `@group(0) @binding(0) var<uniform> b : buffer<128>;`
+  },
+  buffer_override_sized: {
+    code: `let x : buffer<o> = b;`,
+    valid: false,
+    decls: `override o = 16u; var<workgroup> b : buffer<o>;`
+  },
+  ptr_buffer: {
+    code: `let x : ptr<storage, buffer> = &b;`,
+    valid: 'buffer_view',
+    decls: `@group(0) @binding(0) var<storage> b : buffer;`
+  },
+  ptr_buffer_sized: {
+    code: `let x : ptr<uniform, buffer<128>> = &b;`,
+    valid: 'buffer_view',
+    decls: `@group(0) @binding(0) var<uniform> b : buffer<128>;`
+  },
+  ptr_buffer_override_sized: {
+    code: `let x : ptr<workgroup, buffer<o>> = &b;`,
+    valid: 'buffer_view',
+    decls: `override o = 16u; var<workgroup> b : buffer<o>;`
   }
 };
 
@@ -129,6 +159,8 @@ fn foo() {
   let expect = testcase.valid === true;
   if (testcase.valid === 'texture_and_sampler_let') {
     expect = t.hasLanguageFeature('texture_and_sampler_let');
+  } else if (testcase.valid === 'buffer_view') {
+    expect = t.hasLanguageFeature('buffer_view');
   }
   t.expectCompileResult(expect, code);
 });
@@ -177,6 +209,21 @@ const kInitCases = {
   init_runtime_expr: {
     code: `var x = 1;\nlet y = x << 1;`,
     valid: true
+  },
+  buffer_mismatch: {
+    code: `let x : ptr<uniform, buffer> = &b;`,
+    valid: false,
+    decls: `@group(0) @binding(0) var<uniform> b : buffer<128>;`
+  },
+  buffer_smaller_size: {
+    code: `let x : ptr<uniform, buffer<64>> = &b;`,
+    valid: false,
+    decls: `@group(0) @binding(0) var<uniform> b : buffer<128>;`
+  },
+  buffer_mismatched_overrides: {
+    code: `let p : ptr<workgroup, buffer<o1>> = &b;`,
+    valid: false,
+    decls: `override o1 : u32;\noverride o2 : u32;\nvar<workgroup> b : buffer<o2>;`
   }
 };
 

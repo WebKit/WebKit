@@ -1,5 +1,6 @@
 
 PASS :beginOcclusionQuery:
+PASS :unusedOcclusionQuery:
 PASS :timestamps:
 PASS :resolveQuerySet:
 

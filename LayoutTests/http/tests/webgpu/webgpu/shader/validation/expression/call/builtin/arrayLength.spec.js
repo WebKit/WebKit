@@ -25,6 +25,20 @@ fn main() {
   t.expectCompileResult(false, code);
 });
 
+g.test('buffer_type').
+desc('Validates buffers are rejected').
+params((u) => u.combine('sized', [false, true])).
+fn((t) => {
+  const code = `
+@group(0) @binding(0) var<storage> b : buffer${t.params.sized ? '<1024>' : ''};
+@compute @workgroup_size(1)
+fn main() {
+  _ = arrayLength(&b);
+}`;
+
+  t.expectCompileResult(false, code);
+});
+
 const atomic_types = ['u32', 'i32'].map((j) => `atomic<${j}>`);
 const vec_types = [2, 3, 4].
 map((i) => ['i32', 'u32', 'f32', 'f16'].map((j) => `vec${i}<${j}>`)).

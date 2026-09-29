@@ -1729,6 +1729,88 @@ fn((t) => {
   });
 });
 
+g.test('compressed_textures,unaligned_mip_level_0').
+desc(
+  `
+  Test image copies (writeTexture / copyBufferToTexture / copyTextureToBuffer) that touch the partial
+  edge blocks of mip level 0 of a block-compressed texture whose mip level 0 size is NOT a multiple
+  of the texel block size, using the 'texture-compression-unaligned' feature.
+
+  This mirrors the 'mip_levels' test (which exercises the physical-size != logical-size path at
+  non-zero mip levels), but here the partial edge blocks are at mip level 0 itself. As elsewhere, the
+  copy is performed against the physical (rounded-up) size, so block-aligned copies reach the edge
+  blocks which are not fully inside the texture.
+
+  Covers the full copy as well as just the edge column / row / corner blocks, for the WriteTexture,
+  CopyB2T and CopyT2B methods.
+  `
+).
+params((u) =>
+u.
+combineWithParams(kMethodsToTest).
+combine('format', kColorTextureFormats).
+filter(formatCanBeTested).
+filter(({ format }) => isCompressedTextureFormat(format)).
+beginSubcases()
+// Copy box in block units. The mip level 0 size below is 3 full blocks + 1 partial-edge block
+// (physical size 4 blocks) in each dimension, so x/y of 3 selects the partial edge block.
+.combine('copyCase', [
+// Full copy of the physical extent (touches every partial edge block).
+{ originInBlocks: { x: 0, y: 0 }, copySizeInBlocks: { width: 4, height: 4 } },
+// Just the partial edge column / row / corner.
+{ originInBlocks: { x: 3, y: 0 }, copySizeInBlocks: { width: 1, height: 4 } },
+{ originInBlocks: { x: 0, y: 3 }, copySizeInBlocks: { width: 4, height: 1 } },
+{ originInBlocks: { x: 3, y: 3 }, copySizeInBlocks: { width: 1, height: 1 } },
+// Interior block that does not touch a partial edge block.
+{ originInBlocks: { x: 0, y: 0 }, copySizeInBlocks: { width: 1, height: 1 } }]
+)
+).
+fn((t) => {
+  const { format, initMethod, checkMethod, copyCase } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfDeviceDoesNotHaveFeature('texture-compression-unaligned');
+
+  const info = getBlockInfoForColorTextureFormat(format);
+
+  // Unaligned mip level 0: three full blocks plus a one-texel partial edge block in each dimension
+  // (physical size four blocks). This is only valid with 'texture-compression-unaligned'.
+  const textureSize = [3 * info.blockWidth + 1, 3 * info.blockHeight + 1, 1];
+
+  const origin = {
+    x: copyCase.originInBlocks.x * info.blockWidth,
+    y: copyCase.originInBlocks.y * info.blockHeight,
+    z: 0
+  };
+  const copySize = {
+    width: copyCase.copySizeInBlocks.width * info.blockWidth,
+    height: copyCase.copySizeInBlocks.height * info.blockHeight,
+    depthOrArrayLayers: 1
+  };
+
+  const rowsPerImage = copyCase.copySizeInBlocks.height + 1;
+  const bytesPerRow = align(copySize.width, 256);
+
+  const dataSize = dataBytesForCopyOrFail({
+    layout: { offset: 0, bytesPerRow, rowsPerImage },
+    format,
+    copySize,
+    method: initMethod
+  });
+
+  t.uploadTextureAndVerifyCopy({
+    textureDataLayout: { offset: 0, bytesPerRow, rowsPerImage },
+    copySize,
+    dataSize,
+    origin,
+    mipLevel: 0,
+    textureSize,
+    format,
+    dimension: '2d',
+    initMethod,
+    checkMethod
+  });
+});
+
 const UND = undefined;
 g.test('undefined_params').
 desc(

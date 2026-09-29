@@ -741,7 +741,7 @@ fn((t) => {
   t.skipIfTextureFormatNotSupported(format);
   t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
 
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if (transientTexture) {
     t.skipIfTransientAttachmentNotSupported();
   }
@@ -1129,7 +1129,7 @@ fn((t) => {
 
   t.skipIfTextureFormatNotSupported(format);
 
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if (transientTexture) {
     t.skipIfTransientAttachmentNotSupported();
   }

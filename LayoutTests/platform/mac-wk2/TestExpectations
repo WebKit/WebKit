@@ -1325,9 +1325,6 @@ fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
 # skipped outside of macOS Sequoia due to crash in failed allocation
 [ Sonoma ] fast/webgpu/nocrash/fuzz-279086.html [ Skip ]
 
-# Skipped: many_query_sets:65536 and many_slots exhaust GPU memory, which Queue.mm turns into a crash.
-http/tests/webgpu/webgpu/api/operation/command_buffer/queries/timestampQuery.html [ Skip Slow ]
-
 # skipped on non-AS due to requiring features unavailable on Intel
 [ x86_64 ] fast/webgpu/nocrash/fuzz-273021.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-274171.html [ Skip ]
@@ -1403,27 +1400,28 @@ http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_compo
 [ Release arm64 ] http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw.html [ Slow ]
 [ Release x86_64 ] http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw.html [ Skip ]
 
-http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero.html [ Skip Slow ]
-http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesPerShaderStage.html [ Skip Slow ]
+http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero.html [ Pass Slow ]
+http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesPerShaderStage.html [ Pass Slow ]
 http/tests/webgpu/webgpu/api/validation/render_pipeline/vertex_state.html [ Pass Timeout ]
-http/tests/webgpu/webgpu/api/validation/createTexture.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/error_scope.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/createTexture.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/error_scope.html [ Pass ]
 
 # Slow tests or too slow for Intel
 [ arm64 ] http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Slow ]
 [ x86_64 ] http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Skip ]
 
-# these tests are flaky failures, potentially a test issue
-http/tests/webgpu/webgpu/api/operation/adapter/info.html [ Skip ]
-http/tests/webgpu/webgpu/api/operation/rendering/basic.html [ Skip ]
-http/tests/webgpu/webgpu/api/operation/storage_texture/read_only.html [ Skip ]
-http/tests/webgpu/webgpu/api/operation/texture_view/write.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/image_copy/layout_related.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/render_pipeline/misc.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSampledTexturesPerShaderStage.html [ Skip Slow ]
-http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSamplersPerShaderStage.html [ Skip Slow ]
+# These were flaky failures; they stopped being flaky once the render encoder OOM no longer lost the
+# device out from under whatever ran next in the same GPU process.
+http/tests/webgpu/webgpu/api/operation/adapter/info.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/rendering/basic.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/storage_texture/read_only.html [ Pass Slow ]
+http/tests/webgpu/webgpu/api/operation/texture_view/write.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/image_copy/layout_related.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/render_pipeline/misc.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSampledTexturesPerShaderStage.html [ Pass Slow ]
+http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSamplersPerShaderStage.html [ Pass Slow ]
 
 # No longer flaky on arm64 over 8 runs; left skipped on Intel, which was not measured.
 [ x86_64 ] http/tests/webgpu/webgpu/api/validation/createBindGroup.html [ Skip ]
@@ -1458,8 +1456,21 @@ http/tests/webgpu/webgpu/idl/javascript.html [ Pass ]
 http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
 
-# 1 failure: display-p3 to srgb of (0x80, 0, 0x80) rounds to 133 vs ColorSync's 132; no tolerance.
+# The display-p3 to srgb rounding difference is gone; the conversion now matches ColorSync exactly.
 http/tests/webgpu/webgpu/util/texture/color_space_conversions.html [ Pass ]
+http/tests/webgpu/webgpu/util/texture/texel_data.html [ Pass ]
+http/tests/webgpu/webgpu/util/texture/texture_ok.html [ Pass ]
+
+# platform/mac skips all of http/tests/webgpu/webgpu on Release arm64 for rdar://129424261, which only
+# ever concerned Intel. These directories are not re-enabled by a broader line above, so list them here.
+http/tests/webgpu/webgpu/compat [ Pass ]
+[ arm64 ] http/tests/webgpu/webgpu/idl/constants/flags.html [ Pass ]
+[ arm64 ] http/tests/webgpu/webgpu/idl/constructable.html [ Pass ]
+http/tests/webgpu/webgpu/cts.https.html [ Pass ]
+http/tests/webgpu/webgpu/cts-chunked2sec.https.html [ Pass ]
+http/tests/webgpu/webgpu/cts-withsomeworkers.https.html [ Pass ]
+http/tests/webgpu/webgpu/examples.html [ Pass ]
+http/tests/webgpu/webgpu/print_environment.html [ Pass ]
 
 # 14 failures: the CTS asks for more than the 8192 bytes WGSL allows and does not catch the rejection.
 [ arm64 ] http/tests/webgpu/webgpu/shader/execution/zero_init.html [ Pass Slow ]
@@ -1481,11 +1492,11 @@ webkit.org/b/308252 [ Debug arm64 ] http/tests/webgpu/webgpu/shader/execution/ex
 webkit.org/b/308252 [ Debug arm64 ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/atan2.html [ Skip ]
 webkit.org/b/308252 [ Debug arm64 ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/length.html [ Skip ]
 
-# test output is out of order
-http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html  [ Skip ]
-http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/getBindGroupLayout.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/image_copy/buffer_texture_copies.html [ Skip ]
+# The out-of-order output these used to produce is gone; they pass on the current CTS.
+http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html  [ Pass Slow ]
+http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.html  [ Pass ]
+http/tests/webgpu/webgpu/api/validation/getBindGroupLayout.html  [ Pass ]
+http/tests/webgpu/webgpu/api/validation/image_copy/buffer_texture_copies.html [ Pass ]
 
 http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/mix.html [ Slow ]
 
@@ -1520,7 +1531,7 @@ http/tests/webgpu/webgpu/api/operation/buffers/map_detach.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/buffers/map_oom.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/buffers/threading.html [ Pass ]
 
-http/tests/webgpu/webgpu/api/validation/buffer/create.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/buffer/create.html [ Pass Slow ]
 http/tests/webgpu/webgpu/api/validation/buffer/destroy.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
 
@@ -1535,6 +1546,8 @@ http/tests/webgpu/webgpu/api/validation/queue/buffer_mapped.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
 [ arm64 ] http/tests/webgpu/webgpu/api/operation/command_buffer/queries [ Pass ]
+# 4.7s standalone, but it loses the 30s budget when the suite runs it alongside other WebGPU tests.
+[ arm64 ] http/tests/webgpu/webgpu/api/operation/command_buffer/queries/occlusionQuery.html [ Pass Slow ]
 
 # arm64 release only because the tests are incredibly slow due to their extensiveness
 [ Release arm64 ] http/tests/webgpu/webgpu/shader/execution/shader_io [ Pass ]

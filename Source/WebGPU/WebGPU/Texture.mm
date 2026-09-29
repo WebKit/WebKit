@@ -2049,6 +2049,9 @@ NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& de
 
         if (descriptor.size.depthOrArrayLayers != 1)
             return @"createTexture: descriptor.size.depthOrArrayLayers must be 1 when using Transient textures";
+
+        if (!viewFormats.isEmpty())
+            return @"createTexture: descriptor.viewFormats must be empty when using Transient textures";
     }
 
     return nil;
@@ -3176,6 +3179,11 @@ NSString* Texture::errorValidatingTextureViewCreation(const WGPUTextureViewDescr
     // view's own format rather than by the format of the texture it is a view of.
     if (descriptor.usage & ~m_usage)
         return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) is not a subset of the texture's usage(%llu)", descriptor.usage, m_usage]);
+
+    // Transient textures never leave tile memory, so a view of one cannot drop any of the
+    // texture's usages. A zero usage has already been resolved to the texture's usage above.
+    if ((m_usage & WGPUTextureUsage_Transient) && descriptor.usage != m_usage)
+        return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) must be either zero or exactly the transient texture's usage(%llu)", descriptor.usage, m_usage]);
 
     if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !hasStorageBindingCapability(descriptor.format, m_device, WGPUStorageTextureAccess_WriteOnly))
         return ERROR_STRING(@"view usage contains storage binding and the view's format does not support it");

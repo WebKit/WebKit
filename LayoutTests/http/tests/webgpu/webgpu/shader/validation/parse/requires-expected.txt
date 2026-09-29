@@ -28,4 +28,46 @@ PASS :wgsl_matches_api:feature="texture_formats_tier1"
 PASS :wgsl_matches_api:feature="immediate_address_space"
 PASS :wgsl_matches_api:feature="fragment_depth"
 PASS :wgsl_matches_api:feature="buffer_view"
+PASS :have_all_language_features:feature="readonly_and_readwrite_storage_textures"
+PASS :have_all_language_features:feature="packed_4x8_integer_dot_product"
+PASS :have_all_language_features:feature="unrestricted_pointer_parameters"
+PASS :have_all_language_features:feature="pointer_composite_access"
+FAIL :have_all_language_features:feature="uniform_buffer_standard_layout" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
+FAIL :have_all_language_features:feature="texture_and_sampler_let" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
+PASS :have_all_language_features:feature="subgroup_id"
+PASS :have_all_language_features:feature="subgroup_uniformity"
+FAIL :have_all_language_features:feature="swizzle_assignment" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
+FAIL :have_all_language_features:feature="linear_indexing" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
+PASS :have_all_language_features:feature="texture_formats_tier1"
+FAIL :have_all_language_features:feature="immediate_address_space" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
+FAIL :have_all_language_features:feature="fragment_depth" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
+FAIL :have_all_language_features:feature="buffer_view" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/requires.spec.js:110:9
+ Reached unreachable code
 

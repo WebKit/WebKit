@@ -7,6 +7,8 @@ PASS :unused_buffer_bound:smallIndexBuffer=true;smallVertexBuffer=false;smallIns
 PASS :unused_buffer_bound:smallIndexBuffer=true;smallVertexBuffer=false;smallInstanceBuffer=true
 PASS :unused_buffer_bound:smallIndexBuffer=true;smallVertexBuffer=true;smallInstanceBuffer=false
 PASS :unused_buffer_bound:smallIndexBuffer=true;smallVertexBuffer=true;smallInstanceBuffer=true
+PASS :index_buffer_format:
+PASS :index_buffer_format_dirtying:
 PASS :index_buffer_OOB:bufferSizeInElements=10;bindingSizeInElements=10;drawIndexCount=10;drawType="drawIndexed"
 PASS :index_buffer_OOB:bufferSizeInElements=10;bindingSizeInElements=10;drawIndexCount=10;drawType="drawIndexedIndirect"
 PASS :index_buffer_OOB:bufferSizeInElements=10;bindingSizeInElements=10;drawIndexCount=11;drawType="drawIndexed"

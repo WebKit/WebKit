@@ -95,7 +95,9 @@ desc(
   `
     Test that adapter.requestDevice() can successfully return a device once, and once only.
     - Tests that we can successfully resolve after serial and concurrent rejections.
-    - Tests that consecutive valid attempts only succeeds the first time, returning lost device otherwise.`
+    - Tests that consecutive valid attempts only succeeds the first time, throwing OperationError
+      afterward, when the adapter state is "consumed". (Note it's not possibe for CTS to test the
+      adapter state "expired" since there's no way to lose an adapter in the API.)`
 ).
 paramsSubcasesOnly((u) =>
 u.

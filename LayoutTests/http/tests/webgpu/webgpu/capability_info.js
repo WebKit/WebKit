@@ -972,8 +972,8 @@ export const kFeatureNameInfo =
   'primitive-index': {},
   'texture-component-swizzle': {},
   'subgroup-size-control': {},
-  ['atomic-vec2u-min-max']: {},
-  ['texture-compression-unaligned']: {}
+  'atomic-vec2u-min-max': {},
+  'texture-compression-unaligned': {}
 };
 /** List of all GPUFeatureName values. */
 export const kFeatureNames = keysOf(kFeatureNameInfo);

@@ -524,3 +524,36 @@ fn((t) => {
     });
   }, !success);
 });
+
+const BINDINGS_OF_TYPES = [
+{},
+{ buffer: { type: 'uniform' } },
+{ sampler: { type: 'comparison' } },
+{ texture: { multisampled: false, sampleType: 'unfilterable-float' } },
+{ storageTexture: { access: 'read-only', format: 'r32uint' } }];
+
+
+g.test('binding_type').
+desc(
+  `
+    Test that exactly one of the binding types is specified for each entry.
+    - Test each type of bind group resource.
+    - Test that a validation error is generated if more than one type is specified.
+    - Test that a validation error is generated if no type is specified.
+    `
+).
+params((u) => u.combine('entry1', BINDINGS_OF_TYPES).combine('entry2', BINDINGS_OF_TYPES)).
+fn((t) => {
+  const { entry1, entry2 } = t.params;
+
+  const joined = { ...entry1, ...entry2 };
+
+  t.expectValidationError(
+    () => {
+      t.device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.VERTEX, ...joined }]
+      });
+    },
+    !(Object.keys(joined).length === 1)
+  );
+});

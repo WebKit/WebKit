@@ -34,6 +34,10 @@ struct struct_with_array {
   a : array<constructible, 4>
 }
 
+override override_no_default : u32;
+override override_default = 4u;
+override override_expr = override_default + 2;
+
 `;
 
 const kVertexPosCases = {
@@ -278,6 +282,18 @@ const kFunctionParamTypeCases = {
     name: `ptr<workgroup, array<atomic<u32>,1>>`,
     valid: 'with_unrestricted_pointer_parameters'
   },
+  ptrWorkgroupOverrideNoDefault: {
+    name: `ptr<workgroup, array<u32, override_no_default>>`,
+    valid: 'with_unrestricted_pointer_parameters'
+  },
+  ptrWorkgroupOverrideWithDefault: {
+    name: `ptr<workgroup, array<f32, override_default>>`,
+    valid: 'with_unrestricted_pointer_parameters'
+  },
+  ptrWorkgroupOverrideExpr: {
+    name: `ptr<workgroup, array<vec4f, override_expr>>`,
+    valid: 'with_unrestricted_pointer_parameters'
+  },
 
   // Invalid pointers.
   invalid_ptr1: { name: `ptr<handle, u32>`, valid: false }, // Can't spell handle address space
@@ -287,7 +303,69 @@ const kFunctionParamTypeCases = {
   invalid_ptr5: { name: `ptr<private,u32,write>`, valid: false }, // Can't specify access mode
   invalid_ptr6: { name: `ptr<private,u32,read_write>`, valid: false }, // Can't specify access mode
   invalid_ptr7: { name: `ptr<private,clamp>`, valid: false }, // Invalid store type
-  invalid_ptr8: { name: `ptr<function, texture_external>`, valid: false } // non-constructible pointer type
+  invalid_ptr8: { name: `ptr<function, texture_external>`, valid: false }, // non-constructible pointer type
+
+  // Buffers (need buffer_view and unrestricted_pointer_parameters)
+  ptrBufferUnsized_storage: {
+    name: `ptr<storage, buffer, read_write>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSized_storage: {
+    name: `ptr<storage, buffer<128>, read_write>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSizedSmall_storage: {
+    name: `ptr<storage, buffer<64>, read_write>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferUnsized_ro_storage: {
+    name: `ptr<storage, buffer>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSized_ro_storage: {
+    name: `ptr<storage, buffer<128>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSizedSmall_ro_storage: {
+    name: `ptr<storage, buffer<64>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferUnsized_uniform: {
+    name: `ptr<uniform, buffer>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSized_uniform: {
+    name: `ptr<uniform, buffer<128>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSizedSmall_uniform: {
+    name: `ptr<uniform, buffer<64>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferUnsized_workgroup: {
+    name: `ptr<workgroup, buffer>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSized_workgroup: {
+    name: `ptr<workgroup, buffer<128>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferSizedSmall_workgroup: {
+    name: `ptr<workgroup, buffer<64>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferOverrideNoDefault_workgroup: {
+    name: `ptr<workgroup, buffer<override_no_default>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferOverrideDefault_workgroup: {
+    name: `ptr<workgroup, buffer<override_default>>`,
+    valid: 'with_buffer_view'
+  },
+  ptrBufferOverrideExpr_workgroup: {
+    name: `ptr<workgroup, buffer<override_expr>>`,
+    valid: 'with_buffer_view'
+  }
 };
 
 g.test('function_parameter_types').
@@ -308,10 +386,15 @@ fn foo(param : ${testcase.name}) {
   let isValid = testcase.valid;
   if (isValid === 'with_unrestricted_pointer_parameters') {
     isValid = t.hasLanguageFeature('unrestricted_pointer_parameters');
+  } else if (isValid === 'with_buffer_view') {
+    isValid =
+    t.hasLanguageFeature('unrestricted_pointer_parameters') &&
+    t.hasLanguageFeature('buffer_view');
   }
 
   t.expectCompileResult(isValid, code);
 });
+
 
 
 
@@ -487,6 +570,96 @@ const kFunctionParamValueCases = {
     value: `&uniform_host_shareable`,
     matches: ['ptr12'],
     needsUnrestrictedPointerParameters: true
+  },
+  ptrWorkgroupOverrideNoDefault: {
+    value: `&wg_override_no_default`,
+    matches: ['ptrWorkgroupOverrideNoDefault'],
+    needsUnrestrictedPointerParameters: true
+  },
+  ptrWorkgroupOverrideWithDefault: {
+    value: `&wg_override_default`,
+    matches: ['ptrWorkgroupOverrideWithDefault'],
+    needsUnrestrictedPointerParameters: true
+  },
+  ptrWorkgroupOverrideExpr: {
+    value: `&wg_override_expr`,
+    matches: ['ptrWorkgroupOverrideExpr'],
+    needsUnrestrictedPointerParameters: true
+  },
+
+  // Buffer view
+  ptrStorageBufferUnsized: {
+    value: `&storage_buffer_unsized`,
+    matches: ['ptrBufferUnsized_storage'],
+    needsBufferView: true
+  },
+  ptrStorageBufferSized: {
+    value: `&storage_buffer_sized`,
+    matches: ['ptrBufferUnsized_storage', 'ptrBufferSized_storage', 'ptrBufferSizedSmall_storage'],
+    needsBufferView: true
+  },
+  ptrStorageBufferSizedSmall: {
+    value: `&storage_buffer_sized_small`,
+    matches: ['ptrBufferUnsized_storage', 'ptrBufferSizedSmall_storage'],
+    needsBufferView: true
+  },
+  ptrROStorageBufferUnsized: {
+    value: `&ro_storage_buffer_unsized`,
+    matches: ['ptrBufferUnsized_ro_storage'],
+    needsBufferView: true
+  },
+  ptrROStorageBufferSized: {
+    value: `&ro_storage_buffer_sized`,
+    matches: [
+    'ptrBufferUnsized_ro_storage',
+    'ptrBufferSized_ro_storage',
+    'ptrBufferSizedSmall_ro_storage'],
+
+    needsBufferView: true
+  },
+  ptrROStorageBufferSizedSmall: {
+    value: `&ro_storage_buffer_sized_small`,
+    matches: ['ptrBufferUnsized_ro_storage', 'ptrBufferSizedSmall_ro_storage'],
+    needsBufferView: true
+  },
+  ptrUniformBufferSized: {
+    value: `&uniform_buffer_sized`,
+    matches: ['ptrBufferUnsized_uniform', 'ptrBufferSized_uniform', 'ptrBufferSizedSmall_uniform'],
+    needsBufferView: true
+  },
+  ptrUniformBufferSizedSmall: {
+    value: `&uniform_buffer_sized_small`,
+    matches: ['ptrBufferUnsized_uniform', 'ptrBufferSizedSmall_uniform'],
+    needsBufferView: true
+  },
+  ptrWorkgroupBufferSized: {
+    value: `&wg_buffer_sized`,
+    matches: [
+    'ptrBufferUnsized_workgroup',
+    'ptrBufferSized_workgroup',
+    'ptrBufferSizedSmall_workgroup'],
+
+    needsBufferView: true
+  },
+  ptrWorkgroupBufferSizedSmall: {
+    value: `&wg_buffer_sized_small`,
+    matches: ['ptrBufferUnsized_workgroup', 'ptrBufferSizedSmall_workgroup'],
+    needsBufferView: true
+  },
+  ptrWorkgroupBufferOverrideNoDefault: {
+    value: `&wg_buffer_override_no_default`,
+    matches: ['ptrBufferUnsized_workgroup', 'ptrBufferOverrideNoDefault_workgroup'],
+    needsBufferView: true
+  },
+  ptrWorkgroupBufferOverrideDefault: {
+    value: `&wg_buffer_override_default`,
+    matches: ['ptrBufferUnsized_workgroup', 'ptrBufferOverrideDefault_workgroup'],
+    needsBufferView: true
+  },
+  ptrWorkgroupBufferOverrideExpr: {
+    value: `&wg_buffer_override_expr`,
+    matches: ['ptrBufferUnsized_workgroup', 'ptrBufferOverrideExpr_workgroup'],
+    needsBufferView: true
   }
 };
 
@@ -517,6 +690,26 @@ fn((t) => {
   const param = kFunctionParamTypeCases[t.params.decl];
   const arg = kFunctionParamValueCases[t.params.arg];
   const enable = param.name === 'f16' ? 'enable f16;' : '';
+  let buffer_decls = ``;
+  if (param.valid === 'with_buffer_view') {
+    buffer_decls = `
+@group(2) @binding(0) var<storage, read_write> storage_buffer_unsized : buffer;
+@group(2) @binding(1) var<storage, read_write> storage_buffer_sized : buffer<128>;
+@group(2) @binding(2) var<storage, read_write> storage_buffer_sized_small : buffer<64>;
+@group(2) @binding(3) var<storage> ro_storage_buffer_unsized : buffer;
+@group(2) @binding(4) var<storage> ro_storage_buffer_sized : buffer<128>;
+@group(2) @binding(5) var<storage> ro_storage_buffer_sized_small : buffer<64>;
+@group(2) @binding(6) var<uniform> uniform_buffer_sized : buffer<128>;
+@group(2) @binding(7) var<uniform> uniform_buffer_sized_small : buffer<64>;
+
+var<workgroup> wg_buffer_sized : buffer<128>;
+var<workgroup> wg_buffer_sized_small : buffer<64>;
+var<workgroup> wg_buffer_override_no_default : buffer<override_no_default>;
+var<workgroup> wg_buffer_override_default : buffer<override_default>;
+var<workgroup> wg_buffer_override_expr : buffer<override_expr>;
+`;
+  }
+
   const code = `
 ${enable}
 
@@ -543,6 +736,8 @@ var<storage, read_write> rw_host_shareable : host_shareable;
 @group(1) @binding(2)
 var<uniform> uniform_host_shareable : host_shareable;
 
+${buffer_decls}
+
 fn bar(param : ${param.name}) { }
 
 var<private> g_u32 : u32;
@@ -568,6 +763,10 @@ var<private> g_array4 : array<mat2x2f, 4>;
 var<private> g_array5 : array<bool, 4>;
 var<private> g_constructible : constructible;
 var<private> g_struct_with_array : struct_with_array;
+
+var<workgroup> wg_override_no_default : array<u32, override_no_default>;
+var<workgroup> wg_override_default : array<f32, override_default>;
+var<workgroup> wg_override_expr : array<vec4f, override_expr>;
 
 fn foo() {
   var f_u32 : u32;
@@ -607,10 +806,19 @@ fn foo() {
   (kFunctionParamTypeCases[t.params.decl].valid === 'with_unrestricted_pointer_parameters' ||
   arg.needsUnrestrictedPointerParameters) ??
   false;
+  const needsBufferView =
+  (kFunctionParamTypeCases[t.params.decl].valid === 'with_buffer_view' ||
+  arg.needsBufferView) ??
+  false;
 
   let isValid = parameterMatches(t.params.decl, arg.matches);
   if (isValid && needsUnrestrictedPointerParameters) {
     isValid = t.hasLanguageFeature('unrestricted_pointer_parameters');
+  }
+  if (isValid && needsBufferView) {
+    isValid =
+    t.hasLanguageFeature('unrestricted_pointer_parameters') &&
+    t.hasLanguageFeature('buffer_view');
   }
 
   t.expectCompileResult(isValid, code);

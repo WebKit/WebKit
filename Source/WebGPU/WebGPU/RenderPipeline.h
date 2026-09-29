@@ -102,7 +102,9 @@ public:
     const RequiredBufferIndicesContainer& requiredBufferIndices() const LIFETIME_BOUND { return m_requiredBufferIndices; }
     WGPUPrimitiveTopology primitiveTopology() const { return m_descriptor.primitive.topology; }
 
-    MTLIndexType stripIndexFormat() const { return m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32; }
+    // Nullopt when the pipeline did not specify a stripIndexFormat, which no index buffer format
+    // can ever match.
+    std::optional<MTLIndexType> stripIndexFormat() const { return m_indexType; }
 
     const BufferBindingSizesForBindGroup* NODELETE minimumBufferSizes(uint32_t) const;
     RefPtr<RenderPipeline> recomputeLastStrideAsStride() const;

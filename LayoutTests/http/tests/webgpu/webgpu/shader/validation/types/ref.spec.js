@@ -3,6 +3,7 @@
 **/export const description = `
 Validation tests for ref types
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
+import { skipIfImmediateDataNotSupported } from '../decl/util.js';
 import { ShaderValidationTest } from '../shader_validation_test.js';
 
 export const g = makeTestGroup(ShaderValidationTest);
@@ -54,4 +55,16 @@ fn((t) => {
     struct S { a : u32 }
     alias a = ${t.params.view}<private, ${t.params.type}>;`;
   t.expectCompileResult(t.params.view === 'ptr', code);
+});
+
+g.test('not_typeable_ref_immediate').
+desc('Test that ref<immediate, T> cannot be written as an explicit type.').
+params((u) => u.combine('type', kTypes)).
+fn((t) => {
+  skipIfImmediateDataNotSupported(t);
+  const code = `
+      requires immediate_address_space;
+      struct S { a : u32 }
+      alias a = ref<immediate, ${t.params.type}>;`;
+  t.expectCompileResult(false, code);
 });

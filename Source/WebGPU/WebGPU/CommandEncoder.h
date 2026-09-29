@@ -35,6 +35,7 @@
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/SwiftCXXThunk.h>
 #import <wtf/TZoneMalloc.h>
@@ -83,7 +84,10 @@ public:
 #if ENABLE(WEBGPU_SWIFT)
     inline Ref<CommandBuffer> createCommandBuffer(id<MTLCommandBuffer> commandBuffer, Device& device, id<MTLSharedEvent> sharedEvent, uint64_t sharedEventSignalValue)
     {
-        return CommandBuffer::create(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTF::move(m_onCommitHandlers), *this);
+        Ref result = CommandBuffer::create(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTF::move(m_onCommitHandlers), *this);
+        result->setPriorCommandBuffers(WTF::move(m_priorCommandBuffers));
+        m_priorCommandBuffers.clear();
+        return result;
     }
 #endif
 
@@ -141,6 +145,22 @@ public:
     void addSampler(const Sampler&);
     id<MTLCommandBuffer> _Nullable NODELETE commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);
+
+    // IOGPU can only fit on the order of 37000 MTLRenderCommandEncoders in a single MTLCommandBuffer
+    // before the buffer fails with kIOGPUCommandBufferCallbackErrorOutOfMemory, which loses the
+    // device. Roll over to a fresh MTLCommandBuffer well short of that and let the queue commit them
+    // back to back; a page encoding tens of thousands of render passes into one GPUCommandEncoder is
+    // legal WebGPU.
+    void rotateCommandBufferIfNeeded();
+    void didCreateRenderCommandEncoder() { ++m_renderCommandEncoderCount; }
+    id<MTLRenderCommandEncoder> _Nullable makeRenderCommandEncoder(MTLRenderPassDescriptor*);
+    // A render pass that loads and stores every attachment and has no occlusion query cannot change
+    // anything unless it encodes a command, so its render command encoder is not created until the
+    // pass actually encodes one. This keeps the (common) empty-pass case off the budget above.
+    bool canDeferRenderCommandEncoder(MTLRenderPassDescriptor*) const;
+    void encodeDeferredRenderPassTimestamps(MTLRenderPassDescriptor*);
+    // The shared tail of beginRenderPass: creates the pass with an encoder, or defers it.
+    Ref<RenderPassEncoder> createRenderPassEncoder(const WGPURenderPassDescriptor&, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, id<MTLBuffer> _Nullable visibilityResultBuffer, uint64_t maxDrawCount, MTLRenderPassDescriptor*);
     void generateInvalidEncoderStateError();
     bool NODELETE validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     void clearTracking();
@@ -177,8 +197,11 @@ private:
 
     void discardCommandBuffer();
     void retainTimestampsForOneUpdateLoop();
+    void releasePriorCommandBuffers();
 
     id<MTLCommandBuffer> _Nullable m_commandBuffer { nil };
+    Vector<RetainPtr<id<MTLCommandBuffer>>> m_priorCommandBuffers;
+    uint32_t m_renderCommandEncoderCount { 0 };
     id<MTLCommandEncoder> _Nullable m_existingCommandEncoder { nil };
     id<MTLBlitCommandEncoder> _Nullable m_blitCommandEncoder { nil };
     NSString* _Nullable m_lastErrorString { nil };

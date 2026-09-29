@@ -751,6 +751,9 @@ static const WGPUBufferUsage WGPUBufferUsage_Uniform = 0x0000000000000040;
 static const WGPUBufferUsage WGPUBufferUsage_Storage = 0x0000000000000080;
 static const WGPUBufferUsage WGPUBufferUsage_Indirect = 0x0000000000000100;
 static const WGPUBufferUsage WGPUBufferUsage_QueryResolve = 0x0000000000000200;
+// Carries the fact that the caller asked for a usage bit that does not exist, so that buffer
+// creation can reject it rather than acting on the bits it happened to recognize.
+static const WGPUBufferUsage WGPUBufferUsage_Invalid = 0x0000000000000400;
 
 typedef WGPUFlags WGPUColorWriteMask;
 static const WGPUColorWriteMask WGPUColorWriteMask_None = 0x0000000000000000;

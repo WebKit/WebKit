@@ -59,7 +59,7 @@ fn((t) => {
   const { colorFormat } = t.params;
   t.skipIfTextureFormatNotSupported(colorFormat);
   t.skipIfTextureFormatNotResolvable(colorFormat);
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if (t.params.transientColorAttachment || t.params.transientDepthStencilAttachment) {
     t.skipIfTransientAttachmentNotSupported();
   }

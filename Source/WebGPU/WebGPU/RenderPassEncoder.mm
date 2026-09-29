@@ -49,10 +49,12 @@ namespace WebGPU {
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
     protect(m_device)->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]); \
     m_renderCommandEncoder = nil; \
+    m_deferredDescriptor = nil; \
     return; \
 } \
-if (!m_renderCommandEncoder || !m_parentEncoder->isValid() || !protect(m_parentEncoder)->encoderIsCurrent(m_renderCommandEncoder)) { \
+if (!materializeRenderCommandEncoder() || !m_parentEncoder->isValid() || !protect(m_parentEncoder)->encoderIsCurrent(m_renderCommandEncoder)) { \
     m_renderCommandEncoder = nil; \
+    m_deferredDescriptor = nil; \
     return; \
 }
 
@@ -233,10 +235,24 @@ RenderPassEncoder::RenderPassEncoder(CommandEncoder& parentEncoder, Device& devi
 
 RenderPassEncoder::~RenderPassEncoder()
 {
-    if (m_renderCommandEncoder)
+    if (m_renderCommandEncoder || m_deferredDescriptor)
         m_parentEncoder->makeInvalid(@"GPURenderPassEncoder.finish was never called");
 
     m_renderCommandEncoder = nil;
+    m_deferredDescriptor = nil;
+}
+
+id<MTLRenderCommandEncoder> RenderPassEncoder::materializeRenderCommandEncoder() const
+{
+    if (m_renderCommandEncoder || !m_deferredDescriptor)
+        return m_renderCommandEncoder;
+
+    // No render pass state can have been recorded yet: every entry point that records state
+    // materializes the encoder first, so there is nothing to replay here the way splitRenderPass does.
+    MTLRenderPassDescriptor* descriptor = m_deferredDescriptor;
+    m_deferredDescriptor = nil;
+    m_renderCommandEncoder = m_parentEncoder->makeRenderCommandEncoder(descriptor);
+    return m_renderCommandEncoder;
 }
 
 bool RenderPassEncoder::occlusionQueryIsDestroyed() const
@@ -530,6 +546,22 @@ NSString* RenderPassEncoder::errorValidatingAndBindingBuffers()
     return nil;
 }
 
+NSString* RenderPassEncoder::errorValidatingStripIndexFormat() const
+{
+    RefPtr pipeline = m_pipeline;
+    if (!pipeline)
+        return nil;
+
+    auto topology = pipeline->primitiveTopology();
+    if (topology != WGPUPrimitiveTopology_LineStrip && topology != WGPUPrimitiveTopology_TriangleStrip)
+        return nil;
+
+    if (m_indexType != pipeline->stripIndexFormat())
+        return @"Primitive topology mismiatch with render pipeline";
+
+    return nil;
+}
+
 NSString* RenderPassEncoder::errorValidatingDrawIndexed() const
 {
     if (!m_indexBuffer)
@@ -538,13 +570,7 @@ NSString* RenderPassEncoder::errorValidatingDrawIndexed() const
     if (!m_pipeline)
         return @"Pipeline is not set";
 
-    auto topology = m_pipeline->primitiveTopology();
-    if (topology == WGPUPrimitiveTopology_LineStrip || topology == WGPUPrimitiveTopology_TriangleStrip) {
-        if (m_indexType != m_pipeline->stripIndexFormat())
-            return @"Primitive topology mismiatch with render pipeline";
-    }
-
-    return nil;
+    return errorValidatingStripIndexFormat();
 }
 
 void RenderPassEncoder::incrementDrawCount(uint32_t drawCalls)
@@ -1170,6 +1196,11 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
         return;
     }
 
+    if (NSString* error = errorValidatingDrawIndexed()) {
+        makeInvalid(error);
+        return;
+    }
+
     id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
     if (!indexBuffer.length)
         return;
@@ -1228,8 +1259,7 @@ bool RenderPassEncoder::splitRenderPass()
     m_priorVertexDynamicOffsets.clear();
     m_priorFragmentDynamicOffsets.clear();
 
-    m_renderCommandEncoder = [m_parentEncoder->commandBuffer() renderCommandEncoderWithDescriptor:m_metalDescriptor];
-    m_parentEncoder->setExistingEncoder(m_renderCommandEncoder);
+    m_renderCommandEncoder = m_parentEncoder->makeRenderCommandEncoder(m_metalDescriptor);
     if (m_viewport)
         [m_renderCommandEncoder setViewport:*m_viewport];
     if (m_blendColor)
@@ -1311,6 +1341,7 @@ void RenderPassEncoder::endPass()
     if (!parentEncoder->isLocked() || parentEncoder->isFinished()) {
         protect(m_device)->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]);
         m_renderCommandEncoder = nil;
+        m_deferredDescriptor = nil;
         return;
     }
 
@@ -1320,6 +1351,7 @@ void RenderPassEncoder::endPass()
         if (m_renderCommandEncoder)
             parentEncoder->endEncoding(m_renderCommandEncoder);
         m_renderCommandEncoder = nil;
+        m_deferredDescriptor = nil;
         parentEncoder->lock(false);
         parentEncoder->makeInvalid([NSString stringWithFormat:@"RenderPassEncoder.endPass failure, m_debugGroupStackSize = %llu, m_occlusionQueryActive = %d, isValid = %d, error = %@", m_debugGroupStackSize, m_occlusionQueryActive, passIsValid, m_lastErrorString]);
         return;
@@ -1327,8 +1359,23 @@ void RenderPassEncoder::endPass()
 
     if (!parentEncoder->isValid() || !parentEncoder->encoderIsCurrent(m_renderCommandEncoder)) {
         m_renderCommandEncoder = nil;
+        m_deferredDescriptor = nil;
         parentEncoder->lock(false);
         parentEncoder->makeInvalid(@"RenderPassEncoder.endPass: the pass no longer holds the command encoder");
+        return;
+    }
+
+    // A pass that never materialized its encoder encoded nothing, so there is no encoder to end. It
+    // still owes its timestampWrites a pair of values. CommandEncoder only defers passes whose
+    // attachments all load and store and which have no occlusion query, so there is nothing to clear
+    // either.
+    if (m_deferredDescriptor) {
+        ASSERT(!m_attachmentsToClear.count && !m_clearDepthAttachment && !m_clearStencilAttachment);
+        ASSERT(m_queryBufferIndicesToClear.isEmpty());
+        MTLRenderPassDescriptor* deferredDescriptor = m_deferredDescriptor;
+        m_deferredDescriptor = nil;
+        parentEncoder->encodeDeferredRenderPassTimestamps(deferredDescriptor);
+        parentEncoder->lock(false);
         return;
     }
 
@@ -1714,7 +1761,9 @@ NSString* RenderPassEncoder::errorValidatingColorDepthStencilTargets(const Rende
 
 id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
 {
-    return m_parentEncoder->submitWillBeInvalid() ? nil : m_renderCommandEncoder;
+    if (m_parentEncoder->submitWillBeInvalid())
+        return nil;
+    return materializeRenderCommandEncoder();
 }
 
 void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
@@ -1746,6 +1795,9 @@ void RenderPassEncoder::makeInvalid(NSString* errorString)
     Ref parentEncoder = m_parentEncoder;
 
     if (!m_renderCommandEncoder) {
+        // A deferred pass has no encoder to hand back, but it is still holding the parent encoder, so
+        // drop the descriptor to keep the destructor from reporting it as never finished.
+        m_deferredDescriptor = nil;
         parentEncoder->makeInvalid([NSString stringWithFormat:@"RenderPassEncoder.makeInvalid, rason = %@", errorString]);
         return;
     }

@@ -1,9 +1,11 @@
 
 PASS :resolve_attachment:
 PASS :resolve_attachment:bindTextureResource=true
+PASS :resolve_attachment:resolveTargetUsage=16
 PASS :resolve_attachment:colorAttachmentSamples=1
 PASS :resolve_attachment:resolveTargetSamples=4
 PASS :resolve_attachment:resolveTargetUsage=1
+PASS :resolve_attachment:resolveTargetUsage=48
 PASS :resolve_attachment:resolveTargetViewBaseMipLevel=1;resolveTargetHeight=4;resolveTargetWidth=4
 PASS :resolve_attachment:resolveTargetViewBaseMipLevel=1;resolveTargetViewMipCount=2;resolveTargetHeight=4;resolveTargetWidth=4
 PASS :resolve_attachment:resolveTargetInvalid=true
