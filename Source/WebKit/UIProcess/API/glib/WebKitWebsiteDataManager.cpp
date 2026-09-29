@@ -36,7 +36,7 @@
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
 #include <wtf/FileSystem.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/WTFGType.h>
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
@@ -105,15 +105,15 @@ struct _WebKitWebsiteDataManagerPrivate {
     GRefPtr<WebKitCookieManager> cookieManager;
 
     // These manual directory overrides are deprecated. Please don't add more.
-    GUniquePtr<char> localStorageDirectory;
-    GUniquePtr<char> diskCacheDirectory;
-    GUniquePtr<char> applicationCacheDirectory;
-    GUniquePtr<char> indexedDBDirectory;
-    GUniquePtr<char> webSQLDirectory;
-    GUniquePtr<char> hstsCacheDirectory;
-    GUniquePtr<char> itpDirectory;
-    GUniquePtr<char> swRegistrationsDirectory;
-    GUniquePtr<char> domCacheDirectory;
+    GMallocString localStorageDirectory;
+    GMallocString diskCacheDirectory;
+    GMallocString applicationCacheDirectory;
+    GMallocString indexedDBDirectory;
+    GMallocString webSQLDirectory;
+    GMallocString hstsCacheDirectory;
+    GMallocString itpDirectory;
+    GMallocString swRegistrationsDirectory;
+    GMallocString domCacheDirectory;
 #endif
 
     gdouble originStorageRatio;
@@ -189,31 +189,31 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
         break;
 #if !ENABLE(2022_GLIB_API)
     case PROP_LOCAL_STORAGE_DIRECTORY:
-        manager->priv->localStorageDirectory.reset(g_value_dup_string(value));
+        manager->priv->localStorageDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_DISK_CACHE_DIRECTORY:
-        manager->priv->diskCacheDirectory.reset(g_value_dup_string(value));
+        manager->priv->diskCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_APPLICATION_CACHE_DIRECTORY:
-        manager->priv->applicationCacheDirectory.reset(g_value_dup_string(value));
+        manager->priv->applicationCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_INDEXEDDB_DIRECTORY:
-        manager->priv->indexedDBDirectory.reset(g_value_dup_string(value));
+        manager->priv->indexedDBDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_WEBSQL_DIRECTORY:
-        manager->priv->webSQLDirectory.reset(g_value_dup_string(value));
+        manager->priv->webSQLDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_HSTS_CACHE_DIRECTORY:
-        manager->priv->hstsCacheDirectory.reset(g_value_dup_string(value));
+        manager->priv->hstsCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_ITP_DIRECTORY:
-        manager->priv->itpDirectory.reset(g_value_dup_string(value));
+        manager->priv->itpDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY:
-        manager->priv->swRegistrationsDirectory.reset(g_value_dup_string(value));
+        manager->priv->swRegistrationsDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
     case PROP_DOM_CACHE_DIRECTORY:
-        manager->priv->domCacheDirectory.reset(g_value_dup_string(value));
+        manager->priv->domCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(value));
         break;
 #endif
     case PROP_IS_EPHEMERAL:
@@ -238,27 +238,27 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
 
     WebKitWebsiteDataManagerPrivate* priv = WEBKIT_WEBSITE_DATA_MANAGER(object)->priv;
     if (!priv->baseDataDirectory.isNull()) {
-        if (!priv->localStorageDirectory)
-            priv->localStorageDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "localstorage", nullptr));
-        if (!priv->indexedDBDirectory)
-            priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", "indexeddb", nullptr));
-        if (!priv->webSQLDirectory)
-            priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", nullptr));
-        if (!priv->itpDirectory)
-            priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "itp", nullptr));
-        if (!priv->swRegistrationsDirectory)
-            priv->swRegistrationsDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "serviceworkers", nullptr));
+        if (priv->localStorageDirectory.isNull())
+            priv->localStorageDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "localstorage", nullptr));
+        if (priv->indexedDBDirectory.isNull())
+            priv->indexedDBDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", "indexeddb", nullptr));
+        if (priv->webSQLDirectory.isNull())
+            priv->webSQLDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", nullptr));
+        if (priv->itpDirectory.isNull())
+            priv->itpDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "itp", nullptr));
+        if (priv->swRegistrationsDirectory.isNull())
+            priv->swRegistrationsDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "serviceworkers", nullptr));
     }
 
     if (!priv->baseCacheDirectory.isNull()) {
-        if (!priv->diskCacheDirectory)
-            priv->diskCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.legacyCStringPointer()));
-        if (!priv->applicationCacheDirectory)
-            priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "applications", nullptr));
-        if (!priv->hstsCacheDirectory)
-            priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.legacyCStringPointer()));
-        if (!priv->domCacheDirectory)
-            priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "CacheStorage", nullptr));
+        if (priv->diskCacheDirectory.isNull())
+            priv->diskCacheDirectory = GMallocString { priv->baseCacheDirectory };
+        if (priv->applicationCacheDirectory.isNull())
+            priv->applicationCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "applications", nullptr));
+        if (priv->hstsCacheDirectory.isNull())
+            priv->hstsCacheDirectory = GMallocString { priv->baseCacheDirectory };
+        if (priv->domCacheDirectory.isNull())
+            priv->domCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "CacheStorage", nullptr));
     }
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
@@ -536,22 +536,22 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
     if (!priv->websiteDataStore) {
         auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String { priv->baseCacheDirectory }, String { priv->baseDataDirectory });
 #if !ENABLE(2022_GLIB_API)
-        if (priv->localStorageDirectory)
-            configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
-        if (priv->diskCacheDirectory)
-            configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory));
-        if (priv->indexedDBDirectory)
-            configuration->setIndexedDBDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->indexedDBDirectory.get()));
-        if (priv->webSQLDirectory)
-            configuration->setWebSQLDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get()));
-        if (priv->hstsCacheDirectory)
-            configuration->setHSTSStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
-        if (priv->itpDirectory)
-            configuration->setResourceLoadStatisticsDirectory(FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.get()));
-        if (priv->swRegistrationsDirectory)
-            configuration->setServiceWorkerRegistrationDirectory(FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
-        if (priv->domCacheDirectory)
-            configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
+        if (!priv->localStorageDirectory.isNull())
+            configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.utf8()));
+        if (!priv->diskCacheDirectory.isNull())
+            configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.utf8()), networkCacheSubdirectory));
+        if (!priv->indexedDBDirectory.isNull())
+            configuration->setIndexedDBDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->indexedDBDirectory.utf8()));
+        if (!priv->webSQLDirectory.isNull())
+            configuration->setWebSQLDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.utf8()));
+        if (!priv->hstsCacheDirectory.isNull())
+            configuration->setHSTSStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.utf8()));
+        if (!priv->itpDirectory.isNull())
+            configuration->setResourceLoadStatisticsDirectory(FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.utf8()));
+        if (!priv->swRegistrationsDirectory.isNull())
+            configuration->setServiceWorkerRegistrationDirectory(FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.utf8()));
+        if (!priv->domCacheDirectory.isNull())
+            configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.utf8()));
 #endif
         if (priv->originStorageRatio >= 0.0)
             configuration->setOriginQuotaRatio(priv->originStorageRatio);
@@ -699,9 +699,9 @@ const gchar* webkit_website_data_manager_get_local_storage_directory(WebKitWebsi
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->localStorageDirectory)
-        priv->localStorageDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultLocalStorageDirectory().utf8().legacyCStringPointer()));
-    return priv->localStorageDirectory.get();
+    if (priv->localStorageDirectory.isNull())
+        priv->localStorageDirectory = GMallocString { WebKit::WebsiteDataStore::defaultLocalStorageDirectory().utf8() };
+    return priv->localStorageDirectory.utf8();
 }
 
 /**
@@ -724,7 +724,7 @@ const gchar* webkit_website_data_manager_get_disk_cache_directory(WebKitWebsiteD
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    return priv->diskCacheDirectory.get();
+    return priv->diskCacheDirectory.utf8();
 }
 
 /**
@@ -747,7 +747,7 @@ const gchar* webkit_website_data_manager_get_offline_application_cache_directory
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    return priv->applicationCacheDirectory.get();
+    return priv->applicationCacheDirectory.utf8();
 }
 
 /**
@@ -770,9 +770,9 @@ const gchar* webkit_website_data_manager_get_indexeddb_directory(WebKitWebsiteDa
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->indexedDBDirectory)
-        priv->indexedDBDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory().utf8().legacyCStringPointer()));
-    return priv->indexedDBDirectory.get();
+    if (priv->indexedDBDirectory.isNull())
+        priv->indexedDBDirectory = GMallocString { WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory().utf8() };
+    return priv->indexedDBDirectory.utf8();
 }
 
 /**
@@ -795,9 +795,9 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->webSQLDirectory)
-        priv->webSQLDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory().utf8().legacyCStringPointer()));
-    return priv->webSQLDirectory.get();
+    if (priv->webSQLDirectory.isNull())
+        priv->webSQLDirectory = GMallocString { WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory().utf8() };
+    return priv->webSQLDirectory.utf8();
 }
 
 /**
@@ -820,9 +820,9 @@ const gchar* webkit_website_data_manager_get_hsts_cache_directory(WebKitWebsiteD
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->hstsCacheDirectory)
-        priv->hstsCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultHSTSStorageDirectory().utf8().legacyCStringPointer()));
-    return priv->hstsCacheDirectory.get();
+    if (priv->hstsCacheDirectory.isNull())
+        priv->hstsCacheDirectory = GMallocString { WebKit::WebsiteDataStore::defaultHSTSStorageDirectory().utf8() };
+    return priv->hstsCacheDirectory.utf8();
 }
 
 /**
@@ -845,9 +845,9 @@ const gchar* webkit_website_data_manager_get_itp_directory(WebKitWebsiteDataMana
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->itpDirectory)
-        priv->itpDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory().utf8().legacyCStringPointer()));
-    return priv->itpDirectory.get();
+    if (priv->itpDirectory.isNull())
+        priv->itpDirectory = GMallocString { WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory().utf8() };
+    return priv->itpDirectory.utf8();
 }
 
 /**
@@ -870,9 +870,9 @@ const gchar* webkit_website_data_manager_get_service_worker_registrations_direct
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->swRegistrationsDirectory)
-        priv->swRegistrationsDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory().utf8().legacyCStringPointer()));
-    return priv->swRegistrationsDirectory.get();
+    if (priv->swRegistrationsDirectory.isNull())
+        priv->swRegistrationsDirectory = GMallocString { WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory().utf8() };
+    return priv->swRegistrationsDirectory.utf8();
 }
 
 /**
@@ -895,9 +895,9 @@ const gchar* webkit_website_data_manager_get_dom_cache_directory(WebKitWebsiteDa
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->domCacheDirectory)
-        priv->domCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultCacheStorageDirectory().utf8().legacyCStringPointer()));
-    return priv->domCacheDirectory.get();
+    if (priv->domCacheDirectory.isNull())
+        priv->domCacheDirectory = GMallocString { WebKit::WebsiteDataStore::defaultCacheStorageDirectory().utf8() };
+    return priv->domCacheDirectory.utf8();
 }
 
 /**

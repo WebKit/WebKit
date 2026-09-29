@@ -30,6 +30,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include <WebCore/ResourceResponse.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/GWeakPtr.h>
@@ -89,9 +90,9 @@ struct _WebKitDownloadPrivate {
     GRefPtr<WebKitURIResponse> response;
     GWeakPtr<WebKitWebView> webView;
 #if !ENABLE(2022_GLIB_API)
-    GUniquePtr<char> destinationURI;
+    GMallocString destinationURI;
 #endif
-    GUniquePtr<char> destination;
+    GMallocString destination;
     guint64 currentSize;
     bool isCancelled;
     GUniquePtr<GTimer> timer;
@@ -142,12 +143,12 @@ static void webkitDownloadGetProperty(GObject* object, guint propId, GValue* val
 static void maybeFinishDecideDestination(WebKitDownload* download)
 {
     if (auto completionHandler = std::exchange(download->priv->decideDestinationCallback, nullptr))
-        completionHandler(download->priv->allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, String::fromUTF8(download->priv->destination.get()));
+        completionHandler(download->priv->allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, String::fromUTF8(download->priv->destination.span()));
 }
 
 static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const gchar* suggestedFilename)
 {
-    if (download->priv->destination)
+    if (!download->priv->destination.isNull())
         return FALSE;
 
     GUniquePtr<char> filename(g_strdelimit(g_strdup(suggestedFilename), G_DIR_SEPARATOR_S, '_'));
@@ -156,9 +157,9 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
         // If we don't have XDG user dirs info, set just to HOME.
         downloadsDir = g_get_home_dir();
     }
-    download->priv->destination.reset(g_build_filename(downloadsDir, filename.get(), nullptr));
+    download->priv->destination = GMallocString::unsafeAdoptFromUTF8(g_build_filename(downloadsDir, filename.get(), nullptr));
 #if !ENABLE(2022_GLIB_API)
-    download->priv->destinationURI.reset(g_filename_to_uri(download->priv->destination.get(), nullptr, nullptr));
+    download->priv->destinationURI = GMallocString::unsafeAdoptFromUTF8(g_filename_to_uri(download->priv->destination.utf8(), nullptr, nullptr));
 #endif
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
     maybeFinishDecideDestination(download);
@@ -497,10 +498,10 @@ const gchar* webkit_download_get_destination(WebKitDownload* download)
     g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), nullptr);
 
 #if !ENABLE(2022_GLIB_API)
-    if (download->priv->destinationURI)
-        return download->priv->destinationURI.get();
+    if (!download->priv->destinationURI.isNull())
+        return download->priv->destinationURI.utf8();
 #endif
-    return download->priv->destination.get();
+    return download->priv->destination.utf8();
 }
 
 /**
@@ -531,27 +532,21 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* dest
     g_return_if_fail(destination[0] != '\0');
 #if ENABLE(2022_GLIB_API)
     g_return_if_fail(g_path_is_absolute(destination));
+    GMallocString destinationPath { UTF8CStringView::unsafeFromUTF8(destination) };
 #else
     auto isFileURI = startsWith(UTF8CStringView::unsafeFromUTF8(destination).span(), "file://"_s);
     g_return_if_fail(isFileURI || g_path_is_absolute(destination));
 
-    GUniquePtr<char> destinationPath;
+    GMallocString destinationPath;
     if (isFileURI) {
-        download->priv->destinationURI.reset(g_strdup(destination));
-        destinationPath.reset(g_filename_from_uri(destination, nullptr, nullptr));
-        destination = destinationPath.get();
-    }
+        download->priv->destinationURI = GMallocString { UTF8CStringView::unsafeFromUTF8(destination) };
+        destinationPath = GMallocString::unsafeAdoptFromUTF8(g_filename_from_uri(destination, nullptr, nullptr));
+    } else
+        destinationPath = GMallocString { UTF8CStringView::unsafeFromUTF8(destination) };
 #endif
 
-    if (g_strcmp0(download->priv->destination.get(), destination)) {
-#if ENABLE(2022_GLIB_API)
-        download->priv->destination.reset(g_strdup(destination));
-#else
-        if (destinationPath)
-            download->priv->destination = WTF::move(destinationPath);
-        else
-            download->priv->destination.reset(g_strdup(destination));
-#endif
+    if (download->priv->destination != destinationPath) {
+        download->priv->destination = WTF::move(destinationPath);
         g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
     }
 
