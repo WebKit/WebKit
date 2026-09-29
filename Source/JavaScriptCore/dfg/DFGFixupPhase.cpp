@@ -1069,6 +1069,23 @@ private:
                 break;
             }
 
+            // A string loosely equals only a string or nothing at all when the other side is null or undefined,
+            // so this is exactly CompareStrictEq.
+            auto tryConvertStringAndStringOrOther = [&](Edge& stringEdge, Edge& stringOrOtherEdge) {
+                if (!stringEdge->shouldSpeculateString())
+                    return false;
+                if (!stringOrOtherEdge->shouldSpeculateStringOrOther() || stringOrOtherEdge->shouldSpeculateOther())
+                    return false;
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(stringOrOtherEdge.node(), StringOrOtherUse));
+                fixEdge<StringUse>(stringEdge);
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return true;
+            };
+            if (tryConvertStringAndStringOrOther(node->child1(), node->child2()))
+                break;
+            if (tryConvertStringAndStringOrOther(node->child2(), node->child1()))
+                break;
+
             // If either child can be proved to be Null or Undefined, comparing them is greatly simplified.
             bool oneArgumentIsUsedAsSpecOther = false;
             if (node->child1()->isUndefinedOrNullConstant()) {
