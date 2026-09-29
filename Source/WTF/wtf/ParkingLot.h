@@ -136,9 +136,9 @@ public:
         unparkCount(address, 1, callback);
     }
 
-    // Unparks up to count threads from the queue associated with the given address, and calls
-    // the given callback while the address is locked. The token the callback returns is
-    // delivered to every thread that was unparked.
+    // Unparks up to a (nonzero) count of threads from the queue associated with the given address,
+    // and calls the given callback while the address is locked. The token the callback returns
+    // is delivered to every thread that was unparked.
     //
     // This is the bulk analogue of the expert-mode unparkOne(), which is itself implemented on
     // top of it. Its reason to exist is that the callback runs before any of the unparked threads
@@ -149,7 +149,7 @@ public:
     // acquired in the meantime.
     //
     // The callback runs under the queue lock even when nothing was dequeued, which is what makes
-    // acting on a zero count safe: a thread on its way to parking must take that same lock to
+    // operating on an empty queue safe: a thread on its way to parking must take that same lock to
     // validate and enqueue, so it either gets dequeued here or observes whatever the callback
     // published and declines to park.
     static void unparkCount(const void* address, unsigned count, const Invocable<intptr_t(ParkingLot::UnparkResult)> auto& callback)

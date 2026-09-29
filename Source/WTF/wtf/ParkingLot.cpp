@@ -687,6 +687,8 @@ NEVER_INLINE void ParkingLot::unparkCountImpl(
     if (verbose)
         dataLogForCurrentThread(": unparking count = ", count, " the hard way from ", RawPointer(address), ".\n");
 
+    RELEASE_ASSERT(count);
+
     Vector<RefPtr<ThreadData>, 16> threadDatas;
     bool timeToBeFair = false;
     dequeue(
@@ -701,9 +703,6 @@ NEVER_INLINE void ParkingLot::unparkCountImpl(
         // than per call, and once a slot has had a waiter IgnoreEmpty would take the lock as well.
         BucketMode::EnsureNonEmpty,
         [&] (ThreadData* element, bool passedTimeToBeFair) {
-            // Only reachable for a zero count, which this makes unpark nobody.
-            if (threadDatas.size() == count)
-                return DequeueResult::Ignore;
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadDatas.append(element);
