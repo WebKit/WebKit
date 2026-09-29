@@ -1,0 +1,78 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Element: member names are unique
+PASS MathMLElement includes GlobalEventHandlers: member names are unique
+PASS MathMLElement includes HTMLOrSVGElement: member names are unique
+PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS MathMLElement interface: existence and properties of interface object
+PASS MathMLElement interface object length
+PASS MathMLElement interface object name
+PASS MathMLElement interface: existence and properties of interface prototype object
+PASS MathMLElement interface: existence and properties of interface prototype object's "constructor" property
+PASS MathMLElement interface: existence and properties of interface prototype object's @@unscopables property
+PASS MathMLElement must be primary interface of objects.annotation
+PASS Stringification of objects.annotation
+PASS MathMLElement must be primary interface of objects["annotation-xml"]
+PASS Stringification of objects["annotation-xml"]
+PASS MathMLElement must be primary interface of objects.maction
+PASS Stringification of objects.maction
+FAIL MathMLElement must be primary interface of objects.math assert_equals: objects.math's prototype is not MathMLElement.prototype expected object "[object MathMLElement]" but got object "[object MathMLMathElement]"
+FAIL Stringification of objects.math assert_class_string: class string of objects.math expected "[object MathMLElement]" but got "[object MathMLMathElement]"
+PASS MathMLElement must be primary interface of objects.merror
+PASS Stringification of objects.merror
+PASS MathMLElement must be primary interface of objects.mfrac
+PASS Stringification of objects.mfrac
+PASS MathMLElement must be primary interface of objects.mi
+PASS Stringification of objects.mi
+PASS MathMLElement must be primary interface of objects.mmultiscripts
+PASS Stringification of objects.mmultiscripts
+PASS MathMLElement must be primary interface of objects.mn
+PASS Stringification of objects.mn
+PASS MathMLElement must be primary interface of objects.mo
+PASS Stringification of objects.mo
+PASS MathMLElement must be primary interface of objects.mover
+PASS Stringification of objects.mover
+PASS MathMLElement must be primary interface of objects.mpadded
+PASS Stringification of objects.mpadded
+PASS MathMLElement must be primary interface of objects.mphantom
+PASS Stringification of objects.mphantom
+PASS MathMLElement must be primary interface of objects.mprescripts
+PASS Stringification of objects.mprescripts
+PASS MathMLElement must be primary interface of objects.mroot
+PASS Stringification of objects.mroot
+PASS MathMLElement must be primary interface of objects.mrow
+PASS Stringification of objects.mrow
+PASS MathMLElement must be primary interface of objects.ms
+PASS Stringification of objects.ms
+PASS MathMLElement must be primary interface of objects.mspace
+PASS Stringification of objects.mspace
+PASS MathMLElement must be primary interface of objects.msqrt
+PASS Stringification of objects.msqrt
+PASS MathMLElement must be primary interface of objects.mstyle
+PASS Stringification of objects.mstyle
+PASS MathMLElement must be primary interface of objects.msub
+PASS Stringification of objects.msub
+PASS MathMLElement must be primary interface of objects.msubsup
+PASS Stringification of objects.msubsup
+PASS MathMLElement must be primary interface of objects.msup
+PASS Stringification of objects.msup
+PASS MathMLElement must be primary interface of objects.mtable
+PASS Stringification of objects.mtable
+PASS MathMLElement must be primary interface of objects.mtd
+PASS Stringification of objects.mtd
+PASS MathMLElement must be primary interface of objects.mtext
+PASS Stringification of objects.mtext
+PASS MathMLElement must be primary interface of objects.mtr
+PASS Stringification of objects.mtr
+PASS MathMLElement must be primary interface of objects.munder
+PASS Stringification of objects.munder
+PASS MathMLElement must be primary interface of objects.munderover
+PASS Stringification of objects.munderover
+PASS MathMLElement must be primary interface of objects.semantics
+PASS Stringification of objects.semantics
+
