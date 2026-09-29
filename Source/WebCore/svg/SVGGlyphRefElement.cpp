@@ -22,6 +22,7 @@
 #include "SVGGlyphRefElement.h"
 
 #include "NodeName.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -32,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGlyphRefElement);
 
 inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::glyphRefTag));

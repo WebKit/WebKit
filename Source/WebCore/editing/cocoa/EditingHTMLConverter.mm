@@ -378,7 +378,7 @@ static void updateAttributes(const Node* node, const Style::ComputedStyle& style
 #if PLATFORM(IOS_FAMILY)
         PlatformFont *platformFont = [PlatformFontClass systemFontOfSize:size];
 #else
-        PlatformFont *platformFont = [[NSFontManager sharedFontManager] convertFont:protect(WebDefaultFont()) toSize:size];
+        RetainPtr platformFont = [[NSFontManager sharedFontManager] convertFont:protect(WebDefaultFont()) toSize:size];
 #endif
         [attributes setObject:platformFont forKey:NSFontAttributeName];
     }

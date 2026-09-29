@@ -59,7 +59,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGUseElement);
 
 inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGURIReference(this)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
@@ -160,13 +160,13 @@ FloatRect SVGUseElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
         return { };
 
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        auto* transformableContainer = dynamicDowncast<RenderSVGTransformableContainer>(renderer());
+        CheckedPtr transformableContainer = dynamicDowncast<RenderSVGTransformableContainer>(renderer());
         ASSERT(transformableContainer);
         bbox.move(transformableContainer->additionalContainerTranslation());
         return bbox;
     }
 
-    auto* transformableContainer = dynamicDowncast<LegacyRenderSVGTransformableContainer>(renderer());
+    CheckedPtr transformableContainer = dynamicDowncast<LegacyRenderSVGTransformableContainer>(renderer());
     ASSERT(transformableContainer && transformableContainer->isObjectBoundingBoxValid());
     bbox.move(transformableContainer->additionalTranslation());
     return bbox;
@@ -355,8 +355,8 @@ RefPtr<SVGGraphicsElement> SVGUseElement::visibleTargetGraphicsElement() const
     if (!renderer)
         return nullptr;
 
-    auto& style = renderer->style();
-    if (style.display() == Style::DisplayType::None || style.usedVisibility() != Visibility::Visible)
+    CheckedRef style = renderer->style();
+    if (style->display() == Style::DisplayType::None || style->usedVisibility() != Visibility::Visible)
         return nullptr;
 
     // Spec: "If a <use> element is a child of a clipPath element, it must directly

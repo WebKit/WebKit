@@ -61,7 +61,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSMILElement);
 
-static SMILEventSender& smilEventSender()
+static SMILEventSender& smilEventSenderSingleton()
 {
     static NeverDestroyed<SMILEventSender> sender;
     return sender;
@@ -142,7 +142,7 @@ SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, Uniq
 SVGSMILElement::~SVGSMILElement()
 {
     clearResourceReferences();
-    smilEventSender().cancelEvent(*this);
+    smilEventSenderSingleton().cancelEvent(*this);
     disconnectConditions();
     if (RefPtr timeContainer = m_timeContainer; timeContainer && m_targetElement && hasValidAttributeName())
         timeContainer->unschedule(this, protect(targetElement()).get(), m_attributeName);
@@ -1241,7 +1241,7 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         // When seekToTime is true, all repeat events are handled in the seekToTime block below.
         if (!seekToTime && repeat && repeat != m_lastRepeat) {
             m_pendingRepeatIterations.append(repeat);
-            smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+            smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().repeatEventEvent);
         }
 
         updateAnimation(percent, repeat);
@@ -1250,22 +1250,22 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
     }
 
     if (oldActiveState == Active && m_activeState != Active) {
-        smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
+        smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().endEventEvent);
         endedActiveInterval();
         if (m_activeState != Frozen)
             stopAnimation(protect(targetElement()).get());
     } else if (oldActiveState != Active && m_activeState == Active)
-        smilEventSender().dispatchEventSoon(*this, eventNames().beginEventEvent);
+        smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().beginEventEvent);
 
     // Triggering all the pending events if the animation timeline is changed.
     // Handle repeat events entirely here when seeking.
     if (seekToTime) {
         if (m_activeState == Inactive || m_activeState == Frozen)
-            smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
+            smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().endEventEvent);
 
         // Coalesce the skipped repeat iterations into a single event instead of one per interval.
         if (repeat > 1 || (repeat && m_activeState == Inactive))
-            smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+            smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().repeatEventEvent);
     }
 
     m_nextProgressTime = calculateNextProgressTime(elapsed);
@@ -1333,7 +1333,7 @@ void SVGSMILElement::endedActiveInterval()
 
 void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, const AtomString& eventType)
 {
-    ASSERT_UNUSED(eventSender, eventSender == &smilEventSender());
+    ASSERT_UNUSED(eventSender, eventSender == &smilEventSenderSingleton());
     if (eventType == eventNames().repeatEventEvent && !m_pendingRepeatIterations.isEmpty())
         m_lastDispatchedRepeatIteration = m_pendingRepeatIterations.takeFirst();
 

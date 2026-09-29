@@ -2821,7 +2821,7 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
         if (!id)
             continue;
 
-        if (auto* cssAgent = agents->enabledCSSAgent())
+        if (CheckedPtr cssAgent = agents->enabledCSSAgent())
             cssAgent->didModifyDOMAttr(*element);
 
         nodeIds->addItem(id);

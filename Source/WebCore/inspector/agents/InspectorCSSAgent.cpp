@@ -321,7 +321,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
             pseudoElements = JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>::create();
             for (auto pseudoElementType : allPseudoElementTypes) {
                 // `*::marker` selectors are only applicable to elements with `display: list-item`.
-                if (pseudoElementType == PseudoElementType::Marker && !element->computedStyle()->isListItemType())
+                if (pseudoElementType == PseudoElementType::Marker && !protect(element->computedStyle())->isListItemType())
                     continue;
 
                 if (pseudoElementType == PseudoElementType::Backdrop && !element->isInTopLayer())
@@ -442,7 +442,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Font>> Inspecto
     if (!computedStyle)
         return makeUnexpected("No computed style for node."_s);
     
-    return buildObjectForFont(protect(computedStyle->fontCascade().primaryFont()));
+    return buildObjectForFont(protect(protect(computedStyle->fontCascade())->primaryFont()));
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> InspectorCSSAgent::getAllStyleSheets()
@@ -773,7 +773,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent
 {
     auto fontFamilyNames = JSON::ArrayOf<String>::create();
 
-    Vector<String> systemFontFamilies = FontCache::forCurrentThread().systemFontFamilies();
+    Vector<String> systemFontFamilies = protect(FontCache::forCurrentThread())->systemFontFamilies();
     for (const auto& familyName : systemFontFamilies)
         fontFamilyNames->addItem(familyName);
 
@@ -983,7 +983,7 @@ static void pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(InspectorDOMAgent&
     for (auto& child : childrenOfType<Element>(node))
         pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(domAgent, child);
     
-    if (layoutFlagContextType(node.renderer()))
+    if (layoutFlagContextType(protect(node.renderer())))
         domAgent.pushNodeToFrontend(&node);
 }
 
@@ -1185,11 +1185,11 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
     if (auto* extensionStyleSheets = styleResolver.document().extensionStyleSheetsIfExists())
         styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
-    styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(element));
+    styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(Style::Scope::forNode(element)));
 
     // Possiblity of :host styles if this element has a shadow root.
     if (RefPtr shadowRoot = element.shadowRoot())
-        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(shadowRoot->styleScope());
+        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(shadowRoot->styleScope()));
 
     if (RefPtr cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule))
         return buildObjectForRule(cssomWrapper.get());

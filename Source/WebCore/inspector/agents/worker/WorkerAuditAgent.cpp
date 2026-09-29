@@ -57,7 +57,7 @@ InjectedScript WorkerAuditAgent::injectedScriptForEval(Inspector::Protocol::Erro
 
     // FIXME: What guarantees m_globalScope.script() is non-null?
     // FIXME: What guarantees globalScopeWrapper() is non-null?
-    return injectedScriptManager().injectedScriptFor(m_globalScope->script()->globalScopeWrapper());
+    return injectedScriptManager().injectedScriptFor(protect(m_globalScope->script())->globalScopeWrapper());
 }
 
 } // namespace WebCore

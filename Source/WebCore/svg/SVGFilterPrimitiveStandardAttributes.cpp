@@ -151,12 +151,12 @@ void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRepaint()
     if (!renderer)
         return;
 
-    if (auto* filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
+    if (CheckedPtr filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
         filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect);
         return;
     }
 
-    if (auto* filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
+    if (CheckedPtr filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
         filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect);
         return;
     }
@@ -172,12 +172,12 @@ void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
     if (!renderer)
         return;
 
-    if (auto* filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
+    if (CheckedPtr filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
         filterPrimitiveRenderer->markFilterEffectForRebuild();
         return;
     }
 
-    if (auto* filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
+    if (CheckedPtr filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
         filterPrimitiveRenderer->markFilterEffectForRebuild();
         return;
     }

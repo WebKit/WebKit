@@ -25,6 +25,7 @@
 #include "FEDiffuseLighting.h"
 #include "NodeName.h"
 #include "RenderElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -37,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDiffuseLightingElement);
 
 inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     ASSERT(hasTagName(SVGNames::feDiffuseLightingTag));
 

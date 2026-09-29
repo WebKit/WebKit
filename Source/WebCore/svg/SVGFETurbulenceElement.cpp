@@ -25,6 +25,7 @@
 #include "NodeDocument.h"
 #include "NodeName.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
@@ -36,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFETurbulenceElement);
 
 inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     ASSERT(hasTagName(SVGNames::feTurbulenceTag));
 

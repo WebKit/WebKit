@@ -39,7 +39,7 @@ class LegacyPreviewLoaderClient;
 class ResourceLoader;
 class ResourceResponse;
 
-class LegacyPreviewLoader final : public RefCounted<LegacyPreviewLoader>, private PreviewConverterClient, private PreviewConverterProvider {
+class LegacyPreviewLoader final : public RefCounted<LegacyPreviewLoader>, public PreviewConverterClient, private PreviewConverterProvider {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LegacyPreviewLoader, Loader);
     WTF_MAKE_NONCOPYABLE(LegacyPreviewLoader);
 public:
@@ -56,6 +56,7 @@ public:
     // PreviewConverterClient, PreviewConverterProvider.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(PreviewConverterClient);
 
 private:
     LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);

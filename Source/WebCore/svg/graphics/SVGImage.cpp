@@ -422,7 +422,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize, con
     {
         ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
         if (view->needsLayout())
-            view->layoutContext().layout();
+            protect(view->layoutContext())->layout();
     }
 
 #if PLATFORM(MAC)

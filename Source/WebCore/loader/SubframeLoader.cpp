@@ -347,7 +347,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     if ((url.isAboutBlank() || url.isAboutSrcDoc()) && userContentProvider) {
         userContentProvider->userContentExtensionBackend().forEach([&] (const String& identifier, ContentExtensions::ContentExtension& extension) {
             if (RefPtr styleSheetContents = extension.globalDisplayNoneStyleSheet())
-                protect(subFrame->document())->extensionStyleSheets().maybeAddContentExtensionSheet(identifier, *styleSheetContents);
+                protect(protect(subFrame->document())->extensionStyleSheets())->maybeAddContentExtensionSheet(identifier, *styleSheetContents);
         });
     }
 #endif

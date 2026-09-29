@@ -951,20 +951,11 @@ void TypingCommand::deleteSelection(bool smartDelete)
 }
 
 #if PLATFORM(IOS_FAMILY)
-class FriendlyEditCommand : public EditCommand {
-public:
-    void setEndingSelection(const VisibleSelection& selection)
-    {
-        EditCommand::setEndingSelection(selection);
-    }
-};
-
 void TypingCommand::setEndingSelectionOnLastInsertCommand(const VisibleSelection& selection)
 {
     if (!m_commands.isEmpty()) {
-        RefPtr lastCommand = m_commands.last().get();
-        if (lastCommand->isInsertTextCommand())
-            static_cast<FriendlyEditCommand*>(lastCommand.get())->setEndingSelection(selection);
+        if (RefPtr lastCommand = dynamicDowncast<InsertTextCommand>(m_commands.last()))
+            lastCommand->setEndingSelection(selection);
     }
 }
 #endif

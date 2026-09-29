@@ -48,7 +48,7 @@ public:
 
     SVGElement* contextElementConcurrently() const { return m_contextElement; }
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewSpec, SVGFitToViewBox>;
+    using PropertyRegistry = SVGPropertyOwnerRegistryBase<SVGViewSpec, SVGFitToViewBox>;
 
 private:
     explicit SVGViewSpec(SVGElement&);

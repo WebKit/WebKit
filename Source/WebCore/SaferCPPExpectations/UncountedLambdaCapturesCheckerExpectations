@@ -1,10 +1,5 @@
-Modules/cache/DOMCacheStorage.cpp
-Modules/mediastream/RTCDataChannel.cpp
-Modules/webdatabase/DatabaseThread.cpp
 animation/KeyframeEffect.cpp
 css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
-inspector/agents/page/PageDOMDebuggerAgent.cpp
-[ iOS ] loader/ios/LegacyPreviewLoader.mm
 page/IntelligenceTextEffectsSupport.cpp
 [ iOS ] platform/PreviewConverter.cpp
 platform/ScrollableArea.cpp

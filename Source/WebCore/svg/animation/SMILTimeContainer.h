@@ -57,7 +57,7 @@ public:
 
     bool NODELETE isActive() const;
     bool NODELETE isPaused() const;
-    bool NODELETE hasAnimations() const;
+    bool hasAnimations() const;
 
     void begin();
     void pause();

@@ -27,6 +27,7 @@
 #include "NodeName.h"
 #include "RenderSVGEllipse.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include "Settings.h"
@@ -37,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGCircleElement);
 
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     ASSERT(hasTagName(SVGNames::circleTag));
 

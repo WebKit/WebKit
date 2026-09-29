@@ -24,6 +24,7 @@
 
 #include "FEOffset.h"
 #include "NodeName.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFilterRenderer.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -35,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEOffsetElement);
 
 inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     ASSERT(hasTagName(SVGNames::feOffsetTag));
     

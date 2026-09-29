@@ -112,7 +112,7 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapper
         return;
 
     SetForScope ignoreDidClearWindowObject(m_ignoreDidClearWindowObject, true);
-    notifyContextCreated(frameId, frame.script().globalObject(world), world);
+    notifyContextCreated(frameId, protect(frame.script())->globalObject(world), world);
 }
 
 InjectedScript PageRuntimeAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
@@ -149,7 +149,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     Ref identifierRegistry = m_inspectedPage->inspectorController().identifierRegistry();
 
     protect(m_inspectedPage)->forEachLocalFrame([&](LocalFrame& frame) {
-        if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+        if (!protect(frame.script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
             return;
 
         auto frameId = identifierRegistry->frameId(&frame);

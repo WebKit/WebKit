@@ -256,7 +256,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::Compositi
     if (!renderLayer)
         return makeUnexpected("Missing render layer for given layerId"_s);
 
-    OptionSet<CompositingReason> reasons = renderLayer->compositor().reasonsForCompositing(*renderLayer);
+    OptionSet<CompositingReason> reasons = protect(renderLayer->compositor())->reasonsForCompositing(*renderLayer);
     auto compositingReasons = Inspector::Protocol::LayerTree::CompositingReasons::create().release();
 
     if (reasons.contains(CompositingReason::Transform3D))

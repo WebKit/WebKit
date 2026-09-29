@@ -98,14 +98,14 @@ void PageDebugger::didPause(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didPause(globalObject);
 
-    setJavaScriptPaused(protect(m_page)->group(), true);
+    setJavaScriptPaused(protect(protect(m_page)->group()), true);
 }
 
 void PageDebugger::didContinue(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didContinue(globalObject);
 
-    setJavaScriptPaused(protect(m_page)->group(), false);
+    setJavaScriptPaused(protect(protect(m_page)->group()), false);
 }
 
 void PageDebugger::runEventLoopWhilePaused()
@@ -185,7 +185,7 @@ void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 
 void PageDebugger::setJavaScriptPaused(LocalFrame& frame, bool paused)
 {
-    if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+    if (!protect(frame.script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return;
 
     frame.script().setPaused(paused);

@@ -1,5 +1,4 @@
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-[ iOS ] platform/audio/ios/AudioSessionIOS.mm
 rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp

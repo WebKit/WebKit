@@ -930,7 +930,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     Ref frame = this->frame();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This code shouldn't be accessing selection and changing the behavior.
-    if (!frame->editor().client()->hasRichlyEditableSelection()) {
+    if (!protect(frame->editor().client())->hasRichlyEditableSelection()) {
         if (readPlainText([url.createNSURL() absoluteString]))
             return true;
     }

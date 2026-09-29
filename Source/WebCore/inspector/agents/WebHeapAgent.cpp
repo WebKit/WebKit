@@ -55,7 +55,7 @@ public:
 private:
     void timerFired();
 
-    WebHeapAgent& m_agent;
+    const CheckedRef<WebHeapAgent> m_agent;
     Lock m_collectionsLock;
     Vector<GarbageCollectionData> m_collections WTF_GUARDED_BY_LOCK(m_collectionsLock);
     RunLoop::Timer m_timer;
@@ -99,7 +99,7 @@ void SendGarbageCollectionEventsTask::timerFired()
         m_collections.swap(collectionsToSend);
     }
 
-    m_agent.dispatchGarbageCollectionEventsAfterDelay(WTF::move(collectionsToSend));
+    m_agent->dispatchGarbageCollectionEventsAfterDelay(WTF::move(collectionsToSend));
 }
 
 WebHeapAgent::WebHeapAgent(WebAgentContext& context)

@@ -66,7 +66,7 @@ public:
         return !equalIgnoringFragmentIdentifier(url, document.url());
     }
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistryBase<SVGURIReference>;
 
     String href() const { return m_href->currentValue(); }
     SVGAnimatedString& hrefAnimated() { return m_href; }

@@ -402,7 +402,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(CFDictionaryRef dictionary)
         return nullptr;
     }
 
-    auto subresourceArray = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveSubresourcesKey));
+    RetainPtr subresourceArray = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveSubresourcesKey));
     if (subresourceArray && CFGetTypeID(subresourceArray) != CFArrayGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Subresources is not the expected Array, aborting invalid WebArchive");
         return nullptr;
@@ -412,7 +412,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(CFDictionaryRef dictionary)
     if (subresourceArray) {
         auto count = CFArrayGetCount(subresourceArray);
         for (CFIndex i = 0; i < count; ++i) {
-            auto subresourceDict = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(subresourceArray, i));
+            RetainPtr subresourceDict = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(subresourceArray, i));
             if (CFGetTypeID(subresourceDict) != CFDictionaryGetTypeID()) {
                 LOG(Archives, "LegacyWebArchive - Subresource is not expected CFDictionary, aborting invalid WebArchive");
                 return nullptr;
@@ -423,7 +423,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(CFDictionaryRef dictionary)
         }
     }
 
-    auto subframeArray = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveSubframeArchivesKey));
+    RetainPtr subframeArray = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveSubframeArchivesKey));
     if (subframeArray && CFGetTypeID(subframeArray) != CFArrayGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Subframe archives is not the expected Array, aborting invalid WebArchive");
         return nullptr;
@@ -433,7 +433,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(CFDictionaryRef dictionary)
     if (subframeArray) {
         auto count = CFArrayGetCount(subframeArray);
         for (CFIndex i = 0; i < count; ++i) {
-            auto subframeDict = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(subframeArray, i));
+            RetainPtr subframeDict = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(subframeArray, i));
             if (CFGetTypeID(subframeDict) != CFDictionaryGetTypeID()) {
                 LOG(Archives, "LegacyWebArchive - Subframe array is not expected CFDictionary, aborting invalid WebArchive");
                 return nullptr;

@@ -46,7 +46,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLinearGradientElement);
 
 inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document& document)
-    : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
     ASSERT(hasTagName(SVGNames::linearGradientTag));

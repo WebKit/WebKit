@@ -49,7 +49,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMaskElement);
 
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGTests(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
@@ -165,7 +165,7 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         ASSERT(child.isSVGLayerAwareRenderer());
         ASSERT(!child.isRenderSVGRoot());
 
-        auto transform = SVGTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
+        auto transform = SVGTransformComputation(child).computeAccumulatedTransform(protect(downcast<RenderLayerModelObject>(renderer())), TransformState::TrackSVGCTMMatrix);
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTF::move(transform));
     };
     FloatRect maskRepaintRect;

@@ -98,7 +98,7 @@ void PathCache::clear()
 }
 
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     ASSERT(hasTagName(SVGNames::pathTag));
 

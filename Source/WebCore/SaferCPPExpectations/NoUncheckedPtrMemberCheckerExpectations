@@ -5,7 +5,6 @@ css/SelectorFilter.h
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
-inspector/agents/WebHeapAgent.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.h
 layout/formattingContexts/inline/InlineContentBreaker.h
 layout/formattingContexts/inline/InlineFormattingContext.h
@@ -75,4 +74,3 @@ style/StyleScope.h
 style/StyleTreeResolver.h
 style/Styleable.h
 style/values/primitives/StyleLengthResolution.cpp
-svg/properties/SVGPropertyOwnerRegistry.h

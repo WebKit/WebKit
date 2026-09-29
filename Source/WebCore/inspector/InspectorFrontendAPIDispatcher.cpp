@@ -113,7 +113,7 @@ JSDOMGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
     if (!localMainFrame)
         return nullptr;
     
-    return localMainFrame->script().globalObject(mainThreadNormalWorldSingleton());
+    return protect(localMainFrame->script())->globalObject(mainThreadNormalWorldSingleton());
 }
 
 static String expressionForEvaluatingCommand(const String& command, Vector<Ref<JSON::Value>>&& arguments)
@@ -267,7 +267,7 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     JSC::SuspendExceptionScope scope(m_frontendPage->inspectorController().vm());
 
     RefPtr localMainFrame = m_frontendPage->localMainFrame();
-    return localMainFrame->script().evaluateInWorld(ScriptSourceCode(expression, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorldSingleton());
+    return protect(localMainFrame->script())->evaluateInWorld(ScriptSourceCode(expression, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorldSingleton());
 }
 
 void InspectorFrontendAPIDispatcher::evaluateExpressionForTesting(const String& expression)

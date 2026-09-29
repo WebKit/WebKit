@@ -51,7 +51,7 @@ void SVGAnimatedPropertyBase::resetBaseValToInitialValue()
     if (!m_contextElement)
         return;
     RefPtr protectedContextElement = m_contextElement.get();
-    protectedContextElement->propertyRegistry().resetAnimatedPropertyBaseVal(*this);
+    protectedContextElement->propertyRegistry().resetAnimatedPropertyBaseVal(*protectedContextElement, *this);
 }
 
 void SVGAnimatedPropertyBase::commitPropertyChange(SVGProperty*)

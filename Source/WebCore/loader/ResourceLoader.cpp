@@ -559,7 +559,7 @@ static void logResourceResponseSource(LocalFrame* frame, ResourceResponse::Sourc
         return;
     }
 
-    protect(frame->page())->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceResponseSourceKey(), sourceKey, ShouldSample::Yes);
+    protect(protect(frame->page())->diagnosticLoggingClient())->logDiagnosticMessage(DiagnosticLoggingKeys::resourceResponseSourceKey(), sourceKey, ShouldSample::Yes);
 }
 
 bool ResourceLoader::shouldAllowResourceToAskForCredentials() const

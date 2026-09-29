@@ -104,7 +104,7 @@ bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
-    auto* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return false;
 
@@ -123,7 +123,7 @@ bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
-    auto* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return false;
 

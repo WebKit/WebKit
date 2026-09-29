@@ -1491,7 +1491,7 @@ void FrameLoader::prepareForLoadStart()
 {
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderPrepareForLoadStart);
 
-    m_progressTracker->progressStarted();
+    protect(m_progressTracker)->progressStarted();
     m_client->dispatchDidStartProvisionalLoad();
 
     if (AXObjectCache::accessibilityEnabled()) {
@@ -1882,7 +1882,7 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
     if (request.url().protocolIsJavaScript() && !action.isInitialFrameSrcLoad()) {
         if (auto requester = action.requester(); requester && requester->documentIdentifier) {
             if (RefPtr requestingDocument = Document::allDocumentsMap().get(requester->documentIdentifier); requestingDocument && requestingDocument->contentSecurityPolicy()) {
-                if (!requestingDocument->contentSecurityPolicy()->allowJavaScriptURLs(protect(m_frame->document())->url().string(), { }, request.url().string(), nullptr))
+                if (!protect(requestingDocument->contentSecurityPolicy())->allowJavaScriptURLs(protect(m_frame->document())->url().string(), { }, request.url().string(), nullptr))
                     return completionHandler();
             }
         }
@@ -2331,7 +2331,7 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
     // but haven't laid out/painted yet.
     // FIXME: Is this behavior specific to iOS? Or should we expose a setting to toggle this behavior?
     if (frame->view() && !frame->view()->didFirstLayout())
-        protect(frame->view())->layoutContext().layout();
+        protect(protect(frame->view())->layoutContext())->layout();
 #endif
 
     if (deferCheckLoadComplete)
@@ -2550,7 +2550,7 @@ void FrameLoader::commitProvisionalLoad()
     if (!cachedPage && !m_stateMachine.creatingInitialEmptyDocument())
         m_client->makeRepresentation(pdl.get());
 
-    transitionToCommitted(cachedPage.get());
+    transitionToCommitted(protect(cachedPage));
 
     if (pdl && m_documentLoader) {
         // Check if the destination page is allowed to access the previous page's timing information.
@@ -3138,7 +3138,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         if (m_stateMachine.creatingInitialEmptyDocument() || !m_stateMachine.committedFirstRealDocumentLoad())
             return;
 
-        m_progressTracker->progressCompleted(FrameProgressTracker::LoadCompletionStatus::Success);
+        protect(m_progressTracker)->progressCompleted(FrameProgressTracker::LoadCompletionStatus::Success);
         if (RefPtr page = m_frame->page()) {
             if (m_frame->isMainFrame()) {
                 tracePoint(MainResourceLoadDidEnd, PAGE_ID);
@@ -3188,7 +3188,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         // Don't assume 'page' is still available to use.
         if (m_frame->isMainFrame() && m_frame->page()) {
             ASSERT(&m_frame->page()->mainFrame() == m_frame.ptr());
-            protect(m_frame->page())->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
+            protect(protect(m_frame->page())->diagnosticLoggingClient())->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
         }
 
         m_shouldSkipHTTPSUpgradeForSameSiteNavigation = isHTTPFallbackInProgressOrUpgradeDisabled();

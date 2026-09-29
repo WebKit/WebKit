@@ -1,4 +1,3 @@
-[ iOS ] editing/TypingCommand.cpp
 [ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm

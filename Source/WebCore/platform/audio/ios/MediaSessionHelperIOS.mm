@@ -404,13 +404,13 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 
     NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:PAL::get_UIKit_UIApplicationWillEnterForegroundNotificationSingleton() object:nil];
-    [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:WebUIApplicationWillEnterForegroundNotification object:nil];
+    [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:protect(WebUIApplicationWillEnterForegroundNotification) object:nil];
     [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:PAL::get_UIKit_UIApplicationDidBecomeActiveNotificationSingleton() object:nil];
-    [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:WebUIApplicationDidBecomeActiveNotification object:nil];
+    [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:protect(WebUIApplicationDidBecomeActiveNotification) object:nil];
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:PAL::get_UIKit_UIApplicationWillResignActiveNotificationSingleton() object:nil];
-    [center addObserver:self selector:@selector(applicationWillResignActive:) name:WebUIApplicationWillResignActiveNotification object:nil];
+    [center addObserver:self selector:@selector(applicationWillResignActive:) name:protect(WebUIApplicationWillResignActiveNotification) object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:PAL::get_UIKit_UIApplicationDidEnterBackgroundNotificationSingleton() object:nil];
-    [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
+    [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:protect(WebUIApplicationDidEnterBackgroundNotification) object:nil];
     [center addObserver:self selector:@selector(activeOutputDeviceDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotificationSingleton() object:nil];
 
 #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)

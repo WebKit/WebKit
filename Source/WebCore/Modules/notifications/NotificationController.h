@@ -27,13 +27,12 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include <WebCore/NotificationClient.h>
 #include <WebCore/Page.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-
-class NotificationClient;
 
 class NotificationController : public Supplement<Page> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(NotificationController, WEBCORE_EXPORT);

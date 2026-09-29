@@ -61,7 +61,7 @@ namespace WebCore {
 
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
     : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiatorType))
-    , m_bridge(MainThreadBridge::create(m_workerClientWrapper.get(), workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy(), workerOrWorkletGlobalScope.identifier(), taskMode, WTF::move(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope))
+    , m_bridge(MainThreadBridge::create(m_workerClientWrapper.get(), protect(workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy()), workerOrWorkletGlobalScope.identifier(), taskMode, WTF::move(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope))
 {
 }
 
@@ -140,7 +140,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 
     Ref securityOriginCopy = securityOrigin->isolatedCopy();
     ReportingClient* reportingClient = nullptr;
-    if (auto* client = m_loaderProxy ? m_loaderProxy->reportingClient() : nullptr)
+    if (auto* client = m_loaderProxy ? protect(m_loaderProxy)->reportingClient() : nullptr)
         reportingClient = client;
     else if (auto* workerScope = dynamicDowncast<WorkerGlobalScope>(globalScope))
         reportingClient = workerScope;
@@ -179,7 +179,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
         return;
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?
-    m_loaderProxy->postTaskToLoader([this, protectedThis = Ref { *this }, request = WTF::move(request).isolatedCopy(), options = WTF::move(optionsCopy), contentSecurityPolicyIsolatedCopy = WTF::move(contentSecurityPolicyIsolatedCopy), crossOriginEmbedderPolicyCopy = WTF::move(crossOriginEmbedderPolicyCopy)](ScriptExecutionContext& context) mutable {
+    protect(m_loaderProxy)->postTaskToLoader([this, protectedThis = Ref { *this }, request = WTF::move(request).isolatedCopy(), options = WTF::move(optionsCopy), contentSecurityPolicyIsolatedCopy = WTF::move(contentSecurityPolicyIsolatedCopy), crossOriginEmbedderPolicyCopy = WTF::move(crossOriginEmbedderPolicyCopy)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Ref document = downcast<Document>(context);
 
@@ -199,7 +199,7 @@ WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 void WorkerThreadableLoader::MainThreadBridge::cancel()
 {
     if (m_loaderProxy) {
-        m_loaderProxy->postTaskToLoader([this, protectedThis = Ref { *this }] (ScriptExecutionContext& context) {
+        protect(m_loaderProxy)->postTaskToLoader([this, protectedThis = Ref { *this }] (ScriptExecutionContext& context) {
             ASSERT(isMainThread());
             ASSERT_UNUSED(context, context.isDocument());
 
@@ -221,7 +221,7 @@ void WorkerThreadableLoader::MainThreadBridge::computeIsDone()
     if (!m_loaderProxy)
         return;
 
-    m_loaderProxy->postTaskToLoader([this, protectedThis = Ref { *this }](auto&) {
+    protect(m_loaderProxy)->postTaskToLoader([this, protectedThis = Ref { *this }](auto&) {
         if (RefPtr mainThreadLoader = m_mainThreadLoader) {
             mainThreadLoader->computeIsDone();
             return;

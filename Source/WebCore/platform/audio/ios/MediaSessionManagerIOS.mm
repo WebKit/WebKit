@@ -60,7 +60,7 @@ Ref<MediaSessionManageriOS> MediaSessionManageriOS::create(PageIdentifier pageId
 MediaSessionManageriOS::MediaSessionManageriOS(std::optional<PageIdentifier> pageIdentifier)
     : MediaSessionManagerCocoa(pageIdentifier)
 {
-    MediaSessionHelper::sharedHelper().addClient(*this);
+    protect(MediaSessionHelper::sharedHelper())->addClient(*this);
     AudioSession::addInterruptionObserver(*this);
 }
 

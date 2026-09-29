@@ -1,8 +1,5 @@
 dom/Document.cpp
 dom/Position.cpp
-[ iOS ] editing/cocoa/EditorCocoa.mm
-inspector/agents/InspectorDOMAgent.cpp
-inspector/agents/InspectorDOMDebuggerAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
@@ -158,9 +155,5 @@ style/computed/StyleComputedStyleBase.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleCanvasImage.cpp
 style/values/primitives/StyleLengthResolution.cpp
-svg/SVGFilterPrimitiveStandardAttributes.cpp
-svg/SVGGeometryElement.cpp
-svg/SVGLengthContext.cpp
-svg/SVGUseElement.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerOrWorkletThread.cpp

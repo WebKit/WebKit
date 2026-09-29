@@ -23,6 +23,7 @@
 #include "SVGFEMergeNodeElement.h"
 
 #include "LegacyRenderSVGResource.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
@@ -33,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEMergeNodeElement);
 
 inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     ASSERT(hasTagName(SVGNames::feMergeNodeTag));
     

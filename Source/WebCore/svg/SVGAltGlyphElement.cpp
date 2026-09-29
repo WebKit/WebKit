@@ -25,6 +25,7 @@
 
 #include "RenderSVGTSpan.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -33,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAltGlyphElement);
 
 inline SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::altGlyphTag));

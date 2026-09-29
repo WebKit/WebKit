@@ -442,13 +442,13 @@ void InspectorInstrumentation::characterDataModifiedImpl(InstrumentingAgents& in
 void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& instrumentingAgents, const String& url)
 {
     if (CheckedPtr domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willSendXMLHttpRequest(instrumentingAgents.enabledWebDebuggerAgent(), url);
+        domDebuggerAgent->willSendXMLHttpRequest(protect(instrumentingAgents.enabledWebDebuggerAgent()), url);
 }
 
 void InspectorInstrumentation::willFetchImpl(InstrumentingAgents& instrumentingAgents, const String& url)
 {
     if (CheckedPtr domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willFetch(instrumentingAgents.enabledWebDebuggerAgent(), url);
+        domDebuggerAgent->willFetch(protect(instrumentingAgents.enabledWebDebuggerAgent()), url);
 }
 
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext& context)
@@ -739,7 +739,7 @@ void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrume
     if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
         networkProxy->willSendRequest(identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
     if (CheckedPtr domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willSendRequest(instrumentingAgents.enabledWebDebuggerAgent(), request);
+        domDebuggerAgent->willSendRequest(protect(instrumentingAgents.enabledWebDebuggerAgent()), request);
 }
 
 void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType loadType)
@@ -749,7 +749,7 @@ void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& in
     if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
         networkProxy->willSendRequestOfType(identifier, loader, request, loadType);
     if (CheckedPtr domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willSendRequestOfType(instrumentingAgents.enabledWebDebuggerAgent(), request);
+        domDebuggerAgent->willSendRequestOfType(protect(instrumentingAgents.enabledWebDebuggerAgent()), request);
 }
 
 void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)

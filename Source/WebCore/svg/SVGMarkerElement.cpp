@@ -29,6 +29,7 @@
 #include "NodeDocument.h"
 #include "NodeName.h"
 #include "RenderSVGResourceMarker.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "Settings.h"
@@ -39,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMarkerElement);
 
 inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGFitToViewBox(this)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.

@@ -58,7 +58,7 @@ static NSBundle *arKitBundle()
 
 static RetainPtr<CGPDFPageRef> loadARKitPDFPage(NSString *imageName)
 {
-    NSURL *url = [arKitBundle() URLForResource:imageName withExtension:@"pdf"];
+    NSURL *url = [protect(arKitBundle()) URLForResource:imageName withExtension:@"pdf"];
     if (!url)
         return nullptr;
     auto document = adoptCF(CGPDFDocumentCreateWithURL((CFURLRef)url));
@@ -124,7 +124,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    CGContextRef ctx = graphicsContext.platformContext();
+    RetainPtr ctx = graphicsContext.platformContext();
     if (!ctx)
         return;
 
@@ -161,7 +161,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
 
     RetainPtr<CGImageRef> cgImage;
     if (hasBackdropImage) {
-        CIImage *inputImage = [CIImage imageWithCGImage:nativeImage->platformImage().get()];
+        RetainPtr inputImage = [CIImage imageWithCGImage:nativeImage->platformImage().get()];
 
         // Draw the blurred backdrop. Scale from intrinsic size to render size.
         CGAffineTransform transform = CGAffineTransformIdentity;

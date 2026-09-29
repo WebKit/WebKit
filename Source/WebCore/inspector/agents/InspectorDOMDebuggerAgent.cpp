@@ -328,7 +328,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
         injectedScript.setEventValue(toJS(state, deprecatedGlobalObjectForPrototype(state), event));
     }
 
-    auto* debuggerAgent = pausingDebuggerAgent(scriptExecutionContext);
+    CheckedPtr debuggerAgent = pausingDebuggerAgent(scriptExecutionContext);
     if (!debuggerAgent->breakpointsActive())
         return;
 
@@ -358,7 +358,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
             eventData->setInteger("eventListenerId"_s, eventListenerId);
     }
 
-    protect(debuggerAgent)->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
+    debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
 }
 
 void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
@@ -382,8 +382,8 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     // reaches Debugger.enable), so the agent resolved here may not be the one willHandleEvent armed.
     // Cancel on both candidates: an uncancelled arm occupies that debugger's only special-breakpoint
     // slot for good, and cancelling an agent that never armed this breakpoint is a no-op.
-    auto* debuggerAgent = pausingDebuggerAgent(scriptExecutionContext);
-    auto* fallbackDebuggerAgent = m_debuggerAgent.get() != debuggerAgent ? m_debuggerAgent.get() : nullptr;
+    CheckedPtr debuggerAgent = pausingDebuggerAgent(scriptExecutionContext);
+    CheckedPtr fallbackDebuggerAgent = m_debuggerAgent != debuggerAgent ? m_debuggerAgent : nullptr;
     if (!debuggerAgent->breakpointsActive() && !(fallbackDebuggerAgent && fallbackDebuggerAgent->breakpointsActive()))
         return;
 
@@ -405,9 +405,9 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     if (!breakpoint)
         return;
 
-    protect(debuggerAgent)->cancelPauseForSpecialBreakpoint(*breakpoint);
+    debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
     if (fallbackDebuggerAgent)
-        protect(fallbackDebuggerAgent)->cancelPauseForSpecialBreakpoint(*breakpoint);
+        fallbackDebuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void InspectorDOMDebuggerAgent::willFireTimer(Inspector::InspectorDebuggerAgent* debuggerAgent, bool oneShot)

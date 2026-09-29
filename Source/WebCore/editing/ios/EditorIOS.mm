@@ -123,7 +123,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         pasteboardImage.resourceData = buffer->makeContiguous();
 
     if (!pasteboard.isStatic())
-        client()->getClientPasteboardData(makeRangeSelectingNode(imageElement), pasteboardImage.clientTypesAndData);
+        protect(client())->getClientPasteboardData(makeRangeSelectingNode(imageElement), pasteboardImage.clientTypesAndData);
 
     pasteboard.write(pasteboardImage);
 }
@@ -136,9 +136,10 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 
     bool allowPlainText = options.contains(PasteOption::AllowPlainText);
     WebContentReader reader(*document().frame(), *range, allowPlainText);
-    int numberOfPasteboardItems = client()->getPasteboardItemsCount();
+    CheckedPtr client = this->client();
+    int numberOfPasteboardItems = client->getPasteboardItemsCount();
     for (int i = 0; i < numberOfPasteboardItems; ++i) {
-        auto fragment = client()->documentFragmentFromDelegate(i);
+        auto fragment = client->documentFragmentFromDelegate(i);
         if (!fragment)
             continue;
         reader.addFragment(fragment.releaseNonNull());
@@ -191,8 +192,9 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
 
     element.removeChildren();
 
+    CheckedPtr client = this->client();
     if (dictationPhrases.isEmpty()) {
-        client()->respondToChangedContents();
+        client->respondToChangedContents();
         return;
     }
 
@@ -227,7 +229,7 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
 
     addMarker(*textNode, 0, textNode->length(), DocumentMarkerType::DictationResult, retainPtr(metadata));
 
-    client()->respondToChangedContents();
+    client->respondToChangedContents();
 }
 
 void Editor::confirmMarkedText()
@@ -270,7 +272,7 @@ void Editor::setTextAsChildOfElement(String&& text, Element& element)
         return;
     document->selection().setSelection(afterContents);
 
-    client()->respondToChangedContents();
+    protect(client())->respondToChangedContents();
 }
 
 // If the selection is adjusted from UIKit without closing the typing, the typing command may

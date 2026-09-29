@@ -26,6 +26,7 @@
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "SVGElementTypeHelpers.h"
 #include "ScriptElement.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -34,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGScriptElement);
 
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGURIReference(this)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
 {

@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPolyElement);
 
 SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>())
 {
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {

@@ -55,7 +55,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontFaceElement);
 using namespace SVGNames;
 
 inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , m_fontFaceRule(StyleRuleFontFace::create(MutableStyleProperties::create(HTMLStandardMode)))
 {
     LOG(Fonts, "SVGFontFaceElement %p ctor", this);

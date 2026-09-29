@@ -55,13 +55,13 @@ static LegacyPreviewLoaderClient& emptyClient()
     return emptyClient.get();
 }
 
-static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, const String& previewFileName, const String& previewType)
+static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, const PreviewConverter& converter)
 {
     if (RefPtr client = testingClient())
         return client.releaseNonNull();
     if (!loader.frameLoader())
         return emptyClient();
-    if (RefPtr client = loader.frameLoader()->client().createPreviewLoaderClient(previewFileName, previewType))
+    if (RefPtr client = loader.frameLoader()->client().createPreviewLoaderClient(converter.previewFileName(), converter.previewUTI()))
         return client.releaseNonNull();
     return emptyClient();
 }
@@ -73,7 +73,7 @@ Ref<LegacyPreviewLoader> LegacyPreviewLoader::create(ResourceLoader& loader, con
 
 LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
     : m_converter { PreviewConverter::create(response, *this) }
-    , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
+    , m_client { makeClient(loader, protect(*m_converter)) }
     , m_resourceLoader { loader }
     , m_shouldDecidePolicyBeforeLoading { protect(loader.frame())->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
 {
@@ -140,13 +140,14 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
         return;
     }
 
-    resourceLoader->didReceiveResponse(WTF::move(response), [this, weakThis = WeakPtr { static_cast<PreviewConverterClient&>(*this) }, converter = Ref { converter }] {
-        if (!weakThis)
+    resourceLoader->didReceiveResponse(WTF::move(response), [weakThis = WeakPtr { *this }, converter = Ref { converter }] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
             return;
 
-        m_hasProcessedResponse = true;
+        protectedThis->m_hasProcessedResponse = true;
 
-        RefPtr resourceLoader = m_resourceLoader.get();
+        RefPtr resourceLoader = protectedThis->m_resourceLoader;
         if (!resourceLoader)
             return;
 
@@ -155,14 +156,14 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
 
         if (!converter->previewData().isEmpty()) {
             auto bufferSize = converter->previewData().size();
-            protect(resourceLoader)->didReceiveBuffer(converter->previewData().copy(), bufferSize, DataPayloadBytes);
+            protect(resourceLoader)->didReceiveBuffer(protect(converter->previewData())->copy(), bufferSize, DataPayloadBytes);
         }
 
         if (resourceLoader->reachedTerminalState())
             return;
 
-        if (m_needsToCallDidFinishLoading) {
-            m_needsToCallDidFinishLoading = false;
+        if (protectedThis->m_needsToCallDidFinishLoading) {
+            protectedThis->m_needsToCallDidFinishLoading = false;
             resourceLoader->didFinishLoading(NetworkLoadMetrics { });
         }
     });

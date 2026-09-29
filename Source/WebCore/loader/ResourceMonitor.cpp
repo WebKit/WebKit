@@ -226,7 +226,7 @@ void ResourceMonitor::checkNetworkUsageExcessIfNecessary()
         // If the frame has sticky user activation, don't do offloading.
         if (RefPtr protectedWindow = frame->window(); protectedWindow && protectedWindow->hasStickyActivation()) {
             if (RefPtr page = frame->page())
-                page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, diagnosticValues(), ShouldSample::No);
+                protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, diagnosticValues(), ShouldSample::No);
 
             RESOURCEMONITOR_RELEASE_LOG("But the frame has sticky user activation so ignoring.");
             return;

@@ -247,8 +247,9 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
                 while (currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && text.length() > 1) {
                     // Remove the second from last character (the character before the ellipsis) and remeasure.
                     text = makeStringByRemoving(text, text.length() - 2, 1);
-                    textRun = TextRun(text);
-                    textWidth = font.width(textRun);
+                    TextRun truncatedTextRun(text);
+                    textWidth = font.width(truncatedTextRun);
+                    textRun = truncatedTextRun;
                 }
             }
 
@@ -371,7 +372,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
         }
 
         context.setFillColor(computedContentRun.textColor);
-        context.drawText(font, computedContentRun.textRun, textPosition + FloatPoint(xOffset, yOffset));
+        context.drawText(font, protect(computedContentRun.textRun), textPosition + FloatPoint(xOffset, yOffset));
 
         xOffset += computedContentRun.computedWidth;
     }

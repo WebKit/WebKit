@@ -18978,7 +18978,7 @@
 		B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint3D.h; sourceTree = "<group>"; };
 		B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
 		B2F34FE50E82F81400F627CD /* DNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNS.h; sourceTree = "<group>"; };
-		B2F34FE80E82F82700F648CD /* DNSResolveQueueCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSResolveQueueCFNet.cpp; sourceTree = "<group>"; };
+		B2F34FE80E82F82700F648CD /* DNSResolveQueueCFNet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DNSResolveQueueCFNet.mm; sourceTree = "<group>"; };
 		B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedAngle.cpp; sourceTree = "<group>"; };
 		B2FA3C510AB75A6E000E5AC4 /* JSSVGAnimatedAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimatedAngle.h; sourceTree = "<group>"; };
 		B2FA3C520AB75A6E000E5AC4 /* JSSVGAnimatedBoolean.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedBoolean.cpp; sourceTree = "<group>"; };
@@ -37583,8 +37583,8 @@
 				5F2DBBE8178E336900141486 /* CertificateInfo.h */,
 				5F2DBBE7178E332D00141486 /* CertificateInfoCFNet.cpp */,
 				1E177CEEB040E8C9436CBB2D /* CookieStorageSessionCFNet.cpp */,
-				B2F34FE80E82F82700F648CD /* DNSResolveQueueCFNet.cpp */,
 				7EE6845C12D26E3800FF9415 /* DNSResolveQueueCFNet.h */,
+				B2F34FE80E82F82700F648CD /* DNSResolveQueueCFNet.mm */,
 				7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */,
 				7EE6845312D26E3800E79415 /* FormDataStreamCFNet.mm */,
 				7EE6845712D26E3800E79415 /* ResourceError.h */,

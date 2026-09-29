@@ -411,7 +411,7 @@ bool Editor::handleTextEvent(TextEvent& event)
         auto action = event.isRemoveBackground() ? EditAction::RemoveBackground : EditAction::Paste;
         if (event.pastingFragment()) {
 #if PLATFORM(IOS_FAMILY)
-            if (client()->performsTwoStepPaste(protect(event.pastingFragment())))
+            if (protect(client())->performsTwoStepPaste(protect(event.pastingFragment())))
                 return true;
 #endif
             replaceSelectionWithFragment(*protect(event.pastingFragment()), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, event.shouldMatchStyle() ? MatchStyle::Yes : MatchStyle::No, action, event.mailBlockquoteHandling());
@@ -2634,7 +2634,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     }
 
 #if PLATFORM(IOS_FAMILY)
-    client()->startDelayingAndCoalescingContentChangeNotifications();
+    protect(client())->startDelayingAndCoalescingContentChangeNotifications();
 #endif
 
     RefPtr<CompositionEvent> event;
@@ -2744,7 +2744,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     }
 
 #if PLATFORM(IOS_FAMILY)        
-    client()->stopDelayingAndCoalescingContentChangeNotifications();
+    protect(client())->stopDelayingAndCoalescingContentChangeNotifications();
 #endif
 }
 

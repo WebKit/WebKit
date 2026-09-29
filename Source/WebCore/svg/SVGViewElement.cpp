@@ -24,6 +24,7 @@
 
 #include "LegacyRenderSVGResource.h"
 #include "RenderElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
@@ -34,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGViewElement);
 
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::viewTag));

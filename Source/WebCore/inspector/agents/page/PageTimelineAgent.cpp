@@ -128,7 +128,7 @@ void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
         }
     });
 
-    m_frameStartObserver->schedule(currentRunLoop(), { RunLoopObserver::Activity::Entry, RunLoopObserver::Activity::AfterWaiting });
+    m_frameStartObserver->schedule(protect(currentRunLoop()), { RunLoopObserver::Activity::Entry, RunLoopObserver::Activity::AfterWaiting });
 
     // Create a runloop record and increment the runloop nesting level, to capture the current turn of the main runloop
     // (which is the outer runloop if recording started while paused in the debugger).

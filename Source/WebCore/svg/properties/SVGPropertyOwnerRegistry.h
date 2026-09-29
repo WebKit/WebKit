@@ -61,14 +61,8 @@ struct SVGAttributeHashTranslator {
 };
 
 template<typename OwnerType, typename... BaseTypes>
-class SVGPropertyOwnerRegistry : public SVGPropertyRegistry {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(SVGPropertyOwnerRegistry);
+class SVGPropertyOwnerRegistryBase {
 public:
-    SVGPropertyOwnerRegistry(OwnerType& owner)
-        : m_owner(owner)
-    {
-    }
-
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGStringList> SVGConditionalProcessingAttributes::*property>
     static void registerConditionalProcessingAttributeProperty()
     {
@@ -216,67 +210,7 @@ public:
         return false;
     }
 
-    QualifiedName propertyAttributeName(const SVGProperty& property) const override
-    {
-        QualifiedName attributeName = nullQName();
-        enumerateRecursively([&](const auto& entry) -> bool {
-            if (!entry.value->matches(m_owner, property))
-                return true;
-            attributeName = entry.key;
-            return false;
-        });
-        return attributeName;
-    }
-
-    QualifiedName animatedPropertyAttributeName(const SVGAnimatedPropertyBase& animatedProperty) const override
-    {
-        QualifiedName attributeName = nullQName();
-        enumerateRecursively([&](const auto& entry) -> bool {
-            if (!entry.value->matches(m_owner, animatedProperty))
-                return true;
-            attributeName = entry.key;
-            return false;
-        });
-        return attributeName;
-    }
-
-    void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedPropertyBase& animatedProperty) const override
-    {
-        if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
-            property->setDirty();
-            return;
-        }
-
-        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            accessor.setDirty(m_owner, animatedProperty);
-        });
-    }
-
-    // Found by identity rather than by attribute name, so that the caller does not have to know
-    // its own name. matches() is the same pointer comparison used by
-    // animatedPropertyAttributeName() above. A pair accessor matches either half and resets both,
-    // which is what <number-optional-number> needs.
-    void resetAnimatedPropertyBaseVal(const SVGAnimatedPropertyBase& animatedProperty) const override
-    {
-        bool found = !enumerateRecursively([&](const auto& entry) -> bool {
-            if (!entry.value->matches(m_owner, animatedProperty))
-                return true;
-            entry.value->resetBaseVal(m_owner);
-            return false;
-        });
-        ASSERT_UNUSED(found, found);
-    }
-
-    // Detach all the properties recursively from their OwnerTypes.
-    void detachAllProperties() const override
-    {
-        enumerateRecursively([&](const auto& entry) -> bool {
-            entry.value->detach(m_owner);
-            return true;
-        });
-    }
-
-    static inline SVGAnimatedPropertyBase* fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName)
+    static inline SVGAnimatedPropertyBase* fastAnimatedPropertyLookup(const OwnerType& owner, const QualifiedName& attributeName)
     {
         if constexpr (HasFastPropertyForAttribute<OwnerType>)
             return owner.propertyForAttribute(attributeName);
@@ -284,77 +218,6 @@ public:
             static_assert(!std::is_same_v<OwnerType, SVGRectElement> && !std::is_same_v<OwnerType, SVGCircleElement>, "Element should use fast property path");
             return nullptr;
         }
-    }
-
-    // Finds the property whose name is attributeName and returns the synchronize
-    // string through the associated SVGMemberAccessor.
-    std::optional<String> synchronize(const QualifiedName& attributeName) const override
-    {
-        if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName))
-            return property->synchronize();
-
-        std::optional<String> value;
-        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            value = accessor.synchronize(m_owner);
-        });
-        return value;
-    }
-
-    // Enumerate recursively the SVGMemberAccessors of the OwnerType and all its BaseTypes.
-    // Collect all the pairs <AttributeName, String> only for the dirty properties.
-    HashMap<QualifiedName, String> synchronizeAllAttributes() const override
-    {
-        HashMap<QualifiedName, String> map;
-        enumerateRecursively([&](const auto& entry) -> bool {
-            if (auto string = entry.value->synchronize(m_owner))
-                map.add(entry.key, *string);
-            return true;
-        });
-        return map;
-    }
-
-    bool isAnimatedPropertyAttribute(const QualifiedName& attributeName) const override
-    {
-        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
-            return true;
-
-        bool isAnimatedPropertyAttribute = false;
-        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            isAnimatedPropertyAttribute = accessor.isAnimatedProperty();
-        });
-        return isAnimatedPropertyAttribute;
-    }
-
-    bool isAnimatedStylePropertyAttribute(const QualifiedName& attributeName) const override
-    {
-        static NeverDestroyed<HashSet<QualifiedName::QualifiedNameImpl*>> animatedStyleAttributes = std::initializer_list<QualifiedName::QualifiedNameImpl*> {
-            SVGNames::cxAttr->impl(),
-            SVGNames::cyAttr->impl(),
-            SVGNames::rAttr->impl(),
-            SVGNames::rxAttr->impl(),
-            SVGNames::ryAttr->impl(),
-            SVGNames::heightAttr->impl(),
-            SVGNames::widthAttr->impl(),
-            SVGNames::xAttr->impl(),
-            SVGNames::yAttr->impl()
-        };
-        return isAnimatedLengthAttribute(attributeName) && animatedStyleAttributes.get().contains(attributeName.impl());
-    }
-
-    RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const override
-    {
-        RefPtr<SVGAttributeAnimator> animator;
-        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            animator = accessor.createAnimator(m_owner, attributeName, animationMode, calcMode, isAccumulated, isAdditive);
-        });
-        return animator;
-    }
-
-    void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator& animator) const override
-    {
-        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
-            accessor.appendAnimatedInstance(m_owner, animator);
-        });
     }
 
 private:
@@ -415,8 +278,168 @@ private:
 
         return lookupRecursivelyAndApplyBaseTypes<Functor, I + 1>(attributeName, functor);
     }
+};
 
-    OwnerType& m_owner;
+template<typename OwnerType, typename... BaseTypes>
+class SVGPropertyOwnerRegistry : public SVGPropertyRegistry, public SVGPropertyOwnerRegistryBase<OwnerType, BaseTypes...> {
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(SVGPropertyOwnerRegistry);
+    using Base = SVGPropertyOwnerRegistryBase<OwnerType, BaseTypes...>;
+public:
+    SVGPropertyOwnerRegistry() = default;
+
+    using Base::enumerateRecursively;
+    using Base::fastAnimatedPropertyLookup;
+    using Base::isAnimatedLengthAttribute;
+    using Base::lookupRecursivelyAndApply;
+
+    QualifiedName propertyAttributeName(const SVGElement& element, const SVGProperty& property) const override
+    {
+        QualifiedName attributeName = nullQName();
+        enumerateRecursively([&](const auto& entry) -> bool {
+            if (!entry.value->matches(owner(element), property))
+                return true;
+            attributeName = entry.key;
+            return false;
+        });
+        return attributeName;
+    }
+
+    QualifiedName animatedPropertyAttributeName(const SVGElement& element, const SVGAnimatedPropertyBase& animatedProperty) const override
+    {
+        QualifiedName attributeName = nullQName();
+        enumerateRecursively([&](const auto& entry) -> bool {
+            if (!entry.value->matches(owner(element), animatedProperty))
+                return true;
+            attributeName = entry.key;
+            return false;
+        });
+        return attributeName;
+    }
+
+    void setAnimatedPropertyDirty(const SVGElement& element, const QualifiedName& attributeName, SVGAnimatedPropertyBase& animatedProperty) const override
+    {
+        if (RefPtr property = fastAnimatedPropertyLookup(owner(element), attributeName)) {
+            property->setDirty();
+            return;
+        }
+
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            accessor.setDirty(owner(element), animatedProperty);
+        });
+    }
+
+    // Found by identity rather than by attribute name, so that the caller does not have to know
+    // its own name. matches() is the same pointer comparison used by
+    // animatedPropertyAttributeName() above. A pair accessor matches either half and resets both,
+    // which is what <number-optional-number> needs.
+    void resetAnimatedPropertyBaseVal(const SVGElement& element, const SVGAnimatedPropertyBase& animatedProperty) const override
+    {
+        bool found = !enumerateRecursively([&](const auto& entry) -> bool {
+            if (!entry.value->matches(owner(element), animatedProperty))
+                return true;
+            entry.value->resetBaseVal(owner(element));
+            return false;
+        });
+        ASSERT_UNUSED(found, found);
+    }
+
+    // Detach all the properties recursively from their OwnerTypes.
+    void detachAllProperties(const SVGElement& element) const override
+    {
+        enumerateRecursively([&](const auto& entry) -> bool {
+            entry.value->detach(owner(element));
+            return true;
+        });
+    }
+
+
+    // Finds the property whose name is attributeName and returns the synchronize
+    // string through the associated SVGMemberAccessor.
+    std::optional<String> synchronize(const SVGElement& element, const QualifiedName& attributeName) const override
+    {
+        if (RefPtr property = fastAnimatedPropertyLookup(owner(element), attributeName))
+            return property->synchronize();
+
+        std::optional<String> value;
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            value = accessor.synchronize(owner(element));
+        });
+        return value;
+    }
+
+    // Enumerate recursively the SVGMemberAccessors of the OwnerType and all its BaseTypes.
+    // Collect all the pairs <AttributeName, String> only for the dirty properties.
+    HashMap<QualifiedName, String> synchronizeAllAttributes(const SVGElement& element) const override
+    {
+        HashMap<QualifiedName, String> map;
+        enumerateRecursively([&](const auto& entry) -> bool {
+            if (auto string = entry.value->synchronize(owner(element)))
+                map.add(entry.key, *string);
+            return true;
+        });
+        return map;
+    }
+
+    bool isAnimatedPropertyAttribute(const SVGElement& element, const QualifiedName& attributeName) const override
+    {
+        if (auto* property = fastAnimatedPropertyLookup(owner(element), attributeName))
+            return true;
+
+        bool isAnimatedPropertyAttribute = false;
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            isAnimatedPropertyAttribute = accessor.isAnimatedProperty();
+        });
+        return isAnimatedPropertyAttribute;
+    }
+
+    bool isAnimatedStylePropertyAttribute(const QualifiedName& attributeName) const override
+    {
+        static NeverDestroyed<HashSet<QualifiedName::QualifiedNameImpl*>> animatedStyleAttributes = std::initializer_list<QualifiedName::QualifiedNameImpl*> {
+            SVGNames::cxAttr->impl(),
+            SVGNames::cyAttr->impl(),
+            SVGNames::rAttr->impl(),
+            SVGNames::rxAttr->impl(),
+            SVGNames::ryAttr->impl(),
+            SVGNames::heightAttr->impl(),
+            SVGNames::widthAttr->impl(),
+            SVGNames::xAttr->impl(),
+            SVGNames::yAttr->impl()
+        };
+        return isAnimatedLengthAttribute(attributeName) && animatedStyleAttributes.get().contains(attributeName.impl());
+    }
+
+    RefPtr<SVGAttributeAnimator> createAnimator(SVGElement& element, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const override
+    {
+        RefPtr<SVGAttributeAnimator> animator;
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            animator = accessor.createAnimator(owner(element), attributeName, animationMode, calcMode, isAccumulated, isAdditive);
+        });
+        return animator;
+    }
+
+    void appendAnimatedInstance(SVGElement& element, const QualifiedName& attributeName, SVGAttributeAnimator& animator) const override
+    {
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            accessor.appendAnimatedInstance(owner(element), animator);
+        });
+    }
+
+private:
+    static const OwnerType& CLANG_POINTER_CONVERSION owner(const SVGElement& element)
+    {
+        if constexpr (std::is_same_v<OwnerType, SVGElement>)
+            return element;
+        else
+            return downcast<OwnerType>(element);
+    }
+
+    static OwnerType& CLANG_POINTER_CONVERSION owner(SVGElement& element)
+    {
+        if constexpr (std::is_same_v<OwnerType, SVGElement>)
+            return element;
+        else
+            return downcast<OwnerType>(element);
+    }
 };
 
 #define TZONE_TEMPLATE_PARAMS template<typename OwnerType, typename... BaseTypes>

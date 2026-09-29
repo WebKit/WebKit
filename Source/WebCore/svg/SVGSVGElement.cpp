@@ -72,7 +72,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSVGElement);
 
 inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::HasDidMoveToNewDocument)
+    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(), TypeFlag::HasDidMoveToNewDocument)
     , SVGFitToViewBox(this)
     , m_timeContainer(SMILTimeContainer::create(*this))
 {
@@ -650,7 +650,7 @@ void SVGSVGElement::unpauseAnimations()
 bool SVGSVGElement::resumePausedAnimationsIfNeeded(const IntRect& visibleRect)
 {
     bool animationEnabled = document().page() ? document().page()->imageAnimationEnabled() : true;
-    if (!animationEnabled || !renderer() || !renderer()->isVisibleInDocumentRect(visibleRect))
+    if (!animationEnabled || !renderer() || !protect(renderer())->isVisibleInDocumentRect(visibleRect))
         return false;
 
     unpauseAnimations();

@@ -1,5 +1,4 @@
 CommandLineAPIModuleSourceBuiltins.h
-Modules/notifications/NotificationController.h
 ReadableStreamInternalsBuiltins.h
 StreamInternalsBuiltins.h
 TransformStreamInternalsBuiltins.h

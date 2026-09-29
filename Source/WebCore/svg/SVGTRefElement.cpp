@@ -31,6 +31,7 @@
 #include "RenderSVGInline.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
@@ -116,7 +117,7 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& eve
 }
 
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGURIReference(this)
     , m_targetListener(SVGTRefTargetEventListener::create(*this))
 {

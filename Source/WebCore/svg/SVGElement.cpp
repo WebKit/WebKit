@@ -338,7 +338,7 @@ Vector<WeakPtr<SVGResourceElementClient>> SVGElement::referencingCSSClients() co
 void SVGElement::addReferencingCSSClient(SVGResourceElementClient& client)
 {
     if (CheckedPtr container = dynamicDowncast<RenderSVGResourceContainer>(this->renderer()))
-        container->addReferencingCSSClient(client.renderer());
+        container->addReferencingCSSClient(protect(client.renderer()));
     ensureSVGRareData().addReferencingCSSClient(client);
 }
 
@@ -347,7 +347,7 @@ void SVGElement::removeReferencingCSSClient(SVGResourceElementClient& client)
     if (!m_svgRareData)
         return;
     if (CheckedPtr container = dynamicDowncast<RenderSVGResourceContainer>(this->renderer()))
-        container->removeReferencingCSSClient(client.renderer());
+        container->removeReferencingCSSClient(protect(client.renderer()));
     ensureSVGRareData().removeReferencingCSSClient(client);
 }
 
@@ -584,7 +584,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
 void SVGElement::synchronizeAttribute(const QualifiedName& name)
 {
     // If the value of the property has changed, serialize the new value to the attribute.
-    if (auto value = propertyRegistry().synchronize(name)) {
+    if (auto value = propertyRegistry().synchronize(*this, name)) {
         // If the serialized value is empty and the attribute doesn't exist,
         // don't recreate it. This handles the case where the attribute was
         // explicitly removed after the list was emptied.
@@ -599,7 +599,7 @@ void SVGElement::synchronizeAllAttributes()
 {
     // SVGPropertyRegistry::synchronizeAllAttributes() returns the new values of
     // the properties which have changed but not committed yet.
-    auto map = propertyRegistry().synchronizeAllAttributes();
+    auto map = propertyRegistry().synchronizeAllAttributes(*this);
     for (const auto& entry : map)
         setSynchronizedLazyAttribute(entry.key, AtomString { entry.value });
 }
@@ -612,18 +612,18 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
     property->setDirty();
 
     setAnimatedSVGAttributesAreDirty();
-    svgAttributeChanged(propertyRegistry().propertyAttributeName(*property));
+    svgAttributeChanged(propertyRegistry().propertyAttributeName(*this, *property));
 }
 
 void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
 {
-    QualifiedName attributeName = propertyRegistry().animatedPropertyAttributeName(animatedProperty);
+    QualifiedName attributeName = propertyRegistry().animatedPropertyAttributeName(*this, animatedProperty);
     ASSERT(attributeName != nullQName());
 
     // A change in a style property, e.g SVGRectElement::x should be serialized to
     // the attribute immediately. Otherwise it is okay to be lazy in this regard.
     if (!propertyRegistry().isAnimatedStylePropertyAttribute(attributeName))
-        propertyRegistry().setAnimatedPropertyDirty(attributeName, animatedProperty);
+        propertyRegistry().setAnimatedPropertyDirty(*this, attributeName, animatedProperty);
     else
         setSynchronizedLazyAttribute(attributeName, AtomString { animatedProperty.baseValAsString() });
 
@@ -633,7 +633,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
 
 bool SVGElement::isAnimatedPropertyAttribute(const QualifiedName& attributeName) const
 {
-    return propertyRegistry().isAnimatedPropertyAttribute(attributeName);
+    return propertyRegistry().isAnimatedPropertyAttribute(*this, attributeName);
 }
 
 bool SVGElement::isAnimatedAttribute(const QualifiedName& attributeName) const
@@ -653,11 +653,11 @@ RefPtr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& att
         return animator;
 
     // Animated property animator.
-    RefPtr animator = propertyRegistry().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive);
+    RefPtr animator = propertyRegistry().createAnimator(*this, attributeName, animationMode, calcMode, isAccumulated, isAdditive);
     if (!animator)
         return animator;
     for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances()))
-        instance->propertyRegistry().appendAnimatedInstance(attributeName, *animator);
+        instance->propertyRegistry().appendAnimatedInstance(instance, attributeName, *animator);
     return animator;
 }
 

@@ -25,6 +25,7 @@
 #include "LegacyRenderSVGHiddenContainer.h"
 #include "NodeDocument.h"
 #include "RenderSVGHiddenContainer.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "Settings.h"
@@ -35,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSymbolElement);
 
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>())
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::symbolTag));

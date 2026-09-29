@@ -98,7 +98,7 @@ public:
     unsigned inspectionLevel() const;
 
     String platform() const;
-    String NODELETE platformVersionName() const;
+    String platformVersionName() const;
 
     struct DebuggableInfo {
         String debuggableType;

@@ -328,11 +328,11 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
     if (!element)
         return std::nullopt;
 
-    auto* currentStyle = renderStyleForLengthResolving(element.get());
+    CheckedPtr currentStyle = renderStyleForLengthResolving(element.get());
     if (!currentStyle)
         return std::nullopt;
 
-    auto* rootStyle = rootRenderStyleForLengthResolving(element.get());
+    CheckedPtr rootStyle = rootRenderStyleForLengthResolving(element.get());
 
     const Style::ComputedStyle* parentStyle = nullptr;
     if (auto* renderer = element->renderer())
@@ -349,7 +349,7 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
 
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value) const
 {
-    auto* style = renderStyleForLengthResolving(m_context.get());
+    CheckedPtr style = renderStyleForLengthResolving(m_context.get());
     if (!style) {
         // No associated element: x-height falls back to 0.5em per CSS Values spec.
         if (m_context)
@@ -367,7 +367,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
 
 ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value) const
 {
-    auto* style = renderStyleForLengthResolving(m_context.get());
+    CheckedPtr style = renderStyleForLengthResolving(m_context.get());
     if (!style) {
         // No associated element: x-height falls back to 0.5em per CSS Values spec.
         if (m_context)

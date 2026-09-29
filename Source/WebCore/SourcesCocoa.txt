@@ -699,7 +699,7 @@ platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MockAudioDestinationCocoa.cpp
 platform/network/cf/CertificateInfoCFNet.cpp
 platform/network/cf/CookieStorageSessionCFNet.cpp
-platform/network/cf/DNSResolveQueueCFNet.cpp
+platform/network/cf/DNSResolveQueueCFNet.mm @nonARC
 platform/network/cf/FormDataStreamCFNet.mm @nonARC
 platform/network/cf/ResourceRequestCFNet.cpp
 platform/network/cocoa/AuthenticationCocoa.mm @nonARC

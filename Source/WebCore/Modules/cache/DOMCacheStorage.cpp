@@ -214,7 +214,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(std::optional<Except
             m_updateCounter = cachesInfo.updateCounter;
 
             m_caches = WTF::map(WTF::move(cachesInfo.infos), [&] (DOMCacheEngine::CacheInfo&& info) {
-                return findCacheOrCreate(WTF::move(info), *context);
+                return protectedThis->findCacheOrCreate(WTF::move(info), *context);
             });
         }
         callback(std::nullopt);

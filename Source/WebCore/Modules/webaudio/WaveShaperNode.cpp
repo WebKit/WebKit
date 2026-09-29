@@ -83,7 +83,7 @@ ExceptionOr<void> WaveShaperNode::setCurveForBindings(RefPtr<Float32Array>&& cur
 
     // The specification states that we should maintain an internal copy of the curve so that
     // subsequent modifications of the contents of the array have no effect.
-    waveShaperProcessor()->setCurveForBindings(curve ? Vector<float>(curve->typedSpan()) : Vector<float>());
+    protect(waveShaperProcessor())->setCurveForBindings(curve ? Vector<float>(curve->typedSpan()) : Vector<float>());
     return { };
 }
 
@@ -120,7 +120,7 @@ void WaveShaperNode::setOversampleForBindings(OverSampleType type)
 
     // Synchronize with any graph changes or changes to channel configuration.
     Locker contextLocker { context().graphLock() };
-    waveShaperProcessor()->setOversampleForBindings(processorType(type));
+    protect(waveShaperProcessor())->setOversampleForBindings(processorType(type));
 }
 
 auto WaveShaperNode::oversampleForBindings() const -> OverSampleType

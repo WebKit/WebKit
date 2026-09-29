@@ -83,7 +83,7 @@ static NSDictionary* dictionaryThatCanCode(NSDictionary* src)
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    NSDictionary* newUserInfo = dictionaryThatCanCode([self userInfo]);
+    RetainPtr newUserInfo = dictionaryThatCanCode([self userInfo]);
 
     [[NSError errorWithDomain:[self domain] code:[self code] userInfo:newUserInfo] encodeWithCoder:coder];
 }

@@ -1,4 +1,3 @@
-[ iOS ] Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm
 [ iOS ] Modules/system-preview/ARKitBadgeSystemImage.mm
 [ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
@@ -6,15 +5,11 @@
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 bindings/js/ScriptControllerMac.mm
 bridge/objc/objc_class.mm
-[ iOS ] editing/cocoa/DataDetection.mm
-[ macOS ] editing/cocoa/EditingHTMLConverter.mm
-loader/archive/cf/LegacyWebArchive.cpp
 [ iOS ] page/ios/EventHandlerIOS.mm
 [ Mac ] page/mac/EventHandlerMac.mm
 [ Mac ] page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-[ iOS ] platform/audio/ios/AudioSessionIOS.mm
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
@@ -70,10 +65,6 @@ platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm
 platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
 platform/mediastream/cocoa/CoreAudioCaptureUnit.mm
 platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm
-[ iOS ] platform/network/cocoa/ResourceErrorCocoa.mm
-[ iOS ] platform/network/cocoa/ResourceHandleCocoa.mm
-platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
-[ iOS ] platform/network/ios/WebCoreURLResponseIOS.mm
 [ iOS ] platform/text/cocoa/TextBoundaries.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm

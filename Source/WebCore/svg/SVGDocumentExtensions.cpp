@@ -113,7 +113,7 @@ bool SVGDocumentExtensions::hasActiveSMILAnimations() const
 {
     for (Ref container : m_timeContainers) {
         auto& timeContainer = container->timeContainer();
-        if (timeContainer.isActive() && timeContainer.hasAnimations())
+        if (timeContainer.isActive() && protect(timeContainer)->hasAnimations())
             return true;
     }
     return false;

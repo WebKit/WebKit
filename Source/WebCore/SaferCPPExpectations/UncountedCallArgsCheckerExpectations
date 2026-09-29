@@ -81,7 +81,6 @@ dom/ShadowRoot.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-[ iOS ] editing/FrameSelection.cpp
 html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
@@ -92,7 +91,6 @@ html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
-[ iOS ] loader/ios/LegacyPreviewLoader.mm
 [ macOS ] page/ContextMenuController.cpp
 [ iOS ] page/DOMTimer.cpp
 page/ElementTargetingController.cpp
@@ -122,7 +120,6 @@ page/scrolling/ScrollAnchoringController.cpp
 [ Mac ] page/scrolling/ThreadedScrollingCoordinator.cpp
 [ Mac ] page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/text-extraction/TextExtraction.cpp
-[ iOS ] platform/audio/ios/MediaSessionManagerIOS.mm
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
@@ -159,8 +156,6 @@ platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.h
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
-platform/network/cf/FormDataStreamCFNet.mm
-platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
 [ macOS ] rendering/AttachmentLayout.mm
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
@@ -240,6 +235,5 @@ style/values/transforms/StyleScale.h
 style/values/transforms/StyleTransformList.cpp
 style/values/transforms/StyleTranslate.h
 style/values/will-change/StyleWillChange.h
-svg/SVGFEComponentTransferElement.cpp
 [ iOS ] testing/InternalSettings.cpp
 [ iOS ] testing/Internals.cpp

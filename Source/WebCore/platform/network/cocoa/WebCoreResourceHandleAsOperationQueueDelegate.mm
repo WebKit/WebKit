@@ -80,7 +80,7 @@ static bool NODELETE scheduledWithCustomRunLoopMode(const std::optional<Schedule
         function = nullptr;
     });
     for (auto& pair : *m_scheduledPairs)
-        CFRunLoopPerformBlock(pair->runLoop(), pair->mode(), block.get());
+        CFRunLoopPerformBlock(protect(pair->runLoop()), protect(pair->mode()), block.get());
 }
 
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(RefPtr<WebCore::SynchronousLoaderMessageQueue>&&)messageQueue
@@ -91,7 +91,7 @@ static bool NODELETE scheduledWithCustomRunLoopMode(const std::optional<Schedule
 
     m_handle = handle;
     if (m_handle && m_handle->context()) {
-        if (auto* pairs = protect(m_handle.get())->context()->scheduledRunLoopPairs())
+        if (auto* pairs = protect(protect(m_handle.get())->context())->scheduledRunLoopPairs())
             m_scheduledPairs = *pairs;
     }
     m_messageQueue = WTF::move(messageQueue);
@@ -117,12 +117,12 @@ static bool NODELETE scheduledWithCustomRunLoopMode(const std::optional<Schedule
     [super dealloc];
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)originalRedirectResponse
 {
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    redirectResponse = synthesizeRedirectResponseIfNecessary([connection currentRequest], newRequest, redirectResponse);
+    RetainPtr redirectResponse = synthesizeRedirectResponseIfNecessary([connection currentRequest], newRequest, originalRedirectResponse);
 
     // See <rdar://problem/5380697>. This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
     if (!redirectResponse)
@@ -130,13 +130,13 @@ static bool NODELETE scheduledWithCustomRunLoopMode(const std::optional<Schedule
 
 #if !LOG_DISABLED
     if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]])
-        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", m_handle.get(), connection, [newRequest description], static_cast<int>([(id)redirectResponse statusCode]), [[(id)redirectResponse allHeaderFields] objectForKey:@"Location"]);
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", m_handle.get(), connection, [newRequest description], static_cast<int>([(id)redirectResponse.get() statusCode]), [[(id)redirectResponse.get() allHeaderFields] objectForKey:@"Location"]);
     else
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle.get(), connection, [newRequest description]);
 #endif
 
     auto protectedSelf = retainPtr(self);
-    auto work = [protectedSelf, newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] mutable {
+    auto work = [protectedSelf, newRequest = retainPtr(newRequest), redirectResponse] mutable {
         if (!protectedSelf->m_handle) {
             protectedSelf->m_requestResult = nullptr;
             protectedSelf->m_semaphore.signal();

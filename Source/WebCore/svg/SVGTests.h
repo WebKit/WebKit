@@ -33,7 +33,7 @@ class SVGStringList;
 class WeakPtrImplWithEventTargetData;
 
 template<typename OwnerType, typename... BaseTypes>
-class SVGPropertyOwnerRegistry;
+class SVGPropertyOwnerRegistryBase;
 
 class SVGTests;
 
@@ -55,7 +55,7 @@ class SVGTests {
     WTF_MAKE_NONCOPYABLE(SVGTests);
 public:
     static bool NODELETE hasExtension(const String&);
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTests>;
+    using PropertyRegistry = SVGPropertyOwnerRegistryBase<SVGTests>;
 
     static void addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>&);
 

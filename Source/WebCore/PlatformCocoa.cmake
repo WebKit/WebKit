@@ -520,7 +520,7 @@ list(APPEND WebCore_SOURCES
 
     platform/network/cf/CertificateInfoCFNet.cpp
     platform/network/cf/CookieStorageSessionCFNet.cpp
-    platform/network/cf/DNSResolveQueueCFNet.cpp
+    platform/network/cf/DNSResolveQueueCFNet.mm
     platform/network/cf/FormDataStreamCFNet.mm
     platform/network/cf/ResourceRequestCFNet.cpp
 

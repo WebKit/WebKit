@@ -29,29 +29,30 @@ namespace WebCore {
 
 class SVGAnimatedPropertyBase;
 class SVGAttributeAnimator;
+class SVGElement;
 
 class SVGPropertyRegistry {
 public:
     SVGPropertyRegistry() = default;
     virtual ~SVGPropertyRegistry() = default;
 
-    virtual void detachAllProperties() const = 0;
-    virtual QualifiedName propertyAttributeName(const SVGProperty&) const = 0;
-    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedPropertyBase&) const = 0;
-    virtual void setAnimatedPropertyDirty(const QualifiedName&, SVGAnimatedPropertyBase&) const = 0;
-    virtual std::optional<String> synchronize(const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
+    virtual void detachAllProperties(const SVGElement&) const = 0;
+    virtual QualifiedName propertyAttributeName(const SVGElement&, const SVGProperty&) const = 0;
+    virtual QualifiedName animatedPropertyAttributeName(const SVGElement&, const SVGAnimatedPropertyBase&) const = 0;
+    virtual void setAnimatedPropertyDirty(const SVGElement&, const QualifiedName&, SVGAnimatedPropertyBase&) const = 0;
+    virtual std::optional<String> synchronize(const SVGElement&, const QualifiedName&) const = 0;
+    virtual HashMap<QualifiedName, String> synchronizeAllAttributes(const SVGElement&) const = 0;
 
     // Puts one property back to the value it was born with. Called by
     // SVGAnimatedPrimitiveProperty::setBaseValInternal() when parsing produced nothing, which
     // includes the attribute having been removed.
     // https://w3c.github.io/svgwg/svg2-draft/types.html#syntax
-    virtual void resetAnimatedPropertyBaseVal(const SVGAnimatedPropertyBase&) const = 0;
+    virtual void resetAnimatedPropertyBaseVal(const SVGElement&, const SVGAnimatedPropertyBase&) const = 0;
 
-    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
+    virtual bool isAnimatedPropertyAttribute(const SVGElement&, const QualifiedName&) const = 0;
     virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
-    virtual RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
-    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+    virtual RefPtr<SVGAttributeAnimator> createAnimator(SVGElement&, const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
+    virtual void appendAnimatedInstance(SVGElement&, const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
 };
 
 }
