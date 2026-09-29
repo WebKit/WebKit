@@ -808,6 +808,24 @@ TEST_P(EmbeddedPDFLookUp, TextIndicatorRectAccountsForMainFrameScroll)
     EXPECT_TRUE(NSContainsRect(NSOffsetRect(iframeFrame, 0, -scrollOffset), textBoundingRect));
 }
 
+TEST_P(EmbeddedPDFLookUp, BoundsOnScreenMatchTheIFrame)
+{
+    loadAndFindPointOverPDFText();
+
+    // Accessibility reports these as the PDF's frame.
+    RetainPtr<NSArray> bounds = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+        "  const bounds = internals.pdfBoundsOnScreenForTesting(document.querySelector('embed'));"
+        "  return [bounds.x, bounds.y, bounds.width, bounds.height];"
+        "})()" inFrame:[webView firstChildFrame]]);
+    ASSERT_EQ([bounds count], 4u);
+
+    auto expectedBounds = [[webView window] convertRectToScreen:[webView convertRect:iframeFrame toView:nil]];
+    EXPECT_NEAR([[bounds objectAtIndex:0] doubleValue], NSMinX(expectedBounds), 1);
+    EXPECT_NEAR([[bounds objectAtIndex:1] doubleValue], NSMinY(expectedBounds), 1);
+    EXPECT_NEAR([[bounds objectAtIndex:2] doubleValue], NSWidth(expectedBounds), 1);
+    EXPECT_NEAR([[bounds objectAtIndex:3] doubleValue], NSHeight(expectedBounds), 1);
+}
+
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUp, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFLookUp::testNameGenerator);
 
 #endif // PLATFORM(MAC)

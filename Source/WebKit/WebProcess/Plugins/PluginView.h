@@ -275,6 +275,7 @@ private:
     void unlockPDFDocumentForTesting(const String& password) final;
     void setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
     Vector<String> pdfContextMenuItemTitlesForTesting(const WebCore::IntPoint&) const final;
+    WebCore::IntRect pdfBoundsOnScreenForTesting() const final;
     void registerPDFTestCallback(RefPtr<WebCore::VoidCallback>&&) final;
 };
 
