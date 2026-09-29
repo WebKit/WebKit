@@ -6102,7 +6102,7 @@ void WebPage::performDragControllerAction(std::optional<FrameIdentifier> frameID
         if (std::holds_alternative<RemoteUserInputEventData>(resolvedDragAction))
             return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }, std::get<RemoteUserInputEventData>(resolvedDragAction));
         auto dragOperation = std::get<std::optional<DragOperation>>(resolvedDragAction);
-        return completionHandler(dragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates(), m_page->dragCaretController().editableElementRectInRootViewCoordinates(), std::nullopt);
+        return completionHandler(dragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInMainFrameViewCoordinates(), m_page->dragCaretController().editableElementRectInMainFrameViewCoordinates(), std::nullopt);
     }
     case DragControllerAction::Exited:
         m_page->dragController().dragExited(*localFrame, WTF::move(dragData));

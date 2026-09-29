@@ -258,7 +258,7 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
         float snapshotScaleFactor;
         auto visibleContentRect = protect(frame.view())->visibleContentRect();
         data.contentImageWithoutSelection = takeSnapshot(frame, visibleContentRect, WTF::move(snapshotOptions), snapshotScaleFactor, { });
-        data.contentImageWithoutSelectionRectInRootViewCoordinates = protect(frame.view())->contentsToRootView(visibleContentRect);
+        data.contentImageWithoutSelectionRectInRootViewCoordinates = protect(frame.view())->contentsToMainFrameView(visibleContentRect);
     }
     
     return true;

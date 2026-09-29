@@ -155,7 +155,20 @@ IntRect DragCaretController::caretRectInRootViewCoordinates() const
     return { };
 }
 
-IntRect DragCaretController::editableElementRectInRootViewCoordinates() const
+IntRect DragCaretController::caretRectInMainFrameViewCoordinates() const
+{
+    if (!hasCaret())
+        return { };
+
+    if (RefPtr document = m_position.deepEquivalent().document()) {
+        if (RefPtr documentView = document->view())
+            return documentView->contentsToMainFrameView(m_position.absoluteCaretBounds());
+    }
+
+    return { };
+}
+
+IntRect DragCaretController::editableElementRectInMainFrameViewCoordinates() const
 {
     if (!hasCaret())
         return { };
@@ -174,7 +187,7 @@ IntRect DragCaretController::editableElementRectInRootViewCoordinates() const
         return { };
 
     if (RefPtr view = editableContainer->document().view())
-        return view->contentsToRootView(renderer->absoluteBoundingBoxRect()); // FIXME: Wrong for elements with visible layout overflow.
+        return view->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()); // FIXME: Wrong for elements with visible layout overflow.
 
     return { };
 }
