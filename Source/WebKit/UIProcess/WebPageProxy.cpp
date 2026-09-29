@@ -18416,7 +18416,7 @@ void WebPageProxy::insertTextPlaceholder(const IntSize& size, CompletionHandler<
         completionHandler({ });
         return;
     }
-    sendWithAsyncReply(Messages::WebPage::InsertTextPlaceholder { size }, WTF::move(completionHandler));
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::InsertTextPlaceholder { size }, WTF::move(completionHandler));
 }
 
 void WebPageProxy::removeTextPlaceholder(const ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
@@ -18425,7 +18425,17 @@ void WebPageProxy::removeTextPlaceholder(const ElementContext& placeholder, Comp
         completionHandler();
         return;
     }
-    sendWithAsyncReply(Messages::WebPage::RemoveTextPlaceholder { placeholder }, WTF::move(completionHandler));
+
+    RefPtr<WebProcessProxy> placeholderProcess;
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        if (placeholder.webPageIdentifier == pageID)
+            placeholderProcess = &process;
+    });
+    if (!placeholderProcess) {
+        completionHandler();
+        return;
+    }
+    placeholderProcess->sendWithAsyncReply(Messages::WebPage::RemoveTextPlaceholder { placeholder }, WTF::move(completionHandler), *placeholder.webPageIdentifier);
 }
 #endif
 
@@ -19842,6 +19852,9 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::UpdateSel
 #if PLATFORM(COCOA)
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::CancelAutoscroll);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ReplaceSelectionWithPasteboardData);
+INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ClearDictationAlternatives);
+INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::SetDictationStreamingOpacity);
+INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ClearDictationStreamingOpacity);
 #endif
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::InsertMultiRepresentationHEIC);
@@ -19851,6 +19864,8 @@ INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ReplaceSelectedText);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::SelectWordBackward);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::StoreSelectionForAccessibility);
 INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::GenerateSyntheticEditingCommand);
+INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::WillInsertFinalDictationResult);
+INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::DidInsertFinalDictationResult);
 #endif
 #undef INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS
 
@@ -19858,6 +19873,8 @@ INSTANTIATE_SEND_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::GenerateSyntheticEdit
     template std::optional<IPC::AsyncReplyID> WebPageProxy::sendWithAsyncReplyToFocusedOrMainFrameProcess<Messages::message, Messages::message::Reply>(Messages::message&&, Messages::message::Reply&&, OptionSet<IPC::SendOption>)
 #if PLATFORM(COCOA)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::StartAutoscrollAtPosition);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::AddDictationAlternative);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::DictationAlternativesAtSelection);
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::CreateAppHighlightInSelectedRange);

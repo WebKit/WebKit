@@ -395,12 +395,12 @@ void WebPageProxy::updateSelectionWithTouches(IntPoint point, SelectionTouch tou
 
 void WebPageProxy::willInsertFinalDictationResult()
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::WillInsertFinalDictationResult(), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::WillInsertFinalDictationResult());
 }
 
 void WebPageProxy::didInsertFinalDictationResult()
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::DidInsertFinalDictationResult(), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::DidInsertFinalDictationResult());
 }
 
 void WebPageProxy::replaceDictatedText(const String& oldText, const String& newText)
