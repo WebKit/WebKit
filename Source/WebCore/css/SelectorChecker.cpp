@@ -862,8 +862,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         ASSERT(m_strictParsing);
         return element->hasClassName(selector.value());
     }
-    if (selector.match() == CSSSelector::Match::ClassPrefix)
-        return element->hasClassNamePrefix(selector.value());
+    if (selector.match() == CSSSelector::Match::ClassPrefix) {
+        if (!element->hasClass())
+            return false;
+        for (auto& className : element->classNames()) {
+            if (CSSSelector::classNameMatchesPrefix(className, selector.value()))
+                return true;
+        }
+        return false;
+    }
 
     if (selector.match() == CSSSelector::Match::Id) {
         ASSERT(!selector.value().isNull());

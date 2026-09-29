@@ -349,6 +349,8 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                 selectorFeatures.ids.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
         } else if (selector->match() == CSSSelector::Match::Class || selector->isEquivalentToClassSelector())
             selectorFeatures.classes.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
+        else if (selector->match() == CSSSelector::Match::ClassPrefix)
+            selectorFeatures.classPrefixes.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
         else if (selector->isAttributeSelector()) {
             attributeLowercaseLocalNamesInRules.add(selector->attribute().localNameLowercase());
             attributeLocalNamesInRules.add(selector->attribute().localName());
@@ -533,6 +535,23 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
     addToMap(idRules, selectorFeatures.ids, nullptr);
     addToMap(classRules, selectorFeatures.classes, &classesAffectingHost);
 
+    for (auto& entry : selectorFeatures.classPrefixes) {
+        auto& [selector, matchElement, isNegation, scopeSources] = entry;
+
+        addToVector(classPrefixRules, RuleFeature {
+            ruleData,
+            matchElement,
+            isNegation,
+            CSSSelectorList::makeCopyingSimpleSelector(*selector),
+            scopeSelectorFromSources(scopeSources)
+        });
+
+        setUsesRelation(matchElement.relation);
+
+        if (matchElement.relation == MatchElement::Relation::Host)
+            classPrefixesAffectingHost.add(selector->value());
+    }
+
     for (auto& entry : selectorFeatures.attributes) {
         auto& [selector, matchElement, isNegation, scopeSources] = entry;
         auto& featureVector = *attributeRules.ensure(selector->attribute().localNameLowercase(), [] {
@@ -636,6 +655,9 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     addMap(classRules, other.classRules);
     classesAffectingHost.addAll(other.classesAffectingHost);
 
+    classPrefixRules.appendVector(other.classPrefixRules);
+    classPrefixesAffectingHost.addAll(other.classPrefixesAffectingHost);
+
     addMap(attributeRules, other.attributeRules);
     attributesAffectingHost.addAll(other.attributesAffectingHost);
 
@@ -666,6 +688,8 @@ void RuleFeatureSet::clear()
     classRules.clear();
     hasPseudoClassRules.clear();
     classesAffectingHost.clear();
+    classPrefixRules.clear();
+    classPrefixesAffectingHost.clear();
     attributeRules.clear();
     attributesAffectingHost.clear();
     pseudoClassRules.clear();
@@ -682,6 +706,7 @@ void RuleFeatureSet::shrinkToFit()
         rules->shrinkToFit();
     for (auto& rules : classRules.values())
         rules->shrinkToFit();
+    classPrefixRules.shrinkToFit();
     for (auto& rules : attributeRules.values())
         rules->shrinkToFit();
     for (auto& rules : pseudoClassRules.values())
