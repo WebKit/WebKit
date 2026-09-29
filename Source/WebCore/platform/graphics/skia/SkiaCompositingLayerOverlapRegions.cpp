@@ -61,25 +61,24 @@ void ComputeOverlapRegionData::resolveOverlaps(const IntRect& newRegion)
 
 IntRect projectedBoundingBox(const TransformationMatrix& transform, const FloatRect& rect, const IntRect& clipBounds)
 {
-    if (clipBounds.isEmpty())
+    if (rect.isEmpty() || clipBounds.isEmpty())
         return { };
 
     // Clip before dividing by w, so edges running to infinity stop at the clip bounds.
-    auto vertices = Polygon4D::clipToFrontOfCamera(rect, transform);
-    const std::array<Point4D, 4> clipPlanes {
+    const std::array clipPlanes {
         Point4D { 1, 0, 0, -static_cast<double>(clipBounds.x()) },
         Point4D { -1, 0, 0, static_cast<double>(clipBounds.maxX()) },
         Point4D { 0, 1, 0, -static_cast<double>(clipBounds.y()) },
         Point4D { 0, -1, 0, static_cast<double>(clipBounds.maxY()) }
     };
-    for (const auto& plane : clipPlanes)
-        vertices = Polygon4D::clipToPlane(vertices, plane);
 
     MinMax<double> xMinMax { std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity() };
     MinMax<double> yMinMax = xMinMax;
-    for (const auto& point : vertices) {
+    for (const auto& point : Polygon4D::clipToFrontOfCamera(rect, transform, clipPlanes)) {
         const double x = point.x / point.w;
         const double y = point.y / point.w;
+        if (!std::isfinite(x) || !std::isfinite(y))
+            continue;
         xMinMax = { std::min(xMinMax.min, x), std::max(xMinMax.max, x) };
         yMinMax = { std::min(yMinMax.min, y), std::max(yMinMax.max, y) };
     }

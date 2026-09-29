@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          overflow: hidden;
+      }
+      /* Scaled around its center, the layer spans x = 589.9 to 812.1, so its right side is outside
+         the view. Its top and bottom edges stay at y = 100 and y = 200. */
+      #layer {
+          position: absolute;
+          left: 600px;
+          top: 100px;
+          width: 202px;
+          height: 100px;
+          transform: scaleX(1.1);
+          will-change: transform;
+          background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="layer"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var layer = document.getElementById("layer");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { layer.style.backgroundColor = "green"; },
+          // Clipping at the right side of the view must not grow the damage by a pixel.
+          () => {
+              const damage = latestFrameDamage();
+              if (!assert(damage, "no damage was recorded for the frame"))
+                  return;
+              assertRectsEq(damage.rects, [[589, 100, 211, 100]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>
