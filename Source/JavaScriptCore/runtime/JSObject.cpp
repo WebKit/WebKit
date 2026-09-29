@@ -2119,7 +2119,9 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
         asObject(prototype)->didBecomePrototype(vm);
     else if (!prototype.isNull()) [[unlikely]] // Conservative hardening.
         return;
-    
+
+    bool chainAlreadyMayInterceptIndexedAccesses = mayBePrototype() && anyObjectInChainMayInterceptIndexedAccesses();
+
     if (structure()->hasMonoProto()) {
         DeferredStructureTransitionWatchpointFire deferred(vm, structure());
         Structure* newStructure = Structure::changePrototypeTransition(vm, structure(), prototype, deferred);
@@ -2135,7 +2137,8 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
 
     // Realm is always non-nullptr since realmless Structure's objects (e.g. WasmGC Struct) cannot call setPrototypeDirect.
     if (mayBePrototype()) {
-        realm()->haveABadTime(vm);
+        if (!chainAlreadyMayInterceptIndexedAccesses)
+            realm()->haveABadTime(vm);
         return;
     }
 

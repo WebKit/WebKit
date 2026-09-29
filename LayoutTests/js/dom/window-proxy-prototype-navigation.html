@@ -1,0 +1,51 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useDollarVM=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<iframe id="frame" srcdoc="First document"></iframe>
+<script>
+description("Tests that objects inheriting from a WindowProxy see the new window's indexed properties after the frame navigates, and that the navigation does not make the previous window's global object have a bad time.");
+jsTestIsAsync = true;
+
+var frame = document.getElementById("frame");
+var windowProxy;
+var previousArrayConstructor;
+var object;
+var array;
+
+function secondDocumentLoaded()
+{
+    shouldBe("frame.contentWindow", "windowProxy");
+    shouldBeFalse("windowProxy.Array === previousArrayConstructor");
+    shouldBe("windowProxy.length", "1");
+    shouldBeTrue("windowProxy[0] === windowProxy.document.querySelector('iframe').contentWindow");
+    shouldBe("object[0]", "windowProxy[0]");
+    shouldBe("array[0]", "windowProxy[0]");
+    shouldBe("array[1]", "2");
+    shouldBeFalse("$vm.isHavingABadTime(previousArrayConstructor)");
+    finishJSTest();
+}
+
+function firstDocumentLoaded()
+{
+    windowProxy = frame.contentWindow;
+    previousArrayConstructor = windowProxy.Array;
+
+    object = Object.create(windowProxy);
+    object[1] = 1;
+    array = [ , 2];
+    Object.setPrototypeOf(array, windowProxy);
+
+    shouldBe("windowProxy.length", "0");
+    shouldBe("object[0]", "undefined");
+    shouldBe("array[0]", "undefined");
+    shouldBeFalse("$vm.isHavingABadTime(previousArrayConstructor)");
+
+    frame.onload = secondDocumentLoaded;
+    frame.srcdoc = "<iframe></iframe>";
+}
+
+window.onload = firstDocumentLoaded;
+</script>
+</body>
+</html>
