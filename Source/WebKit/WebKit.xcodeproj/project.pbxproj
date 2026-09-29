@@ -1587,7 +1587,6 @@
 		5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */; };
 		5C5139DB25927D80009C3E30 /* WKContentRuleListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5139DA259277A2009C3E30 /* WKContentRuleListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C5786902B6EFA29005D51D5 /* CoreIPCCFArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C57868F2B6EF92F005D51D5 /* CoreIPCCFArray.mm */; };
-		5C5786922B6EFFFF005D51D5 /* CoreIPCRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5786912B6EFFFF005D51D5 /* CoreIPCRetainPtr.h */; };
 		5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6250,7 +6249,6 @@
 		5197FACD2AFD33AF009180C5 /* CoreIPCArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCArray.h; sourceTree = "<group>"; };
 		5197FACE2AFD33AF009180C5 /* CoreIPCNSCFObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCNSCFObject.h; sourceTree = "<group>"; };
 		5197FAD02AFD33AF009180C5 /* CoreIPCNSCFObject.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCNSCFObject.serialization.in; sourceTree = "<group>"; };
-		5197FAD12AFD33B0009180C5 /* CoreIPCSecureCoding.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCSecureCoding.serialization.in; sourceTree = "<group>"; };
 		5197FAD22AFD33B0009180C5 /* CoreIPCDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCDictionary.h; sourceTree = "<group>"; };
 		5197FAD32AFD33B0009180C5 /* CoreIPCColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCColor.h; sourceTree = "<group>"; };
 		5197FAD42AFD33B0009180C5 /* CoreIPCString.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCString.serialization.in; sourceTree = "<group>"; };
@@ -6784,7 +6782,6 @@
 		5C57868D2B6EF92F005D51D5 /* CoreIPCCFArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFArray.h; sourceTree = "<group>"; };
 		5C57868E2B6EF92F005D51D5 /* CoreIPCCFArray.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCFArray.serialization.in; sourceTree = "<group>"; };
 		5C57868F2B6EF92F005D51D5 /* CoreIPCCFArray.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCFArray.mm; sourceTree = "<group>"; };
-		5C5786912B6EFFFF005D51D5 /* CoreIPCRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCRetainPtr.h; sourceTree = "<group>"; };
 		5C5CEC382209583200D6BBB0 /* DaemonEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonEntryPoint.h; sourceTree = "<group>"; };
 		5C5CEC392209583200D6BBB0 /* DaemonEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DaemonEntryPoint.mm; sourceTree = "<group>"; };
 		5C5D2387227A1891000B9BDA /* _WKCustomHeaderFieldsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKCustomHeaderFieldsInternal.h; sourceTree = "<group>"; };
@@ -13567,10 +13564,8 @@
 				564599942B71BBB200BC59E6 /* CoreIPCPresentationIntent.h */,
 				564599952B71BBC300BC59E6 /* CoreIPCPresentationIntent.mm */,
 				564599932B71BBA000BC59E6 /* CoreIPCPresentationIntent.serialization.in */,
-				5C5786912B6EFFFF005D51D5 /* CoreIPCRetainPtr.h */,
 				5197FAD92AFD33B2009180C5 /* CoreIPCSecureCoding.h */,
 				5197FADA2AFD33B2009180C5 /* CoreIPCSecureCoding.mm */,
-				5197FAD12AFD33B0009180C5 /* CoreIPCSecureCoding.serialization.in */,
 				5197FACC2AFD33AE009180C5 /* CoreIPCString.h */,
 				5197FAD42AFD33B0009180C5 /* CoreIPCString.serialization.in */,
 				F430FB722E316B0D003340BB /* CoreIPCStringSet.h */,
@@ -18498,7 +18493,6 @@
 				F4AF724A2F23025700861236 /* CoreIPCPKPaymentToken.h in Headers */,
 				F4EBCF642F33E87800BFAC3C /* CoreIPCPKShippingMethod.h in Headers */,
 				564599992B71C3D100BC59E6 /* CoreIPCPresentationIntent.h in Headers */,
-				5C5786922B6EFFFF005D51D5 /* CoreIPCRetainPtr.h in Headers */,
 				561A54532B61E49E00073A72 /* CoreIPCSecCertificate.h in Headers */,
 				5197FAE92AFD33CF009180C5 /* CoreIPCSecureCoding.h in Headers */,
 				5197FAE52AFD33CF009180C5 /* CoreIPCString.h in Headers */,

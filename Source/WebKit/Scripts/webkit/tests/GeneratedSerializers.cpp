@@ -239,7 +239,7 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 {
     auto a = decoder.decode<int>();
     auto b = decoder.decode<bool>();
-    auto dataDetectorResults = decoder.decodeWithAllowedClasses<RetainPtr<NSArray>>({ NSArray.class, PAL::getDDScannerResultClassSingleton() });
+    auto dataDetectorResults = decoder.decode<RetainPtr<NSArray>>();
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -269,7 +269,7 @@ std::optional<Namespace::ClassWithMemberPrecondition> ArgumentCoder<Namespace::C
 {
     if (!(PAL::isPassKitCoreFrameworkAvailable()))
         return std::nullopt;
-    auto m_pkPaymentMethod = decoder.decodeWithAllowedClasses<RetainPtr<PKPaymentMethod>>({ PAL::getPKPaymentMethodClassSingleton() });
+    auto m_pkPaymentMethod = decoder.decode<RetainPtr<PKPaymentMethod>>();
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -626,8 +626,8 @@ void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedM
 
 std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder& decoder)
 {
-    auto firstMember = decoder.decodeWithAllowedClasses<RetainPtr<DDActionContext>>({ PAL::getDDActionContextClassSingleton() });
-    auto secondMember = decoder.decodeWithAllowedClasses<RetainPtr<DDActionContext>>({ PAL::getDDActionContextClassSingleton() });
+    auto firstMember = decoder.decode<RetainPtr<DDActionContext>>();
+    auto secondMember = decoder.decode<RetainPtr<DDActionContext>>();
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {

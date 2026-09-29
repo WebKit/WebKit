@@ -33,7 +33,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
-#if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
+#if PLATFORM(COCOA)
 
 @interface NSURLRequest (WKSecureCoding)
 - (NSDictionary *)_webKitPropertyListData;
@@ -510,4 +510,4 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 #undef SET_PROTOCOL_DICT_BOOL
 #undef SET_PROTOCOL_DICT_MEMBER
 
-#endif // PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
+#endif // PLATFORM(COCOA)

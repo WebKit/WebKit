@@ -30,7 +30,6 @@ interface TestRunner {
     readonly attribute boolean isMac;
     readonly attribute boolean isKeyboardImmediatelyAvailable;
     readonly attribute boolean keyboardAppearsOverContent;
-    readonly attribute boolean haveSecureCodingRequest;
     readonly attribute boolean haveSecureCodingDataDetectors;
 
     // The basics.

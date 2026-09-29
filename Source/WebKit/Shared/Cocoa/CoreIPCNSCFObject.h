@@ -92,9 +92,6 @@ class CoreIPCNSShadow;
 class CoreIPCNSValue;
 class CoreIPCNumber;
 class CoreIPCNull;
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-class CoreIPCSecureCoding;
-#endif
 class CoreIPCString;
 class CoreIPCURL;
 
@@ -127,9 +124,6 @@ using ObjectValue = Variant<
     CoreIPCCNPostalAddress,
 #endif
     CoreIPCDateComponents,
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    CoreIPCSecureCoding,
-#endif // HAVE(WK_SECURE_CODING_NSURLREQUEST)
     CoreIPCString,
     CoreIPCURL
 >;
@@ -141,8 +135,6 @@ public:
     CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);
 
     RetainPtr<id> toID() const;
-
-    static bool NODELETE valueIsAllowed(IPC::Decoder&, ObjectValue&);
 
     const UniqueRef<ObjectValue>& value() const { return m_value; }
 private:

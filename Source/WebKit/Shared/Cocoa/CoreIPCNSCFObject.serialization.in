@@ -25,7 +25,7 @@
 webkit_platform_headers: "ArgumentCodersCocoa.h" "CoreIPCNSCFObject.h"
 
 [WebKitPlatform] class WebKit::CoreIPCNSCFObject {
-    [Validator='WebKit::CoreIPCNSCFObject::valueIsAllowed(decoder, *value)'] UniqueRef<WebKit::ObjectValue> value();
+    UniqueRef<WebKit::ObjectValue> value();
 }
 
 using WebKit::ObjectValue = Variant<
@@ -57,9 +57,6 @@ using WebKit::ObjectValue = Variant<
     WebKit::CoreIPCCNPostalAddress,
 #endif
     WebKit::CoreIPCDateComponents,
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    WebKit::CoreIPCSecureCoding,
-#endif
     WebKit::CoreIPCString,
     WebKit::CoreIPCURL
 >

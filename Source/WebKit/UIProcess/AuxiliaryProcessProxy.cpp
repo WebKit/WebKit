@@ -46,7 +46,6 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
-#include "CoreIPCSecureCoding.h"
 #include "SandboxUtilities.h"
 #include <sys/sysctl.h>
 #include <wtf/cf/TypeCastsCF.h>
@@ -651,12 +650,6 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     parameters.wtfLoggingChannels = UIProcess::wtfLogLevelString();
     parameters.webCoreLoggingChannels = UIProcess::webCoreLogLevelString();
     parameters.webKitLoggingChannels = UIProcess::webKitLogLevelString();
-#endif
-
-#if PLATFORM(COCOA)
-    auto* exemptClassNames = SecureCoding::classNamesExemptFromSecureCodingCrash();
-    if (exemptClassNames)
-        parameters.classNamesExemptFromSecureCodingCrash = WTF::makeUnique<HashSet<String>>(*exemptClassNames);
 #endif
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)

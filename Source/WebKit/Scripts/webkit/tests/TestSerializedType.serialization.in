@@ -16,11 +16,11 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 [Nested] class Namespace::OtherClass {
     int a
     [BitField] bool b
-    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClassSingleton()]] RetainPtr<NSArray> dataDetectorResults;
+    RetainPtr<NSArray> dataDetectorResults;
 }
 
 [Nested] class Namespace::ClassWithMemberPrecondition {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClassSingleton()]] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 }
 
 [RefCounted] class Namespace::ReturnRefClass {
@@ -102,8 +102,8 @@ class WTF::Seconds {
 };
 
 struct SoftLinkedMember {
-    [SecureCodingAllowed=[PAL::getDDActionContextClassSingleton()]] RetainPtr<DDActionContext> firstMember;
-    [SecureCodingAllowed=[PAL::getDDActionContextClassSingleton()]] RetainPtr<DDActionContext> secondMember;
+    RetainPtr<DDActionContext> firstMember;
+    RetainPtr<DDActionContext> secondMember;
 }
 
 [RefCounted] class WebCore::TimingFunction subclasses {

@@ -26,7 +26,6 @@
 #pragma once
 
 #import "ArgumentCoders.h"
-#import "CoreIPCRetainPtr.h"
 
 #if PLATFORM(COCOA)
 
@@ -101,9 +100,6 @@ enum class NSType : uint8_t {
     Locale,
     Number,
     Null,
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    SecureCoding,
-#endif
 #if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
     Set,
 #endif
@@ -171,49 +167,9 @@ template<typename T> void encodeObjectDirectly(Encoder&, T *);
 template<typename T> void encodeObjectDirectly(Encoder&, T);
 template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T *);
 template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T);
-template<typename T> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses(Decoder&);
+template<typename T> std::optional<RetainPtr<id>> decodeObjectDirectly(Decoder&);
 
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
-
-#if ASSERT_ENABLED
-
-static inline bool isObjectClassAllowed(id object, const AllowedClassHashSet& allowedClasses)
-{
-    for (auto& allowedClass : allowedClasses) {
-        if ([object isKindOfClass:allowedClass.get()])
-            return true;
-    }
-    return false;
-}
-
-#endif // ASSERT_ENABLED
-
-template<typename T, typename>
-std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder& decoder)
-{
-#if ASSERT_ENABLED && !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    auto allowedClasses = decoder.allowedClasses();
-#endif
-    auto result = decodeObjectDirectlyRequiringAllowedClasses<T>(decoder);
-    if (!result)
-        return std::nullopt;
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
-#endif
-    return { *result };
-}
-
-template<typename T, typename>
-std::optional<T> decodeRequiringAllowedClasses(Decoder& decoder)
-{
-    auto result = decodeObjectDirectlyRequiringAllowedClasses<T>(decoder);
-    if (!result)
-        return std::nullopt;
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    ASSERT(!*result || isObjectClassAllowed((*result).get(), decoder.allowedClasses()));
-#endif
-    return { *result };
-}
 
 template<typename T> struct ArgumentCoder<T *> {
     template<typename U = T, typename = IsObjCObject<U>>
@@ -222,28 +178,6 @@ template<typename T> struct ArgumentCoder<T *> {
         encodeObjectDirectly<U>(encoder, object);
     }
 };
-
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-template<typename T> struct ArgumentCoder<CoreIPCRetainPtr<T>> {
-    template<typename U = T>
-    static void encode(Encoder& encoder, const CoreIPCRetainPtr<U>& object)
-    {
-        encodeObjectDirectly<U>(encoder, object.get());
-    }
-
-    template<typename U = T>
-    static void encode(StreamConnectionEncoder& encoder, const CoreIPCRetainPtr<U>& object)
-    {
-        encodeObjectDirectly<U>(encoder, object.get());
-    }
-
-    template<typename U = T>
-    static std::optional<RetainPtr<U>> decode(Decoder& decoder)
-    {
-        return decodeObjectDirectlyRequiringAllowedClasses<U>(decoder);
-    }
-};
-#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 
 template<typename T> struct ArgumentCoder<RetainPtr<T>> {
     template<typename U = T, typename = IsObjCObject<U>>
@@ -266,7 +200,7 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
             return std::nullopt;
         if (!*isEngaged)
             return { nullptr };
-        return decoder.decodeWithAllowedClasses<U>();
+        return decodeObjectDirectly<U>(decoder);
     }
 };
 

@@ -89,10 +89,6 @@ static ObjectValue valueFromID(id object)
         return CoreIPCNumber(bridge_cast((NSNumber *)object));
     case IPC::NSType::Null:
         return CoreIPCNull((NSNull *)object);
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    case IPC::NSType::SecureCoding:
-        return CoreIPCSecureCoding((NSObject<NSSecureCoding> *)object);
-#endif
     case IPC::NSType::String:
         return CoreIPCString((NSString *)object);
     case IPC::NSType::URL:
@@ -130,28 +126,6 @@ RetainPtr<id> CoreIPCNSCFObject::toID() const
     });
 
     return result;
-}
-
-bool CoreIPCNSCFObject::valueIsAllowed(IPC::Decoder& decoder, ObjectValue& value)
-{
-#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    UNUSED_PARAM(decoder);
-    UNUSED_PARAM(value);
-    return true;
-#else
-    // The Decoder always has a set of allowedClasses,
-    // but we only check that set when considering SecureCoding classes
-    Class objectClass;
-    WTF::switchOn(value,
-        [&](CoreIPCSecureCoding& object) {
-            objectClass = object.objectClass();
-        }, [&](auto& object) {
-            objectClass = nullptr;
-        }
-    );
-
-    return !objectClass || decoder.allowedClasses().contains(objectClass);
-#endif
 }
 
 } // namespace WebKit

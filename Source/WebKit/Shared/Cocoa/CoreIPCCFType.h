@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CoreIPCRetainPtr.h"
 #include <wtf/ArgumentCoder.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

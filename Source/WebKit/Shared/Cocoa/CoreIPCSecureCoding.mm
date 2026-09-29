@@ -28,94 +28,13 @@
 
 #if PLATFORM(COCOA)
 
-#import "ArgumentCodersCocoa.h"
-#import "AuxiliaryProcessCreationParameters.h"
-#import "WKCrashReporter.h"
-#import <wtf/RuntimeApplicationChecks.h>
-#import <wtf/TZoneMallocInlines.h>
-#import <wtf/cocoa/NSStringExtras.h>
-#import <wtf/cocoa/TypeCastsCocoa.h>
-#import <wtf/text/StringHash.h>
-
 namespace WebKit {
-
-namespace SecureCoding {
-
-static std::unique_ptr<HashSet<String>>& internalClassNamesExemptFromSecureCodingCrash()
-{
-    static NeverDestroyed<std::unique_ptr<HashSet<String>>> exemptClassNames = []() -> std::unique_ptr<HashSet<String>> {
-        if (isInAuxiliaryProcess())
-            return nullptr;
-
-        RetainPtr<NSArray> array = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitCrashOnSecureCodingWithExemptClassesKey"];
-        if (!array)
-            return nullptr;
-
-        auto exemptClassNames = WTF::makeUnique<HashSet<String>>();
-
-        for (id value in array.get()) {
-            if (RetainPtr string = dynamic_objc_cast<NSString>(value))
-                exemptClassNames->add(string.get());
-        }
-        return exemptClassNames;
-    }();
-
-    return exemptClassNames.get();
-}
-
-const HashSet<String>* classNamesExemptFromSecureCodingCrash()
-{
-    return internalClassNamesExemptFromSecureCodingCrash().get();
-}
-
-void applyProcessCreationParameters(AuxiliaryProcessCreationParameters&& parameters)
-{
-    RELEASE_ASSERT(isInAuxiliaryProcess());
-
-    auto& exemptClassNames = internalClassNamesExemptFromSecureCodingCrash();
-    RELEASE_ASSERT(!exemptClassNames);
-
-    if (parameters.classNamesExemptFromSecureCodingCrash)
-        exemptClassNames = WTF::move(parameters.classNamesExemptFromSecureCodingCrash);
-}
-
-} // namespace SecureCoding
-
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCSecureCoding);
-#endif
 
 bool conformsToWebKitSecureCoding(id object)
 {
     return [object respondsToSelector:@selector(_webKitPropertyListData)]
         && [object respondsToSelector:@selector(_initWithWebKitPropertyListData:)];
 }
-
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-[[noreturn]] static void crashWithClassName(Class objectClass)
-{
-    WebKit::logAndSetCrashLogMessage("NSSecureCoding path used for unexpected object"_s);
-
-    std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
-    memcpySpan(asMutableByteSpan(std::span { values }), span(NSStringFromClass(objectClass)));
-    CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
-}
-
-CoreIPCSecureCoding::CoreIPCSecureCoding(id object)
-    : m_secureCoding((NSObject<NSSecureCoding> *)object)
-{
-    RELEASE_ASSERT(!m_secureCoding || [object conformsToProtocol:@protocol(NSSecureCoding)]);
-
-    auto* exemptClassNames = SecureCoding::classNamesExemptFromSecureCodingCrash();
-    if (!exemptClassNames)
-        return;
-
-    if (exemptClassNames->contains(NSStringFromClass([object class])))
-        return;
-
-    crashWithClassName([object class]);
-}
-#endif
 
 } // namespace WebKit
 

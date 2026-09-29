@@ -51,10 +51,6 @@
 #endif
 #endif
 
-#if PLATFORM(COCOA)
-#include "CoreIPCSecureCoding.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -256,9 +252,6 @@ void AuxiliaryProcess::applyProcessCreationParameters(AuxiliaryProcessCreationPa
     WTF::logChannels().initializeLogChannelsIfNecessary(parameters.wtfLoggingChannels);
     WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
     WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
-#endif
-#if PLATFORM(COCOA)
-    SecureCoding::applyProcessCreationParameters(WTF::move(parameters));
 #endif
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (parameters.shouldEnableIPCSignposts)

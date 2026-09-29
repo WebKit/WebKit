@@ -1732,7 +1732,7 @@ TEST(IPCSerialization, NSURLRequest)
     runTestNS({ urlRequest });
 }
 
-#if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
+#if PLATFORM(COCOA)
 
 @interface NSURLRequest (WKSecureCoding)
 - (NSDictionary *)_webKitPropertyListData;
@@ -1921,7 +1921,7 @@ TEST(IPCSerialization, NSURLRequestAttribution)
     EXPECT_EQ([reconstructed attribution], NSURLRequestAttributionUser);
 }
 
-#endif // PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
+#endif // PLATFORM(COCOA)
 
 #if USE(AVFOUNDATION) && PLATFORM(MAC)
 TEST(IPCSerialization, AVOutputContext)

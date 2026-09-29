@@ -29,53 +29,18 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/TZoneMalloc.h>
 
 #ifdef __OBJC__
+
 @interface NSObject (WebKitSecureCoding)
 - (NSDictionary *)_webKitPropertyListData;
 - (id)_initWithWebKitPropertyListData:(NSDictionary *)plist;
 @end
-#endif
 
 namespace WebKit {
-
-struct AuxiliaryProcessCreationParameters;
-
-namespace SecureCoding {
-
-const HashSet<String>* classNamesExemptFromSecureCodingCrash();
-void applyProcessCreationParameters(AuxiliaryProcessCreationParameters&&);
-
-} // namespace SecureCoding
-
-#ifdef __OBJC__
-
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-class CoreIPCSecureCoding {
-WTF_MAKE_TZONE_ALLOCATED(CoreIPCSecureCoding);
-public:
-    CoreIPCSecureCoding(id);
-    CoreIPCSecureCoding(const RetainPtr<NSObject<NSSecureCoding>>& object)
-        : CoreIPCSecureCoding(object.get())
-    {
-    }
-
-    RetainPtr<id> toID() const { return m_secureCoding; }
-
-    Class objectClass() { return m_secureCoding.get().class; }
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCSecureCoding>;
-
-    IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
-};
-#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-
 bool conformsToWebKitSecureCoding(id);
+}
 
 #endif // __OBJC__
-
-} // namespace WebKit
 
 #endif // PLATFORM(COCOA)

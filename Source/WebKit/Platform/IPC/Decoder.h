@@ -42,10 +42,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
 
-#if PLATFORM(COCOA)
-#include "ClassStructPtr.h"
-#endif
-
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
 #endif
@@ -59,17 +55,11 @@ template<typename> struct ArgumentCoder;
 
 #ifdef __OBJC__
 template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
-template<typename T> using IsNotObjCObject = std::enable_if_t<!std::is_convertible<T *, id>::value, T *>;
-template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder&);
 
 template<typename T, typename = IsObjCObject<T>> Class getClass()
 {
     return [T class];
 }
-#endif
-
-#if PLATFORM(COCOA)
-using AllowedClassHashSet = HashSet<RetainPtr<ClassStructPtr>>;
 #endif
 
 class Decoder {
@@ -153,34 +143,6 @@ public:
         return t;
     }
 
-#ifdef __OBJC__
-    template<typename T, typename = IsObjCObject<T>>
-    std::optional<RetainPtr<T>> decodeWithAllowedClasses(const AllowedClassHashSet& allowedClasses = { getClass<T>() })
-    {
-#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
-        UNUSED_PARAM(allowedClasses);
-#else
-        m_allowedClasses = allowedClasses;
-#endif
-        return IPC::decodeRequiringAllowedClasses<T>(*this);
-    }
-
-    template<typename T, typename = IsNotObjCObject<T>>
-    std::optional<T> decodeWithAllowedClasses(const AllowedClassHashSet& allowedClasses)
-    {
-#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
-        UNUSED_PARAM(allowedClasses);
-#else
-        m_allowedClasses = allowedClasses;
-#endif
-        return decode<T>();
-    }
-
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    AllowedClassHashSet& allowedClasses() LIFETIME_BOUND { return m_allowedClasses; }
-#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-#endif // __OBJC__
-
     std::optional<Attachment> takeLastAttachment();
 
     void addIndexOfDecodingFailure(uint32_t indexOfObjectFailingDecoding) { m_indicesOfObjectsFailingDecoding.append(indexOfObjectFailingDecoding); }
@@ -201,9 +163,6 @@ private:
 
 #if PLATFORM(MAC)
     ImportanceAssertion m_importanceAssertion;
-#endif
-#if PLATFORM(COCOA) && !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    AllowedClassHashSet m_allowedClasses;
 #endif
 
     uint64_t m_destinationID;

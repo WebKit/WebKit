@@ -56,12 +56,7 @@ header: <WebCore/DictionaryPopupInfo.h>
 
 header: <WebCore/ResourceRequest.h>
 [CustomHeader] struct WebCore::ResourceRequestPlatformData {
-#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
     RetainPtr<NSURLRequest> m_urlRequest;
-#endif
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    [SecureCodingAllowed=[NSMutableURLRequest.class, NSURLRequest.class]] RetainPtr<NSURLRequest> m_urlRequest;
-#endif
     std::optional<bool> m_isAppInitiated;
     std::optional<WebCore::ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
@@ -233,7 +228,7 @@ enum class WebCore::ApplePaySessionPaymentRequestShippingType : uint8_t {
 };
 
 class WebCore::PaymentSessionError {
-    [SecureCodingAllowed=[NSError.class]] RetainPtr<NSError> platformError();
+    RetainPtr<NSError> platformError();
 };
 
 
@@ -322,23 +317,19 @@ class WebCore::PaymentSessionError {
 
 headers: <pal/cocoa/PassKitSoftLink.h>
 class WebCore::PaymentMethod {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClassSingleton()], Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 };
 
 class WebCore::Payment {
-#if HAVE(WK_SECURE_CODING_PKPAYMENT)
     [Precondition='PAL::isPassKitCoreFrameworkAvailable()'] RetainPtr<PKPayment> pkPayment();
-#else
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentClassSingleton()]] RetainPtr<PKPayment> pkPayment();
-#endif
 };
 
 class WebCore::PaymentContact {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKContactClassSingleton()]] RetainPtr<PKContact> pkContact();
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()'] RetainPtr<PKContact> pkContact();
 };
 
 class WebCore::PaymentMerchantSession {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMerchantSessionClassSingleton()]] RetainPtr<PKPaymentMerchantSession> pkPaymentMerchantSession();
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()'] RetainPtr<PKPaymentMerchantSession> pkPaymentMerchantSession();
 };
 #endif
 
@@ -426,9 +417,7 @@ WKDDActionContext wrapped by CoreIPCDDSecureActionContext
 #endif
 #endif
 
-#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
 NSURLRequest wrapped by CoreIPCNSURLRequest
-#endif
 
 #if USE(AVFOUNDATION)
 AVOutputContext wrapped by CoreIPCAVOutputContext

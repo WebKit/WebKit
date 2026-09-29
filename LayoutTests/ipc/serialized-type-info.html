@@ -74,9 +74,6 @@
             "Box",
             "RectEdges",
         ];
-        if (window.testRunner && !testRunner.haveSecureCodingRequest) {
-            containerTypes.push("IPC::CoreIPCRetainPtr");
-        }
 
         const outputSet = new Set();
         for (const input of inputSet) {
@@ -180,10 +177,6 @@
             if (testRunner.isMac || testRunner.isIOSFamily) {
                 result.push("CTFontDescriptorOptions");
                 result.push("MachSendRight");
-                if (!testRunner.haveSecureCodingRequest) {
-                    result.push("NSObject<NSSecureCoding>");
-                    result.push("NSURLRequest");
-                }
                 if (!testRunner.haveSecureCodingDataDetectors) {
                     result.push("DDScannerResult");
                     if (testRunner.isMac) {

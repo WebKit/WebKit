@@ -26,7 +26,6 @@ $(SRCROOT)/Shared/Cocoa/CoreIPCPKShippingMethod.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCPlistArray.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCPlistDictionary.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCPlistObject.h
-$(SRCROOT)/Shared/Cocoa/CoreIPCRetainPtr.h
 $(SRCROOT)/Shared/cf/CoreIPCSecTrust.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCString.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCURL.h
