@@ -40,6 +40,12 @@
 
     // Non-standard
     [CEReactions=NotNeeded, Reflect="webkitprojection", EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString projection;
+    [CEReactions=NotNeeded, Reflect="webkitfieldofview", EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString fieldOfView;
+    [CEReactions=NotNeeded, Reflect="webkityaw", EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString yaw;
+    [CEReactions=NotNeeded, Reflect="webkitpitch", EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString pitch;
+    [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double cameraYaw;
+    [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double cameraPitch;
+    [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double cameraFieldOfView;
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
