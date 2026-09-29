@@ -235,28 +235,6 @@ inline bool LineBox::hasEllipsis() const
     });
 }
 
-inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSelection) const
-{
-    ASSERT(hasEllipsis());
-
-    auto visualRect = WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.ellipsisVisualRectIgnoringBlockDirection();
-    });
-
-    // FIXME: Add pixel snapping here.
-    if (adjustedForSelection == AdjustedForSelection::No) {
-        formattingContextRoot().flipForWritingMode(visualRect);
-        return visualRect;
-    }
-    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { contentLogicalTopAdjustedForPrecedingLineBox() });
-    auto selectionBottom = contentLogicalBottomAdjustedForFollowingLineBox();
-
-    visualRect.setY(selectionTop);
-    visualRect.setHeight(selectionBottom - selectionTop);
-    formattingContextRoot().flipForWritingMode(visualRect);
-    return visualRect;
-}
-
 inline TextRun LineBox::ellipsisText() const
 {
     ASSERT(hasEllipsis());
