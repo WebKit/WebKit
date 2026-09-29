@@ -84,11 +84,11 @@ void testTLCDecommit(unsigned numHeaps,
 
     pas_heap_ref* heaps = new pas_heap_ref[numHeaps];
     for (size_t index = numHeaps; index--;)
-        heaps[index] = BMALLOC_HEAP_REF_INITIALIZER(new bmalloc_type(BMALLOC_TYPE_INITIALIZER(42, 2, "test")), pas_bmalloc_heap_ref_kind_non_compact);
+        heaps[index] = BMALLOC_HEAP_REF_INITIALIZER(new bmalloc_type(BMALLOC_TYPE_INITIALIZER(42, 2, "test")));
 
     vector<void*> objects;
     for (size_t index = 0; index < numHeaps; ++index) {
-        void* ptr = bmalloc_iso_allocate(heaps + index, pas_non_compact_allocation_mode);
+        void* ptr = bmalloc_iso_allocate(heaps + index);
         CHECK(ptr);
         CHECK_EQUAL(pas_get_heap(ptr, BMALLOC_HEAP_CONFIG),
                     bmalloc_heap_ref_get_heap(heaps + index));
@@ -188,7 +188,7 @@ void testTLCDecommit(unsigned numHeaps,
         pas_lock_is_not_held);
 
     for (size_t index = 0; index < numHeaps; ++index) {
-        void* ptr = bmalloc_iso_allocate(heaps + index, pas_non_compact_allocation_mode);
+        void* ptr = bmalloc_iso_allocate(heaps + index);
         CHECK(ptr);
         CHECK_EQUAL(pas_get_heap(ptr, BMALLOC_HEAP_CONFIG),
                     bmalloc_heap_ref_get_heap(heaps + index));
@@ -207,8 +207,7 @@ void testChaosThenDecommit(unsigned numHeaps, unsigned typeSize, unsigned maxObj
     pas_heap_ref* heapRefs = new pas_heap_ref[numHeaps];
     for (unsigned index = numHeaps; index--;) {
         heapRefs[index] = BMALLOC_HEAP_REF_INITIALIZER(
-            new bmalloc_type(BMALLOC_TYPE_INITIALIZER(typeSize, 1, "test")),
-            pas_bmalloc_heap_ref_kind_non_compact);
+            new bmalloc_type(BMALLOC_TYPE_INITIALIZER(typeSize, 1, "test")));
     }
     
     vector<vector<void*>> objects;
@@ -242,7 +241,7 @@ void testChaosThenDecommit(unsigned numHeaps, unsigned typeSize, unsigned maxObj
             while (numObjectsNow--) {
                 if (!deterministicRandomNumber(maxFromSameHeap))
                     selectNextHeap();
-                void* ptr = bmalloc_iso_allocate(heapRef, pas_non_compact_allocation_mode);
+                void* ptr = bmalloc_iso_allocate(heapRef);
                 CHECK(ptr);
                 CHECK_EQUAL(pas_get_heap(ptr, BMALLOC_HEAP_CONFIG),
                             bmalloc_heap_ref_get_heap(heapRef));
@@ -278,8 +277,7 @@ vector<void*> prepareToTestDLCDecommitThenStuff(unsigned numHeaps)
     pas_heap_ref* heaps = new pas_heap_ref[numHeaps];
     for (size_t index = numHeaps; index--;)
         heaps[index] = BMALLOC_HEAP_REF_INITIALIZER(
-            new bmalloc_type(BMALLOC_TYPE_INITIALIZER(512, 512, "test")),
-            pas_bmalloc_heap_ref_kind_non_compact);
+            new bmalloc_type(BMALLOC_TYPE_INITIALIZER(512, 512, "test")));
 
     vector<void*> objects;
     for (size_t index = 0; index < numHeaps; ++index) {
@@ -287,7 +285,7 @@ vector<void*> prepareToTestDLCDecommitThenStuff(unsigned numHeaps)
         for (size_t objectIndex = pas_segregated_page_number_of_objects(
                  512, BMALLOC_HEAP_CONFIG.small_segregated_config);
              objectIndex--;) {
-            void* ptr = bmalloc_iso_allocate(heaps + index, pas_non_compact_allocation_mode);
+            void* ptr = bmalloc_iso_allocate(heaps + index);
             CHECK(ptr);
             CHECK_EQUAL(pas_get_heap(ptr, BMALLOC_HEAP_CONFIG),
                         bmalloc_heap_ref_get_heap(heaps + index));
@@ -379,10 +377,9 @@ void testAllocateFromStoppedBaselineImpl()
     }
 
     pas_heap_ref heapRef = BMALLOC_HEAP_REF_INITIALIZER(
-        new bmalloc_type(BMALLOC_TYPE_INITIALIZER(32, 1, "test")),
-        pas_bmalloc_heap_ref_kind_non_compact);
+        new bmalloc_type(BMALLOC_TYPE_INITIALIZER(32, 1, "test")));
 
-    void* ptr = bmalloc_iso_allocate(&heapRef, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_iso_allocate(&heapRef);
     CHECK(ptr);
     pas_segregated_view view = pas_segregated_view_for_object(
         reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
@@ -408,7 +405,7 @@ void testAllocateFromStoppedBaselineImpl()
     if (verbose)
         cout << "TLC = " << pas_thread_local_cache_try_get() << "\n";
 
-    ptr = bmalloc_iso_allocate(&heapRef, pas_non_compact_allocation_mode);
+    ptr = bmalloc_iso_allocate(&heapRef);
     CHECK(ptr);
 }
 

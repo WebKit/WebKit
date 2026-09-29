@@ -104,10 +104,9 @@ size_t firstNonZeroByte(const void* ptr, size_t size)
 }
 
 // The two axes varied below, besides size and alignment. HeapVariant selects the
-// zeroed entry point; Compact routes to the separate compact primitive
-// heap and is untagged-only, as the tagged API takes no allocation mode. Plain vs
-// with-alignment takes a different internal path even at the minimum alignment.
-enum class HeapVariant { Untagged, Compact, Tagged };
+// zeroed entry point. Plain vs with-alignment takes a different internal path even
+// at the minimum alignment.
+enum class HeapVariant { Untagged, Tagged };
 enum class AlignmentApi { Plain, WithAlignment };
 
 // Whether reuse goes straight through (WithoutScavenge) or forces a synchronous
@@ -121,8 +120,6 @@ const char* variantName(HeapVariant variant)
     switch (variant) {
     case HeapVariant::Untagged:
         return "untagged";
-    case HeapVariant::Compact:
-        return "compact";
     case HeapVariant::Tagged:
         return "tagged";
     }
@@ -140,12 +137,8 @@ void* allocateZeroed(HeapVariant variant, AlignmentApi api, size_t size, size_t 
     switch (variant) {
     case HeapVariant::Untagged:
         if (api == AlignmentApi::WithAlignment)
-            return bmalloc_try_allocate_zeroed_with_alignment(size, alignment, pas_non_compact_allocation_mode);
-        return bmalloc_try_allocate_zeroed(size, pas_non_compact_allocation_mode);
-    case HeapVariant::Compact:
-        if (api == AlignmentApi::WithAlignment)
-            return bmalloc_try_allocate_zeroed_with_alignment(size, alignment, pas_always_compact_allocation_mode);
-        return bmalloc_try_allocate_zeroed(size, pas_always_compact_allocation_mode);
+            return bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
+        return bmalloc_try_allocate_zeroed(size);
     case HeapVariant::Tagged:
         if (api == AlignmentApi::WithAlignment)
             return tagged_bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
@@ -328,7 +321,7 @@ void runZeroingReuse(const std::vector<size_t>& sizes, Reuse reuse = Reuse::With
 {
     pas_scavenger_suspend();
 
-    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Compact, HeapVariant::Tagged };
+    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
     static constexpr size_t alignments[] = { 16, 512, 4096, 16384 };
 
     for (HeapVariant variant : variants) {
@@ -530,7 +523,7 @@ void testSmallZeroingPageBatching()
         bmallocMinAlign,
         PAS_SMALL_PAGE_DEFAULT_SIZE / PAS_MIN_OBJECTS_PER_PAGE,
     };
-    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Compact, HeapVariant::Tagged };
+    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
     for (HeapVariant variant : variants) {
         for (size_t size : sizes)
             smallPageBatching(variant, size);
@@ -765,7 +758,7 @@ void runFragmentationReuse(Reuse reuse)
 {
     pas_scavenger_suspend();
 
-    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Compact, HeapVariant::Tagged };
+    static constexpr HeapVariant variants[] = { HeapVariant::Untagged, HeapVariant::Tagged };
     for (HeapVariant variant : variants)
         fragmentationReuse(variant, reuse);
 }

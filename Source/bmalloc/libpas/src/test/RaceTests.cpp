@@ -162,7 +162,7 @@ void testLocalAllocatorStopRace(pas_race_test_hook_kind kindToStopOn)
 
     thread thread1 = thread(
         [&] () {
-            void* ptr = iso_allocate(&heap, pas_non_compact_allocation_mode);
+            void* ptr = iso_allocate(&heap);
             CHECK(ptr);
             CHECK(pas_segregated_view_is_exclusive(
                       pas_segregated_view_for_object(
@@ -184,7 +184,7 @@ void testLocalAllocatorStopRace(pas_race_test_hook_kind kindToStopOn)
         globalCond.notify_all();
     }
 
-    void* ptr = iso_allocate(&heap, pas_non_compact_allocation_mode);
+    void* ptr = iso_allocate(&heap);
     if (kindToStopOn == pas_race_test_hook_local_allocator_stop_before_unlock)
         CHECK_EQUAL(ptr, thePtr);
     thread1.join();
@@ -223,7 +223,7 @@ void testLocalAllocatorStopRaceAgainstScavenge(pas_race_test_hook_kind kindToSto
 
     thread thread1 = thread(
         [&] () {
-            void* ptr = iso_allocate(&heap, pas_non_compact_allocation_mode);
+            void* ptr = iso_allocate(&heap);
             CHECK(ptr);
             CHECK(pas_segregated_view_is_exclusive(
                       pas_segregated_view_for_object(
@@ -247,7 +247,7 @@ void testLocalAllocatorStopRaceAgainstScavenge(pas_race_test_hook_kind kindToSto
 
     pas_scavenger_decommit_free_memory();
 
-    void* ptr = iso_allocate(&heap, pas_non_compact_allocation_mode);
+    void* ptr = iso_allocate(&heap);
     if (kindToStopOn == pas_race_test_hook_local_allocator_stop_before_unlock)
         CHECK_EQUAL(ptr, thePtr);
     hookShouldStop = true;
@@ -269,7 +269,7 @@ void testMediumDirectoryTornInsertRace()
        the insertion path once without getting stopped by the hook.
        So we start with a no-op hook and only afterwards install the effectful one. */
     hookCallback = [] (pas_race_test_hook_kind) { };
-    void* seedBig = iso_allocate_primitive(&heap, kBigSize, pas_non_compact_allocation_mode);
+    void* seedBig = iso_allocate_primitive(&heap, kBigSize);
     CHECK(seedBig);
 
     bool didGetToHook = false;
@@ -297,7 +297,7 @@ void testMediumDirectoryTornInsertRace()
                but its begin_index/end_index fields won't yet have been.
                If there is a race here, then the reader will see
                { new_directory_ptr, old_begin_index, old_end_index } */
-            void* small = iso_allocate_primitive(&heap, kNewSize, pas_non_compact_allocation_mode);
+            void* small = iso_allocate_primitive(&heap, kNewSize);
             CHECK(small);
         });
 

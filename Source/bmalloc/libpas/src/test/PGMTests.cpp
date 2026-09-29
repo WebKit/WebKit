@@ -78,7 +78,7 @@ void testPGMSingleAlloc()
     size_t init_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
 
     size_t alloc_size = 1024;
-    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
     size_t updated_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
@@ -116,7 +116,7 @@ void testPGMMultipleAlloc()
 
     for (size_t i = 0; i < num_allocations; ++i) {
         size_t alloc_size = random() % 100000;
-        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, &iso_heap_config, &transaction);
         pas_allocation_result mem = mem_storage[i];
         memset(reinterpret_cast<void *>(mem.begin), 0x42, alloc_size);
     }
@@ -152,7 +152,7 @@ void testPGMAlignedAlloc()
         size_t alignment = 1 << shift;
         for (size_t i = 0; i < num_allocations; ++i) {
             size_t alloc_size = random() % 100000;
-            pas_allocation_result mem = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, alignment, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+            pas_allocation_result mem = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, alignment, &iso_heap_config, &transaction);
             mem_storage[i] = mem;
             memset(reinterpret_cast<void *>(mem.begin), 0x42, alloc_size);
             CHECK(pas_is_aligned(mem.begin, alignment));
@@ -184,31 +184,31 @@ void testPGMRealloc()
 
     /* Realloc the same size */
     pas_heap_lock_lock();
-    pas_allocation_result alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    pas_allocation_result alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, &iso_heap_config, &transaction);
     pas_heap_lock_unlock();
 
-    void* new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 10000000, pas_non_compact_allocation_mode, pas_reallocate_free_always);
+    void* new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 10000000, pas_reallocate_free_always);
 
     /* Realloc bigger size */
     pas_heap_lock_lock();
-    alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, &iso_heap_config, &transaction);
     pas_heap_lock_unlock();
 
-    new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 20000000, pas_non_compact_allocation_mode, pas_reallocate_free_always);
+    new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 20000000, pas_reallocate_free_always);
 
     /* Realloc smaller size */
     pas_heap_lock_lock();
-    alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, &iso_heap_config, &transaction);
     pas_heap_lock_unlock();
 
-    new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 05000000, pas_non_compact_allocation_mode, pas_reallocate_free_always);
+    new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 05000000, pas_reallocate_free_always);
 
     /* Realloc size of 0 */
     pas_heap_lock_lock();
-    alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    alloc_memory = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, 1, &iso_heap_config, &transaction);
     pas_heap_lock_unlock();
 
-    new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 0, pas_non_compact_allocation_mode, pas_reallocate_free_always);
+    new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 0, pas_reallocate_free_always);
 }
 
 void testPGMMetaData()
@@ -230,7 +230,7 @@ void testPGMMetaData()
 
     for (size_t i = 0; i < num_allocations; ++i) {
         size_t alloc_size = 20;
-        pas_allocation_result mem = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+        pas_allocation_result mem = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, &iso_heap_config, &transaction);
         mem_storage[i] = mem;
         if (mem_storage[i].did_succeed)
             num_success_allocs++;
@@ -269,17 +269,17 @@ void testPGMErrors()
     pas_allocation_result result;
 
     /* Test invalid alloc size */
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 0, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 0, 1, &iso_heap_config, &transaction);
     CHECK(!result.begin);
     CHECK(!result.did_succeed);
 
     /* Test NULL heap */
-    result = pas_probabilistic_guard_malloc_allocate(nullptr, 1024, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(nullptr, 1024, 1, &iso_heap_config, &transaction);
     CHECK(!result.begin);
     CHECK(!result.did_succeed);
 
     /* Test allocating more than virtual memory available */
-    result = pas_probabilistic_guard_malloc_allocate(nullptr, 1024 * 1024 * 1024 + 1, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(nullptr, 1024 * 1024 * 1024 + 1, 1, &iso_heap_config, &transaction);
     CHECK(!result.begin);
     CHECK(!result.did_succeed);
 
@@ -288,10 +288,10 @@ void testPGMErrors()
     pas_allocation_result mem_storage[num_allocations];
     for (size_t i = 0; i < num_allocations; ++i) {
         size_t alloc_size = 1; /* A small alloc size wastes more memory */
-        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, &iso_heap_config, &transaction);
     }
 
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 1, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 1, 1, &iso_heap_config, &transaction);
     CHECK(!result.begin);
     CHECK(!result.did_succeed);
 
@@ -304,7 +304,7 @@ void testPGMErrors()
     pas_probabilistic_guard_malloc_deallocate((void *) 0x42);
 
     /* Test deallocating same memory location multiple times */
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 1, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 1, 1, &iso_heap_config, &transaction);
     CHECK(result.begin);
     CHECK(result.did_succeed);
 
@@ -323,10 +323,10 @@ void testPGMMetadataVectorManagement()
     pas_heap_lock_unlock();
 
     size_t total_allocations = 12;
-    int** int_arr = static_cast<int**>(bmalloc_allocate(total_allocations * sizeof(int*), pas_non_compact_allocation_mode));
+    int** int_arr = static_cast<int**>(bmalloc_allocate(total_allocations * sizeof(int*)));
     // Allocate arrays of ints, of random size between [1, 30000].
     for (size_t i = 0; i < total_allocations; ++i) {
-        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int), pas_non_compact_allocation_mode));
+        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int)));
         checkMalloc(int_arr[i]);
     }
 
@@ -360,10 +360,10 @@ void testPGMMetadataVectorManagementFewDeallocations()
     pas_heap_lock_unlock();
 
     size_t total_allocations = 12;
-    int** int_arr = static_cast<int**>(bmalloc_allocate(total_allocations * sizeof(int*), pas_non_compact_allocation_mode));
+    int** int_arr = static_cast<int**>(bmalloc_allocate(total_allocations * sizeof(int*)));
     // Allocate arrays of ints, of random size between [1, 30000].
     for (size_t i = 0; i < total_allocations; ++i) {
-        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int), pas_non_compact_allocation_mode));
+        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int)));
         checkMalloc(int_arr[i]);
     }
 
@@ -398,10 +398,10 @@ void testPGMMetadataDoubleFreeBehavior()
     pas_heap_lock_unlock();
 
     size_t total_allocations = 20;
-    int** int_arr = static_cast<int**>(bmalloc_allocate(total_allocations * sizeof(int*), pas_non_compact_allocation_mode));
+    int** int_arr = static_cast<int**>(bmalloc_allocate(total_allocations * sizeof(int*)));
     // Allocate arrays of ints, of random size between [1, 30000].
     for (size_t i = 0; i < total_allocations; ++i) {
-        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int), pas_non_compact_allocation_mode));
+        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int)));
         checkMalloc(int_arr[i]);
     }
 
@@ -437,10 +437,10 @@ void testPGMMetadataVectorManagementRehash()
     pas_root* root = pas_root_create();
     pas_heap_lock_unlock();
 
-    int** int_arr = static_cast<int**>(bmalloc_allocate(MAX_PGM_DEALLOCATED_METADATA_ENTRIES * sizeof(int*), pas_non_compact_allocation_mode));
+    int** int_arr = static_cast<int**>(bmalloc_allocate(MAX_PGM_DEALLOCATED_METADATA_ENTRIES * sizeof(int*)));
     // Allocate arrays of ints, of random size between [1, 30000].
     for (size_t i = 0; i < MAX_PGM_DEALLOCATED_METADATA_ENTRIES; ++i) {
-        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int), pas_non_compact_allocation_mode));
+        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int)));
         checkMalloc(int_arr[i]);
     }
 
@@ -461,7 +461,7 @@ void testPGMMetadataVectorManagementRehash()
     pas_heap_lock_unlock();
 
     for (size_t i = 0; i < MAX_PGM_DEALLOCATED_METADATA_ENTRIES; ++i) {
-        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int), pas_non_compact_allocation_mode));
+        int_arr[i] = static_cast<int*>(bmalloc_allocate(((rand() % 30000) + 1) * sizeof(int)));
         checkMalloc(int_arr[i]);
     }
     pas_heap_lock_lock();
@@ -495,24 +495,24 @@ void testPGMBmallocAllocationBacktrace()
     pas_heap_lock_unlock();
 
     // Allocate and check arrays of various sizes
-    int* int_arr1 = static_cast<int*>(bmalloc_allocate(30000 * sizeof(int), pas_non_compact_allocation_mode));
+    int* int_arr1 = static_cast<int*>(bmalloc_allocate(30000 * sizeof(int)));
     CHECK(int_arr1);
 
-    int* int_arr2 = static_cast<int*>(bmalloc_allocate(20000 * sizeof(int), pas_non_compact_allocation_mode));
+    int* int_arr2 = static_cast<int*>(bmalloc_allocate(20000 * sizeof(int)));
     CHECK(int_arr2);
 
     bmalloc_deallocate(int_arr1);
     bmalloc_deallocate(int_arr2);
 
-    int* int_arr3 = static_cast<int*>(bmalloc_allocate(499999 * sizeof(int), pas_non_compact_allocation_mode));
+    int* int_arr3 = static_cast<int*>(bmalloc_allocate(499999 * sizeof(int)));
     CHECK(int_arr3);
 
     bmalloc_deallocate(int_arr3);
 
-    char* char_arr4 = static_cast<char*>(bmalloc_allocate(500000 * sizeof(char), pas_non_compact_allocation_mode));
+    char* char_arr4 = static_cast<char*>(bmalloc_allocate(500000 * sizeof(char)));
     CHECK(char_arr4);
 
-    char* char_arr5 = static_cast<char*>(bmalloc_allocate(399999 * sizeof(char), pas_non_compact_allocation_mode));
+    char* char_arr5 = static_cast<char*>(bmalloc_allocate(399999 * sizeof(char)));
     CHECK(char_arr5);
     bmalloc_deallocate(char_arr5);
 
@@ -554,7 +554,7 @@ void testPGMAllocMetadataOnly()
     pas_heap_lock_unlock();
 
     // Allocate and check arrays of various sizes
-    int* int_arr1 = static_cast<int*>(bmalloc_allocate(30000 * sizeof(int), pas_non_compact_allocation_mode));
+    int* int_arr1 = static_cast<int*>(bmalloc_allocate(30000 * sizeof(int)));
     CHECK(int_arr1);
 
     pas_ptr_hash_map* hash_map = root->pas_pgm_hash_map_instance;
@@ -608,7 +608,7 @@ void testPGMCrashReportTaskPassthrough()
     pas_heap_lock_unlock();
 
     // Allocate and free to populate PGM hash map with a freed entry.
-    int* arr = static_cast<int*>(bmalloc_allocate(1000 * sizeof(int), pas_non_compact_allocation_mode));
+    int* arr = static_cast<int*>(bmalloc_allocate(1000 * sizeof(int)));
     CHECK(arr);
     bmalloc_deallocate(arr);
 

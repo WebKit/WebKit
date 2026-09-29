@@ -33,6 +33,7 @@
 
 #include "bmalloc_heap_config.h"
 #include "bmalloc_heap_innards.h"
+#include "bmalloc_heap_ref.h"
 #include "pas_ensure_heap_forced_into_reserved_memory.h"
 #include "pas_get_allocation_size.h"
 #include "pas_get_heap.h"
@@ -55,7 +56,8 @@ pas_heap bmalloc_common_primitive_heap =
 
 const bmalloc_type bmalloc_compact_primitive_type = BMALLOC_TYPE_INITIALIZER(1, 1, "Compact Primitive");
 
-pas_primitive_heap_ref bmalloc_compact_primitive_heap_ref =  BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&bmalloc_compact_primitive_type, pas_bmalloc_heap_ref_kind_compact);
+pas_primitive_heap_ref bmalloc_compact_primitive_heap_ref =
+    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&bmalloc_compact_primitive_type);
 
 pas_allocator_counts bmalloc_allocator_counts;
 

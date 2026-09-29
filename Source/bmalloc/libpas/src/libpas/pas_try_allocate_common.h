@@ -26,7 +26,6 @@
 #ifndef PAS_TRY_ALLOCATE_COMMON_H
 #define PAS_TRY_ALLOCATE_COMMON_H
 
-#include "pas_allocation_mode.h"
 #include "pas_allocation_result.h"
 #include "pas_heap_inlines.h"
 #include "pas_local_allocator_inlines.h"
@@ -66,11 +65,9 @@ static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_common_impl_fast_inline_only(
     pas_heap_config config,
     pas_allocation_result_filter result_filter,
-    pas_local_allocator* allocator,
-    pas_allocation_mode allocation_mode)
+    pas_local_allocator* allocator)
 {
     return pas_local_allocator_try_allocate_inline_only(allocator,
-                                                        allocation_mode,
                                                         config,
                                                         result_filter);
 }
@@ -82,8 +79,7 @@ pas_try_allocate_common_impl_fast(
     pas_allocation_result_filter result_filter,
     pas_local_allocator* allocator,
     size_t size,
-    size_t alignment,
-    pas_allocation_mode allocation_mode)
+    size_t alignment)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
@@ -91,7 +87,6 @@ pas_try_allocate_common_impl_fast(
     result = pas_local_allocator_try_allocate(allocator,
                                               size,
                                               alignment,
-                                              allocation_mode,
                                               config,
                                               allocator_counts,
                                               result_filter);
@@ -106,7 +101,6 @@ pas_try_allocate_pgm(
     pas_heap* heap,
     size_t size,
     size_t alignment,
-    pas_allocation_mode allocation_mode,
     pas_heap_config config)
 {
     pas_allocation_result result;
@@ -129,7 +123,7 @@ pas_try_allocate_pgm(
         pas_physical_memory_transaction_begin(&transaction);
         pas_heap_lock_lock();
 
-        result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
+        result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, size, alignment, config.config_ptr, &transaction);
 
         pas_heap_lock_unlock();
     } while (!pas_physical_memory_transaction_end(&transaction));
@@ -145,7 +139,6 @@ pas_try_allocate_common_impl_slow(
     pas_heap_ref_kind heap_ref_kind,
     size_t size, /* Must be = round_up(size, alignment) */
     size_t alignment,
-    pas_allocation_mode allocation_mode,
     pas_heap_config config,
     pas_heap_runtime_config* runtime_config,
     pas_allocator_counts* allocator_counts,
@@ -171,7 +164,7 @@ pas_try_allocate_common_impl_slow(
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config.kind))) {
         if (verbose)
             pas_log("System heap enabled, asking system heap.\n");
-        result = pas_system_heap_allocate(size, alignment, allocation_mode);
+        result = pas_system_heap_allocate(size, alignment, config.allow_mte_tagging);
         if (verbose)
             pas_log("Got result.ptr = %p, did_succeed = %d\n", (void*)result.begin, result.did_succeed);
         return result;
@@ -192,7 +185,7 @@ pas_try_allocate_common_impl_slow(
         break;
     }
 
-    result = pas_try_allocate_pgm(verbose, heap, size, alignment, allocation_mode, config);
+    result = pas_try_allocate_pgm(verbose, heap, size, alignment, config);
     if (PAS_UNLIKELY(result.did_succeed))
         return pas_msl_malloc_logging(size, result);
 
@@ -218,7 +211,7 @@ pas_try_allocate_common_impl_slow(
             pas_physical_memory_transaction_begin(&transaction);
             pas_heap_lock_lock();
 
-            result = pas_large_heap_try_allocate_user_allocation(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
+            result = pas_large_heap_try_allocate_user_allocation(&heap->large_heap, size, alignment, config.config_ptr, &transaction);
             
             if (result.did_succeed)
                 PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_large, size);
@@ -242,7 +235,6 @@ pas_try_allocate_common_impl_slow(
     result = pas_local_allocator_try_allocate(baseline_allocator_result.allocator,
                                               size,
                                               alignment,
-                                              allocation_mode,
                                               config,
                                               allocator_counts,
                                               pas_allocation_result_identity);
@@ -259,11 +251,10 @@ pas_try_allocate_common_impl(
     pas_heap_ref* heap_ref,
     size_t size,
     size_t alignment,
-    pas_allocation_mode allocation_mode,
     pas_heap_config config,
     pas_allocator_counts* allocator_counts,
     pas_allocation_result (*result_filter)(pas_allocation_result result),
-    pas_allocation_result (*slow)(pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode),
+    pas_allocation_result (*slow)(pas_heap_ref* heap_ref, size_t size, size_t alignment),
     pas_local_allocator_result allocator_result)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
@@ -276,59 +267,59 @@ pas_try_allocate_common_impl(
     if (PAS_LIKELY(pas_try_allocate_common_can_go_fast(allocator_result))) {
         return pas_try_allocate_common_impl_fast(
             config, allocator_counts, result_filter, (pas_local_allocator*)allocator_result.allocator,
-            size, alignment, allocation_mode);
+            size, alignment);
     }
 
-    return slow(heap_ref, size, alignment, allocation_mode);
+    return slow(heap_ref, size, alignment);
 }
 
 #define PAS_CREATE_TRY_ALLOCATE_COMMON(name, heap_ref_kind, heap_config, runtime_config, allocator_counts, size_lookup_mode, result_filter) \
     static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
-    name ## _fast_inline_only(pas_local_allocator* allocator, pas_allocation_mode allocation_mode) \
+    name ## _fast_inline_only(pas_local_allocator* allocator) \
     { \
         return pas_try_allocate_common_impl_fast_inline_only( \
-            (heap_config), (result_filter), allocator, allocation_mode); \
+            (heap_config), (result_filter), allocator); \
     } \
     \
     static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
-    name ## _fast(pas_local_allocator* allocator, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+    name ## _fast(pas_local_allocator* allocator, size_t size, size_t alignment) \
     { \
         return pas_try_allocate_common_impl_fast( \
             (heap_config), (allocator_counts), (result_filter), allocator, \
-            size, alignment, allocation_mode); \
+            size, alignment); \
     } \
     \
     static PAS_NEVER_INLINE pas_allocation_result \
-    name ## _slow(pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+    name ## _slow(pas_heap_ref* heap_ref, size_t size, size_t alignment) \
     { \
         return (result_filter)( \
             (heap_config).specialized_try_allocate_common_impl_slow( \
-                heap_ref, (heap_ref_kind), size, alignment, allocation_mode, (runtime_config), \
+                heap_ref, (heap_ref_kind), size, alignment, (runtime_config), \
                 (allocator_counts), (size_lookup_mode))); \
     } \
     \
     static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
-    name(pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode, \
+    name(pas_heap_ref* heap_ref, size_t size, size_t alignment, \
          pas_local_allocator_result allocator_result) \
     { \
         return pas_try_allocate_common_impl( \
-            heap_ref, size, alignment, allocation_mode, (heap_config), \
+            heap_ref, size, alignment, (heap_config), \
             (allocator_counts), (result_filter), name ## _slow, allocator_result); \
     } \
     \
     struct pas_dummy
 
 typedef pas_allocation_result (*pas_try_allocate_common_fast_inline_only)(
-    pas_local_allocator* allocator, pas_allocation_mode allocation_mode);
+    pas_local_allocator* allocator);
 
 typedef pas_allocation_result (*pas_try_allocate_common_fast)(
-    pas_local_allocator* allocator, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_local_allocator* allocator, size_t size, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_common_slow)(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_common)(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode,
+    pas_heap_ref* heap_ref, size_t size, size_t alignment,
     pas_local_allocator_result allocator_result);
 
 PAS_END_EXTERN_C;

@@ -46,6 +46,10 @@ struct pas_heap_runtime_config {
 
     bool statically_allocated : 1;
     bool is_part_of_heap : 1;
+
+    /* Set for heaps whose memory must come out of a client-supplied reservation, i.e. those created
+       by pas_ensure_heap_forced_into_reserved_memory (Gigacage). */
+    bool is_in_reserved_memory : 1;
     
     unsigned directory_size_bound_for_baseline_allocators;
     unsigned directory_size_bound_for_no_view_cache;

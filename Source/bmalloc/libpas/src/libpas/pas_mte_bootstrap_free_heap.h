@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pas_config.h"
+#ifndef PAS_MTE_BOOTSTRAP_FREE_HEAP_H
+#define PAS_MTE_BOOTSTRAP_FREE_HEAP_H
 
-#if LIBPAS_ENABLED
+#include "pas_allocation_config.h"
+#include "pas_allocation_kind.h"
+#include "pas_lock.h"
+#include "pas_simple_large_free_heap.h"
 
-#include "minalign32_heap_config.h"
+PAS_BEGIN_EXTERN_C;
 
-#if PAS_ENABLE_MINALIGN32
+#define PAS_SIMPLE_FREE_HEAP_NAME pas_mte_bootstrap_free_heap
+#define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_mte_bootstrap_free_heap ## suffix
+#include "pas_simple_free_heap_declarations.def"
+#undef PAS_SIMPLE_FREE_HEAP_NAME
+#undef PAS_SIMPLE_FREE_HEAP_ID
 
-#include "minalign32_heap.h"
-#include "pas_designated_intrinsic_heap.h"
-#include "pas_heap_config_utils_inlines.h"
+PAS_END_EXTERN_C;
 
-const pas_heap_config minalign32_heap_config = MINALIGN32_HEAP_CONFIG;
-
-PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
-    minalign32, MINALIGN32, false,
-    .allocate_page_should_zero = false,
-    .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
-
-void minalign32_heap_config_activate(void)
-{
-    pas_designated_intrinsic_heap_initialize(&minalign32_common_primitive_heap.segregated_heap,
-                                             &minalign32_heap_config);
-}
-
-#endif /* PAS_ENABLE_MINALIGN32 */
-
-#endif /* LIBPAS_ENABLED */
+#endif /* PAS_MTE_BOOTSTRAP_FREE_HEAP_H */

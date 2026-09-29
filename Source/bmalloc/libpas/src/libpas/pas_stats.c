@@ -42,7 +42,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "pas_allocation_mode.h"
 #include "pas_heap_lock.h"
 #include "pas_immortal_heap.h"
 #include "pas_utils.h"
@@ -511,15 +510,13 @@ char* pas_stats_malloc_info_dump_to_json(void* stat_v)
     return buf;
 }
 
-void pas_stats_page_alloc_counts_record(pas_stats_page_alloc_counts_data* data, size_t size, bool may_contain_small_or_medium, bool mapped_with_mte)
+void pas_stats_page_alloc_counts_record(pas_stats_page_alloc_counts_data* data, size_t size, bool mapped_with_mte)
 {
     PAS_TESTING_ASSERT(data);
 
     pas_atomic_fetch_add_uint64_relaxed(&data->total_bytes_mapped, size);
     if (mapped_with_mte)
         pas_atomic_fetch_add_uint64_relaxed(&data->bytes_mapped_mte_tagged, size);
-    if (may_contain_small_or_medium)
-        pas_atomic_fetch_add_uint64_relaxed(&data->bytes_mapped_may_contain_small_or_medium, size);
 }
 
 
@@ -530,8 +527,7 @@ char* pas_stats_page_alloc_counts_dump_to_json(void* stat_v)
      * ```
      * {
      *   "total_bytes_mapped": <NUM>,
-     *   "bytes_mapped_mte_tagged": <NUM>,
-     *   "bytes_mapped_may_contain_small_or_medium": <NUM>
+     *   "bytes_mapped_mte_tagged": <NUM>
      * }
      * ```
      */
@@ -540,19 +536,17 @@ char* pas_stats_page_alloc_counts_dump_to_json(void* stat_v)
 
     // 128 is a conservative overestimate of the identifier names + `":,` chars
     // 1024 is a conservative overestimate of `{"name": "page_alloc_counts"}`
-    size_t bufsize = 1024 + (128 + PAS_STATS_UINT64_MAX_STRING_LEN) * 3;
+    size_t bufsize = 1024 + (128 + PAS_STATS_UINT64_MAX_STRING_LEN) * 2;
     char* buf = pas_stats_ensure_print_buffer(&stat->base.buffer, bufsize);
 
     int n = snprintf(buf, bufsize,
         "{ \"name\": \"%s\", "
         "\"total_bytes_mapped\": %llu, "
-        "\"bytes_mapped_mte_tagged\": %llu, "
-        "\"bytes_mapped_may_contain_small_or_medium\": %llu "
+        "\"bytes_mapped_mte_tagged\": %llu "
         "}",
         stat->base.name,
         stat->total_bytes_mapped,
-        stat->bytes_mapped_mte_tagged,
-        stat->bytes_mapped_may_contain_small_or_medium);
+        stat->bytes_mapped_mte_tagged);
     PAS_ASSERT(n >= 0);
 
     return buf;

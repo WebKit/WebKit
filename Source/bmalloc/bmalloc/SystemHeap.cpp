@@ -260,6 +260,7 @@ bool pas_system_heap_is_enabled(pas_heap_config_kind kind)
 {
     switch (kind) {
     case pas_heap_config_kind_bmalloc:
+    case pas_heap_config_kind_tagged_bmalloc:
         return !!SystemHeap::tryGet();
     case pas_heap_config_kind_jit:
     case pas_heap_config_kind_pas_utility:
@@ -275,6 +276,7 @@ bool pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind kind)
     SystemHeap* heap;
     switch (kind) {
     case pas_heap_config_kind_bmalloc:
+    case pas_heap_config_kind_tagged_bmalloc:
         heap = SystemHeap::tryGet();
         if (!heap)
             return false;
@@ -291,48 +293,45 @@ bool pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind kind)
 void* pas_system_heap_malloc(size_t size)
 {
     auto systemHeap = SystemHeap::getExisting();
-    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, 0, pas_non_compact_allocation_mode);
-    PAS_MTE_HANDLE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, 0, pas_non_compact_allocation_mode);
+    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, 0);
     return systemHeap->malloc(size, FailureAction::ReturnNull);
 }
 
 void* pas_system_heap_memalign(size_t alignment, size_t size)
 {
     auto systemHeap = SystemHeap::getExisting();
-    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, alignment, pas_non_compact_allocation_mode);
-    PAS_MTE_HANDLE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, alignment, pas_non_compact_allocation_mode);
+    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, alignment);
     return systemHeap->memalign(alignment, size, FailureAction::ReturnNull);
 }
 
 void* pas_system_heap_realloc(void* ptr, size_t size)
 {
     auto systemHeap = SystemHeap::getExisting();
-    PAS_PROFILE(SYSTEM_HEAP_REALLOCATION, systemHeap, ptr, size, pas_non_compact_allocation_mode);
-    PAS_MTE_HANDLE(SYSTEM_HEAP_REALLOCATION, systemHeap, ptr, size, pas_non_compact_allocation_mode);
+    PAS_PROFILE(SYSTEM_HEAP_REALLOCATION, systemHeap, ptr, size);
     return systemHeap->realloc(ptr, size, FailureAction::ReturnNull);
 }
 
-void* pas_system_heap_malloc_compact(size_t size)
+void* pas_system_heap_malloc_untagged(size_t size)
 {
     auto systemHeap = SystemHeap::getExisting();
-    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, 0, pas_always_compact_allocation_mode);
-    PAS_MTE_HANDLE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, 0, pas_always_compact_allocation_mode);
+    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, 0);
+    PAS_MTE_HANDLE(SYSTEM_HEAP_CANONICAL_TAG_ALLOCATION, systemHeap, size, 0);
     return systemHeap->malloc(size, FailureAction::ReturnNull);
 }
 
-void* pas_system_heap_memalign_compact(size_t alignment, size_t size)
+void* pas_system_heap_memalign_untagged(size_t alignment, size_t size)
 {
     auto systemHeap = SystemHeap::getExisting();
-    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, alignment, pas_always_compact_allocation_mode);
-    PAS_MTE_HANDLE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, alignment, pas_always_compact_allocation_mode);
+    PAS_PROFILE(SYSTEM_HEAP_ALLOCATION, systemHeap, size, alignment);
+    PAS_MTE_HANDLE(SYSTEM_HEAP_CANONICAL_TAG_ALLOCATION, systemHeap, size, alignment);
     return systemHeap->memalign(alignment, size, FailureAction::ReturnNull);
 }
 
-void* pas_system_heap_realloc_compact(void* ptr, size_t size)
+void* pas_system_heap_realloc_untagged(void* ptr, size_t size)
 {
     auto systemHeap = SystemHeap::getExisting();
-    PAS_PROFILE(SYSTEM_HEAP_REALLOCATION, systemHeap, ptr, size, pas_always_compact_allocation_mode);
-    PAS_MTE_HANDLE(SYSTEM_HEAP_REALLOCATION, systemHeap, ptr, size, pas_always_compact_allocation_mode);
+    PAS_PROFILE(SYSTEM_HEAP_REALLOCATION, systemHeap, ptr, size);
+    PAS_MTE_HANDLE(SYSTEM_HEAP_CANONICAL_TAG_REALLOCATION, systemHeap, ptr, size);
     return systemHeap->realloc(ptr, size, FailureAction::ReturnNull);
 }
 
@@ -378,14 +377,14 @@ void* pas_system_heap_realloc(void* ptr, size_t size)
     return nullptr;
 }
 
-void* pas_system_heap_malloc_compact(size_t size)
+void* pas_system_heap_malloc_untagged(size_t size)
 {
     BUNUSED_PARAM(size);
     RELEASE_BASSERT_NOT_REACHED();
     return nullptr;
 }
 
-void* pas_system_heap_memalign_compact(size_t alignment, size_t size)
+void* pas_system_heap_memalign_untagged(size_t alignment, size_t size)
 {
     BUNUSED_PARAM(size);
     BUNUSED_PARAM(alignment);
@@ -393,7 +392,7 @@ void* pas_system_heap_memalign_compact(size_t alignment, size_t size)
     return nullptr;
 }
 
-void* pas_system_heap_realloc_compact(void* ptr, size_t size)
+void* pas_system_heap_realloc_untagged(void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
     BUNUSED_PARAM(size);

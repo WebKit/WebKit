@@ -53,6 +53,9 @@ pas_heap* pas_ensure_heap_with_page_caches(
 
     runtime_config->base = *template_runtime_config;
     runtime_config->page_caches = page_caches;
+    /* This is only reached via pas_ensure_heap_forced_into_reserved_memory, so the page caches we
+       were just handed are backed by a client-supplied reservation. */
+    runtime_config->base.is_in_reserved_memory = true;
 
     PAS_ASSERT(!heap_ref->heap);
     PAS_ASSERT(!heap_ref->allocator_index);

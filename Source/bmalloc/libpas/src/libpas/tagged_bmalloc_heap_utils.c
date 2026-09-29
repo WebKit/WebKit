@@ -33,9 +33,14 @@
 
 #include "tagged_bmalloc_heap_config.h"
 #include "tagged_bmalloc_heap_innards.h"
+#include "bmalloc_heap_config.h"
 #include "pas_ensure_heap_forced_into_reserved_memory.h"
 #include "pas_get_allocation_size.h"
 #include "pas_get_heap.h"
+#include "pas_get_page_base.h"
+#include "pas_heap_lock.h"
+#include "pas_large_map.h"
+#include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_try_allocate_intrinsic.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -68,6 +73,42 @@ size_t tagged_bmalloc_get_allocation_size(void* ptr)
 pas_heap* tagged_bmalloc_get_heap(void* ptr)
 {
     return pas_get_heap(ptr, TAGGED_BMALLOC_HEAP_CONFIG);
+}
+
+bool tagged_bmalloc_owns_object(void* ptr)
+{
+    pas_large_map_entry entry;
+    uintptr_t begin;
+    bool result;
+
+    if (!ptr)
+        return false;
+
+    /* Segregated and bitfit objects resolve out of the per-config megapage table and page
+       header tables, both of which are lock-free. This is the common case. */
+    if (pas_get_page_base(ptr, TAGGED_BMALLOC_HEAP_CONFIG))
+        return true;
+    if (pas_get_page_base(ptr, BMALLOC_HEAP_CONFIG))
+        return false;
+
+    /* Otherwise it is a large object, or not ours at all. Unlike the page tables, the large
+       map is global, so it is the only thing that can tell the two configs apart here -- and
+       reading it means taking the heap lock. */
+    begin = (uintptr_t)ptr;
+
+    pas_heap_lock_lock();
+
+    if (pas_probabilistic_guard_malloc_check_exists(begin))
+        entry = pas_probabilistic_guard_malloc_return_as_large_map_entry(begin);
+    else
+        entry = pas_large_map_find(begin);
+
+    result = !pas_large_map_entry_is_empty(entry)
+        && pas_heap_for_large_heap(entry.heap)->config_kind == pas_heap_config_kind_tagged_bmalloc;
+
+    pas_heap_lock_unlock();
+
+    return result;
 }
 
 PAS_END_EXTERN_C;

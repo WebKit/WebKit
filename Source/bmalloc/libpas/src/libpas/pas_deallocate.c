@@ -29,7 +29,12 @@
 
 #include "pas_deallocate.h"
 
+#include "pas_heap.h"
+#include "pas_heap_config_kind.h"
+#include "pas_large_map.h"
 #include "pas_malloc_stack_logging.h"
+#include "pas_mte.h"
+#include "pas_page_base.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_page_inlines.h"
@@ -43,9 +48,9 @@ bool pas_try_deallocate_known_large(void* ptr,
 
     begin = (uintptr_t)ptr;
     PAS_PROFILE(TRY_DEALLOCATE_KNOWN_LARGE, config, begin);
-    
+
     pas_heap_lock_lock();
-    
+
     if (!pas_large_heap_try_deallocate(begin, config)) {
         switch (deallocation_mode) {
         case pas_try_deallocate_mode:
@@ -58,9 +63,14 @@ bool pas_try_deallocate_known_large(void* ptr,
         }
         PAS_ASSERT_NOT_REACHED();
     }
-    
+
     pas_heap_lock_unlock();
-    
+
+    /* Only log once the large heap has confirmed the object was ours and freed it. Callers
+       that dispatch across heap configs reach us speculatively, so logging any earlier
+       would record frees we decline to perform. */
+    pas_msl_free_logging(ptr);
+
     pas_scavenger_notify_eligibility_if_needed();
     return true;
 }
@@ -130,29 +140,34 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config_ptr->kind))) {
         if (verbose)
             pas_log("Deallocating %p with system heap.\n", ptr);
-        PAS_ASSERT(deallocation_mode == pas_deallocate_mode);
+        // The system heap does not provide a try_free API, because not all platform mallocs
+        // provide one. Cleanly failing here is better than potentially crashing inside ::free
+        if (deallocation_mode != pas_deallocate_mode)
+            return false;
         pas_system_heap_free(ptr);
         return true;
     }
-    pas_msl_free_logging(ptr);
 
     if (verbose)
         pas_log("Deallocating %p normally.\n", ptr);
-    
+
     if (pas_thread_local_cache_can_set()) {
         /* Make sure that future calls to this get a TLC. But the body of this slow path also needs to
            handle the cases where we cannot get a TLC, like if the thread is exiting. */
         pas_thread_local_cache_get(config_ptr);
     }
-    
+
     begin = (uintptr_t)ptr;
 
     /* Try to deallocate a PGM allocation based on config and checking PGM entry */
-    if (pas_try_deallocate_pgm_large(ptr, config_ptr))
+    if (pas_try_deallocate_pgm_large(ptr, config_ptr)) {
+        pas_msl_free_logging(ptr);
         return true;
+    }
 
     switch (config_ptr->fast_megapage_kind_func(begin)) {
     case pas_small_exclusive_segregated_fast_megapage_kind: {
+        pas_msl_free_logging(ptr);
         deallocate_segregated(begin, &config_ptr->small_segregated_config);
         return true;
     }
@@ -162,6 +177,7 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
         page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, *config_ptr);
         switch (page_and_kind.page_kind) {
         case pas_small_bitfit_page_kind:
+            pas_msl_free_logging(ptr);
             config_ptr->small_bitfit_config.specialized_page_deallocate_with_page(
                 pas_page_base_get_bitfit(page_and_kind.page_base),
                 begin);
@@ -174,40 +190,40 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
 
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
-            
-        page_base = config_ptr->page_header_func(begin);
-        if (page_base) {
-            switch (pas_page_base_get_kind(page_base)) {
-            case pas_small_exclusive_segregated_page_kind:
-                PAS_ASSERT(!config_ptr->small_segregated_is_in_megapage);
-                deallocate_segregated(begin, &config_ptr->small_segregated_config);
-                return true;
-            case pas_small_bitfit_page_kind:
-                PAS_ASSERT(!config_ptr->small_bitfit_is_in_megapage);
-                config_ptr->small_bitfit_config.specialized_page_deallocate_with_page(
-                    pas_page_base_get_bitfit(page_base),
-                    begin);
-                return true;
-            case pas_medium_exclusive_segregated_page_kind:
-                deallocate_segregated(begin, &config_ptr->medium_segregated_config);
-                return true;
-            case pas_medium_bitfit_page_kind:
-                config_ptr->medium_bitfit_config.specialized_page_deallocate_with_page(
-                    pas_page_base_get_bitfit(page_base),
-                    begin);
-                return true;
-            case pas_marge_bitfit_page_kind:
-                config_ptr->marge_bitfit_config.specialized_page_deallocate_with_page(
-                    pas_page_base_get_bitfit(page_base),
-                    begin);
-                return true;
-            default:
-                PAS_ASSERT(!"Wrong page kind");
-                return false;
-            }
-        }
 
-        return pas_try_deallocate_slow(begin, config_ptr, deallocation_mode);
+        page_base = config_ptr->page_header_func(begin);
+        if (!page_base)
+            return pas_try_deallocate_slow(begin, config_ptr, deallocation_mode);
+
+        pas_msl_free_logging(ptr);
+        switch (pas_page_base_get_kind(page_base)) {
+        case pas_small_exclusive_segregated_page_kind:
+            PAS_ASSERT(!config_ptr->small_segregated_is_in_megapage);
+            deallocate_segregated(begin, &config_ptr->small_segregated_config);
+            return true;
+        case pas_small_bitfit_page_kind:
+            PAS_ASSERT(!config_ptr->small_bitfit_is_in_megapage);
+            config_ptr->small_bitfit_config.specialized_page_deallocate_with_page(
+                pas_page_base_get_bitfit(page_base),
+                begin);
+            return true;
+        case pas_medium_exclusive_segregated_page_kind:
+            deallocate_segregated(begin, &config_ptr->medium_segregated_config);
+            return true;
+        case pas_medium_bitfit_page_kind:
+            config_ptr->medium_bitfit_config.specialized_page_deallocate_with_page(
+                pas_page_base_get_bitfit(page_base),
+                begin);
+            return true;
+        case pas_marge_bitfit_page_kind:
+            config_ptr->marge_bitfit_config.specialized_page_deallocate_with_page(
+                pas_page_base_get_bitfit(page_base),
+                begin);
+            return true;
+        default:
+            PAS_ASSERT(!"Wrong page kind");
+            return false;
+        }
     } }
 
     PAS_ASSERT_NOT_REACHED();

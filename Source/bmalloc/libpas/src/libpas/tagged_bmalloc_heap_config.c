@@ -31,6 +31,7 @@
 
 #if PAS_ENABLE_BMALLOC
 
+#include "bmalloc_heap_config.h"
 #include "tagged_bmalloc_heap_innards.h"
 #include "pas_designated_intrinsic_heap.h"
 #include "pas_heap_config_utils_inlines.h"
@@ -40,8 +41,10 @@ PAS_BEGIN_EXTERN_C;
 
 const pas_heap_config tagged_bmalloc_heap_config = TAGGED_BMALLOC_HEAP_CONFIG;
 
+extern const pas_heap_config bmalloc_heap_config;
+
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
-    tagged_bmalloc, TAGGED_BMALLOC,
+    tagged_bmalloc, TAGGED_BMALLOC, true,
     .allocate_page_should_zero = false,
     .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
 
@@ -50,6 +53,11 @@ void tagged_bmalloc_heap_config_activate(void)
 #if PAS_OS(DARWIN)
     static const bool register_with_libmalloc = true;
 #endif
+
+    // Make sure that the bmalloc heap config initializes before we do anything else, since that
+    // one will want to be designated.
+    // FIXME: it's annoying that we need to do this in every heap-config other than bmalloc.
+    pas_heap_config_activate(&bmalloc_heap_config);
     
     // FIXME: Find a way to install our heap as the designated intrinsic heap instead of, or alongside,
     // the regular bmalloc heap's intrinsic heap. For now leave bmalloc's hot path undisturbed.

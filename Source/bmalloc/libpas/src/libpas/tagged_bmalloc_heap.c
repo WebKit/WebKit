@@ -37,15 +37,23 @@ PAS_BEGIN_EXTERN_C;
 
 PAS_NEVER_INLINE void* tagged_bmalloc_try_allocate_casual(size_t size)
 {
-    return (void*)tagged_bmalloc_try_allocate_impl_casual_case(size, 1, pas_non_compact_allocation_mode).begin;
+    return (void*)tagged_bmalloc_try_allocate_impl_casual_case(size, 1).begin;
 }
 
 PAS_NEVER_INLINE void* tagged_bmalloc_allocate_casual(size_t size)
 {
-    return (void*)tagged_bmalloc_allocate_impl_casual_case(size, 1, pas_non_compact_allocation_mode).begin;
+    return (void*)tagged_bmalloc_allocate_impl_casual_case(size, 1).begin;
 }
 
-#if !(defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN)
+PAS_NEVER_INLINE bool tagged_bmalloc_try_deallocate_casual(void* ptr)
+{
+    return pas_try_deallocate_casual_case(ptr, TAGGED_BMALLOC_HEAP_CONFIG, pas_try_deallocate_mode);
+}
+
+PAS_NEVER_INLINE void tagged_bmalloc_deallocate_casual(void* ptr)
+{
+    pas_deallocate_casual_case(ptr, TAGGED_BMALLOC_HEAP_CONFIG);
+}
 
 void* tagged_bmalloc_try_allocate(size_t size)
 {
@@ -103,8 +111,6 @@ void tagged_bmalloc_deallocate(void* ptr)
 {
     tagged_bmalloc_deallocate_inline(ptr);
 }
-
-#endif /* !PAS_BMALLOC_HIDDEN */
 
 PAS_END_EXTERN_C;
 

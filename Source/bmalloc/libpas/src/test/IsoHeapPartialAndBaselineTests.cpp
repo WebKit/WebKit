@@ -157,7 +157,7 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
     pas_mock_fast_random = random;
 
     for (size_t index = 0; index < count; ++index) {
-        void *allocated_addr1 = iso_allocate(&heap1, pas_non_compact_allocation_mode);
+        void *allocated_addr1 = iso_allocate(&heap1);
         if (pas_check_pgm_entry_exists(allocated_addr1)) {
             // PGM entry so only push as PGM allocation
             objects_pgm.push_back(allocated_addr1);
@@ -167,7 +167,7 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
             objects_heap1.push_back(allocated_addr1);
             non_pgm++;
         }
-        void * allocated_addr2 = iso_allocate(&heap2, pas_non_compact_allocation_mode);
+        void * allocated_addr2 = iso_allocate(&heap2);
         if (pas_check_pgm_entry_exists(allocated_addr2)) {
             // PGM entry so only push as PGM allocation
             objects_pgm.push_back(allocated_addr2);
@@ -193,14 +193,14 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
     scavenge();
 
     for (size_t index = 0, id1 = 0, id2 = 0; index < count; ++index) {
-        void *allocated_addr1 = iso_allocate(&heap1, pas_non_compact_allocation_mode);
+        void *allocated_addr1 = iso_allocate(&heap1);
         if (pas_check_pgm_entry_exists(allocated_addr1)) {
             // If PGM allocation skip the check
             continue;
         }
         CHECK_EQUAL(allocated_addr1, objects_heap1[id1]);
         id1++;
-        void * allocated_addr2 = iso_allocate(&heap2, pas_non_compact_allocation_mode);
+        void * allocated_addr2 = iso_allocate(&heap2);
         if (pas_check_pgm_entry_exists(allocated_addr2)) {
             // If PGM allocation skip the check
             continue;

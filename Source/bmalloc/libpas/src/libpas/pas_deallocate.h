@@ -102,42 +102,48 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small_exclusive_segregated(
         pas_system_heap_free((void*)begin);
         return true;
     }
-    pas_msl_free_logging((void*)begin);
 
     page_base = config.page_header_func(begin);
-    if (page_base) {
-        switch (pas_page_base_get_kind(page_base)) {
-        case pas_small_exclusive_segregated_page_kind:
-            PAS_ASSERT(!config.small_segregated_is_in_megapage);
-            pas_segregated_page_log_or_deallocate(
-                begin, thread_local_cache, config.small_segregated_config);
-            return true;
-        case pas_small_bitfit_page_kind:
-            PAS_ASSERT(!config.small_bitfit_is_in_megapage);
-            config.small_bitfit_config.specialized_page_deallocate_with_page(
-                pas_page_base_get_bitfit(page_base),
-                begin);
-            return true;
-        case pas_medium_exclusive_segregated_page_kind:
-            pas_segregated_page_log_or_deallocate(
-                begin, thread_local_cache, config.medium_segregated_config);
-            return true;
-        case pas_medium_bitfit_page_kind:
-            config.medium_bitfit_config.specialized_page_deallocate_with_page(
-                pas_page_base_get_bitfit(page_base),
-                begin);
-            return true;
-        case pas_marge_bitfit_page_kind:
-            config.marge_bitfit_config.specialized_page_deallocate_with_page(
-                pas_page_base_get_bitfit(page_base),
-                begin);
-            return true;
-        }
-        PAS_ASSERT(!"Wrong page kind");
-        return false;
+    if (!page_base) {
+        /* Either is one of our large objects, or it isn't ours at all.
+           The large heap will decide which and logs as appropriate. */
+        return pas_try_deallocate_slow(begin, config.config_ptr, deallocation_mode);
     }
-    
-    return pas_try_deallocate_slow(begin, config.config_ptr, deallocation_mode);
+
+    /* Now that we know that the page belongs to this config's page-header
+       table, we know that we will successfully free it (or crash), so
+       it's safe to log to msl. */
+    pas_msl_free_logging((void*)begin);
+
+    switch (pas_page_base_get_kind(page_base)) {
+    case pas_small_exclusive_segregated_page_kind:
+        PAS_ASSERT(!config.small_segregated_is_in_megapage);
+        pas_segregated_page_log_or_deallocate(
+            begin, thread_local_cache, config.small_segregated_config);
+        return true;
+    case pas_small_bitfit_page_kind:
+        PAS_ASSERT(!config.small_bitfit_is_in_megapage);
+        config.small_bitfit_config.specialized_page_deallocate_with_page(
+            pas_page_base_get_bitfit(page_base),
+            begin);
+        return true;
+    case pas_medium_exclusive_segregated_page_kind:
+        pas_segregated_page_log_or_deallocate(
+            begin, thread_local_cache, config.medium_segregated_config);
+        return true;
+    case pas_medium_bitfit_page_kind:
+        config.medium_bitfit_config.specialized_page_deallocate_with_page(
+            pas_page_base_get_bitfit(page_base),
+            begin);
+        return true;
+    case pas_marge_bitfit_page_kind:
+        config.marge_bitfit_config.specialized_page_deallocate_with_page(
+            pas_page_base_get_bitfit(page_base),
+            begin);
+        return true;
+    }
+    PAS_ASSERT(!"Wrong page kind");
+    return false;
 }
 
 /* The deallocation fast path is split into an inline-only entry and a casual (slow)
@@ -204,6 +210,18 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_casual_case(void* ptr,
         return pas_try_deallocate_slow_no_cache((void*)begin, config.config_ptr, deallocation_mode);
 
     megapage_kind = config.fast_megapage_kind_func(begin);
+    /* Generally, if this is true then we would have expected it to be caught
+       in a preceding call to pas_try_deallocate_inline_only.
+       However, if the consumer did not call it, or another function-call from
+       this thread (e.g. another config's casual_case) has modified TLC state
+       since the consumer called it, then it's possible that we actually can
+       go down the happy-happy path after all. */
+    if (PAS_UNLIKELY(megapage_kind == pas_small_exclusive_segregated_fast_megapage_kind)) {
+        pas_segregated_page_log_or_deallocate(
+            begin, thread_local_cache, config.small_segregated_config);
+        return true;
+    }
+
     return config.specialized_try_deallocate_not_small_exclusive_segregated(
         thread_local_cache, begin, deallocation_mode, megapage_kind);
 }

@@ -36,7 +36,7 @@
 const pas_heap_config thingy_heap_config = THINGY_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
-    thingy, THINGY,
+    thingy, THINGY, false,
     .allocate_page_should_zero = true,
     .intrinsic_view_cache_capacity = pas_heap_runtime_config_zero_view_cache_capacity);
 

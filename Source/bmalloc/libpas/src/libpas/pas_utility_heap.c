@@ -119,7 +119,6 @@ void* pas_utility_heap_try_allocate_with_alignment(
         allocator,
         aligned_size,
         alignment,
-        pas_always_compact_allocation_mode,
         PAS_UTILITY_HEAP_CONFIG,
         &pas_utility_allocator_counts,
         pas_allocation_result_identity).begin;

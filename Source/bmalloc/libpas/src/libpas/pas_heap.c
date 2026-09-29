@@ -72,12 +72,10 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
     heap->type = heap_ref->type;
     pas_segregated_heap_construct(
         &heap->segregated_heap, heap, config, runtime_config);
-    pas_large_heap_construct(&heap->megapage_large_heap, config->large_map_variant, true);
-    pas_large_heap_construct(&heap->large_heap, config->large_map_variant, false);
+    pas_large_heap_construct(&heap->large_heap, config->large_map_variant);
     heap->heap_ref = heap_ref;
     heap->heap_ref_kind = heap_ref_kind;
     heap->config_kind = config->kind;
-    heap->is_non_compact_heap = heap_ref->is_non_compact_heap;
 
     // PGM being enabled in the config does not guarantee it will be called during runtime.
     if (config->pgm_enabled)

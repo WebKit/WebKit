@@ -36,59 +36,59 @@
 PAS_BEGIN_EXTERN_C;
 
 void* bmalloc_try_allocate_flex_with_alignment_casual(
-    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment)
 {
-    return (void*)bmalloc_try_allocate_flex_impl_casual_case(heap_ref, size, alignment, allocation_mode).begin;
+    return (void*)bmalloc_try_allocate_flex_impl_casual_case(heap_ref, size, alignment).begin;
 }
 
 void* bmalloc_allocate_flex_with_alignment_casual(
-    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment)
 {
-    return (void*)bmalloc_allocate_flex_impl_casual_case(heap_ref, size, alignment, allocation_mode).begin;
+    return (void*)bmalloc_allocate_flex_impl_casual_case(heap_ref, size, alignment).begin;
 }
 
 #if !(defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN)
 
-void* bmalloc_try_allocate_flex(pas_primitive_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+void* bmalloc_try_allocate_flex(pas_primitive_heap_ref* heap_ref, size_t size)
 {
-    return bmalloc_try_allocate_flex_inline(heap_ref, size, allocation_mode);
+    return bmalloc_try_allocate_flex_inline(heap_ref, size);
 }
 
-void* bmalloc_allocate_flex(pas_primitive_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+void* bmalloc_allocate_flex(pas_primitive_heap_ref* heap_ref, size_t size)
 {
-    return bmalloc_allocate_flex_inline(heap_ref, size, allocation_mode);
+    return bmalloc_allocate_flex_inline(heap_ref, size);
 }
 
-void* bmalloc_try_allocate_zeroed_flex(pas_primitive_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+void* bmalloc_try_allocate_zeroed_flex(pas_primitive_heap_ref* heap_ref, size_t size)
 {
-    return bmalloc_try_allocate_zeroed_flex_inline(heap_ref, size, allocation_mode);
+    return bmalloc_try_allocate_zeroed_flex_inline(heap_ref, size);
 }
 
-void* bmalloc_allocate_zeroed_flex(pas_primitive_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+void* bmalloc_allocate_zeroed_flex(pas_primitive_heap_ref* heap_ref, size_t size)
 {
-    return bmalloc_allocate_zeroed_flex_inline(heap_ref, size, allocation_mode);
+    return bmalloc_allocate_zeroed_flex_inline(heap_ref, size);
 }
 
 void* bmalloc_try_allocate_flex_with_alignment(
-    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment)
 {
-    return bmalloc_try_allocate_flex_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
+    return bmalloc_try_allocate_flex_with_alignment_inline(heap_ref, size, alignment);
 }
 
 void* bmalloc_allocate_flex_with_alignment(
-    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment)
 {
-    return bmalloc_allocate_flex_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
+    return bmalloc_allocate_flex_with_alignment_inline(heap_ref, size, alignment);
 }
 
-void* bmalloc_try_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, size_t new_size, pas_allocation_mode allocation_mode)
+void* bmalloc_try_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, size_t new_size)
 {
-    return bmalloc_try_reallocate_flex_inline(heap_ref, old_ptr, new_size, allocation_mode);
+    return bmalloc_try_reallocate_flex_inline(heap_ref, old_ptr, new_size);
 }
 
-void* bmalloc_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, size_t new_size, pas_allocation_mode allocation_mode)
+void* bmalloc_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, size_t new_size)
 {
-    return bmalloc_reallocate_flex_inline(heap_ref, old_ptr, new_size, allocation_mode);
+    return bmalloc_reallocate_flex_inline(heap_ref, old_ptr, new_size);
 }
 
 pas_heap* bmalloc_flex_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref)

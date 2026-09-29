@@ -58,7 +58,7 @@ void testSizeProgression(size_t startSize,
             cout << "Allocating " << size << "\n";
         
         for (size_t i = countForSize; i--;) {
-            void* object = iso_try_allocate_primitive(&heapRef, size, pas_non_compact_allocation_mode);
+            void* object = iso_try_allocate_primitive(&heapRef, size);
             
             if (shouldSucceed)
                 CHECK(object);

@@ -38,7 +38,7 @@
 const pas_heap_config hotbit_heap_config = HOTBIT_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
-    hotbit, HOTBIT,
+    hotbit, HOTBIT, false,
     .allocate_page_should_zero = false,
     .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
 

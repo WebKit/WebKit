@@ -324,6 +324,7 @@ typedef struct {
         PAS_HEAP_CONFIG_SPECIALIZATIONS(name ## _heap_config), \
         .pgm_enabled = true, \
         .delegate_large_user_allocations = ((pas_basic_heap_config_arguments){__VA_ARGS__}).delegate_large_user_allocations, \
+        .allow_mte_tagging = ((pas_basic_heap_config_arguments){__VA_ARGS__}).allow_mte_tagging, \
         .large_map_variant = ((pas_basic_heap_config_arguments){__VA_ARGS__}).large_map_variant \
     })
 

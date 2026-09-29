@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Apple Inc. All rights reserved.
+ * Copyright (c) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAS_SMALL_MEDIUM_BOOTSTRAP_HEAP_PAGE_PROVIDER_H
-#define PAS_SMALL_MEDIUM_BOOTSTRAP_HEAP_PAGE_PROVIDER_H
+#include "pas_config.h"
 
-#include "pas_heap_page_provider.h"
+#if LIBPAS_ENABLED
 
-PAS_BEGIN_EXTERN_C;
+#include "pas_mte_bootstrap_heap_page_provider.h"
 
-PAS_API pas_allocation_result pas_small_medium_bootstrap_heap_page_provider(
+#include "pas_mte_bootstrap_free_heap.h"
+
+pas_allocation_result pas_mte_bootstrap_heap_page_provider(
     size_t size,
     pas_alignment alignment,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,
-    void *arg);
+    void *arg)
+{
+    PAS_UNUSED_PARAM(arg);
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
 
-PAS_END_EXTERN_C;
+    if (verbose)
+        pas_log("small/medium bootstrap heap page-provider allocating %zu for %s\n", size, name);
 
-#endif /* PAS_SMALL_MEDIUM_BOOTSTRAP_HEAP_PAGE_PROVIDER_H */
+    PAS_PROFILE(MTE_BOOTSTRAP_ALLOCATION, heap, size, alignment, name, arg);
 
+    pas_allocation_result retval = pas_mte_bootstrap_free_heap_try_allocate_with_alignment(
+        size, alignment, name, pas_delegate_allocation);
+
+    if (verbose)
+        pas_log("small/medium bootstrap heap page-provider done allocating\n");
+
+    return retval;
+}
+
+#endif /* LIBPAS_ENABLED */
