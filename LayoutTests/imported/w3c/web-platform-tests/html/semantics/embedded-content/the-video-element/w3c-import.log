@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/WEB_FEATURES.yml
@@ -22,12 +20,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-autoplay-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-autoplay-when-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-below-viewport-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-disconnected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-in-scroller.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-in-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-load-when-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-not-rendered.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-poster-when-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-resume-on-loading-attribute-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-source-poster-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-to-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-window-onload.html
