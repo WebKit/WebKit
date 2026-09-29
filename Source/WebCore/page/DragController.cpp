@@ -1444,6 +1444,8 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
         } else {
             // We can position the preview using the bounds of the drag source element.
             item.dragPreviewFrameInRootViewCoordinates = element->boundsInRootViewSpace();
+            if (RefPtr localRootView = frame.rootFrame().view())
+                item.dragPreviewFrameInRootViewCoordinates = localRootView->convertToRootViewAcrossIsolatedFrames(item.dragPreviewFrameInRootViewCoordinates);
         }
 
         if (RefPtr link = containingLinkElement(*element)) {
