@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; padding: 0; height: 2000px;">
+<!-- Same site as this document, so this frame is local to the middle frame's process, while the
+     middle frame itself is remote to the main frame. That gives a single isolation boundary with
+     two frames below it, which is what makes the chained conversion double-count this frame's
+     scroll position. -->
+<iframe id="inner" style="position: absolute; left: 30px; top: 260px; width: 300px; height: 200px; border: none;" src="http://localhost:8000/site-isolation/accessibility/resources/scrolled-frame-with-text.html"></iframe>
+<script>
+window.scrollTo(0, 60);
+</script>
+</body>
+</html>

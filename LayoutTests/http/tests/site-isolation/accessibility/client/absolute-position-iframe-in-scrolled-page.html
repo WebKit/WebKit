@@ -1,0 +1,68 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+body { margin: 0; padding: 0; height: 2000px; }
+#frame {
+    position: absolute;
+    left: 100px;
+    top: 500px;
+    width: 400px;
+    height: 300px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/frame-with-text.html"></iframe>
+
+<script>
+var output = "Validates the absolute (screen) position of text inside an iframe in a scrolled page with site isolation.\n\n";
+
+var webArea, container, scrollY, textX, textY;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        window.scrollTo(0, 400);
+        scrollY = window.scrollY;
+
+        await waitFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            return webArea;
+        })
+
+        // Positions are measured against the page origin, which is the main frame's document
+        // origin, so the expected values below don't depend on how far the page is scrolled. What
+        // this test catches is the main frame's scroll being accounted for in the iframe's cached
+        // screen position but not in the page's own, or vice versa.
+        await waitFor(() => {
+            var pageOrigin = { x: webArea.x, y: webArea.y };
+            container = accessibilityController.accessibleElementById("container");
+            if (!container || !container.childAtIndex(0))
+                return false;
+
+            var textNode = container.childAtIndex(0);
+            textX = textNode.x - pageOrigin.x;
+            textY = textNode.y - pageOrigin.y;
+
+            // The text is at (20, 30) inside the iframe, and the iframe is at (100, 500).
+            return textX === 120 && textY === 530;
+        });
+
+        output += expect("scrollY", "400");
+        output += expect("textX", "120");
+        output += expect("textY", "530");
+
+        debug(output);
+        document.getElementById("frame").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

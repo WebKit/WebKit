@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; padding: 0; height: 2000px;">
+<p id="container" style="position: absolute; left: 20px; top: 230px; margin: 0;">Hello from iframe</p>
+<script>
+// Scroll far enough that the text would be reported 200px too low if the frame's own scroll
+// position was not baked into the screen position the UI process computes for this frame.
+window.scrollTo(0, 200);
+</script>
+</body>
+</html>
