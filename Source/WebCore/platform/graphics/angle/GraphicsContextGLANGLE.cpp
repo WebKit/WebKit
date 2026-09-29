@@ -3139,6 +3139,13 @@ void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
         addError(GCGLErrorCode::InvalidOperation);
 }
 
+void GraphicsContextGLANGLE::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_DiscardFramebufferEXT(target, attachments.size(), attachments.data());
+}
 #endif
 
 void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)

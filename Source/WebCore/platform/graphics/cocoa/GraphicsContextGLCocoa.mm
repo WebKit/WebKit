@@ -704,13 +704,6 @@ void GraphicsContextGLCocoa::disableFoveation()
 }
 
 #if ENABLE(WEBXR)
-void GraphicsContextGLCocoa::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
-{
-    if (!makeContextCurrent())
-        return;
-    GL_DiscardFramebufferEXT(target, attachments.size(), attachments.data());
-}
-
 void GraphicsContextGLCocoa::framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject renderbuffer)
 {
     if (!makeContextCurrent())
