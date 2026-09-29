@@ -428,7 +428,7 @@ static bool shouldSnapshotWebGPUAction(RecordingSwizzleType receiverSwizzleType,
         return name == "submit"_s
             || name == "writeTexture"_s
             || name == "copyExternalImageToTexture"_s
-            || name == "copyElementImageToTexture"_s;
+            || name == "drawElementImageToTexture"_s;
     }
     return false;
 }

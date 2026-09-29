@@ -137,8 +137,8 @@ enum class RecordingSwizzleType : int {
     GPURenderPipelineDescriptor = 103,
     GPUComputePassDescriptor = 104,
     GPUComputePipelineDescriptor = 105,
-    GPUCopyElementImageDestination = 106,
-    GPUCopyElementImageSource = 107,
+    GPUDrawElementImageDestination = 106,
+    GPUDrawElementImageSource = 107,
     GPUExternalTextureDescriptor = 108,
     GPUImageCopyBuffer = 109,
     GPUImageCopyExternalImage = 110,
@@ -147,6 +147,7 @@ enum class RecordingSwizzleType : int {
     GPUPipelineLayoutDescriptor = 113,
     GPURenderPassDescriptor = 114,
     GPUShaderModuleDescriptor = 115,
+    UpdateElementGeometryOptions = 116,
 };
 
 } // namespace WebCore

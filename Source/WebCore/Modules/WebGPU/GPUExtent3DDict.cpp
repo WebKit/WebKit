@@ -39,4 +39,19 @@ Ref<JSON::Object> GPUExtent3DDict::toJSON() const
     return json;
 }
 
+Ref<JSON::Value> toJSON(const GPUExtent3D& extent)
+{
+    return WTF::switchOn(extent,
+        [](const Vector<GPUIntegerCoordinate>& extent) -> Ref<JSON::Value> {
+            auto array = JSON::ArrayOf<double>::create();
+            for (auto coordinate : extent)
+                array->addItem(coordinate);
+            return array;
+        },
+        [](const GPUExtent3DDict& extent) -> Ref<JSON::Value> {
+            return extent.toJSON();
+        }
+    );
+}
+
 } // namespace WebCore

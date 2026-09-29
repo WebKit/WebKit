@@ -512,7 +512,7 @@ typedef (Element or CanvasElementImage) CanvasElementImageSource;
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, TexImageSource source);
 
-    [EnabledBySetting=HTMLInCanvasEnabled] undefined texElementImage2D(GLenum target, GLenum internalformat, CanvasElementImageSource source, optional WebGLCopyElementImageConfig options = {});
+    [EnabledBySetting=HTMLInCanvasEnabled] undefined texElementSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, CanvasElementImageSource source, optional WebGLCopyElementImageConfig options = {});
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView data);
     undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView data);

@@ -1575,6 +1575,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/CachedHTMLCollection.h
     html/CachedHTMLCollectionInlines.h
     html/CanvasBase.h
+    html/CanvasContent.h
     html/CanvasNoiseInjection.h
     html/CaptionDisplaySettingsClient.h
     html/CaptionDisplaySettingsOptions.h

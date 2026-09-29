@@ -881,7 +881,7 @@ WI.RecordingAction._objectReferenceCollectors = {
                 collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
             },
         ],
-        "copyElementImageToTexture": [
+        "drawElementImageToTexture": [
             function(value, collect) {
                 collect(value?.source, [WI.Recording.Swizzle.None]);
             },
@@ -1059,7 +1059,7 @@ WI.RecordingAction._visualNames = {
         "multiDrawElementsWEBGL",
     ]),
     [WI.Recording.Type.CanvasWebGPU]: new Set([
-        "copyElementImageToTexture",
+        "drawElementImageToTexture",
         "copyExternalImageToTexture",
         "submit",
         "writeTexture",

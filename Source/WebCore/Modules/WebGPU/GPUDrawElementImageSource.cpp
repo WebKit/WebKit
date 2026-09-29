@@ -24,24 +24,24 @@
  */
 
 #include "config.h"
-#include "GPUCopyElementImageSource.h"
+#include "GPUDrawElementImageSource.h"
 
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
 
-Ref<JSON::Object> GPUCopyElementImageSource::toJSON() const
+Ref<JSON::Object> GPUDrawElementImageSource::toJSON() const
 {
     Ref json = JSON::Object::create();
     // `CanvasElementImageSource` is not JSON serializable.
-    if (sx)
-        json->setDouble("sx"_s, *sx);
-    if (sy)
-        json->setDouble("sy"_s, *sy);
-    if (swidth)
-        json->setDouble("swidth"_s, *swidth);
-    if (sheight)
-        json->setDouble("sheight"_s, *sheight);
+    if (sourceX)
+        json->setDouble("sourceX"_s, *sourceX);
+    if (sourceY)
+        json->setDouble("sourceY"_s, *sourceY);
+    if (sourceWidth)
+        json->setDouble("sourceWidth"_s, *sourceWidth);
+    if (sourceHeight)
+        json->setDouble("sourceHeight"_s, *sourceHeight);
     return json;
 }
 

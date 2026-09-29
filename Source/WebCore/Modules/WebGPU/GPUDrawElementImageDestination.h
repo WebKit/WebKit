@@ -25,19 +25,16 @@
 
 #pragma once
 
-#include "CanvasElementImage.h"
+#include "GPUExtent3DDict.h"
+#include "GPUImageCopyTextureTagged.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-struct GPUCopyElementImageSource {
+struct GPUDrawElementImageDestination : public GPUImageCopyTextureTagged {
     Ref<JSON::Object> toJSON() const;
 
-    CanvasElementImageSource source;
-    std::optional<float> sx;
-    std::optional<float> sy;
-    std::optional<float> swidth;
-    std::optional<float> sheight;
+    std::optional<GPUExtent3D> size;
 };
 
 } // namespace WebCore

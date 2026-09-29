@@ -26,12 +26,11 @@
  */
 
 typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
+typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
 
 // https://github.com/WICG/html-in-canvas
 [
     EnabledBySetting=HTMLInCanvasEnabled,
-] dictionary GPUCopyElementImageDestination {
-    required GPUImageCopyTextureTagged destination;
-    GPUIntegerCoordinate width;
-    GPUIntegerCoordinate height;
+] dictionary GPUDrawElementImageDestination : GPUImageCopyTextureTagged {
+    GPUExtent3D size;
 };

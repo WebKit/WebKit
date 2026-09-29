@@ -731,14 +731,6 @@ frames:
         0: texImage2D
         1: (anonymous function)
         2: executeFrameFunction
-    2: texElementImage2D(14, 15, "Element", {"sx":16,"sy":17,"swidth":18,"sheight":19,"width":20,"height":21})
-      swizzleTypes: [Number, Number, None, JSON]
-      trace:
-        0: texElementImage2D
-        1: (anonymous function)
-        2: ignoreException
-        3: (anonymous function)
-        4: executeFrameFunction
   102: (duration)
     0: texParameterf(1, 2, 3)
       swizzleTypes: [Number, Number, Number]

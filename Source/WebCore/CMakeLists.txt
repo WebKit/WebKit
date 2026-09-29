@@ -1389,6 +1389,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
     html/canvas/PredefinedColorSpace.idl
+    html/canvas/UpdateElementGeometryOptions.idl
 
     html/closewatcher/CloseWatcher.idl
 
@@ -1833,14 +1834,14 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUComputePassTimestampWrites.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
-    Modules/WebGPU/GPUCopyElementImageDestination.idl
-    Modules/WebGPU/GPUCopyElementImageSource.idl
     Modules/WebGPU/GPUCullMode.idl
     Modules/WebGPU/GPUDepthStencilState.idl
     Modules/WebGPU/GPUDevice.idl
     Modules/WebGPU/GPUDeviceDescriptor.idl
     Modules/WebGPU/GPUDeviceLostInfo.idl
     Modules/WebGPU/GPUDeviceLostReason.idl
+    Modules/WebGPU/GPUDrawElementImageDestination.idl
+    Modules/WebGPU/GPUDrawElementImageSource.idl
     Modules/WebGPU/GPUError.idl
     Modules/WebGPU/GPUErrorFilter.idl
     Modules/WebGPU/GPUExtent3DDict.idl
@@ -2102,6 +2103,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
 
     html/canvas/CanvasCompositing.idl
     html/canvas/CanvasDrawElementImage.idl
+    html/canvas/CanvasDrawElementImageOptions.idl
     html/canvas/CanvasDrawImage.idl
     html/canvas/CanvasDrawPath.idl
     html/canvas/CanvasFillStrokeStyles.idl

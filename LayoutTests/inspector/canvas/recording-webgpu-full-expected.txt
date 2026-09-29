@@ -759,16 +759,6 @@ frames:
         4: executeFrameFunction
       snapshot: <filtered>
   94: (duration)
-    0: queue.copyElementImageToTexture({"sx":0,"sy":0,"swidth":1,"sheight":1,"source":"<Element>"}, {"destination":{"mipLevel":0,"aspect":"all","colorSpace":"srgb","premultipliedAlpha":false,"texture":"<texture>"},"width":1,"height":1})
-      swizzleTypes: [GPUCopyElementImageSource, GPUCopyElementImageDestination]
-      trace:
-        0: copyElementImageToTexture
-        1: (anonymous function)
-        2: ignoreException
-        3: (anonymous function)
-        4: executeFrameFunction
-      snapshot: <filtered>
-  95: (duration)
     0: queue.submit(["<commandBuffer>"])
       swizzleTypes: [ArrayOf]
       trace:
@@ -776,13 +766,13 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
       snapshot: <filtered>
-  96: (duration)
+  95: (duration)
     0: queue.onSubmittedWorkDone()
       trace:
         0: onSubmittedWorkDone
         1: (anonymous function)
         2: executeFrameFunction
-  97: (duration)
+  96: (duration)
     0: buffer.label = "buffer"
       swizzleTypes: [String]
       trace:
@@ -792,14 +782,14 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  98: (duration)
+  97: (duration)
     0: buffer.mapAsync(1, 0, 4)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: mapAsync
         1: (anonymous function)
         2: executeFrameFunction
-  99: (duration)
+  98: (duration)
     0: buffer.getMappedRange(0, 4)
       swizzleTypes: [Number, Number]
       trace:
@@ -808,31 +798,31 @@ frames:
         2: ignoreException
         3: (anonymous function)
         4: executeFrameFunction
-  100: (duration)
+  99: (duration)
     0: buffer.unmap()
       trace:
         0: unmap
         1: (anonymous function)
         2: executeFrameFunction
-  101: (duration)
+  100: (duration)
     0: buffer.destroy()
       trace:
         0: destroy
         1: (anonymous function)
         2: executeFrameFunction
-  102: (duration)
+  101: (duration)
     0: texture.destroy()
       trace:
         0: destroy
         1: (anonymous function)
         2: executeFrameFunction
-  103: (duration)
+  102: (duration)
     0: querySet.destroy()
       trace:
         0: destroy
         1: (anonymous function)
         2: executeFrameFunction
-  104: (duration)
+  103: (duration)
     0: destroy()
       trace:
         0: destroy

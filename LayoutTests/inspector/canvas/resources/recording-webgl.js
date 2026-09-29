@@ -361,8 +361,6 @@ function performActions() {
         () => {
             context.texImage2D(1, 2, 3, 4, 5, image);
             context.texImage2D(6, 7, 8, 9, 10, 11, 12, 13, float32Array);
-            if (context.texElementImage2D)
-                ignoreException(() => context.texElementImage2D(14, 15, image, {sx: 16, sy: 17, swidth: 18, sheight: 19, width: 20, height: 21}));
         },
         () => {
             context.texParameterf(1, 2, 3);
@@ -373,6 +371,8 @@ function performActions() {
         () => {
             context.texSubImage2D(1, 2, 3, 4, 5, 6, image);
             context.texSubImage2D(7, 8, 9, 10, 11, 12, 13, 14, float32Array);
+            if (context.texElementSubImage2D)
+                ignoreException(() => context.texElementSubImage2D(15, 16, 17, 18, 19, 20, image));
         },
         () => {
             context.uniform1f(uniformLocation, 1);
