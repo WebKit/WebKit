@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<select id="select" multiple size="4">
+    <option>one</option>
+    <option selected>two</option>
+</select>
+<script>
+description("HTMLSelectElement::listBoxDefaultEventHandler() must not keep a pointer to the list box " +
+    "renderer across the change event it dispatches: the event handler can destroy the renderer, which " +
+    "leaves the pointer dangling.");
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    var select = document.getElementById("select");
+
+    select.addEventListener("change", function () {
+        // Destroy the list box renderer while listBoxDefaultEventHandler() is still on the stack.
+        select.style.display = "none";
+        document.body.offsetHeight;
+
+        // Detached renderers are normally deleted asynchronously; releasing memory deletes them now.
+        // (releaseMemoryNow() is called directly rather than beginSimulatedMemoryPressure() because
+        // WebKitTestRunner sets WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR=1, so simulated pressure never
+        // invokes releaseMemory.)
+        internals.releaseMemoryNow();
+    });
+
+    // Make sure the list box renderer exists before sending the key event.
+    document.body.offsetHeight;
+
+    // Arrow Up moves the selection to the first option, which fires input and change events.
+    var event = document.createEvent("KeyboardEvents");
+    event.initKeyboardEvent("keydown", true, true, window, "Up", 0, false, false, false, false);
+    select.dispatchEvent(event);
+
+    shouldBe("select.selectedIndex", "0");
+    testPassed("Did not crash destroying the list box renderer from a change event handler.");
+}
+</script>
+</body>
+</html>

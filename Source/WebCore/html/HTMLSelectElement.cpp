@@ -2087,9 +2087,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         if (!keyboardEvent)
             return;
 
-        CheckedPtr renderer = this->renderer();
-        auto writingMode = renderer ? renderer->writingMode() : WritingMode { };
-        auto navigationKeys = navigationKeyIdentifiersForWritingMode(writingMode);
+        auto navigationKeys = navigationKeyIdentifiersForWritingMode([&] {
+            CheckedPtr renderer = this->renderer();
+            return renderer ? renderer->writingMode() : WritingMode { };
+        }());
 
         const String& keyIdentifier = keyboardEvent->keyIdentifier();
 
@@ -2169,7 +2170,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
                 setActiveSelectionAnchorIndex(m_activeSelectionEndIndex);
             }
 
-            if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer))
+            if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(this->renderer()))
                 renderListBox->scrollToRevealElementAtListIndex(endIndex);
             if (selectNewItem) {
                 updateListBoxSelection(deselectOthers);
@@ -2236,8 +2237,7 @@ void HTMLSelectElement::baseAppearanceListBoxDefaultEventHandler(Event& event)
 
 void HTMLSelectElement::defaultEventHandler(Event& event)
 {
-    CheckedPtr renderer = this->renderer();
-    if (!renderer)
+    if (!renderer())
         return;
 
     if (isDisabledFormControl()) {
