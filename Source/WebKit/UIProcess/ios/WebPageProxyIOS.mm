@@ -932,19 +932,7 @@ void WebPageProxy::elementDidFocus(IPC::Connection& connection, const FocusedEle
 
     RefPtr userDataObject = process->transformHandlesToObjects(protect(userData.object())).get();
 
-    convertFocusedElementInformationRectsToMainFrameCoordinates(information,
-        [weakThis = WeakPtr { *this }, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject = WTF::move(userDataObject)] (FocusedElementInformation convertedInfo) {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-
-            RefPtr pageClient = protectedThis->pageClient();
-            if (!pageClient)
-                return;
-
-            pageClient->elementDidFocus(convertedInfo, userIsInteracting,
-                blurPreviousNode, activityStateChanges, userDataObject.get());
-        });
+    pageClient->elementDidFocus(information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject.get());
 }
 
 void WebPageProxy::elementDidBlur(IPC::Connection& connection)
@@ -960,54 +948,8 @@ void WebPageProxy::elementDidBlur(IPC::Connection& connection)
 
 void WebPageProxy::updateFocusedElementInformation(const FocusedElementInformation& information)
 {
-    convertFocusedElementInformationRectsToMainFrameCoordinates(information,
-        [weakThis = WeakPtr { *this }](FocusedElementInformation convertedInfo) {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-
-            if (RefPtr pageClient = protectedThis->pageClient())
-                pageClient->updateFocusedElementInformation(convertedInfo);
-        });
-}
-
-void WebPageProxy::convertFocusedElementInformationRectsToMainFrameCoordinates(FocusedElementInformation information, CompletionHandler<void(FocusedElementInformation)>&& completionHandler)
-{
-    if (!information.frame || information.frame->isMainFrame) {
-        completionHandler(WTF::move(information));
-        return;
-    }
-
-    RefPtr frame = WebFrameProxy::webFrame(information.frame->frameID);
-    if (!frame) {
-        completionHandler(WTF::move(information));
-        return;
-    }
-
-    Vector<FloatRect> rects;
-    rects.append(information.interactionRect);
-    // The last interaction location is the tap point as delivered to the frame's own process, so it is in
-    // that frame's root-view coordinates. Convert it too, so that comparing it against interactionRect in
-    // -[WKContentView rectToRevealWhenZoomingToFocusedElement] compares points in the same space.
-    rects.append({ FloatPoint { information.lastInteractionLocation }, FloatSize { } });
-    if (information.hasNextNode)
-        rects.append(information.nextNodeRect);
-    if (information.hasPreviousNode)
-        rects.append(information.previousNodeRect);
-
-    auto expectedRectCount = rects.size();
-    convertRectsToMainFrameCoordinates(WTF::move(rects), frame->rootFrame()->frameID(), [expectedRectCount, information = WTF::move(information), completionHandler = WTF::move(completionHandler)](std::optional<Vector<FloatRect>> convertedRects) mutable {
-        if (convertedRects && convertedRects->size() == expectedRectCount) {
-            size_t index = 0;
-            information.interactionRect = IntRect(convertedRects->at(index++));
-            information.lastInteractionLocation = IntPoint(convertedRects->at(index++).location());
-            if (information.hasNextNode)
-                information.nextNodeRect = IntRect(convertedRects->at(index++));
-            if (information.hasPreviousNode)
-                information.previousNodeRect = IntRect(convertedRects->at(index++));
-        }
-        completionHandler(WTF::move(information));
-    });
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->updateFocusedElementInformation(information);
 }
 
 void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)

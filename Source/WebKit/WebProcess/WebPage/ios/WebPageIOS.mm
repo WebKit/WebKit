@@ -1513,6 +1513,23 @@ IntRect WebPage::rootViewBounds(const Node& node)
     return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
+IntRect WebPage::mainFrameViewBounds(const Node& node)
+{
+    RefPtr frame = node.document().frame();
+    if (!frame)
+        return { };
+
+    RefPtr view = frame->view();
+    if (!view)
+        return { };
+
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
+        return { };
+
+    return view->contentsToMainFrameView(renderer->absoluteBoundingBoxRect());
+}
+
 void WebPage::clearSelection()
 {
     m_startingGestureRange = std::nullopt;
@@ -2720,12 +2737,17 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
     if (RefPtr webFrame = WebProcess::singleton().webFrame(focusedOrMainFrame->frameID()))
         information.frame = webFrame->info();
 
-    information.lastInteractionLocation = flooredIntPoint(m_lastInteractionLocation);
+    // The last interaction location is relative to the local root frame, so map it into the main frame
+    // along with the rects below for when the focused element is in a cross-origin subframe.
+    if (RefPtr localRootView = focusedOrMainFrame->rootFrame().view())
+        information.lastInteractionLocation = flooredIntPoint(localRootView->convertToRootViewAcrossIsolatedFrames(FloatPoint { m_lastInteractionLocation }));
+    else
+        information.lastInteractionLocation = flooredIntPoint(m_lastInteractionLocation);
     if (auto elementContext = contextForElement(*focusedElement))
         information.elementContext = WTF::move(*elementContext);
 
     if (CheckedPtr renderer = focusedElement->renderer()) {
-        information.interactionRect = rootViewInteractionBounds(*focusedElement);
+        information.interactionRect = mainFrameViewInteractionBounds(*focusedElement);
         information.nodeFontSize = protect(renderer->style())->fontDescription().usedSize();
 
         bool inFixed = false;
@@ -2753,11 +2775,11 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
     if (auto nextElement = nextAssistableElement(focusedElement.get(), page, true)) {
-        information.nextNodeRect = rootViewBounds(*nextElement);
+        information.nextNodeRect = mainFrameViewBounds(*nextElement);
         information.hasNextNode = true;
     }
     if (auto previousElement = nextAssistableElement(focusedElement.get(), page, false)) {
-        information.previousNodeRect = rootViewBounds(*previousElement);
+        information.previousNodeRect = mainFrameViewBounds(*previousElement);
         information.hasPreviousNode = true;
     }
     information.identifier = m_internals->lastFocusedElementInformationIdentifier.increment();

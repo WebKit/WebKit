@@ -2741,6 +2741,19 @@ IntRect WebPage::rootViewInteractionBounds(const Node& node)
     return view->contentsToRootView(absoluteInteractionBounds(node));
 }
 
+IntRect WebPage::mainFrameViewInteractionBounds(const Node& node)
+{
+    RefPtr frame = node.document().frame();
+    if (!frame)
+        return { };
+
+    RefPtr view = frame->view();
+    if (!view)
+        return { };
+
+    return view->contentsToMainFrameView(absoluteInteractionBounds(node));
+}
+
 IntRect WebPage::absoluteInteractionBounds(const Node& node)
 {
     RefPtr frame = node.document().frame();

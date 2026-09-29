@@ -13103,11 +13103,17 @@ TEST(SiteIsolation, RefocusingCrossOriginIframeFieldStartsInputSessionAgain)
     EXPECT_WK_STREQ("iframe,iframe", [inputSessionElements componentsJoinedByString:@","]);
 }
 
-TEST(SiteIsolation, ZoomToRevealFocusedElementRectIsInMainFrameCoordinates)
+static void testZoomToRevealFocusedElementRect(unsigned mainFrameScrollY, unsigned subframeScrollY)
 {
+    // The iframe and the input are offset by the scroll amounts so that they appear at the same place in the view after scrolling.
+    auto mainframeHTML = makeString("<body style='margin: 0; height: 3000px;'><iframe style='position: absolute; top: "_s, 100 + mainFrameScrollY, "px; left: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s);
+    auto subframeHTML = makeString("<!DOCTYPE html><body style='margin: 0; height: 3000px;'>"
+        "<input id='input' value='hello world' style='position: absolute; top: "_s, 50 + subframeScrollY, "px; left: 50px; width: 200px; height: 20px; border: none; padding: 0;'>"
+        "</body>"_s);
+
     HTTPServer server({
-        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
-        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><input id='input' value='hello world' style='margin: 50px; width: 200px;'></body>"_s } }
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/iframe"_s, { subframeHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
@@ -13123,6 +13129,8 @@ TEST(SiteIsolation, ZoomToRevealFocusedElementRectIsInMainFrameCoordinates)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"scrollTo(0, %u); true", mainFrameScrollY]];
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"scrollTo(0, %u); true", subframeScrollY] inFrame:[webView firstChildFrame]];
     [webView waitForNextPresentationUpdate];
     [webView focusInWindow];
 
@@ -13137,10 +13145,15 @@ TEST(SiteIsolation, ZoomToRevealFocusedElementRectIsInMainFrameCoordinates)
         childFrame = [webView firstChildFrame];
     }
 
+    // The input is at (50, 50) in the iframe's view, and the iframe is at (100, 100) in the main frame's
+    // view, so the interaction rect is at (150, 150) plus the main frame's scroll offset in main-frame
+    // document coordinates. The subframe's scroll offset must only be applied once.
+    EXPECT_EQ([webView _focusedElementInteractionRect], CGRectMake(150, 150 + mainFrameScrollY, 200, 20));
+
     // -[WKContentView _zoomToRevealFocusedElement] reveals the selection's bounding rect intersected with
-    // the focused element's interaction rect. Both are in main-frame coordinates, so for an input at
-    // (50, 50) inside an iframe at (100, 100) the reveal rect lands on the input rather than near the page
-    // origin, and stays within the interaction rect the zoom is anchored to.
+    // the focused element's interaction rect. Both are in main-frame coordinates, so the reveal rect lands
+    // on the input rather than near the page origin, and stays within the interaction rect the zoom is
+    // anchored to.
     CGRect revealRect = CGRectZero;
     EXPECT_TRUE(Util::waitFor([&] {
         revealRect = [webView _rectToRevealWhenZoomingToFocusedElementForTesting];
@@ -13148,8 +13161,16 @@ TEST(SiteIsolation, ZoomToRevealFocusedElementRectIsInMainFrameCoordinates)
     }));
 
     EXPECT_GE(CGRectGetMinX(revealRect), 150);
-    EXPECT_GE(CGRectGetMinY(revealRect), 150);
+    EXPECT_GE(CGRectGetMinY(revealRect), 150 + mainFrameScrollY);
     EXPECT_TRUE(CGRectContainsRect([webView _focusedElementInteractionRect], revealRect));
+}
+
+TEST(SiteIsolation, ZoomToRevealFocusedElementRect)
+{
+    testZoomToRevealFocusedElementRect(0, 0);
+    testZoomToRevealFocusedElementRect(500, 0);
+    testZoomToRevealFocusedElementRect(0, 500);
+    testZoomToRevealFocusedElementRect(500, 500);
 }
 
 #if HAVE(UICONTEXTMENU_LOCATION)
