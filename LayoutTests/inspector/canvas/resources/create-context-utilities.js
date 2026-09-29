@@ -1,22 +1,34 @@
 window.contexts = [];
 
+// Set by the frontend. Because the GC is conservative, any one canvas can stay alive after it is
+// no longer referenced, so tests create many canvases and wait for any of them to be destroyed.
+window.canvasCountPerTestCase = 1;
+
+// Creating more WebGL contexts than the per-page limit loses the oldest ones, which would otherwise
+// log a console message for each one.
+window.internals?.settings.setWebGLErrorsToConsoleEnabled(false);
+
 function createAttachedCanvas(contextType) {
-    let canvas = document.body.appendChild(document.createElement("canvas"));
-    let context = canvas.getContext(contextType);
-    if (!context) {
-        TestPage.addResult("FAIL: missing context for type " + contextType);
-        return;
+    for (let i = 0; i < window.canvasCountPerTestCase; ++i) {
+        let canvas = document.body.appendChild(document.createElement("canvas"));
+        let context = canvas.getContext(contextType);
+        if (!context) {
+            TestPage.addResult("FAIL: missing context for type " + contextType);
+            return;
+        }
+        window.contexts.push(context);
     }
-    window.contexts.push(context);
 }
 
 function createDetachedCanvas(contextType) {
-    let context = document.createElement("canvas").getContext(contextType);
-    if (!context) {
-        TestPage.addResult("FAIL: missing context for type " + contextType);
-        return;
+    for (let i = 0; i < window.canvasCountPerTestCase; ++i) {
+        let context = document.createElement("canvas").getContext(contextType);
+        if (!context) {
+            TestPage.addResult("FAIL: missing context for type " + contextType);
+            return;
+        }
+        window.contexts.push(context);
     }
-    window.contexts.push(context);
 }
 
 function createCSSCanvas(contextType, canvasName) {
@@ -33,14 +45,16 @@ function createOffscreenCanvas(contextType, canvasName) {
         TestPage.addResult("FAIL: missing OffscreenCanvas implementation");
         return;
     }
-    let canvas = new OffscreenCanvas(10, 10);
-    let context = canvas.getContext(contextType);
+    for (let i = 0; i < window.canvasCountPerTestCase; ++i) {
+        let canvas = new OffscreenCanvas(10, 10);
+        let context = canvas.getContext(contextType);
 
-    if (!context) {
-        TestPage.addResult("FAIL: missing offscreen context for type " + contextType);
-        return;
+        if (!context) {
+            TestPage.addResult("FAIL: missing offscreen context for type " + contextType);
+            return;
+        }
+        window.contexts.push(context);
     }
-    window.contexts.push(context);
 }
 
 let destroyCanvasesInterval = null;
@@ -52,6 +66,8 @@ function destroyCanvases() {
             canvasElement.remove();
     }
 
+    for (let i = 0; i < window.contexts.length; ++i)
+        window.contexts[i] = null;
     window.contexts = [];
 
     window.worker?.postMessage({name: `destroyContexts`, args: []});
@@ -69,12 +85,24 @@ function stopDestroyingCanvases()
 TestPage.registerInitializer(() => {
     let suite = null;
 
-    function awaitCanvasAdded(contextType) {
-        return WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded)
-        .then((event) => {
-            let canvas = event.data.item;
+    const canvasCountPerTestCase = 100;
+
+    function awaitCanvasesAdded(contextType, count) {
+        return new Promise((resolve, reject) => {
+            let canvases = [];
+            let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                canvases.push(event.data.item);
+                if (canvases.length < count)
+                    return;
+                WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
+                resolve(canvases);
+            });
+        })
+        .then((canvases) => {
             let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
-            InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be ${contextDisplayName}.`);
+            InspectorTest.expectThat(canvases.every((canvas) => canvas.contextType === contextType), `Canvas context should be ${contextDisplayName}.`);
+
+            let canvas = canvases[0];
 
             let traceText = "";
             let callFrames = canvas?.stackTrace.callFrames ?? [];
@@ -93,15 +121,20 @@ TestPage.registerInitializer(() => {
             }
             InspectorTest.log(traceText);
 
-            return canvas;
+            return canvases;
         });
     }
 
-    function awaitCanvasRemoved(canvasIdentifier) {
-        return WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemRemoved)
-        .then((event) => {
-            let canvas = event.data.item;
-            InspectorTest.expectEqual(canvas.identifier, canvasIdentifier, "Removed canvas has expected ID.");
+    function awaitAnyCanvasRemoved(canvases) {
+        let identifiers = new Set(canvases.map((canvas) => canvas.identifier));
+        return new Promise((resolve, reject) => {
+            let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+                if (!identifiers.has(event.data.item.identifier))
+                    return;
+                WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemRemoved, listener);
+                InspectorTest.pass("Removed canvas has expected ID.");
+                resolve();
+            });
         });
     }
 
@@ -109,6 +142,8 @@ TestPage.registerInitializer(() => {
 
     InspectorTest.CreateContextUtilities.initializeTestSuite = function(name) {
         suite = InspectorTest.createAsyncSuite(name);
+
+        InspectorTest.evaluateInPage(`window.canvasCountPerTestCase = ${canvasCountPerTestCase}`);
 
         suite.addTestCase({
             name: `${suite.name}.NoCanvases`,
@@ -122,19 +157,19 @@ TestPage.registerInitializer(() => {
         return suite;
     };
 
-    InspectorTest.CreateContextUtilities.addSimpleTestCase = function({name, description, expression, contextType, skipDestroy}) {
+    InspectorTest.CreateContextUtilities.addSimpleTestCase = function({name, description, expression, contextType, canvasCount, skipDestroy}) {
         suite.addTestCase({
             name: suite.name + "." + name,
             description,
             test(resolve, reject) {
-                awaitCanvasAdded(contextType)
-                .then((canvas) => {
+                awaitCanvasesAdded(contextType, canvasCount ?? canvasCountPerTestCase)
+                .then((canvases) => {
                     if (skipDestroy) {
                         resolve();
                         return;
                     }
 
-                    let promise = awaitCanvasRemoved(canvas.identifier).then(() => { InspectorTest.evaluateInPage(`stopDestroyingCanvases()`); });
+                    let promise = awaitAnyCanvasRemoved(canvases).then(() => { InspectorTest.evaluateInPage(`stopDestroyingCanvases()`); });
                     InspectorTest.evaluateInPage(`destroyCanvases()`);
                     return promise;
                 })
@@ -155,8 +190,8 @@ TestPage.registerInitializer(() => {
             name: `${suite.name}.CSSCanvas`,
             description: "Check that CSS canvases have the correct name and type.",
             test(resolve, reject) {
-                awaitCanvasAdded(contextType)
-                .then((canvas) => {
+                awaitCanvasesAdded(contextType, 1)
+                .then(([canvas]) => {
                     InspectorTest.expectShallowEqual(canvas.cssCanvasNames, ["css-canvas"], "Canvas name should equal the identifier passed to -webkit-canvas.");
                 })
                 .then(resolve, reject);

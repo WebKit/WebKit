@@ -815,8 +815,6 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-tran
 
 webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash ]
 
-webkit.org/b/207141 [ Debug ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]
-
 webkit.org/b/207166 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Pass Failure ]
 
 webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html [ Pass Crash ]
@@ -1050,8 +1048,6 @@ webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Fai
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 
 webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/228256 inspector/canvas/create-context-webgl.html [ Pass Failure ]
 
 webkit.org/b/229043 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-offscreen-bitmaprenderer-frameCount.html [ Pass Failure ]
@@ -1725,8 +1721,6 @@ webkit.org/b/278329 imported/w3c/web-platform-tests/screen-orientation/lock-sand
 
 webkit.org/b/288025 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure ]
 
-webkit.org/b/288043 [ Release ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]
- 
 webkit.org/b/288053 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.serviceworker.html [ Pass Failure ]
 
 webkit.org/b/288119 imported/w3c/web-platform-tests/preload/preload-type-match.html [ Pass Failure ]

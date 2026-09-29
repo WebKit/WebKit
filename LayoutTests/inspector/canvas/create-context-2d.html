@@ -32,6 +32,7 @@ function test() {
         name: "Worker",
         expression: `worker.postMessage({name: "createContext", args: ["2d"]})`,
         contextType: WI.Canvas.ContextType.OffscreenCanvas2D,
+        canvasCount: 1,
         skipDestroy: true,
     });
 
