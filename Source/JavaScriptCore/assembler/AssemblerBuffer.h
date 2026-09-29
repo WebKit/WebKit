@@ -31,7 +31,6 @@
 
 #include <JavaScriptCore/ExecutableAllocator.h>
 #include <JavaScriptCore/JITCompilationEffort.h>
-#include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/SecureARM64EHashPinsInlines.h>
 #include <stdint.h>
 #include <string.h>
@@ -186,11 +185,6 @@ namespace JSC {
 
         ~AssemblerDataImpl()
         {
-            if (Options::useCachedAssemblerDataCapacityLimit() && m_capacity > Options::maximumCachedAssemblerDataCapacity()) {
-                clear();
-                return;
-            }
-
             if constexpr (type == AssemblerDataType::Code)
                 threadSpecificAssemblerData()->takeBufferIfLarger(*this);
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
