@@ -13467,7 +13467,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
 
 void WebPageProxy::handleContextMenuKeyEvent()
 {
-    send(Messages::WebPage::ContextMenuForKeyEvent());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ContextMenuForKeyEvent());
 }
 
 #endif // ENABLE(CONTEXT_MENUS)

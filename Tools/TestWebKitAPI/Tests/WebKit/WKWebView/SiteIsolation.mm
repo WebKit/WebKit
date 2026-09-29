@@ -15746,6 +15746,24 @@ TEST(SiteIsolation, ContextMenuPasteInCrossOriginFrame)
         return [[webView stringByEvaluatingJavaScript:@"document.getElementById('editor').textContent" inFrame:[webView firstChildFrame]] isEqualToString:@"hello"];
     }));
 }
+
+TEST(SiteIsolation, ContextMenuKeyInCrossOriginFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<script>addEventListener('contextmenu', event => { event.preventDefault(); window.receivedContextMenu = true; })</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    [webView objectByEvaluatingJavaScript:@"addEventListener('contextmenu', event => { event.preventDefault(); window.receivedContextMenu = true; }); true"];
+
+    [webView showContextMenuForSelection:nil];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.receivedContextMenu" inFrame:childFrame.get()] boolValue];
+    }));
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!window.receivedContextMenu"] boolValue]);
+}
 #endif
 
 TEST(SiteIsolation, UserGesture)
