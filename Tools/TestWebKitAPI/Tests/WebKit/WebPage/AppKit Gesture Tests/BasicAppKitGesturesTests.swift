@@ -937,6 +937,30 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func clickAndHoldOnStandaloneImageOpensContextMenu() async throws {
+        let imageURL = try #require(Bundle.testResources.url(forResource: "400x400-green", withExtension: "png"))
+        try await page.load(imageURL).wait()
+
+        try await page.callJavaScript {
+            """
+            document.images[0].id = "image";
+            """
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let imageBounds = try await screenBounds(ofElementWithID: "image")
+
+        await withMockedImageAnalyzer(response: .success(.init(lines: [])), after: .zero) {
+            await withSwizzledContextMenu {
+                await recap.play { composer in
+                    composer._wk_click(at: imageBounds.center, for: .seconds(2))
+                }
+            }
+        }
+    }
+
+    @Test
     func clickAndHoldOnUnselectableContentDoesNotOpenContextMenu() async throws {
         let html = """
             <div id="target" style="width: 100vw; height: 100vh; font-size: 30px; -webkit-user-select: none; user-select: none">Hello world</div>

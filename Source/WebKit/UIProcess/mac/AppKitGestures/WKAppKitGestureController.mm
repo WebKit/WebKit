@@ -148,12 +148,15 @@ static bool prefersDirectManipulation(const WebKit::InteractionInformationAtPosi
     return prefersInteraction;
 }
 
-static bool representsSecondaryClickableElement(const WebKit::InteractionInformationAtPosition& info)
+static bool representsSecondaryClickableElement(const WebKit::InteractionInformationAtPosition& info, bool isDisplayingStandaloneImageDocument)
 {
     if (prefersDirectManipulation(info))
         return false;
 
     if (representsSelectableContent(info))
+        return true;
+
+    if (info.isImage && isDisplayingStandaloneImageDocument)
         return true;
 
     return info.isOverVideo && info.selectability != WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement;
@@ -1361,12 +1364,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
     int radius = static_cast<int>(std::ceil([_secondaryClickGestureRecognizer allowableMovement]));
 
     const auto& information = _positionInformationManager->currentInformation();
 
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:radius];
-    bool isSecondaryClickable = representsSecondaryClickableElement(information);
+    bool isSecondaryClickable = representsSecondaryClickableElement(information, [webView _isDisplayingStandaloneImageDocument]);
     bool isOverSelectableText = information.isOverSelectableText;
 
     // The secondary click owns points that are not over selectable text (e.g. the page background
