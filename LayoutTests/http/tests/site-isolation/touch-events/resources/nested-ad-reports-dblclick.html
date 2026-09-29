@@ -1,0 +1,7 @@
+<body style="margin: 0; width: 100vw; height: 100vh;">
+<div id="ad" style="width: 100vw; height: 100vh;"></div>
+<script>
+ad.addEventListener("dblclick", () => window.top.postMessage("dblclicked", "*"));
+window.top.postMessage("ready", "*");
+</script>
+</body>

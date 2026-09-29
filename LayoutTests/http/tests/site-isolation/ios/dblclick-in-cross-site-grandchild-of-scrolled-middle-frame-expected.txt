@@ -1,0 +1,11 @@
+Double-tapping a small dblclick target near the top of a cross-site grandchild frame, whose parent is itself a cross-site frame that is SCROLLED, must fire dblclick. Regression test for the coordinate bug where the middle frame's scroll offset was applied twice when forwarding a point into the grandchild, which made the 'should begin' decision look at the wrong point and never start the gesture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS middleScrollMessage is "middle scrolled to 120"
+PASS receivedClientY is 30
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

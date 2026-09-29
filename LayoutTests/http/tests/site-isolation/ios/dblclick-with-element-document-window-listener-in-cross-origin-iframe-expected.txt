@@ -1,0 +1,12 @@
+A dblclick from a double tap inside a cross-origin iframe must fire for a listener registered on an element, on the document, and on the window.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Received dblclick for the element listener
+PASS Received dblclick for the document listener
+PASS Received dblclick for the window listener
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<body style="margin: 0; padding: 0;">
+<div id="target" style="width: 100%; height: 100%;"></div>
+<script>
+const listenerType = new URLSearchParams(location.search).get("listener");
+function report(event) {
+    window.top.postMessage({ type: "dblclick", listenerType, clientX: event.clientX, clientY: event.clientY }, "*");
+}
+if (listenerType === "element")
+    target.addEventListener("dblclick", report);
+else if (listenerType === "document")
+    document.addEventListener("dblclick", report);
+else if (listenerType === "window")
+    window.addEventListener("dblclick", report);
+window.top.postMessage({ type: "ready", listenerType }, "*");
+</script>
+</body>

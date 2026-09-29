@@ -653,6 +653,20 @@ static void animationPositionInformation(WebPage& page, const InteractionInforma
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
+std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventDataForHitTestResult(const WebCore::HitTestResult& hitTestResult, WebCore::LocalFrameView& localRootView, const WebCore::IntPoint& pointInRootView)
+{
+    if (!hitTestResult.isOverWidget())
+        return std::nullopt;
+
+    RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(WebCore::EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get()));
+    RefPtr remoteFrameView = remoteFrame ? remoteFrame->view() : nullptr;
+    if (!remoteFrameView)
+        return std::nullopt;
+
+    WebCore::RemoteFrameGeometryTransformer transformer(remoteFrameView.releaseNonNull(), Ref { localRootView }, remoteFrame->frameID());
+    return WebCore::RemoteUserInputEventData { remoteFrame->frameID(), transformer.transformToRemoteFrameCoordinates(WebCore::DoublePoint { pointInRootView }) };
+}
+
 Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> positionInformationForWebPage(WebPage& page, WebCore::LocalFrame& localRoot, const InteractionInformationRequest& request)
 {
     // `request.point` is in `localRoot`'s root-view coordinate space.
@@ -692,13 +706,8 @@ Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> pos
     auto hitTestPoint = localRootView->rootViewToContents(request.point);
     auto hitTestResult = eventHandler.hitTestResultAtPoint(hitTestPoint, hitTestRequestTypes);
 
-    if (hitTestResult.isOverWidget()) {
-        RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(WebCore::EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get()));
-        if (RefPtr remoteFrameView = remoteFrame ? remoteFrame->view() : nullptr) {
-            WebCore::RemoteFrameGeometryTransformer transformer(remoteFrameView.releaseNonNull(), localRootView.releaseNonNull(), remoteFrame->frameID());
-            return WebCore::RemoteUserInputEventData { remoteFrame->frameID(), transformer.transformToRemoteFrameCoordinates(WebCore::DoublePoint { hitTestPoint }) };
-        }
-    }
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForHitTestResult(hitTestResult, *localRootView, request.point))
+        return *remoteUserInputEventData;
 
 #if ENABLE(PDF_PLUGIN)
     RefPtr pluginView = hitTestResult.isOverWidget() ? WebPage::pluginViewForFrame(WTF::protect(hitTestResult.innerNodeFrame())) : nullptr;
