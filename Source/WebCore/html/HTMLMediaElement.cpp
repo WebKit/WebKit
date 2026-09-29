@@ -8464,8 +8464,8 @@ void HTMLMediaElement::configureMediaControls()
 {
     bool requireControls = controls();
 
-    // Always create controls for video when fullscreen playback is required.
-    if (isVideo() && protect(mediaSession())->requiresFullscreenForVideoPlayback())
+    // Create controls for a video in fullscreen when fullscreen playback is required.
+    if (isVideo() && isFullscreen() && protect(mediaSession())->requiresFullscreenForVideoPlayback())
         requireControls = true;
 
     if (shouldForceControlsDisplay())
