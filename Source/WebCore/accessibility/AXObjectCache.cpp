@@ -147,6 +147,7 @@
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+#include "TextNodeTraversal.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <utility>
 #include <wtf/Borrow.h>
@@ -3266,7 +3267,16 @@ void AXObjectCache::onValidityChange(Element& element)
 
 static bool messageIsEmpty(const Element* message)
 {
-    return !message || !message->isConnected() || message->textContent().trim(isASCIIWhitespace).isEmpty();
+    if (!message || !message->isConnected())
+        return true;
+
+    // Pages withdraw a message by hiding it as well as by emptying it, so only visible text counts.
+    for (RefPtr text = TextNodeTraversal::firstWithin(*message); text; text = TextNodeTraversal::next(*text, message)) {
+        CheckedPtr renderer = text->renderer();
+        if (renderer && !isVisibilityHidden(renderer->style()) && !text->data().containsOnly<isASCIIWhitespace>())
+            return false;
+    }
+    return true;
 }
 
 bool AXObjectCache::fieldHasDetectedError(const Element& element) const

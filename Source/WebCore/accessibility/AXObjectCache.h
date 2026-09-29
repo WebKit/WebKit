@@ -1287,9 +1287,10 @@ private:
     // is not written anywhere in the markup to rebuild it from.
     struct DetectedFormError {
         WeakPtr<Element, WeakPtrImplWithEventTargetData> message;
-        // Let's us detect whether an error's message was empty or not last time we checked.
+        // Lets us detect whether an error's message was empty or not last time we checked.
         // This matters because some pages implement the addition and removal of error messages
-        // by emptying / re-adding text to some container (vs. outright adding / deleting element(s)).
+        // by emptying / re-adding text to some container, or by hiding / showing it (vs. outright
+        // adding / deleting element(s)).
         bool messageWasEmpty { false };
     };
     WeakHashMap<Element, DetectedFormError, WeakPtrImplWithEventTargetData> m_detectedFormErrors;

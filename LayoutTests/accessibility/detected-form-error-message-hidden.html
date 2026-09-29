@@ -1,0 +1,76 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.invalid-feedback { display: none; }
+.is-invalid ~ .invalid-feedback { display: block; }
+</style>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error" class="invalid-feedback">Enter a valid email address.</div>
+
+  <label for="password">Password</label><input id="password" type="password">
+  <div id="password-error" style="visibility: hidden;">Enter your password.</div>
+
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<script>
+var output = "This tests that hiding an error message stops the field reporting invalid, even though the message's wording is still in the document. Sites commonly hide a message with a class or a style rather than emptying it, and a field still reporting a problem after the page has taken its message away sends the user looking for an error that is no longer there.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("email").classList.add("is-invalid");
+        document.getElementById("password-error").style.visibility = "visible";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function fieldsWithError() {
+        return formFieldWithErrorCount(axElement("form"));
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+        output += await expectAsync("axElement('password').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('password'))", "'Enter your password.'");
+        output += expect("fieldsWithError()", "2");
+
+        output += evalAndReturn("document.getElementById('email').classList.remove('is-invalid');");
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'no error messages'");
+
+        output += evalAndReturn("document.getElementById('password-error').style.visibility = 'hidden';");
+        output += await expectAsync("axElement('password').stringAttributeValue('AXInvalid')", "'false'");
+        output += await expectAsync("errorMessageText(axElement('password'))", "'no error messages'");
+        output += await expectAsync("fieldsWithError()", "0");
+
+        // The same message shown again is the page saying the field is wrong again.
+        output += evalAndReturn("document.getElementById('email').classList.add('is-invalid');");
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

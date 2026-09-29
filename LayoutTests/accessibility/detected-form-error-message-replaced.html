@@ -28,8 +28,8 @@ if (window.accessibilityController) {
             document.getElementById("first-error").textContent = "Enter a valid email address.";
             return;
         }
-        // The first message keeps its wording and is only taken off screen, which is what stops it being
-        // treated as withdrawn. A second, different element carries what the page now wants to say.
+        // The first message keeps its wording and is only taken off screen. A second, different element
+        // carries what the page now wants to say.
         document.getElementById("first-error").style.display = "none";
         document.getElementById("second-error").textContent = "That address is already registered.";
     });
