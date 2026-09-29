@@ -25,6 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import shutil
 import sys
 import tempfile
 import logging
@@ -48,6 +49,8 @@ class LinuxBrowserDriver(BrowserDriver):
     def __init__(self, browser_args):
         super().__init__(browser_args)
         self._temp_profiledir = None
+        self._pgo_collection_active = False
+        self._pgo_profile_directory = None
         self.process_name = self._get_first_executable_path_from_list(self.process_search_list)
         if self.process_name is None:
             raise ValueError('Cant find executable for browser {browser_name}. Searched list: {browser_process_list}'.format(
@@ -64,6 +67,10 @@ class LinuxBrowserDriver(BrowserDriver):
         self._temp_profiledir = tempfile.mkdtemp()
         self._test_environ = dict(os.environ)
         self._test_environ['HOME'] = self._temp_profiledir
+        if self._pgo_collection_active and not self._test_environ.get('LLVM_PROFILE_FILE'):
+            profile_dir = self.pgo_profile_output_directories[0]
+            self._test_environ['LLVM_PROFILE_FILE'] = os.path.join(
+                profile_dir, '{browser}-%p-%m.profraw'.format(browser=self.browser_name or 'webkit'))
 
     def prepare_initial_env(self, config):
         pass
@@ -72,7 +79,9 @@ class LinuxBrowserDriver(BrowserDriver):
         self._clean_temp_profiledir()
 
     def restore_env_after_all_testing(self):
-        pass
+        if self._pgo_profile_directory:
+            force_remove(self._pgo_profile_directory)
+            self._pgo_profile_directory = None
 
     def close_browsers(self):
         if self._browser_process:
@@ -83,21 +92,34 @@ class LinuxBrowserDriver(BrowserDriver):
                     _log.info('Killing browser {browser_name} with pid {browser_pid} and cmd: {browser_cmd}'.format(
                                browser_name=self.browser_name, browser_pid=self._browser_process.pid,
                                browser_cmd=' '.join(main_browser_process.cmdline()).strip() or main_browser_process.name()))
-                    main_browser_process.kill()
-                    for browser_child in browser_children:
-                        if browser_child.is_running():
-                            try:
-                                browser_child.kill()
-                                _log.info('Killed still alive {browser_name} child with pid {browser_pid} and cmd: {browser_cmd}'.format(
-                                          browser_name=self.browser_name, browser_pid=browser_child.pid,
-                                          browser_cmd=' '.join(browser_child.cmdline()).strip() or browser_child.name()))
-                            except psutil.NoSuchProcess:
-                                # There can be a race condition where the child ends in the interval between the is_running() and kill() calls.
-                                pass
+                    if self._pgo_collection_active:
+                        self._graceful_pgo_teardown(main_browser_process, browser_children)
+                    else:
+                        main_browser_process.kill()
+                        for browser_child in browser_children:
+                            if browser_child.is_running():
+                                try:
+                                    browser_child.kill()
+                                    _log.info('Killed still alive {browser_name} child with pid {browser_pid} and cmd: {browser_cmd}'.format(
+                                              browser_name=self.browser_name, browser_pid=browser_child.pid,
+                                              browser_cmd=' '.join(browser_child.cmdline()).strip() or browser_child.name()))
+                                except psutil.NoSuchProcess:
+                                    # Race: child ended between is_running() and kill().
+                                    pass
                 else:
                     _log.info('Killing browser {browser_name} with pid {browser_pid}'.format(
                                browser_name=self.browser_name, browser_pid=self._browser_process.pid))
-                    self._browser_process.kill()
+                    if self._pgo_collection_active:
+                        self._browser_process.terminate()
+                        try:
+                            rc = self._browser_process.wait(timeout=10)
+                            _log.info('[pgo] browser pid {pid} exited with {rc} (negative value = killed by that signal)'.format(
+                                      pid=self._browser_process.pid, rc=rc))
+                        except subprocess.TimeoutExpired:
+                            _log.warning('[pgo] browser pid {pid} did not exit within timeout; SIGKILL'.format(pid=self._browser_process.pid))
+                            self._browser_process.kill()
+                    else:
+                        self._browser_process.kill()
                     _log.warning('python psutil not found, can\'t check for '
                                  'still-alive browser children to kill.')
             else:
@@ -105,6 +127,74 @@ class LinuxBrowserDriver(BrowserDriver):
                             browser_name=self.browser_name, browser_pid=self._browser_process.pid,
                             browser_retcode=self._browser_process.returncode))
         self._clean_temp_profiledir()
+
+    def _graceful_pgo_teardown(self, main_browser_process, browser_children):
+        all_procs = [main_browser_process] + browser_children
+        proc_names = {}
+        for proc in all_procs:
+            try:
+                proc_names[proc.pid] = ' '.join(proc.cmdline()).strip() or proc.name()
+            except psutil.NoSuchProcess:
+                proc_names[proc.pid] = '<gone>'
+        _log.info('[pgo] graceful teardown of {n} process(es): {names}'.format(
+                  n=len(all_procs), names=proc_names))
+        # Leave the main process last as it might be a wrapper script like run-minibrowser
+        for proc in browser_children + [main_browser_process]:
+            try:
+                proc.terminate()
+            except psutil.NoSuchProcess:
+                pass
+        gone, alive = psutil.wait_procs(all_procs, timeout=10, callback=lambda proc: _log.info(
+            '[pgo] pid {pid} ({name}) exited with {rc}'.format(
+                pid=proc.pid, name=proc_names.get(proc.pid, '?'), rc=proc.returncode)))
+        for proc in alive:
+            _log.warning('[pgo] pid {pid} ({name}) did not exit within timeout; SIGKILL (profile might be lost)'.format(
+                         pid=proc.pid, name=proc_names.get(proc.pid, '?')))
+            try:
+                proc.kill()
+            except psutil.NoSuchProcess:
+                pass
+
+    @property
+    def pgo_profile_output_directories(self):
+        # A caller-set LLVM_PROFILE_FILE wins; its directory must be absolute (LLVM writes relative to
+        # the browser cwd, which we can't discover) and free of %p/%m/%t wildcards (which would make
+        # the real output dir vary at runtime). Otherwise return the private per-run dir that
+        # prepare_pgo_profile_collection() created.
+        profile_file = os.environ.get('LLVM_PROFILE_FILE')
+        if profile_file:
+            if not os.path.isabs(profile_file):
+                raise ValueError('LLVM_PROFILE_FILE={profile_file} must be an absolute path so .profraw '
+                                 'lands in a discoverable directory.'.format(profile_file=profile_file))
+            directory = os.path.dirname(os.path.realpath(profile_file))
+            if '%' in directory:
+                raise ValueError('LLVM_PROFILE_FILE={profile_file} expands a wildcard in its directory; '
+                                 'keep %p/%m in the filename only.'.format(profile_file=profile_file))
+            return [directory]
+        return [self._pgo_profile_directory]
+
+    def prepare_pgo_profile_collection(self):
+        self._pgo_collection_active = True
+        if os.environ.get('LLVM_PROFILE_FILE'):
+            # Access (and thereby validate) the caller's path now so a bad LLVM_PROFILE_FILE fails
+            # before the run. We neither create the dir (LLVM does, on first write) nor wipe it (could
+            # be a real location like /home); collect() tolerates its absence if the run flushed nothing.
+            assert self.pgo_profile_output_directories
+            return
+        # Driver-owned output: a fresh, unique dir per iteration -- mkdtemp so concurrent runs don't
+        # collide, and each iteration starts clean so collect copies only its own .profraw.
+        if self._pgo_profile_directory:
+            force_remove(self._pgo_profile_directory)
+        self._pgo_profile_directory = tempfile.mkdtemp(prefix='WebKitPGO-')
+
+    def collect_pgo_profile(self, destination):
+        _log.info('Copying PGO profiles from {sources} to {destination}'.format(
+                  sources=self.pgo_profile_output_directories, destination=destination))
+        for directory in self.pgo_profile_output_directories:
+            if not os.path.isdir(directory):
+                _log.warning('[pgo] no profile directory {directory}; the run flushed nothing'.format(directory=directory))
+                continue
+            shutil.copytree(directory, destination, dirs_exist_ok=True)
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         if not self._default_browser_arguments:
