@@ -32,9 +32,11 @@
 #include "StreamServerConnection.h"
 #include "Helpers/Test.h"
 #include "Helpers/Utilities.h"
+#include <atomic>
 #include <optional>
 #include <wtf/Lock.h>
 #include <wtf/Scope.h>
+#include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
@@ -194,6 +196,8 @@ public:
         m_invalidMessageHandler = WTF::move(handler);
     }
 
+    unsigned didRunOutOfMessagesCount() const { return m_didRunOutOfMessagesCount; }
+
 private:
     MockStreamServerConnectionClient() = default;
 
@@ -217,6 +221,12 @@ private:
         addInvalidMessage(messageName, indicesOfObjectsFailingDecoding);
     }
 
+    void didRunOutOfMessages() final
+    {
+        ++m_didRunOutOfMessagesCount;
+    }
+
+    std::atomic<unsigned> m_didRunOutOfMessagesCount { 0 };
     Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)> m_asyncMessageHandler;
     Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)> m_syncMessageHandler;
     Function<bool(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&)> m_invalidMessageHandler;
@@ -300,6 +310,112 @@ TEST_F(StreamConnectionTest, InvalidateUnopened)
         assertIsCurrent(serverQueue());
         serverConnection->invalidate();
     });
+    clientConnection->invalidate();
+}
+
+struct MockStreamTestMessageBlockingEncode {
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
+    template<typename Encoder> void encode(Encoder&)
+    {
+        didStartEncoding.signal();
+        finishEncoding.wait();
+    }
+    BinarySemaphore& didStartEncoding;
+    BinarySemaphore& finishEncoding;
+};
+
+TEST_F(StreamConnectionTest, DidRunOutOfMessagesNotSentForLoneDestinationIDOnInvalidate)
+{
+    auto connectionPair = IPC::StreamClientConnection::create(17, defaultTimeout);
+    ASSERT_TRUE(!!connectionPair);
+    auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+    RefPtr serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { });
+    Ref mockClientReceiver = MockStreamClientConnectionClient::create();
+    clientConnection->open(mockClientReceiver);
+    Ref mockServerReceiver = MockStreamServerConnectionClient::create();
+    auto destination = ObjectIdentifier<TestObjectIdentifierTag>(77);
+    auto otherDestination = ObjectIdentifier<TestObjectIdentifierTag>(78);
+    serverQueue().dispatch([&] {
+        serverConnection->open(mockServerReceiver, serverQueue());
+        serverConnection->startReceivingMessages(mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), destination.toUInt64());
+    });
+    localReferenceBarrier();
+    EXPECT_EQ(clientConnection->send(MockStreamTestMessage1 { }, destination), IPC::Error::NoError);
+    mockServerReceiver->waitForMessage(defaultTimeout);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return mockServerReceiver->didRunOutOfMessagesCount() == 1;
+    }));
+
+    BinarySemaphore destinationIDWritten;
+    BinarySemaphore didInvalidate;
+    serverQueue().dispatch([&] {
+        destinationIDWritten.wait();
+        serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), destination.toUInt64());
+        serverConnection->invalidate();
+        didInvalidate.signal();
+    });
+    BinarySemaphore didStartEncoding;
+    BinarySemaphore finishEncoding;
+    RefPtr sender = Thread::create("sender"_s, [&] {
+        clientConnection->send(MockStreamTestMessageBlockingEncode { didStartEncoding, finishEncoding }, otherDestination);
+    });
+    didStartEncoding.wait();
+    destinationIDWritten.signal();
+    didInvalidate.wait();
+    localReferenceBarrier();
+    EXPECT_EQ(mockServerReceiver->didRunOutOfMessagesCount(), 1u);
+    finishEncoding.signal();
+    sender->waitForCompletion();
+    clientConnection->invalidate();
+}
+
+TEST_F(StreamConnectionTest, DidRunOutOfMessagesSentOnceWhenInvalidatedAfterFullPass)
+{
+    static constexpr unsigned count = 999;
+    auto connectionPair = IPC::StreamClientConnection::create(17, defaultTimeout);
+    ASSERT_TRUE(!!connectionPair);
+    auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+    RefPtr serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { });
+    Ref mockClientReceiver = MockStreamClientConnectionClient::create();
+    clientConnection->open(mockClientReceiver);
+    Ref mockServerReceiver = MockStreamServerConnectionClient::create();
+    auto destination = ObjectIdentifier<TestObjectIdentifierTag>(77);
+    unsigned received = 0;
+    bool invalidated = false;
+    mockServerReceiver->setAsyncMessageHandler([&](IPC::StreamServerConnection& connection, IPC::Decoder&) {
+        if (++received == count) {
+            serverQueue().dispatch([&, connection = Ref { connection }] {
+                connection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), destination.toUInt64());
+                connection->invalidate();
+                invalidated = true;
+            });
+        }
+        return true;
+    });
+    serverQueue().dispatch([&] {
+        serverConnection->open(mockServerReceiver, serverQueue());
+        serverConnection->startReceivingMessages(mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), destination.toUInt64());
+    });
+    localReferenceBarrier();
+    BinarySemaphore didBlock;
+    BinarySemaphore unblock;
+    serverQueue().dispatch([&] {
+        didBlock.signal();
+        unblock.wait();
+    });
+    didBlock.wait();
+    for (unsigned i = 0; i < count; ++i)
+        EXPECT_EQ(clientConnection->send(MockStreamTestMessage1 { }, destination), IPC::Error::NoError);
+    unblock.signal();
+    EXPECT_TRUE(Util::waitFor([&] {
+        return invalidated;
+    }));
+    localReferenceBarrier();
+    EXPECT_EQ(received, count);
+    EXPECT_EQ(mockServerReceiver->didRunOutOfMessagesCount(), 1u);
     clientConnection->invalidate();
 }
 
@@ -767,6 +883,174 @@ TEST_P(StreamServerDidReceiveInvalidMessageTest, AsyncWithReply)
 INSTANTIATE_TEST_SUITE_P(StreamServerConnectionTests,
     StreamServerDidReceiveInvalidMessageTest,
     testing::Values(InvalidMessageTestType::DecodeError, InvalidMessageTestType::ValidationError),
+    TestParametersToStringFormatter());
+
+class StreamServerDidRunOutOfMessagesTest : public ::testing::TestWithParam<std::tuple<unsigned>>, public StreamConnectionTestBase {
+public:
+    unsigned messageCount() const
+    {
+        return std::get<0>(GetParam());
+    }
+
+    void SetUp() override
+    {
+        setupBase();
+        m_connectionA = openConnection();
+        m_connectionB = openConnection();
+    }
+
+    void TearDown() override
+    {
+        closeConnection(m_connectionA);
+        closeConnection(m_connectionB);
+        teardownBase();
+    }
+
+protected:
+    struct ConnectionPair {
+        RefPtr<IPC::StreamClientConnection> clientConnection;
+        RefPtr<MockStreamClientConnectionClient> mockClientReceiver;
+        RefPtr<IPC::StreamServerConnection> serverConnection;
+        RefPtr<MockStreamServerConnectionClient> mockServerReceiver;
+    };
+
+    static constexpr unsigned bufferSizeLog2 = 17;
+
+    static TestObjectIdentifier defaultDestinationID()
+    {
+        return ObjectIdentifier<TestObjectIdentifierTag>(77);
+    }
+
+    ConnectionPair openConnection()
+    {
+        auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2, defaultTimeout);
+        ASSERT(!!connectionPair);
+        auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+        ConnectionPair connection;
+        connection.clientConnection = WTF::move(clientConnection);
+        connection.mockClientReceiver = MockStreamClientConnectionClient::create();
+        connection.clientConnection->open(*connection.mockClientReceiver);
+        connection.serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { });
+        connection.mockServerReceiver = MockStreamServerConnectionClient::create();
+        serverQueue().dispatch([this, serverConnection = connection.serverConnection, mockServerReceiver = connection.mockServerReceiver] {
+            assertIsCurrent(serverQueue());
+            serverConnection->open(*mockServerReceiver, serverQueue());
+            serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), defaultDestinationID().toUInt64());
+        });
+        localReferenceBarrier();
+        return connection;
+    }
+
+    void closeConnection(ConnectionPair& connection)
+    {
+        connection.clientConnection->invalidate();
+        serverQueue().dispatch([&] {
+            assertIsCurrent(serverQueue());
+            connection.serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), defaultDestinationID().toUInt64());
+            connection.serverConnection->invalidate();
+        });
+        localReferenceBarrier();
+        EXPECT_TRUE(connection.mockClientReceiver->checkMessages());
+        EXPECT_TRUE(connection.mockServerReceiver->checkMessages());
+    }
+
+    void send(ConnectionPair& connection, unsigned count)
+    {
+        for (unsigned i = 0; i < count; ++i) {
+            auto result = connection.clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID());
+            EXPECT_EQ(result, IPC::Error::NoError);
+        }
+    }
+
+    void sendWhileWorkQueueIsBlocked(ConnectionPair& connection, unsigned count)
+    {
+        serverQueue().dispatch([this] {
+            m_workQueueDidBlock.signal();
+            m_unblockWorkQueue.wait();
+        });
+        m_workQueueDidBlock.wait();
+        send(connection, count);
+        m_unblockWorkQueue.signal();
+    }
+
+    void receive(ConnectionPair& connection, unsigned count)
+    {
+        for (unsigned i = 0; i < count; ++i) {
+            auto message = connection.mockServerReceiver->waitForMessage(defaultTimeout);
+            EXPECT_EQ(message.messageName, MockStreamTestMessage1::name());
+            EXPECT_EQ(message.destinationID, defaultDestinationID().toUInt64());
+        }
+    }
+
+    static bool waitForDidRunOutOfMessages(ConnectionPair& connection, unsigned count)
+    {
+        return Util::waitFor([&] {
+            return connection.mockServerReceiver->didRunOutOfMessagesCount() >= count;
+        });
+    }
+
+    ConnectionPair m_connectionA;
+    ConnectionPair m_connectionB;
+    BinarySemaphore m_workQueueDidBlock;
+    BinarySemaphore m_unblockWorkQueue;
+};
+
+TEST_P(StreamServerDidRunOutOfMessagesTest, NotSentWithoutMessages)
+{
+    localReferenceBarrier();
+    EXPECT_EQ(m_connectionA.mockServerReceiver->didRunOutOfMessagesCount(), 0u);
+    EXPECT_EQ(m_connectionB.mockServerReceiver->didRunOutOfMessagesCount(), 0u);
+}
+
+TEST_P(StreamServerDidRunOutOfMessagesTest, SentOnceAfterBurst)
+{
+    sendWhileWorkQueueIsBlocked(m_connectionA, messageCount());
+    receive(m_connectionA, messageCount());
+    EXPECT_TRUE(waitForDidRunOutOfMessages(m_connectionA, 1));
+    localReferenceBarrier();
+    EXPECT_EQ(m_connectionA.mockServerReceiver->didRunOutOfMessagesCount(), 1u);
+
+    sendWhileWorkQueueIsBlocked(m_connectionA, messageCount());
+    receive(m_connectionA, messageCount());
+    EXPECT_TRUE(waitForDidRunOutOfMessages(m_connectionA, 2));
+    localReferenceBarrier();
+    EXPECT_EQ(m_connectionA.mockServerReceiver->didRunOutOfMessagesCount(), 2u);
+}
+
+TEST_P(StreamServerDidRunOutOfMessagesTest, SentAfterEveryUnpacedSend)
+{
+    for (unsigned expected = 1; expected <= 3; ++expected) {
+        auto before = m_connectionA.mockServerReceiver->didRunOutOfMessagesCount();
+        send(m_connectionA, messageCount());
+        receive(m_connectionA, messageCount());
+        EXPECT_TRUE(waitForDidRunOutOfMessages(m_connectionA, before + 1));
+        localReferenceBarrier();
+        auto after = m_connectionA.mockServerReceiver->didRunOutOfMessagesCount();
+        EXPECT_GE(after, before + 1);
+        EXPECT_LE(after, before + messageCount());
+    }
+}
+
+TEST_P(StreamServerDidRunOutOfMessagesTest, OnlySentToConnectionThatReceivedMessages)
+{
+    sendWhileWorkQueueIsBlocked(m_connectionA, messageCount());
+    receive(m_connectionA, messageCount());
+    EXPECT_TRUE(waitForDidRunOutOfMessages(m_connectionA, 1));
+    localReferenceBarrier();
+    EXPECT_EQ(m_connectionA.mockServerReceiver->didRunOutOfMessagesCount(), 1u);
+    EXPECT_EQ(m_connectionB.mockServerReceiver->didRunOutOfMessagesCount(), 0u);
+
+    sendWhileWorkQueueIsBlocked(m_connectionB, messageCount());
+    receive(m_connectionB, messageCount());
+    EXPECT_TRUE(waitForDidRunOutOfMessages(m_connectionB, 1));
+    localReferenceBarrier();
+    EXPECT_EQ(m_connectionA.mockServerReceiver->didRunOutOfMessagesCount(), 1u);
+    EXPECT_EQ(m_connectionB.mockServerReceiver->didRunOutOfMessagesCount(), 1u);
+}
+
+INSTANTIATE_TEST_SUITE_P(StreamServerConnectionTests,
+    StreamServerDidRunOutOfMessagesTest,
+    testing::Values(1, 10, 999, 1000, 1001, 2000),
     TestParametersToStringFormatter());
 
 }

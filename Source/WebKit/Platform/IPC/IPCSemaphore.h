@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Timeout.h"
+#include <wtf/Atomics.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
@@ -79,7 +80,11 @@ public:
 #elif USE(UNIX_DOMAIN_SOCKETS)
     explicit Semaphore(UnixFileDescriptor&&);
     UnixFileDescriptor duplicateDescriptor() const;
+#if OS(LINUX)
+    explicit operator bool() const { return !!m_fd && m_state; }
+#else
     explicit operator bool() const { return !!m_fd; }
+#endif
 #else
     explicit operator bool() const { return true; }
 #endif
@@ -94,6 +99,13 @@ private:
     Win32Handle m_semaphoreHandle;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor m_fd;
+#if OS(LINUX)
+    bool waitImpl(Timeout);
+
+    void* m_state { nullptr };
+    Atomic<bool> m_shouldPoll { true };
+    Atomic<unsigned> m_waitCount { 0 };
+#endif
 #endif
 };
 
