@@ -378,7 +378,7 @@ bool BrowsingContextGroup::hasVisiblePage() const
     return false;
 }
 
-void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<void(RemotePageProxy&)>&& function)
+void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, NOESCAPE const Function<void(RemotePageProxy&)>& function)
 {
     auto it = m_remotePages.find(page);
     if (it == m_remotePages.end())

@@ -702,10 +702,10 @@ void DrawingAreaCoordinatedGraphics::resetDamageHistoryForTesting()
         m_layerTreeHost->resetDamageHistoryForTesting();
 }
 
-void DrawingAreaCoordinatedGraphics::foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&& callback) const
+void DrawingAreaCoordinatedGraphics::foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const Region&)>& callback) const
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->foreachRegionInDamageHistoryForTesting(WTF::move(callback));
+        m_layerTreeHost->foreachRegionInDamageHistoryForTesting(callback);
 }
 #endif
 

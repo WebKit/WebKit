@@ -27,6 +27,8 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#include <wtf/Compiler.h>
+
 struct CGPDFDocument;
 using CGPDFDocumentRef = CGPDFDocument *;
 
@@ -34,7 +36,7 @@ namespace WebKit::PDFScriptEvaluation {
 
 using PrintingCallback = std::function<void()>;
 
-void runScripts(CGPDFDocumentRef, PrintingCallback&&);
+void runScripts(CGPDFDocumentRef, NOESCAPE const PrintingCallback&);
 
 } // namespace WebKit::PDFScriptEvaluation
 

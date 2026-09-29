@@ -124,7 +124,7 @@ void IDBStorageConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& res
 }
 
 template<typename RegisterFn>
-static WebIDBResult prepareResultImpl(const WebCore::IDBResultData& resultData, RefPtr<NetworkStorageManager>&& networkStorageManager, NOESCAPE RegisterFn&& registerRecords)
+static WebIDBResult prepareResultImpl(const WebCore::IDBResultData& resultData, RefPtr<NetworkStorageManager>&& networkStorageManager, NOESCAPE const RegisterFn& registerRecords)
 {
     WebIDBResult result { resultData };
     if (!networkStorageManager)

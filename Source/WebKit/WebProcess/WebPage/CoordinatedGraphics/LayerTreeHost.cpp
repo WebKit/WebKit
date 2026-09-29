@@ -589,7 +589,7 @@ void LayerTreeHost::resetDamageHistoryForTesting()
     m_compositor->enableFrameDamageNotificationForTesting();
 }
 
-void LayerTreeHost::foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&& callback) const
+void LayerTreeHost::foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const Region&)>& callback) const
 {
     Locker locker { m_frameDamageHistoryForTestingLock };
     for (const auto& region : m_frameDamageHistoryForTesting)

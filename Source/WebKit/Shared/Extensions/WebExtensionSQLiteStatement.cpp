@@ -109,7 +109,7 @@ Ref<WebExtensionSQLiteRowEnumerator> WebExtensionSQLiteStatement::fetch()
     return WebExtensionSQLiteRowEnumerator::create(*this);
 }
 
-bool WebExtensionSQLiteStatement::fetchWithEnumerationCallback(Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>& callback, RefPtr<API::Error>& outError)
+bool WebExtensionSQLiteStatement::fetchWithEnumerationCallback(NOESCAPE const Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>& callback, RefPtr<API::Error>& outError)
 {
     Ref db = m_db;
 

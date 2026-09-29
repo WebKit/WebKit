@@ -49,7 +49,7 @@ namespace WebKit {
 
 class WebFrame;
 
-Ref<JSON::Array> filterObjects(const JSON::Array&, WTF::Function<bool(const JSON::Value&)>&& lambda);
+Ref<JSON::Array> filterObjects(const JSON::Array&, NOESCAPE const WTF::Function<bool(const JSON::Value&)>&);
 
 Vector<String> makeStringVector(const JSON::Array&);
 
@@ -72,7 +72,7 @@ inline std::unexpected<WebExtensionError> toWebExtensionError(const String& call
 JSObjectRef toJSError(JSContextRef, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
 
 /// Serializes large data to JSON chunks to avoid StringBuilder overflow.
-void serializeToMultipleJSONStrings(Ref<JSON::Object>, Function<void(String&&)>&&);
+void serializeToMultipleJSONStrings(Ref<JSON::Object>, NOESCAPE const Function<void(String&&)>&);
 
 enum class UseNullValue : bool { No, Yes };
 

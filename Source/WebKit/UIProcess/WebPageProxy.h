@@ -2958,7 +2958,7 @@ public:
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSyncToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, const IPC::Timeout&, OptionSet<IPC::SendSyncOption>);
     Ref<WebProcessProxy> processContainingFrame(std::optional<WebCore::FrameIdentifier>);
 
-    void forEachWebContentProcess(NOESCAPE Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&&);
+    void forEachWebContentProcess(NOESCAPE const Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&);
 
     void convertPointToMainFrameCoordinates(WebCore::FloatPoint, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FloatPoint>)>&&);
     void convertRectToMainFrameCoordinates(WebCore::FloatRect, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);
@@ -3721,7 +3721,7 @@ private:
     template<typename Message> void send(Message&&);
     template<typename Message, typename CH> void sendWithAsyncReply(Message&&, CH&&);
 
-    template<typename F> decltype(auto) sendToWebPage(std::optional<WebCore::FrameIdentifier>, F&&);
+    template<typename F> decltype(auto) sendToWebPage(std::optional<WebCore::FrameIdentifier>, NOESCAPE const F&);
 
     void sendPreventableTouchEvent(WebCore::FrameIdentifier, Ref<WebTouchEvent>&&);
     void sendUnpreventableTouchEvent(WebCore::FrameIdentifier, Ref<WebTouchEvent>&&);

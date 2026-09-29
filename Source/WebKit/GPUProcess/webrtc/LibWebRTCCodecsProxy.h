@@ -112,7 +112,7 @@ private:
         std::unique_ptr<WebCore::FrameRateMonitor> frameRateMonitor;
         Deque<CompletionHandler<void(bool)>> decodingCallbacks;
     };
-    void doDecoderTask(VideoDecoderIdentifier, NOESCAPE Function<void(Decoder&)>&&);
+    void doDecoderTask(VideoDecoderIdentifier, NOESCAPE const Function<void(Decoder&)>&);
 
     struct Encoder {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(Encoder);

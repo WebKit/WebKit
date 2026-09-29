@@ -166,7 +166,7 @@ protected:
     ProcessState& processStateForConnection(IPC::Connection&);
     const ProcessState& NODELETE processStateForIdentifier(WebCore::ProcessIdentifier) const;
     IPC::Connection* connectionForIdentifier(WebCore::ProcessIdentifier);
-    void forEachProcessState(NOESCAPE Function<void(ProcessState&, WebProcessProxy&)>&&);
+    void forEachProcessState(NOESCAPE const Function<void(ProcessState&, WebProcessProxy&)>&);
 
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_needsDisplayRefreshCallbacksForDrawing { false };

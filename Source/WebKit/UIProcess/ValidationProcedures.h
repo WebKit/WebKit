@@ -108,7 +108,7 @@ private:
     // Takes the domain as a function rather than a value because deriving one from an origin
     // consults the public suffix list under a global lock, and the guard below usually discards it.
     template<typename DomainFunction>
-    std::optional<IPC::ValidationFailure> checkUntrustedDomain(NOESCAPE DomainFunction&& domain) const
+    std::optional<IPC::ValidationFailure> checkUntrustedDomain(NOESCAPE const DomainFunction& domain) const
     {
         RefPtr process = m_process.get();
         if (!process)

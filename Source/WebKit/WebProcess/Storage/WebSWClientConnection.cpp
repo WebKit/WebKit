@@ -309,7 +309,7 @@ void WebSWClientConnection::storeRegistrationsOnDiskForTesting(CompletionHandler
     sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTF::move(callback));
 }
 
-template<typename C, typename U> void callExceptionOrResultCallback(C&& callback, U&& valueOrException)
+template<typename C, typename U> void callExceptionOrResultCallback(NOESCAPE C&& callback, U&& valueOrException)
 {
     if (!valueOrException.has_value()) {
         callback(valueOrException.error().toException());

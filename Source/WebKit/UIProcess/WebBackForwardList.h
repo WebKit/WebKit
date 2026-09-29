@@ -89,11 +89,11 @@ public:
     Ref<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
     Ref<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
 
-    BackForwardListState backForwardListState(WTF::Function<bool (WebBackForwardListItem&)>&&) const;
+    BackForwardListState backForwardListState(NOESCAPE const WTF::Function<bool(WebBackForwardListItem&)>&) const;
     void restoreFromState(BackForwardListState);
 
     void setItemsAsRestoredFromSession();
-    void setItemsAsRestoredFromSessionIf(NOESCAPE Function<bool(WebBackForwardListItem&)>&&);
+    void setItemsAsRestoredFromSessionIf(NOESCAPE const Function<bool(WebBackForwardListItem&)>&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveProvisionalMessage(IPC::Connection&, IPC::Decoder&);

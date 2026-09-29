@@ -6909,7 +6909,7 @@ SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListIt
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
     sessionState.backForwardListState = backForwardList().backForwardListState(WebBackForwardListItemFilter::create(WTF::move(filter)).ptr());
 #else
-    sessionState.backForwardListState = backForwardList().backForwardListState(WTF::move(filter));
+    sessionState.backForwardListState = backForwardList().backForwardListState(filter);
 #endif
 
     auto& pendingURL = internals().pageLoadState.pendingAPIRequestURL();
@@ -9305,7 +9305,7 @@ HashSet<Ref<WebProcessProxy>> WebPageProxy::webContentProcessesWithFrame()
     return processes;
 }
 
-void WebPageProxy::forEachWebContentProcess(NOESCAPE Function<void(WebProcessProxy&, PageIdentifier)>&& function)
+void WebPageProxy::forEachWebContentProcess(NOESCAPE const Function<void(WebProcessProxy&, PageIdentifier)>& function)
 {
     protect(browsingContextGroup())->forEachRemotePage(*this, [&] (auto& remotePageProxy) {
         function(remotePageProxy.process(), remotePageProxy.pageID());
@@ -19615,7 +19615,7 @@ WebCore::PageIdentifier WebPageProxy::webPageIDInProcessForFrame(std::optional<W
 }
 
 template<typename F>
-decltype(auto) WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, F&& sendFunction)
+decltype(auto) WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, NOESCAPE const F& sendFunction)
 {
     if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
         if (RefPtr remotePage = protect(browsingContextGroup())->remotePageInProcess(*this, protect(frame->process())))

@@ -60,7 +60,7 @@ SharedVideoFrameWriter::SharedVideoFrameWriter()
 {
 }
 
-bool SharedVideoFrameWriter::wait(const Function<void(IPC::Semaphore&)>& newSemaphoreCallback)
+bool SharedVideoFrameWriter::wait(NOESCAPE const Function<void(IPC::Semaphore&)>& newSemaphoreCallback)
 {
     if (!m_isSemaphoreInUse) {
         m_isSemaphoreInUse = true;

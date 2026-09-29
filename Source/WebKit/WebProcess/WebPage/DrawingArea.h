@@ -189,7 +189,7 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     virtual void resetDamageHistoryForTesting() { }
-    virtual void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&&) const { }
+    virtual void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const { }
 #endif
 
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }

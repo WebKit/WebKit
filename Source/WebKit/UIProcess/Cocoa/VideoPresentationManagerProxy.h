@@ -199,7 +199,7 @@ public:
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
-    void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoPresentationInterface&)>&&);
+    void forEachSession(NOESCAPE const Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoPresentationInterface&)>&);
 
 #if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::PlatformVideoPresentationInterface> returningToStandbyInterface() const;

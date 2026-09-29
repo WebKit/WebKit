@@ -94,7 +94,7 @@ private:
     void skipReceivedBuffer(size_t len);
 
     std::expected<bool, String> validateOpeningHandshake();
-    std::optional<String> receiveFrames(Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>&&);
+    std::optional<String> receiveFrames(NOESCAPE const Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>&);
     std::optional<String> validateFrame(const WebCore::WebSocketFrame&);
 
     bool sendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);

@@ -64,7 +64,7 @@ public:
     bool execute(RefPtr<API::Error>&);
 
     Ref<WebExtensionSQLiteRowEnumerator> fetch();
-    bool fetchWithEnumerationCallback(Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>&, RefPtr<API::Error>&);
+    bool fetchWithEnumerationCallback(NOESCAPE const Function<void(RefPtr<WebExtensionSQLiteRow>, bool)>&, RefPtr<API::Error>&);
 
     void reset();
     void invalidate();

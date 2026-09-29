@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-Ref<JSON::Array> filterObjects(const JSON::Array& array, WTF::Function<bool(const JSON::Value&)>&& lambda)
+Ref<JSON::Array> filterObjects(const JSON::Array& array, NOESCAPE const WTF::Function<bool(const JSON::Value&)>& lambda)
 {
     auto result = JSON::Array::create();
 
@@ -100,7 +100,7 @@ RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object> jsonA, RefPtr<JSON::Object> 
     return mergedObject;
 }
 
-void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, Function<void(String&&)>&& chunkCallback)
+void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const Function<void(String&&)>& chunkCallback)
 {
     // StringBuilder is limited to INT_MAX characters and JSON chars may expand up to 6x to account for escaping (\uNNNN).
     // We can assume memoryCost() ≈ total bytes of string storage, so a threshold cap of INT_MAX / 6

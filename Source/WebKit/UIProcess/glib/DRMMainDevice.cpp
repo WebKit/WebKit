@@ -55,7 +55,7 @@
 namespace WebKit {
 
 #if USE(LIBDRM)
-static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
+static void drmForeachDevice(NOESCAPE const Function<bool(drmDevice*)>& functor)
 {
     std::array<drmDevicePtr, 64> devices = { };
 

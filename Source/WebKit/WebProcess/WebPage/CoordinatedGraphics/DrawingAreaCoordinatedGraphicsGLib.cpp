@@ -384,12 +384,12 @@ void DrawingAreaCoordinatedGraphics::resetDamageHistoryForTesting()
     m_renderer->resetDamageHistoryForTesting();
 }
 
-void DrawingAreaCoordinatedGraphics::foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&& callback) const
+void DrawingAreaCoordinatedGraphics::foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const Region&)>& callback) const
 {
     if (!m_renderer)
         return;
 
-    m_renderer->foreachRegionInDamageHistoryForTesting(WTF::move(callback));
+    m_renderer->foreachRegionInDamageHistoryForTesting(callback);
 }
 #endif
 

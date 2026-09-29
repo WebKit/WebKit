@@ -2549,7 +2549,7 @@ void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTa
     });
 }
 
-void WebExtensionContext::enumerateExtensionPages(NOESCAPE Function<void(WebPageProxy&, bool&)>&& action)
+void WebExtensionContext::enumerateExtensionPages(NOESCAPE const Function<void(WebPageProxy&, bool&)>& action)
 {
     if (!isLoaded())
         return;
@@ -3115,7 +3115,7 @@ void WebExtensionContext::runOpenPanel(WKWebView *, WKOpenPanelParameters *param
 #endif // PLATFORM(MAC)
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>&& predicate) const
+WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(NOESCAPE const Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>& predicate) const
 {
     ASSERT(isLoaded());
 

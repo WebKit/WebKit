@@ -70,7 +70,7 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     virtual void resetDamageHistoryForTesting() = 0;
-    virtual void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&&) const = 0;
+    virtual void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const = 0;
 #endif
 
 #if PLATFORM(GTK)

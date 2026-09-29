@@ -155,7 +155,7 @@ public:
     WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
     ~WebsiteDataStore();
 
-    static void forEachWebsiteDataStore(NOESCAPE Function<void(WebsiteDataStore&)>&&);
+    static void forEachWebsiteDataStore(NOESCAPE const Function<void(WebsiteDataStore&)>&);
     
     NetworkProcessProxy& networkProcess() const;
     NetworkProcessProxy& networkProcess();

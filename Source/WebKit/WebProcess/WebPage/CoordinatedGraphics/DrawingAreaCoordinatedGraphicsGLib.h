@@ -98,7 +98,7 @@ private:
 
 #if ENABLE(DAMAGE_TRACKING)
     void resetDamageHistoryForTesting() override;
-    void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&&) const override;
+    void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const override;
 #endif
 
 #if PLATFORM(GTK)

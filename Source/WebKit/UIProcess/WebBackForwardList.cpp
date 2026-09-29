@@ -545,7 +545,7 @@ void WebBackForwardList::clear()
     page->didChangeBackForwardList(nullptr, WTF::move(removedItems));
 }
 
-BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool (WebBackForwardListItem&)>&& filter) const
+BackForwardListState WebBackForwardList::backForwardListState(NOESCAPE const WTF::Function<bool(WebBackForwardListItem&)>& filter) const
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 
@@ -600,7 +600,7 @@ void WebBackForwardList::setItemsAsRestoredFromSession()
     });
 }
 
-void WebBackForwardList::setItemsAsRestoredFromSessionIf(NOESCAPE Function<bool(WebBackForwardListItem&)>&& functor)
+void WebBackForwardList::setItemsAsRestoredFromSessionIf(NOESCAPE const Function<bool(WebBackForwardListItem&)>& functor)
 {
     for (auto& entry : m_entries) {
         if (functor(entry))

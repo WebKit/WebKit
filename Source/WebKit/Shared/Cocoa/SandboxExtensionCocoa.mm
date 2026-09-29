@@ -201,7 +201,7 @@ auto SandboxExtension::createHandle(StringView path, Type type) -> std::optional
     return createHandleWithoutResolvingPath(resolvePathForSandboxExtension(path), type);
 }
 
-template<typename Collection, typename Function> static Vector<SandboxExtension::Handle> createHandlesForResources(const Collection& resources, const Function& createFunction)
+template<typename Collection, typename Function> static Vector<SandboxExtension::Handle> createHandlesForResources(const Collection& resources, NOESCAPE const Function& createFunction)
 {
     return WTF::compactMap(resources, [&](auto& resource) -> std::optional<SandboxExtension::Handle> {
         if (auto handle = createFunction(resource))

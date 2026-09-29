@@ -729,7 +729,7 @@ void PlaybackSessionManager::setSpatialTrackingLabel(WebCore::HTMLMediaElementId
 }
 #endif
 
-void PlaybackSessionManager::forEachModel(Function<void(PlaybackSessionModel&)>&& callback)
+void PlaybackSessionManager::forEachModel(NOESCAPE const Function<void(PlaybackSessionModel&)>& callback)
 {
     for (auto [model, interface] : m_contextMap.values()) {
         UNUSED_PARAM(interface);

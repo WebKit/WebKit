@@ -134,7 +134,7 @@ bool PositionInformationManager::hasValidOutstandingRequest(const InteractionInf
     }).value_or(false);
 }
 
-void PositionInformationManager::invokeAndRemovePendingHandlers(Function<bool(const InteractionInformationRequest&)>&& matches, const std::optional<InteractionInformationAtPosition>& information)
+void PositionInformationManager::invokeAndRemovePendingHandlers(NOESCAPE const Function<bool(const InteractionInformationRequest&)>& matches, const std::optional<InteractionInformationAtPosition>& information)
 {
     ++m_callbackDepth;
 

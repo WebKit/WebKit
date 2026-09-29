@@ -854,7 +854,7 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
     m_clientCounts.set(contextId, clientCount);
 }
 
-void VideoPresentationManagerProxy::forEachSession(Function<void(VideoPresentationModelContext&, PlatformVideoPresentationInterface&)>&& callback)
+void VideoPresentationManagerProxy::forEachSession(NOESCAPE const Function<void(VideoPresentationModelContext&, PlatformVideoPresentationInterface&)>& callback)
 {
     if (m_contextMap.isEmpty())
         return;

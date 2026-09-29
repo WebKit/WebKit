@@ -233,7 +233,7 @@ private:
     void setSpatialTrackingLabel(WebCore::MediaPlayerClientIdentifier, const String&);
 #endif
 
-    void forEachModel(Function<void(WebCore::PlaybackSessionModel&)>&&);
+    void forEachModel(NOESCAPE const Function<void(WebCore::PlaybackSessionModel&)>&);
 
 #if ENABLE(IMAGE_ANALYSIS)
     TextRecognitionRequest& textRecognitionRequest() { return m_textRecognitionRequest.get(); }

@@ -693,7 +693,7 @@ public:
     void addExtensionTabPage(WebPageProxy&, WebExtensionTab&);
     void addPopupPage(WebPageProxy&, WebExtensionAction&);
 
-    void enumerateExtensionPages(NOESCAPE Function<void(WebPageProxy&, bool& stop)>&&);
+    void enumerateExtensionPages(NOESCAPE const Function<void(WebPageProxy&, bool& stop)>&);
 
     WebViewClass *relatedWebView();
     String processDisplayName();
@@ -720,7 +720,7 @@ public:
         return processes(WTF::move(typeSet), ContentWorldTypeSet { contentWorldType });
     }
 
-    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&, Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>&& predicate = nullptr) const;
+    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&, NOESCAPE const Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>& predicate = nullptr) const;
 
     const UserContentControllerProxySet& NODELETE userContentControllers() const LIFETIME_BOUND;
 
@@ -811,7 +811,7 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     URL inspectorBackgroundPageURL() const;
 
-    InspectorTabVector openInspectors(Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>&& = nullptr) const;
+    InspectorTabVector openInspectors(NOESCAPE const Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>& = nullptr) const;
     InspectorTabVector loadedInspectors() const;
 
     bool isInspectorBackgroundPage(WKWebView *) const;

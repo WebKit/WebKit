@@ -126,7 +126,7 @@ public:
 #if ENABLE(DAMAGE_TRACKING)
     void notifyFrameDamageForTesting(WebCore::Region&&);
     void resetDamageHistoryForTesting();
-    void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&&);
+    void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&);
 #endif
 
 private:

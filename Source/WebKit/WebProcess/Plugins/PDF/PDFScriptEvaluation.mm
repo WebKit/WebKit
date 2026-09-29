@@ -149,7 +149,7 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
     return false;
 }
 
-void runScripts(CGPDFDocumentRef document, PrintingCallback&& callback)
+void runScripts(CGPDFDocumentRef document, NOESCAPE const PrintingCallback& callback)
 {
     if (pdfDocumentContainsPrintScript(document))
         callback();

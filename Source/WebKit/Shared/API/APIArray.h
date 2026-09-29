@@ -65,7 +65,7 @@ public:
     }
 
     template<typename MatchFunction>
-    unsigned removeAllMatching(const MatchFunction& matchFunction)
+    unsigned removeAllMatching(NOESCAPE const MatchFunction& matchFunction)
     {
         return m_elements.removeAllMatching(matchFunction);
     }

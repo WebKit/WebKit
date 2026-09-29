@@ -291,7 +291,7 @@ void LibWebRTCCodecsProxy::setFrameSize(VideoDecoderIdentifier identifier, uint1
     });
 }
 
-void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, NOESCAPE Function<void(Decoder&)>&& task)
+void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, NOESCAPE const Function<void(Decoder&)>& task)
 {
     assertIsCurrent(workQueue());
     auto iterator = m_decoders.find(identifier);

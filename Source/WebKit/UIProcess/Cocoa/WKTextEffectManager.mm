@@ -77,7 +77,7 @@ static NSWritingDirection toNSWritingDirection(WebCore::WritingDirection editorW
 // The indicator's rects are in root view coordinates, which is also the coordinate space of the coordinator's
 // effect container view, so no conversion is needed.
 template<typename Callback>
-static void forEachTextPreviewImage(const RefPtr<WebCore::TextIndicator>& textIndicator, NOESCAPE Callback&& callback)
+static void forEachTextPreviewImage(const RefPtr<WebCore::TextIndicator>& textIndicator, NOESCAPE const Callback& callback)
 {
     if (!textIndicator)
         return;

@@ -100,7 +100,7 @@ public:
     bool processIncomingMessage(Connection& connectionForLockCheck, UniqueRef<Decoder>&) WTF_REQUIRES_LOCK(connectionForLockCheck.m_incomingMessagesLock);
 
     // Dispatch pending messages that should be dispatched while waiting for a sync reply.
-    void dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage = { });
+    void dispatchMessages(NOESCAPE const Function<void(MessageName, uint64_t)>& willDispatchMessage = { });
 
     // Dispatch pending messages that should be dispatched while waiting for a sync reply,
     // up until the message with the provided identifier.
@@ -230,7 +230,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     return true;
 }
 
-void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage)
+void Connection::SyncMessageState::dispatchMessages(NOESCAPE const Function<void(MessageName, uint64_t)>& willDispatchMessage)
 {
     assertIsCurrent(m_dispatcher.get());
     {

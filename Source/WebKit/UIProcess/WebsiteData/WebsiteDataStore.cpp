@@ -141,7 +141,7 @@ WorkQueue& WebsiteDataStore::websiteDataStoreIOQueueSingleton()
     return queue.get();
 }
 
-void WebsiteDataStore::forEachWebsiteDataStore(NOESCAPE Function<void(WebsiteDataStore&)>&& function)
+void WebsiteDataStore::forEachWebsiteDataStore(NOESCAPE const Function<void(WebsiteDataStore&)>& function)
 {
     for (auto& dataStore : allDataStores().values())
         function(protect(dataStore));

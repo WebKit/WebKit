@@ -1717,7 +1717,7 @@ const WebExtensionContext::UserContentControllerProxySet& WebExtensionContext::u
     return extensionController()->allNonPrivateUserContentControllers();
 }
 
-WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet&& typeSet, ContentWorldTypeSet&& contentWorldTypeSet, Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>&& predicate) const
+WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet&& typeSet, ContentWorldTypeSet&& contentWorldTypeSet, NOESCAPE const Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>& predicate) const
 {
     if (!isLoaded())
         return { };
