@@ -3329,7 +3329,8 @@ void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frame
         return;
     }
     contentChangeObserver->stopContentObservation();
-    callOnMainRunLoop([protectedThis = Ref { *this }, targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId, frameID] {
+    dispatchDeferredSyntheticClickIfNeeded();
+    m_deferredSyntheticClick = [protectedThis = Ref { *this }, targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId, frameID] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
 
@@ -3344,7 +3345,17 @@ void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frame
         }
         LOG(ContentObservation, "handleSyntheticClick: calling completeSyntheticClick -> click.");
         protectedThis->completeSyntheticClick(frameID, targetNode, location, modifiers, WebCore::SyntheticClickType::OneFingerTap, pointerId);
+    };
+    callOnMainRunLoop([protectedThis = Ref { *this }, generation = ++m_deferredSyntheticClickGeneration] {
+        if (generation == protectedThis->m_deferredSyntheticClickGeneration)
+            protectedThis->dispatchDeferredSyntheticClickIfNeeded();
     });
+}
+
+void WebPage::dispatchDeferredSyntheticClickIfNeeded()
+{
+    if (auto dispatch = std::exchange(m_deferredSyntheticClick, { }))
+        dispatch();
 }
 
 Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTapAtPosition(std::optional<WebCore::FrameIdentifier> frameID, WebKit::TapIdentifier requestID, WebCore::FloatPoint positionInRootView, bool shouldRequestMagnificationInformation, WebKit::WebEventInputSource inputSource)
@@ -3536,6 +3547,10 @@ void WebPage::cancelPotentialTap()
         ContentChangeObserver::didCancelPotentialTap(*localMainFrame);
 #endif
     cancelPotentialTapInFrame(m_mainFrame);
+
+#if ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
+    dispatchDeferredSyntheticClickIfNeeded();
+#endif
 }
 
 void WebPage::didHandleTapAsHover()

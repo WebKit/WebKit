@@ -36,6 +36,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 NS_SWIFT_UI_ACTOR
 @interface WKPressGestureRecognizer : NSPressGestureRecognizer
 
+@property (nonatomic) BOOL refusesToBeFailureRequirement;
+
 - (void)beginReportingMovementFromWindowLocation:(NSPoint)locationInWindow;
 - (NSEvent *)eventReportingMovement:(NSEvent *)event atWindowLocation:(NSPoint)locationInWindow;
 

@@ -1052,35 +1052,40 @@ extension AppKitGesturesTests.Basic {
         #expect(newSelection == crazySelection)
     }
 
-    @Test(arguments: [false, true])
-    func doubleClickingInWordInTextFieldSelectsWord(readOnly: Bool) async throws {
-        try await loadTextField(readOnly: readOnly)
-
+    @Test(arguments: [false, true], [Duration.seconds(0.05), .seconds(0.15)])
+    func doubleClickingInWordInTextFieldSelectsWord(readOnly: Bool, secondClickDuration: Duration) async throws {
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
 
-        let crazyBoundsInScreenCoordinates = try await screenBoundsOfTextFieldText("crazy")
+        for attempt in 0..<3 {
+            try await loadTextField(readOnly: readOnly)
 
-        await page.waitForNextPresentationUpdate()
+            let crazyBoundsInScreenCoordinates = try await screenBoundsOfTextFieldText("crazy")
 
-        await recap.play { composer in
-            composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
-            composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
+            await page.waitForNextPresentationUpdate()
+
+            await recap.play { composer in
+                composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
+                composer.advanceTime(0.1)
+                composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: secondClickDuration)
+            }
+
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+
+            // `getSelection()` cannot see into the field's shadow tree, so read the selection off the field.
+            let (start, end) = try await page.callJavaScript(returning: (Int, Int).self) {
+                """
+                const input = document.getElementById("input");
+                return [input.selectionStart, input.selectionEnd];
+                """
+            }
+
+            #expect(start == crazyRange.lowerBound, "attempt \(attempt)")
+            #expect(end == crazyRange.upperBound, "attempt \(attempt)")
+
+            // Keeps the next attempt's first click from continuing this attempt's click sequence.
+            try await Task.sleep(for: .seconds(1))
         }
-
-        await page.waitForPendingMouseEvents()
-        await page.waitForNextPresentationUpdate()
-
-        // `getSelection()` cannot see into the field's shadow tree, so read the selection off the field.
-        let (start, end) = try await page.callJavaScript(returning: (Int, Int).self) {
-            """
-            const input = document.getElementById("input");
-            return [input.selectionStart, input.selectionEnd];
-            """
-        }
-
-        #expect(start == crazyRange.lowerBound)
-        #expect(end == crazyRange.upperBound)
     }
 
     @Test()
