@@ -5709,10 +5709,16 @@ sub GenerateImplementation
         my $vtableRefGnu = GetGnuVTableRefForInterface($interface);
         my $vtableRefWin = GetWinVTableRefForInterface($interface);
 
+        my $hasChildInterfaces = 0;
+        unless ($interface->extendedAttributes->{IgnoreSubclassesWhenGeneratingToJSObject}) {
+            $codeGenerator->ForEachChildInterface($interface, sub { $hasChildInterfaces = 1; });
+        }
+
         # We use a templated verifyVTable function here to force the type
         # being checked to be a dependent type so we can rely on `if constexpr`
-        # not causing errors when evaluated.
-        push(@implContent, <<END) if $vtableNameGnu;
+        # not causing errors when evaluated. It is only called when there are
+        # no child interfaces, so only emit it in that case.
+        push(@implContent, <<END) if $vtableNameGnu and not $hasChildInterfaces;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
@@ -5753,11 +5759,9 @@ END
         } else {
             push(@implContent, "    UNUSED_PARAM(lexicalGlobalObject);\n");
         }
-        my $hasChildInterfaces = 0;
         unless ($interface->extendedAttributes->{IgnoreSubclassesWhenGeneratingToJSObject}) {
             $codeGenerator->ForEachChildInterface($interface, sub {
                 my $childInterface = shift;
-                $hasChildInterfaces = 1;
                 my $childImplType = GetImplClassName($childInterface);
                 my $conditional = $childInterface->extendedAttributes->{Conditional};
                 if ($conditional) {

@@ -318,35 +318,6 @@ void JSTestDefaultToJSONInherit::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
     Base::analyzeHeap(cell, analyzer);
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-#if ENABLE(BINDING_INTEGRITY)
-#if PLATFORM(WIN)
-#pragma warning(disable: 4483)
-extern "C" { extern void (*const __identifier("??_7TestDefaultToJSONInherit@WebCore@@6B@")[])(); }
-#else
-extern "C" { extern void* _ZTVN7WebCore24TestDefaultToJSONInheritE[]; }
-#endif
-template<std::same_as<TestDefaultToJSONInherit> T>
-static inline void verifyVTable(TestDefaultToJSONInherit* ptr)
-{
-    if constexpr (std::is_polymorphic_v<T>) {
-        const void* actualVTablePointer = getVTablePointer<T>(ptr);
-#if PLATFORM(WIN)
-        void* expectedVTablePointer = __identifier("??_7TestDefaultToJSONInherit@WebCore@@6B@");
-#else
-        void* expectedVTablePointer = &_ZTVN7WebCore24TestDefaultToJSONInheritE[2];
-#endif
-
-        // If you hit this assertion you either have a use after free bug, or
-        // TestDefaultToJSONInherit has subclasses. If TestDefaultToJSONInherit has subclasses that get passed
-        // to toJS() we currently require TestDefaultToJSONInherit you to opt out of binding hardening
-        // by adding the SkipVTableValidation attribute to the interface IDL definition
-        RELEASE_ASSERT_WITH_UNQUALIFIED_FUNCTION_NAME(actualVTablePointer == expectedVTablePointer);
-    }
-}
-#endif
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInherit>&& impl)
 {
     UNUSED_PARAM(lexicalGlobalObject);

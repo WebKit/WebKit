@@ -877,35 +877,6 @@ void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDefaultToJSON->wrapped(), jsTestDefaultToJSON);
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-#if ENABLE(BINDING_INTEGRITY)
-#if PLATFORM(WIN)
-#pragma warning(disable: 4483)
-extern "C" { extern void (*const __identifier("??_7TestDefaultToJSON@WebCore@@6B@")[])(); }
-#else
-extern "C" { extern void* _ZTVN7WebCore17TestDefaultToJSONE[]; }
-#endif
-template<std::same_as<TestDefaultToJSON> T>
-static inline void verifyVTable(TestDefaultToJSON* ptr)
-{
-    if constexpr (std::is_polymorphic_v<T>) {
-        const void* actualVTablePointer = getVTablePointer<T>(ptr);
-#if PLATFORM(WIN)
-        void* expectedVTablePointer = __identifier("??_7TestDefaultToJSON@WebCore@@6B@");
-#else
-        void* expectedVTablePointer = &_ZTVN7WebCore17TestDefaultToJSONE[2];
-#endif
-
-        // If you hit this assertion you either have a use after free bug, or
-        // TestDefaultToJSON has subclasses. If TestDefaultToJSON has subclasses that get passed
-        // to toJS() we currently require TestDefaultToJSON you to opt out of binding hardening
-        // by adding the SkipVTableValidation attribute to the interface IDL definition
-        RELEASE_ASSERT_WITH_UNQUALIFIED_FUNCTION_NAME(actualVTablePointer == expectedVTablePointer);
-    }
-}
-#endif
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
 {
     UNUSED_PARAM(lexicalGlobalObject);
