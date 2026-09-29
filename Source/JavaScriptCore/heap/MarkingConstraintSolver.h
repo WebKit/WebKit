@@ -37,7 +37,6 @@
 
 namespace JSC {
 
-class Heap;
 class MarkingConstraint;
 class MarkingConstraintSet;
 
@@ -46,7 +45,7 @@ class MarkingConstraintSolver {
     WTF_MAKE_TZONE_ALLOCATED(MarkingConstraintSolver);
     
 public:
-    MarkingConstraintSolver(MarkingConstraintSet&);
+    MarkingConstraintSolver(MarkingConstraintSet&, SlotVisitor& mainVisitor);
     ~MarkingConstraintSolver();
     
     bool NODELETE didVisitSomething() const;
@@ -85,7 +84,6 @@ private:
         MarkingConstraint* constraint { nullptr };
     };
     
-    JSC::Heap& m_heap;
     SlotVisitor& m_mainVisitor;
     MarkingConstraintSet& m_set;
     BitVector m_executed;

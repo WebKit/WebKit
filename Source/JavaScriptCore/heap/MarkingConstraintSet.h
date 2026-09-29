@@ -33,14 +33,13 @@
 
 namespace JSC {
 
-class Heap;
 class MarkingConstraintSolver;
 
 class MarkingConstraintSet {
     WTF_MAKE_TZONE_ALLOCATED(MarkingConstraintSet);
     WTF_MAKE_NONCOPYABLE(MarkingConstraintSet);
 public:
-    MarkingConstraintSet(Heap&);
+    MarkingConstraintSet();
     ~MarkingConstraintSet();
     
     void didStartMarking();
@@ -50,17 +49,8 @@ public:
         ASCIICString name,
         MarkingConstraintExecutorPair&&,
         ConstraintVolatility,
-        ConstraintConcurrency = ConstraintConcurrency::Concurrent,
-        ConstraintParallelism = ConstraintParallelism::Sequential);
-    
-    void add(
-        ASCIICString abbreviatedName, ASCIICString name,
-        MarkingConstraintExecutorPair&& executors,
-        ConstraintVolatility volatility,
-        ConstraintParallelism parallelism)
-    {
-        add(WTF::move(abbreviatedName), WTF::move(name), WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism);
-    }
+        ConstraintConcurrency,
+        ConstraintParallelism);
     
     void add(std::unique_ptr<MarkingConstraint>);
 
@@ -87,7 +77,6 @@ private:
 
     bool executeConvergenceImpl(SlotVisitor&);
     
-    JSC::Heap& m_heap;
     BitVector m_unexecutedRoots;
     BitVector m_unexecutedOutgrowths;
     Vector<std::unique_ptr<MarkingConstraint>> m_set;

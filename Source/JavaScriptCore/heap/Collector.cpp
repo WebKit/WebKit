@@ -120,6 +120,7 @@ Collector::Collector(Heap& heap)
     , m_raceMarkStack(makeUnique<MarkStackArray>())
     , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"_s))
     , m_helperClient(&heapHelperPool())
+    , m_constraintSet(makeUnique<MarkingConstraintSet>())
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
 {
@@ -369,7 +370,7 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
 
     SlotVisitor& visitor = *m_collectorSlotVisitor;
 
-    m_heap.m_constraintSet->didStartMarking();
+    m_constraintSet->didStartMarking();
 
     m_scheduler->beginCollection();
     if (Options::logGC()) [[unlikely]]
@@ -427,7 +428,7 @@ NEVER_INLINE bool Collector::runFixpointPhase(GCConductor conn)
 
         // Wondering what this does? Look at Heap::addCoreConstraints(). The DOM and others can also
         // add their own using Heap::addMarkingConstraint().
-        bool converged = m_heap.m_constraintSet->executeConvergence(visitor);
+        bool converged = m_constraintSet->executeConvergence(visitor);
 
         // FIXME: The visitor.isEmpty() check is most likely not needed.
         // https://bugs.webkit.org/show_bug.cgi?id=180310
@@ -792,6 +793,19 @@ void Collector::resumeCompilerThreads()
 #if ENABLE(JIT)
     JITWorklist::ensureGlobalWorklist().resumeAllThreads();
 #endif
+}
+
+void Collector::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
+{
+    ASSERT(!m_heap.m_collectionScope);
+    m_constraintSet->add(WTF::move(constraint));
+}
+
+void Collector::addMarkingConstraint(ASCIICString abbreviatedName, ASCIICString name, MarkingConstraintExecutorPair&& executors,
+    ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
+{
+    ASSERT(!m_heap.m_collectionScope);
+    m_constraintSet->add(WTF::move(abbreviatedName), WTF::move(name), WTF::move(executors), volatility, concurrency, parallelism);
 }
 
 size_t Collector::bytesVisited()

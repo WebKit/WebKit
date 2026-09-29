@@ -93,7 +93,6 @@ class MarkStackMergingConstraint;
 class BlockDirectory;
 class MarkedVectorBase;
 class MarkingConstraint;
-class MarkingConstraintSet;
 class MutatorScheduler;
 class RunningScope;
 class SlotVisitor;
@@ -851,7 +850,6 @@ private:
     const std::unique_ptr<Collector> m_collector;
     std::unique_ptr<SlotVisitor> m_mutatorSlotVisitor;
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
-    std::unique_ptr<MarkingConstraintSet> m_constraintSet;
     std::unique_ptr<VerifierSlotVisitor> m_verifierSlotVisitor;
     
     StrongSet m_strongSet;

@@ -33,12 +33,11 @@
 
 namespace JSC { 
 
-MarkingConstraintSolver::MarkingConstraintSolver(MarkingConstraintSet& set)
-    : m_heap(set.m_heap)
-    , m_mainVisitor(m_heap.collectorSlotVisitor())
+MarkingConstraintSolver::MarkingConstraintSolver(MarkingConstraintSet& set, SlotVisitor& mainVisitor)
+    : m_mainVisitor(mainVisitor)
     , m_set(set)
 {
-    m_heap.collector().forEachSlotVisitor(
+    m_mainVisitor.collector().forEachSlotVisitor(
         [&] (SlotVisitor& visitor) {
             m_visitCounters.append(VisitCounter(visitor));
         });
@@ -63,7 +62,7 @@ void MarkingConstraintSolver::execute(SchedulerPreference preference, const Scop
     if (Options::useParallelMarkingConstraintSolver()) {
         dataLogIf(Options::logGC(), preference == ParallelWorkFirst ? "P" : "N", "<");
         
-        m_heap.collector().runFunctionInParallel(
+        m_mainVisitor.collector().runFunctionInParallel(
             [&] (SlotVisitor& visitor) { runExecutionThread(visitor, preference, pickNext); });
         
         dataLogIf(Options::logGC(), ">");

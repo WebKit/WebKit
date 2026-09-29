@@ -296,7 +296,6 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_collector(makeUnique<Collector>(*this))
     , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*m_collector, "M"_s))
     , m_mutatorMarkStack(makeUnique<MarkStackArray>())
-    , m_constraintSet(makeUnique<MarkingConstraintSet>(*this))
     , m_strongSet(vm)
     , m_codeBlocks(makeUnique<CodeBlockSet>())
     , m_jitStubRoutines(makeUnique<JITStubRoutineSet>())
@@ -2374,7 +2373,7 @@ static UNUSED_FUNCTION void visitSamplingProfiler(VM&, AbstractSlotVisitor&) { }
 
 void Heap::addCoreConstraints()
 {
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "Cs"_s, "Conservative Scan"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this, lastVersion = static_cast<uint64_t>(0)] (auto& visitor) mutable {
             bool shouldNotProduceWork = lastVersion == m_collector->m_phaseVersion;
@@ -2422,9 +2421,11 @@ void Heap::addCoreConstraints()
             }
             lastVersion = m_collector->m_phaseVersion;
         })),
-        ConstraintVolatility::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution,
+        ConstraintConcurrency::Concurrent,
+        ConstraintParallelism::Sequential);
     
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "Msr"_s, "Misc Small Roots"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             VM& vm = this->vm();
@@ -2464,18 +2465,22 @@ void Heap::addCoreConstraints()
                 visitor.appendUnbarriered(vm.m_terminationException);
             }
         })),
-        ConstraintVolatility::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution,
+        ConstraintConcurrency::Concurrent,
+        ConstraintParallelism::Sequential);
     
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "Sh"_s, "Strong Handles"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongHandles);
             m_strongSet.visitAggregate(visitor);
             vm().visitAggregate(visitor);
         })),
-        ConstraintVolatility::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution,
+        ConstraintConcurrency::Concurrent,
+        ConstraintParallelism::Sequential);
     
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "D"_s, "Debugger"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Debugger);
@@ -2490,9 +2495,11 @@ void Heap::addCoreConstraints()
             if (auto* shadowChicken = vm.shadowChicken())
                 shadowChicken->visitChildren(visitor);
         })),
-        ConstraintVolatility::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution,
+        ConstraintConcurrency::Concurrent,
+        ConstraintParallelism::Sequential);
     
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "Ws"_s, "Weak Sets"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakSets);
@@ -2500,9 +2507,10 @@ void Heap::addCoreConstraints()
             visitor.addParallelConstraintTask(WTF::move(task));
         })),
         ConstraintVolatility::GreyedByMarking,
+        ConstraintConcurrency::Concurrent,
         ConstraintParallelism::Parallel);
     
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "O"_s, "Output"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             auto callOutputConstraint = [] (auto& visitor, HeapCell* heapCell, HeapCell::Kind) {
@@ -2531,10 +2539,11 @@ void Heap::addCoreConstraints()
             }
         })),
         ConstraintVolatility::GreyedByMarking,
+        ConstraintConcurrency::Concurrent,
         ConstraintParallelism::Parallel);
 
 #if ENABLE(WEBASSEMBLY)
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "Pbc"_s, "Pinball Completions"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             // FIXME: Unlike the "Cs" constraint which is skipped during verification
@@ -2561,12 +2570,13 @@ void Heap::addCoreConstraints()
             visitor.append(conservativeRoots);
         })),
         ConstraintVolatility::GreyedByMarking,
-        ConstraintConcurrency::Sequential);
+        ConstraintConcurrency::Sequential,
+        ConstraintParallelism::Sequential);
 #endif
 
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-        m_constraintSet->add(
+        m_collector->addMarkingConstraint(
             "Jw"_s, "JIT Worklist"_s,
             MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::JITWorkList);
@@ -2584,11 +2594,13 @@ void Heap::addCoreConstraints()
                 if (Options::logGC() == GCLogging::Verbose)
                     dataLog("JIT Worklists:\n", visitor);
             })),
-            ConstraintVolatility::GreyedByMarking);
+            ConstraintVolatility::GreyedByMarking,
+            ConstraintConcurrency::Concurrent,
+            ConstraintParallelism::Sequential);
     }
 #endif
     
-    m_constraintSet->add(
+    m_collector->addMarkingConstraint(
         "Cb"_s, "CodeBlocks"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::CodeBlocks);
@@ -2600,15 +2612,17 @@ void Heap::addCoreConstraints()
                         visitor.visitAsConstraint(codeBlock);
                 });
         })),
-        ConstraintVolatility::SeldomGreyed);
+        ConstraintVolatility::SeldomGreyed,
+        ConstraintConcurrency::Concurrent,
+        ConstraintParallelism::Sequential);
     
-    m_constraintSet->add(makeUnique<MarkStackMergingConstraint>(*this));
+    m_collector->addMarkingConstraint(makeUnique<MarkStackMergingConstraint>(*this));
 }
 
 void Heap::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
 {
     PreventCollectionScope preventCollectionScope(*this);
-    m_constraintSet->add(WTF::move(constraint));
+    m_collector->addMarkingConstraint(WTF::move(constraint));
 }
 
 void Heap::notifyIsSafeToCollect()
@@ -2720,7 +2734,7 @@ void Heap::verifierMark()
     do {
         while (!visitor.isEmpty())
             visitor.drain();
-        m_constraintSet->executeAllSynchronously(visitor);
+        m_collector->m_constraintSet->executeAllSynchronously(visitor);
         visitor.executeConstraintTasks();
     } while (!visitor.isEmpty());
 

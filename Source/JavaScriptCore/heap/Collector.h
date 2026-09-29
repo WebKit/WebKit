@@ -22,6 +22,9 @@
 #pragma once
 
 #include <JavaScriptCore/CollectorPhase.h>
+#include <JavaScriptCore/ConstraintConcurrency.h>
+#include <JavaScriptCore/ConstraintParallelism.h>
+#include <JavaScriptCore/ConstraintVolatility.h>
 #include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/GCRequest.h>
 #include <JavaScriptCore/MachineStackMarker.h>
@@ -44,6 +47,9 @@ namespace JSC {
 
 class Heap;
 class MarkStackArray;
+class MarkingConstraint;
+class MarkingConstraintSet;
+struct MarkingConstraintExecutorPair;
 class MutatorScheduler;
 class SlotVisitor;
 
@@ -70,6 +76,11 @@ public:
     {
         runTaskInParallel(createSharedTask<void(SlotVisitor&)>(func));
     }
+
+    // Only while no collection is running, since a collection iterates the constraints.
+    void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
+    void addMarkingConstraint(ASCIICString abbreviatedName, ASCIICString name, MarkingConstraintExecutorPair&&,
+        ConstraintVolatility, ConstraintConcurrency, ConstraintParallelism);
 
 private:
     class CollectorThread;
@@ -155,6 +166,8 @@ private:
     // GC marking threads claim these at the start of marking, and return them at the end.
     Vector<SlotVisitor*> m_availableParallelSlotVisitors WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
     ParallelHelperClient m_helperClient;
+
+    std::unique_ptr<MarkingConstraintSet> m_constraintSet;
 
     // The phase machine, stepped once per transition.
     CollectorPhase m_lastPhase { CollectorPhase::NotRunning };
