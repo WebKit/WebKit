@@ -685,6 +685,7 @@
 				WebCore/cocoa/GraphicsContextCGTests.mm,
 				WebCore/cocoa/ImageRotationSessionVT.cpp,
 				WebCore/cocoa/IOSurfaceTests.mm,
+				WebCore/cocoa/MultiRepresentationHEICAttachment.mm,
 				WebCore/cocoa/PrivateClickMeasurementCocoa.mm,
 				WebCore/cocoa/ResourceMonitor.mm,
 				WebCore/cocoa/ScrollbarWidthCrash.mm,
