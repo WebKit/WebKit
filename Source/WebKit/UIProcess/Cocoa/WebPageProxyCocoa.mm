@@ -2251,7 +2251,11 @@ std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> WebPageProxy::
     auto outstandingRequest = std::exchange(internals().outstandingPositionInformationRequest, std::nullopt);
     if (!outstandingRequest)
         return std::nullopt;
-    return { { outstandingRequest->replyID, WTF::move(outstandingRequest->connection) } };
+
+    RefPtr process = outstandingRequest->process.get();
+    if (!process || !process->hasConnection())
+        return std::nullopt;
+    return { { outstandingRequest->replyID, process->connection() } };
 }
 
 void WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)
@@ -2290,7 +2294,7 @@ void WebPageProxy::requestPositionInformationInFrame(std::optional<WebCore::Fram
     }, webPageIDInProcessForFrame(frameID));
 
     if (replyID)
-        internals().outstandingPositionInformationRequest = { { request, *replyID, process->connection() } };
+        internals().outstandingPositionInformationRequest = { { request, *replyID, process } };
 }
 
 void WebPageProxy::selectPositionAtPoint(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& callbackFunction)

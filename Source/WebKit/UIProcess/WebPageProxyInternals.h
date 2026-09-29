@@ -327,7 +327,7 @@ public:
     struct OutstandingPositionInformationRequest {
         InteractionInformationRequest request;
         IPC::AsyncReplyID replyID;
-        Ref<IPC::Connection> connection;
+        WeakPtr<WebProcessProxy> process;
     };
     std::optional<OutstandingPositionInformationRequest> outstandingPositionInformationRequest;
 
