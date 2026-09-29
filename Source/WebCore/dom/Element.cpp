@@ -1216,6 +1216,12 @@ static HTMLSelectElement* owningSelectElement(const Element& element)
     return nullptr;
 }
 
+static bool isListBoxItem(const Element& element)
+{
+    RefPtr selectElement = owningSelectElement(element);
+    return selectElement && is<RenderListBox>(selectElement->renderer());
+}
+
 static std::optional<std::pair<SingleThreadWeakPtr<RenderElement>, LayoutRect>> listBoxElementScrollIntoView(const Element& element)
 {
     RefPtr selectElement = owningSelectElement(element);
@@ -6534,7 +6540,8 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
 {
     protect(document())->updateStyleIfNeeded();
 
-    if (!renderer())
+    // List box items are painted by the list box renderer and have no renderer of their own.
+    if (!renderer() && !isListBoxItem(*this))
         return false;
 
     CheckedPtr style = computedStyle();
