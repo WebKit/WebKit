@@ -10228,18 +10228,23 @@ void WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
     SetForScope highlightIsNewGroupScope { m_internals->highlightIsNewGroup, createNewGroup };
     SetForScope highlightRequestOriginScope { m_internals->highlightRequestOriginatedInApp, requestOriginatedInApp };
 
+    // Always reply, so the UI process isn't left waiting for a highlight that will never come.
+    auto replyWithoutHighlight = [&] {
+        completionHandler({ WebCore::SharedBuffer::create(), std::nullopt, createNewGroup, requestOriginatedInApp });
+    };
+
     RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
-        return;
+        return replyWithoutHighlight();
     RefPtr document = focusedOrMainFrame->document();
 
     RefPtr frame = document->frame();
     if (!frame)
-        return;
+        return replyWithoutHighlight();
 
     auto selectionRange = frame->selection().selection().toNormalizedRange();
     if (!selectionRange)
-        return;
+        return replyWithoutHighlight();
 
     protect(document->appHighlightRegistry())->addAnnotationHighlightWithRange(StaticRange::create(selectionRange.value()));
     document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()), [completionHandler = WTF::move(completionHandler), protectedThis = Ref { *this }, this] (WebCore::AppHighlight&& highlight) mutable {

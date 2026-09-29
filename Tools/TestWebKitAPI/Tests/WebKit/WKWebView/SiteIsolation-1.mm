@@ -39,12 +39,16 @@
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKAppHighlight.h>
+#import <WebKit/_WKAppHighlightDelegate.h>
 #import <WebKit/_WKAttachment.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -126,6 +130,36 @@
 
 @end
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(APP_HIGHLIGHTS)
+@interface SiteIsolationAppHighlightDelegate : NSObject <_WKAppHighlightDelegate>
+- (NSArray<_WKAppHighlight *> *)storedHighlights;
+@end
+
+@implementation SiteIsolationAppHighlightDelegate {
+    RetainPtr<NSMutableArray<_WKAppHighlight *>> _storedHighlights;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    _storedHighlights = adoptNS([[NSMutableArray alloc] init]);
+    return self;
+}
+
+- (void)_webView:(WKWebView *)webView storeAppHighlight:(_WKAppHighlight *)highlight inNewGroup:(BOOL)inNewGroup requestOriginatedInApp:(BOOL)requestOriginatedInApp
+{
+    [_storedHighlights addObject:highlight];
+}
+
+- (NSArray<_WKAppHighlight *> *)storedHighlights
+{
+    return _storedHighlights.get();
+}
+
+@end
+#endif // ENABLE(APP_HIGHLIGHTS)
 
 namespace TestWebKitAPI {
 
@@ -787,5 +821,61 @@ TEST(SiteIsolation, ExtendedProofreadingReplyReachesCrossOriginIframe)
 }
 
 #endif // PLATFORM(MAC)
+
+#if ENABLE(APP_HIGHLIGHTS)
+
+// Creating an app highlight acts on the focused frame's selection, so it must go to the focused frame's process.
+// The request must also complete even when there's nothing to highlight: under site isolation the UI process
+// crashes on a failed message check, and a request that's never answered is eventually cancelled with an empty
+// highlight, which fails the check.
+
+TEST(SiteIsolation, AddAppHighlightInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr delegate = adoptNS([SiteIsolationAppHighlightDelegate new]);
+    [webView _setAppHighlightDelegate:delegate.get()];
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    [webView _addAppHighlight];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [delegate storedHighlights].count == 1;
+    }));
+    EXPECT_WK_STREQ("subframe text", [delegate storedHighlights].firstObject.text);
+}
+
+TEST(SiteIsolation, AddAppHighlightWithoutSelectionDoesNotCrashWhenWebProcessesExit)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr delegate = adoptNS([SiteIsolationAppHighlightDelegate new]);
+    [webView _setAppHighlightDelegate:delegate.get()];
+
+    // Nothing is selected in either frame, so whichever process gets the request has nothing to highlight.
+    [webView _addAppHighlight];
+    [webView waitForNextPresentationUpdate];
+
+    // Any request that was never answered is cancelled when its process exits. That must not crash the UI process.
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    pid_t childFramePID = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(mainFramePID, childFramePID);
+    kill(childFramePID, SIGKILL);
+    kill(mainFramePID, SIGKILL);
+    while (!kill(childFramePID, 0) || !kill(mainFramePID, 0))
+        Util::spinRunLoop();
+    Util::runFor(0.5_s);
+
+    EXPECT_EQ(0U, [delegate storedHighlights].count);
+}
+
+#endif // ENABLE(APP_HIGHLIGHTS)
 
 } // namespace TestWebKitAPI
