@@ -99,6 +99,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, structureHeapSizeInKB, 0, Normal, "Override for Structure Heap size (in KBs) if non-zero"_s) \
     v(Unsigned, jitMemoryReservationSize, 0, Normal, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)"_s) \
     v(Size, jitMemoryReservationAddress, 0, Restricted, "If non-zero, we will attempt to allocate JIT memory at the address provided and crash if we cannot.") \
+    v(Size, maximumCachedAssemblerDataCapacity, 4 * MB, Normal, "When useCachedAssemblerDataCapacityLimit is true, a thread does not keep an AssemblerData buffer larger than this cached for reuse. (In bytes.)"_s) \
     \
     v(Bool, forceCodeBlockLiveness, false, Normal, nullptr) \
     v(Bool, forceICFailure, false, Normal, nullptr) \

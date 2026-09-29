@@ -1362,6 +1362,16 @@ CacheAPIEnabled:
   disableInLockdownMode: true
   richJavaScript: true
 
+CachedAssemblerDataCapacityLimitEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Limit Cached JIT Assembler Buffer Size"
+  humanReadableDescription: "Do not keep per-thread JIT assembler buffers larger than maximumCachedAssemblerDataCapacity cached for reuse"
+  jscOptionName: useCachedAssemblerDataCapacityLimit
+  sharedPreferenceForWebProcess: true
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: true
+
 CanvasColorSpaceEnabled:
   type: bool
   status: stable
