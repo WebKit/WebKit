@@ -19,5 +19,5 @@ PASS System color GrayText works
 PASS System color AccentColor works
 PASS System color AccentColorText works
 PASS System color AppWorkspace works
-FAIL System color Scrollbar works assert_not_equals: Scrollbar should react to color-scheme got disallowed value "rgb(170, 170, 170)"
+PASS System color Scrollbar works
 

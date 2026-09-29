@@ -92,6 +92,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/CString.h>
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -446,7 +447,12 @@ static Color activeButtonTextColor()
 
 #endif
 
-static SRGBA<uint8_t> menuBackgroundColor()
+static bool usesLegacyDeprecatedSystemColors()
+{
+    return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DeprecatedSystemColorsUseCSSColor4Mappings);
+}
+
+static SRGBA<uint8_t> legacyMenuBackgroundColor()
 {
     RetainPtr offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
         bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
@@ -467,6 +473,74 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [offscreenRep getPixel:pixel.data() atX:0 y:0];
 
     return makeFromComponentsClamping<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
+}
+
+static std::optional<Color> legacyDeprecatedSystemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options)
+{
+    auto selectCocoaColor = [cssValueID, useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance)] () -> SEL {
+        switch (cssValueID) {
+        case CSSValueActivecaption:
+            return @selector(windowFrameTextColor);
+        case CSSValueAppworkspace:
+            return @selector(headerColor);
+        case CSSValueThreedface:
+            // Fallback to hardcoded color below in light mode.
+            return useDarkAppearance ? @selector(controlColor) : nullptr;
+        case CSSValueButtonhighlight:
+            return @selector(controlHighlightColor);
+        case CSSValueButtonshadow:
+            return @selector(controlShadowColor);
+        case CSSValueCaptiontext:
+            return @selector(textColor);
+        case CSSValueInactiveborder:
+            return @selector(controlBackgroundColor);
+        case CSSValueInactivecaption:
+            return @selector(controlBackgroundColor);
+        case CSSValueInactivecaptiontext:
+            return @selector(textColor);
+        case CSSValueInfotext:
+            return @selector(textColor);
+        case CSSValueMenutext:
+            return @selector(labelColor);
+        case CSSValueScrollbar:
+            return @selector(scrollBarColor);
+        case CSSValueThreeddarkshadow:
+            return @selector(controlDarkShadowColor);
+        case CSSValueThreedshadow:
+            return @selector(shadowColor);
+        case CSSValueThreedhighlight:
+            return @selector(highlightColor);
+        case CSSValueThreedlightshadow:
+            return @selector(controlLightHighlightColor);
+        case CSSValueWindow:
+            return @selector(windowBackgroundColor);
+        case CSSValueWindowframe:
+            return @selector(windowFrameColor);
+        case CSSValueWindowtext:
+            return @selector(windowFrameTextColor);
+        default:
+            return nullptr;
+        }
+    };
+
+    if (auto selector = selectCocoaColor()) {
+        if (RetainPtr color = wtfObjCMsgSend<NSColor *>([NSColor class], selector))
+            return semanticColorFromNSColor(color.get());
+    }
+
+    switch (cssValueID) {
+    case CSSValueActiveborder:
+        return defaultFocusRingColor(options);
+    case CSSValueThreedface:
+        return Color::lightGray;
+    case CSSValueInfobackground:
+        // No corresponding NSColor for this so we use a hard coded value.
+        return SRGBA<uint8_t> { 251, 252, 197 };
+    case CSSValueMenu:
+        return legacyMenuBackgroundColor();
+    default:
+        return std::nullopt;
+    }
 }
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
@@ -508,8 +582,12 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
         // The following colors would expose user appearance preferences to the web, and could be used for fingerprinting.
         // These are available only when the web view opts into the system appearance.
         case CSSValueWebkitFocusRingColor:
-        case CSSValueActiveborder:
             return focusRingColor(options);
+
+        case CSSValueActiveborder:
+            if (usesLegacyDeprecatedSystemColors())
+                return focusRingColor(options);
+            break;
 
         case CSSValueAppleSystemControlAccent:
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
@@ -540,27 +618,21 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     auto color = [this, cssValueID, options, useDarkAppearance]() -> Color {
         LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 
+        if (usesLegacyDeprecatedSystemColors()) {
+            if (auto color = legacyDeprecatedSystemColor(cssValueID, options))
+                return *color;
+        }
+
         auto selectCocoaColor = [cssValueID, useDarkAppearance] () -> SEL {
             switch (cssValueID) {
-            case CSSValueActivecaption:
-                return @selector(windowFrameTextColor);
-            case CSSValueAppworkspace:
-                return @selector(headerColor);
             case CSSValueButtonface:
-            case CSSValueThreedface:
                 // Fallback to hardcoded color below in light mode.
                 return useDarkAppearance ? @selector(controlColor) : nullptr;
-            case CSSValueButtonhighlight:
-                return @selector(controlHighlightColor);
-            case CSSValueButtonshadow:
-                return @selector(controlShadowColor);
             case CSSValueButtontext:
                 return @selector(controlTextColor);
             case CSSValueCanvas:
                 return @selector(textBackgroundColor);
             case CSSValueCanvastext:
-                return @selector(textColor);
-            case CSSValueCaptiontext:
                 return @selector(textColor);
             case CSSValueField:
                 return @selector(controlColor);
@@ -570,34 +642,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
                 return @selector(disabledControlTextColor);
             case CSSValueHighlighttext:
                 return @selector(selectedTextColor);
-            case CSSValueInactiveborder:
-                return @selector(controlBackgroundColor);
-            case CSSValueInactivecaption:
-                return @selector(controlBackgroundColor);
-            case CSSValueInactivecaptiontext:
-                return @selector(textColor);
-            case CSSValueInfotext:
-                return @selector(textColor);
-            case CSSValueMenutext:
-                return @selector(labelColor);
-            case CSSValueScrollbar:
-                return @selector(scrollBarColor);
             case CSSValueText:
                 return @selector(textColor);
-            case CSSValueThreeddarkshadow:
-                return @selector(controlDarkShadowColor);
-            case CSSValueThreedshadow:
-                return @selector(shadowColor);
-            case CSSValueThreedhighlight:
-                return @selector(highlightColor);
-            case CSSValueThreedlightshadow:
-                return @selector(controlLightHighlightColor);
-            case CSSValueWindow:
-                return @selector(windowBackgroundColor);
-            case CSSValueWindowframe:
-                return @selector(windowFrameColor);
-            case CSSValueWindowtext:
-                return @selector(windowFrameTextColor);
             case CSSValueAppleSystemHeaderText:
                 return @selector(headerTextColor);
             case CSSValueAppleSystemBackground:
@@ -691,22 +737,13 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
             return textColorForActiveButton();
 
         case CSSValueButtonface:
-        case CSSValueThreedface:
             // Dark mode uses [NSColor controlColor].
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
             ASSERT(!localAppearance.usingDarkAppearance());
             return Color::lightGray;
 
-        case CSSValueInfobackground:
-            // No corresponding NSColor for this so we use a hard coded value.
-            return SRGBA<uint8_t> { 251, 252, 197 };
-
-        case CSSValueMenu:
-            return menuBackgroundColor();
-
         case CSSValueWebkitFocusRingColor:
-        case CSSValueActiveborder:
             return defaultFocusRingColor(options);
 
         case CSSValueAppleSystemControlAccent:

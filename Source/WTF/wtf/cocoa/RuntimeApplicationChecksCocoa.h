@@ -151,6 +151,7 @@ enum class SDKAlignedBehavior {
     NoMediaLayerTeardownOnPageVisibilityChangeQuirk,
     NetworkProcessInheritsNetworkAccessFromUIProcess,
     UserSelectSupersedesWebkitUserSelect,
+    DeprecatedSystemColorsUseCSSColor4Mappings,
 
     NumberOfBehaviors
 };
