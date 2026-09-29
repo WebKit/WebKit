@@ -1,0 +1,13 @@
+Tests that the queries involving the default framebuffer of an OffscreenCanvas WebGL context in a worker give the same answers in every state of the context. Part 2 of 4.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: resources/default-framebuffer-queries-worker.js#2-4
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: true
+FAIL [Worker] ReferenceError: Can't find variable: OffscreenCanvas
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

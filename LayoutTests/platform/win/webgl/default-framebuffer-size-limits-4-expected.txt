@@ -1,0 +1,36 @@
+Tests that a canvas element or an OffscreenCanvas resized larger than the implementation limits gets a drawing buffer clamped to the limits, without errors or a context loss, and that the clamped drawing buffer renders, is read and is displayed with the clamped size. Part 4 of 4.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: true
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: false
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: true
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: false, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: false
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+
+WebGL 2, alpha: false, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false
+FAIL TypeError: null is not an object (evaluating 'attributes.antialias')
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+
