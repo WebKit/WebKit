@@ -437,13 +437,12 @@ void Heap::dumpHeapStatisticsAtVMDestruction()
 }
 
 // The VM is being destroyed and the collector will never run again.
-// Run all pending finalizers now because we won't get another chance.
-void Heap::lastChanceToFinalize()
+void Heap::shutDown()
 {
     MonotonicTime before;
     if (Options::logGC()) [[unlikely]] {
         before = MonotonicTime::now();
-        dataLog("[GC<", RawPointer(this), ">: shutdown ");
+        dataLog("[GC<", RawPointer(this), ">: shutdown: ");
     }
     
     m_isShuttingDown = true;
@@ -451,16 +450,16 @@ void Heap::lastChanceToFinalize()
     RELEASE_ASSERT(!vm().entryScope);
     RELEASE_ASSERT(m_mutatorState == MutatorState::Running);
     
+    // The collect-continuously thread requests a collection whenever the queue is empty, so it has to
+    // stop before the queue drains.
     m_collector->stopCollectingContinuously();
-
-    dataLogIf(Options::logGC(), "1");
+    dataLogIf(Options::logGC(), "stopped collecting continuously, ");
     
     // Prevent new collections from being started. This is probably not even necessary, since we're not
     // going to call into anything that starts collections. Still, this makes the algorithm more
     // obviously sound.
     m_isSafeToCollect = false;
-    
-    dataLogIf(Options::logGC(), "2");
+    dataLogIf(Options::logGC(), "disabled collection, ");
 
     bool isCollecting;
     {
@@ -468,7 +467,7 @@ void Heap::lastChanceToFinalize()
         isCollecting = m_collector->hasOutstandingRequest();
     }
     if (isCollecting) {
-        dataLogIf(Options::logGC(), "...]\n");
+        dataLogIf(Options::logGC(), "waiting for the current collection...]\n");
         
         // Wait for the current collection to finish.
         waitForCollector(
@@ -476,33 +475,23 @@ void Heap::lastChanceToFinalize()
                 return !m_collector->hasOutstandingRequest();
             });
         
-        dataLogIf(Options::logGC(), "[GC<", RawPointer(this), ">: shutdown ");
+        dataLogIf(Options::logGC(), "[GC<", RawPointer(this), ">: shutdown: ");
     }
-    dataLogIf(Options::logGC(), "3");
+    dataLogIf(Options::logGC(), "no collection pending, stopping the collector thread, ");
 
-    RELEASE_ASSERT(m_collector->m_requests.isEmpty());
-    RELEASE_ASSERT(!m_collector->hasOutstandingRequest());
-    
-    // Carefully bring the thread down.
-    bool stopped = false;
-    {
-        Locker locker { *m_collector->m_threadLock };
-        stopped = m_collector->m_thread->tryStop(locker);
-        m_collector->m_threadShouldStop = true;
-        if (!stopped)
-            m_collector->m_threadCondition->notifyOne(locker);
-    }
-
-    dataLogIf(Options::logGC(), "4");
-    
-    if (!stopped)
-        m_collector->m_thread->join();
-    
-    dataLogIf(Options::logGC(), "5 ");
+    m_collector->stopThread();
+    dataLogIf(Options::logGC(), "stopped, ");
 
     if (Options::dumpHeapStatisticsAtVMDestruction()) [[unlikely]]
         dumpHeapStatisticsAtVMDestruction();
-    
+
+    lastChanceToFinalize();
+    dataLogIf(Options::logGC(), (MonotonicTime::now() - before).milliseconds(), "ms]\n");
+}
+
+// Run all pending finalizers now because we won't get another chance.
+void Heap::lastChanceToFinalize()
+{
     m_arrayBuffers.lastChanceToFinalize();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
@@ -511,8 +500,6 @@ void Heap::lastChanceToFinalize()
 #endif
 
     m_objectSpace.freeMemory();
-
-    dataLogIf(Options::logGC(), (MonotonicTime::now() - before).milliseconds(), "ms]\n");
 }
 
 void Heap::releaseDelayedReleasedObjects()

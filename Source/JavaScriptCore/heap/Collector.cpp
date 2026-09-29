@@ -154,6 +154,23 @@ Collector::~Collector()
     m_raceMarkStack->clear();
 }
 
+void Collector::stopThread()
+{
+    RELEASE_ASSERT(m_requests.isEmpty());
+    RELEASE_ASSERT(!hasOutstandingRequest());
+
+    bool stopped = false;
+    {
+        Locker locker { *m_threadLock };
+        stopped = m_thread->tryStop(locker);
+        m_threadShouldStop = true;
+        if (!stopped)
+            m_threadCondition->notifyOne(locker);
+    }
+    if (!stopped)
+        m_thread->join();
+}
+
 void Collector::assertMarkStacksEmpty()
 {
     bool ok = true;

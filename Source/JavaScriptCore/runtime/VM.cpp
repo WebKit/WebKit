@@ -640,7 +640,7 @@ VM::~VM()
     ASSERT(currentThreadIsHoldingAPILock());
     m_apiLock->willDestroyVM(this);
     smallStrings.setIsInitialized(false);
-    heap.lastChanceToFinalize();
+    heap.shutDown();
 
     while (!m_microtaskQueues.isEmpty())
         m_microtaskQueues.begin()->remove();

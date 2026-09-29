@@ -105,6 +105,8 @@ private:
     void startCollectingContinuously();
     void stopCollectingContinuously();
 
+    void stopThread();
+
     enum class RunCurrentPhaseResult {
         Finished,
         Continue,

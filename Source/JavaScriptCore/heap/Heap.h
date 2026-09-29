@@ -348,7 +348,7 @@ public:
 
     Heap(VM&, HeapType);
     ~Heap();
-    void lastChanceToFinalize();
+    void shutDown();
     void releaseDelayedReleasedObjects();
 
     VM& vm() const;
@@ -796,6 +796,7 @@ private:
     void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
     
     void dumpHeapStatisticsAtVMDestruction();
+    void lastChanceToFinalize();
 
     static bool useGenerationalGC();
     bool shouldSweepSynchronously();
