@@ -284,13 +284,6 @@ public:
         ASSERT(m_cacheability == CachingDisallowed);
     }
 
-    void setCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue, PutValueFunc putValue, DOMAttributeAnnotation domAttribute)
-    {
-        setCustom(slotBase, attributes, getValue, putValue);
-        m_additionalDataType = AdditionalDataType::DOMAttribute;
-        m_additionalData.domAttribute = domAttribute;
-    }
-    
     // Inline caches need the offset (which will be invalidOffset if e.g. served from a static property table,
     // with no backing property, or the offset of the property holding the CustomGetterSetter otherwise) to
     // recognize the case of an unbacked custom being shadowed by the addition of a property to a dictionary
