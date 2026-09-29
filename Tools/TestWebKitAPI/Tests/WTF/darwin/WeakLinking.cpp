@@ -52,9 +52,9 @@ namespace TestWebKitAPI {
 
 TEST(WeakLinking, WeakImport)
 {
-    EXPECT_FALSE(TestWTFAlwaysMissing);
-    EXPECT_FALSE(TestWTFAlwaysMissingWithoutAttributeWeakImport);
-    EXPECT_TRUE(close);
+    EXPECT_FALSE(!!TestWTFAlwaysMissing);
+    EXPECT_FALSE(!!TestWTFAlwaysMissingWithoutAttributeWeakImport);
+    EXPECT_TRUE(!!close);
 }
 
 }
