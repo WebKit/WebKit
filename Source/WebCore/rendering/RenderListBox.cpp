@@ -369,7 +369,7 @@ std::optional<LayoutRect> RenderListBox::localBoundsOfOptGroup(const HTMLOptGrou
         if (is<HTMLOptGroupElement>(*item)) {
             if (item == &optGroupElement)
                 boundingBox = itemBoundingBoxRect({ }, rowIndex);
-        } else if (is<HTMLOptionElement>(*item)) {
+        } else if (boundingBox && is<HTMLOptionElement>(*item)) {
             if (item->parentNode() != &optGroupElement)
                 break;
 
