@@ -93,7 +93,8 @@
     background-color: rgb(102, 102, 102);
 }
 
-.slider.default > .appearance > .fill > .secondary {
+.slider.default > .appearance > .fill > .track > .secondary {
+    height: 100%;
     background-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -127,6 +128,6 @@
 /* When disabled, we only want to show the track and turn off interaction. */
 
 .slider.default.disabled > .appearance > .fill > .primary,
-.slider.default.disabled > .appearance > .fill > .secondary {
+.slider.default.disabled > .appearance > .fill > .track > .secondary {
     display: none;
 }

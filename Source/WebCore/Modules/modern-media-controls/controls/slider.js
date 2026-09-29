@@ -71,8 +71,21 @@ class Slider extends SliderBase
     {
         super.commit();
 
-        this._primaryFill.element.style.flexGrow = 100 * this.value;
-        this._trackFill.element.style.flexGrow = 100 * (1 - this.value);
+        const value = this.value;
+        const secondaryValue = this.secondaryValue;
+
+        if (value === this._committedValue && secondaryValue === this._committedSecondaryValue)
+            return;
+
+        this._committedValue = value;
+        this._committedSecondaryValue = secondaryValue;
+
+        this._primaryFill.element.style.flexGrow = 100 * value;
+        this._trackFill.element.style.flexGrow = 100 * (1 - value);
+
+        const remaining = 1 - value;
+        const secondaryFraction = remaining > 0 ? Math.max(0, Math.min(1, (secondaryValue - value) / remaining)) : 0;
+        this._secondaryFill.element.style.width = `${100 * secondaryFraction}%`;
     }
 
 }
