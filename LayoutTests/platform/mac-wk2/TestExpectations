@@ -2574,7 +2574,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] media/media-vp8-hiddenframes.html [ ImageOnlyFailure ]
 [ GoldenGate Debug ] media/media-vp9-yuv422p10.html [ ImageOnlyFailure ]
 [ GoldenGate Debug ] media/video-object-fit.html [ ImageOnlyFailure ]
-[ GoldenGate Debug ] svg/compositing/filtered-container-with-composited-child.svg [ ImageOnlyFailure ]
 [ GoldenGate Debug ] svg/text/bidi-dir-rtl.html [ ImageOnlyFailure ]
 [ GoldenGate Debug ] editing/mac/attributed-string/font-weight.html [ Failure ]
 [ GoldenGate Debug ] editing/mac/selection/25228.html [ Failure ]
@@ -2625,3 +2624,5 @@ fast/webgpu/nocrash/fuzz-277928.html [ Pass Failure ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.serviceworker.html [ Failure ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.sharedworker.html [ Failure ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.worker.html [ Failure ]
+
+webkit.org/b/325574 [ Tahoe+ arm64 ] svg/compositing/filtered-container-with-composited-child.svg [ ImageOnlyFailure ]
