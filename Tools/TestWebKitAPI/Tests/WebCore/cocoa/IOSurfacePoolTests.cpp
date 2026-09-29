@@ -27,14 +27,23 @@
 
 #if HAVE(IOSURFACE)
 
+#include "Helpers/Utilities.h"
 #include "Test.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/IOSurfacePool.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
+
+// Once an IOSurface has called setVolatile(), isVolatile() answers from that record. A fresh wrapper
+// around the same surface has no record, so it asks the kernel.
+static bool isVolatile(IOSurfaceRef surface)
+{
+    return IOSurface::createFromSurface(surface, std::nullopt)->isVolatile();
+}
 
 TEST(IOSurfacePoolTest, TakeSurfaceFindsSurfaceThatIsNoLongerInUse)
 {
@@ -55,6 +64,58 @@ TEST(IOSurfacePoolTest, TakeSurfaceFindsSurfaceThatIsNoLongerInUse)
     auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
     ASSERT_NE(taken, nullptr);
     EXPECT_EQ(taken->surface(), expected);
+}
+
+TEST(IOSurfacePoolTest, AddedSurfaceIsVolatileUntilTaken)
+{
+    auto pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+    auto colorSpace = ColorSpace::SRGB();
+
+    auto surface = IOSurface::create(nullptr, size, colorSpace);
+    ASSERT_NE(surface, nullptr);
+    RetainPtr<IOSurfaceRef> surfaceRef = surface->surface();
+    EXPECT_FALSE(surface->isInUse());
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+
+    // A pooled surface is not charged to its owner while it waits to be reused.
+    pool->addSurface(WTF::move(surface));
+    EXPECT_TRUE(isVolatile(surfaceRef.get()));
+
+    auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+    ASSERT_NE(taken, nullptr);
+    EXPECT_EQ(taken->surface(), surfaceRef.get());
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+}
+
+TEST(IOSurfacePoolTest, InUseSurfaceBecomesVolatileWhenNoLongerInUse)
+{
+    auto pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+    auto colorSpace = ColorSpace::SRGB();
+
+    auto surface = IOSurface::create(nullptr, size, colorSpace);
+    ASSERT_NE(surface, nullptr);
+    RetainPtr<IOSurfaceRef> surfaceRef = surface->surface();
+
+    auto sendRight = surface->createSendRight();
+    EXPECT_TRUE(surface->isInUse());
+
+    // The compositor may still be displaying a surface that is in use, so it must not be purgeable.
+    pool->addSurface(WTF::move(surface));
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+
+    // Once it is no longer in use, the pool's collection timer should move it to the reusable surfaces
+    // and mark it volatile within a second.
+    sendRight = { };
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isVolatile(surfaceRef.get());
+    }, 10));
+
+    auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+    ASSERT_NE(taken, nullptr);
+    EXPECT_EQ(taken->surface(), surfaceRef.get());
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
 }
 
 } // namespace TestWebKitAPI

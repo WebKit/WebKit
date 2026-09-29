@@ -31,7 +31,6 @@
 #import "GarbageCollectionController.h"
 #import "HTMLNameCache.h"
 #import "IOSurfacePool.h"
-#import "LayerPool.h"
 #import "LocaleCocoa.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -54,9 +53,6 @@ void platformReleaseMemory(Critical)
 #endif
 
     LocaleCocoa::releaseMemory();
-
-    for (auto& pool : LayerPool::allLayerPools())
-        pool->drain();
 
 #if PLATFORM(IOS_FAMILY)
     LegacyTileCache::drainLayerPool();

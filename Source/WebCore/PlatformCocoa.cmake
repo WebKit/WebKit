@@ -422,7 +422,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/ca/FrameProcessIndicators.cpp
     platform/graphics/ca/GraphicsLayerCA.cpp
-    platform/graphics/ca/LayerPool.cpp
     platform/graphics/ca/PlatformCAAnimation.cpp
     platform/graphics/ca/PlatformCALayer.mm
     platform/graphics/ca/TileController.cpp
@@ -1322,7 +1321,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/ca/FrameProcessIndicators.h
     platform/graphics/ca/GraphicsLayerCA.h
-    platform/graphics/ca/LayerPool.h
     platform/graphics/ca/PlatformCAAnimation.h
     platform/graphics/ca/PlatformCAFilters.h
     platform/graphics/ca/PlatformCALayer.h
