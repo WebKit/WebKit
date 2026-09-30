@@ -1,0 +1,13 @@
+An image's natural size should stay its real size after its encoded data is replaced, even if its only decoded frame was decoded at a smaller size for drawing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS thumbnail.naturalWidth is 400
+PASS thumbnail.naturalHeight is 400
+PASS fullSize.naturalWidth is 400
+PASS fullSize.naturalHeight is 400
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

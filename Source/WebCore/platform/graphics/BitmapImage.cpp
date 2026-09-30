@@ -97,6 +97,11 @@ void BitmapImage::dataReplaced()
     return m_source->dataReplaced(protect(data()));
 }
 
+void BitmapImage::simulateDataReplacedForTesting()
+{
+    dataReplaced();
+}
+
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {
     m_source->destroyDecodedData(destroyAll);

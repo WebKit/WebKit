@@ -614,11 +614,12 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
     if (!properties)
         return false;
 
+    frame.m_naturalSize = frameSizeFromProperties(properties.get());
     if (options.hasSizeForDrawing()) {
         ASSERT(frame.hasNativeImage(options.decodingDestination()));
         frame.m_size = frame.nativeImage(options.decodingDestination())->size();
     } else
-        frame.m_size = frameSizeFromProperties(properties.get());
+        frame.m_size = frame.m_naturalSize;
 
     frame.m_density = frameDensityFromProperties(properties.get());
 

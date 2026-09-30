@@ -1372,6 +1372,13 @@ void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& eleme
         cachedImage->setForceUpdateImageDataEnabledForTesting(enabled);
 }
 
+// Stands in for the disk cache handing the memory cache a file-backed copy of a resource's body.
+void Internals::simulateImageDataReplacedForTesting(HTMLImageElement& element)
+{
+    if (RefPtr bitmapImage = bitmapImageFromImageElement(element))
+        bitmapImage->simulateDataReplacedForTesting();
+}
+
 void Internals::setHasHDRContentForTesting(HTMLImageElement& element)
 {
     if (RefPtr bitmapImage = bitmapImageFromImageElement(element))

@@ -130,7 +130,7 @@ IntSize BitmapImageDescriptor::sourceSize(ImageOrientation orientation) const
         size = decoder->size();
     else
 #endif
-        size = primaryImageFrameMetadata(m_size, CachedFlag::Size, &ImageFrame::size, SubsamplingLevel::Default);
+        size = primaryImageFrameMetadata(m_naturalSize, CachedFlag::NaturalSize, &ImageFrame::naturalSize, SubsamplingLevel::Default);
 
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = this->orientation();

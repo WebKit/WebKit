@@ -86,7 +86,7 @@ public:
 private:
     enum class CachedFlag : uint16_t {
         EncodedDataStatus           = 1 << 0,
-        Size                        = 1 << 1,
+        NaturalSize                 = 1 << 1,
         Density                     = 1 << 2,
         DensityCorrectedSize        = 1 << 3,
         Orientation                 = 1 << 4,
@@ -116,7 +116,7 @@ private:
     mutable OptionSet<CachedFlag> m_cachedFlags;
 
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
-    mutable IntSize m_size;
+    mutable IntSize m_naturalSize;
     mutable FloatSize m_density;
     mutable std::optional<IntSize> m_densityCorrectedSize;
     mutable ImageOrientation m_orientation;
