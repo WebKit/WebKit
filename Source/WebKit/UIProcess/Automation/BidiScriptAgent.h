@@ -66,6 +66,7 @@ public:
         WebCore::SecurityOriginData origin;
         Inspector::Protocol::BidiScript::RealmType type;
         Inspector::Protocol::BidiBrowsingContext::BrowsingContext context;
+        String sandbox;
     };
 
 
@@ -106,15 +107,25 @@ private:
         std::optional<Vector<String>> userContexts;
     };
 
-    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const String& sandbox = String());
 
-    void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
-    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
+    struct AccumulatedRealmData {
+        RefPtr<Inspector::Protocol::BidiScript::RealmInfo> info;
+        String context;
+        String origin;
+    };
+
+    void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&&, std::optional<Inspector::Protocol::BidiScript::RealmType>&&, std::optional<String>&& contextHandleFilter, Vector<AccumulatedRealmData>&&, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
+    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<AccumulatedRealmData>&, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
     bool NODELETE isFrameExecutionReady(const FrameInfoData&);
     RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
     RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
+    bool isValidSandboxName(const String&) const;
+    bool canCreateSandboxRealm(const String& browsingContext, const String& sandboxName) const;
+    String realmIdForTarget(const String& browsingContext, const std::optional<String>& sandboxName);
+    String generateSandboxRealmId(const String& browsingContext, const String& sandboxName);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
     void finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
@@ -128,11 +139,15 @@ private:
     HashMap<String, RealmIdentifier> m_browsingContextToRealmId;
 
     // Store active realms (key: realm identifier, value: realm info).
+    // Includes both default window realms and sandbox realms.
     HashMap<RealmIdentifier, RealmInfo> m_activeRealms;
 
     // Track realm counters for navigation detection: frame ID -> counter
 
     Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
+
+    // Map (browsingContext handle, sandbox name) -> RealmIdentifier for sandbox realms.
+    HashMap<std::pair<String, String>, RealmIdentifier> m_sandboxRealms;
 };
 
 } // namespace WebKit
