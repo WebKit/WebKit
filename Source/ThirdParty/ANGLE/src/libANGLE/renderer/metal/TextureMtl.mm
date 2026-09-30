@@ -26,6 +26,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
+#include "libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h"
 #include "libANGLE/renderer/metal/ImageMtl.h"
 #include "libANGLE/renderer/metal/SamplerMtl.h"
 #include "libANGLE/renderer/metal/SurfaceMtl.h"
@@ -1819,6 +1820,32 @@ angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface 
 
     mBoundSurface         = surface;
     auto pBuffer          = GetImplAs<OffscreenSurfaceMtl>(surface);
+
+    if (pBuffer->isYUV())
+    {
+        // Multiplanar NV12: don't go through the single-texture native-storage path (there is no
+        // native multiplanar Metal format).  Instead expose the surface's color texture as the
+        // level-0 image and capture the conversion and orientation state, consumed by
+        // copySubTextureWithDrawYUV.  The color texture is the luma plane; the chroma plane and
+        // the colorspace matrix are used for shader conversion.
+        ContextMtl *contextMtl = mtl::GetImpl(context);
+        auto *ioSurface        = static_cast<IOSurfaceSurfaceMtl *>(pBuffer);
+
+        ImageDefinitionMtl &imageDef = mTexImageDefs[0][0];
+        imageDef.image               = ioSurface->getColorTexture();
+        imageDef.formatID            = angle::FormatID::G8_B8R8_2PLANE_420_UNORM;
+        mBoundToYUVSurface           = true;
+        mYUVChromaTexture            = ioSurface->getChromaTexture();
+        mYUVColorMatrix              = ioSurface->getYUVToRGBMatrix();
+        mYUVOrientation              = ioSurface->getYUVOrientation();
+        mSlices                      = 1;
+
+        // No sampler/native-storage setup: the conversion draw binds its own sampler and reads the
+        // plane texture(s) directly.
+        contextMtl->invalidateCurrentTextures();
+        return angle::Result::Continue;
+    }
+
     mtl::Format pbufferFormat = pBuffer->getColorFormat();
     mNativeTextureStorage     = std::make_unique<NativeTextureWrapperWithViewSupport>(
         pBuffer->getColorTexture(), /*baseGLLevel=*/0, pbufferFormat);
@@ -1837,7 +1864,10 @@ angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface 
 angle::Result TextureMtl::releaseTexImage(const gl::Context *context)
 {
     deallocateNativeStorage(/*keepImages=*/false);
-    mBoundSurface = nullptr;
+    mBoundSurface      = nullptr;
+    mBoundToYUVSurface = false;
+    mYUVChromaTexture  = nullptr;
+    mYUVOrientation    = 0;
     return angle::Result::Continue;
 }
 
@@ -2834,6 +2864,15 @@ angle::Result TextureMtl::copySubTextureImpl(const gl::Context *context,
     const mtl::TextureRef &sourceImage     = sourceImageDef.image;
     const mtl::Format &sourceFormat        = contextMtl->getPixelFormat(sourceImageDef.formatID);
     const angle::Format &sourceAngleFormat = sourceFormat.actualAngleFormat();
+
+    // A YUV source (e.g. an NV12 IOSurface) is converted to RGB with a dedicated draw that applies
+    // the conversion and orientation captured at bind time.
+    if (sourceMtl->mBoundToYUVSurface)
+    {
+        return copySubTextureYUV(context, index, destOffset, internalFormat, sourceBox,
+                                 unpackFlipY, sourceImage, *sourceMtl);
+    }
+
     if (!mtlFormat.getCaps().isRenderable())
     {
         return copySubTextureCPU(context, index, destOffset, internalFormat,
@@ -2893,6 +2932,115 @@ angle::Result TextureMtl::copySubTextureWithDraw(const gl::Context *context,
 
     DisplayMtl *displayMtl = contextMtl->getDisplay();
     return displayMtl->getUtils().copyTextureWithDraw(context, cmdEncoder, sourceAngleFormat,
+                                                      dstAngleFormat, blitParams);
+}
+
+angle::Result TextureMtl::copySubTextureYUV(const gl::Context *context,
+                                            const gl::ImageIndex &index,
+                                            const gl::Offset &destOffset,
+                                            const gl::InternalFormat &internalFormat,
+                                            const gl::Box &sourceBox,
+                                            bool unpackFlipY,
+                                            const mtl::TextureRef &sourceImage,
+                                            const TextureMtl &source)
+{
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+
+    const ImageDefinitionMtl &imageDef = getImageDefinition(index);
+    ANGLE_CHECK_ASSERT(contextMtl, imageDef.image && imageDef.image->valid());
+    const angle::Format &dstAngleFormat =
+        contextMtl
+            ->getPixelFormat(angle::Format::InternalFormatToID(internalFormat.sizedInternalFormat))
+            .actualAngleFormat();
+
+    if (contextMtl->getPixelFormat(imageDef.formatID).getCaps().isRenderable())
+    {
+        mtl::TextureRef image = imageDef.image;
+        if (internalFormat.colorEncoding == GL_SRGB)
+        {
+            image = image->getLinearColorView();
+        }
+        return copySubTextureWithDrawYUV(context, image, dstAngleFormat, internalFormat.isLUMA(),
+                                         destOffset, sourceBox, unpackFlipY, sourceImage, source);
+    }
+
+    // The destination is not renderable, e.g. GL_RGB9_E5 on some GPUs.  Draw to an RGBA8
+    // intermediate texture and convert it to the destination format on the CPU.
+    if (sourceBox.width == 0 || sourceBox.height == 0)
+    {
+        return angle::Result::Continue;
+    }
+    const mtl::Format &intermediateFormat =
+        contextMtl->getPixelFormat(angle::FormatID::R8G8B8A8_UNORM);
+    mtl::TextureRef intermediate;
+    ANGLE_TRY(mtl::Texture::Make2DTexture(contextMtl, intermediateFormat, sourceBox.width,
+                                          sourceBox.height, 1, /*renderTargetOnly=*/false,
+                                          /*allowFormatView=*/false, &intermediate));
+    ANGLE_TRY(copySubTextureWithDrawYUV(context, intermediate,
+                                        intermediateFormat.actualAngleFormat(),
+                                        /*dstLuminance=*/false, gl::Offset(), sourceBox,
+                                        /*unpackFlipY=*/false, sourceImage, source));
+    const gl::Box intermediateBox(0, 0, 0, sourceBox.width, sourceBox.height, 1);
+    return copySubTextureCPU(context, index, destOffset, internalFormat, mtl::kZeroNativeMipLevel,
+                             intermediateBox, intermediateFormat.actualAngleFormat(), unpackFlipY,
+                             /*unpackPremultiplyAlpha=*/false, /*unpackUnmultiplyAlpha=*/false,
+                             intermediate);
+}
+
+// static
+angle::Result TextureMtl::copySubTextureWithDrawYUV(const gl::Context *context,
+                                                    const mtl::TextureRef &image,
+                                                    const angle::Format &dstAngleFormat,
+                                                    bool dstLuminance,
+                                                    const gl::Offset &destOffset,
+                                                    const gl::Box &sourceBox,
+                                                    bool unpackFlipY,
+                                                    const mtl::TextureRef &sourceImage,
+                                                    const TextureMtl &source)
+{
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    DisplayMtl *displayMtl = contextMtl->getDisplay();
+
+    mtl::RenderCommandEncoder *cmdEncoder = contextMtl->getTextureRenderCommandEncoder(
+        image, mtl::ImageNativeIndex::FromBaseZeroGLIndex(GetZeroLevelIndex(image)));
+    mtl::ColorBlitParams blitParams;
+
+    blitParams.dstTextureSize = image->sizeAt0();
+    blitParams.dstRect =
+        gl::Rectangle(destOffset.x, destOffset.y, sourceBox.width, sourceBox.height);
+    blitParams.dstScissorRect = blitParams.dstRect;
+    blitParams.enabledBuffers.set(0);
+
+    // sourceBox is in the coordinates of the oriented texture image, which has the axes of the
+    // source image swapped if the orientation swaps them.
+    const EGLint orientation = source.mYUVOrientation;
+    const bool swapXY        = (orientation & EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE) != 0;
+    gl::Extents orientedSize = sourceImage->size(mtl::kZeroNativeMipLevel);
+    if (swapXY)
+    {
+        std::swap(orientedSize.width, orientedSize.height);
+    }
+
+    blitParams.src                 = sourceImage;
+    blitParams.srcLevel            = mtl::kZeroNativeMipLevel;
+    blitParams.srcLayer            = 0;
+    blitParams.srcNormalizedCoords = mtl::NormalizedCoords(sourceBox.toRect(), orientedSize);
+    blitParams.srcInvertX          = (orientation & EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE) != 0;
+    blitParams.srcInvertY          = (orientation & EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE) != 0;
+    blitParams.srcSwapXY           = swapXY;
+    blitParams.srcYFlipped         = false;
+    blitParams.dstLuminance        = dstLuminance;
+    blitParams.unpackFlipY         = unpackFlipY;
+    blitParams.unpackPremultiplyAlpha = false;
+    blitParams.unpackUnmultiplyAlpha  = false;
+    blitParams.transformLinearToSrgb  = false;
+    blitParams.srcIsYUV     = true;
+    blitParams.srcYUVChroma = source.mYUVChromaTexture;
+    blitParams.yuvMatrix    = source.mYUVColorMatrix;
+
+    // Use a float format to select the float blit pipeline.
+    const angle::Format &lumaAngleFormat = angle::Format::Get(angle::FormatID::R8_UNORM);
+    return displayMtl->getUtils().copyTextureWithDraw(context, cmdEncoder, lumaAngleFormat,
                                                       dstAngleFormat, blitParams);
 }
 

@@ -15,6 +15,7 @@ constant bool kUnmultiplyAlpha [[function_constant(2)]];
 constant bool kTransformLinearToSrgb [[function_constant(3)]];
 constant int kSourceTextureType [[function_constant(4)]];   // Source color/depth texture type.
 constant int kSourceTexture2Type [[function_constant(5)]];  // Source stencil texture type.
+constant bool kSourceIsYUV [[function_constant(6)]];        // Source is multiplanar NV12 (luma+chroma).
 
 constant bool kSourceTextureType2D      = kSourceTextureType == kTextureType2D;
 constant bool kSourceTextureType2DArray = kSourceTextureType == kTextureType2DArray;
@@ -34,7 +35,10 @@ struct BlitParams
     int srcLevel;  // Source texture level.
     int srcLayer;  // Source texture layer.
     bool dstLuminance;  // destination texture is luminance. Unused by depth & stencil blitting.
-    uint8_t padding[7];
+    bool srcSwapXY;     // swap x and y of the source texture coordinates.
+    uint8_t padding[6];
+    // Row-major YCbCr->RGB matrix used when kSourceIsYUV: rgb[i] = dot(colorMatrix[i], float4(y,cb,cr,1)).
+    float4 colorMatrix[3];
 };
 
 struct BlitVSOut
@@ -49,6 +53,10 @@ vertex BlitVSOut blitVS(unsigned int vid [[vertex_id]], constant BlitParams &opt
     output.position.xy = select(float2(-1.0f), float2(1.0f), bool2(vid & uint2(2, 1)));
     output.position.zw = float2(0.0, 1.0);
     output.texCoords = select(options.srcTexCoords.xy, options.srcTexCoords.zw, bool2(vid & uint2(2, 1)));
+    if (options.srcSwapXY)
+    {
+        output.texCoords = output.texCoords.yx;
+    }
 
     return output;
 }
@@ -90,18 +98,41 @@ static inline vec<T, 4> blitSampleTexture3D(texture3d<T> srcTexture,
     texture2d_ms<TYPE> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], \
     texturecube<TYPE> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]],  \
     texture3d<TYPE> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]],        \
+    texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]],           \
     sampler textureSampler [[sampler(0)]],                                                       \
     constant BlitParams &options [[buffer(0)]]
 // clang-format on
 
-#define FORWARD_BLIT_COLOR_FS_PARAMS                                                      \
-    input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, \
-        textureSampler, options
+#define FORWARD_BLIT_COLOR_FS_PARAMS                                                            \
+    input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d,       \
+        srcChromaTexture, textureSampler, options
 
 template <typename T>
 static inline vec<T, 4> blitReadTexture(BLIT_COLOR_FS_PARAMS(T))
 {
     vec<T, 4> output;
+
+    if (kSourceIsYUV)
+    {
+        // Multiplanar NV12: sample luma (R8) and chroma (RG8) planes, convert to RGB with the
+        // colorspace matrix.  Narrow range footroom and headroom convert to values outside
+        // [0, 1], so clamp.  The source is opaque and not sRGB, so no alpha / sRGB
+        // post-processing is applied.
+        float yValue =
+            srcTexture2d.sample(textureSampler, input.texCoords, level(options.srcLevel)).r;
+        float2 cbcr =
+            srcChromaTexture.sample(textureSampler, input.texCoords, level(options.srcLevel)).rg;
+        float4 yuv = float4(yValue, cbcr.x, cbcr.y, 1.0);
+        float3 rgb = saturate(float3(dot(options.colorMatrix[0], yuv),
+                                     dot(options.colorMatrix[1], yuv),
+                                     dot(options.colorMatrix[2], yuv)));
+        output     = vec<T, 4>(rgb.r, rgb.g, rgb.b, 1.0);
+        if (options.dstLuminance)
+        {
+            output.g = output.b = output.r;
+        }
+        return output;
+    }
 
     switch (kSourceTextureType)
     {

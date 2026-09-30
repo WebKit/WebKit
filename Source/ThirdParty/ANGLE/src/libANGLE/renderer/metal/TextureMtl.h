@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_METAL_TEXTUREMTL_H_
 #define LIBANGLE_RENDERER_METAL_TEXTUREMTL_H_
 
+#include <array>
 #include <map>
 
 #include "common/PackedEnums.h"
@@ -308,6 +309,28 @@ class TextureMtl : public TextureImpl
                                     bool unpackUnmultiplyAlpha,
                                     const mtl::TextureRef &sourceTexture);
 
+    // Copies from a multiplanar NV12 source, converting it to RGB using the conversion and
+    // orientation captured at bind time.  Used when the copy source is a YUV IOSurface.
+    angle::Result copySubTextureYUV(const gl::Context *context,
+                                    const gl::ImageIndex &index,
+                                    const gl::Offset &destOffset,
+                                    const gl::InternalFormat &internalFormat,
+                                    const gl::Box &sourceBox,
+                                    bool unpackFlipY,
+                                    const mtl::TextureRef &sourceImage,
+                                    const TextureMtl &source);
+
+    // Draws the YUV source converted to RGB to the renderable `dstImage`.
+    static angle::Result copySubTextureWithDrawYUV(const gl::Context *context,
+                                                   const mtl::TextureRef &dstImage,
+                                                   const angle::Format &dstAngleFormat,
+                                                   bool dstLuminance,
+                                                   const gl::Offset &destOffset,
+                                                   const gl::Box &sourceBox,
+                                                   bool unpackFlipY,
+                                                   const mtl::TextureRef &sourceImage,
+                                                   const TextureMtl &source);
+
     // Copy data to texture's per array's slice/cube's face. NOTE: This function doesn't upload
     // data to 3D texture's z layer. Metal treats 3D texture's z layer & array texture's slice
     // differently. For array/cube texture, it is only possible to upload to one slice at a time.
@@ -343,6 +366,13 @@ class TextureMtl : public TextureImpl
     bool isImmutableOrPBuffer() const;
 
     egl::Surface *mBoundSurface = nullptr;
+    // Set when bound to a multiplanar YUV IOSurface: chroma plane, YCbCr->RGB matrix and
+    // EGL_IOSURFACE_ORIENTATION_ANGLE bits captured from the surface, consumed by
+    // copySubTextureWithDrawYUV.
+    bool mBoundToYUVSurface = false;
+    mtl::TextureRef mYUVChromaTexture;
+    std::array<float, 12> mYUVColorMatrix{};
+    EGLint mYUVOrientation = 0;
     class NativeTextureWrapper;
     class NativeTextureWrapperWithViewSupport;
     // The real texture used by Metal.
