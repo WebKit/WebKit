@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <atomic>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
@@ -53,11 +52,6 @@ public:
 
     static bool lowPowerVideoAudioBufferSizeEnabled() { return singleton().m_lowPowerVideoAudioBufferSizeEnabled; }
     static void setLowPowerVideoAudioBufferSizeEnabled(bool flag) { singleton().m_lowPowerVideoAudioBufferSizeEnabled = flag; }
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT static void NODELETE setMediaResourceLoadTimeoutForTesting(unsigned);
-    static unsigned mediaResourceLoadTimeoutForTesting() { return singleton().m_mediaResourceLoadTimeoutForTesting.load(std::memory_order_relaxed); }
-#endif
 
     static bool trackingPreventionEnabled() { return singleton().m_trackingPreventionEnabled; }
     WEBCORE_EXPORT static void NODELETE setTrackingPreventionEnabled(bool);
@@ -190,10 +184,6 @@ private:
 
 #if HAVE(WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST)
     bool m_webContentRestrictionsTransitiveTrustEnabled { true };
-#endif
-
-#if PLATFORM(COCOA)
-    std::atomic<unsigned> m_mediaResourceLoadTimeoutForTesting { 0 };
 #endif
 
     friend class NeverDestroyed<DeprecatedGlobalSettings>;

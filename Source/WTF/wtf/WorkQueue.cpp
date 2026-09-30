@@ -188,11 +188,6 @@ void WorkQueue::dispatch(Function<void()>&& function)
     WorkQueueBase::dispatch(WTF::move(function));
 }
 
-void WorkQueue::dispatchAfter(Seconds delay, Function<void()>&& function)
-{
-    WorkQueueBase::dispatchAfter(delay, WTF::move(function));
-}
-
 bool WorkQueue::isCurrent() const
 {
     return currentSequence() == m_threadID;

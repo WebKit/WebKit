@@ -2985,7 +2985,7 @@ static CGFloat liveResizeMinimumWidthDifference()
         return;
 
     _perProcessState.didDeferUpdateVisibleContentRectsForAnyReason = YES;
-    _pendingInteractiveObscuredInsetsChangeTimer = RunLoop::mainSingleton().scheduleTimer(delay, [retainedSelf = retainPtr(self)] {
+    _pendingInteractiveObscuredInsetsChangeTimer = RunLoop::mainSingleton().dispatchAfter(delay, [retainedSelf = retainPtr(self)] {
         retainedSelf->_pendingInteractiveObscuredInsetsChangeTimer = nullptr;
         [retainedSelf _scheduleVisibleContentRectUpdate];
     });

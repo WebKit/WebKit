@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include <wtf/CancellableTask.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
@@ -81,10 +80,6 @@ private:
     void loadFailed(const ResourceError&);
     void loadFinished();
 
-    void startLoadingTimer();
-    void stopLoadingTimer();
-    void loadTimedOut();
-
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     ASCIILiteral logClassName() const { return "WebCoreAVFResourceLoader"_s; }
@@ -96,6 +91,7 @@ private:
     RefPtr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
     RefPtr<PlatformResourceMediaLoader> m_resourceMediaLoader;
     const Ref<PlatformMediaResourceLoader> m_platformMediaLoader;
+    bool m_isBlob { false };
     size_t m_responseOffset { 0 };
     int64_t m_requestedLength { 0 };
     int64_t m_requestedOffset { 0 };
@@ -103,8 +99,6 @@ private:
 
     const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
     std::optional<MonotonicTime> m_loadStartTime;
-
-    std::optional<TaskCancellationGroup> m_loadingTimerCancellationGroup;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

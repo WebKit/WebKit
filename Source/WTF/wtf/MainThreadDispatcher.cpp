@@ -28,7 +28,6 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
-#include <wtf/RunLoop.h>
 
 namespace WTF {
 
@@ -46,13 +45,6 @@ bool MainThreadDispatcher::isCurrent() const
 void MainThreadDispatcher::dispatch(Function<void ()>&& function)
 {
     callOnMainThread(WTF::move(function));
-}
-
-void MainThreadDispatcher::dispatchAfter(Seconds delay, Function<void ()>&& function)
-{
-    RunLoop::mainSingleton().dispatchAfter(delay, [function = WTF::move(function)] mutable {
-        callOnMainThread(WTF::move(function));
-    });
 }
 
 } // namespace WTF

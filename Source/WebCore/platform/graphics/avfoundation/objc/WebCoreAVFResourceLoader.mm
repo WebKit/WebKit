@@ -32,7 +32,6 @@
 #import "CachedResourceLoader.h"
 #import "CachedResourceRequest.h"
 #import "DataURLDecoder.h"
-#import "DeprecatedGlobalSettings.h"
 #import "Logging.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 #import "PlatformMediaResourceLoader.h"
@@ -56,15 +55,6 @@
 @end
 
 namespace WebCore {
-
-static constexpr Seconds defaultResourceLoadTimeout = 10_s;
-
-static Seconds resourceLoadTimeout()
-{
-    if (auto milliseconds = DeprecatedGlobalSettings::mediaResourceLoadTimeoutForTesting())
-        return Seconds::fromMilliseconds(milliseconds);
-    return defaultResourceLoadTimeout;
-}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCoreAVFResourceLoader);
 
@@ -371,22 +361,22 @@ void WebCoreAVFResourceLoader::startLoading()
         return;
     }
 
-    m_resourceMediaLoader = PlatformResourceMediaLoader::create(*this, m_platformMediaLoader, WTF::move(request));
-    if (!m_resourceMediaLoader) {
-        ERROR_LOG(LOGIDENTIFIER, "Failed to start load for media at url ", URL { [nsRequest URL] }.string());
-        [m_avRequest finishLoadingWithError:0];
-        return;
-    }
+#if PLATFORM(IOS_FAMILY)
+    m_isBlob = request.url().protocolIsBlob();
+#endif
 
-    startLoadingTimer();
+    m_resourceMediaLoader = PlatformResourceMediaLoader::create(*this, m_platformMediaLoader, WTF::move(request));
+    if (m_resourceMediaLoader)
+        return;
+
+    ERROR_LOG(LOGIDENTIFIER, "Failed to start load for media at url %s", request.url().string());
+    [m_avRequest finishLoadingWithError:0];
 }
 
 // No code accessing `this` should ever be used after calling stopLoading().
 void WebCoreAVFResourceLoader::stopLoading()
 {
     assertIsCurrent(m_targetDispatcher.get());
-
-    stopLoadingTimer();
 
     if (m_loadStartTime)
         ALWAYS_LOG(LOGIDENTIFIER, "duration: ", (MonotonicTime::now() - *m_loadStartTime).millisecondsAs<int>(), "ms");
@@ -442,41 +432,6 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
         }
     }
     return false;
-}
-
-void WebCoreAVFResourceLoader::startLoadingTimer()
-{
-    assertIsCurrent(m_targetDispatcher.get());
-
-    stopLoadingTimer();
-
-    if (!m_loadingTimerCancellationGroup)
-        m_loadingTimerCancellationGroup.emplace();
-
-    m_targetDispatcher->dispatchAfter(resourceLoadTimeout(), CancellableTask(*m_loadingTimerCancellationGroup, [weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->loadTimedOut();
-    }));
-}
-
-void WebCoreAVFResourceLoader::stopLoadingTimer()
-{
-    assertIsCurrent(m_targetDispatcher.get());
-
-    if (m_loadingTimerCancellationGroup)
-        m_loadingTimerCancellationGroup->cancel();
-}
-
-void WebCoreAVFResourceLoader::loadTimedOut()
-{
-    assertIsCurrent(m_targetDispatcher.get());
-
-    ERROR_LOG(LOGIDENTIFIER, "timed out after ", resourceLoadTimeout().seconds());
-
-    RetainPtr error = adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:@{
-        NSLocalizedDescriptionKey: @"The media resource loading request was not answered in time."
-    }]);
-    loadFailed(ResourceError { error.get() });
 }
 
 void WebCoreAVFResourceLoader::loadFailed(const ResourceError& error)
