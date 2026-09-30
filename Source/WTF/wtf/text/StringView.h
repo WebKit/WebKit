@@ -73,8 +73,8 @@ public:
     StringView(std::span<const char> span LIFETIME_BOUND); // FIXME: Consider dropping this overload. Callers should pass Latin1Character/char16_t instead.
     StringView(const void* string LIFETIME_BOUND, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
+    StringView(const ASCIICString& string LIFETIME_BOUND);
 
-    ALWAYS_INLINE static StringView fromLatin1(std::span<const Latin1Character> span LIFETIME_BOUND) { return StringView { span }; }
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
     unsigned length() const;
@@ -443,6 +443,11 @@ inline StringView::StringView(const void* characters LIFETIME_BOUND, unsigned le
 inline StringView::StringView(ASCIILiteral string)
 {
     initialize(string.span8());
+}
+
+inline StringView::StringView(const ASCIICString& string LIFETIME_BOUND)
+{
+    initialize(byteCast<Latin1Character>(string.span()));
 }
 
 inline StringView::StringView(const StringImpl& string LIFETIME_BOUND)
