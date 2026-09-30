@@ -491,4 +491,53 @@ TEST(WTF_ReadWriteLock, UncontendedQuiescence)
     }
 }
 
+// A writer may destroy the lock as soon as it has acquired it, so the last reader out must not touch
+// the lock once the writer can get in. Each round builds a lock in storage that the writer destroys
+// and fills with a poison pattern; any later access from the reader shows up as a changed byte.
+TEST(WTF_ReadWriteLock, WriterMayDestroyLockAfterLastReaderReleases)
+{
+    constexpr unsigned pairCount = 8;
+    constexpr unsigned roundsPerPair = 2000;
+
+    DeadlineGuard deadline;
+    Atomic<unsigned> corruptedRounds { 0 };
+    Atomic<unsigned> completedRounds { 0 };
+
+    auto pairs = spawn(pairCount, [&](unsigned) {
+        for (unsigned round = 0; round < roundsPerPair && !deadline.expired(); ++round) {
+            alignas(ReadWriteLock) std::array<uint8_t, sizeof(ReadWriteLock)> storage;
+            auto* lock = new (storage.data()) ReadWriteLock;
+
+            lock->readLock();
+            auto writer = spawn(1, [&](unsigned) {
+                lock->writeLock();
+                lock->writeUnlock();
+                std::destroy_at(lock);
+                storage.fill(0xFF);
+            });
+            // Wait for the writer to announce itself, and on most rounds for it to park too.
+            while (!lock->hasWriterPresentForTesting())
+                Thread::yield();
+            if (round % 4) {
+                while (!lock->hasParkedBitsForTesting())
+                    Thread::yield();
+            }
+            lock->readUnlock();
+            join(writer);
+
+            for (uint8_t byte : storage) {
+                if (byte != 0xFF) {
+                    corruptedRounds.exchangeAdd(1);
+                    break;
+                }
+            }
+            completedRounds.exchangeAdd(1);
+        }
+    });
+    join(pairs);
+
+    EXPECT_EQ(pairCount * roundsPerPair, completedRounds.load());
+    EXPECT_EQ(0u, corruptedRounds.load());
+}
+
 } // namespace TestWebKitAPI

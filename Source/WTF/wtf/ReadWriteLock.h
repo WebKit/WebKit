@@ -46,9 +46,18 @@ class WriteLockView;
 // It's easiest to write lock like this:
 //     Locker locker { rwLock.write() };
 //
+// Some **IMPORTANT** notes on using this lock:
+//
 // This lock is **NOT** recursive: taking a second read lock on a thread that already holds one
 // deadlocks if a writer announces itself in between, and upgrading one of them deadlocks outright,
 // since the upgrade then waits for a departure only the upgrading thread can make.
+//
+// For a writer, this lock respects POSIX's: "It shall be safe to destroy an initialized mutex that is
+// unlocked. Attempting to destroy a locked mutex results in undefined behavior." For a reader, no such
+// guarantee applies: a releasing writer can still be modifying bits in the lock after it has handed off
+// access to readers, so a reader may only destroy the lock once it knows every other thread's unlock has
+// returned. No fence helps, since the writer's accesses are late, not reordered. Note: POSIX only has
+// this requirement for mutexes, not read-write locks, but we apply it to writers for convenience.
 //
 // Fairness is what we call eventually phase-fair:
 //  - A reader waits only for the one writer whose phase it collided with. Writers queued behind that
@@ -80,7 +89,8 @@ class WriteLockView;
 // bit all new incoming readers are gated behind the writer. The writer also records the "in" ticket
 // count at the time it registered then waits for the "out" count to match. If readers take too long
 // the writer will park, setting a bit on the out and handing-off notification responsibility to the
-// last reader to exit.
+// last reader to exit. That reader clears the bit as its last access to the lock, so once the bit is
+// set the writer waits for it to clear rather than for the counts to match.
 
 class WTF_CAPABILITY_LOCK ReadWriteLock {
     WTF_MAKE_NONMOVABLE(ReadWriteLock);

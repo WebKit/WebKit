@@ -86,12 +86,13 @@ void ReadWriteLock::readLockSlow(uint32_t observedPhase)
 
 void ReadWriteLock::readUnlockSlow()
 {
-    // We were the reader the draining writer was waiting for.
+    // We were the reader the draining writer was waiting for. It waits for the bit to clear, so this
+    // callback is our last access to the lock.
     ParkingLot::unparkOne(
         drainParkingAddress(),
         [&](ParkingLot::UnparkResult) -> intptr_t {
-            // Only one writer can be draining, so once the queue is empty the bit is no longer needed.
-            // mayHaveMoreThreads is bucket-granular and would only leave the bit stale here.
+            // Clear unconditionally: the draining writer waits for this bit to clear, and this is our
+            // last access to the lock.
             m_readersOut.exchangeAnd(~s_writerDrainParkedBit, std::memory_order_relaxed);
             return 0;
         });
@@ -109,21 +110,28 @@ void ReadWriteLock::writeLockSlow(uint32_t target)
         if (ReadWriteLockInternal::spinStep(spinCount, ReadWriteLockInternal::writerSpinLimit))
             continue;
 
-        // It's ok that we set the parked bit before actually parking. We end up synchronizing with that
-        // reader under the ParkingLot's lock. If they win we'll abort the park or we'll win and actually
-        // park.
         uint64_t parked = (readersOut & s_outCountMask) | s_writerDrainParkedBit | target;
         if (m_readersOut.compareExchangeStrong(readersOut, parked, std::memory_order_relaxed) != readersOut)
             continue;
 
+        // The reader that reaches target still accesses the lock after its count lands, so wait for it
+        // to clear the bit instead. Its clear and our validation are serialized by the ParkingLot.
         ParkingLot::parkConditionally(
             drainParkingAddress(),
             [&]() -> bool {
-                uint64_t currentReadersOut = m_readersOut.loadRelaxed();
-                return outCount(currentReadersOut) != target && (currentReadersOut & s_writerDrainParkedBit);
+                return m_readersOut.loadRelaxed() & s_writerDrainParkedBit;
             },
             []() { },
             ParkingLot::Time::infinity());
+
+        // Only the reader that reaches target unparks this address, and it clears the bit first, so
+        // whether or not we successfully parked, the drain must be done.
+        // NOTE: This acquire is what orders every reader's critical section before ours. The ParkingLot
+        // only orders us after the last reader; the others are ordered through the release sequence
+        // their exchangeAdds started on m_readersOut, which the clear we read here continues.
+        readersOut = m_readersOut.load(std::memory_order_acquire);
+        RELEASE_ASSERT(readersOut == ((static_cast<uint64_t>(target) << s_outCountShift) | target));
+        return;
     }
 }
 
