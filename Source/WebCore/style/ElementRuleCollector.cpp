@@ -308,8 +308,10 @@ void ElementRuleCollector::sortAndTransferMatchedRules(DeclarationOrigin declara
 
 void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOrigin, std::optional<ScopeOrdinal> fromScope)
 {
-    if (m_mode != SelectorChecker::Mode::CollectingRules)
-        declarationsForOrigin(declarationOrigin).reserveCapacity(m_matchedRules.size());
+    if (m_mode != SelectorChecker::Mode::CollectingRules) {
+        auto& declarations = declarationsForOrigin(declarationOrigin);
+        declarations.reserveCapacity(declarations.size() + (m_matchedRules.size() - m_matchedRuleTransferIndex));
+    }
 
     for (; m_matchedRuleTransferIndex < m_matchedRules.size(); ++m_matchedRuleTransferIndex) {
         auto& matchedRule = m_matchedRules[m_matchedRuleTransferIndex];
