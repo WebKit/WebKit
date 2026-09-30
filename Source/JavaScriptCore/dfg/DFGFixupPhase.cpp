@@ -4520,6 +4520,8 @@ private:
     {
         bool atLeastOneString = false;
         bool goodToGo = true;
+        // String.prototype.concat must throw for a null or undefined |this|, so it cannot stringify it.
+        bool canConvertOther = !(node->op() == StrCat && node->intrinsic() == StringPrototypeConcatIntrinsic);
         m_graph.doToChildren(
             node,
             [&] (Edge& edge) {
@@ -4530,6 +4532,8 @@ private:
                 if (edge->shouldSpeculateInt32())
                     return;
                 if (edge->shouldSpeculateNumber())
+                    return;
+                if (canConvertOther && edge->shouldSpeculateStringOrOther())
                     return;
                 if (m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
                     if (edge->shouldSpeculateStringObject()) {
@@ -4563,6 +4567,10 @@ private:
                 }
                 if (edge->shouldSpeculateNumber()) {
                     convertStringAddUse<DoubleRepUse>(node, edge);
+                    return;
+                }
+                if (canConvertOther && edge->shouldSpeculateStringOrOther()) {
+                    convertStringAddUse<StringOrOtherUse>(node, edge);
                     return;
                 }
                 if (edge->op() == ToPrimitive) {
