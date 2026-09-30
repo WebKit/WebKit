@@ -1883,8 +1883,10 @@ void enumerateUnignoredDescendants(T& object, bool includeSelf, NOESCAPE const F
     if (includeSelf)
         lambda(object);
 
+    // Children go onto the stack last to first, so that they come off it in document order.
     Vector<Ref<AXCoreObject>> stack;
-    for (const auto& child : object.unignoredChildren())
+    const auto& children = object.unignoredChildren();
+    for (const auto& child : children | std::views::reverse)
         stack.append(child);
 
     unsigned iterationCount = 0;
@@ -1904,7 +1906,8 @@ void enumerateUnignoredDescendants(T& object, bool includeSelf, NOESCAPE const F
             break;
 #endif
         lambda(current.get());
-        for (const auto& child : current->unignoredChildren())
+        const auto& currentChildren = current->unignoredChildren();
+        for (const auto& child : currentChildren | std::views::reverse)
             stack.append(child);
     }
 }

@@ -1,0 +1,15 @@
+This tests that an error message made of several pieces of text is exposed in reading order, with each piece exposed once. Text read as part of its neighbor's label is not exposed again on its own.
+
+PASS: errorMessageLabels('name') === 'AXLabel: Error: Enter your full name'
+PASS: errorMessageLabels('password') === 'AXLabel: Your password needs | AXLabel: at least 8 characters'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Full name
+Error: Enter your full name
+
+Password
+Your password needs
+
+at least 8 characters

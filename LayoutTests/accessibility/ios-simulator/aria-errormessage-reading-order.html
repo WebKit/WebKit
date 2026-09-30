@@ -1,0 +1,36 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<label for="name">Full name</label>
+<input id="name" type="text" aria-invalid="true" aria-errormessage="name-error">
+<p id="name-error"><span>Error:</span> Enter your full name</p>
+
+<label for="password">Password</label>
+<input id="password" type="password" aria-invalid="true" aria-errormessage="password-error">
+<div id="password-error">
+  <p>Your password needs</p>
+  <p>at least 8 characters</p>
+</div>
+
+<script>
+var output = "This tests that an error message made of several pieces of text is exposed in reading order, with each piece exposed once. Text read as part of its neighbor's label is not exposed again on its own.\n\n";
+
+if (window.accessibilityController) {
+    function errorMessageLabels(id) {
+        var messages = accessibilityController.accessibleElementById(id).errorMessageElements() || [];
+        return messages.map((message) => message.description).join(" | ");
+    }
+
+    output += expect("errorMessageLabels('name')", "'AXLabel: Error: Enter your full name'");
+    output += expect("errorMessageLabels('password')", "'AXLabel: Your password needs | AXLabel: at least 8 characters'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
