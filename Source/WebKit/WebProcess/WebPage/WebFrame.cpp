@@ -680,7 +680,7 @@ void WebFrame::invalidatePolicyListeners()
         policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
-bool WebFrame::dispatchPendingNavigateEventAfterNavigationPolicy(WebCore::PendingNavigateEventIdentifier identifier)
+bool WebFrame::dispatchPendingNavigateEventAfterNavigationPolicy(WebCore::NavigateEventIdentifier identifier)
 {
     RefPtr coreFrame = coreLocalFrame();
     if (!coreFrame)

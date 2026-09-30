@@ -50,6 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigateEvent);
 
 NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
     : Event(EventInterfaceType::NavigateEvent, type, WTF::move(init), isTrusted)
+    , m_identifier(NavigateEventIdentifier::generate())
     , m_navigationType(init.navigationType)
     , m_destination(WTF::move(init.destination))
     , m_signal(WTF::move(init.signal))
@@ -66,8 +67,9 @@ NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, const AtomString
     m_info.set(globalObject, wrapper(), init.info);
 }
 
-NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
+NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController, std::optional<NavigateEventIdentifier> identifier)
     : Event(EventInterfaceType::NavigateEvent, type, WTF::move(init), isTrusted)
+    , m_identifier(identifier ? *identifier : NavigateEventIdentifier::generate())
     , m_navigationType(init.navigationType)
     , m_destination(WTF::move(init.destination))
     , m_signal(WTF::move(init.signal))
@@ -84,9 +86,9 @@ NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& 
     m_info.setWeakly(WTF::move(world), init.info);
 }
 
-Ref<NavigateEvent> NavigateEvent::create(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, AbortController* abortController)
+Ref<NavigateEvent> NavigateEvent::create(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, AbortController* abortController, std::optional<NavigateEventIdentifier> identifier)
 {
-    return adoptRef(*new NavigateEvent(WTF::move(world), type, WTF::move(init), EventIsTrusted::Yes, abortController));
+    return adoptRef(*new NavigateEvent(WTF::move(world), type, WTF::move(init), EventIsTrusted::Yes, abortController, identifier));
 }
 
 Ref<NavigateEvent> NavigateEvent::create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& init)
