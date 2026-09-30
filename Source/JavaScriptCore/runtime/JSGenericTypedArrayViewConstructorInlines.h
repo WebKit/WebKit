@@ -264,7 +264,12 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
                     RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromIterator<ViewClass>(globalObject, structure, object, iteratorFunc));
             }
 
-            if (lengthSlot.isUnset())
+            if (lengthSlot.isTaintedByOpaqueObject()) {
+                JSValue lengthValue = object->get(globalObject, vm.propertyNames->length);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                length = lengthValue.toLength(globalObject);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            } else if (lengthSlot.isUnset())
                 length = 0;
             else {
                 JSValue value = lengthSlot.getValue(globalObject, vm.propertyNames->length);
