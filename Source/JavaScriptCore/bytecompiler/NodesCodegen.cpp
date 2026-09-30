@@ -401,6 +401,7 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
         if (bracket->base()->isSuperNode()) {
             RefPtr<RegisterID> thisValue = generator.ensureThis();
             tag = generator.emitGetByVal(generator.newTemporary(), base.get(), thisValue.get(), property.get());
+            base = WTF::move(thisValue);
         } else
             tag = generator.emitGetByVal(generator.newTemporary(), base.get(), property.get());
     } else {
@@ -409,7 +410,10 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
         tag = generator.newTemporary();
         base = generator.newTemporary();
         base = generator.emitNode(base.get(), dot->base());
-        tag = dot->emitGetPropertyValue(generator, tag.get(), base.get());
+        RefPtr<RegisterID> thisValue;
+        tag = dot->emitGetPropertyValue(generator, tag.get(), base.get(), thisValue);
+        if (thisValue)
+            base = WTF::move(thisValue);
     }
 
     RefPtr<RegisterID> templateObject = generator.emitGetTemplateObject(nullptr, this);
