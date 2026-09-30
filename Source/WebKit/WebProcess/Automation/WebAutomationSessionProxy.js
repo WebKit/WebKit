@@ -283,8 +283,12 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _createNodeHandle(node)
     {
-        if (node.ownerDocument !== window.document || !node.isConnected)
-            throw {name: "NodeNotFound", message: "Stale element found when trying to create the node handle"};
+        if (node.ownerDocument !== window.document || !node.isConnected) {
+            // https://w3c.github.io/webdriver/#dfn-internal-json-clone
+            if (node instanceof Element)
+                throw {name: "StaleNode", message: "Stale element found when trying to create the node handle"};
+            throw {name: "NodeNotFound", message: "Stale node found when trying to create the node handle"};
+        }
 
         return {[sessionNodePropertyName]: this._identifierForNode(node)};
     }
