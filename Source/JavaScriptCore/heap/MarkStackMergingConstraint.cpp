@@ -60,14 +60,12 @@ void MarkStackMergingConstraint::prepareToExecuteImpl(const AbstractLocker&, Abs
 template<typename Visitor>
 void MarkStackMergingConstraint::executeImplImpl(Visitor& visitor)
 {
-    // We want to skip this constraint for the GC verifier because:
-    // 1. There should be no mutator marking action between the End phase and verifyGC().
-    //    Hence, we can ignore these stacks.
-    // 2. The End phase explicitly calls iterateExecutingAndCompilingCodeBlocks()
-    //    to add executing CodeBlocks to m_heap.m_mutatorMarkStack. We want to
-    //    leave those unperturbed.
-    if (m_heap.m_isMarkingForGCVerifier)
+    // The GC verifier marks after marking has terminated, with the world stopped, so nothing can be on these stacks.
+    if (m_heap.m_isMarkingForGCVerifier) {
+        ASSERT(m_heap.m_mutatorMarkStack->isEmpty());
+        ASSERT(m_heap.collector().m_raceMarkStack->isEmpty());
         return;
+    }
 
     m_heap.m_mutatorMarkStack->transferTo(visitor.mutatorMarkStack());
     m_heap.collector().m_raceMarkStack->transferTo(visitor.mutatorMarkStack());

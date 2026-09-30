@@ -1815,7 +1815,9 @@ void CodeBlock::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     UNUSED_PARAM(vm);
 
-    // Called for all live CodeBlocks.
+    // Called for the CodeBlocks visited in this collection. An Eden collection visits an old CodeBlock only
+    // if it was barriered, which op_enter, OSR exit and the End phase ensure for any that ran since it was last
+    // reconciled.
     // We do not need to call updateAllPredictions for DFG / FTL since the same thing happens in LLInt / Baseline CodeBlock for them.
     if (JITCode::isBaselineCode(jitType()))
         updateAllPredictions();
