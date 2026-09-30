@@ -16995,8 +16995,7 @@ void WebPageProxy::getSelectedRangeAsync(CompletionHandler<void(const EditingRan
 
 void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& callbackFunction)
 {
-    // FIXME: This needs to use `sendWithAsyncReplyToFocusedOrMainFrameProcess` and convert to frame coordinates.
-    sendWithAsyncReply(Messages::WebPage::CharacterIndexForPointAsync(point), WTF::move(callbackFunction));
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::CharacterIndexForPointAsync(point), WTF::move(callbackFunction));
 }
 
 void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&& callbackFunction)
@@ -19797,6 +19796,7 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::PerformAc
 #if ENABLE(REVEAL)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::PrepareSelectionForContextMenuWithLocationInView);
 #endif
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::SelectPositionAtBoundaryWithDirection);
 #if ENABLE(DRAG_SUPPORT)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestDragStart);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::RequestAdditionalItemsForDragSession);
@@ -19850,6 +19850,7 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::Crea
 #endif
 #if PLATFORM(IOS_FAMILY)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::BeginSelectionInDirection);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::SelectWithTwoTouches);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ExtendSelection);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::ExtendSelectionForReplacement);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::GetSelectionContext);

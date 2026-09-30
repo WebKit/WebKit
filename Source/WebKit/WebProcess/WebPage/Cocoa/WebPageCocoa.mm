@@ -2250,16 +2250,24 @@ void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange& s
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    RefPtr localMainFrame = this->localMainFrame();
-    if (!localMainFrame)
-        return;
-    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
-    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
-    RefPtr frame = result.innerNonSharedNode() ? result.innerNodeFrame() : corePage()->focusController().focusedOrMainFrame();
+    RefPtr frame = corePage()->focusController().focusedOrMainFrame();
     if (!frame)
-        return completionHandler({ });
-    auto range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
-    auto editingRange = EditingRange::fromRange(*frame, range);
+        return completionHandler(notFound);
+
+    RefPtr view = frame->view();
+    if (!view)
+        return completionHandler(notFound);
+
+    // The point arrives in the main frame's root view; map it into this frame. Like the main-frame-only
+    // code this replaces, it is then treated as a contents point, which ignores scroll offset.
+    auto pointInFrame = roundedIntPoint(view->convertFromRootViewAcrossIsolatedFrames(FloatPoint { point }));
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
+    auto result = frame->eventHandler().hitTestResultAtPoint(pointInFrame, hitType);
+    RefPtr targetFrame = result.innerNonSharedNode() ? result.innerNodeFrame() : frame.get();
+    if (!targetFrame)
+        return completionHandler(notFound);
+    auto range = targetFrame->rangeForPoint(result.roundedPointInInnerNodeFrame());
+    auto editingRange = EditingRange::fromRange(*targetFrame, range);
     completionHandler(editingRange.location);
 }
 

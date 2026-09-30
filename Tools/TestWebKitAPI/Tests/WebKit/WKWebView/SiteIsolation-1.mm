@@ -88,6 +88,13 @@
 - (void)_setDictationStreamingOpacity:(CGFloat)opacity forHypothesisText:(NSString *)hypothesisText streamingRange:(NSRange)streamingRange;
 - (void)_clearDictationStreamingOpacity;
 @end
+
+// UIWKGestureType stands in for WKBEGestureType, which is BEGestureType with BrowserEngineKit and
+// UIWKGestureType without; both are NSInteger-backed, and these handlers ignore the value.
+@interface UIView (SiteIsolationPointBasedSelection)
+- (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState;
+- (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler;
+@end
 #endif
 
 @interface SiteIsolationFontAttributesListener : NSObject <WKUIDelegatePrivate>
@@ -1144,5 +1151,118 @@ TEST(SiteIsolation, DocumentEditingContextInCrossOriginIframe)
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 #endif // PLATFORM(IOS_FAMILY)
+
+// Point-based selection. The UI process hands these messages a point in web-view coordinates, and every
+// web-process handler resolves it against `focusedOrMainFrame()`'s own LocalFrameView (via
+// `rootViewToContents`, directly or through `visiblePositionInFocusedNodeForPoint`). So each one needs to
+// reach the focused frame's process *and* have its point converted into that frame's root view; routing
+// alone would land the point off by the iframe's position. `SelectPositionAtPoint` and
+// `SelectTextWithGranularityAtPoint` are already handled, by hit-testing and re-dispatching on a
+// `RemoteUserInputEventData` reply.
+
+// initial-scale=1 keeps CSS pixels equal to web-view coordinates, which the helper below relies on.
+static constexpr auto pointSelectionMainFrame = "<meta name='viewport' content='initial-scale=1'><body style='margin: 0'>main frame text<iframe id='iframe' style='position: absolute; left: 100px; top: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
+static constexpr auto pointSelectionIframe = "<body contenteditable style='margin: 0; font: 20px monospace'>hello world</body>"_s;
+
+// A point in web-view coordinates just inside the left edge of the character at `offset` in the iframe's
+// first text node, so that the nearest character boundary is unambiguously `offset` itself. The iframe is
+// positioned at (100, 100) and nothing is scrolled, so its client coordinates are offset by exactly that.
+static CGPoint pointAtCharacterInIframe(TestWKWebView *webView, WKFrameInfo *childFrame, unsigned offset)
+{
+    RetainPtr script = [NSString stringWithFormat:@"(() => {"
+        "let range = document.createRange();"
+        "range.setStart(document.body.firstChild, %u);"
+        "range.setEnd(document.body.firstChild, %u);"
+        "let rect = range.getBoundingClientRect();"
+        "return [rect.left + 2, rect.top + rect.height / 2];"
+        "})()", offset, offset + 1];
+    RetainPtr result = [webView objectByEvaluatingJavaScript:script.get() inFrame:childFrame];
+    return CGPointMake(100 + [[result objectAtIndex:0] doubleValue], 100 + [[result objectAtIndex:1] doubleValue]);
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+static int selectionAnchorOffsetInFrame(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    return [[webView objectByEvaluatingJavaScript:@"getSelection().anchorOffset" inFrame:frame] intValue];
+}
+
+TEST(SiteIsolation, SelectPositionAtBoundaryInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { pointSelectionMainFrame } },
+        { "/iframe"_s, { pointSelectionIframe } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 0)", _WKSelectionAttributeIsCaret);
+    ASSERT_EQ(0, selectionAnchorOffsetInFrame(webView.get(), childFrame.get()));
+
+    // Starting from a point at "h", the next word boundary forward is the end of "hello".
+    __block bool done = false;
+    [[webView textInputContentView] selectPositionAtBoundary:UITextGranularityWord inDirection:UITextStorageDirectionForward fromPoint:pointAtCharacterInIframe(webView.get(), childFrame.get(), 0) completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return selectionAnchorOffsetInFrame(webView.get(), childFrame.get()) == 5;
+    }));
+    EXPECT_EQ(5, selectionAnchorOffsetInFrame(webView.get(), childFrame.get()));
+}
+
+TEST(SiteIsolation, SelectWithTwoTouchesInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { pointSelectionMainFrame } },
+        { "/iframe"_s, { pointSelectionIframe } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 0)", _WKSelectionAttributeIsCaret);
+
+    // Two touches at "h" and at "w" must select everything between them, in the iframe.
+    CGPoint from = pointAtCharacterInIframe(webView.get(), childFrame.get(), 0);
+    CGPoint to = pointAtCharacterInIframe(webView.get(), childFrame.get(), 6);
+    [[webView textInputContentView] changeSelectionWithTouchesFrom:from to:to withGesture:UIWKGestureLoupe withState:UIGestureRecognizerStateEnded];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"hello "];
+    }));
+    EXPECT_WK_STREQ("hello ", [webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()]);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, CharacterIndexForPointInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { pointSelectionMainFrame } },
+        { "/iframe"_s, { pointSelectionIframe } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+
+    // characterIndexForPoint: takes a screen point, so undo what WebViewImpl will redo. WKWebView is
+    // flipped on macOS, so its coordinates match the CSS pixels the helper reports.
+    CGPoint pointInView = pointAtCharacterInIframe(webView.get(), childFrame.get(), 6);
+    NSPoint pointInWindow = [webView convertPoint:NSPointFromCGPoint(pointInView) toView:nil];
+    NSPoint point = [webView window] ? [[webView window] convertPointToScreen:pointInWindow] : pointInWindow;
+
+    __block NSUInteger index = NSNotFound;
+    __block bool done = false;
+    [static_cast<id<NSTextInputClient_Async>>(webView.get()) characterIndexForPoint:point completionHandler:^(NSUInteger result) {
+        index = result;
+        done = true;
+    }];
+    Util::run(&done);
+
+    // "w" is at offset 6 in the iframe's "hello world".
+    EXPECT_EQ(6U, index);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

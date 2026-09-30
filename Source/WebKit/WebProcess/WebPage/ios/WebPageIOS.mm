@@ -1751,6 +1751,17 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
     completionHandler(point, selectionTouch, flags);
 }
 
+// The UI process sends these points in the main frame's root view. In a cross-origin iframe's process the
+// iframe is the local root, so its own rootViewToContents would be off by the iframe's position. This is
+// the identity for a main frame.
+static IntPoint mainFrameRootViewToRootView(const LocalFrame& frame, const IntPoint& point)
+{
+    RefPtr view = frame.view();
+    if (!view)
+        return point;
+    return roundedIntPoint(view->convertFromRootViewAcrossIsolatedFrames(FloatPoint { point }));
+}
+
 void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
@@ -1758,8 +1769,8 @@ void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore:
         return;
 
     RefPtr view = frame->view();
-    auto fromPosition = frame->visiblePositionForPoint(view->rootViewToContents(from));
-    auto toPosition = frame->visiblePositionForPoint(view->rootViewToContents(to));
+    auto fromPosition = frame->visiblePositionForPoint(view->rootViewToContents(mainFrameRootViewToRootView(*frame, from)));
+    auto toPosition = frame->visiblePositionForPoint(view->rootViewToContents(mainFrameRootViewToRootView(*frame, to)));
     if (auto range = makeSimpleRange(fromPosition, toPosition)) {
         if (!(fromPosition < toPosition))
             std::swap(range->start, range->end);
@@ -2132,7 +2143,7 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
     if (!frame)
         return completionHandler();
 
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, mainFrameRootViewToRootView(*frame, point), isInteractingWithFocusedElement);
 
     if (position.isNotNull()) {
         position = positionOfNextBoundaryOfGranularity(position, granularity, direction);

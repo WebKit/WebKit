@@ -447,9 +447,13 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, granularity, direction, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s)] () mutable {
+    RefPtr focusedFrame = focusedOrMainFrame();
+    auto frameID = focusedFrame ? std::optional(focusedFrame->frameID()) : std::nullopt;
+    Ref process = processContainingFrame(frameID);
+    auto backgroundActivity = protect(process->throttler())->backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s);
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, granularity, direction, isInteractingWithFocusedElement), Messages::WebPage::SelectPositionAtBoundaryWithDirection::Reply { [callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)] () mutable {
         callbackFunction();
-    }, webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, CompletionHandler<void()>&& callbackFunction)
@@ -553,7 +557,7 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
     if (!hasRunningProcess())
         return callback({ }, GestureType::Loupe, GestureRecognizerState::Possible, { });
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState), Messages::WebPage::SelectWithTwoTouches::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::startInteractionWithPositionInformation(std::optional<WebCore::FrameIdentifier> frameID, const InteractionInformationAtPosition& positionInformation)
