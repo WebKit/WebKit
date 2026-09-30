@@ -72,6 +72,7 @@ private:
     void NODELETE delegatedScrollingModeDidChange() final;
     void NODELETE updateScrollCorner() final;
     bool NODELETE scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
+    void NODELETE scrollContentsSlowPath(const IntRect& updateRect) final;
     bool NODELETE isVerticalDocument() const final;
     bool NODELETE isFlippedDocument() const final;
     bool NODELETE shouldDeferScrollUpdateAfterContentSizeChange() final;

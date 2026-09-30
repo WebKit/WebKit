@@ -17641,3 +17641,62 @@ TEST(SiteIsolation, ThirdPartyCookieBlockingSpoofedWebPageProxyID)
 }
 
 }
+
+#if PLATFORM(MAC)
+
+@interface SiteIsolationPageScrollCounter : NSObject<WKUIDelegatePrivate>
+@property (nonatomic) NSUInteger pageScrollCount;
+@end
+
+@implementation SiteIsolationPageScrollCounter
+- (void)_webViewDidScroll:(WKWebView *)webView
+{
+    ++_pageScrollCount;
+}
+@end
+
+namespace TestWebKitAPI {
+
+TEST(SiteIsolation, CrossSiteIframeProcessesDoNotReportMainFrameScroll)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 5000px'>"
+            "<iframe style='width: 300px; height: 200px; border: none' src='https://domain2.com/subframe'></iframe>"
+            "<iframe style='width: 300px; height: 200px; border: none' src='https://domain3.com/subframe'></iframe>"
+            "</body>"_s } },
+        { "/subframe"_s, { "<body style='background-color: green'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server, CGRectMake(0, 0, 800, 600));
+    RetainPtr scrollCounter = adoptNS([SiteIsolationPageScrollCounter new]);
+    webView.get().UIDelegate = scrollCounter.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr<NSArray<_WKFrameTreeNode *>> childFrames = [webView mainFrame].childFrames;
+    EXPECT_EQ([childFrames count], 2u);
+
+    auto pageScrollsForMainFrameScrollTo = [&](int y) {
+        [scrollCounter setPageScrollCount:0];
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", y]];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [scrollCounter pageScrollCount] > 0;
+        }));
+
+        // Wait for the next presentation update since the main frame broadcasts its scroll position
+        // to remote frame processes as part of the rendering update. Then wait for each remote
+        // frame process to do some request/response IPC to make sure it's processed that update.
+        [webView waitForNextPresentationUpdate];
+        for (_WKFrameTreeNode *childFrame in childFrames.get())
+            [webView objectByEvaluatingJavaScript:@"0" inFrame:childFrame.info];
+
+        return [scrollCounter pageScrollCount];
+    };
+
+    EXPECT_EQ(pageScrollsForMainFrameScrollTo(100), 1u);
+    EXPECT_EQ(pageScrollsForMainFrameScrollTo(300), 1u);
+}
+
+} // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC)
