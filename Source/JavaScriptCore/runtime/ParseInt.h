@@ -274,6 +274,32 @@ static ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, String
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
 inline constexpr char radixDigits[37] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
+ALWAYS_INLINE static double parseIntString(JSGlobalObject* globalObject, JSString* string, int32_t radix)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // A short rope is copied out rather than flattened in place: the number token being parsed is rarely
+    // used again, so allocating a StringImpl for it would only add work for the allocator and the sweeper.
+    constexpr unsigned maxLengthForStackCopy = 64;
+    if (string->isNonSubstringRope() && string->length() <= maxLengthForStackCopy) {
+        if (string->is8Bit()) {
+            std::array<Latin1Character, maxLengthForStackCopy> buffer;
+            auto characters = std::span { buffer }.first(string->length());
+            string->resolveToBuffer(characters);
+            return parseInt(StringView { characters }, radix);
+        }
+        std::array<char16_t, maxLengthForStackCopy> buffer;
+        auto characters = std::span { buffer }.first(string->length());
+        string->resolveToBuffer(characters);
+        return parseInt(StringView { characters }, radix);
+    }
+
+    auto view = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return parseInt(view, radix);
+}
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

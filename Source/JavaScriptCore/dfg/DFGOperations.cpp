@@ -179,11 +179,6 @@ static ALWAYS_INLINE void putWithThis(JSGlobalObject* globalObject, EncodedJSVal
     baseValue.putInline(globalObject, ident, putValue, slot);
 }
 
-static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
-{
-    return JSValue::encode(jsNumber(input));
-}
-
 ALWAYS_INLINE static JSValue getByValObject(JSGlobalObject* globalObject, VM& vm, JSObject* base, PropertyName propertyName)
 {
     Structure& structure = *base->structure();
@@ -2021,7 +2016,6 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (
         })));
 }
 
-
 JSC_DEFINE_JIT_OPERATION(operationParseIntGenericNoRadix, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
 {
     VM& vm = globalObject->vm();
@@ -2032,13 +2026,13 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntGenericNoRadix, EncodedJSValue, (JSGlo
     JSValue value = JSValue::decode(encodedValue);
     if (value.isNumber()) {
         if (auto result = parseIntDouble(value.asNumber()))
-            OPERATION_RETURN(scope, parseIntResult(result.value()));
+            OPERATION_RETURN(scope, JSValue::encode(jsNumber(result.value())));
     }
 
-    OPERATION_RETURN(scope, toStringView(globalObject, value, [&] (StringView view) {
-        // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
-        return parseIntResult(parseInt(view, 0));
-    }));
+    JSString* string = value.toString(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseIntString(globalObject, string, 0))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlobalObject* globalObject, JSString* string))
@@ -2048,11 +2042,8 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto view = string->view(globalObject);
-    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
     // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
-    OPERATION_RETURN(scope, parseIntResult(parseInt(view, 0)));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseIntString(globalObject, string, 0))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject* globalObject, double value))
@@ -2063,9 +2054,9 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlob
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (auto result = parseIntDouble(value))
-        OPERATION_RETURN(scope, parseIntResult(result.value()));
+        OPERATION_RETURN(scope, JSValue::encode(jsNumber(result.value())));
 
-    OPERATION_RETURN(scope, parseIntResult(parseInt(String::number(value), 0)));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(String::number(value), 0))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObject* globalObject, JSString* string, int32_t radix))
@@ -2075,10 +2066,7 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto view = string->view(globalObject);
-    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    OPERATION_RETURN(scope, parseIntResult(parseInt(view, radix)));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseIntString(globalObject, string, radix))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue, int32_t radix))
@@ -2091,12 +2079,13 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObje
     JSValue value = JSValue::decode(encodedValue);
     if (radix == 10 && value.isNumber()) {
         if (auto result = parseIntDouble(value.asNumber()))
-            OPERATION_RETURN(scope, parseIntResult(result.value()));
+            OPERATION_RETURN(scope, JSValue::encode(jsNumber(result.value())));
     }
 
-    OPERATION_RETURN(scope, toStringView(globalObject, value, [&] (StringView view) {
-        return parseIntResult(parseInt(view, radix));
-    }));
+    JSString* string = value.toString(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseIntString(globalObject, string, radix))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntDouble, EncodedJSValue, (JSGlobalObject* globalObject, double value, int32_t radix))
@@ -2108,10 +2097,10 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntDouble, EncodedJSValue, (JSGlobalObjec
 
     if (radix == 10) {
         if (auto result = parseIntDouble(value))
-            OPERATION_RETURN(scope, parseIntResult(result.value()));
+            OPERATION_RETURN(scope, JSValue::encode(jsNumber(result.value())));
     }
 
-    OPERATION_RETURN(scope, parseIntResult(parseInt(String::number(value), radix)));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(String::number(value), radix))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntInt32, EncodedJSValue, (JSGlobalObject* globalObject, int32_t value, int32_t radix))
@@ -2124,7 +2113,7 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntInt32, EncodedJSValue, (JSGlobalObject
     if (radix == 10)
         OPERATION_RETURN(scope, JSValue::encode(jsNumber(value)));
 
-    OPERATION_RETURN(scope, parseIntResult(parseInt(String::number(value), radix)));
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(parseInt(String::number(value), radix))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationResolvePromiseFirstResolving, void, (JSGlobalObject* globalObject, JSPromise* promise, EncodedJSValue encodedArgument))
