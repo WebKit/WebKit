@@ -400,9 +400,17 @@ NSString *RemoteLayerTreeNode::appendLayerDescription(NSString *description, CAL
 void RemoteLayerTreeNode::addToHostingNode(RemoteLayerTreeNode& hostingNode)
 {
 #if PLATFORM(IOS_FAMILY)
-    [protect(hostingNode.uiView()) addSubview:protect(uiView()).get()];
+    RetainPtr hostingView = hostingNode.uiView();
+    RetainPtr view = uiView();
+    if ([view superview] != hostingView.get())
+        [hostingView addSubview:view.get()];
+    ASSERT([hostingView subviews].count == 1);
 #else
-    [protect(hostingNode.layer()) addSublayer:protect(layer()).get()];
+    RetainPtr hostingLayer = hostingNode.layer();
+    RetainPtr layer = this->layer();
+    if ([layer superlayer] != hostingLayer.get())
+        [hostingLayer addSublayer:layer.get()];
+    ASSERT([hostingLayer sublayers].count == 1);
 #endif
 }
 

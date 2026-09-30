@@ -12274,6 +12274,47 @@ TEST(SiteIsolation, ContextMenuLocationInScrolledCrossSiteIframeWithScrolledMain
 
 #endif
 
+static IMP originalAddSublayer;
+static unsigned redundantAddSublayerCount;
+
+static void addSublayerCountingRedundantInsertions(CALayer *self, SEL selector, CALayer *layer)
+{
+    if (layer.superlayer == self)
+        ++redundantAddSublayerCount;
+    reinterpret_cast<void (*)(CALayer *, SEL, CALayer *)>(originalAddSublayer)(self, selector, layer);
+}
+
+TEST(SiteIsolation, CommitsFromCrossSiteIframeDoNotReparentItsLayers)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='width: 300px; height: 200px; border: none' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='background-color: green'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    originalAddSublayer = class_getMethodImplementation(CALayer.class, @selector(addSublayer:));
+    redundantAddSublayerCount = 0;
+    InstanceMethodSwizzler swizzler { CALayer.class, @selector(addSublayer:), reinterpret_cast<IMP>(addSublayerCountingRedundantInsertions) };
+
+    [webView objectByEvaluatingJavaScript:@"window.ticks = 0;"
+        "(function tick() {"
+        "    document.body.style.backgroundColor = window.ticks % 2 ? 'green' : 'blue';"
+        "    if (++window.ticks < 10)"
+        "        requestAnimationFrame(tick);"
+        "})();" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.ticks" inFrame:childFrame.get()] intValue] >= 10;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(redundantAddSublayerCount, 0u);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(SiteIsolation, SelectMultiplePickerLocationInCrossOriginIframe)
