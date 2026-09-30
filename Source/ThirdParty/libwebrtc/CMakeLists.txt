@@ -3011,6 +3011,7 @@ if (APPLE)
         "-DOPUS_BUILD"
         "-DOPUS_EXPORT="
         "-DHAVE_LRINT HAVE_LRINTF"
+        "-Wno-incompatible-pointer-types" # FIXME: Not great but matches Configurations/opus.xcconfig.
     )
     if (WTF_CPU_ARM64)
         # Configurations/opus.xcconfig:17, which is what makes the NEON sources
