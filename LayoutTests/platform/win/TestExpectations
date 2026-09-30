@@ -4909,3 +4909,29 @@ http/tests/inspector/network/cross-origin-iframe-get-response-body-binary.html [
 imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904409.html [ Skip ] # Flaky Crash
 js/dom/promise-stack-overflow.html [ Pass Failure ]
 webgl/2.0.y/conformance2/query/occlusion-query-scissor.html [ Pass Timeout ]
+
+# webkit.org/b/325759 Pre-existing failures on Win-Tests-EWS, 2026-09-30
+
+# Consistent text failures, in every run
+fast/webcodecs/videoframe-from-image-orientation-and-density.html [ Failure ]
+fast/webcodecs/videoframe-from-svg-without-natural-size.html [ Failure ]
+
+# Consistent image failures, in every run
+compositing/filters/filter-fractional-translation-perspective.html [ ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-fractional-translation-edge.html [ ImageOnlyFailure ]
+
+# Site Isolation tests that crash the GPU process; the crash is reported against the next test
+http/tests/web-locks/web-lock-in-third-party-serviceworker-site-isolation.html [ Skip ]
+http/tests/web-locks/web-lock-in-third-party-sharedworker-site-isolation.html [ Skip ]
+http/wpt/site-isolation/history-traversal/history-traversal-navigate-parent-while-child-loading.html [ Skip ]
+
+# Flaky
+imported/w3c/web-platform-tests/largest-contentful-paint/image-not-fully-visible.html [ Pass Failure ]
+
+# Windows Server 2025 (win-bot-006) only
+css3/filters/backdrop/add-remove-add-backdrop-filter.html [ Pass ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-clip-path.html [ Pass ImageOnlyFailure ]
+css3/filters/backdrop/effect-hw.html [ Pass ImageOnlyFailure ]
+css3/filters/effect-blur-hw.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-nested.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Pass Failure ]
