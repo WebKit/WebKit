@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>updateCallbackDone rejects with the exception thrown while resolving the update callback's returned promise</title>
+<link rel="help" href="https://webidl.spec.whatwg.org/#invoke-a-callback-function">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function promiseWithThrowingConstructorGetter(error)
+{
+    const promise = Promise.resolve();
+    Object.defineProperty(promise, "constructor", { get() { throw error; } });
+    return promise;
+}
+
+promise_test(t => {
+    const error = new Error("boom");
+    const transition = document.startViewTransition(() => promiseWithThrowingConstructorGetter(error));
+    transition.ready.catch(() => { });
+    transition.finished.catch(() => { });
+    return promise_rejects_exactly(t, error, transition.updateCallbackDone);
+}, "updateCallbackDone rejects with the exception thrown by the update callback's returned promise's constructor getter");
+</script>

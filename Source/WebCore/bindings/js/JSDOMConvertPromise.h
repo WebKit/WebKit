@@ -37,8 +37,7 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
     using Result = ConversionResult<IDLPromise<T>>;
 
     // https://webidl.spec.whatwg.org/#es-promise
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, NOESCAPE ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         auto& vm = lexicalGlobalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -48,17 +47,14 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
         // 1. Let resolve be the original value of %Promise%.resolve.
         // 2. Let promise be the result of calling resolve with %Promise% as the this value and V as the single argument value.
         auto* promise = JSC::JSPromise::resolvedPromise(globalObject, value);
-        if (scope.exception()) {
+        if (scope.exception()) [[unlikely]] {
             CheckedPtr scriptExecutionContext = globalObject->scriptExecutionContext();
             if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext.get())) {
                 CheckedPtr scriptController = globalScope->script();
                 bool terminatorCausedException = vm.isTerminationException(scope.exception());
-                if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
+                if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution()))
                     scriptController->forbidExecution();
-                    return Result::exception();
-                }
             }
-            exceptionThrower(lexicalGlobalObject, scope);
             return Result::exception();
         }
         ASSERT(promise);

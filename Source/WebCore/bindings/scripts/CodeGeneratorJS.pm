@@ -7459,8 +7459,18 @@ sub GenerateCallbackImplementationOperationBody
 
         push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
         push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
-        push(@$contentRef, "    if (returnValue.hasException(throwScope)) [[unlikely]]\n");
-        push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+        if ($codeGenerator->IsPromiseType($operation->type)) {
+            push(@$contentRef, "    if (returnValue.hasException(throwScope)) [[unlikely]] {\n");
+            push(@$contentRef, "        auto exceptionValue = throwScope.exception()->value();\n");
+            push(@$contentRef, "        TRY_CLEAR_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);\n");
+            push(@$contentRef, "        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());\n");
+            push(@$contentRef, "        jsPromise->rejectAsHandled(vm, exceptionValue);\n");
+            push(@$contentRef, "        return { DOMPromise::create(globalObject, *jsPromise) };\n");
+            push(@$contentRef, "    }\n");
+        } else {
+            push(@$contentRef, "    if (returnValue.hasException(throwScope)) [[unlikely]]\n");
+            push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+        }
         push(@$contentRef, "    return { returnValue.releaseReturnValue() };\n");
     }
 
