@@ -1167,34 +1167,34 @@ select::picker-icon {
 }
 
 select:-internal-uses-menulist option {
-    min-inline-size: 24px;
-    min-block-size: max(24px, 1lh);
-    padding-block: 0.4lh;
-    padding-inline: 0.75em 1.1em;
-    display: flex;
+    min-inline-size: -internal-auto-base(revert-rule, 24px);
+    min-block-size: -internal-auto-base(revert-rule, max(24px, 1lh));
+    padding-block: -internal-auto-base(revert-rule, 0.4lh);
+    padding-inline: -internal-auto-base(revert-rule, 0.75em 1.1em);
+    display: -internal-auto-base(revert-rule, flex);
     align-items: center;
-    gap: 0.5em;
+    gap: -internal-auto-base(revert-rule, 0.5em);
 }
 
 select option {
     white-space: nowrap;
     box-sizing: border-box;
-    outline-offset: inset;
+    outline-offset: -internal-auto-base(revert-rule, inset);
 }
 
 select option:hover,
 select option:focus-visible {
-    background-color: color-mix(currentColor 10%);
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 10%));
 }
 
 select option:active {
-    background-color: color-mix(currentColor 15%);
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 15%));
 }
 
 select option:disabled {
-    color: color-mix(currentColor 55%);
-    background: transparent;
-    cursor: not-allowed;
+    color: -internal-auto-base(revert-rule, color-mix(currentColor 55%));
+    background: -internal-auto-base(revert-rule, transparent);
+    cursor: -internal-auto-base(revert-rule, not-allowed);
 }
 
 select option::checkmark {
@@ -1213,7 +1213,7 @@ optgroup {
 }
 
 select:-internal-uses-menulist optgroup:not(:first-child) {
-    border-block-start: 1px solid color-mix(currentColor 12%);
+    border-block-start: -internal-auto-base(revert-rule, 1px solid color-mix(currentColor 12%));
 }
 
 option {

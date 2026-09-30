@@ -139,7 +139,7 @@ select[multiple]:-internal-select-preferred-size-one option {
     padding-block: -internal-auto-base(revert-rule, 0.4lh);
     padding-inline: -internal-auto-base(revert-rule, 0.75em 1.1em);
     display: -internal-auto-base(revert-rule, flex);
-    align-items: -internal-auto-base(revert-rule, center);
+    align-items: center;
     gap: -internal-auto-base(revert-rule, 0.5em);
 }
 
@@ -150,7 +150,7 @@ select:not(:-internal-select-preferred-size-one) option {
     padding-block: -internal-auto-base(revert-rule, 0);
     padding-inline: -internal-auto-base(revert-rule, 0.75em 1.1em);
     display: -internal-auto-base(revert-rule, flex);
-    align-items: -internal-auto-base(revert-rule, center);
+    align-items: center;
     gap: -internal-auto-base(revert-rule, 0.5em);
 }
 

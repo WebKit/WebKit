@@ -17,6 +17,10 @@
 <select id="baseDropdownSecond" class="base" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
 <select id="baseDropdownFirst" class="base" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
 <select id="nativeMultipleSecond" multiple size="1"><option>one</option><optgroup label="group"><option>two</option></optgroup></select>
+<select id="nativeDropdownFirst"><option>one</option><optgroup label="group"><option disabled>two</option></optgroup></select>
+<select id="baseSingleDropdownSecond" class="base"><option>one</option><optgroup label="group"><option disabled>two</option></optgroup></select>
+<select id="baseSingleDropdownFirst" class="base"><option>one</option><optgroup label="group"><option disabled>two</option></optgroup></select>
+<select id="nativeDropdownSecond"><option>one</option><optgroup label="group"><option disabled>two</option></optgroup></select>
 <script>
 description("The option styles of a base appearance select do not apply to a native one, whichever of the two is styled first.");
 
@@ -30,17 +34,23 @@ function groupStyle(select)
     return getComputedStyle(select.querySelector("optgroup"));
 }
 
-for (const id of ["nativeListBoxFirst", "nativeListBoxSecond", "nativeMultipleFirst", "nativeMultipleSecond"]) {
+for (const id of ["nativeListBoxFirst", "nativeListBoxSecond", "nativeMultipleFirst", "nativeMultipleSecond", "nativeDropdownFirst", "nativeDropdownSecond"]) {
     shouldBeEqualToString(`optionStyle(${id}).display`, "block");
     shouldBeEqualToString(`optionStyle(${id}).paddingInlineStart`, "0px");
     shouldBeEqualToString(`groupStyle(${id}).borderBlockStartStyle`, "none");
 }
 
-for (const id of ["baseListBoxFirst", "baseListBoxSecond", "baseDropdownFirst", "baseDropdownSecond"]) {
+for (const id of ["baseListBoxFirst", "baseListBoxSecond", "baseDropdownFirst", "baseDropdownSecond", "baseSingleDropdownFirst", "baseSingleDropdownSecond"]) {
     shouldBeEqualToString(`optionStyle(${id}).display`, "flex");
     shouldBeEqualToString(`optionStyle(${id}).alignItems`, "center");
     shouldBeEqualToString(`groupStyle(${id}).borderBlockStartStyle`, "solid");
 }
+
+// A disabled option only looks disabled in the base appearance way when its select has base appearance.
+for (const id of ["nativeDropdownFirst", "nativeDropdownSecond"])
+    shouldNotBe(`getComputedStyle(${id}.options[1]).cursor`, "'not-allowed'");
+for (const id of ["baseSingleDropdownFirst", "baseSingleDropdownSecond"])
+    shouldBeEqualToString(`getComputedStyle(${id}.options[1]).cursor`, "not-allowed");
 
 // A select has an appearance of its own, so one inside a base appearance list box stays native.
 const nested = document.createElement("select");
