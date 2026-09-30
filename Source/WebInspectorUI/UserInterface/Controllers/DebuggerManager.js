@@ -1075,7 +1075,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         let activeCallFrameDidChange = this._activeCallFrame && this._activeCallFrame.target === target;
         if (activeCallFrameDidChange)
             this._activeCallFrame = activeCallFrame;
-        else if (!wasPaused) {
+        else if (!wasPaused || !this._activeCallFrame) {
             this._activeCallFrame = activeCallFrame;
             activeCallFrameDidChange = true;
         }
@@ -1808,6 +1808,16 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._blackboxedCallFrameGroupsToAutoExpand = [];
 
         this.dataForTarget(target).updateForResume();
+
+        if (activeCallFrameDidChange) {
+            for (let targetData of this._targetDebuggerDataMap.values()) {
+                let callFrame = targetData.paused && targetData.stackTrace.callFrames[0];
+                if (callFrame) {
+                    this._activeCallFrame = callFrame;
+                    break;
+                }
+            }
+        }
 
         if (!this.paused)
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
