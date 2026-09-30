@@ -75,6 +75,19 @@ public:
             || m_depthStencilAttachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT;
     }
     IntSize size() const { return m_size; }
+
+    // The answers to the queries about the default framebuffer, such as DEPTH_BITS or SAMPLES.
+    // They depend only on the formats chosen at creation, not on whether or how the storage is
+    // allocated, so they are answered without querying the GraphicsContextGL.
+    GCGLint depthBits() const
+    {
+        if (!hasDepth())
+            return 0;
+        return m_depthStencilFormat == GraphicsContextGL::DEPTH_COMPONENT16 ? 16 : 24;
+    }
+    GCGLint stencilBits() const { return hasStencil() ? 8 : 0; }
+    GCGLsizei sampleCount() const { return m_sampleCount; }
+
     // Returns false if the storage could not be allocated. The caller must then lose the context,
     // as the default framebuffer is unusable.
     [[nodiscard]] bool reshape(IntSize);
@@ -107,6 +120,7 @@ private:
 
     GCGLenum m_depthStencilFormat { 0 };
     GCGLenum m_depthStencilAttachment { 0 };
+    GCGLsizei m_sampleCount { 0 };
 
     IntSize m_size;
     GCGLbitfield m_unpreservedBuffers { 0 };

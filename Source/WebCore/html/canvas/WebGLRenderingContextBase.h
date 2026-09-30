@@ -698,6 +698,7 @@ protected:
     GCGLint m_maxCubeMapTextureSize;
     GCGLint m_maxRenderbufferSize;
     std::array<GCGLint, 2> m_maxViewportDims { 0, 0 };
+    std::array<GCGLint, 2> m_maxDrawingBufferSize { 0, 0 };
     GCGLint m_maxTextureLevel;
     GCGLint m_maxCubeMapTextureLevel;
     GCGLint m_maxSamples { 0 };

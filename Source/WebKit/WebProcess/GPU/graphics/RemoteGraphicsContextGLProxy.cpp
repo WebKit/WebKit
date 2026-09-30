@@ -168,6 +168,7 @@ void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLIniti
     m_maxCubeMapTextureSize = initializationState.maxCubeMapTextureSize;
     m_maxRenderbufferSize = initializationState.maxRenderbufferSize;
     m_maxViewportDims = initializationState.maxViewportDims;
+    m_maxDrawingBufferSize = initializationState.maxDrawingBufferSize;
     m_maxSamples = initializationState.maxSamples;
     m_maxTransformFeedbackSeparateAttribs = initializationState.maxTransformFeedbackSeparateAttribs;
     m_maxUniformBufferBindings = initializationState.maxUniformBufferBindings;

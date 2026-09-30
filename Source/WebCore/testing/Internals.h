@@ -1107,6 +1107,8 @@ public:
         HighPerformance
     };
     RequestedGPU NODELETE requestedGPU(WebGLRenderingContextBase&);
+    // The largest drawing buffer width and height, including the limits of the compositor buffers.
+    Vector<int> webglMaxDrawingBufferSize(WebGLRenderingContextBase&);
 #endif
 
     void setPageVisibility(bool isVisible);
