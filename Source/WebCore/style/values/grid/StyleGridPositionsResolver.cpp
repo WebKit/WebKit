@@ -187,14 +187,16 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
         auto areaName = name;
         bool startSide = isStartSide(side);
         if (!nameIsAreaName) {
-            size_t suffix = name.value.find("-start"_s);
-            if (suffix == notFound) {
-                suffix = name.value.find("-end"_s);
-                ASSERT(suffix != notFound);
-                startSide = false;
-            } else
+            size_t suffixLength;
+            if (name.value.endsWith("-start"_s)) {
                 startSide = true;
-            areaName = CustomIdent { AtomString { name.value.string().left(suffix) } };
+                suffixLength = "-start"_s.length();
+            } else {
+                ASSERT(name.value.endsWith("-end"_s));
+                startSide = false;
+                suffixLength = "-end"_s.length();
+            }
+            areaName = CustomIdent { AtomString { name.value.string().left(name.value.length() - suffixLength) } };
         }
         auto implicitLine = clampedImplicitLineForArea(*gridContainerStyle, areaName, 0, m_lastLine, direction, startSide);
         if (implicitLine)
