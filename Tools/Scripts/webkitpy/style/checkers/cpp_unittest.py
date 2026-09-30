@@ -6835,6 +6835,46 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.cpp')
 
+    def test_log_string_conversions(self):
+        self.assert_lint(
+            'RELEASE_LOG(Network, "Loading %s", url.string().utf8().legacyCStringPointer());',
+            "Pass the typed string instead of calling legacyCStringPointer(). 'RELEASE_LOG()' converts typed strings itself."
+            "  [runtime/log_string_conversion] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'WEBPAGEPROXY_RELEASE_LOG(Loading, "Loading %s", url.string().utf8().legacyCStringPointer());',
+            "Pass the typed string instead of calling legacyCStringPointer(). 'WEBPAGEPROXY_RELEASE_LOG()' converts typed strings itself."
+            "  [runtime/log_string_conversion] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'LOG(Network, "Loading %s", url.string().ascii().data());',
+            "Pass '.utf8()' instead of '.ascii().data()' to 'LOG()'. It converts typed strings itself, and ASCII conversion loses non-ASCII characters."
+            "  [runtime/log_string_conversion] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'SAFE_PRINTF("Loading %s", url.string().latin1().data());',
+            "Pass '.utf8()' instead of '.latin1().data()' to 'SAFE_PRINTF()'. It converts typed strings itself, and a Latin-1 pointer loses non-ASCII characters."
+            "  [runtime/log_string_conversion] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'RELEASE_LOG(Network, "Loading %s", url.string().utf8());',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'RELEASE_LOG(Network, "Name has %zu bytes", strlen(name.legacyCStringPointer()));',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'RELEASE_LOG_FORWARDABLE(Loading, MESSAGE_NAME, name.legacyCStringPointer());',
+            '',
+            'foo.cpp')
+
     def test_lock_guard(self):
         self.assert_lint(
             'Locker locker(lock);',
@@ -7044,6 +7084,21 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint(
             'snprintf(buffer, "%s", s);',
             'snprintf is unsafe. Use SAFE_SPRINTF instead.  [safercpp/printf] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'dataLogF("%s", s);',
+            'dataLogF is unsafe. Use SAFE_DATALOGF instead.  [safercpp/printf] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'SAFE_DATALOGF("%s", s.utf8());',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'dataLogFIf(verbose, "%s", s);',
+            '',
             'foo.cpp')
 
         # Method calls should not trigger warnings (PrintStream::printf is safe)

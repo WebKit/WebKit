@@ -3277,6 +3277,63 @@ def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
               "Use '%s()' from <wtf/glib/GLibExtras.h> instead of '%s()', and pass the typed string instead of calling legacyCStringPointer()." % (wrapper, function))
 
 
+# printf-style logging and assertion macros that convert typed string arguments themselves.
+_TYPED_STRING_PRINTF_MACROS = frozenset([
+    'ASSERT_WITH_MESSAGE',
+    'ASSERT_WITH_MESSAGE_UNUSED',
+    'LOG',
+    'LOG_ERROR',
+    'LOG_ONCE',
+    'LOG_VERBOSE',
+    'LOG_WITH_LEVEL',
+    'RELEASE_ASSERT_WITH_MESSAGE',
+    'SAFE_DATALOGF',
+    'SAFE_FPRINTF',
+    'SAFE_PRINTF',
+    'SAFE_SPRINTF',
+    'SAFE_WTFLOGALWAYS',
+])
+
+
+def _is_typed_string_printf_macro(name):
+    if name in _TYPED_STRING_PRINTF_MACROS:
+        return True
+    # RELEASE_LOG() and its variants, including per-file wrappers such as WEBPAGEPROXY_RELEASE_LOG(). The
+    # _FORWARDABLE variants take typed message parameters rather than printf arguments.
+    return 'RELEASE_LOG' in name and 'FORWARDABLE' not in name
+
+
+def check_log_string_conversions(clean_lines, line_number, file_state, error):
+    """Looks for strings unwrapped to a pointer for a logging macro that converts typed strings itself.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    if 'legacyCStringPointer' not in line and '.data()' not in line:
+        return
+
+    for pointer_call in re.finditer(r'\blegacyCStringPointer\s*\(|\.(ascii|latin1)\s*\(\s*\)\s*\.\s*data\s*\(', line):
+        macro = _enclosing_function_call(clean_lines, line_number, pointer_call.start())
+        if not macro or not _is_typed_string_printf_macro(macro):
+            continue
+        if pointer_call.group(1):
+            error(line_number, 'runtime/log_string_conversion', 4,
+                  "Pass '.utf8()' instead of '.%s().data()' to '%s()'. It converts typed strings itself, and %s loses non-ASCII characters."
+                  % (pointer_call.group(1), macro, 'ASCII conversion' if pointer_call.group(1) == 'ascii' else 'a Latin-1 pointer'))
+        else:
+            error(line_number, 'runtime/log_string_conversion', 4,
+                  "Pass the typed string instead of calling legacyCStringPointer(). '%s()' converts typed strings itself." % macro)
+
+
 def check_auto_with_adopt(clean_lines, line_number, file_state, error):
     """Looks for usage of 'auto' with adopt functions, which should use the explicit smart pointer type.
 
@@ -4064,6 +4121,10 @@ def check_safer_cpp(clean_lines, line_number, error):
     if uses_snprintf:
         error(line_number, 'safercpp/printf', 4, "snprintf is unsafe. Use SAFE_SPRINTF instead.")
 
+    uses_datalogf = search(r'(?<![.>])\bdataLogF\s*\(', line)
+    if uses_datalogf:
+        error(line_number, 'safercpp/printf', 4, "dataLogF is unsafe. Use SAFE_DATALOGF instead.")
+
     uses_xpc_dictionary_get_data = search(r'xpc_dictionary_get_data\(', line)
     if uses_xpc_dictionary_get_data:
         error(line_number, 'safercpp/xpc_dictionary_get_data', 4, "Use xpcDictionaryGetData() instead of xpc_dictionary_get_data().")
@@ -4191,6 +4252,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_os_object_ptr(clean_lines, line_number, file_state, error)
     check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error)
     check_glib_string_wrappers(clean_lines, line_number, file_state, error)
+    check_log_string_conversions(clean_lines, line_number, file_state, error)
     check_auto_with_adopt(clean_lines, line_number, file_state, error)
     check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
@@ -5494,6 +5556,7 @@ class CppChecker(object):
         'runtime/leaky_pattern',
         'runtime/lock_guard',
         'runtime/log',
+        'runtime/log_string_conversion',
         'runtime/mainthreadlazyneverdestroyed',
         'runtime/mainthreadneverdestroyed',
         'runtime/max_min_macros',
