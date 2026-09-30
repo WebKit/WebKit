@@ -186,8 +186,9 @@
     "imported/selenium/py/test/selenium/webdriver/common/bidi_browser_tests.py": {
         "subtests": {
             "test_create_user_context_with_accept_insecure_certs": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288104"}}},
-            "test_create_user_context_with_manual_proxy_all_params": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288104"}}},
-            "test_create_user_context_with_proxy_and_accept_insecure_certs": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288104"}}},
+            "test_create_user_context_with_manual_proxy_all_params": { "expected": { "all": { "status": ["SKIP"], "bug": ["webkit.org/b/288104", "webkit.org/b/325796", "webkit.org/b/324682"]}}},
+            "test_create_user_context_with_proxy_and_accept_insecure_certs": { "expected": { "all": { "status": ["SKIP"], "bug": ["webkit.org/b/288104", "webkit.org/b/325796", "webkit.org/324682"]}}},
+            "test_create_user_context_with_direct_proxy": { "expected": { "all": { "status": ["SKIP"], "bug": ["webkit.org/b/325796", "webkit.org/324682"]}}},
             "test_get_client_windows": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288106"}}}
         }
     },
