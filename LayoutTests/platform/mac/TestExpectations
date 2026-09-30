@@ -1690,9 +1690,6 @@ webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-chang
 webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
 webkit.org/b/322959 [ x86_64 ] fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
-# Note: Even when fixed, this bug needs to be marked as Slow in debug builds.
-webkit.org/b/222239 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Pass Failure Slow ]
-
 webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
