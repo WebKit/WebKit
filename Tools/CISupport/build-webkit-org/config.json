@@ -204,13 +204,6 @@
                     "xcode": "Xcode 27.0-27A266a"
                   },
 
-                  { "name": "wincairo-debug-build-01", "platform": "win" },
-                  { "name": "wincairo-debug-tests-01", "platform": "win" },
-                  { "name": "wincairo-debug-tests-02", "platform": "win" },
-                  { "name": "wincairo-release-build-01", "platform": "win" },
-                  { "name": "wincairo-release-tests-01", "platform": "win" },
-                  { "name": "wincairo-release-tests-02", "platform": "win" },
-
                   { "name": "win-build-bot-001", "platform": "win" },
                   { "name": "win-build-bot-002", "platform": "win" },
 
@@ -617,23 +610,25 @@
                     "name": "Windows-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "win", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["win-release-tests"],
-                    "workernames": ["wincairo-release-build-01", "win-build-bot-002"]
+                    "workernames": ["win-build-bot-002"],
+                    "workerbuilddir": "win-release"
                   },
                   {
                     "name": "Windows-64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "win", "configuration": "release", "architectures": ["x86_64"],
-                    "workernames": ["wincairo-release-tests-01", "wincairo-release-tests-02"]
+                    "workernames": ["win-build-bot-002"]
                   },
                   {
                     "name": "Windows-64-bit-Debug-Build", "factory": "BuildFactory",
                     "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
                     "triggers": ["win-debug-tests"],
-                    "workernames": ["wincairo-debug-build-01", "win-build-bot-001"]
+                    "workernames": ["win-build-bot-001"],
+                    "workerbuilddir": "win-debug"
                   },
                   {
                     "name": "Windows-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
-                    "workernames": ["wincairo-debug-tests-01", "wincairo-debug-tests-02"]
+                    "workernames": ["win-build-bot-001"]
                   },
                   {
                     "name": "PlayStation-Debug-Build", "factory": "BuildFactory",

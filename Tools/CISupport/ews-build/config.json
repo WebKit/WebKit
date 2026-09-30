@@ -60,10 +60,8 @@
     { "name": "win-bot-004", "platform": "win" },
     { "name": "win-bot-005", "platform": "win" },
     { "name": "win-bot-006", "platform": "win" },
-    { "name": "wincairo-ews-001", "platform": "win" },
-    { "name": "wincairo-ews-002", "platform": "win" },
-    { "name": "wincairo-ews-003", "platform": "win" },
-    { "name": "wincairo-ews-004", "platform": "win" },
+    { "name": "win-bot-007", "platform": "win" },
+    { "name": "win-bot-008", "platform": "win" },
     { "name": "ews100", "platform": "mac-sequoia" },
     { "name": "ews101", "platform": "mac-sequoia" },
     { "name": "ews102", "platform": "mac-sequoia" },
@@ -453,7 +451,7 @@
       "factory": "WinBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "win",
       "triggers": ["win-tests-ews"],
-      "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004", "win-bot-001", "win-bot-002"]
+      "workernames": ["win-bot-001", "win-bot-002", "win-bot-007", "win-bot-008"]
     },
     {
       "name": "Win-Tests-EWS", "shortname": "win-tests", "icon": "testOnly",
