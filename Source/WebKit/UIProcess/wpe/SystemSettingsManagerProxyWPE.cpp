@@ -186,7 +186,7 @@ bool SystemSettingsManagerProxy::overlayScrolling() const
 
 bool SystemSettingsManagerProxy::reducedMotion() const
 {
-    return !getBool(m_settings, WPE_SETTING_REDUCED_MOTION, false);
+    return getBool(m_settings, WPE_SETTING_REDUCED_MOTION, false);
 }
 
 WebCore::InterfaceContrastPreference SystemSettingsManagerProxy::interfaceContrast() const
