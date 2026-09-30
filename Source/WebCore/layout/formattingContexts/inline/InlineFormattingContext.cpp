@@ -178,7 +178,7 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
             inlineLayoutState.setAvailableLineWidthOverride({ *constrainedLineWidths });
     }
 
-    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(inlineItems, inlineLayoutState.placedFloats()) && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root())) {
+    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(inlineItems, inlineLayoutState) && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root())) {
         auto simplifiedLineBuilder = makeUniqueRef<TextOnlySimpleLineBuilder>(*this, root(), constraints.horizontal(), inlineItemList);
         auto shouldUseSimplifiedDisplayContentBuild = [&] {
             if (lineDamage || !m_globalLayoutState.inStandardsMode() || inlineLayoutState.parentBlockLayoutState().lineClamp())

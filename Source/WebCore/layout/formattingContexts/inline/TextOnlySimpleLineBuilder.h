@@ -41,7 +41,7 @@ public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLine) final;
 
-    static bool NODELETE isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const PlacedFloats&);
+    static bool NODELETE isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const InlineLayoutState&);
     static bool isEligibleForSimplifiedInlineLayoutByStyle(const Box&);
     static bool isEligibleForSimplifiedDisplayBuild(const ElementBox& rootBlockContainer);
 
