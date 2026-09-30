@@ -48,7 +48,7 @@ WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
             sourceURL = scriptType;
             isContentScript = executionContextId;
             executionContextId = undefined;
-            scriptType = isModule ? InspectorBackend.Enum.Debugger.ScriptType.Module : InspectorBackend.Enum.Debugger.ScriptType.Program;
+            scriptType = isModule ? WI.Script.SourceType.Module : WI.Script.SourceType.Program;
         }
 
         WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName, requestId);
