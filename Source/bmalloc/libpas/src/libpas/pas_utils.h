@@ -42,7 +42,9 @@
 #endif
 
 #include <limits.h>
+#if !defined(__cplusplus) || defined(__clang__)
 #include <stdatomic.h>
+#endif
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
