@@ -55,10 +55,17 @@
             "type": "string",
             "enum": [
                 "array",
+                "bigint",
+                "boolean",
                 "date",
                 "map",
+                "null",
+                "number",
                 "object",
-                "set"
+                "regexp",
+                "set",
+                "string",
+                "undefined"
             ]
         },
         {

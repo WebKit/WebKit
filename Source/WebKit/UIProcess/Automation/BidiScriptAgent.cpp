@@ -45,6 +45,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
+#include <cmath>
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HexNumber.h>
@@ -61,6 +62,35 @@ using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
+
+static bool isValidSerializationOptions(const JSON::Object& options)
+{
+    if (auto maxDomDepthField = options.getValue("maxDomDepth"_s)) {
+        double value;
+        if (!maxDomDepthField->asDouble(value))
+            return false;
+        if (value < 0 || !std::isfinite(value) || std::floor(value) != value)
+            return false;
+    }
+
+    if (auto maxObjectDepthField = options.getValue("maxObjectDepth"_s)) {
+        double value;
+        if (!maxObjectDepthField->asDouble(value))
+            return false;
+        if (value < 0 || !std::isfinite(value) || std::floor(value) != value)
+            return false;
+    }
+
+    if (auto includeShadowTreeField = options.getValue("includeShadowTree"_s)) {
+        String value;
+        if (!includeShadowTreeField->asString(value))
+            return false;
+        if (value != "none"_s && value != "open"_s && value != "all"_s)
+            return false;
+    }
+
+    return true;
+}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
 
@@ -305,24 +335,124 @@ static Ref<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue)
     return JSON::Value::null();
 }
 
-void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
+void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&& resultOwnership, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // FIXME: handle non-BrowsingContext obtained from `Target`.
-    std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
+    // https://bugs.webkit.org/show_bug.cgi?id=304062
+    std::optional<BrowsingContext> browsingContext;
 
+    if (auto contextJSON = target->getValue("context"_s)) {
+        String contextValue;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!contextJSON->asString(contextValue), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(contextValue.isEmpty(), InvalidParameter);
+        browsingContext = contextValue;
+
+        if (auto sandboxValue = target->getValue("sandbox"_s)) {
+            String sandboxString;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sandboxValue->asString(sandboxString), InvalidParameter);
+        }
+    } else if (auto realmJSON = target->getValue("realm"_s)) {
+        String realmValue;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmJSON->asString(realmValue), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(realmValue.isEmpty(), InvalidParameter);
+        // FIXME: Resolve realm to its browsing context via proper realm registry.
+        // https://bugs.webkit.org/show_bug.cgi?id=304062
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(true, FrameNotFound);
+    } else
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(true, InvalidParameter);
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(functionDeclaration.isEmpty(), InvalidParameter);
+
+    if (arguments) {
+        for (size_t i = 0; i < arguments->length(); ++i) {
+            auto argument = arguments->get(i);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!argument, InvalidParameter);
+
+            auto argObject = argument->asObject();
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!argObject, InvalidParameter);
+
+            if (auto handleField = argObject->getValue("handle"_s)) {
+                String handleString;
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!handleField->asString(handleString), InvalidParameter);
+                continue;
+            }
+
+            if (auto sharedIdField = argObject->getValue("sharedId"_s)) {
+                String sharedIdString;
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sharedIdField->asString(sharedIdString), InvalidParameter);
+                continue;
+            }
+
+            auto typeField = argObject->getValue("type"_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!typeField, InvalidParameter);
+
+            String argType;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!typeField->asString(argType), InvalidParameter);
+
+            if (argType == "channel"_s) {
+                auto channelValue = argObject->getValue("value"_s);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!channelValue, InvalidParameter);
+
+                auto channelObj = channelValue->asObject();
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!channelObj, InvalidParameter);
+
+                auto channelField = channelObj->getValue("channel"_s);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!channelField, InvalidParameter);
+                String channelString;
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!channelField->asString(channelString), InvalidParameter);
+
+                if (auto ownershipField = channelObj->getValue("ownership"_s)) {
+                    String ownershipString;
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!ownershipField->asString(ownershipString), InvalidParameter);
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(ownershipString != "root"_s && ownershipString != "none"_s, InvalidParameter);
+                }
+
+                if (auto serializationOptionsField = channelObj->getValue("serializationOptions"_s)) {
+                    auto serializationOptionsObj = serializationOptionsField->asObject();
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!serializationOptionsObj, InvalidParameter);
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isValidSerializationOptions(*serializationOptionsObj), InvalidParameter);
+                }
+            } else {
+                auto parsedType = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::LocalValueType>(argType);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedType, InvalidParameter);
+            }
+        }
+    }
+
+    if (optionalThis) {
+        if (auto handleField = optionalThis->getValue("handle"_s)) {
+            String handleString;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!handleField->asString(handleString), InvalidParameter);
+        } else if (auto sharedIdField = optionalThis->getValue("sharedId"_s)) {
+            String sharedIdString;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sharedIdField->asString(sharedIdString), InvalidParameter);
+        } else {
+            auto thisTypeField = optionalThis->getValue("type"_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!thisTypeField, InvalidParameter);
+            String thisType;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!thisTypeField->asString(thisType), InvalidParameter);
+            auto parsedThisType = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::LocalValueType>(thisType);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedThisType, InvalidParameter);
+        }
+    }
+
+    if (optionalSerializationOptions)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isValidSerializationOptions(*optionalSerializationOptions), InvalidParameter);
+
+    // resultOwnership is already validated by the protocol layer's enum parsing.
+    // If it arrives here, it is guaranteed to be Root or None.
+
+    // FIXME: Temporary fallback to evaluateJavaScriptFunction until full evaluateBidiCallFunction pipeline is ready.
+    // https://bugs.webkit.org/show_bug.cgi?id=288058
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
-
-    // FIXME: handle `awaitPromise` option.
-    // FIXME: handle `resultOwnership` option.
-    // FIXME: handle `serializationOptions` option.
-    // FIXME: handle custom `this` option.
-    // FIXME: handle `userActivation` option.
 
     // Deserialize LocalValue arguments into plain JSON values for script evaluation.
     // FIXME: Implement RemoteReference and Channel types for arguments <https://webkit.org/b/288057>
