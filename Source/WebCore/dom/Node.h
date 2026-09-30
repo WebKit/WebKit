@@ -791,7 +791,7 @@ private:
     void derefEventTarget() final;
 
 #if ASSERT_ENABLED
-    bool checkIsInUserAgentShadowTree(bool) const;
+    WEBCORE_EXPORT bool checkIsInUserAgentShadowTree(bool) const;
 #else
     bool checkIsInUserAgentShadowTree(bool value) const { return value; }
 #endif
