@@ -1,5 +1,5 @@
 
 
-PASS results=N saved-searches button is not constructed by default
+PASS results=N is ignored and the input gets ::-webkit-search-decoration instead
 PASS cancel button is unaffected by the SearchInputResultsAttributeEnabled gate
 
