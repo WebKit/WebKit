@@ -27,13 +27,17 @@
 
 #include "DecodingOptions.h"
 #include "ImageTypes.h"
-#include <wtf/SynchronizedFixedQueue.h>
+#include <atomic>
+#include <wtf/Deque.h>
+#include <wtf/Seconds.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WorkQueue.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
 class BitmapImageSource;
+class ImageDecoder;
+class ImageDecodingQueue;
 
 class ImageFrameWorkQueue : public ThreadSafeRefCounted<ImageFrameWorkQueue> {
 public:
@@ -52,8 +56,8 @@ public:
     };
 
     static Ref<ImageFrameWorkQueue> create(BitmapImageSource&);
+    ~ImageFrameWorkQueue();
 
-    void start();
     void dispatch(const Request&);
     void stop();
 
@@ -67,19 +71,16 @@ private:
     ImageFrameWorkQueue(BitmapImageSource&);
 
     static const int BufferSize = 8;
-    using RequestQueue = SynchronizedFixedQueue<Request, BufferSize>;
     using DecodeQueue = Deque<Request, BufferSize>;
 
-    RequestQueue& requestQueue();
     DecodeQueue& decodeQueue() LIFETIME_BOUND { return m_decodeQueue; }
-
-    Seconds minimumDecodingDurationForTesting() const { return m_minimumDecodingDurationForTesting; }
 
     ThreadSafeWeakRef<BitmapImageSource> m_source;
 
-    RefPtr<RequestQueue> m_requestQueue;
+    RefPtr<ImageDecoder> m_decoder;
     DecodeQueue m_decodeQueue;
-    RefPtr<WorkQueue> m_workQueue;
+    const Ref<ImageDecodingQueue> m_workQueue;
+    std::atomic<uint64_t> m_generation { 0 };
 
     Seconds m_minimumDecodingDurationForTesting;
 };

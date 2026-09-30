@@ -337,6 +337,9 @@ fast/frames/frame-append-body-child-crash.html [ Slow ]
 [ Debug ] fast/frames/lots-of-objects.html [ Slow ]
 [ Debug ] fast/frames/lots-of-iframes.html [ Slow ]
 
+# The 160 sequential batches each require at least 100 ms of decoding.
+webkit.org/b/308730 fast/images/async-image-decoding-removed-images.html [ Slow ]
+
 # Builds a 10000 link aria-labelledby chain, which has to be long enough to overflow the stack on
 # release builds, so it is unavoidably slow to walk in a debug build.
 [ Debug ] accessibility/accessible-name-chain-depth-no-crash.html [ Slow ]
