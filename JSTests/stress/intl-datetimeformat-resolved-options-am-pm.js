@@ -44,10 +44,19 @@ function roundTrip(locale, options) {
     shouldBe(recreated.format(time), original.format(time));
 }
 
-for (let locale of ["en-GB", "ja", "ko", "zh-Hant", "hi", "ar", "th", "de", "ru", "fr"]) {
+for (let locale of ["en-GB", "ja", "ko", "ar", "th", "de", "ru", "fr"]) {
     for (let hour12 of [true, false]) {
         let { original, resolved, recreated } = roundTrip(locale, { hour: "numeric", minute: "numeric", hour12 });
         shouldBe("dayPeriod" in resolved, false);
+        shouldBe(recreated.format(time), original.format(time));
+        shouldBe(recreated.resolvedOptions().hourCycle, resolved.hourCycle);
+    }
+}
+
+// Some CLDR writes the 12-hour marker of these locales as a flexible day period ('B'), which is reported as dayPeriod.
+for (let locale of ["zh-Hant", "hi"]) {
+    for (let hour12 of [true, false]) {
+        let { original, resolved, recreated } = roundTrip(locale, { hour: "numeric", minute: "numeric", hour12 });
         shouldBe(recreated.format(time), original.format(time));
         shouldBe(recreated.resolvedOptions().hourCycle, resolved.hourCycle);
     }
