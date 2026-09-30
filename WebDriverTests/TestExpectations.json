@@ -5202,14 +5202,11 @@
     },
     "imported/w3c/webdriver/tests/bidi/session/subscribe/events.py": {
         "subtests": {
-            "test_subscribe_to_module": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/291371"}}
-            },
             "test_subscribe_to_one_event_and_then_to_module": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/291371"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_subscribe_to_module_and_then_to_one_event_again": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/291371"}}
+                "expected": {"all": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
@@ -5230,6 +5227,9 @@
             "test_params_contexts_invalid_type[value3]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_empty": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_invalid_event_name[]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_events_value_invalid_event_name[foo]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_events_value_invalid_event_name[foo.bar]": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_params_events_value_invalid_event_name[log.invalidEvent]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[None]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
@@ -5280,7 +5280,7 @@
                 "expected": {"all": {"status": ["PASS"]}}
             },
             "test_subscribe_to_module_unsubscribe_from_one_event": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291371"}}
+                "expected": {"all": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287930"}}
@@ -5316,6 +5316,7 @@
             "test_params_events_value_invalid_event_name[foo]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_invalid_event_name[foo.bar]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_valid_and_invalid_event_name": {"expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/282977"}}},
+            "test_unsubscribe_from_one_event_and_then_from_module": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_contexts_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_contexts_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_contexts_invalid_type[42]": {"expected": {"all": {"status": ["PASS"]}}},
