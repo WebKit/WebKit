@@ -51,6 +51,7 @@
 #include <WebCore/TimingAllowOrigin.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/MakeString.h>
@@ -155,7 +156,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 {
     m_currentRequest = WTF::move(request);
     if (m_currentRequest.url().protocolIsFile()) {
-        m_file = adoptGRef(g_file_new_for_path(m_currentRequest.url().fileSystemPath().utf8().legacyCStringPointer()));
+        m_file = gFileNewForPath(m_currentRequest.url().fileSystemPath().utf8());
         return;
     }
 
@@ -1281,7 +1282,7 @@ void NetworkDataTaskSoup::download()
     }
 
     auto downloadDestinationPath = m_pendingDownloadLocation.utf8();
-    m_downloadDestinationFile = adoptGRef(g_file_new_for_path(downloadDestinationPath.legacyCStringPointer()));
+    m_downloadDestinationFile = gFileNewForPath(downloadDestinationPath);
     GRefPtr<GFileOutputStream> outputStream;
     GUniqueOutPtr<GError> error;
     if (m_allowOverwriteDownload)
@@ -1294,7 +1295,7 @@ void NetworkDataTaskSoup::download()
     }
 
     auto intermediatePath = makeString(m_pendingDownloadLocation, ".wkdownload"_s).utf8();
-    m_downloadIntermediateFile = adoptGRef(g_file_new_for_path(intermediatePath.legacyCStringPointer()));
+    m_downloadIntermediateFile = gFileNewForPath(intermediatePath);
     outputStream = adoptGRef(g_file_replace(m_downloadIntermediateFile.get(), nullptr, TRUE, G_FILE_CREATE_NONE, nullptr, &error.outPtr()));
     if (!outputStream) {
         didFailDownload(downloadDestinationError(m_response, String::fromUTF8(error->message)));

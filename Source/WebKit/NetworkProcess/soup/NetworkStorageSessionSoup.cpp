@@ -45,6 +45,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/UTF8CStringView.h>
 
@@ -327,7 +328,7 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
     if (!attributes)
         return;
 
-    g_hash_table_insert(attributes.get(), g_strdup("user"), g_strdup(credential.user().utf8().legacyCStringPointer()));
+    g_hash_table_insert(attributes.get(), g_strdup("user"), gStrdup(credential.user().utf8()));
     auto utf8Password = credential.password().utf8();
     GRefPtr<SecretValue> newSecretValue = adoptGRef(secret_value_new(utf8Password.legacyCStringPointer(), utf8Password.length(), "text/plain"));
     secret_service_store(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(), SECRET_COLLECTION_DEFAULT, _("WebKitGTK password"),

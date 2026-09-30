@@ -32,6 +32,7 @@
 #include "JSCallbackObject.h"
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -280,7 +281,7 @@ static void jscClassGetProperty(GObject* object, guint propID, GValue* value, GP
 
     switch (propID) {
     case PROP_NAME:
-        g_value_set_string(value, jscClass->priv->name.legacyCStringPointer());
+        gValueSetString(value, jscClass->priv->name);
         break;
     case PROP_PARENT:
         g_value_set_object(value, jscClass->priv->parentClass);

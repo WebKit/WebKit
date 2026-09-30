@@ -22,6 +22,7 @@
 #include "WebViewTest.h"
 #include <gio/gunixfdlist.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 
 static GUniquePtr<char> scriptDialogResult;
@@ -687,8 +688,8 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
     g_assert_cmpstr(parameter, ==, "NULL");
 
     // Message with file descriptors.
-    GUniquePtr<char> filename(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "simple.json", nullptr));
-    reply = test->sendMessage(webkit_user_message_new("Test.OpenFile", g_variant_new("s", filename.get())));
+    auto filename = gBuildFilename(Test::getResourcesDir(), "simple.json");
+    reply = test->sendMessage(webkit_user_message_new("Test.OpenFile", gVariantNew("s", filename)));
     g_assert_true(WEBKIT_IS_USER_MESSAGE(reply));
     parameters = webkit_user_message_get_parameters(reply);
     g_assert_nonnull(parameters);
@@ -709,7 +710,7 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
     close(fd);
     GUniqueOutPtr<char> fileContents;
     gsize fileContentsLength;
-    g_assert_true(g_file_get_contents(filename.get(), &fileContents.outPtr(), &fileContentsLength, nullptr));
+    g_assert_true(g_file_get_contents(filename.utf8(), &fileContents.outPtr(), &fileContentsLength, nullptr));
     g_assert_cmpmem(fdContents.get(), fdContentsLength, fileContents.get(), fileContentsLength);
 
     // Unhandled message.

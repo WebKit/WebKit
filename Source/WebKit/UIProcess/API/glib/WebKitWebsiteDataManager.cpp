@@ -36,6 +36,7 @@
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -239,26 +240,26 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
     WebKitWebsiteDataManagerPrivate* priv = WEBKIT_WEBSITE_DATA_MANAGER(object)->priv;
     if (!priv->baseDataDirectory.isNull()) {
         if (priv->localStorageDirectory.isNull())
-            priv->localStorageDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "localstorage", nullptr));
+            priv->localStorageDirectory = gBuildFilename(priv->baseDataDirectory, "localstorage");
         if (priv->indexedDBDirectory.isNull())
-            priv->indexedDBDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", "indexeddb", nullptr));
+            priv->indexedDBDirectory = gBuildFilename(priv->baseDataDirectory, "databases", "indexeddb");
         if (priv->webSQLDirectory.isNull())
-            priv->webSQLDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", nullptr));
+            priv->webSQLDirectory = gBuildFilename(priv->baseDataDirectory, "databases");
         if (priv->itpDirectory.isNull())
-            priv->itpDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "itp", nullptr));
+            priv->itpDirectory = gBuildFilename(priv->baseDataDirectory, "itp");
         if (priv->swRegistrationsDirectory.isNull())
-            priv->swRegistrationsDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "serviceworkers", nullptr));
+            priv->swRegistrationsDirectory = gBuildFilename(priv->baseDataDirectory, "serviceworkers");
     }
 
     if (!priv->baseCacheDirectory.isNull()) {
         if (priv->diskCacheDirectory.isNull())
             priv->diskCacheDirectory = GMallocString { priv->baseCacheDirectory };
         if (priv->applicationCacheDirectory.isNull())
-            priv->applicationCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "applications", nullptr));
+            priv->applicationCacheDirectory = gBuildFilename(priv->baseCacheDirectory, "applications");
         if (priv->hstsCacheDirectory.isNull())
             priv->hstsCacheDirectory = GMallocString { priv->baseCacheDirectory };
         if (priv->domCacheDirectory.isNull())
-            priv->domCacheDirectory = GMallocString::unsafeAdoptFromUTF8(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "CacheStorage", nullptr));
+            priv->domCacheDirectory = gBuildFilename(priv->baseCacheDirectory, "CacheStorage");
     }
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;

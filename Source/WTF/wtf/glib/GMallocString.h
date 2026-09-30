@@ -104,6 +104,8 @@ public:
     explicit operator bool() const { return !isEmpty(); }
     bool operator!() const { return isEmpty(); }
 
+    operator UTF8CStringView() const LIFETIME_BOUND { return UTF8CStringView::fromUTF8(spanIncludingNullTerminator()); }
+
 private:
     explicit GMallocString(GMallocSpan<char8_t>&& string)
         : m_spanWithNullTerminator(WTF::move(string))

@@ -21,6 +21,7 @@
 #include "WebKitURIUtilities.h"
 
 #include <wtf/URLHelpers.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,5 +50,5 @@ gchar* webkit_uri_for_display(const gchar* uri)
     if (!result)
         return nullptr;
 
-    return g_strdup(result.utf8().legacyCStringPointer());
+    return gStrdup(result.utf8());
 }

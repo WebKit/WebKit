@@ -31,6 +31,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -1827,7 +1828,7 @@ static JSCClassVTable fooVTable = {
         std::sort(names.begin(), names.end());
         for (const auto& name : names) {
             if (g_str_has_prefix(name.legacyCStringPointer(), "prop_enum_"))
-                g_ptr_array_add(properties.get(), g_strdup(name.legacyCStringPointer()));
+                g_ptr_array_add(properties.get(), gStrdup(name));
         }
         if (!properties->len)
             return nullptr;

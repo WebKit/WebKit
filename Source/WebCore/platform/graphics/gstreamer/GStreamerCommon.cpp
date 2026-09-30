@@ -53,6 +53,7 @@
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/ZippedRange.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
@@ -494,9 +495,9 @@ bool ensureGStreamerInitialized()
         int argc = parameters.size() + 1;
         char** argv = g_new0(char*, argc + 1);
         auto argvSpan = unsafeMakeSpan(argv, argc);
-        argvSpan[0] = g_strdup(FileSystem::currentExecutableName().legacyCStringPointer());
+        argvSpan[0] = gStrdup(FileSystem::currentExecutableName());
         for (auto [arg, parameter] : zippedRange(argvSpan.subspan(1), parameters))
-            arg = g_strdup(parameter.utf8().legacyCStringPointer());
+            arg = gStrdup(parameter.utf8());
 
         GUniqueOutPtr<GError> error;
         isGStreamerInitialized = gst_init_check(&argc, &argv, &error.outPtr());
@@ -2106,7 +2107,7 @@ GRefPtr<GstCaps> buildDMABufCaps()
         for (auto token : String(formats.span()).split(',')) {
             GValue value = G_VALUE_INIT;
             g_value_init(&value, G_TYPE_STRING);
-            g_value_set_string(&value, token.utf8().legacyCStringPointer());
+            gValueSetString(&value, token.utf8());
             gst_value_list_append_and_take_value(&drmSupportedFormats, &value);
         }
         gst_caps_set_value(caps.get(), "drm-format", &drmSupportedFormats);

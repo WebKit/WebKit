@@ -91,6 +91,7 @@
 #include <limits>
 #include <wtf/FileSystem.h>
 #include <wtf/HexNumber.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
@@ -1825,17 +1826,17 @@ void MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate()
     if (m_wantedVideoStreamId) {
         auto track = m_videoTracks.get(m_wantedVideoStreamId.value());
         m_requestedVideoStreamId = m_wantedVideoStreamId;
-        streams = g_list_append(streams, g_strdup(track->gstStreamId().utf8().legacyCStringPointer()));
+        streams = g_list_append(streams, gStrdup(track->gstStreamId().utf8()));
     }
     if (m_wantedAudioStreamId) {
         auto track = m_audioTracks.get(m_wantedAudioStreamId.value());
         m_requestedAudioStreamId = m_wantedAudioStreamId;
-        streams = g_list_append(streams, g_strdup(track->gstStreamId().utf8().legacyCStringPointer()));
+        streams = g_list_append(streams, gStrdup(track->gstStreamId().utf8()));
     }
     if (m_wantedTextStreamId) {
         auto track = m_textTracks.get(m_wantedTextStreamId.value());
         m_requestedTextStreamId = m_wantedTextStreamId;
-        streams = g_list_append(streams, g_strdup(track->gstStreamId().utf8().legacyCStringPointer()));
+        streams = g_list_append(streams, gStrdup(track->gstStreamId().utf8()));
     }
 
     if (!streams)

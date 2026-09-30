@@ -60,6 +60,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -469,8 +470,8 @@ private:
         GRefPtr<GPtrArray> textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         GRefPtr<GPtrArray> textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         for (auto& pair : values) {
-            g_ptr_array_add(textFieldNames.get(), g_strdup(pair.first.utf8().legacyCStringPointer()));
-            g_ptr_array_add(textFieldValues.get(), g_strdup(pair.second.utf8().legacyCStringPointer()));
+            g_ptr_array_add(textFieldNames.get(), gStrdup(pair.first.utf8()));
+            g_ptr_array_add(textFieldValues.get(), gStrdup(pair.second.utf8()));
         }
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN

@@ -24,6 +24,7 @@
 
 #include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,15 +40,15 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_actionFunctions = {
         else if (!g_strcmp0(methodName, "GetName")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", !index ? atspiObject->actionName().utf8().legacyCStringPointer() : ""));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->actionName().utf8() } : ""_s));
         } else if (!g_strcmp0(methodName, "GetLocalizedName")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", !index ? atspiObject->localizedActionName().utf8().legacyCStringPointer() : ""));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->localizedActionName().utf8() } : ""_s));
         } else if (!g_strcmp0(methodName, "GetKeyBinding")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", !index ? atspiObject->actionKeyBinding().utf8().legacyCStringPointer() : ""));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->actionKeyBinding().utf8() } : ""_s));
         } else if (!g_strcmp0(methodName, "DoAction")) {
             int index;
             g_variant_get(parameters, "(i)", &index);

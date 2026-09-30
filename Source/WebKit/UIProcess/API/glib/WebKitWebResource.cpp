@@ -29,6 +29,7 @@
 #include "WebKitWebResourcePrivate.h"
 #include "WebPageProxy.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -274,7 +275,7 @@ void webkitWebResourceFailed(WebKitWebResource* resource, WebCore::ResourceError
     if (resourceError.tlsErrors())
         g_signal_emit(resource, signals[FAILED_WITH_TLS_ERRORS], 0, resourceError.certificate(), static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()));
     else {
-        GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
         g_signal_emit(resource, signals[FAILED], 0, error.get());
     }

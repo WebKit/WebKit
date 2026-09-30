@@ -24,6 +24,7 @@
 #include "APIString.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -79,8 +80,8 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
         request->priv->textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         request->priv->textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         for (size_t i = 0; i < values.size(); i++) {
-            g_ptr_array_add(request->priv->textFieldNames.get(), g_strdup(values[i].first.utf8().legacyCStringPointer()));
-            g_ptr_array_add(request->priv->textFieldValues.get(), g_strdup(values[i].second.utf8().legacyCStringPointer()));
+            g_ptr_array_add(request->priv->textFieldNames.get(), gStrdup(values[i].first.utf8()));
+            g_ptr_array_add(request->priv->textFieldValues.get(), gStrdup(values[i].second.utf8()));
         }
     }
     request->priv->listener = WTF::move(listener);

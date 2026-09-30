@@ -6766,6 +6766,75 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/auto_with_adopt] [4]",
             'foo.mm')
 
+    def test_glib_string_wrappers(self):
+        self.assert_lint(
+            'char* copy = g_strdup(string.utf8().legacyCStringPointer());',
+            "Use 'gStrdup()' from <wtf/glib/GLibExtras.h> instead of 'g_strdup()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'GVariant* variant = g_variant_new_string(string.legacyCStringPointer());',
+            "Use 'gVariantNewString()' from <wtf/glib/GLibExtras.h> instead of 'g_variant_new_string()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'GVariant* variant = g_variant_new("(so)", name, path.utf8().legacyCStringPointer());',
+            "Use 'gVariantNew()' from <wtf/glib/GLibExtras.h> instead of 'g_variant_new()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'GUniquePtr<char> path(g_build_filename(directory.legacyCStringPointer(), "file", nullptr));',
+            "Use 'gBuildFilename()' from <wtf/glib/GLibExtras.h> instead of 'g_build_filename()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(reason.utf8().legacyCStringPointer()));',
+            "Use 'gVariantNewString()' from <wtf/glib/GLibExtras.h> instead of 'g_variant_new_string()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'g_value_set_string(value, isNull ? first.legacyCStringPointer() : second.legacyCStringPointer());',
+            "Use 'gValueSetString()' from <wtf/glib/GLibExtras.h> instead of 'g_value_set_string()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_multi_line_lint(
+            'GVariant* variant = g_variant_new("(so)",\n'
+            '    path.utf8().legacyCStringPointer(), name);\n',
+            "Use 'gVariantNew()' from <wtf/glib/GLibExtras.h> instead of 'g_variant_new()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* copy = g_strdup(convert(string.utf8().legacyCStringPointer()));',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* copy = gStrdup(string.utf8());',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* copy = g_strdup(otherCString);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'GVariant* variant = g_variant_new_string("default");',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'const char* name = string.legacyCStringPointer();',
+            '',
+            'foo.cpp')
+
     def test_lock_guard(self):
         self.assert_lint(
             'Locker locker(lock);',

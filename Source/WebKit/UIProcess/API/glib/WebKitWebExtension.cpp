@@ -30,6 +30,7 @@
 #include "WebKitWebExtensionMatchPatternPrivate.h"
 #include <WebCore/Icon.h>
 #include <wtf/RefPtr.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -867,7 +868,7 @@ const gchar* const * webkit_web_extension_get_requested_permissions(WebKitWebExt
 
     priv->requestedPermissions = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (auto permission : requestedPermissions)
-        g_ptr_array_add(priv->requestedPermissions.get(), g_strdup(permission.utf8().legacyCStringPointer()));
+        g_ptr_array_add(priv->requestedPermissions.get(), gStrdup(permission.utf8()));
     g_ptr_array_add(priv->requestedPermissions.get(), nullptr);
 
     return reinterpret_cast<gchar**>(priv->requestedPermissions->pdata);
@@ -902,7 +903,7 @@ const gchar* const * webkit_web_extension_get_optional_permissions(WebKitWebExte
 
     priv->optionalPermissions = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (auto permission : optionalPermissions)
-        g_ptr_array_add(priv->optionalPermissions.get(), g_strdup(permission.utf8().legacyCStringPointer()));
+        g_ptr_array_add(priv->optionalPermissions.get(), gStrdup(permission.utf8()));
     g_ptr_array_add(priv->optionalPermissions.get(), nullptr);
 
     return reinterpret_cast<gchar**>(priv->optionalPermissions->pdata);

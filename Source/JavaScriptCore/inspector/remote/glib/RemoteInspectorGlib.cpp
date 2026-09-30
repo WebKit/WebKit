@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace Inspector {
@@ -175,16 +176,16 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     if (!target.allowsInspectionByPolicy())
         return nullptr;
 
-    return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
-        targetDebuggableType(target.type()), target.name().utf8().legacyCStringPointer(),
-        target.type() == RemoteInspectionTarget::Type::JavaScript ? "null" : target.url().utf8().legacyCStringPointer(),
+    return gVariantNew("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
+        targetDebuggableType(target.type()), target.name().utf8(),
+        target.type() == RemoteInspectionTarget::Type::JavaScript ? "null"_s : target.url().utf8(),
         target.hasLocalDebugger());
 }
 
 TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget& target) const
 {
-    return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
-        "Automation", target.name().utf8().legacyCStringPointer(), "null", target.isPaired());
+    return gVariantNew("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
+        "Automation", target.name().utf8(), "null", target.isPaired());
 }
 
 void RemoteInspector::pushListingsNow()
@@ -235,7 +236,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
     if (!m_socketConnection)
         return;
 
-    m_socketConnection->sendMessage("SendMessageToFrontend"_s, g_variant_new("(ts)", static_cast<guint64>(targetIdentifier), message.utf8().legacyCStringPointer()));
+    m_socketConnection->sendMessage("SendMessageToFrontend"_s, gVariantNew("(ts)", static_cast<guint64>(targetIdentifier), message.utf8()));
 }
 
 void RemoteInspector::receivedGetTargetListMessage()

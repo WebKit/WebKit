@@ -139,6 +139,7 @@ if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     )
     if (ENABLE_REMOTE_INSPECTOR)
         list(APPEND WTF_PUBLIC_HEADERS
+            glib/GLibExtras.h
             glib/GSocketMonitor.h
             glib/GUniquePtr.h
             glib/SocketConnection.h
@@ -151,6 +152,7 @@ if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     endif ()
     if (ENABLE_JSC_GLIB_API)
         list(APPEND WTF_PUBLIC_HEADERS
+            glib/GLibExtras.h
             glib/GUniquePtr.h
             glib/GWeakPtr.h
             glib/WTFGType.h

@@ -29,6 +29,7 @@
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -222,7 +223,7 @@ static void webkitAutomationSessionGetProperty(GObject* object, guint propID, GV
 
     switch (propID) {
     case PROP_ID:
-        g_value_set_string(value, session->priv->id.legacyCStringPointer());
+        gValueSetString(value, session->priv->id);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);

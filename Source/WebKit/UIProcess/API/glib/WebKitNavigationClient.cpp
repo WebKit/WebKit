@@ -32,6 +32,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -65,7 +66,7 @@ private:
         RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
         if (!frame || !frame->isMainFrame())
             return;
-        GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
         if (resourceError.tlsErrors()) {
             webkitWebViewLoadFailedWithTLSErrors(m_webView, resourceError.failingURL().string(), error.get(),
@@ -89,7 +90,7 @@ private:
         RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
         if (!frame || !frame->isMainFrame())
             return;
-        GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
         webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().string(), error.get());
     }

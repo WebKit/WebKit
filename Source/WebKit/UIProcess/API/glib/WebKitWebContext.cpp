@@ -72,6 +72,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -357,7 +358,7 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     switch (propID) {
 #if PLATFORM(GTK) && !USE(GTK4)
     case PROP_LOCAL_STORAGE_DIRECTORY:
-        g_value_set_string(value, context->priv->localStorageDirectory.legacyCStringPointer());
+        gValueSetString(value, context->priv->localStorageDirectory);
         break;
 #endif
 #if !ENABLE(2022_GLIB_API)
@@ -430,13 +431,13 @@ static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
 
-    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory().legacyCStringPointer(), INJECTED_BUNDLE_FILENAME, nullptr));
+    auto bundleFilename = gBuildFilename(injectedBundleDirectory(), INJECTED_BUNDLE_FILENAME);
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
 
     Ref configuration = API::ProcessPoolConfiguration::create();
-    configuration->setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
+    configuration->setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.utf8()));
     configuration->setUsesWebProcessCache(true);
 #if PLATFORM(GTK) && !USE(GTK4)
     configuration->setProcessSwapsOnNavigation(priv->psonEnabled);
@@ -1186,11 +1187,10 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
     priv->faviconDatabaseDirectory = directoryPath.utf8();
 
     // Build the full path to the icon database file on disk.
-    GUniquePtr<gchar> faviconDatabasePath(g_build_filename(priv->faviconDatabaseDirectory.legacyCStringPointer(),
-        "WebpageIcons.db", nullptr));
+    auto faviconDatabasePath = gBuildFilename(priv->faviconDatabaseDirectory, "WebpageIcons.db");
 
     // Setting the path will cause the icon database to be opened.
-    webkitFaviconDatabaseOpen(priv->faviconDatabase.get(), FileSystem::stringFromFileSystemRepresentation(faviconDatabasePath.get()), webkit_web_context_is_ephemeral(context));
+    webkitFaviconDatabaseOpen(priv->faviconDatabase.get(), FileSystem::stringFromFileSystemRepresentation(faviconDatabasePath.utf8()), webkit_web_context_is_ephemeral(context));
 }
 
 /**
@@ -1581,7 +1581,7 @@ const gchar* const* webkit_web_context_get_spell_checking_languages(WebKitWebCon
     static GRefPtr<GPtrArray> languagesToReturn;
     languagesToReturn = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (const auto& language : spellCheckingLanguages)
-        g_ptr_array_add(languagesToReturn.get(), g_strdup(language.utf8().legacyCStringPointer()));
+        g_ptr_array_add(languagesToReturn.get(), gStrdup(language.utf8()));
     g_ptr_array_add(languagesToReturn.get(), nullptr);
 
     return reinterpret_cast<char**>(languagesToReturn->pdata);
@@ -2017,8 +2017,8 @@ void webkitWebContextDownloadStarted(WebKitWebContext* context, WebKitDownload* 
 GVariant* webkitWebContextInitializeWebProcessExtensions(WebKitWebContext* context)
 {
     g_signal_emit(context, signals[INITIALIZE_WEB_PROCESS_EXTENSIONS], 0);
-    return g_variant_new("(msmv)",
-        context->priv->webProcessExtensionsDirectory.legacyCStringPointer(),
+    return gVariantNew("(msmv)",
+        context->priv->webProcessExtensionsDirectory,
         context->priv->webProcessExtensionsInitializationUserData.get());
 }
 

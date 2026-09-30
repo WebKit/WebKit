@@ -92,6 +92,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -1236,7 +1237,7 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
 #endif
     case PROP_TITLE:
-        g_value_set_string(value, webView->priv->title.legacyCStringPointer());
+        gValueSetString(value, webView->priv->title);
         break;
     case PROP_ESTIMATED_LOAD_PROGRESS:
         g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
@@ -2811,7 +2812,7 @@ void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, 
     webkitWebViewCompleteAuthenticationRequest(webView);
 
     gboolean returnValue;
-    g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI.utf8().legacyCStringPointer(), error, &returnValue);
+    gSignalEmit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI.utf8(), error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
@@ -2828,9 +2829,9 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const String& 
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
         auto failingURIUTF8 = failingURI.utf8();
         gboolean returnValue;
-        g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURIUTF8.legacyCStringPointer(), certificate, tlsErrors, &returnValue);
+        gSignalEmit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURIUTF8, certificate, tlsErrors, &returnValue);
         if (!returnValue)
-            g_signal_emit(webView, signals[LOAD_FAILED], 0, WEBKIT_LOAD_STARTED, failingURIUTF8.legacyCStringPointer(), error, &returnValue);
+            gSignalEmit(webView, signals[LOAD_FAILED], 0, WEBKIT_LOAD_STARTED, failingURIUTF8, error, &returnValue);
     }
 
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);

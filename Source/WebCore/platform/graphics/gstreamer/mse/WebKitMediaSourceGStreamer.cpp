@@ -37,6 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Scope.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/AtomString.h>
@@ -901,7 +902,7 @@ static gchar* webKitMediaSrcGetUri(GstURIHandler* handler)
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(handler);
 
     auto locker = GstObjectLocker(source);
-    return g_strdup(source->priv->uri.utf8());
+    return gStrdup(source->priv->uri);
 }
 
 static gboolean webKitMediaSrcSetUri(GstURIHandler* handler, const gchar* uri, GError**)

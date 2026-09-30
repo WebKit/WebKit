@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
@@ -187,8 +188,8 @@ void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
     }
 
     auto storagePath = FileSystem::fileSystemRepresentation(directory);
-    GUniquePtr<char> dbFilename(g_build_filename(storagePath.legacyCStringPointer(), "hsts-storage.sqlite", nullptr));
-    GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(dbFilename.get()));
+    auto dbFilename = gBuildFilename(storagePath, "hsts-storage.sqlite");
+    GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(dbFilename.utf8()));
     soup_session_remove_feature_by_type(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER);
     soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(enforcer.get()));
 }
@@ -243,8 +244,8 @@ static inline bool stringIsNumeric(const std::string_view& str)
 void SoupNetworkSession::clearOldSoupCache(const String& cacheDirectory)
 {
     auto cachePath = FileSystem::fileSystemRepresentation(cacheDirectory);
-    GUniquePtr<char> cacheFile(g_build_filename(cachePath.legacyCStringPointer(), "soup.cache2", nullptr));
-    if (!g_file_test(cacheFile.get(), G_FILE_TEST_IS_REGULAR))
+    auto cacheFile = gBuildFilename(cachePath, "soup.cache2");
+    if (!g_file_test(cacheFile.utf8(), G_FILE_TEST_IS_REGULAR))
         return;
 
     GUniquePtr<GDir> dir(g_dir_open(cachePath.legacyCStringPointer(), 0, nullptr));
@@ -256,9 +257,9 @@ void SoupNetworkSession::clearOldSoupCache(const String& cacheDirectory)
         if (!nameView.starts_with("soup.cache") && !stringIsNumeric(nameView))
             continue;
 
-        GUniquePtr<gchar> filename(g_build_filename(cachePath.legacyCStringPointer(), name, nullptr));
-        if (g_file_test(filename.get(), G_FILE_TEST_IS_REGULAR))
-            g_unlink(filename.get());
+        auto filename = gBuildFilename(cachePath, name);
+        if (g_file_test(filename.utf8(), G_FILE_TEST_IS_REGULAR))
+            g_unlink(filename.utf8());
     }
 }
 

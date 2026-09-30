@@ -29,6 +29,7 @@
 #include "WebKitDirectoryInputStreamData.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -90,9 +91,9 @@ static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *s
 
     GUniquePtr<char> markupName(g_markup_escape_text(name, -1));
     GUniquePtr<char> escapedName(g_uri_escape_string(name, nullptr, FALSE));
-    GUniquePtr<char> path(g_build_filename(stream->priv->uri.legacyCStringPointer(), escapedName.get(), nullptr));
+    auto path = gBuildFilename(stream->priv->uri, escapedName.get());
     GUniquePtr<char> formattedSize(g_file_info_get_file_type(info) == G_FILE_TYPE_REGULAR ? g_format_size(g_file_info_get_size(info)) : nullptr);
-    GUniquePtr<char> formattedName(g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY ? g_strdup_printf("1.%s", path.get()) : g_strdup_printf("%s", path.get()));
+    GUniquePtr<char> formattedName(g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY ? g_strdup_printf("1.%s", path.utf8()) : g_strdup_printf("%s", path.utf8()));
     GRefPtr<GDateTime> modificationTime = adoptGRef(g_file_info_get_modification_date_time(info));
     GUniquePtr<char> formattedTime(g_date_time_format(modificationTime.get(), "%X"));
     GUniquePtr<char> formattedDate(g_date_time_format(modificationTime.get(), "%x"));
@@ -103,7 +104,7 @@ static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *s
         "<td align=\"right\" sortable-data=\"%" G_GOFFSET_FORMAT "\">%s</td>"
         "<td align=\"right\" sortable-data=\"%" G_GINT64_FORMAT "\">%s&ensp;%s</td>\n"
         "</tr>",
-        formattedName.get(), path.get(), markupName.get(), g_file_info_get_size(info),
+        formattedName.get(), path.utf8(), markupName.get(), g_file_info_get_size(info),
         formattedSize ? formattedSize.get() : "", g_date_time_to_unix(modificationTime.get()), formattedTime.get(), formattedDate.get());
     return g_bytes_new_with_free_func(row, strlen(row), g_free, row);
 }

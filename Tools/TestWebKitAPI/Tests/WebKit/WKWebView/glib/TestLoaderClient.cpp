@@ -26,6 +26,7 @@
 #include "WebViewTest.h"
 #include <libsoup/soup.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/CString.h>
 
 static WebKitTestServer* kServer;
@@ -96,10 +97,10 @@ static void testLoadPlainText(LoadTrackingTest* test, gconstpointer)
 
 static void testLoadBytes(LoadTrackingTest* test, gconstpointer)
 {
-    GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
+    auto filePath = gBuildFilename(Test::getResourcesDir(), "blank.ico");
     char* contents;
     gsize contentsLength;
-    g_file_get_contents(filePath.get(), &contents, &contentsLength, nullptr);
+    g_file_get_contents(filePath.utf8(), &contents, &contentsLength, nullptr);
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_take(contents, contentsLength));
     test->loadBytes(bytes.get(), "image/vnd.microsoft.icon", nullptr, nullptr);
     test->waitUntilLoadFinished();

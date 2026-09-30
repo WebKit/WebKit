@@ -31,6 +31,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/Application.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/MakeString.h>
@@ -414,7 +415,7 @@ void GeoclueGeolocationProvider::setupGeoclueClient(GRefPtr<GDBusProxy>&& proxy)
     // Geoclue2 requires the client to provide a desktop ID for security
     // reasons, which should identify the application requesting the location.
     g_dbus_proxy_call(m_geoclue.client.get(), "org.freedesktop.DBus.Properties.Set",
-        g_variant_new("(ssv)", "org.freedesktop.GeoClue2.Client", "DesktopId", g_variant_new_string(WTF::applicationID().legacyCStringPointer())),
+        g_variant_new("(ssv)", "org.freedesktop.GeoClue2.Client", "DesktopId", gVariantNewString(WTF::applicationID())),
         G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(manager), result, &error.outPtr()));

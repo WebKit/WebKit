@@ -25,6 +25,7 @@
 #include "AccessibilityAtspi.h"
 #include <gio/gio.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
         } else if (!g_strcmp0(methodName, "GetURI")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", !index ? atspiObject->url().string().utf8().legacyCStringPointer() : ""));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->url().string().utf8() } : ""_s));
         } else if (!g_strcmp0(methodName, "IsValid"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->m_coreObject ? TRUE : FALSE));
     },

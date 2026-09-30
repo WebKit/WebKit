@@ -29,6 +29,7 @@
 #include <glib.h>
 #include <wpe/WPEDisplay.h>
 #include <wtf/HashMap.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -248,7 +249,7 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
                 continue;
 
             iter->value.setValue = WTF::move(parsedValue);
-            g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(path.legacyCStringPointer()), path.legacyCStringPointer(), iter->value.setValue.get());
+            gSignalEmit(settingsObject, signals[CHANGED], gQuarkFromString(path), path, iter->value.setValue.get());
         }
     }
 
@@ -275,7 +276,7 @@ void wpe_settings_save_to_keyfile(WPESettings* settingsObject, GKeyFile* keyFile
             continue;
 
         // Transform "/foo/bar/baz" into "foo/bar" and "baz".
-        GUniquePtr<char> keyString(g_strdup(key.legacyCStringPointer()));
+        GUniquePtr<char> keyString(gStrdup(key));
         auto* keyStart = strrchr(keyString.get(), '/');
         ASSERT(keyStart && keyStart != keyString.get());
         *keyStart = '\0';

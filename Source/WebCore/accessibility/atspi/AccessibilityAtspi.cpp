@@ -32,6 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/UUID.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebCore {
@@ -377,7 +378,7 @@ void AccessibilityAtspi::unregisterRoot(AccessibilityRootAtspi& rootObject)
 
     auto registeredObjects = m_rootObjects.take(&rootObject);
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
-        g_variant_new("((so))", uniqueName(), rootObject.path().utf8().legacyCStringPointer()), nullptr);
+        gVariantNew("((so))", uniqueName(), rootObject.path().utf8()), nullptr);
     for (auto id : registeredObjects)
         g_dbus_connection_unregister_object(m_connection.get(), id);
 }
@@ -420,7 +421,7 @@ void AccessibilityAtspi::unregisterObject(AccessibilityObjectAtspi& atspiObject)
 
     if (!m_cacheUpdateList.remove(&atspiObject) && m_cache.remove(path)) {
         g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
-            g_variant_new("((so))", uniqueName(), path.utf8().legacyCStringPointer()), nullptr);
+            gVariantNew("((so))", uniqueName(), path.utf8()), nullptr);
     }
 
     if (m_cacheUpdateList.isEmpty())
@@ -485,8 +486,8 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
         return;
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
-        g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child.indexInParentForChildrenChanged(change),
-        0, g_variant_new("(so)", uniqueName(), child.path().utf8().legacyCStringPointer()), uniqueName(), atspiObject.path().utf8().legacyCStringPointer()), nullptr);
+        gVariantNew("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child.indexInParentForChildrenChanged(change),
+        0, gVariantNew("(so)", uniqueName(), child.path().utf8()), uniqueName(), atspiObject.path().utf8()), nullptr);
 }
 
 void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
@@ -499,8 +500,8 @@ void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, Acc
         return;
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
-        g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
-        0, g_variant_new("(so)", uniqueName(), child.path().utf8().legacyCStringPointer()), uniqueName(), rootObject.path().utf8().legacyCStringPointer()), nullptr);
+        gVariantNew("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
+        0, gVariantNew("(so)", uniqueName(), child.path().utf8()), uniqueName(), rootObject.path().utf8()), nullptr);
 }
 
 void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, const char* name, bool value)
@@ -532,7 +533,7 @@ void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, cons
         return;
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Object", "TextChanged",
-        g_variant_new("(siiva{sv})", changeType, offset, length, g_variant_new_string(text.legacyCStringPointer()), nullptr), nullptr);
+        g_variant_new("(siiva{sv})", changeType, offset, length, gVariantNewString(text), nullptr), nullptr);
 }
 
 void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiObject)
@@ -607,7 +608,7 @@ void AccessibilityAtspi::activeDescendantChanged(AccessibilityObjectAtspi& atspi
     ASSERT(activeDescendant);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Object", "ActiveDescendantChanged",
-        g_variant_new("(siiva{sv})", "", activeDescendant->indexInParent(), 0, g_variant_new("(so)", uniqueName(), activeDescendant->path().utf8().legacyCStringPointer()), nullptr), nullptr);
+        g_variant_new("(siiva{sv})", "", activeDescendant->indexInParent(), 0, gVariantNew("(so)", uniqueName(), activeDescendant->path().utf8()), nullptr), nullptr);
 }
 
 void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)

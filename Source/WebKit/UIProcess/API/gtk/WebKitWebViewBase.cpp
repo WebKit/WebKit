@@ -90,6 +90,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NotFound.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
@@ -2007,7 +2008,7 @@ GVariant* webkitWebViewBaseContentsOfUserInterfaceItem(WebKitWebViewBase* webVie
 
     GVariantBuilder subBuilder;
     g_variant_builder_init(&subBuilder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&subBuilder, "{sv}", "message", g_variant_new_string(message.utf8().legacyCStringPointer()));
+    g_variant_builder_add(&subBuilder, "{sv}", "message", gVariantNewString(message.utf8()));
     g_variant_builder_add(&subBuilder, "{sv}", "fontSize", g_variant_new_double(fontSize));
 
     GVariantBuilder builder;

@@ -25,6 +25,7 @@
 #include "WebViewTest.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 static WebKitTestServer* kServer;
@@ -353,16 +354,16 @@ static void serverCallback(SoupServer*, SoupServerMessage* message, const char* 
     char* contents;
     gsize length;
     if (g_str_equal(path, "/icon/favicon.ico")) {
-        GUniquePtr<char> pathToFavicon(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
-        g_file_get_contents(pathToFavicon.get(), &contents, &length, 0);
+        auto pathToFavicon = gBuildFilename(Test::getResourcesDir(), "blank.ico");
+        g_file_get_contents(pathToFavicon.utf8(), &contents, &length, 0);
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/icon/red-32x32.png")) {
-        GUniquePtr<char> pathToFavicon(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "red-32x32.png", nullptr));
-        g_file_get_contents(pathToFavicon.get(), &contents, &length, nullptr);
+        auto pathToFavicon = gBuildFilename(Test::getResourcesDir(), "red-32x32.png");
+        g_file_get_contents(pathToFavicon.utf8(), &contents, &length, nullptr);
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/icon/blue-48x48.png")) {
-        GUniquePtr<char> pathToFavicon(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blue-48x48.png", nullptr));
-        g_file_get_contents(pathToFavicon.get(), &contents, &length, nullptr);
+        auto pathToFavicon = gBuildFilename(Test::getResourcesDir(), "blue-48x48.png");
+        g_file_get_contents(pathToFavicon.utf8(), &contents, &length, nullptr);
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/nofavicon")) {
         static const char* noFaviconHTML = "<html><head><body>test</body></html>";

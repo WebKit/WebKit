@@ -63,6 +63,10 @@
 #include <wtf/darwin/DispatchExtras.h>
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <wtf/glib/GLibExtras.h>
+#endif
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -148,7 +152,7 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
 #if PLATFORM(GTK) || PLATFORM(WPE)
         // Triggers with "touch $cachePath/dump".
         auto dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePathIsolatedCopy(), "dump"_s));
-        GRefPtr<GFile> dumpFile = adoptGRef(g_file_new_for_path(dumpFilePath.legacyCStringPointer()));
+        GRefPtr<GFile> dumpFile = gFileNewForPath(dumpFilePath);
         GFileMonitor* monitor = g_file_monitor_file(dumpFile.get(), G_FILE_MONITOR_NONE, nullptr, nullptr);
         g_signal_connect_swapped(monitor, "changed", G_CALLBACK(dumpFileChanged), this);
 #endif

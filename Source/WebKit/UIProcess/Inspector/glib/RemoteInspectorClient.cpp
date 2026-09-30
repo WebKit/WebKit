@@ -37,6 +37,7 @@
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -253,7 +254,7 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, co
 
 void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)
 {
-    m_socketConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", connectionID, targetID, message.utf8().legacyCStringPointer()));
+    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", connectionID, targetID, message.utf8()));
 }
 
 void RemoteInspectorClient::closeFromFrontend(uint64_t connectionID, uint64_t targetID)

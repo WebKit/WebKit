@@ -40,6 +40,7 @@
 #include "TextIterator.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/UUID.h>
+#include <wtf/glib/GLibExtras.h>
 
 namespace WebCore {
 
@@ -388,7 +389,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         if (!g_strcmp0(methodName, "GetRole"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", atspiObject->role()));
         else if (!g_strcmp0(methodName, "GetRoleName"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", atspiObject->roleName().utf8().legacyCStringPointer()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->roleName().utf8()));
         else if (!g_strcmp0(methodName, "GetLocalizedRoleName"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", atspiObject->localizedRoleName()));
         else if (!g_strcmp0(methodName, "GetState")) {
@@ -437,14 +438,14 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         atspiObject->updateBackingStore();
 
         if (!g_strcmp0(propertyName, "Name"))
-            return g_variant_new_string(atspiObject->name().legacyCStringPointer());
+            return gVariantNewString(atspiObject->name());
         if (!g_strcmp0(propertyName, "Description"))
-            return g_variant_new_string(atspiObject->description().legacyCStringPointer());
+            return gVariantNewString(atspiObject->description());
         if (!g_strcmp0(propertyName, "Locale"))
-            return g_variant_new_string(atspiObject->locale().utf8().legacyCStringPointer());
+            return gVariantNewString(atspiObject->locale().utf8());
         if (!g_strcmp0(propertyName, "AccessibleId")) {
             auto objectID = atspiObject->m_coreObject->objectID();
-            return g_variant_new_string(atspiObject->m_coreObject ? String::number(objectID.toUInt64()).utf8().legacyCStringPointer() : "");
+            return gVariantNewString(atspiObject->m_coreObject ? UTF8CStringView { String::number(objectID.toUInt64()).utf8() } : ""_s);
         }
         if (!g_strcmp0(propertyName, "Parent"))
             return atspiObject->parentReference();
@@ -512,7 +513,7 @@ const String& AccessibilityObjectAtspi::path()
 
 GVariant* AccessibilityObjectAtspi::reference()
 {
-    return g_variant_new("(so)", AccessibilityAtspi::singleton().uniqueName(), path().utf8().legacyCStringPointer());
+    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), path().utf8());
 }
 
 GVariant* AccessibilityObjectAtspi::hyperlinkReference()
@@ -522,7 +523,7 @@ GVariant* AccessibilityObjectAtspi::hyperlinkReference()
         m_hyperlinkPath = AccessibilityAtspi::singleton().registerHyperlink(*this, { { const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions } });
     }
 
-    return g_variant_new("(so)", AccessibilityAtspi::singleton().uniqueName(), m_hyperlinkPath.utf8().legacyCStringPointer());
+    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), m_hyperlinkPath.utf8());
 }
 
 void AccessibilityObjectAtspi::setParent(std::optional<AccessibilityObjectAtspi*> atspiParent)
@@ -1042,7 +1043,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 void AccessibilityObjectAtspi::buildAttributes(GVariantBuilder* builder) const
 {
     for (const auto& it : attributes())
-        g_variant_builder_add(builder, "{ss}", it.key.utf8().legacyCStringPointer(), it.value.utf8().legacyCStringPointer());
+        gVariantBuilderAdd(builder, "{ss}", it.key.utf8(), it.value.utf8());
 }
 
 RelationMap AccessibilityObjectAtspi::relationMap() const
@@ -1148,7 +1149,7 @@ void AccessibilityObjectAtspi::buildStates(GVariantBuilder* builder) const
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
 {
-    g_variant_builder_add(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8().legacyCStringPointer());
+    gVariantBuilderAdd(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8());
     g_variant_builder_add(builder, "@(so)", AccessibilityAtspi::singleton().applicationReference());
     g_variant_builder_add(builder, "@(so)", parentReference());
 
@@ -1160,11 +1161,11 @@ void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
     buildInterfaces(&interfacesBuilder);
     g_variant_builder_add(builder, "@as", g_variant_new("as", &interfacesBuilder));
 
-    g_variant_builder_add(builder, "s", name().legacyCStringPointer());
+    gVariantBuilderAdd(builder, "s", name());
 
     g_variant_builder_add(builder, "u", role());
 
-    g_variant_builder_add(builder, "s", description().legacyCStringPointer());
+    gVariantBuilderAdd(builder, "s", description());
 
     GVariantBuilder statesBuilder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("au"));
     buildStates(&statesBuilder);

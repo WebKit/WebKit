@@ -30,6 +30,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -39,7 +40,7 @@ namespace NetworkCache {
 IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos)
 {
     auto path = FileSystem::fileSystemRepresentation(filePath);
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.legacyCStringPointer()));
+    GRefPtr<GFile> file = gFileNewForPath(path);
 
     Locker locker { m_lock };
     switch (type) {

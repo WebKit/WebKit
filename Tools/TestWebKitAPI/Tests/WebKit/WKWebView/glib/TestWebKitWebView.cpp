@@ -22,6 +22,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <glib/gstdio.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 
@@ -1878,8 +1879,8 @@ static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpoi
     g_assert_false(webkit_web_view_is_playing_audio(test->webView()));
     g_assert_false(webkit_web_view_get_is_muted(test->webView()));
 
-    GUniquePtr<char> resourcePath(g_build_filename(Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer(), "file-with-video.html", nullptr));
-    GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.get(), nullptr, nullptr));
+    auto resourcePath = gBuildFilename(Test::getResourcesDir(Test::WebKit2Resources), "file-with-video.html");
+    GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.utf8(), nullptr, nullptr));
     webkit_web_view_load_uri(test->webView(), resourceURL.get());
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_playing_audio(test->webView()));

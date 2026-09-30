@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebKitAutoconfigProxyResolver.h"
 
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -64,7 +65,7 @@ GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const UTF8CString& auto
 static gchar** webkitAutoconfigProxyResolverLookup(GProxyResolver* proxyResolver, const char* uri, GCancellable* cancellable, GError** error)
 {
     auto* priv = WEBKIT_AUTOCONFIG_PROXY_RESOLVER(proxyResolver)->priv;
-    GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_sync(priv->pacRunner.get(), "Lookup", g_variant_new("(ss)", priv->autoconfigURL.legacyCStringPointer(), uri),
+    GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_sync(priv->pacRunner.get(), "Lookup", gVariantNew("(ss)", priv->autoconfigURL, uri),
         G_DBUS_CALL_FLAGS_NONE, -1, cancellable, error));
     if (!variant)
         return nullptr;
@@ -78,7 +79,7 @@ static void webkitAutoconfigProxyResolverLookupAsync(GProxyResolver* proxyResolv
 {
     GTask* task = g_task_new(proxyResolver, cancellable, callback, userData);
     auto* priv = WEBKIT_AUTOCONFIG_PROXY_RESOLVER(proxyResolver)->priv;
-    g_dbus_proxy_call(priv->pacRunner.get(), "Lookup", g_variant_new("(ss)", priv->autoconfigURL.legacyCStringPointer(), uri), G_DBUS_CALL_FLAGS_NONE, -1, cancellable,
+    g_dbus_proxy_call(priv->pacRunner.get(), "Lookup", gVariantNew("(ss)", priv->autoconfigURL, uri), G_DBUS_CALL_FLAGS_NONE, -1, cancellable,
         [](GObject* source, GAsyncResult* result, gpointer userData) {
             GRefPtr<GTask> task = adoptGRef(G_TASK(userData));
             GUniqueOutPtr<GError> error;

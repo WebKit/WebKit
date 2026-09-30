@@ -29,6 +29,7 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -226,7 +227,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
         String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
-        g_ptr_array_add(request->priv->mimeTypes.get(), g_strdup(mimeTypeString.utf8().legacyCStringPointer()));
+        g_ptr_array_add(request->priv->mimeTypes.get(), gStrdup(mimeTypeString.utf8()));
     }
     g_ptr_array_add(request->priv->mimeTypes.get(), 0);
 
@@ -368,7 +369,7 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
         if (webFileName->stringView().isEmpty())
             continue;
         auto filename = FileSystem::fileSystemRepresentation(webFileName->string());
-        g_ptr_array_add(request->priv->selectedFiles.get(), g_strdup(filename.legacyCStringPointer()));
+        g_ptr_array_add(request->priv->selectedFiles.get(), gStrdup(filename));
     }
     g_ptr_array_add(request->priv->selectedFiles.get(), 0);
 

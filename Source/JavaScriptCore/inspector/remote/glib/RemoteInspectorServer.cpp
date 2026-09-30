@@ -32,6 +32,7 @@
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 
 namespace Inspector {
@@ -164,9 +165,9 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             auto capabilities = processSessionCapabilities(sessionCapabilities.get());
             inspectorServer.startAutomationSession(connection, sessionID, capabilities);
             auto clientCapabilities = RemoteInspector::singleton().clientCapabilities();
-            connection.sendMessage("DidStartAutomationSession"_s, g_variant_new("(ss)",
-                clientCapabilities ? clientCapabilities->browserName.utf8().legacyCStringPointer() : "",
-                clientCapabilities ? clientCapabilities->browserVersion.utf8().legacyCStringPointer() : ""));
+            connection.sendMessage("DidStartAutomationSession"_s, gVariantNew("(ss)",
+                clientCapabilities ? UTF8CStringView { clientCapabilities->browserName.utf8() } : ""_s,
+                clientCapabilities ? UTF8CStringView { clientCapabilities->browserVersion.utf8() } : ""_s));
         }}
     }
     });

@@ -24,6 +24,7 @@
 #include "WebKitTestServer.h"
 #include "WebKitWebsitePolicies.h"
 #include <algorithm>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -353,8 +354,8 @@ static void testAutoplayPolicy(PolicyClientTest* test, gconstpointer)
     test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
 
     const char* resourceName = "autoplay-check.html";
-    GUniquePtr<char> resourcePath(g_build_filename(Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer(), resourceName, nullptr));
-    GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.get(), nullptr, nullptr));
+    auto resourcePath = gBuildFilename(Test::getResourcesDir(Test::WebKit2Resources), resourceName);
+    GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.utf8(), nullptr, nullptr));
 
     g_assert_false(test->loadURIAndWaitForAutoPlayed(resourceURL.get(), WEBKIT_AUTOPLAY_DENY));
 
@@ -372,8 +373,8 @@ static void testAutoplayPolicy(PolicyClientTest* test, gconstpointer)
 
     // Silent audio track tests
     resourceName = "autoplay-no-audio-check.html";
-    resourcePath.reset(g_build_filename(Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer(), resourceName, nullptr));
-    resourceURL.reset(g_filename_to_uri(resourcePath.get(), nullptr, nullptr));
+    resourcePath = gBuildFilename(Test::getResourcesDir(Test::WebKit2Resources), resourceName);
+    resourceURL.reset(g_filename_to_uri(resourcePath.utf8(), nullptr, nullptr));
 
     g_assert_false(test->loadURIAndWaitForAutoPlayed(resourceURL.get(), WEBKIT_AUTOPLAY_DENY));
     g_assert_true(test->loadURIAndWaitForAutoPlayed(resourceURL.get(), WEBKIT_AUTOPLAY_ALLOW));

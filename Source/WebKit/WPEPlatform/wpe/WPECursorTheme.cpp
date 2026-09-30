@@ -29,6 +29,7 @@
 #include <array>
 #include <stdio.h>
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -271,12 +272,12 @@ static std::optional<CursorTheme::CursorImage> readImage(FILE* file, const Xcuso
 
 Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(UTF8CStringView name, uint32_t size, std::optional<uint32_t> maxImages)
 {
-    GUniquePtr<char> path(g_build_filename(m_path.legacyCStringPointer(), name.utf8(), nullptr));
-    if (!g_file_test(path.get(), G_FILE_TEST_EXISTS)) {
+    auto path = gBuildFilename(m_path, name);
+    if (!g_file_test(path.utf8(), G_FILE_TEST_EXISTS)) {
         path = nullptr;
         for (auto& theme : m_inherited) {
-            path.reset(g_build_filename(theme.legacyCStringPointer(), name.utf8(), nullptr));
-            if (g_file_test(path.get(), G_FILE_TEST_EXISTS))
+            path = gBuildFilename(theme, name);
+            if (g_file_test(path.utf8(), G_FILE_TEST_EXISTS))
                 break;
             path = nullptr;
         }
@@ -285,7 +286,7 @@ Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(UTF8CStringView name, u
     if (!path)
         return { };
 
-    FILE* file = fopen(path.get(), "r");
+    FILE* file = fopen(path.utf8(), "r");
     if (!file)
         return { };
 

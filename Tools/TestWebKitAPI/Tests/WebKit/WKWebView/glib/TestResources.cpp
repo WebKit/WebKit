@@ -23,6 +23,7 @@
 #include "WebViewTest.h"
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/UTF8CStringView.h>
 
@@ -182,10 +183,10 @@ public:
             g_assert_cmpint(m_resourceDataSize, ==, strlen(kJavascript));
             g_assert_cmpint(strncmp(m_resourceData.get(), kJavascript, m_resourceDataSize), ==, 0);
         } else if (uri == kServer->getURIForPath("/blank.ico")) {
-            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
+            auto filePath = gBuildFilename(Test::getResourcesDir(), "blank.ico");
             GUniqueOutPtr<char> contents;
             gsize contentsLength;
-            g_file_get_contents(filePath.get(), &contents.outPtr(), &contentsLength, nullptr);
+            g_file_get_contents(filePath.utf8(), &contents.outPtr(), &contentsLength, nullptr);
             g_assert_cmpint(m_resourceDataSize, ==, contentsLength);
             g_assert_cmpmem(m_resourceData.get(), contentsLength, contents.get(), contentsLength);
         } else
@@ -822,10 +823,10 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='/redirected-to-cancel.js'></script></head><body></body></html>";
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
     } else if (g_str_equal(path, "/blank.ico")) {
-        GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), path, nullptr));
+        auto filePath = gBuildFilename(Test::getResourcesDir(), path);
         char* contents;
         gsize contentsLength;
-        g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);
+        g_file_get_contents(filePath.utf8(), &contents, &contentsLength, 0);
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, contentsLength);
         addCacheHTTPHeadersToResponse(message);
         soup_message_headers_append(responseHeaders, "Content-Type", "image/vnd.microsoft.icon");
@@ -868,8 +869,8 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
                 Locker locker { s_serverLock };
             }
 
-            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
-            g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);
+            auto filePath = gBuildFilename(Test::getResourcesDir(), "blank.ico");
+            g_file_get_contents(filePath.utf8(), &contents, &contentsLength, 0);
         }
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, contentsLength);
     } else

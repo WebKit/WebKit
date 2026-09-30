@@ -43,6 +43,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -832,7 +833,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 
     auto html = htmlBuilder.toString().utf8();
     gsize streamLength = html.length();
-    GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(g_strdup(html.legacyCStringPointer()), streamLength, g_free));
+    GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(gStrdup(html), streamLength, g_free));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
 
     if (requestURL.path() == "/stdout"_s)

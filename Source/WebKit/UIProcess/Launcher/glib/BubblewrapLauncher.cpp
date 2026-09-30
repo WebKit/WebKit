@@ -31,6 +31,7 @@
 #include <wtf/UUID.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/Application.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -752,7 +753,7 @@ static std::optional<UTF8CString> directoryContainingDBusSocket(StringView dbusA
 
         auto pathEnd = dbusAddressString.find(',', pathStart);
         auto path = pathEnd == notFound ? dbusAddressString.substring(pathStart) : dbusAddressString.substring(pathStart, pathEnd - pathStart);
-        GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.utf8().legacyCStringPointer()));
+        GRefPtr<GFile> file = gFileNewForPath(path.utf8());
         GRefPtr<GFile> parent = adoptGRef(g_file_get_parent(file.get()));
         if (!parent)
             return std::nullopt;

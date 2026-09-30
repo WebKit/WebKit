@@ -41,6 +41,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -345,11 +346,11 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
 
     switch (propID) {
     case WEBKIT_WEBSRC_PROP_LOCATION:
-        g_value_set_string(value, priv->originalURI.legacyCStringPointer());
+        gValueSetString(value, priv->originalURI);
         break;
     case WEBKIT_WEBSRC_PROP_RESOLVED_LOCATION: {
         DataMutexLocker members { priv->dataMutex };
-        g_value_set_string(value, members->redirectedURI.isNull() ? priv->originalURI.legacyCStringPointer() : members->redirectedURI.legacyCStringPointer());
+        gValueSetString(value, members->redirectedURI.isNull() ? priv->originalURI : members->redirectedURI);
         break;
     }
     case WEBKIT_WEBSRC_PROP_KEEP_ALIVE:
@@ -362,7 +363,7 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
         g_value_set_boolean(value, priv->compress);
         break;
     case WEBKIT_WEBSRC_PROP_METHOD:
-        g_value_set_string(value, priv->httpMethod.utf8());
+        gValueSetString(value, priv->httpMethod);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
@@ -894,7 +895,7 @@ static URL convertPlaybinURI(String&& uriString)
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(handler);
-    gchar* ret = g_strdup(src->priv->originalURI.legacyCStringPointer());
+    gchar* ret = gStrdup(src->priv->originalURI);
     return ret;
 }
 

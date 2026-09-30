@@ -30,6 +30,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include <WebCore/ResourceResponse.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -413,7 +414,7 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
 
 void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourceError)
 {
-    GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().legacyCStringPointer()),
+    GUniquePtr<GError> webError(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
         toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
@@ -444,7 +445,7 @@ void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* downlo
 
     download->priv->decideDestinationCallback = WTF::move(completionHandler);
     gboolean applicationWillDecideDestination = FALSE;
-    g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.legacyCStringPointer(), &applicationWillDecideDestination);
+    gSignalEmit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename, &applicationWillDecideDestination);
     if (!applicationWillDecideDestination)
         maybeFinishDecideDestination(download);
 }
@@ -455,7 +456,7 @@ void webkitDownloadDestinationCreated(WebKitDownload* download, const String& de
         return;
 
 #if ENABLE(2022_GLIB_API)
-    g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationPath.utf8().legacyCStringPointer());
+    gSignalEmit(download, signals[CREATED_DESTINATION], 0, destinationPath.utf8());
 #else
     GUniquePtr<char> destinationURI(g_filename_to_uri(destinationPath.utf8().legacyCStringPointer(), nullptr, nullptr));
     ASSERT(destinationURI);

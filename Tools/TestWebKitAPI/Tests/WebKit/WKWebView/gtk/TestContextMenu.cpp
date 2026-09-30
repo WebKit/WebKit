@@ -22,6 +22,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 
 #if !USE(GTK4)
@@ -1110,10 +1111,10 @@ static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* tes
 static void writeNextChunk(SoupServerMessage* message)
 {
     auto* responseBody = soup_server_message_get_response_body(message);
-    GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "silence.webm", nullptr));
+    auto filePath = gBuildFilename(Test::getResourcesDir(), "silence.webm");
     char* contents;
     gsize contentsLength;
-    if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, nullptr)) {
+    if (!g_file_get_contents(filePath.utf8(), &contents, &contentsLength, nullptr)) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
         soup_message_body_complete(responseBody);
         return;

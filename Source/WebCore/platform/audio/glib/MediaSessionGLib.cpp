@@ -26,6 +26,7 @@
 #include <gio/gio.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
 
@@ -313,14 +314,14 @@ GVariant* MediaSessionGLib::getMetadataAsGVariant(std::optional<NowPlayingInfo> 
 
     g_variant_builder_add(&builder, "{sv}", "mpris:trackid", g_variant_new("o", DBUS_MPRIS_TRACK_PATH));
     g_variant_builder_add(&builder, "{sv}", "mpris:length", g_variant_new_int64(info->duration * 1000000));
-    g_variant_builder_add(&builder, "{sv}", "xesam:title", g_variant_new_string(info->metadata.title.utf8().legacyCStringPointer()));
-    g_variant_builder_add(&builder, "{sv}", "xesam:album", g_variant_new_string(info->metadata.album.utf8().legacyCStringPointer()));
+    g_variant_builder_add(&builder, "{sv}", "xesam:title", gVariantNewString(info->metadata.title.utf8()));
+    g_variant_builder_add(&builder, "{sv}", "xesam:album", gVariantNewString(info->metadata.album.utf8()));
     if (info->metadata.artwork)
-        g_variant_builder_add(&builder, "{sv}", "mpris:artUrl", g_variant_new_string(info->metadata.artwork->src.utf8().legacyCStringPointer()));
+        g_variant_builder_add(&builder, "{sv}", "mpris:artUrl", gVariantNewString(info->metadata.artwork->src.utf8()));
 
     GVariantBuilder artistBuilder;
     g_variant_builder_init(&artistBuilder, G_VARIANT_TYPE("as"));
-    g_variant_builder_add(&artistBuilder, "s", info->metadata.artist.utf8().legacyCStringPointer());
+    gVariantBuilderAdd(&artistBuilder, "s", info->metadata.artist.utf8());
     g_variant_builder_add(&builder, "{sv}", "xesam:artist", g_variant_builder_end(&artistBuilder));
 
     return g_variant_builder_end(&builder);

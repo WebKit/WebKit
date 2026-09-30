@@ -22,6 +22,7 @@
 
 #include "TestMain.h"
 #include <wtf/Threading.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -36,9 +37,9 @@ WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
     if (options[ServerHTTPS]) {
         GUniqueOutPtr<GError> error;
         UTF8CString resourcesDir = Test::getResourcesDir();
-        GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.legacyCStringPointer(), "test-cert.pem", nullptr));
-        GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.legacyCStringPointer(), "test-key.pem", nullptr));
-        certificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.get(), sslKeyFile.get(), &error.outPtr()));
+        auto sslCertificateFile = gBuildFilename(resourcesDir, "test-cert.pem");
+        auto sslKeyFile = gBuildFilename(resourcesDir, "test-key.pem");
+        certificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.utf8(), sslKeyFile.utf8(), &error.outPtr()));
         g_assert_no_error(error.get());
     }
 

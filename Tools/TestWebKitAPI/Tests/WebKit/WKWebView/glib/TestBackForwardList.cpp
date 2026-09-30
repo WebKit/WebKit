@@ -23,6 +23,7 @@
 #include "WebViewTest.h"
 #include <libsoup/soup.h>
 #include <string.h>
+#include <wtf/glib/GLibExtras.h>
 
 // Back forward list limit is 100 by default.
 static const int kBackForwardListLimit = 100;
@@ -338,8 +339,8 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
 
 static void testWebKitWebViewSessionStateWithFormData(BackForwardListTest* test, gconstpointer)
 {
-    GUniquePtr<char> htmlPath(g_build_filename(Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer(), "simple-form.html", nullptr));
-    GUniquePtr<char> htmlURL(g_filename_to_uri(htmlPath.get(), nullptr, nullptr));
+    auto htmlPath = gBuildFilename(Test::getResourcesDir(Test::WebKit2Resources), "simple-form.html");
+    GUniquePtr<char> htmlURL(g_filename_to_uri(htmlPath.utf8(), nullptr, nullptr));
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
     test->loadURI(htmlURL.get());
     test->waitUntilLoadFinished();

@@ -21,6 +21,7 @@
 
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
+#include <wtf/glib/GLibExtras.h>
 
 static WebKitTestServer* kHttpsServer;
 static WebKitTestServer* kHttpServer;
@@ -516,10 +517,10 @@ public:
     ClientSideCertificateTestBase(WebKitWebView* webView)
     {
         UTF8CString resourcesDir = Test::getResourcesDir();
-        GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.legacyCStringPointer(), "test-cert.pem", nullptr));
-        GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.legacyCStringPointer(), "test-key.pem", nullptr));
+        auto sslCertificateFile = gBuildFilename(resourcesDir, "test-cert.pem");
+        auto sslKeyFile = gBuildFilename(resourcesDir, "test-key.pem");
         GUniqueOutPtr<GError> error;
-        m_clientCertificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.get(), sslKeyFile.get(), &error.outPtr()));
+        m_clientCertificate = adoptGRef(g_tls_certificate_new_from_files(sslCertificateFile.utf8(), sslKeyFile.utf8(), &error.outPtr()));
         g_assert_no_error(error.get());
 
         soup_server_set_tls_auth_mode(kHttpsServer->soupServer(), G_TLS_AUTHENTICATION_REQUIRED);
@@ -759,19 +760,19 @@ static void httpServerCallback(SoupServer* server, SoupServerMessage* message, c
     auto* responseBody = soup_server_message_get_response_body(message);
 
     if (g_str_equal(path, "/test-script")) {
-        GUniquePtr<char> pathToFile(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "link-title.js", nullptr));
+        auto pathToFile = gBuildFilename(Test::getResourcesDir(), "link-title.js");
         char* contents;
         gsize length;
-        g_file_get_contents(pathToFile.get(), &contents, &length, 0);
+        g_file_get_contents(pathToFile.utf8(), &contents, &length, 0);
 
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, length);
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/test-image")) {
-        GUniquePtr<char> pathToFile(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "blank.ico", nullptr));
+        auto pathToFile = gBuildFilename(Test::getResourcesDir(), "blank.ico");
         char* contents;
         gsize length;
-        g_file_get_contents(pathToFile.get(), &contents, &length, 0);
+        g_file_get_contents(pathToFile.utf8(), &contents, &length, 0);
 
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, length);
         soup_message_body_complete(responseBody);

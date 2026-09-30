@@ -26,6 +26,7 @@
 #include "AccessibilityObject.h"
 #include "RenderObjectInlines.h"
 #include <gio/gio.h>
+#include <wtf/glib/GLibExtras.h>
 
 namespace WebCore {
 
@@ -56,9 +57,9 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
         atspiObject->updateBackingStore();
 
         if (!g_strcmp0(propertyName, "ImageDescription"))
-            return g_variant_new_string(atspiObject->imageDescription().utf8().legacyCStringPointer());
+            return gVariantNewString(atspiObject->imageDescription().utf8());
         if (!g_strcmp0(propertyName, "ImageLocale"))
-            return g_variant_new_string(atspiObject->locale().utf8().legacyCStringPointer());
+            return gVariantNewString(atspiObject->locale().utf8());
 
         g_set_error(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "Unknown property '%s'", propertyName);
         return nullptr;

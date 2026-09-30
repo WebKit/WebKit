@@ -28,6 +28,7 @@
 
 #include <gio/gio.h>
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 
@@ -90,13 +91,13 @@ void SleepDisablerGLib::acquireInhibitor()
     if (shouldUsePortal()) {
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-        g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(m_reason.utf8().legacyCStringPointer()));
+        g_variant_builder_add(&builder, "{sv}", "reason", gVariantNewString(m_reason.utf8()));
         parameters = g_variant_new("(su@a{sv})", "" /* no window */, 8 /* idle */, g_variant_builder_end(&builder));
     } else if (const gchar* prgname = g_get_prgname()) {
-        parameters = g_variant_new("(ss)", prgname, m_reason.utf8().legacyCStringPointer());
+        parameters = gVariantNew("(ss)", prgname, m_reason.utf8());
     } else if (const auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
         GUniquePtr<char> executableName(g_path_get_basename(executablePath.legacyCStringPointer()));
-        parameters = g_variant_new("(ss)", executableName.get(), m_reason.utf8().legacyCStringPointer());
+        parameters = gVariantNew("(ss)", executableName.get(), m_reason.utf8());
     } else
         return;
 

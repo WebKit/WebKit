@@ -30,6 +30,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include <gio/gio.h>
 #include <wtf/HashMap.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,17 +44,17 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
         if (!g_strcmp0(methodName, "GetAttributeValue")) {
             const char* name;
             g_variant_get(parameters, "(&s)", &name);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", atspiObject->documentAttribute(String::fromUTF8(name)).utf8().legacyCStringPointer()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->documentAttribute(String::fromUTF8(name)).utf8()));
         } else if (!g_strcmp0(methodName, "GetAttributes")) {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(a{ss})"));
             g_variant_builder_open(&builder, G_VARIANT_TYPE("a{ss}"));
             auto attributes = atspiObject->documentAttributes();
             for (const auto& it : attributes)
-                g_variant_builder_add(&builder, "{ss}", it.key.utf8().legacyCStringPointer(), it.value.utf8().legacyCStringPointer());
+                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
             g_variant_builder_close(&builder);
             g_dbus_method_invocation_return_value(invocation, g_variant_builder_end(&builder));
         } else if (!g_strcmp0(methodName, "GetLocale"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", atspiObject->documentLocale().utf8().legacyCStringPointer()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->documentLocale().utf8()));
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {

@@ -3210,6 +3210,73 @@ def check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error):
         return
 
 
+_GLIB_STRING_WRAPPERS = {
+    'g_build_filename': 'gBuildFilename',
+    'g_file_new_for_path': 'gFileNewForPath',
+    'g_quark_from_string': 'gQuarkFromString',
+    'g_signal_emit': 'gSignalEmit',
+    'g_strdup': 'gStrdup',
+    'g_value_set_string': 'gValueSetString',
+    'g_variant_builder_add': 'gVariantBuilderAdd',
+    'g_variant_new': 'gVariantNew',
+    'g_variant_new_string': 'gVariantNewString',
+}
+
+
+def _enclosing_function_call(clean_lines, line_number, position):
+    """Returns the name of the function whose argument list contains the given position, or None.
+
+    Looks back across previous lines, so that arguments on continuation lines are attributed to their call.
+    """
+
+    depth = 0
+    for current_line_number in range(line_number, max(line_number - 10, -1), -1):
+        line = clean_lines.elided[current_line_number]
+        end = position if current_line_number == line_number else len(line)
+        for index in range(end - 1, -1, -1):
+            character = line[index]
+            if character == ')':
+                depth += 1
+            elif character == '(':
+                if depth:
+                    depth -= 1
+                    continue
+                name = search(r'(?<![\w.>:])(\w+)\s*$', line[:index])
+                return name.group(1) if name else None
+            elif character in ';{}' and not depth:
+                return None
+    return None
+
+
+def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
+    """Looks for GLib functions called with legacyCStringPointer(), which should use the wrappers in wtf/glib/GLibExtras.h.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    if 'legacyCStringPointer' not in line:
+        return
+
+    reported_functions = set()
+    for pointer_call in re.finditer(r'\blegacyCStringPointer\s*\(', line):
+        function = _enclosing_function_call(clean_lines, line_number, pointer_call.start())
+        wrapper = _GLIB_STRING_WRAPPERS.get(function)
+        if not wrapper or function in reported_functions:
+            continue
+        reported_functions.add(function)
+        error(line_number, 'runtime/glib_string_wrappers', 4,
+              "Use '%s()' from <wtf/glib/GLibExtras.h> instead of '%s()', and pass the typed string instead of calling legacyCStringPointer()." % (wrapper, function))
+
+
 def check_auto_with_adopt(clean_lines, line_number, file_state, error):
     """Looks for usage of 'auto' with adopt functions, which should use the explicit smart pointer type.
 
@@ -4123,6 +4190,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_wtf_os_object_ptr(clean_lines, line_number, file_state, error)
     check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error)
+    check_glib_string_wrappers(clean_lines, line_number, file_state, error)
     check_auto_with_adopt(clean_lines, line_number, file_state, error)
     check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
@@ -5418,6 +5486,7 @@ class CppChecker(object):
         'runtime/dispatch_set_target_queue',
         'runtime/enum_bitfields',
         'runtime/explicit',
+        'runtime/glib_string_wrappers',
         'runtime/init',
         'runtime/int',
         'runtime/invalid_increment',

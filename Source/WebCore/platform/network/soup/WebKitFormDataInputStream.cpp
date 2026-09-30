@@ -28,6 +28,7 @@
 
 #include "BlobData.h"
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
@@ -65,7 +66,7 @@ static bool webkitFormDataInputStreamCreateNextStream(WebKitFormDataInputStream*
             priv->currentStream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
         }, [priv, cancellable] (const FormDataElement::EncodedFileData& fileData) {
             if (fileData.fileModificationTimeMatchesExpectation()) {
-                GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(FileSystem::fileSystemRepresentation(fileData.filename).legacyCStringPointer()));
+                GRefPtr<GFile> file = gFileNewForPath(FileSystem::fileSystemRepresentation(fileData.filename));
                 priv->currentStream = adoptGRef(G_INPUT_STREAM(g_file_read(file.get(), cancellable, nullptr)));
                 if (G_IS_SEEKABLE(priv->currentStream.get()) && fileData.fileStart > 0)
                     g_seekable_seek(G_SEEKABLE(priv->currentStream.get()), fileData.fileStart, G_SEEK_SET, cancellable, nullptr);

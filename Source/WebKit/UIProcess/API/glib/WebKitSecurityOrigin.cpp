@@ -22,6 +22,7 @@
 
 #include "WebKitSecurityOriginPrivate.h"
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/CString.h>
 
 /**
@@ -271,5 +272,5 @@ gchar* webkit_security_origin_to_string(WebKitSecurityOrigin* origin)
     g_return_val_if_fail(origin, nullptr);
 
     auto cstring = origin->securityOriginData.toString().utf8();
-    return cstring == "null"_s || cstring == ""_s ? nullptr : g_strdup (cstring.legacyCStringPointer());
+    return cstring == "null"_s || cstring == ""_s ? nullptr : gStrdup(cstring);
 }

@@ -25,6 +25,7 @@
 #include <libsoup/soup.h>
 #include <string.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -215,8 +216,8 @@ public:
 
 static GRefPtr<WebKitDownload> downloadLocalFileSuccessfully(DownloadTest* test, const char* filename)
 {
-    GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), filename, nullptr));
-    GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
+    auto sourcePath = gBuildFilename(Test::getResourcesDir(), filename);
+    GRefPtr<GFile> source = gFileNewForPath(sourcePath);
     GRefPtr<GFileInfo> sourceInfo = adoptGRef(g_file_query_info(source.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
     GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
     GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(sourceURI.get()));
@@ -337,8 +338,8 @@ static void testDownloadOverwriteDestinationDisallowed(DownloadErrorTest* test, 
     createFileAtDestination(filename);
 
     test->m_expectedError = DownloadErrorTest::DestinationExists;
-    GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), filename, nullptr));
-    GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
+    auto sourcePath = gBuildFilename(Test::getResourcesDir(), filename);
+    GRefPtr<GFile> source = gFileNewForPath(sourcePath);
     GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
     GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(sourceURI.get()));
     g_assert_null(webkit_download_get_web_view(download.get()));
@@ -369,8 +370,8 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
 
     test->m_expectedError = DownloadErrorTest::InvalidDestination;
-    GUniquePtr<char> path(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), "test.pdf", nullptr));
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
+    auto path = gBuildFilename(Test::getResourcesDir(), "test.pdf");
+    GRefPtr<GFile> file = gFileNewForPath(path);
     GUniquePtr<char> uri(g_file_get_uri(file.get()));
     download = test->downloadURIAndWaitUntilFinished(UTF8CStringView::unsafeFromUTF8(uri.get()));
     g_assert_null(webkit_download_get_web_view(download.get()));
@@ -455,10 +456,10 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     else if (g_str_equal(path, "/text"))
         path = "/text";
 
-    GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().legacyCStringPointer(), path, nullptr));
+    auto filePath = gBuildFilename(Test::getResourcesDir(), path);
     char* contents;
     gsize contentsLength;
-    if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, 0)) {
+    if (!g_file_get_contents(filePath.utf8(), &contents, &contentsLength, 0)) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
         soup_message_body_complete(responseBody);
         return;
@@ -583,8 +584,8 @@ public:
 
     virtual void finishDecideDestination()
     {
-        GUniquePtr<char> destination(g_build_filename(Test::dataDirectory(), m_suggestedFilename.legacyCStringPointer(), nullptr));
-        webkit_download_set_destination(m_download.get(), destination.get());
+        auto destination = gBuildFilename(Test::dataDirectory(), m_suggestedFilename);
+        webkit_download_set_destination(m_download.get(), destination.utf8());
     }
 
     static gboolean downloadDecideDestinationCallback(WebKitDownload* download, const gchar* suggestedFilename, WebViewDownloadTest* test)
