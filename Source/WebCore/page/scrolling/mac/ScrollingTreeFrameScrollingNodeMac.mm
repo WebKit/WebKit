@@ -188,18 +188,18 @@ void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    auto* layer = static_cast<CALayer*>(scrolledContentsLayer());
+    RetainPtr layer = static_cast<CALayer*>(scrolledContentsLayer());
     if (ScrollingThread::isCurrentThread()) {
         // If we're committing on the scrolling thread, it means that ThreadedScrollingTree is in "desynchronized" mode.
         // The main thread may already have set the same layer position, but here we need to trigger a scrolling thread commit to
         // ensure that the scroll happens even when the main thread commit is taking a long time. So make sure the layer property changes
         // when there has been a scroll position change.
         if (!scrollingTree()->isScrollingSynchronizedWithMainThread())
-            layer.position = CGPointZero;
+            [layer setPosition:CGPointZero];
     }
 
     // We use scroll position here because the root content layer is offset to account for scrollOrigin (see LocalFrameView::positionForRootContentLayer).
-    layer.position = -currentScrollPosition();
+    [layer setPosition:-currentScrollPosition()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -285,7 +285,7 @@ unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
     PlatformLayerList tiles;
 
     while (!layerQueue.isEmpty() && tiles.isEmpty()) {
-        CALayer* layer = layerQueue.takeFirst();
+        RetainPtr layer = layerQueue.takeFirst();
         auto sublayers = adoptNS([[layer sublayers] copy]);
 
         // If this layer is the parent of a tile, it is the parent of all of the tiles and nothing else.

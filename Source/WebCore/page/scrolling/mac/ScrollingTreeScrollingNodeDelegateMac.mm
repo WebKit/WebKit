@@ -67,8 +67,8 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
     Ref verticalScroller = m_scrollerPair->verticalScroller();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::PainterForScrollbar)) {
-        auto horizontalScrollbar = scrollingStateNode.horizontalScrollerImp();
-        auto verticalScrollbar = scrollingStateNode.verticalScrollerImp();
+        RetainPtr horizontalScrollbar = scrollingStateNode.horizontalScrollerImp();
+        RetainPtr verticalScrollbar = scrollingStateNode.verticalScrollerImp();
         if (horizontalScrollbar || verticalScrollbar) {
             m_scrollerPair->releaseReferencesToScrollerImpsOnTheMainThread();
             horizontalScroller->setScrollerImp(horizontalScrollbar);
@@ -80,10 +80,10 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
         m_scrollerPair->mouseIsInScrollbar(scrollingStateNode.scrollbarHoverState());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer))
-        horizontalScroller->setHostLayer(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer()));
+        horizontalScroller->setHostLayer(protect(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer())));
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
-        verticalScroller->setHostLayer(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer()));
+        verticalScroller->setHostLayer(protect(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer())));
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
         horizontalScroller->setHiddenByStyle(scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility);

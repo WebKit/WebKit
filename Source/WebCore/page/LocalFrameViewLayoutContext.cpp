@@ -255,7 +255,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
             return;
 
         layoutRoot = subtreeLayoutRoot() ? subtreeLayoutRoot() : renderView();
-        m_needsFullRepaint = is<RenderView>(layoutRoot) && (m_firstLayout || renderView()->printing());
+        m_needsFullRepaint = is<RenderView>(layoutRoot) && (m_firstLayout || protect(renderView())->printing());
 
         LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " layout " << m_layoutUpdateCount << " - subtree root " << subtreeLayoutRoot() << ", needsFullRepaint " << m_needsFullRepaint);
 
@@ -279,7 +279,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
             auto state = renderView ? renderView->textAutosizingState() : RenderView::TextAutosizingState::Normal;
             switch (state) {
             case RenderView::TextAutosizingState::Normal:
-                applyTextSizingIfNeeded(*layoutRoot.get());
+                applyTextSizingIfNeeded(protect(*layoutRoot));
                 break;
             case RenderView::TextAutosizingState::ResetScheduled: {
                 renderView->resetTextAutosizing();
@@ -314,7 +314,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-        if (is<RenderView>(layoutRoot) && !renderView()->printing()) {
+        if (is<RenderView>(layoutRoot) && !protect(renderView())->printing()) {
             // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
             SetForScope needsFullRepaint(m_needsFullRepaint);
             protect(view())->adjustViewSize();
@@ -327,7 +327,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPostLayout);
         if (m_needsFullRepaint)
-            renderView()->repaintRootContents();
+            protect(renderView())->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
         protect(view())->didLayout(layoutRoot, canDeferUpdateLayerPositions);
         runOrScheduleAsynchronousTasks(canDeferUpdateLayerPositions);
@@ -413,11 +413,11 @@ void LocalFrameViewLayoutContext::flushUpdateLayerPositions()
     if (!view)
         return;
 
-    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), document()->printing(), protect(this->view())->useFixedLayout() };
+    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), protect(document())->printing(), protect(this->view())->useFixedLayout() };
     bool environmentChanged = repaintRectEnvironment != m_lastRepaintRectEnvironment;
 
     auto updateLayerPositions = *std::exchange(m_pendingUpdateLayerPositions, std::nullopt);
-    view->layer()->updateLayerPositionsAfterLayout(updateLayerPositions.needsFullRepaint, environmentChanged);
+    protect(view->layer())->updateLayerPositionsAfterLayout(updateLayerPositions.needsFullRepaint, environmentChanged);
 
     m_renderLayerPositionUpdateCount++;
     m_lastRepaintRectEnvironment = WTF::move(repaintRectEnvironment);
@@ -433,14 +433,14 @@ bool LocalFrameViewLayoutContext::updateCompositingLayersAfterStyleChange()
     if (needsLayout() || isInLayout())
         return false;
 
-    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), document()->printing(), protect(this->view())->useFixedLayout() };
+    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), protect(document())->printing(), protect(this->view())->useFixedLayout() };
     bool environmentChanged = repaintRectEnvironment != m_lastRepaintRectEnvironment;
 
-    view->layer()->updateLayerPositionsAfterStyleChange(environmentChanged);
+    protect(view->layer())->updateLayerPositionsAfterStyleChange(environmentChanged);
 
     m_lastRepaintRectEnvironment = WTF::move(repaintRectEnvironment);
 
-    return view->compositor().didRecalcStyleWithNoPendingLayout();
+    return protect(view->compositor())->didRecalcStyleWithNoPendingLayout();
 }
 
 void LocalFrameViewLayoutContext::markForUpdateLayerPositionsAfterSVGTransformChange()
@@ -473,7 +473,7 @@ void LocalFrameViewLayoutContext::addPendingSVGTransformAttributeUpdate(RenderLa
     // force a layout pass every animation frame. The flush runs the position update inline,
     // keeping needsLayout() false.
     if (wasEmpty)
-        view->page().scheduleRenderingUpdate({ RenderingUpdateStep::LayerFlush });
+        protect(view->page())->scheduleRenderingUpdate({ RenderingUpdateStep::LayerFlush });
 }
 
 void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeeded()
@@ -608,8 +608,10 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
             addResult.iterator->value.second.unite(rect);
     }
     // Map each parent-space union to its repaint container, once per parent.
-    for (auto& [parent, containerAndRect] : unionByParent)
-        addToContainer(containerAndRect.first, parent->computeRectForRepaint(containerAndRect.second, containerAndRect.first));
+    for (auto& [parent, containerAndRect] : unionByParent) {
+        CheckedPtr container = containerAndRect.first;
+        addToContainer(container, protect(parent)->computeRectForRepaint(containerAndRect.second, container));
+    }
 
     // Slow path: exact per-renderer mapping for the cases the fast path skipped.
     for (auto& record : slowRecords) {
@@ -623,7 +625,7 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
     }
 
     for (auto& [container, unionRect] : unionByContainer)
-        container->repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject> { container }, unionRect);
+        protect(container)->repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject> { container }, unionRect);
 
     if (!anyWorkDone)
         return;
@@ -643,7 +645,7 @@ void LocalFrameViewLayoutContext::updateCompositingLayersAfterLayout()
     if (!renderView)
         return;
 
-    renderView->compositor().updateCompositingLayers(CompositingUpdateType::AfterLayout);
+    protect(renderView->compositor())->updateCompositingLayers(CompositingUpdateType::AfterLayout);
     m_updateCompositingLayersIsPending = false;
 }
 
@@ -684,7 +686,7 @@ bool LocalFrameViewLayoutContext::needsLayoutInternal() const
     // This can return true in cases where the document does not have a body yet.
     // Document::shouldScheduleLayout takes care of preventing us from scheduling
     // layout in that case.
-    auto* renderView = this->renderView();
+    CheckedPtr renderView = this->renderView();
     return isLayoutPending()
         || (renderView && renderView->needsLayout())
         || subtreeLayoutRoot()
@@ -743,7 +745,7 @@ void LocalFrameViewLayoutContext::scheduleLayout()
 #endif
 
     ASSERT(renderView());
-    InspectorInstrumentation::didScheduleLayout(*renderView());
+    InspectorInstrumentation::didScheduleLayout(protect(*renderView()));
 
     m_layoutTimer.startOneShot(0_s);
 }
@@ -835,7 +837,7 @@ RenderElement* LocalFrameViewLayoutContext::subtreeLayoutRoot() const
 void LocalFrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
 {
     ASSERT(subtreeLayoutRoot());
-    subtreeLayoutRoot()->markContainingBlocksForLayout(renderView());
+    protect(subtreeLayoutRoot())->markContainingBlocksForLayout(protect(renderView()));
     clearSubtreeLayoutRoot();
 }
 
@@ -865,7 +867,7 @@ void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutR
         return;
     Ref settings = layoutRoot.settings();
     bool idempotentMode = settings->textAutosizingUsesIdempotentMode();
-    if (!settings->textAutosizingEnabled() || idempotentMode || renderView()->printing())
+    if (!settings->textAutosizingEnabled() || idempotentMode || protect(renderView())->printing())
         return;
     auto minimumZoomFontSize = settings->minimumZoomFontSize();
     if (!idempotentMode && !minimumZoomFontSize)
@@ -1135,11 +1137,11 @@ void LocalFrameViewLayoutContext::unregisterAnchorScrollAdjusterFor(const Render
         return item.anchored() == &anchored;
     }));
 
-    if (anchored.layer()) {
+    if (CheckedPtr layer = anchored.layer()) {
         if (clearAnchorScrollAdjustment)
-            anchored.layer()->clearAnchorScrollAdjustment();
+            layer->clearAnchorScrollAdjustment();
         else
-            anchored.layer()->setAnchorScrollAdjustment(LayoutSize { });
+            layer->setAnchorScrollAdjustment(LayoutSize { });
     }
 }
 

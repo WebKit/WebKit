@@ -101,8 +101,9 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
         if (CheckedPtr renderView = document->renderView()) {
             LayoutIntegration::LineLayout::releaseCaches(*renderView);
             Layout::TextBreakingPositionCache::singleton().clear();
-            renderView->layoutContext().deleteDetachedRenderersNow();
-            renderView->layoutContext().deleteDetachedInlineContentNow();
+            CheckedRef layoutContext = renderView->layoutContext();
+            layoutContext->deleteDetachedRenderersNow();
+            layoutContext->deleteDetachedInlineContentNow();
         }
     }
 

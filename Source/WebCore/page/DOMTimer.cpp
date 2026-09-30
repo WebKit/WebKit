@@ -219,9 +219,9 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
         nestedTimers->add(timer->m_timeoutId, timer.get());
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (RefPtr document = dynamicDowncast<Document>(context)) {
-        document->contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, type == Type::SingleShot);
+        protect(document->contentChangeObserver())->didInstallDOMTimer(timer.get(), timeout, type == Type::SingleShot);
         if (DeferDOMTimersForScope::isDeferring())
-            document->domTimerHoldingTank().add(timer.get());
+            protect(document->domTimerHoldingTank())->add(timer.get());
     }
 #endif
     return timer->m_timeoutId;
@@ -238,7 +238,7 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (RefPtr document = dynamicDowncast<Document>(context)) {
         if (RefPtr timer = document->findTimeout(timeoutId)) {
-            document->contentChangeObserver().didRemoveDOMTimer(*timer);
+            protect(document->contentChangeObserver())->didRemoveDOMTimer(*timer);
             if (auto* holdingTank = document->domTimerHoldingTankIfExists())
                 holdingTank->remove(*timer);
         }

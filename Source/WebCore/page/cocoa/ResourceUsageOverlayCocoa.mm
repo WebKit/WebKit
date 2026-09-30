@@ -232,7 +232,7 @@ void ResourceUsageOverlay::platformInitialize()
     [m_layer setBackgroundColor:createColor(0, 0, 0, 0.8).get()];
     [m_layer setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
 
-    protect(overlay())->layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::None);
+    protect(protect(overlay())->layer())->setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::None);
 
     ResourceUsageThread::addObserver(this, All, [weakThis = WeakPtr { *this }] (const ResourceUsageData& data) {
         RefPtr protectedThis = weakThis;

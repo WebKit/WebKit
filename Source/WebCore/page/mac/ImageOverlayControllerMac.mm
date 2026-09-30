@@ -83,7 +83,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     if (dataDetectorResultElementsWithHighlights == dataDetectorResultElements)
         return;
 
-    RefPtr mainFrameView = m_page->mainFrame().virtualView();
+    RefPtr mainFrameView = protect(m_page->mainFrame())->virtualView();
     if (!mainFrameView)
         return;
 
@@ -104,7 +104,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
 bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& event)
 {
-    RefPtr mainFrameView = m_page->mainFrame().virtualView();
+    RefPtr mainFrameView = protect(m_page->mainFrame())->virtualView();
     if (!mainFrameView)
         return false;
 
@@ -118,7 +118,7 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
             continue;
 
         Boolean isOverButton = NO;
-        if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(highlight->highlight(), mousePositionInContents, &isOverButton))
+        if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(protect(highlight->highlight()), mousePositionInContents, &isOverButton))
             continue;
 
         mouseIsOverActiveDataDetectorHighlightButton = isOverButton;
@@ -131,9 +131,9 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
         if (previousActiveHighlight)
             previousActiveHighlight->fadeOut();
 
-        if (m_activeDataDetectorHighlight) {
-            m_overlay->layer().addChild(m_activeDataDetectorHighlight->layer());
-            m_activeDataDetectorHighlight->fadeIn();
+        if (RefPtr activeDataDetectorHighlight = m_activeDataDetectorHighlight) {
+            protect(protect(m_overlay)->layer())->addChild(activeDataDetectorHighlight->layer());
+            activeDataDetectorHighlight->fadeIn();
         }
     }
 

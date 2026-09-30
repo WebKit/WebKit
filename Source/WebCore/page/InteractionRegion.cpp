@@ -317,7 +317,7 @@ static bool isGuardContainer(const Element& element)
         return false;
 
     CheckedRef renderer = *element.renderer();
-    return hasTransparentContainerStyle(renderer->style());
+    return hasTransparentContainerStyle(protect(renderer->style()));
 }
 
 static FloatSize boundingSize(const RenderObject& renderer, const std::optional<AffineTransform>& transform)
@@ -621,7 +621,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
 
         clipPath = path;
     } else if ((regionRendererBox = dynamicDowncast<RenderBox>(regionRenderer))) {
-        auto borderShape = BorderShape::shapeForBorderRect(regionRendererBox->style(), regionRendererBox->borderBoxRect());
+        auto borderShape = BorderShape::shapeForBorderRect(protect(regionRendererBox->style()), regionRendererBox->borderBoxRect());
         auto borderRadii = borderShape.radii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();
@@ -690,7 +690,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
                 if (!clipOffset.isZero())
                     adjustedPath.translate(clipOffset);
 
-                RetainPtr intersectingPath = adoptCF(CGPathCreateCopyByIntersectingPath(adjustedPath.platformPath(), clipPath->platformPath(), false));
+                RetainPtr intersectingPath = adoptCF(CGPathCreateCopyByIntersectingPath(protect(adjustedPath.platformPath()), protect(clipPath->platformPath()), false));
                 clipPath = { PathCG::create(adoptCF(CGPathCreateMutableCopy(intersectingPath.get()))) };
 
                 // No need for continuous corners if we're already going to clip.

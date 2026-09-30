@@ -130,36 +130,7 @@ layout/layouttree/LayoutTreeBuilder.cpp
 mathml/MathMLElement.cpp
 mathml/MathMLMathElement.cpp
 mathml/MathMLPresentationElement.cpp
-page/AutoscrollController.cpp
-[ iOS ] page/DOMTimer.cpp
-page/ElementTargetingController.cpp
-page/EventHandler.cpp
-page/FocusController.cpp
-page/FrameSnapshotting.cpp
-page/IntelligenceTextEffectsSupport.cpp
-page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
-page/LocalDOMWindow.cpp
-page/LocalFrame.cpp
-page/LocalFrameView.cpp
-page/LocalFrameViewLayoutContext.cpp
-page/MemoryRelease.cpp
-[ iOS ] page/Page.cpp
-page/PageSerializer.cpp
-page/Performance.cpp
-page/PerformanceMonitor.cpp
-page/ResizeObserver.cpp
-page/SettingsBase.cpp
-page/SpatialNavigation.cpp
-[ iOS ] page/cocoa/ContentChangeObserver.cpp
-[ iOS ] page/ios/FrameIOS.mm
-page/scrolling/AsyncScrollingCoordinator.cpp
-page/scrolling/ScrollAnchoringController.cpp
-[ Mac ] page/scrolling/ScrollLatchingController.cpp
-page/scrolling/ScrollingCoordinator.cpp
-page/scrolling/ScrollingStateNode.cpp
-page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp
-page/scrolling/ScrollingStateStickyNode.cpp
 platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileController.cpp

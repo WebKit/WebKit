@@ -1,6 +1,5 @@
 animation/KeyframeEffect.cpp
 css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
-page/IntelligenceTextEffectsSupport.cpp
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp

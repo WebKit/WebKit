@@ -119,7 +119,7 @@ FloatPoint ScrollingStateStickyNode::computeAnchorLayerPosition(const LayoutRect
 
     for (auto ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (auto* overflowProxyNode = dynamicDowncast<ScrollingStateOverflowScrollProxyNode>(*ancestor)) {
-            auto overflowNode = scrollingStateTree().stateNodeForID(overflowProxyNode->overflowScrollingNode());
+            auto overflowNode = protect(scrollingStateTree())->stateNodeForID(overflowProxyNode->overflowScrollingNode());
             if (!overflowNode)
                 break;
 

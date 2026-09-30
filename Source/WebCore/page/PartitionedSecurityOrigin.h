@@ -51,7 +51,7 @@ struct PartitionedSecurityOrigin {
     bool isHashTableDeletedValue() const { return topOrigin.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return topOrigin.isHashTableEmptyValue(); }
 
-    PartitionedSecurityOrigin isolatedCopy() const { return { topOrigin->isolatedCopy(), clientOrigin->isolatedCopy() }; }
+    PartitionedSecurityOrigin isolatedCopy() const { return { protect(topOrigin)->isolatedCopy(), protect(clientOrigin)->isolatedCopy() }; }
 
     Ref<SecurityOrigin> topOrigin;
     Ref<SecurityOrigin> clientOrigin;
@@ -59,7 +59,7 @@ struct PartitionedSecurityOrigin {
 
 inline bool operator==(const PartitionedSecurityOrigin& a, const PartitionedSecurityOrigin& b)
 {
-    return a.topOrigin->isSameOriginAs(b.topOrigin) && a.clientOrigin->isSameOriginAs(b.clientOrigin);
+    return protect(a.topOrigin)->isSameOriginAs(b.topOrigin) && protect(a.clientOrigin)->isSameOriginAs(b.clientOrigin);
 }
 
 } // namespace WebCore

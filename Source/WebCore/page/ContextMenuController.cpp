@@ -1408,7 +1408,7 @@ void ContextMenuController::populate()
             appendItem(writingToolsItem, m_contextMenu.get());
 #if ENABLE(TOP_LEVEL_WRITING_TOOLS_CONTEXT_MENU_ITEMS)
             bool editorHasText = [&] {
-                if (auto range = frame->editor().contextRangeForCandidateRequest())
+                if (auto range = protect(frame->editor())->contextRangeForCandidateRequest())
                     return !plainText(*range).isEmpty();
 
                 return false;

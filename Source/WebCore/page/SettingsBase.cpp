@@ -330,9 +330,8 @@ void SettingsBase::setNeedsRelayoutAllFrames()
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (!localFrame->ownerRenderer())
-            continue;
-        localFrame->ownerRenderer()->setNeedsLayoutAndInvalidateContentLogicalWidths();
+        if (CheckedPtr ownerRenderer = localFrame->ownerRenderer())
+            ownerRenderer->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
 }
 

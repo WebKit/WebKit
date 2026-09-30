@@ -104,7 +104,7 @@ void DragController::cleanupAfterSystemDrag()
     // We don't want to do this for WebKit2, since the client call to start the drag
     // is asynchronous.
 
-    if (m_page->mainFrame().virtualView()->platformWidget())
+    if (protect(protect(m_page->mainFrame())->virtualView())->platformWidget())
         dragEnded();
 #endif
 }
@@ -156,7 +156,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
 
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    client().declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, protect(element.document())->frame());
+    client().declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, protect(protect(element.document())->frame()));
 }
 
 } // namespace WebCore

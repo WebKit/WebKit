@@ -50,9 +50,9 @@ namespace WebCore {
 void Page::platformInitialize()
 {
 #if PLATFORM(IOS_FAMILY)
-    addSchedulePair(SchedulePair::create(WebThreadNSRunLoop(), kCFRunLoopCommonModes));
+    addSchedulePair(SchedulePair::create(protect(WebThreadNSRunLoop()), kCFRunLoopCommonModes));
 #else
-    addSchedulePair(SchedulePair::create([[NSRunLoop currentRunLoop] getCFRunLoop], kCFRunLoopCommonModes));
+    addSchedulePair(SchedulePair::create(protect([[NSRunLoop currentRunLoop] getCFRunLoop]), kCFRunLoopCommonModes));
 #endif
 
     static std::once_flag onceFlag;

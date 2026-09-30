@@ -49,12 +49,12 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
     Vector<FloatRect> textRectsInRootViewCoordinates;
 
     CheckedRef markers = document.markers();
-    markers->forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    markers->forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&textRectsInRootViewCoordinates, document = Ref { document }](auto& node, auto& marker) {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto markerRange = makeSimpleRange(node, marker);
 
-        auto rect = document.view()->contentsToRootView(unionRect(RenderObject::absoluteTextRects(markerRange, { })));
+        auto rect = document->view()->contentsToRootView(unionRect(RenderObject::absoluteTextRects(markerRange, { })));
         textRectsInRootViewCoordinates.append(WTF::move(rect));
 
         return false;
@@ -66,14 +66,15 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
 
 void updateTextVisibility(Document& document, const SimpleRange& scope, const CharacterRange& range, bool visible, const WTF::UUID& identifier)
 {
+    CheckedRef markers = document.markers();
     if (visible) {
-        document.markers().removeMarkers({ WebCore::DocumentMarkerType::TransparentContent }, [identifier](auto& marker) {
+        markers->removeMarkers({ WebCore::DocumentMarkerType::TransparentContent }, [identifier](auto& marker) {
             auto& data = std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data());
             return data.uuid == identifier ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
         });
     } else {
         auto resolvedRange = resolveCharacterRange(scope, range);
-        document.markers().addTransparentContentMarker(resolvedRange, identifier);
+        markers->addTransparentContentMarker(resolvedRange, identifier);
     }
 }
 

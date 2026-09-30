@@ -177,7 +177,7 @@ RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&
     protect(frame.view())->setBaseBackgroundColor(Color::transparentBlack);
 
     LayoutRect elementRect;
-    auto paintingRect = snappedIntRect(node.renderer()->subtreePaintRootRect(elementRect, RenderObject::RespectTransforms::Yes));
+    auto paintingRect = snappedIntRect(protect(node.renderer())->subtreePaintRootRect(elementRect, RenderObject::RespectTransforms::Yes));
     if (outPaintingRect)
         *outPaintingRect = paintingRect;
     if (outElementRect)

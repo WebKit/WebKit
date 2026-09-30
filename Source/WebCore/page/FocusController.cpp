@@ -158,7 +158,7 @@ static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newF
         }
     }
 
-    oldFocusedFrame->selection().clear();
+    protect(oldFocusedFrame->selection())->clear();
 }
 
 class FocusNavigationScope {
@@ -490,7 +490,7 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     // Now that the frame is updated, fire events and update the selection focused states of both frames.
     if (RefPtr oldFrameView = oldFrame ? oldFrame->view() : nullptr) {
         oldFrameView->stopKeyboardScrollAnimation();
-        oldFrame->selection().setFocused(false);
+        protect(oldFrame->selection())->setFocused(false);
         protect(oldFrame->document())->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
         for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(*oldFrame))
             protect(localFrame->document())->updateServiceWorkerClientData();
@@ -502,7 +502,7 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
 #endif
 
     if (newFrame && newFrame->view() && isFocused()) {
-        newFrame->selection().setFocused(true);
+        protect(newFrame->selection())->setFocused(true);
         protect(newFrame->document())->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
         for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(*newFrame))
             protect(localFrame->document())->updateServiceWorkerClientData();
@@ -603,7 +603,7 @@ FocusableElementSearchResult FocusController::findFocusableElementContinuingFrom
 
     if (shouldFocusElement == ShouldFocusElement::Yes) {
         RefPtr element = findResult.element;
-        setFocusedFrame(element->document().frame());
+        setFocusedFrame(protect(protect(element->document())->frame()));
         element->focus({ { }, { }, SelectionRestorationMode::SelectAll, direction, { }, { }, FocusVisibility::Visible });
     }
 
@@ -634,8 +634,8 @@ FocusableElementSearchResult FocusController::findFocusableElementDescendingInto
                 // The remote frame has no focusable elements. Focus the frame itself,
                 // matching the behavior of local empty iframes (see findFocusableElementInDocumentOrderStartingWithFrame).
                 if (shouldFocusElement == ShouldFocusElement::Yes) {
-                    ownerElement->document().setFocusedElement(nullptr);
-                    page->focusController().setFocusedFrame(ownerElement->contentFrame());
+                    protect(ownerElement->document())->setFocusedElement(nullptr);
+                    page->focusController().setFocusedFrame(protect(ownerElement->contentFrame()));
                 }
             });
 
@@ -805,9 +805,10 @@ FocusableElementSearchResult FocusController::findFocusableElementInDocumentOrde
 
     if (caretBrowsing) {
         VisibleSelection newSelection(firstPositionInOrBeforeNode(element.get()), Affinity::Downstream);
-        if (frame->selection().shouldChangeSelection(newSelection)) {
+        CheckedRef selection = frame->selection();
+        if (selection->shouldChangeSelection(newSelection)) {
             AXTextStateChangeIntent intent(AXTextStateChangeType::SelectionMove, AXTextSelection { AXTextSelectionDirection::Discontiguous, AXTextSelectionGranularity::Unknown, true });
-            frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
+            selection->setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
         }
     }
 
@@ -1268,7 +1269,7 @@ void FocusController::setActiveInternal()
     }
 
     if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
-        focusedOrMainFrame->selection().pageActivationChanged();
+        protect(focusedOrMainFrame->selection())->pageActivationChanged();
 }
 
 static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
@@ -1527,8 +1528,8 @@ void FocusController::focusRepaintTimerFired()
     if (!focusedElement)
         return;
 
-    if (focusedElement->renderer())
-        focusedElement->renderer()->repaint();
+    if (CheckedPtr renderer = focusedElement->renderer())
+        renderer->repaint();
 }
 
 Seconds FocusController::timeSinceFocusWasSet() const

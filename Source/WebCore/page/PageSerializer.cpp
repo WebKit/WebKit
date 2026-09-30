@@ -217,7 +217,7 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(*element)) {
             auto url = document->encodingParseURL(imageElement->attributeWithoutSynchronization(HTMLNames::srcAttr));
             RefPtr cachedImage = imageElement->cachedImage();
-            addImageToResources(cachedImage, imageElement->renderer(), url);
+            addImageToResources(cachedImage, protect(imageElement->renderer()), url);
         } else if (RefPtr linkElement = dynamicDowncast<HTMLLinkElement>(*element)) {
             if (RefPtr sheet = linkElement->sheet()) {
                 auto url = document->encodingParseURL(linkElement->attributeWithoutSynchronization(HTMLNames::hrefAttr));

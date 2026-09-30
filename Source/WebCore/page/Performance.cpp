@@ -408,8 +408,8 @@ void Performance::enqueueLargestContentfulPaint(Ref<LargestContentfulPaint>&& pa
 
 void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& document, CachedResource& resource, const DocumentLoadTiming& timing, const NetworkLoadMetrics& metrics)
 {
-    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.eventTiming(), document.securityOrigin(), documentLoader.triggeringAction().type());
-    addToEntryBuffer(*m_navigationTiming);
+    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.eventTiming(), protect(document.securityOrigin()), documentLoader.triggeringAction().type());
+    addToEntryBuffer(protect(*m_navigationTiming));
 }
 
 void Performance::documentLoadFinished(const NetworkLoadMetrics& metrics)
@@ -634,7 +634,7 @@ void Performance::scheduleTaskIfNeeded()
         return;
 
     m_hasScheduledDeliveryTask = true;
-    context->eventLoop().queueTask(TaskSource::PerformanceTimeline, [protectedThis = Ref { *this }, this] {
+    protect(context->eventLoop())->queueTask(TaskSource::PerformanceTimeline, [protectedThis = Ref { *this }, this] {
         RefPtr context = scriptExecutionContext();
         if (!context)
             return;

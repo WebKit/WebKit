@@ -19,7 +19,6 @@ layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h
 page/Page.h
 [ iOS ] page/cocoa/ContentChangeObserver.h
-[ Mac ] page/scrolling/ScrollingStateScrollingNode.cpp
 platform/PODRedBlackTree.h
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/graphics/ca/PlatformCALayer.h

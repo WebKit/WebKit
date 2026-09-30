@@ -12,11 +12,6 @@ layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
-page/ElementTargetingController.cpp
-page/EventHandler.cpp
-page/LocalFrameView.cpp
-[ iOS ] page/cocoa/ContentChangeObserver.cpp
-[ iOS ] page/ios/FrameIOS.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
 rendering/AutoTableLayout.cpp

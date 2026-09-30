@@ -129,8 +129,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #endif
 #if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     , m_scrollbarEnabledState(stateNode.scrollbarEnabledState())
-    , m_verticalScrollerImp(stateNode.verticalScrollerImp())
-    , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
+    , m_verticalScrollerImp(stateNode.m_verticalScrollerImp)
+    , m_horizontalScrollerImp(stateNode.m_horizontalScrollerImp)
 #endif
     , m_scrollbarColor(stateNode.scrollbarColor())
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())

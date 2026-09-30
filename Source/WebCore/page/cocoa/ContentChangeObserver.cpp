@@ -102,27 +102,27 @@ bool ContentChangeObserver::isContentChangeObserverEnabled()
 
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
 {
-    if (!node.renderStyle())
+    CheckedPtr style = node.renderStyle();
+    if (!style)
         return true;
 
-    auto& style = *node.renderStyle();
-    if (style.display() == Style::DisplayType::None)
+    if (style->display() == Style::DisplayType::None)
         return true;
 
-    if (style.usedVisibility() == Visibility::Hidden)
+    if (style->usedVisibility() == Visibility::Hidden)
         return true;
 
-    if (style.opacity().isTransparent())
+    if (style->opacity().isTransparent())
         return true;
 
-    auto fixedWidth = style.logicalWidth().tryFixed();
-    auto fixedHeight = style.logicalHeight().tryFixed();
+    auto fixedWidth = style->logicalWidth().tryFixed();
+    auto fixedHeight = style->logicalHeight().tryFixed();
     if ((fixedWidth && fixedWidth->isZero()) || (fixedHeight && fixedHeight->isZero()))
         return true;
 
-    auto fixedTop = style.logicalTop().tryFixed();
-    auto fixedLeft = style.logicalLeft().tryFixed();
-    auto usedZoom = style.usedZoomForLength();
+    auto fixedTop = style->logicalTop().tryFixed();
+    auto fixedLeft = style->logicalLeft().tryFixed();
+    auto usedZoom = style->usedZoomForLength();
     // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
     if (fixedLeft && fixedWidth && -fixedLeft->resolveZoom(usedZoom) >= fixedWidth->resolveZoom(usedZoom))
         return true;
@@ -130,11 +130,11 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
         return true;
 
     // It's a common technique used to position content offscreen.
-    if (style.hasOutOfFlowPosition() && fixedLeft && fixedLeft->resolveZoom(usedZoom) <= -999)
+    if (style->hasOutOfFlowPosition() && fixedLeft && fixedLeft->resolveZoom(usedZoom) <= -999)
         return true;
 
     // FIXME: Check for other cases like zero height with overflow hidden.
-    if (auto fixedMaxHeight = style.maxHeight().tryFixed(); fixedMaxHeight && fixedMaxHeight->isZero())
+    if (auto fixedMaxHeight = style->maxHeight().tryFixed(); fixedMaxHeight && fixedMaxHeight->isZero())
         return true;
 
     // Special case opacity, because a descendant with non-zero opacity should still be considered hidden when one of its ancetors has opacity: 0;
@@ -159,11 +159,11 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
         return false;
 
     // 1px width or height content is not considered visible.
-    auto& style = *node.renderStyle();
-    auto usedZoom = style.usedZoomForLength();
-    if (auto fixedWidth = style.logicalWidth().tryFixed(); fixedWidth && fixedWidth->resolveZoom(usedZoom) <= 1)
+    CheckedRef style = *node.renderStyle();
+    auto usedZoom = style->usedZoomForLength();
+    if (auto fixedWidth = style->logicalWidth().tryFixed(); fixedWidth && fixedWidth->resolveZoom(usedZoom) <= 1)
         return false;
-    if (auto fixedHeight = style.logicalHeight().tryFixed(); fixedHeight && fixedHeight->resolveZoom(usedZoom) <= 1)
+    if (auto fixedHeight = style->logicalHeight().tryFixed(); fixedHeight && fixedHeight->resolveZoom(usedZoom) <= 1)
         return false;
     return true;
 }
@@ -180,20 +180,21 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
 
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element)) {
             // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
-            auto* imageRenderer = imageElement->renderer();
-            return imageRenderer && imageElement->willRespondToMouseClickEventsWithEditability(imageElement->computeEditabilityForMouseClickEvents(&imageRenderer->style()), HTMLImageElement::IgnoreTouchCallout::Yes);
+            CheckedPtr imageRenderer = imageElement->renderer();
+            return imageRenderer && imageElement->willRespondToMouseClickEventsWithEditability(imageElement->computeEditabilityForMouseClickEvents(protect(&imageRenderer->style())), HTMLImageElement::IgnoreTouchCallout::Yes);
         }
-        bool hasRenderer = element.renderer();
-        auto willRespondToMouseClickEvents = hasRenderer && element.willRespondToMouseClickEvents(&element.renderer()->style());
+        CheckedPtr renderer = element.renderer();
+        bool hasRenderer = !!renderer;
+        auto willRespondToMouseClickEvents = hasRenderer && element.willRespondToMouseClickEvents(protect(&renderer->style()));
         if (willRespondToMouseClickEvents || !hasRenderer || hadRenderer == ElementHadRenderer::No)
             return willRespondToMouseClickEvents;
 
         // In case when the content already had renderers it's not sufficient to check the candidate element only since it might just be the container for the clickable content.
-        for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
-            if (!descendant.element())
+        for (CheckedRef descendant : descendantsOfType<RenderElement>(*renderer)) {
+            if (!descendant->element())
                 continue;
-            Ref element = *descendant.element();
-            if (element->renderer() && element->willRespondToMouseClickEvents(&element->renderer()->style()))
+            Ref element = *descendant->element();
+            if (CheckedPtr elementRenderer = element->renderer(); elementRenderer && element->willRespondToMouseClickEvents(protect(&elementRenderer->style())))
                 return true;
         }
         return false;
@@ -214,7 +215,7 @@ static void willNotProceedWithClick(LocalFrame& mainFrame)
         if (!localFrame)
             continue;
         if (RefPtr document = localFrame->document())
-            document->contentChangeObserver().willNotProceedWithClick();
+            protect(document->contentChangeObserver())->willNotProceedWithClick();
     }
 }
 

@@ -667,7 +667,7 @@ void LocalDOMWindow::resumeFromBackForwardCache()
 CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
 {
     if (!m_customElementRegistry) {
-        m_customElementRegistry = CustomElementRegistry::create(*scriptExecutionContext(), *this);
+        m_customElementRegistry = CustomElementRegistry::create(protect(*scriptExecutionContext()), *this);
         for (Ref shadowRoot : document()->inDocumentShadowRoots()) {
             if (shadowRoot->mode() == ShadowRootMode::UserAgent || shadowRoot->hasScopedCustomElementRegistry())
                 continue;
@@ -1333,7 +1333,7 @@ bool LocalDOMWindow::find(const String& string, bool caseSensitive, bool backwar
         options.add(FindOption::CaseInsensitive);
     if (wrap)
         options.add(FindOption::WrapAround);
-    return protect(frame())->editor().findString(string, options).has_value();
+    return protect(protect(frame())->editor())->findString(string, options).has_value();
 }
 
 bool LocalDOMWindow::offscreenBuffering() const
@@ -1745,7 +1745,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     if (!authorOnly)
         rulesToInclude |= Style::Resolver::UAAndUserCSSRules;
 
-    auto matchedRules = document->styleScope().resolver().pseudoStyleRulesForElement(element, pseudoElementIdentifier, rulesToInclude);
+    auto matchedRules = protect(protect(document->styleScope())->resolver())->pseudoStyleRulesForElement(element, pseudoElementIdentifier, rulesToInclude);
     if (matchedRules.isEmpty())
         return nullptr;
 
@@ -2232,11 +2232,12 @@ bool LocalDOMWindow::isAllowedToUseDeviceOrientation(String& message) const
 bool LocalDOMWindow::hasPermissionToReceiveDeviceMotionOrOrientationEvents(String& message) const
 {
     if (frame()->settings().deviceOrientationPermissionAPIEnabled()) {
-        if (!page()) {
+        RefPtr page = this->page();
+        if (!page) {
             message = "No browsing context"_s;
             return false;
         }
-        auto accessState = page()->deviceOrientationAndMotionAccessController().accessState(protect(*this->document()));
+        auto accessState = protect(page->deviceOrientationAndMotionAccessController())->accessState(protect(*this->document()));
         switch (accessState) {
         case DeviceOrientationOrMotionPermissionState::Denied:
             message = "Permission to use the API was denied"_s;
@@ -3169,7 +3170,7 @@ void LocalDOMWindow::subscribeToPushService(const Vector<uint8_t>& applicationSe
 {
     LOG(Push, "LocalDOMWindow::subscribeToPushService");
 
-    platformStrategies()->pushStrategy()->windowSubscribeToPushService(toScope(*this), applicationServerKey, [protectedThis = Ref { *this }, promise = WTF::move(promise)](auto&& result) mutable {
+    platformStrategies()->pushStrategy()->windowSubscribeToPushService(toScope(*this), applicationServerKey, [protectedThis = Ref { *this }, promise = WTF::move(promise)](ExceptionOr<PushSubscriptionData>&& result) mutable {
         LOG(Push, "LocalDOMWindow::subscribeToPushService completed");
         if (result.hasException()) {
             promise.reject(result.releaseException());
@@ -3194,7 +3195,7 @@ void LocalDOMWindow::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInter
 {
     LOG(Push, "LocalDOMWindow::getPushSubscription");
 
-    platformStrategies()->pushStrategy()->windowGetPushSubscription(toScope(*this), [protectedThis = Ref { *this }, promise = WTF::move(promise)](auto&& result) mutable {
+    platformStrategies()->pushStrategy()->windowGetPushSubscription(toScope(*this), [protectedThis = Ref { *this }, promise = WTF::move(promise)](ExceptionOr<std::optional<PushSubscriptionData>>&& result) mutable {
         LOG(Push, "LocalDOMWindow::getPushSubscription completed");
         if (result.hasException()) {
             promise.reject(result.releaseException());
@@ -3207,7 +3208,7 @@ void LocalDOMWindow::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInter
             return;
         }
 
-        promise.resolve(protect(PushSubscription::create(WTF::move(*optionalPushSubscriptionData), protectedThis.ptr()).ptr()));
+        promise.resolve(PushSubscription::create(WTF::move(*optionalPushSubscriptionData), protectedThis.ptr()).ptr());
     });
 }
 

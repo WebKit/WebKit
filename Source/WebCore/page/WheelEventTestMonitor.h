@@ -96,8 +96,8 @@ public:
         , m_identifier(identifier)
         , m_reason(reason)
     {
-        if (m_monitor)
-            m_monitor->deferForReason(m_identifier, m_reason);
+        if (RefPtr monitor = m_monitor)
+            monitor->deferForReason(m_identifier, m_reason);
     }
     
     WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitorCompletionDeferrer&& other)
@@ -109,8 +109,8 @@ public:
 
     ~WheelEventTestMonitorCompletionDeferrer()
     {
-        if (m_monitor)
-            m_monitor->removeDeferralForReason(m_identifier, m_reason);
+        if (RefPtr monitor = m_monitor)
+            monitor->removeDeferralForReason(m_identifier, m_reason);
     }
 
 private:

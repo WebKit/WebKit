@@ -241,7 +241,7 @@ static inline String computeIDSelector(const Element& element)
 {
     if (element.hasID()) {
         auto elementID = element.getIdAttribute();
-        if (auto* matches = element.treeScope().getAllElementsById(elementID); matches && matches->size() == 1)
+        if (auto* matches = protect(element.treeScope())->getAllElementsById(elementID); matches && matches->size() == 1)
             return makeString('#', elementID);
     }
     return emptyString();
@@ -590,7 +590,7 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element
 static FloatRect computeClientRect(const RenderElement& renderer)
 {
     auto rect = FloatRect { renderer.absoluteBoundingBoxRect() };
-    renderer.document().convertAbsoluteToClientRect(rect, renderer.style());
+    protect(renderer.document())->convertAbsoluteToClientRect(rect, protect(renderer.style()));
     return rect;
 }
 
@@ -1275,12 +1275,12 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
             if (targetAreaRatio < minimumAreaRatioForElementToCoverViewport && !hasOneRenderedChild(target))
                 return false;
 
-            auto& style = targetRenderer->style();
-            if (auto specifiedZIndexValue = style.specifiedZIndex().tryValue(); specifiedZIndexValue && *specifiedZIndexValue < 0)
+            CheckedRef style = targetRenderer->style();
+            if (auto specifiedZIndexValue = style->specifiedZIndex().tryValue(); specifiedZIndexValue && *specifiedZIndexValue < 0)
                 return true;
 
             return targetRenderer->isOutOfFlowPositioned()
-                && (!style.hasBackground() || style.opacity().isTransparent())
+                && (!style->hasBackground() || style->opacity().isTransparent())
                 && targetRenderer->usedPointerEvents() == PointerEvents::None;
         }();
 

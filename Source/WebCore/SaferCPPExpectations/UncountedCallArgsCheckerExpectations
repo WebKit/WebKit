@@ -91,35 +91,8 @@ html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
-[ macOS ] page/ContextMenuController.cpp
-[ iOS ] page/DOMTimer.cpp
-page/ElementTargetingController.cpp
-page/EventHandler.cpp
-page/FocusController.cpp
 page/IntersectionObserver.cpp
-page/LocalDOMWindow.cpp
-page/LocalFrame.cpp
-page/LocalFrameView.cpp
-page/LocalFrameViewLayoutContext.cpp
-page/PartitionedSecurityOrigin.h
-page/Performance.cpp
-page/PrintContext.cpp
-page/ResizeObserver.cpp
-page/WheelEventTestMonitor.h
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
-page/cocoa/ResourceUsageOverlayCocoa.mm
-page/cocoa/WebTextIndicatorLayer.mm
-[ iOS ] page/ios/EventHandlerIOS.mm
-[ iOS ] page/ios/FrameIOS.mm
-page/mac/DragControllerMac.mm
-[ Mac ] page/mac/EventHandlerMac.mm
-[ Mac ] page/mac/ImageOverlayControllerMac.mm
-page/scrolling/AsyncScrollingCoordinator.cpp
-[ Mac ] page/scrolling/AsyncScrollingCoordinator.h
-page/scrolling/ScrollAnchoringController.cpp
-[ Mac ] page/scrolling/ThreadedScrollingCoordinator.cpp
-[ Mac ] page/scrolling/mac/ScrollingCoordinatorMac.mm
-page/text-extraction/TextExtraction.cpp
 platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp

@@ -5,11 +5,6 @@
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 bindings/js/ScriptControllerMac.mm
 bridge/objc/objc_class.mm
-[ iOS ] page/ios/EventHandlerIOS.mm
-[ Mac ] page/mac/EventHandlerMac.mm
-[ Mac ] page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
-[ Mac ] page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
-[ Mac ] page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 [ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp

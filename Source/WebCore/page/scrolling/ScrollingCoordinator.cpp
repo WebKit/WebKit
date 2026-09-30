@@ -261,7 +261,7 @@ Page* ScrollingCoordinator::page() const
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(LocalFrameView& frameView)
 {
     if (CheckedPtr renderView = frameView.frame().contentRenderer())
-        return renderView->compositor().fixedRootBackgroundLayer();
+        return protect(renderView->compositor())->fixedRootBackgroundLayer();
     return nullptr;
 }
 

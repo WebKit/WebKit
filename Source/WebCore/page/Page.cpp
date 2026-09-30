@@ -1573,7 +1573,7 @@ void Page::setEditableRegionEnabled(bool enabled)
     if (!frameView)
         return;
     if (CheckedPtr renderView = frameView->renderView())
-        renderView->compositor().invalidateEventRegionForAllLayers();
+        protect(renderView->compositor())->invalidateEventRegionForAllLayers();
 }
 
 #endif

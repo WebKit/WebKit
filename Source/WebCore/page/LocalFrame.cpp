@@ -412,30 +412,32 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
     if (!page() || !m_doc || !m_doc->renderView())
         return;
 
+    Ref document = *m_doc;
+
     bool needsUpdateForTouchEventHandlers = false;
     bool needsUpdateForWheelEventHandlers = false;
     bool needsUpdateForTouchActionElements = false;
     bool needsUpdateForEditableElements = false;
     bool needsUpdateForInteractionRegions = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    needsUpdateForWheelEventHandlers = protect(m_doc)->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
+    needsUpdateForWheelEventHandlers = document->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
     UNUSED_PARAM(reason);
 #endif
 #if ENABLE(TOUCH_EVENT_REGIONS)
-    if (m_doc->shouldUseTouchEventRegions())
-        needsUpdateForTouchEventHandlers = m_doc->hasTouchEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
+    if (document->shouldUseTouchEventRegions())
+        needsUpdateForTouchEventHandlers = document->hasTouchEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
     UNUSED_PARAM(reason);
 #endif
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // Document::mayHaveElementsWithNonAutoTouchAction never changes from true to false currently.
-    needsUpdateForTouchActionElements = m_doc->mayHaveElementsWithNonAutoTouchAction();
+    needsUpdateForTouchActionElements = document->mayHaveElementsWithNonAutoTouchAction();
 #endif
 #if ENABLE(EDITABLE_REGION)
     // Document::mayHaveEditableElements never changes from true to false currently.
-    needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && protect(page())->shouldBuildEditableRegion();
+    needsUpdateForEditableElements = document->mayHaveEditableElements() && protect(page())->shouldBuildEditableRegion();
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     needsUpdateForInteractionRegions = page()->shouldBuildInteractionRegions();
@@ -444,7 +446,7 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
     if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions && !needsUpdateForTouchEventHandlers)
         return;
 
-    if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
+    if (!protect(protect(document->renderView())->compositor())->viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
         return;
 
     if (RefPtr ownerElement = this->ownerElement())
@@ -1191,7 +1193,7 @@ void LocalFrame::deviceOrPageScaleFactorChanged()
     }
 
     if (CheckedPtr root = contentRenderer())
-        root->compositor().deviceOrPageScaleFactorChanged();
+        protect(root->compositor())->deviceOrPageScaleFactorChanged();
 }
 
 void LocalFrame::dropChildren()
@@ -1365,7 +1367,7 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
     if (!m_doc)
         return;
 
-    for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
+    for (auto& jsWindowProxy : protect(windowProxy())->jsWindowProxiesAsVector()) {
         if (auto* jsDOMWindow = dynamicDowncast<JSDOMWindowBase>(jsWindowProxy->window()))
             jsDOMWindow->setAssociatedContextIsFullyActive(false);
     }
@@ -1558,7 +1560,7 @@ void LocalFrame::applyResourceMonitorErrorToIFrameElement(HTMLIFrameElement& ifr
 
 #if ENABLE(DARK_MODE_CSS)
     if (CheckedPtr style = iframeElement.existingComputedStyle())
-        colorScheme = iframeElement.document().resolvedColorScheme(style);
+        colorScheme = protect(iframeElement.document())->resolvedColorScheme(style);
 #endif
 
     iframeElement.setSrcdoc(generateResourceMonitorErrorHTML(colorScheme), SubstituteData::SessionHistoryVisibility::Hidden);
@@ -1574,7 +1576,7 @@ void LocalFrame::showResourceMonitoringError()
     URL mainFrameURL;
     if (RefPtr page = this->page()) {
         mainFrameURL = page->mainFrameURL();
-        page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Unloaded"_s, valueDictionaryForResult(true), ShouldSample::No);
+        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Unloaded"_s, valueDictionaryForResult(true), ShouldSample::No);
     }
 
     FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": unloading", url.isValid() ? url.string().utf8() : "invalid"_s, mainFrameURL.isValid() ? mainFrameURL.string().utf8() : "invalid"_s);
@@ -1605,7 +1607,7 @@ void LocalFrame::reportResourceMonitoringWarning()
         url = document->url();
     if (RefPtr page = this->page()) {
         mainFrameURL = page->mainFrameURL();
-        page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, valueDictionaryForResult(false), ShouldSample::No);
+        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, valueDictionaryForResult(false), ShouldSample::No);
     }
 
     FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": not unloading due to global limits", url.isValid() ? url.string().utf8() : "invalid"_s, mainFrameURL.isValid() ? mainFrameURL.string().utf8() : "invalid"_s);
@@ -1651,7 +1653,7 @@ void LocalFrame::applyMemoryMonitorErrorToIFrameElement(HTMLIFrameElement& ifram
 
 #if ENABLE(DARK_MODE_CSS)
     if (CheckedPtr style = iframeElement.existingComputedStyle())
-        colorScheme = iframeElement.document().resolvedColorScheme(style);
+        colorScheme = protect(iframeElement.document())->resolvedColorScheme(style);
 #endif
 
     iframeElement.setSrcdoc(generateFrameMemoryMonitorErrorHTML(colorScheme), SubstituteData::SessionHistoryVisibility::Hidden);
@@ -1758,9 +1760,9 @@ static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(Securit
                 if (nodeBounds) {
                     // This is a check to see whether this node is an area element. The only way this can happen is if this is the first check.
                     if (node == hitTestResult.innerNode() && node != hitTestResult.innerNonSharedNode() && is<HTMLAreaElement>(*node))
-                        *nodeBounds = snappedIntRect(downcast<HTMLAreaElement>(*node).computeRect(hitTestResult.innerNonSharedNode()->renderer()));
-                    else if (node && node->renderer())
-                        *nodeBounds = node->renderer()->absoluteBoundingBoxRect(true);
+                        *nodeBounds = snappedIntRect(downcast<HTMLAreaElement>(*node).computeRect(protect(hitTestResult.innerNonSharedNode()->renderer())));
+                    else if (CheckedPtr renderer = node ? node->renderer() : nullptr)
+                        *nodeBounds = renderer->absoluteBoundingBoxRect(true);
                 }
 
                 return node;
@@ -1954,8 +1956,8 @@ RefPtr<Node> LocalFrame::nodeRespondingToDoubleClickEvent(const FloatPoint& view
             if (!node->allowsDoubleTapGesture())
                 continue;
 #endif
-            if (nodeBounds && node->renderer())
-                *nodeBounds = node->renderer()->absoluteBoundingBoxRect(true);
+            if (CheckedPtr renderer = nodeBounds ? node->renderer() : nullptr)
+                *nodeBounds = renderer->absoluteBoundingBoxRect(true);
             return node;
         }
         return nullptr;

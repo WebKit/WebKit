@@ -136,7 +136,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(LocalFrame& f
             FrameState state;
             state.frame = &frame;
             state.wheelEventElement = latchedElement;
-            if (shouldLatchToScrollableArea(frame, scrollableArea, m_cumulativeEventDelta))
+            if (shouldLatchToScrollableArea(frame, protect(scrollableArea), m_cumulativeEventDelta))
                 state.scrollableArea = scrollableArea;
             state.isOverWidget = isOverWidget;
 
@@ -152,7 +152,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(LocalFrame& f
             return;
 
         // We may not have latched at gesture start because of small deltas. Re-evaluate latching based on accumulated delta.
-        if (!state->scrollableArea && shouldLatchToScrollableArea(frame, scrollableArea, m_cumulativeEventDelta))
+        if (!state->scrollableArea && shouldLatchToScrollableArea(frame, protect(scrollableArea), m_cumulativeEventDelta))
             state->scrollableArea = scrollableArea;
     }
 

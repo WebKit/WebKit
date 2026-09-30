@@ -478,7 +478,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         // e.g given the chain: main <- cross-origin <- same-origin 2 <- same-origin 1 <- target
         // then scroll margin is applied to same-origin frame 1/2 but not to cross-origin and main frames.
         // Clips are visited from the target's frame outwards, so stop applying scroll margin once we see a cross-origin frame.
-        Ref targetSecurityOrigin = target.document().securityOrigin();
+        Ref targetSecurityOrigin = protect(target.document())->securityOrigin();
         auto& scrollMargin = scrollMarginBox();
         bool hasSeenCrossOriginFrame = false;
         auto applyScrollMargin = [&](const Frame& frame, const LayoutRect& clipRect) -> std::optional<LayoutRect> {
@@ -599,7 +599,7 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
         // Per HTML spec, "update the rendering" step (which includes "run the update intersection
         // observations") only occurs for fully active documents. Hence skip updating the target if
         // its document is not fully active.
-        if (!root() && !isDocumentFullyActive(target->document()))
+        if (!root() && !isDocumentFullyActive(protect(target->document())))
             continue;
 
         auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
@@ -611,7 +611,7 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
 
         bool isSameOriginObservation = [&] () {
             if (RefPtr hostFrameSecurityOrigin = hostFrame.frameDocumentSecurityOrigin())
-                return protect(target->document().securityOrigin())->isSameOriginDomain(*hostFrameSecurityOrigin);
+                return protect(protect(target->document())->securityOrigin())->isSameOriginDomain(*hostFrameSecurityOrigin);
 
             return false;
         }();

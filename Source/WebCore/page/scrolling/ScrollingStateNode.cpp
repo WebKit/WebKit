@@ -58,7 +58,7 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     if (hasChangedProperty(Property::Layer))
         setLayer(stateNode.layer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
-    scrollingStateTree().addNode(*this);
+    protect(scrollingStateTree())->addNode(*this);
 }
 
 ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID)
@@ -115,7 +115,7 @@ void ScrollingStateNode::setPropertyChanged(Property property)
 
     setPropertyChangedInternal(property);
     ASSERT(m_scrollingStateTree);
-    m_scrollingStateTree->setHasChangedProperties();
+    protect(m_scrollingStateTree)->setHasChangedProperties();
 }
 
 OptionSet<ScrollingStateNode::Property> ScrollingStateNode::applicableProperties() const
@@ -128,7 +128,7 @@ void ScrollingStateNode::setAllApplicablePropertiesChanged()
     auto allPropertiesForNodeType = applicableProperties();
     setPropertiesChangedInternal(allPropertiesForNodeType);
     ASSERT(m_scrollingStateTree);
-    m_scrollingStateTree->setHasChangedProperties();
+    protect(m_scrollingStateTree)->setHasChangedProperties();
 }
 
 Ref<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)

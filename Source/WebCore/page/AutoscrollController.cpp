@@ -174,7 +174,7 @@ void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoin
         if (!dropTargetNode)
             return nullptr;
 
-        CheckedPtr scrollable = RenderBox::findAutoscrollable(dropTargetNode->renderer());
+        CheckedPtr scrollable = RenderBox::findAutoscrollable(protect(dropTargetNode->renderer()));
         if (!scrollable)
             return nullptr;
 

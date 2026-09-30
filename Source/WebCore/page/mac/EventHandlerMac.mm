@@ -152,7 +152,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
         return false;
 
     CurrentEventScope scope(event, nil);
-    auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient());
+    auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event, protect(page->chrome().platformPageClient()));
     OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
@@ -184,7 +184,7 @@ void EventHandler::focusDocumentView()
         return;
 
     if (RefPtr frameView = m_frame->view()) {
-        if (NSView *documentView = frameView->documentView()) {
+        if (RetainPtr documentView = frameView->documentView()) {
             page->chrome().focusNSView(documentView);
             // Check page() again because focusNSView can cause reentrancy.
             if (!m_frame->page())
@@ -228,9 +228,10 @@ static bool lastEventIsMouseUp()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
-    return EventHandler::currentNSEvent() != currentEventAfterHandlingMouseDown
+    RetainPtr currentEvent = EventHandler::currentNSEvent();
+    return currentEvent != currentEventAfterHandlingMouseDown
         && [currentEventAfterHandlingMouseDown type] == NSEventTypeLeftMouseUp
-        && [currentEventAfterHandlingMouseDown timestamp] >= [EventHandler::currentNSEvent() timestamp];
+        && [currentEventAfterHandlingMouseDown timestamp] >= [currentEvent timestamp];
     END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
@@ -257,7 +258,8 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 
     RetainPtr nodeView = widget->platformWidget();
     ASSERT([nodeView.get() superview]);
-    NSView *view = [nodeView.get() hitTest:[[nodeView.get() superview] convertPoint:[currentNSEvent() locationInWindow] fromView:nil]];
+    RetainPtr currentEvent = currentNSEvent();
+    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent locationInWindow] fromView:nil]];
     if (!view) {
         // We probably hit the border of a RenderWidget
         return true;
@@ -270,7 +272,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (page->chrome().client().firstResponder() != view) {
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
-        if ([currentNSEvent() clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey])
+        if ([currentEvent clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey])
             page->chrome().client().makeFirstResponder(view);
     }
 
@@ -290,7 +292,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        [view mouseDown:currentNSEvent()];
+        [view mouseDown:currentEvent];
     }
 
     m_sendingEventToSubview = false;
@@ -363,7 +365,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [view mouseDragged:currentNSEvent()];
+        [view mouseDragged:protect(currentNSEvent())];
         END_BLOCK_OBJC_EXCEPTIONS
         m_sendingEventToSubview = false;
     }
@@ -382,7 +384,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [view mouseUp:currentNSEvent()];
+        [view mouseUp:protect(currentNSEvent())];
         END_BLOCK_OBJC_EXCEPTIONS
         m_sendingEventToSubview = false;
     }
@@ -394,7 +396,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    switch ([currentNSEvent() type]) {
+    switch ([protect(currentNSEvent()) type]) {
     case NSEventTypeLeftMouseDragged:
     case NSEventTypeOtherMouseDragged:
     case NSEventTypeRightMouseDragged:
@@ -465,7 +467,7 @@ static void setNSScrollViewScrollWheelShouldRetainSelf(bool shouldRetain)
     ASSERT(isMainThread());
 
     if (!originalNSScrollViewScrollWheel) {
-        Method method = class_getInstanceMethod(objc_getRequiredClass("NSScrollView"), @selector(scrollWheel:));
+        Method method = class_getInstanceMethod(protect(objc_getRequiredClass("NSScrollView")), @selector(scrollWheel:));
         originalNSScrollViewScrollWheel = method_setImplementation(method, reinterpret_cast<IMP>(selfRetainingNSScrollViewScrollWheel));
     }
 
@@ -495,12 +497,13 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         return result.wasHandled();
     }
 
-    if ([currentNSEvent() type] != NSEventTypeScrollWheel || m_sendingEventToSubview)
+    RetainPtr currentEvent = currentNSEvent();
+    if ([currentEvent type] != NSEventTypeScrollWheel || m_sendingEventToSubview)
         return false;
 
     ASSERT(nodeView);
     ASSERT([nodeView.get() superview]);
-    NSView *view = [nodeView.get() hitTest:[[nodeView.get() superview] convertPoint:[currentNSEvent() locationInWindow] fromView:nil]];
+    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent locationInWindow] fromView:nil]];
     if (!view) {
         // We probably hit the border of a RenderWidget
         return false;
@@ -512,7 +515,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
     // crash if the NSScrollView is released during timer or network callback dispatch
     // in the nested tracking runloop that -[NSScrollView scrollWheel:] runs.
     setNSScrollViewScrollWheelShouldRetainSelf(true);
-    [view scrollWheel:currentNSEvent()];
+    [view scrollWheel:currentEvent];
     setNSScrollViewScrollWheelShouldRetainSelf(false);
     m_sendingEventToSubview = false;
     return true;
@@ -634,7 +637,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
         // no up-to-date cache of them anywhere.
         fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
-                                       location:[[view->platformWidget() window] convertPointFromScreen:[NSEvent mouseLocation]]
+                                       location:[[protect(view->platformWidget()) window] convertPointFromScreen:[NSEvent mouseLocation]]
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]
@@ -741,7 +744,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     RetainPtr<NSView> windowView;
     if (RefPtr page = m_frame->page())
         windowView = page->chrome().platformPageClient();
-    return PlatformEventFactory::createPlatformMouseEvent(currentNSEvent(), correspondingPressureEvent(), windowView.get());
+    return PlatformEventFactory::createPlatformMouseEvent(protect(currentNSEvent()), protect(correspondingPressureEvent()), windowView);
 }
 
 bool NODELETE EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
@@ -861,7 +864,7 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
     if (wheelEvent.shouldResetLatching() || wheelEvent.isNonGestureEvent())
         return;
 
-    page->scrollLatchingController().updateAndFetchLatchingStateForFrame(protect(m_frame), wheelEvent, wheelEventTarget, scrollableArea, isOverWidget);
+    protect(page->scrollLatchingController())->updateAndFetchLatchingStateForFrame(protect(m_frame), wheelEvent, wheelEventTarget, scrollableArea, isOverWidget);
 }
 
 bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, const WeakPtr<ScrollableArea>& scrollableArea, OptionSet<EventHandling> eventHandling)
@@ -924,7 +927,7 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
 
     updateWheelGestureState(wheelEvent, eventHandling);
 
-    if (RefPtr scrollingCoordinator = m_frame->page()->scrollingCoordinator()) {
+    if (RefPtr scrollingCoordinator = protect(m_frame->page())->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
             scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, m_wheelScrollGestureState);
     }
@@ -941,7 +944,7 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
         return false;
 
     WeakPtr<ScrollableArea> latchedScrollableArea;
-    if (!frame->page()->scrollLatchingController().latchingAllowsScrollingInFrame(frame, latchedScrollableArea))
+    if (!protect(protect(frame->page())->scrollLatchingController())->latchingAllowsScrollingInFrame(frame, latchedScrollableArea))
         return false;
 
     return wheelEvent.useLatchedEventElement() && latchedScrollableArea && scrollableArea == latchedScrollableArea;
@@ -1111,7 +1114,7 @@ bool EventHandler::isPointNearSelectionAutoscrollEdge(const IntPoint& positionIn
     //                must exceed dragThreshold (= edgeHotZone / 2)
     //
     // Arms only when BOTH hold: p is in the band, and (p - origin) toward the edge > dragThreshold.
-    auto geometry = selectionAutoscrollGeometry(m_frame.get());
+    auto geometry = selectionAutoscrollGeometry(protect(m_frame));
     if (!geometry)
         return false;
 
@@ -1140,7 +1143,7 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
     // Push that point past the nearest visible-content edge so the autoscroll timer keeps scrolling
     // at a stable velocity while the gesture holds near (or past) the edge.
     if (m_isAutoscrolling) {
-        auto geometry = selectionAutoscrollGeometry(m_frame.get());
+        auto geometry = selectionAutoscrollGeometry(protect(m_frame));
         if (!geometry)
             return m_targetAutoscrollPositionInRootView;
         auto [visibleRect, zoomScale] = *geometry;

@@ -99,7 +99,7 @@ void ScrollingTreeOverflowScrollingNodeMac::currentScrollPositionChanged(ScrollT
 void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [static_cast<CALayer*>(scrollContainerLayer()) _web_setLayerBoundsOrigin:currentScrollOffset()];
+    [protect(static_cast<CALayer*>(scrollContainerLayer())) _web_setLayerBoundsOrigin:currentScrollOffset()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

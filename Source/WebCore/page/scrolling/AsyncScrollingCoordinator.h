@@ -221,15 +221,15 @@ public:
     {
         if (auto* asyncScrollingCoordinator = dynamicDowncast<AsyncScrollingCoordinator>(scrollingCoordinator)) {
             m_scrollingTree = asyncScrollingCoordinator->scrollingTree();
-            if (m_scrollingTree)
-                m_scrollingTree->lockLayersForHitTesting();
+            if (RefPtr scrollingTree = m_scrollingTree)
+                scrollingTree->lockLayersForHitTesting();
         }
     }
     
     ~LayerTreeHitTestLocker()
     {
-        if (m_scrollingTree)
-            m_scrollingTree->unlockLayersForHitTesting();
+        if (RefPtr scrollingTree = m_scrollingTree)
+            scrollingTree->unlockLayersForHitTesting();
     }
 
 private:
