@@ -143,12 +143,12 @@ struct DMABufFeedback {
         UTF8CString returnValue;
         if (isScanout) {
             if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
-                returnValue = UTF8CString { byteCast<char8_t>(drmDevice->nodes[DRM_NODE_PRIMARY]) };
+                returnValue = UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_PRIMARY]);
         } else {
             if (drmDevice->available_nodes & (1 << DRM_NODE_RENDER))
-                returnValue = UTF8CString { byteCast<char8_t>(drmDevice->nodes[DRM_NODE_RENDER]) };
+                returnValue = UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_RENDER]);
             else if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
-                returnValue = UTF8CString { byteCast<char8_t>(drmDevice->nodes[DRM_NODE_PRIMARY]) };
+                returnValue = UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_PRIMARY]);
         }
 
         drmFreeDevice(&drmDevice);

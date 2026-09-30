@@ -398,7 +398,7 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
 
 static inline void webKitFindControllerSetSearchData(WebKitFindController* findController, const gchar* searchText, guint32 findOptions, guint maxMatchCount)
 {
-    findController->priv->searchText = UTF8CString { byteCast<char8_t>(searchText) };
+    findController->priv->searchText = UTF8CString::unsafeFromUTF8(searchText);
     findController->priv->findOptions = toWebFindOptions(findOptions);
     findController->priv->maxMatchCount = maxMatchCount;
 }

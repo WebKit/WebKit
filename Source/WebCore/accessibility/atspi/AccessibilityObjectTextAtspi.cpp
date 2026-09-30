@@ -348,7 +348,7 @@ UTF8CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
         return utf8Text;
 
     GUniquePtr<char> substring(g_utf8_substring(utf8Text.legacyCStringPointer(), startOffset, endOffset));
-    return UTF8CString { byteCast<char8_t>(substring.get()) };
+    return UTF8CString::unsafeFromUTF8(substring.get());
 }
 
 static inline int adjustInputOffset(unsigned utf16Offset, bool hasListMarkerAtStart)
@@ -486,7 +486,7 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
     }
 
     GUniquePtr<char> substring(g_utf8_substring(utf8Text.legacyCStringPointer(), startOffset, endOffset));
-    return UTF8CString { byteCast<char8_t>(substring.get()) };
+    return UTF8CString::unsafeFromUTF8(substring.get());
 }
 
 int AccessibilityObjectAtspi::characterAtOffset(int offset) const

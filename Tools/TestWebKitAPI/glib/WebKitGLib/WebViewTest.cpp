@@ -145,7 +145,7 @@ void WebViewTest::goBack()
     if (canGoBack) {
         WebKitBackForwardList* list = webkit_web_view_get_back_forward_list(m_webView.get());
         WebKitBackForwardListItem* item = webkit_back_forward_list_get_nth_item(list, -1);
-        m_activeURI = UTF8CString { byteCast<char8_t>(webkit_back_forward_list_item_get_original_uri(item)) };
+        m_activeURI = UTF8CString::unsafeFromUTF8(webkit_back_forward_list_item_get_original_uri(item));
     }
 
     // Call go_back even when can_go_back returns FALSE to check nothing happens.
@@ -162,7 +162,7 @@ void WebViewTest::goForward()
     if (canGoForward) {
         WebKitBackForwardList* list = webkit_web_view_get_back_forward_list(m_webView.get());
         WebKitBackForwardListItem* item = webkit_back_forward_list_get_nth_item(list, 1);
-        m_activeURI = UTF8CString { byteCast<char8_t>(webkit_back_forward_list_item_get_original_uri(item)) };
+        m_activeURI = UTF8CString::unsafeFromUTF8(webkit_back_forward_list_item_get_original_uri(item));
     }
 
     // Call go_forward even when can_go_forward returns FALSE to check nothing happens.
@@ -175,7 +175,7 @@ void WebViewTest::goForward()
 
 void WebViewTest::goToBackForwardListItem(WebKitBackForwardListItem* item)
 {
-    m_activeURI = UTF8CString { byteCast<char8_t>(webkit_back_forward_list_item_get_original_uri(item)) };
+    m_activeURI = UTF8CString::unsafeFromUTF8(webkit_back_forward_list_item_get_original_uri(item));
     webkit_web_view_go_to_back_forward_list_item(m_webView.get(), item);
     g_assert_true(webkit_web_view_is_loading(m_webView.get()));
     ASSERT_CMP_CSTRING(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI);
@@ -213,7 +213,7 @@ void WebViewTest::waitUntilLoadFinished(WebKitWebView* webView)
 
 static void titleChanged(WebKitWebView* webView, GParamSpec*, WebViewTest* test)
 {
-    if (!test->m_expectedTitle.isNull() && test->m_expectedTitle != UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(webView)) })
+    if (!test->m_expectedTitle.isNull() && test->m_expectedTitle != UTF8CString::unsafeFromUTF8(webkit_web_view_get_title(webView)))
         return;
 
     g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(titleChanged), test);
@@ -225,7 +225,7 @@ void WebViewTest::waitUntilTitleChangedTo(const char* expectedTitle)
     if (expectedTitle && !g_strcmp0(expectedTitle, webkit_web_view_get_title(m_webView.get())))
         return;
 
-    m_expectedTitle = UTF8CString { byteCast<char8_t>(expectedTitle) };
+    m_expectedTitle = UTF8CString::unsafeFromUTF8(expectedTitle);
     g_signal_connect(m_webView.get(), "notify::title", G_CALLBACK(titleChanged), this);
     g_main_loop_run(m_mainLoop);
     m_expectedTitle = { };

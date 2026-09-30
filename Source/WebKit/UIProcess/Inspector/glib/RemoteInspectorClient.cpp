@@ -155,7 +155,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
             gboolean hasLocalDebugger;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &url, &hasLocalDebugger)) {
                 if (!g_strcmp0(type, "JavaScript") || !g_strcmp0(type, "ServiceWorker") || !g_strcmp0(type, "WebPage"))
-                    targetList.append({ targetID, UTF8CString { byteCast<char8_t>(type) }, UTF8CString { byteCast<char8_t>(name) }, UTF8CString { byteCast<char8_t>(url) } });
+                    targetList.append({ targetID, UTF8CString::unsafeFromUTF8(type), UTF8CString::unsafeFromUTF8(name), UTF8CString::unsafeFromUTF8(url) });
             }
             client.setTargetList(connectionID, WTF::move(targetList));
         }}

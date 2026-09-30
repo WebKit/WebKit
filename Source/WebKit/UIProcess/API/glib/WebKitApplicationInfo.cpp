@@ -111,7 +111,7 @@ void webkit_application_info_set_name(WebKitApplicationInfo* info, const char* n
 {
     g_return_if_fail(info);
 
-    info->name = UTF8CString { byteCast<char8_t>(name) };
+    info->name = UTF8CString::unsafeFromUTF8(name);
 }
 
 /**

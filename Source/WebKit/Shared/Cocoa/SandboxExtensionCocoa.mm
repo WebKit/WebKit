@@ -116,7 +116,7 @@ UTF8CString SandboxExtensionImpl::sandboxExtensionForType(const UTF8CString& pat
         }
     }();
 
-    return UTF8CString { byteCast<char8_t>(sandboxExtension.get()) };
+    return UTF8CString::unsafeFromUTF8(sandboxExtension.get());
 }
 
 SandboxExtensionImpl::SandboxExtensionImpl(const UTF8CString& path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)

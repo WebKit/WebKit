@@ -431,7 +431,7 @@ public:
     {
         g_assert_true(resource == test->m_resource.get());
         ASSERT_CMP_CSTRING(test->m_activeURI, !=, webkit_web_resource_get_uri(test->m_resource.get()));
-        test->m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_resource_get_uri(test->m_resource.get())) };
+        test->m_activeURI = UTF8CString::unsafeFromUTF8(webkit_web_resource_get_uri(test->m_resource.get()));
     }
 
     void resourceLoadStarted(WebKitWebResource* resource, WebKitURIRequest* request)
@@ -440,7 +440,7 @@ public:
             return;
 
         m_resource = resource;
-        m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_resource_get_uri(resource)) };
+        m_activeURI = UTF8CString::unsafeFromUTF8(webkit_web_resource_get_uri(resource));
         checkActiveURI("/redirected.css");
         ASSERT_CMP_CSTRING(m_activeURI, ==, webkit_uri_request_get_uri(request));
         g_signal_connect(resource, "notify::uri", G_CALLBACK(uriChanged), this);

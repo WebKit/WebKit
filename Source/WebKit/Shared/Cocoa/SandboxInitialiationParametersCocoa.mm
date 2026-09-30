@@ -42,7 +42,7 @@ void SandboxInitializationParameters::appendPathInternal(ASCIILiteral name, cons
         normalizedPath[0] = '\0';
 
     m_parameterNames.append(name);
-    m_parameterValues.append(UTF8CString { byteCast<char8_t>(normalizedPath.data()) });
+    m_parameterValues.append(UTF8CString::unsafeFromUTF8(normalizedPath.data()));
 }
 
 void SandboxInitializationParameters::addConfDirectoryParameter(ASCIILiteral name, int confID)

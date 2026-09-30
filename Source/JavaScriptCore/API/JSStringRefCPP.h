@@ -43,7 +43,7 @@ inline UTF8CString utf8CString(JSStringRef string)
     Vector<char> buffer(JSStringGetMaximumUTF8CStringSize(string));
     // The returned length counts the null terminator, which UTF8CString adds itself.
     size_t length = JSStringGetUTF8CString(string, buffer.mutableSpan().data(), buffer.size());
-    return UTF8CString { byteCast<char8_t>(buffer.span().first(length ? length - 1 : 0)) };
+    return UTF8CString::fromUTF8(buffer.span().first(length ? length - 1 : 0));
 }
 
 // Counterparts to JSStringCreateWithUTF8CString(), taking the encoding in the type and

@@ -372,11 +372,11 @@ public:
         switch (resourcesDir) {
         case WebKitGLibResources: {
             GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", "glib", nullptr));
-            return UTF8CString { byteCast<char8_t>(resourcesDir.get()) };
+            return UTF8CString::unsafeFromUTF8(resourcesDir.get());
         }
         case WebKit2Resources: {
             GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", nullptr));
-            return UTF8CString { byteCast<char8_t>(resourcesDir.get()) };
+            return UTF8CString::unsafeFromUTF8(resourcesDir.get());
         }
         }
         RELEASE_ASSERT_NOT_REACHED();

@@ -387,7 +387,7 @@ void wpe_clipboard_content_set_text(WPEClipboardContent* content, const char* te
 {
     g_return_if_fail(content);
 
-    content->text = UTF8CString { byteCast<char8_t>(text) };
+    content->text = UTF8CString::unsafeFromUTF8(text);
 }
 
 /**

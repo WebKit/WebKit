@@ -74,7 +74,7 @@ static void wpeGamepadSetProperty(GObject* object, guint propId, const GValue* v
 
     switch (propId) {
     case PROP_NAME:
-        gamepad->priv->name = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        gamepad->priv->name = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);

@@ -135,7 +135,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<O
             return;
 
         m_openingThreadID = 0;
-        m_openErrorMessage = UTF8CString { byteCast<char8_t>(sqlite3_errmsg(m_db)) };
+        m_openErrorMessage = UTF8CString::unsafeFromUTF8(sqlite3_errmsg(m_db));
         m_openError = sqlite3_errcode(m_db);
         close();
     });

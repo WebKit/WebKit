@@ -226,7 +226,7 @@ void GeoclueGeolocationProvider::createPortalSession()
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to connect to geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to connect to geolocation service")));
                 return;
             }
             provider.startPortalSession();
@@ -253,7 +253,7 @@ void GeoclueGeolocationProvider::startPortalSession()
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (response) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to connect to geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to connect to geolocation service")));
                 provider.stopPortalSession();
             }
         }, this, nullptr);
@@ -282,7 +282,7 @@ void GeoclueGeolocationProvider::startPortalSession()
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error)
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to connect to geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to connect to geolocation service")));
         }, this);
 }
 
@@ -345,7 +345,7 @@ void GeoclueGeolocationProvider::createGeoclueManager()
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to connect to geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to connect to geolocation service")));
                 return;
             }
             provider.setupGeoclueManager(WTF::move(proxy));
@@ -371,7 +371,7 @@ void GeoclueGeolocationProvider::setupGeoclueManager(GRefPtr<GDBusProxy>&& proxy
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to connect to geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to connect to geolocation service")));
                 return;
             }
             const char* clientPath;
@@ -397,7 +397,7 @@ void GeoclueGeolocationProvider::createGeoclueClient(const char* clientPath)
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to connect to geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to connect to geolocation service")));
                 return;
             }
             provider.setupGeoclueClient(WTF::move(proxy));
@@ -444,7 +444,7 @@ void GeoclueGeolocationProvider::startGeoclueClient()
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to determine position from geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to determine position from geolocation service")));
                 return;
             }
         }, this);
@@ -526,7 +526,7 @@ void GeoclueGeolocationProvider::createLocation(const char* locationPath)
 
             auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
-                provider.didFail(UTF8CString { byteCast<char8_t>(_("Failed to determine position from geolocation service")) });
+                provider.didFail(UTF8CString::unsafeFromUTF8(_("Failed to determine position from geolocation service")));
                 return;
             }
             provider.locationUpdated(WTF::move(proxy));

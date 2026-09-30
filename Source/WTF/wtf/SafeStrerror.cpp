@@ -71,7 +71,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    return UTF8CString { byteCast<char8_t>(messageSpan) };
+    return UTF8CString::fromUTF8(messageSpan);
 }
 
 } // namespace WTF

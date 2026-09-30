@@ -41,7 +41,7 @@ public:
         g_assert_no_error(error.get());
         g_assert_nonnull(result);
         GUniquePtr<char> string(javascriptResultToCString(result));
-        return UTF8CString { byteCast<char8_t>(string.get()) };
+        return UTF8CString::unsafeFromUTF8(string.get());
     }
 
     WPEClipboard* clipboard() const
@@ -64,7 +64,7 @@ public:
 
         gsize length;
         GUniquePtr<char> text(wpe_clipboard_read_text(clipboard(), "text/plain;charset=utf-8", &length));
-        return text ? UTF8CString { byteCast<char8_t>(std::span { text.get(), length }) } : UTF8CString();
+        return text ? UTF8CString::fromUTF8(std::span { text.get(), length }) : UTF8CString();
     }
 };
 

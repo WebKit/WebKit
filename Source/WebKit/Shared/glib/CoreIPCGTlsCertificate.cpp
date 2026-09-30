@@ -51,7 +51,7 @@ CoreIPCGTlsCertificate::CoreIPCGTlsCertificate(const GRefPtr<GTlsCertificate>& c
 
     GUniqueOutPtr<char> privateKeyPKCS11Uri;
     g_object_get(certificate.get(), "private-key", &m_privateKey.outPtr(), "private-key-pkcs11-uri", &privateKeyPKCS11Uri.outPtr(), nullptr);
-    m_privateKeyPKCS11Uri = UTF8CString { byteCast<char8_t>(privateKeyPKCS11Uri.get()) };
+    m_privateKeyPKCS11Uri = UTF8CString::unsafeFromUTF8(privateKeyPKCS11Uri.get());
 }
 
 CoreIPCGTlsCertificate::CoreIPCGTlsCertificate(Vector<GRefPtr<GByteArray>>&& certificates, GRefPtr<GByteArray>&& privateKey, UTF8CString&& privateKeyPKCS11Uri)

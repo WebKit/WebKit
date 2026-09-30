@@ -53,7 +53,7 @@ UTF8CString FileSystem::fileSystemRepresentation(const String& path)
     }
 
     // CFStringGetFileSystemRepresentation() produces UTF-8, null-terminated within the buffer.
-    return UTF8CString { byteCast<char8_t>(buffer.span().data()) };
+    return UTF8CString::unsafeFromUTF8(buffer.span().data());
 }
 
 String FileSystem::stringFromFileSystemRepresentation(UTF8CStringView fileSystemRepresentation)

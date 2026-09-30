@@ -221,6 +221,10 @@ public:
             ASSERT(charactersAreAllASCII(byteCast<Latin1Character>(CStringBase::span())));
     }
 
+    // For bytes from external C functions, which are known to be UTF-8 but come typed as char.
+    static CString unsafeFromUTF8(const char* string) requires std::same_as<CharacterType, char8_t> { return CString { byteCast<char8_t>(string) }; }
+    static CString fromUTF8(std::span<const char> characters) requires std::same_as<CharacterType, char8_t> { return CString { byteCast<char8_t>(characters) }; }
+
     static CString newUninitialized(size_t length, std::span<CharacterType>& characterBuffer)
     {
         std::span<char> bytes;

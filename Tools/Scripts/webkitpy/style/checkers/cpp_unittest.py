@@ -313,6 +313,11 @@ class CppStyleTestBase(unittest.TestCase):
         basic_error_rules = ('-', '+runtime/leaky_pattern')
         return self.perform_lint(code, 'test.cpp', basic_error_rules)
 
+    # Only keep UTF8CString construction errors.
+    def perform_utf8cstring_from_utf8_check(self, code, filename='test.cpp'):
+        basic_error_rules = ('-', '+runtime/utf8cstring_from_utf8')
+        return self.perform_lint(code, filename, basic_error_rules)
+
     # Only include what you use errors.
     def perform_include_what_you_use(self, code, filename='foo.h', io=codecs):
         basic_error_rules = ('-', '+build/include_what_you_use')
@@ -6364,6 +6369,24 @@ class WebKitStyleTest(CppStyleTestBase):
             "Use 'WTF::toArray()' instead of 'std::to_array()'."
             "  [runtime/wtf_to_array] [4]",
             'foo.cpp')
+
+    def test_utf8cstring_from_utf8(self):
+        message = ("Use 'UTF8CString::unsafeFromUTF8()' or 'UTF8CString::fromUTF8()' instead of constructing a UTF8CString from 'byteCast<char8_t>()'."
+                   "  [runtime/utf8cstring_from_utf8] [4]")
+
+        def assert_utf8cstring_lint(code, expected_message, file_name='foo.cpp'):
+            self.assertEqual(expected_message, self.perform_utf8cstring_from_utf8_check(code, file_name))
+
+        assert_utf8cstring_lint('auto string = UTF8CString::unsafeFromUTF8(g_get_prgname());', '')
+        assert_utf8cstring_lint('auto string = UTF8CString::fromUTF8(std::span { data, size });', '')
+        assert_utf8cstring_lint('auto view = UTF8CStringView::fromUTF8(byteCast<char8_t>(span));', '')
+        assert_utf8cstring_lint('UTF8CString string { span };', '')
+
+        assert_utf8cstring_lint('return UTF8CString { byteCast<char8_t>(g_get_prgname()) };', message)
+        assert_utf8cstring_lint('return UTF8CString(byteCast<char8_t>(data));', message)
+        assert_utf8cstring_lint('UTF8CString string { byteCast<char8_t>(path) };', message)
+        assert_utf8cstring_lint('UTF8CString string(byteCast<char8_t>(path));', message)
+        assert_utf8cstring_lint('return UTF8CString { byteCast<char8_t>(path.fileSystemRepresentation) };', message, 'foo.mm')
 
     def _construct_and_append_message(self, type_name):
         return ("If this is a WTF::Vector, SegmentedVector, or Deque of '%s', use 'constructAndAppend()'; if its element type is a "

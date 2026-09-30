@@ -101,7 +101,7 @@ static void webkitPrintCustomWidgetSetProperty(GObject* object, guint propId, co
         printCustomWidget->priv->widget = GTK_WIDGET(g_value_get_object(value));
         break;
     case PROP_TITLE:
-        printCustomWidget->priv->title = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        printCustomWidget->priv->title = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);

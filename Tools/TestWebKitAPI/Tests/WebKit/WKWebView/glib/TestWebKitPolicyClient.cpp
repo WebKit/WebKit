@@ -158,7 +158,7 @@ public:
         gLastRequestUserAgent = nullptr;
         loadURI(uri);
         waitUntilLoadFinished();
-        return UTF8CString { byteCast<char8_t>(gLastRequestUserAgent ? gLastRequestUserAgent.get() : "") };
+        return UTF8CString::unsafeFromUTF8(gLastRequestUserAgent ? gLastRequestUserAgent.get() : "");
     }
 
     PolicyDecisionResponse m_policyDecisionResponse { None };

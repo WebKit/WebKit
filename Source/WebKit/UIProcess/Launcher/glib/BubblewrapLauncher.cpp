@@ -758,7 +758,7 @@ static std::optional<UTF8CString> directoryContainingDBusSocket(StringView dbusA
         if (!parent)
             return std::nullopt;
 
-        return UTF8CString { byteCast<char8_t>(g_file_peek_path(parent.get())) };
+        return UTF8CString::unsafeFromUTF8(g_file_peek_path(parent.get()));
     }
 
     return std::nullopt;
@@ -784,7 +784,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     if (launchOptions.processType == ProcessLauncher::ProcessType::Network)
         return adoptGRef(g_subprocess_launcher_spawnv(launcher, argv.span().data(), error));
 
-    UTF8CString runDir { byteCast<char8_t>(g_get_user_runtime_dir()) };
+    auto runDir = UTF8CString::unsafeFromUTF8(g_get_user_runtime_dir());
     Vector<UTF8CString> sandboxArgs = {
         "--unshare-uts"_s,
 
@@ -884,7 +884,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         // On distros using a suid bwrap it drops this env var
         // so we have to pass it through to the children.
         sandboxArgs.appendList<UTF8CString>({
-            "--setenv"_s, "LD_LIBRARY_PATH"_s, UTF8CString { byteCast<char8_t>(libraryPath) },
+            "--setenv"_s, "LD_LIBRARY_PATH"_s, UTF8CString::unsafeFromUTF8(libraryPath),
         });
     }
 

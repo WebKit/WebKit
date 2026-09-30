@@ -107,7 +107,7 @@ void WebContextMenuItemGlib::createActionIfNeeded()
 #if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (m_gtkAction) // NOLINT
-            name = UTF8CString { byteCast<char8_t>(gtk_action_get_name(m_gtkAction)) };
+            name = UTF8CString::unsafeFromUTF8(gtk_action_get_name(m_gtkAction));
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         m_gAction = adoptGRef(webkitContextMenuGActionNew(WTF::move(name), *this));

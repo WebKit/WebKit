@@ -236,7 +236,7 @@ static void webkitAutomationSessionSetProperty(GObject* object, guint propID, co
 
     switch (propID) {
     case PROP_ID:
-        session->priv->id = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        session->priv->id = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);

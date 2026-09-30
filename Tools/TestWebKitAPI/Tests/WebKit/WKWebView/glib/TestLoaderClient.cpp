@@ -243,7 +243,7 @@ static void uriChanged(WebKitWebView* webView, GParamSpec*, LoadTrackingTest* te
 {
     const char* uri = webkit_web_view_get_uri(webView);
     if (g_str_has_suffix(uri, "/normal"))
-        test->m_activeURI = UTF8CString { byteCast<char8_t>(uri) };
+        test->m_activeURI = UTF8CString::unsafeFromUTF8(uri);
 }
 
 static void testUnfinishedSubresourceLoad(LoadTrackingTest* test, gconstpointer)
@@ -274,11 +274,11 @@ public:
     static void uriChanged(GObject*, GParamSpec*, ViewURITrackingTest* test)
     {
         ASSERT_CMP_CSTRING(test->m_currentURI, !=, webkit_web_view_get_uri(test->webView()));
-        test->m_currentURI = UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(test->webView())) };
+        test->m_currentURI = UTF8CString::unsafeFromUTF8(webkit_web_view_get_uri(test->webView()));
     }
 
     ViewURITrackingTest()
-        : m_currentURI(UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(m_webView.get())) })
+        : m_currentURI(UTF8CString::unsafeFromUTF8(webkit_web_view_get_uri(m_webView.get())))
     {
         g_assert_true(m_currentURI.isNull());
         m_currentURIList.grow(m_currentURIList.capacity());
@@ -523,12 +523,12 @@ public:
     {
         const char* uri;
         g_variant_get(result, "(&s)", &uri);
-        test->m_webPageURIs.append(UTF8CString { byteCast<char8_t>(uri) });
+        test->m_webPageURIs.append(UTF8CString::unsafeFromUTF8(uri));
     }
 
     static void webViewURIChanged(GObject*, GParamSpec*, WebPageURITest* test)
     {
-        test->m_webViewURIs.append(UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(test->webView())) });
+        test->m_webViewURIs.append(UTF8CString::unsafeFromUTF8(webkit_web_view_get_uri(test->webView())));
     }
 
     WebPageURITest()
@@ -751,7 +751,7 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     auto* responseBody = soup_server_message_get_response_body(message);
 
     if (g_str_has_prefix(path, "/ua-"))
-        s_userAgentMap.add(UTF8CString { byteCast<char8_t>(path) }, UTF8CString { byteCast<char8_t>(soup_message_headers_get_one(requestHeaders, "User-Agent")) });
+        s_userAgentMap.add(UTF8CString::unsafeFromUTF8(path), UTF8CString::unsafeFromUTF8(soup_message_headers_get_one(requestHeaders, "User-Agent")));
 
     if (g_str_has_prefix(path, "/normal") || g_str_has_prefix(path, "/http-get-method"))
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));

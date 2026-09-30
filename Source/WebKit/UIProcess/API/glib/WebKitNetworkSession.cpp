@@ -117,10 +117,10 @@ static void webkitNetworkSessionSetProperty(GObject* object, guint propID, const
 
     switch (propID) {
     case PROP_DATA_DIRECTORY:
-        session->priv->dataDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        session->priv->dataDirectory = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_CACHE_DIRECTORY:
-        session->priv->cacheDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        session->priv->cacheDirectory = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))

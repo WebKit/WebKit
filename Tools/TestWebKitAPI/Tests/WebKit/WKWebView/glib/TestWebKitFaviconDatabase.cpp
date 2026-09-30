@@ -111,7 +111,7 @@ public:
     static void faviconChangedCallback(WebKitFaviconDatabase* database, const char* pageURI, const char* faviconURI, FaviconDatabaseTest* test)
     {
         if (!g_strcmp0(webkit_web_view_get_uri(test->webView()), pageURI)) {
-            test->m_faviconURI = UTF8CString { byteCast<char8_t>(faviconURI) };
+            test->m_faviconURI = UTF8CString::unsafeFromUTF8(faviconURI);
             if (test->m_waitingForFaviconURI) {
                 test->m_waitingForFaviconURI = false;
                 test->quitMainLoop();

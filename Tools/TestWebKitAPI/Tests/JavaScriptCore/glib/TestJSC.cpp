@@ -1696,13 +1696,13 @@ static void multiplyFooV(Foo* foo, GPtrArray* multipliers)
 
 static int fooGetProperty(Foo* foo, const char* name)
 {
-    auto addResult = foo->properties.add(UTF8CString { byteCast<char8_t>(name) }, 0);
+    auto addResult = foo->properties.add(UTF8CString::unsafeFromUTF8(name), 0);
     return addResult.iterator->value;
 }
 
 static void fooSetProperty(Foo* foo, const char* name, int value)
 {
-    auto addResult = foo->properties.add(UTF8CString { byteCast<char8_t>(name) }, value);
+    auto addResult = foo->properties.add(UTF8CString::unsafeFromUTF8(name), value);
     if (!addResult.isNewEntry)
         addResult.iterator->value = value;
 }
@@ -1815,7 +1815,7 @@ static JSCClassVTable fooVTable = {
         }
 
         auto* foo = static_cast<Foo*>(instance);
-        return foo->properties.remove(UTF8CString { byteCast<char8_t>(name) });
+        return foo->properties.remove(UTF8CString::unsafeFromUTF8(name));
     },
     // enumerate_properties
     [](JSCClass* jscClass, JSCContext* context, gpointer instance) -> char** {

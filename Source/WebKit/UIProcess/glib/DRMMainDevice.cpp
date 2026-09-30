@@ -80,7 +80,7 @@ static std::optional<std::pair<UTF8CString, UTF8CString>> drmFirstDeviceWithRend
         if (!(drmDevice->available_nodes & (1 << DRM_NODE_RENDER)))
             return true;
 
-        device = { UTF8CString { byteCast<char8_t>(drmDevice->nodes[DRM_NODE_PRIMARY]) }, UTF8CString { byteCast<char8_t>(drmDevice->nodes[DRM_NODE_RENDER]) } };
+        device = { UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_PRIMARY]), UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_RENDER]) };
         return false;
     });
     return device;
@@ -100,9 +100,9 @@ static UTF8CString drmPrimaryNodeDeviceForRenderNodeDevice(const UTF8CString& re
         if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
             return true;
 
-        auto node = UTF8CString { byteCast<char8_t>(device->nodes[DRM_NODE_RENDER]) };
+        auto node = UTF8CString::unsafeFromUTF8(device->nodes[DRM_NODE_RENDER]);
         if (node == renderNode) {
-            primaryNode = UTF8CString { byteCast<char8_t>(device->nodes[DRM_NODE_PRIMARY]) };
+            primaryNode = UTF8CString::unsafeFromUTF8(device->nodes[DRM_NODE_PRIMARY]);
             return false;
         }
 
@@ -126,10 +126,10 @@ static UTF8CString drmRenderNodeDeviceFromPrimaryNodeDevice(const UTF8CString& p
         if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY)))
             return true;
 
-        auto node = UTF8CString { byteCast<char8_t>(device->nodes[DRM_NODE_PRIMARY]) };
+        auto node = UTF8CString::unsafeFromUTF8(device->nodes[DRM_NODE_PRIMARY]);
         if (node == primaryNode) {
             if (device->available_nodes & (1 << DRM_NODE_RENDER))
-                renderNode = UTF8CString { byteCast<char8_t>(device->nodes[DRM_NODE_RENDER]) };
+                renderNode = UTF8CString::unsafeFromUTF8(device->nodes[DRM_NODE_RENDER]);
             return false;
         }
 
@@ -174,7 +174,7 @@ static std::optional<UTF8CString> drmPrimaryNodeDevice(EGLDeviceEXT device)
     if (!WebCore::GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm"))
         return std::nullopt;
 
-    return UTF8CString { byteCast<char8_t>(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT)) };
+    return UTF8CString::unsafeFromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT));
 }
 
 static std::optional<UTF8CString> drmRenderNodeDevice(EGLDeviceEXT device)
@@ -182,7 +182,7 @@ static std::optional<UTF8CString> drmRenderNodeDevice(EGLDeviceEXT device)
     if (!WebCore::GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm_render_node"))
         return std::nullopt;
 
-    return UTF8CString { byteCast<char8_t>(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT)) };
+    return UTF8CString::unsafeFromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT));
 }
 
 const WebCore::DRMDevice& drmMainDevice()
@@ -195,8 +195,8 @@ const WebCore::DRMDevice& drmMainDevice()
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
         if (WKWPE::isUsingWPEPlatformAPI()) {
             if (auto* drmDevice = wpe_display_get_drm_device(wpe_display_get_primary())) {
-                mainDevice->primaryNode = UTF8CString { byteCast<char8_t>(wpe_drm_device_get_primary_node(drmDevice)) };
-                mainDevice->renderNode = UTF8CString { byteCast<char8_t>(wpe_drm_device_get_render_node(drmDevice)) };
+                mainDevice->primaryNode = UTF8CString::unsafeFromUTF8(wpe_drm_device_get_primary_node(drmDevice));
+                mainDevice->renderNode = UTF8CString::unsafeFromUTF8(wpe_drm_device_get_render_node(drmDevice));
             }
             return;
         }
@@ -204,7 +204,7 @@ const WebCore::DRMDevice& drmMainDevice()
 
         const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
         if (envDeviceFile && *envDeviceFile) {
-            mainDevice->renderNode = UTF8CString { byteCast<char8_t>(envDeviceFile) };
+            mainDevice->renderNode = UTF8CString::unsafeFromUTF8(envDeviceFile);
             mainDevice->primaryNode = drmPrimaryNodeDeviceForRenderNodeDevice(mainDevice->renderNode);
             return;
         }

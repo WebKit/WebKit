@@ -346,7 +346,7 @@ static UTF8CString injectedBundleDirectory()
 {
     const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
     if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
-        return UTF8CString { byteCast<char8_t>(bundleDirectory) };
+        return UTF8CString::unsafeFromUTF8(bundleDirectory);
 
     return PKGLIBDIR G_DIR_SEPARATOR_S "injected-bundle"_s G_DIR_SEPARATOR_S;
 }
@@ -391,7 +391,7 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     switch (propID) {
 #if PLATFORM(GTK) && !USE(GTK4)
     case PROP_LOCAL_STORAGE_DIRECTORY:
-        context->priv->localStorageDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        context->priv->localStorageDirectory = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
 #endif
 #if !ENABLE(2022_GLIB_API)
@@ -419,7 +419,7 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     case PROP_TIME_ZONE_OVERRIDE: {
         const auto* timeZone = g_value_get_string(value);
         if (isTimeZoneValid(StringView::fromLatin1(timeZone)))
-            context->priv->timeZoneOverride = UTF8CString { byteCast<char8_t>(timeZone) };
+            context->priv->timeZoneOverride = UTF8CString::unsafeFromUTF8(timeZone);
         break;
     }
     default:
@@ -1497,7 +1497,7 @@ void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const cha
         g_error("Sandbox paths cannot be changed after subprocesses were spawned.");
 
     auto permission = readOnly ? SandboxPermission::ReadOnly : SandboxPermission::ReadWrite;
-    context->priv->processPool->addSandboxPath(UTF8CString { byteCast<char8_t>(path) }, permission);
+    context->priv->processPool->addSandboxPath(UTF8CString::unsafeFromUTF8(path), permission);
 }
 
 #if !ENABLE(2022_GLIB_API)
@@ -1700,7 +1700,7 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
-    context->priv->webProcessExtensionsDirectory = UTF8CString { byteCast<char8_t>(directory) };
+    context->priv->webProcessExtensionsDirectory = UTF8CString::unsafeFromUTF8(directory);
     context->priv->processPool->addSandboxPath(context->priv->webProcessExtensionsDirectory, SandboxPermission::ReadOnly);
 }
 

@@ -66,7 +66,7 @@ UTF8CString currentExecutablePath()
     ssize_t result = readlink("/proc/self/exe", readLinkBuffer.data(), readLinkBuffer.size());
     if (result <= 0)
         return { };
-    return UTF8CString { byteCast<char8_t>(unsafeMakeSpan(readLinkBuffer.data(), static_cast<size_t>(result))) };
+    return UTF8CString::fromUTF8(unsafeMakeSpan(readLinkBuffer.data(), static_cast<size_t>(result)));
 }
 #elif OS(HURD)
 UTF8CString currentExecutablePath()
@@ -84,7 +84,7 @@ UTF8CString currentExecutablePath()
     close(selfFd);
     if (result <= 0)
         return { };
-    return UTF8CString { byteCast<char8_t>(unsafeMakeSpan(readBuffer, static_cast<size_t>(result))) };
+    return UTF8CString::fromUTF8(unsafeMakeSpan(readBuffer, static_cast<size_t>(result)));
 }
 #elif OS(UNIX)
 #if OS(NETBSD)
@@ -98,7 +98,7 @@ UTF8CString currentExecutablePath()
     ssize_t result = readlink(_PROC_CURPROC_PATH, readLinkBuffer, PATH_MAX);
     if (result <= 0)
         return { };
-    return UTF8CString { byteCast<char8_t>(unsafeMakeSpan(readLinkBuffer, static_cast<size_t>(result))) };
+    return UTF8CString::fromUTF8(unsafeMakeSpan(readLinkBuffer, static_cast<size_t>(result)));
 }
 #elif OS(WINDOWS)
 UTF8CString currentExecutablePath()
@@ -118,10 +118,10 @@ UTF8CString currentExecutableName()
     auto executablePath = currentExecutablePath();
     if (!executablePath.isNull()) {
         GUniquePtr<char> basename(g_path_get_basename(executablePath.legacyCStringPointer()));
-        return UTF8CString { byteCast<char8_t>(basename.get()) };
+        return UTF8CString::unsafeFromUTF8(basename.get());
     }
 
-    return UTF8CString { byteCast<char8_t>(g_get_prgname()) };
+    return UTF8CString::unsafeFromUTF8(g_get_prgname());
 }
 
 String userCacheDirectory()
@@ -152,14 +152,14 @@ UTF8CString webkitTopLevelDirectory()
 {
     if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL")) {
         if (g_file_test(topLevelDirectory, G_FILE_TEST_IS_DIR))
-            return UTF8CString { byteCast<char8_t>(topLevelDirectory) };
+            return UTF8CString::unsafeFromUTF8(topLevelDirectory);
     }
     // The tooling to run tests should provide the above environment variable with
     // the right value, but if that was not the case, then do an attempt to guess
     // it assuming that we were built in the standard WebKitBuild subdirectory.
     GUniquePtr<char*> parentPath(g_strsplit(currentExecutablePath().legacyCStringPointer(), "/WebKitBuild", -1));
     GUniquePtr<char> absoluteTopLevelPath(realpath(parentPath.get()[0], nullptr));
-    return UTF8CString { byteCast<char8_t>(absoluteTopLevelPath.get()) };
+    return UTF8CString::unsafeFromUTF8(absoluteTopLevelPath.get());
 }
 #endif
 

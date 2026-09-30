@@ -108,7 +108,7 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     GUniquePtr<char*> environ(g_get_environ());
     for (auto* variable : span(environ)) {
         GUniquePtr<char> arg(g_strconcat("--env=", variable, nullptr));
-        flatpakArgs.append(UTF8CString { byteCast<char8_t>(arg.get()) });
+        flatpakArgs.append(UTF8CString::unsafeFromUTF8(arg.get()));
     }
 
     Vector<char*> newArgv(argv.size() + flatpakArgs.size());

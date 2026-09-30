@@ -398,7 +398,7 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "key"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
-            event.key = UTF8CString { byteCast<char8_t>(strValue.get()) };
+            event.key = UTF8CString::unsafeFromUTF8(strValue.get());
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "isComposing"));
             g_assert_true(jsc_value_is_boolean(value.get()));
             event.isComposing = jsc_value_to_boolean(value.get());
@@ -417,7 +417,7 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "key"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
-            event.key = UTF8CString { byteCast<char8_t>(strValue.get()) };
+            event.key = UTF8CString::unsafeFromUTF8(strValue.get());
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "isComposing"));
             g_assert_true(jsc_value_is_boolean(value.get()));
             event.isComposing = jsc_value_to_boolean(value.get());
@@ -427,21 +427,21 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
-            event.data = UTF8CString { byteCast<char8_t>(strValue.get()) };
+            event.data = UTF8CString::unsafeFromUTF8(strValue.get());
             m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionupdate")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionUpdate);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
-            event.data = UTF8CString { byteCast<char8_t>(strValue.get()) };
+            event.data = UTF8CString::unsafeFromUTF8(strValue.get());
             m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionend")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionEnd);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
-            event.data = UTF8CString { byteCast<char8_t>(strValue.get()) };
+            event.data = UTF8CString::unsafeFromUTF8(strValue.get());
             m_events.append(WTF::move(event));
         }
 
@@ -646,7 +646,7 @@ public:
 
     void waitForSurroundingText(const char* text)
     {
-        m_expectedSurroundingText = UTF8CString { byteCast<char8_t>(text) };
+        m_expectedSurroundingText = UTF8CString::unsafeFromUTF8(text);
         g_idle_add([](gpointer userData) -> gboolean {
             auto* test = static_cast<InputMethodTest*>(userData);
             if (!g_strcmp0(test->m_context->surroundingText, test->m_expectedSurroundingText.legacyCStringPointer())) {

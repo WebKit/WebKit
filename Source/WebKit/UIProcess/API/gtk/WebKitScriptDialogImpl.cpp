@@ -364,7 +364,7 @@ void webkitScriptDialogImplConfirm(WebKitScriptDialogImpl* dialog)
     case WEBKIT_SCRIPT_DIALOG_ALERT:
         break;
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
-        dialog->priv->dialog->text = UTF8CString { byteCast<char8_t>(gtk_entry_get_text(GTK_ENTRY(dialog->priv->entry))) };
+        dialog->priv->dialog->text = UTF8CString::unsafeFromUTF8(gtk_entry_get_text(GTK_ENTRY(dialog->priv->entry)));
         break;
     case WEBKIT_SCRIPT_DIALOG_CONFIRM:
     case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:

@@ -222,17 +222,17 @@ static UTF8CString getCgroupControllerPath(FILE* cgroupControllerFile, ASCIILite
                 return { };
         }
         if (!strcmp(name.data(), controllerName)) {
-            cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
+            cgroupMemoryControllerPath = UTF8CString::unsafeFromUTF8(path.data());
             LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath);
             return cgroupMemoryControllerPath;
         }
         if (!strcmp(name.data(), "name=systemd")) {
-            cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
+            cgroupMemoryControllerPath = UTF8CString::unsafeFromUTF8(path.data());
             LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath);
             return cgroupMemoryControllerPath;
         }
         if (!strcmp(name.data(), "")) {
-            cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
+            cgroupMemoryControllerPath = UTF8CString::unsafeFromUTF8(path.data());
             LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath);
             return cgroupMemoryControllerPath;
         }

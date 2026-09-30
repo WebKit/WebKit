@@ -60,7 +60,7 @@ public:
         const char* messageText;
         const char* sourceID;
         g_variant_get(variant.get(), "(uu&su&s)", &source, &level, &messageText, &lineNumber, &sourceID);
-        test->m_consoleMessage = { static_cast<ConsoleMessageTest::MessageSource>(source), static_cast<ConsoleMessageTest::MessageLevel>(level), UTF8CString { byteCast<char8_t>(messageText) }, lineNumber, UTF8CString { byteCast<char8_t>(sourceID) } };
+        test->m_consoleMessage = { static_cast<ConsoleMessageTest::MessageSource>(source), static_cast<ConsoleMessageTest::MessageLevel>(level), UTF8CString::unsafeFromUTF8(messageText), lineNumber, UTF8CString::unsafeFromUTF8(sourceID) };
 
         g_main_loop_quit(test->m_mainLoop);
     }

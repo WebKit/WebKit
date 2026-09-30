@@ -797,7 +797,7 @@ static UTF8CString getShaderLog(GLuint shader)
     glGetShaderInfoLog(shader, logLength, &infoLength, info.mutableSpan().data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return UTF8CString { byteCast<char8_t>(info.span().first(stringLength)) };
+    return UTF8CString::fromUTF8(info.span().first(stringLength));
 }
 
 static UTF8CString getProgramLog(GLuint program)
@@ -812,7 +812,7 @@ static UTF8CString getProgramLog(GLuint program)
     glGetProgramInfoLog(program, logLength, &infoLength, info.mutableSpan().data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return UTF8CString { byteCast<char8_t>(info.span().first(stringLength)) };
+    return UTF8CString::fromUTF8(info.span().first(stringLength));
 }
 #endif
 

@@ -74,7 +74,7 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(LookupAsyncData)
 static GList* webkitCachedResolverLookupByName(GResolver* resolver, const char* hostname, GCancellable* cancellable, GError** error)
 {
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
-    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto host = UTF8CString::unsafeFromUTF8(hostname);
     auto addressList = priv->cache->lookup(host);
     if (addressList)
         return addressListVectorToGList(addressList.value());
@@ -89,7 +89,7 @@ static void webkitCachedResolverLookupByNameAsync(GResolver* resolver, const cha
 {
     GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
-    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto host = UTF8CString::unsafeFromUTF8(hostname);
     auto addressList = priv->cache->lookup(host);
     if (addressList) {
         g_task_return_pointer(task.get(), addressListVectorToGList(addressList.value()), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
@@ -135,7 +135,7 @@ static GList* webkitCachedResolverLookupByNameWithFlags(GResolver* resolver, con
 {
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
     auto cacheType = dnsCacheType(flags);
-    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto host = UTF8CString::unsafeFromUTF8(hostname);
     auto addressList = priv->cache->lookup(host, cacheType);
     if (addressList)
         return addressListVectorToGList(addressList.value());
@@ -151,7 +151,7 @@ static void webkitCachedResolverLookupByNameWithFlagsAsync(GResolver* resolver, 
     GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
     auto cacheType = dnsCacheType(flags);
-    UTF8CString host { byteCast<char8_t>(hostname) };
+    auto host = UTF8CString::unsafeFromUTF8(hostname);
     auto addressList = priv->cache->lookup(host, cacheType);
     if (addressList) {
         g_task_return_pointer(task.get(), addressListVectorToGList(addressList.value()), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));

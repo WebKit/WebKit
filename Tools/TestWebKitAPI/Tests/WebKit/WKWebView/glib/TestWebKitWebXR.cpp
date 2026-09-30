@@ -167,7 +167,7 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
         data->result.didCallback = true;
         data->result.mode = webkit_xr_permission_request_get_session_mode(xrRequest);
         g_autofree gchar* originStr = webkit_security_origin_to_string(webkit_xr_permission_request_get_security_origin(xrRequest));
-        data->result.origin = UTF8CString { byteCast<char8_t>(originStr) };
+        data->result.origin = UTF8CString::unsafeFromUTF8(originStr);
         data->result.grantedFeatures = webkit_xr_permission_request_get_granted_features(xrRequest);
         data->result.consentRequiredFeatures = webkit_xr_permission_request_get_consent_required_features(xrRequest);
         data->result.consentOptionalFeatures = webkit_xr_permission_request_get_consent_optional_features(xrRequest);
@@ -201,7 +201,7 @@ static void testWebKitXRPermissionRequest(WebXRTest* test, gconstpointer)
         test->waitUntilLoadFinished();
         test->runJavaScriptAndWaitUntilFinished(script.utf8(), nullptr);
         test->waitUntilTitleChanged();
-        data.result.title = UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(test->webView())) };
+        data.result.title = UTF8CString::unsafeFromUTF8(webkit_web_view_get_title(test->webView()));
     };
 
     // requestSession is rejected by default without a permission-request callback
@@ -285,7 +285,7 @@ static void testWebKitXRHitTest(WebXRTest* test, gconstpointer)
         test->waitUntilLoadFinished();
         test->runJavaScriptAndWaitUntilFinished(script.utf8(), nullptr);
         test->waitUntilTitleChanged();
-        return UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(test->webView())) };
+        return UTF8CString::unsafeFromUTF8(webkit_web_view_get_title(test->webView()));
     };
 
     // FIXME: requestHitTestSource throws NotSupportedError because the SDK doesn't support XR_ANDROID_raycast yet

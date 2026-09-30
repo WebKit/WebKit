@@ -102,7 +102,7 @@ static void webkitUserMessageSetProperty(GObject* object, guint propId, const GV
 
     switch (propId) {
     case PROP_NAME:
-        message->priv->message.name = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        message->priv->message.name = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         message->priv->message.type = UserMessage::Type::Message;
         break;
     case PROP_PARAMETERS:

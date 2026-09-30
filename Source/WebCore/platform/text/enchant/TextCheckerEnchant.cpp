@@ -159,7 +159,7 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
             enchant_broker_list_dicts(m_broker, [](const char* const languageTag, const char* const, const char* const, const char* const, void* data) {
                 auto* dictLanguage = static_cast<UTF8CString*>(data);
                 if (dictLanguage->isNull())
-                    *dictLanguage = UTF8CString { byteCast<char8_t>(languageTag) };
+                    *dictLanguage = UTF8CString::unsafeFromUTF8(languageTag);
             }, &dictLanguage);
             if (!dictLanguage.isNull()) {
                 if (auto* dict = enchant_broker_request_dict(m_broker, dictLanguage.legacyCStringPointer()))

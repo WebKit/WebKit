@@ -173,7 +173,7 @@ void webkit_script_dialog_prompt_set_text(WebKitScriptDialog* dialog, const char
     g_return_if_fail(dialog);
     g_return_if_fail(dialog->type == WEBKIT_SCRIPT_DIALOG_PROMPT);
 
-    dialog->text = UTF8CString { byteCast<char8_t>(text) };
+    dialog->text = UTF8CString::unsafeFromUTF8(text);
 }
 
 /**

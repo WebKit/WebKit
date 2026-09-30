@@ -2084,7 +2084,7 @@ public:
 
     static void titleChangedCallback(WebKitWebView* view, GParamSpec*, WebViewTitleTest* test)
     {
-        test->m_webViewTitles.append(UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(view)) });
+        test->m_webViewTitles.append(UTF8CString::unsafeFromUTF8(webkit_web_view_get_title(view)));
     }
 
     WebViewTitleTest()
@@ -2131,7 +2131,7 @@ public:
 
     static void titleChangedCallback(WebKitWebView* view, GParamSpec*, WebViewTitleTest* test)
     {
-        test->m_webViewTitles.append(UTF8CString { byteCast<char8_t>(webkit_web_view_get_title(view)) });
+        test->m_webViewTitles.append(UTF8CString::unsafeFromUTF8(webkit_web_view_get_title(view)));
     }
 
     FrameDisplayedTest()

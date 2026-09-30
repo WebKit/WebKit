@@ -118,7 +118,7 @@ void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(c
         return;
 
     for (auto& notification : m_apiNotifications.values()) {
-        if (tag == UTF8CString { byteCast<char8_t>(webkit_notification_get_tag(notification.get())) }) {
+        if (tag == UTF8CString::unsafeFromUTF8(webkit_notification_get_tag(notification.get()))) {
             closeAPINotification(WebNotificationIdentifier { webkit_notification_get_id(notification.get()) });
             break;
         }
@@ -126,7 +126,7 @@ void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(c
 
 #if ASSERT_ENABLED
     for (auto& notification : m_apiNotifications.values())
-        ASSERT(tag != UTF8CString { byteCast<char8_t>(webkit_notification_get_tag(notification.get())) });
+        ASSERT(tag != UTF8CString::unsafeFromUTF8(webkit_notification_get_tag(notification.get())));
 #endif
 }
 

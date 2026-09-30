@@ -551,7 +551,7 @@ public:
         if (m_expectedViewMessageNames.isEmpty())
             return false;
 
-        if (m_expectedViewMessageNames.contains(UTF8CString { byteCast<char8_t>(webkit_user_message_get_name(message)) })) {
+        if (m_expectedViewMessageNames.contains(UTF8CString::unsafeFromUTF8(webkit_user_message_get_name(message)))) {
             m_receivedViewMessages.append(message);
             if (m_receivedViewMessages.size() == m_expectedViewMessageNames.size())
                 quitMainLoop();
@@ -566,7 +566,7 @@ public:
         if (m_expectedContextMessageNames.isEmpty())
             return false;
 
-        if (m_expectedContextMessageNames.contains(UTF8CString { byteCast<char8_t>(webkit_user_message_get_name(message)) })) {
+        if (m_expectedContextMessageNames.contains(UTF8CString::unsafeFromUTF8(webkit_user_message_get_name(message)))) {
             m_receivedContextMessages.append(message);
             if (m_receivedContextMessages.size() == m_expectedContextMessageNames.size())
                 quitMainLoop();
@@ -587,7 +587,7 @@ public:
 
     WebKitUserMessage* waitUntilViewMessageReceived(const char* messageName)
     {
-        return waitUntilViewMessagesReceived({ UTF8CString { byteCast<char8_t>(messageName) } }).first().get();
+        return waitUntilViewMessagesReceived({ UTF8CString::unsafeFromUTF8(messageName) }).first().get();
     }
 
     const Vector<GRefPtr<WebKitUserMessage>>& waitUntilContextMessagesReceived(Vector<UTF8CString>&& messageNames)
@@ -601,7 +601,7 @@ public:
 
     WebKitUserMessage* waitUntilContextMessageReceived(const char* messageName)
     {
-        return waitUntilContextMessagesReceived({ UTF8CString { byteCast<char8_t>(messageName) } }).first().get();
+        return waitUntilContextMessagesReceived({ UTF8CString::unsafeFromUTF8(messageName) }).first().get();
     }
 
     Vector<UTF8CString> m_expectedViewMessageNames;

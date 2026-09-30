@@ -122,15 +122,15 @@ struct DelayedSignal {
 
     DelayedSignal(DelayedSignalType type, const char* str)
         : type(type)
-        , str(UTF8CString { byteCast<char8_t>(str) })
+        , str(UTF8CString::unsafeFromUTF8(str))
     {
     }
 
     DelayedSignal(DelayedSignalType type, const char* str, const char* str2, const char* str3, gboolean b, gboolean b2)
         : type(type)
-        , str(UTF8CString { byteCast<char8_t>(str) })
-        , str2(UTF8CString { byteCast<char8_t>(str2) })
-        , str3(UTF8CString { byteCast<char8_t>(str3) })
+        , str(UTF8CString::unsafeFromUTF8(str))
+        , str2(UTF8CString::unsafeFromUTF8(str2))
+        , str3(UTF8CString::unsafeFromUTF8(str3))
         , b(b)
         , b2(b2)
     {

@@ -30,7 +30,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
         break;
     case WEBKIT_LOAD_REDIRECTED:
         g_assert_true(webkit_web_view_is_loading(webView));
-        test->m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(webView)) };
+        test->m_activeURI = UTF8CString::unsafeFromUTF8(webkit_web_view_get_uri(webView));
         test->m_committedURI = test->m_activeURI;
         if (!test->m_redirectURI.isNull())
             ASSERT_CMP_CSTRING(test->m_redirectURI, ==, test->m_activeURI);
@@ -38,7 +38,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
         break;
     case WEBKIT_LOAD_COMMITTED: {
         g_assert_true(webkit_web_view_is_loading(webView));
-        test->m_activeURI = UTF8CString { byteCast<char8_t>(webkit_web_view_get_uri(webView)) };
+        test->m_activeURI = UTF8CString::unsafeFromUTF8(webkit_web_view_get_uri(webView));
 
         // Check that on committed we always have a main resource with a response.
         WebKitWebResource* resource = webkit_web_view_get_main_resource(webView);

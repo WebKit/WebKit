@@ -300,7 +300,7 @@ static void jscClassSetProperty(GObject* object, guint propID, const GValue* val
         jscClass->priv->context = jscContextGetJSContext(JSC_CONTEXT(g_value_get_object(value)));
         break;
     case PROP_NAME:
-        jscClass->priv->name = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        jscClass->priv->name = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_PARENT:
         if (auto* parent = g_value_get_object(value))

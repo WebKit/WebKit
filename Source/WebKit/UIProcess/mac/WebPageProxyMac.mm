@@ -608,7 +608,7 @@ static NSString *temporaryPDFDirectoryPath()
     static NeverDestroyed path = [] {
         RetainPtr temporaryDirectory = NSTemporaryDirectory();
         RetainPtr temporaryDirectoryTemplate = [temporaryDirectory stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
-        UTF8CString templateRepresentation { byteCast<char8_t>([temporaryDirectoryTemplate fileSystemRepresentation]) };
+        auto templateRepresentation = UTF8CString::unsafeFromUTF8([temporaryDirectoryTemplate fileSystemRepresentation]);
         if (mkdtemp(byteCast<char>(templateRepresentation.mutableSpanIncludingNullTerminator()).data()))
             return adoptNS((NSString *)[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.legacyCStringPointer() length:templateRepresentation.length()] copy]);
         return RetainPtr<NSString> { };

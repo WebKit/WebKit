@@ -78,7 +78,7 @@ public:
     {
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
-        m_message = UTF8CString { byteCast<char8_t>(message) };
+        m_message = UTF8CString::unsafeFromUTF8(message);
         g_main_loop_quit(m_mainLoop.get());
     }
 
@@ -279,7 +279,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
             gboolean isPaired;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
                 if (!g_strcmp0(type, "Automation")) {
-                    test.setTarget(connectionID, Target(targetID, UTF8CString { byteCast<char8_t>(name) }, isPaired));
+                    test.setTarget(connectionID, Target(targetID, UTF8CString::unsafeFromUTF8(name), isPaired));
                     break;
                 }
             }

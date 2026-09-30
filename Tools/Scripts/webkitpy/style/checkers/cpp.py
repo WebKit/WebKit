@@ -2938,6 +2938,29 @@ def check_wtf_to_array(clean_lines, line_number, file_state, error):
         error(line_number, 'runtime/wtf_to_array', 4, "Use 'WTF::toArray()' instead of 'std::to_array()'.")
 
 
+def check_utf8cstring_from_utf8(clean_lines, line_number, file_state, error):
+    """Looks for a UTF8CString constructed from 'byteCast<char8_t>()', which should use
+    'UTF8CString::unsafeFromUTF8()' or 'UTF8CString::fromUTF8()' instead.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    if search(r'\bUTF8CString(\s+\w+)?\s*[({]\s*byteCast\s*<\s*char8_t\s*>\s*\(', line):
+        error(line_number, 'runtime/utf8cstring_from_utf8', 4,
+              "Use 'UTF8CString::unsafeFromUTF8()' or 'UTF8CString::fromUTF8()' instead of constructing a UTF8CString from 'byteCast<char8_t>()'.")
+
+
 # Matches '.append(T { })', '->append(T())', 'append(Foo::Bar<Baz>{})', 'append({ })', etc.
 # The call is either through a receiver ('.' or '->'), or bare / base-qualified ('append(',
 # 'Base::append(') where it cannot be a declaration such as 'void append(Foo());': at the start
@@ -4245,6 +4268,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_to_array(clean_lines, line_number, file_state, error)
+    check_utf8cstring_from_utf8(clean_lines, line_number, file_state, error)
     check_construct_and_append(clean_lines, line_number, file_state, error)
     check_unsafe_get(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
@@ -5573,6 +5597,7 @@ class CppChecker(object):
         'runtime/threadsafe_fn',
         'runtime/unsafe_get_ptr',
         'runtime/unsigned',
+        'runtime/utf8cstring_from_utf8',
         'runtime/virtual',
         'runtime/adopt_dynamic_cast',
         'runtime/auto_with_adopt',

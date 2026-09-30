@@ -546,7 +546,7 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     // Check default values of settings, before applying key_file settings.
     g_assert_true(webkit_settings_get_enable_webaudio(settings.get()));
     g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
-    UTF8CString defaultUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
+    auto defaultUserAgent = UTF8CString::unsafeFromUTF8(webkit_settings_get_user_agent(settings.get()));
 
     // Loading settings from a file that contains an unknown setting should raise an error.
     g_key_file_load_from_data(key_file.get(), unknownSetting, strlen(unknownSetting), G_KEY_FILE_NONE, &error.outPtr());
@@ -576,7 +576,7 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     g_assert_false(webkit_settings_get_enable_webaudio(settings.get()));
     g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
 
-    UTF8CString newUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
+    auto newUserAgent = UTF8CString::unsafeFromUTF8(webkit_settings_get_user_agent(settings.get()));
     ASSERT_CMP_CSTRING(newUserAgent, !=, defaultUserAgent);
 }
 
@@ -585,7 +585,7 @@ static UTF8CString convertWebViewMainResourceDataToUTF8CString(WebViewTest* test
 {
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
-    return UTF8CString { byteCast<char8_t>(std::span { mainResourceData, mainResourceDataSize }) };
+    return UTF8CString::fromUTF8(std::span { mainResourceData, mainResourceDataSize });
 }
 
 static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, UTF8CStringView userAgent)
@@ -598,7 +598,7 @@ static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, UTF8CStringVie
 static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
 {
     GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
-    UTF8CString defaultUserAgent { byteCast<char8_t>(webkit_settings_get_user_agent(settings.get())) };
+    auto defaultUserAgent = UTF8CString::unsafeFromUTF8(webkit_settings_get_user_agent(settings.get()));
     webkit_web_view_set_settings(test->webView(), settings.get());
 
     g_assert_nonnull(g_strstr_len(defaultUserAgent.legacyCStringPointer(), -1, "AppleWebKit"));

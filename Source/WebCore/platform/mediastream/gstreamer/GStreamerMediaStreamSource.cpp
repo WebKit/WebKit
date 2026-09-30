@@ -883,7 +883,7 @@ static char* webkitMediaStreamSrcUriGetUri(GstURIHandler* handler)
 static gboolean webkitMediaStreamSrcUriSetUri(GstURIHandler* handler, const char* uri, GError**)
 {
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(handler);
-    self->priv->uri = UTF8CString { byteCast<char8_t>(uri) };
+    self->priv->uri = UTF8CString::unsafeFromUTF8(uri);
     return TRUE;
 }
 

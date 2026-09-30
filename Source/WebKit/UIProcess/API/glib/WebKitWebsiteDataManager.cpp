@@ -183,10 +183,10 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
 
     switch (propID) {
     case PROP_BASE_DATA_DIRECTORY:
-        manager->priv->baseDataDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        manager->priv->baseDataDirectory = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_BASE_CACHE_DIRECTORY:
-        manager->priv->baseCacheDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        manager->priv->baseCacheDirectory = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
 #if !ENABLE(2022_GLIB_API)
     case PROP_LOCAL_STORAGE_DIRECTORY:

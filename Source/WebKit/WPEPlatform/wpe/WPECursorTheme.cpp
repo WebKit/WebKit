@@ -71,7 +71,7 @@ static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& in
     }
 
     if (g_file_test(baseCursorsPath.get(), G_FILE_TEST_IS_DIR))
-        return UTF8CString { byteCast<char8_t>(baseCursorsPath.get()) };
+        return UTF8CString::unsafeFromUTF8(baseCursorsPath.get());
 
     return { };
 }

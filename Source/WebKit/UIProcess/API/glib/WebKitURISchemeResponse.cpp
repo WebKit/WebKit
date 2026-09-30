@@ -185,7 +185,7 @@ void webkit_uri_scheme_response_set_content_type(WebKitURISchemeResponse* respon
 {
     g_return_if_fail(WEBKIT_IS_URI_SCHEME_RESPONSE(response));
 
-    response->priv->contentType = UTF8CString { byteCast<char8_t>(contentType) };
+    response->priv->contentType = UTF8CString::unsafeFromUTF8(contentType);
 }
 
 /**
@@ -226,7 +226,7 @@ void webkit_uri_scheme_response_set_status(WebKitURISchemeResponse* response, gu
 
     response->priv->statusCode = static_cast<gint>(statusCode);
     if (statusMessage)
-        response->priv->statusMessage = UTF8CString { byteCast<char8_t>(statusMessage) };
+        response->priv->statusMessage = UTF8CString::unsafeFromUTF8(statusMessage);
     else
-        response->priv->statusMessage = UTF8CString { byteCast<char8_t>(soup_status_get_phrase(statusCode)) };
+        response->priv->statusMessage = UTF8CString::unsafeFromUTF8(soup_status_get_phrase(statusCode));
 }

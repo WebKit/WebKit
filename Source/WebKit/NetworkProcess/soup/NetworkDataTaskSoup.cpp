@@ -559,7 +559,7 @@ void NetworkDataTaskSoup::didSniffContentCallback(SoupMessage* soupMessage, cons
 
     ASSERT(task->m_soupMessage.get() == soupMessage);
     if (!parameters) {
-        task->didSniffContent(UTF8CString { byteCast<char8_t>(contentType) });
+        task->didSniffContent(UTF8CString::unsafeFromUTF8(contentType));
         return;
     }
 
@@ -573,7 +573,7 @@ void NetworkDataTaskSoup::didSniffContentCallback(SoupMessage* soupMessage, cons
         soup_header_g_string_append_param(sniffedType, static_cast<const char*>(key), static_cast<const char*>(value));
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
-    task->didSniffContent(UTF8CString { byteCast<char8_t>(sniffedType->str) });
+    task->didSniffContent(UTF8CString::unsafeFromUTF8(sniffedType->str));
     g_string_free(sniffedType, TRUE);
 }
 

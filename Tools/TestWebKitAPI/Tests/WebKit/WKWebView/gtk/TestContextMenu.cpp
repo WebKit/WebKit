@@ -699,7 +699,7 @@ public:
     void setAction(GAction* action, const char* title, GVariant* target = nullptr)
     {
         m_gAction = action;
-        m_gActionTitle = UTF8CString { byteCast<char8_t>(title) };
+        m_gActionTitle = UTF8CString::unsafeFromUTF8(title);
         m_action = nullptr;
         m_expectedTarget = target;
         g_signal_connect_swapped(action, "activate", G_CALLBACK(actionActivatedCallback), this);
@@ -1057,13 +1057,13 @@ public:
         GVariant* value;
         while (g_variant_iter_next(&iter, "{&sv}", &key, &value)) {
             if (!strcmp(key, "Name") && g_variant_classify(value) == G_VARIANT_CLASS_STRING)
-                m_node.name = UTF8CString { byteCast<char8_t>(g_variant_get_string(value, nullptr)) };
+                m_node.name = UTF8CString::unsafeFromUTF8(g_variant_get_string(value, nullptr));
             else if (!strcmp(key, "Type") && g_variant_classify(value) == G_VARIANT_CLASS_UINT32)
                 m_node.type = g_variant_get_uint32(value);
             else if (!strcmp(key, "Contents") && g_variant_classify(value) == G_VARIANT_CLASS_STRING)
-                m_node.contents = UTF8CString { byteCast<char8_t>(g_variant_get_string(value, nullptr)) };
+                m_node.contents = UTF8CString::unsafeFromUTF8(g_variant_get_string(value, nullptr));
             else if (!strcmp(key, "Parent") && g_variant_classify(value) == G_VARIANT_CLASS_STRING)
-                m_node.parentName = UTF8CString { byteCast<char8_t>(g_variant_get_string(value, nullptr)) };
+                m_node.parentName = UTF8CString::unsafeFromUTF8(g_variant_get_string(value, nullptr));
             g_variant_unref(value);
         }
     }

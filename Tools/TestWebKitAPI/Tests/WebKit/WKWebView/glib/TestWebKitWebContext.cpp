@@ -99,9 +99,9 @@ public:
         }
 
         URISchemeHandler(const char* reply, int replyLength, const char* mimeType, int statusCode = 200)
-            : reply(UTF8CString { byteCast<char8_t>(reply) })
+            : reply(UTF8CString::unsafeFromUTF8(reply))
             , replyLength(replyLength)
-            , mimeType(UTF8CString { byteCast<char8_t>(mimeType) })
+            , mimeType(UTF8CString::unsafeFromUTF8(mimeType))
             , statusCode(statusCode)
         {
         }
@@ -730,7 +730,7 @@ public:
         waitUntilLoadFinished();
         size_t dataSize = 0;
         const char* data = mainResourceData(dataSize);
-        return UTF8CString { byteCast<char8_t>(std::span { data, dataSize }) };
+        return UTF8CString::fromUTF8(std::span { data, dataSize });
     }
 
     UTF8CString loadURIAndGetMainResourceData(const UTF8CString& uri) { return loadURIAndGetMainResourceData(uri.legacyCStringPointer()); }
@@ -814,7 +814,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
         g_assert_nonnull(data);
         auto* test = static_cast<ProxyTest*>(userData);
         GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
-        ASSERT_CMP_CSTRING(UTF8CString { byteCast<char8_t>(std::span { data.get(), dataSize }) }, ==, proxyServerPortAsString.get());
+        ASSERT_CMP_CSTRING(UTF8CString::fromUTF8(std::span { data.get(), dataSize }), ==, proxyServerPortAsString.get());
         test->quitMainLoop();
         }, test);
     g_main_loop_run(test->m_mainLoop);

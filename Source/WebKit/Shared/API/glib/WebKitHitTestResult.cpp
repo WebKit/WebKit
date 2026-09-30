@@ -113,19 +113,19 @@ static void webkitHitTestResultSetProperty(GObject* object, guint propId, const 
         hitTestResult->priv->context = g_value_get_uint(value);
         break;
     case PROP_LINK_URI:
-        hitTestResult->priv->linkURI = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        hitTestResult->priv->linkURI = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_LINK_TITLE:
-        hitTestResult->priv->linkTitle = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        hitTestResult->priv->linkTitle = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_LINK_LABEL:
-        hitTestResult->priv->linkLabel = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        hitTestResult->priv->linkLabel = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_IMAGE_URI:
-        hitTestResult->priv->imageURI = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        hitTestResult->priv->imageURI = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     case PROP_MEDIA_URI:
-        hitTestResult->priv->mediaURI = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
+        hitTestResult->priv->mediaURI = UTF8CString::unsafeFromUTF8(g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);

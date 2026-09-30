@@ -39,14 +39,14 @@ const UTF8CString& applicationID()
     std::call_once(onceFlag, [] {
         if (auto* app = g_application_get_default()) {
             if (const char* appID = g_application_get_application_id(app)) {
-                id.get() = UTF8CString { byteCast<char8_t>(appID) };
+                id.get() = UTF8CString::unsafeFromUTF8(appID);
                 return;
             }
         }
 
         const char* programName = g_get_prgname();
         if (programName && g_application_id_is_valid(programName)) {
-            id.get() = UTF8CString { byteCast<char8_t>(programName) };
+            id.get() = UTF8CString::unsafeFromUTF8(programName);
             return;
         }
 
