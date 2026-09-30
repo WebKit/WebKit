@@ -10434,3 +10434,7 @@ fast/text-extraction/text-extraction-scroll-to-next-page.html [ Timeout ]
 webkit.org/b/325809 fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/325810 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Pass Timeout ]
+
+# webkit.org/b/325812 NEW TEST(318573@main): [iOS] 2x tests in fast/visual-viewport/ios/interactive-widget are flaky
+fast/visual-viewport/ios/interactive-widget/resizes-content-hardware-keyboard.html [ Pass Failure ]
+fast/visual-viewport/ios/interactive-widget/resizes-content-keyboard-scroll.html [ Pass Failure ]
