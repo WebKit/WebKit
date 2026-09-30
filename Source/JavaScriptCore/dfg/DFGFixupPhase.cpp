@@ -922,8 +922,8 @@ private:
                 } else {
                     node->setResult(NodeResultDouble);
                     node->setArithRoundingMode(Arith::RoundingMode::Double);
+                    node->clearFlags(NodeMustGenerate);
                 }
-                node->clearFlags(NodeMustGenerate);
             } else
                 fixEdge<UntypedUse>(node->child1());
             break;
