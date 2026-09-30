@@ -1294,7 +1294,7 @@ void SkiaCompositingLayer::paintWithMaskAndBackdrop(SkCanvas& canvas, PaintConte
     if (!context.shouldDraw()) {
         collectGroupDamage(canvas, context);
 
-        if (m_backdrop.filter && !context.paintingBackdropForLayer)
+        if (m_backdrop.filter && context.paintingBackdropForLayer != this)
             paintBackdrop(canvas, context);
 
         paintWithBlendMode(canvas, context);
@@ -1324,7 +1324,7 @@ void SkiaCompositingLayer::paintWithMaskAndBackdrop(SkCanvas& canvas, PaintConte
             canvas.clipShader(maskShader);
     }
 
-    if (m_backdrop.filter && !context.paintingBackdropForLayer)
+    if (m_backdrop.filter && context.paintingBackdropForLayer != this)
         paintBackdrop(canvas, context);
 
     paintWithBlendMode(canvas, context);
