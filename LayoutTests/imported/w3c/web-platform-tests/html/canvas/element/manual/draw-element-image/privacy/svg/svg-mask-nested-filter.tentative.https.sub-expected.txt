@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage does not use cross-origin feImages on nested filtered SVG content inside masks promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

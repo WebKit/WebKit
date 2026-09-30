@@ -12,7 +12,9 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-no-layoutsubtree.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-no-content-drawable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-update-element-geometry-offscreen.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-update-element-geometry.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/low-dpi-hit-test.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/selection.tentative.html

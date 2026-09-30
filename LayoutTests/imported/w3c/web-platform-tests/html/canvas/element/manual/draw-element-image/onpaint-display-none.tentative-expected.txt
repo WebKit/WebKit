@@ -1,0 +1,4 @@
+
+
+FAIL Canvas paint events on display:none canvas fire in reverse shadow-including tree order promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

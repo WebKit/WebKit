@@ -1,0 +1,10 @@
+
+Harness Error (FAIL), message = Test named 'drawElementImage() automatically updates element canvas transform by default' specified 1 'cleanup' function, and 1 failed.
+
+FAIL drawElementImage() automatically updates element canvas transform by default promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+NOTRUN drawElementImage() updates element canvas transform with explicit {preserveElementGeometry: false}
+NOTRUN drawElementImage() does not update element canvas transform with {preserveElementGeometry: true}
+NOTRUN drawElementImage() with destination size overload (4 arguments)
+NOTRUN drawElementImage() with source rect overload (6 arguments)
+NOTRUN drawElementImage() with source and destination rect overload (8 arguments)
+

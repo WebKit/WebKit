@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage should succeed if a canvas is moved to be nested promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

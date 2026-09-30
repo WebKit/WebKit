@@ -1,0 +1,12 @@
+
+Harness Error (FAIL), message = Test named 'OffscreenCanvas drawElementImage(ElementImage) automatically updates element canvas transform by default' specified 1 'cleanup' function, and 1 failed.
+
+FAIL OffscreenCanvas drawElementImage(ElementImage) automatically updates element canvas transform by default promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+NOTRUN OffscreenCanvas drawElementImage(ElementImage) updates element canvas transform with explicit {preserveElementGeometry: false}
+NOTRUN OffscreenCanvas drawElementImage(ElementImage) does not update element canvas transform with {preserveElementGeometry: true}
+NOTRUN OffscreenCanvas.clearElementGeometry(ElementImage) on main thread clears element canvas transform and dispatches elementgeometryupdate
+NOTRUN OffscreenCanvas.clearElementGeometry(Element) on main thread clears element canvas transform and dispatches elementgeometryupdate
+NOTRUN OffscreenCanvas draw and clear in the same turn processes updates in order and de-duplicates event.elements
+NOTRUN OffscreenCanvas clear and redraw in same turn processes updates in order
+NOTRUN OffscreenCanvas multiple clearElementGeometry calls in same turn batch and de-duplicate event.elements
+

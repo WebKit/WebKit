@@ -1,0 +1,9 @@
+
+Harness Error (FAIL), message = Test named 'drawElementImage on worker dispatches elementgeometryupdate and updates element transform by default' specified 1 'cleanup' function, and 1 failed.
+
+FAIL drawElementImage on worker dispatches elementgeometryupdate and updates element transform by default promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+NOTRUN drawElementImage on worker updates element transform with explicit {preserveElementGeometry: false}
+NOTRUN drawElementImage on worker does not update element transform with {preserveElementGeometry: true}
+NOTRUN Multiple drawElementImage calls in same worker turn batch into a single elementgeometryupdate event
+NOTRUN clearElementGeometry on worker clears geometry and dispatches elementgeometryupdate event
+

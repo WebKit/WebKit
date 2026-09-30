@@ -13,7 +13,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/animated-gif-worker.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/drawElementImage-returned-matrix-worker.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/canvas-transform-update-worker.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/getElementTransform-worker.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/ink-overflow-worker-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/ink-overflow-worker.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/ink-overflow-worker.tentative.html

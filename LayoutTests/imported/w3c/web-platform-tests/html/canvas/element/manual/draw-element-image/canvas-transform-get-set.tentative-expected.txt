@@ -1,0 +1,26 @@
+
+
+FAIL getElementTransform() defaults to identity DOMMatrix canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(inside)', 'canvas.getElementTransform' is undefined)
+FAIL getElementTransform() returns a new DOMMatrix object each time canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(inside)', 'canvas.getElementTransform' is undefined)
+FAIL updateElementGeometry() with 2D DOMMatrix and reading back canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(inside, {canvasTransform: expected})', 'canvas.updateElementGeometry' is undefined)
+FAIL updateElementGeometry() with 3D DOMMatrix and reading back canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(inside, {canvasTransform: expected})', 'canvas.updateElementGeometry' is undefined)
+FAIL clearElementGeometry() and updateElementGeometry() resetting matrix to identity canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(inside, {canvasTransform: new DOMMatrix().scale(2, 3)})', 'canvas.updateElementGeometry' is undefined)
+PASS updateElementGeometry() with invalid DOMMatrixInit throws TypeError
+FAIL getElementTransform() and updateElementGeometry() on disconnected elements throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(disconnected);
+      }" threw object "TypeError: canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(disconnected)', 'canvas.getElementTransform' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL getElementTransform() and updateElementGeometry() on elements outside <canvas> throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(outside);
+      }" threw object "TypeError: canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(outside)', 'canvas.getElementTransform' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL getElementTransform() and updateElementGeometry() on elements inside different <canvas> throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(otherInside);
+      }" threw object "TypeError: canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(otherInside)', 'canvas.getElementTransform' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL getElementTransform() and updateElementGeometry() on canvas without content=drawable throw InvalidStateError assert_throws_dom: function "() => {
+        canvasNotDrawable.getElementTransform(insideNotDrawable);
+      }" threw object "TypeError: canvasNotDrawable.getElementTransform is not a function. (In 'canvasNotDrawable.getElementTransform(insideNotDrawable)', 'canvasNotDrawable.getElementTransform' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL getElementTransform() and updateElementGeometry() on non-drawable nested descendants throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(nestedNonDrawable);
+      }" threw object "TypeError: canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(nestedNonDrawable)', 'canvas.getElementTransform' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL getElementTransform() and updateElementGeometry() on drawable nested descendants canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(nestedDrawable)', 'canvas.getElementTransform' is undefined)
+FAIL getElementTransform() and updateElementGeometry() on SVG element canvas.getElementTransform is not a function. (In 'canvas.getElementTransform(svgRect)', 'canvas.getElementTransform' is undefined)
+

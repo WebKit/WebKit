@@ -16,7 +16,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/iframe-blue.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/sandboxed-iframe-red.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/sandboxed-iframe-red.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-cross-origin-background-image-on-body.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-cross-origin-background-image-on-html.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-cross-origin-background-image.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-cross-origin-before-background-on-body-modified.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-cross-origin-before-background-on-body.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-cross-origin-before-content-on-body.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-with-canvas-background-png-images.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-with-canvas-html-images.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/support/subframe-with-canvas-iframe.https.sub.html

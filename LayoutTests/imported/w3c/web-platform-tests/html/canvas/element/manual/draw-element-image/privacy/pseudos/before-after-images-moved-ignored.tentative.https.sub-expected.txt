@@ -1,0 +1,5 @@
+Before/After
+
+
+FAIL drawElementImage does not draw cross-origin images for before/after promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

@@ -1,0 +1,12 @@
+
+Harness Error (FAIL), message = TypeError: d1.requestPaint is not a function. (In 'd1.requestPaint()', 'd1.requestPaint' is undefined)
+
+FAIL calling requestPaint on d1 outside of paint should cause canvas a, b, and c to fire paint assert_equals: canvas a: should fire onpaint expected 1 but got 0
+FAIL drawing into d1 outside of paint should cause canvas a, b, and c to fire paint assert_equals: canvas a: should fire onpaint expected 1 but got 0
+FAIL drawing into d2 outside of paint should cause canvas a, b, and c to fire paint assert_equals: canvas a: should fire onpaint expected 1 but got 0
+FAIL modifying d3 outside of paint should cause canvas a, b, and c to fire paint assert_equals: canvas a: should fire onpaint expected 1 but got 0
+FAIL drawing into d1 from canvas a onpaint should cause canvas a, b, and c to fire paint the next frame promise_test: Unhandled rejection with value: object "TypeError: canvasa.requestPaint is not a function. (In 'canvasa.requestPaint()', 'canvasa.requestPaint' is undefined)"
+FAIL drawing into d2 from canvas a onpaint should cause canvas a, b, and c to fire paint the next frame promise_test: Unhandled rejection with value: object "TypeError: canvasa.requestPaint is not a function. (In 'canvasa.requestPaint()', 'canvasa.requestPaint' is undefined)"
+FAIL modifying d3 from canvas a onpaint should cause canvas a, b, and c to fire paint the next frame promise_test: Unhandled rejection with value: object "TypeError: canvasa.requestPaint is not a function. (In 'canvasa.requestPaint()', 'canvasa.requestPaint' is undefined)"
+FAIL drawing into d1 from its own onpaint should not cause canvas a, b, or c to fire paint the next frame promise_test: Unhandled rejection with value: object "TypeError: d1.requestPaint is not a function. (In 'd1.requestPaint()', 'd1.requestPaint' is undefined)"
+

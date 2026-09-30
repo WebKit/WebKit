@@ -1,0 +1,4 @@
+Enough text for multiple lines.
+
+FAIL drawElementImage does not reveal visited link colors in first-line promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

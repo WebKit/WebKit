@@ -1,0 +1,6 @@
+
+FAIL onpaint should fire when a deeply nested element with the drawable attribute is removed assert_equals: onpaint should fire after a deeply nested drawable element is removed. expected 1 but got 0
+FAIL onpaint should fire when a nested element with the drawable attribute is removed assert_equals: onpaint should fire after a nested drawable element is removed. expected 1 but got 0
+FAIL onpaint should fire when a direct child with the drawable attribute is removed assert_equals: onpaint should fire after a direct drawable element is removed. expected 1 but got 0
+FAIL onpaint should fire when an inline element with the drawable attribute is removed assert_equals: onpaint should fire after a nested inline drawable element is removed. expected 1 but got 0
+

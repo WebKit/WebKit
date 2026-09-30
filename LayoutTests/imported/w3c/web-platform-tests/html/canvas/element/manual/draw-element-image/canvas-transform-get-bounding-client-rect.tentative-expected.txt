@@ -1,0 +1,11 @@
+
+FAIL updateElementGeometry() affects getBoundingClientRect() on canvas child assert_equals: expected 10 but got 0
+FAIL updateElementGeometry() affects getBoundingClientRect() on an inline nested drawable assert_equals: expected 10 but got 0
+FAIL updateElementGeometry() affects getBoundingClientRect() on a fragmented inline nested drawable assert_equals: expected 10 but got 0
+FAIL updateElementGeometry() on ancestor and nested drawable canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(target, {canvasTransform: new DOMMatrix().translate(100, 200)})', 'canvas.updateElementGeometry' is undefined)
+FAIL updateElementGeometry() affects getBoundingClientRect() on a block nested drawable assert_equals: expected 10 but got 0
+FAIL A non-drawable descendant inherits its ancestor's canvas transform canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(target, {canvasTransform: new DOMMatrix().translate(100, 200)})', 'canvas.updateElementGeometry' is undefined)
+FAIL updateElementGeometry() does not affect getBoundingClientRect() outside canvas subtree assert_throws_dom: function "() => {
+          canvas.updateElementGeometry(outside, {canvasTransform: new DOMMatrix().translate(50, 50)});
+        }" threw object "TypeError: canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(outside, {canvasTransform: new DOMMatrix().translate(50, 50)})', 'canvas.updateElementGeometry' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

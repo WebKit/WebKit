@@ -14,6 +14,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/backdrop-filter-png-images-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-image-in-iframe-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-image-in-iframe-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-image-on-body-in-iframe-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-image-on-body-in-iframe-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-image-on-html-in-iframe-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-image-on-html-in-iframe-moved-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-png-images-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/background-svg-images-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/border-png-images-ignored.tentative.https.sub.html
@@ -55,17 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/subframe-cross-origin-background-image.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/subframe-cross-origin-frame.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/subframe-cross-origin-html-images.tentative.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg-images-ignored.tentative.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg-mask-filter.tentative.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg-pattern-cross-origin-image.tentative.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg-pattern-with-feImage-cross-origin-image.tentative.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg-use-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/target-text-ignored-overlay-path-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/target-text-ignored-overlay-path.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/target-text-ignored-overlay-path.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/video-ignored.tentative.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link-color-ignored.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link-currentcolor-ignored.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link-decoration-color-ignored.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link-slotted-color-ignored.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link-svg-fill-stroke-color-ignored.tentative.html

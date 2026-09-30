@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-after-images-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-after-images-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-after-visited-color-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-background-image-iframe-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-background-image-iframe-modified-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-background-image-iframe-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-images-iframe-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/before-images-iframe-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/details-content-after-image-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/details-content-background-image-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/details-content-visited-link-currentcolor-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/details-content-visited-link-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-letter-background-images-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-letter-visited-link-color-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-letter-visited-link-currentcolor-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-line-background-images-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-line-background-images-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-line-visited-link-color-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-line-visited-link-color-moved-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/first-line-visited-link-currentcolor-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/marker-images-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/pseudos/marker-visited-link-currentcolor-ignored.tentative.html

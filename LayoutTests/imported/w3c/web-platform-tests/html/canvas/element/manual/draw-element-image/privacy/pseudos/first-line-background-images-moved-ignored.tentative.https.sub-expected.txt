@@ -1,0 +1,4 @@
+Enough test for several lines of content.
+
+FAIL drawElementImage does not draw cross-origin background images for first-line promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

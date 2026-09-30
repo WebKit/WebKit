@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage does not use cross-origin SVG use content from outside the subtree promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+

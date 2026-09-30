@@ -1,0 +1,15 @@
+
+
+FAIL canvas.updateElementGeometry and clearElementGeometry are defined assert_equals: expected "function" but got "undefined"
+FAIL updateElementGeometry throws InvalidStateError for ineligible elements assert_throws_dom: Calling updateElementGeometry on canvas without content=drawable must throw function "() => {
+          notDrawableCanvas.updateElementGeometry(child);
+        }" threw object "TypeError: notDrawableCanvas.updateElementGeometry is not a function. (In 'notDrawableCanvas.updateElementGeometry(child)', 'notDrawableCanvas.updateElementGeometry' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL updateElementGeometry() with canvasTransform affects getBoundingClientRect() on canvas child assert_equals: expected 10 but got 0
+FAIL clearElementGeometry() unsets canvas transform on canvas child canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(target, {
+          canvasTransform: new DOMMatrix().translate(50, 60).scale(2, 3)
+        })', 'canvas.updateElementGeometry' is undefined)
+FAIL updateElementGeometry and clearElementGeometry accept ElementImage promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL updateElementGeometry() with clip does not affect getBoundingClientRect() canvas.updateElementGeometry is not a function. (In 'canvas.updateElementGeometry(target, {
+          canvasClip: { x: 10, y: 10, width: 20, height: 20 }
+        })', 'canvas.updateElementGeometry' is undefined)
+
