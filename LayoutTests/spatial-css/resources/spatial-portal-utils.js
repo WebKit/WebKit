@@ -135,3 +135,29 @@ async function waitForEnvironmentMap(element, predicate, description, timeout = 
         await sleepForSeconds(0.1);
     }
 }
+
+const parseSceneGraph = text => {
+    const entities = [];
+    const openEntities = [];
+    for (const line of text.split("\n")) {
+        const depth = line.search(/\S/);
+        const entityMatch = /^\s*\(entity(?: (.+))?$/.exec(line);
+        if (entityMatch) {
+            while (openEntities.length && openEntities.at(-1).depth >= depth)
+                openEntities.pop();
+            const entity = { name: entityMatch[1] ?? "", element: null, parent: openEntities.at(-1) ?? null, depth };
+            entities.push(entity);
+            openEntities.push(entity);
+            continue;
+        }
+
+        const elementMatch = /^\s*\(element (.+)\)$/.exec(line);
+        if (elementMatch && openEntities.length)
+            openEntities.at(-1).element = elementMatch[1];
+    }
+    return entities;
+};
+
+const parentOfElement = (entities, label) => entities.find(entity => entity.element === label)?.parent;
+
+const modelSceneGraph = async element => parseSceneGraph(await internals.modelSceneGraphAsText(element));

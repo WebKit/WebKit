@@ -65,6 +65,7 @@
 #include "StyleEnvironmentMap.h"
 #include "StylePortalTransform.h"
 #include "StylePositionAnchor.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityChangeClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <ranges>
@@ -273,6 +274,20 @@ HTMLModelElement* SpatialPortalController::hostedModelElement(NodeIdentifier nod
     if (it == m_hostedModels.end())
         return nullptr;
     return it->value.element.get();
+}
+
+Vector<Ref<HTMLModelElement>> SpatialPortalController::hostedModelsInTreeOrder() const
+{
+    RefPtr portalElement = m_portalElement.get();
+    if (!portalElement)
+        return { };
+
+    Vector<Ref<HTMLModelElement>> models;
+    for (Ref model : descendantsOfType<HTMLModelElement>(*portalElement)) {
+        if (hostedModelElement(model->nodeIdentifier()) == model.ptr())
+            models.append(WTF::move(model));
+    }
+    return models;
 }
 
 void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
@@ -641,6 +656,26 @@ String SpatialPortalController::effectiveEnvironmentMapForTesting() const
 }
 
 #endif // ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+
+#if ENABLE(MODEL_PROCESS)
+void SpatialPortalController::sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, const ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    RefPtr player = m_modelPlayer;
+    if (!player) {
+        completionHandler({ });
+        return;
+    }
+
+    updateAnchors();
+
+    Vector<std::pair<NodeIdentifier, String>> modelLabels;
+    unsigned treeOrderPosition = 0;
+    for (Ref model : hostedModelsInTreeOrder())
+        modelLabels.append({ model->nodeIdentifier(), model->dumpLabelForTesting(++treeOrderPosition) });
+
+    player->sceneGraphAsTextForTesting(rootNode, WTF::move(modelLabels), options, WTF::move(completionHandler));
+}
+#endif
 
 void SpatialPortalController::updateGestureHandling()
 {

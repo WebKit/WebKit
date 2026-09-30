@@ -7147,6 +7147,11 @@ header: <WebCore/DocumentClasses.h>
 #if ENABLE(MODEL_PROCESS)
 header: <WebCore/StageModeOperations.h>
 enum class WebCore::StageModeOperation : bool;
+
+header: <WebCore/ModelPlayer.h>
+[CustomHeader] struct WebCore::ModelSceneGraphAsTextOptions {
+    bool includeAssetEntities;
+};
 #endif
 
 #if ENABLE(SPATIAL_PORTAL)

@@ -224,6 +224,14 @@ enum AutoplayPolicy {
     float right = 0;
 };
 
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=MODEL_PROCESS,
+    ImplementedAs=ModelSceneGraphAsTextOptions,
+] dictionary ModelSceneGraphAsTextOptions {
+    boolean includeAssetEntities = false;
+};
+
 enum HEVCParameterCodec {
     "hev1",
     "hvc1"
@@ -1584,6 +1592,8 @@ enum ContentsFormat {
     [Conditional=MODEL_ELEMENT] undefined disableModelLoadDelaysForTesting();
     [Conditional=MODEL_ELEMENT] DOMString modelElementState(HTMLModelElement element);
     [Conditional=MODEL_ELEMENT] boolean isModelElementIntersectingViewport(HTMLModelElement element);
+
+    [Conditional=MODEL_PROCESS] Promise<DOMString> modelSceneGraphAsText(Element element, optional ModelSceneGraphAsTextOptions options = {});
 
     [Conditional=SPATIAL_PORTAL] unsigned long numberOfHostedModelsInSpatialPortal(Element element);
     [Conditional=SPATIAL_PORTAL] boolean establishesSpatialPortal(Element element);

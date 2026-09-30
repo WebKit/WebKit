@@ -22,63 +22,78 @@ async function anchoredPair(test, { positionAnchor = "--host" } = {}) {
     const portal = createPortal(test);
 
     const host = appendModel(portal, asset);
+    host.id = "host";
     host.style.anchorName = "--host";
 
     const child = appendModel(portal, asset);
+    child.id = "child";
     child.style.positionAnchor = positionAnchor;
     child.style.positionContext = "anchor";
 
     await Promise.all([host.ready, child.ready]);
-    return { host, child };
+    return { portal, host, child };
 }
 
 promise_test(async t => {
-    const { host, child } = await anchoredPair(t);
+    const { portal, host, child } = await anchoredPair(t);
     await settledAnchor(child, host, "the child resolves to the host");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is reparented under the host's");
 
     assert_equals(internals.spatialPortalAnchorForModel(host), null, "the host is not itself anchored");
 }, `position-anchor with position-context: anchor resolves to the named model`);
 
 promise_test(async t => {
-    const { host, child } = await anchoredPair(t, { positionAnchor: "--host#lid-attachment" });
+    const { portal, host, child } = await anchoredPair(t, { positionAnchor: "--host#Cube" });
 
     await settledAnchor(child, host, "the child resolves to the host");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.name, "Cube", "the child's entity is reparented under the placement");
+
+    child.style.positionAnchor = "--host#missing";
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "an unknown placement falls back to the host's root");
 }, `an anchor name with a placement resolves to the same model`);
 
 promise_test(async t => {
-    const { host, child } = await anchoredPair(t);
+    const { portal, host, child } = await anchoredPair(t);
     await settledAnchor(child, host, "anchored");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is under the host's");
 
     child.style.positionAnchor = "";
     await settledAnchor(child, null, "un-anchored");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.name, "WebKit:PortalContainer", "the child's entity is back under the container");
 }, `clearing position-anchor removes the anchor`);
 
 promise_test(async t => {
     const portal = createPortal(t);
 
     const child = appendModel(portal, asset);
+    child.id = "child";
     child.style.positionAnchor = "--later";
     child.style.positionContext = "anchor";
 
     const host = appendModel(portal, asset);
+    host.id = "host";
     host.style.anchorName = "--later";
 
     await Promise.all([host.ready, child.ready]);
     await settledAnchor(child, host, "the child resolves to a host declared after it");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is reparented under the host's");
 }, `an anchor declared after the anchored model still resolves`);
 
 promise_test(async t => {
     const portal = createPortal(t);
 
     const first = appendModel(portal, asset);
+    first.id = "first";
     first.style.anchorName = "--first";
 
     const middle = appendModel(portal, asset);
+    middle.id = "middle";
     middle.style.anchorName = "--middle";
     middle.style.positionAnchor = "--first";
     middle.style.positionContext = "anchor";
 
     const last = appendModel(portal, asset);
+    last.id = "last";
     last.style.positionAnchor = "--middle";
     last.style.positionContext = "anchor";
 
@@ -86,6 +101,9 @@ promise_test(async t => {
 
     await settledAnchor(middle, first, "middle resolves to first");
     await settledAnchor(last, middle, "last resolves to middle");
+    const entities = await modelSceneGraph(portal);
+    assert_equals(parentOfElement(entities, "#middle")?.element, "#first", "middle's entity is under first's");
+    assert_equals(parentOfElement(entities, "#last")?.element, "#middle", "last's entity is under middle's");
 }, `a chain of anchors resolves at every step`);
 
 </script>

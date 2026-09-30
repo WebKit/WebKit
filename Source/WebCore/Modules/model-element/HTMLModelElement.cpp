@@ -95,6 +95,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(MODEL_CONTEXT)
 #include "ModelContext.h"
@@ -2415,6 +2416,35 @@ String HTMLModelElement::modelElementStateForTesting() const
     ASSERT_NOT_REACHED();
     return "Unknown"_s;
 }
+
+#if ENABLE(MODEL_PROCESS)
+void HTMLModelElement::sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler) const
+{
+    RefPtr modelPlayer = m_modelPlayer;
+    if (modelPlayer) {
+        modelPlayer->sceneGraphAsTextForTesting(std::nullopt, { { nodeIdentifier(), dumpLabelForTesting(1) } }, options, WTF::move(completionHandler));
+        return;
+    }
+
+#if ENABLE(SPATIAL_PORTAL)
+    CheckedPtr controller = m_lastRegisteredPortalController.get();
+    if (controller) {
+        controller->sceneGraphAsTextForTesting(nodeIdentifier(), options, WTF::move(completionHandler));
+        return;
+    }
+#endif
+
+    completionHandler({ });
+}
+
+String HTMLModelElement::dumpLabelForTesting(unsigned treeOrderPosition) const
+{
+    auto& id = getIdAttribute();
+    if (!id.isEmpty())
+        return makeString('#', id);
+    return makeString(localName(), '[', treeOrderPosition, ']');
+}
+#endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
 void HTMLModelElement::dynamicRangeLimitDidChange(PlatformDynamicRangeLimit dynamicRangeLimit)

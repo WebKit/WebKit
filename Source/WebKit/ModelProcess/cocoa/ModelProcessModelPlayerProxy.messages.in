@@ -33,7 +33,8 @@ messages -> ModelProcessModelPlayerProxy {
     ReloadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
     ModelVisibilityDidChange(bool isVisible)
     [EnabledBy=AllowTestOnlyIPC] DisableUnloadDelayForTesting()
-    
+    [EnabledBy=AllowTestOnlyIPC] SceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>> modelLabels, struct WebCore::ModelSceneGraphAsTextOptions options) -> (String sceneGraph)
+
     # WebCore::ModelPlayer
     LoadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
     UnloadModel(WebCore::NodeIdentifier nodeID)

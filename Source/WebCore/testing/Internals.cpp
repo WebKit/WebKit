@@ -9052,6 +9052,37 @@ bool Internals::isModelElementIntersectingViewport(HTMLModelElement& element)
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+void Internals::modelSceneGraphAsText(Element& element, const ModelSceneGraphAsTextOptions& options, DOMPromiseDeferred<IDLDOMString>&& promise)
+{
+    protect(element.document())->updateStyleIfNeeded();
+
+    auto completionHandler = [promise = WTF::move(promise)](String&& sceneGraph) mutable {
+        if (sceneGraph.isNull()) {
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "The element has no loaded model"_s });
+            return;
+        }
+        promise.resolve(WTF::move(sceneGraph));
+    };
+
+#if ENABLE(SPATIAL_PORTAL)
+    CheckedPtr controller = element.spatialPortalController();
+    if (controller) {
+        controller->sceneGraphAsTextForTesting(std::nullopt, options, WTF::move(completionHandler));
+        return;
+    }
+#endif
+
+    RefPtr model = dynamicDowncast<HTMLModelElement>(element);
+    if (model) {
+        model->sceneGraphAsTextForTesting(options, WTF::move(completionHandler));
+        return;
+    }
+
+    completionHandler({ });
+}
+#endif
+
 #if ENABLE(SPATIAL_PORTAL)
 unsigned Internals::numberOfHostedModelsInSpatialPortal(Element& element)
 {

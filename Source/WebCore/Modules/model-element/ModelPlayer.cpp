@@ -278,5 +278,12 @@ std::optional<double> ModelPlayer::getEffectiveDynamicRangeLimitValue() const
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+void ModelPlayer::sceneGraphAsTextForTesting(std::optional<NodeIdentifier>, Vector<std::pair<NodeIdentifier, String>>&&, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+#endif
+
 
 } // namespace WebCore

@@ -74,6 +74,12 @@ struct ModelPlayerGraphicsLayerConfiguration;
 enum class EnvironmentMapKind : uint8_t { None, Default, Custom };
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+struct ModelSceneGraphAsTextOptions {
+    bool includeAssetEntities { false };
+};
+#endif
+
 class WEBCORE_EXPORT ModelPlayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelPlayer, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer, WEBCORE_EXPORT);
 public:
@@ -185,6 +191,10 @@ public:
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     virtual void setDynamicRangeLimit(PlatformDynamicRangeLimit, float, bool);
     virtual std::optional<double> getEffectiveDynamicRangeLimitValue() const;
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    virtual void sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, Vector<std::pair<NodeIdentifier, String>>&& modelLabels, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&);
 #endif
 };
 

@@ -155,6 +155,8 @@ private:
     void exitImmersivePresentation(CompletionHandler<void()>&&) final;
 #endif
 
+    void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) final;
+
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;

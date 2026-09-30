@@ -193,6 +193,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
     void disableUnloadDelayForTesting() { m_unloadDelayDisabledForTesting = true; }
+    void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) final;
     static uint64_t objectCountForTesting() { return gObjectCountForTesting; }
 
 private:

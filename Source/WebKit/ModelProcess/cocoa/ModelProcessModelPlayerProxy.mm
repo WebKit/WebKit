@@ -58,6 +58,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
+#import <wtf/HashSet.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/NeverDestroyed.h>
@@ -1907,6 +1908,145 @@ void ModelProcessModelPlayerProxy::removeIBL()
 {
     RetainPtr entity = environmentMapTargetEntity();
     [entity removeIBL];
+}
+
+#if HAVE(CORE_RE)
+static double roundedForSceneGraph(float value)
+{
+    double rounded = std::round(value * 10000.0) / 10000.0;
+    return rounded ? rounded : 0;
+}
+
+static String sceneGraphNumbers(std::initializer_list<float> values)
+{
+    return makeString(interleave(values, [](float value) {
+        return FormattedNumber::fixedPrecision(roundedForSceneGraph(value), 10);
+    }, ' '));
+}
+
+static void dumpSceneGraphTransform(TextStream& ts, REEntityRef entity)
+{
+    auto transformComponent = REEntityGetComponentByClass(entity, RETransformComponentGetComponentType());
+    if (!transformComponent)
+        return;
+
+    auto srt = RETransformComponentGetLocalSRT(transformComponent);
+
+    auto scale = sceneGraphNumbers({ srt.scale.x, srt.scale.y, srt.scale.z });
+    if (scale != "1 1 1"_s)
+        ts << indent << "(scale "_s << scale << ")\n"_s;
+
+    auto quaternion = srt.rotation.vector;
+    for (float component : { quaternion.w, quaternion.x, quaternion.y, quaternion.z }) {
+        double rounded = roundedForSceneGraph(component);
+        if (!rounded)
+            continue;
+        if (rounded < 0)
+            quaternion = -quaternion;
+        break;
+    }
+    auto rotation = sceneGraphNumbers({ quaternion.x, quaternion.y, quaternion.z, quaternion.w });
+    if (rotation != "0 0 0 1"_s)
+        ts << indent << "(rotation "_s << rotation << ")\n"_s;
+
+    auto translation = sceneGraphNumbers({ srt.translation.x, srt.translation.y, srt.translation.z });
+    if (translation != "0 0 0"_s)
+        ts << indent << "(translation "_s << translation << ")\n"_s;
+}
+
+static bool collectEntitiesWithWebKitDescendants(REEntityRef entity, HashSet<REEntityRef>& entities)
+{
+    bool found = spanHasPrefix(unsafeSpan(REEntityGetName(entity)), "WebKit:"_span);
+    for (size_t i = 0; i < REEntityGetChildCount(entity); ++i) {
+        REEntityRef child = REEntityGetChild(entity, i);
+        if (child && collectEntitiesWithWebKitDescendants(child, entities))
+            found = true;
+    }
+    if (found)
+        entities.add(entity);
+    return found;
+}
+
+static void dumpSceneGraphEntity(TextStream& ts, REEntityRef entity, const WebCore::ModelSceneGraphAsTextOptions& options, const HashSet<REEntityRef>& entitiesWithWebKitDescendants, const Vector<std::pair<REEntityRef, String>>& labels)
+{
+    auto labelIndex = [&](REEntityRef candidate) {
+        return labels.findIf([&](auto& label) {
+            return label.first == candidate;
+        });
+    };
+
+    ts << indent << "(entity"_s;
+    auto name = String::fromUTF8(REEntityGetName(entity));
+    if (!name.isEmpty())
+        ts << ' ' << name;
+    ts << '\n';
+
+    {
+        TextStream::IndentScope indentScope(ts);
+
+        auto index = labelIndex(entity);
+        if (index != notFound)
+            ts << indent << "(element "_s << labels[index].second << ")\n"_s;
+
+        dumpSceneGraphTransform(ts, entity);
+
+        if (REEntityGetComponentByClass(entity, REImageBasedLightReceiverComponentGetComponentType()))
+            ts << indent << "(image-based light receiver)\n"_s;
+
+        Vector<REEntityRef> children;
+        for (size_t i = 0; i < REEntityGetChildCount(entity); ++i) {
+            REEntityRef child = REEntityGetChild(entity, i);
+            if (child && (options.includeAssetEntities || entitiesWithWebKitDescendants.contains(child)))
+                children.append(child);
+        }
+
+        std::ranges::stable_sort(children, { }, labelIndex);
+
+        if (!children.isEmpty()) {
+            ts << indent << "(children "_s << children.size() << '\n';
+            for (auto child : children) {
+                TextStream::IndentScope childIndentScope(ts);
+                dumpSceneGraphEntity(ts, child, options, entitiesWithWebKitDescendants, labels);
+            }
+            ts << indent << ")\n"_s;
+        }
+    }
+
+    ts << indent << ")\n"_s;
+}
+#endif // HAVE(CORE_RE)
+
+void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+#if HAVE(CORE_RE)
+    [m_layer layoutIfNeeded];
+
+    REEntityRef rootEntity = rootNode ? [entityForNode(*rootNode) coreEntity] : m_containerEntity.get();
+    if (!rootEntity) {
+        completionHandler({ });
+        return;
+    }
+
+    Vector<std::pair<REEntityRef, String>> labels;
+    for (auto& [nodeID, label] : modelLabels) {
+        RetainPtr entity = entityForNode(nodeID);
+        if (entity)
+            labels.append({ [entity coreEntity], WTF::move(label) });
+    }
+
+    HashSet<REEntityRef> entitiesWithWebKitDescendants;
+    if (!options.includeAssetEntities)
+        collectEntitiesWithWebKitDescendants(rootEntity, entitiesWithWebKitDescendants);
+
+    TextStream ts;
+    dumpSceneGraphEntity(ts, rootEntity, options, entitiesWithWebKitDescendants, labels);
+    completionHandler(ts.release());
+#else
+    UNUSED_PARAM(rootNode);
+    UNUSED_PARAM(modelLabels);
+    UNUSED_PARAM(options);
+    completionHandler({ });
+#endif
 }
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)

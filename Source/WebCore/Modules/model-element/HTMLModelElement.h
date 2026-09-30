@@ -230,6 +230,11 @@ public:
 
     WEBCORE_EXPORT String modelElementStateForTesting() const;
 
+#if ENABLE(MODEL_PROCESS)
+    WEBCORE_EXPORT void sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) const;
+    String dumpLabelForTesting(unsigned treeOrderPosition) const;
+#endif
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 

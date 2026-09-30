@@ -184,6 +184,10 @@ class MockMediaSessionCoordinator;
 class HTMLModelElement;
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+struct ModelSceneGraphAsTextOptions;
+#endif
+
 #if ENABLE(SPEECH_SYNTHESIS)
 class PlatformSpeechSynthesizerMock;
 #endif
@@ -1718,6 +1722,10 @@ public:
     void disableModelLoadDelaysForTesting();
     String modelElementState(HTMLModelElement&);
     bool NODELETE isModelElementIntersectingViewport(HTMLModelElement&);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelSceneGraphAsText(Element&, const ModelSceneGraphAsTextOptions&, DOMPromiseDeferred<IDLDOMString>&&);
 #endif
 
 #if ENABLE(SPATIAL_PORTAL)

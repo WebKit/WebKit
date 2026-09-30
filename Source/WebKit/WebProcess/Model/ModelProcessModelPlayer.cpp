@@ -616,6 +616,11 @@ void ModelProcessModelPlayer::exitImmersivePresentation(CompletionHandler<void()
 
 #endif
 
+void ModelProcessModelPlayer::sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SceneGraphAsTextForTesting(rootNode, modelLabels, options), WTF::move(completionHandler));
+}
+
 }
 
 #endif // ENABLE(MODEL_PROCESS)

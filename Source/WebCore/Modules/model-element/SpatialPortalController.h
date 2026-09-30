@@ -108,6 +108,10 @@ public:
     WEBCORE_EXPORT String effectiveEnvironmentMapForTesting() const;
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+    WEBCORE_EXPORT void sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&);
+#endif
+
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
     WEBCORE_EXPORT static CheckedPtr<SpatialPortalController> interactiveControllerForHitTestedElement(Element*);
     WEBCORE_EXPORT bool supportsInteraction() const;
@@ -154,6 +158,7 @@ private:
     void unloadAllChildModels();
     void saveChildState(NodeIdentifier, HostedModel&, bool onSuspend);
     HTMLModelElement* hostedModelElement(NodeIdentifier) const;
+    Vector<Ref<HTMLModelElement>> hostedModelsInTreeOrder() const;
     void updateAnchors();
     AnchorsByName collectAnchorNames() const;
     AnchorResolution resolvedAnchorNode(const HTMLModelElement&, const Style::ComputedStyle&, const AnchorsByName&) const;
