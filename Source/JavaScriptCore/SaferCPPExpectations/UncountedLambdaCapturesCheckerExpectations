@@ -1,6 +1,3 @@
-bytecode/AccessCase.cpp
-bytecode/InlineCacheCompiler.cpp
-bytecode/ObjectPropertyConditionSet.cpp
 bytecompiler/NodesCodegen.cpp
 debugger/Debugger.cpp
 dfg/DFGLazyJSValue.cpp
@@ -9,11 +6,8 @@ ftl/FTLCompile.cpp
 ftl/FTLLowerDFGToB3.cpp
 ftl/FTLOSRExitHandle.cpp
 ftl/FTLPatchpointExceptionHandle.cpp
-jit/JITPlan.cpp
 jit/JITSizeStatistics.cpp
-jit/PolymorphicCallStubRoutine.cpp
 runtime/CachedTypes.cpp
 runtime/SamplingProfiler.cpp
 runtime/WaiterListManager.h
-wasm/WasmCallee.cpp
 wasm/WasmTable.cpp

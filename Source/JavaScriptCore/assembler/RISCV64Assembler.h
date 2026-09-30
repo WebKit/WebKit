@@ -2182,25 +2182,25 @@ public:
     }
 
     template<typename F>
-    void jumpPlaceholder(const F& functor)
+    void jumpPlaceholder(NOESCAPE const F& functor)
     {
         LinkJumpImpl::generatePlaceholder(*this, functor);
     }
 
     template<typename F>
-    void branchPlaceholder(const F& functor)
+    void branchPlaceholder(NOESCAPE const F& functor)
     {
         LinkBranchImpl::generatePlaceholder(*this, functor);
     }
 
     template<typename F>
-    void pointerCallPlaceholder(const F& functor)
+    void pointerCallPlaceholder(NOESCAPE const F& functor)
     {
         PatchPointerImpl::generatePlaceholder(*this, functor);
     }
 
     template<typename F>
-    void nearCallPlaceholder(const F& functor)
+    void nearCallPlaceholder(NOESCAPE const F& functor)
     {
         LinkCallImpl::generatePlaceholder(*this, functor);
     }
@@ -2357,7 +2357,7 @@ protected:
         }
 
         template<typename F>
-        static void generatePlaceholder(RISCV64Assembler& assembler, const F& functor)
+        static void generatePlaceholder(RISCV64Assembler& assembler, NOESCAPE const F& functor)
         {
             assembler.insn(placeholderInsn());
             functor();
@@ -2372,7 +2372,7 @@ protected:
         }
 
         template<typename F>
-        static void generatePlaceholder(RISCV64Assembler& assembler, const F& functor)
+        static void generatePlaceholder(RISCV64Assembler& assembler, NOESCAPE const F& functor)
         {
             assembler.insn(placeholderInsn());
             functor();
@@ -2387,7 +2387,7 @@ protected:
         }
 
         template<typename F>
-        static void generatePlaceholder(RISCV64Assembler& assembler, const F& functor)
+        static void generatePlaceholder(RISCV64Assembler& assembler, NOESCAPE const F& functor)
         {
             auto insnValue = placeholderInsn();
             for (unsigned i = 0; i < 2; ++i)
@@ -2459,7 +2459,7 @@ protected:
         }
 
         template<typename F>
-        static void generatePlaceholder(RISCV64Assembler& assembler, const F& functor)
+        static void generatePlaceholder(RISCV64Assembler& assembler, NOESCAPE const F& functor)
         {
             auto insnValue = placeholderInsn();
             for (unsigned i = 0; i < 7; ++i)

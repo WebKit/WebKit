@@ -866,19 +866,19 @@ public:
     };
 
     template<typename ChildFunctor>
-    ALWAYS_INLINE void doToChildren(Node* node, const ChildFunctor& functor)
+    ALWAYS_INLINE void doToChildren(Node* node, NOESCAPE const ChildFunctor& functor)
     {
         DFG_NODE_DO_TO_CHILDREN(*this, node, (ForwardingFunc<ChildFunctor>(functor)));
     }
     
     template<typename ChildFunctor>
-    ALWAYS_INLINE void doToAllChildren(Node* node, const ChildFunctor& functor)
+    ALWAYS_INLINE void doToAllChildren(Node* node, NOESCAPE const ChildFunctor& functor)
     {
         DFG_NODE_DO_TO_ALL_CHILDREN_COMMON(*this, node, (ForwardingFunc<ChildFunctor>(functor)), APPLY_THING_TO_DO);
     }
 
     template<typename ChildFunctor>
-    ALWAYS_INLINE void doToChildrenBreakOnDone(Node* node, const ChildFunctor& functor)
+    ALWAYS_INLINE void doToChildrenBreakOnDone(Node* node, NOESCAPE const ChildFunctor& functor)
     {
         DFG_NODE_DO_TO_CHILDREN_BREAK_ON_DONE(*this, node, (ForwardingFunc<ChildFunctor>(functor)));
     }
@@ -1121,7 +1121,7 @@ public:
     // any arguments because those are all presumed live. You can call forAllLiveInBytecode() to
     // also get the arguments. This is much faster than calling isLiveInBytecode() for each local.
     template<typename Functor>
-    void forAllLocalsAndTmpsLiveInBytecode(CodeOrigin codeOrigin, const Functor& functor)
+    void forAllLocalsAndTmpsLiveInBytecode(CodeOrigin codeOrigin, NOESCAPE const Functor& functor)
     {
         // Support for not redundantly reporting arguments. Necessary because in case of a varargs
         // call, only the callee knows that arguments are live while in the case of a non-varargs
@@ -1225,7 +1225,7 @@ public:
     // Tells you all of the operands live at the given CodeOrigin. This is a small
     // extension to forAllLocalsOrTmpsLiveInBytecode(), since all arguments are always presumed live.
     template<typename Functor>
-    void forAllLiveInBytecode(CodeOrigin codeOrigin, const Functor& functor)
+    void forAllLiveInBytecode(CodeOrigin codeOrigin, NOESCAPE const Functor& functor)
     {
         forAllLocalsAndTmpsLiveInBytecode(codeOrigin, functor);
         

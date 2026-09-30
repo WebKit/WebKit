@@ -227,7 +227,7 @@ PropertyOffset PropertyTable::renumberPropertyOffsets(JSObject* object, unsigned
 }
 
 template<typename Functor>
-inline void PropertyTable::forEachPropertyMutable(const Functor& functor)
+inline void PropertyTable::forEachPropertyMutable(NOESCAPE const Functor& functor)
 {
     withIndexVector([&](auto* vector) {
         auto* cursor = tableFromIndexVector(vector);

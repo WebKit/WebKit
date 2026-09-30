@@ -195,7 +195,7 @@ inline void SlotVisitor::reportExternalMemoryVisited(size_t size)
 #endif
 
 template<typename Func>
-IterationStatus SlotVisitor::forEachMarkStack(const Func& func)
+IterationStatus SlotVisitor::forEachMarkStack(NOESCAPE const Func& func)
 {
     if (func(m_collectorStack) == IterationStatus::Done)
         return IterationStatus::Done;

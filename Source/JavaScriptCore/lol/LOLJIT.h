@@ -419,7 +419,7 @@ private:
     template<typename Op>
     void emitCompare(const JSInstruction*, RelationalCondition);
     template <typename EmitCompareFunctor>
-    void emitCompareImpl(VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, RelationalCondition, const EmitCompareFunctor&);
+    void emitCompareImpl(VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, RelationalCondition, NOESCAPE const EmitCompareFunctor&);
 
     template<typename Op>
     void emitCompareAndJump(const JSInstruction*, RelationalCondition);
@@ -427,7 +427,7 @@ private:
     template<typename Op, typename SlowOperation>
     void emitCompareSlow(const JSInstruction*, DoubleCondition, SlowOperation, Vector<SlowCaseEntry>::iterator&);
     template<typename SlowOperation>
-    void emitCompareSlowImpl(const auto& allocations, VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, GPRReg dstGPR, SlowOperation, Vector<SlowCaseEntry>::iterator&, const Invocable<void(FPRReg, FPRReg)> auto&);
+    void emitCompareSlowImpl(const auto& allocations, VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, GPRReg dstGPR, SlowOperation, Vector<SlowCaseEntry>::iterator&, NOESCAPE const Invocable<void(FPRReg, FPRReg)> auto&);
 
     template<typename Op, typename SlowOperation>
     void emitCompareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invertOperationResult, Vector<SlowCaseEntry>::iterator&);

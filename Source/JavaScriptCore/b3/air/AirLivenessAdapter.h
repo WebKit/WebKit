@@ -95,7 +95,7 @@ public:
     };
 
     template<typename Func>
-    void forEachActionGroupDescendingStreaming(BasicBlock* block, const Func& func)
+    void forEachActionGroupDescendingStreaming(BasicBlock* block, NOESCAPE const Func& func)
     {
         unsigned blockSize = block->size();
         StreamedActions* early = &m_streamedEarly[0];
@@ -136,7 +136,7 @@ public:
     }
 
     template<typename Func>
-    static void forEachUseInGroup(const StreamedGroup* group, const Func& func)
+    static void forEachUseInGroup(const StreamedGroup* group, NOESCAPE const Func& func)
     {
         for (unsigned index : group->early->use)
             func(index);
@@ -145,7 +145,7 @@ public:
     }
 
     template<typename Func>
-    static void forEachDefInGroup(const StreamedGroup* group, const Func& func)
+    static void forEachDefInGroup(const StreamedGroup* group, NOESCAPE const Func& func)
     {
         for (unsigned index : group->early->def)
             func(index);
@@ -220,7 +220,7 @@ public:
     using ActionGroup = Actions*;
 
     template<typename Func>
-    void forEachActionGroupDescending(BasicBlock* block, const Func& func)
+    void forEachActionGroupDescending(BasicBlock* block, NOESCAPE const Func& func)
     {
         ensureActions();
         ActionsForBoundary& actionsForBoundary = actions[block];
@@ -229,14 +229,14 @@ public:
     }
 
     template<typename Func>
-    static void forEachUseInGroup(ActionGroup group, const Func& func)
+    static void forEachUseInGroup(ActionGroup group, NOESCAPE const Func& func)
     {
         for (unsigned index : group->use)
             func(index);
     }
 
     template<typename Func>
-    static void forEachDefInGroup(ActionGroup group, const Func& func)
+    static void forEachDefInGroup(ActionGroup group, NOESCAPE const Func& func)
     {
         for (unsigned index : group->def)
             func(index);
@@ -245,7 +245,7 @@ public:
     // The tail boundary only ever holds the late roles of the last instruction, which is cheaper to
     // read off that instruction than to materialize the whole per-boundary table for.
     template<typename Func>
-    void forEachUseAtTail(BasicBlock* block, const Func& func)
+    void forEachUseAtTail(BasicBlock* block, NOESCAPE const Func& func)
     {
         if (!block->size())
             return;
@@ -259,14 +259,14 @@ public:
     }
 
     template<typename Func>
-    void forEachUse(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
+    void forEachUse(BasicBlock* block, size_t instBoundaryIndex, NOESCAPE const Func& func)
     {
         for (unsigned index : actionsAt(block, instBoundaryIndex).use)
             func(index);
     }
 
     template<typename Func>
-    void forEachDef(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
+    void forEachDef(BasicBlock* block, size_t instBoundaryIndex, NOESCAPE const Func& func)
     {
         for (unsigned index : actionsAt(block, instBoundaryIndex).def)
             func(index);

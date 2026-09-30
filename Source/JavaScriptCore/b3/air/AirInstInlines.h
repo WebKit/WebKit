@@ -36,7 +36,7 @@
 namespace JSC { namespace B3 { namespace Air {
 
 template<typename Thing, typename Functor>
-void Inst::forEach(const Functor& functor)
+void Inst::forEach(NOESCAPE const Functor& functor)
 {
     forEachArg(
         [&] (Arg& arg, Arg::Role role, Bank bank, Width width) {
@@ -57,7 +57,7 @@ inline RegisterSet Inst::extraEarlyClobberedRegs()
 }
 
 template<typename Thing, typename Functor>
-inline void Inst::forEachUse(Inst* prevInst, Inst* nextInst, const Functor& functor)
+inline void Inst::forEachUse(Inst* prevInst, Inst* nextInst, NOESCAPE const Functor& functor)
 {
     if (prevInst) {
         prevInst->forEach<Thing>(
@@ -77,7 +77,7 @@ inline void Inst::forEachUse(Inst* prevInst, Inst* nextInst, const Functor& func
 }
 
 template<typename Thing, typename Functor>
-inline void Inst::forEachDef(Inst* prevInst, Inst* nextInst, const Functor& functor)
+inline void Inst::forEachDef(Inst* prevInst, Inst* nextInst, NOESCAPE const Functor& functor)
 {
     if (prevInst) {
         prevInst->forEach<Thing>(
@@ -98,7 +98,7 @@ inline void Inst::forEachDef(Inst* prevInst, Inst* nextInst, const Functor& func
 
 template<typename Thing, typename Functor>
 inline void Inst::forEachDefWithExtraClobberedRegs(
-    Inst* prevInst, Inst* nextInst, const Functor& functor)
+    Inst* prevInst, Inst* nextInst, NOESCAPE const Functor& functor)
 {
     forEachDef<Thing>(prevInst, nextInst, [&functor] (Thing thing, Arg::Role role, Bank b,  Width w) {
         functor(thing, role, b, w, PreservesNothing);

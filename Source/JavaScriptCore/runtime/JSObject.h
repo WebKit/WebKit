@@ -173,7 +173,7 @@ public:
 
     enum class SortMode { Default, Ascending };
     template<SortMode mode = SortMode::Default, typename Functor>
-    void forEachOwnIndexedProperty(JSGlobalObject*, const Functor&);
+    void forEachOwnIndexedProperty(JSGlobalObject*, NOESCAPE const Functor&);
 
 private:
     static bool getOwnPropertySlotImpl(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);

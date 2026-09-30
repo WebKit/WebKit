@@ -474,7 +474,7 @@ public:
 
     UncheckedKeyHashSet<MarkedVectorBase*>& markListSet() { return m_markListSet; }
 
-    template<typename Functor> inline void forEachProtectedCell(const Functor&);
+    template<typename Functor> inline void forEachProtectedCell(NOESCAPE const Functor&);
     template<typename Functor> inline void forEachCodeBlock(NOESCAPE const Functor&);
     template<typename Functor> inline void forEachCodeBlockIgnoringJITPlans(const AbstractLocker& codeBlockSetLocker, NOESCAPE const Functor&);
 
@@ -701,7 +701,7 @@ private:
     bool stopIfNecessarySlow(unsigned extraStateBits);
     
     template<typename Func>
-    void waitForCollector(const Func&);
+    void waitForCollector(NOESCAPE const Func&);
     
     JS_EXPORT_PRIVATE void acquireAccessSlow();
     JS_EXPORT_PRIVATE void releaseAccessSlow();
@@ -775,8 +775,8 @@ private:
     JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeededSlow();
 
     
-    void forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>&);
-    void forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& codeBlockSetLocker, const ScopedLambda<void(CodeBlock*)>&);
+    void forEachCodeBlockImpl(NOESCAPE const ScopedLambda<void(CodeBlock*)>&);
+    void forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& codeBlockSetLocker, NOESCAPE const ScopedLambda<void(CodeBlock*)>&);
     
     void setMutatorShouldBeFenced(bool value);
     
@@ -793,7 +793,7 @@ private:
     void iterateExecutingAndCompilingCodeBlocks(Visitor&, NOESCAPE const Function<void(CodeBlock*)>&);
     
     template<typename Func, typename Visitor>
-    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
+    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, NOESCAPE const Func&);
     
     void dumpHeapStatisticsAtVMDestruction();
     void lastChanceToFinalize();
@@ -1114,7 +1114,7 @@ public:
     CodeBlockSpaceAndSet codeBlockSpaceAndSet;
 
     template<typename Func>
-    void forEachCodeBlockSpace(const Func& func)
+    void forEachCodeBlockSpace(NOESCAPE const Func& func)
     {
         func(codeBlockSpaceAndSet);
     }
@@ -1154,7 +1154,7 @@ public:
     ScriptExecutableSpaceAndSets programExecutableSpaceAndSet;
 
     template<typename Func>
-    void forEachScriptExecutableSpace(const Func& func)
+    void forEachScriptExecutableSpace(NOESCAPE const Func& func)
     {
         if (m_evalExecutableSpace)
             func(*m_evalExecutableSpace);

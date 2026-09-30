@@ -83,7 +83,7 @@ public:
     }
 
     template<typename Functor>
-    void removeIf(const Functor& functor)
+    void removeIf(NOESCAPE const Functor& functor)
     {
         m_map.removeIf(
             [&] (UncheckedKeyHashMap<Value*, Matches>::KeyValuePairType& entry) -> bool {
@@ -106,7 +106,7 @@ public:
     }
 
     template<typename Functor>
-    MemoryValue* find(Value* ptr, const Functor& functor)
+    MemoryValue* find(Value* ptr, NOESCAPE const Functor& functor)
     {
         dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "        Looking for ", pointerDump(ptr), " in ", *this);
         if (Matches* matches = find(ptr)) {
@@ -629,7 +629,7 @@ private:
     }
 
     template<typename Filter>
-    bool handleStoreBeforeClobber(Value* ptr, HeapRange range, const Filter& filter)
+    bool handleStoreBeforeClobber(Value* ptr, HeapRange range, NOESCAPE const Filter& filter)
     {
         MemoryMatches matches = findMemoryValue(ptr, range, filter);
         if (matches.isEmpty())
@@ -641,7 +641,7 @@ private:
     }
 
     template<typename Filter>
-    void handleStoreAfterClobber(Value* ptr, HeapRange range, const Filter& filter)
+    void handleStoreAfterClobber(Value* ptr, HeapRange range, NOESCAPE const Filter& filter)
     {
         if (!m_value->traps() && findStoreAfterClobber(ptr, range, filter)) {
             m_value->replaceWithNop();
@@ -653,7 +653,7 @@ private:
     }
 
     template<typename Filter>
-    bool findStoreAfterClobber(Value* ptr, HeapRange range, const Filter& filter)
+    bool findStoreAfterClobber(Value* ptr, HeapRange range, NOESCAPE const Filter& filter)
     {
         if (m_value->as<MemoryValue>()->hasFence())
             return false;
@@ -708,7 +708,7 @@ private:
 
     template<typename Filter, typename Replace>
     void handleMemoryValue(
-        Value* ptr, HeapRange range, const Filter& filter, const Replace& replace)
+        Value* ptr, HeapRange range, NOESCAPE const Filter& filter, NOESCAPE const Replace& replace)
     {
         // FIXME: Currently we observed some performance regression in this case.
         MemoryMatches matches = findMemoryValue(ptr, range, filter /* , m_value->as<MemoryValue>()->readsMutability() */);
@@ -718,7 +718,7 @@ private:
     }
 
     template<typename Replace>
-    bool replaceMemoryValue(const MemoryMatches& matches, const Replace& replace)
+    bool replaceMemoryValue(const MemoryMatches& matches, NOESCAPE const Replace& replace)
     {
         if (matches.isEmpty())
             return false;
@@ -776,7 +776,7 @@ private:
     }
 
     template<typename Filter>
-    MemoryMatches findMemoryValue(Value* ptr, HeapRange range, const Filter& filter, Mutability readsMutability = Mutability::Mutable)
+    MemoryMatches findMemoryValue(Value* ptr, HeapRange range, NOESCAPE const Filter& filter, Mutability readsMutability = Mutability::Mutable)
     {
         if constexpr (B3EliminateCommonSubexpressionsInternal::verbose) {
             dataLogLn(*m_value, ": looking backward for ", *ptr, "...");

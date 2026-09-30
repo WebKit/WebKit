@@ -216,7 +216,7 @@ public:
     }
 
     template<typename Functor>
-    void forEach(const Functor& functor) const
+    void forEach(NOESCAPE const Functor& functor) const
     {
         ASSERT(!isTop());
         m_set.forEach(functor);

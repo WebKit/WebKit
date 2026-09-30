@@ -63,7 +63,7 @@ public:
     }
 
     template<typename HashTranslator, typename T>
-    ValueArg* ensureValue(T&& key, const Invocable<ValueType()> auto& functor)
+    ValueArg* ensureValue(T&& key, NOESCAPE const Invocable<ValueType()> auto& functor)
     {
         // If functor invokes GC, GC can prune WeakGCSet, and manipulate HashSet while we are touching it in the ensure function.
         // The functor must not invoke GC.

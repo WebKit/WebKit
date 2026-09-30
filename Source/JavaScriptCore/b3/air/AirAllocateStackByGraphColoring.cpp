@@ -267,7 +267,7 @@ public:
     StackSlot* indexToValue(unsigned index) const { return actions.code().stackSlots()[index]; }
 
     template<typename Func>
-    void forEachActionGroupDescending(BasicBlock* block, const Func& func) const
+    void forEachActionGroupDescending(BasicBlock* block, NOESCAPE const Func& func) const
     {
         auto blockActions = actions.actionsFor(block);
         while (!blockActions.empty()) {
@@ -277,7 +277,7 @@ public:
     }
 
     template<typename Func>
-    static void forEachUseInGroup(ActionGroup group, const Func& func)
+    static void forEachUseInGroup(ActionGroup group, NOESCAPE const Func& func)
     {
         for (const auto& action : group) {
             if (action.kind == StackSlotActions::UseAction)
@@ -286,7 +286,7 @@ public:
     }
 
     template<typename Func>
-    static void forEachDefInGroup(ActionGroup group, const Func& func)
+    static void forEachDefInGroup(ActionGroup group, NOESCAPE const Func& func)
     {
         for (const auto& action : group) {
             if (action.kind != StackSlotActions::UseAction)
@@ -295,7 +295,7 @@ public:
     }
 
     template<typename Func>
-    void forEachUseAtTail(BasicBlock* block, const Func& func) const
+    void forEachUseAtTail(BasicBlock* block, NOESCAPE const Func& func) const
     {
         auto blockActions = actions.actionsFor(block);
         if (blockActions.empty() || blockActions.back().boundary != block->size())

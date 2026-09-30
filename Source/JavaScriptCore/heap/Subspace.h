@@ -65,29 +65,29 @@ public:
     void prepareForAllocation();
     
     template<typename Func>
-    void forEachDirectory(const Func&);
+    void forEachDirectory(NOESCAPE const Func&);
     
     Ref<SharedTask<BlockDirectory*()>> parallelDirectorySource();
     
     template<typename Func>
-    void forEachMarkedBlock(const Func&);
+    void forEachMarkedBlock(NOESCAPE const Func&);
     
     template<typename Func>
-    void forEachNotEmptyMarkedBlock(const Func&);
+    void forEachNotEmptyMarkedBlock(NOESCAPE const Func&);
     
     JS_EXPORT_PRIVATE Ref<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyMarkedBlockSource();
     
     template<typename Func>
-    void forEachPreciseAllocation(const Func&);
+    void forEachPreciseAllocation(NOESCAPE const Func&);
     
     template<typename Func>
-    void forEachMarkedCell(const Func&);
+    void forEachMarkedCell(NOESCAPE const Func&);
     
     template<typename Visitor, typename Func>
     Ref<SharedTask<void(Visitor&)>> forEachMarkedCellInParallel(const Func&);
 
     template<typename Func>
-    void forEachLiveCell(const Func&);
+    void forEachLiveCell(NOESCAPE const Func&);
     
     void sweepBlocks();
     

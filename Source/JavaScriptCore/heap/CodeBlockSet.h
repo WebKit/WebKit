@@ -64,10 +64,10 @@ public:
     // Visits each CodeBlock in the heap until the visitor function returns true
     // to indicate that it is done iterating, or until every CodeBlock has been
     // visited.
-    template<typename Functor> void iterate(const Functor&);
-    template<typename Functor> void iterate(const AbstractLocker&, const Functor&);
+    template<typename Functor> void iterate(NOESCAPE const Functor&);
+    template<typename Functor> void iterate(const AbstractLocker&, NOESCAPE const Functor&);
 
-    template<typename Functor> void iterateCurrentlyExecuting(const Functor&);
+    template<typename Functor> void iterateCurrentlyExecuting(NOESCAPE const Functor&);
     
     void dump(PrintStream&) const;
     

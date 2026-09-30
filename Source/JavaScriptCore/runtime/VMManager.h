@@ -291,17 +291,17 @@ public:
     using IteratorCallback = IterationStatus(VM&);
     using TestCallback = bool(VM&);
 
-    static inline VM* findMatchingVM(const Invocable<TestCallback> auto& test)
+    static inline VM* findMatchingVM(NOESCAPE const Invocable<TestCallback> auto& test)
     {
         SUPPRESS_FORWARD_DECL_ARG return singleton().findMatchingVMImpl(test);
     }
 
-    static inline void forEachVM(const Invocable<IteratorCallback> auto& functor)
+    static inline void forEachVM(NOESCAPE const Invocable<IteratorCallback> auto& functor)
     {
         SUPPRESS_FORWARD_DECL_ARG singleton().forEachVMImpl(functor);
     }
 
-    static inline Error forEachVMWithTimeout(Seconds timeout, const Invocable<IteratorCallback> auto& functor)
+    static inline Error forEachVMWithTimeout(Seconds timeout, NOESCAPE const Invocable<IteratorCallback> auto& functor)
     {
         SUPPRESS_FORWARD_DECL_ARG return singleton().forEachVMWithTimeoutImpl(timeout, functor);
     }
@@ -329,11 +329,11 @@ private:
     void dispatchStopHandler(VM&);
 
     JS_EXPORT_PRIVATE static bool isValidVMSlow(VM*);
-    JS_EXPORT_PRIVATE VM* findMatchingVMImpl(const ScopedLambda<TestCallback>&);
-    JS_EXPORT_PRIVATE void forEachVMImpl(const ScopedLambda<IteratorCallback>&);
-    JS_EXPORT_PRIVATE Error forEachVMWithTimeoutImpl(Seconds timeout, const ScopedLambda<IteratorCallback>&);
+    JS_EXPORT_PRIVATE VM* findMatchingVMImpl(NOESCAPE const ScopedLambda<TestCallback>&);
+    JS_EXPORT_PRIVATE void forEachVMImpl(NOESCAPE const ScopedLambda<IteratorCallback>&);
+    JS_EXPORT_PRIVATE Error forEachVMWithTimeoutImpl(Seconds timeout, NOESCAPE const ScopedLambda<IteratorCallback>&);
 
-    void iterateVMs(const Invocable<IterationStatus(VM&)> auto&) WTF_REQUIRES_LOCK(m_worldLock);
+    void iterateVMs(NOESCAPE const Invocable<IterationStatus(VM&)> auto&) WTF_REQUIRES_LOCK(m_worldLock);
 
     DoublyLinkedList<VMThreadContext> m_vmList WTF_GUARDED_BY_LOCK(m_worldLock);
     Lock m_worldLock;

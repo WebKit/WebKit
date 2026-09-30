@@ -47,13 +47,13 @@ template<> struct ArgThingHelper<Tmp> {
     }
 
     template<typename Functor>
-    static void forEachFast(Arg& arg, const Functor& functor)
+    static void forEachFast(Arg& arg, NOESCAPE const Functor& functor)
     {
         arg.forEachTmpFast(functor);
     }
 
     template<typename Functor>
-    static void forEach(Arg& arg, Arg::Role role, Bank bank, Width width, const Functor& functor)
+    static void forEach(Arg& arg, Arg::Role role, Bank bank, Width width, NOESCAPE const Functor& functor)
     {
         arg.forEachTmp(role, bank, width, functor);
     }
@@ -71,13 +71,13 @@ template<> struct ArgThingHelper<Arg> {
     }
 
     template<typename Functor>
-    static void forEachFast(Arg& arg, const Functor& functor)
+    static void forEachFast(Arg& arg, NOESCAPE const Functor& functor)
     {
         functor(arg);
     }
 
     template<typename Functor>
-    static void forEach(Arg& arg, Arg::Role role, Bank bank, Width width, const Functor& functor)
+    static void forEach(Arg& arg, Arg::Role role, Bank bank, Width width, NOESCAPE const Functor& functor)
     {
         functor(arg, role, bank, width);
     }
@@ -95,7 +95,7 @@ template<> struct ArgThingHelper<StackSlot*> {
     }
     
     template<typename Functor>
-    static void forEachFast(Arg& arg, const Functor& functor)
+    static void forEachFast(Arg& arg, NOESCAPE const Functor& functor)
     {
         if (!arg.isStack())
             return;
@@ -106,7 +106,7 @@ template<> struct ArgThingHelper<StackSlot*> {
     }
     
     template<typename Functor>
-    static void forEach(Arg& arg, Arg::Role role, Bank bank, Width width, const Functor& functor)
+    static void forEach(Arg& arg, Arg::Role role, Bank bank, Width width, NOESCAPE const Functor& functor)
     {
         if (!arg.isStack())
             return;
@@ -136,7 +136,7 @@ template<> struct ArgThingHelper<Reg> {
     }
     
     template<typename Functor>
-    static void forEachFast(Arg& arg, const Functor& functor)
+    static void forEachFast(Arg& arg, NOESCAPE const Functor& functor)
     {
         arg.forEachTmpFast(
             [&] (Tmp& tmp) {
@@ -150,7 +150,7 @@ template<> struct ArgThingHelper<Reg> {
     }
     
     template<typename Functor>
-    static void forEach(Arg& arg, Arg::Role argRole, Bank argBank, Width argWidth, const Functor& functor)
+    static void forEach(Arg& arg, Arg::Role argRole, Bank argBank, Width argWidth, NOESCAPE const Functor& functor)
     {
         arg.forEachTmp(
             argRole, argBank, argWidth,
@@ -178,13 +178,13 @@ Thing Arg::as() const
 }
 
 template<typename Thing, typename Functor>
-void Arg::forEachFast(const Functor& functor)
+void Arg::forEachFast(NOESCAPE const Functor& functor)
 {
     ArgThingHelper<Thing>::forEachFast(*this, functor);
 }
 
 template<typename Thing, typename Functor>
-void Arg::forEach(Role role, Bank bank, Width width, const Functor& functor)
+void Arg::forEach(Role role, Bank bank, Width width, NOESCAPE const Functor& functor)
 {
     ArgThingHelper<Thing>::forEach(*this, role, bank, width, functor);
 }

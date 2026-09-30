@@ -39,7 +39,7 @@ public:
     using Cache = std::array<JSString*, capacity>;
 
     template<typename Buffer, typename Func>
-    JSString* make(VM&, Buffer&, const Func&);
+    JSString* make(VM&, Buffer&, NOESCAPE const Func&);
 
     ALWAYS_INLINE void clear()
     {

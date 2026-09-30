@@ -63,7 +63,7 @@ inline void IsoSubspace::sweep()
 }
 
 template<typename Func>
-void IsoSubspace::forEachLowerTierPreciseFreeListedPreciseAllocation(const Func& func)
+void IsoSubspace::forEachLowerTierPreciseFreeListedPreciseAllocation(NOESCAPE const Func& func)
 {
     m_lowerTierPreciseFreeList.forEach(func);
 }

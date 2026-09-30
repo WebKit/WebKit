@@ -153,7 +153,7 @@ protected:
     ALWAYS_INLINE CallLinkInfo* callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned) { return nullptr; }
 
     template<typename Func>
-    ALWAYS_INLINE void NODELETE runWithDowncast(const Func& function);
+    ALWAYS_INLINE void NODELETE runWithDowncast(NOESCAPE const Func& function);
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
     unsigned m_refCount;

@@ -442,7 +442,7 @@ public:
     }
 
     template<typename Functor>
-    void fill(VM& vm, size_t count, const Functor& func)
+    void fill(VM& vm, size_t count, NOESCAPE const Functor& func)
     {
         ASSERT(!m_size);
         ensureCapacity(count);
@@ -467,7 +467,7 @@ public:
         func(buffer);
     }
 
-    void fillWith(VM& vm, MarkedVectorHelper::Iterable auto const& iterable, auto&& mapValue)
+    void fillWith(VM& vm, MarkedVectorHelper::Iterable auto const& iterable, NOESCAPE const auto& mapValue)
     {
         ensureCapacity(iterable.size());
         if constexpr (!WTF::shouldCrashOnOverflow(OverflowHandler::policy)) {

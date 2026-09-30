@@ -76,7 +76,7 @@ void VMManager::dumpVMs()
     });
 }
 
-void VMManager::iterateVMs(const Invocable<IterationStatus(VM&)> auto& functor) WTF_REQUIRES_LOCK(m_worldLock)
+void VMManager::iterateVMs(NOESCAPE const Invocable<IterationStatus(VM&)> auto& functor) WTF_REQUIRES_LOCK(m_worldLock)
 {
     for (auto* context = m_vmList.head(); context; context = context->next()) {
         VM& vm = *VM::fromThreadContext(context);
@@ -86,7 +86,7 @@ void VMManager::iterateVMs(const Invocable<IterationStatus(VM&)> auto& functor) 
     }
 }
 
-VM* VMManager::findMatchingVMImpl(const ScopedLambda<VMManager::TestCallback>& test)
+VM* VMManager::findMatchingVMImpl(NOESCAPE const ScopedLambda<VMManager::TestCallback>& test)
 {
     Locker lock { m_worldLock };
     if (s_recentVM && test(*s_recentVM))
@@ -104,13 +104,13 @@ VM* VMManager::findMatchingVMImpl(const ScopedLambda<VMManager::TestCallback>& t
     return result;
 }
 
-void VMManager::forEachVMImpl(const ScopedLambda<VMManager::IteratorCallback>& func)
+void VMManager::forEachVMImpl(NOESCAPE const ScopedLambda<VMManager::IteratorCallback>& func)
 {
     Locker lock { m_worldLock };
     iterateVMs(func);
 }
 
-VMManager::Error VMManager::forEachVMWithTimeoutImpl(Seconds timeout, const ScopedLambda<VMManager::IteratorCallback>& func)
+VMManager::Error VMManager::forEachVMWithTimeoutImpl(Seconds timeout, NOESCAPE const ScopedLambda<VMManager::IteratorCallback>& func)
 {
     if (!m_worldLock.tryLockWithTimeout(timeout))
         return Error::TimedOut;

@@ -431,7 +431,7 @@ public:
         return rehash(globalObject, base, newCapacity);
     }
     template<typename FindKeyFunctor>
-    ALWAYS_INLINE static void addImpl(JSGlobalObject* globalObject, HashTable* owner, Storage& base, JSValue key, JSValue value, const FindKeyFunctor& findKeyFunctor)
+    ALWAYS_INLINE static void addImpl(JSGlobalObject* globalObject, HashTable* owner, Storage& base, JSValue key, JSValue value, NOESCAPE const FindKeyFunctor& findKeyFunctor)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -528,7 +528,7 @@ public:
         owner->m_storage.set(vm, owner, newBuffer);
     }
     template<typename FindKeyFunctor>
-    ALWAYS_INLINE static bool removeImpl(JSGlobalObject* globalObject, HashTable* owner, Storage& storage, const FindKeyFunctor& findKeyFunctor)
+    ALWAYS_INLINE static bool removeImpl(JSGlobalObject* globalObject, HashTable* owner, Storage& storage, NOESCAPE const FindKeyFunctor& findKeyFunctor)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -565,7 +565,7 @@ public:
     }
 
     template<typename Functor>
-    ALWAYS_INLINE static Storage& transit(Storage& storage, const Functor& functor)
+    ALWAYS_INLINE static Storage& transit(Storage& storage, NOESCAPE const Functor& functor)
     {
         Storage* ptr = &storage;
         while (isObsolete(*ptr)) {

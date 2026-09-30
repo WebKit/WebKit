@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-ALWAYS_INLINE HeapCell* FreeList::allocateWithCellSize(const Invocable<void()> auto& slowPath, size_t cellSize)
+ALWAYS_INLINE HeapCell* FreeList::allocateWithCellSize(NOESCAPE const Invocable<void()> auto& slowPath, size_t cellSize)
 {
     if (m_intervalStart < m_intervalEnd) [[likely]] {
         char* result = m_intervalStart;
@@ -53,7 +53,7 @@ ALWAYS_INLINE HeapCell* FreeList::allocateWithCellSize(const Invocable<void()> a
     return std::bit_cast<HeapCell*>(result);
 }
 
-void FreeList::forEachInterval(const Invocable<void(char*, char*)> auto& func) const
+void FreeList::forEachInterval(NOESCAPE const Invocable<void(char*, char*)> auto& func) const
 {
     FreeCell* cell = nextInterval();
     char* intervalStart = m_intervalStart;
@@ -73,7 +73,7 @@ void FreeList::forEachInterval(const Invocable<void(char*, char*)> auto& func) c
     }
 }
 
-void FreeList::forEach(const Invocable<void(HeapCell*)> auto& func) const
+void FreeList::forEach(NOESCAPE const Invocable<void(HeapCell*)> auto& func) const
 {
     forEachInterval(
         [&] (char* intervalStart, char* intervalEnd) {

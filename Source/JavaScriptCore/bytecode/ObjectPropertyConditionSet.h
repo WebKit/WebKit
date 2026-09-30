@@ -140,7 +140,7 @@ public:
     bool needImpurePropertyWatchpoint() const;
 
     template<typename Functor>
-    void forEachDependentCell(const Functor& functor) const
+    void forEachDependentCell(NOESCAPE const Functor& functor) const
     {
         for (const ObjectPropertyCondition& condition : *this)
             condition.forEachDependentCell(functor);

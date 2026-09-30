@@ -71,7 +71,7 @@ static RefPtr<TimeZoneCacheEntry> timeZoneCacheEntry(const TimeZone& timeZone)
 }
 
 template<typename F>
-static auto withTimeZone(const TimeZone& timeZone, F&& fn) -> decltype(fn(static_cast<UCalendar*>(nullptr)))
+static auto withTimeZone(const TimeZone& timeZone, NOESCAPE const F& fn) -> decltype(fn(static_cast<UCalendar*>(nullptr)))
 {
     ASSERT(timeZone.isID());
     auto entry = timeZoneCacheEntry(timeZone);

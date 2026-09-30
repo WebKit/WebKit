@@ -57,7 +57,7 @@ bool GCIncomingRefCounted<T>::addIncomingReference(JSCell* cell)
 
 template<typename T>
 template<typename FilterFunctionType>
-bool GCIncomingRefCounted<T>::filterIncomingReferences(FilterFunctionType&& filterFunction)
+bool GCIncomingRefCounted<T>::filterIncomingReferences(NOESCAPE const FilterFunctionType& filterFunction)
 {
     constexpr bool verbose = false;
     

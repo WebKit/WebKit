@@ -304,7 +304,7 @@ inline uint64_t NODELETE advanceStringIndex(StringView str, unsigned strSize, ui
 }
 
 template<typename FixEndFunc>
-JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, StringView s, RegExp* regExp, const FixEndFunc& fixEnd)
+JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, StringView s, RegExp* regExp, NOESCAPE const FixEndFunc& fixEnd)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 

@@ -174,7 +174,7 @@ public:
     }
 
     template<typename FindKeyFunctor>
-    ALWAYS_INLINE JSValue getImpl(JSGlobalObject* globalObject, const FindKeyFunctor& findKeyFunctor)
+    ALWAYS_INLINE JSValue getImpl(JSGlobalObject* globalObject, NOESCAPE const FindKeyFunctor& findKeyFunctor)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -211,7 +211,7 @@ public:
     }
 
     template<typename GetValueFunctor>
-    ALWAYS_INLINE JSValue getOrInsert(JSGlobalObject* globalObject, JSValue key, const GetValueFunctor& getValueFunctor)
+    ALWAYS_INLINE JSValue getOrInsert(JSGlobalObject* globalObject, JSValue key, NOESCAPE const GetValueFunctor& getValueFunctor)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);

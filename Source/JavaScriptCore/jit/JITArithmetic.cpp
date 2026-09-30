@@ -226,7 +226,7 @@ void JIT::emit_compareAndJump(const JSInstruction* instruction, RelationalCondit
 }
 
 template <typename EmitCompareFunctor>
-ALWAYS_INLINE void JIT::emit_compareImpl(VirtualRegister op1, VirtualRegister op2, RelationalCondition condition, const EmitCompareFunctor& emitCompare)
+ALWAYS_INLINE void JIT::emit_compareImpl(VirtualRegister op1, VirtualRegister op2, RelationalCondition condition, NOESCAPE const EmitCompareFunctor& emitCompare)
 {
     // We generate inline code for the following cases in the fast path:
     // - int immediate to constant int immediate
@@ -372,7 +372,7 @@ void JIT::emit_compareAndJumpSlow(const JSInstruction* instruction, DoubleCondit
 }
 
 template<typename SlowOperation, typename HandleReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
-void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const HandleReturnValueGPRFunctor& handleReturnValueGPR, const EmitDoubleCompareFunctor& emitDoubleCompare)
+void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, NOESCAPE const HandleReturnValueGPRFunctor& handleReturnValueGPR, NOESCAPE const EmitDoubleCompareFunctor& emitDoubleCompare)
 {
 
     // We generate inline code for the following cases in the slow path:

@@ -342,7 +342,7 @@ public:
     void collectDependentCells(VM&, Vector<JSCell*>&) const;
 
     template<typename Func>
-    void runWithDowncast(const Func&);
+    void runWithDowncast(NOESCAPE const Func&);
 
     void operator delete(AccessCase*, std::destroying_delete_t);
 
@@ -387,7 +387,7 @@ private:
     friend class InstanceOfAccessCase;
 
     template<typename Functor>
-    void forEachDependentCell(VM&, const Functor&) const;
+    void forEachDependentCell(VM&, NOESCAPE const Functor&) const;
 
     DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(const);
     bool isStillLive(VM&) const;

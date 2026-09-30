@@ -56,7 +56,7 @@ public:
 #endif
 
     template<typename CustomizeSuccessors>
-    BasicBlock* cloneBlock(BasicBlock* const, const CustomizeSuccessors&);
+    BasicBlock* cloneBlock(BasicBlock* const, NOESCAPE const CustomizeSuccessors&);
     BasicBlock* blockClone(BasicBlock*);
 
     void clear();
@@ -73,7 +73,7 @@ private:
 };
 
 template<typename CustomizeSuccessors>
-BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSuccessors& customizeSuccessors)
+BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, NOESCAPE const CustomizeSuccessors& customizeSuccessors)
 {
     auto iter = m_blockClones.find(block);
     if (iter != m_blockClones.end())

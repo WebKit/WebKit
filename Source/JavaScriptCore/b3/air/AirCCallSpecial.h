@@ -56,7 +56,7 @@ public:
     static constexpr GPRReg scratchRegister = GPRInfo::nonPreservedNonArgumentGPR0;
 
 private:
-    void forEachArg(Inst&, const ScopedLambda<Inst::EachArgCallback>&) final;
+    void forEachArg(Inst&, NOESCAPE const ScopedLambda<Inst::EachArgCallback>&) final;
     bool isValid(Inst&) final;
     bool admitsStack(Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Inst&, unsigned) final;

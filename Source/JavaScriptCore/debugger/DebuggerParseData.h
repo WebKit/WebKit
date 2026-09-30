@@ -62,7 +62,7 @@ public:
         m_positions.append({ DebuggerPausePositionType::Leave, position });
     }
 
-    void forEachBreakpointLocation(JSTextPosition start, JSTextPosition end, SourceProvider&, Function<void(JSTextPosition)>&&);
+    void forEachBreakpointLocation(JSTextPosition start, JSTextPosition end, SourceProvider&, NOESCAPE const Function<void(JSTextPosition)>&);
 
     std::optional<JSTextPosition> breakpointLocationForOffset(JSTextPosition, SourceProvider&);
 

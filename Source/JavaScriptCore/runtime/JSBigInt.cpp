@@ -4882,7 +4882,7 @@ inline bool JSBigInt::productGreaterThan(Digit factor1, Digit factor2, Digit hig
 //                   v     v     v     v
 // result: [  0 ][ x3 ][ r2 ][ r1 ][ r0 ]
 template<typename BitwiseOp>
-inline std::span<JSBigInt::Digit> JSBigInt::absoluteBitwiseOp(std::span<const Digit> x, std::span<const Digit> y, ExtraDigitsHandling extraDigits, BitwiseOp&& op, std::span<Digit> result)
+inline std::span<JSBigInt::Digit> JSBigInt::absoluteBitwiseOp(std::span<const Digit> x, std::span<const Digit> y, ExtraDigitsHandling extraDigits, NOESCAPE const BitwiseOp& op, std::span<Digit> result)
 {
     if (x.size() < y.size())
         std::swap(x, y);

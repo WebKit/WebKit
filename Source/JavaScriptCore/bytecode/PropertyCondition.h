@@ -351,7 +351,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     template<typename Functor>
-    void forEachDependentCell(const Functor& functor) const
+    void forEachDependentCell(NOESCAPE const Functor& functor) const
     {
         if (hasPrototype() && prototype())
             functor(prototype());

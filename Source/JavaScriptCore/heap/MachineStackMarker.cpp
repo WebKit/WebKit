@@ -229,7 +229,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
     fastFree(buffer);
 }
 
-NEVER_INLINE int callWithCurrentThreadState(const ScopedLambda<void(CurrentThreadState&)>& lambda)
+NEVER_INLINE int callWithCurrentThreadState(NOESCAPE const ScopedLambda<void(CurrentThreadState&)>& lambda)
 {
     DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(state);
     lambda(state);

@@ -329,7 +329,7 @@ ALWAYS_INLINE Value* Value::cloneImpl() const
 }
 
 template<typename BottomProvider>
-void Value::replaceWithBottom(const BottomProvider& bottomProvider)
+void Value::replaceWithBottom(NOESCAPE const BottomProvider& bottomProvider)
 {
     if (m_type == Void) {
         replaceWithNop();
@@ -524,7 +524,7 @@ inline T Value::asNumber() const
 }
 
 template<typename Functor>
-void Value::walk(const Functor& functor, PhiChildren* phiChildren)
+void Value::walk(NOESCAPE const Functor& functor, PhiChildren* phiChildren)
 {
     GraphNodeWorklist<Value*> worklist;
     worklist.push(this);

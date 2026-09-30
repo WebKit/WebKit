@@ -145,7 +145,7 @@ private:
     bool check(bool condition, Strings... message);
 
     template<typename JSFunctor, typename APIFunctor>
-    void checkJSAndAPIMatch(const JSFunctor&, const APIFunctor&, const char* description);
+    void checkJSAndAPIMatch(NOESCAPE const JSFunctor&, NOESCAPE const APIFunctor&, const char* description);
 
     void checkIsBigIntType(JSValueRef);
 
@@ -233,7 +233,7 @@ bool TestAPI::check(bool condition, Strings... messages)
 }
 
 template<typename JSFunctor, typename APIFunctor>
-void TestAPI::checkJSAndAPIMatch(const JSFunctor& jsFunctor, const APIFunctor& apiFunctor, const char* description)
+void TestAPI::checkJSAndAPIMatch(NOESCAPE const JSFunctor& jsFunctor, NOESCAPE const APIFunctor& apiFunctor, const char* description)
 {
     JSValueRef exception = nullptr;
     JSValueRef result = apiFunctor(&exception);

@@ -99,7 +99,7 @@ private:
     void waitUntilAllPlansForVMAreReady(VM&);
 
     template<typename MatchFunction>
-    void removeMatchingPlansForVM(VM&, const MatchFunction&);
+    void removeMatchingPlansForVM(VM&, NOESCAPE const MatchFunction&);
 
     State removeAllReadyPlansForVM(VM&, Vector<Ref<JITPlan>, 8>&, JITCompilationKey);
 

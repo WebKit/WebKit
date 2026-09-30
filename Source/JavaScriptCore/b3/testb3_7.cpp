@@ -1010,7 +1010,7 @@ void testOptimizeMaterialization()
 }
 
 template<typename Func>
-void generateLoop(Procedure& proc, const Func& func)
+void generateLoop(Procedure& proc, NOESCAPE const Func& func)
 {
     BasicBlock* root = proc.addBlock();
     BasicBlock* loop = proc.addBlock();
@@ -1048,7 +1048,7 @@ static std::array<int, 100> NODELETE makeArrayForLoops()
 }
 
 template<typename Func>
-void generateLoopNotBackwardsDominant(Procedure& proc, std::array<int, 100>& array, const Func& func)
+void generateLoopNotBackwardsDominant(Procedure& proc, std::array<int, 100>& array, NOESCAPE const Func& func)
 {
     BasicBlock* root = proc.addBlock();
     BasicBlock* loopHeader = proc.addBlock();

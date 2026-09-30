@@ -55,7 +55,7 @@ WasmOpcodeCounter& WasmOpcodeCounter::singleton()
 
 
 template<typename OpcodeType, typename OpcodeTypeDump, typename IsRegisteredOpcodeFunctor>
-void WasmOpcodeCounter::dump(Atomic<uint64_t>* counter, NumberOfRegisteredOpcodes numberOfRegisteredOpcode, CounterSize counterSize, const IsRegisteredOpcodeFunctor& isRegisteredOpcodeFunctor, const char* prefix, const char* suffix)
+void WasmOpcodeCounter::dump(Atomic<uint64_t>* counter, NumberOfRegisteredOpcodes numberOfRegisteredOpcode, CounterSize counterSize, NOESCAPE const IsRegisteredOpcodeFunctor& isRegisteredOpcodeFunctor, const char* prefix, const char* suffix)
 {
     struct Pair {
         OpcodeType opcode;

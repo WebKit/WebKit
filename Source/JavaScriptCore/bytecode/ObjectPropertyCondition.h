@@ -279,7 +279,7 @@ public:
     }
 
     template<typename Functor>
-    void forEachDependentCell(const Functor& functor) const
+    void forEachDependentCell(NOESCAPE const Functor& functor) const
     {
         functor(m_object);
         m_condition.forEachDependentCell(functor);

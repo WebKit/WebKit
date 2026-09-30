@@ -47,7 +47,8 @@ enum ScratchMode {
 };
 
 template<typename Functor>
-Tmp findPossibleScratch(Code& code, Bank bank, const Functor& functor) {
+Tmp findPossibleScratch(Code& code, Bank bank, NOESCAPE const Functor& functor)
+{
     for (Reg reg : code.regsInPriorityOrder(bank)) {
         Tmp tmp(reg);
         if (functor(tmp))

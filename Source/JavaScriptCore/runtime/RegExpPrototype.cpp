@@ -672,7 +672,7 @@ template<typename ControlFunc, typename PushFunc>
 MatchResult genericSplit(
     JSGlobalObject* globalObject, RegExp* regexp, JSString* inputString, StringView input, unsigned inputSize, unsigned& position,
     unsigned& matchPosition, bool regExpIsSticky, bool regExpIsUnicode,
-    const ControlFunc& control, const PushFunc& push)
+    NOESCAPE const ControlFunc& control, NOESCAPE const PushFunc& push)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

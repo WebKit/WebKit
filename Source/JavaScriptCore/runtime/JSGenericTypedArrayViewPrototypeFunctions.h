@@ -100,7 +100,7 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(JSGlobalObject* globalObject, ViewCl
 static constexpr size_t maximumSpeciesConstructArguments = 3;
 
 template<typename ViewClass, typename Functor, typename SlowPathArgsConstructor>
-inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewClass* exemplar, const Functor& defaultConstructor, const SlowPathArgsConstructor& constructArgs, std::optional<size_t> length)
+inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewClass* exemplar, NOESCAPE const Functor& defaultConstructor, NOESCAPE const SlowPathArgsConstructor& constructArgs, std::optional<size_t> length)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

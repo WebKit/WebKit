@@ -35,14 +35,14 @@
 namespace JSC {
 
 template<typename Func>
-void Subspace::forEachDirectory(const Func& func)
+void Subspace::forEachDirectory(NOESCAPE const Func& func)
 {
     for (BlockDirectory* directory = m_firstDirectory; directory; directory = directory->nextDirectoryInSubspace())
         func(*directory);
 }
 
 template<typename Func>
-void Subspace::forEachMarkedBlock(const Func& func)
+void Subspace::forEachMarkedBlock(NOESCAPE const Func& func)
 {
     forEachDirectory(
         [&] (BlockDirectory& directory) {
@@ -51,7 +51,7 @@ void Subspace::forEachMarkedBlock(const Func& func)
 }
 
 template<typename Func>
-void Subspace::forEachNotEmptyMarkedBlock(const Func& func)
+void Subspace::forEachNotEmptyMarkedBlock(NOESCAPE const Func& func)
 {
     forEachDirectory(
         [&] (BlockDirectory& directory) {
@@ -60,14 +60,14 @@ void Subspace::forEachNotEmptyMarkedBlock(const Func& func)
 }
 
 template<typename Func>
-void Subspace::forEachPreciseAllocation(const Func& func)
+void Subspace::forEachPreciseAllocation(NOESCAPE const Func& func)
 {
     for (PreciseAllocation& allocation : m_preciseAllocations)
         func(&allocation);
 }
 
 template<typename Func>
-void Subspace::forEachMarkedCell(const Func& func)
+void Subspace::forEachMarkedCell(NOESCAPE const Func& func)
 {
     forEachNotEmptyMarkedBlock(
         [&] (MarkedBlock::Handle* handle) {
@@ -129,7 +129,7 @@ Ref<SharedTask<void(Visitor&)>> Subspace::forEachMarkedCellInParallel(const Func
 }
 
 template<typename Func>
-void Subspace::forEachLiveCell(const Func& func)
+void Subspace::forEachLiveCell(NOESCAPE const Func& func)
 {
     forEachMarkedBlock(
         [&] (MarkedBlock::Handle* handle) {

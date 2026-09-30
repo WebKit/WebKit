@@ -43,7 +43,7 @@ PatchpointSpecial::PatchpointSpecial() = default;
 
 PatchpointSpecial::~PatchpointSpecial() = default;
 
-void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
+void PatchpointSpecial::forEachArg(Inst& inst, NOESCAPE const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     const Procedure& procedure = code().proc();
     PatchpointValue* patchpoint = inst.origin->as<PatchpointValue>();

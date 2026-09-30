@@ -20424,7 +20424,7 @@ IGNORE_CLANG_WARNINGS_END
     template<typename Functor>
     void checkStructure(
         LValue structureDiscriminant, const FormattedValue& formattedValue, ExitKind exitKind,
-        const RegisteredStructureSet& set, const Functor& weakStructureDiscriminant)
+        const RegisteredStructureSet& set, NOESCAPE const Functor& weakStructureDiscriminant)
     {
         if (set.isEmpty()) {
             terminate(exitKind);
@@ -20923,7 +20923,7 @@ IGNORE_CLANG_WARNINGS_END
 
     template<typename IntFunctor, typename DoubleFunctor>
     void compare(
-        const IntFunctor& intFunctor, const DoubleFunctor& doubleFunctor,
+        NOESCAPE const IntFunctor& intFunctor, NOESCAPE const DoubleFunctor& doubleFunctor,
         C_JITOperation_TT stringIdentFunction,
         C_JITOperation_B_GJssJss stringFunction,
         S_JITOperation_GJJ fallbackFunction)
@@ -21864,7 +21864,7 @@ IGNORE_CLANG_WARNINGS_END
     }
 
     template <typename F1, typename F2>
-    LValue emitCodeBasedOnEndiannessBranch(LValue isLittleEndian, const F1& emitLittleEndianCode, const F2& emitBigEndianCode)
+    LValue emitCodeBasedOnEndiannessBranch(LValue isLittleEndian, NOESCAPE const F1& emitLittleEndianCode, NOESCAPE const F2& emitBigEndianCode)
     {
         LType type;
 
@@ -22675,7 +22675,7 @@ IGNORE_CLANG_WARNINGS_END
     }
 
     template<typename IntFunctor>
-    void genericJSValueCompare(const IntFunctor& intFunctor, S_JITOperation_GJJ helperFunction)
+    void genericJSValueCompare(NOESCAPE const IntFunctor& intFunctor, S_JITOperation_GJJ helperFunction)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue left = lowJSValue(m_node->child1(), ManualOperandSpeculation);
@@ -24401,7 +24401,7 @@ IGNORE_CLANG_WARNINGS_END
     //     });
     // m_out.appendTo(continuation, lastNext);
     template<typename Functor>
-    void buildTypeOf(Edge child, LValue value, const Functor& functor)
+    void buildTypeOf(Edge child, LValue value, NOESCAPE const Functor& functor)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 

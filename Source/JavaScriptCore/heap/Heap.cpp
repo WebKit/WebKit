@@ -759,7 +759,7 @@ void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, NOESCAPE con
 }
 
 template<typename Func, typename Visitor>
-void Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor& visitor, const Func& func)
+void Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor& visitor, NOESCAPE const Func& func)
 {
     Vector<CodeBlock*, 256> codeBlocks;
     iterateExecutingAndCompilingCodeBlocks(visitor,
@@ -1472,7 +1472,7 @@ NEVER_INLINE void Heap::collectInMutatorThread()
 }
 
 template<typename Func>
-void Heap::waitForCollector(const Func& func)
+void Heap::waitForCollector(NOESCAPE const Func& func)
 {
     for (;;) {
         bool done;
@@ -2140,7 +2140,7 @@ void Heap::destroyAllPooledWeakBlocks()
     m_pooledWeakBlockCount = 0;
 }
 
-void Heap::forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>& func)
+void Heap::forEachCodeBlockImpl(NOESCAPE const ScopedLambda<void(CodeBlock*)>& func)
 {
     // We don't know the full set of CodeBlocks until compilation has terminated.
     completeAllJITPlans();
@@ -2148,7 +2148,7 @@ void Heap::forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>& func)
     return m_codeBlocks->iterate(func);
 }
 
-void Heap::forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& locker, const ScopedLambda<void(CodeBlock*)>& func)
+void Heap::forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& locker, NOESCAPE const ScopedLambda<void(CodeBlock*)>& func)
 {
     return m_codeBlocks->iterate(locker, func);
 }

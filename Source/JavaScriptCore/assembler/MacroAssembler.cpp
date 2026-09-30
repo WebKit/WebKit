@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-void MacroAssembler::jitAssert(const ScopedLambda<Jump(void)>& functor)
+void MacroAssembler::jitAssert(NOESCAPE const ScopedLambda<Jump(void)>& functor)
 {
     if (Options::useJITDebugAssertions()) {
         Jump passed = functor();

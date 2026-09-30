@@ -6131,7 +6131,7 @@ void AbstractInterpreter<AbstractStateType>::didFoldClobberWorld()
 template<typename AbstractStateType>
 template<typename Functor>
 void AbstractInterpreter<AbstractStateType>::forAllValues(
-    unsigned clobberLimit, Functor& functor)
+    unsigned clobberLimit, NOESCAPE Functor& functor)
 {
     if (clobberLimit >= m_state.block()->size())
         clobberLimit = m_state.block()->size();
@@ -6326,7 +6326,7 @@ FiltrationResult AbstractInterpreter<AbstractStateType>::filterClassInfo(
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, const auto& equivalentFunction)
+void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, NOESCAPE const auto& equivalentFunction)
 {
     JSValue child = forNode(node->child1()).value();
     if (std::optional<double> number = child.toNumberFromPrimitive()) {

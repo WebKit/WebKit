@@ -126,13 +126,13 @@ public:
 
 #if ENABLE(JIT)
 protected:
-    static void emitFastPathImpl(CallLinkInfo*, CCallHelpers&, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall);
+    static void emitFastPathImpl(CallLinkInfo*, CCallHelpers&, bool isTailCall, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
 public:
     static void emitDataICFastPath(CCallHelpers&);
-    static void emitTailCallDataICFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
+    static void emitTailCallDataICFastPath(CCallHelpers&, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
 
     static void emitFastPath(CCallHelpers&, CompileTimeCallLinkInfo);
-    static void emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, ScopedLambda<void()>&& prepareForTailCall);
+    static void emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
 #endif
 
     void NODELETE revertCallToStub();
@@ -249,7 +249,7 @@ public:
     CodeOrigin codeOrigin() const { return m_codeOrigin; }
 
     template<typename Functor>
-    void forEachDependentCell(const Functor& functor) const
+    void forEachDependentCell(NOESCAPE const Functor& functor) const
     {
         if (isLinked()) {
             if (stub())
@@ -389,7 +389,7 @@ public:
     bool isDataIC() const { return m_useDataIC == UseDataIC::Yes; }
 
     MacroAssembler::JumpList emitDirectFastPath(CCallHelpers&);
-    MacroAssembler::JumpList emitDirectTailCallFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
+    MacroAssembler::JumpList emitDirectTailCallFastPath(CCallHelpers&, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
     void setCallTarget(CodeBlock*, CodeLocationLabel<JSEntryPtrTag>);
     void NODELETE setMaxArgumentCountIncludingThis(unsigned);
     unsigned maxArgumentCountIncludingThis() const { return m_maxArgumentCountIncludingThis; }
@@ -445,7 +445,7 @@ public:
 
 private:
     void emitFastPath(CCallHelpers&);
-    void emitTailCallFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
+    void emitTailCallFastPath(CCallHelpers&, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
 
     CodeLocationNearCall<JSInternalPtrTag> m_callLocation NO_UNIQUE_ADDRESS;
 };

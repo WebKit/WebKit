@@ -59,7 +59,7 @@ namespace JSC { namespace B3 { namespace Air {
 // Definition of Patch instruction. Patch is used to delegate the behavior of the instruction to the
 // Special object, which will be the first argument to the instruction.
 struct PatchCustom {
-    static void forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& lambda)
+    static void forEachArg(Inst& inst, NOESCAPE const ScopedLambda<Inst::EachArgCallback>& lambda)
     {
         // This is basically bogus, but it works for analyses that model Special as an
         // immediate.
@@ -130,7 +130,7 @@ struct CommonCustomBase {
 // inline lowering happens before register allocation, so that the register allocator sees the clobbers.
 struct CCallCustom : public CommonCustomBase<CCallCustom> {
     template<typename Functor>
-    static void forEachArg(Inst& inst, const Functor& functor)
+    static void forEachArg(Inst& inst, NOESCAPE const Functor& functor)
     {
         CCallValue* value = inst.origin->as<CCallValue>();
 
@@ -202,7 +202,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
 
 struct ColdCCallCustom : CCallCustom {
     template<typename Functor>
-    static void forEachArg(Inst& inst, const Functor& functor)
+    static void forEachArg(Inst& inst, NOESCAPE const Functor& functor)
     {
         // This is just like a call, but uses become cold.
         CCallCustom::forEachArg(
@@ -215,7 +215,7 @@ struct ColdCCallCustom : CCallCustom {
 
 struct ShuffleCustom : public CommonCustomBase<ShuffleCustom> {
     template<typename Functor>
-    static void forEachArg(Inst& inst, const Functor& functor)
+    static void forEachArg(Inst& inst, NOESCAPE const Functor& functor)
     {
         unsigned limit = inst.args().size() / 3 * 3;
         for (unsigned i = 0; i < limit; i += 3) {
@@ -269,7 +269,7 @@ struct ShuffleCustom : public CommonCustomBase<ShuffleCustom> {
 
 struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
     template<typename Func>
-    static void forEachArg(Inst&, const Func&)
+    static void forEachArg(Inst&, NOESCAPE const Func&)
     {
     }
     
@@ -315,7 +315,7 @@ struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
 
 struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
     template<typename Func>
-    static void forEachArg(Inst& inst, const Func& functor)
+    static void forEachArg(Inst& inst, NOESCAPE const Func& functor)
     {
         functor(inst.args()[0], Arg::Use, GP, pointerWidth());
         functor(inst.args()[1], Arg::Use, GP, pointerWidth());

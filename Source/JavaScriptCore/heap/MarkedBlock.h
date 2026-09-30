@@ -157,7 +157,7 @@ public:
         
         // This is to be called by Subspace.
         template<typename DestroyFunc>
-        void finishSweepKnowingHeapCellType(FreeList*, const DestroyFunc&);
+        void finishSweepKnowingHeapCellType(FreeList*, NOESCAPE const DestroyFunc&);
         
         void unsweepWithNoNewlyAllocated();
         
@@ -194,10 +194,10 @@ public:
         bool isLive(const HeapCell*);
         bool isLiveCell(const void*);
 
-        template <typename Functor> IterationStatus forEachCell(const Functor&);
-        template <typename Functor> inline IterationStatus forEachLiveCell(const Functor&);
-        template <typename Functor> inline IterationStatus forEachDeadCell(const Functor&);
-        template <typename Functor> inline IterationStatus forEachMarkedCell(const Functor&);
+        template <typename Functor> IterationStatus forEachCell(NOESCAPE const Functor&);
+        template <typename Functor> inline IterationStatus forEachLiveCell(NOESCAPE const Functor&);
+        template <typename Functor> inline IterationStatus forEachDeadCell(NOESCAPE const Functor&);
+        template <typename Functor> inline IterationStatus forEachMarkedCell(NOESCAPE const Functor&);
             
         JS_EXPORT_PRIVATE bool NODELETE areMarksStale();
         bool areMarksStaleForSweep();
@@ -237,7 +237,7 @@ public:
         MarksMode marksMode();
         
         template<bool, EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, typename DestroyFunc>
-        void specializedSweep(FreeList*, EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, const DestroyFunc&);
+        void specializedSweep(FreeList*, EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, NOESCAPE const DestroyFunc&);
         
         unsigned m_atomsPerCell { std::numeric_limits<unsigned>::max() };
         unsigned m_startAtom { std::numeric_limits<unsigned>::max() }; // Exact location of the first allocatable atom.
@@ -671,7 +671,7 @@ inline bool MarkedBlock::isAtom(const void* p)
 }
 
 template <typename Functor>
-inline IterationStatus MarkedBlock::Handle::forEachCell(const Functor& functor)
+inline IterationStatus MarkedBlock::Handle::forEachCell(NOESCAPE const Functor& functor)
 {
     HeapCell::Kind kind = m_attributes.cellKind;
     for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {

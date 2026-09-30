@@ -107,9 +107,9 @@ protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, FunctionSpaceIndex, std::pair<const Name*, RefPtr<NameSection>>&&);
 
     template<typename Func>
-    void runWithDowncast(const Func&);
+    void runWithDowncast(NOESCAPE const Func&);
     template<typename Func>
-    void runWithDowncast(const Func&) const;
+    void runWithDowncast(NOESCAPE const Func&) const;
 
     void setIndexOrName(IndexOrName&&);
 

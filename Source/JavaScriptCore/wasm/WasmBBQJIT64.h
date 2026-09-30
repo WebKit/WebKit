@@ -40,7 +40,7 @@
 namespace JSC { namespace Wasm { namespace BBQJITImpl {
 
 template<typename Functor>
-auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, Functor&& functor) -> decltype(auto)
+auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, NOESCAPE const Functor& functor) -> decltype(auto)
 {
     if (m_info.memory(memoryIndex).doesAccessOverflow(uoffset, sizeOfOperation)) {
         recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());

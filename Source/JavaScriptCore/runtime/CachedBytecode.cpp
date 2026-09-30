@@ -60,7 +60,7 @@ void CachedBytecode::copyLeafExecutables(const CachedBytecode& bytecode)
     m_size += bytecode.size();
 }
 
-void CachedBytecode::commitUpdates(const ForEachUpdateCallback& callback) const
+void CachedBytecode::commitUpdates(NOESCAPE const ForEachUpdateCallback& callback) const
 {
     off_t offset = m_payload.size();
     for (const auto& update : m_updates) {

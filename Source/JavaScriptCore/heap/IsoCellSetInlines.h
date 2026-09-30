@@ -76,7 +76,7 @@ inline bool IsoCellSet::contains(HeapCell* cell) const
 }
 
 template<typename Func>
-void IsoCellSet::forEachMarkedCell(const Func& func)
+void IsoCellSet::forEachMarkedCell(NOESCAPE const Func& func)
 {
     BlockDirectory& directory = m_subspace.m_directory;
     directory.assertIsMutatorOrMutatorIsStopped();
@@ -148,7 +148,7 @@ Ref<SharedTask<void(Visitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Fu
 }
 
 template<typename Func>
-void IsoCellSet::forEachLiveCell(const Func& func)
+void IsoCellSet::forEachLiveCell(NOESCAPE const Func& func)
 {
     BlockDirectory& directory = m_subspace.m_directory;
     m_blocksWithBits.forEachSetBit(

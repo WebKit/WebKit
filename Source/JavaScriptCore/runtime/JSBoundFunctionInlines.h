@@ -36,7 +36,7 @@ inline Structure* JSBoundFunction::createStructure(VM& vm, JSGlobalObject* globa
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
-inline void JSBoundFunction::forEachBoundArg(const Invocable<IterationStatus(JSValue)> auto& func)
+inline void JSBoundFunction::forEachBoundArg(NOESCAPE const Invocable<IterationStatus(JSValue)> auto& func)
 {
     unsigned length = boundArgsLength();
     if (!length)

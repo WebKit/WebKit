@@ -74,7 +74,7 @@ void Disassembler::addInst(Inst* inst, MacroAssembler::Label start, MacroAssembl
     RELEASE_ASSERT(addResult.isNewEntry);
 }
 
-void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst)
+void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, NOESCAPE const ScopedLambda<void(Inst&)>& doToEachInst)
 {
     void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
     void* codeEnd = std::bit_cast<uint8_t*>(codeStart) +  linkBuffer.size();

@@ -306,7 +306,7 @@ RefPtr<const RTT> TypeInformation::extractExternalRTT(Type type)
 using EncodedRef = Variant<ProjectionIndex, const RTT*>;
 
 template<typename IntraLookup>
-inline EncodedRef encodeRef(const RTT* rtt, IntraLookup&& intra)
+inline EncodedRef encodeRef(const RTT* rtt, NOESCAPE const IntraLookup& intra)
 {
     if (auto idx = intra(rtt))
         return EncodedRef { static_cast<ProjectionIndex>(*idx) };
@@ -314,7 +314,7 @@ inline EncodedRef encodeRef(const RTT* rtt, IntraLookup&& intra)
 }
 
 template<typename IntraLookup>
-inline EncodedRef encodeRef(Type type, IntraLookup&& intra)
+inline EncodedRef encodeRef(Type type, NOESCAPE const IntraLookup& intra)
 {
     ASSERT(isRefWithTypeIndex(type));
     return encodeRef(std::bit_cast<const RTT*>(type.index()), intra);
@@ -331,7 +331,7 @@ inline unsigned hashEncodedRef(EncodedRef r)
 }
 
 template<typename IntraLookup>
-inline unsigned hashType(Type type, IntraLookup&& intra)
+inline unsigned hashType(Type type, NOESCAPE const IntraLookup& intra)
 {
     unsigned h = WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(type.kind()));
     if (isRefWithTypeIndex(type))
@@ -347,7 +347,7 @@ inline unsigned hashType(Type type, IntraLookup&& intra)
 }
 
 template<typename IntraLookupA, typename IntraLookupB>
-inline bool equalTypes(Type a, IntraLookupA&& aIntra, Type b, IntraLookupB&& bIntra)
+inline bool equalTypes(Type a, NOESCAPE const IntraLookupA& aIntra, Type b, NOESCAPE const IntraLookupB& bIntra)
 {
     if (a.kind() != b.kind())
         return false;
@@ -360,7 +360,7 @@ inline bool equalTypes(Type a, IntraLookupA&& aIntra, Type b, IntraLookupB&& bIn
 }
 
 template<typename IntraLookup>
-inline unsigned hashFieldType(FieldType field, IntraLookup&& intra)
+inline unsigned hashFieldType(FieldType field, NOESCAPE const IntraLookup& intra)
 {
     unsigned h = static_cast<unsigned>(field.mutability);
     if (field.type.is<PackedType>())
@@ -371,7 +371,7 @@ inline unsigned hashFieldType(FieldType field, IntraLookup&& intra)
 }
 
 template<typename IntraLookupA, typename IntraLookupB>
-inline bool equalFieldTypes(FieldType a, IntraLookupA&& aIntra, FieldType b, IntraLookupB&& bIntra)
+inline bool equalFieldTypes(FieldType a, NOESCAPE const IntraLookupA& aIntra, FieldType b, NOESCAPE const IntraLookupB& bIntra)
 {
     if (a.mutability != b.mutability)
         return false;
@@ -383,7 +383,7 @@ inline bool equalFieldTypes(FieldType a, IntraLookupA&& aIntra, FieldType b, Int
 }
 
 template<typename IntraLookup>
-unsigned hashRTTForRecGroup(const RTT& rtt, IntraLookup&& intra)
+unsigned hashRTTForRecGroup(const RTT& rtt, NOESCAPE const IntraLookup& intra)
 {
     if (unsigned hash = rtt.hashMayBeEmpty())
         return hash;
@@ -423,7 +423,7 @@ unsigned hashRTTForRecGroup(const RTT& rtt, IntraLookup&& intra)
 }
 
 template<typename IntraLookupA, typename IntraLookupB>
-bool equalRTTsForRecGroup(const RTT& a, IntraLookupA&& aIntra, const RTT& b, IntraLookupB&& bIntra)
+bool equalRTTsForRecGroup(const RTT& a, NOESCAPE const IntraLookupA& aIntra, const RTT& b, NOESCAPE const IntraLookupB& bIntra)
 {
     // Cheap rejects first: kind / is_final / display depth / per-kind arity.
     if (a.kind() != b.kind())

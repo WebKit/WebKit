@@ -61,7 +61,7 @@ public:
     }
 
     template<typename Op, typename Functor>
-    ALWAYS_INLINE void forEach(const Functor& func)
+    ALWAYS_INLINE void forEach(NOESCAPE const Functor& func)
     {
         auto* metadata = get<typename Op::Metadata>();
         auto* end = std::bit_cast<typename Op::Metadata*>(getWithoutAligning(Op::opcodeID + 1));
@@ -70,7 +70,7 @@ public:
     }
 
     template<typename Functor>
-    ALWAYS_INLINE void forEachValueProfile(const Functor& func)
+    ALWAYS_INLINE void forEachValueProfile(NOESCAPE const Functor& func)
     {
         // We could do a checked multiply here but if it overflows we'd just not look at any value profiles so it's probably not worth it.
         int lastValueProfileOffset = -unlinkedMetadata()->m_numValueProfiles;

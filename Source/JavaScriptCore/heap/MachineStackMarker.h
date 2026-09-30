@@ -71,7 +71,7 @@ private:
     stateName.registerState = &stateName ## _registerState
 
 // The return value is meaningless. We just use it to suppress tail call optimization.
-int callWithCurrentThreadState(const ScopedLambda<void(CurrentThreadState&)>&);
+int callWithCurrentThreadState(NOESCAPE const ScopedLambda<void(CurrentThreadState&)>&);
 
 } // namespace JSC
 

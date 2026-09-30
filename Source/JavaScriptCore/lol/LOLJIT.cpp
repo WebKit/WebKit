@@ -955,7 +955,7 @@ void LOLJIT::emitCompare(const JSInstruction* instruction, RelationalCondition c
 }
 
 template <typename EmitCompareFunctor>
-ALWAYS_INLINE void LOLJIT::emitCompareImpl(VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, RelationalCondition condition, const EmitCompareFunctor& emitCompare)
+ALWAYS_INLINE void LOLJIT::emitCompareImpl(VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, RelationalCondition condition, NOESCAPE const EmitCompareFunctor& emitCompare)
 {
     // We generate inline code for the following cases in the fast path:
     // - int immediate to constant int immediate
@@ -1026,7 +1026,7 @@ void LOLJIT::emitCompareSlow(const JSInstruction* instruction, DoubleCondition c
 
 // FIXME: Maybe this should take a shouldBox template parameter instead of relying on !dstGPR
 template<typename SlowOperation>
-void LOLJIT::emitCompareSlowImpl(const auto& allocations, VirtualRegister lhs, GPRReg lhsGPR, VirtualRegister rhs, GPRReg rhsGPR, GPRReg dstGPR, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const Invocable<void(FPRReg, FPRReg)> auto& emitDoubleCompare)
+void LOLJIT::emitCompareSlowImpl(const auto& allocations, VirtualRegister lhs, GPRReg lhsGPR, VirtualRegister rhs, GPRReg rhsGPR, GPRReg dstGPR, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, NOESCAPE const Invocable<void(FPRReg, FPRReg)> auto& emitDoubleCompare)
 {
     // We generate inline code for the following cases in the slow path:
     // - floating-point number to constant int immediate

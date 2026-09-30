@@ -61,7 +61,7 @@ public:
         }
 
         template<typename Func>
-        void forEachSetBit(const Func& func) const
+        void forEachSetBit(NOESCAPE const Func& func) const
         {
             WTF::forEachSetBit(std::span<const uint64_t> { m_words }, func);
         }

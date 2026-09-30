@@ -48,13 +48,13 @@ enum class DateField : int64_t {
 };
 
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
-void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
+void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOESCAPE const WriteFunctor& write, NOESCAPE const DefFunctor& def)
 {
     clobberize(graph, node, read, write, def, [] { });
 }
 
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor, typename ClobberTopFunctor>
-void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def, const ClobberTopFunctor& clobberTopFunctor)
+void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOESCAPE const WriteFunctor& write, NOESCAPE const DefFunctor& def, NOESCAPE const ClobberTopFunctor& clobberTopFunctor)
 {
     // Some notes:
     //

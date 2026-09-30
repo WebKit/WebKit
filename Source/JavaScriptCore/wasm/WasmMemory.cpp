@@ -71,7 +71,7 @@ static bool isDeclarablePageCount(PageCount pageCount, AddressType addressType)
 }
 
 template<typename Func>
-static bool tryAllocate(VM& vm, const Func& allocate)
+static bool tryAllocate(VM& vm, NOESCAPE const Func& allocate)
 {
     unsigned numTries = 2;
     bool done = false;

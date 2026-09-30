@@ -34,7 +34,7 @@
 namespace JSC {
 
 template<typename Func>
-inline JSString* ConcatKeyAtomStringCache::getOrInsert(VM& vm, JSString* s0, JSString* s1, JSString* s2, const Func& func)
+inline JSString* ConcatKeyAtomStringCache::getOrInsert(VM& vm, JSString* s0, JSString* s1, JSString* s2, NOESCAPE const Func& func)
 {
     JSString* variable = nullptr;
     switch (m_mode) {

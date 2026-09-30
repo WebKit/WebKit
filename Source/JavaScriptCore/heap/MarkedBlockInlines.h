@@ -232,7 +232,7 @@ inline bool MarkedBlock::Handle::areMarksStaleForSweep()
 // Only the DoesNotNeedDestruction one should be specialized by MarkedBlock.
 
 template<bool specialize, MarkedBlock::Handle::EmptyMode specializedEmptyMode, MarkedBlock::Handle::SweepMode specializedSweepMode, MarkedBlock::Handle::SweepDestructionMode specializedDestructionMode, MarkedBlock::Handle::ScribbleMode specializedScribbleMode, MarkedBlock::Handle::NewlyAllocatedMode specializedNewlyAllocatedMode, MarkedBlock::Handle::MarksMode specializedMarksMode, typename DestroyFunc>
-void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Handle::EmptyMode emptyMode, MarkedBlock::Handle::SweepMode sweepMode, MarkedBlock::Handle::SweepDestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode, MarkedBlock::Handle::NewlyAllocatedMode newlyAllocatedMode, MarkedBlock::Handle::MarksMode marksMode, const DestroyFunc& destroyFunc)
+void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Handle::EmptyMode emptyMode, MarkedBlock::Handle::SweepMode sweepMode, MarkedBlock::Handle::SweepDestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode, MarkedBlock::Handle::NewlyAllocatedMode newlyAllocatedMode, MarkedBlock::Handle::MarksMode marksMode, NOESCAPE const DestroyFunc& destroyFunc)
 {
     constexpr bool verbose = false;
     if (specialize) {
@@ -399,7 +399,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 }
 
 template<typename DestroyFunc>
-void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, const DestroyFunc& destroyFunc)
+void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, NOESCAPE const DestroyFunc& destroyFunc)
 {
     SweepMode sweepMode = freeList ? SweepToFreeList : SweepOnly;
     SweepDestructionMode destructionMode = this->sweepDestructionMode();
@@ -524,7 +524,7 @@ inline MarkedBlock::Handle::MarksMode MarkedBlock::Handle::marksMode()
 }
 
 template <typename Functor>
-inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& functor)
+inline IterationStatus MarkedBlock::Handle::forEachLiveCell(NOESCAPE const Functor& functor)
 {
     // FIXME: This is not currently efficient to use in the constraint solver because isLive() grabs a
     // lock to protect itself from concurrent calls to aboutToMarkSlow(). But we could get around this by
@@ -554,7 +554,7 @@ inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& funct
 }
 
 template <typename Functor>
-inline IterationStatus MarkedBlock::Handle::forEachDeadCell(const Functor& functor)
+inline IterationStatus MarkedBlock::Handle::forEachDeadCell(NOESCAPE const Functor& functor)
 {
     HeapCell::Kind kind = m_attributes.cellKind;
     for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
@@ -569,7 +569,7 @@ inline IterationStatus MarkedBlock::Handle::forEachDeadCell(const Functor& funct
 }
 
 template <typename Functor>
-inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& functor)
+inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(NOESCAPE const Functor& functor)
 {
     HeapCell::Kind kind = m_attributes.cellKind;
     MarkedBlock& block = this->block();

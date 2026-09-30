@@ -286,7 +286,7 @@ ObjectPropertyCondition generateCondition(
 }
 
 template<typename Functor>
-ObjectPropertyConditionSet generateConditions(JSGlobalObject* globalObject, Structure* structure, JSObject* prototype, UniquedStringImpl* uid, const Functor& functor)
+ObjectPropertyConditionSet generateConditions(JSGlobalObject* globalObject, Structure* structure, JSObject* prototype, UniquedStringImpl* uid, NOESCAPE const Functor& functor)
 {
     Vector<ObjectPropertyCondition, 8> conditions;
     

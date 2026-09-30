@@ -169,7 +169,7 @@ static RefPtr<CalendarCacheEntry> calendarCacheEntry(CalendarID calendarId)
 }
 
 template<typename F>
-static auto withCalendar(CalendarID calendarId, F&& fn) -> decltype(fn(static_cast<UCalendar*>(nullptr)))
+static auto withCalendar(CalendarID calendarId, NOESCAPE const F& fn) -> decltype(fn(static_cast<UCalendar*>(nullptr)))
 {
     auto entry = calendarCacheEntry(calendarId);
     ASSERT(entry);
@@ -216,7 +216,7 @@ static std::optional<ISO8601::PlainDate> isoDateFromCalendarChecked(UCalendar* c
 }
 
 template<typename F>
-static auto withCalendarSetToDate(CalendarID calendarId, const ISO8601::PlainDate& isoDate, F&& body) -> decltype(body(static_cast<UCalendar*>(nullptr)))
+static auto withCalendarSetToDate(CalendarID calendarId, const ISO8601::PlainDate& isoDate, NOESCAPE const F& body) -> decltype(body(static_cast<UCalendar*>(nullptr)))
 {
     return withCalendar(calendarId, [&](UCalendar* cal) -> decltype(body(cal)) {
         if (!cal) [[unlikely]]

@@ -382,7 +382,7 @@ private:
     RegisterMap<CachedRecovery*> m_newRegisters;
 
     template<typename CheckFunctor>
-    Reg getFreeRegister(const CheckFunctor& check) const
+    Reg getFreeRegister(NOESCAPE const CheckFunctor& check) const
     {
         Reg nonTemp { };
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
@@ -444,7 +444,7 @@ private:
     // assumes and asserts that it is passed a cachedRecovery stored in a
     // register).
     template<typename CheckFunctor>
-    void ensureRegister(const CheckFunctor& check)
+    void ensureRegister(NOESCAPE const CheckFunctor& check)
     {
         // If we can spill a callee-save, that's best, because it will
         // free up a register that would otherwise been taken for the

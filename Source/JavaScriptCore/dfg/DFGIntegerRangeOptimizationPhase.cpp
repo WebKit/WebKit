@@ -367,7 +367,7 @@ public:
     // produce two relationships as a result of the merge, the total number of relationships that
     // can be present at head of block is limited by O(graph.size^2).
     template<typename Functor>
-    void merge(const Relationship& other, const Functor& functor) const
+    void merge(const Relationship& other, NOESCAPE const Functor& functor) const
     {
         // Handle the super obvious case first.
         if (*this == other) {
@@ -803,7 +803,7 @@ private:
     }
 
     template<typename Functor>
-    void mergeConstantsImpl(const Relationship& other, const Functor& functor) const
+    void mergeConstantsImpl(const Relationship& other, NOESCAPE const Functor& functor) const
     {
         ASSERT(m_left == other.m_left);
 

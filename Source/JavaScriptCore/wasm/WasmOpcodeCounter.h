@@ -49,7 +49,7 @@ public:
 
     void dump();
     template<typename OpcodeType, typename OpcodeTypeDump, typename IsRegisteredOpcodeFunctor>
-    void dump(Atomic<uint64_t>* counter, NumberOfRegisteredOpcodes, CounterSize, const IsRegisteredOpcodeFunctor&, const char* prefix, const char* suffix);
+    void dump(Atomic<uint64_t>* counter, NumberOfRegisteredOpcodes, CounterSize, NOESCAPE const IsRegisteredOpcodeFunctor&, const char* prefix, const char* suffix);
 
 private:
     constexpr static std::pair<NumberOfRegisteredOpcodes, CounterSize> m_extendedSIMDOpcodeInfo = countNumberOfWasmExtendedSIMDOpcodes();

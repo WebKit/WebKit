@@ -233,7 +233,7 @@ class GlobalObject;
 class Workers;
 
 template<typename Func>
-int runJSC(const CommandLine&, bool isWorker, const Func&);
+int runJSC(const CommandLine&, bool isWorker, NOESCAPE const Func&);
 static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, const CommandLine&, bool& success);
 
 class Message : public ThreadSafeRefCounted<Message> {
@@ -301,7 +301,7 @@ public:
     ~Workers();
     
     template<typename Func>
-    void broadcast(const Func&);
+    void broadcast(NOESCAPE const Func&);
     
     void report(const String&);
     String tryGetReport();
@@ -2601,7 +2601,7 @@ Workers::~Workers()
 }
 
 template<typename Func>
-void Workers::broadcast(const Func& func)
+void Workers::broadcast(NOESCAPE const Func& func)
 {
     Locker locker { m_lock };
     for (Worker& worker : m_workers) {
@@ -4571,7 +4571,7 @@ CommandLine::CommandLine(CommandLineForWorkersTag)
 }
 
 template<typename Func>
-int runJSC(const CommandLine& options, bool isWorker, const Func& func)
+int runJSC(const CommandLine& options, bool isWorker, NOESCAPE const Func& func)
 {
     Worker worker(Workers::singleton(), !isWorker);
     

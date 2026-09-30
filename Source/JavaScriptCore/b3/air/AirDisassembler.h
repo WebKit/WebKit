@@ -56,7 +56,7 @@ public:
     void startBlock(BasicBlock*, CCallHelpers&);
     void addInst(Inst*, MacroAssembler::Label, MacroAssembler::Label);
 
-    void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, const WTF::ScopedLambda<void(Inst&)>& doToEachInst);
+    void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, NOESCAPE const WTF::ScopedLambda<void(Inst&)>& doToEachInst);
 
 private:
     UncheckedKeyHashMap<Inst*, std::pair<MacroAssembler::Label, MacroAssembler::Label>> m_instToRange;

@@ -92,7 +92,7 @@ public:
     
 private:
     template<typename Functor>
-    void callIfAppropriate(const Functor& functor, Operand operand)
+    void callIfAppropriate(NOESCAPE const Functor& functor, Operand operand)
     {
         if (operand.isLocal() && static_cast<unsigned>(operand.toLocal()) >= m_graph.block(0)->variablesAtHead.numberOfLocals())
             return;
@@ -286,7 +286,7 @@ private:
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
 void preciseLocalClobberize(
     Graph& graph, Node* node,
-    const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
+    NOESCAPE const ReadFunctor& read, NOESCAPE const WriteFunctor& write, NOESCAPE const DefFunctor& def)
 {
     PreciseLocalClobberizeAdaptor<ReadFunctor, WriteFunctor, DefFunctor>
         adaptor(graph, node, read, write, def);

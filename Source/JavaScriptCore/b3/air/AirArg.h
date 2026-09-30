@@ -337,7 +337,7 @@ public:
     }
     
     template<typename Func>
-    static void forEachPhase(Timing timing, const Func& func)
+    static void forEachPhase(Timing timing, NOESCAPE const Func& func)
     {
         if (activeAt(timing, Early))
             func(Early);
@@ -346,7 +346,7 @@ public:
     }
     
     template<typename Func>
-    static void forEachPhase(Role role, const Func& func)
+    static void forEachPhase(Role role, NOESCAPE const Func& func)
     {
         if (activeAt(role, Early))
             func(Early);
@@ -1602,7 +1602,7 @@ public:
     }
 
     template<typename Functor>
-    void forEachTmpFast(const Functor& functor)
+    void forEachTmpFast(NOESCAPE const Functor& functor)
     {
         switch (m_kind) {
         case Tmp:
@@ -1631,10 +1631,10 @@ public:
     Thing as() const;
 
     template<typename Thing, typename Functor>
-    void forEachFast(const Functor&);
+    void forEachFast(NOESCAPE const Functor&);
 
     template<typename Thing, typename Functor>
-    void forEach(Role, Bank, Width, const Functor&);
+    void forEach(Role, Bank, Width, NOESCAPE const Functor&);
 
     // This is smart enough to know that an address arg in a Def or UseDef rule will use its
     // tmps and never def them. For example, this:
@@ -1643,7 +1643,7 @@ public:
     //
     // This defs (%rcx) but uses %rcx.
     template<typename Functor>
-    void forEachTmp(Role argRole, Bank argBank, Width argWidth, const Functor& functor)
+    void forEachTmp(Role argRole, Bank argBank, Width argWidth, NOESCAPE const Functor& functor)
     {
         switch (m_kind) {
         case Tmp:

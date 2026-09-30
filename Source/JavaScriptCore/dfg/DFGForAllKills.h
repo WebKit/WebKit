@@ -44,7 +44,7 @@ namespace JSC { namespace DFG {
 // conservative in the sense that it might resort to telling you some things that are still live at
 // nodeAfter.
 template<ConstInvocable<void(Operand)> Functor>
-void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const Functor& functor)
+void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, NOESCAPE const Functor& functor)
 {
     CodeOrigin before = nodeBefore->origin.forExit;
 
@@ -124,7 +124,7 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
 template<ConstInvocable<void(Node*)> Functor>
 void forAllKilledNodesAtNodeIndex(
     Graph& graph, AvailabilityMap& availabilityMap, BasicBlock* block, unsigned nodeIndex,
-    const Functor& functor)
+    NOESCAPE const Functor& functor)
 {
     static constexpr unsigned seenInClosureFlag = 1;
     static constexpr unsigned calledFunctorFlag = 2;

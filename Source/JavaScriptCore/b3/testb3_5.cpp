@@ -1708,7 +1708,7 @@ void testCheckMul64SShr()
 
 template<typename LeftFunctor, typename RightFunctor, typename InputType>
 void genericTestCompare(
-    B3::Opcode opcode, const LeftFunctor& leftFunctor, const RightFunctor& rightFunctor,
+    B3::Opcode opcode, NOESCAPE const LeftFunctor& leftFunctor, NOESCAPE const RightFunctor& rightFunctor,
     InputType left, InputType right, int result)
 {
     // Using a compare.

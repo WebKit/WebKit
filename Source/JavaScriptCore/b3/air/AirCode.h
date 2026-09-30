@@ -147,7 +147,7 @@ public:
     }
 
     template<Bank bank, typename Func>
-    void forEachTmp(const Func& func)
+    void forEachTmp(NOESCAPE const Func& func)
     {
         unsigned numTmps = this->numTmps(bank);
         for (unsigned i = 0; i < numTmps; ++i)
@@ -155,7 +155,7 @@ public:
     }
 
     template<typename Func>
-    void forEachTmp(const Func& func)
+    void forEachTmp(NOESCAPE const Func& func)
     {
         static_assert(numBanks == 2);
         forEachTmp<GP>(func);
@@ -314,7 +314,7 @@ public:
     JS_EXPORT_PRIVATE void addFastTmp(Tmp);
 
     template<typename Functor>
-    void forEachFastTmp(const Functor& functor) const
+    void forEachFastTmp(NOESCAPE const Functor& functor) const
     {
         for (Tmp tmp : m_fastTmps)
             functor(tmp);

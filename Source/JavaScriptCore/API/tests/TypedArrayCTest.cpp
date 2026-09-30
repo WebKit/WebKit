@@ -219,7 +219,7 @@ static int testConstructors(JSGlobalContextRef context, JSTypedArrayType type, u
 }
 
 template <typename Functor>
-static int forEachTypedArrayType(const Functor& functor)
+static int forEachTypedArrayType(NOESCAPE const Functor& functor)
 {
     int failed = 0;
     for (unsigned i = 0; i < kJSTypedArrayTypeArrayBuffer; i++) {

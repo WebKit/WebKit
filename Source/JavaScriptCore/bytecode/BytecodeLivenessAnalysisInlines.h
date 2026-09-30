@@ -59,7 +59,7 @@ inline bool isValidRegisterForLiveness(VirtualRegister operand)
 }
 
 template<typename CodeBlockType, typename DefFunctor>
-inline void BytecodeLivenessPropagation::stepOverBytecodeIndexDef(CodeBlockType* codeBlock, const JSInstructionStream& instructions, BytecodeGraph&, BytecodeIndex bytecodeIndex, const DefFunctor& def)
+inline void BytecodeLivenessPropagation::stepOverBytecodeIndexDef(CodeBlockType* codeBlock, const JSInstructionStream& instructions, BytecodeGraph&, BytecodeIndex bytecodeIndex, NOESCAPE const DefFunctor& def)
 {
     auto* instruction = instructions.at(bytecodeIndex).ptr();
     computeDefsForBytecodeIndex(
@@ -71,7 +71,7 @@ inline void BytecodeLivenessPropagation::stepOverBytecodeIndexDef(CodeBlockType*
 }
 
 template<typename CodeBlockType, typename UseFunctor>
-inline void BytecodeLivenessPropagation::stepOverBytecodeIndexUse(CodeBlockType* codeBlock, const JSInstructionStream& instructions, BytecodeGraph&, BytecodeIndex bytecodeIndex, const UseFunctor& use)
+inline void BytecodeLivenessPropagation::stepOverBytecodeIndexUse(CodeBlockType* codeBlock, const JSInstructionStream& instructions, BytecodeGraph&, BytecodeIndex bytecodeIndex, NOESCAPE const UseFunctor& use)
 {
     auto* instruction = instructions.at(bytecodeIndex).ptr();
     computeUsesForBytecodeIndex(
@@ -83,7 +83,7 @@ inline void BytecodeLivenessPropagation::stepOverBytecodeIndexUse(CodeBlockType*
 }
 
 template<typename CodeBlockType, typename UseFunctor>
-inline void BytecodeLivenessPropagation::stepOverBytecodeIndexUseInExceptionHandler(CodeBlockType* codeBlock, const JSInstructionStream&, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, const UseFunctor& use)
+inline void BytecodeLivenessPropagation::stepOverBytecodeIndexUseInExceptionHandler(CodeBlockType* codeBlock, const JSInstructionStream&, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, NOESCAPE const UseFunctor& use)
 {
     // If we have an exception handler, we want the live-in variables of the
     // exception handler block to be included in the live-in of this particular BytecodeIndex.
@@ -97,7 +97,7 @@ inline void BytecodeLivenessPropagation::stepOverBytecodeIndexUseInExceptionHand
 // Simplified interface to bytecode use/def, which determines defs first and then uses, and includes
 // exception handlers in the uses.
 template<typename CodeBlockType, typename UseFunctor, typename DefFunctor>
-inline void BytecodeLivenessPropagation::stepOverBytecodeIndex(CodeBlockType* codeBlock, const JSInstructionStream& instructions, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, const UseFunctor& use, const DefFunctor& def)
+inline void BytecodeLivenessPropagation::stepOverBytecodeIndex(CodeBlockType* codeBlock, const JSInstructionStream& instructions, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, NOESCAPE const UseFunctor& use, NOESCAPE const DefFunctor& def)
 {
     // This abstractly executes the BytecodeIndex in reverse. Instructions logically first use operands and
     // then define operands. This logical ordering is necessary for operations that use and def the same

@@ -46,7 +46,7 @@ CCallSpecial::CCallSpecial(bool isSIMDContext)
 
 CCallSpecial::~CCallSpecial() = default;
 
-void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
+void CCallSpecial::forEachArg(Inst& inst, NOESCAPE const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     for (unsigned i = 0; i < numCalleeArgs; ++i)
         callback(inst.args()[calleeArgOffset + i], Arg::Use, GP, pointerWidth());

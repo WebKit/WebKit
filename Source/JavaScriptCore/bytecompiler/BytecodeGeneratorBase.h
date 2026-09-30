@@ -65,7 +65,7 @@ public:
     // the next instruction may overwrite it.
     RegisterID* newTemporary();
     template<typename Functor>
-    void newTemporaries(size_t count, const Functor&);
+    void newTemporaries(size_t count, NOESCAPE const Functor&);
 
     void emitLabel(GenericLabel<Traits>&);
     void recordOpcode(typename Traits::OpcodeID);

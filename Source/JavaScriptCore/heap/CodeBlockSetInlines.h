@@ -47,21 +47,21 @@ inline void CodeBlockSet::mark(const AbstractLocker&, CodeBlock* codeBlock)
 }
 
 template<typename Functor>
-void CodeBlockSet::iterate(const Functor& functor)
+void CodeBlockSet::iterate(NOESCAPE const Functor& functor)
 {
     Locker locker { m_lock };
     iterate(locker, functor);
 }
 
 template<typename Functor>
-void CodeBlockSet::iterate(const AbstractLocker&, const Functor& functor)
+void CodeBlockSet::iterate(const AbstractLocker&, NOESCAPE const Functor& functor)
 {
     for (CodeBlock* codeBlock : m_codeBlocks)
         functor(codeBlock);
 }
 
 template<typename Functor>
-void CodeBlockSet::iterateCurrentlyExecuting(const Functor& functor)
+void CodeBlockSet::iterateCurrentlyExecuting(NOESCAPE const Functor& functor)
 {
     Locker locker { m_lock };
     for (CodeBlock* codeBlock : m_currentlyExecuting)

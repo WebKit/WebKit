@@ -116,7 +116,7 @@ void Callee::reportToVMsForDestruction()
 }
 
 template<typename Func>
-inline void Callee::runWithDowncast(const Func& func)
+inline void Callee::runWithDowncast(NOESCAPE const Func& func)
 {
     switch (m_compilationMode) {
     case CompilationMode::IPIntMode:
@@ -163,7 +163,7 @@ inline void Callee::runWithDowncast(const Func& func)
 }
 
 template<typename Func>
-inline void Callee::runWithDowncast(const Func& func) const
+inline void Callee::runWithDowncast(NOESCAPE const Func& func) const
 {
     const_cast<Callee*>(this)->runWithDowncast(func);
 }

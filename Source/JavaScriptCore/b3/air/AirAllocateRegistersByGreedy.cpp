@@ -561,7 +561,7 @@ public:
     //
     // func is allowed to modify this RegisterRange, e.g. by calling evict().
     // func must not modify 'range' for the duration of this forEachConflict invocation.
-    void forEachConflict(const LiveRange& range, Width width, const Invocable<IterationStatus(AllocatedInterval&)> auto& func)
+    void forEachConflict(const LiveRange& range, Width width, NOESCAPE const Invocable<IterationStatus(AllocatedInterval&)> auto& func)
     {
         auto status = forEachConflictImpl(m_allocations, range, func);
         if (width > Width64) [[unlikely]] {
@@ -595,7 +595,7 @@ public:
     }
 
 private:
-    static IterationStatus forEachConflictImpl(AllocatedIntervalSet& allocatedSet, const LiveRange& range, const Invocable<IterationStatus(AllocatedInterval&)> auto& func)
+    static IterationStatus forEachConflictImpl(AllocatedIntervalSet& allocatedSet, const LiveRange& range, NOESCAPE const Invocable<IterationStatus(AllocatedInterval&)> auto& func)
     {
         for (auto interval : range.intervals()) {
             while (true) {
@@ -648,7 +648,7 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    void removeAllMatching(const Invocable<bool(Tmp)> auto& predicate)
+    void removeAllMatching(NOESCAPE const Invocable<bool(Tmp)> auto& predicate)
     {
         ASSERT(!m_isSorted);
         for (size_t i = 0; i < m_entries.size(); ) {
@@ -1077,7 +1077,7 @@ private:
         m_stats[GP].numInsts += (tailPosition + 1) / PointOffsets::PointsPerInst;
     }
 
-    void forEachBlockInLiveRange(const LiveRange& liveRange, const Invocable<IterationStatus(BasicBlock*)> auto& func)
+    void forEachBlockInLiveRange(const LiveRange& liveRange, NOESCAPE const Invocable<IterationStatus(BasicBlock*)> auto& func)
     {
         for (auto& interval : liveRange.intervals()) {
             size_t blockIdx = findBlockIndexContainingPoint(interval.begin());
@@ -1663,7 +1663,7 @@ private:
         }
 
         // Calls func with the TmpList for any intervals in this map that overlaps with the given range.
-        IterationStatus forEachOverlap(const LiveRange& range, const Invocable<IterationStatus(const TmpList&)> auto& func) const
+        IterationStatus forEachOverlap(const LiveRange& range, NOESCAPE const Invocable<IterationStatus(const TmpList&)> auto& func) const
         {
             for (auto interval : range.intervals()) {
                 while (true) {
@@ -1682,7 +1682,7 @@ private:
         }
 
         // Calls func with both TmpLists for each pair of overlapping intervals in a and b.
-        static IterationStatus forEachPairwiseOverlap(const LivenessMap& a, const LivenessMap& b, const Invocable<IterationStatus(const TmpList&, const TmpList&)> auto& func)
+        static IterationStatus forEachPairwiseOverlap(const LivenessMap& a, const LivenessMap& b, NOESCAPE const Invocable<IterationStatus(const TmpList&, const TmpList&)> auto& func)
         {
             const LivenessMap* smaller = &a;
             const LivenessMap* larger = &b;
@@ -1886,12 +1886,12 @@ private:
 
         using TmpList = typename LivenessMap<bank>::TmpList;
 
-        IterationStatus forEachOverlap(const LiveRange& range, const Invocable<IterationStatus(const TmpList&)> auto& func) const
+        IterationStatus forEachOverlap(const LiveRange& range, NOESCAPE const Invocable<IterationStatus(const TmpList&)> auto& func) const
         {
             return m_liveness.forEachOverlap(range, func);
         }
 
-        static IterationStatus forEachPairwiseOverlap(const AffinityGroup& a, const AffinityGroup& b, const Invocable<IterationStatus(const TmpList&, const TmpList&)> auto& func)
+        static IterationStatus forEachPairwiseOverlap(const AffinityGroup& a, const AffinityGroup& b, NOESCAPE const Invocable<IterationStatus(const TmpList&, const TmpList&)> auto& func)
         {
             return LivenessMap<bank>::forEachPairwiseOverlap(a.m_liveness, b.m_liveness, func);
         }
@@ -2945,7 +2945,7 @@ private:
     // uses or defs the given tmp, up to the end of the basic block.
     // Returns the unprocessed portion of the interval (if interval spans multiple blocks).
     // `cursor` can be used to perform a "sort-merge join" when the caller is making queries over a sorted set of intervals for the same tmp
-    Interval forEachUseDefWithin(Tmp tmp, Interval interval, size_t& cursor, const Invocable<void(Point, Inst&, BasicBlock&)> auto& func)
+    Interval forEachUseDefWithin(Tmp tmp, Interval interval, size_t& cursor, NOESCAPE const Invocable<void(Point, Inst&, BasicBlock&)> auto& func)
     {
         auto& useDefs = m_useDefLists[tmp].useDefs();
 

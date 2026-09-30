@@ -60,13 +60,13 @@ public:
     // This will have to do a combined search over whatever Subspace::forEachMarkedCell uses and
     // our m_blocksWithBits.
     template<typename Func>
-    void forEachMarkedCell(const Func&);
+    void forEachMarkedCell(NOESCAPE const Func&);
 
     template<typename Visitor, typename Func>
     Ref<SharedTask<void(Visitor&)>> forEachMarkedCellInParallel(const Func&);
     
     template<typename Func>
-    void forEachLiveCell(const Func&);
+    void forEachLiveCell(NOESCAPE const Func&);
     
 private:
     friend class IsoSubspace;

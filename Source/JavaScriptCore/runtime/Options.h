@@ -110,9 +110,9 @@ public:
 #endif
     };
 
-    JS_EXPORT_PRIVATE static void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCustomizationCallback);
+    JS_EXPORT_PRIVATE static void initializeWithOptionsCustomization(NOESCAPE const ScopedLambda<void()>& optionsCustomizationCallback);
 
-    ALWAYS_INLINE static void initialize(const Invocable<void()> auto& optionsCustomizationCallback)
+    ALWAYS_INLINE static void initialize(NOESCAPE const Invocable<void()> auto& optionsCustomizationCallback)
     {
         SUPPRESS_FORWARD_DECL_ARG initializeWithOptionsCustomization(optionsCustomizationCallback);
     }

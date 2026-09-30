@@ -33,7 +33,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-void DebuggerPausePositions::forEachBreakpointLocation(JSTextPosition start, JSTextPosition end, SourceProvider& provider, Function<void(JSTextPosition)>&& callback)
+void DebuggerPausePositions::forEachBreakpointLocation(JSTextPosition start, JSTextPosition end, SourceProvider& provider, NOESCAPE const Function<void(JSTextPosition)>& callback)
 {
     Vector<JSTextPosition> uniquePositions;
     for (auto it = firstPositionAtOrAfter(start); it != m_positions.end(); ++it) {

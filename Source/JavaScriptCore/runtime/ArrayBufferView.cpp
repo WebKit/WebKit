@@ -56,25 +56,25 @@ ArrayBufferView::ArrayBufferView(TypedArrayType type, RefPtr<ArrayBuffer>&& buff
         m_baseAddress = BaseAddress(static_cast<char*>(m_buffer->data()) + m_byteOffset);
 }
 
-template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(Visitor&& visitor)
+template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(NOESCAPE const Visitor& visitor)
 {
     switch (m_type) {
     case TypedArrayType::NotTypedArray:
     case TypedArrayType::TypeDataView:
-        return std::invoke(std::forward<Visitor>(visitor), static_cast<DataView&>(*this));
+        return std::invoke(visitor, static_cast<DataView&>(*this));
 #define DECLARE_TYPED_ARRAY_TYPE(name) \
     case TypedArrayType::Type##name: \
-        return std::invoke(std::forward<Visitor>(visitor), static_cast<name##Array&>(*this));
+        return std::invoke(visitor, static_cast<name##Array&>(*this));
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(DECLARE_TYPED_ARRAY_TYPE)
 #undef DECLARE_TYPED_ARRAY_TYPE
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(Visitor&& visitor) const
+template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(NOESCAPE const Visitor& visitor) const
 {
     return const_cast<ArrayBufferView&>(*this).visitDerived([&](auto& value) {
-        return std::invoke(std::forward<Visitor>(visitor), std::as_const(value));
+        return std::invoke(visitor, std::as_const(value));
     });
 }
 

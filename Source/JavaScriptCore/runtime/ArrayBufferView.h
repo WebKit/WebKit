@@ -211,8 +211,8 @@ protected:
 
 private:
     friend class ArrayBuffer;
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
 
     RefPtr<ArrayBuffer> m_buffer;
 };

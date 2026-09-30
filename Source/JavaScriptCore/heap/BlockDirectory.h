@@ -75,8 +75,8 @@ public:
     DestructionMode destruction() const { return m_attributes.destruction; }
     HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
 
-    inline void forEachBlock(const std::invocable<MarkedBlock::Handle*> auto&);
-    inline void forEachNotEmptyBlock(const std::invocable<MarkedBlock::Handle*> auto&);
+    inline void forEachBlock(NOESCAPE const std::invocable<MarkedBlock::Handle*> auto&);
+    inline void forEachNotEmptyBlock(NOESCAPE const std::invocable<MarkedBlock::Handle*> auto&);
 
     // Intended for diagnostics only (rdar://157153895)
     bool isFreeListedCell(const void*);
@@ -120,7 +120,7 @@ public:
     bool isStealable(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return stealableBits()[index]; }
 
     template<typename Func>
-    void forEachBitVector(const Func& func) WTF_REQUIRES_LOCK(m_bitvectorLock)
+    void forEachBitVector(NOESCAPE const Func& func) WTF_REQUIRES_LOCK(m_bitvectorLock)
     {
 #define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_bits.lowerBitName());
@@ -129,7 +129,7 @@ public:
     }
     
     template<typename Func>
-    void forEachBitVectorWithName(const Func& func) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
+    void forEachBitVectorWithName(NOESCAPE const Func& func) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
     {
 #define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_bits.lowerBitName(), #capitalBitName);

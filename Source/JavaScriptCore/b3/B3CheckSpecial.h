@@ -119,7 +119,7 @@ private:
     // Constructs and returns the Inst representing the branch that this will use.
     Air::Inst hiddenBranch(const Air::Inst&) const;
 
-    void forEachArg(Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&) final;
+    void forEachArg(Air::Inst&, NOESCAPE const ScopedLambda<Air::Inst::EachArgCallback>&) final;
     bool isValid(Air::Inst&) final;
     bool admitsStack(Air::Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Air::Inst&, unsigned) final;

@@ -37,13 +37,13 @@ ALWAYS_INLINE JSC::Heap& MarkedSpace::heap() const
     return *std::bit_cast<Heap*>(std::bit_cast<uintptr_t>(this) - OBJECT_OFFSETOF(Heap, m_objectSpace));
 }
 
-template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIterationScope&, const Functor& functor)
+template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIterationScope&, NOESCAPE const Functor& functor)
 {
     ASSERT(isIterating());
     forEachLiveCell(functor);
 }
 
-template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functor& functor)
+template<typename Functor> inline void MarkedSpace::forEachLiveCell(NOESCAPE const Functor& functor)
 {
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
@@ -62,7 +62,7 @@ template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functo
     }
 }
 
-template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIterationScope&, const Functor& functor)
+template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIterationScope&, NOESCAPE const Functor& functor)
 {
     ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();

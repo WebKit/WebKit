@@ -144,7 +144,7 @@ private:
     }
 
     template<typename Func>
-    void forAllAliases(const Func& func)
+    void forAllAliases(NOESCAPE const Func& func)
     {
         Inst& inst = m_block->at(m_instIndex);
 
@@ -203,7 +203,7 @@ private:
     }
 
     template<typename IsWhichDef>
-    void clobberDefTmps(Arg& arg, Arg::Role role, Bank bank, Width width, const IsWhichDef& isWhichDef)
+    void clobberDefTmps(Arg& arg, Arg::Role role, Bank bank, Width width, NOESCAPE const IsWhichDef& isWhichDef)
     {
         auto mayReportDefTmp = [](const Arg& arg, bool argRoleIsDef) {
             return argRoleIsDef || arg.isPreIndex() || arg.isPostIndex();

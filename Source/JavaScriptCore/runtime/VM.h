@@ -300,7 +300,7 @@ public:
     Integrity::Random& integrityRandom() LIFETIME_BOUND { return m_integrityRandom; }
 
     template<typename Type, typename Functor>
-    Type& ensureSideData(void* key, const Functor&);
+    Type& ensureSideData(void* key, NOESCAPE const Functor&);
 
     bool hasTerminationRequest() const { return m_hasTerminationRequest; }
     void clearHasTerminationRequest()
@@ -1059,7 +1059,7 @@ public:
     ShadowChicken& ensureShadowChicken() { return m_shadowChicken.get(*this); }
     
     template<typename Func>
-    void logEvent(CodeBlock*, const char* summary, const Func& func);
+    void logEvent(CodeBlock*, const char* summary, NOESCAPE const Func&);
 
     inline std::optional<RefPtr<Thread>> ownerThread() const; // Defined in VMInlines.h
     inline std::optional<uint64_t> ownerThreadUID() const; // Defined in VMInlines.h
@@ -1127,7 +1127,7 @@ public:
     void NODELETE addDebugger(Debugger&);
     void NODELETE removeDebugger(Debugger&);
     template<typename Func>
-    void forEachDebugger(const Func&);
+    void forEachDebugger(NOESCAPE const Func&);
 
     void changeNumberOfActiveJITPlans(int64_t value)
     {

@@ -65,7 +65,7 @@ public:
     // argument without using any argument registers. You usually want one of the setupArguments*()
     // methods below instead of this. This thing is most useful if you have *a lot* of arguments.
     template<typename Functor>
-    void setupArgument(unsigned argumentIndex, const Functor& functor)
+    void setupArgument(unsigned argumentIndex, NOESCAPE const Functor& functor)
     {
         unsigned numberOfRegs = GPRInfo::numberOfArgumentRegisters; // Disguise the constant from clang's tautological compare warning.
         if (argumentIndex < numberOfRegs) {

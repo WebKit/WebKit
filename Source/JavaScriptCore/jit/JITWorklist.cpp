@@ -440,7 +440,7 @@ JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<Ref<JITP
 }
 
 template<typename MatchFunction>
-void JITWorklist::removeMatchingPlansForVM(VM& vm, const MatchFunction& matches)
+void JITWorklist::removeMatchingPlansForVM(VM& vm, NOESCAPE const MatchFunction& matches)
 {
     Locker locker { *m_lock };
     UncheckedKeyHashSet<JITCompilationKey> deadPlanKeys;

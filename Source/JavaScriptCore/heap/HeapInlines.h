@@ -141,7 +141,7 @@ template<typename Functor> inline void Heap::forEachCodeBlockIgnoringJITPlans(co
     forEachCodeBlockIgnoringJITPlansImpl(codeBlockSetLocker, func);
 }
 
-template<typename Functor> inline void Heap::forEachProtectedCell(const Functor& functor)
+template<typename Functor> inline void Heap::forEachProtectedCell(NOESCAPE const Functor& functor)
 {
     for (auto& pair : m_protectedValues)
         functor(pair.key);

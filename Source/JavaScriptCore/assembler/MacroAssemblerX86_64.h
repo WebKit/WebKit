@@ -4732,7 +4732,7 @@ protected:
     }
 
     template<typename AddressType, typename Func>
-    void atomicStrongCAS(StatusCondition cond, RegisterID expectedAndResult, RegisterID result, AddressType& address, const Func& func)
+    void atomicStrongCAS(StatusCondition cond, RegisterID expectedAndResult, RegisterID result, AddressType& address, NOESCAPE const Func& func)
     {
         address = address.withSwappedRegister(X86Registers::eax, expectedAndResult);
         swap(expectedAndResult, X86Registers::eax);
@@ -4743,7 +4743,7 @@ protected:
     }
 
     template<typename AddressType, typename Func>
-    void atomicStrongCAS(RegisterID expectedAndResult, AddressType& address, const Func& func)
+    void atomicStrongCAS(RegisterID expectedAndResult, AddressType& address, NOESCAPE const Func& func)
     {
         address = address.withSwappedRegister(X86Registers::eax, expectedAndResult);
         swap(expectedAndResult, X86Registers::eax);
@@ -4753,7 +4753,7 @@ protected:
     }
 
     template<typename AddressType, typename Func>
-    Jump branchAtomicStrongCAS(StatusCondition cond, RegisterID expectedAndResult, AddressType& address, const Func& func)
+    Jump branchAtomicStrongCAS(StatusCondition cond, RegisterID expectedAndResult, AddressType& address, NOESCAPE const Func& func)
     {
         address = address.withSwappedRegister(X86Registers::eax, expectedAndResult);
         swap(expectedAndResult, X86Registers::eax);

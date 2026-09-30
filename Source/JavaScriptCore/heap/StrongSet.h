@@ -72,7 +72,7 @@ public:
 
     // Runs with the JSLock held (see the class comment). The functor must not
     // allocate or deallocate handles. See forEachSlot.
-    void forEachStrongHandle(const Invocable<void(JSCell*)> auto&, const HashCountedSet<JSCell*>& skipSet);
+    void forEachStrongHandle(NOESCAPE const Invocable<void(JSCell*)> auto&, const HashCountedSet<JSCell*>& skipSet);
 
     unsigned blockCount() const { return m_blockCount; }
     // Test-only. Counts the transition s_reAdmissionWatermark exists to keep rare.
@@ -99,8 +99,8 @@ private:
     void destroyBlock(StrongBlock*);
     HandleSlot tryAllocateFromCurrent();
 
-    void forEachSlot(const Invocable<void(const HandleSlot&)> auto&);
-    void forEachLiveCell(const Invocable<void(JSCell*)> auto&);
+    void forEachSlot(NOESCAPE const Invocable<void(const HandleSlot&)> auto&);
+    void forEachLiveCell(NOESCAPE const Invocable<void(JSCell*)> auto&);
 
     VM& m_vm;
     // The hoisted cursors of m_currentBlock. All three stay null while there is
@@ -190,7 +190,7 @@ inline void StrongSet::deallocateFromCurrentBlock(StrongBlock* block, HandleSlot
 // must filter to cells. The functor must not allocate or deallocate handles:
 // deallocating the last live slot of a non-current block destroys that block
 // mid-iteration, and the walk would continue into freed memory.
-void StrongSet::forEachSlot(const Invocable<void(const HandleSlot&)> auto& functor)
+void StrongSet::forEachSlot(NOESCAPE const Invocable<void(const HandleSlot&)> auto& functor)
 {
     for (StrongBlock::BlockListNode& node : m_blocks) {
         StrongBlock& block = node.block();
@@ -207,7 +207,7 @@ void StrongSet::forEachSlot(const Invocable<void(const HandleSlot&)> auto& funct
     }
 }
 
-void StrongSet::forEachLiveCell(const Invocable<void(JSCell*)> auto& functor)
+void StrongSet::forEachLiveCell(NOESCAPE const Invocable<void(JSCell*)> auto& functor)
 {
     forEachSlot([&](HandleSlot slot) {
         JSValue value = *slot;
@@ -217,7 +217,7 @@ void StrongSet::forEachLiveCell(const Invocable<void(JSCell*)> auto& functor)
     });
 }
 
-void StrongSet::forEachStrongHandle(const Invocable<void(JSCell*)> auto& functor, const HashCountedSet<JSCell*>& skipSet)
+void StrongSet::forEachStrongHandle(NOESCAPE const Invocable<void(JSCell*)> auto& functor, const HashCountedSet<JSCell*>& skipSet)
 {
     forEachLiveCell([&](JSCell* cell) {
         if (!skipSet.contains(cell))

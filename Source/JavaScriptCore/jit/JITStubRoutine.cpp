@@ -40,7 +40,7 @@ void JITStubRoutine::observeZeroRefCountImpl()
 }
 
 template<typename Func>
-void JITStubRoutine::runWithDowncast(const Func& function)
+void JITStubRoutine::runWithDowncast(NOESCAPE const Func& function)
 {
     switch (m_type) {
     case Type::JITStubRoutineType:

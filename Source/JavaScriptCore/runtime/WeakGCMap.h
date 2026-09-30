@@ -64,7 +64,7 @@ public:
     }
 
     template<typename Functor>
-    ValueArg* ensureValue(const KeyType& key, Functor&& functor)
+    ValueArg* ensureValue(const KeyType& key, NOESCAPE const Functor& functor)
     {
         // If functor invokes GC, GC can prune WeakGCMap, and manipulate UncheckedKeyHashMap while we are touching it in ensure function.
         // The functor must not invoke GC.

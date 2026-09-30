@@ -85,7 +85,7 @@ State::State(Graph& graph)
         proc->setIonGraphPasses(passes.releaseNonNull());
 }
 
-void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback)
+void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, NOESCAPE const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback)
 {
     B3::Air::Disassembler* disassembler = proc->code().disassembler();
 

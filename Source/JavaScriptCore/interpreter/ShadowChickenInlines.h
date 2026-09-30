@@ -31,7 +31,7 @@
 namespace JSC {
 
 template<typename Functor>
-void ShadowChicken::iterate(VM& vm, CallFrame* callFrame, const Functor& functor)
+void ShadowChicken::iterate(VM& vm, CallFrame* callFrame, NOESCAPE const Functor& functor)
 {
     DeferGC deferGC(vm);
 

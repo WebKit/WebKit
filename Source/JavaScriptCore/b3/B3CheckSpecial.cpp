@@ -110,7 +110,7 @@ Inst CheckSpecial::hiddenBranch(const Inst& inst) const
     return hiddenBranch;
 }
 
-void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
+void CheckSpecial::forEachArg(Inst& inst, NOESCAPE const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     using namespace Air;
     std::optional<Width> optionalDefArgWidth;

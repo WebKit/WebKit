@@ -75,7 +75,7 @@ bool VM::isSafeToRecurseSoft() const
 }
 
 template<typename Func>
-void VM::logEvent(CodeBlock* codeBlock, const char* summary, const Func& func)
+void VM::logEvent(CodeBlock* codeBlock, const char* summary, NOESCAPE const Func& func)
 {
     if (!m_perBytecodeProfiler) [[likely]]
         return;
@@ -105,7 +105,7 @@ inline void VM::setFuzzerAgent(std::unique_ptr<FuzzerAgent>&& fuzzerAgent)
 }
 
 template<typename Func>
-inline void VM::forEachDebugger(const Func& callback)
+inline void VM::forEachDebugger(NOESCAPE const Func& callback)
 {
     if (m_debuggers.isEmpty()) [[likely]]
         return;
@@ -115,7 +115,7 @@ inline void VM::forEachDebugger(const Func& callback)
 }
 
 template<typename Type, typename Functor>
-Type& VM::ensureSideData(void* key, const Functor& functor)
+Type& VM::ensureSideData(void* key, NOESCAPE const Functor& functor)
 {
     m_hasSideData = true;
     return sideDataRepository().ensure<Type>(this, key, functor);

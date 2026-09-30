@@ -95,7 +95,7 @@ public:
         m_bindings[reg] = RegisterBinding();
     }
 
-    void flushIf(JITBackend& backend, const Invocable<bool(Register, const RegisterBinding&)> auto& functor)
+    void flushIf(JITBackend& backend, NOESCAPE const Invocable<bool(Register, const RegisterBinding&)> auto& functor)
     {
         for (Reg r : m_validRegisters) {
             Register reg = fromJSCReg(r);

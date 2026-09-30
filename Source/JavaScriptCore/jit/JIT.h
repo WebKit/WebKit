@@ -338,7 +338,7 @@ namespace JSC {
         template<typename Op>
         void emit_compare(const JSInstruction*, RelationalCondition);
         template <typename EmitCompareFunctor>
-        void emit_compareImpl(VirtualRegister op1, VirtualRegister op2, RelationalCondition, const EmitCompareFunctor&);
+        void emit_compareImpl(VirtualRegister op1, VirtualRegister op2, RelationalCondition, NOESCAPE const EmitCompareFunctor&);
         template<typename Op>
         void emit_compareAndJump(const JSInstruction*, RelationalCondition);
         template<typename Op>
@@ -350,7 +350,7 @@ namespace JSC {
         template<typename Op, typename SlowOperation>
         void emit_compareSlow(const JSInstruction*, DoubleCondition, SlowOperation, Vector<SlowCaseEntry>::iterator&);
         template<typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
-        void emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation, Vector<SlowCaseEntry>::iterator&, const HanldeReturnValueGPRFunctor&, const EmitDoubleCompareFunctor&);
+        void emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation, Vector<SlowCaseEntry>::iterator&, NOESCAPE const HanldeReturnValueGPRFunctor&, NOESCAPE const EmitDoubleCompareFunctor&);
         template<typename Op, typename SlowOperation>
         void emit_compareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invert, Vector<SlowCaseEntry>::iterator&);
 

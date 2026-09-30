@@ -133,7 +133,7 @@ RegisterID* BytecodeGeneratorBase<Traits>::newTemporary()
 
 template<typename Traits>
 template<typename Functor>
-void BytecodeGeneratorBase<Traits>::newTemporaries(size_t count, const Functor& func)
+void BytecodeGeneratorBase<Traits>::newTemporaries(size_t count, NOESCAPE const Functor& func)
 {
     reclaimFreeRegisters();
     for (size_t index = 0; index < count; ++index) {

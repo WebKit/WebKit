@@ -67,7 +67,7 @@ public:
 
     void appendVisited(VM&, CyclicModuleRecord*);
     bool containsVisited(CyclicModuleRecord*) const;
-    void iterateVisited(auto&& function) const
+    void iterateVisited(NOESCAPE const auto& function) const
     {
         for (const auto& barrier : m_visited)
             function(barrier.get());

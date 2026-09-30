@@ -180,7 +180,7 @@ public:
     // inlining, and would mostly require that we can request that StackVisitor doesn't skip tail
     // frames.
     template<typename Functor>
-    void iterate(VM&, CallFrame*, const Functor&);
+    void iterate(VM&, CallFrame*, NOESCAPE const Functor&);
     
     void visitChildren(AbstractSlotVisitor&);
     void reset();

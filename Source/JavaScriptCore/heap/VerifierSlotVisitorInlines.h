@@ -31,14 +31,14 @@
 namespace JSC {
 
 template<typename Functor>
-void VerifierSlotVisitor::forEachLiveCell(const Functor& functor)
+void VerifierSlotVisitor::forEachLiveCell(NOESCAPE const Functor& functor)
 {
     forEachLivePreciseAllocation(functor);
     forEachLiveMarkedBlockCell(functor);
 }
 
 template<typename Functor>
-void VerifierSlotVisitor::forEachLivePreciseAllocation(const Functor& func)
+void VerifierSlotVisitor::forEachLivePreciseAllocation(NOESCAPE const Functor& func)
 {
     for (auto& entry : m_preciseAllocationMap) {
         PreciseAllocation* allocation = entry.value->allocation();
@@ -47,7 +47,7 @@ void VerifierSlotVisitor::forEachLivePreciseAllocation(const Functor& func)
 }
 
 template<typename Functor>
-void VerifierSlotVisitor::forEachLiveMarkedBlockCell(const Functor& func)
+void VerifierSlotVisitor::forEachLiveMarkedBlockCell(NOESCAPE const Functor& func)
 {
     for (auto& entry : m_markedBlockMap) {
         auto& data = entry.value;

@@ -806,7 +806,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
 }
 
 template<typename Functor>
-void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
+void AccessCase::forEachDependentCell(VM&, NOESCAPE const Functor& functor) const
 {
     m_conditionSet.forEachDependentCell(functor);
     if (m_structureID)
@@ -1454,7 +1454,7 @@ void AccessCase::visitAggregateImpl(Visitor& visitor) const
 DEFINE_VISIT_AGGREGATE_WITH_MODIFIER(AccessCase, const);
 
 template<typename Func>
-inline void AccessCase::runWithDowncast(const Func& func)
+inline void AccessCase::runWithDowncast(NOESCAPE const Func& func)
 {
     switch (m_type) {
     case LoadMegamorphic:

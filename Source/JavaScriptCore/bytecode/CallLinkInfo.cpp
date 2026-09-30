@@ -322,7 +322,7 @@ void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
 
 #if ENABLE(JIT)
 
-void CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkInfo, CCallHelpers& jit, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall)
+void CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkInfo, CCallHelpers& jit, bool isTailCall, NOESCAPE const ScopedLambda<void()>& prepareForTailCall)
 {
     if (callLinkInfo)
         jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), BaselineJITRegisters::Call::callLinkInfoGPR);
@@ -364,9 +364,9 @@ void CallLinkInfo::emitDataICFastPath(CCallHelpers& jit)
     emitFastPathImpl(nullptr, jit, false, nullptr);
 }
 
-void CallLinkInfo::emitTailCallDataICFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
+void CallLinkInfo::emitTailCallDataICFastPath(CCallHelpers& jit, NOESCAPE const ScopedLambda<void()>& prepareForTailCall)
 {
-    emitFastPathImpl(nullptr, jit, true, WTF::move(prepareForTailCall));
+    emitFastPathImpl(nullptr, jit, true, prepareForTailCall);
 }
 
 void CallLinkInfo::emitFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo)
@@ -377,12 +377,12 @@ void CallLinkInfo::emitFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callL
     return CallLinkInfo::emitDataICFastPath(jit);
 }
 
-void CallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo, ScopedLambda<void()>&& prepareForTailCall)
+void CallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo, NOESCAPE const ScopedLambda<void()>& prepareForTailCall)
 {
     if (std::holds_alternative<OptimizingCallLinkInfo*>(callLinkInfo))
-        return std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitTailCallFastPath(jit, WTF::move(prepareForTailCall));
+        return std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitTailCallFastPath(jit, prepareForTailCall);
 
-    return CallLinkInfo::emitTailCallDataICFastPath(jit, WTF::move(prepareForTailCall));
+    return CallLinkInfo::emitTailCallDataICFastPath(jit, prepareForTailCall);
 }
 
 void OptimizingCallLinkInfo::emitFastPath(CCallHelpers& jit)
@@ -391,10 +391,10 @@ void OptimizingCallLinkInfo::emitFastPath(CCallHelpers& jit)
     emitFastPathImpl(this, jit, isTailCall(), nullptr);
 }
 
-void OptimizingCallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
+void OptimizingCallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, NOESCAPE const ScopedLambda<void()>& prepareForTailCall)
 {
     RELEASE_ASSERT(isTailCall());
-    emitFastPathImpl(this, jit, isTailCall(), WTF::move(prepareForTailCall));
+    emitFastPathImpl(this, jit, isTailCall(), prepareForTailCall);
 }
 
 #if ENABLE(DFG_JIT)
@@ -473,7 +473,7 @@ CCallHelpers::JumpList DirectCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
     return { };
 }
 
-CCallHelpers::JumpList DirectCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
+CCallHelpers::JumpList DirectCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, NOESCAPE const ScopedLambda<void()>& prepareForTailCall)
 {
     RELEASE_ASSERT(isTailCall());
 

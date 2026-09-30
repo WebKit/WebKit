@@ -97,7 +97,7 @@ public:
     void unlinkForcefully();
 
     template<typename Functor>
-    void forEachDependentCell(const Functor& functor) const
+    void forEachDependentCell(NOESCAPE const Functor& functor) const
     {
         for (unsigned i = 0, size = std::size(trailingSpan()) - 1; i < size; ++i)
             functor(trailingSpan()[i].m_calleeOrExecutable);

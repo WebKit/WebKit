@@ -124,7 +124,7 @@ public:
     [[nodiscard]] inline constexpr ScalarRegisterSet toScalarRegisterSet() const;
     [[nodiscard]] inline constexpr RegisterSet normalizeWidths() const;
 
-    inline constexpr void forEach(const Invocable<void(Reg)> auto& func) const
+    inline constexpr void forEach(NOESCAPE const Invocable<void(Reg)> auto& func) const
     {
         m_bits.forEachSetBit(
             [&] (size_t index) {
@@ -132,7 +132,7 @@ public:
             });
     }
 
-    inline constexpr void forEachWithWidth(const Invocable<void(Reg, Width)> auto& func) const
+    inline constexpr void forEachWithWidth(NOESCAPE const Invocable<void(Reg, Width)> auto& func) const
     {
         m_bits.forEachSetBit(
             [&] (size_t index) {
@@ -142,7 +142,7 @@ public:
             });
     }
 
-    inline constexpr void forEachWithWidthAndPreserved(const Invocable<void(Reg, Width, PreservedWidth)> auto& func) const
+    inline constexpr void forEachWithWidthAndPreserved(NOESCAPE const Invocable<void(Reg, Width, PreservedWidth)> auto& func) const
     {
         auto allBits = m_bits;
         allBits.merge(m_upperBits);
@@ -388,16 +388,16 @@ public:
         return m_bits.subsumes(other.m_bits);
     }
 
-    inline constexpr void forEach(const Invocable<void(Reg)> auto& func) const
+    inline constexpr void forEach(NOESCAPE const Invocable<void(Reg)> auto& func) const
     {
         m_bits.forEachSetBit([&] (size_t index) {
             func(Reg::fromIndex(index));
         });
     }
 
-    inline constexpr void forEachReg(const Invocable<void(Reg)> auto& func) const { forEach(func); }
+    inline constexpr void forEachReg(NOESCAPE const Invocable<void(Reg)> auto& func) const { forEach(func); }
 
-    inline constexpr void forEachWithWidth(const Invocable<void(Reg, Width)> auto& func) const
+    inline constexpr void forEachWithWidth(NOESCAPE const Invocable<void(Reg, Width)> auto& func) const
     {
         m_bits.forEachSetBit(
             [&] (size_t index) {

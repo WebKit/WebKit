@@ -171,7 +171,7 @@ public:
     //
     // You're guaranteed that bottom is zero.
     template<typename BottomProvider>
-    void replaceWithBottom(const BottomProvider&);
+    void replaceWithBottom(NOESCAPE const BottomProvider&);
     
     void replaceWithBottom(InsertionSet&, size_t index);
 
@@ -359,7 +359,7 @@ public:
         Stop
     };
     template<typename Functor>
-    void walk(const Functor& functor, PhiChildren* = nullptr);
+    void walk(NOESCAPE const Functor&, PhiChildren* = nullptr);
 
 protected:
     Effects effectsSlow() const;

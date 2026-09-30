@@ -55,7 +55,7 @@ unsigned requestedIterationCount;
     } while (false)
 
 template<typename Callback>
-NEVER_INLINE void benchmarkImpl(const char* name, unsigned iterationCount, const Callback& callback)
+NEVER_INLINE void benchmarkImpl(const char* name, unsigned iterationCount, NOESCAPE const Callback& callback)
 {
     if (nameFilter && WTF::findIgnoringASCIICaseWithoutLength(name, nameFilter) == WTF::notFound)
         return;

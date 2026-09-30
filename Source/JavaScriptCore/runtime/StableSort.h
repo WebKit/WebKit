@@ -62,7 +62,7 @@ static ALWAYS_INLINE bool coerceComparatorResultToBoolean(JSGlobalObject* global
 }
 
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE void arrayInsertionSort(VM& vm, std::span<ElementType> span, const Functor& comparator, size_t sortedHeader = 0)
+static ALWAYS_INLINE void arrayInsertionSort(VM& vm, std::span<ElementType> span, NOESCAPE const Functor& comparator, size_t sortedHeader = 0)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -95,7 +95,7 @@ static ALWAYS_INLINE void arrayInsertionSort(VM& vm, std::span<ElementType> span
 // If descending, reverse in-place to make ascending (stable: uses strict < for descending).
 // Returns end index (inclusive) of the normalized ascending run.
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE size_t extendAndNormalizeRun(VM& vm, std::span<ElementType> span, size_t begin, const Functor& comparator)
+static ALWAYS_INLINE size_t extendAndNormalizeRun(VM& vm, std::span<ElementType> span, size_t begin, NOESCAPE const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -138,7 +138,7 @@ static ALWAYS_INLINE size_t extendAndNormalizeRun(VM& vm, std::span<ElementType>
 // Returns k in [0, length] such that base[k-1] < key <= base[k].
 // hint is a starting index for the exponential search.
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE size_t gallopLeft(VM& vm, const ElementType& key, const ElementType* base, size_t length, size_t hint, const Functor& comparator)
+static ALWAYS_INLINE size_t gallopLeft(VM& vm, const ElementType& key, const ElementType* base, size_t length, size_t hint, NOESCAPE const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -200,7 +200,7 @@ static ALWAYS_INLINE size_t gallopLeft(VM& vm, const ElementType& key, const Ele
 // gallopRight: Find the rightmost position where key should be inserted (after equal elements).
 // Returns k in [0, length] such that base[k-1] <= key < base[k].
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE size_t gallopRight(VM& vm, const ElementType& key, const ElementType* base, size_t length, size_t hint, const Functor& comparator)
+static ALWAYS_INLINE size_t gallopRight(VM& vm, const ElementType& key, const ElementType* base, size_t length, size_t hint, NOESCAPE const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -269,7 +269,7 @@ static ALWAYS_INLINE size_t gallopRight(VM& vm, const ElementType& key, const El
 enum class MergeStrategy { Galloping, Simple };
 
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE void mergeRunsSimple(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex1, size_t srcEnd1, size_t srcIndex2, size_t srcEnd2, const Functor& comparator)
+static ALWAYS_INLINE void mergeRunsSimple(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex1, size_t srcEnd1, size_t srcIndex2, size_t srcEnd2, NOESCAPE const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -308,7 +308,7 @@ static ALWAYS_INLINE void mergeRunsSimple(VM& vm, std::span<ElementType> dst, st
 static constexpr size_t minGallopThreshold = 7;
 
 template<typename ElementType, typename Functor>
-static MAYBE_ALWAYS_INLINE void mergePowersortRuns(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex1, size_t srcEnd1, size_t srcIndex2, size_t srcEnd2, const Functor& comparator, size_t& minGallop)
+static MAYBE_ALWAYS_INLINE void mergePowersortRuns(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex1, size_t srcEnd1, size_t srcIndex2, size_t srcEnd2, NOESCAPE const Functor& comparator, size_t& minGallop)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -468,7 +468,7 @@ struct SortedRun {
 };
 
 template<MergeStrategy mergeStrategy, typename ElementType, typename Functor, size_t forceRunLength = 64>
-static ALWAYS_INLINE std::span<ElementType> arrayStableSort(VM& vm, std::span<ElementType> src, std::span<ElementType> workingSet, const Functor& comparator)
+static ALWAYS_INLINE std::span<ElementType> arrayStableSort(VM& vm, std::span<ElementType> src, std::span<ElementType> workingSet, NOESCAPE const Functor& comparator)
 {
     constexpr size_t extendRunCutoff = 8;
 

@@ -125,7 +125,7 @@ public:
         ValueCollection values() { return ValueCollection(m_values); }
         
         template<typename Functor>
-        void forAllTransitiveIncomingValues(const Functor& functor)
+        void forAllTransitiveIncomingValues(NOESCAPE const Functor& functor)
         {
             if (m_value->opcode() != Phi) {
                 functor(m_value);

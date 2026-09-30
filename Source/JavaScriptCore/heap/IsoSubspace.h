@@ -55,7 +55,7 @@ public:
 
     void sweep();
 
-    template<typename Func> void forEachLowerTierPreciseFreeListedPreciseAllocation(const Func&);
+    template<typename Func> void forEachLowerTierPreciseFreeListedPreciseAllocation(NOESCAPE const Func&);
 
 private:
     friend class IsoCellSet;

@@ -567,7 +567,7 @@ void BBQJIT::emitSanitizeAtomicResult(ExtAtomicOpType op, TypeKind resultType, G
 }
 
 template<typename Functor>
-void BBQJIT::emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg oldGPR, GPRReg scratchGPR, const Functor& functor)
+void BBQJIT::emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg oldGPR, GPRReg scratchGPR, NOESCAPE const Functor& functor)
 {
     Width accessWidth = this->accessWidth(op);
 

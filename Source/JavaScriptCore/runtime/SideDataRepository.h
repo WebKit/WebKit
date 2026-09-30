@@ -41,7 +41,7 @@ public:
     };
 
     template<typename Type, typename Functor>
-    Type& ensure(void* owner, void* key, const Functor& functor)
+    Type& ensure(void* owner, void* key, NOESCAPE const Functor& functor)
     {
         static_assert(std::is_base_of_v<SideData, Type>);
         Locker lock { m_lock };

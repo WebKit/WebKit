@@ -200,7 +200,7 @@ bool HeapVerifier::validateCell(HeapCell* cell, VM* expectedVM)
     return validateJSCell(expectedVM, jsCell, nullptr, nullptr, printNothing);
 }
 
-bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* profile, CellList* list, const ScopedLambda<void()>& printHeaderIfNeeded, const char* prefix)
+bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* profile, CellList* list, NOESCAPE const ScopedLambda<void()>& printHeaderIfNeeded, const char* prefix)
 {
     auto printHeaderAndCell = [cell, profile, &printHeaderIfNeeded, prefix] () {
         printHeaderIfNeeded();

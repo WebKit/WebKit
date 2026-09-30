@@ -777,7 +777,7 @@ writeH("OpcodeUtils") {
     outp.puts "} while (false)"
 
     outp.puts "template<typename Functor>"
-    outp.puts "ALWAYS_INLINE void Inst::forEachArg(const Functor& functor)"
+    outp.puts "ALWAYS_INLINE void Inst::forEachArg(NOESCAPE const Functor& functor)"
     outp.puts "{"
     outp.puts "switch (kind.opcode) {"
     $opcodes.values.each {
@@ -795,7 +795,7 @@ writeH("OpcodeUtils") {
     outp.puts "}"
     
     outp.puts "template<typename Func>"
-    outp.puts "ALWAYS_INLINE void Inst::forEachArgSimple(const Func& func)"
+    outp.puts "ALWAYS_INLINE void Inst::forEachArgSimple(NOESCAPE const Func& func)"
     outp.puts "{"
     outp.puts "    auto args = this->args();"
     outp.puts "    size_t numOperands = args.size();"

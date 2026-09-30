@@ -396,7 +396,7 @@ public:
     }
 
 private:
-    static CanonicalShuffle tryMatchCanonicalBinaryImpl(v128_t pattern, const Invocable<v128_t(v128_t)> auto& canonicalize)
+    static CanonicalShuffle tryMatchCanonicalBinaryImpl(v128_t pattern, NOESCAPE const Invocable<v128_t(v128_t)> auto& canonicalize)
     {
         // 64-bit element patterns
         // UZP1.2D: {a[lo64], b[lo64]}

@@ -98,7 +98,7 @@ public:
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSBoundFunction, m_length); }
     static constexpr ptrdiff_t offsetOfCanConstruct() { return OBJECT_OFFSETOF(JSBoundFunction, m_canConstruct); }
 
-    inline void forEachBoundArg(const Invocable<IterationStatus(JSValue)> auto& func);
+    inline void forEachBoundArg(NOESCAPE const Invocable<IterationStatus(JSValue)> auto& func);
 
     bool canConstruct()
     {

@@ -31,7 +31,7 @@
 namespace JSC {
 
 template<typename Func>
-void Collector::forEachSlotVisitor(const Func& func)
+void Collector::forEachSlotVisitor(NOESCAPE const Func& func)
 {
     func(*m_collectorSlotVisitor);
     func(*m_heap.m_mutatorSlotVisitor);

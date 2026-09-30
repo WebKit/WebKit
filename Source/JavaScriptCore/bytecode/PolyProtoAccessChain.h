@@ -54,7 +54,7 @@ public:
     bool NODELETE needImpurePropertyWatchpoint(VM&) const;
 
     template <typename Func>
-    void forEach(VM&, Structure* baseStructure, const Func& func) const
+    void forEach(VM&, Structure* baseStructure, NOESCAPE const Func& func) const
     {
         bool atEnd = !m_chain.size();
         func(baseStructure, atEnd);

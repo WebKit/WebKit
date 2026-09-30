@@ -143,7 +143,7 @@ static Vector<size_t> sizeClasses()
 }
 
 template<typename TableType, typename SizeClassCons, typename DefaultCons>
-void buildSizeClassTable(TableType& table, const SizeClassCons& cons, const DefaultCons& defaultCons)
+void buildSizeClassTable(TableType& table, NOESCAPE const SizeClassCons& cons, NOESCAPE const DefaultCons& defaultCons)
 {
     size_t nextIndex = 0;
     for (size_t sizeClass : sizeClasses()) {

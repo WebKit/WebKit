@@ -2416,7 +2416,7 @@ public:
     }
 
     // Returned branch should be taken on ASSERT pass.
-    void jitAssert(const WTF::ScopedLambda<Jump(void)>&);
+    void jitAssert(NOESCAPE const WTF::ScopedLambda<Jump(void)>&);
 
     // This function emits code to preserve the CPUState (e.g. registers),
     // call a user supplied probe function, and restore the CPUState before

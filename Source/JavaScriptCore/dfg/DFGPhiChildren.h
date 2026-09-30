@@ -50,7 +50,7 @@ public:
     const List& upsilonsOf(Node*) const;
     
     template<typename Functor>
-    void forAllIncomingValues(Node* node, const Functor& functor)
+    void forAllIncomingValues(Node* node, NOESCAPE const Functor& functor)
     {
         for (Node* upsilon : upsilonsOf(node))
             functor(upsilon->child1().node());
@@ -58,7 +58,7 @@ public:
     
     // This walks the Phi graph.
     template<typename Functor>
-    void forAllTransitiveIncomingValues(Node* node, const Functor& functor)
+    void forAllTransitiveIncomingValues(Node* node, NOESCAPE const Functor& functor)
     {
         if (node->op() != Phi) {
             functor(node);

@@ -1403,8 +1403,8 @@ public:
     // case. It is passed the unlinked jump to the slow case.
     template<typename Functor, typename SlowPathFunctor>
     void emitTypeOf(
-        GPRReg valueGPR, GPRReg tempGPR, const Functor& functor,
-        const SlowPathFunctor& slowPathFunctor)
+        GPRReg valueGPR, GPRReg tempGPR, NOESCAPE const Functor& functor,
+        NOESCAPE const SlowPathFunctor& slowPathFunctor)
     {
         // Implements the following branching structure:
         //

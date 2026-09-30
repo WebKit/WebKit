@@ -44,7 +44,7 @@ PrintSpecial::PrintSpecial(Printer::PrintRecordList* list)
 
 PrintSpecial::~PrintSpecial() = default;
 
-void PrintSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
+void PrintSpecial::forEachArg(Inst& inst, NOESCAPE const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     // The printed Tmps must be reported, or liveness ends their ranges before the print and the
     // register allocator has nothing to hand generate().

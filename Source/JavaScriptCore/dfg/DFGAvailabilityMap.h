@@ -45,7 +45,7 @@ struct AvailabilityMap {
     void merge(const AvailabilityMap& other);
     
     template<typename Functor>
-    void forEachAvailability(const Functor& functor) const
+    void forEachAvailability(NOESCAPE const Functor& functor) const
     {
         for (unsigned i = m_locals.size(); i--;)
             functor(m_locals[i]);
@@ -54,7 +54,7 @@ struct AvailabilityMap {
     }
     
     template<typename HasFunctor, typename AddFunctor>
-    void closeOverNodes(const HasFunctor& has, const AddFunctor& add) const
+    void closeOverNodes(NOESCAPE const HasFunctor& has, NOESCAPE const AddFunctor& add) const
     {
         bool changed;
         do {
@@ -67,7 +67,7 @@ struct AvailabilityMap {
     }
     
     template<typename HasFunctor, typename AddFunctor>
-    void closeStartingWithLocal(Operand op, const HasFunctor& has, const AddFunctor& add) const
+    void closeStartingWithLocal(Operand op, NOESCAPE const HasFunctor& has, NOESCAPE const AddFunctor& add) const
     {
         Availability availability = m_locals.operand(op);
         if (!availability.hasNode())

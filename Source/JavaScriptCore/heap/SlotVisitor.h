@@ -222,7 +222,7 @@ private:
     bool didReachTermination(const AbstractLocker&);
 
     template<typename Func>
-    IterationStatus forEachMarkStack(const Func&);
+    IterationStatus forEachMarkStack(NOESCAPE const Func&);
 
     MarkStackArray& NODELETE correspondingGlobalStack(MarkStackArray&);
 

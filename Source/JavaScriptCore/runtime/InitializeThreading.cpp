@@ -83,7 +83,7 @@ void initialize()
     });
 }
 
-void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCustomizationCallback)
+void initializeWithOptionsCustomization(NOESCAPE const ScopedLambda<void()>& optionsCustomizationCallback)
 {
     static std::once_flag onceFlag;
 

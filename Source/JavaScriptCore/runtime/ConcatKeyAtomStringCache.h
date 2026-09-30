@@ -53,7 +53,7 @@ public:
     { }
 
     template<typename Func>
-    JSString* getOrInsert(VM&, JSString*, JSString*, JSString*, const Func&);
+    JSString* getOrInsert(VM&, JSString*, JSString*, JSString*, NOESCAPE const Func&);
 
     struct CacheEntry {
         static constexpr ptrdiff_t offsetOfKey()

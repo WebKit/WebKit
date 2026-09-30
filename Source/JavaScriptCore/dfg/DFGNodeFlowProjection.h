@@ -114,7 +114,7 @@ public:
     void dump(PrintStream&) const;
     
     template<typename Func>
-    static void forEach(Node* node, const Func& func)
+    static void forEach(Node* node, NOESCAPE const Func& func)
     {
         func(NodeFlowProjection(node));
         if (node->op() == Phi)

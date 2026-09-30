@@ -67,7 +67,7 @@ public:
 
     // Every marking worker of the cycle: this Collector's own visitors, plus each participant's.
     template<typename Func>
-    inline void forEachSlotVisitor(const Func&);
+    inline void forEachSlotVisitor(NOESCAPE const Func&);
 
     void runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>>);
 

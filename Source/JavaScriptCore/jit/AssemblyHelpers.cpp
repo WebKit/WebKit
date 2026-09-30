@@ -813,7 +813,7 @@ void AssemblyHelpers::reclaimSpaceOnStackForCCall()
 }
 
 template<typename LoadFromHigh, typename StoreToHigh, typename LoadFromLow, typename StoreToLow>
-void emitRandomThunkImpl(AssemblyHelpers& jit, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result, const LoadFromHigh& loadFromHigh, const StoreToHigh& storeToHigh, const LoadFromLow& loadFromLow, const StoreToLow& storeToLow)
+void emitRandomThunkImpl(AssemblyHelpers& jit, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result, NOESCAPE const LoadFromHigh& loadFromHigh, NOESCAPE const StoreToHigh& storeToHigh, NOESCAPE const LoadFromLow& loadFromLow, NOESCAPE const StoreToLow& storeToLow)
 {
     // Inlined WeakRandom::advance().
     // uint64_t x = m_low;

@@ -961,8 +961,8 @@ private:
     template<typename WriteFunctor, typename ResolveFunctor>
     void handleNode(
         Node* node,
-        const WriteFunctor& heapWrite,
-        const ResolveFunctor& heapResolve)
+        NOESCAPE const WriteFunctor& heapWrite,
+        NOESCAPE const ResolveFunctor& heapResolve)
     {
         m_heap.assertIsValid();
         ASSERT(m_heap.takeEscapees().isEmpty());
