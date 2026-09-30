@@ -555,15 +555,13 @@ WebCore::Color ComputedStyle::usedAccentColor(OptionSet<StyleColorOptions> style
         [&](const Color& color) -> WebCore::Color {
             ColorResolver colorResolver { *this };
 
-            auto resolvedAccentColor = colorResolver.colorResolvingCurrentColor(color);
+            auto resolvedAccentColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(color);
 
             if (!resolvedAccentColor.isOpaque()) {
                 auto computedCanvasColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
                 resolvedAccentColor = blendSourceOver(computedCanvasColor, resolvedAccentColor);
             }
 
-            if (!appleColorFilter().isNone())
-                return colorResolver.colorApplyingColorFilter(resolvedAccentColor);
             return resolvedAccentColor;
         }
     );

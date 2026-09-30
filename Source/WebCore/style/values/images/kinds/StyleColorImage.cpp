@@ -81,13 +81,13 @@ RefPtr<WebCore::Image> ColorImage::image(const RenderElement* renderer, const Fl
     if (size.isEmpty())
         return nullptr;
 
-    auto color = ColorResolver { renderer->style() }.colorResolvingCurrentColor(m_color);
+    auto color = ColorResolver { renderer->style() }.colorResolvingCurrentColorApplyingColorFilter(m_color);
     return ColorImageGeneratedImage::create(color, size);
 }
 
 bool ColorImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return ColorResolver { renderer.style() }.colorResolvingCurrentColor(m_color).isOpaque();
+    return ColorResolver { renderer.style() }.colorResolvingCurrentColorApplyingColorFilter(m_color).isOpaque();
 }
 
 FloatSize ColorImage::fixedSize(const RenderElement&) const
