@@ -108,6 +108,15 @@
     boolean expectCancel = false;
     boolean supportClientPin = false;
     boolean supportInternalUV = false;
+    boolean supportHmacSecret = false;
+    boolean supportHmacSecretMc = false;
+    boolean expectKeyAgreement = false;
+    boolean keyAgreementError = false;
+    boolean malformedKeyAgreement = false;
+    boolean requireHmacSecretExtension = false;
+    boolean rejectHmacSecretExtension = false;
+    boolean rejectPinUvAuth = false;
+    DOMString hmacSecretOutputBase64;
     sequence<octet> pinProtocols = [];
     long maxCredentialCountInList = 1;
     long maxCredentialIdLength = 64;

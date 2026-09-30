@@ -28,6 +28,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "HidConnection.h"
+#include <WebCore/CBORValue.h>
+#include <WebCore/CryptoKeyEC.h>
+#include <WebCore/FidoConstants.h>
 #include <WebCore/FidoHidMessage.h>
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 #include <wtf/WeakPtr.h>
@@ -68,8 +71,18 @@ private:
     void continueFeedReports();
     void validateExpectedCommand(const Vector<uint8_t>& actualCommand);
     void initializeExpectedCommands();
+    void initializeHmacSecretKey();
+    void handleHmacSecretRequest(fido::CtapRequestCommand, const cbor::CBORValue::MapValue&);
+    Vector<uint8_t> synthesizedKeyAgreementResponse() const;
+    Vector<uint8_t> injectHmacSecretOutput(Vector<uint8_t>&& payload) const;
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
+    RefPtr<WebCore::CryptoKeyEC> m_authenticatorPrivateKey;
+    RefPtr<WebCore::CryptoKeyEC> m_authenticatorPublicKey;
+    std::optional<cbor::CBORValue::MapValue> m_pendingHmacSecretPeerCoseKey;
+    std::optional<fido::PINUVAuthProtocol> m_pendingHmacSecretProtocol;
+    bool m_respondWithSynthesizedKeyAgreement { false };
+    size_t m_keyAgreementCount { 0 };
     std::optional<fido::FidoHidMessage> m_requestMessage;
     WebCore::MockWebAuthenticationConfiguration::HidStage m_stage { WebCore::MockWebAuthenticationConfiguration::HidStage::Info };
     WebCore::MockWebAuthenticationConfiguration::HidSubStage m_subStage { WebCore::MockWebAuthenticationConfiguration::HidSubStage::Init };

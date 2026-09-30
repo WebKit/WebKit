@@ -244,6 +244,11 @@ WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const TokenRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 
+// Encrypts hmac-secret output using the authenticator private key and the
+// client's COSE public key from the request. Used by the HID mock so tests can
+// assert exact PRF bytes without freezing production ECDH randomness.
+WEBCORE_EXPORT std::optional<Vector<uint8_t>> encryptHmacSecretOutput(PINUVAuthProtocol, const WebCore::CryptoKeyEC& authenticatorPrivateKey, const cbor::CBORValue::MapValue& peerCoseKey, const Vector<uint8_t>& plaintext);
+
 } // namespace pin
 } // namespace fido
 
