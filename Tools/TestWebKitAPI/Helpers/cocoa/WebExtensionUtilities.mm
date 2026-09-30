@@ -55,6 +55,20 @@ static NSError *managerError(NSString *description)
     return [NSError errorWithDomain:@"TestWebExtensionManager" code:1 userInfo:@{ NSLocalizedDescriptionKey: description }];
 }
 
+@implementation WKWebExtensionMatchPattern (TestWebKitAPIExtras)
+
++ (instancetype)testCachedPatternWithString:(NSString *)string
+{
+    return [self matchPatternWithString:string];
+}
+
++ (instancetype)testCachedPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path
+{
+    return [self matchPatternWithScheme:scheme host:host path:path];
+}
+
+@end
+
 @implementation TestWebExtensionManager {
     bool _done;
     bool _receivedMessage;
@@ -65,6 +79,16 @@ static NSError *managerError(NSString *description)
     NSMutableArray<NSString *> *_collectedFailures;
     NSString *_pendingTestMessage;
     void (^_pendingTestMessageHandler)(NSError *);
+}
+
++ (BOOL)shouldEnableSiteIsolation
+{
+    return TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest;
+}
+
++ (void)setShouldEnableSiteIsolation:(BOOL)shouldEnableSiteIsolation
+{
+    TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest = shouldEnableSiteIsolation;
 }
 
 - (instancetype)initForExtension:(WKWebExtension *)extension

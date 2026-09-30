@@ -51,6 +51,9 @@ NS_SWIFT_UI_ACTOR
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources;
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration;
 
+// The equivalent of Util::shouldEnableSiteIsolationForWebExtensionsTest for callers that cannot reach C++ globals, such as Swift.
+@property (class, nonatomic) BOOL shouldEnableSiteIsolation;
+
 @property (nonatomic, strong) WKWebExtension *extension;
 // Cleared by tests that check what the controller does once the context is released.
 @property (nonatomic, strong, nullable) WKWebExtensionContext *context;
@@ -170,6 +173,16 @@ NS_SWIFT_UI_ACTOR
 
 @property (nonatomic, copy, nullable) void (^didFocus)(void);
 @property (nonatomic, copy, nullable) void (^didClose)(void);
+
+@end
+
+// +matchPatternWith… is unavailable in Swift, which redirects it to -initWithString:error:, and that
+// initializer consults the pattern cache only when no error out-parameter is given — which Swift's
+// throwing bridge always supplies. The cache is unreachable from Swift without these.
+@interface WKWebExtensionMatchPattern (TestWebKitAPIExtras)
+
++ (nullable instancetype)testCachedPatternWithString:(NSString *)string NS_SWIFT_NAME(cachedPattern(string:));
++ (nullable instancetype)testCachedPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path NS_SWIFT_NAME(cachedPattern(scheme:host:path:));
 
 @end
 
