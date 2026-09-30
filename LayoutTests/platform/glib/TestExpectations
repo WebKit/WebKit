@@ -1008,6 +1008,7 @@ accessibility/detected-form-error-empty-field-waits-for-interaction.html [ Skip 
 accessibility/detected-form-error-distant-text-is-not-a-message.html [ Skip ]
 accessibility/detected-form-error-message-emptied.html [ Skip ]
 accessibility/detected-form-error-message-hidden.html [ Skip ]
+accessibility/detected-form-error-message-in-shadow-root.html [ Skip ]
 accessibility/detected-form-error-message-replaced.html [ Skip ]
 accessibility/detected-form-error-message-rewritten.html [ Skip ]
 accessibility/detected-form-error-message-wrapper-without-a-box.html [ Skip ]

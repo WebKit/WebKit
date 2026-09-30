@@ -1,0 +1,24 @@
+This tests that a field reports the error a component shows for it from a shadow root. One component is already on the page and writes its message as text directly inside its shadow root. The other is added on submission and puts a label of its own in front of the page's text, which it slots in. Only the components themselves are in the page's own DOM, so each message has to be found and read where it is rendered, and read whole. When a component takes its message away, the field stops reporting invalid.
+
+PASS: invalidStatus('name') === 'false'
+PASS: notifications === 1
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Error: Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: invalidStatus('name') === 'true'
+PASS: hasErrorMessage('name') === true
+PASS: invalidStatus('email') === 'true'
+PASS: hasErrorMessage('email') === true
+PASS: fieldsWithError() === 2
+document.getElementById('name-error').message = '';
+PASS: invalidStatus('name') === 'false'
+PASS: hasErrorMessage('name') === false
+document.getElementById('email-error').remove();
+PASS: invalidStatus('email') === 'false'
+PASS: hasErrorMessage('email') === false
+PASS: fieldsWithError() === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Email
+Sign up

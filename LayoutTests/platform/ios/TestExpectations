@@ -183,6 +183,7 @@ accessibility/detected-form-error-empty-field-waits-for-interaction.html [ Pass 
 accessibility/detected-form-error-distant-text-is-not-a-message.html [ Pass ]
 accessibility/detected-form-error-message-emptied.html [ Pass ]
 accessibility/detected-form-error-message-hidden.html [ Pass ]
+accessibility/detected-form-error-message-in-shadow-root.html [ Pass ]
 accessibility/detected-form-error-message-replaced.html [ Pass ]
 accessibility/detected-form-error-message-rewritten.html [ Pass ]
 accessibility/detected-form-error-message-wrapper-without-a-box.html [ Pass ]

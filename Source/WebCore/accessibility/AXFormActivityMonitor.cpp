@@ -401,11 +401,11 @@ void AXFormActivityMonitor::onChangedContent(AccessibilityObject& object)
     if (!isWatching())
         return;
 
-    // Text nodes have no element of their own, so record the element holding the text.
+    // Text nodes have no element of their own, so record the element holding the text, or the host of the shadow root holding it.
     RefPtr element = object.element();
     if (!element) {
         RefPtr node = object.node();
-        element = node ? node->parentElement() : nullptr;
+        element = node ? node->parentOrShadowHostElement() : nullptr;
     }
     if (element)
         onChangedContent(*element);
@@ -452,21 +452,25 @@ void AXFormActivityMonitor::collectErrorMessagesFrom(AccessibilityObject& object
     RefPtr element = object.element();
     if (!element) {
         RefPtr node = object.node();
-        element = node ? node->parentElement() : nullptr;
+        element = node ? node->parentOrShadowHostElement() : nullptr;
     }
 
-    // A message and the wrapper around it can both arrive separately. Keep the outermost, which is the
-    // whole message, so a field does not end up with the same message attached twice.
+    // A message and the wrapper around it can both arrive separately, as can a component and the parts of its shadow
+    // root. Keep the outermost, which is the whole message, so a field does not end up with the same message attached twice.
     if (element) {
-        for (const auto& candidate : m_candidateErrorMessages) {
+        for (auto& candidate : m_candidateErrorMessages) {
             RefPtr existing = candidate.element.get();
-            if (existing && existing->contains(*element))
-                return;
+            if (!existing || !existing->isShadowIncludingInclusiveAncestorOf(*element))
+                continue;
+            // The same element arriving whole, after text inside it arrived on its own, is the whole message.
+            if (existing == element && text.contains(candidate.text))
+                candidate.text = WTF::move(text);
+            return;
         }
 
         m_candidateErrorMessages.removeAllMatching([&] (const CandidateErrorMessage& candidate) {
             RefPtr existing = candidate.element.get();
-            return existing && element->contains(*existing);
+            return existing && element->isShadowIncludingInclusiveAncestorOf(*existing);
         });
     }
 

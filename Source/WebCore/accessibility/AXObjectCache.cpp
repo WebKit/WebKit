@@ -64,6 +64,7 @@
 #include "CaretRectComputation.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeIterator.h"
 #include "ContainerNodeInlines.h"
 #include "CustomElementDefaultARIA.h"
 #include "DeprecatedGlobalSettings.h"
@@ -144,10 +145,10 @@
 #include "SelectPopoverElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "Text.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
-#include "TextNodeTraversal.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <utility>
 #include <wtf/Borrow.h>
@@ -3275,13 +3276,18 @@ void AXObjectCache::onValidityChange(Element& element)
     postNotification(protect(get(&element)), AXNotification::InvalidStatusChanged);
 }
 
-static bool messageIsEmpty(const Element* message)
+static bool messageIsEmpty(Element* message)
 {
     if (!message || !message->isConnected())
         return true;
 
-    // Pages withdraw a message by hiding it as well as by emptying it, so only visible text counts.
-    for (RefPtr text = TextNodeTraversal::firstWithin(*message); text; text = TextNodeTraversal::next(*text, message)) {
+    // Pages withdraw a message by hiding it as well as by emptying it, so only visible text counts. That includes text
+    // a component renders from its shadow root, but not text the browser renders inside its own controls.
+    for (Ref node : composedTreeDescendants(*message)) {
+        RefPtr text = dynamicDowncast<Text>(node);
+        if (!text || text->isInUserAgentShadowTree())
+            continue;
+
         CheckedPtr renderer = text->renderer();
         if (renderer && !isVisibilityHidden(renderer->style()) && !text->data().containsOnly<isASCIIWhitespace>())
             return false;
