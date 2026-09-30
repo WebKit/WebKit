@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +25,8 @@
  */
 
 #include "config.h"
-#include "CorpseSymbolTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
@@ -34,7 +34,9 @@
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <dlfcn.h>
+#if OS(DARWIN)
 #include <mach/mach.h>
+#endif
 #include <stdlib.h>
 #include <unistd.h>
 #include <wtf/MonotonicTime.h>
@@ -59,6 +61,8 @@ void testSymbol()
     SuiteTracer tracer("Symbol");
     if (!tracer.shouldRun())
         return;
+    if (linuxSkip("Symbol", "corpses are not implemented on Linux yet"))
+        return;
 
     SelfSnapshot self;
     if (!self.isValid())
@@ -72,7 +76,7 @@ void testSymbol()
         auto expected = reinterpret_cast<uintptr_t>(WebConfig::g_config);
         Address found = snapshot.symbol("g_config");
         TEST_ASSERT(found, "a symbol exported by JavaScriptCore is found");
-        TEST_ASSERT_HEX_EQ(found.toMachVMAddress(), expected,
+        TEST_ASSERT_HEX_EQ(found.toTargetVMAddress(), expected,
             "g_config resolves to the address this process uses for it");
     }
     {
@@ -84,8 +88,8 @@ void testSymbol()
         TEST_ASSERT(found, "a symbol exported by a shared cache image is found");
         // A function pointer arrives signed on arm64e; only the address it names is
         // being compared here.
-        TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
-            Address(expected).stripped().toMachVMAddress(),
+        TEST_ASSERT_HEX_EQ(found.stripped().toTargetVMAddress(),
+            Address(expected).stripped().toTargetVMAddress(),
             "tolower resolves to the address this process uses for it");
     }
     {
@@ -96,8 +100,8 @@ void testSymbol()
         else {
             Address found = snapshot.symbol("environ");
             TEST_ASSERT(found, "a data symbol in the shared cache is found");
-            TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
-                Address(expected).stripped().toMachVMAddress(),
+            TEST_ASSERT_HEX_EQ(found.stripped().toTargetVMAddress(),
+                Address(expected).stripped().toTargetVMAddress(),
                 "environ resolves to the address this process uses for it");
         }
     }
@@ -159,4 +163,4 @@ void testSymbol()
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

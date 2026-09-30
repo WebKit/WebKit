@@ -1006,6 +1006,10 @@
 #define ENABLE_TREE_DEBUGGING 1
 #endif
 
+#if !defined(ENABLE_MYA)
+#define ENABLE_MYA 0
+#endif
+
 /* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
    that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
    OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
