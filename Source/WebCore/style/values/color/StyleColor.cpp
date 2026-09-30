@@ -48,12 +48,7 @@
 #include "StyleColorResolutionState.h"
 #include "StyleColorResolver.h"
 #include "StyleComputedStyle.h"
-#include "StyleComputedStyleBase+GettersInlines.h"
-#include "StyleComputedStyleBase+SettersInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
-#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleContrastColor.h"
-#include "StyleDisplay.h"
 #include "StyleHexColor.h"
 #include "StyleKeywordColor.h"
 #include "StyleLightDarkColor.h"
@@ -407,31 +402,6 @@ auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState
     return toStyle(value, builderState, ForVisitedLink::No);
 }
 
-
-static Color resolveInternalCurrentBackgroundColor(BuilderState& builderState, ForVisitedLink forVisitedLink)
-{
-    builderState.style().setUsesCurrentBackgroundColorKeyword();
-
-    auto propertyID = builderState.cssPropertyID();
-    bool includesSelf = propertyID != CSSPropertyBackgroundColor
-        && propertyID != CSSPropertyColor
-        && propertyID != CSSPropertyAccentColor;
-
-    if (includesSelf) {
-        CheckedRef style = builderState.style();
-        auto backgroundColor = style->backgroundColor();
-        // A display:contents element generates no box and paints no background, so it doesn't participate.
-        if (backgroundColor != ComputedStyle::initialBackgroundColor()
-            && style->display() != DisplayType::Contents)
-            return ColorResolver { style }.colorResolvingCurrentColor(backgroundColor);
-    }
-
-    if (auto& inherited = builderState.parentStyle().currentBackgroundColor(); inherited.isValid())
-        return Color { ResolvedColor { inherited } };
-
-    return toStyle(CSS::Color { CSS::KeywordColor { CSSValueCanvas } }, builderState, forVisitedLink);
-}
-
 auto CSSValueConversion<Color>::operator()(BuilderState& builderState, const CSSValue& value, ForVisitedLink forVisitedLink) -> Color
 {
     if (!builderState.element() || !builderState.element()->isLink())
@@ -441,8 +411,6 @@ auto CSSValueConversion<Color>::operator()(BuilderState& builderState, const CSS
         return toStyle(color->color(), builderState, forVisitedLink);
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueInternalCurrentBackgroundColor)
-            return resolveInternalCurrentBackgroundColor(builderState, forVisitedLink);
         if (auto valueID = keywordValue->valueID(); CSS::isColorKeyword(valueID))
             return toStyle(CSS::Color { CSS::KeywordColor { valueID } }, builderState, forVisitedLink);
     }

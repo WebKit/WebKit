@@ -34,23 +34,25 @@ namespace Style {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InheritedData);
 
 InheritedData::InheritedData()
-    : lineHeight(ComputedStyle::initialLineHeight())
+    : borderHorizontalSpacing(ComputedStyle::initialBorderHorizontalSpacing())
+    , borderVerticalSpacing(ComputedStyle::initialBorderVerticalSpacing())
+    , lineHeight(ComputedStyle::initialLineHeight())
     , textAutosizingAdjustedLineHeight(ComputedStyle::initialLineHeight())
     , fontData(FontData::create())
     , color(WebCore::Color::black)
     , visitedLinkColor(WebCore::Color::black)
-    , currentBackgroundColor(WebCore::Color { })
 {
 }
 
 inline InheritedData::InheritedData(const InheritedData& o)
     : RefCounted<InheritedData>()
+    , borderHorizontalSpacing(o.borderHorizontalSpacing)
+    , borderVerticalSpacing(o.borderVerticalSpacing)
     , lineHeight(o.lineHeight)
     , textAutosizingAdjustedLineHeight(o.textAutosizingAdjustedLineHeight)
     , fontData(o.fontData)
     , color(o.color)
     , visitedLinkColor(o.visitedLinkColor)
-    , currentBackgroundColor(o.currentBackgroundColor)
 {
     ASSERT(o == *this, "InheritedData should be properly copied.");
 }
@@ -72,22 +74,22 @@ bool InheritedData::fastPathInheritedEqual(const InheritedData& other) const
     // These properties also need to have "fast-path-inherited" codegen property set.
     // Cases where other properties depend on these values need to disallow the fast path (via Style::ComputedStyle::setDisallowsFastPathInheritance).
     return color == other.color
-        && visitedLinkColor == other.visitedLinkColor
-        && currentBackgroundColor == other.currentBackgroundColor;
+        && visitedLinkColor == other.visitedLinkColor;
 }
 
 bool InheritedData::nonFastPathInheritedEqual(const InheritedData& other) const
 {
     return lineHeight == other.lineHeight
         && textAutosizingAdjustedLineHeight == other.textAutosizingAdjustedLineHeight
-        && fontData == other.fontData;
+        && fontData == other.fontData
+        && borderHorizontalSpacing == other.borderHorizontalSpacing
+        && borderVerticalSpacing == other.borderVerticalSpacing;
 }
 
 void InheritedData::fastPathInheritFrom(const InheritedData& inheritParent)
 {
     color = inheritParent.color;
     visitedLinkColor = inheritParent.visitedLinkColor;
-    currentBackgroundColor = inheritParent.currentBackgroundColor;
 }
 
 #if !LOG_DISABLED
@@ -95,11 +97,12 @@ void InheritedData::dumpDifferences(TextStream& ts, const InheritedData& other) 
 {
     fontData->dumpDifferences(ts, *other.fontData);
 
+    LOG_IF_DIFFERENT(borderHorizontalSpacing);
+    LOG_IF_DIFFERENT(borderVerticalSpacing);
     LOG_IF_DIFFERENT(lineHeight);
     LOG_IF_DIFFERENT(textAutosizingAdjustedLineHeight);
     LOG_IF_DIFFERENT(color);
     LOG_IF_DIFFERENT(visitedLinkColor);
-    LOG_IF_DIFFERENT(currentBackgroundColor);
 }
 #endif
 

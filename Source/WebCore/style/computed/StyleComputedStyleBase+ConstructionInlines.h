@@ -78,7 +78,6 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.usesViewportUnits = false;
     m_nonInheritedFlags.isContainerDependent = false;
     m_nonInheritedFlags.useTreeCountingFunctions = false;
-    m_nonInheritedFlags.usesCurrentBackgroundColorKeyword = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
     m_nonInheritedFlags.firstChildState = false;
@@ -128,7 +127,6 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     usesViewportUnits = other.usesViewportUnits;
     isContainerDependent = other.isContainerDependent;
     useTreeCountingFunctions = other.useTreeCountingFunctions;
-    usesCurrentBackgroundColorKeyword = other.usesCurrentBackgroundColorKeyword;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
 }

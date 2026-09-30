@@ -27,6 +27,7 @@
 
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleLineHeight.h>
+#include <WebCore/StyleWebKitBorderSpacing.h>
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -54,13 +55,15 @@ public:
     bool nonFastPathInheritedEqual(const InheritedData&) const;
     void NODELETE fastPathInheritFrom(const InheritedData&);
 
+    WebkitBorderSpacing borderHorizontalSpacing;
+    WebkitBorderSpacing borderVerticalSpacing;
+
     LineHeight lineHeight;
     LineHeight textAutosizingAdjustedLineHeight;
 
     DataRef<FontData> fontData;
     WebCore::Color color;
     WebCore::Color visitedLinkColor;
-    WebCore::Color currentBackgroundColor;
 
 private:
     InheritedData();
