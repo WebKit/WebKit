@@ -292,6 +292,18 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     Vector<Ref<SVGSMILElement>> animationsToApply;
     SMILTime earliestFireTime = SMILTime::unresolved();
 
+    // https://w3c.github.io/svgwg/svg2-draft/struct.html#ConditionalProcessing
+    auto isDisabledByConditionalProcessing = [](const SVGSMILElement& animation) {
+        if (!animation.isValid())
+            return true;
+        for (RefPtr ancestor = animation.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
+            RefPtr svgElement = dynamicDowncast<SVGElement>(*ancestor);
+            if (svgElement && !svgElement->isValid())
+                return true;
+        }
+        return false;
+    };
+
     for (auto& animations : scheduledAnimations) {
         // Advance every animation's current interval to `elapsed` before sorting. An animation
         // whose interval only restarts at (or before) the current time -- e.g. a sync-base
@@ -312,6 +324,9 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
             ASSERT(animation->timeContainer() == this);
             ASSERT(animation->targetElement());
             ASSERT(animation->hasValidAttributeName());
+
+            if (isDisabledByConditionalProcessing(animation))
+                continue;
 
             // Results are accumulated to the first animation that animates and contributes to a particular element/attribute pair.
             if (!firstAnimation) {

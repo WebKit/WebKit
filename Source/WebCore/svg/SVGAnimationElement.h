@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
@@ -53,6 +53,8 @@ public:
     void endElementAt(float offset);
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);
+
+    bool isValid() const override { return SVGTests::isValid(); }
 
     bool isAdditive() const override;
     bool isAccumulated() const;
