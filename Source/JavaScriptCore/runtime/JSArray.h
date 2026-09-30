@@ -133,6 +133,8 @@ public:
 
     JSArray* fastToSpliced(JSGlobalObject*, CallFrame*, uint64_t length, uint64_t newLength, uint64_t start, uint64_t deleteCount, uint64_t insertCount);
 
+    bool fastSplice(JSGlobalObject*, uint64_t length, uint64_t start, uint64_t deleteCount, std::span<const EncodedJSValue> items);
+
     JSString* fastToString(JSGlobalObject*);
 
     JSArray* fastFlat(JSGlobalObject*, uint64_t depth, uint64_t length);
@@ -151,7 +153,7 @@ public:
     };
 
     template<ShiftCountMode shiftCountMode>
-    bool shiftCount(JSGlobalObject* globalObject, unsigned& startIndex, unsigned count)
+    bool shiftCount(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
     {
         if constexpr (shiftCountMode == ShiftCountForShift)
             return shiftCountWithAnyIndexingType(globalObject, startIndex, count, shiftThreshold);
@@ -199,7 +201,7 @@ private:
         return !map || !map->lengthIsReadOnly();
     }
         
-    bool shiftCountWithAnyIndexingType(JSGlobalObject*, unsigned& startIndex, unsigned count, unsigned shiftArrayStorageThreshold);
+    bool shiftCountWithAnyIndexingType(JSGlobalObject*, unsigned startIndex, unsigned count, unsigned shiftArrayStorageThreshold);
     JS_EXPORT_PRIVATE bool shiftCountWithArrayStorage(VM&, unsigned startIndex, unsigned count, ArrayStorage*);
 
     bool unshiftCountWithAnyIndexingType(JSGlobalObject*, unsigned startIndex, unsigned count);

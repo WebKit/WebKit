@@ -1227,6 +1227,14 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    if (isJSArray(thisObj)) {
+        ArgList items = itemCount ? ArgList(callFrame, 2) : ArgList();
+        bool spliced = asArray(thisObj)->fastSplice(globalObject, length, actualStart, actualDeleteCount, std::span<const EncodedJSValue> { items.data(), items.size() });
+        RETURN_IF_EXCEPTION(scope, { });
+        if (spliced)
+            return JSValue::encode(result);
+    }
+
     if (itemCount < actualDeleteCount) {
         shift<JSArray::ShiftCountForSplice>(globalObject, thisObj, actualStart, actualDeleteCount, itemCount, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

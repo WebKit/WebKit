@@ -1567,16 +1567,6 @@ static ALWAYS_INLINE EncodedJSValue arraySpliceImpl(JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    MarkedArgumentBuffer insertions;
-    insertions.ensureCapacity(itemCount);
-    if (insertions.hasOverflowed()) [[unlikely]] {
-        throwOutOfMemoryError(globalObject, scope);
-        return { };
-    }
-
-    for (unsigned i = 0; i < itemCount; ++i)
-        insertions.appendWithCrashOnOverflow(JSValue::decode(buffer[i]));
-
     uint64_t length = base->length();
     uint64_t actualStart = 0;
     int64_t startInt64 = start;
@@ -1594,13 +1584,42 @@ static ALWAYS_INLINE EncodedJSValue arraySpliceImpl(JSGlobalObject* globalObject
     else
         actualDeleteCount = static_cast<uint64_t>(deleteCount);
 
+    std::span<const EncodedJSValue> items { buffer, itemCount };
+
+    // Nothing between here and fastSplice can run user code, so the items can be read from the scratch buffer without a copy.
+    JSValue result;
+    bool didFastSlice = false;
+    if (arraySpeciesWatchpointIsValid(vm, base)) {
+        if constexpr (!ignoreResult) {
+            result = JSArray::fastSlice(globalObject, base, actualStart, actualDeleteCount);
+            RETURN_IF_EXCEPTION(scope, { });
+            didFastSlice = true;
+        }
+        if (ignoreResult || result) {
+            bool spliced = base->fastSplice(globalObject, length, actualStart, actualDeleteCount, items);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (spliced)
+                return JSValue::encode(ignoreResult ? jsUndefined() : result);
+        }
+    }
+
+    MarkedArgumentBuffer insertions;
+    insertions.ensureCapacity(itemCount);
+    if (insertions.hasOverflowed()) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    for (EncodedJSValue item : items)
+        insertions.appendWithCrashOnOverflow(JSValue::decode(item));
+
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, base, actualDeleteCount);
     EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (speciesResult.first == SpeciesConstructResult::Exception)
         return { };
 
-    JSValue result;
-    if (speciesResult.first == SpeciesConstructResult::FastPath) [[likely]] {
+    ASSERT(!didFastSlice || speciesResult.first == SpeciesConstructResult::FastPath);
+    if (!didFastSlice && speciesResult.first == SpeciesConstructResult::FastPath) {
         // DFG / FTL tells the hint that the result array is not used at all.
         // If this condition is met, we can skip creation of this array completely.
         auto canFastSliceWithoutSideEffect = [](JSGlobalObject* globalObject, JSArray* base, uint64_t count) {
