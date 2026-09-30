@@ -200,6 +200,8 @@ void Collector::assertMarkStacksEmpty()
 GCRequest::Ticket Collector::requestCollection(GCRequest request)
 {
     Locker locker { *m_threadLock };
+    // Once the thread is stopping, nothing would serve a request.
+    RELEASE_ASSERT(!m_threadShouldStop);
     // We may be able to steal the conn. That only works if the collector is definitely not running
     // right now. This is an optimization that prevents the collector thread from ever starting in most
     // cases.

@@ -1582,9 +1582,6 @@ bool Heap::relinquishConn(unsigned oldState)
     if (!(oldState & mutatorHasConnBit))
         return false; // Done.
     
-    if (m_collector->m_threadShouldStop)
-        return false;
-    
     if (!m_worldState.compareExchangeWeak(oldState, oldState & ~mutatorHasConnBit))
         return true; // Loop around.
     
@@ -1599,8 +1596,10 @@ void Heap::finishRelinquishingConn()
     sanitizeStackForVM(vm());
     
     Locker locker { *m_collector->m_threadLock };
-    if (!m_collector->m_requests.isEmpty())
+    if (!m_collector->m_requests.isEmpty()) {
+        RELEASE_ASSERT(!m_collector->m_threadShouldStop);
         m_collector->m_threadCondition->notifyOne(locker);
+    }
     ParkingLot::unparkAll(&m_worldState);
 }
 
