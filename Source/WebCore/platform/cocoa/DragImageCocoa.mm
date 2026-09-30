@@ -190,7 +190,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     RetainPtr nsURL = url.createNSURL();
     NSString *absoluteURLString = [nsURL absoluteString];
 
-    NSString *domain = absoluteURLString;
+    RetainPtr domain = absoluteURLString;
 #if HAVE(URL_FORMATTING)
     domain = [nsURL _lp_simplifiedDisplayString];
 #else
@@ -237,7 +237,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
         RetainPtr<CGPathRef> textPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, textSize.width, textSize.height), nullptr));
         RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(textFramesetter.get(), fitRange, textPath.get(), (CFDictionaryRef)frameAttributes));
 
-        CFArrayRef ctLines = CTFrameGetLines(textFrame.get());
+        RetainPtr ctLines = CTFrameGetLines(textFrame.get());
         CFIndex lineCount = CFArrayGetCount(ctLines);
         if (!lineCount)
             return;
@@ -247,7 +247,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
         CGFloat height = 0;
         CTFrameGetLineOrigins(textFrame.get(), CFRangeMake(0, 0), origins.mutableSpan().data());
         for (CFIndex lineIndex = 0; lineIndex < lineCount; ++lineIndex) {
-            CTLineRef line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
+            RetainPtr line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
 
             lineBounds = CTLineGetBoundsWithOptions(line, 0);
             CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
@@ -289,7 +289,7 @@ DragImageData createDragImageForLink(Element& element, URL& url, const String& t
 {
     LinkImageLayout layout(url, title);
 
-    LocalDefaultSystemAppearance localAppearance(element.document().useDarkAppearance(element.computedStyle()));
+    LocalDefaultSystemAppearance localAppearance(protect(element.document())->useDarkAppearance(protect(element.computedStyle())));
 
     auto imageSize = layout.boundingRect.size();
     RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:imageSize]);

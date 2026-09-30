@@ -166,7 +166,7 @@ void SwitchMac::drawTrack(GraphicsContext& context, const FloatRoundedRect& bord
         context.scale(style.zoomFactor);
     }
 
-    auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
+    RetainPtr coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
     auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isInlineFlipped, coreUISize);
     if (!maskImage)
@@ -257,7 +257,7 @@ void SwitchMac::drawThumb(GraphicsContext& context, const FloatRoundedRect& bord
     auto drawingThumbLogicalX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
     auto drawingThumbRect = NSMakeRect(drawingThumbLogicalX, 0, inflatedThumbRect.width(), inflatedThumbRect.height());
 
-    auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
+    RetainPtr coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
     auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isInlineFlipped, coreUISize);
     if (!maskImage)
@@ -267,7 +267,7 @@ void SwitchMac::drawThumb(GraphicsContext& context, const FloatRoundedRect& bord
     if (!thumbImage)
         return;
 
-    auto cgContext = thumbImage->context().platformContext();
+    RetainPtr cgContext = thumbImage->context().platformContext();
 
     {
         CGContextStateSaver stateSaverTrack(cgContext);

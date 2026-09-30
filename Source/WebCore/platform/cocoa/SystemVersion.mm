@@ -32,8 +32,8 @@ static RetainPtr<NSString> createSystemMarketingVersion()
 {
     // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
     auto systemVersionDictionary = adoptCF(_CFCopySystemVersionDictionary());
-    CFStringRef productVersion = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary.get(), _kCFSystemVersionProductVersionKey));
-    return adoptNS([(__bridge NSString *)productVersion copy]);
+    RetainPtr productVersion = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary.get(), _kCFSystemVersionProductVersionKey));
+    return adoptNS([(__bridge NSString *)productVersion.get() copy]);
 }
 
 NSString *systemMarketingVersion()

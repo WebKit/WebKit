@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static NSString *localizedPercentage(double percent)
+static RetainPtr<NSString> localizedPercentage(double percent)
 {
     RetainPtr numberFormatter = adoptNS([[NSNumberFormatter alloc] init]);
     [numberFormatter setLocale:[NSLocale currentLocale]];
@@ -47,7 +47,7 @@ static NSString *localizedPercentage(double percent)
 
 String AXProcessingPage(double percent)
 {
-    return WEB_UI_FORMAT_STRING("Processing page %@", "Title for the webarea while the accessibility tree is being built.", localizedPercentage(percent));
+    return WEB_UI_FORMAT_STRING("Processing page %@", "Title for the webarea while the accessibility tree is being built.", localizedPercentage(percent).get());
 }
 
 String copyImageUnknownFileLabel()

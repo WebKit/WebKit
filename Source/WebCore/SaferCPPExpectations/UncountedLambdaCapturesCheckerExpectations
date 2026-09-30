@@ -1,10 +1,7 @@
 animation/KeyframeEffect.cpp
 css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
 page/IntelligenceTextEffectsSupport.cpp
-[ iOS ] platform/PreviewConverter.cpp
-platform/ScrollableArea.cpp
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
-platform/mediastream/RealtimeVideoCaptureSource.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
 rendering/RenderElement.cpp

@@ -97,7 +97,7 @@ private:
     ResourceResponse platformPreviewResponse() const;
     bool isPlatformPasswordError(const ResourceError&) const;
 
-    template<typename T> void iterateClients(T&& callback);
+    template<typename T> void iterateClients(NOESCAPE T&& callback);
     void appendFromBuffer(const FragmentedSharedBuffer&);
     void didAddClient(PreviewConverterClient&);
     void didFailConvertingWithError(const ResourceError&);

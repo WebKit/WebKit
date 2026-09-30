@@ -45,7 +45,8 @@ HIDGamepadElement::HIDGamepadElement(const HIDElement& element)
 void HIDGamepadElement::refreshCurrentValue()
 {
     IOHIDValueRef value;
-    if (IOHIDDeviceGetValue(RetainPtr { IOHIDElementGetDevice(rawElement()) }.get(), rawElement(), &value) == kIOReturnSuccess)
+    RetainPtr element = rawElement();
+    if (IOHIDDeviceGetValue(RetainPtr { IOHIDElementGetDevice(element) }.get(), element, &value) == kIOReturnSuccess)
         gamepadValueChanged(value);
 }
 

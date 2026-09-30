@@ -44,7 +44,7 @@ public:
 
     ~MediaPlaybackTargetCocoa();
 
-    RetainPtr<AVOutputContext> outputContext() const { return m_outputContext.get(); }
+    RetainPtr<AVOutputContext> outputContext() const { return m_outputContext; }
 
     // MediaPlaybackTarget
     bool supportsRemoteVideoPlayback() const final;

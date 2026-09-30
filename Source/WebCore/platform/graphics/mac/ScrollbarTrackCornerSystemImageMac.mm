@@ -63,7 +63,7 @@ void ScrollbarTrackCornerSystemImageMac::drawControl(GraphicsContext& graphicsCo
 
     auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
         (__bridge NSString *)kCUIIsFlippedKey: (__bridge NSNumber *)kCFBooleanTrue };
-    [[NSAppearance currentDrawingAppearance] _drawInRect:rect context:localContext.cgContext() options:cornerDrawingOptions];
+    [[NSAppearance currentDrawingAppearance] _drawInRect:rect context:protect(localContext.cgContext()) options:cornerDrawingOptions];
 }
 
 } // namespace WebCore

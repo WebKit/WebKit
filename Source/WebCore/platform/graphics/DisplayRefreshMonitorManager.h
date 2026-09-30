@@ -68,7 +68,7 @@ private:
     struct DisplayRefreshMonitorWrapper {
         ~DisplayRefreshMonitorWrapper()
         {
-            if (monitor)
+            if (RefPtr monitor = this->monitor)
                 monitor->stop();
         }
 

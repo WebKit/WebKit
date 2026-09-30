@@ -122,22 +122,22 @@ void AVRoutePickerViewTargetPicker::showPlaybackTargetPicker(NSView *view, const
     if (!client())
         return;
 
-    auto *picker = devicePicker();
+    RetainPtr picker = devicePicker();
     if (useDarkAppearance)
-        picker.routeListAlwaysHasDarkAppearance = YES;
+        [picker setRouteListAlwaysHasDarkAppearance:YES];
 
     m_hadActiveRoute = hasActiveRoute;
 
     auto rectInWindowCoordinates = [view.window convertRectFromScreen:NSMakeRect(rectInScreenCoordinates.x(), rectInScreenCoordinates.y(), 1.0, 1.0)];
     auto rectInViewCoordinates = [view convertRect:rectInWindowCoordinates fromView:view];
-    [picker showRoutePickingControlsForOutputContext:outputContextInternal() relativeToRect:rectInViewCoordinates ofView:view];
+    [picker showRoutePickingControlsForOutputContext:protect(outputContextInternal()) relativeToRect:rectInViewCoordinates ofView:view];
 }
 
 void AVRoutePickerViewTargetPicker::startingMonitoringPlaybackTargets()
 {
     m_ignoreNextMultipleRoutesDetectedDidChangeNotification = false;
 
-    routeDetector().routeDetectionEnabled = YES;
+    [protect(routeDetector()) setRouteDetectionEnabled:YES];
 }
 
 void AVRoutePickerViewTargetPicker::stopMonitoringPlaybackTargets()
@@ -157,7 +157,7 @@ void AVRoutePickerViewTargetPicker::stopMonitoringPlaybackTargets()
 
 bool AVRoutePickerViewTargetPicker::externalOutputDeviceAvailable()
 {
-    return routeDetector().multipleRoutesDetected;
+    return [protect(routeDetector()) multipleRoutesDetected];
 }
 
 AVOutputContext * AVRoutePickerViewTargetPicker::outputContext()

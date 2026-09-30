@@ -53,7 +53,7 @@ bool SourceGraphicCoreImageApplier::apply(const Filter& filter, std::span<const 
             return false;
 
         if (auto surface = sourceImage->surface())
-            image = [CIImage imageWithIOSurface:surface->surface()];
+            image = [CIImage imageWithIOSurface:protect(surface->surface())];
         else
             image = [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
 

@@ -49,7 +49,7 @@ ProgressBarPart::ProgressBarPart(double position, const Seconds& animationStartT
 
 std::unique_ptr<PlatformControl> ProgressBarPart::createPlatformControl()
 {
-    return controlFactory().createPlatformProgressBar(protect(*this));
+    return protect(controlFactory())->createPlatformProgressBar(protect(*this));
 }
 
 } // namespace WebCore

@@ -89,7 +89,7 @@ float LocalizedDateCache::estimatedMaximumWidthForDateType(DateComponentsType ty
         if (m_maxWidthMap.contains(key))
             return m_maxWidthMap.get(key);
     } else {
-        m_font = FontCascade(font);
+        m_font = font;
         m_maxWidthMap.clear();
     }
 

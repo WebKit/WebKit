@@ -63,7 +63,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
         // Note that CADisplayLink retains its target (self), so a call to -invalidate is needed on teardown.
         m_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
     ALLOW_DEPRECATED_DECLARATIONS_END
-        [m_displayLink addToRunLoop:WebThreadNSRunLoop() forMode:NSDefaultRunLoopMode];
+        [m_displayLink addToRunLoop:protect(WebThreadNSRunLoop()) forMode:NSDefaultRunLoopMode];
         m_displayLink.preferredFramesPerSecond = DisplayLinkFramesPerSecond;
     }
     return self;

@@ -39,6 +39,10 @@ namespace WebCore {
 
 RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&& source)
     : m_audioSource(WTF::move(source))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(protect(m_audioSource)->logger())
+    , m_logIdentifier(protect(m_audioSource)->logIdentifier())
+#endif
 {
 }
 
@@ -56,7 +60,7 @@ RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource()
 void RealtimeOutgoingAudioSource::observeSource()
 {
     ASSERT(!m_audioSource->hasObserver(*this));
-    m_audioSource->addObserver(*this);
+    protect(m_audioSource)->addObserver(*this);
     protect(m_audioSource->source())->addAudioSampleObserver(*this);
     initializeConverter();
 }
@@ -64,7 +68,7 @@ void RealtimeOutgoingAudioSource::observeSource()
 void RealtimeOutgoingAudioSource::unobserveSource()
 {
     protect(m_audioSource->source())->removeAudioSampleObserver(*this);
-    m_audioSource->removeObserver(*this);
+    protect(m_audioSource)->removeObserver(*this);
 }
 
 void RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)

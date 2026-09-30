@@ -45,12 +45,12 @@ namespace WebCore {
 static bool isWordDelimitingCharacter(char32_t c)
 {
     // Ampersand is an exception added to treat AT&T as a single word (see <rdar://problem/5022264>).
-    return !CFCharacterSetIsLongCharacterMember(CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric), c) && c != '&';
+    return !CFCharacterSetIsLongCharacterMember(protect(CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric)), c) && c != '&';
 }
 
 static bool isSymbolCharacter(char32_t c)
 {
-    return CFCharacterSetIsLongCharacterMember(CFCharacterSetGetPredefined(kCFCharacterSetSymbol), c);
+    return CFCharacterSetIsLongCharacterMember(protect(CFCharacterSetGetPredefined(kCFCharacterSetSymbol)), c);
 }
 
 static bool isAmbiguousBoundaryCharacter(char32_t character)
@@ -145,7 +145,7 @@ static void findComplexWordBoundary(StringView text, int position, int* start, i
 {
     RetainPtr<CFStringRef> charString = text.createCFStringWithoutCopying();
 
-    CFStringTokenizerRef tokenizer = tokenizerForString(charString.get());
+    RetainPtr tokenizer = tokenizerForString(charString.get());
     if (!tokenizer) {
         // Error creating tokenizer, so just use simple function.
         findSimpleWordBoundary(text, position, start, end);

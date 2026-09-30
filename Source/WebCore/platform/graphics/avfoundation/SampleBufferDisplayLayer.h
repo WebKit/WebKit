@@ -110,7 +110,8 @@ inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLay
 inline bool SampleBufferDisplayLayer::canShowWhileLocked()
 {
 #if PLATFORM(IOS_FAMILY)
-    return m_client && m_client->canShowWhileLocked();
+    RefPtr client = m_client;
+    return client && client->canShowWhileLocked();
 #else
     return false;
 #endif

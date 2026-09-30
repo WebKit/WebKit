@@ -561,7 +561,7 @@ void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
         return;
 
     if (!m_audioCompressedAudioInfo) {
-        RetainPtr audioFormatDescription = PAL::CMSampleBufferGetFormatDescription(audioConverter()->getOutputSampleBuffer());
+        RetainPtr audioFormatDescription = PAL::CMSampleBufferGetFormatDescription(protect(audioConverter()->getOutputSampleBuffer()));
         m_audioCompressedAudioInfo = createAudioInfoFromFormatDescription(audioFormatDescription.get());
         ASSERT(m_audioCompressedAudioInfo);
         if (!m_audioCompressedAudioInfo) {

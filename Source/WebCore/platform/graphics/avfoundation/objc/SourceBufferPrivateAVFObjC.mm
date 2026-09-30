@@ -303,7 +303,7 @@ bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample)
 
         if (RefPtr textTrack = downcast<InbandTextTrackPrivateAVF>(result->second)) {
             PlatformSample platformSample = sample.platformSample();
-            textTrack->processVTTSample(platformSample.cmSampleBuffer(), sample.presentationTime());
+            textTrack->processVTTSample(protect(platformSample.cmSampleBuffer()), sample.presentationTime());
         }
 
         return false;
@@ -683,7 +683,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
 
     PlatformSample platformSample = sample->platformSample();
 
-    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(platformSample.cmSampleBuffer());
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(protect(platformSample.cmSampleBuffer()));
     ASSERT(formatDescription);
     if (!formatDescription) {
         ERROR_LOG(logSiteIdentifier, "Received sample with a null formatDescription. Bailing.");

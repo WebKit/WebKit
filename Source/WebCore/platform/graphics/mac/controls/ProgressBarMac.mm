@@ -113,7 +113,7 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     if (!imageBuffer)
         return;
 
-    CGContextRef cgContext = imageBuffer->context().platformContext();
+    RetainPtr cgContext = imageBuffer->context().platformContext();
 
     Ref progressBarPart = owningProgressBarPart();
     auto controlSize = controlSizeForFont(style);

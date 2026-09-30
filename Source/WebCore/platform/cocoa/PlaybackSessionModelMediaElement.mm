@@ -529,7 +529,7 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     if (!mediaElement->document().page())
         return;
 
-    Ref captionPreferences = protect(protect(mediaElement->document())->page()->group())->ensureCaptionPreferences();
+    Ref captionPreferences = protect(protect(protect(mediaElement->document())->page())->group())->ensureCaptionPreferences();
     auto* textTracks = mediaElement->textTracks();
     if (textTracks && textTracks->length())
         m_legibleTracksForMenu = captionPreferences->sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
@@ -731,7 +731,7 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelecti
     if (!mediaElement || !mediaElement->document().page())
         return { };
 
-    Ref captionPreferences = protect(protect(mediaElement->document())->page()->group())->ensureCaptionPreferences();
+    Ref captionPreferences = protect(protect(protect(mediaElement->document())->page())->group())->ensureCaptionPreferences();
     return m_audioTracksForMenu.map([&](auto& audioTrack) {
         return captionPreferences->mediaSelectionOptionForTrack(audioTrack.get());
     });
@@ -762,7 +762,7 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
     }
 #endif
 
-    Ref captionPreferences = protect(protect(mediaElement->document())->page()->group())->ensureCaptionPreferences();
+    Ref captionPreferences = protect(protect(protect(mediaElement->document())->page())->group())->ensureCaptionPreferences();
     return m_legibleTracksForMenu.map([&](auto& track) {
         return captionPreferences->mediaSelectionOptionForTrack(track.get());
     });

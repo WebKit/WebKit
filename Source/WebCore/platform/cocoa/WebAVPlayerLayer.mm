@@ -54,7 +54,7 @@ public:
         : m_playerLayer(playerLayer)
     {
     }
-private:
+
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
@@ -62,6 +62,7 @@ private:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
+private:
     void videoDimensionsChanged(const FloatSize& videoDimensions)
     {
         [m_playerLayer.get() setVideoDimensions:videoDimensions];
@@ -108,7 +109,7 @@ private:
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
     [_pixelBufferAttributes release];
     if (auto model = _presentationModel.get())
-        model->removeClient(*_presentationModelClient);
+        model->removeClient(protect(*_presentationModelClient));
     [super dealloc];
 }
 
@@ -124,7 +125,7 @@ private:
         return;
 
     if (model)
-        model->removeClient(*_presentationModelClient);
+        model->removeClient(protect(*_presentationModelClient));
 
     _presentationModel = presentationModel;
 #if !RELEASE_LOG_DISABLED
@@ -132,7 +133,7 @@ private:
 #endif
 
     if (presentationModel)
-        presentationModel->addClient(*_presentationModelClient);
+        presentationModel->addClient(protect(*_presentationModelClient));
 
     self.videoDimensions = presentationModel ? presentationModel->videoDimensions() : CGSizeZero;
 }

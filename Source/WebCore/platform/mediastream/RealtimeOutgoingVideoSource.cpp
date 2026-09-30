@@ -78,16 +78,16 @@ void RealtimeOutgoingVideoSource::observeSource()
 void RealtimeOutgoingVideoSource::unobserveSource()
 {
     protect(m_videoSource)->removeObserver(*this);
-    protect(m_videoSource)->source().removeVideoFrameObserver(*this);
+    protect(m_videoSource->source())->removeVideoFrameObserver(*this);
 }
 
 void RealtimeOutgoingVideoSource::startObservingVideoFrames()
 {
     if (m_maxFrameRate) {
-        protect(m_videoSource)->source().addVideoFrameObserver(*this, { }, *m_maxFrameRate);
+        protect(m_videoSource->source())->addVideoFrameObserver(*this, { }, *m_maxFrameRate);
         return;
     }
-    protect(m_videoSource)->source().addVideoFrameObserver(*this);
+    protect(m_videoSource->source())->addVideoFrameObserver(*this);
 }
 
 void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
@@ -102,7 +102,7 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 
     if (!m_areSinksAskingToApplyRotation)
         return;
-    protect(m_videoSource)->source().setShouldApplyRotation();
+    protect(m_videoSource->source())->setShouldApplyRotation();
     m_isApplyingRotation = m_videoSource->source().isApplyingRotation();
 }
 
@@ -113,7 +113,7 @@ void RealtimeOutgoingVideoSource::applyRotation()
             return;
 
         m_areSinksAskingToApplyRotation = true;
-        protect(m_videoSource)->source().setShouldApplyRotation();
+        protect(m_videoSource->source())->setShouldApplyRotation();
         m_isApplyingRotation = m_videoSource->source().isApplyingRotation();
     });
 }
@@ -155,7 +155,7 @@ void RealtimeOutgoingVideoSource::updateFramesSending()
 
     if (m_isObservingVideoFrames) {
         m_isObservingVideoFrames = false;
-        protect(m_videoSource)->source().removeVideoFrameObserver(*this);
+        protect(m_videoSource->source())->removeVideoFrameObserver(*this);
     }
     sendBlackFramesIfNeeded();
 }
@@ -180,7 +180,7 @@ void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 
 void RealtimeOutgoingVideoSource::initializeFromSource()
 {
-    const auto& settings = protect(m_videoSource)->source().settings();
+    const auto& settings = protect(m_videoSource->source())->settings();
     {
         Locker lock(m_frameSizeLock);
         m_width = settings.width();
@@ -213,7 +213,7 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(webrtc::VideoSinkInterface<web
         m_maxPixelCount = maxPixelCount;
         if (!m_isObservingVideoFrames)
             return;
-        protect(m_videoSource)->source().removeVideoFrameObserver(*this);
+        protect(m_videoSource->source())->removeVideoFrameObserver(*this);
         m_isObservingVideoFrames = false;
         updateFramesSending();
     });

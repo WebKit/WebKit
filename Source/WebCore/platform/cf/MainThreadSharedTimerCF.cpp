@@ -112,9 +112,9 @@ void MainThreadSharedTimer::setFireInterval(Seconds interval)
     if (!sharedTimer()) {
         sharedTimer() = adoptCF(CFRunLoopTimerCreate(nullptr, fireDate, kCFTimeIntervalDistantFuture, 0, 0, timerFired, nullptr));
 #if PLATFORM(IOS_FAMILY)
-        CFRunLoopAddTimer(WebThreadRunLoop(), sharedTimer().get(), kCFRunLoopCommonModes);
+        CFRunLoopAddTimer(protect(WebThreadRunLoop()), sharedTimer().get(), kCFRunLoopCommonModes);
 #else
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer().get(), kCFRunLoopCommonModes);
+        CFRunLoopAddTimer(protect(CFRunLoopGetCurrent()), sharedTimer().get(), kCFRunLoopCommonModes);
 #endif
 
         setupPowerObserver();

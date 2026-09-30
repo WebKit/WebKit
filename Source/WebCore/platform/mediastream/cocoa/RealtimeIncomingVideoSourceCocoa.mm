@@ -128,7 +128,7 @@ RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::
     return VideoFrameLibWebRTC::create(MediaTime(frame.timestamp_us(), 1000000), false, rotation, colorSpaceFromLibWebRTCVideoFrame(frame), toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, this](auto& buffer) {
         return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [this, protectedThis = Ref { *this }](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
             Locker lock(m_pixelBufferPoolLock);
-            auto pixelBufferPool = this->pixelBufferPool(width, height, bufferType);
+            RetainPtr pixelBufferPool = this->pixelBufferPool(width, height, bufferType);
             if (!pixelBufferPool)
                 return nullptr;
             CVPixelBufferRef pixelBuffer = nullptr;

@@ -84,7 +84,7 @@
     ASSERT(parent);
     _parent = parent;
     _parser = parser;
-    [_parser setDelegate:self];
+    [protect(_parser) setDelegate:self];
     return self;
 }
 
@@ -92,13 +92,13 @@
 
 - (void)dealloc
 {
-    [_parser setDelegate:nil];
+    [protect(_parser) setDelegate:nil];
     [super dealloc];
 }
 
 - (void)invalidate
 {
-    [_parser setDelegate:nil];
+    [protect(_parser) setDelegate:nil];
     _parser = nullptr;
 }
 
@@ -189,7 +189,7 @@ private:
             return emptyString();
         FourCC originalCodec = PAL::softLink_CoreMedia_CMFormatDescriptionGetMediaSubType(description);
         CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::kCMFormatDescriptionExtension_ProtectedContentOriginalFormat : CFSTR("CommonEncryptionOriginalFormat");
-        if (auto originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
+        if (RetainPtr originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
             CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &originalCodec.value);
         return String::fromLatin1(originalCodec.string().data());
     }

@@ -73,7 +73,7 @@
         if (!_notifier)
             return;
         _isLowPowerModeEnabled = lowPowerModeEnabled;
-        notifyLowPowerModeChanged(*_notifier, _isLowPowerModeEnabled);
+        notifyLowPowerModeChanged(protect(*_notifier), _isLowPowerModeEnabled);
     });
 }
 

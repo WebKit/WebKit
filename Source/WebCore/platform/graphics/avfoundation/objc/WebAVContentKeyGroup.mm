@@ -121,7 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)processContentKeyRequestWithIdentifier:(nullable id)identifier initializationData:(nullable NSData *)initializationData options:(nullable NSDictionary<NSString *, id> *)options
 {
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, identifier, ", initializationData=", initializationData, ", options=", options);
-    [_contentKeySession processContentKeyRequestWithIdentifier:identifier initializationData:initializationData options:options];
+    [protect(_contentKeySession) processContentKeyRequestWithIdentifier:identifier initializationData:initializationData options:options];
 }
 
 @end

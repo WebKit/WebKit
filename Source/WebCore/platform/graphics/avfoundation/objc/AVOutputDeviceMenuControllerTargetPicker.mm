@@ -43,8 +43,8 @@
 
 using namespace WebCore;
 
-static NSString *externalOutputDeviceAvailableKeyName = @"externalOutputDeviceAvailable";
-static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicked";
+static NSString * const externalOutputDeviceAvailableKeyName = @"externalOutputDeviceAvailable";
+static NSString * const externalOutputDevicePickedKeyName = @"externalOutputDevicePicked";
 
 @interface WebAVOutputDeviceMenuControllerHelper : NSObject {
     WeakPtr<AVOutputDeviceMenuControllerTargetPicker> m_callback;
@@ -111,7 +111,7 @@ void AVOutputDeviceMenuControllerTargetPicker::showPlaybackTargetPicker(NSView *
     m_showingMenu = true;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    bool targetSelected = [devicePicker() showMenuForRect:location appearanceName:(useDarkAppearance ? NSAppearanceNameVibrantDark : NSAppearanceNameVibrantLight) allowReselectionOfSelectedOutputDevice:!hasActiveRoute];
+    bool targetSelected = [protect(devicePicker()) showMenuForRect:location appearanceName:(useDarkAppearance ? NSAppearanceNameVibrantDark : NSAppearanceNameVibrantLight) allowReselectionOfSelectedOutputDevice:!hasActiveRoute];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!client())
@@ -148,7 +148,7 @@ void AVOutputDeviceMenuControllerTargetPicker::invalidatePlaybackTargets()
 bool AVOutputDeviceMenuControllerTargetPicker::externalOutputDeviceAvailable()
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return devicePicker().externalOutputDeviceAvailable;
+    return [protect(devicePicker()) isExternalOutputDeviceAvailable];
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 

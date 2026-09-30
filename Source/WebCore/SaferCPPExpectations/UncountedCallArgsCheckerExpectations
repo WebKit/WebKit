@@ -120,41 +120,12 @@ page/scrolling/ScrollAnchoringController.cpp
 [ Mac ] page/scrolling/ThreadedScrollingCoordinator.cpp
 [ Mac ] page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/text-extraction/TextExtraction.cpp
-[ Mac ] platform/cocoa/DragImageCocoa.mm
-platform/cocoa/PlaybackSessionModelMediaElement.mm
-platform/cocoa/VideoPresentationModelVideoElement.mm
-platform/graphics/DisplayRefreshMonitorManager.h
-platform/graphics/ImageBackingStore.h
-[ iOS ] platform/graphics/avfoundation/SampleBufferDisplayLayer.h
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
 platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp
 [ Mac ] platform/graphics/cocoa/ImageAdapterCocoa.mm
-platform/graphics/controls/ButtonPart.h
-platform/graphics/controls/ColorWellPart.h
-[ Mac ] platform/graphics/controls/ImageControlsButtonPart.h
-platform/graphics/controls/InnerSpinButtonPart.h
-platform/graphics/controls/MenuListButtonPart.h
-platform/graphics/controls/MenuListPart.h
-platform/graphics/controls/ProgressBarPart.cpp
-platform/graphics/controls/SearchFieldCancelButtonPart.h
-platform/graphics/controls/SearchFieldPart.h
-platform/graphics/controls/SearchFieldResultsPart.h
-platform/graphics/controls/SliderThumbPart.h
-platform/graphics/controls/SwitchPart.h
-platform/graphics/controls/TextAreaPart.h
-platform/graphics/controls/TextFieldPart.h
-platform/graphics/controls/ToggleButtonPart.h
-platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.cpp
 platform/graphics/filters/software/FELightingSoftwareApplier.cpp
-platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
-[ Mac ] platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/transforms/TransformOperationsSharedPrimitivesPrefix.h
-platform/mediastream/RealtimeOutgoingAudioSource.cpp
-platform/mediastream/RealtimeOutgoingAudioSource.h
-platform/mediastream/RealtimeOutgoingVideoSource.cpp
-platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
 [ macOS ] rendering/AttachmentLayout.mm
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp

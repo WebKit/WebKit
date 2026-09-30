@@ -1050,7 +1050,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size().width(), m_currentPreset->size().height(), m_currentFrameRate, m_currentZoom }
 #if PLATFORM(IOS_FAMILY)
-        , " binned: ", !!m_currentPreset->format().isVideoBinned
+        , " binned: ", !![protect(m_currentPreset->format()) isVideoBinned]
 #endif
     );
 

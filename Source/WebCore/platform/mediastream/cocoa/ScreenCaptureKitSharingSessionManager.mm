@@ -475,10 +475,10 @@ ScreenCaptureSessionSource::~ScreenCaptureSessionSource()
 
 bool ScreenCaptureSessionSource::operator==(const ScreenCaptureSessionSource& other) const
 {
-    if (![m_stream isEqual:other.stream()])
+    if (![m_stream isEqual:protect(other.stream())])
         return false;
 
-    if (![m_contentFilter isEqual:other.contentFilter()])
+    if (![m_contentFilter isEqual:protect(other.contentFilter())])
         return false;
 
     return m_observer == other.observer();

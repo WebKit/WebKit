@@ -164,12 +164,12 @@ static NSRect _clipBounds;
 
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus
 {
-    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus]];
+    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:protect([super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus])];
 }
 
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus maskOnly:(BOOL)maskOnly
 {
-    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus maskOnly:maskOnly]];
+    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:protect([super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus maskOnly:maskOnly])];
 }
 
 @end

@@ -223,7 +223,7 @@ void ScreenCaptureKitCaptureSource::stop()
                 protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_s);
         });
     });
-    [contentStream() stopCaptureWithCompletionHandler:stopHandler.get()];
+    [protect(contentStream()) stopCaptureWithCompletionHandler:stopHandler.get()];
 
     // We do not nullify m_sessionSource to keep the picker active since it is helping capture for some fullscreen cases.
     if (m_sessionSource)
@@ -304,7 +304,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
             });
         });
 
-        [contentStream() updateContentFilter:contentFilter completionHandler:completionHandler.get()];
+        [protect(contentStream()) updateContentFilter:contentFilter completionHandler:completionHandler.get()];
     }
 
     configurationChanged();
@@ -395,9 +395,10 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     }
 
 #if HAVE(WINDOW_CAPTURE)
-    switch (contentFilter().style) {
+    RetainPtr contentFilter = this->contentFilter();
+    switch ([contentFilter style]) {
     case SCShareableContentStyleWindow: {
-        RetainPtr windows = retainPtr(contentFilter().includedWindows);
+        RetainPtr windows = [contentFilter includedWindows];
         ASSERT([windows count] == 1);
         if (![windows count])
             return;
@@ -406,7 +407,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
         break;
     }
     case SCShareableContentStyleDisplay: {
-        RetainPtr displays = retainPtr(contentFilter().includedDisplays);
+        RetainPtr displays = [contentFilter includedDisplays];
         ASSERT([displays count] == 1);
         if (![displays count])
             return;
@@ -423,8 +424,9 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     }
 #endif
 
+    RetainPtr contentStream = this->contentStream();
     NSError *error;
-    if (![contentStream() addStreamOutput:m_captureHelper.get() type:SCStreamOutputTypeScreen sampleHandlerQueue:captureQueue() error:&error]) {
+    if (![contentStream addStreamOutput:m_captureHelper.get() type:SCStreamOutputTypeScreen sampleHandlerQueue:protect(captureQueue()) error:&error]) {
         sessionFailedWithError(WTF::move(error), "-[SCStream addStreamOutput:type:sampleHandlerQueue:error:] failed"_s);
         return;
     }
@@ -446,7 +448,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
         });
     });
 
-    [contentStream() startCaptureWithCompletionHandler:completionHandler.get()];
+    [contentStream startCaptureWithCompletionHandler:completionHandler.get()];
 
     m_isRunning = true;
 }
@@ -498,7 +500,7 @@ void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
         });
     });
 
-    [contentStream() updateConfiguration:streamConfiguration().get() completionHandler:completionHandler.get()];
+    [protect(contentStream()) updateConfiguration:streamConfiguration().get() completionHandler:completionHandler.get()];
 }
 
 void ScreenCaptureKitCaptureSource::commitConfiguration(const RealtimeMediaSourceSettings& settings)

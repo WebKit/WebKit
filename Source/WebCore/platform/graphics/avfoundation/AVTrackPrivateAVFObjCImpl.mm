@@ -42,6 +42,7 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -57,16 +58,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AVTrackPrivateAVFObjCImpl);
 
-static NSArray* assetTrackConfigurationKeyNames()
+static NSArray* assetTrackConfigurationKeyNamesSingleton()
 {
-    static NSArray* keys = [[NSArray alloc] initWithObjects:@"formatDescriptions", @"estimatedDataRate", @"nominalFrameRate", nil];
-    return keys;
+    static NeverDestroyed<RetainPtr<NSArray>> keys = adoptNS([[NSArray alloc] initWithObjects:@"formatDescriptions", @"estimatedDataRate", @"nominalFrameRate", nil]);
+    return keys.get();
 }
 
 static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)
 {
-    if (impl.playerItemTrack() && impl.playerItemTrack().assetTrack)
-        return impl.playerItemTrack().assetTrack;
+    if (RetainPtr playerItemTrack = impl.playerItemTrack(); playerItemTrack && [playerItemTrack assetTrack])
+        return [playerItemTrack assetTrack];
     if (impl.assetTrack())
         return impl.assetTrack();
     if (RefPtr mediaSelectionOption = impl.mediaSelectionOption())
@@ -101,7 +102,7 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
     if (!m_assetTrack)
         return;
 
-    [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNames() completionHandler:[weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+    [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNamesSingleton() completionHandler:[weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         callOnMainThread([weakThis = WTF::move(weakThis)] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->initializationCompleted();

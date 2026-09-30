@@ -160,7 +160,7 @@ void PreviewConverter::setPasswordForTesting(const String& password)
 }
 
 template<typename T>
-void PreviewConverter::iterateClients(T&& callback)
+void PreviewConverter::iterateClients(NOESCAPE T&& callback)
 {
     SetForScope isInClientCallback { m_isInClientCallback, true };
     auto clientsCopy { m_clients };

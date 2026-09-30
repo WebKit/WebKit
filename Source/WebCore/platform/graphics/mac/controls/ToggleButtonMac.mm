@@ -128,7 +128,7 @@ void ToggleButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& bor
         context.scale(FloatSize(1, -1));
         context.translate(0, -logicalRect.height());
 
-        [m_buttonCell _renderCurrentAnimationFrameInContext:context.platformContext() atLocation:NSMakePoint(0, 0)];
+        [m_buttonCell _renderCurrentAnimationFrameInContext:protect(context.platformContext()) atLocation:NSMakePoint(0, 0)];
 
         if (![m_buttonCell _stateAnimationRunning] && style.states.contains(ControlStyle::State::Focused))
             drawCell(context, logicalRect, deviceScaleFactor, style, m_buttonCell.get(), false);

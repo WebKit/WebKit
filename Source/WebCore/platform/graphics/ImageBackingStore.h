@@ -75,7 +75,7 @@ public:
 
         buffer.grow(bufferSize);
         m_pixels = FragmentedSharedBuffer::DataSegment::create(WTF::move(buffer));
-        m_pixelsSpan = spanReinterpretCast<uint32_t>(spanConstCast<uint8_t>(m_pixels->span()));
+        m_pixelsSpan = spanReinterpretCast<uint32_t>(spanConstCast<uint8_t>(protect(m_pixels)->span()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
         clear();
@@ -221,9 +221,9 @@ private:
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
-        Vector<uint8_t> buffer(other.m_pixels->span());
+        Vector<uint8_t> buffer(protect(other.m_pixels)->span());
         m_pixels = FragmentedSharedBuffer::DataSegment::create(WTF::move(buffer));
-        m_pixelsSpan = spanReinterpretCast<uint32_t>(spanConstCast<uint8_t>(m_pixels->span()));
+        m_pixelsSpan = spanReinterpretCast<uint32_t>(spanConstCast<uint8_t>(protect(m_pixels)->span()));
     }
 
     bool inBounds(const IntPoint& point) const

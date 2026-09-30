@@ -160,10 +160,6 @@ page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp
 page/scrolling/ScrollingStateStickyNode.cpp
-platform/ScrollingEffectsController.cpp
-[ Mac ] platform/cocoa/DragImageCocoa.mm
-platform/cocoa/LowPowerModeNotifier.mm
-platform/cocoa/WebAVPlayerLayer.mm
 platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileController.cpp
@@ -171,7 +167,6 @@ platform/graphics/ca/TileCoverageMap.cpp
 platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
 platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
-platform/text/cocoa/LocalizedDateCache.mm
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AttachmentLayout.mm
 rendering/AutoTableLayout.cpp

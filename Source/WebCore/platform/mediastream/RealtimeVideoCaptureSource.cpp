@@ -300,11 +300,11 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
         }
 
         IntSize encodingSize;
-        auto lookForAspectRatioMatch = [this, &preset, &encodingSize] (const IntSize& size) -> bool {
+        auto lookForAspectRatioMatch = [protectedThis = Ref { *this }, &preset, &encodingSize] (const IntSize& size) -> bool {
             auto aspectRatio = [] (const IntSize size) -> double {
                 return size.width() / static_cast<double>(size.height());
             };
-            if (std::abs(aspectRatio(preset.size()) - aspectRatio(size)) > 10e-7 || !canResizeVideoFrames())
+            if (std::abs(aspectRatio(preset.size()) - aspectRatio(size)) > 10e-7 || !protectedThis->canResizeVideoFrames())
                 return false;
 
             encodingSize = size;

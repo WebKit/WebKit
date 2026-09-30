@@ -89,8 +89,8 @@ ImageBuffer* FilterImage::filterResultImageBuffer(const Filter& filter)
     // We use -[CIContext:startTaskToRender...] because it lets us specify `fromRect`, which provides the rect against which earlier
     // CIImages extents are computed (in flipped coordinates). -[CIContext render:...] uses the size of the IOSurface, which is only
     // the output size of the last filter operation.
-    RetainPtr destination = adoptNS([[CIRenderDestination alloc] initWithIOSurface:(__bridge id)imageBuffer->surface()->surface()]);
-    [destination setColorSpace:m_colorSpace.platformColorSpace()];
+    RetainPtr destination = adoptNS([[CIRenderDestination alloc] initWithIOSurface:(__bridge id)protect(imageBuffer->surface()->surface()).get()]);
+    [destination setColorSpace:protect(m_colorSpace.platformColorSpace())];
 
     RetainPtr image = m_ciImage;
 

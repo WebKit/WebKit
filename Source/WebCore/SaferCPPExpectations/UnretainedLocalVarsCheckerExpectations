@@ -10,19 +10,6 @@ bridge/objc/objc_class.mm
 [ Mac ] page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-[ Mac ] platform/cocoa/DragImageCocoa.mm
-platform/cocoa/PlatformPasteboardCocoa.mm
-platform/cocoa/RemoteCommandListenerCocoa.mm
-platform/cocoa/SerializedPlatformDataCueValue.mm
-platform/cocoa/SystemVersion.mm
-[ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
-platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
-[ Mac ] platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
-platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
-platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
-platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm
-platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
 [ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
@@ -34,14 +21,5 @@ platform/graphics/cocoa/CMUtilities.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
 [ Mac ] platform/graphics/cocoa/ImageAdapterCocoa.mm
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
-[ Mac ] platform/graphics/mac/controls/ImageControlsButtonMac.mm
-[ Mac ] platform/graphics/mac/controls/ProgressBarMac.mm
-[ Mac ] platform/graphics/mac/controls/SliderTrackMac.mm
-[ Mac ] platform/graphics/mac/controls/SwitchMac.mm
-[ Mac ] platform/graphics/mac/controls/SwitchMacUtilities.mm
-platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
-platform/mediastream/cocoa/CoreAudioCaptureUnit.mm
-platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm
-[ iOS ] platform/text/cocoa/TextBoundaries.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm

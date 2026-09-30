@@ -490,7 +490,7 @@ void WebCoreAVFResourceLoader::loadFailed(const ResourceError& error)
     if ([m_avRequest contentInformationRequest] && ![[m_avRequest contentInformationRequest] contentType])
         [[m_avRequest contentInformationRequest] setContentType:@""];
 
-    [m_avRequest finishLoadingWithError:error.nsError()];
+    [m_avRequest finishLoadingWithError:protect(error.nsError())];
     stopLoading();
 }
 

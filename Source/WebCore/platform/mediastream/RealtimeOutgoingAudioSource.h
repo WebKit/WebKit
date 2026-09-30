@@ -88,8 +88,8 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper API
-    const Logger& logger() const final { return m_audioSource->logger(); }
-    uint64_t logIdentifier() const final { return m_audioSource->logIdentifier(); }
+    const Logger& logger() const final { return m_logger.get(); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "RealtimeOutgoingAudioSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -139,6 +139,8 @@ private:
     HashSet<webrtc::AudioTrackSinkInterface*> m_sinks WTF_GUARDED_BY_LOCK(m_sinksLock);
 
 #if !RELEASE_LOG_DISABLED
+    const Ref<const Logger> m_logger;
+    const uint64_t m_logIdentifier;
     size_t m_chunksSent { 0 };
 #endif
 };

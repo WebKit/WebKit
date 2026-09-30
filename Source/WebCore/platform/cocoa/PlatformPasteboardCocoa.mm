@@ -83,19 +83,19 @@ String PlatformPasteboard::urlStringSuitableForLoading(String& title)
 #endif
 
     if (types.contains(urlPasteboardType)) {
-        NSURL *URLFromPasteboard = [NSURL URLWithString:stringForType(urlPasteboardType).createNSString().get()];
+        RetainPtr urlFromPasteboard = [NSURL URLWithString:stringForType(urlPasteboardType).createNSString().get()];
         // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
-        if (URL { URLFromPasteboard }.protocolIsInHTTPFamily())
-            return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
+        if (URL { urlFromPasteboard }.protocolIsInHTTPFamily())
+            return [protect(URLByCanonicalizingURL(urlFromPasteboard)) absoluteString];
     }
 
     if (types.contains(stringPasteboardType)) {
-        NSURL *URLFromPasteboard = [NSURL URLWithString:stringForType(stringPasteboardType).createNSString().get()];
+        RetainPtr urlFromPasteboard = [NSURL URLWithString:stringForType(stringPasteboardType).createNSString().get()];
         // Pasteboard content is not trusted, because JavaScript code can modify it. We can sanitize it for URLs and other typed content, but not for strings.
         // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
         // FIXME: Should we allow only http family schemes, or anything non-local?
-        if (URL { URLFromPasteboard }.protocolIsInHTTPFamily())
-            return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
+        if (URL { urlFromPasteboard }.protocolIsInHTTPFamily())
+            return [protect(URLByCanonicalizingURL(urlFromPasteboard)) absoluteString];
     }
 
 #if PLATFORM(MAC)
@@ -107,7 +107,7 @@ String PlatformPasteboard::urlStringSuitableForLoading(String& title)
             BOOL isDirectory;
             if ([[NSFileManager defaultManager] fileExistsAtPath:firstFile.get() isDirectory:&isDirectory] && isDirectory)
                 return String();
-            return [URLByCanonicalizingURL([NSURL fileURLWithPath:firstFile.get()]) absoluteString];
+            return [protect(URLByCanonicalizingURL([NSURL fileURLWithPath:firstFile.get()])) absoluteString];
         }
     }
 #endif

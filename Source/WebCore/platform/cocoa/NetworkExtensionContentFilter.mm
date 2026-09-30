@@ -47,7 +47,7 @@
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/threads/BinarySemaphore.h>
 
-static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
+static inline RetainPtr<NSData> replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!decisionInfo || [decisionInfo isKindOfClass:[NSDictionary class]]);
     return decisionInfo[NEFilterSourceOptionsPageData];

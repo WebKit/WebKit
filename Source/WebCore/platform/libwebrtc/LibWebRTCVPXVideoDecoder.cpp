@@ -84,7 +84,7 @@ private:
     bool NODELETE isVPx() const { return m_type == LibWebRTCVPXVideoDecoder::Type::VP8 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9_P2; }
     int32_t Decoded(webrtc::VideoFrame&) final;
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
-    CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType, bool isFullRange);
+    CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType, bool isFullRange, const std::optional<PlatformVideoColorSpace>&);
 
     const LibWebRTCVPXVideoDecoder::Type m_type;
     VideoDecoder::OutputCallback m_outputCallback;
@@ -227,7 +227,7 @@ CVPixelBufferPoolRef LibWebRTCVPXInternalVideoDecoder::pixelBufferPool(size_t wi
     return m_pixelBufferPool.get();
 }
 
-CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t width, size_t height, webrtc::BufferType bufferType, bool isFullRange)
+CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t width, size_t height, webrtc::BufferType bufferType, bool isFullRange, const std::optional<PlatformVideoColorSpace>& colorSpace)
 {
     OSType pixelBufferType;
 
@@ -261,9 +261,12 @@ CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t widt
     }
 
     if (m_resourceOwner) {
-        if (auto surface = CVPixelBufferGetIOSurface(pixelBuffer))
+        if (RetainPtr surface = CVPixelBufferGetIOSurface(pixelBuffer))
             IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
     }
+
+    if (colorSpace)
+        attachColorSpaceToPixelBuffer(*colorSpace, pixelBuffer);
 
     return pixelBuffer;
 }
@@ -286,10 +289,7 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
 
     auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, std::optional { colorSpace }, toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, colorSpace, isFullRange](auto& buffer) {
         return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis, colorSpace, isFullRange](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
-            auto pixelBuffer = protectedThis->createPixelBuffer(width, height, bufferType, isFullRange);
-            if (colorSpace)
-                attachColorSpaceToPixelBuffer(*colorSpace, pixelBuffer);
-            return pixelBuffer;
+            return protectedThis->createPixelBuffer(width, height, bufferType, isFullRange, colorSpace);
         }));
     });
 

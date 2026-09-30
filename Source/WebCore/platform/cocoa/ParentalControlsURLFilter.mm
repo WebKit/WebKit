@@ -231,14 +231,14 @@ void ParentalControlsURLFilter::isURLAllowedImpl(IsMainFrameLoad isMainFrame, co
         && [wcrBrowserEngineClient respondsToSelector:@selector(evaluateURL:mainDocumentURL:withCompletion:onCompletionQueue:)]) {
         [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() mainDocumentURL:mainDocumentURL.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
         completionHandler(!shouldBlock, replacementData);
-        }).get() onCompletionQueue:workQueueSingleton().dispatchQueue()];
+        }).get() onCompletionQueue:protect(workQueueSingleton().dispatchQueue())];
         return;
     }
 #endif
     UNUSED_PARAM(mainDocumentURL);
     [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
         completionHandler(!shouldBlock, replacementData);
-        }).get() onCompletionQueue:workQueueSingleton().dispatchQueue()];
+        }).get() onCompletionQueue:protect(workQueueSingleton().dispatchQueue())];
 }
 
 void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(bool)>&& completionHandler)

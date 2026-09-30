@@ -262,7 +262,7 @@ SubsamplingLevel BitmapImageDescriptor::subsamplingLevelForScaleFactor(GraphicsC
         return SubsamplingLevel::Default;
 
     // Never use subsampled images for drawing into PDF contexts.
-    if (context.hasPlatformContext() && CGContextGetType(context.platformContext()) == kCGContextTypePDF)
+    if (context.hasPlatformContext() && CGContextGetType(protect(context.platformContext())) == kCGContextTypePDF)
         return SubsamplingLevel::Default;
 
     float scale = std::min(float(1), std::max(scaleFactor.width(), scaleFactor.height()));
