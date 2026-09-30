@@ -37,7 +37,9 @@
 #include "pas_ensure_heap_forced_into_reserved_memory.h"
 #include "pas_get_allocation_size.h"
 #include "pas_get_heap.h"
+#include "pas_get_page_base.h"
 #include "pas_try_allocate_intrinsic.h"
+#include "tagged_bmalloc_heap_config.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -83,6 +85,15 @@ size_t bmalloc_heap_ref_get_type_size(pas_heap_ref* heap_ref)
 
 size_t bmalloc_get_allocation_size(void* ptr)
 {
+    /* Because bmalloc is implemented using two heap configs, it's necessary to check both
+       when looking up the size of a given implementation. Non-large objects can be located
+       via pas_get_page_base. If neither heap's pas_get_page_base yields a result, we know
+       it's a large allocation, which is reachable through either heap, so arbitrarily
+       fall back to BMALLOC_HEAP_CONFIG. */
+    if (pas_get_page_base(ptr, BMALLOC_HEAP_CONFIG))
+        return pas_get_allocation_size(ptr, BMALLOC_HEAP_CONFIG);
+    if (pas_get_page_base(ptr, TAGGED_BMALLOC_HEAP_CONFIG))
+        return pas_get_allocation_size(ptr, TAGGED_BMALLOC_HEAP_CONFIG);
     return pas_get_allocation_size(ptr, BMALLOC_HEAP_CONFIG);
 }
 

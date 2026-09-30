@@ -32,6 +32,7 @@
 #include "pas_large_heap.h"
 #include "tagged_bmalloc_heap.h"
 #include "tagged_bmalloc_heap_config.h"
+#include "tagged_bmalloc_heap_utils.h"
 
 #if PAS_OS(DARWIN)
 #include <malloc/malloc.h>
@@ -414,6 +415,53 @@ void testBmallocLargeObjectDelegation(BmallocHeapVariant variant)
 }
 #endif // PAS_OS(DARWIN) && PAS_ENABLE_TESTING
 
+
+// Test that the bmalloc-size lookup works for objects allocated in any one of bmalloc's
+// individual heap configs.
+void testBmallocMallocSizeAcrossHeaps(BmallocHeapVariant variant)
+{
+    const bool tagged = variant == BmallocHeapVariant::Tagged;
+
+    auto try_allocate = [tagged](size_t size) -> void* {
+        if (tagged)
+            return tagged_bmalloc_try_allocate(size);
+        return bmalloc_try_allocate(size);
+    };
+    auto deallocate = [tagged](void* ptr) {
+        if (tagged)
+            tagged_bmalloc_deallocate(ptr);
+        else
+            bmalloc_deallocate(ptr);
+    };
+
+    // Spans the small/medium segregated and bitfit size classes plus the large heap, so each of the
+    // lookups the size query can bottom out in is covered.
+    const std::array<size_t, 6> sizes = {
+        8,
+        743,
+        4096,
+        PAS_SMALL_PAGE_DEFAULT_SIZE,
+        PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE,
+        PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE * 4,
+    };
+
+    for (auto size : sizes) {
+        void* mem = try_allocate(size);
+        CHECK(mem);
+        // Must be usable, i.e. at least what was asked for, and never zero.
+        CHECK_GREATER_EQUAL(bmalloc_get_allocation_size(mem), size);
+        deallocate(mem);
+    }
+
+    // The compact heap is a third pas_heap, in the untagged config.
+    for (auto size : sizes) {
+        void* mem = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size);
+        CHECK(mem);
+        CHECK_GREATER_EQUAL(bmalloc_get_allocation_size(mem), size);
+        bmalloc_deallocate(mem);
+    }
+}
+
 } // anonymous namespace
 
 void addBmallocTests()
@@ -427,6 +475,7 @@ void addBmallocTests()
         ADD_TEST(testBmallocDisableAllocationsAboveMTETaggingCeiling(variant));
         ADD_TEST(testBmallocSmallIndexOverlap(variant));
         ADD_TEST(testBmallocOwnsObject(variant));
+        ADD_TEST(testBmallocMallocSizeAcrossHeaps(variant));
 #if PAS_OS(DARWIN) && PAS_ENABLE_TESTING
         ADD_TEST(testBmallocLargeObjectDelegation(variant));
 #endif
