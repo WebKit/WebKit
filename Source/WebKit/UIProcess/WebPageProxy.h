@@ -2009,8 +2009,11 @@ public:
     void drawToPDF(const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #if PLATFORM(IOS_FAMILY)
     size_t computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&);
-    std::optional<IPC::AsyncReplyID> drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
-    std::optional<IPC::AsyncReplyID> drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    // With DrawSynchronously::Yes, the completion handler may be called before returning, in which case no reply ID is returned.
+    enum class DrawSynchronously : bool { No, Yes };
+    std::optional<IPC::AsyncReplyID> drawToImage(WebCore::FrameIdentifier, const PrintInfo&, DrawSynchronously, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
+    std::optional<IPC::AsyncReplyID> drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t pageCount, DrawSynchronously, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    template<typename M> std::optional<WebCore::FloatSize> drawRootFrameToSnapshotSynchronously(WebCore::FrameIdentifier, M&&);
 #endif
 #elif PLATFORM(GTK)
     void drawPagesForPrinting(WebFrameProxy&, const PrintInfo&, CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, WebCore::ResourceError&&)>&&);
@@ -3742,7 +3745,8 @@ private:
     void updateRemoteFrameAccessibilityInheritedState(WebCore::FrameIdentifier, const WebCore::InheritedFrameState&);
 #endif
     void reportMixedContentViolation(WebCore::FrameIdentifier, bool blocked, const URL& target);
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&);
+    // Returns the process drawing each subframe, for the GPU process to wait for.
+    HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier> drawSubframesToSnapshot(WebCore::FrameIdentifier rootFrameID, RemoteSnapshotIdentifier);
 
     void didCacheBackForwardItem(WebCore::BackForwardItemIdentifier, CompletionHandler<void(bool)>&&);
     void didEvictBackForwardItem(WebCore::BackForwardItemIdentifier);

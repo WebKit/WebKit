@@ -43,33 +43,77 @@ Ref<RemoteSnapshot> RemoteSnapshot::create()
 
 RemoteSnapshot::RemoteSnapshot() = default;
 
-RemoteSnapshot::~RemoteSnapshot() = default;
-
-bool RemoteSnapshot::addFrameReference(FrameIdentifier frameIdentifier)
+RemoteSnapshot::~RemoteSnapshot()
 {
-    Locker locker(m_lock);
-    m_referencedFrames++;
-    auto result = m_frameDisplayLists.add(frameIdentifier, std::nullopt);
-    if (result.isNewEntry)
-        return true;
-    // It is ok to setFrame win the race. It is not ok to have two addFrameReferences.
-    return !result.iterator->value;
+    // Make sure whoever is waiting for this snapshot hears back.
+    abandon();
 }
 
 bool RemoteSnapshot::setFrame(FrameIdentifier frameIdentifier, Ref<const DisplayList::DisplayList>&& displayList, SerialFunctionDispatcher& releaseDispatcher)
 {
-    Locker locker(m_lock);
-    m_completedFrames++;
-    auto iterator = m_frameDisplayLists.find(frameIdentifier);
-    if (iterator == m_frameDisplayLists.end()) {
-        m_frameDisplayLists.add(frameIdentifier, DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher });
-        return true;
+    Function<void()> completionHandler;
+    {
+        Locker locker(m_lock);
+        if (!m_frameDisplayLists.add(frameIdentifier, std::optional { DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher } }).isNewEntry)
+            return false;
+        m_pendingFrames.remove(frameIdentifier);
+        completionHandler = takeCompletionHandlerIfComplete();
     }
-    // It is ok to addFrameReference to win the race. It's not ok to have two setFrames.
-    if (iterator->value)
-        return false;
-    iterator->value = DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher };
+    if (completionHandler)
+        completionHandler();
     return true;
+}
+
+void RemoteSnapshot::whenComplete(FrameIdentifier rootFrameIdentifier, HashMap<FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, Function<void()>&& completionHandler)
+{
+    {
+        Locker locker(m_lock);
+        ASSERT(!m_completionHandler);
+        m_completionHandler = WTF::move(completionHandler);
+        if (!m_frameDisplayLists.contains(rootFrameIdentifier))
+            m_pendingFrames.add(rootFrameIdentifier, std::nullopt);
+        for (auto& [frameIdentifier, processIdentifier] : subframeProcesses) {
+            if (!m_frameDisplayLists.contains(frameIdentifier))
+                m_pendingFrames.add(frameIdentifier, processIdentifier);
+        }
+        completionHandler = takeCompletionHandlerIfComplete();
+    }
+    if (completionHandler)
+        completionHandler();
+}
+
+void RemoteSnapshot::webProcessDidClose(WebCore::ProcessIdentifier processIdentifier)
+{
+    Function<void()> completionHandler;
+    {
+        Locker locker(m_lock);
+        // These frames will never be drawn, so leave them blank.
+        m_pendingFrames.removeIf([&](auto& entry) {
+            return entry.value == processIdentifier;
+        });
+        completionHandler = takeCompletionHandlerIfComplete();
+    }
+    if (completionHandler)
+        completionHandler();
+}
+
+void RemoteSnapshot::abandon()
+{
+    Function<void()> completionHandler;
+    {
+        Locker locker(m_lock);
+        m_pendingFrames.clear();
+        completionHandler = std::exchange(m_completionHandler, nullptr);
+    }
+    if (completionHandler)
+        completionHandler();
+}
+
+Function<void()> RemoteSnapshot::takeCompletionHandlerIfComplete()
+{
+    if (!m_pendingFrames.isEmpty())
+        return nullptr;
+    return std::exchange(m_completionHandler, nullptr);
 }
 
 bool RemoteSnapshot::applyFrame(FrameIdentifier frameIdentifier, GraphicsContext& context) const
@@ -85,12 +129,6 @@ bool RemoteSnapshot::applyFrame(FrameIdentifier frameIdentifier, GraphicsContext
         return false;
     context.drawDisplayList(*displayList);
     return true;
-}
-
-bool RemoteSnapshot::isComplete() const
-{
-    Locker locker(m_lock);
-    return m_completedFrames == m_referencedFrames; // Duplicates are handled when the values are updated.
 }
 
 RemoteSnapshot::DisplayListAndReleaseDispatcher::DisplayListAndReleaseDispatcher(Ref<const WebCore::DisplayList::DisplayList>&& displayList, SerialFunctionDispatcher& dispatcher)
@@ -109,7 +147,6 @@ RemoteSnapshot::DisplayListAndReleaseDispatcher::~DisplayListAndReleaseDispatche
 
 std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& size, FrameIdentifier rootIdentifier)
 {
-    ASSERT(isComplete());
     RefPtr buffer = ImageBuffer::create(size, RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
@@ -126,7 +163,6 @@ std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& s
 
 std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatSize& size, FrameIdentifier rootFrameIdentifier)
 {
-    ASSERT(isComplete());
     Ref image = WebImage::create(size, ImageOption::Shareable, ColorSpace::SRGB());
     auto* context = image->context();
     if (!context)

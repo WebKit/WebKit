@@ -29,6 +29,8 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestPDFDocument.h"
@@ -315,5 +317,98 @@ TEST(WKWebView, PrintToPDFUsingPrintInteractionControllerAndPrintPageRenderer)
     EXPECT_NE(printInteractionControllerPDFDataLength, 0UL);
     EXPECT_NE([printPageRendererPDFData length], 0UL);
 }
+
+#if HAVE(PDFKIT)
+
+static RetainPtr<NSData> printToPDFUsingPrintPageRenderer(UIPrintPageRenderer *printPageRenderer, CGRect pageRect)
+{
+    RetainPtr pdfData = adoptNS([[NSMutableData alloc] init]);
+    UIGraphicsBeginPDFContextToData(pdfData.get(), pageRect, nil);
+
+    NSInteger numberOfPages = [printPageRenderer numberOfPages];
+    for (NSInteger i = 0; i < numberOfPages; i++) {
+        UIGraphicsBeginPDFPage();
+        [printPageRenderer drawPageAtIndex:i inRect:UIGraphicsGetPDFContextBounds()];
+    }
+
+    UIGraphicsEndPDFContext();
+    return pdfData;
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedWebViewWithRemoteSnapshotting(const TestWebKitAPI::HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    TestWebKitAPI::setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    [configuration preferences].shouldPrintBackgrounds = YES;
+
+    auto [webView, navigationDelegate] = TestWebKitAPI::siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    [webView waitForNextPresentationUpdate];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+TEST(WKWebView, PrintToPDFWithCrossSiteIframeOnMainThread)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe src='https://b.com/subframe' style='display: block; border: 0; width: 100px; height: 100px'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0; background-color: #00ff00; print-color-adjust: exact'></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedWebViewWithRemoteSnapshotting(server);
+
+    CGRect pageRect = CGRectMake(0, 0, 100, 100);
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:pageRect];
+    [printPageRenderer setPrintableRect:pageRect];
+
+    // Drawing on the main thread blocks the UI process until the PDF is ready. Drawing the cross-site
+    // iframe must not require the UI process to handle other messages while it's blocked.
+    RetainPtr pdfData = printToPDFUsingPrintPageRenderer(printPageRenderer.get(), pageRect);
+
+    RetainPtr pdf = adoptNS([[TestPDFDocument alloc] initFromData:pdfData.get()]);
+    EXPECT_GE([pdf pageCount], 1);
+    EXPECT_TRUE(Util::compareColors([[pdf pageAtIndex:0] colorAtPoint:CGPointMake(50, 50)], [CocoaColor greenColor]));
+}
+
+TEST(WKWebView, PrintToPDFWithCrossSiteIframeSpanningMultiplePages)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe src='https://b.com/subframe' style='display: block; border: 0; width: 100px; height: 300px'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0; background-color: #00ff00; print-color-adjust: exact'></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedWebViewWithRemoteSnapshotting(server);
+
+    CGRect pageRect = CGRectMake(0, 0, 100, 100);
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:pageRect];
+    [printPageRenderer setPrintableRect:pageRect];
+
+    // Draw on a background thread, which doesn't block the UI process, so that this only tests
+    // an iframe that is painted once per page it spans.
+    __block RetainPtr<NSData> pdfData;
+    __block bool done = false;
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), ^{
+        pdfData = printToPDFUsingPrintPageRenderer(printPageRenderer.get(), pageRect);
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            done = true;
+        });
+    });
+    Util::run(&done);
+
+    RetainPtr pdf = adoptNS([[TestPDFDocument alloc] initFromData:pdfData.get()]);
+    EXPECT_GE([pdf pageCount], 3);
+    for (NSInteger i = 0; i < std::min<NSInteger>([pdf pageCount], 3); ++i)
+        EXPECT_TRUE(Util::compareColors([[pdf pageAtIndex:i] colorAtPoint:CGPointMake(50, 50)], [CocoaColor greenColor])) << "page " << i;
+}
+
+#endif // HAVE(PDFKIT)
 
 #endif

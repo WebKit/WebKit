@@ -185,9 +185,9 @@ public:
 #if PLATFORM(COCOA)
     void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
 
-    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    std::optional<IPC::AsyncReplyID> sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
-    void sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    std::optional<IPC::AsyncReplyID> sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void releaseSnapshot(RemoteSnapshotIdentifier);
 
 private:

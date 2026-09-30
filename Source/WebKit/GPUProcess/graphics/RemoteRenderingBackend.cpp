@@ -270,11 +270,13 @@ void RemoteRenderingBackend::sinkSnapshotRecorderIntoSnapshotFrame(RemoteSnapsho
 {
     assertIsCurrent(workQueue());
     RefPtr recorder = m_remoteSnapshotRecorders.take(identifier).get();
-    MESSAGE_CHECK(recorder, "Recorder sunk into snapshot before being cached");
+    // Recorder sunk into snapshot before being cached.
+    MESSAGE_CHECK_COMPLETION_BASE(recorder, m_streamConnection, completionHandler(false));
     Ref snapshot = recorder->snapshot();
     // FIXME: using global identifiers (frameIdentifier) is not secure. Do not follow this pattern.
     bool success = snapshot->setFrame(frameIdentifier, recorder->takeDisplayList(), workQueue());
-    MESSAGE_CHECK(success, "Frame already present");
+    // Frame already present.
+    MESSAGE_CHECK_COMPLETION_BASE(success, m_streamConnection, completionHandler(false));
 
     // Note:
     // Success completion handlers are used to ensure that getOrCreateSnapshot does not vivify already released snapshot identifier into a leaked object. Caller is expected to wait

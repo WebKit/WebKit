@@ -7279,7 +7279,10 @@ void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& r
     // Painting remote frames supported only for snapshot purposes.
     if (!m_remoteSnapshotState || m_remoteSnapshotState->recorder.ptr() != &context)
         return;
-    sendWithAsyncReply(Messages::WebPageProxy::DrawFrameToSnapshot(frameID, rect, m_remoteSnapshotState->identifier), Ref { m_remoteSnapshotState->callback }->chain());
+    // The UI process has the remote frame's process draw it into the snapshot (see WebPage::drawFrameToSnapshot), so only
+    // leave a placeholder for it here. Each time the frame is painted (e.g. once per printed page it spans) refers to that
+    // same drawing, clipped to wherever it's painted.
+    UNUSED_PARAM(rect);
     m_remoteSnapshotState->recorder->drawSnapshotFrame(frameID);
 #else
     UNUSED_PARAM(frameID);
@@ -7325,51 +7328,39 @@ void WebPage::drawToSnapshot(const std::optional<FloatRect>& rect, bool allowTra
 #endif
 }
 
-void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT(m_page->settings().siteIsolationEnabled());
 
-    // FIXME: Error handling, so that the GPUP doesn't wait for something not coming.
-
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
-    if (!webFrame) {
-        ASSERT_NOT_REACHED();
-        completionHandler(false);
-        return;
-    }
+    RefPtr coreLocalFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    RefPtr frameView = coreLocalFrame ? coreLocalFrame->view() : nullptr;
 
-    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
-    if (!coreLocalFrame) {
-        ASSERT_NOT_REACHED();
-        completionHandler(false);
-        return;
-    }
-
-    RefPtr frameView = coreLocalFrame->view();
-    if (!frameView) {
-        completionHandler(false);
-        return;
-    }
+    // Draw the frame's visible area in its view's coordinates. That's where the placeholders in its parent's
+    // snapshot expect it, however many times and wherever the parent paints the frame.
+    auto visibleRect = frameView ? frameView->visibleContentRect() : IntRect { };
 
     Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
     m_remoteSnapshotState = {
         .identifier = snapshotIdentifier,
-        .recorder = remoteRenderingBackend->createSnapshotRecorder(rect, snapshotIdentifier),
+        .recorder = remoteRenderingBackend->createSnapshotRecorder(IntRect { { }, visibleRect.size() }, snapshotIdentifier),
         .callback = MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler))
     };
 
-    LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
-    LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
+    if (frameView) {
+        GraphicsContext& context = m_remoteSnapshotState->recorder.get();
+        context.translate(-visibleRect.x(), -visibleRect.y());
+        frameView->paintContentsForSnapshot(context, visibleRect, nullptr, LocalFrameView::IncludeSelection, LocalFrameView::DocumentCoordinates);
+    } else
+        Ref { m_remoteSnapshotState->callback }->failed();
 
-    frameView->paintContentsForSnapshot(m_remoteSnapshotState->recorder, rect, nullptr, shouldPaintSelection, coordinateSpace);
-
+    // Sink the recording even if nothing could be drawn, so that the GPU process doesn't wait for this frame. It's left blank.
     remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameID, Ref { m_remoteSnapshotState->callback }->chain());
 
     m_remoteSnapshotState = std::nullopt;
 #else
     UNUSED_PARAM(frameID);
-    UNUSED_PARAM(rect);
     UNUSED_PARAM(snapshotIdentifier);
     UNUSED_PARAM(completionHandler);
 #endif

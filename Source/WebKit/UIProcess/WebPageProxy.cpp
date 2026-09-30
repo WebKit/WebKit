@@ -16454,7 +16454,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFr
 
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID, imageSize](bool success) mutable {
+    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID, imageSize, subframeProcesses = drawSubframesToSnapshot(frameID, snapshotIdentifier)](bool success) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             callback({ });
@@ -16465,7 +16465,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFr
             callback({ });
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, imageSize, rootFrameIdentifier, WTF::move(callback));
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, imageSize, rootFrameIdentifier, WTF::move(subframeProcesses), WTF::move(callback));
     };
 
     if (m_isPerformingDOMPrintOperation)
@@ -16486,7 +16486,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
 
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID](std::optional<FloatSize> result) mutable {
+    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID, subframeProcesses = drawSubframesToSnapshot(frameID, snapshotIdentifier)](std::optional<FloatSize> result) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             callback(nullptr);
@@ -16497,7 +16497,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
             callback(nullptr);
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, toAPIDataSharedBufferCallback(WTF::move(callback)));
+        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(subframeProcesses), toAPIDataSharedBufferCallback(WTF::move(callback)));
     };
 
     if (m_isPerformingDOMPrintOperation)
@@ -16533,7 +16533,7 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier),
-        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID()](std::optional<IntSize> result) mutable {
+        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID(), subframeProcesses = drawSubframesToSnapshot(m_mainFrame->frameID(), snapshotIdentifier)](std::optional<IntSize> result) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             callback({ });
@@ -16544,7 +16544,7 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
             callback({ });
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(callback));
+        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(subframeProcesses), WTF::move(callback));
     });
 }
 
@@ -17096,7 +17096,7 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     sendWithAsyncReply(Messages::WebPage::TakeRemoteSnapshot(rect, bitmapSize, options, snapshotIdentifier),
-        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID()](std::optional<WebCore::IntSize> resolvedSize) mutable {
+        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID(), subframeProcesses = drawSubframesToSnapshot(m_mainFrame->frameID(), snapshotIdentifier)](std::optional<WebCore::IntSize> resolvedSize) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             callback(nullptr);
@@ -17107,7 +17107,7 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
             callback(nullptr);
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *resolvedSize, rootFrameIdentifier, [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *resolvedSize, rootFrameIdentifier, WTF::move(subframeProcesses), [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
             if (!handle) {
                 callback(nullptr);
                 return;
@@ -20174,9 +20174,25 @@ void WebPageProxy::reportMixedContentViolation(FrameIdentifier frameID, bool blo
     addConsoleMessage(frameID, MessageSource::Security, MessageLevel::Warning, message);
 }
 
-void WebPageProxy::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+HashMap<FrameIdentifier, WebCore::ProcessIdentifier> WebPageProxy::drawSubframesToSnapshot(FrameIdentifier rootFrameID, RemoteSnapshotIdentifier snapshotIdentifier)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier), WTF::move(completionHandler));
+    HashMap<FrameIdentifier, WebCore::ProcessIdentifier> subframeProcesses;
+    RefPtr rootFrame = WebFrameProxy::webFrame(rootFrameID);
+    if (!rootFrame)
+        return subframeProcesses;
+
+    for (RefPtr frame = rootFrame->traverseNext(rootFrame.get()); frame; frame = frame->traverseNext(rootFrame.get())) {
+        RefPtr parentFrame = frame->parentFrame();
+        Ref process = frame->process();
+        if (!parentFrame || &parentFrame->process() == process.ptr())
+            continue;
+        if (m_isPerformingDOMPrintOperation)
+            sendWithAsyncReplyToProcessContainingFrame(frame->frameID(), Messages::WebPage::DrawFrameToSnapshotDuringDOMPrintOperation(frame->frameID(), snapshotIdentifier), [](bool) { }, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        else
+            sendWithAsyncReplyToProcessContainingFrame(frame->frameID(), Messages::WebPage::DrawFrameToSnapshot(frame->frameID(), snapshotIdentifier), [](bool) { });
+        subframeProcesses.add(frame->frameID(), process->coreProcessIdentifier());
+    }
+    return subframeProcesses;
 }
 
 Vector<Ref<WebProcessProxy>> WebPageProxy::activeRemoteFrameProcesses() const

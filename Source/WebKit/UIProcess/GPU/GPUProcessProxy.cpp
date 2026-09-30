@@ -989,9 +989,9 @@ void GPUProcessProxy::unregisterMemoryAttributionID(const String& attributionID,
 #endif
 #endif
 
-void GPUProcessProxy::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const WebCore::FloatSize& size, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+std::optional<IPC::AsyncReplyID> GPUProcessProxy::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const WebCore::FloatSize& size, WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToBitmap(identifier, size, rootFrameIdentifier), WTF::move(completionHandler));
+    return sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToBitmap(identifier, size, rootFrameIdentifier, WTF::move(subframeProcesses)), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::releaseSnapshot(RemoteSnapshotIdentifier identifier)

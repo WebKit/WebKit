@@ -157,6 +157,14 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
 
     removeTransferredImageBuffersForProcess(connection.webProcessIdentifier());
 
+    Vector<Ref<RemoteSnapshot>> snapshots;
+    {
+        Locker locker(m_globalResourceLocker);
+        snapshots = copyToVector(m_snapshots.values());
+    }
+    for (Ref snapshot : snapshots)
+        snapshot->webProcessDidClose(connection.webProcessIdentifier());
+
     recomputeNowPlayingOwner();
 
     tryExitIfUnusedAndUnderMemoryPressure();
@@ -605,63 +613,82 @@ Ref<RemoteSnapshot> GPUProcess::getOrCreateSnapshot(RemoteSnapshotIdentifier sna
     return addResult.iterator->value;
 }
 
+RefPtr<RemoteSnapshot> GPUProcess::snapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    Locker locker(m_globalResourceLocker);
+    return m_snapshots.get(snapshotIdentifier);
+}
+
 #if PLATFORM(COCOA)
 
-void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FloatSize size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FloatSize size, FrameIdentifier rootFrameIdentifier, HashMap<FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    RefPtr<RemoteSnapshot> snapshot;
-    {
-        Locker locker(m_globalResourceLocker);
-        snapshot = m_snapshots.take(identifier);
-    }
-    if (!snapshot) {
-        // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-        completionHandler({ });
-        return;
-    }
-    if (!snapshot->isComplete()) {
-        // Currently the callbacks ensure the completeness.
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
-    }
-    auto result = snapshot->drawToPDF(size, rootFrameIdentifier);
-    if (!result) {
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
-    }
-    completionHandler(WTF::move(*result));
+    takeSnapshotWhenComplete(identifier, rootFrameIdentifier, WTF::move(subframeProcesses), [size, rootFrameIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
+        if (!snapshot) {
+            // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
+            completionHandler({ });
+            return;
+        }
+        auto result = snapshot->drawToPDF(size, rootFrameIdentifier);
+        if (!result) {
+            completionHandler({ });
+            return;
+        }
+        completionHandler(WTF::move(*result));
+    });
 }
 
 #endif
 
-void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const FloatSize& size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const FloatSize& size, FrameIdentifier rootFrameIdentifier, HashMap<FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
-    RefPtr<RemoteSnapshot> snapshot;
-    {
-        Locker locker(m_globalResourceLocker);
-        snapshot = m_snapshots.take(identifier);
-    }
+    takeSnapshotWhenComplete(identifier, rootFrameIdentifier, WTF::move(subframeProcesses), [size, rootFrameIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
+        if (!snapshot) {
+            // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
+            completionHandler({ });
+            return;
+        }
+        completionHandler(snapshot->drawToBitmap(size, rootFrameIdentifier));
+    });
+}
+
+void GPUProcess::takeSnapshotWhenComplete(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, HashMap<FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(RefPtr<RemoteSnapshot>&&)>&& completionHandler)
+{
+    RefPtr snapshot = this->snapshot(identifier);
     if (!snapshot) {
-        // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
-    if (!snapshot->isComplete()) {
-        // Currently the callbacks ensure the completeness.
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
-    }
-    completionHandler(snapshot->drawToBitmap(size, rootFrameIdentifier));
+
+    // Frames drawn by processes that are already gone will never arrive.
+    subframeProcesses.removeIf([&](auto& entry) {
+        return !m_webProcessConnections.contains(entry.value);
+    });
+
+    // FIXME: Stop waiting after a timeout, in case a process never draws its frame.
+    snapshot->whenComplete(rootFrameIdentifier, WTF::move(subframeProcesses), [identifier, completionHandler = WTF::move(completionHandler)]() mutable {
+        callOnMainRunLoop([identifier, completionHandler = WTF::move(completionHandler)]() mutable {
+            Ref gpuProcess = GPUProcess::singleton();
+            RefPtr<RemoteSnapshot> snapshot;
+            {
+                Locker locker(gpuProcess->m_globalResourceLocker);
+                snapshot = gpuProcess->m_snapshots.take(identifier);
+            }
+            completionHandler(WTF::move(snapshot));
+        });
+    });
 }
 
 void GPUProcess::releaseSnapshot(RemoteSnapshotIdentifier identifier)
 {
     // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-    Locker locker(m_globalResourceLocker);
-    m_snapshots.remove(identifier);
+    RefPtr<RemoteSnapshot> snapshot;
+    {
+        Locker locker(m_globalResourceLocker);
+        snapshot = m_snapshots.take(identifier);
+    }
+    if (snapshot)
+        snapshot->abandon();
 }
 
 #if ENABLE(MEDIA_STREAM)

@@ -38,6 +38,8 @@
 #import "DragInitiationResult.h"
 #import "DrawingAreaProxy.h"
 #import "EditingRange.h"
+#import "GPUProcessMessages.h"
+#import "GPUProcessProxy.h"
 #import "GlobalFindInPageState.h"
 #import "InteractionInformationAtPosition.h"
 #import "KeyEventInterpretationContext.h"
@@ -88,6 +90,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/Box.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
@@ -1080,7 +1083,21 @@ size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const P
     return pageCount;
 }
 
-std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+template<typename M>
+std::optional<FloatSize> WebPageProxy::drawRootFrameToSnapshotSynchronously(FrameIdentifier frameID, M&& message)
+{
+    // Blocking on the reply is safe because no process needs anything from the UI process to finish its part
+    // of the snapshot (see drawSubframesToSnapshot).
+    auto result = Box<std::optional<FloatSize>>::create(std::nullopt);
+    typename std::remove_cvref_t<M>::Reply replyHandler = [result](std::optional<FloatSize>&& reply) {
+        *result = WTF::move(reply);
+    };
+    if (auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, std::forward<M>(message), WTF::move(replyHandler)))
+        protect(processContainingFrame(frameID)->connection())->waitForAsyncReplyAndDispatchImmediately<std::remove_cvref_t<M>>(*replyID, Seconds::infinity());
+    return *result;
+}
+
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, DrawSynchronously drawSynchronously, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -1093,7 +1110,25 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
 
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    CompletionHandler<void(std::optional<FloatSize>&&)> snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, completionHandler = WTF::move(completionHandler), rootFrameIdentifier = frameID](std::optional<FloatSize> result) mutable {
+    auto subframeProcesses = drawSubframesToSnapshot(frameID, snapshotIdentifier);
+
+    if (drawSynchronously == DrawSynchronously::Yes) {
+        auto result = drawRootFrameToSnapshotSynchronously(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount));
+        if (!gpuProcess->hasConnection()) {
+            completionHandler({ });
+            return std::nullopt;
+        }
+        if (!result) {
+            gpuProcess->releaseSnapshot(snapshotIdentifier);
+            completionHandler({ });
+            return std::nullopt;
+        }
+        if (auto replyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, frameID, WTF::move(subframeProcesses), WTF::move(completionHandler)))
+            protect(gpuProcess->connection())->waitForAsyncReplyAndDispatchImmediately<Messages::GPUProcess::SinkCompletedSnapshotToPDF>(*replyID, Seconds::infinity());
+        return std::nullopt;
+    }
+
+    CompletionHandler<void(std::optional<FloatSize>&&)> snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, completionHandler = WTF::move(completionHandler), rootFrameIdentifier = frameID, subframeProcesses = WTF::move(subframeProcesses)](std::optional<FloatSize> result) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             completionHandler({ });
@@ -1104,13 +1139,13 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
             completionHandler({ });
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(completionHandler));
+        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(subframeProcesses), WTF::move(completionHandler));
     };
 
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount), WTF::move(snapshotCallback));
 }
 
-std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, DrawSynchronously drawSynchronously, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -1123,7 +1158,25 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
 
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    CompletionHandler<void(std::optional<FloatSize>&&)> snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, completionHandler = WTF::move(completionHandler), rootFrameIdentifier = frameID](std::optional<FloatSize> result) mutable {
+    auto subframeProcesses = drawSubframesToSnapshot(frameID, snapshotIdentifier);
+
+    if (drawSynchronously == DrawSynchronously::Yes) {
+        auto result = drawRootFrameToSnapshotSynchronously(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo));
+        if (!gpuProcess->hasConnection()) {
+            completionHandler({ });
+            return std::nullopt;
+        }
+        if (!result) {
+            gpuProcess->releaseSnapshot(snapshotIdentifier);
+            completionHandler({ });
+            return std::nullopt;
+        }
+        if (auto replyID = gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *result, frameID, WTF::move(subframeProcesses), WTF::move(completionHandler)))
+            protect(gpuProcess->connection())->waitForAsyncReplyAndDispatchImmediately<Messages::GPUProcess::SinkCompletedSnapshotToBitmap>(*replyID, Seconds::infinity());
+        return std::nullopt;
+    }
+
+    CompletionHandler<void(std::optional<FloatSize>&&)> snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, completionHandler = WTF::move(completionHandler), rootFrameIdentifier = frameID, subframeProcesses = WTF::move(subframeProcesses)](std::optional<FloatSize> result) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             completionHandler({ });
@@ -1134,7 +1187,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
             completionHandler({ });
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(completionHandler));
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(subframeProcesses), WTF::move(completionHandler));
     };
 
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo), WTF::move(snapshotCallback));

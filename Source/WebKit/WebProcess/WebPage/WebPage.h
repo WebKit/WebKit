@@ -1531,7 +1531,8 @@ public:
     void drawToSnapshot(const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground, RemoteSnapshotIdentifier, CompletionHandler<void(std::optional<WebCore::IntSize>)>&&);
 
     // Submessage for a frame delivered during web page snapshot draw.
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&);
+    void drawFrameToSnapshotDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler) { drawFrameToSnapshot(frameID, snapshotIdentifier, WTF::move(completionHandler)); }
 
     void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&, const WebCore::DocumentLoader*, WebCore::LocalFrame*);
     void removeResourceRequest(WebCore::ResourceLoaderIdentifier, WebCore::LocalFrame*);

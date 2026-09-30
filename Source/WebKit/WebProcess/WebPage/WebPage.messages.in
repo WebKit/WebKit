@@ -541,7 +541,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
     DrawToSnapshot(std::optional<WebCore::FloatRect> rect, bool allowTransparentBackground, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (std::optional<WebCore::IntSize> result)
-    DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success)
+    DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success)
+    DrawFrameToSnapshotDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 
     # Media
     SetMediaVolume(float volume)

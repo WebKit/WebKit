@@ -1301,7 +1301,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         RELEASE_LOG(Printing, "Beginning to generate print preview image. Page count = %zu", [formatterAttributes pageCount]);
 
         // Begin generating the image in expectation of a (eventual) request for the drawn data.
-        auto callbackID = protect(retainedSelf->_page)->drawToImage(*[formatterAttributes frameID], [formatterAttributes printInfo], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) mutable {
+        // When printing on the main thread, we're about to block until the image is ready, so draw synchronously.
+        auto drawSynchronously = isPrintingOnBackgroundThread ? WebKit::WebPageProxy::DrawSynchronously::No : WebKit::WebPageProxy::DrawSynchronously::Yes;
+        auto callbackID = protect(retainedSelf->_page)->drawToImage(*[formatterAttributes frameID], [formatterAttributes printInfo], drawSynchronously, [isPrintingOnBackgroundThread, printFormatter, retainedSelf](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) mutable {
             if (!isPrintingOnBackgroundThread)
                 retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
@@ -1337,7 +1339,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
     ensureOnMainRunLoop([formatterAttributes = retainPtr(formatterAttributes), isPrintingOnBackgroundThread, printFormatter = retainPtr(printFormatter), retainedSelf = retainPtr(self)] {
         // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
-        auto callbackID = protect(retainedSelf->_page)->drawToPDFiOS(*[formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
+        // When printing on the main thread, we're about to block until the PDF is ready, so draw synchronously.
+        auto drawSynchronously = isPrintingOnBackgroundThread ? WebKit::WebPageProxy::DrawSynchronously::No : WebKit::WebPageProxy::DrawSynchronously::Yes;
+        auto callbackID = protect(retainedSelf->_page)->drawToPDFiOS(*[formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], drawSynchronously, [isPrintingOnBackgroundThread, printFormatter, retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
             if (!isPrintingOnBackgroundThread)
                 retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
@@ -1415,7 +1419,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (!callbackID)
             return;
 
-        protect(protect(_page)->legacyMainFrameProcess().connection())->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(*callbackID, Seconds::infinity());
+        protect(protect(_page)->legacyMainFrameProcess().connection())->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToImage>(*callbackID, Seconds::infinity());
         return;
     }
 

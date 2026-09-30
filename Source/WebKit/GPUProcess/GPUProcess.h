@@ -269,10 +269,13 @@ private:
     void updateProcessName();
 #endif
 #if PLATFORM(COCOA)
-    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FloatSize, WebCore::FrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FloatSize, WebCore::FrameIdentifier, HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier>&&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
-    void sinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    void sinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier, HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier>&&, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void releaseSnapshot(RemoteSnapshotIdentifier);
+    // Calls completionHandler on the main thread with the snapshot, which is no longer retrievable by its identifier, once it's complete,
+    // or with null if it doesn't exist or is released first.
+    void takeSnapshotWhenComplete(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier>&& subframeProcesses, CompletionHandler<void(RefPtr<RemoteSnapshot>&&)>&&);
 
 #if USE(OS_STATE)
     RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
