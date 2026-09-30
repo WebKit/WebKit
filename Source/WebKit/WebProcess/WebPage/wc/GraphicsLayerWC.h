@@ -89,7 +89,7 @@ public:
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     void setContentsToPlatformLayerHost(WebCore::LayerHostingContextIdentifier) override;
     void setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
-    bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
+    bool canDirectlyCompositeNativeImage() const override { return false; }
     bool usesContentsLayer() const override;
     void setShowDebugBorder(bool) override;
     void setDebugBorder(const WebCore::Color&, float width) override;

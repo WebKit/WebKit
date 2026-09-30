@@ -20,7 +20,6 @@
 #include "TextureMapperTile.h"
 
 #include "BitmapTexture.h"
-#include "Image.h"
 #include "NativeImage.h"
 #include "TextureMapper.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -48,7 +47,7 @@ void TextureMapperTile::setTexture(BitmapTexture* texture)
     m_texture = texture;
 }
 
-void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
+void TextureMapperTile::updateContents(NativeImage& image, const IntRect& dirtyRect)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -63,13 +62,12 @@ void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
     targetRect.move(-m_rect.x(), -m_rect.y());
     if (!m_texture) {
         OptionSet<BitmapTexture::Flags> flags;
-        if (!image->currentFrameKnownToBeOpaque())
+        if (image.hasAlpha())
             flags.add(BitmapTexture::Flags::SupportsAlpha);
         m_texture = BitmapTexture::create(targetRect.size(), flags);
     }
 
-    auto nativeImage = image->currentNativeImage(ConcreteObjectSize::fixed(image->size()));
-    m_texture->updateContents(nativeImage.get(), targetRect, sourceOffset);
+    m_texture->updateContents(&image, targetRect, sourceOffset);
 }
 
 void TextureMapperTile::updateContents(GraphicsLayer* sourceLayer, const IntRect& dirtyRect, float scale)

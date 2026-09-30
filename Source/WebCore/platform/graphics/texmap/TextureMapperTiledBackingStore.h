@@ -21,7 +21,7 @@
 #define TextureMapperTiledBackingStore_h
 
 #include "FloatRect.h"
-#include "Image.h"
+#include "NativeImage.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperTile.h"
 #include <wtf/RefCounted.h>
@@ -41,10 +41,10 @@ public:
     void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
 
     void updateContentsScale(float);
-    void updateContents(TextureMapper&, Image*, const FloatSize&, const IntRect&);
+    void updateContents(TextureMapper&, NativeImage&, const FloatSize&, const IntRect&);
     void updateContents(TextureMapper&, GraphicsLayer*, const FloatSize&, const IntRect&);
 
-    void setContentsToImage(Image* image) { m_image = image; }
+    void setContentsToNativeImage(NativeImage* image) { m_image = image; }
 
 private:
     TextureMapperTiledBackingStore() = default;
@@ -61,7 +61,7 @@ private:
 
     Vector<TextureMapperTile> m_tiles;
     FloatSize m_size;
-    RefPtr<Image> m_image;
+    RefPtr<NativeImage> m_image;
     float m_contentsScale { 1 };
     bool m_isScaleDirty { false };
 };

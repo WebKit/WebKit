@@ -28,6 +28,7 @@ namespace WebCore {
 
 class BitmapTexture;
 class GraphicsLayer;
+class NativeImage;
 class TextureMapper;
 
 class TextureMapperTile {
@@ -38,7 +39,7 @@ public:
     void setTexture(BitmapTexture*);
     inline void setRect(const FloatRect& rect) { m_rect = rect; }
 
-    void updateContents(Image*, const IntRect&);
+    void updateContents(NativeImage&, const IntRect&);
     void updateContents(GraphicsLayer*, const IntRect&, float scale = 1);
     WEBCORE_EXPORT virtual void paint(TextureMapper&, const TransformationMatrix&, float, bool allEdgesExposed);
     virtual ~TextureMapperTile();

@@ -72,12 +72,12 @@ void TextureMapperSparseBackingStore::drawRepaintCounter(TextureMapper& textureM
         textureMapper.drawNumber(repaintCount, borderColor, iterator.value->rect().location(), adjustedTransform);
 }
 
-void TextureMapperSparseBackingStore::updateContents(const TileIndex& index, Image& image, const IntRect& dirtyRect)
+void TextureMapperSparseBackingStore::updateContents(const TileIndex& index, NativeImage& image, const IntRect& dirtyRect)
 {
     auto addResult = m_tiles.ensure(index, [&]() {
         return makeUnique<TextureMapperTile>(dirtyRect);
     });
-    addResult.iterator->value->updateContents(&image, dirtyRect);
+    addResult.iterator->value->updateContents(image, dirtyRect);
 }
 
 void TextureMapperSparseBackingStore::removeTile(const TileIndex& index)

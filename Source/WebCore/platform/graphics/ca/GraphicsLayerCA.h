@@ -167,7 +167,7 @@ public:
     WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;
     WEBCORE_EXPORT void transformRelatedPropertyDidChange() override;
-    WEBCORE_EXPORT void setContentsToImage(Image*) override;
+    WEBCORE_EXPORT void setContentsToNativeImage(NativeImage*) override;
     WEBCORE_EXPORT void setContentsToImageBuffer(ImageBuffer*) override;
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT PlatformLayer* contentsLayerForMedia() const override;

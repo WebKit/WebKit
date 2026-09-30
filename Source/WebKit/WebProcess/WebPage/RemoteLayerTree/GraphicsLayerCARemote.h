@@ -69,7 +69,7 @@ private:
     Ref<WebCore::PlatformCALayer> createPlatformCALayerHost(WebCore::LayerHostingContextIdentifier, WebCore::PlatformCALayerClient*) override;
 
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
-    bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
+    bool canDirectlyCompositeNativeImage() const override { return false; }
 
     bool shouldDirectlyCompositeImageBuffer(WebCore::ImageBuffer*) const override;
     void setLayerContentsToImageBuffer(WebCore::PlatformCALayer&, WebCore::ImageBuffer*) final;

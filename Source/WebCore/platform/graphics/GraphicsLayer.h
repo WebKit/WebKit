@@ -79,6 +79,7 @@ class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
 class Image;
 class ImageBuffer;
+class NativeImage;
 class MediaPlayer;
 class Model;
 class Settings;
@@ -387,10 +388,10 @@ public:
     virtual Vector<AcceleratedAnimationForTesting> acceleratedAnimationsForTesting() const { return { }; }
 
     // Layer contents
-    virtual void setContentsToImage(Image*) { }
-    virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
+    virtual void setContentsToNativeImage(NativeImage*) { }
+    virtual bool canDirectlyCompositeNativeImage() const { return true; }
 
-    // FIXME: Merge this with setContentsToImage once we can efficiently convert an
+    // FIXME: Merge this with setContentsToNativeImage once we can efficiently convert an
     // ImageBuffer to NativeImage without GPUP readback.
     virtual void setContentsToImageBuffer(ImageBuffer*) { }
     virtual bool shouldDirectlyCompositeImageBuffer(ImageBuffer*) const { return false; }

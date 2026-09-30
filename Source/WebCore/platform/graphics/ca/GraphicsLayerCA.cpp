@@ -1351,17 +1351,13 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
     noteLayerPropertyChanged(ContentsColorLayerChanged);
 }
 
-void GraphicsLayerCA::setContentsToImage(Image* image)
+void GraphicsLayerCA::setContentsToNativeImage(NativeImage* image)
 {
     if (image) {
-        auto newImage = image->currentNativeImage(ConcreteObjectSize::fixed(image->size()));
-        if (!newImage)
+        if (m_pendingContentsImage == image)
             return;
 
-        if (m_pendingContentsImage == newImage)
-            return;
-
-        m_pendingContentsImage = WTF::move(newImage);
+        m_pendingContentsImage = image;
         m_contentsLayerPurpose = ContentsLayerPurpose::Image;
         if (!m_contentsLayer)
             noteSublayersChanged();

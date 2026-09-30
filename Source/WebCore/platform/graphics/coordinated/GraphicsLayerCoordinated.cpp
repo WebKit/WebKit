@@ -465,17 +465,13 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCoordinated::crea
     return delegate;
 }
 
-void GraphicsLayerCoordinated::setContentsToImage(Image* image)
+void GraphicsLayerCoordinated::setContentsToNativeImage(NativeImage* image)
 {
     if (image) {
-        auto nativeImage = image->currentNativeImage(ConcreteObjectSize::fixed(image->size()));
-        if (!nativeImage)
+        if (m_contentsImage && m_contentsImage->uniqueID() == image->uniqueID())
             return;
 
-        if (m_contentsImage && m_contentsImage->uniqueID() == nativeImage->uniqueID())
-            return;
-
-        m_contentsImage = WTF::move(nativeImage);
+        m_contentsImage = image;
     } else {
         if (!m_contentsImage)
             return;

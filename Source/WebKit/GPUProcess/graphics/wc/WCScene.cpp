@@ -34,8 +34,8 @@
 #include "WCRemoteFrameHostLayerManager.h"
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
-#include <WebCore/BitmapImage.h>
 #include <WebCore/BitmapTexturePool.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperGLHeaders.h>
@@ -164,8 +164,8 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
                     else {
                         auto bitmap = tileUpdate.backingStore.bitmap();
                         if (bitmap) {
-                            auto image = bitmap->createImage();
-                            backingStore.updateContents(tileUpdate.index, *image, tileUpdate.dirtyRect);
+                            if (RefPtr image = WebCore::NativeImage::create(bitmap->createPlatformImage(WebCore::BackingStoreCopy::DontCopyBackingStore)))
+                                backingStore.updateContents(tileUpdate.index, *image, tileUpdate.dirtyRect);
                         }
                     }
                 }

@@ -59,6 +59,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageObserver.h"
 #include "InspectorInstrumentation.h"
 #include "LayerAncestorClippingStack.h"
 #include "LocalFrame.h"
@@ -3508,6 +3509,20 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(PaintedContents
     didUpdateContentsRect = true;
 }
 
+// Only bitmap images are directly composited, so the layer shows the image's current frame at its natural size.
+static RefPtr<NativeImage> nativeImageForDirectlyCompositedImage(Image& image)
+{
+    // Showing the image in a layer uses its decoded data, as drawing it would.
+    if (RefPtr observer = image.imageObserver())
+        observer->didDraw(image);
+
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image);
+    if (!bitmapImage)
+        return nullptr;
+
+    return bitmapImage->currentNativeImage();
+}
+
 void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContentsInfo& contentsInfo, bool& didUpdateContentsRect)
 {
     if (!GraphicsLayer::supportsContentsTiling())
@@ -3517,13 +3532,13 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
         return;
 
     if (!contentsInfo.isSimpleContainer()) {
-        m_graphicsLayer->setContentsToImage(nullptr);
+        m_graphicsLayer->setContentsToNativeImage(nullptr);
         return;
     }
 
     auto& backgroundLayers = renderer().style().backgroundLayers();
     if (!Style::hasImageInAnyLayer(backgroundLayers)) {
-        m_graphicsLayer->setContentsToImage(nullptr);
+        m_graphicsLayer->setContentsToNativeImage(nullptr);
         return;
     }
 
@@ -3536,7 +3551,8 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
     m_graphicsLayer->setContentsTilePhase(geometry.phase);
     m_graphicsLayer->setContentsRect(geometry.destinationRect);
     m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(geometry.destinationRect));
-    m_graphicsLayer->setContentsToImage(backgroundLayer.image().tryStyleImage()->cachedImage()->image());
+    if (RefPtr nativeImage = nativeImageForDirectlyCompositedImage(Ref { *backgroundLayer.image().tryStyleImage()->cachedImage()->image() }))
+        m_graphicsLayer->setContentsToNativeImage(nativeImage.get());
 
     didUpdateContentsRect = true;
 }
@@ -3905,7 +3921,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (image->currentFrameOrientation() != ImageOrientation::Orientation::None)
             return false;
 
-        return m_graphicsLayer->shouldDirectlyCompositeImage(image);
+        return m_graphicsLayer->canDirectlyCompositeNativeImage();
     }
 
     return false;
@@ -4043,8 +4059,8 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
         if (!cachedImage->isLoaded())
             return;
 
-
-        m_graphicsLayer->setContentsToImage(image);
+        if (RefPtr nativeImage = nativeImageForDirectlyCompositedImage(*image))
+            m_graphicsLayer->setContentsToNativeImage(nativeImage.get());
 
         // Image animation is "lazy", in that it automatically stops unless someone is drawing
         // the image. So we have to kick the animation each time; this has the downside that the
