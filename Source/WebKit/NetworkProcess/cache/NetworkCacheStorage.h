@@ -101,6 +101,7 @@ public:
     // This may call completion handler synchronously on failure.
     using RetrieveCompletionHandler = CompletionHandler<bool(Record&&, const Timings&)>;
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
+    bool NODELETE mayContain(const Key&) const;
 
     using MappedBodyHandler = Function<void (const Data& mappedBody)>;
     void store(const Record&, MappedBodyHandler&&, bool storeBlobInMemoryCache = false);
@@ -184,7 +185,6 @@ private:
     ConcurrentWorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
-    bool NODELETE mayContain(const Key&) const;
     bool NODELETE mayContainBlob(const Key&) const;
 
     void addToRecordFilter(const Key&);

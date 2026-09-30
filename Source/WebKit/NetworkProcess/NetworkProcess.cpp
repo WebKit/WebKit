@@ -2114,7 +2114,17 @@ static void deleteCacheRecordsForOrigin(NetworkCache::Cache& cache, const Client
     // A first-party origin has no partition of its own, so its traversal sees every origin's
     // records; only whole-disk-cache removal is allowed to take them all.
     bool shouldClearAllEntriesInPartition = origin.clientOrigin == origin.topOrigin && recordsToDelete == CacheRecordsToDelete::AllTypes;
-    auto recordHandler = [cache = Ref { cache }, clearTasksHandler = WTF::move(clearTasksHandler), shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTF::move(cacheKeysToDelete)](auto* traversalRecord) mutable {
+    // A dictionary is indexed when it is registered, before its record has been written, so the
+    // traversal below cannot see one that was registered moments ago. Take those now, and remove
+    // only what was registered by this point, since the same key is reused when a dictionary is
+    // registered again.
+    auto deletionTime = WallTime::now();
+    for (auto& key : cache.compressionDictionaryKeys(cachePartition)) {
+        if (shouldClearAllEntriesInPartition || SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { key.identifier() }) == origin.clientOrigin)
+            cacheKeysToDelete.append(key);
+    }
+
+    auto recordHandler = [cache = Ref { cache }, clearTasksHandler = WTF::move(clearTasksHandler), shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, deletionTime, cacheKeysToDelete = WTF::move(cacheKeysToDelete)](auto* traversalRecord) mutable {
         if (traversalRecord) {
             ASSERT_UNUSED(cachePartition, equalIgnoringNullity(traversalRecord->record.key.partition(), cachePartition));
             if (shouldClearAllEntriesInPartition) {
@@ -2128,7 +2138,7 @@ static void deleteCacheRecordsForOrigin(NetworkCache::Cache& cache, const Client
             return;
         }
 
-        cache->remove(cacheKeysToDelete, [clearTasksHandler] { });
+        cache->remove(cacheKeysToDelete, [clearTasksHandler] { }, deletionTime);
     };
 
     if (recordsToDelete == CacheRecordsToDelete::CompressionDictionariesOnly)
