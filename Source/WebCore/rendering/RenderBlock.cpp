@@ -98,6 +98,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1359,7 +1363,15 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // 5. paint outline.
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().usedVisibility() == Visibility::Visible)
+    auto phaseIsRelatedToOwnOutline = paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline;
+    auto shouldPaintDebugIndicatorsForAXCustomColorMode = false;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    shouldPaintDebugIndicatorsForAXCustomColorMode = AXCustomColorModeController::shouldPaintDebugIndicators(document());
+#endif
+    auto hasOutlineOrAXCustomColorIndicators = hasOutline() || shouldPaintDebugIndicatorsForAXCustomColorMode;
+    if (phaseIsRelatedToOwnOutline
+        && hasOutlineOrAXCustomColorIndicators
+        && style().usedVisibility() == Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(paintOffset, borderBoxSize()));
 
     // 7. paint caret.

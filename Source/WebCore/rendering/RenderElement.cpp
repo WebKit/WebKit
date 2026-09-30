@@ -123,6 +123,10 @@
 #include "ContentChangeObserver.h"
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderElement);
@@ -2273,10 +2277,12 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     if (paintInfo.context().paintingDisabled())
         return;
 
-    if (!hasOutline())
-        return;
+    if (hasOutline())
+        OutlinePainter { paintInfo }.paintOutline(*this, paintRect);
 
-    OutlinePainter { paintInfo }.paintOutline(*this, paintRect);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AXCustomColorModeController::paintDebugIndicatorsIfNecessary(paintInfo.context(), *this, paintRect);
+#endif
 }
 
 void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
