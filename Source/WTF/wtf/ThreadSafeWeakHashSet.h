@@ -196,7 +196,7 @@ public:
     }
 
     template<typename Functor>
-    void forEach(const Functor& callback) const
+    void forEach(NOESCAPE const Functor& callback) const
     {
         for (auto& item : values())
             callback(item.get());

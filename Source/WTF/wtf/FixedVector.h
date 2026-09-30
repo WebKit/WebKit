@@ -125,22 +125,22 @@ public:
     }
 
     template<std::invocable<size_t> Generator>
-    static FixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
+    static FixedVector createWithSizeFromGenerator(size_t size, NOESCAPE const Generator& generator)
     {
-        return Self { size ? Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
+        return Self { size ? Storage::createWithSizeFromGenerator(size, generator).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
     }
 
     template<std::invocable<size_t> FailableGenerator>
-    static FixedVector createWithSizeFromFailableGenerator(size_t size, NOESCAPE FailableGenerator&& generator)
+    static FixedVector createWithSizeFromFailableGenerator(size_t size, NOESCAPE const FailableGenerator& generator)
     {
-        return Self { size ? Storage::createWithSizeFromFailableGenerator(size, std::forward<FailableGenerator>(generator)) : std::unique_ptr<Storage> { nullptr } };
+        return Self { size ? Storage::createWithSizeFromFailableGenerator(size, generator) : std::unique_ptr<Storage> { nullptr } };
     }
 
     template<typename SizedRange, typename Mapper>
-    static FixedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static FixedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         auto size = std::size(range);
-        return Self { size ? Storage::map(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper)).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
+        return Self { size ? Storage::map(size, std::forward<SizedRange>(range), mapper).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
     }
 
     size_t size() const { return m_storage ? m_storage->size() : 0; }
@@ -293,10 +293,10 @@ inline void swap(FixedVector<T, Malloc>& a, FixedVector<T, Malloc>& b)
     a.swap(b);
 }
 
-template<typename T, typename Mapper, typename Malloc, typename ReturnType = typename std::invoke_result<Mapper, const T&>::type>
-FixedVector<ReturnType, Malloc> map(const FixedVector<T, Malloc>& source, Mapper&& mapper)
+template<typename T, typename Mapper, typename Malloc, typename ReturnType = typename std::invoke_result<const Mapper&, const T&>::type>
+FixedVector<ReturnType, Malloc> map(const FixedVector<T, Malloc>& source, NOESCAPE const Mapper& mapper)
 {
-    return FixedVector<ReturnType, Malloc>::map(source, std::forward<Mapper>(mapper));
+    return FixedVector<ReturnType, Malloc>::map(source, mapper);
 }
 
 } // namespace WTF

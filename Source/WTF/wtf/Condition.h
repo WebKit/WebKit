@@ -80,13 +80,13 @@ public:
     // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
     // May return early due to timeout.
     template<typename LockType, typename Functor>
-    bool waitUntil(LockType& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate)
+    bool waitUntil(LockType& lock, const TimeWithDynamicClockType& timeout, NOESCAPE const Functor& predicate)
     {
         return waitUntilUnchecked(lock, timeout, predicate);
     }
 
     template<typename Functor>
-    bool waitUntil(Lock& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    bool waitUntil(Lock& lock, const TimeWithDynamicClockType& timeout, NOESCAPE const Functor& predicate) WTF_REQUIRES_LOCK(lock)
     {
         return waitUntilUnchecked(lock, timeout, predicate);
     }
@@ -94,13 +94,13 @@ public:
     // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
     // May return early due to timeout.
     template<typename LockType, typename Functor>
-    bool waitFor(LockType& lock, Seconds relativeTimeout, const Functor& predicate)
+    bool waitFor(LockType& lock, Seconds relativeTimeout, NOESCAPE const Functor& predicate)
     {
         return waitUntil(lock, MonotonicTime::timePointFromNow(relativeTimeout), predicate);
     }
 
     template<typename Functor>
-    bool waitFor(Lock& lock, Seconds relativeTimeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    bool waitFor(Lock& lock, Seconds relativeTimeout, NOESCAPE const Functor& predicate) WTF_REQUIRES_LOCK(lock)
     {
         return waitUntil(lock, MonotonicTime::timePointFromNow(relativeTimeout), predicate);
     }
@@ -128,14 +128,14 @@ public:
     }
 
     template<typename LockType, typename Functor>
-    void wait(LockType& lock, const Functor& predicate)
+    void wait(LockType& lock, NOESCAPE const Functor& predicate)
     {
         while (!predicate())
             wait(lock);
     }
 
     template<typename Functor>
-    void wait(Lock& lock, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    void wait(Lock& lock, NOESCAPE const Functor& predicate) WTF_REQUIRES_LOCK(lock)
     {
         while (!predicate())
             wait(lock);
@@ -207,7 +207,7 @@ private:
     }
 
     template<typename LockType, typename Functor>
-    bool waitUntilUnchecked(LockType& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    bool waitUntilUnchecked(LockType& lock, const TimeWithDynamicClockType& timeout, NOESCAPE const Functor& predicate) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
         while (!predicate()) {
             if (!waitUntil(lock, timeout))

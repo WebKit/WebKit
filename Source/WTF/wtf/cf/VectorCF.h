@@ -91,11 +91,11 @@ template<> inline Vector<String> makeVector<String>(CFArrayRef array) { return m
 // This overload of createCFArray takes a function to map each vector element to an CF object.
 // The map function has the same interface as the makeCFArrayElement function above, but can be any
 // function including a lambda, a function-like object, or Function<>.
-template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&&, MapFunctionType&&);
+template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&&, NOESCAPE const MapFunctionType&);
 
 // This overload of makeVector takes a function to map each CF object to a vector element.
 // Currently, the map function needs to return a std::optional<T>.
-template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>::returnType::value_type> makeVector(CFArrayRef, MapLambdaType&&);
+template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>::returnType::value_type> makeVector(CFArrayRef, NOESCAPE const MapLambdaType&);
 
 // Implementation details of the function templates above.
 
@@ -117,7 +117,7 @@ template<typename CollectionType> RetainPtr<CFMutableArrayRef> createCFArray(Col
     return array;
 }
 
-template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&& collection, MapFunctionType&& function)
+template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&& collection, NOESCAPE const MapFunctionType& function)
 {
     auto array = adoptCF(CFArrayCreateMutable(nullptr, Checked<CFIndex>(std::size(collection)), &kCFTypeArrayCallBacks));
     for (auto&& element : collection)
@@ -135,7 +135,7 @@ template<typename VectorElementType, typename CFType> Vector<VectorElementType> 
     });
 }
 
-template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>::returnType::value_type> makeVector(CFArrayRef array, MapLambdaType&& lambda)
+template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>::returnType::value_type> makeVector(CFArrayRef array, NOESCAPE const MapLambdaType& lambda)
 {
     using ElementType = typename LambdaTypeTraits<MapLambdaType>::returnType::value_type;
     using CFType = typename LambdaTypeTraits<MapLambdaType>::firstParamType;
@@ -145,7 +145,7 @@ template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>
 
     return Vector<ElementType>(CFArrayGetCount(array), [&](size_t index) -> std::optional<ElementType> {
         if (RetainPtr element = dynamic_cf_cast<CFType>(CFArrayGetValueAtIndex(array, index)))
-            return std::invoke(std::forward<MapLambdaType>(lambda), element.get());
+            return std::invoke(lambda, element.get());
         return std::nullopt;
     });
 }

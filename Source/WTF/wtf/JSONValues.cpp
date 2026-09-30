@@ -468,19 +468,19 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
 
 } // anonymous namespace
 
-template<typename Visitor> constexpr decltype(auto) Value::visitDerived(Visitor&& visitor)
+template<typename Visitor> constexpr decltype(auto) Value::visitDerived(NOESCAPE const Visitor& visitor)
 {
     if (std::holds_alternative<ObjectTypeTag>(m_value))
-        return std::invoke(std::forward<Visitor>(visitor), static_cast<Object&>(*this));
+        return std::invoke(visitor, static_cast<Object&>(*this));
     if (std::holds_alternative<ArrayTypeTag>(m_value))
-        return std::invoke(std::forward<Visitor>(visitor), static_cast<Array&>(*this));
-    return std::invoke(std::forward<Visitor>(visitor), static_cast<Value&>(*this));
+        return std::invoke(visitor, static_cast<Array&>(*this));
+    return std::invoke(visitor, static_cast<Value&>(*this));
 }
 
-template<typename Visitor> constexpr decltype(auto) Value::visitDerived(Visitor&& visitor) const
+template<typename Visitor> constexpr decltype(auto) Value::visitDerived(NOESCAPE const Visitor& visitor) const
 {
     return const_cast<Value&>(*this).visitDerived([&](auto& derived) {
-        return std::invoke(std::forward<Visitor>(visitor), std::as_const(derived));
+        return std::invoke(visitor, std::as_const(derived));
     });
 }
 

@@ -143,7 +143,7 @@ public:
     bool isEmpty() { return begin() == end(); }
     
     template<typename Func>
-    void forEach(const Func& func)
+    void forEach(NOESCAPE const Func& func)
     {
         for (iterator iter = begin(); iter != end();) {
             iterator next = iter;

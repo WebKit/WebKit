@@ -424,7 +424,7 @@ static int findMonth(std::span<const Latin1Character> monthStr)
 }
 
 template<typename T, typename ValidateLongLambda>
-static bool safeStringToInteger(std::span<const Latin1Character>& string, int base, const ValidateLongLambda& validateResult, T* result)
+static bool safeStringToInteger(std::span<const Latin1Character>& string, int base, NOESCAPE const ValidateLongLambda& validateResult, T* result)
 {
     auto charSpan = byteCast<char>(string);
     // strtol() skips leading whitespace ('\t', '\n', '\v', '\f', '\r', ' ') while std::from_chars() does not.

@@ -66,10 +66,10 @@ namespace WTF {
         Deque<std::unique_ptr<DataType>> takeAllMessages();
         std::unique_ptr<DataType> tryGetMessageIgnoringKilled();
         template<typename Predicate>
-        std::unique_ptr<DataType> waitForMessageFilteredWithTimeout(MessageQueueWaitResult&, Predicate&&, Seconds relativeTimeout);
+        std::unique_ptr<DataType> waitForMessageFilteredWithTimeout(MessageQueueWaitResult&, NOESCAPE const Predicate&, Seconds relativeTimeout);
 
         template<typename Predicate>
-        void removeIf(Predicate&&);
+        void removeIf(NOESCAPE const Predicate&);
 
         void kill();
         bool killed() const;
@@ -136,7 +136,7 @@ namespace WTF {
 
     template<typename DataType>
     template<typename Predicate>
-    inline auto MessageQueue<DataType>::waitForMessageFilteredWithTimeout(MessageQueueWaitResult& result, Predicate&& predicate, Seconds relativeTimeout) -> std::unique_ptr<DataType>
+    inline auto MessageQueue<DataType>::waitForMessageFilteredWithTimeout(MessageQueueWaitResult& result, NOESCAPE const Predicate& predicate, Seconds relativeTimeout) -> std::unique_ptr<DataType>
     {
         Locker lock { m_lock };
         bool timedOut = false;
@@ -206,7 +206,7 @@ namespace WTF {
 
     template<typename DataType>
     template<typename Predicate>
-    inline void MessageQueue<DataType>::removeIf(Predicate&& predicate)
+    inline void MessageQueue<DataType>::removeIf(NOESCAPE const Predicate& predicate)
     {
         Locker lock { m_lock };
         m_queue.removeAllMatching([&predicate](const std::unique_ptr<DataType>& ptr) -> bool {

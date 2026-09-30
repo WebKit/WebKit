@@ -232,7 +232,7 @@ public:
     }
     
     template<typename Func>
-    AddResult ensure(const KeyType& key, Func&& func) LIFETIME_BOUND
+    AddResult ensure(const KeyType& key, NOESCAPE const Func& func) LIFETIME_BOUND
     {
         StringPrintStream string;
         string.print(m_id, "->ensure(");
@@ -256,7 +256,7 @@ public:
     }
     
     template<typename Func>
-    AddResult ensure(KeyType&& key, Func&& func) LIFETIME_BOUND
+    AddResult ensure(KeyType&& key, NOESCAPE const Func& func) LIFETIME_BOUND
     {
         StringPrintStream string;
         string.print(m_id, "->ensure(");

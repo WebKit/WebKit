@@ -171,7 +171,7 @@ template<CompactVariantAlternative... Ts> struct CompactVariantOperations {
         return encodedPayloadFromArguments<T>(std::forward<Args>(arguments)...) | encodedIndex(alternativeIndexV<T, StdVariant>);
     }
 
-    template<typename... F> static decltype(auto) payloadForData(Storage data, F&&... f)
+    template<typename... F> static decltype(auto) payloadForData(Storage data, NOESCAPE F&&... f)
     {
         auto visitor = makeVisitor(std::forward<F>(f)...);
         return typeForIndex<StdVariant>(decodedIndex(data), [&]<typename T>() {
@@ -179,7 +179,7 @@ template<CompactVariantAlternative... Ts> struct CompactVariantOperations {
         });
     }
 
-    template<typename... F> static decltype(auto) constPayloadForData(Storage data, F&&... f)
+    template<typename... F> static decltype(auto) constPayloadForData(Storage data, NOESCAPE F&&... f)
     {
         auto visitor = makeVisitor(std::forward<F>(f)...);
         return typeForIndex<StdVariant>(decodedIndex(data), [&]<typename T>() {

@@ -299,10 +299,10 @@ public:
     // If the lambda returns an IterationStatus, we use it. The lambda can also return
     // void, in which case, we'll iterate every set bit.
     template<typename Func>
-    constexpr ALWAYS_INLINE void forEachSetBit(const Func&) const;
+    constexpr ALWAYS_INLINE void forEachSetBit(NOESCAPE const Func&) const;
 
     template<typename Func>
-    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, const Func&) const;
+    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, NOESCAPE const Func&) const;
     
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
     
@@ -537,7 +537,7 @@ private:
 };
 
 template<typename Func>
-ALWAYS_INLINE constexpr void BitVector::forEachSetBit(const Func& func) const
+ALWAYS_INLINE constexpr void BitVector::forEachSetBit(NOESCAPE const Func& func) const
 {
     const uintptr_t copiedInline = cleanseInlineBits(m_bitsOrPointer);
     auto words = isInline() ? singleElementSpan(copiedInline) : outOfLineBits()->wordsSpan();
@@ -545,7 +545,7 @@ ALWAYS_INLINE constexpr void BitVector::forEachSetBit(const Func& func) const
 }
 
 template<typename Func>
-ALWAYS_INLINE constexpr void BitVector::forEachSetBit(size_t startIndex, const Func& func) const
+ALWAYS_INLINE constexpr void BitVector::forEachSetBit(size_t startIndex, NOESCAPE const Func& func) const
 {
     const uintptr_t copiedInline = cleanseInlineBits(m_bitsOrPointer);
     auto words = isInline() ? singleElementSpan(copiedInline) : outOfLineBits()->wordsSpan();

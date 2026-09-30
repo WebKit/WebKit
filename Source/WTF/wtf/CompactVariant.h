@@ -157,7 +157,7 @@ public:
         return index() == I;
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return Operations::constPayloadForData(m_data, std::forward<F>(f)...);
     }

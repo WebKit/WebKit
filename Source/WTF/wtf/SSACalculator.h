@@ -224,7 +224,7 @@ public:
     // find it later. Note that it is generally always sound to not prune any Phis (that is, to
     // always have the functor insert a Phi and never return a null Value).
     template<typename Functor>
-    void computePhis(const Functor& functor)
+    void computePhis(NOESCAPE const Functor& functor)
     {
         ensureDominanceFrontiers();
 

@@ -93,7 +93,7 @@ public:
     }
 
     template<typename Func>
-    void forEachSetBit(const Func& func) const
+    void forEachSetBit(NOESCAPE const Func& func) const
     {
         for (const Element& element : m_elements) {
             unsigned base = element.index * elementBits;

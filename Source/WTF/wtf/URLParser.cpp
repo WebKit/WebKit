@@ -2591,7 +2591,7 @@ std::optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator
 
 // FIXME: This function should take span<const char8_t>, since it requires UTF-8.
 template<typename SyntaxViolationHandler>
-URLParser::Latin1Buffer URLParser::percentDecodeImpl(std::span<const Latin1Character> input, SyntaxViolationHandler&& syntaxViolationHandler)
+URLParser::Latin1Buffer URLParser::percentDecodeImpl(std::span<const Latin1Character> input, NOESCAPE const SyntaxViolationHandler& syntaxViolationHandler)
 {
     Latin1Buffer output;
     output.reserveInitialCapacity(input.size());

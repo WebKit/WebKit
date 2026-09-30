@@ -118,7 +118,7 @@ public:
     }
     
     template<typename Functor>
-    void removeIf(const Functor& functor)
+    void removeIf(NOESCAPE const Functor& functor)
     {
         Locker locker(m_lock);
         m_map.removeIf([&functor] (typename HashMap<T, CounterType>::KeyValuePairType& pair) {

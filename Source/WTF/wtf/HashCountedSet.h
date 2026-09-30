@@ -100,7 +100,7 @@ public:
     bool removeAll(const ValueType&);
 
     template<typename Functor>
-    bool removeAllIf(const Functor&);
+    bool removeAllIf(NOESCAPE const Functor&);
 
     // Clears the whole set.
     void clear();
@@ -293,7 +293,7 @@ inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAll(iterator it)
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAllIf(const auto& functor)
+inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAllIf(NOESCAPE const auto& functor)
 {
     return m_impl.removeIf(functor);
 }

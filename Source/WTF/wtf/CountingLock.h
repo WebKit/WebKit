@@ -182,7 +182,7 @@ public:
     //             });
     //     }
     template<typename Func>
-    auto doOptimizedRead(const Func& func)
+    auto doOptimizedRead(NOESCAPE const Func& func)
     {
         Count count = tryOptimisticRead();
         if (count) {
@@ -240,7 +240,7 @@ public:
     }
     
     template<typename OptimisticFunc, typename Func>
-    auto doOptimizedFencelessRead(const OptimisticFunc& optimisticFunc, const Func& func)
+    auto doOptimizedFencelessRead(NOESCAPE const OptimisticFunc& optimisticFunc, NOESCAPE const Func& func)
     {
         auto count = tryOptimisticFencelessRead();
         if (count.value) {

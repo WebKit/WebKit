@@ -95,14 +95,14 @@ public:
     void remove(iterator&);
     void remove(const_iterator&);
     
-    template<std::predicate<T&> Predicate> size_t removeAllMatching(const Predicate&);
-    template<std::predicate<T&> Predicate> bool removeFirstMatching(const Predicate&);
+    template<std::predicate<T&> Predicate> size_t removeAllMatching(NOESCAPE const Predicate&);
+    template<std::predicate<T&> Predicate> bool removeFirstMatching(NOESCAPE const Predicate&);
 
     // This is a priority enqueue. The callback is given a value, and if it returns true, then this
     // will put the appended value before that value. It will keep bubbling until the callback returns
     // false or the value ends up at the head of the queue.
     template<typename U, std::predicate<T&> Predicate>
-    void appendAndBubble(U&&, const Predicate&);
+    void appendAndBubble(U&&, NOESCAPE const Predicate&);
     
     // Remove and return the first element for which the callback returns true. Returns a null version of
     // T if it the callback always returns false.
@@ -580,7 +580,7 @@ inline void Deque<T, inlineCapacity>::remove(size_t position)
 
 template<typename T, size_t inlineCapacity>
 template<std::predicate<T&> Predicate>
-inline size_t Deque<T, inlineCapacity>::removeAllMatching(const Predicate& predicate)
+inline size_t Deque<T, inlineCapacity>::removeAllMatching(NOESCAPE const Predicate& predicate)
 {
     auto oldSize = size();
     for (size_t i = 0; i < oldSize; ++i) {
@@ -593,7 +593,7 @@ inline size_t Deque<T, inlineCapacity>::removeAllMatching(const Predicate& predi
 
 template<typename T, size_t inlineCapacity>
 template<std::predicate<T&> Predicate>
-inline bool Deque<T, inlineCapacity>::removeFirstMatching(const Predicate& predicate)
+inline bool Deque<T, inlineCapacity>::removeFirstMatching(NOESCAPE const Predicate& predicate)
 {
     for (auto iter = begin(); iter != end(); ++iter) {
         if (predicate(*iter)) {
@@ -606,7 +606,7 @@ inline bool Deque<T, inlineCapacity>::removeFirstMatching(const Predicate& predi
 
 template<typename T, size_t inlineCapacity>
 template<typename U, std::predicate<T&> Predicate>
-inline void Deque<T, inlineCapacity>::appendAndBubble(U&& value, const Predicate& predicate)
+inline void Deque<T, inlineCapacity>::appendAndBubble(U&& value, NOESCAPE const Predicate& predicate)
 {
     append(std::forward<U>(value));
     iterator begin = this->begin();

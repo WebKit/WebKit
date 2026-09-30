@@ -156,8 +156,8 @@ protected:
     {
     }
 
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
     size_t memoryCostImpl() const;
     void writeJSONImpl(StringBuilder& output) const;
 

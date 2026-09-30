@@ -2478,7 +2478,7 @@ template<typename... Types> struct VariantSize<Variant<Types...>> : std::integra
 template<typename T> struct VariantSize<const T> : VariantSize<T> { };
 template<typename T> constexpr size_t VariantSizeV = VariantSize<T>::value;
 
-template<typename Visitor, typename... Variants> constexpr auto visit(Visitor&& v, Variants&&... values)
+template<typename Visitor, typename... Variants> constexpr auto visit(NOESCAPE Visitor&& v, Variants&&... values)
     -> decltype(mpark::visit<Visitor, Variants...>(std::forward<Visitor>(v), std::forward<Variants>(values)...))
 {
     return mpark::visit<Visitor, Variants...>(std::forward<Visitor>(v), std::forward<Variants>(values)...);

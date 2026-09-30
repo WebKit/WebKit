@@ -71,24 +71,24 @@ public:
     }
 
     template<std::invocable<size_t> Generator>
-    static Ref<RefCountedFixedVectorBase> createWithSizeFromGenerator(unsigned size, NOESCAPE Generator&& generator)
+    static Ref<RefCountedFixedVectorBase> createWithSizeFromGenerator(unsigned size, NOESCAPE const Generator& generator)
     {
-        return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(size, std::forward<Generator>(generator)));
+        return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(size, generator));
     }
 
     template<std::invocable<size_t> FailableGenerator>
-    static RefPtr<RefCountedFixedVectorBase> createWithSizeFromFailableGenerator(unsigned size, NOESCAPE FailableGenerator&& generator)
+    static RefPtr<RefCountedFixedVectorBase> createWithSizeFromFailableGenerator(unsigned size, NOESCAPE const FailableGenerator& generator)
     {
-        auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(typename Base::Failable { }, size, std::forward<FailableGenerator>(generator)));
+        Ref result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(typename Base::Failable { }, size, generator));
         if (result->size() != size)
             return nullptr;
         return result;
     }
 
     template<typename SizedRange, typename Mapper>
-    static Ref<RefCountedFixedVectorBase> map(unsigned size, SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static Ref<RefCountedFixedVectorBase> map(unsigned size, SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper)));
+        return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(size, std::forward<SizedRange>(range), mapper));
     }
 
     Ref<RefCountedFixedVectorBase> clone() const
@@ -114,20 +114,20 @@ private:
     }
 
     template<std::invocable<size_t> Generator>
-    RefCountedFixedVectorBase(unsigned size, NOESCAPE Generator&& generator)
-        : Base(size, std::forward<Generator>(generator))
+    RefCountedFixedVectorBase(unsigned size, NOESCAPE const Generator& generator)
+        : Base(size, generator)
     {
     }
 
     template<std::invocable<size_t> FailableGenerator>
-    RefCountedFixedVectorBase(typename Base::Failable failable, unsigned size, NOESCAPE FailableGenerator&& generator)
-        : Base(failable, size, std::forward<FailableGenerator>(generator))
+    RefCountedFixedVectorBase(typename Base::Failable failable, unsigned size, NOESCAPE const FailableGenerator& generator)
+        : Base(failable, size, generator)
     {
     }
 
     template<typename SizedRange, typename Mapper>
-    RefCountedFixedVectorBase(unsigned size, SizedRange&& range, NOESCAPE Mapper&& mapper)
-        : Base(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper))
+    RefCountedFixedVectorBase(unsigned size, SizedRange&& range, NOESCAPE const Mapper& mapper)
+        : Base(size, std::forward<SizedRange>(range), mapper)
     {
     }
 };

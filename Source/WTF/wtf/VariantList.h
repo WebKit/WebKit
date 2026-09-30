@@ -93,7 +93,7 @@ public:
     auto begin() const LIFETIME_BOUND { return const_iterator(spanToSize()); }
     auto end() const LIFETIME_BOUND { return const_iterator(spanFromSizeToSize()); }
 
-    template<typename...F> void forEach(F&&...) const;
+    template<typename...F> void forEach(NOESCAPE F&&...) const;
 
 private:
     friend VariantListConstIterator<V, inlineCapacity>;
@@ -312,7 +312,7 @@ template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>:
     arg.forEach([&](const auto& element) { appendImpl(element); });
 }
 
-template<typename V, size_t inlineCapacity> template<typename...F> void VariantList<V, inlineCapacity>::forEach(F&&... f) const
+template<typename V, size_t inlineCapacity> template<typename...F> void VariantList<V, inlineCapacity>::forEach(NOESCAPE F&&... f) const
 {
     auto visitor = makeVisitor(std::forward<F>(f)...);
 

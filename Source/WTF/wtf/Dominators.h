@@ -154,7 +154,7 @@ public:
     }
     
     template<typename Functor>
-    void forAllStrictDominatorsOf(typename Graph::Node to, const Functor& functor) const
+    void forAllStrictDominatorsOf(typename Graph::Node to, NOESCAPE const Functor& functor) const
     {
         for (typename Graph::Node block = m_data[to].idomParent; block; block = m_data[block].idomParent)
             functor(block);
@@ -164,14 +164,14 @@ public:
     // until it gets to the root. Some clients of this function, like B3::moveConstants(), rely on this
     // order.
     template<typename Functor>
-    void forAllDominatorsOf(typename Graph::Node to, const Functor& functor) const
+    void forAllDominatorsOf(typename Graph::Node to, NOESCAPE const Functor& functor) const
     {
         for (typename Graph::Node block = to; block; block = m_data[block].idomParent)
             functor(block);
     }
     
     template<typename Functor>
-    void forAllBlocksStrictlyDominatedBy(typename Graph::Node from, const Functor& functor) const
+    void forAllBlocksStrictlyDominatedBy(typename Graph::Node from, NOESCAPE const Functor& functor) const
     {
         Vector<typename Graph::Node, 16> worklist;
         worklist.appendVector(m_data[from].idomKids);
@@ -183,7 +183,7 @@ public:
     }
     
     template<typename Functor>
-    void forAllBlocksDominatedBy(typename Graph::Node from, const Functor& functor) const
+    void forAllBlocksDominatedBy(typename Graph::Node from, NOESCAPE const Functor& functor) const
     {
         Vector<typename Graph::Node, 16> worklist;
         worklist.append(from);
@@ -240,7 +240,7 @@ public:
     
     template<typename Functor>
     void forAllBlocksInDominanceFrontierOf(
-        typename Graph::Node from, const Functor& functor) const
+        typename Graph::Node from, NOESCAPE const Functor& functor) const
     {
         typename Graph::Set set;
         forAllBlocksInDominanceFrontierOfImpl(
@@ -263,7 +263,7 @@ public:
     }
     
     template<typename Functor>
-    void forAllBlocksInIteratedDominanceFrontierOf(const List& from, const Functor& functor)
+    void forAllBlocksInIteratedDominanceFrontierOf(const List& from, NOESCAPE const Functor& functor)
     {
         forAllBlocksInPrunedIteratedDominanceFrontierOf(
             from,
@@ -278,7 +278,7 @@ public:
     // Useful for computing pruned SSA form.
     template<typename Functor>
     void forAllBlocksInPrunedIteratedDominanceFrontierOf(
-        const List& from, const Functor& functor)
+        const List& from, NOESCAPE const Functor& functor)
     {
         typename Graph::Set set;
         forAllBlocksInIteratedDominanceFrontierOfImpl(
@@ -869,7 +869,7 @@ private:
     
     template<typename Functor>
     void forAllBlocksInDominanceFrontierOfImpl(
-        typename Graph::Node from, const Functor& functor) const
+        typename Graph::Node from, NOESCAPE const Functor& functor) const
     {
         // Paraphrasing from http://en.wikipedia.org/wiki/Dominator_(graph_theory):
         //     "The dominance frontier of a block 'from' is the set of all blocks 'to' such that
@@ -892,7 +892,7 @@ private:
     
     template<typename Functor>
     void forAllBlocksInIteratedDominanceFrontierOfImpl(
-        const List& from, const Functor& functor) const
+        const List& from, NOESCAPE const Functor& functor) const
     {
         List worklist = from;
         while (!worklist.isEmpty()) {

@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <span>
+#include <wtf/Compiler.h>
 
 namespace WTF {
 
@@ -52,7 +53,7 @@ namespace WTF {
 // are unsorted it's usually because of a few out-of-place elements.
 
 template<typename T, typename LessThan>
-void bubbleSort(std::span<T> data, const LessThan& lessThan)
+void bubbleSort(std::span<T> data, NOESCAPE const LessThan& lessThan)
 {
     for (;;) {
         bool changed = false;

@@ -104,7 +104,7 @@ public:
         }
 
         template<typename Func>
-        void forEachSetBit(const Func& func) const
+        void forEachSetBit(NOESCAPE const Func& func) const
         {
             if (m_storage == Storage::Sparse) {
                 m_sparse.forEachSetBit(func);
@@ -376,7 +376,7 @@ public:
         return Iterable(*this, { }, &sparseTail(block->index()), Storage::Sparse);
     }
 
-    void forEachLiveAtHead(typename CFG::Node block, const Invocable<void(const Thing&)> auto& func)
+    void forEachLiveAtHead(typename CFG::Node block, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         if (m_storage == Storage::Dense) {
             forEachInDense(denseHeadSlice(block->index()), func);
@@ -385,7 +385,7 @@ public:
         forEachInSparse(sparseHead(block->index()), func);
     }
 
-    void forEachLiveAtTail(typename CFG::Node block, const Invocable<void(const Thing&)> auto& func)
+    void forEachLiveAtTail(typename CFG::Node block, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         if (m_storage == Storage::Dense) {
             forEachInDense(denseTailSlice(block->index()), func);
@@ -394,7 +394,7 @@ public:
         forEachInSparse(sparseTail(block->index()), func);
     }
 
-    void forEachLiveAtHeadNotLiveAtTail(typename CFG::Node headBlock, typename CFG::Node tailBlock, const Invocable<void(const Thing&)> auto& func)
+    void forEachLiveAtHeadNotLiveAtTail(typename CFG::Node headBlock, typename CFG::Node tailBlock, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         if (m_storage == Storage::Dense) {
             forEachInDenseDifference(denseHeadSlice(headBlock->index()), denseTailSlice(tailBlock->index()), func);
@@ -403,7 +403,7 @@ public:
         forEachInSparseDifference(sparseHead(headBlock->index()), sparseTail(tailBlock->index()), func);
     }
 
-    void forEachLiveAtTailNotLiveAtHead(typename CFG::Node tailBlock, typename CFG::Node headBlock, const Invocable<void(const Thing&)> auto& func)
+    void forEachLiveAtTailNotLiveAtHead(typename CFG::Node tailBlock, typename CFG::Node headBlock, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         if (m_storage == Storage::Dense) {
             forEachInDenseDifference(denseTailSlice(tailBlock->index()), denseHeadSlice(headBlock->index()), func);
@@ -687,14 +687,14 @@ private:
     friend class Iterable;
     friend class LiveAtHead;
 
-    void forEachInDense(std::span<const uint64_t> set, const Invocable<void(const Thing&)> auto& func)
+    void forEachInDense(std::span<const uint64_t> set, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         WTF::forEachSetBit(set, [&] (size_t index) {
             func(this->indexToValue(static_cast<unsigned>(index)));
         });
     }
 
-    void forEachInSparse(const SparseBitVector<>& set, const Invocable<void(const Thing&)> auto& func)
+    void forEachInSparse(const SparseBitVector<>& set, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         set.forEachSetBit(
             [&](auto index) {
@@ -702,7 +702,7 @@ private:
             });
     }
 
-    void forEachInDenseDifference(std::span<const uint64_t> a, std::span<const uint64_t> b, const Invocable<void(const Thing&)> auto& func)
+    void forEachInDenseDifference(std::span<const uint64_t> a, std::span<const uint64_t> b, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         for (size_t wordIndex = 0; wordIndex < m_wordsPerSet; ++wordIndex) {
             uint64_t word = a[wordIndex] & ~b[wordIndex];
@@ -714,7 +714,7 @@ private:
         }
     }
 
-    void forEachInSparseDifference(const SparseBitVector<>& a, const SparseBitVector<>& b, const Invocable<void(const Thing&)> auto& func)
+    void forEachInSparseDifference(const SparseBitVector<>& a, const SparseBitVector<>& b, NOESCAPE const Invocable<void(const Thing&)> auto& func)
     {
         a.forEachSetBit(
             [&](auto index) {

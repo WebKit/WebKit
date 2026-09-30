@@ -629,14 +629,14 @@ constexpr bool rangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
 }
 
 template<typename VectorType, typename RandomFunc>
-constexpr void shuffleVector(VectorType& vector, size_t size, const RandomFunc& randomFunc)
+constexpr void shuffleVector(VectorType& vector, size_t size, NOESCAPE const RandomFunc& randomFunc)
 {
     for (size_t i = 0; i + 1 < size; ++i)
         std::swap(vector[i], vector[i + randomFunc(size - i)]);
 }
 
 template<typename VectorType, typename RandomFunc>
-constexpr void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
+constexpr void shuffleVector(VectorType& vector, NOESCAPE const RandomFunc& randomFunc)
 {
     shuffleVector(vector, vector.size(), randomFunc);
 }

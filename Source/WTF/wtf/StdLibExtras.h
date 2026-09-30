@@ -237,7 +237,7 @@ enum BinarySearchMode {
 };
 
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey, BinarySearchMode mode>
-inline ArrayElementType* binarySearchImpl(ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+inline ArrayElementType* binarySearchImpl(ArrayType& array, size_t size, KeyType key, NOESCAPE const ExtractKey& extractKey = ExtractKey())
 {
     size_t offset = 0;
     while (size > 1) {
@@ -583,7 +583,7 @@ template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE constexpr
 
 #endif
 
-template<class V, class... F> requires (HasSwitchOn<V>) ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(v.switchOn(std::forward<F>(f)...))
+template<class V, class... F> requires (HasSwitchOn<V>) ALWAYS_INLINE auto switchOn(V&& v, NOESCAPE F&&... f) -> decltype(v.switchOn(std::forward<F>(f)...))
 {
     return v.switchOn(std::forward<F>(f)...);
 }
@@ -662,11 +662,11 @@ template<size_t I, typename V> constexpr bool holdsAlternative(const V& v)
     {                                                                                \
         return name.index();                                                         \
     }                                                                                \
-    template<typename... F> decltype(auto) switchOn(F&&... f) const                  \
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const         \
     {                                                                                \
         return WTF::switchOn(name, std::forward<F>(f)...);                           \
     }                                                                                \
-    template<typename... F> decltype(auto) switchOn(F&&... f)                        \
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f)               \
     {                                                                                \
         return WTF::switchOn(name, std::forward<F>(f)...);                           \
     }                                                                                \
@@ -761,7 +761,7 @@ template<typename T> constexpr bool IsStdInPlaceIndexV = IsStdInPlaceIndex<T>::v
 //       },
 //   );
 
-template<class F, class Tuple> ALWAYS_INLINE constexpr decltype(auto) visitTupleElementAtIndex(F&& f, size_t index, Tuple&& tuple)
+template<class F, class Tuple> ALWAYS_INLINE constexpr decltype(auto) visitTupleElementAtIndex(NOESCAPE F&& f, size_t index, Tuple&& tuple)
 {
     return visitAtIndex<0, std::tuple_size_v<std::remove_cvref_t<Tuple>>>(
         index,
@@ -1363,7 +1363,7 @@ template<class T> concept TupleLike = !std::is_reference_v<T>
 // This should be something we can remove if P2165 (https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2165r3.pdf)
 // is adopted and implemented.
 template<class F, class T, size_t ...I>
-constexpr decltype(auto) apply_impl(F&& functor, T&& tupleLike, std::index_sequence<I...>)
+constexpr decltype(auto) apply_impl(NOESCAPE F&& functor, T&& tupleLike, std::index_sequence<I...>)
 {
     using std::get;
     return std::invoke(std::forward<F>(functor), get<I>(std::forward<T>(tupleLike))...);
@@ -1427,7 +1427,7 @@ template<typename Head, typename... Tail> auto tuple_zip(Head&& head, Tail&& ...
 }
 
 template<typename WordType, std::size_t Extent, typename Func>
-ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bits, const Func& func)
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bits, NOESCAPE const Func& func)
 {
     constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
     for (size_t i = 0; i < bits.size(); ++i) {
@@ -1466,7 +1466,7 @@ ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bit
 }
 
 template<typename WordType, std::size_t Extent, typename Func>
-ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bits, size_t startIndex, const Func& func)
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bits, size_t startIndex, NOESCAPE const Func& func)
 {
     constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
     auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {

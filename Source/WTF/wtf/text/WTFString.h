@@ -218,7 +218,7 @@ public:
     [[nodiscard]] WTF_EXPORT_PRIVATE String simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
     [[nodiscard]] WTF_EXPORT_PRIVATE String trim(CodeUnitMatchFunction) const;
-    template<typename Predicate> [[nodiscard]] String removeCharacters(const Predicate&) const;
+    template<typename Predicate> [[nodiscard]] String removeCharacters(NOESCAPE const Predicate&) const;
 
     // Returns the string with case folded for case insensitive comparison.
     // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.
@@ -556,7 +556,7 @@ inline RetainPtr<NSString> nsStringNilIfNull(const String& string)
 #endif
 
 template<typename Predicate>
-String String::removeCharacters(const Predicate& findMatch) const
+String String::removeCharacters(NOESCAPE const Predicate& findMatch) const
 {
     SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->removeCharacters(findMatch) : String { };
 }

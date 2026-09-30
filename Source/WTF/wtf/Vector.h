@@ -1924,7 +1924,7 @@ template<typename T> struct ValueCheck<Vector<T>> {
 #endif // ENABLE(SECURITY_ASSERTIONS)
 
 template<typename VectorType, typename Func>
-size_t removeRepeatedElements(VectorType& vector, const Func& func)
+size_t removeRepeatedElements(VectorType& vector, NOESCAPE const Func& func)
 {
     auto end = std::unique(vector.begin(), vector.end(), func);
     size_t newSize = end - vector.begin();
@@ -1947,7 +1947,7 @@ struct CollectionInspector {
 
 template<typename MapFunction, typename DestinationVectorType, typename SourceType>
 struct Mapper {
-    static void map(DestinationVectorType& result, SourceType&& source, const MapFunction& mapFunction)
+    static void map(DestinationVectorType& result, SourceType&& source, NOESCAPE const MapFunction& mapFunction)
     {
         result.reserveInitialCapacity(containerSize(source));
         for (auto&& item : std::forward<SourceType>(source))
@@ -1956,26 +1956,26 @@ struct Mapper {
 };
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType&& source, NOESCAPE MapFunction&& mapFunction)
+Vector<typename std::invoke_result<const MapFunction&, typename CollectionInspector<SourceType>::SourceItemType&&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType&& source, NOESCAPE const MapFunction& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
+    using DestinationItemType = typename std::invoke_result<const MapFunction&, SourceItemType&&>::type;
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
-    Mapper<MapFunction, DestinationVectorType, SourceType>::map(result, std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    Mapper<MapFunction, DestinationVectorType, SourceType>::map(result, std::forward<SourceType>(source), mapFunction);
     return result;
 }
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType& source, NOESCAPE MapFunction&& mapFunction)
+Vector<typename std::invoke_result<const MapFunction&, typename CollectionInspector<SourceType>::SourceItemType&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType& source, NOESCAPE const MapFunction& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
+    using DestinationItemType = typename std::invoke_result<const MapFunction&, SourceItemType&>::type;
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
-    Mapper<MapFunction, DestinationVectorType, SourceType&>::map(result, source, std::forward<MapFunction>(mapFunction));
+    Mapper<MapFunction, DestinationVectorType, SourceType&>::map(result, source, mapFunction);
     return result;
 }
 
@@ -2017,7 +2017,7 @@ struct CompactMapTraits<RetainPtr<T>> {
 template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable = void>
 struct CompactMapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
+    using ResultItemType = typename std::invoke_result<const MapFunction&, SourceItemType&>::type;
 
     static void compactMap(DestinationVectorType& result, const SourceType& source, NOESCAPE const MapFunction& mapFunction)
     {
@@ -2034,7 +2034,7 @@ template<typename MapFunction, typename DestinationVectorType, typename SourceTy
     requires (std::is_rvalue_reference_v<SourceType&&>)
 struct CompactMapper<MapFunction, DestinationVectorType, SourceType> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
+    using ResultItemType = typename std::invoke_result<const MapFunction&, SourceItemType&&>::type;
 
     static void compactMap(DestinationVectorType& result, SourceType&& source, NOESCAPE const MapFunction& mapFunction)
     {
@@ -2048,39 +2048,39 @@ struct CompactMapper<MapFunction, DestinationVectorType, SourceType> {
 };
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType&& source, NOESCAPE MapFunction&& mapFunction)
+Vector<typename CompactMapTraits<typename std::invoke_result<const MapFunction&, typename CollectionInspector<SourceType>::SourceItemType&&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType&& source, NOESCAPE const MapFunction& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
+    using ResultItemType = typename std::invoke_result<const MapFunction&, SourceItemType&&>::type;
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
     result.reserveInitialCapacity(containerSize(source));
-    CompactMapper<MapFunction, DestinationVectorType, SourceType>::compactMap(result, std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    CompactMapper<MapFunction, DestinationVectorType, SourceType>::compactMap(result, std::forward<SourceType>(source), mapFunction);
     return result;
 }
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType& source, NOESCAPE MapFunction&& mapFunction)
+Vector<typename CompactMapTraits<typename std::invoke_result<const MapFunction&, typename CollectionInspector<SourceType>::SourceItemType&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType& source, NOESCAPE const MapFunction& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
+    using ResultItemType = typename std::invoke_result<const MapFunction&, SourceItemType&>::type;
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
     result.reserveInitialCapacity(containerSize(source));
-    CompactMapper<MapFunction, DestinationVectorType, SourceType&>::compactMap(result, source, std::forward<MapFunction>(mapFunction));
+    CompactMapper<MapFunction, DestinationVectorType, SourceType&>::compactMap(result, source, mapFunction);
     return result;
 }
 
 template<typename MapFunction, typename SourceType>
 struct FlatMapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&>::type>::SourceItemType;
+    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<const MapFunction&, SourceItemType&>::type>::SourceItemType;
 
-    static Vector<DestinationItemType> flatMap(const SourceType& source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> flatMap(const SourceType& source, NOESCAPE const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
         for (auto&& item : source)
@@ -2094,9 +2094,9 @@ template<typename MapFunction, typename SourceType>
     requires (std::is_rvalue_reference_v<SourceType&&>)
 struct FlatMapper<MapFunction, SourceType> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&&>::type>::SourceItemType;
+    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<const MapFunction&, SourceItemType&&>::type>::SourceItemType;
 
-    static Vector<DestinationItemType> flatMap(SourceType&& source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> flatMap(SourceType&& source, NOESCAPE const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
         for (auto&& item : source)
@@ -2107,9 +2107,9 @@ struct FlatMapper<MapFunction, SourceType> {
 };
 
 template<typename MapFunction, typename SourceType>
-Vector<typename FlatMapper<MapFunction, SourceType>::DestinationItemType> flatMap(SourceType&& source, NOESCAPE MapFunction&& mapFunction)
+Vector<typename FlatMapper<MapFunction, SourceType>::DestinationItemType> flatMap(SourceType&& source, NOESCAPE const MapFunction& mapFunction)
 {
-    return FlatMapper<MapFunction, SourceType>::flatMap(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    return FlatMapper<MapFunction, SourceType>::flatMap(std::forward<SourceType>(source), mapFunction);
 }
 
 template<typename DestinationVector, typename Collection>

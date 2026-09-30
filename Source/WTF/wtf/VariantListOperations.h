@@ -75,8 +75,8 @@ template<typename Variant> struct VariantListOperations {
 
     // MARK: - Value visiting.
 
-    template<typename... F> static auto visitValue(std::span<std::byte>, F&&...);
-    template<typename... F> static auto visitValue(std::span<const std::byte>, F&&...);
+    template<typename... F> static auto visitValue(std::span<std::byte>, NOESCAPE F&&...);
+    template<typename... F> static auto visitValue(std::span<const std::byte>, NOESCAPE F&&...);
 
     // MARK: - Value iteration.
 
@@ -165,7 +165,7 @@ template<typename V> template<typename T, typename U> auto VariantListOperations
     return buffer.subspan(sizeof(T));
 }
 
-template<typename V> template<typename... F> auto VariantListOperations<V>::visitValue(std::span<std::byte> buffer, F&& ...f)
+template<typename V> template<typename... F> auto VariantListOperations<V>::visitValue(std::span<std::byte> buffer, NOESCAPE F&& ...f)
 {
     auto visitor = makeVisitor(std::forward<F>(f)...);
     return typeForIndex<V>(readIndex(buffer), [&]<typename T>() {
@@ -173,7 +173,7 @@ template<typename V> template<typename... F> auto VariantListOperations<V>::visi
     });
 }
 
-template<typename V> template<typename... F> auto VariantListOperations<V>::visitValue(std::span<const std::byte> buffer, F&& ...f)
+template<typename V> template<typename... F> auto VariantListOperations<V>::visitValue(std::span<const std::byte> buffer, NOESCAPE F&& ...f)
 {
     auto visitor = makeVisitor(std::forward<F>(f)...);
     return typeForIndex<V>(readIndex(buffer), [&]<typename T>() {
@@ -365,7 +365,7 @@ template<typename V> struct VariantListProxy {
         return Operations::readIndex(buffer) == I;
     }
 
-    template<typename... F> auto switchOn(F&& ...f) const
+    template<typename... F> auto switchOn(NOESCAPE F&& ...f) const
     {
         return Operations::visitValue(buffer, std::forward<F>(f)...);
     }

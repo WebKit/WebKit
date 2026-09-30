@@ -107,7 +107,7 @@ PointerListDump<T> pointerListDump(const T& list, ASCIILiteral comma = ", "_s)
 }
 
 template<typename T, typename Comparator>
-UTF8CString sortedListDump(const T& list, const Comparator& comparator, ASCIILiteral comma = ", "_s)
+UTF8CString sortedListDump(const T& list, NOESCAPE const Comparator& comparator, ASCIILiteral comma = ", "_s)
 {
     Vector<typename T::ValueType> myList;
     myList.appendRange(list.begin(), list.end());
@@ -132,7 +132,7 @@ MapDump<T> mapDump(const T& map, ASCIILiteral arrow = "=>"_s, ASCIILiteral comma
 }
 
 template<typename T, typename Comparator>
-UTF8CString sortedMapDump(const T& map, const Comparator& comparator, ASCIILiteral arrow = "=>"_s, ASCIILiteral comma = ", "_s)
+UTF8CString sortedMapDump(const T& map, NOESCAPE const Comparator& comparator, ASCIILiteral arrow = "=>"_s, ASCIILiteral comma = ", "_s)
 {
     Vector<typename T::KeyType> keys;
     for (auto iter = map.begin(); iter != map.end(); ++iter)

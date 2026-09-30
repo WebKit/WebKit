@@ -633,7 +633,7 @@ inline void stringTypeAdapterAccumulator(std::span<ResultType> result, StringTyp
 }
 
 template<typename Func, StringTypeAdaptable... StringTypes>
-auto handleWithAdapters(Func&& func, StringTypes&& ...strings) -> decltype(auto)
+auto handleWithAdapters(NOESCAPE const Func& func, StringTypes&& ...strings) -> decltype(auto)
 {
     return func(StringTypeAdapter<StringTypes>(std::forward<StringTypes>(strings))...);
 }

@@ -116,7 +116,7 @@ private:
     template<bool(*isInCodeSet)(char32_t), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> std::optional<Latin1Buffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    template<typename SyntaxViolationHandler> static Latin1Buffer percentDecodeImpl(std::span<const Latin1Character>, SyntaxViolationHandler&&);
+    template<typename SyntaxViolationHandler> static Latin1Buffer percentDecodeImpl(std::span<const Latin1Character>, NOESCAPE const SyntaxViolationHandler&);
     template<typename CharacterType> Latin1Buffer percentDecode(std::span<const Latin1Character>, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     static Latin1Buffer percentDecode(std::span<const Latin1Character>);
     bool NODELETE hasForbiddenHostCodePoint(const Latin1Buffer&);

@@ -130,7 +130,7 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
     return directory;
 }
 
-static String generateTemporaryPath(const Function<bool(const String&)>& action)
+static String generateTemporaryPath(NOESCAPE const Function<bool(const String&)>& action)
 {
     wchar_t tempPath[MAX_PATH];
     int tempPathLength = ::GetTempPathW(std::size(tempPath), tempPath);

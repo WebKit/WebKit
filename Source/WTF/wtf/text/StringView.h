@@ -133,7 +133,7 @@ public:
     WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = LenientConversion) const;
 
     template<typename Func>
-    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
+    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = LenientConversion) const;
 
     template<size_t N>
     class UpconvertedCharactersWithSize;
@@ -165,7 +165,7 @@ public:
     ALWAYS_INLINE size_t find(char c, unsigned start = 0) const { return find(byteCast<Latin1Character>(c), start); }
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-    size_t NODELETE find(CodeUnitMatchFunction&&, unsigned start = 0) const;
+    size_t NODELETE find(NOESCAPE const CodeUnitMatchFunction&, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) const { return find(literal.span8(), start); }
     WTF_EXPORT_PRIVATE size_t NODELETE find(StringView, unsigned start = 0) const;
     WTF_EXPORT_PRIVATE size_t NODELETE find(AdaptiveStringSearcherTables&, StringView, unsigned start = 0) const;
@@ -186,7 +186,7 @@ public:
     bool NODELETE contains(char16_t) const;
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-    bool NODELETE contains(CodeUnitMatchFunction&&) const;
+    bool NODELETE contains(NOESCAPE const CodeUnitMatchFunction&) const;
     bool contains(ASCIILiteral literal) const { return find(literal) != notFound; }
     bool contains(StringView string) const { return find(string) != notFound; }
 
@@ -232,7 +232,7 @@ private:
     WTF_EXPORT_PRIVATE size_t NODELETE reverseFind(std::span<const Latin1Character> match, unsigned start) const;
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
-    StringView trim(std::span<const CharacterType>, const MatchedCharacterPredicate&) const;
+    StringView trim(std::span<const CharacterType>, NOESCAPE const MatchedCharacterPredicate&) const;
 
     WTF_EXPORT_PRIVATE bool NODELETE underlyingStringIsValidImpl() const;
     WTF_EXPORT_PRIVATE void NODELETE setUnderlyingStringImpl(const StringImpl*);
@@ -654,9 +654,9 @@ inline bool StringView::contains(char16_t character) const
 
 template<typename CodeUnitMatchFunction>
     requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-inline bool StringView::contains(CodeUnitMatchFunction&& function) const
+inline bool StringView::contains(NOESCAPE const CodeUnitMatchFunction& function) const
 {
-    return find(std::forward<CodeUnitMatchFunction>(function)) != notFound;
+    return find(function) != notFound;
 }
 
 template<bool isSpecialCharacter(char16_t)> inline bool StringView::containsOnly() const
@@ -754,11 +754,11 @@ inline size_t StringView::find(Latin1Character character, unsigned start) const
 
 template<typename CodeUnitMatchFunction>
     requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-inline size_t StringView::find(CodeUnitMatchFunction&& matchFunction, unsigned start) const
+inline size_t StringView::find(NOESCAPE const CodeUnitMatchFunction& matchFunction, unsigned start) const
 {
     if (is8Bit())
-        return WTF::find(span8(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
-    return WTF::find(span16(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
+        return WTF::find(span8(), matchFunction, start);
+    return WTF::find(span16(), matchFunction, start);
 }
 
 SUPPRESS_NODELETE inline size_t StringView::reverseFind(char16_t character, unsigned start) const
@@ -1236,7 +1236,7 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>
-inline StringView StringView::trim(std::span<const CharacterType> characters, const MatchedCharacterPredicate& predicate) const
+inline StringView StringView::trim(std::span<const CharacterType> characters, NOESCAPE const MatchedCharacterPredicate& predicate) const
 {
     if (!m_length)
         return *this;
@@ -1569,7 +1569,7 @@ inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
 }
 
 template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringView::tryGetUTF8(const Func& function, ConversionMode mode) const
+inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringView::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
 {
     if (is8Bit())
         return StringImpl::tryGetUTF8ForCharacters(function, span8());

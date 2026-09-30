@@ -101,7 +101,7 @@ public:
     }
 
     template<typename Functor>
-    void genericDequeue(const Functor& functor)
+    void genericDequeue(NOESCAPE const Functor& functor)
     {
         if (verbose)
             dataLogForCurrentThread(": dequeueing from bucket at ", RawPointer(this), "\n");
@@ -509,8 +509,8 @@ enum class BucketMode {
 
 template<typename DequeueFunctor, typename FinishFunctor>
 bool dequeue(
-    const void* address, BucketMode bucketMode, const DequeueFunctor& dequeueFunctor,
-    const FinishFunctor& finishFunctor)
+    const void* address, BucketMode bucketMode, NOESCAPE const DequeueFunctor& dequeueFunctor,
+    NOESCAPE const FinishFunctor& finishFunctor)
 {
     unsigned hash = hashAddress(address);
 
@@ -556,8 +556,8 @@ bool dequeue(
 
 NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
     const void* address,
-    const ScopedLambda<bool()>& validation,
-    const ScopedLambda<void()>& beforeSleep,
+    NOESCAPE const ScopedLambda<bool()>& validation,
+    NOESCAPE const ScopedLambda<void()>& beforeSleep,
     const TimeWithDynamicClockType& timeout)
 {
     if (verbose)
@@ -682,7 +682,7 @@ NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned coun
 
 NEVER_INLINE void ParkingLot::unparkCountImpl(
     const void* address, unsigned count,
-    const ScopedLambda<intptr_t(ParkingLot::UnparkResult)>& callback)
+    NOESCAPE const ScopedLambda<intptr_t(ParkingLot::UnparkResult)>& callback)
 {
     if (verbose)
         dataLogForCurrentThread(": unparking count = ", count, " the hard way from ", RawPointer(address), ".\n");
@@ -740,7 +740,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
     unparkCount(address, UINT_MAX);
 }
 
-NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(uintptr_t, const void*)>& callback)
+NEVER_INLINE void ParkingLot::forEachImpl(NOESCAPE const ScopedLambda<void(uintptr_t, const void*)>& callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 

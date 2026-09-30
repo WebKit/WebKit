@@ -982,7 +982,7 @@ private:
     };
 
     template <typename F, typename Arg>
-    static auto invokeWithVoidOrWithArg(F&& f, Arg&& arg)
+    static auto invokeWithVoidOrWithArg(NOESCAPE F&& f, Arg&& arg)
     {
         if constexpr (std::is_invocable_v<F>)
             return std::invoke(std::forward<F>(f));

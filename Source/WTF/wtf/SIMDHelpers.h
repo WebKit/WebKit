@@ -709,7 +709,7 @@ ALWAYS_INLINE simde_uint64x2_t greaterThanOrEqual(simde_uint64x2_t lhs, simde_ui
 }
 
 template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
-ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, NOESCAPE const auto& vectorMatch, NOESCAPE const auto& scalarMatch)
 {
     constexpr size_t stride = SIMD::stride<CharacterType>;
     using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
@@ -737,7 +737,7 @@ ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, con
 }
 
 template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
-ALWAYS_INLINE const CharacterType* reverseFind(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+ALWAYS_INLINE const CharacterType* reverseFind(std::span<const CharacterType> span, NOESCAPE const auto& vectorMatch, NOESCAPE const auto& scalarMatch)
 {
     constexpr size_t stride = SIMD::stride<CharacterType>;
     using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
@@ -770,7 +770,7 @@ ALWAYS_INLINE const CharacterType* reverseFind(std::span<const CharacterType> sp
 
 template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType> * 2>
 requires(sizeof(CharacterType) == 2)
-ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType> span, NOESCAPE const auto& vectorMatch, NOESCAPE const auto& scalarMatch)
 {
     constexpr size_t stride = SIMD::stride<CharacterType> * 2;
     static_assert(threshold >= stride);
@@ -797,7 +797,7 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
 }
 
 template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
-ALWAYS_INLINE size_t count(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+ALWAYS_INLINE size_t count(std::span<const CharacterType> span, NOESCAPE const auto& vectorMatch, NOESCAPE const auto& scalarMatch)
 {
     constexpr size_t stride = SIMD::stride<CharacterType>;
     constexpr size_t bulkLoadCount = 4;

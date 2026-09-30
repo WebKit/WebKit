@@ -97,24 +97,24 @@ public:
     }
 
     template<std::invocable<size_t> Generator>
-    static UniqueRef<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, NOESCAPE Generator&& generator)
+    static UniqueRef<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, NOESCAPE const Generator& generator)
     {
-        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<Generator>(generator)) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, generator) };
     }
 
     template<std::invocable<size_t> FailableGenerator>
-    static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromFailableGenerator(unsigned size, NOESCAPE FailableGenerator&& generator)
+    static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromFailableGenerator(unsigned size, NOESCAPE const FailableGenerator& generator)
     {
-        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, std::forward<FailableGenerator>(generator)) };
+        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, generator) };
         if (result->size() != size)
             return nullptr;
         return result;
     }
 
     template<typename SizedRange, typename Mapper>
-    static UniqueRef<EmbeddedFixedVector> map(unsigned size, SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static UniqueRef<EmbeddedFixedVector> map(unsigned size, SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper)) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<SizedRange>(range), mapper) };
     }
 
     UniqueRef<EmbeddedFixedVector> clone() const
@@ -168,20 +168,20 @@ private:
     }
 
     template<std::invocable<size_t> Generator>
-    EmbeddedFixedVector(unsigned size, NOESCAPE Generator&& generator)
-        : Base(size, std::forward<Generator>(generator))
+    EmbeddedFixedVector(unsigned size, NOESCAPE const Generator& generator)
+        : Base(size, generator)
     {
     }
 
     template<std::invocable<size_t> FailableGenerator>
-    EmbeddedFixedVector(typename Base::Failable failable, unsigned size, NOESCAPE FailableGenerator&& generator)
-        : Base(failable, size, std::forward<FailableGenerator>(generator))
+    EmbeddedFixedVector(typename Base::Failable failable, unsigned size, NOESCAPE const FailableGenerator& generator)
+        : Base(failable, size, generator)
     {
     }
 
     template<typename SizedRange, typename Mapper>
-    EmbeddedFixedVector(unsigned size, SizedRange&& range, NOESCAPE Mapper&& mapper)
-        : Base(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper))
+    EmbeddedFixedVector(unsigned size, SizedRange&& range, NOESCAPE const Mapper& mapper)
+        : Base(size, std::forward<SizedRange>(range), mapper)
     {
     }
 };

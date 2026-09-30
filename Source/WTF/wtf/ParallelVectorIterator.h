@@ -43,7 +43,7 @@ public:
     }
 
     template<typename Functor>
-    ALWAYS_INLINE void iterate(const Functor& functor)
+    ALWAYS_INLINE void iterate(NOESCAPE const Functor& functor)
     {
         for (;;) {
             size_t begin;

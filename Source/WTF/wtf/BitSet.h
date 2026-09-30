@@ -79,10 +79,10 @@ public:
     // If the lambda returns an IterationStatus, we use it. The lambda can also return
     // void, in which case, we'll iterate every set bit.
     template<typename Func>
-    constexpr ALWAYS_INLINE void forEachSetBit(const Func&) const;
+    constexpr ALWAYS_INLINE void forEachSetBit(NOESCAPE const Func&) const;
 
     template<typename Func>
-    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, const Func&) const;
+    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, NOESCAPE const Func&) const;
 
     constexpr size_t findBit(size_t startIndex, bool value) const;
 
@@ -392,14 +392,14 @@ inline constexpr bool BitSet<bitSetSize, WordType>::subsumes(const BitSet& other
 
 template<size_t bitSetSize, typename WordType>
 template<typename Func>
-ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const Func& func) const
+ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(NOESCAPE const Func& func) const
 {
     WTF::forEachSetBit(std::span { bits }, func);
 }
 
 template<size_t bitSetSize, typename WordType>
 template<typename Func>
-ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t startIndex, const Func& func) const
+ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t startIndex, NOESCAPE const Func& func) const
 {
     WTF::forEachSetBit(std::span { bits }, startIndex, func);
 }

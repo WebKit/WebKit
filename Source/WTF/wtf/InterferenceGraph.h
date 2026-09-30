@@ -94,7 +94,7 @@ public:
     }
 
     template <typename Functor>
-    void forEach(const Functor& functor)
+    void forEach(NOESCAPE const Functor& functor)
     {
         for (IndexType i = 0; i < m_numElements; ++i) {
             for (IndexType j = i + 1; j < m_numElements; ++j) {
@@ -202,7 +202,7 @@ public:
     }
 
     template <typename Functor>
-    void forEach(const Functor& functor)
+    void forEach(NOESCAPE const Functor& functor)
     {
         for (unsigned i = 0; i < m_vector.size() ; ++i) {
             for (IndexType j : m_vector[i])
@@ -261,7 +261,7 @@ public:
     void mayClear(IndexType u) { m_underlying.mayClear(u); }
     void setMaxIndex(unsigned n) { m_underlying.setMaxIndex(n); }
     template <typename Functor>
-    void forEach(const Functor& functor) { m_underlying.forEach(functor); }
+    void forEach(NOESCAPE const Functor& functor) { m_underlying.forEach(functor); }
     unsigned size() const { return m_underlying.size(); }
     unsigned memoryUse() const { return m_underlying.memoryUse(); }
     void dumpMemoryUseInKB() const { m_underlying.dumpMemoryUseInKB(); }
@@ -303,7 +303,7 @@ public:
     void mayClear(IndexType u) { m_underlying.mayClear(u); }
     void setMaxIndex(unsigned n) { m_underlying.setMaxIndex(n); }
     template <typename Functor>
-    void forEach(const Functor& functor) { m_underlying.forEach(functor); }
+    void forEach(NOESCAPE const Functor& functor) { m_underlying.forEach(functor); }
     unsigned size() const { return m_underlying.size(); }
     unsigned memoryUse() const { return m_underlying.memoryUse(); }
     void dumpMemoryUseInKB() const { m_underlying.dumpMemoryUseInKB(); }
@@ -368,7 +368,7 @@ public:
     }
 
     template <typename Functor>
-    void forEach(const Functor& functor)
+    void forEach(NOESCAPE const Functor& functor)
     {
         for (auto edge : m_set)
             functor(edge);
@@ -431,7 +431,7 @@ public:
     }
 
     template <typename Functor>
-    void forEach(const Functor& functor)
+    void forEach(NOESCAPE const Functor& functor)
     {
         m_setA.forEach(functor);
     }

@@ -127,7 +127,7 @@ struct Atomic {
 
     // func is supposed to return false if the value is already in the desired state.
     // Returns true if the value was changed. Else returns false.
-    ALWAYS_INLINE bool transaction(const Invocable<bool(T&)> auto& func, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE bool transaction(NOESCAPE const Invocable<bool(T&)> auto& func, std::memory_order order = std::memory_order_seq_cst)
     {
         for (;;) {
             T oldValue = load(std::memory_order_relaxed);
@@ -142,7 +142,7 @@ struct Atomic {
     // func is supposed to return false if the value is already in the desired state.
     // Returns true if the value was changed. Else returns false.
     template<typename Func>
-    ALWAYS_INLINE bool transactionRelaxed(const Func& func)
+    ALWAYS_INLINE bool transactionRelaxed(NOESCAPE const Func& func)
     {
         return transaction(func, std::memory_order_relaxed);
     }
@@ -502,7 +502,7 @@ InputAndValue<InputType, ValueType> inputAndValue(InputType input, ValueType val
 }
 
 template<typename T>
-ALWAYS_INLINE T& ensurePointer(Atomic<T*>& pointer, const Invocable<T*()> auto& func)
+ALWAYS_INLINE T& ensurePointer(Atomic<T*>& pointer, NOESCAPE const Invocable<T*()> auto& func)
 {
     T* oldValue = pointer.load(std::memory_order_relaxed);
     if (oldValue) {
