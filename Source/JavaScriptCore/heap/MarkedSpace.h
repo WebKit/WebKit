@@ -117,7 +117,6 @@ public:
     void stopAllocating();
     void resumeAllocating(); // If we just stopped allocation but we didn't do a collection, we need to resume allocation.
     
-    void NODELETE prepareForMarking();
     
     void prepareForConservativeScan();
 

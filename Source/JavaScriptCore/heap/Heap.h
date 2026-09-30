@@ -722,8 +722,7 @@ private:
     GCRequest::Ticket requestCollection(GCRequest);
     void waitForCollection(GCRequest::Ticket);
     
-    void willStartCollection();
-    void prepareForMarking();
+    void willStartCollection(CollectionScope);
     
     void gatherStackRoots(ConservativeRoots&);
     void gatherVMRoots(ConservativeRoots&);
@@ -767,8 +766,6 @@ private:
     void destroyAllPooledWeakBlocks();
     unsigned maxPooledWeakBlocks();
 
-    bool shouldDoFullCollection();
-
     inline void incrementDeferralDepth();
     inline void decrementDeferralDepth();
     inline void decrementDeferralDepthAndGCIfNeeded();
@@ -798,7 +795,6 @@ private:
     void dumpHeapStatisticsAtVMDestruction();
     void lastChanceToFinalize();
 
-    static bool useGenerationalGC();
     bool shouldSweepSynchronously();
 
     void verifyGC();

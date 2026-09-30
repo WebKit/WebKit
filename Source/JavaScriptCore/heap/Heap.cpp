@@ -800,6 +800,9 @@ void Heap::gatherVMRoots(ConservativeRoots& roots)
 void Heap::beginMarking()
 {
     TimingScope timingScope(*this, "Heap::beginMarking"_s);
+    ASSERT(m_collectionScope);
+    if (*m_collectionScope == CollectionScope::Full)
+        m_mutatorMarkStack->clear();
     m_jitStubRoutines->clearMarks();
     m_objectSpace.beginMarking();
     vm().beginMarking();
@@ -1744,7 +1747,7 @@ void Heap::sweepEagerlyInEpilogue()
 #endif
 }
 
-void Heap::willStartCollection()
+void Heap::willStartCollection(CollectionScope scope)
 {
     if (m_collectionScope) {
         dataLogLn("Collection scope already set during GC: ", *m_collectionScope);
@@ -1759,15 +1762,10 @@ void Heap::willStartCollection()
 
     dataLogIf(Options::logGC(), "=> ");
     
-    if (shouldDoFullCollection()) {
-        m_collectionScope = CollectionScope::Full;
+    m_collectionScope = scope;
+    if (scope == CollectionScope::Full) {
         m_shouldDoFullCollection = false;
         dataLogIf(Options::logGC(), "FullCollection, ");
-    } else {
-        m_collectionScope = CollectionScope::Eden;
-        dataLogIf(Options::logGC(), "EdenCollection, ");
-    }
-    if (m_collectionScope.value() == CollectionScope::Full) {
         m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + totalBytesAllocatedThisCycle();
         m_extraMemorySize = 0;
         m_deprecatedExtraMemorySize = 0;
@@ -1778,8 +1776,10 @@ void Heap::willStartCollection()
         if (m_fullActivityCallback)
             m_fullActivityCallback->willCollect();
     } else {
-        ASSERT(m_collectionScope && m_collectionScope.value() == CollectionScope::Eden);
+        ASSERT(scope == CollectionScope::Eden);
+        dataLogIf(Options::logGC(), "EdenCollection, ");
         m_sizeBeforeLastEdenCollect = m_sizeAfterLastCollect + totalBytesAllocatedThisCycle();
+        m_bytesAllocatedBeforeLastEdenCollect = totalBytesAllocatedThisCycle();
     }
 
     if (m_edenActivityCallback)
@@ -1787,11 +1787,15 @@ void Heap::willStartCollection()
 
     for (auto* observer : m_observers)
         observer->willGarbageCollect();
-}
 
-void Heap::prepareForMarking()
-{
-    m_objectSpace.prepareForMarking();
+    if (m_verifier) [[unlikely]] {
+        // Verify that live objects from the last GC cycle haven't been corrupted by
+        // mutators before we begin this new GC cycle.
+        m_verifier->verify(HeapVerifier::Phase::BeforeGC);
+
+        m_verifier->startGC();
+        m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
+    }
 }
 
 void Heap::cancelDeferredWorkIfNeeded()
@@ -2058,25 +2062,10 @@ void Heap::disableStopIfNecessaryTimer()
     m_stopIfNecessaryTimer->disable();
 }
 
-bool Heap::useGenerationalGC()
-{
-    return Options::useGenerationalGC() && !VM::isInMiniMode();
-}
-
 bool Heap::shouldSweepSynchronously()
 {
     // updateAllocationLimits() updates info that overCriticalMemoryThreshold() needs.
     return overCriticalMemoryThreshold() || Options::sweepSynchronously() || VM::isInMiniMode();
-}
-
-bool Heap::shouldDoFullCollection()
-{
-    if (!useGenerationalGC())
-        return true;
-
-    if (!m_collector->m_currentRequest.scope)
-        return m_shouldDoFullCollection || overCriticalMemoryThreshold();
-    return *m_collector->m_currentRequest.scope == CollectionScope::Full;
 }
 
 void Heap::addDetachedWeakBlock(WeakBlock* block)

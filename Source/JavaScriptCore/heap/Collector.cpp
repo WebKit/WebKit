@@ -225,6 +225,17 @@ bool Collector::shouldCollectInCollectorThread(const AbstractLocker&)
     return !m_requests.isEmpty() && !(m_heap.m_worldState.load() & Heap::mutatorHasConnBit);
 }
 
+CollectionScope Collector::decideCollectionScope()
+{
+    if (!Options::useGenerationalGC() || VM::isInMiniMode())
+        return CollectionScope::Full;
+    if (m_currentRequest.scope)
+        return *m_currentRequest.scope;
+    if (m_heap.m_shouldDoFullCollection || m_heap.overCriticalMemoryThreshold())
+        return CollectionScope::Full;
+    return CollectionScope::Eden;
+}
+
 void Collector::collectInCollectorThread()
 {
     for (;;) {
@@ -320,46 +331,17 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
     if (!Options::seedOfVMRandomForFuzzer())
         m_heap.vm().random().setSeed(cryptographicallyRandomNumber<uint32_t>());
 
-    m_heap.willStartCollection();
+    CollectionScope scope = decideCollectionScope();
+    m_heap.willStartCollection(scope);
 
-    if (m_heap.m_verifier) [[unlikely]] {
-        // Verify that live objects from the last GC cycle haven't been corrupted by
-        // mutators before we begin this new GC cycle.
-        m_heap.m_verifier->verify(HeapVerifier::Phase::BeforeGC);
-
-        m_heap.m_verifier->startGC();
-        m_heap.m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
-    }
-
-    ASSERT(m_heap.m_collectionScope);
-    CollectionScope scope = m_heap.m_collectionScope.value();
-    bool isFullGC = scope == CollectionScope::Full;
     if (Options::useGCSignpost()) [[unlikely]] {
         StringPrintStream stream;
-        stream.print("GC:(", RawPointer(&m_heap), "),mode:(", (isFullGC ? "Full" : "Eden"), "),version:(", m_heap.m_gcVersion, "),conn:(", gcConductorShortName(conn), "),capacity(", m_heap.capacity() / 1024, "kb)");
+        stream.print("GC:(", RawPointer(&m_heap), "),mode:(", scope, "),version:(", m_heap.m_gcVersion, "),conn:(", gcConductorShortName(conn), "),capacity(", m_heap.capacity() / 1024, "kb)");
         m_signpostMessage = stream.toUTF8CString();
         WTFBeginSignpost(&m_heap, JSCGarbageCollector, "%" PUBLIC_LOG_STRING, m_signpostMessage.isNull() ? "(nullptr)"_s : m_signpostMessage);
     }
 
-    m_heap.prepareForMarking();
-
-    if (isFullGC) {
-        m_opaqueRoots.clear();
-        m_collectorSlotVisitor->clearMarkStacks();
-        m_heap.m_mutatorMarkStack->clear();
-    } else
-        m_heap.m_bytesAllocatedBeforeLastEdenCollect = m_heap.totalBytesAllocatedThisCycle();
-
-    RELEASE_ASSERT(m_raceMarkStack->isEmpty());
-
-    m_heap.beginMarking();
-
-    HeapVersion markingVersion = m_heap.objectSpace().markingVersion();
-    HeapAnalyzer* heapAnalyzer = m_heap.vm().activeHeapAnalyzer();
-    forEachSlotVisitor(
-        [&] (SlotVisitor& visitor) {
-            visitor.didStartMarking(scope, markingVersion, heapAnalyzer);
-        });
+    beginMarking(scope);
 
     m_parallelMarkersShouldExit = false;
 
@@ -701,6 +683,24 @@ NEVER_INLINE bool Collector::finishChangingPhase(GCConductor conn)
 
     m_currentPhase = m_nextPhase;
     return true;
+}
+
+void Collector::beginMarking(CollectionScope scope)
+{
+    if (scope == CollectionScope::Full) {
+        m_opaqueRoots.clear();
+        m_collectorSlotVisitor->clearMarkStacks();
+    }
+    RELEASE_ASSERT(m_raceMarkStack->isEmpty());
+
+    m_heap.beginMarking();
+
+    HeapVersion markingVersion = m_heap.objectSpace().markingVersion();
+    HeapAnalyzer* heapAnalyzer = m_heap.vm().activeHeapAnalyzer();
+    forEachSlotVisitor(
+        [&] (SlotVisitor& visitor) {
+            visitor.didStartMarking(scope, markingVersion, heapAnalyzer);
+        });
 }
 
 void Collector::endMarking()

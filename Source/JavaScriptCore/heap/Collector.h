@@ -100,6 +100,7 @@ private:
     bool hasServedTicket(GCRequest::Ticket ticket) const { return m_lastServedTicket >= ticket; }
 
     bool shouldCollectInCollectorThread(const AbstractLocker&);
+    CollectionScope decideCollectionScope();
     void collectInCollectorThread();
 
     void startCollectingContinuously();
@@ -124,6 +125,7 @@ private:
     bool changePhase(GCConductor, CollectorPhase);
     bool finishChangingPhase(GCConductor);
 
+    void beginMarking(CollectionScope);
     void endMarking();
     void didFinishCollection();
 
