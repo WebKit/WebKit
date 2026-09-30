@@ -236,8 +236,14 @@ void Line::detachHangingTrailingWhitespaceIfApplicable()
 {
     if (m_runs.isEmpty() || !isHangingTrailingContentWhitespace())
         return;
-    if (auto trailingRun = m_runs.last().detachTrailingWhitespace())
-        m_runs.append(*trailingRun);
+    // The hanging whitespace ends the last text run, which may still be followed by non-content runs (e.g. </span>).
+    for (auto index = m_runs.size(); index--;) {
+        if (!m_runs[index].isText())
+            continue;
+        if (auto trailingRun = m_runs[index].detachTrailingWhitespace())
+            m_runs.insert(index + 1, *trailingRun);
+        return;
+    }
 }
 
 void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)

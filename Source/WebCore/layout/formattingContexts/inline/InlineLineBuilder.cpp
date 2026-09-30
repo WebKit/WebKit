@@ -708,8 +708,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                 auto lineEndsWithForcedLineBreak = lineContent->lineBreakReason == LineContent::LineBreakReason::ForcedLineBreakByBlockContent || Line::hasTrailingForcedLineBreak(m_line.runs());
                 auto hasTextAlignJustify = (isLastInlineContent || lineEndsWithForcedLineBreak) ? rootStyle.textAlignLast() == Style::TextAlignLast::Justify : rootStyle.textAlign() == Style::TextAlign::Justify;
                 if (hasTextAlignJustify) {
-                    // Detach trailing hanging whitespace into its own run so the text
-                    // shaper applies expansion only to inter-word spaces in the content run.
+                    // Detach trailing hanging whitespace into its own run: FontCascade spreads a run's expansion over every space in its text, and only the inter-word spaces should get it.
                     m_line.detachHangingTrailingWhitespaceIfApplicable();
                     auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
                     m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
