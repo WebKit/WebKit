@@ -41,6 +41,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
+#include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
@@ -128,7 +129,7 @@ std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Eleme
         auto intersectingContentRect = intersection(absoluteContentRect, intersectionRect);
         area = intersectingContentRect.area();
 
-        auto naturalSize = image->imageSizeForRenderer(renderer.get(), 1);
+        auto naturalSize = LayoutSize { RenderImage::imageSizeAsRendered(*image, renderer.get()) };
         if (naturalSize.isEmpty())
             return { };
 

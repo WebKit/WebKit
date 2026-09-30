@@ -137,7 +137,7 @@ static Image* imageFromImageElementNode(Node& node)
     RefPtr image = renderer->cachedImage();
     if (!image || image->errorOccurred())
         return nullptr;
-    return image->imageForRenderer(renderer.get());
+    return image->image();
 }
 
 bool handleEvent(HTMLElement& element, Event& event)

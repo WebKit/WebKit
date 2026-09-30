@@ -151,16 +151,11 @@ ImageDrawingExtras MultiImage::drawingExtrasForRenderer(const RenderElement& ren
     return protect(m_selectedImage)->drawingExtrasForRenderer(renderer, url);
 }
 
-bool MultiImage::usesImageContainerSize() const
-{
-    return m_selectedImage && protect(m_selectedImage)->usesImageContainerSize();
-}
-
-void MultiImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
+void MultiImage::setContainerSizeForRenderer(const RenderElement& renderer, const FloatSize& containerSize)
 {
     if (!m_selectedImage)
         return;
-    protect(m_selectedImage)->setContainerContextForRenderer(renderer, containerSize, containerZoom, url);
+    protect(m_selectedImage)->setContainerSizeForRenderer(renderer, containerSize);
 }
 
 void MultiImage::addClient(RenderElement& renderer)

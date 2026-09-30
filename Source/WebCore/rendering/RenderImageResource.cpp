@@ -146,13 +146,6 @@ bool RenderImageResource::currentFrameIsComplete() const
     return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
 }
 
-void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& url)
-{
-    if (!m_styleImage || !m_renderer)
-        return;
-    protect(m_styleImage)->setContainerContextForRenderer(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), url);
-}
-
 Style::ImageDrawingExtras RenderImageResource::drawingExtras(const URL& url) const
 {
     if (!m_styleImage || !m_renderer)

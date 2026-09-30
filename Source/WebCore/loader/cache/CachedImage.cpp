@@ -40,8 +40,6 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "NativeImage.h"
-#include "RenderElement.h"
-#include "RenderImage.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
@@ -115,9 +113,6 @@ void CachedImage::setBodyDataFrom(const CachedResource& resource)
     m_imageObserver = image.m_imageObserver;
     if (m_imageObserver)
         m_imageObserver->cachedImages().add(*this);
-
-    if (RefPtr svgImage = dynamicDowncast<SVGImage>(m_image.get()))
-        m_svgImageCache = makeUnique<SVGImageCache>(svgImage.get());
 }
 
 void CachedImage::didAddClient(CachedResourceClient& client)
@@ -141,11 +136,7 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
 {
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
 
-    m_pendingContainerContextRequests.remove(&downcast<CachedImageClient>(client));
     m_clientsWaitingForAsyncDecoding.remove(downcast<CachedImageClient>(client));
-
-    if (m_svgImageCache)
-        m_svgImageCache->removeClientFromCache(&downcast<CachedImageClient>(client));
 
     CachedResource::didRemoveClient(client);
 
@@ -204,25 +195,11 @@ bool CachedImage::hasRendererClients() const
 void CachedImage::switchClientsToRevalidatedResource()
 {
     ASSERT(is<CachedImage>(resourceToRevalidate()));
-    // Pending container size requests need to be transferred to the revalidated resource.
-    if (!m_pendingContainerContextRequests.isEmpty()) {
-        // A copy of pending size requests is needed as they are deleted during CachedResource::switchClientsToRevalidateResouce().
-        ContainerContextRequests switchContainerContextRequests;
-        for (auto& request : m_pendingContainerContextRequests)
-            switchContainerContextRequests.set(request.key, request.value);
-        CachedResource::switchClientsToRevalidatedResource();
-        RefPtr revalidatedCachedImage = downcast<CachedImage>(*resourceToRevalidate());
-        for (auto& request : switchContainerContextRequests)
-            revalidatedCachedImage->setContainerContextForClient(protect(request.key), request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
-        return;
-    }
-
     CachedResource::switchClientsToRevalidatedResource();
 }
 
 void CachedImage::allClientsRemoved()
 {
-    m_pendingContainerContextRequests.clear();
     m_clientsWaitingForAsyncDecoding.clear();
     if (RefPtr image = m_image; image && !errorOccurred())
         image->resetAnimation();
@@ -264,45 +241,7 @@ Image* CachedImage::image() const
     return &Image::nullImage();
 }
 
-Image* CachedImage::imageForRenderer(const RenderObject* renderer)
-{
-    if (errorOccurred() && m_shouldPaintBrokenImage) {
-        // Returning the 1x broken image is non-ideal, but we cannot reliably access the appropriate
-        // deviceScaleFactor from here. It is critical that callers use CachedImage::brokenImage() 
-        // when they need the real, deviceScaleFactor-appropriate broken image icon. 
-        return brokenImage(1).first.get();
-    }
-
-    if (!m_image)
-        return &Image::nullImage();
-
-    if (m_image->drawsSVGImage()) {
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* image = m_svgImageCache->imageForRenderer(renderer); image != &Image::nullImage())
-            return image;
-    }
-    return m_image.get();
-}
-
-void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL, const Style::LinkParameters& linkParameters)
-{
-    if (containerSize.isEmpty())
-        return;
-    ASSERT(containerZoom);
-    RefPtr image = m_image;
-    if (!image) {
-        m_pendingContainerContextRequests.set(client, ContainerContext { containerSize, containerZoom, imageURL, linkParameters });
-        return;
-    }
-
-    if (!image->drawsSVGImage()) {
-        image->setContainerSize(containerSize);
-        return;
-    }
-
-    m_svgImageCache->setContainerContextForClient(client, containerSize, containerZoom, imageURL, linkParameters);
-}
-
-FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+FloatSize CachedImage::imageSize(ImageOrientation orientation, float multiplier, SizeType sizeType, float density) const
 {
     RefPtr image = m_image;
     if (!image)
@@ -310,24 +249,16 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
 
     if (RefPtr svgImage = dynamicDowncast<SVGImage>(*image)) {
         FloatSize size;
-        if (sizeType == UsedSize) {
-            // The SVG cache size is already in CSS pixels (set by the layout
-            // system via setContainerContextForClient), so density does not apply.
-            size = m_svgImageCache->imageSizeForRenderer(renderer);
-        } else
+        if (sizeType == UsedSize)
+            size = svgImage->size();
+        else
             size = svgImage->resolvedIntrinsicSize(density);
         if (multiplier != 1.0f)
             size.scale(multiplier);
         return size;
     }
 
-    FloatSize imageSize;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC())
-        imageSize = renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size();
-    else
-#endif
-        imageSize = image->size(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+    auto imageSize = image->size(orientation);
 
     float scaleFactor = multiplier * density;
     float widthScale = image->hasRelativeWidth() ? 1.0f : scaleFactor;
@@ -337,19 +268,14 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
     return imageSize;
 }
 
-FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer) const
+LayoutSize CachedImage::clampedImageSize(ImageOrientation orientation, float multiplier, SizeType sizeType, float density) const
 {
-    return internalImageSizeForRenderer(renderer, 1.0f, UsedSize, 1.0f);
+    return clampForZoom(imageSize(orientation, multiplier, sizeType, density), multiplier);
 }
 
-LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+LayoutSize CachedImage::clampForZoom(FloatSize size, float multiplier)
 {
-    return LayoutSize(internalImageSizeForRenderer(renderer, multiplier, sizeType, density));
-}
-
-LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
-{
-    auto imageSize = unclampedImageSizeForRenderer(renderer, multiplier, sizeType, density);
+    LayoutSize imageSize { size };
     if (imageSize.isEmpty() || multiplier == 1.0f)
         return imageSize;
 
@@ -398,7 +324,6 @@ void CachedImage::clear()
 {
     destroyDecodedData();
     clearImage();
-    m_pendingContainerContextRequests.clear();
     m_clientsWaitingForAsyncDecoding.clear();
     setEncodedSize(0);
 }
@@ -413,18 +338,8 @@ inline void CachedImage::createImage()
 
     m_image = Image::create(protect(*m_imageObserver).get());
 
-    if (RefPtr image = m_image) {
-        if (auto* svgImage = dynamicDowncast<SVGImage>(*image))
-            m_svgImageCache = makeUnique<SVGImageCache>(svgImage);
-
-        // Send queued container size requests.
-        if (image->usesContainerSize()) {
-            for (auto& request : m_pendingContainerContextRequests)
-                setContainerContextForClient(protect(request.key), request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
-        }
-        m_pendingContainerContextRequests.clear();
+    if (m_image)
         m_clientsWaitingForAsyncDecoding.clear();
-    }
 }
 
 CachedImage::CachedImageObserver::CachedImageObserver(CachedImage& image)
@@ -786,15 +701,15 @@ bool CachedImage::allowsAnimation(const Image& image) const
     return true;
 }
 
-bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
+bool CachedImage::currentFrameKnownToBeOpaque() const
 {
-    RefPtr image = imageForRenderer(renderer);
+    RefPtr image = this->image();
     return image->currentFrameKnownToBeOpaque();
 }
 
-bool CachedImage::currentFrameIsComplete(const RenderElement* renderer)
+bool CachedImage::currentFrameIsComplete() const
 {
-    RefPtr image = imageForRenderer(renderer);
+    RefPtr image = this->image();
     return image->currentFrameIsComplete();
 }
 

@@ -212,7 +212,7 @@ static std::optional<std::pair<WebCore::RenderImage&, WebCore::Image&>> imageRen
     if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
         return std::nullopt;
 
-    RefPtr image = protect(renderImage->cachedImage())->imageForRenderer(renderImage);
+    RefPtr image = protect(renderImage->cachedImage())->image();
     if (!image || image->width() <= 1 || image->height() <= 1)
         return std::nullopt;
 

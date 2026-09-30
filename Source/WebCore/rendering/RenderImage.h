@@ -87,6 +87,8 @@ public:
     bool isMultiRepresentationHEIC() const;
 #endif
 
+    WEBCORE_EXPORT static FloatSize imageSizeAsRendered(const CachedImage&, const RenderElement*, float multiplier = 1.0f, CachedImage::SizeType = CachedImage::UsedSize, float density = 1.0f);
+
     FloatSize preferredAspectRatioAsSize() const final;
 
 protected:
@@ -139,7 +141,6 @@ private:
     // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
     IntSize imageContainerSize() const;
     Style::ImageDrawingExtras imageDrawingExtras() const;
-    void updateInnerContentRect();
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
 

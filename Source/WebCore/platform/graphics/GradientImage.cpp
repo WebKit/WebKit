@@ -33,9 +33,9 @@
 namespace WebCore {
 
 GradientImage::GradientImage(Gradient& generator, const FloatSize& size)
-    : m_gradient(generator)
+    : GeneratedImage(size)
+    , m_gradient(generator)
 {
-    setContainerSize(size);
 }
 
 GradientImage::~GradientImage() = default;

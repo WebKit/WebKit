@@ -231,7 +231,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concr
 
     ASSERT_IMPLIES(isBitmapImage(), !hasSolidColor());
 
-    FloatSize intrinsicTileSize = size();
+    FloatSize intrinsicTileSize = drawsSVGImage() ? scaledTileSize : concreteObjectSize.size();
     if (hasRelativeWidth())
         intrinsicTileSize.setWidth(scaledTileSize.width());
     if (hasRelativeHeight())
@@ -257,7 +257,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concr
 
     // When using accelerated drawing, it's faster to stretch an image than to tile it.
     if (ctxt.renderingMode() == RenderingMode::Accelerated) {
-        if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
+        if (concreteObjectSize.size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
             FloatRect visibleSrcRect;
             visibleSrcRect.setX(0);
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
@@ -265,7 +265,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concr
             visibleSrcRect.setHeight(destRect.height() / scale.height());
             return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
         }
-        if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
+        if (concreteObjectSize.size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
             FloatRect visibleSrcRect;
             visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
             visibleSrcRect.setY(0);
@@ -475,8 +475,6 @@ TextStream& operator<<(TextStream& ts, const Image& image)
         ts << "svg image"_s;
     else if (image.isSVGResourceImage())
         ts << "svg resource image"_s;
-    else if (image.isSVGImageForContainer())
-        ts << "svg image for container"_s;
     else if (image.isPDFDocumentImage())
         ts << "pdf image"_s;
 

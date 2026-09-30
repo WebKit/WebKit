@@ -187,7 +187,7 @@ unsigned ImageInputType::height() const
     // If the image is available, use its height.
     RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image())
-        return protect(imageLoader->image())->imageSizeForRenderer(renderer.get(), 1).height().toUnsigned();
+        return LayoutSize { RenderImage::imageSizeAsRendered(*protect(imageLoader->image()), renderer.get()) }.height().toUnsigned();
 
     return 0;
 }
@@ -210,7 +210,7 @@ unsigned ImageInputType::width() const
     // If the image is available, use its width.
     RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image())
-        return protect(imageLoader->image())->imageSizeForRenderer(renderer.get(), 1).width().toUnsigned();
+        return LayoutSize { RenderImage::imageSizeAsRendered(*protect(imageLoader->image()), renderer.get()) }.width().toUnsigned();
 
     return 0;
 }

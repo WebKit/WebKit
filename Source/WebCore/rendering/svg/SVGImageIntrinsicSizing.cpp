@@ -36,7 +36,7 @@ SVGImageIntrinsicSizing resolveSVGImageIntrinsicSizing(CachedImage& cachedImage,
 
     // Raster (non-SVG) sources: the intrinsic size *is* the ratio.
     if (!image || !image->isSVGImage()) {
-        FloatSize size = cachedImage.imageSizeForRenderer(nullptr, usedZoom);
+        FloatSize size = cachedImage.clampedImageSize(ImageOrientation::Orientation::FromImage, usedZoom);
         return { size, size, size.isEmpty() ? HasRatio::No : HasRatio::Yes };
     }
 

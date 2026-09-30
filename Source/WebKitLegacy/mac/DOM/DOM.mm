@@ -650,7 +650,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(renderer)->adapter().nsImage();
+    return cachedImage->image()->adapter().nsImage();
 }
 
 #endif
@@ -678,7 +678,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->adapter().tiffRepresentation();
+    return (__bridge NSData *)cachedImage->image()->adapter().tiffRepresentation();
 }
 
 #endif

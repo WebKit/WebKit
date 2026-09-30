@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AutoscrollController.h"
 #include "BackForwardController.h"
+#include "BitmapImage.h"
 #include "BoundaryPointInlines.h"
 #include "CachedImage.h"
 #include "Chrome.h"
@@ -124,6 +125,7 @@
 #include "ResourceLoadObserver.h"
 #include "SVGDocument.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGImage.h"
 #include "SVGNames.h"
 #include "ScrollAnimator.h"
 #include "ScrollLatchingController.h"
@@ -137,6 +139,7 @@
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "Styleable.h"
 #include "TextEvent.h"
@@ -1735,23 +1738,22 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             if (!renderElement && renderer && renderer->parent())
                 renderElement = renderer->parent();
 
+            IntSize svgCursorSize;
             if (renderElement) {
                 RefPtr image = cachedImage->image();
                 if (image && image->drawsSVGImage()) {
-                    // For SVG cursors, scale the image size with device resolution so
-                    // on high-DPI displays SVG images get crisp rendering.
                     RefPtr page = frame->page();
                     float deviceScale = page ? page->deviceScaleFactor() : 1.0f;
 
-                    FloatSize scaledSize = image->size() * deviceScale;
-                    styleImage->setContainerContextForRenderer(*renderElement, scaledSize, deviceScale);
-
+                    svgCursorSize = roundedIntSize(image->size() * deviceScale);
                     renderer = renderElement;
                     scale *= deviceScale;
                 }
             }
 
-            FloatSize size = protect(cachedImage->imageForRenderer(renderer))->size();
+            FloatSize size = svgCursorSize.isEmpty()
+                ? protect(cachedImage->image())->size()
+                : FloatSize { svgCursorSize };
             if (cachedImage->errorOccurred())
                 continue;
             // Limit the size of cursors (in UI pixels) so that they cannot be
@@ -1770,7 +1772,18 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             if (!visibleContentRect.contains(cursorRect))
                 continue;
 
-            RefPtr image = cachedImage->imageForRenderer(renderer);
+            RefPtr image = cachedImage->image();
+
+            if (RefPtr svgImage = dynamicDowncast<SVGImage>(image.get()); svgImage && !svgCursorSize.isEmpty()) {
+                auto extras = renderElement ? styleImage->drawingExtrasForRenderer(*renderElement) : Style::ImageDrawingExtras { };
+                ImagePaintingOptions options;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+                if (renderElement)
+                    options = ImagePaintingOptions { AXCustomColorModeController::shouldInvertSVGImage(*renderElement) ? InvertContent::Yes : InvertContent::No };
+#endif
+                if (RefPtr nativeImage = svgImage->nativeImage(FloatSize { svgCursorSize }, ColorSpace::SRGB(), &extras, options))
+                    image = BitmapImage::create(WTF::move(nativeImage));
+            }
 #if ENABLE(MOUSE_CURSOR_SCALE)
             // Ensure no overflow possible in calculations above.
             if (scale < minimumCursorScale)

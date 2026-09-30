@@ -35,9 +35,9 @@
 namespace WebCore {
 
 NamedImageGeneratedImage::NamedImageGeneratedImage(String name, const FloatSize& size)
-    : m_name(name)
+    : GeneratedImage(size)
+    , m_name(name)
 {
-    setContainerSize(size);
 }
 
 ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras*)

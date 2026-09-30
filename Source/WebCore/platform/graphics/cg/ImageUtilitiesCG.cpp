@@ -37,7 +37,6 @@
 #include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "SVGImage.h"
-#include "SVGImageForContainer.h"
 #include "UTIRegistry.h"
 #include "UTIUtilities.h"
 #include <CoreFoundation/CoreFoundation.h>
@@ -295,8 +294,7 @@ static RefPtr<NativeImage> createNativeImageFromSVGImage(SVGImage& image, const 
     if (!buffer)
         return nullptr;
 
-    Ref svgImageContainer = SVGImageForContainer::create(&image, { .containerSize = size });
-    buffer->context().drawImage(svgImageContainer.get(), ConcreteObjectSize::fixed(svgImageContainer->size()), FloatPoint::zero());
+    buffer->context().drawImage(image, ConcreteObjectSize::fixed(size), FloatPoint::zero());
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }

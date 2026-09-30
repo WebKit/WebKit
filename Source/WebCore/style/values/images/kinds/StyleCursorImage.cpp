@@ -113,13 +113,6 @@ ImageWithScale CursorImage::selectBestFitImage(const Document& document)
     return { m_image.ptr(), 1_css_dppx, std::nullopt };
 }
 
-void CursorImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
-{
-    if (!hasCachedImage())
-        return;
-    protect(cachedImage())->setContainerContextForClient(renderer.cachedImageClient(), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_originalURL.resolved, renderer.style().linkParameters());
-}
-
 ImageDrawingExtras CursorImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
 {
     return { !url.isNull() ? url : m_originalURL.resolved, renderer.style().linkParameters() };

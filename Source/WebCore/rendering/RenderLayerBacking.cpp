@@ -2510,7 +2510,7 @@ void RenderLayerBacking::updateSeparatedProperties()
             return false;
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return false;
-        RefPtr bitmapImage = dynamicDowncast<BitmapImage>(renderImage->cachedImage()->imageForRenderer(renderImage));
+        RefPtr bitmapImage = dynamicDowncast<BitmapImage>(renderImage->cachedImage()->image());
         if (!bitmapImage)
             return false;
         if (bitmapImage.get() == &BitmapImage::nullImage())
@@ -3914,7 +3914,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (!cachedImage->hasImage())
             return false;
 
-        RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+        RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
         if (!image)
             return false;
 
@@ -3959,7 +3959,7 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
             if (!cachedImage->hasImage())
                 return false;
 
-            RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+            RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
             if (!image)
                 return false;
 
@@ -4051,7 +4051,7 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
         if (!cachedImage)
             return;
 
-        RefPtr image = cachedImage->imageForRenderer(&imageRenderer);
+        RefPtr image = cachedImage->image();
         if (!image)
             return;
 

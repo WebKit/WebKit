@@ -782,7 +782,7 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const LocalFr
         return false;
 
     RefPtr cachedImage = renderImage->cachedImage();
-    return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderImage.get());
+    return cachedImage && !cachedImage->errorOccurred() && cachedImage->image();
 }
 
 #if ENABLE(MODEL_ELEMENT)
@@ -889,9 +889,6 @@ static CachedImage* getCachedImage(Element& element)
 static Image* getImage(Element& element)
 {
     RefPtr cachedImage = getCachedImage(element);
-    // Don't use cachedImage->imageForRenderer() here as that may return BitmapImages for cached SVG Images.
-    // Users of getImage() want access to the SVGImage, in order to figure out the filename extensions,
-    // which would be empty when asking the cached BitmapImages.
     return (cachedImage && !cachedImage->errorOccurred()) ?
         cachedImage->image() : nullptr;
 }

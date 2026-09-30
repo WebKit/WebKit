@@ -85,14 +85,14 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!cachedImage || cachedImage->errorOccurred())
         return { };
 
-    RefPtr image = cachedImage->imageForRenderer(&renderImage);
+    RefPtr image = cachedImage->image();
     if (!image || image->width() <= 1 || image->height() <= 1)
         return { };
 
     if (options.allowAnimatedImages == AllowAnimatedImages::No && image->isAnimated())
         return { };
 
-    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
+    auto bitmapSize = RenderImage::imageSizeAsRendered(*cachedImage, &renderImage);
     if (options.screenSizeInPixels) {
         auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *options.screenSizeInPixels }).size();
         bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;

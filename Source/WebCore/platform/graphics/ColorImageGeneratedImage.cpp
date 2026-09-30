@@ -35,9 +35,9 @@
 namespace WebCore {
 
 ColorImageGeneratedImage::ColorImageGeneratedImage(const Color& color, const FloatSize& size)
-    : m_color(color)
+    : GeneratedImage(size)
+    , m_color(color)
 {
-    setContainerSize(size);
 }
 
 ImageDrawResult ColorImageGeneratedImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect&, ImagePaintingOptions options, const ImageDrawingExtras*)

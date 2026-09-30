@@ -61,7 +61,6 @@ public:
     bool currentFrameIsComplete() const;
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
 
-    void setContainerContext(const IntSize&, const URL&);
     Style::ImageDrawingExtras drawingExtras(const URL& = { }) const;
 
     bool imageHasRelativeWidth() const { return m_styleImage && m_styleImage->imageHasRelativeWidth(); }

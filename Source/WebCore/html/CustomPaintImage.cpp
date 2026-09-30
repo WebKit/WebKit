@@ -57,12 +57,12 @@
 namespace WebCore {
 
 CustomPaintImage::CustomPaintImage(PaintDefinition& definition, const FloatSize& size, const RenderElement& element, const Vector<String>& arguments)
-    : m_paintDefinition(definition)
+    : GeneratedImage(size)
+    , m_paintDefinition(definition)
     , m_inputProperties(definition.inputProperties)
     , m_element(element)
     , m_arguments(arguments)
 {
-    setContainerSize(size);
 }
 
 CustomPaintImage::~CustomPaintImage() = default;

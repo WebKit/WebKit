@@ -75,14 +75,13 @@ public:
     virtual bool isNamedImageGeneratedImage() const { return false; }
     virtual bool isGradientImage() const { return false; }
     virtual bool NODELETE isSVGImage() const { return false; }
-    virtual bool NODELETE isSVGImageForContainer() const { return false; }
     virtual bool isSVGResourceImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool isCustomPaintImage() const { return false; }
 
     virtual void subresourcesAreFinished(Document*, CompletionHandler<void()>&&);
 
-    bool NODELETE drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
+    bool NODELETE drawsSVGImage() const { return isSVGImage(); }
 
     virtual unsigned frameCount() const { return 1; }
 
@@ -98,8 +97,6 @@ public:
     WEBCORE_EXPORT static Image& nullImage();
     bool isNull() const { return size().isEmpty(); }
 
-    virtual void setContainerSize(const FloatSize&) { }
-    virtual bool usesContainerSize() const { return false; }
     virtual bool hasIntrinsicWidth() const { return true; }
     virtual bool hasIntrinsicHeight() const { return true; }
     // FIXME: hasRelativeWidth/Height should be deduplicated with hasIntrinsicWidth/Height.

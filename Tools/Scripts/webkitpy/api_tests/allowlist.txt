@@ -400,7 +400,6 @@ TestWebKitAPI.RestoreScrollPositionTests
 TestWebKitAPI.RunScriptAfterDocumentLoad
 TestWebKitAPI.SOAuthorizationPopUp
 TestWebKitAPI.STUNMessageParsing
-TestWebKitAPI.SVGImageCasts
 TestWebKitAPI.SampleMapTest
 TestWebKitAPI.ScrollbarWidthCrash
 TestWebKitAPI.ScrollingCoordinatorTests

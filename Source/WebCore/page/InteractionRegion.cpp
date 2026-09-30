@@ -357,11 +357,11 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return nullptr;
 
-        RefPtr image = protect(*renderImage->cachedImage())->imageForRenderer(renderImage);
+        RefPtr image = protect(*renderImage->cachedImage())->image();
         if (!image)
             return nullptr;
 
-        if (image->isSVGImageForContainer())
+        if (image->isSVGImage())
             return image;
 
         RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image);

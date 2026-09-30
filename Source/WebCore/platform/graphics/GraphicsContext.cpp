@@ -341,8 +341,6 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize conc
 
 ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    if (!concreteObjectSize.size().isEmpty())
-        image.setContainerSize(concreteObjectSize.size());
     return image.draw(*this, concreteObjectSize, destination, source, options, extras);
 }
 

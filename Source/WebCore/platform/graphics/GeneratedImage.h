@@ -32,8 +32,6 @@ namespace WebCore {
 
 class GeneratedImage : public Image {
 public:
-    void setContainerSize(const FloatSize& size) override { m_size = size; }
-    bool usesContainerSize() const override { return true; }
     bool hasIntrinsicWidth() const override { return false; }
     bool hasIntrinsicHeight() const override { return false; }
     bool hasRelativeWidth() const override { return true; }
@@ -51,6 +49,10 @@ protected:
     bool currentFrameIsComplete() const override { return true; }
 
     GeneratedImage() = default;
+    explicit GeneratedImage(const FloatSize& size)
+        : m_size(size)
+    {
+    }
 
 private:
     bool isGeneratedImage() const override { return true; }

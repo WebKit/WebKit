@@ -456,9 +456,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style:
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
     auto source = modelObject->calculateImageIntrinsicDimensions(image.get(), destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);
-
-    // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-    image->setContainerContextForRenderer(m_renderer, source, style.usedZoom());
+    image->setContainerSizeForRenderer(m_renderer, source);
 
     NinePieceImagePainter::paint(ninePieceImage, m_paintInfo.context(), m_renderer.ptr(), style, destination, source, deviceScaleFactor, options);
     return true;

@@ -36,14 +36,15 @@
 #include "CrossfadeGeneratedImage.h"
 #include "DeprecatedCSSOMValue.h"
 #include "RenderElement.h"
-#include "SVGImageForContainer.h"
+#include "SVGImage.h"
+#include "StyleImageDrawingExtras.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/PointerComparison.h>
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
 #include <WebKitAdditions/AXCustomColorModeController.h>
 #endif
-#include "StylePrimitiveNumericTypes+Blending.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
-#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 namespace Style {
@@ -181,27 +182,23 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
     RefPtr protectedToImage = toImage;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    auto invertContent = AXCustomColorModeController::shouldInvertSVGImage(*renderer);
+    auto invertContent = AXCustomColorModeController::shouldInvertSVGImage(*renderer) ? InvertContent::Yes : InvertContent::No;
 #endif
 
-    if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
-        auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
-        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            , .invertContent = invertContent
-#endif
-        }, { fromURL });
-    }
-    if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
-        auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
-        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            , .invertContent = invertContent
-#endif
-        }, { toURL });
-    }
+    auto extrasFor = [&](auto& image, auto& cachedImage) -> std::unique_ptr<WebCore::ImageDrawingExtras> {
+        if (!is<SVGImage>(image))
+            return nullptr;
+        return makeUnique<ImageDrawingExtras>(cachedImage ? protect(cachedImage)->url() : WTF::URL());
+    };
+    auto fromExtras = extrasFor(protectedFromImage, m_cachedFromImage);
+    auto toExtras = extrasFor(protectedToImage, m_cachedToImage);
 
-    return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), size);
+    ImagePaintingOptions inputOptions;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    inputOptions = ImagePaintingOptions { invertContent };
+#endif
+
+    return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), WTF::move(fromExtras), WTF::move(toExtras), inputOptions);
 }
 
 bool CrossfadeImage::currentFrameIsComplete(const RenderElement* renderer) const

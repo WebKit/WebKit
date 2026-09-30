@@ -33,42 +33,46 @@
 
 namespace WebCore {
 
-CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
+CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, std::unique_ptr<ImageDrawingExtras>&& fromExtras, std::unique_ptr<ImageDrawingExtras>&& toExtras, ImagePaintingOptions inputOptions)
     : m_fromImage(fromImage)
     , m_toImage(toImage)
     , m_percentage(percentage)
     , m_crossfadeSize(crossfadeSize)
+    , m_fromExtras(WTF::move(fromExtras))
+    , m_toExtras(WTF::move(toExtras))
+    , m_inputOptions(inputOptions)
 {
-    setContainerSize(size);
 }
 
-static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, CompositeOperator operation, float opacity, const FloatSize& targetSize)
+static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, const ImageDrawingExtras* extras, ImagePaintingOptions inputOptions, CompositeOperator operation, float opacity, const FloatSize& targetSize)
 {
-    FloatSize imageSize = image.size();
+    bool drawsSVGImage = image.drawsSVGImage();
+    FloatSize imageSize = drawsSVGImage ? targetSize : image.size();
 
     // A zero-sized image would produce a non-finite scale below, poisoning the CTM.
     if (imageSize.isEmpty())
         return;
 
     // SVGImage resets the opacity when painting, so we have to use transparency layers to accurately paint one at a given opacity.
-    bool useTransparencyLayer = image.drawsSVGImage();
+    bool useTransparencyLayer = drawsSVGImage;
 
     GraphicsContextStateSaver stateSaver(context);
 
-    ImagePaintingOptions options;
+    ImagePaintingOptions options = inputOptions;
 
     if (useTransparencyLayer) {
         context.setCompositeOperation(operation);
         context.beginTransparencyLayer(opacity);
     } else {
         context.setAlpha(opacity);
-        options = { operation };
+        options = { options, operation };
     }
 
     if (targetSize != imageSize)
         context.scale(targetSize / imageSize);
 
-    context.drawImage(image, ConcreteObjectSize::fixed(imageSize), IntPoint(), options);
+    FloatRect imageRect { { }, imageSize };
+    context.drawImage(image, ConcreteObjectSize::fixed(imageSize), imageRect, imageRect, options, extras);
 
     if (useTransparencyLayer)
         context.endTransparencyLayer();
@@ -85,8 +89,8 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext& context)
     context.clip(FloatRect(FloatPoint(), m_crossfadeSize));
     context.beginTransparencyLayer(1);
 
-    drawCrossfadeSubimage(context, m_fromImage.get(), CompositeOperator::SourceOver, 1 - m_percentage, m_crossfadeSize);
-    drawCrossfadeSubimage(context, m_toImage.get(), CompositeOperator::PlusLighter, m_percentage, m_crossfadeSize);
+    drawCrossfadeSubimage(context, m_fromImage.get(), m_fromExtras.get(), m_inputOptions, CompositeOperator::SourceOver, 1 - m_percentage, m_crossfadeSize);
+    drawCrossfadeSubimage(context, m_toImage.get(), m_toExtras.get(), m_inputOptions, CompositeOperator::PlusLighter, m_percentage, m_crossfadeSize);
 
     context.endTransparencyLayer();
 }

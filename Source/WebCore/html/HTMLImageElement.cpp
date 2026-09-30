@@ -678,7 +678,7 @@ LayoutSize HTMLImageElement::naturalSize() const
     RefPtr image = m_imageLoader->image();
     if (!image)
         return { };
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio);
+    return LayoutSize { RenderImage::imageSizeAsRendered(*image, protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio) };
 }
 
 unsigned HTMLImageElement::width()

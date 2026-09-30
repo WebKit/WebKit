@@ -73,8 +73,7 @@ private:
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;
     void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
-    bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) override;
+    void setContainerSizeForRenderer(const RenderElement&, const FloatSize&) override;
     ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const override;
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
