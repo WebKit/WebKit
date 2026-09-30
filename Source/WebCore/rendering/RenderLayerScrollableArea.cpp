@@ -1082,8 +1082,8 @@ std::optional<ScrollbarColor> RenderLayerScrollableArea::scrollbarColorStyle() c
         if (auto value = m_layer.renderer().style().scrollbarColor().tryValue()) {
             Style::ColorResolver colorResolver { m_layer.renderer().style() };
             return ScrollbarColor {
-                .thumbColor = colorResolver.colorResolvingCurrentColor(value->thumb),
-                .trackColor = colorResolver.colorResolvingCurrentColor(value->track)
+                .thumbColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(value->thumb),
+                .trackColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(value->track)
             };
         }
     }

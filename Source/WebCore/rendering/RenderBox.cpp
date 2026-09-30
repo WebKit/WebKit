@@ -513,8 +513,8 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
         if (auto value = newStyle.scrollbarColor().tryValue()) {
             Style::ColorResolver colorResolver { newStyle };
             scrollbarColor = ScrollbarColor {
-                .thumbColor = colorResolver.colorResolvingCurrentColor(value->thumb),
-                .trackColor = colorResolver.colorResolvingCurrentColor(value->track)
+                .thumbColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(value->thumb),
+                .trackColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(value->track)
             };
         }
 

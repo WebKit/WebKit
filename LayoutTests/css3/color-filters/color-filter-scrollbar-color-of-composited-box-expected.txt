@@ -1,0 +1,3 @@
+
+PASS -apple-color-filter is applied to scrollbar color of composited box
+
