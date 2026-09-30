@@ -252,6 +252,7 @@ struct WEBCORE_EXPORT AttributedString {
     RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
     RetainPtr<NSAttributedString> nsAttributedString() const;
     bool NODELETE isNull() const;
+    void truncate(uint64_t length);
 
     WEBCORE_EXPORT static unsigned encodeFontCacheMissesForTesting();
     WEBCORE_EXPORT static unsigned decodeFontCacheMissesForTesting();

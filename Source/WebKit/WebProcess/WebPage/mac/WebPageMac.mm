@@ -414,26 +414,26 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    auto attributedString = editingAttributedString(*range, { }).nsAttributedString();
+    auto attributedString = editingAttributedString(*range, { });
 
-    // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
+    // WebCore::editingAttributedString() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
-    if ([attributedString length] > editingRange.length) {
-        ASSERT([attributedString length] == editingRange.length + 1);
-        ASSERT([[attributedString string] characterAtIndex:editingRange.length] == '\n' || [[attributedString string] characterAtIndex:editingRange.length] == ' ');
-        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
+    if (attributedString.string.length() > editingRange.length) {
+        ASSERT(attributedString.string.length() == editingRange.length + 1);
+        ASSERT(attributedString.string[static_cast<unsigned>(editingRange.length)] == '\n' || attributedString.string[static_cast<unsigned>(editingRange.length)] == ' ');
+        attributedString.truncate(editingRange.length);
     }
 
-    EditingRange rangeToSend(editingRange.location, [attributedString length]);
+    EditingRange rangeToSend(editingRange.location, attributedString.string.length());
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        completionHandler(WebCore::AttributedString::fromNSAttributedString(WTF::move(attributedString)), EditingRange());
+        completionHandler(attributedString, EditingRange());
         return;
     }
 
-    completionHandler(WebCore::AttributedString::fromNSAttributedString(WTF::move(attributedString)), rangeToSend);
+    completionHandler(attributedString, rangeToSend);
 }
 
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)

@@ -194,4 +194,58 @@ TEST(AttributedStringImageAttachment, PreservesNonImageData)
     EXPECT_TRUE([zipResult isEqualToData:zip.get()]);
 }
 
+using AttributeRuns = Vector<std::pair<WebCore::AttributedString::Range, HashMap<String, WebCore::AttributedString::AttributeValue>>>;
+
+static WebCore::AttributedString::AttributeValue testAttributeValue(double value)
+{
+    return { { value } };
+}
+
+TEST(AttributedStringTruncate, ClipsStraddlingRunsAndDropsLaterOnes)
+{
+    AttributeRuns runs;
+    runs.append({ { 0, 4 }, { { "before"_s, testAttributeValue(1) } } });
+    runs.append({ { 4, 6 }, { { "straddling"_s, testAttributeValue(2) } } });
+    runs.append({ { 10, 2 }, { { "after"_s, testAttributeValue(3) } } });
+
+    WebCore::AttributedString string { "0123456789AB"_s, WTF::move(runs), std::nullopt };
+    string.truncate(8);
+
+    EXPECT_TRUE(string.string == "01234567"_s);
+    ASSERT_EQ(string.attributes.size(), 2U);
+    EXPECT_EQ(string.attributes[0].first.location, 0U);
+    EXPECT_EQ(string.attributes[0].first.length, 4U);
+    EXPECT_EQ(string.attributes[1].first.location, 4U);
+    EXPECT_EQ(string.attributes[1].first.length, 4U);
+    EXPECT_TRUE(WebCore::AttributedString::rangesAreSafe(string.string, string.attributes));
+}
+
+TEST(AttributedStringTruncate, LeavesShorterStringUntouched)
+{
+    AttributeRuns runs;
+    runs.append({ { 0, 3 }, { { "all"_s, testAttributeValue(1) } } });
+
+    WebCore::AttributedString string { "abc"_s, WTF::move(runs), std::nullopt };
+    string.truncate(8);
+
+    EXPECT_TRUE(string.string == "abc"_s);
+    ASSERT_EQ(string.attributes.size(), 1U);
+    EXPECT_EQ(string.attributes[0].first.location, 0U);
+    EXPECT_EQ(string.attributes[0].first.length, 3U);
+}
+
+TEST(AttributedStringTruncate, DropsEveryRunWhenTruncatedToNothing)
+{
+    AttributeRuns runs;
+    runs.append({ { 0, 2 }, { { "first"_s, testAttributeValue(1) } } });
+    runs.append({ { 2, 2 }, { { "second"_s, testAttributeValue(2) } } });
+
+    WebCore::AttributedString string { "abcd"_s, WTF::move(runs), std::nullopt };
+    string.truncate(0);
+
+    EXPECT_TRUE(string.string.isEmpty());
+    EXPECT_TRUE(string.attributes.isEmpty());
+    EXPECT_TRUE(WebCore::AttributedString::rangesAreSafe(string.string, string.attributes));
+}
+
 } // namespace TestWebKitAPI

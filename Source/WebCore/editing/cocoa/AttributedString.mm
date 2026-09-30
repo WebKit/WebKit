@@ -531,6 +531,22 @@ bool AttributedString::isNull() const
     return string.isNull();
 }
 
+void AttributedString::truncate(uint64_t length)
+{
+    if (string.length() <= length)
+        return;
+
+    auto truncatedLength = static_cast<unsigned>(length);
+    string = string.left(truncatedLength);
+    attributes.removeAllMatching([truncatedLength](auto& attribute) {
+        return attribute.first.location >= truncatedLength;
+    });
+    for (auto& attribute : attributes) {
+        if (attribute.first.location + attribute.first.length > truncatedLength)
+            attribute.first.length = truncatedLength - attribute.first.location;
+    }
+}
+
 RetainPtr<NSDictionary> AttributedString::documentAttributesAsNSDictionary() const
 {
     if (!documentAttributes)
