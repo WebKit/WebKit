@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+var drawsPerRun = 50;
+var canvas = document.createElement("canvas");
+canvas.width = 1024;
+canvas.height = 1024;
+var gl = canvas.getContext("webgl2", { alpha: false, antialias: false, depth: false });
+
+var program = gl.createProgram();
+
+function compile(type, source) {
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+        throw "Test error";
+    gl.attachShader(program, shader);
+}
+
+compile(gl.VERTEX_SHADER, `#version 300 es
+in vec4 position;
+void main()
+{
+    gl_Position = position;
+}`);
+compile(gl.FRAGMENT_SHADER, `#version 300 es
+precision highp float;
+uniform int iterations;
+out vec4 color;
+void main()
+{
+    vec2 value = gl_FragCoord.xy / 1024.0;
+    for (int i = 0; i < iterations; i++)
+        value = fract(value.yx + sin(dot(value, vec2(12.9898, 78.233))) * vec2(0.031, 0.017));
+    color = vec4(value, 0.0, 1.0);
+}`);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+var buffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+var position = gl.getAttribLocation(program, "position");
+gl.enableVertexAttribArray(position);
+gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+var iterationsLocation = gl.getUniformLocation(program, "iterations");
+
+function drawAndWait(iterations) {
+    gl.uniform1i(iterationsLocation, iterations);
+    var start = PerfTestRunner.now();
+    for (var i = 0; i < drawsPerRun; i++)
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.finish();
+    gl.getError();
+    return PerfTestRunner.now() - start;
+}
+
+function busyWait(milliseconds) {
+    var start = PerfTestRunner.now();
+    while (PerfTestRunner.now() - start < milliseconds) { }
+}
+
+// Scale the fragment work so one run's draws take roughly targetTime of GPU
+// time, then have script busy for the same amount of time after submitting
+// them. If draw execution overlaps the busy script, one run takes about
+// targetTime; if the draws only execute once the script is done, it takes
+// about twice that.
+var targetTime = 10;
+var iterations = 64;
+drawAndWait(iterations);
+for (var attempt = 0; attempt < 8; attempt++) {
+    var elapsed = drawAndWait(iterations);
+    if (elapsed > targetTime * 0.8 && elapsed < targetTime * 1.25)
+        break;
+    iterations = Math.max(1, Math.min(65536, Math.round(iterations * targetTime / elapsed)));
+}
+var busyTime = drawAndWait(iterations);
+if (gl.getError() != gl.NO_ERROR)
+    throw "Test error";
+
+PerfTestRunner.measureTime({
+    description: "Measures whether WebGL draw calls execute in parallel with script running after their submission.",
+    run: function() {
+        for (var i = 0; i < drawsPerRun; i++)
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+        busyWait(busyTime);
+        gl.finish();
+        gl.getError();
+    }
+});
+
+</script>
+</body>
+</html>
