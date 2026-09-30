@@ -736,6 +736,9 @@ void HTMLMediaElement::initializeMediaSession()
     if (document->settings().requiresPageVisibilityToPlayAudio())
         mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageVisibilityToPlayAudio);
 
+    if (document->settings().requiresUserGestureToStartAudiblePlaybackWhenHidden())
+        mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToStartAudiblePlaybackWhenHidden);
+
     if (document->ownerElement() || !document->isMediaDocument()) {
         if (m_shouldVideoPlaybackRequireUserGesture) {
             mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
@@ -1734,6 +1737,7 @@ void HTMLMediaElement::prepareForLoad(IsExplicitLoad isExplicitLoad)
     m_autoplaying = true;
     Ref mediaSession = this->mediaSession();
     mediaSession->clientWillBeginAutoplaying();
+    mediaSession->loadWillStart(autoplay());
 
     if (!MediaPlayer::isAvailable())
         noneSupported();
@@ -3291,7 +3295,7 @@ std::expected<void, MediaPlaybackDenialExplanation> HTMLMediaElement::canTransit
     if (document().isSandboxed(SandboxFlag::AutomaticFeatures))
         return makeUnexpectedDenial(MediaPlaybackDenialReason::PageConsentRequired, "isSandboxed"_s);
 
-    return mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing);
+    return mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing, MediaElementSession::ForAutoplay::Yes);
 }
 
 void HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks()
@@ -4608,9 +4612,14 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
 
 void HTMLMediaElement::play()
 {
+    playIfPermitted(MediaElementSession::ForAutoplay::No);
+}
+
+void HTMLMediaElement::playIfPermitted(MediaElementSession::ForAutoplay forAutoplay)
+{
     HTMLMEDIAELEMENT_RELEASE_LOG(Play);
 
-    auto permitted = protect(mediaSession())->playbackStateChangePermitted(MediaPlaybackState::Playing);
+    auto permitted = protect(mediaSession())->playbackStateChangePermitted(MediaPlaybackState::Playing, forAutoplay);
     if (!permitted) {
         ERROR_LOG(LOGIDENTIFIER, "playback not permitted: ", permitted.error());
         if (permitted.error().reason == MediaPlaybackDenialReason::UserGestureRequired)
@@ -9613,7 +9622,7 @@ void HTMLMediaElement::resumeAutoplaying()
     auto canTransition = canTransitionFromAutoplayToPlay();
     if (canTransition) {
         ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused());
-        play();
+        playIfPermitted(MediaElementSession::ForAutoplay::Yes);
     } else
         ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused(), ", blocked with reason: ", canTransition.error());
 }
@@ -10202,7 +10211,7 @@ void HTMLMediaElement::updateShouldPlay()
     auto canTransition = canTransitionFromAutoplayToPlay();
     if (canTransition) {
         HTMLMEDIAELEMENT_RELEASE_LOG(UpdateShouldPlay);
-        play();
+        playIfPermitted(MediaElementSession::ForAutoplay::Yes);
     } else
         ALWAYS_LOG(LOGIDENTIFIER, "autoplay blocked with reason: ", canTransition.error());
 }
@@ -10446,7 +10455,7 @@ void HTMLMediaElement::mediaStreamCaptureStarted()
     auto canTransition = canTransitionFromAutoplayToPlay();
     if (canTransition) {
         HTMLMEDIAELEMENT_RELEASE_LOG(MediaStreamCaptureStarted);
-        play();
+        playIfPermitted(MediaElementSession::ForAutoplay::Yes);
     } else
         ALWAYS_LOG(LOGIDENTIFIER, "autoplay blocked with reason: ", canTransition.error());
 }

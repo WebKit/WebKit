@@ -1,0 +1,15 @@
+
+RUN(video.play())
+Promise resolved OK
+RUN(testRunner.setPageVisibility("hidden"))
+RUN(internals.simulateSystemSleep())
+EVENT(pause)
+Audible media that never played may not start while hidden during system sleep
+RUN(fresh.play())
+Promise rejected correctly OK
+Media playing when the system went to sleep resumes on wake while hidden
+RUN(internals.simulateSystemWake())
+EVENT(playing)
+EXPECTED (fresh.paused == 'true') OK
+END OF TEST
+

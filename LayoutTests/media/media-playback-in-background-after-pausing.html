@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>media-playback-in-background-after-pausing</title>
+	<script src="video-test.js"></script>
+	<script src="media-file.js"></script>
+	<script>
+	async function hidePage() {
+		const hidden = waitFor(document, 'visibilitychange', true);
+		run('testRunner.setPageVisibility("hidden")');
+		await hidden;
+	}
+
+	const restriction = 'RequireUserGestureToStartAudiblePlaybackWhenHidden';
+
+	function createMediaElement() {
+		const element = document.createElement('video');
+		document.body.appendChild(element);
+		internals.setMediaElementRestrictions(element, restriction);
+		internals.setMediaElementGracePeriodForResumingPlaybackInBackground(element, 0);
+		return element;
+	}
+
+	async function runTest() {
+		findMediaElement();
+		internals.setMediaElementRestrictions(video, restriction);
+		video.loop = true;
+		video.src = findMediaFile('video', 'content/test');
+
+		await waitFor(video, 'canplay');
+		await shouldResolve(run('video.play()'));
+
+		run('internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 20)');
+		run('video.pause()');
+		await waitFor(video, 'pause');
+
+		consoleWrite('Sleep 50ms:')
+		await sleepFor(50);
+		await hidePage();
+		await shouldResolve(run('video.play()'));
+
+		consoleWrite('-');
+		run('internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 0.01)');
+		run('video.pause()');
+		consoleWrite('Sleep 50ms:')
+		await sleepFor(50);
+		await shouldReject(run('video.play()'));
+
+		consoleWrite('- Muted media may start while hidden');
+		run('video.muted = true');
+		await shouldResolve(run('video.play()'));
+		run('video.pause()');
+		run('video.muted = false');
+
+		consoleWrite('- Video without audio may start while hidden');
+		videoOnly = createMediaElement();
+		run('videoOnly.src = "content/test-video-only.mp4"');
+		await waitFor(videoOnly, 'canplay');
+		await shouldResolve(run('videoOnly.play()'));
+		run('videoOnly.pause()');
+
+		consoleWrite('- MediaStream may start while hidden');
+		const audioContext = new AudioContext();
+		const oscillator = audioContext.createOscillator();
+		const audioDestination = audioContext.createMediaStreamDestination();
+		oscillator.connect(audioDestination);
+		oscillator.start();
+		streamVideo = createMediaElement();
+		streamVideo.srcObject = audioDestination.stream;
+		await shouldResolve(run('streamVideo.play()'));
+		run('streamVideo.pause()');
+		audioContext.close();
+
+		consoleWrite('- Audible media that never played may not start while hidden, before or after metadata is known');
+		fresh = createMediaElement();
+		run('fresh.src = findMediaFile("video", "content/test")');
+		await shouldReject(run('fresh.play()'));
+		await waitFor(fresh, 'canplay');
+		await shouldReject(run('fresh.play()'));
+	}
+
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	})
+	</script>
+</head>
+<body>
+	<video></video>
+</body>
+</html>

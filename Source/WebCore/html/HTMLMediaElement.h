@@ -1032,6 +1032,8 @@ private:
     void pauseInternal(bool dispatchPauseEvent = true);
     void completePlayInternal();
 
+    void playIfPermitted(MediaElementSession::ForAutoplay);
+
     enum class IsExplicitLoad : bool { No, Yes };
     void prepareForLoad(IsExplicitLoad = IsExplicitLoad::No);
     void allowVideoRendering();

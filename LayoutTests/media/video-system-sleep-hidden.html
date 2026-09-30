@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+    async function hidePage() {
+        const hidden = waitFor(document, 'visibilitychange', true);
+        run('testRunner.setPageVisibility("hidden")');
+        await hidden;
+    }
+
+    const restriction = 'RequireUserGestureToStartAudiblePlaybackWhenHidden';
+
+    async function runTest() {
+        findMediaElement();
+        fresh = document.getElementById('fresh');
+        for (const element of [video, fresh]) {
+            internals.setMediaElementRestrictions(element, restriction);
+            internals.setMediaElementGracePeriodForResumingPlaybackInBackground(element, 0);
+        }
+
+        video.loop = true;
+        video.src = findMediaFile('video', 'content/test');
+        fresh.src = findMediaFile('video', 'content/test');
+        await Promise.all([waitFor(video, 'canplay', true), waitFor(fresh, 'canplay', true)]);
+
+        await shouldResolve(run('video.play()'));
+
+        await hidePage();
+
+        let paused = waitFor(video, 'pause');
+        run('internals.simulateSystemSleep()');
+        await paused;
+
+        consoleWrite('Audible media that never played may not start while hidden during system sleep');
+        await shouldReject(run('fresh.play()'));
+
+        consoleWrite('Media playing when the system went to sleep resumes on wake while hidden');
+        let resumed = waitFor(video, 'playing');
+        run('internals.simulateSystemWake()');
+        await resumed;
+
+        await sleepFor(200);
+        testExpected('fresh.paused', true);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+    <video id="fresh"></video>
+</body>
+</html>

@@ -5100,6 +5100,13 @@ RequiresUserGestureToLoadVideo:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+RequiresUserGestureToStartAudiblePlaybackWhenHidden:
+  type: bool
+  status: embedder
+  defaultValue:
+    default: false
+    WebKit: defaultRequiresUserGestureToStartAudiblePlaybackWhenHidden()
+
 ResourceLoadSchedulingEnabled:
   type: bool
   status: internal

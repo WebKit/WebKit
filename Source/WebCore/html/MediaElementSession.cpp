@@ -125,6 +125,7 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
     CASE(RequirePlaybackToControlControlsManager)
     CASE(RequireUserGestureForVideoDueToLowPowerMode)
     CASE(RequireUserGestureForVideoDueToAggressiveThermalMitigation)
+    CASE(RequireUserGestureToStartAudiblePlaybackWhenHidden)
 
     return restrictionBuilder.toString();
 }
@@ -459,7 +460,7 @@ static ASCIILiteral mediaGestureReasonString(Document::MediaGestureReason reason
 
 #endif
 
-std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
+std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state, ForAutoplay forAutoplay) const
 {
     RefPtr element = m_element.get();
     auto makeUnexpectedDenial = [](MediaPlaybackDenialReason reason, const String& explanation) {
@@ -476,6 +477,9 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
 
     if (document->isMediaDocument() && !document->ownerElement())
         return { };
+
+    if (startingAudiblePlaybackWhileHiddenRequiresUserGesture(state, forAutoplay, *element, document))
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required to start audible playback when not visible"_s);
 
     RefPtr mainFrameDocument = document->mainFrameDocument();
 
@@ -1176,6 +1180,90 @@ void MediaElementSession::mediaEngineUpdated()
     client->setShouldPlayToPlaybackTarget(m_shouldPlayToPlaybackTarget);
 #endif
 
+}
+
+void MediaElementSession::setState(State state)
+{
+    auto previousState = this->state();
+
+    if (state == State::Playing)
+        m_startPlaybackWhenHiddenGranted = false;
+
+    if (previousState == State::Playing && state != State::Playing) {
+        m_mostRecentPlaybackEndedTime = MonotonicTime::now();
+        if (RefPtr element = m_element.get(); element && !element->muted() && canProduceAudio())
+            protect(element->document())->audiblePlaybackEnded();
+    }
+    PlatformMediaSession::setState(state);
+}
+
+bool MediaElementSession::isWithinGracePeriodForResumingPlaybackInBackground(const Document& document) const
+{
+    auto now = MonotonicTime::now();
+    auto isWithinGracePeriod = [&now, this](const Markable<MonotonicTime>& time) {
+        return time && now - *time <= m_gracePeriodForResumingPlaybackInBackground;
+    };
+    return isWithinGracePeriod(m_mostRecentPlaybackEndedTime) || isWithinGracePeriod(document.mostRecentAudiblePlaybackEndedTime());
+}
+
+void MediaElementSession::loadWillStart(bool autoplay)
+{
+    RefPtr element = m_element.get();
+    // An autoplay load started within the grace period may begin playback once enough data has loaded, however long that takes.
+    m_startPlaybackWhenHiddenGranted = element && autoplay && isWithinGracePeriodForResumingPlaybackInBackground(protect(element->document()));
+}
+
+// A gesture inherited from an earlier interaction with the document does not count.
+static bool isProcessingUserGestureForStartingPlaybackWhileHidden(const Document& document)
+{
+    switch (document.mediaUserGestureReason()) {
+    case Document::MediaGestureReason::ActiveToken:
+    case Document::MediaGestureReason::TransientActivation:
+    case Document::MediaGestureReason::MediaFinishedGrace:
+        return true;
+    case Document::MediaGestureReason::None:
+    case Document::MediaGestureReason::InheritsFromDocumentSetting:
+    case Document::MediaGestureReason::InheritedUserGesturesQuirk:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool MediaElementSession::startingAudiblePlaybackWhileHiddenRequiresUserGesture(MediaPlaybackState state, ForAutoplay forAutoplay, const HTMLMediaElement& element, const Document& document) const
+{
+    if (!(m_restrictions & RequireUserGestureToStartAudiblePlaybackWhenHidden) || state != MediaPlaybackState::Playing)
+        return false;
+
+    // Only starting playback is restricted. Media that is playing, or whose play request was already accepted
+    // and is waiting for data, is never denied. A session restored to Playing when an interruption ends was
+    // admitted before the interruption began and may resume.
+    if (!element.paused() || this->state() == State::Playing)
+        return false;
+
+    if (!document.hidden() || isProcessingUserGestureForStartingPlaybackWhileHidden(document))
+        return false;
+
+#if ENABLE(MEDIA_STREAM)
+    if (element.hasMediaStreamSrcObject())
+        return false;
+#endif
+
+    if (element.muted() || !element.volume())
+        return false;
+
+    // Tracks are unknown until metadata is available, so the element is treated as audible until then.
+    if (element.isVideo() && element.readyState() >= HTMLMediaElement::HAVE_METADATA && !element.hasAudio())
+        return false;
+
+    if (forAutoplay == ForAutoplay::Yes && m_startPlaybackWhenHiddenGranted)
+        return false;
+
+    // Another element of this document playing audio may hand over to this one (a crossfade).
+    if (document.mediaState().contains(MediaProducerMediaState::IsPlayingAudio))
+        return false;
+
+    return !isWithinGracePeriodForResumingPlaybackInBackground(document);
 }
 
 void MediaElementSession::resetPlaybackSessionState()

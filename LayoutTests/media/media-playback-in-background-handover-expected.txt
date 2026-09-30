@@ -1,0 +1,26 @@
+
+RUN(testRunner.setPageVisibility("hidden"))
+- Crossfade: an element that never played may start while another element of the document plays audio
+RUN(b.play())
+Promise resolved OK
+RUN(b.pause())
+- Handover: an element that never played may start within the grace period after another element stopped
+RUN(a.pause())
+RUN(c.play())
+Promise resolved OK
+RUN(c.pause())
+- Handover after the grace period is refused
+RUN(d.play())
+Promise rejected correctly OK
+- Muted handover: a muted element stopping does not allow an audible element to start
+RUN(e.muted = true)
+RUN(e.play())
+Promise resolved OK
+RUN(e.pause())
+RUN(f.play())
+Promise rejected correctly OK
+- Audio playing in an iframe does not allow the main document to start
+RUN(g.play())
+Promise rejected correctly OK
+END OF TEST
+

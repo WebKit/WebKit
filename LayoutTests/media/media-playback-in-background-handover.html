@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-playback-in-background-handover</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    async function hidePage() {
+        const hidden = waitFor(document, 'visibilitychange', true);
+        run('testRunner.setPageVisibility("hidden")');
+        await hidden;
+    }
+
+    const restriction = 'RequireUserGestureToStartAudiblePlaybackWhenHidden';
+
+    async function createMediaElement(gracePeriod) {
+        const element = document.createElement('video');
+        document.body.appendChild(element);
+        internals.setMediaElementRestrictions(element, restriction);
+        internals.setMediaElementGracePeriodForResumingPlaybackInBackground(element, gracePeriod);
+        element.loop = true;
+        element.src = findMediaFile('video', 'content/test');
+        await waitFor(element, 'canplay', true);
+        return element;
+    }
+
+    async function startIframePlayback() {
+        const iframe = document.createElement('iframe');
+        const loaded = waitFor(iframe, 'load', true);
+        iframe.srcdoc = `<video loop src="${findMediaFile('video', 'content/test')}"></video>`;
+        document.body.appendChild(iframe);
+        await loaded;
+        const iframeVideo = iframe.contentDocument.querySelector('video');
+        iframeVideo.muted = true;
+        await iframeVideo.play();
+        iframeVideo.muted = false;
+        await testExpectedEventuallySilent("internals.pageMediaState().includes('IsPlayingAudio')", true);
+        return iframeVideo;
+    }
+
+    async function runTest() {
+        a = await createMediaElement(0);
+        b = await createMediaElement(0);
+        c = await createMediaElement(20);
+        d = await createMediaElement(0.01);
+        e = await createMediaElement(0);
+        f = await createMediaElement(0.5);
+        g = await createMediaElement(0);
+
+        await a.play();
+
+        await hidePage();
+
+        consoleWrite('- Crossfade: an element that never played may start while another element of the document plays audio');
+        await shouldResolve(run('b.play()'));
+        run('b.pause()');
+
+        consoleWrite('- Handover: an element that never played may start within the grace period after another element stopped');
+        run('a.pause()');
+        await shouldResolve(run('c.play()'));
+        run('c.pause()');
+
+        consoleWrite('- Handover after the grace period is refused');
+        await sleepFor(50);
+        await shouldReject(run('d.play()'));
+
+        consoleWrite('- Muted handover: a muted element stopping does not allow an audible element to start');
+        await sleepFor(600);
+        run('e.muted = true');
+        await shouldResolve(run('e.play()'));
+        run('e.pause()');
+        await shouldReject(run('f.play()'));
+
+        consoleWrite('- Audio playing in an iframe does not allow the main document to start');
+        // FIXME (webkit.org/b/325646): the page stays hidden for this step. Showing it would restart b and c:
+        // their play() while hidden committed State::Playing during the visibility interruption, pause() left
+        // the state to restore at Playing, and ending the interruption resumes them.
+        iframeVideo = await startIframePlayback();
+        await shouldReject(run('g.play()'));
+        iframeVideo.pause();
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

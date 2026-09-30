@@ -29,7 +29,9 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -65,14 +67,11 @@ public:
 
     void createWebView()
     {
-        webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-#if TARGET_OS_IPHONE
-        window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-        [window addSubview:webView.get()];
-#else
-        window = adoptNS([[NSWindow alloc] initWithContentRect:webView.get().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
-        [window.get().contentView addSubview:webView.get()];
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+#if PLATFORM(MAC)
+        [webView _setWindowOcclusionDetectionEnabled:NO];
 #endif
+        [webView setVisibility:YES];
     }
 
     void testVideoWithAudio()
@@ -107,12 +106,7 @@ public:
 
     RetainPtr<RequiresUserActionForPlaybackMessageHandler> handler;
     RetainPtr<WKWebViewConfiguration> configuration;
-    RetainPtr<WKWebView> webView;
-#if TARGET_OS_IPHONE
-    RetainPtr<UIWindow> window;
-#else
-    RetainPtr<NSWindow> window;
-#endif
+    RetainPtr<TestWKWebView> webView;
 };
 
 #if TARGET_OS_IPHONE

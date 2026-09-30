@@ -970,6 +970,7 @@ public:
     void suspendAllMediaBuffering();
     void suspendAllMediaPlayback();
     void resumeAllMediaPlayback();
+    void setMediaElementGracePeriodForResumingPlaybackInBackground(const HTMLMediaElement&, double gracePeriodInSeconds);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

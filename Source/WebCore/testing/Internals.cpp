@@ -5719,6 +5719,8 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringVie
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepagevisibilityforvideotobenowplaying"_s))
             restrictions |= MediaElementSession::RequirePageVisibilityForVideoToBeNowPlaying;
 #endif
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergesturetostartaudibleplaybackwhenhidden"_s))
+            restrictions |= MediaElementSession::RequireUserGestureToStartAudiblePlaybackWhenHidden;
     }
     mediaSession->addBehaviorRestriction(restrictions);
 }
@@ -5890,6 +5892,10 @@ void Internals::resumeAllMediaPlayback()
     page->resumeAllMediaPlayback();
 }
 
+void Internals::setMediaElementGracePeriodForResumingPlaybackInBackground(const HTMLMediaElement& element, double gracePeriodInSeconds)
+{
+    element.mediaSession().setGracePeriodForResumingPlaybackInBackgroundForTesting(Seconds(gracePeriodInSeconds));
+}
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)
