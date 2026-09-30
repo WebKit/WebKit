@@ -22,6 +22,8 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
+window.internals?.setTopDocumentURLForQuirks("https://outlook.live.com/");
+
 document.addEventListener("touchmove", (e) => {
     e.preventDefault();
 }, { passive: false });

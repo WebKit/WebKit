@@ -599,6 +599,8 @@ static constexpr Quirk fullTable[] = {
             mayNeedToIgnoreContentObservation.when(elementMatchesSelector(onSwatchColorPicker)),
             // Outlook detects Safari and handles selections incorrectly in their rich text editor roosterjs.
             needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent)),
+            // outlook.live.com: rdar://151851274
+            shouldAllowTouchMoveToChangeSelectionQuirk,
         } },
 
     // outlook.live.com rdar://48008837

@@ -228,6 +228,7 @@ enum class QuirkBehaviorID {
     ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk,
     ShouldAllowMSTeamsProtocolWithoutUserGestureQuirk,
     ShouldAllowPopupFromMicrosoftOfficeToOneDrive,
+    ShouldAllowTouchMoveToChangeSelectionQuirk,
     ShouldAutoplayWebAudioForArbitraryUserGestureQuirk,
     ShouldAvoidProgrammaticScrollClampingQuirk,
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk,
@@ -537,6 +538,7 @@ inline constexpr QuirkBehavior requiresUserGestureToPlayInFullscreenQuirk { WebC
 inline constexpr QuirkBehavior returnNullPictureInPictureElementDuringFullscreenChangeQuirk { WebCore::QuirkBehaviorID::ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldAllowMSTeamsProtocolWithoutUserGestureQuirk { WebCore::QuirkBehaviorID::ShouldAllowMSTeamsProtocolWithoutUserGestureQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldAllowPopupFromMicrosoftOfficeToOneDrive { .id = WebCore::QuirkBehaviorID::ShouldAllowPopupFromMicrosoftOfficeToOneDrive, .isAvailable = BuildCondition::iOSFamily, .quirkConditionsSupported = QuirkConditionsSupported::SecondaryURL, .quirkConditionsNeeded = QuirkConditionsSupported::SecondaryURL };
+inline constexpr QuirkBehavior shouldAllowTouchMoveToChangeSelectionQuirk { WebCore::QuirkBehaviorID::ShouldAllowTouchMoveToChangeSelectionQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior shouldAutoplayWebAudioForArbitraryUserGestureQuirk { WebCore::QuirkBehaviorID::ShouldAutoplayWebAudioForArbitraryUserGestureQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldAvoidProgrammaticScrollClampingQuirk { WebCore::QuirkBehaviorID::ShouldAvoidProgrammaticScrollClampingQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldAvoidResizingWhenInputViewBoundsChangeQuirk { WebCore::QuirkBehaviorID::ShouldAvoidResizingWhenInputViewBoundsChangeQuirk, BuildCondition::always };

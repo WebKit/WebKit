@@ -201,6 +201,7 @@ https://outlook.live.com/
     MayNeedToIgnoreContentObservation
     NeedsMozillaFileTypeForDataTransferQuirk
     NeedsUserAgentStringOverrideQuirk
+    ShouldAllowTouchMoveToChangeSelectionQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk

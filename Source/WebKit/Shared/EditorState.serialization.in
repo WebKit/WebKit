@@ -138,6 +138,7 @@ using WebCore::ScrollOffset = WebCore::IntPoint;
     WebCore::ScrollOffset enclosingScrollOffset;
     bool enclosingLayerUsesContentsLayer;
     bool needsHideSelectionDuringOverflowScrollQuirk;
+    bool shouldAllowTouchMoveToChangeSelectionQuirk;
 #endif
 };
 

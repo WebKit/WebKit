@@ -291,6 +291,7 @@ public:
     bool needsAmazonDesignMenuViewportUnitQuirk(const Style::ComputedStyle&, const Style::ComputedStyle& parentStyle) const;
     bool needsClaudeSidebarViewportUnitQuirk(Element&, const Style::ComputedStyle&) const;
     WEBCORE_EXPORT bool needsHideSelectionDuringOverflowScrollQuirk() const;
+    WEBCORE_EXPORT bool shouldAllowTouchMoveToChangeSelection() const;
     bool needsChromeOSNavigatorUserAgentQuirk(const Document&) const;
 
     bool shouldTreatAddingMouseOutEventListenerAsContentChange() const;

@@ -3441,6 +3441,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!editorState.visualData)
         return NO;
 
+    if (!editorState.visualData->shouldAllowTouchMoveToChangeSelectionQuirk)
+        return NO;
+
     static constexpr float handleHitTestPadding = 44;
     auto inflatedContainsPoint = [&](WebCore::IntRect caretRect) -> bool {
         if (caretRect.isEmpty())

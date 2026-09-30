@@ -2064,6 +2064,13 @@ bool Quirks::needsHideSelectionDuringOverflowScrollQuirk() const
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsHideSelectionDuringOverflowScrollQuirk);
 }
 
+// outlook.live.com: rdar://151851274
+bool Quirks::shouldAllowTouchMoveToChangeSelection() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAllowTouchMoveToChangeSelectionQuirk);
+}
+
 // amazon.design rdar://175953409
 bool Quirks::needsAmazonDesignMenuViewportUnitQuirk(const Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle) const
 {

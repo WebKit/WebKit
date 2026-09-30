@@ -389,8 +389,10 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     auto& postLayoutData = *result.postLayoutData;
     auto& visualData = *result.visualData;
 
-    if (RefPtr document = frame.document())
+    if (RefPtr document = frame.document()) {
         visualData.needsHideSelectionDuringOverflowScrollQuirk = document->quirks().needsHideSelectionDuringOverflowScrollQuirk();
+        visualData.shouldAllowTouchMoveToChangeSelectionQuirk = document->quirks().shouldAllowTouchMoveToChangeSelection();
+    }
 
     Ref view = *frame.view();
 
