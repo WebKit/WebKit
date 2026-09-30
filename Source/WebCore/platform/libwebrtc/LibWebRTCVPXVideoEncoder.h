@@ -28,6 +28,8 @@
 #if USE(LIBWEBRTC)
 
 #include "VideoEncoder.h"
+#include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -50,6 +52,12 @@ public:
 
     ~LibWebRTCVPXVideoEncoder();
 
+    struct PendingFrame {
+        RawFrame rawFrame;
+        bool shouldGenerateKeyFrame;
+        UniqueRef<EncodePromise::Producer> promise;
+    };
+
 private:
     LibWebRTCVPXVideoEncoder(Type, DescriptionCallback&&, OutputCallback&&);
 
@@ -60,7 +68,16 @@ private:
     void NODELETE close() final;
     Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
+    void encodeVideoFrame(VideoFrame&);
+
     const Ref<LibWebRTCVPXInternalVideoEncoder> m_internalEncoder;
+
+    struct PendingFlush {
+        UniqueRef<GenericPromise::Producer> promise;
+    };
+
+    Lock m_pendingFramesLock;
+    Deque<Variant<PendingFrame, PendingFlush>> m_pendingFrames WTF_GUARDED_BY_LOCK(m_pendingFramesLock);
 };
 
 }

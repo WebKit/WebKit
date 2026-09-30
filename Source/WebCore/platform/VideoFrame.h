@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
 #if ENABLE(VIDEO)
 
 #include <JavaScriptCore/TypedArrays.h>
@@ -35,6 +34,8 @@
 #include <WebCore/VideoPixelFormat.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NativePromise.h>
+#include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
@@ -113,6 +114,8 @@ public:
 #endif
 #if PLATFORM(COCOA)
     virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
+    using PixelBufferPromise = NativePromise<RetainPtr<CVPixelBufferRef>, String>;
+    virtual Ref<PixelBufferPromise> getPixelBuffer() const { return PixelBufferPromise::createAndResolve(RetainPtr { pixelBuffer() }); }
 #endif
     WEBCORE_EXPORT virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 

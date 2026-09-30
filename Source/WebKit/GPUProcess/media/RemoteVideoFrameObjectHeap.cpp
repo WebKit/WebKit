@@ -37,6 +37,7 @@
 
 #if PLATFORM(COCOA)
 #include <WebCore/ColorSpaceCG.h>
+#include <WebCore/CVUtilities.h>
 #include <WebCore/PixelBufferConformerCV.h>
 #include <WebCore/VideoFrameCV.h>
 #include <pal/cf/CoreMediaSoftLink.h>
