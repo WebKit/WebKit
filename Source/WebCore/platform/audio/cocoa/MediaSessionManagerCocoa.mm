@@ -774,23 +774,27 @@ static id<MRNowPlayingActivityUIControllable> nowPlayingActivityController()
     return controller;
 }
 
+static void setPreferredState(MRNowPlayingActivityUIState preferredState)
+{
+    RELEASE_LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingSuppression: setting preferred state to %ld", std::to_underlying(preferredState));
+    [nowPlayingActivityController() setPreferredState:preferredState forBundleIdentifier:NSBundle.mainBundle.bundleIdentifier];
+}
+
 void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo* nowPlayingInfo)
 {
     if (!nowPlayingInfo || !nowPlayingInfo->isVideo || nowPlayingInfo->fullscreenMode != MediaPlayerEnums::VideoFullscreenModeNone) {
         RELEASE_LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingSuppression: clearing suppressPresentationOverBundleIdentifiers (hasNowPlayingInfo=%d, isVideo=%d, fullscreenMode=%d)", !!nowPlayingInfo, nowPlayingInfo && nowPlayingInfo->isVideo, nowPlayingInfo && nowPlayingInfo->fullscreenMode);
         [nowPlayingActivityController() suppressPresentationOverBundleIdentifiers:nil];
 
-#if HAVE(AVEXPERIENCECONTROLLER)
         MRNowPlayingActivityUIState preferredState;
         if (nowPlayingInfo && nowPlayingInfo->fullscreenMode != MediaPlayerEnums::VideoFullscreenModeNone)
             preferredState = MRNowPlayingActivityUIStateFullScreen;
         else
             preferredState = MRNowPlayingActivityUIStateInline;
-
-        RELEASE_LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingSuppression: setting preferred state to %ld", std::to_underlying(preferredState));
-        [nowPlayingActivityController() setPreferredState:preferredState forBundleIdentifier:NSBundle.mainBundle.bundleIdentifier];
-#endif
+        setPreferredState(preferredState);
     } else {
+        setPreferredState(MRNowPlayingActivityUIStateInline);
+
         RetainPtr parentApplicationBundleIdentifier = applicationBundleIdentifier().createNSString();
         RetainPtr presentingApplicationBundleIdentifier = nowPlayingInfo->metadata.sourceApplicationIdentifier.createNSString();
         NSSet *bundleIdentifiers = [NSSet setWithArray:@[parentApplicationBundleIdentifier.get(), presentingApplicationBundleIdentifier.get()]];
