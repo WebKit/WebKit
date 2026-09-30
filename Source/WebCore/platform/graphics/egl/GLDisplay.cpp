@@ -118,12 +118,24 @@ GLDisplay::GLDisplay(EGLDisplay eglDisplay)
 
 void GLDisplay::terminate()
 {
-    if (m_display == EGL_NO_DISPLAY)
+    Locker locker { m_terminationLock };
+    auto display = m_display.exchange(EGL_NO_DISPLAY);
+    if (display == EGL_NO_DISPLAY)
         return;
 
-    eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglTerminate(m_display);
-    m_display = EGL_NO_DISPLAY;
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglTerminate(display);
+}
+
+bool GLDisplay::runIfNotTerminated(NOESCAPE const Function<void(EGLDisplay)>& function)
+{
+    Locker locker { m_terminationLock };
+    auto display = m_display.load();
+    if (display == EGL_NO_DISPLAY)
+        return false;
+
+    function(display);
+    return true;
 }
 
 bool GLDisplay::checkVersion(int major, int minor) const

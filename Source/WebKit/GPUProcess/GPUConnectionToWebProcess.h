@@ -147,6 +147,15 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const LIFETIME_BOUND { return m_sharedPreferencesForWebProcess; }
+
+    IPC::Connection& connection() { return m_connection.get(); }
+    IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
+    GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
+
+    using RemoteRenderingBackendMap = HashMap<RemoteRenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
+
+    const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }
+    const RemoteRenderingBackendMap& remoteRenderingBackendMap() const LIFETIME_BOUND { return m_remoteRenderingBackendMap; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
 #if ENABLE(WEBXR)
@@ -160,10 +169,9 @@ public:
 #endif
 
     USING_CAN_MAKE_WEAKPTR(WebCore::NowPlayingManagerClient);
-
-    IPC::Connection& connection() { return m_connection.get(); }
-    IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
-    GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void close() { didClose(connection()); }
+#endif
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
     Ref<RemoteSharedResourceCache> sharedResourceCache();
 
@@ -209,8 +217,6 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
     void setTCCIdentity();
 #endif
-
-    const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
 #endif
@@ -244,9 +250,6 @@ public:
 #endif
 
     static uint64_t objectCountForTesting() { return gObjectCountForTesting; }
-
-    using RemoteRenderingBackendMap = HashMap<RemoteRenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
-    const RemoteRenderingBackendMap& remoteRenderingBackendMap() const LIFETIME_BOUND { return m_remoteRenderingBackendMap; }
 
     RemoteRenderingBackend* NODELETE remoteRenderingBackend(RemoteRenderingBackendIdentifier);
 

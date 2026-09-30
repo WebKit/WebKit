@@ -286,6 +286,14 @@ public:
     void setTextCheckerState(OptionSet<TextCheckerState>);
 
     EventDispatcher& eventDispatcher() LIFETIME_BOUND { return m_eventDispatcher; }
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const LIFETIME_BOUND { return m_sharedPreferencesForWebProcess; }
+
+    const String& uiProcessBundleIdentifier() const LIFETIME_BOUND { return m_uiProcessBundleIdentifier; }
+    WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
+    WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
+    WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
+    WebCookieJar& cookieJar() { return m_cookieJar.get(); }
+    WebSocketChannelManager& webSocketChannelManager() LIFETIME_BOUND { return m_webSocketChannelManager; }
 
     NetworkProcessConnection& ensureNetworkProcessConnection();
 
@@ -299,7 +307,6 @@ public:
     void removeWebTransportSession(WebTransportSessionIdentifier);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const LIFETIME_BOUND { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess); }
 
 #if USE(LIBRICE)
@@ -367,8 +374,6 @@ public:
     void releaseSystemMallocMemory();
 #endif
 
-    const String& uiProcessBundleIdentifier() const LIFETIME_BOUND { return m_uiProcessBundleIdentifier; }
-
     void updateActivePages(const String& overrideDisplayName);
     void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
     void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState> changed);
@@ -402,17 +407,12 @@ public:
 #if ENABLE(MODEL_PROCESS)
     ModelProcessModelPlayerManager& modelProcessModelPlayerManager() { return m_modelProcessModelPlayerManager.get(); }
 #endif
-    WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
-    WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
     RemoteMediaPlayerManager& remoteMediaPlayerManager() { return m_remoteMediaPlayerManager.get(); }
 #endif
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
     RemoteImageDecoderAVFManager& remoteImageDecoderAVFManager() { return m_remoteImageDecoderAVFManager.get(); }
 #endif
-    WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
-    WebCookieJar& cookieJar() { return m_cookieJar.get(); }
-    WebSocketChannelManager& webSocketChannelManager() LIFETIME_BOUND { return m_webSocketChannelManager; }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     float backlightLevel() const { return m_backlightLevel; }
@@ -902,6 +902,7 @@ private:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<RendererBufferTransportMode> m_rendererBufferTransportMode;
     OptionSet<AvailableInputDevices> m_availableInputDevices;
+    bool m_isStoppingRunLoop { false };
 #endif
 
     bool m_hasSuspendedPageProxy { false };

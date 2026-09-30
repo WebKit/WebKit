@@ -190,6 +190,9 @@ private:
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
     void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     bool shouldTerminate() override;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void stopRunLoop() override;
+#endif
 
     void tryExitIfUnused();
     bool canExitUnderMemoryPressure() const;
