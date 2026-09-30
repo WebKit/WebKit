@@ -106,6 +106,27 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     if (extendedMeasuring)
         width -= (singleSpaceWidth(fontCascade, useSimplifiedContentMeasuring) + fontCascade.wordSpacing());
 
+    if (!width && hasKerningOrLigatures && (from || to < text.length())) {
+        auto breaksShaping = [](char16_t character) {
+            return character == space || character == tabCharacter || character == newlineCharacter || character == carriageReturn;
+        };
+        auto sharesShapingAcrossBoundary = (from && !breaksShaping(text[from - 1]) && !breaksShaping(text[from]))
+            || (to < text.length() && !breaksShaping(text[to - 1]) && !breaksShaping(text[to]));
+        if (sharesShapingAcrossBoundary) {
+            CheckedRef style = inlineTextBox.style();
+            auto directionalOverride = isOverride(style->unicodeBidi());
+            auto contextRun = WebCore::TextRun { StringView(text), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style->writingMode().bidiDirection() : TextDirection::LTR, directionalOverride };
+            if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
+                contextRun.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+            contextRun.setTextSpacingState(spacingState);
+            ComplexTextController controller(fontCascade, contextRun);
+            controller.advance(from);
+            auto widthBeforeRange = controller.runWidthSoFar();
+            controller.advance(to);
+            width = controller.runWidthSoFar() - widthBeforeRange;
+        }
+    }
+
     if (std::isnan(width) || std::isinf(width)) [[unlikely]]
         return std::isnan(width) ? 0.0f : maxInlineLayoutUnit();
     return std::max(0.f, width);
