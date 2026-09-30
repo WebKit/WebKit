@@ -61,7 +61,12 @@ public:
     void start();
 
     void setConfiguration(Configuration&&);
+    void setConfigurationForTesting(Configuration&&);
     const Configuration& configuration() const { return m_configuration; }
+
+#if PLATFORM(IOS_FAMILY)
+    void didDetectWebProcessWithoutPerProcessJetsamLimit();
+#endif
 
 private:
     enum class State : uint8_t {
@@ -78,6 +83,10 @@ private:
     Configuration m_configuration;
     RunLoop::Timer m_measurementTimer;
     State m_state { State::NotStarted };
+    bool m_configurationSetForTesting { false };
+#if PLATFORM(IOS_FAMILY)
+    bool m_didDetectWebProcessWithoutPerProcessJetsamLimit { false };
+#endif
 };
 
 } // namespace WebKit

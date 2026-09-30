@@ -443,6 +443,10 @@ public:
     const MachSendRight& taskNamePort() const { return m_taskNamePort; }
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)
+    void didComputeAvailableMemory(uint64_t availableMemory);
+#endif
+
 #if HAVE(DISPLAY_LINK)
     DisplayLink::Client& displayLinkClient() LIFETIME_BOUND { return m_displayLinkClient; }
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);

@@ -361,17 +361,20 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
         installMemoryPressureHandler();
 
 #if ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)
-        auto monitorConfiguration = MemoryFootprintMonitor::defaultConfiguration();
-        if (auto pollInterval = m_configuration->memoryFootprintPollIntervalForTesting())
-            monitorConfiguration.pollInterval = pollInterval;
-        if (auto memoryLimit = m_configuration->memoryLimitForTesting()) {
-            monitorConfiguration.foregroundPageMemoryLimit = memoryLimit;
-            monitorConfiguration.backgroundPageMemoryLimit = memoryLimit;
-            monitorConfiguration.webProcessMemoryLimit = memoryLimit;
-        }
-
         auto& memoryMeasurementMonitor = MemoryFootprintMonitor::singleton();
-        memoryMeasurementMonitor.setConfiguration(WTF::move(monitorConfiguration));
+        auto pollInterval = m_configuration->memoryFootprintPollIntervalForTesting();
+        auto memoryLimit = m_configuration->memoryLimitForTesting();
+        if (pollInterval || memoryLimit) {
+            auto monitorConfiguration = MemoryFootprintMonitor::defaultConfiguration();
+            if (pollInterval)
+                monitorConfiguration.pollInterval = pollInterval;
+            if (memoryLimit) {
+                monitorConfiguration.foregroundPageMemoryLimit = memoryLimit;
+                monitorConfiguration.backgroundPageMemoryLimit = memoryLimit;
+                monitorConfiguration.webProcessMemoryLimit = memoryLimit;
+            }
+            memoryMeasurementMonitor.setConfigurationForTesting(WTF::move(monitorConfiguration));
+        }
         memoryMeasurementMonitor.start();
 #endif
     }

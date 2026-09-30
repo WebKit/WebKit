@@ -68,6 +68,10 @@ messages -> WebProcessProxy WantsDispatchMessage {
     SetTaskNamePort(MachSendRight taskNamePort)
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)
+    DidComputeAvailableMemory(uint64_t availableMemory)
+#endif
+
 #if HAVE(DISPLAY_LINK)
     StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
     StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
