@@ -61,6 +61,8 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         flatpakArgs.appendList({
             "--sandbox",
+            // The current working directory might not be visible in the sub-sandbox.
+            "--directory=/",
             "--no-network",
             "--sandbox-flag=share-gpu",
             "--sandbox-flag=share-display",
@@ -97,13 +99,13 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
         }
 
 #if USE(ATSPI)
-        RELEASE_ASSERT(isInsideFlatpak());
-        if (checkFlatpakPortalVersion(7)) {
-            auto busName = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s);
-            GUniquePtr<gchar> a11yOwnNameArg(g_strdup_printf("--sandbox-a11y-own-name=%s", busName.utf8().data()));
-            flatpakArgs.append(a11yOwnNameArg.get());
-        }
-#endif
+            RELEASE_ASSERT(isInsideFlatpak());
+            if (checkFlatpakPortalVersion(7)) {
+                auto busName = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s);
+                GUniquePtr<gchar> a11yOwnNameArg(g_strdup_printf("--sandbox-a11y-own-name=%s", busName.utf8().data()));
+                flatpakArgs.append(a11yOwnNameArg.get());
+            }
+    #endif
     }
 
     // We need to pass our full environment to the subprocess.
