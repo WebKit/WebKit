@@ -32,6 +32,10 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "SecurityOrigin.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "FloatingPointEnvironment.h"
 #endif
@@ -116,10 +120,19 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
     if (isMainThread()) {
         m_globalScope = createGlobalScope();
-        if (!m_globalScope)
+        if (!m_globalScope) {
+#if ENABLE(WEBDRIVER_BIDI)
+            m_globalScopeCreatedCallback = nullptr;
+#endif
             return;
+        }
 
         downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*globalScope());
+
+#if ENABLE(WEBDRIVER_BIDI)
+        if (auto callback = WTF::move(m_globalScopeCreatedCallback))
+            callback(protect(globalScope())->securityOrigin()->data().isolatedCopy());
+#endif
 
         String exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);
@@ -151,6 +164,9 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
         // When running out of memory, createGlobalScope() may return null because we could not allocate a JSC::VM.
         if (!m_globalScope) {
+#if ENABLE(WEBDRIVER_BIDI)
+            m_globalScopeCreatedCallback = nullptr;
+#endif
             WTFLogAlways("Error: Failed to create a WorkerOrWorkerGlobalScope.");
             return;
         }
@@ -164,6 +180,11 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
             scriptController->forbidExecution();
         }
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (auto callback = WTF::move(m_globalScopeCreatedCallback))
+        callback(protect(globalScope())->securityOrigin()->data().isolatedCopy());
+#endif
 
     if (shouldWaitForWebInspectorOnStartup()) {
         startRunningDebuggerTasks();
@@ -237,7 +258,11 @@ void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&
     protector->detach();
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback, Function<void(SecurityOriginData&&)>&& globalScopeCreatedCallback)
+#else
 void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback)
+#endif
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     Locker locker { m_threadCreationAndGlobalScopeLock };
@@ -246,6 +271,9 @@ void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallba
         return;
 
     m_evaluateCallback = WTF::move(evaluateCallback);
+#if ENABLE(WEBDRIVER_BIDI)
+    m_globalScopeCreatedCallback = WTF::move(globalScopeCreatedCallback);
+#endif
 
     auto thread = createThread();
 
