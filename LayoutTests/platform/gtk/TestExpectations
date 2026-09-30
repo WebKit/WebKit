@@ -267,9 +267,6 @@ fast/forms/validation-message-on-textarea.html [ Skip ]
 
 webkit.org/b/301556 transforms/2d/zoom-menulist.html [ Skip ]
 
-webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
-webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
-
 # Since r200320 resource-timing feature is a runtime flag.
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
 webkit.org/b/315934 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Failure Pass ]

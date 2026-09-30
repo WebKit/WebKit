@@ -32,9 +32,8 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
-#include "SVGGlyphElement.h"
 #include "SVGHKernElement.h"
-#include "SVGMissingGlyphElement.h"
+#include "SVGNames.h"
 #include "SVGPathParser.h"
 #include "SVGPathStringViewSource.h"
 #include "SVGVKernElement.h"
@@ -74,7 +73,7 @@ public:
 
 private:
     struct GlyphData {
-        GlyphData(Vector<char>&& charString, const SVGGlyphElement* glyphElement, float horizontalAdvance, float verticalAdvance, FloatRect boundingBox, const String& codepoints)
+        GlyphData(Vector<char>&& charString, const SVGElement* glyphElement, float horizontalAdvance, float verticalAdvance, FloatRect boundingBox, const String& codepoints)
             : boundingBox(boundingBox)
             , charString(charString)
             , codepoints(codepoints)
@@ -86,7 +85,7 @@ private:
         FloatRect boundingBox;
         Vector<char> charString;
         String codepoints;
-        WeakPtr<const SVGGlyphElement, WeakPtrImplWithEventTargetData> glyphElement;
+        WeakPtr<const SVGElement, WeakPtrImplWithEventTargetData> glyphElement;
         float horizontalAdvance;
         float verticalAdvance;
     };
@@ -198,7 +197,7 @@ private:
 
     uint32_t NODELETE calculateChecksum(size_t startingOffset, size_t endingOffset) const;
 
-    void processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGGlyphElement*, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox);
+    void processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGElement* glyphElement, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox);
 
     typedef void (SVGToOTFFontConverter::*FontAppendingFunction)();
     void appendTable(ASCIILiteral identifier, FontAppendingFunction);
@@ -252,7 +251,7 @@ private:
     FloatRect m_boundingBox;
     WeakRef<const SVGFontElement, WeakPtrImplWithEventTargetData> m_fontElement;
     WeakPtr<const SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_fontFaceElement;
-    WeakPtr<const SVGMissingGlyphElement, WeakPtrImplWithEventTargetData> m_missingGlyphElement;
+    WeakPtr<const SVGElement, WeakPtrImplWithEventTargetData> m_missingGlyphElement;
     String m_fontFamily;
     float m_advanceWidthMax;
     float m_advanceHeightMax;
@@ -1269,7 +1268,7 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
     return result;
 }
 
-void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGGlyphElement* glyphElement, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox)
+void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGElement* glyphElement, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox)
 {
     bool ok;
     float horizontalAdvance = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr).toFloat(&ok));
@@ -1362,10 +1361,20 @@ static void populateEmptyGlyphCharString(Vector<char, 17>& o, unsigned unitsPerE
     o.append(endChar);
 }
 
+// <glyph> and <missing-glyph> have no element class of their own. They are created as SVGUnknownElement, so match them by tag name.
+static const SVGElement* firstMissingGlyphElement(const SVGFontElement& fontElement)
+{
+    for (auto& child : childrenOfType<SVGElement>(fontElement)) {
+        if (child.hasTagName(SVGNames::missing_glyphTag))
+            return &child;
+    }
+    return nullptr;
+}
+
 SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     : m_fontElement(fontElement)
     , m_fontFaceElement(childrenOfType<SVGFontFaceElement>(fontElement).first())
-    , m_missingGlyphElement(childrenOfType<SVGMissingGlyphElement>(fontElement).first())
+    , m_missingGlyphElement(firstMissingGlyphElement(fontElement))
     , m_advanceWidthMax(0)
     , m_advanceHeightMax(0)
     , m_minRightSideBearing(std::numeric_limits<float>::max())
@@ -1412,7 +1421,9 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         boundingBox = FloatRect(0, 0, s_outputUnitsPerEm, s_outputUnitsPerEm);
     }
 
-    for (Ref glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
+    for (Ref glyphElement : childrenOfType<SVGElement>(m_fontElement)) {
+        if (!glyphElement->hasTagName(SVGNames::glyphTag))
+            continue;
         auto& unicodeAttribute = glyphElement->attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
             processGlyphElement(glyphElement.get(), glyphElement.ptr(), defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
