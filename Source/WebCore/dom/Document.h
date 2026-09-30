@@ -1565,7 +1565,7 @@ public:
 
     bool hasRecentUserInteractionForNavigationFromJS() const;
     void userActivatedMediaFinishedPlaying() { m_userActivatedMediaFinishedPlayingTimestamp = MonotonicTime::now(); }
-    void audiblePlaybackEnded() { m_mostRecentAudiblePlaybackEndedTime = MonotonicTime::now(); }
+    void updateMostRecentAudiblePlaybackEndedTime() { m_mostRecentAudiblePlaybackEndedTime = MonotonicTime::now(); }
     Markable<MonotonicTime> mostRecentAudiblePlaybackEndedTime() const { return m_mostRecentAudiblePlaybackEndedTime; }
 
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.

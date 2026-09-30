@@ -1192,7 +1192,7 @@ void MediaElementSession::setState(State state)
     if (previousState == State::Playing && state != State::Playing) {
         m_mostRecentPlaybackEndedTime = MonotonicTime::now();
         if (RefPtr element = m_element.get(); element && !element->muted() && canProduceAudio())
-            protect(element->document())->audiblePlaybackEnded();
+            protect(element->document())->updateMostRecentAudiblePlaybackEndedTime();
     }
     PlatformMediaSession::setState(state);
 }
