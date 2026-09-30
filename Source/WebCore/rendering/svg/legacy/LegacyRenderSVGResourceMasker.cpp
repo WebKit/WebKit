@@ -108,7 +108,7 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerD
 {
     RefPtr maskImage = maskerData->maskImage;
     auto& maskImageContext = maskImage->context();
-    auto objectBoundingBox = object->objectBoundingBox();
+    auto objectBoundingBox = object->objectBoundingBoxForResources();
 
     if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
         return false;
@@ -187,7 +187,7 @@ void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectC
 
 FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    FloatRect objectBoundingBox = object.objectBoundingBox();
+    FloatRect objectBoundingBox = object.objectBoundingBoxForResources();
     Ref maskElement = this->maskElement();
     FloatRect maskBoundaries = SVGLengthContext::resolveRectangle(maskElement.get(), maskElement->maskUnits(), objectBoundingBox);
 
