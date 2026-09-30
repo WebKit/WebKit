@@ -38,10 +38,6 @@ set(WPEPlatformDRM_LIBRARIES
     Udev::Udev
 )
 
-if (ENABLE_JOURNALD_LOG)
-    list(APPEND WPEPlatformDRM_LIBRARIES Journald::Journald)
-endif ()
-
 set(WPEPlatformDRM_SOURCES_FOR_INTROSPECTION
     ${WPEPlatformDRM_INSTALLED_HEADERS}
     ${WPEPlatformDRM_SOURCES}
