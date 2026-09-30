@@ -68,11 +68,6 @@ ScrollingTreeScrollingNodeDelegateMac& ScrollingTreeFrameScrollingNodeMac::deleg
     return *static_cast<ScrollingTreeScrollingNodeDelegateMac*>(m_delegate.get());
 }
 
-bool ScrollingTreeFrameScrollingNodeMac::isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const
-{
-    return delegate().isPointInScrollbar(pointInReferenceLayer, referenceLayer);
-}
-
 void ScrollingTreeFrameScrollingNodeMac::startRubberBandSnapBack()
 {
     delegate().startRubberBandSnapBack();

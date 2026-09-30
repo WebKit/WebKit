@@ -346,6 +346,13 @@ std::optional<RubberbandingState> ScrollingTreeScrollingNode::captureRubberbandi
 }
 #endif
 
+Vector<PlatformLayerContainer, 2> ScrollingTreeScrollingNode::hitTestableScrollbarLayers() const
+{
+    if (m_delegate)
+        return m_delegate->hitTestableScrollbarLayers();
+    return { };
+}
+
 void ScrollingTreeScrollingNode::willStartAnimatedScroll()
 {
     scrollingTree()->scrollingTreeNodeWillStartAnimatedScroll(*this);

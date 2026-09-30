@@ -77,7 +77,7 @@ public:
     void initScrollbars() final;
     String scrollbarStateForOrientation(ScrollbarOrientation) const final;
 
-    bool isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const;
+    Vector<RetainPtr<CALayer>, 2> hitTestableScrollbarLayers() const final;
 
 private:
     void updateFromStateNode(const ScrollingStateScrollingNode&) final;

@@ -1264,6 +1264,79 @@ extension AppKitGesturesTests.Basic {
         #expect(finalScrollPosition.y == 0)
     }
 
+    private func loadPageWithSubscroller() async throws {
+        let html = """
+            <body style="margin: 0; height: 2000px;">
+                <div id="scroller" style="position: absolute; left: 100px; top: 100px; width: 400px; height: 300px; overflow-y: scroll;">
+                    <div style="height: 400px; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);"></div>
+                </div>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func subscrollerScrollTop() async throws -> Double {
+        try #require(try await page.callJavaScript("return document.getElementById('scroller').scrollTop") as? Double)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/325063", "Cannot drag subscroller scrollbars"),
+        arguments: [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)]
+    )
+    func scrollingOnSubscrollerScrollBarChangesScrollPosition(pressAndWait: Duration) async throws {
+        try await loadPageWithSubscroller()
+
+        let scrollerBounds = try await screenBounds(ofElementWithID: "scroller")
+        let start = CGPoint(x: scrollerBounds.maxX - 8, y: scrollerBounds.minY + 40)
+        let end = CGPoint(x: start.x, y: start.y + 100)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(0.5), pressAndWait: pressAndWait)
+        }
+
+        try await Task.sleep(for: .seconds(1))
+
+        let scrollTop = try await subscrollerScrollTop()
+        #expect(scrollTop > 0)
+
+        let pageScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+        #expect(pageScrollPosition.y == 0)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/325063", "Cannot drag subscroller scrollbars")
+    )
+    func subscrollerScrollbarCanBeDraggedDuringScrollDeceleration() async throws {
+        try await loadPageWithSubscroller()
+
+        let scrollerBounds = try await screenBounds(ofElementWithID: "scroller")
+        let scrollerCenter = CGPoint(x: scrollerBounds.midX, y: scrollerBounds.midY)
+        let scrollEnd = CGPoint(x: scrollerCenter.x, y: scrollerCenter.y - 50)
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: scrollerCenter, end: scrollEnd, duration: .seconds(0.1))
+        }
+
+        let thumb = CGPoint(x: scrollerBounds.maxX - 8, y: scrollerBounds.midY)
+        let thumbDragEnd = CGPoint(x: thumb.x, y: scrollerBounds.minY + 10)
+
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: thumb,
+                end: thumbDragEnd,
+                duration: .seconds(0.5),
+                pressAndWait: .seconds(0.1)
+            )
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let scrollTop = try await subscrollerScrollTop()
+        #expect(scrollTop == 0)
+    }
+
     @Test(arguments: [true, false])
     func scrollingChangesScrollPosition(scrollOnImage: Bool) async throws {
         let image = scrollOnImage ? #"<img id="img" src="400x400-green.png" style="display: block; margin: 50px;">"# : ""
