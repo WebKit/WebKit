@@ -1,0 +1,54 @@
+texImage2D(video) validates the internalformat, format and type combination and supports non-zero levels.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WebGL 1.0
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGB, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGBA, RGBA, UNSIGNED_BYTE, video)
+WebGL 1.0 requires internalformat == format.
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGBA, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGB, RGBA, UNSIGNED_BYTE, video)
+An invalid combination is an error also when the texture already has the frame.
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGBA, RGBA, UNSIGNED_BYTE, video)
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: level 0
+PASS level 0: top of the video should be blue
+PASS level 0: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : after checking the content
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGBA, RGB, UNSIGNED_BYTE, video) after a valid upload of the same frame
+Non-zero levels must have power of two sizes in WebGL 1.0.
+PASS getError was expected value: INVALID_VALUE : texImage2D(level 1, RGBA, RGBA, UNSIGNED_BYTE, video)
+
+WebGL 2.0
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGB, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGBA, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGB8, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, SRGB8, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGB565, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGBA8, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, SRGB8_ALPHA8, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGBA4, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 0, RGB5_A1, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGBA, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGB, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGBA8, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGB8, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, SRGB8_ALPHA8, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGB565, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGBA8UI, RGBA, UNSIGNED_BYTE, video)
+PASS getError was expected value: INVALID_OPERATION : texImage2D(level 0, RGB8UI, RGB, UNSIGNED_BYTE, video)
+PASS getError was expected value: NO_ERROR : texImage2D(level 1, RGBA8, RGBA, UNSIGNED_BYTE, video)
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: level 1
+PASS level 1: top of the video should be blue
+PASS level 1: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : after checking the content
+PASS getError was expected value: NO_ERROR : texImage2D(level 2, RGBA8, RGBA, UNSIGNED_BYTE, video)
+PASS checkFramebufferStatus was FRAMEBUFFER_COMPLETE: level 2
+PASS level 2: top of the video should be blue
+PASS level 2: bottom of the video should be red
+PASS getError was expected value: NO_ERROR : after checking the content
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

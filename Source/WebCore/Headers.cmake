@@ -2811,7 +2811,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/coretext/DrawGlyphsRecorder.h
 
     platform/graphics/cv/CVUtilities.h
-    platform/graphics/cv/GraphicsContextGLCV.h
     platform/graphics/cv/ImageRotationSessionVT.h
     platform/graphics/cv/ImageTransferSessionVT.h
     platform/graphics/cv/PixelBufferConformerCV.h

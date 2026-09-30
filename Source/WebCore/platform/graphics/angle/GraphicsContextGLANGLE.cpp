@@ -51,9 +51,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/UTF8CStringView.h>
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-#include "GraphicsContextGLCVCocoa.h"
-#endif
 
 // This one definition short-circuits the need for gl2ext.h, which
 // would need more work to be included from WebCore.
