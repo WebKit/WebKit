@@ -145,7 +145,7 @@ class Color;
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request NS_SWIFT_UNAVAILABLE("Use async loadAndWait(_:) instead");
 - (void)synchronouslyLoadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)htmlString NS_SWIFT_UNAVAILABLE("Spins the run loop");
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences NS_SWIFT_UNAVAILABLE("Spins the run loop");
-- (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request NS_SWIFT_UNAVAILABLE("Spins the run loop");
+- (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request NS_SWIFT_UNAVAILABLE("Use async loadAndWaitIgnoringSSLErrors(_:) instead");
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName NS_SWIFT_UNAVAILABLE("Use async load(testPageNamed:) instead");
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName asStringWithBaseURL:(nullable NSURL *)url NS_SWIFT_UNAVAILABLE("Spins the run loop");
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences NS_SWIFT_UNAVAILABLE("Spins the run loop");

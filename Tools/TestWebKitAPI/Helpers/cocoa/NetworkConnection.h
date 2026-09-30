@@ -32,7 +32,6 @@
 #import <memory>
 #import <wtf/CompletionHandler.h>
 #import <wtf/CoroutineUtilities.h>
-#import <wtf/HashMap.h>
 #import <wtf/darwin/DispatchOSObject.h>
 #import <wtf/text/WTFString.h>
 
@@ -45,16 +44,6 @@ class ConnectionGroup;
 #if HAVE(WEBTRANSPORT)
 class ReceiveIncomingConnectionOperation;
 #endif
-struct HTTPResponse;
-
-struct HTTPRequestData {
-    String method;
-    String path;
-    String authority;
-    HashMap<String, String> headerFields; // Header field names arrive lowercased per RFC 7540 8.1.2.
-    Vector<uint8_t> body;
-};
-
 class Connection {
 public:
     void send(String&&, CompletionHandler<void()>&& = nullptr) const;
@@ -68,10 +57,6 @@ public:
     ReceiveBytesOperation awaitableReceiveBytes() const;
     void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
     ReceiveHTTPRequestOperation awaitableReceiveHTTPRequest() const;
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-    void receiveHTTPMessagingRequest(CompletionHandler<void(HTTPRequestData&&)>&&, HTTPRequestData&& partial = { }) const;
-    void sendHTTPMessagingResponse(const HTTPResponse&, CompletionHandler<void()>&& = nullptr) const;
-#endif
     void webSocketHandshake(CompletionHandler<void()>&& = { });
     void terminate(CompletionHandler<void()>&& = { });
     void cancel();

@@ -592,6 +592,8 @@
 				WebKit/WebPage/WebPageTransferableTests.swift,
 				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
+				WebKit/WKWebView/HTTP2Server.swift,
+				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/TextExtractionTests.swift,
 				WebKit/WKWebView/TextFragments.swift,
 				WebKit/WKWebView/TextPlaceholderTests.swift,

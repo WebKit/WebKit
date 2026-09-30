@@ -64,6 +64,7 @@ final class HTTPServerCore {
     private var responses: [String: HTTPResponseData] = [:]
 
     private(set) var requestCount = 0
+    private(set) var receivedRequests: [(request: HTTPRequest, body: Data)] = []
     private(set) var lastRequestCookies = ""
     private(set) var sawAuthorizationHeader = false
 
@@ -256,11 +257,12 @@ final class HTTPServerCore {
     // attachProtocolListener; unlike respondToRequests(), this must not recurse
     // to await a second message on the same connection, since a second request never arrives here.
     private func respondToHTTPMessagingRequests(on connection: NWConnection) async throws {
-        guard let (request, _) = await connection.receiveHTTPMessagingRequest(), let path = request.path else {
+        guard let (request, body) = await connection.receiveHTTPMessagingRequest(), let path = request.path else {
             return
         }
 
         requestCount += 1
+        receivedRequests.append((request, body))
         lastRequestCookies = request.headerFields[.cookie] ?? ""
 
         if request.headerFields[.authorization] != nil {

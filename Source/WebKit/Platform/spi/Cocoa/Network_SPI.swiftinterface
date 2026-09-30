@@ -261,6 +261,16 @@ public struct HTTPRequest : Swift.Sendable, Swift.Hashable {
   }
 }
 
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+extension HTTPRequest.Method {
+  public static var get: HTTPRequest.Method {
+    get
+  }
+  public static var post: HTTPRequest.Method {
+    get
+  }
+}
+
 @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
 extension Network.NWParametersProvider {
   public func serverMode(_ val: Swift.Bool) -> Self

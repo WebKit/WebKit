@@ -70,6 +70,15 @@ extension WKWebView {
         try await _test_waitForDidFinishNavigation()
     }
 
+    /// Loads a request, trusting any server certificate, and waits until the navigation finishes.
+    ///
+    /// - Parameter request: The request to load.
+    /// - Throws: The navigation error if the provisional load fails.
+    public func loadAndWaitIgnoringSSLErrors(_ request: URLRequest) async throws {
+        load(request)
+        try await _test_waitForDidFinishNavigationWhileIgnoringSSLErrors()
+    }
+
     /// Loads a page from the test resources bundle and waits until the navigation finishes.
     ///
     /// - Parameter pageName: The name of the HTML resource, without its extension.

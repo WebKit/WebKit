@@ -76,7 +76,8 @@ NS_SWIFT_UI_ACTOR
 - (void)_test_waitForDidSameDocumentNavigation NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
 - (void)_test_waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
 - (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
-- (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
+- (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors NS_SWIFT_UNAVAILABLE("Use the async variant instead.");
+- (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrorsWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler;
 - (void)_test_waitForDidFailProvisionalNavigation NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
 - (_WKProcessTerminationReason)_test_waitForWebContentProcessDidTerminate NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
 @end
