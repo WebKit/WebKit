@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-sample-boundaries-not-overlapping</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 4)');
+        await sourceBufferAppend(1, [[0, 8]]);
+
+        run('sourceBuffer.timestampOffset = 0.25');
+        await sourceBufferAppend(2, [[2, 4], [4, 6], [6, 8]]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+
+        consoleWrite("<br>A smooth switch should successfully complete at DTS=4.25 of generation 2 with no need for non-displaying samples. No samples from generation 1 should be enqueued afterwards.")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
+

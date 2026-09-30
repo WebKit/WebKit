@@ -1,0 +1,53 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 5))
+RUN(sourceBuffer.appendBuffer(gops(1, [[0,3],[3,6],[6,9]])))
+EVENT(updateend)
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+RUN(sourceBuffer.appendBuffer(gops(2, [[0,12]])))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED))
+
+Non-displaying samples are needed to catchup. All samples of generation 2, including the sync sample, must be present.
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(3), generation(2)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({8/1 = 8.000000}), DTS({8/1 = 8.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({9/1 = 9.000000}), DTS({9/1 = 9.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({10/1 = 10.000000}), DTS({10/1 = 10.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({11/1 = 11.000000}), DTS({11/1 = 11.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+Buffered samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({8/1 = 8.000000}), DTS({8/1 = 8.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({9/1 = 9.000000}), DTS({9/1 = 9.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({10/1 = 10.000000}), DTS({10/1 = 10.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({11/1 = 11.000000}), DTS({11/1 = 11.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+END OF TEST
+

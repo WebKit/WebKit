@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-need-to-rewind-later</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 3)');
+        await sourceBufferAppend(1, [[0, 9]]);
+        await showEnqueuedSamples();
+
+        run('sourceBuffer.timestampOffset = 0.25');
+        await sourceBufferAppend(2, [[1, 3]]);
+
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 7)');
+        consoleWrite("Generation 2 must not be enqueued.");
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(3, [[5, 10]])
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+
+        consoleWrite("<br>The last enqueued sample from Generation 1 must have DTS=6.");
+        consoleWrite("Generation 3 must span from DTS=5.25 to DTS=9.25 inclusive, starting with non-displaying samples.")
+        await showEnqueuedSamples();
+
+        consoleWrite("<br>The buffered samples have a hole between generations 2 and 3. This is intentional, as most of generation 1 was wiped from the sample map by generation 2, as required by spec, even if some of those samples were allowed to remain in the decode queue.")
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

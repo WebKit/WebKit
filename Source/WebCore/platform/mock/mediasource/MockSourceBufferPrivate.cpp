@@ -221,9 +221,11 @@ Ref<SourceBufferPrivate::SamplesPromise> MockSourceBufferPrivate::enqueuedSample
     return SamplesPromise::createAndResolve(copyToVector(m_enqueuedSamples));
 }
 
-void MockSourceBufferPrivate::setMaximumQueueDepthForTrackID(TrackID, uint64_t maxQueueDepth)
+void MockSourceBufferPrivate::setMaximumQueueDepthForTrackID(TrackID trackID, uint64_t maxQueueDepth)
 {
     m_maxQueueDepth = maxQueueDepth;
+    // After the change we may be ready for more samples.
+    provideMediaData(trackID);
 }
 
 bool MockSourceBufferPrivate::canSetMinimumUpcomingPresentationTime(TrackID) const

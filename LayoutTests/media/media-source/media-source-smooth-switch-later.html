@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-later</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 3)');
+        await sourceBufferAppend(1, [[0, 9]]);
+        await showEnqueuedSamples();
+
+        run('sourceBuffer.timestampOffset = 0.25');
+        await sourceBufferAppend(2, [[1, 3]]);
+
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 4)');
+        consoleWrite("Generation 2 must not be enqueued.");
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(3, [[5, 10]])
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+
+        consoleWrite("<br>The last enqueued sample from Generation 1 must have DTS=5.");
+        consoleWrite("Generation 3 must have been enqueued in its entirety without any non-displaying samples (first sample DTS=5.25, last sample DTS=9.25).")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
