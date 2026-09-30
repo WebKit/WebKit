@@ -137,7 +137,6 @@ function checkFramebufferParameters()
 
     shouldBeDefaultFramebufferReadFormat("gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)");
     shouldBe("gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE)", "gl.UNSIGNED_BYTE");
-    wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)");
 
     wtu.framebufferStatusShouldBe(gl, gl.FRAMEBUFFER, gl.FRAMEBUFFER_COMPLETE, "FRAMEBUFFER");
     if (isWebGL2()) {
@@ -230,7 +229,17 @@ function checkNoErrorsAndNotLost()
     shouldBe("contextLostEventCount", "0");
 }
 
-function checkState(stateName, expectedWidth, expectedHeight)
+// The size of the allocated default framebuffer storage, or null if it can't be observed.
+function allocatedSize()
+{
+    if (!self.internals || !internals.webglDefaultFramebufferAllocatedSize)
+        return null;
+    return internals.webglDefaultFramebufferAllocatedSize(gl).join("x");
+}
+
+// expectedAllocatedSize is the size of the default framebuffer storage that is allocated in this
+// state, or "0x0" if none. The queries must not allocate or reallocate the storage.
+function checkState(stateName, expectedWidth, expectedHeight, expectedAllocatedSize)
 {
     debug(stateName + ":");
     // Print the read format that the implementation chose, so that the expectations record it. The
@@ -243,6 +252,10 @@ function checkState(stateName, expectedWidth, expectedHeight)
     checkSizeAndAttributes(expectedWidth, expectedHeight);
     checkNoErrorsAndNotLost();
     shouldBe("collectStateIndependentQueries()", "stateIndependentQueries");
+    if (allocatedSize() !== null)
+        shouldBeEqualToString("allocatedSize()", expectedAllocatedSize);
+    // Reading allocates the storage.
+    wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)");
 }
 
 // Q10: the viewport and the scissor box are set to the drawing buffer size at creation, and are
@@ -462,7 +475,7 @@ async function runConfiguration(version, parameters)
     }
 
     stateIndependentQueries = collectStateIndependentQueries();
-    checkState("fresh", 2, 2);
+    checkState("fresh", 2, 2, "0x0");
     checkViewportAndScissor(2, 2);
     checkSameAsOtherConfigurations(version, parameters);
     checkSetDrawAndReadBufferNone();
@@ -470,10 +483,10 @@ async function runConfiguration(version, parameters)
     checkPendingErrorIsKept();
 
     draw();
-    checkState("drawn", 2, 2);
+    checkState("drawn", 2, 2, "2x2");
 
     await present();
-    checkState("presented", 2, 2);
+    checkState("presented", 2, 2, "2x2");
 
     canvas.toDataURL();
     readCanvas = document.createElement("canvas");
@@ -481,11 +494,12 @@ async function runConfiguration(version, parameters)
     readCanvas.height = 2;
     readContext = readCanvas.getContext("2d");
     readContext.drawImage(canvas, 0, 0);
-    checkState("after internal reads", 2, 2);
+    checkState("after internal reads", 2, 2, "2x2");
 
     canvas.width = 3;
     canvas.height = 3;
-    checkState("resized", 3, 3);
+    // The storage is reallocated to the new size when it is next used.
+    checkState("resized", 3, 3, "2x2");
     checkViewportAndScissor(2, 2);
 
     await loseAndRestoreContext();
@@ -493,11 +507,12 @@ async function runConfiguration(version, parameters)
     // The extensions must be enabled again after a restore.
     if (version == 1)
         drawBuffersExtension = gl.getExtension("WEBGL_draw_buffers");
-    checkState("restored", 3, 3);
+    checkState("restored", 3, 3, "0x0");
 
     canvas.width = 0;
     canvas.height = 0;
-    checkState("zero size canvas", 1, 1);
+    // The readPixels() of the previous state allocated the storage.
+    checkState("zero size canvas", 1, 1, "3x3");
 }
 
 // Q15: the same queries on an OffscreenCanvas context, on the main thread or in a worker.
@@ -528,17 +543,17 @@ async function runOffscreenConfiguration(version, parameters)
     }
 
     stateIndependentQueries = collectStateIndependentQueries();
-    checkState("fresh", 2, 2);
+    checkState("fresh", 2, 2, "0x0");
 
     draw();
-    checkState("drawn", 2, 2);
+    checkState("drawn", 2, 2, "2x2");
 
     canvas.transferToImageBitmap().close();
-    checkState("after transferToImageBitmap()", 2, 2);
+    checkState("after transferToImageBitmap()", 2, 2, "2x2");
 
     canvas.width = 3;
     canvas.height = 3;
-    checkState("resized", 3, 3);
+    checkState("resized", 3, 3, "2x2");
 }
 
 // The context configurations: every combination of the alpha variant, depth, stencil, antialias and

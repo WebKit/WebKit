@@ -41,8 +41,8 @@ class WebGLDefaultFramebuffer {
     WTF_MAKE_TZONE_ALLOCATED(WebGLDefaultFramebuffer);
     WTF_MAKE_NONCOPYABLE(WebGLDefaultFramebuffer);
 public:
-    // Creates the framebuffer with a 0x0 size. The caller must call setSize() and ensureSize()
-    // once the context is initialized to allocate and configure the attachments.
+    // Creates the framebuffer with a 0x0 size. The caller must call setSize() once the context
+    // is initialized. The attachments are allocated and configured by the first ensureSize().
     static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&);
     ~WebGLDefaultFramebuffer();
 
@@ -75,6 +75,9 @@ public:
             || m_depthStencilAttachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT;
     }
     IntSize size() const { return m_size; }
+    // The size of the allocated storage, or empty if the storage is not allocated. May differ
+    // from size() until the next ensureSize().
+    IntSize allocatedSize() const { return m_allocatedSize; }
 
     // The answers to the queries about the default framebuffer, such as DEPTH_BITS or SAMPLES.
     // They depend only on the formats chosen at creation, not on whether or how the storage is
@@ -129,6 +132,7 @@ private:
     GCGLsizei m_sampleCount { 0 };
 
     IntSize m_size;
+    IntSize m_allocatedSize;
     bool m_needsReshape { false };
     GCGLbitfield m_unpreservedBuffers { 0 };
     GCGLbitfield m_dirtyBuffers { 0 };

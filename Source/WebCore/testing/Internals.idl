@@ -1278,6 +1278,8 @@ enum ContentsFormat {
     [Conditional=WEBGL] RequestedGPU requestedGPU(WebGL2RenderingContext context);
     [Conditional=WEBGL] sequence<long> webglMaxDrawingBufferSize(WebGLRenderingContext context);
     [Conditional=WEBGL] sequence<long> webglMaxDrawingBufferSize(WebGL2RenderingContext context);
+    [Conditional=WEBGL] sequence<long> webglDefaultFramebufferAllocatedSize(WebGLRenderingContext context);
+    [Conditional=WEBGL] sequence<long> webglDefaultFramebufferAllocatedSize(WebGL2RenderingContext context);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocused(boolean isFocused);

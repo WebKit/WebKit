@@ -170,6 +170,7 @@ bool WebGLDefaultFramebuffer::ensureSize()
 bool WebGLDefaultFramebuffer::reshape()
 {
     IntSize size = m_size;
+    m_allocatedSize = size;
     Ref context = m_context.get();
     Ref gl = *context->graphicsContextGL();
     auto& attributes = context->attributes();

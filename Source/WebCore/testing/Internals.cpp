@@ -7050,6 +7050,12 @@ Vector<int> Internals::webglMaxDrawingBufferSize(WebGLRenderingContextBase& cont
     auto size = gl->maxDrawingBufferSize();
     return { size[0], size[1] };
 }
+
+Vector<int> Internals::webglDefaultFramebufferAllocatedSize(WebGLRenderingContextBase& context)
+{
+    auto size = context.defaultFramebufferAllocatedSize();
+    return { size.width(), size.height() };
+}
 #endif
 
 void Internals::setPageVisibility(bool isVisible)
