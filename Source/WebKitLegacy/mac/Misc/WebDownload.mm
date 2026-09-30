@@ -55,8 +55,10 @@ static bool shouldCallOnNetworkThread()
 
 static void callOnDelegateThread(Function<void()>&& function)
 {
-    if (shouldCallOnNetworkThread())
+    if (shouldCallOnNetworkThread()) {
         function();
+        return;
+    }
     callOnMainThread(WTF::move(function));
 }
 
