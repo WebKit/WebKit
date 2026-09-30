@@ -1487,12 +1487,11 @@ void ContainerNode::replaceChildrenWithoutValidityCheck(NodeVector&& newChildren
     dispatchSubtreeModifiedEvent();
 }
 
-static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Node& movedNode, ContainerNode& oldParent, bool newParentIsConnected)
+static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Node& movedNode, ContainerNode& oldParent, bool newParentIsConnected, Node::MovingType movingType)
 {
     for (RefPtr inclusiveDescendant = &root; inclusiveDescendant; inclusiveDescendant = NodeTraversal::next(*inclusiveDescendant, &root)) {
-        bool isSubtreeRoot = inclusiveDescendant.get() == &movedNode;
-
-        inclusiveDescendant->movingSteps(isSubtreeRoot ? Node::IsSubtreeRoot::Yes : Node::IsSubtreeRoot::No, oldParent);
+        movingType.isSubtreeRoot = inclusiveDescendant == &movedNode;
+        inclusiveDescendant->movingSteps(movingType, oldParent);
 
         if (newParentIsConnected) {
             if (RefPtr element = dynamicDowncast<Element>(*inclusiveDescendant); element && element->isDefinedCustomElement())
@@ -1500,7 +1499,7 @@ static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Nod
         }
 
         if (RefPtr shadowRoot = inclusiveDescendant->shadowRoot())
-            runMovingStepsForShadowIncludingInclusiveDescendants(*shadowRoot, movedNode, oldParent, newParentIsConnected);
+            runMovingStepsForShadowIncludingInclusiveDescendants(*shadowRoot, movedNode, oldParent, newParentIsConnected, { });
     }
 }
 
@@ -1593,7 +1592,7 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
 
     auto newParentIsConnected = isConnected();
 
-    runMovingStepsForShadowIncludingInclusiveDescendants(node, node, *oldParent, newParentIsConnected);
+    runMovingStepsForShadowIncludingInclusiveDescendants(node, node, *oldParent, newParentIsConnected, { .didRemoveFromOldTreeScope = oldParent->isInTreeScope(), .didInsertIntoNewTreeScope = isInTreeScope() });
 
     oldParent->childrenChanged(removalChildChange);
     childrenChanged(makeChildChangeForMoveInsertion(*this, node, refChild));

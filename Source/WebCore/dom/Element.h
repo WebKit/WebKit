@@ -944,7 +944,7 @@ protected:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode&) override;
-    void movingSteps(IsSubtreeRoot, ContainerNode&) override;
+    void movingSteps(MovingType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
     void removeAllEventListeners() override;
 
@@ -1008,6 +1008,9 @@ private:
 
     enum class HTMLDocumentNamedItemMapsUpdatingCondition : bool { Always, UpdateOnlyIfDiffersFromNameAttribute };
     void updateIdForDocument(HTMLDocument&, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition);
+
+    void addToIdAndNameMaps(TreeScope&, HTMLDocument*);
+    void removeFromIdAndNameMaps(TreeScope&, HTMLDocument*);
 
     ExceptionOr<Node*> insertAdjacent(const String& where, Ref<Node>&& newChild);
 

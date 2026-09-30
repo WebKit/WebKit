@@ -728,9 +728,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 # Untriaged.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-restore.optional.html [ Skip ]
 
-# moveBefore() of a <select> double-registers the named slot in its shadow tree.
-webkit.org/b/325616 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-subtree-mutations.html [ Skip ]
-
 # Our selectedcontent avoids overflow, but test expects it.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-button-text-and-icon-clipping.html [ ImageOnlyFailure ]
 # Overflow handling differences.

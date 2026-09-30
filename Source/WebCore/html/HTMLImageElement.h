@@ -232,7 +232,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode&) override;
-    void movingSteps(IsSubtreeRoot, ContainerNode&) override;
+    void movingSteps(MovingType, ContainerNode&) override;
 
     bool NODELETE isFormListedElement() const final { return false; }
     FormAssociatedElement* NODELETE asFormAssociatedElement() final { return this; }

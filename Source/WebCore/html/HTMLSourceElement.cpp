@@ -123,11 +123,11 @@ void HTMLSourceElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
-void HTMLSourceElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
+void HTMLSourceElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
-    HTMLElement::movingSteps(isSubtreeRoot, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent);
 
-    if (isSubtreeRoot == IsSubtreeRoot::No)
+    if (!movingType.isSubtreeRoot)
         return;
 
     RefPtr newParent { parentElement() };

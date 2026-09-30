@@ -88,7 +88,7 @@ private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
-    void movingSteps(IsSubtreeRoot, ContainerNode&) final;
+    void movingSteps(MovingType, ContainerNode&) final;
 
     bool supportsFocus() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;

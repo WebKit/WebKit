@@ -87,9 +87,9 @@ void HTMLSelectedContentElement::removingSteps(RemovalType removalType, Containe
     }
 }
 
-void HTMLSelectedContentElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
+void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
-    HTMLElement::movingSteps(isSubtreeRoot, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent);
 
     RefPtr select = recalculateDisabledness();
     if (m_isDisabled || !select || select->multiple())

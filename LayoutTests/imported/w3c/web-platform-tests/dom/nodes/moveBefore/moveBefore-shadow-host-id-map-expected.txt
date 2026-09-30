@@ -1,0 +1,7 @@
+
+
+PASS moveBefore() of a shadow host leaves the id map of its shadow tree alone
+PASS moveBefore() of an ancestor of a shadow host leaves the id map of its shadow tree alone
+PASS moveBefore() of a <select> element leaves the document's id and name maps alone
+PASS moveBefore() of a <details> element leaves the document's id and name maps alone
+

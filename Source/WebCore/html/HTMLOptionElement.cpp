@@ -224,9 +224,9 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
-void HTMLOptionElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
+void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
-    HTMLElement::movingSteps(isSubtreeRoot, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent);
 
     if (!document().settings().htmlEnhancedSelectParsingEnabled())
         return;

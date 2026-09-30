@@ -1518,8 +1518,10 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
     }
 }
 
-void Node::movingSteps(IsSubtreeRoot, ContainerNode&)
+void Node::movingSteps(MovingType, ContainerNode&)
 {
+    setEventTargetFlag(EventTargetFlag::IsInShadowTree, treeScope().rootNode().isShadowRoot());
+
     invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 }
 

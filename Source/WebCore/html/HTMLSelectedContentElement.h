@@ -45,7 +45,7 @@ private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
     void removingSteps(RemovalType, ContainerNode&) final;
-    void movingSteps(IsSubtreeRoot, ContainerNode&) final;
+    void movingSteps(MovingType, ContainerNode&) final;
 
     RefPtr<HTMLSelectElement> recalculateDisabledness();
 

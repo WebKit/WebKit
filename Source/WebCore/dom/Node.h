@@ -508,12 +508,13 @@ public:
     // https://dom.spec.whatwg.org/#concept-node-remove-ext
     virtual void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree);
 
-    enum class IsSubtreeRoot {
-        Yes,
-        No
+    struct MovingType {
+        bool isSubtreeRoot { false };
+        bool didRemoveFromOldTreeScope { false };
+        bool didInsertIntoNewTreeScope { false };
     };
     // https://dom.spec.whatwg.org/#concept-node-move-ext
-    virtual void movingSteps(IsSubtreeRoot, ContainerNode&);
+    virtual void movingSteps(MovingType, ContainerNode& oldParent);
 
     void updateShadowIncludingRootForSubtree();
 

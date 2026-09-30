@@ -3150,16 +3150,7 @@ Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionTy
     if (insertionType.treeScopeChanged) {
         RefPtr<HTMLDocument> newHTMLDocument = insertionType.connectedToDocument && parentOfInsertedTree.isInDocumentTree()
             ? dynamicDowncast<HTMLDocument>(treeScope().documentScope()) : nullptr;
-        if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
-            protect(treeScope())->addElementById(idValue, *this);
-            if (newHTMLDocument)
-                updateIdForDocument(*newHTMLDocument, nullAtom(), idValue, HTMLDocumentNamedItemMapsUpdatingCondition::Always);
-        }
-        if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
-            protect(treeScope())->addElementByName(nameValue, *this);
-            if (newHTMLDocument)
-                updateNameForDocument(*newHTMLDocument, nullAtom(), nameValue);
-        }
+        addToIdAndNameMaps(protect(treeScope()), newHTMLDocument.get());
 
         if (parentOfInsertedTree.isInTreeScope()) {
             if (usesScopedCustomElementRegistryMap()) {
@@ -3263,16 +3254,7 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
         RefPtr<HTMLDocument> oldHTMLDocument = removalType.disconnectedFromDocument
             && oldParentOfRemovedTree.isInDocumentTree() ? dynamicDowncast<HTMLDocument>(oldTreeScope->documentScope()) : nullptr;
 
-        if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
-            oldTreeScope->removeElementById(idValue, *this);
-            if (oldHTMLDocument)
-                updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), HTMLDocumentNamedItemMapsUpdatingCondition::Always);
-        }
-        if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
-            oldTreeScope->removeElementByName(nameValue, *this);
-            if (oldHTMLDocument)
-                updateNameForDocument(*oldHTMLDocument, nameValue, nullAtom());
-        }
+        removeFromIdAndNameMaps(oldTreeScope, oldHTMLDocument.get());
         if (oldParentOfRemovedTree.isInShadowTree()) {
             if (RefPtr registry = oldTreeScope->customElementRegistry()) {
                 if (registry->isScoped() && !usesScopedCustomElementRegistryMap()) [[unlikely]]
@@ -3339,41 +3321,22 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
     }
 }
 
-void Element::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
+void Element::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
-    ContainerNode::movingSteps(isSubtreeRoot, oldParent);
+    ContainerNode::movingSteps(movingType, oldParent);
 
-    Ref oldTreeScope = oldParent.treeScope();
-    Ref newTreeScope = treeScope();
-    RefPtr<HTMLDocument> oldHTMLDocument = oldTreeScope->rootNode().isDocumentNode()
-        ? dynamicDowncast<HTMLDocument>(oldTreeScope->documentScope()) : nullptr;
-    RefPtr<HTMLDocument> newHTMLDocument = newTreeScope->rootNode().isDocumentNode()
-        ? dynamicDowncast<HTMLDocument>(newTreeScope->documentScope()) : nullptr;
-
-    if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
-        oldTreeScope->removeElementById(idValue, *this);
-        newTreeScope->addElementById(idValue, *this);
-        if (oldHTMLDocument)
-            updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), HTMLDocumentNamedItemMapsUpdatingCondition::Always);
-        if (newHTMLDocument)
-            updateIdForDocument(*newHTMLDocument, nullAtom(), idValue, HTMLDocumentNamedItemMapsUpdatingCondition::Always);
-    }
-
-    if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
-        oldTreeScope->removeElementByName(nameValue, *this);
-        newTreeScope->addElementByName(nameValue, *this);
-        if (oldHTMLDocument)
-            updateNameForDocument(*oldHTMLDocument, nameValue, nullAtom());
-        if (newHTMLDocument)
-            updateNameForDocument(*newHTMLDocument, nullAtom(), nameValue);
-    }
+    RefPtr htmlDocument = dynamicDowncast<HTMLDocument>(document());
+    if (movingType.didRemoveFromOldTreeScope)
+        removeFromIdAndNameMaps(protect(oldParent.treeScope()), oldParent.isInDocumentTree() ? htmlDocument.get() : nullptr);
+    if (movingType.didInsertIntoNewTreeScope)
+        addToIdAndNameMaps(protect(treeScope()), isInDocumentTree() ? htmlDocument.get() : nullptr);
 
     if (!is<HTMLSlotElement>(*this))
         updateEffectiveTextDirectionIfNeeded();
 
     updateEffectiveLangState();
 
-    if (isSubtreeRoot == IsSubtreeRoot::No || !hasFocusWithin())
+    if (!movingType.isSubtreeRoot || !hasFocusWithin())
         return;
 
     if (RefPtr oldParentElement = dynamicDowncast<Element>(oldParent))
@@ -5835,6 +5798,34 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldI
             document.removeDocumentNamedItem(oldId, *this);
         if (!newId.isEmpty() && newId != name)
             document.addDocumentNamedItem(newId, *this);
+    }
+}
+
+inline void Element::addToIdAndNameMaps(TreeScope& treeScope, HTMLDocument* htmlDocument)
+{
+    if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
+        treeScope.addElementById(idValue, *this);
+        if (htmlDocument)
+            updateIdForDocument(*htmlDocument, nullAtom(), idValue, HTMLDocumentNamedItemMapsUpdatingCondition::Always);
+    }
+    if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
+        treeScope.addElementByName(nameValue, *this);
+        if (htmlDocument)
+            updateNameForDocument(*htmlDocument, nullAtom(), nameValue);
+    }
+}
+
+inline void Element::removeFromIdAndNameMaps(TreeScope& treeScope, HTMLDocument* htmlDocument)
+{
+    if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
+        treeScope.removeElementById(idValue, *this);
+        if (htmlDocument)
+            updateIdForDocument(*htmlDocument, idValue, nullAtom(), HTMLDocumentNamedItemMapsUpdatingCondition::Always);
+    }
+    if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
+        treeScope.removeElementByName(nameValue, *this);
+        if (htmlDocument)
+            updateNameForDocument(*htmlDocument, nameValue, nullAtom());
     }
 }
 
