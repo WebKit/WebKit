@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Scenario: selective first-party sweep with partitioned storage</title>
+
+  <!-- existing utilities (contain all functions you pasted) -->
+  <script src="/cookies/resources/cookie-utilities.js"></script>
+  <script src="resources/utilities.js"></script>
+
+</head>
+
+<body onload="setTimeout(runTest, 0)">
+  <div id="description">
+    Visit 127.0.0.1:8000 with interaction and an embedded localhost:8000, set storage on both, then visit localhost:8000
+    without interaction embedding 127.0.0.1:8000, clean storage, and confirm only the latter's storage is deleted while
+    the former's remains.
+  </div>
+  <br>
+
+  <!-- Phase A: embed localhost:8000 under 127.0.0.1:8000 -->
+  <iframe id="a_iframe" src="http://localhost:8000/resourceLoadStatistics/resources/iframe-with-storage-inside-popup.html"></iframe>
+
+  <div id="output"></div>
+  <script>window.output = document.getElementById("output");</script>
+
+  <script>
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    const httpOnlyCookieName = "http-only-cookie";
+    const serverSideCookieName = "server-side-cookie";
+    const clientSideCookieName = "client-side-cookie";
+    const dbName = "TestDatabase";
+    const objectStoreName = "TestObjectStore";
+    const storageKey = "key";
+    const storageValue = "value";
+
+    let popup = null;
+    const iframeWin = document.getElementById("a_iframe").contentWindow;
+
+    internals.settings.setStorageBlockingPolicy('BlockThirdParty');
+
+    const originUnderTest = "http://127.0.0.1:8000";  // Phase A top (this page) and Phase B iframe
+    const crossOrigin = "http://localhost:8000";  // Phase A iframe and Phase B top
+
+    /*  Phase A: write & verify on 127 top and localhost iframe */
+    function phaseA(callback) {
+      addOutput("Phase A: writing on 127.0.0.1 top and expecting partitioned storage in localhost iframe.");
+      setEnableFeature(true, function () {
+        if (!testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
+          addOutput("FAIL: " + originUnderTest + " got logged for user interaction.");
+
+        window.addEventListener("message", (e) => {
+            phaseA_writeWebsiteDataAndReturn(callback);
+        }, { once: true });
+
+        popup = window.open(crossOrigin + "/resourceLoadStatistics/resources/popup-with-storage.html");
+        if (popup === undefined)
+          addOutput("FAIL: Opening " + crossOrigin + " popup with opener was not successful.");
+      });
+    }
+
+    /*  Phase B: open localhost top (no interaction), write both, clear, verify cleared  */
+    function phaseB(callback) {
+      addOutput("Phase B: opening popup on localhost:8000 (no interaction) with an embedded 127.0.0.1 iframe.");
+
+      var readyTimer = setTimeout(function () {
+        addOutput("FAIL: Did not receive 'popup-ready' from popup. Aborting to avoid timeout.");
+        try { popup.close(); } catch (_) {}
+        finishTest();
+      }, 5000);
+
+      function onReady(e) {
+        if (e.origin !== crossOrigin) return;
+        if (e.source !== popup) return;
+        if (e.data !== "popup-ready") return;
+
+        clearTimeout(readyTimer);
+        window.removeEventListener("message", onReady);
+
+        setEnableFeature(true, function () {
+          checkPopupCookiesLikeCheckCookies(false, popup, function () {
+            checkFrameStorage(false, popup, "popup", function () {
+              checkFrameStorage(false, popup, "popup-iframe", function () {
+                addLinebreakToOutput();
+                  testRunner.setStatisticsHasHadUserInteraction(crossOrigin, false, function () {
+                    processWebsiteDataAndContinue(popup, function () {
+                      callback();
+                    });
+                  });
+                // });
+
+              }, { viaChild: true, targetOrigin: crossOrigin, expectedOrigin: crossOrigin });
+            }, { targetOrigin: crossOrigin, expectedOrigin: crossOrigin });
+          });
+        });
+      }
+
+      window.addEventListener("message", onReady);
+      popup = window.open(crossOrigin + "/resourceLoadStatistics/resources/popup-with-storage-and-iframe.html");
+      if (!popup) {
+        clearTimeout(readyTimer);
+        window.removeEventListener("message", onReady);
+        addOutput("FAIL: Opening popup failed.");
+        return callback();
+      }
+      addOutput("Opening popup on localhost.");
+    }
+
+    /*  Phase C: verify that 127 top and its partitioned iframe unaffected  */
+    function phaseC(callback) {
+      addLinebreakToOutput();
+      addOutput("Phase C: Getting back to 127.0.0.1 (with interaction) with an embedded localhost iframe.");
+      setEnableFeature(true, function () {
+        checkCookies(true);
+        checkLocalStorageExists(true, function () {
+          checkIDBDataStoreExists((message, eventName) => {
+              addOutput(`After deletion: (${eventName}) IDB entry does ${message === storageValue ? "" : "not"} exist.`);
+              addOutput(`After deletion: ${crossOrigin} ${testRunner.isStatisticsHasLocalStorage(crossOrigin) ? "has" : "does not have"} local storage`);
+              checkFrameStorage(true, iframeWin, "iframe", callback, false);
+          });
+        });              
+      });
+    }
+
+    /* Main driver */
+    function runTest() {
+      setEnableFeature(true, function () {
+        testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, function () {
+          testRunner.setStatisticsHasHadUserInteraction(originUnderTest, true, function () {
+            testRunner.setStatisticsHasHadUserInteraction(crossOrigin, false, function () {
+
+              // Phase A: write and verify on 127 top and localhost iframe
+              phaseA(function () {
+                // Phase B; open localhost top (no interaction), write/check, remove data after no user interaction, verify cleared there
+                phaseB(function () {
+                  // Phase C: verify that 127 top and its partitioned iframe unaffected
+                  phaseC(function () {
+                    finishTest();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    }
+  </script>
+</body>
+
+</html>

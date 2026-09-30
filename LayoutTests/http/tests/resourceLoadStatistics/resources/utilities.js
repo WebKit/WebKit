@@ -65,7 +65,111 @@ function addOutput(message) {
     output.appendChild(element);
 }
 
+// Talks to a target window (either popup or iframe)
+function checkFrameStorage(isAfterDeletion, frame, label, callback, routeOrOptions) {  
+    var expectedOrigin = null;
+
+    if (typeof routeOrOptions === "boolean") {
+        viaChild = routeOrOptions;
+    } else if (typeof routeOrOptions === "string") {
+        viaChild = (routeOrOptions === "child");
+    } else if (routeOrOptions && typeof routeOrOptions === "object") {
+        viaChild = !!routeOrOptions.viaChild;
+        if (routeOrOptions.targetOrigin)   targetOrigin   = routeOrOptions.targetOrigin;
+        if (routeOrOptions.expectedOrigin) expectedOrigin = routeOrOptions.expectedOrigin;
+    }
+    // addOutput(viaChild);
+    // addOutput(label);
+    let storageValue;
+    let localStorageItem;
+    let sessionStorageItem;
+    let indexedDBResult;
+    let currentRequest = "getExpectedValue";
+
+    function finish() {
+        addOutput((isAfterDeletion ? "After deletion: " : "Before deletion: ") + label + " LocalStorage entry " + (storageValue && localStorageItem === storageValue ? "does" : "does not") + " exist.");
+        addOutput((isAfterDeletion ? "After deletion: " : "Before deletion: ") + label + " SessionStorage entry " + (storageValue && sessionStorageItem === storageValue ? "does" : "does not") + " exist.");
+        addOutput((isAfterDeletion ? "After deletion: " : "Before deletion: ") + label + " indexedDB entry " + (storageValue && indexedDBResult === storageValue ? "does" : "does not") + " exist.");
+        window.removeEventListener("message", receiveResponse);
+        callback();
+    }
+    
+    function receiveResponse(e) {
+        if (e.source !== frame) return; // ignore any message not comming from expected frame
+        if (expectedOrigin && e.origin !== expectedOrigin) return;
+        
+        // let oldRequest = currentRequest;
+        let requestPayload = label === "popup-iframe" ? ("child:" + currentRequest) : currentRequest
+        switch (currentRequest) {
+        case "getExpectedValue": {
+            storageValue = e.data;
+            // addOutput(`${e.origin}: storageValue: ${storageValue}`);
+            currentRequest = isAfterDeletion ? "getItemLocalStorage" : "createindexedDB";
+            requestPayload = label === "popup-iframe" ? ("child:" + currentRequest) : currentRequest
+            frame.postMessage(requestPayload, "*");
+            break;
+        }
+        case "createindexedDB": {
+            indexedDBResult = e.data;
+            // addOutput(`${e.origin}: indexedDBResult: ${indexedDBResult}`);
+            currentRequest = "getItemLocalStorage";
+            requestPayload = label === "popup-iframe" ? ("child:" + currentRequest) : currentRequest
+            frame.postMessage(requestPayload, "*");
+            break;
+        }
+        case "getItemLocalStorage": {
+            localStorageItem = e.data;
+            // addOutput(`${e.origin}: localStorageItem: ${localStorageItem}`);
+            currentRequest = "getItemSessionStorage";
+            requestPayload = label === "popup-iframe" ? ("child:" + currentRequest) : currentRequest
+            frame.postMessage(requestPayload, "*");
+            break;
+        }
+        case "getItemSessionStorage": {
+            sessionStorageItem = e.data;
+            // addOutput(`${e.origin}: sessionStorageItem: ${sessionStorageItem}`);
+            currentRequest = "checkindexedDBDoesExists";
+            requestPayload = label === "popup-iframe" ? ("child:" + currentRequest) : currentRequest
+            frame.postMessage(requestPayload, "*");
+            break;
+        }
+        case "checkindexedDBDoesExists": {
+            indexedDBResult = e.data;
+            finish();
+            break;
+        }
+        };
+    }
+    window.addEventListener("message", receiveResponse); // triggered when a message comes from opener
+    const initialPayload = label === "popup-iframe" ? ("child:" + currentRequest): currentRequest;
+    frame.postMessage(initialPayload, "*");
+    // frame.postMessage(currentRequest, "*");
+}
+
+// target's listener
+function addFrameEventListener() {
+    window.addEventListener('message', e => {
+        if (e.data === "getItemLocalStorage") {
+            // console.log(`URL : ${document.URL} getItemLocalStorage  ${storageKey} + ${localStorage.getItem(storageKey)}`);
+            let storageValue = localStorage.getItem(storageKey);
+
+            return e.source.postMessage(storageValue === null ? "" : storageValue, "*");
+        }
+        if (e.data === "getItemSessionStorage")
+            return e.source.postMessage(sessionStorage.getItem(storageKey), "*");
+        if (e.data == "createindexedDB")
+            createIDBDataStore(dbName, objectStoreName, storageKey, storageValue, (message) => e.source.postMessage(message, "*"));
+        if (e.data == "checkindexedDBDoesExists")
+            checkIDBDataStoreExists((message) => e.source.postMessage(message, "*"));
+        if (e.data === "getExpectedValue") {
+            // console.log(`origin: ${e.origin} storageKey: ${storageKey}`);
+            return e.source.postMessage(storageValue, "*"); // comes from the target (popup or popup-iframe)
+        }
+    });
+}
+
 function checkCookies(isAfterDeletion) {
+    // addOutput("checking cookies...");
     let unsortedTestPassedMessages = [];
     let cookies = internals.getCookies();
     let potentialCookies = { "http-only-cookie": 1, "server-side-cookie": 1, "client-side-cookie": 1 };
@@ -108,19 +212,61 @@ function checkCookies(isAfterDeletion) {
     }
 }
 
-function addFrameEventListener() {
-    window.addEventListener('message', e => {
-        if (e.data === "getItemLocalStorage")
-            return e.source.postMessage(localStorage.getItem(storageKey), "*");
-        if (e.data === "getItemSessionStorage")
-            return e.source.postMessage(sessionStorage.getItem(storageKey), "*");
-        if (e.data == "createindexedDB")
-            createIDBDataStore(dbName, objectStoreName, storageKey, storageValue, (message) => e.source.postMessage(message, "*"));
-        if (e.data == "checkindexedDBDoesExists")
-            checkIDBDataStoreExists((message) => e.source.postMessage(message, "*"));
-        if (e.data === "getExpectedValue")
-            return e.source.postMessage(storageValue, "*");
-    });
+function checkPopupCookiesLikeCheckCookies(isAfterDeletion, popupWin, done) {
+  var finished = false;
+  function finish() {
+    if (finished) return;
+    finished = true;
+    window.removeEventListener("message", onMsg);
+    if (typeof done === "function") done();
+  }
+
+  function onMsg(e){
+    if (e.source !== popupWin) return;
+    if (e.origin !== crossOrigin) return;
+    const data = e.data;
+    if (!data || data.type !== "cookies:list") return;
+
+    const cookies = Array.isArray(data.cookies) ? data.cookies : [];
+    const potential = { "http-only-cookie":1, "server-side-cookie":1, "client-side-cookie":1 };
+    const msgs = [];
+    const pfx = isAfterDeletion ? "After deletion popup:" : "Before deletion popup:";
+
+    if (!cookies.length)
+      testFailed(`${pfx} No cookies found.`);
+
+    for (const c of cookies) {
+      if (c.name in potential) delete potential[c.name];
+      if (c.name === httpOnlyCookieName)
+        msgs.push(`${pfx} HttpOnly cookie exists.`);
+      else if (c.name === serverSideCookieName)
+        msgs.push(`${pfx} Regular server-side cookie exists.`);
+      else if (c.name === clientSideCookieName)
+        msgs.push(`${pfx} Client-side cookie exists.`);
+    }
+    for (const missing in potential) {
+      if (missing === httpOnlyCookieName)
+        msgs.push(`${pfx} HttpOnly cookie does not exist.`);
+      else if (missing === serverSideCookieName)
+        msgs.push(`${pfx} Regular server-side cookie does not exist.`);
+      else if (missing === clientSideCookieName)
+        msgs.push(`${pfx} Client-side cookie does not exist.`);
+    }
+
+    msgs.sort(sortStringArray).forEach(addOutput);
+    finish();
+  }
+
+  window.addEventListener("message", onMsg);
+
+  setTimeout(function () {
+    if (!finished) {
+      addOutput("WARN: popup cookie query timed out; continuing.");
+      finish();
+    }
+  }, 3000);
+
+  try { popupWin.postMessage({ type: "get:cookies:all" }, crossOrigin); } catch (_){ finish(); }
 }
 
 function createIDBDataStore(dbName, objectStoreName, key, value, callback) {
@@ -135,62 +281,7 @@ function createIDBDataStore(dbName, objectStoreName, key, value, callback) {
 
 function initStorage(key, value) {
     localStorage.setItem(key, value);
-    sessionStorage.setItem(key, value);
-}
-
-function checkFrameStorage(isAfterDeletion, frame, label, callback) {
-    // addOutput(isAfterDeletion);
-    let storageValue;
-    let localStorageItem;
-    let sessionStorageItem;
-    let indexedDBResult;
-    let currentRequest = "getExpectedValue";
-
-    function finish() {
-        addOutput((isAfterDeletion ? "After deletion: " : "Before deletion: ") + label + " LocalStorage entry " + (storageValue && localStorageItem === storageValue ? "does" : "does not") + " exist.");
-        addOutput((isAfterDeletion ? "After deletion: " : "Before deletion: ") + label + " SessionStorage entry " + (storageValue && sessionStorageItem === storageValue ? "does" : "does not") + " exist.");
-        addOutput((isAfterDeletion ? "After deletion: " : "Before deletion: ") + label + " indexedDB entry " + (storageValue && indexedDBResult === storageValue ? "does" : "does not") + " exist.");
-        window.removeEventListener("message", receiveResponse);
-        callback();
-    }
-
-    function receiveResponse(e) {
-        if (e.source !== frame) return;
-        
-        switch (currentRequest) {
-        case "getExpectedValue": {
-            storageValue = e.data;
-            currentRequest = isAfterDeletion ? "getItemLocalStorage" : "createindexedDB";
-            frame.postMessage(currentRequest, "*");
-            break;
-        }
-        case "createindexedDB": {
-            indexedDBResult = e.data;
-            currentRequest = "getItemLocalStorage";
-            frame.postMessage(currentRequest, "*");
-            break;
-        }
-        case "getItemLocalStorage": {
-            localStorageItem = e.data;
-            currentRequest = "getItemSessionStorage";
-            frame.postMessage(currentRequest, "*");
-            break;
-        }
-        case "getItemSessionStorage": {
-            sessionStorageItem = e.data;
-            currentRequest = "checkindexedDBDoesExists";
-            frame.postMessage(currentRequest, "*");
-            break;
-        }
-        case "checkindexedDBDoesExists": {
-            indexedDBResult = e.data;
-            finish();
-            break;
-        }
-        };
-    }
-    window.addEventListener("message", receiveResponse);
-    frame.postMessage(currentRequest, "*");
+    sessionStorage.setItem(key, value);    
 }
 
 function checkIDBDataStoreExists(callback) {
@@ -237,7 +328,6 @@ function checkIDBDataStoreExists(callback) {
         };
 
         req.onsuccess = (e) => {
-            // If we already finished in onupgradeneeded, ignore.
             if (completed) { try { e.target.result.close(); } catch (_) {} return; }
 
             const db = e.target.result;
@@ -279,20 +369,21 @@ function checkIDBDataStoreExists(callback) {
 
 
 function checkLocalStorageExists(isAfterDeletion, callback) {
-    let maxIntervals = 20;
+    let maxIntervals = 30;
     let intervalCounterLocalStorage = 0;
     let checkLocalStorageIntervalID;
     checkLocalStorageCallback = callback;
     if (!isAfterDeletion) {
-        // check until there is localStorage
         checkLocalStorageIntervalID = setInterval(function () {
             if (++intervalCounterLocalStorage >= maxIntervals) {
                 clearInterval(checkLocalStorageIntervalID);
                 addOutput("Before deletion: LocalStorage entry " + (localStorage.getItem(storageKey) === storageValue ? "does" : "does not") + " exist.");
+                addOutput("Before deletion: SessionStorage entry " + (sessionStorage.getItem(storageKey) === storageValue ? "does" : "does not") + " exist.");
                 checkLocalStorageCallback();
             } else if (testRunner.isStatisticsHasLocalStorage(originUnderTest)) {
                 clearInterval(checkLocalStorageIntervalID);
                 addOutput("Before deletion: LocalStorage entry " + (localStorage.getItem(storageKey) === storageValue ? "does" : "does not") + " exist.");
+                addOutput("Before deletion: SessionStorage entry " + (sessionStorage.getItem(storageKey) === storageValue ? "does" : "does not") + " exist.");
                 checkLocalStorageCallback();
             }
         }, 100);
@@ -312,8 +403,25 @@ function checkLocalStorageExists(isAfterDeletion, callback) {
     }
 }
 
-async function writeWebsiteDataAndContinue() {
-    // Write cookies.
+function waitForLocalStorage(frame, expectedOrigin, key, value, done, tries) {
+    // addOutput("inside waitForLocalStorage");
+    tries = tries || 0;
+    if (tries > 30) { 
+        return done();} // give up after ~3s
+
+    function once(e) {
+        if (e.source !== frame) return;
+        if (expectedOrigin && e.origin !== expectedOrigin) return;
+        window.removeEventListener("message", once);
+        if (e.data === value) return done();
+        setTimeout(function () { waitForLocalStorage(frame, expectedOrigin, key, value, done, tries + 1); }, 100);
+    }
+    window.addEventListener("message", once);
+    frame.postMessage("getItemLocalStorage", "*");
+}
+
+async function phaseA_writeWebsiteDataAndReturn(callback) {
+     // Write cookies.
     await fetch("/cookies/resources/set-http-only-cookie.py?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
     await fetch("/cookies/resources/setCookies.cgi", { headers: { "X-Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
     document.cookie = clientSideCookieName + "=1";
@@ -322,36 +430,40 @@ async function writeWebsiteDataAndContinue() {
 
     // Write LocalStorage
     localStorage.setItem(storageKey, storageValue);
+    sessionStorage.setItem(storageKey, storageValue);
     checkLocalStorageExists(false, function () {
-        
         // write IndexedDB
         createIDBDataStore(dbName, objectStoreName, storageKey, storageValue, function () {
             checkIDBDataStoreExists(function(message, eventName) {
                 addOutput(`Before deletion: (${eventName}) IDB entry does ${message === storageValue ? "" : "not"} exist.`);
-                addOutput(`Before deletion: ${crossOrigin} ${testRunner.isStatisticsHasLocalStorage(crossOrigin) ? "has" : "does not have"} local storage`);
-                checkFrameStorage(false, iframe.contentWindow, "iframe", () => checkFrameStorage(false, popup, "popup", () => {
-                    addLinebreakToOutput();
-                    processWebsiteDataAndContinue(); // Kicks off the website-data removal pass
-                }));
+                // addOutput(`Before deletion: ${crossOrigin} ${testRunner.isStatisticsHasLocalStorage(crossOrigin) ? "has" : "does not have"} local storage`);
+                waitForLocalStorage(iframeWin, crossOrigin, storageKey, storageValue, function () {
+                    checkFrameStorage(false, iframeWin, "iframe", () => {
+                        addLinebreakToOutput();
+                        callback();
+                    }, false);
+                });
             });
         });
     });
 }
 
-async function processWebsiteDataAndContinue() {
+async function processWebsiteDataAndContinue(popupWindow, callback) {
     await testRunner.statisticsProcessStatisticsAndDataRecords();
-    checkWebsiteDataAndContinue();
+    
+    checkWebsiteDataAndContinue(popupWindow, callback);
 }
 
-async function checkWebsiteDataAndContinue() {
-    checkCookies(true);
-    checkLocalStorageExists(true, function () {
-        checkIDBDataStoreExists((message, eventName) => {
-            addOutput(`After deletion: (${eventName}) IDB entry does ${message === storageValue ? "" : "not"} exist.`);
-            addOutput(`After deletion: ${crossOrigin} ${testRunner.isStatisticsHasLocalStorage(crossOrigin) ? "has" : "does not have"} local storage`);
-            checkFrameStorage(true, iframe.contentWindow, "iframe", () => checkFrameStorage(true, popup, "popup", finishTest));
+async function checkWebsiteDataAndContinue(popupWindow, callback) {
+    setTimeout(function () {
+        checkPopupCookiesLikeCheckCookies(true, popupWindow, function () {
+            checkFrameStorage(true, popupWindow, "popup", function () {
+                checkFrameStorage(true, popupWindow, "popup-iframe", function () {
+                    if (typeof callback === "function") callback();
+                }, { viaChild: true, targetOrigin: crossOrigin, expectedOrigin: crossOrigin });
+            }, { targetOrigin: crossOrigin, expectedOrigin: crossOrigin });
         });
-    });
+    }, 600);
 }
 
 async function finishTest() {

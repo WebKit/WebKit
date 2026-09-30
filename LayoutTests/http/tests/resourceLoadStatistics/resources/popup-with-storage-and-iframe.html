@@ -1,0 +1,75 @@
+<!-- http://localhost:8000/resourceLoadStatistics/resources/popup-with-storage.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script src="utilities.js"></script>
+  <script>
+      const dbName = "TestDatabase";
+      const objectStoreName = "TestObjectStore";
+      const storageKey = "key";
+      const storageValue = "value";
+    </script>
+</head>
+<body>
+  <!-- This is the line: localhost top embedding 127.0.0.1 iframe -->
+  <iframe id="child"
+          src="http://127.0.0.1:8000/resourceLoadStatistics/resources/iframe-with-storage-inside-popup.html">
+  </iframe>
+
+    <script>
+        addFrameEventListener();
+
+        // set this popup's storage and cookies, then announce readiness to the opener.
+        window.addEventListener("load", async function () {
+            try {
+                initStorage(storageKey, storageValue);
+                await fetch("/cookies/resources/set-http-only-cookie.py?cookieName=http-only-cookie",
+                            { credentials: "same-origin" });
+                await fetch("/cookies/resources/setCookies.cgi", {
+                    credentials: "same-origin",
+                    headers: { "X-Set-Cookie": "server-side-cookie=1; path=/;" }
+                });
+                document.cookie = "client-side-cookie=1";
+            } catch (_) {}
+
+            // Tell the opener (127.0.0.1) we are ready *after* seeding, to avoid races.
+            try { window.opener && window.opener.postMessage("popup-ready", "http://127.0.0.1:8000"); } catch (_) {}
+      });
+
+        // Forward "child:*" commands from opener to our child iframe, then bounce a single reply back.
+        window.addEventListener("message", function (e) {
+            if (e.origin !== "http://127.0.0.1:8000") return;
+            var msg = e.data;
+            if (typeof msg !== "string") return;
+            if (msg.indexOf("child:") !== 0) return;
+            var cmd = msg.slice(6);
+            var child = document.getElementById("child").contentWindow;
+
+            // console.log(`frpm popup-iframe: ${msg}`);
+            function once(ev) {
+                if (ev.source !== child) return;
+                window.removeEventListener("message", once);
+                // bounce child's single reply back to opener
+                e.source.postMessage(ev.data, e.origin);
+            }
+            window.addEventListener("message", once);
+            child.postMessage(cmd, "*");
+        });
+
+        // listener for popups cookies
+        window.addEventListener("message", (e) => {
+        if (e.origin !== "http://127.0.0.1:8000") return;
+        const msg = e.data;
+        if (!msg || typeof msg !== "object") return;
+
+        if (msg.type === "get:cookies:all") {
+            let cookies = [];
+            try { cookies = internals.getCookies(); } catch (_) {}
+            e.source.postMessage({ type: "cookies:list", cookies }, e.origin);
+        }
+        });
+
+    </script>
+</body>
+</html>
