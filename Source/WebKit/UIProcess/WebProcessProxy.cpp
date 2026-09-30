@@ -418,7 +418,7 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 {
     Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode, enhancedSecurity));
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    // FIXME: disable jetsam boost on prewarmed processes always, not just when SI is enabled.
+    // FIXME(rdar://188839922): disable jetsam boost on prewarmed processes always, not just when SI is enabled.
     if (isPrewarmed == IsPrewarmed::Yes && WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
         proxy->setJetsamBoostEnabled(false);
 #endif

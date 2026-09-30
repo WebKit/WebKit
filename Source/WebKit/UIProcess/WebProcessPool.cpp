@@ -1074,6 +1074,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.crossOriginMode = process.crossOriginMode();
     parameters.jscOptions = jscOptions;
 
+    // FIXME(rdar://188839922): this should be enabled for all configs, not just when Site Isolation is enabled.
+    if (hasAnyProcessPoolUsedSiteIsolation())
+        parameters.jscOptions.cachedAssemblerDataCapacityLimitEnabled = true;
+
 #if ENABLE(SERVICE_CONTROLS)
     auto& serviceController = ServicesController::singleton();
     parameters.hasImageServices = serviceController.hasImageServices();

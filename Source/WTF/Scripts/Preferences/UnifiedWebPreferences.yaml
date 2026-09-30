@@ -1370,7 +1370,7 @@ CachedAssemblerDataCapacityLimitEnabled:
   jscOptionName: useCachedAssemblerDataCapacityLimit
   sharedPreferenceForWebProcess: true
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: true
+  defaultValue: false
 
 CanvasColorSpaceEnabled:
   type: bool
