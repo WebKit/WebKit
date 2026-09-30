@@ -49,7 +49,10 @@ void printErrorMessageForFrame(LocalFrame* frame, const String& message)
 
 static String remoteFrameAccessError(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow& targetWindow)
 {
-    return targetWindow.crossDomainAccessErrorMessage(activeDOMWindow(*lexicalGlobalObject), IncludeTargetOrigin::No);
+    RefPtr activeWindow = dynamicDowncast<LocalDOMWindow>(asJSDOMWindow(lexicalGlobalObject)->wrapped());
+    if (!activeWindow)
+        return { };
+    return targetWindow.crossDomainAccessErrorMessage(*activeWindow, IncludeTargetOrigin::No);
 }
 
 // FIXME: Refactor to share more code with canAccessDocument.
