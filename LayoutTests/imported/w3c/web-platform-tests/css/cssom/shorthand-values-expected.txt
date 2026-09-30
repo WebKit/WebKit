@@ -19,5 +19,5 @@ PASS The serialization of list-style-type: circle; list-style-position: inside; 
 PASS The serialization of list-style-type: lower-alpha; should be canonical.
 PASS The serialization of font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold; should be canonical.
 PASS The serialization of padding-top: 1px; padding-right: 2px; padding-bottom: 3px; padding-left: 4px; should be canonical.
-FAIL The serialization of -webkit-line-clamp: none; should be canonical. assert_equals: expected "line-clamp: none;" but got "-webkit-line-clamp: none;"
+PASS The serialization of -webkit-line-clamp: none; should be canonical.
 

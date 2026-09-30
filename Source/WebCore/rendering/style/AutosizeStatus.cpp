@@ -168,8 +168,8 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const Style::Compu
         return false;
 
     float approximateNumberOfLines = heightOrMaxHeight / approximateLineHeight;
-    if (auto integerLineClamp = style.lineClamp().tryInteger())
-        return std::floor(approximateNumberOfLines) == integerLineClamp->value;
+    if (auto integerMaxLines = style.maxLines().tryValue())
+        return std::floor(approximateNumberOfLines) == integerMaxLines->value;
 
     constexpr auto maximumNumberOfLines = 5;
     constexpr auto thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger = 0.01f;

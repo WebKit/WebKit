@@ -1962,7 +1962,7 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
     auto& renderer = m_layer.renderer();
     bool restrictedByLineClamp = false;
     if (renderer.parent())
-        restrictedByLineClamp = !renderer.parent()->style().lineClamp().isNone();
+        restrictedByLineClamp = renderer.parent()->style().hasLegacyLineClamp();
 
     if (renderer.hasNonVisibleOverflow() && !restrictedByLineClamp) {
         ScrollOffset newScrollOffset = scrollOffset() + delta;

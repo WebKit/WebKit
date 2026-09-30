@@ -184,6 +184,7 @@ public:
     static RefPtr<CSSValue> extractWebkitColumnBreakAfterShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitColumnBreakBeforeShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitColumnBreakInsideShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractWebkitLineClampShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitMaskBoxImageShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitMaskPositionShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractMarkerShorthand(ExtractorState&);
@@ -284,6 +285,7 @@ public:
     static void extractWebkitColumnBreakAfterShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitColumnBreakBeforeShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitColumnBreakInsideShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractWebkitLineClampShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitMaskBoxImageShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitMaskPositionShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractMarkerShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -3135,9 +3137,28 @@ inline RefPtr<CSSValue> ExtractorCustom::extractLineClampShorthand(ExtractorStat
     return extractCSSValue<CSSPropertyLineClamp>(state);
 }
 
+inline RefPtr<CSSValue> ExtractorCustom::extractWebkitLineClampShorthand(ExtractorState& state)
+{
+    if (auto maxLines = state.style.maxLines().tryValue()) {
+        if (state.style.overflowContinue() == OverflowContinue::WebkitLegacy && state.style.blockEllipsis().isEllipsis())
+            return createCSSValue(state.pool, state.style, *maxLines);
+    } else if (state.style.overflowContinue() == OverflowContinue::Auto && state.style.blockEllipsis().isNone())
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
+    return nullptr;
+}
+
 inline void ExtractorCustom::extractLineClampShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyLineClamp>(state, builder, context);
+}
+
+inline void ExtractorCustom::extractWebkitLineClampShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto maxLines = state.style.maxLines().tryValue()) {
+        if (state.style.overflowContinue() == OverflowContinue::WebkitLegacy && state.style.blockEllipsis().isEllipsis())
+            serializationForCSS(builder, context, state.style, *maxLines);
+    } else if (state.style.overflowContinue() == OverflowContinue::Auto && state.style.blockEllipsis().isNone())
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractMaskShorthand(ExtractorState& state)

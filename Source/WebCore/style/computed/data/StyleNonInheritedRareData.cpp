@@ -38,7 +38,6 @@ NonInheritedRareData::NonInheritedRareData()
     : touchAction(ComputedStyle::initialTouchAction())
     , zoom(ComputedStyle::initialZoom())
     , initialLetter(ComputedStyle::initialInitialLetter())
-    , lineClamp(ComputedStyle::initialLineClamp())
     , maxLines(ComputedStyle::initialMaxLines())
     , marquee(MarqueeData::create())
     , backdropFilter(BackdropFilterData::create())
@@ -160,7 +159,6 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , touchAction(o.touchAction)
     , zoom(o.zoom)
     , initialLetter(o.initialLetter)
-    , lineClamp(o.lineClamp)
     , maxLines(o.maxLines)
     , marquee(o.marquee)
     , backdropFilter(o.backdropFilter)
@@ -287,7 +285,6 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
     return touchAction == o.touchAction
         && zoom == o.zoom
         && initialLetter == o.initialLetter
-        && lineClamp == o.lineClamp
         && maxLines == o.maxLines
         && marquee == o.marquee
         && backdropFilter == o.backdropFilter
@@ -421,7 +418,6 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(zoom);
 
     LOG_IF_DIFFERENT(initialLetter);
-    LOG_IF_DIFFERENT(lineClamp);
     LOG_IF_DIFFERENT(maxLines);
 
     marquee->dumpDifferences(ts, other.marquee);
