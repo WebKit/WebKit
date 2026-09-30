@@ -280,6 +280,8 @@ protected:
     virtual void didContinue(JSGlobalObject*) { }
     virtual void runEventLoopWhilePaused() { }
 
+    virtual bool isPauseBlockedByAnotherDebugger() const { return false; }
+
     virtual bool isContentScript(JSGlobalObject*) const { return false; }
 
     virtual URL sourceURLBase(JSGlobalObject*) const { return { }; }
