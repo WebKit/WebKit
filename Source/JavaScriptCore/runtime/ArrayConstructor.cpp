@@ -87,6 +87,15 @@ JSArray* constructArrayWithSizeQuirk(JSGlobalObject* globalObject, ArrayAllocati
     
     uint32_t n = length.toUInt32(globalObject);
     if (n != length.toNumber(globalObject)) {
+        if (newTarget && newTarget != globalObject->arrayConstructor()) {
+            JSObject* target = asObject(newTarget);
+            JSValue prototype = target->get(globalObject, vm.propertyNames->prototype);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (!prototype.isObject()) {
+                getFunctionRealm(globalObject, target);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            }
+        }
         throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
         return nullptr;
     }
