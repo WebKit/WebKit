@@ -1,5 +1,5 @@
 
-FAIL Property font-family inherits assert_not_equals: got disallowed value "\"Not Initial!\""
+PASS Property font-family inherits
 PASS Property font-feature-settings has initial value normal
 PASS Property font-feature-settings inherits
 PASS Property font-kerning has initial value auto
