@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<meta id="colorSchemeMeta" name="color-scheme" content="light dark">
+
+<style>
+  body {
+    background-color: Canvas;
+  }
+
+  #box {
+    width: 100px;
+    height: 100px;
+    background-color: light-dark(cyan, green);
+  }
+</style>
+
+<p>Box is cyan if light-dark() resolves to light, and green if it resolves to dark.</p>
+<div id="box"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const colorSchemeOverride = params.get("colorSchemeOverride");
+  if (colorSchemeOverride)
+    colorSchemeMeta.content = colorSchemeOverride;
+</script>
