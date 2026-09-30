@@ -63,8 +63,10 @@ public:
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
-        if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
+        if (!m_lineIndex)
             return contentLogicalTop();
+        if (formattingContextRoot().writingMode().isLineInverted())
+            return hasBlockLevelBox() ? contentLogicalTop() : std::min(logicalTop(), contentLogicalTop());
         for (auto precedingLineIndex = m_lineIndex; precedingLineIndex--;) {
             auto precedingLineBox = LineBoxIteratorModernPath { *m_inlineContent, precedingLineIndex };
             if (!precedingLineBox.line().hasContentfulInFlowBox())
@@ -73,18 +75,23 @@ public:
                 break;
             if (precedingLineBox.logicalBottom() < logicalTop())
                 break;
-            return precedingLineBox.contentLogicalBottom();
+            return precedingLineBox.contentLogicalBottomAdjustedForFollowingLineBox();
         }
         return contentLogicalTop();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        if (m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         auto followingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 };
-        if (followingLineBox.hasBlockLevelBox())
+        if (formattingContextRoot().writingMode().isLineInverted()) {
+            if (followingLineBox.hasBlockLevelBox())
+                return contentLogicalBottom();
+            return followingLineBox.contentLogicalTopAdjustedForPrecedingLineBox();
+        }
+        if (!hasContentfulInFlowBox() || hasBlockLevelBox() || logicalBottom() < followingLineBox.logicalTop())
             return contentLogicalBottom();
-        return followingLineBox.contentLogicalTop();
+        return std::max(logicalBottom(), contentLogicalBottom());
     }
 
     float contentLogicalLeft() const
