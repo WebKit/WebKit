@@ -689,6 +689,14 @@ bool Quirks::needsZomatoEmailLoginLabelQuirk() const
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsZomatoEmailLoginLabelQuirk);
 }
 
+// google.com/maps/embed rdar://184166392
+bool Quirks::needsGoogleMapsEmbedManipulationSurfaceQuirk() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsGoogleMapsEmbedManipulationSurfaceQuirk);
+}
+
 // maps.google.com rdar://67358928
 bool Quirks::needsGoogleMapsScrollingQuirk() const
 {
@@ -2333,6 +2341,18 @@ URL Quirks::topDocumentURL() const
     return protect(m_document)->topURL();
 }
 
+URL Quirks::documentURL() const
+{
+    Ref document = *protect(m_document);
+
+    if (!document->isTopDocument()) [[unlikely]] {
+        if (RefPtr page = document->page(); page && !page->quirksSubframeURLForTesting().isEmpty())
+            return page->quirksSubframeURLForTesting();
+    }
+
+    return document->url();
+}
+
 void Quirks::setTopDocumentURLForTesting(URL&& url)
 {
     m_topDocumentURLForTesting = WTF::move(url);
@@ -2371,7 +2391,7 @@ void Quirks::determineRelevantQuirks()
         return;
 
     Ref document = *protect(m_document);
-    m_quirksData.merge(resolveSiteSpecificQuirks(quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
+    m_quirksData.merge(resolveSiteSpecificQuirks(quirksURL, documentURL(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     // rdar://133423460

@@ -442,6 +442,10 @@ static constexpr Quirk fullTable[] = {
             shouldDispatchSimulatedMouseEventsQuirk,
         } },
 
+    // google.com/maps/embed rdar://184166392
+    { .match = QuirkURLMatch::embeddedDocument(URLMatch::anyTopLevelDomain("google"_s).when(pathStartsWith("/maps/embed"_s))),
+        .behaviors = { needsGoogleMapsEmbedManipulationSurfaceQuirk } },
+
     { .match = URLMatch::host("docs.google.com"_s),
         .behaviors = {
             inputMethodUsesCorrectKeyEventOrder,

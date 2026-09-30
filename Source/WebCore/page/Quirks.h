@@ -155,6 +155,7 @@ public:
     bool NODELETE needsFullscreenDisplayNoneQuirk() const;
     bool NODELETE needsFullscreenObjectFitQuirk() const;
     bool needsZomatoEmailLoginLabelQuirk() const;
+    bool NODELETE needsGoogleMapsEmbedManipulationSurfaceQuirk() const;
     bool NODELETE needsGoogleMapsScrollingQuirk() const;
     bool NODELETE needsGoogleTranslateScrollingQuirk() const;
     bool NODELETE needsNetflixVolumeSliderQuirk() const;
@@ -361,6 +362,7 @@ public:
 private:
     bool needsQuirks() const;
     URL topDocumentURL() const;
+    URL documentURL() const;
 
     bool behaviorAppliesToNode(QuirkBehaviorID, const Node*) const;
     bool behaviorAppliesToDocument(QuirkBehaviorID) const;

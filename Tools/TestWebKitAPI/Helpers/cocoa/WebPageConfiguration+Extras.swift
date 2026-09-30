@@ -26,15 +26,10 @@
 @_spi(Testing) public import WebKit
 public import WebKit_Private.WKWebProcessPlugIn
 private import WebKit_Private.WKProcessPoolPrivate
+private import TestWebKitAPILibrary.InjectedBundle.cocoa.WebProcessPlugIn.WebProcessPlugInWithInternals
 
 extension WebPage.Configuration {
     /// Creates a new `WebPage.Configuration` initialized using a custom web process test plug-in class.
-    ///
-    /// For example, to create a configuration to allow a WebPage to access the `Internals` plug-in:
-    ///
-    /// ```
-    ///  let configuration = WebPage.Configuration(testPlugInClass: WebProcessPlugInWithInternals.self)
-    /// ```
     ///
     /// - Parameters:
     ///   - testPlugInClass: The type of the plug-in class to use.
@@ -53,6 +48,16 @@ extension WebPage.Configuration {
         processPool._setObject(NSStringFromClass(testPlugInClass) as NSString, forBundleParameter: "TestPlugInPrincipalClassName")
 
         self.processPool = processPool
+    }
+
+    /// Creates a new `WebPage.Configuration` whose web process installs the `internals` object on every frame.
+    ///
+    /// - Parameter:
+    ///   - configureJSCForTesting: If `true`, relaxes JSC's security hardening so that tests can freely modify JSC options, config,
+    ///   and behavior that would otherwise be more secured.
+    /// - Returns: A correctly-configured WebPage.Configuration.
+    public static func withInternals(configureJSCForTesting: Bool = true) -> WebPage.Configuration {
+        .init(testPlugInClass: WebProcessPlugInWithInternals.self, configureJSCForTesting: configureJSCForTesting)
     }
 }
 

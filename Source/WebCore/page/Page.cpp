@@ -5750,6 +5750,22 @@ std::optional<std::pair<uint16_t, uint16_t>> Page::portsForUpgradingInsecureSche
     return m_portsForUpgradingInsecureSchemeForTesting;
 }
 
+void Page::setQuirksSubframeURLForTesting(URL&& url)
+{
+    if (m_quirksSubframeURLForTesting == url)
+        return;
+
+    m_quirksSubframeURLForTesting = WTF::move(url);
+
+    forEachDocument([](Document& document) {
+        if (document.isTopDocument())
+            return;
+
+        document.quirks().determineRelevantQuirks();
+        document.scheduleFullStyleRebuild();
+    });
+}
+
 #if USE(ATSPI)
 AccessibilityRootAtspi* Page::accessibilityRootObject() const
 {

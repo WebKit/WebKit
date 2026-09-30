@@ -1582,6 +1582,7 @@ public:
     bool destroySleepDisabler(unsigned identifier);
 
     void setTopDocumentURLForQuirks(const String&);
+    void setSubframeURLForQuirks(const String&);
     Vector<String> activeQuirks() const;
 
 #if ENABLE(APP_HIGHLIGHTS)

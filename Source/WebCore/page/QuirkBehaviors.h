@@ -188,6 +188,7 @@ enum class QuirkBehaviorID {
     NeedsFullscreenDisplayNoneQuirk,
     NeedsFullscreenObjectFitQuirk,
     NeedsGMailOverflowScrollQuirk,
+    NeedsGoogleMapsEmbedManipulationSurfaceQuirk,
     NeedsGoogleMapsScrollingQuirk,
     NeedsGoogleTranslateScrollingQuirk,
     NeedsNetflixVolumeSliderQuirk,
@@ -498,6 +499,7 @@ inline constexpr QuirkBehavior needsFormControlToBeMouseFocusableQuirk { WebCore
 inline constexpr QuirkBehavior needsFullscreenDisplayNoneQuirk { WebCore::QuirkBehaviorID::NeedsFullscreenDisplayNoneQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsFullscreenObjectFitQuirk { WebCore::QuirkBehaviorID::NeedsFullscreenObjectFitQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsGMailOverflowScrollQuirk { WebCore::QuirkBehaviorID::NeedsGMailOverflowScrollQuirk, BuildCondition::iOSFamily };
+inline constexpr QuirkBehavior needsGoogleMapsEmbedManipulationSurfaceQuirk { WebCore::QuirkBehaviorID::NeedsGoogleMapsEmbedManipulationSurfaceQuirk, BuildCondition::mac };
 inline constexpr QuirkBehavior needsGoogleMapsScrollingQuirk { WebCore::QuirkBehaviorID::NeedsGoogleMapsScrollingQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsGoogleTranslateScrollingQuirk { WebCore::QuirkBehaviorID::NeedsGoogleTranslateScrollingQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsNetflixVolumeSliderQuirk { WebCore::QuirkBehaviorID::NeedsNetflixVolumeSliderQuirk, BuildCondition::iOS || BuildCondition::vision };
