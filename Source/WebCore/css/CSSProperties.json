@@ -436,6 +436,7 @@
             "values": [
                 "auto",
                 "discard",
+                "collapse",
                 "-webkit-legacy"
             ],
             "codegen-properties": {
