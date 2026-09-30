@@ -459,6 +459,7 @@ editing/spelling/grammar-markers-hidpi.html [ Skip ]
 editing/spelling/inline-spelling-markers.html [ Skip ]
 editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
 editing/spelling/spellcheck-async-mutation.html [ Skip ]
+webkit.org/b/125690 editing/spelling/spellcheck-async.html [ Failure ]
 editing/spelling/spellcheck-queue.html [ Skip ]
 editing/spelling/spelling-insert-html.html [ Skip ]
 
@@ -526,6 +527,7 @@ editing/mac/input/text-input-controller.html
 editing/mac/input/text-input-controller-no-editable-no-crash.html
 editing/mac/input/wrapped-line-char-rect.html
 editing/mac/input/NSBackgroundColor-transparent.html
+editing/mac/selection/25228.html
 
 # WebKitTestRunner needs testRunner.setCallCloseOnWebViews
 # http://webkit.org/b/46714
@@ -2576,12 +2578,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] media/video-object-fit.html [ ImageOnlyFailure ]
 [ GoldenGate Debug ] svg/text/bidi-dir-rtl.html [ ImageOnlyFailure ]
 [ GoldenGate Debug ] editing/mac/attributed-string/font-weight.html [ Failure ]
-[ GoldenGate Debug ] editing/mac/selection/25228.html [ Failure ]
-[ GoldenGate Debug ] editing/selection/select-across-readonly-input-2.html [ Failure ]
-[ GoldenGate Debug ] editing/selection/select-across-readonly-input-3.html [ Failure ]
-[ GoldenGate Debug ] editing/selection/select-across-readonly-input-4.html [ Failure ]
-[ GoldenGate Debug ] editing/selection/select-across-readonly-input-5.html [ Failure ]
-[ GoldenGate Debug ] editing/spelling/spellcheck-async.html [ Failure ]
 [ GoldenGate Debug ] fast/events/ime-composition-events-001.html [ Failure ]
 [ GoldenGate Debug ] fast/mediastream/video-rotation2.html [ Failure ]
 [ GoldenGate Debug ] fast/mediastream/video-srcObject-fit-fill.html [ Failure ]
@@ -2626,3 +2622,9 @@ fast/webgpu/nocrash/fuzz-277928.html [ Pass Failure ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.worker.html [ Failure ]
 
 webkit.org/b/325574 [ Tahoe+ arm64 ] svg/compositing/filtered-container-with-composited-child.svg [ ImageOnlyFailure ]
+
+# webkit.org/b/304362 REGRESSION(Tahoe): editing/selection/select-across-readonly-input* broken by Liquid Glass
+editing/selection/select-across-readonly-input-2.html [ Failure ]
+editing/selection/select-across-readonly-input-3.html [ Failure ]
+editing/selection/select-across-readonly-input-4.html [ Failure ]
+editing/selection/select-across-readonly-input-5.html [ Failure ]
