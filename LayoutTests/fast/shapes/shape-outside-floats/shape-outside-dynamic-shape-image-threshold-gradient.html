@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#image-shape {
+    float: left;
+    shape-outside: linear-gradient(to right, rgba(0, 0, 255, 1), rgba(0, 0, 255, 0));
+    shape-image-threshold: 0.5;
+    width: 100px;
+    height: 100px;
+}
+
+#content {
+    font: 50px/1 Ahem, sans-serif;
+    width: 600px;
+    color: green;
+}
+</style>
+<script>
+window.onload = () => {
+    document.body.offsetTop;
+    document.getElementById('image-shape').style.setProperty('shape-image-threshold', '0.25');
+};
+</script>
+</head>
+<body>
+<div id="content">
+  <div id="image-shape"></div>
+  X<br>X<br>X
+</div>
+</body>
+</html>

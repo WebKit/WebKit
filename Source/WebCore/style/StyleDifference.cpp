@@ -236,7 +236,7 @@ public:
         if (a.lineClamp != b.lineClamp || a.initialLetter != b.initialLetter)
             return true;
 
-        if (a.shapeMargin != b.shapeMargin)
+        if (a.shapeMargin != b.shapeMargin || a.shapeImageThreshold != b.shapeImageThreshold)
             return true;
 
         if (a.columnGap != b.columnGap || a.rowGap != b.rowGap)
