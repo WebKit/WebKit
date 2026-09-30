@@ -74,6 +74,7 @@ struct InteractionInformationAtPosition {
         bool isColorInput,
         bool isRangeInput,
         bool isARIASlider,
+        bool isCustomSlider,
         bool hasDirectionalResizeCursor,
         bool isInResizeControl,
         bool isOverVideo,
@@ -153,6 +154,7 @@ struct InteractionInformationAtPosition {
     bool isColorInput { false };
     bool isRangeInput { false };
     bool isARIASlider { false };
+    bool isCustomSlider { false };
 
     // `cursor` at the hit node is an axis-specific resize cursor (`ew-resize`, `ns-resize`, `col-resize`, `row-resize`).
     // Web content uses this to mark something that is manipulated by dragging along that axis -- a slider, for example.

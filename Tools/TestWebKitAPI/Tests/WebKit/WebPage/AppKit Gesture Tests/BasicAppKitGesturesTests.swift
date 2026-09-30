@@ -1966,6 +1966,63 @@ extension AppKitGesturesTests.Basic {
         #expect(try await settledScrollPosition() == .zero)
     }
 
+    @Test(arguments: CustomScrubberSliderPlacement.allCases)
+    func mouseDragOverCustomVideoScrubberDoesNotScroll(sliderPlacement: CustomScrubberSliderPlacement) async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+
+        // Mirrors players which draw the scrubber with plain elements, handle it with mouse events
+        // (listening for moves on the window once the drag starts), and provide a visually hidden
+        // range input alongside it for accessibility.
+        let sliderMarkup =
+            "<div style='position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden'><input type='range' min='0' max='100' value='0'></div>"
+        let visibleSliderMarkup = "<input type='range' min='0' max='100' value='0' style='position: absolute; top: 20px; left: 20px;'>"
+
+        let html = """
+            <body style="margin: 0; width: 4000px; height: 4000px;">
+                <div style="position: relative; width: 600px; height: 340px;">
+                    <video src="video-with-audio.mp4" style="display: block; width: 100%; height: 100%"></video>
+                    <div id="scrubber" style="position: absolute; left: 20px; right: 20px; bottom: 20px; height: 24px; cursor: pointer; background-color: red;"></div>
+                    \(sliderPlacement == .insidePlayer ? sliderMarkup : "")
+                    \(sliderPlacement == .visibleInsidePlayer ? visibleSliderMarkup : "")
+                </div>
+                \(sliderPlacement == .outsidePlayer ? sliderMarkup : "")
+                <script>
+                    window.sliderEvents = [];
+                    document.getElementById("scrubber").addEventListener("mousedown", event => {
+                        window.sliderEvents.push(event.type);
+                        event.preventDefault();
+                        window.addEventListener("mousemove", event => window.sliderEvents.push(event.type), true);
+                        window.addEventListener("mouseup", event => window.sliderEvents.push(event.type), true);
+                    });
+                </script>
+            </body>
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let scrubber = try await screenBounds(ofElementWithID: "scrubber")
+        // Drag leftward, so that if the gesture scrolls instead, it moves away from the pinned left edge.
+        let startPoint = CGPoint(x: scrubber.minX + scrubber.width * 0.75, y: scrubber.midY)
+        let endPoint = CGPoint(x: scrubber.minX + scrubber.width * 0.25, y: scrubber.midY)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: startPoint, end: endPoint, duration: .seconds(0.2), release: true)
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        if sliderPlacement == .insidePlayer {
+            let events = try await sliderEvents()
+            #expect(events.first == "mousedown")
+            #expect(events.contains("mousemove"))
+            #expect(try await settledScrollPosition() == .zero)
+        } else {
+            #expect(try await sliderEvents().isEmpty)
+            #expect(try await settledScrollPosition() != .zero)
+        }
+    }
+
     @Test(
         .bug("https://webkit.org/b/323383", "<model> element in orbit stage mode does not rotate on press drag"),
         arguments: [false, true]
@@ -3081,6 +3138,13 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
+    }
+
+    enum CustomScrubberSliderPlacement: Sendable, CaseIterable {
+        case absent
+        case insidePlayer
+        case visibleInsidePlayer
+        case outsidePlayer
     }
 
     enum ThinSliderDragStart: Sendable, CaseIterable {

@@ -63,6 +63,7 @@
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/Model.h>
 #import <WebCore/NodeDocument.h>
+#import <WebCore/NodeInlines.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
@@ -74,10 +75,13 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderObjectDocument.h>
+#import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderObjectStyle.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/RenderVideoInlines.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/ScrollingCoordinator.h>
+#import <WebCore/TypedElementDescendantIteratorInlines.h>
 #import <WebCore/VisibleUnits.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
@@ -368,6 +372,49 @@ static bool isRangeInput(const RefPtr<WebCore::Node>& node)
     return input && input->isRangeControl() && !input->isDisabledFormControl();
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+static bool isARIASlider(const WebCore::Element& element)
+{
+    const auto ariaRole = element.attributeWithoutSynchronization(WebCore::HTMLNames::roleAttr);
+    return WebCore::AccessibilityObject::ariaRoleToWebCoreRole(ariaRole) == WebCore::AccessibilityRole::Slider;
+}
+
+static bool isVisuallyHidden(const WebCore::Element& element)
+{
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return false;
+
+    auto visibleRect = WebCore::snappedIntRect(renderer->absoluteClippedOverflowRectForRepaint());
+    if (visibleRect.width() <= 1 || visibleRect.height() <= 1)
+        return true;
+
+    return !visibleRect.intersects(renderer->view().documentRect());
+}
+
+static bool isCustomSlider(WebCore::Node& hitNode, WebCore::HTMLVideoElement& video)
+{
+    static constexpr unsigned maximumAncestorDepth = 3;
+
+    // Ignore built-in media controls.
+    if (hitNode.isInUserAgentShadowTree())
+        return false;
+
+    unsigned depth = 0;
+    for (RefPtr ancestor = hitNode.parentElementInComposedTree(); ancestor && depth < maximumAncestorDepth; ancestor = ancestor->parentElementInComposedTree(), ++depth) {
+        for (Ref descendant : WebCore::descendantsOfType<WebCore::Element>(*ancestor)) {
+            if ((isRangeInput(descendant.ptr()) || isARIASlider(descendant)) && isVisuallyHidden(descendant))
+                return true;
+        }
+
+        if (ancestor->isShadowIncludingInclusiveAncestorOf(video))
+            break;
+    }
+
+    return false;
+}
+#endif
+
 static void selectionPositionInformation(WebPage& page, WebCore::LocalFrame& localRoot, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     // `request.point` is in the root-view coordinate space.
@@ -473,20 +520,24 @@ static void selectionPositionInformation(WebPage& page, WebCore::LocalFrame& loc
         WebCore::HitTestRequest::Type::IncludeAllElementsUnderPoint,
     };
     const auto allElementsResult = localRoot.eventHandler().hitTestResultAtPoint(contentsPoint, allElementsHitType);
+    RefPtr<WebCore::HTMLVideoElement> videoUnderPoint;
     for (Ref node : allElementsResult.listBasedTestResult()) {
-        if (!info.isOverVideo)
-            info.isOverVideo = !!hostVideoElementIgnoringImageOverlay(node.get());
+        if (!videoUnderPoint) {
+            videoUnderPoint = hostVideoElementIgnoringImageOverlay(node.get());
+            info.isOverVideo = !!videoUnderPoint;
+        }
 
         if (!info.isRangeInput && !info.isARIASlider) {
-            if (const RefPtr element = dynamicDowncast<WebCore::Element>(node)) {
-                const auto ariaRole = element->attributeWithoutSynchronization(WebCore::HTMLNames::roleAttr);
-                info.isARIASlider = WebCore::AccessibilityObject::ariaRoleToWebCoreRole(ariaRole) == WebCore::AccessibilityRole::Slider;
-            }
+            if (const RefPtr element = dynamicDowncast<WebCore::Element>(node))
+                info.isARIASlider = isARIASlider(*element);
         }
 
         if (info.isOverVideo && (info.isRangeInput || info.isARIASlider))
             break;
     }
+
+    if (videoUnderPoint && !info.isRangeInput && !info.isARIASlider)
+        info.isCustomSlider = isCustomSlider(*hitNode, *videoUnderPoint);
 
     if (request.inputSource == WebEventInputSource::Automation)
         automationAdjustedInteractionPositionInformation(localRoot, *frameView, contentsPoint, info);
