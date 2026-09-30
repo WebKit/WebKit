@@ -44,8 +44,10 @@ public:
         assertIsCurrent(m_ownerThread);
         m_value = n;
     }
+IGNORE_CLANG_WARNINGS_BEGIN("unused-template")
     template<typename T> int doTaskCompileFailure(T n) { return doTaskImpl(n); }
     template<typename T> void accessVariableCompileFailure(T n) { m_value = n; }
+IGNORE_CLANG_WARNINGS_END
 private:
     int doTaskImpl(int n) WTF_REQUIRES_CAPABILITY(m_ownerThread) { return n + 1; }
     int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };

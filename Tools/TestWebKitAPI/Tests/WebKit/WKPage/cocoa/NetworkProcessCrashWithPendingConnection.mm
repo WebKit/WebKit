@@ -40,7 +40,6 @@ static bool loadedOrCrashed = false;
 static bool loaded = false;
 static bool webProcessCrashed = false;
 static bool networkProcessCrashed = false;
-static WKWebView* testView;
 
 @interface MonitorWebContentCrashNavigationDelegate : NSObject <WKNavigationDelegate>
 @end
@@ -143,7 +142,6 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
     WKContextSetClient(static_cast<WKContextRef>(processPool.get()), &client.base);
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    testView = webView.get();
 
     // Constucting a WebView starts a network process so terminate this one. The page load below will then request a network process and we
     // make this new network process launch crash on startup.

@@ -202,11 +202,13 @@ public:
         Locker holdLock { AdoptLock, m_otherLock };
         m_otherValue = value;
     }
+IGNORE_CLANG_WARNINGS_BEGIN("unused-template")
     // This function can be used to manually check that compile fails.
     template<typename T> void shouldFailCompile(T t)
     {
         m_value = t;
     }
+IGNORE_CLANG_WARNINGS_END
     private:
     Lock m_lock;
     int m_value WTF_GUARDED_BY_LOCK(m_lock) { 77 };

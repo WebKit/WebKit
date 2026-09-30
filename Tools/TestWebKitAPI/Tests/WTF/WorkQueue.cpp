@@ -333,10 +333,12 @@ struct AssertionTestHolder {
     {
         result = ++counter;
     }
+IGNORE_CLANG_WARNINGS_BEGIN("unused-template")
     template<typename T> void testTaskThatFailsToCompile()
     {
         ++counter;
     }
+IGNORE_CLANG_WARNINGS_END
 };
 }
 
