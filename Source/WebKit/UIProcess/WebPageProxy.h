@@ -1291,6 +1291,7 @@ public:
     void applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(String&&)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText, bool isCandidate);
     void requestAutocorrectionContext();
+    bool requestAutocorrectionContextAndWaitForReply(Seconds timeout);
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
     void clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint);
 #if ENABLE(REVEAL)

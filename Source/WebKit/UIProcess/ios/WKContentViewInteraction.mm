@@ -6220,9 +6220,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
         return completionHandler(WebKit::RequestAutocorrectionContextResult::Empty);
 
     _pendingAutocorrectionContextHandler = WTF::move(completionHandler);
-    protect(_page)->requestAutocorrectionContext();
-
-    if (protect(_page->legacyMainFrameProcess().connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) != IPC::Error::NoError)
+    if (!page->requestAutocorrectionContextAndWaitForReply(1_s))
         RELEASE_LOG(TextInput, "Timed out while waiting for autocorrection context.");
 
     if (_autocorrectionContextNeedsUpdate)

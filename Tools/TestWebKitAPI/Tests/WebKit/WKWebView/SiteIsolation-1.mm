@@ -54,6 +54,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "TestInputDelegate.h"
 #import "UIKitSPIForTesting.h"
 #import <WebKit/_WKTextInputContext.h>
 #endif
@@ -1014,5 +1015,134 @@ TEST(SiteIsolation, AddAppHighlightWithoutSelectionDoesNotCrashWhenWebProcessesE
 }
 
 #endif // ENABLE(APP_HIGHLIGHTS)
+
+#if PLATFORM(IOS_FAMILY)
+
+// UIKit reads text and geometry around the insertion point to drive autocorrection, predictive text, and
+// accessibility. With the caret in a cross-origin iframe, those requests must go to the iframe's process, and
+// any rects in the reply must be in the main frame's coordinates rather than the iframe's.
+
+static constexpr auto mainFrameWithPositionedCrossOriginIframe = "<meta name='viewport' content='width=device-width, initial-scale=1'>"
+    "<body style='margin: 0'><iframe id='iframe' style='position: absolute; left: 100px; top: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
+static constexpr auto editableIframeWithText = "<body contenteditable style='margin: 0; font-size: 20px;'>hello world</body>"_s;
+
+// The iframe in mainFrameWithPositionedCrossOriginIframe covers (100, 100) to (500, 400) in the main frame.
+static void expectRectInPositionedCrossOriginIframe(CGRect rect)
+{
+    EXPECT_FALSE(CGRectIsEmpty(rect));
+    EXPECT_GE(CGRectGetMinX(rect), 100);
+    EXPECT_GE(CGRectGetMinY(rect), 100);
+    EXPECT_LE(CGRectGetMaxX(rect), 500);
+    EXPECT_LE(CGRectGetMaxY(rect), 400);
+}
+
+// Focuses the iframe's editable body with a user gesture, so that it becomes the focused element and starts an
+// input session, then puts the caret after "hello world". Focusing already leaves a caret, so the UI process may not
+// have seen the caret move by the time this returns; callers that depend on UI-side editor state must wait for more.
+static RetainPtr<TestInputDelegate> startInputSessionInCrossOriginIframe(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    RetainPtr inputDelegate = adoptNS([TestInputDelegate new]);
+    __block bool didStartInputSession = false;
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:^_WKFocusStartsInputSessionPolicy(WKWebView *, id<_WKFocusedElementInfo>) {
+        didStartInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.body.focus()" inFrame:frame];
+    Util::run(&didStartInputSession);
+    setSelectionInFrame(webView, frame, @"getSelection().setPosition(document.body.firstChild, 11)", _WKSelectionAttributeIsCaret);
+    return inputDelegate;
+}
+
+TEST(SiteIsolation, AutocorrectionContextInCrossOriginIframe)
+{
+    // With the out-of-process keyboard, UIKit doesn't ask the web process for autocorrection context.
+    if ([UIKeyboard usesInputSystemUI])
+        return;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), childFrame.get());
+
+    // The UI process caches the context the iframe sent when its body was focused, and only asks a web process
+    // again after it sees the selection change. Switching from a caret to a range gives us something to wait for.
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setBaseAndExtent(document.body.firstChild, 6, document.body.firstChild, 11)", _WKSelectionAttributeIsRange);
+
+    // The request is answered by a separate message that the UI process waits for, so the wait has to be on the
+    // process that got the request. Otherwise the wait times out and the context comes back empty.
+    auto context = [webView autocorrectionContext];
+    EXPECT_WK_STREQ("world", context.selectedText);
+    EXPECT_TRUE(context.contextBeforeSelection.startsWith("hello"_s));
+}
+
+TEST(SiteIsolation, AutocorrectionRectsInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), childFrame.get());
+
+    auto [firstRect, lastRect] = [webView autocorrectionRectsForString:@"world"];
+    expectRectInPositionedCrossOriginIframe(firstRect);
+    expectRectInPositionedCrossOriginIframe(lastRect);
+}
+
+TEST(SiteIsolation, AccessibilityRectsAtSelectionOffsetInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    __block bool done = false;
+    __block RetainPtr<NSArray<NSValue *>> rects;
+    [webView _accessibilityRetrieveRectsAtSelectionOffset:0 withText:@"hello" completionHandler:^(NSArray<NSValue *> *result) {
+        rects = result;
+        done = true;
+    }];
+    Util::run(&done);
+
+    ASSERT_GE([rects count], 1U);
+    expectRectInPositionedCrossOriginIframe([rects firstObject].CGRectValue);
+}
+
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+
+TEST(SiteIsolation, DocumentEditingContextInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), childFrame.get());
+
+    RetainPtr request = adoptNS([[UIWKDocumentRequest alloc] init]);
+    [request setFlags:UIWKDocumentRequestText | UIWKDocumentRequestRects];
+    [request setSurroundingGranularity:UITextGranularityParagraph];
+    [request setGranularityCount:1];
+    RetainPtr context = [webView synchronouslyRequestDocumentContext:request.get()];
+
+    EXPECT_TRUE([[context contextBefore] isKindOfClass:NSString.class]);
+    EXPECT_WK_STREQ("hello world", (NSString *)[context contextBefore]);
+    RetainPtr<NSArray<NSValue *>> characterRects = [context characterRectsForCharacterRange:NSMakeRange(0, 1)];
+    ASSERT_GE([characterRects count], 1U);
+    expectRectInPositionedCrossOriginIframe([characterRects firstObject].CGRectValue);
+}
+
+#endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI

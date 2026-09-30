@@ -71,6 +71,7 @@
 #import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
+#import "WebPageProxyMessages.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -176,7 +177,7 @@ void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const
     if (!hasRunningProcess())
         return callback({ });
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestFocusedElementInformation(), Messages::WebPage::RequestFocusedElementInformation::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
@@ -422,7 +423,7 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
         callback({ });
         return;
     }
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), Messages::WebPage::RequestAutocorrectionData::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(String&&)>&& callback)
@@ -508,7 +509,19 @@ void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(std::optiona
 
 void WebPageProxy::requestAutocorrectionContext()
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::HandleAutocorrectionContextRequest(), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::HandleAutocorrectionContextRequest());
+}
+
+bool WebPageProxy::requestAutocorrectionContextAndWaitForReply(Seconds timeout)
+{
+    // The focused frame's process answers with a separate HandleAutocorrectionContext message, so wait on that
+    // process's connection, for its page, rather than the main frame's.
+    RefPtr frame = focusedOrMainFrame();
+    auto frameID = frame ? std::optional(frame->frameID()) : std::nullopt;
+    Ref process = processContainingFrame(frameID);
+    auto pageID = webPageIDInProcessForFrame(frameID);
+    process->send(Messages::WebPage::HandleAutocorrectionContextRequest(), pageID);
+    return protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(pageID, timeout, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) == IPC::Error::NoError;
 }
 
 void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& context)
@@ -684,7 +697,7 @@ void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGr
     if (!hasRunningProcess())
         return callback({ });
     
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(granularity, offset), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(granularity, offset), Messages::WebPage::GetRectsForGranularityWithSelectionOffset::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
@@ -692,7 +705,7 @@ void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const S
     if (!hasRunningProcess())
         return callback({ });
     
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text), Messages::WebPage::GetRectsAtSelectionOffsetWithText::Reply { WTF::move(callback) });
 }
 
 void WebPageProxy::storeSelectionForAccessibility(bool shouldStore)
@@ -1276,7 +1289,7 @@ void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextR
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), Messages::WebPage::RequestDocumentEditingContext::Reply { WTF::move(completionHandler) });
 }
 
 #if ENABLE(DRAG_SUPPORT)

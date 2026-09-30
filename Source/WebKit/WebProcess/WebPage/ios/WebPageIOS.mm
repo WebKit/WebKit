@@ -345,6 +345,12 @@ static void convertContentToRootView(const LocalFrameView& view, Vector<Selectio
         geometry.setQuad(view.contentsToRootView(geometry.quad()));
 }
 
+static void convertContentToMainFrameView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
+{
+    for (auto& geometry : geometries)
+        geometry.setQuad(view.contentsToMainFrameView(geometry.quad()));
+}
+
 static std::optional<IntRect> overflowClipRectForSelection(const VisibleSelection& selection)
 {
     auto range = selection.range();
@@ -2065,7 +2071,7 @@ void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity
 
     auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
     RefPtr view = frame->view();
-    convertContentToRootView(*view, selectionGeometries);
+    convertContentToMainFrameView(*view, selectionGeometries);
     completionHandler(selectionGeometries);
 }
 
@@ -2114,7 +2120,7 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
 
     auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
     RefPtr view = frame->view();
-    convertContentToRootView(*view, selectionGeometries);
+    convertContentToMainFrameView(*view, selectionGeometries);
     completionHandler(selectionGeometries);
 }
 
@@ -2336,7 +2342,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         selectionGeometries = RenderObject::collectSelectionGeometries(*range).geometries;
 
     auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
-        return frame->view()->contentsToRootView(selectionGeometry.rect());
+        return frame->view()->contentsToMainFrameView(selectionGeometry.rect());
     });
 
     bool multipleFonts = false;
@@ -4499,6 +4505,9 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
     if (!view)
         return completionHandler({ });
 
+    if (!request.rect.isEmpty())
+        request.rect = view->contentsToRootView(view->rootViewToContentsAcrossIsolatedFrames(request.rect));
+
     protect(frame->document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     VisibleSelection selection = frame->selection().selection();
@@ -4703,7 +4712,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
             }
 
             for (auto& absoluteRect : absoluteRects)
-                rects.append({ protect(iterator.range().start.document().view())->contentsToRootView(absoluteRect), { offsetSoFar++, 1 } });
+                rects.append({ protect(iterator.range().start.document().view())->contentsToMainFrameView(absoluteRect), { offsetSoFar++, 1 } });
 
             lastTextRange = iterator.range();
         }
