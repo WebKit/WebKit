@@ -677,21 +677,21 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     if (!report)
         return nil;
 
-    OSObjectPtr path = dynamicOSObjectCast<nw_path_t>(error.userInfo[@"_NSURLErrorNWPathKey"]);
-    if (!path)
-        return nil;
-
     auto interfaces = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
     if (!interfaces.get())
         return nil;
-    nw_path_enumerate_interfaces(path.get(), ^bool(nw_interface_t interface) {
-        String name = String::fromUTF8(nw_interface_get_name(interface));
-        [interfaces addObject:@{
-            @"type" : description(nw_interface_get_type(interface)),
-            @"name" : name.createNSString().get() ?: @"",
-        }];
-        return true;
-    });
+
+    // The path may be a Swift NWPath that is not an nw_path_t; the report is still useful without interfaces.
+    if (OSObjectPtr path = dynamicOSObjectCast<nw_path_t>(error.userInfo[@"_NSURLErrorNWPathKey"])) {
+        nw_path_enumerate_interfaces(path.get(), ^bool(nw_interface_t interface) {
+            String name = String::fromUTF8(nw_interface_get_name(interface));
+            [interfaces addObject:@{
+                @"type" : description(nw_interface_get_type(interface)),
+                @"name" : name.createNSString().get() ?: @"",
+            }];
+            return true;
+        });
+    }
 
     String provider = String::fromUTF8(nw_resolution_report_get_provider_name(report.get()));
     String extraText = String::fromUTF8(nw_resolution_report_get_extended_dns_error_extra_text(report.get()));

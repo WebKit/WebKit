@@ -30,6 +30,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <wtf/ArgumentCoder.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
 OBJC_CLASS NSError;
@@ -39,12 +40,24 @@ namespace WebKit {
 class CoreIPCError {
     WTF_MAKE_TZONE_ALLOCATED(CoreIPCError);
 public:
+    struct NetworkResolutionReportInterface {
+        String type;
+        String name;
+    };
+
+    struct NetworkResolutionReport {
+        String provider;
+        String dnsFailureReason;
+        String extendedDNSErrorExtraText;
+        Vector<NetworkResolutionReportInterface> interfaces;
+    };
+
     CoreIPCError(CoreIPCError&&) = default;
     CoreIPCError& operator=(CoreIPCError&&) = default;
 
     CoreIPCError(NSError *);
     CoreIPCError(String&& domain, int64_t code, std::unique_ptr<CoreIPCError>&& underlyingError, std::optional<Vector<RetainPtr<SecCertificateRef>>>&& clientCertificateChain, std::optional<Vector<RetainPtr<SecCertificateRef>>>&& peerCertificateChain, String&& localizedDescription, String&& localizedFailureReasonError, String&& localizedRecoverySuggestionError, std::optional<Vector<String>>&& localizedRecoveryOptionsError, String&& localizedFailureError, String&& helpAnchorError, String&& debugDescriptionError, RetainPtr<NSNumber>&& stringEncodingError, RetainPtr<SecTrustRef>&& failingURLPeerTrustError, RetainPtr<NSURL>&& urlError, RetainPtr<NSURL>&& failingURLError,
-        String&& filePathError, String&& networkTaskDescription, String&& networkTaskMetricsPrivacyStance, String&& description)
+        String&& filePathError, String&& networkTaskDescription, String&& networkTaskMetricsPrivacyStance, std::optional<NetworkResolutionReport>&& networkResolutionReport, String&& description)
         : m_domain(WTF::move(domain))
         , m_code(WTF::move(code))
         , m_underlyingError(WTF::move(underlyingError))
@@ -64,6 +77,7 @@ public:
         , m_filePathError(WTF::move(filePathError))
         , m_networkTaskDescription(WTF::move(networkTaskDescription))
         , m_networkTaskMetricsPrivacyStance(WTF::move(networkTaskMetricsPrivacyStance))
+        , m_networkResolutionReport(WTF::move(networkResolutionReport))
         , m_description(WTF::move(description))
     {
     }
@@ -98,6 +112,7 @@ private:
 
     String m_networkTaskDescription;
     String m_networkTaskMetricsPrivacyStance;
+    std::optional<NetworkResolutionReport> m_networkResolutionReport;
 
     String m_description;
 };

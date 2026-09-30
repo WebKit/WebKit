@@ -28,6 +28,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -54,6 +55,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/UUID.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 
@@ -973,6 +975,30 @@ TEST(NetworkProcess, URLSchemeHandlerWasPrivateRelayed)
 
     EXPECT_EQ(NO, [webView _wasPrivateRelayed]);
 }
+
+#if HAVE(NETWORK_RESOLUTION_FAILURE_REPORT) && USE(APPLE_INTERNAL_SDK)
+
+TEST(NetworkProcess, NavigationErrorIncludesNetworkResolutionReport)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate];
+
+    // .invalid is guaranteed never to resolve (RFC 6761), so CFNetwork attaches a resolution report to the error.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://doesnotexist.invalid/"]]];
+    RetainPtr error = [navigationDelegate waitForDidFailProvisionalNavigation];
+
+    EXPECT_WK_STREQ([error domain], NSURLErrorDomain);
+    EXPECT_EQ([error code], NSURLErrorCannotFindHost);
+
+    RetainPtr report = dynamic_objc_cast<NSDictionary>([[error userInfo] objectForKey:@"networkResolutionReport"]);
+    ASSERT_NOT_NULL(report);
+    EXPECT_TRUE([[report objectForKey:@"dnsFailureReason"] isKindOfClass:NSString.class]);
+    EXPECT_TRUE([[report objectForKey:@"provider"] isKindOfClass:NSString.class]);
+    EXPECT_TRUE([[report objectForKey:@"interfaces"] isKindOfClass:NSArray.class]);
+}
+
+#endif // HAVE(NETWORK_RESOLUTION_FAILURE_REPORT) && USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(IPC_TESTING_API)
 
