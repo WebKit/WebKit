@@ -77,11 +77,30 @@ public:
     {
         return axis == ScrollEventAxis::Horizontal ? m_activeSnapIndexX : m_activeSnapIndexY;
     }
-    
+
     void setActiveSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned>);
 
+    // The snap target currently snapped to (settled) in this axis, per
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events; refreshed by resnapAfterLayout(),
+    // setNearestScrollSnapIndexForOffset(), and setActiveSnapIndexForAxis().
+    Markable<NodeIdentifier> currentSnapTargetForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Horizontal ? m_currentSnapTargetForHorizontalAxis : m_currentSnapTargetForVerticalAxis;
+    }
+
+    // The snap target this axis would eventually settle on were an in-progress scrolling operation to
+    // reach its intended destination, per https://drafts.csswg.org/css-scroll-snap-2/#snap-events. Set
+    // by callers as soon as a destination is chosen (e.g. gesture/animation setup, or an immediate
+    // snap-adjusted destination), ahead of the scroll actually getting there.
+    Markable<NodeIdentifier> changingSnapTargetForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Horizontal ? m_changingSnapTargetForHorizontalAxis : m_changingSnapTargetForVerticalAxis;
+    }
+    void setChangingSnapTargetForAxis(ScrollEventAxis, std::optional<unsigned> index);
+
     std::optional<unsigned> closestSnapPointForOffset(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale) const;
-    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents&, float pageScale, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest) const;
+    // Also updates this axis's changing (eventual) snap target; see setChangingSnapTargetForAxis().
+    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents&, float pageScale, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest);
 
     // returns true if an active snap index changed.
     bool resnapAfterLayout(ScrollOffset, const ScrollExtents&, float pageScale);
@@ -166,6 +185,10 @@ private:
     HashSet<NodeIdentifier> m_currentlySnappedBoxes;
     Markable<NodeIdentifier> m_currentSnapTargetForHorizontalAxis;
     Markable<NodeIdentifier> m_currentSnapTargetForVerticalAxis;
+
+    // See changingSnapTargetForAxis()/setChangingSnapTargetForAxis().
+    Markable<NodeIdentifier> m_changingSnapTargetForHorizontalAxis;
+    Markable<NodeIdentifier> m_changingSnapTargetForVerticalAxis;
 
     // The focused/targeted box seen at the last re-snap, per axis, so we can tell a focus/:target
     // change (a snap-target selection trigger) apart from a pure layout change.

@@ -94,6 +94,8 @@ protected:
 #endif
 
     void setActiveScrollSnapIndices(ScrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex) override;
+    void setActiveScrollSnapChangeTargets(ScrollingNodeID, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical) override;
+    void setActiveScrollSnapChangingTargets(ScrollingNodeID, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical) override;
 
 #if PLATFORM(COCOA)
     void currentSnapPointIndicesDidChange(ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) override;

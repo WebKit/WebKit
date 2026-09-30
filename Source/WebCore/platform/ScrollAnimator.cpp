@@ -118,6 +118,8 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     m_scrollController.stopAnimatedScroll();
 
     setCurrentPosition(adjustedPosition, NotifyScrollableArea::Yes);
+    // Instant (non-animated) scrolls settle immediately; see https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+    m_scrollController.notifyScrollSnapDidSettle();
     scrollableArea->scrollDidEnd();
     return true;
 }
@@ -316,12 +318,27 @@ void ScrollAnimator::didStopAnimatedScroll()
     CheckedRef scrollableArea = m_scrollableArea;
     scrollableArea->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
     scrollableArea->animatedScrollDidEnd();
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events. Momentum-glide-driven snap animations
+    // (Mac) are excluded here; those settle via ScrollingEffectsController::scrollAnimationDidEnd()'s
+    // own scroll-snap branch instead, since Momentum doesn't route through didStopAnimatedScroll().
+    m_scrollController.notifyScrollSnapDidSettle();
     scrollableArea->scrollDidEnd();
 }
 
 void ScrollAnimator::didStopWheelEventScroll()
 {
+    m_scrollController.notifyScrollSnapDidSettle();
     protect(m_scrollableArea)->scrollDidEnd();
+}
+
+void ScrollAnimator::scrollSnapChangeTargetsChanged(Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    protect(m_scrollableArea)->updateSnapChangeEventTargets(horizontal, vertical);
+}
+
+void ScrollAnimator::scrollSnapChangingTargetsChanged(Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    protect(m_scrollableArea)->updateSnapChangingEventTargets(horizontal, vertical);
 }
 
 #if HAVE(RUBBER_BANDING)
@@ -443,7 +460,7 @@ void ScrollAnimator::contentsSizeChanged()
     m_scrollController.contentsSizeChanged();
 }
 
-FloatPoint ScrollAnimator::scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod method) const
+FloatPoint ScrollAnimator::scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod method)
 {
     if (!m_scrollController.usesScrollSnap())
         return offset;
@@ -457,7 +474,7 @@ FloatPoint ScrollAnimator::scrollOffsetAdjustedForSnapping(const FloatPoint& off
     return result;
 }
 
-float ScrollAnimator::scrollOffsetAdjustedForSnapping(ScrollEventAxis axis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod method) const
+float ScrollAnimator::scrollOffsetAdjustedForSnapping(ScrollEventAxis axis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod method)
 {
     if (!m_scrollController.usesScrollSnap())
         return axis == ScrollEventAxis::Horizontal ? newOffset.x() : newOffset.y();

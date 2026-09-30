@@ -32,6 +32,7 @@
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/NodeIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/RectEdges.h>
@@ -187,6 +188,12 @@ public:
 #endif
 
     virtual void setActiveScrollSnapIndices(ScrollingNodeID, std::optional<unsigned> /*horizontalIndex*/, std::optional<unsigned> /*verticalIndex*/) { }
+
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events. Called from the scrolling thread;
+    // overrides are expected to hop to the main thread before resolving/dispatching, mirroring
+    // setActiveScrollSnapIndices() above.
+    virtual void setActiveScrollSnapChangeTargets(ScrollingNodeID, Markable<NodeIdentifier> /*horizontal*/, Markable<NodeIdentifier> /*vertical*/) { }
+    virtual void setActiveScrollSnapChangingTargets(ScrollingNodeID, Markable<NodeIdentifier> /*horizontal*/, Markable<NodeIdentifier> /*vertical*/) { }
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT virtual void currentSnapPointIndicesDidChange(ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) = 0;

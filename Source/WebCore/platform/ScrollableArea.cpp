@@ -66,6 +66,10 @@ struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea
     uint8_t scrollAnimationStatus;
     bool bytes[4];
     Markable<ScrollingNodeID> scrollingNodeIDForTesting;
+    Markable<NodeIdentifier> lastScrollSnapChangeTargetHorizontal;
+    Markable<NodeIdentifier> lastScrollSnapChangeTargetVertical;
+    Markable<NodeIdentifier> lastScrollSnapChangingTargetHorizontal;
+    Markable<NodeIdentifier> lastScrollSnapChangingTargetVertical;
 };
 
 #if CPU(ADDRESS64)
@@ -620,6 +624,35 @@ void ScrollableArea::clearSnapOffsets()
 {
     if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->setSnapOffsetsInfo(LayoutScrollSnapOffsetsInfo());
+}
+
+static std::pair<Markable<NodeIdentifier>, Markable<NodeIdentifier>> blockAndInlineTargets(const LayoutScrollSnapOffsetsInfo* info, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    if (info && info->blockAxis() == ScrollEventAxis::Horizontal)
+        return { horizontal, vertical };
+    return { vertical, horizontal };
+}
+
+void ScrollableArea::updateSnapChangeEventTargets(Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    if (horizontal == m_lastScrollSnapChangeTargetHorizontal && vertical == m_lastScrollSnapChangeTargetVertical)
+        return;
+    m_lastScrollSnapChangeTargetHorizontal = horizontal;
+    m_lastScrollSnapChangeTargetVertical = vertical;
+
+    auto [blockTarget, inlineTarget] = blockAndInlineTargets(snapOffsetsInfo(), horizontal, vertical);
+    scrollSnapChangeEventTargetsChanged(blockTarget, inlineTarget);
+}
+
+void ScrollableArea::updateSnapChangingEventTargets(Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    if (horizontal == m_lastScrollSnapChangingTargetHorizontal && vertical == m_lastScrollSnapChangingTargetVertical)
+        return;
+    m_lastScrollSnapChangingTargetHorizontal = horizontal;
+    m_lastScrollSnapChangingTargetVertical = vertical;
+
+    auto [blockTarget, inlineTarget] = blockAndInlineTargets(snapOffsetsInfo(), horizontal, vertical);
+    scrollSnapChangingEventTargetsChanged(blockTarget, inlineTarget);
 }
 
 std::optional<unsigned> ScrollableArea::currentHorizontalSnapPointIndex() const

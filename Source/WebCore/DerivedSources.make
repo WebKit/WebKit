@@ -1267,6 +1267,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ShadowRootMode.idl \
     $(WebCore)/dom/SlotAssignmentMode.idl \
     $(WebCore)/dom/Slotable.idl \
+    $(WebCore)/dom/SnapEvent.idl \
     $(WebCore)/dom/StartViewTransitionOptions.idl \
     $(WebCore)/dom/StaticRange.idl \
     $(WebCore)/dom/StringCallback.idl \

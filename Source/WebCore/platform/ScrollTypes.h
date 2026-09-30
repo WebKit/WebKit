@@ -193,9 +193,11 @@ enum class ScrollEventAxis : uint8_t {
     Vertical
 };
 
-enum class ScrollEventType : bool {
+enum class ScrollEventType : uint8_t {
     Scroll,
-    Scrollend
+    Scrollend,
+    Scrollsnapchange,
+    Scrollsnapchanging
 };
 
 inline constexpr ScrollEventAxis axisFromDirection(ScrollDirection direction)

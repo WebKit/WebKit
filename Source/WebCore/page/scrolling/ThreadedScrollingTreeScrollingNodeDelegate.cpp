@@ -67,6 +67,12 @@ void ThreadedScrollingTreeScrollingNodeDelegate::updateSnapScrollState()
 
     if (m_scrollController.activeScrollSnapIndexDidChange())
         scrollingTree()->setActiveScrollSnapIndices(scrollingNode->scrollingNodeID(), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
+
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events. Unlike the index update above, these are
+    // sent unconditionally (relying on main-thread dedup in ScrollableArea::updateSnapChange(ing)EventTargets())
+    // since ScrollSnapAnimatorState doesn't expose a "did the target change" flag of its own.
+    scrollingTree()->setActiveScrollSnapChangingTargets(scrollingNode->scrollingNodeID(), m_scrollController.changingScrollSnapTargetForAxis(ScrollEventAxis::Horizontal), m_scrollController.changingScrollSnapTargetForAxis(ScrollEventAxis::Vertical));
+    scrollingTree()->setActiveScrollSnapChangeTargets(scrollingNode->scrollingNodeID(), m_scrollController.currentScrollSnapTargetForAxis(ScrollEventAxis::Horizontal), m_scrollController.currentScrollSnapTargetForAxis(ScrollEventAxis::Vertical));
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::updateUserScrollInProgressForEvent(const PlatformWheelEvent& wheelEvent)

@@ -418,6 +418,28 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, s
     });
 }
 
+void ThreadedScrollingTree::setActiveScrollSnapChangeTargets(ScrollingNodeID nodeID, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTF::move(scrollingCoordinator), nodeID, horizontal, vertical] {
+        scrollingCoordinator->setActiveScrollSnapChangeTargets(nodeID, horizontal, vertical);
+    });
+}
+
+void ThreadedScrollingTree::setActiveScrollSnapChangingTargets(ScrollingNodeID nodeID, Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical)
+{
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTF::move(scrollingCoordinator), nodeID, horizontal, vertical] {
+        scrollingCoordinator->setActiveScrollSnapChangingTargets(nodeID, horizontal, vertical);
+    });
+}
+
 void ThreadedScrollingTree::lockLayersForHitTesting()
 {
     m_layerHitTestMutex.lock();

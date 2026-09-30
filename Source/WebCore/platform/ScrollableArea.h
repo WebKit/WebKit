@@ -118,6 +118,14 @@ public:
     WEBCORE_EXPORT void resnapAfterLayout();
     void doPostThumbMoveSnapping(ScrollbarOrientation);
 
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events. horizontal/vertical identify the snap
+    // target the container is (or, for "changing", would eventually be) snapped to in each physical
+    // axis; these are remapped to the block/inline axis SnapEvent expects (via snapOffsetsInfo()'s
+    // writing-mode-aware blockAxis()) before notifying the subclass, which is expected to resolve the
+    // container Element/Document and enqueue the event via Document::addPendingScrollSnapChange(ing)EventTarget.
+    WEBCORE_EXPORT void updateSnapChangeEventTargets(Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical);
+    WEBCORE_EXPORT void updateSnapChangingEventTargets(Markable<NodeIdentifier> horizontal, Markable<NodeIdentifier> vertical);
+
     void stopKeyboardScrollAnimation();
 
 #if ENABLE(TOUCH_EVENTS)
@@ -471,6 +479,11 @@ public:
     virtual void scrollDidEnd() { }
     virtual void scrollOriginDidChange() { }
 
+    // Subclasses resolve blockTarget/inlineTarget to Nodes and enqueue the corresponding event; see
+    // updateSnapChangeEventTargets()/updateSnapChangingEventTargets() above.
+    virtual void scrollSnapChangeEventTargetsChanged(Markable<NodeIdentifier> blockTarget, Markable<NodeIdentifier> inlineTarget) { UNUSED_PARAM(blockTarget); UNUSED_PARAM(inlineTarget); }
+    virtual void scrollSnapChangingEventTargetsChanged(Markable<NodeIdentifier> blockTarget, Markable<NodeIdentifier> inlineTarget) { UNUSED_PARAM(blockTarget); UNUSED_PARAM(inlineTarget); }
+
 protected:
     WEBCORE_EXPORT ScrollableArea();
     WEBCORE_EXPORT virtual ~ScrollableArea();
@@ -538,6 +551,13 @@ private:
     bool m_scrollShouldClearLatchedState { false };
     bool m_isAwaitingScrollend { false };
     ScrollbarRevealBehavior m_scrollbarRevealBehavior { ScrollbarRevealBehavior::Default };
+
+    // Last dispatched (settled/eventual) snap targets, per https://drafts.csswg.org/css-scroll-snap-2/#snap-events;
+    // physical horizontal/vertical, remapped to block/inline right before notifying the subclass.
+    Markable<NodeIdentifier> m_lastScrollSnapChangeTargetHorizontal;
+    Markable<NodeIdentifier> m_lastScrollSnapChangeTargetVertical;
+    Markable<NodeIdentifier> m_lastScrollSnapChangingTargetHorizontal;
+    Markable<NodeIdentifier> m_lastScrollSnapChangingTargetVertical;
 
     Markable<ScrollingNodeID> m_scrollingNodeIDForTesting;
 };

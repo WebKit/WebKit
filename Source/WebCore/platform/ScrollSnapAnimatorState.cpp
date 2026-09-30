@@ -60,6 +60,10 @@ bool ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
         float targetOffsetX, targetOffsetY;
         std::tie(targetOffsetX, m_activeSnapIndexX) = targetOffsetForStartOffset(ScrollEventAxis::Horizontal, scrollExtents, initialOffset.x(), targetOffset, pageScale, initialDelta.width());
         std::tie(targetOffsetY, m_activeSnapIndexY) = targetOffsetForStartOffset(ScrollEventAxis::Vertical, scrollExtents, initialOffset.y(), targetOffset, pageScale, initialDelta.height());
+        // The gesture/animation is being set up to land on this target, ahead of actually getting
+        // there; see https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+        setChangingSnapTargetForAxis(ScrollEventAxis::Horizontal, m_activeSnapIndexX);
+        setChangingSnapTargetForAxis(ScrollEventAxis::Vertical, m_activeSnapIndexY);
         LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollSnapAnimatorState::setupAnimationForState() - target offset " << targetOffset << " modified to " << FloatPoint(targetOffsetX, targetOffsetY));
         return FloatPoint { targetOffsetX, targetOffsetY };
     });
@@ -84,7 +88,7 @@ std::optional<unsigned> ScrollSnapAnimatorState::closestSnapPointForOffset(Scrol
     return activeIndex;
 }
 
-float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents& scrollExtents, float pageScale, ScrollSnapPointSelectionMethod selectionMethod) const
+float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents& scrollExtents, float pageScale, ScrollSnapPointSelectionMethod selectionMethod)
 {
     auto snapOffsets = snapOffsetsForAxis(axis);
     if (!snapOffsets.size())
@@ -101,9 +105,13 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
     destinationOffset = setValueForAxis(destinationOffset, axis, clampTo<float>(valueForAxis(destinationOffset, axis), minScrollOffset, maxScrollOffset));
 
     LayoutPoint layoutDestinationOffset(destinationOffset.x() / pageScale, destinationOffset.y() / pageScale);
-    LayoutUnit offset = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits, selectionMethod).first;
+    auto [offset, snapIndex] = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits, selectionMethod);
+    // This destination has just been chosen for an (about to be applied) scroll; see
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events.
+    setChangingSnapTargetForAxis(axis, snapIndex);
     return offset * pageScale;
 }
+
 
 // The snap offset nodeID contributes to in this axis, plus nodeID's own area at that offset: a box can
 // be any of the areas sharing an offset, not just its representative snapTargetID, so we find both here.
@@ -204,6 +212,21 @@ void ScrollSnapAnimatorState::setActiveSnapIndexForAxis(ScrollEventAxis axis, st
 {
     setActiveSnapIndexForAxisInternal(axis, index);
     updateCurrentlySnappedBoxes();
+}
+
+void ScrollSnapAnimatorState::setChangingSnapTargetForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
+{
+    Markable<NodeIdentifier> target;
+    if (index) {
+        auto& offsets = snapOffsetsForAxis(axis);
+        if (*index < offsets.size())
+            target = offsets[*index].snapTargetID;
+    }
+
+    if (axis == ScrollEventAxis::Horizontal)
+        m_changingSnapTargetForHorizontalAxis = target;
+    else
+        m_changingSnapTargetForVerticalAxis = target;
 }
 
 // Selects this axis's snap target among the boxes aligned at the active offset, per

@@ -227,6 +227,8 @@
     "rtctransform": { },
     "scroll": { },
     "scrollend": { },
+    "scrollsnapchange": { },
+    "scrollsnapchanging": { },
     "securitypolicyviolation": { },
     "seeked": { },
     "seeking": { },

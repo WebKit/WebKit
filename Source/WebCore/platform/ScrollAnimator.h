@@ -114,8 +114,8 @@ public:
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
     WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }
 
-    FloatPoint scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod) const;
-    float scrollOffsetAdjustedForSnapping(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod) const;
+    FloatPoint scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
+    float scrollOffsetAdjustedForSnapping(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod);
 
     bool NODELETE activeScrollSnapIndexDidChange() const;
     std::optional<unsigned> NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
@@ -158,6 +158,10 @@ private:
     void didStopAnimatedScroll() final;
 
     void didStopWheelEventScroll() final;
+
+    // https://drafts.csswg.org/css-scroll-snap-2/#snap-events
+    void scrollSnapChangeTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) final;
+    void scrollSnapChangingTargetsChanged(Markable<NodeIdentifier>, Markable<NodeIdentifier>) final;
 
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
