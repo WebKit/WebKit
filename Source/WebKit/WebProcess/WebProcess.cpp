@@ -266,6 +266,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import <WebCore/LocalDefaultSystemAppearance.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -925,6 +926,10 @@ void WebProcess::prewarmGlobally()
         return;
     }
     WebCore::ProcessWarming::prewarmGlobally();
+
+#if PLATFORM(MAC)
+    WebCore::LocalDefaultSystemAppearance appearance(false);
+#endif
 }
 
 void WebProcess::prewarmWithDomainInformation(WebCore::PrewarmInformation&& prewarmInformation)
