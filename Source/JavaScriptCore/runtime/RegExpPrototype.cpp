@@ -566,12 +566,12 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterFlags, (JSGlobalObject* globalObject, 
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.flags getter can only be called on an object"_s);
 
     if (auto* regExpObject = dynamicDowncast<RegExpObject>(thisValue); regExpObject && regExpFlagsWatchpointIsValid(vm, regExpObject)) [[likely]]
-        return JSValue::encode(jsString(vm, String::fromLatin1(Yarr::flagsString(regExpObject->regExp()->flags()).data())));
+        return JSValue::encode(jsString(vm, String { Yarr::flagsString(regExpObject->regExp()->flags()).span() }));
 
     auto flags = flagsString(globalObject, asObject(thisValue));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(jsString(vm, String::fromLatin1(flags.data())));
+    return JSValue::encode(jsString(vm, String { flags.span() }));
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject, CallFrame* callFrame))

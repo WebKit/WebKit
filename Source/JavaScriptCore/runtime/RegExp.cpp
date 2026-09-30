@@ -57,7 +57,7 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, StringView s, 
         fputc('/', m_file);
         outputEscapedString(regExp->pattern(), true);
         fputc('/', m_file);
-        fprintf(m_file, "%s\n", Yarr::flagsString(regExp->flags()).data());
+        SAFE_FPRINTF(m_file, "%s\n", Yarr::flagsString(regExp->flags()));
     }
 
     fprintf(m_file, " \"");
@@ -548,12 +548,9 @@ void RegExp::printTraceHeader()
 
 void RegExp::printTraceData()
 {
-    char formattedRegExp[SameLineFormatedRegExpnWidth + 1];
+    UTF8CString formattedRegExp = ""_s;
     char rawPatternBuffer[SameLineFormatedRegExpnWidth + 1];
     String rawPattern;
-
-    memset(formattedRegExp, ' ', SameLineFormatedRegExpnWidth);
-    formattedRegExp[SameLineFormatedRegExpnWidth] = '\0';
 
     auto patternCStr = pattern().utf8(); // Hold a reference so it doesn't get destroyed.
     auto patternStr = patternCStr.legacyCStringPointer();
@@ -588,12 +585,10 @@ void RegExp::printTraceData()
 
     appendRawPatternBuffer(dstIdx);
 
-    if (rawPattern.length() + strlen(Yarr::flagsString(flags()).data()) + 2 <= SameLineFormatedRegExpnWidth) {
-        String result = makeString('/', rawPattern, '/', Yarr::flagsString(flags()).data());
-        memcpy(formattedRegExp, result.utf8().legacyCStringPointer(), result.length());
-        formattedRegExp[result.length()] = '\0';
-    } else
-        SAFE_DATALOGF("/%s/%s\n", rawPattern.utf8(), Yarr::flagsString(flags()).data());
+    if (rawPattern.length() + Yarr::flagsString(flags()).span().size() + 2 <= SameLineFormatedRegExpnWidth)
+        formattedRegExp = makeString('/', rawPattern, '/', Yarr::flagsString(flags()).span()).utf8();
+    else
+        SAFE_DATALOGF("/%s/%s\n", rawPattern.utf8(), Yarr::flagsString(flags()));
 
     constexpr int addrWidth = 12;
 #if ENABLE(YARR_JIT)
@@ -654,10 +649,10 @@ void RegExp::printTraceData()
     unsigned averageMatchOnlyStringLen = (unsigned)(m_rtMatchOnlyTotalSubjectStringLen / m_rtMatchOnlyCallCount);
     unsigned averageMatchStringLen = (unsigned)(m_rtMatchTotalSubjectStringLen / m_rtMatchCallCount);
 
-    dataLogF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp, addrWidth, addrWidth, jit8BitMatchOnlyAddr.utf8().legacyCStringPointer(), addrWidth, addrWidth, jit16BitMatchOnlyAddr.utf8().legacyCStringPointer(), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
+    SAFE_DATALOGF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp, addrWidth, addrWidth, jit8BitMatchOnlyAddr.utf8(), addrWidth, addrWidth, jit16BitMatchOnlyAddr.utf8(), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
     for (unsigned i = 0; i < SameLineFormatedRegExpnWidth; ++i)
         dataLog(" ");
-    dataLogF(" %*.*s %*.*s %10d %10d %10u\n", addrWidth, addrWidth, jit8BitMatchAddr.utf8().legacyCStringPointer(), addrWidth, addrWidth, jit16BitMatchAddr.utf8().legacyCStringPointer(), m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
+    SAFE_DATALOGF(" %*.*s %*.*s %10d %10d %10u\n", addrWidth, addrWidth, jit8BitMatchAddr.utf8(), addrWidth, addrWidth, jit16BitMatchAddr.utf8(), m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
 }
 #endif
 
@@ -665,7 +660,7 @@ void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     // This function can be called concurrently. So we must not ref m_pattern.
     auto* regExp = uncheckedDowncast<RegExp>(cell);
-    out.print(toUTF8CString("/", regExp->pattern().impl(), "/", Yarr::flagsString(regExp->flags()).data()));
+    out.print(toUTF8CString("/", regExp->pattern().impl(), "/", StringView { Yarr::flagsString(regExp->flags()).span() }));
 }
 
 template <typename CharacterType>
@@ -781,7 +776,7 @@ String RegExp::escapedPattern() const
 
 String RegExp::toSourceString() const
 {
-    return makeString('/', escapedPattern(), '/', unsafeSpan(Yarr::flagsString(flags()).data()));
+    return makeString('/', escapedPattern(), '/', Yarr::flagsString(flags()).span());
 }
 
 } // namespace JSC

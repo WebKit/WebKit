@@ -33,6 +33,7 @@
 #include "AssemblerCommon.h"
 #include "RISCV64Registers.h"
 #include <tuple>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
@@ -725,103 +726,103 @@ struct JTypeBase {
 // RV32I Base Instruction Set
 
 struct LUI : UTypeBase<Opcode::LUI, RegistersBase::G> {
-    static constexpr const char* name = "lui";
+    static constexpr ASCIILiteral name = "lui"_s;
 };
 
 struct AUIPC : UTypeBase<Opcode::AUIPC, RegistersBase::G> {
-    static constexpr const char* name = "auipc";
+    static constexpr ASCIILiteral name = "auipc"_s;
 };
 
 struct JAL : JTypeBase<Opcode::JAL, RegistersBase::G> {
-    static constexpr const char* name = "jal";
+    static constexpr ASCIILiteral name = "jal"_s;
 };
 
 struct JALR : ITypeBase<Opcode::JALR, 0b000, RegistersBase::GG> {
-    static constexpr const char* name = "jalr";
+    static constexpr ASCIILiteral name = "jalr"_s;
 };
 
 struct BEQ : BTypeBase<Opcode::BRANCH, 0b000, RegistersBase::GG> {
-    static constexpr const char* name = "beq";
+    static constexpr ASCIILiteral name = "beq"_s;
 };
 
 struct BNE : BTypeBase<Opcode::BRANCH, 0b001, RegistersBase::GG> {
-    static constexpr const char* name = "bne";
+    static constexpr ASCIILiteral name = "bne"_s;
 };
 
 struct BLT : BTypeBase<Opcode::BRANCH, 0b100, RegistersBase::GG> {
-    static constexpr const char* name = "blt";
+    static constexpr ASCIILiteral name = "blt"_s;
 };
 
 struct BGE : BTypeBase<Opcode::BRANCH, 0b101, RegistersBase::GG> {
-    static constexpr const char* name = "bge";
+    static constexpr ASCIILiteral name = "bge"_s;
 };
 
 struct BLTU : BTypeBase<Opcode::BRANCH, 0b110, RegistersBase::GG> {
-    static constexpr const char* name = "bltu";
+    static constexpr ASCIILiteral name = "bltu"_s;
 };
 
 struct BGEU : BTypeBase<Opcode::BRANCH, 0b111, RegistersBase::GG> {
-    static constexpr const char* name = "bgeu";
+    static constexpr ASCIILiteral name = "bgeu"_s;
 };
 
 struct LB : ITypeBase<Opcode::LOAD, 0b000, RegistersBase::GG> {
-    static constexpr const char* name = "lb";
+    static constexpr ASCIILiteral name = "lb"_s;
 };
 
 struct LH : ITypeBase<Opcode::LOAD, 0b001, RegistersBase::GG> {
-    static constexpr const char* name = "lh";
+    static constexpr ASCIILiteral name = "lh"_s;
 };
 
 struct LW : ITypeBase<Opcode::LOAD, 0b010, RegistersBase::GG> {
-    static constexpr const char* name = "lw";
+    static constexpr ASCIILiteral name = "lw"_s;
 };
 
 struct LBU : ITypeBase<Opcode::LOAD, 0b100, RegistersBase::GG> {
-    static constexpr const char* name = "lbu";
+    static constexpr ASCIILiteral name = "lbu"_s;
 };
 
 struct LHU : ITypeBase<Opcode::LOAD, 0b101, RegistersBase::GG> {
-    static constexpr const char* name = "lhu";
+    static constexpr ASCIILiteral name = "lhu"_s;
 };
 
 struct SB : STypeBase<Opcode::STORE, 0b000, RegistersBase::GG> {
-    static constexpr const char* name = "sb";
+    static constexpr ASCIILiteral name = "sb"_s;
 };
 
 struct SH : STypeBase<Opcode::STORE, 0b001, RegistersBase::GG> {
-    static constexpr const char* name = "sh";
+    static constexpr ASCIILiteral name = "sh"_s;
 };
 
 struct SW : STypeBase<Opcode::STORE, 0b010, RegistersBase::GG> {
-    static constexpr const char* name = "sw";
+    static constexpr ASCIILiteral name = "sw"_s;
 };
 
 struct ADDI : ITypeBase<Opcode::OP_IMM, 0b000, RegistersBase::GG> {
-    static constexpr const char* name = "addi";
+    static constexpr ASCIILiteral name = "addi"_s;
 };
 
 struct SLTI : ITypeBase<Opcode::OP_IMM, 0b010, RegistersBase::GG> {
-    static constexpr const char* name = "slti";
+    static constexpr ASCIILiteral name = "slti"_s;
 };
 
 struct SLTIU : ITypeBase<Opcode::OP_IMM, 0b011, RegistersBase::GG> {
-    static constexpr const char* name = "sltiu";
+    static constexpr ASCIILiteral name = "sltiu"_s;
 };
 
 struct XORI : ITypeBase<Opcode::OP_IMM, 0b100, RegistersBase::GG> {
-    static constexpr const char* name = "xori";
+    static constexpr ASCIILiteral name = "xori"_s;
 };
 
 struct ORI : ITypeBase<Opcode::OP_IMM, 0b110, RegistersBase::GG> {
-    static constexpr const char* name = "ori";
+    static constexpr ASCIILiteral name = "ori"_s;
 };
 
 struct ANDI : ITypeBase<Opcode::OP_IMM, 0b111, RegistersBase::GG> {
-    static constexpr const char* name = "andi";
+    static constexpr ASCIILiteral name = "andi"_s;
 };
 
 struct SLLI : ITypeBase<Opcode::OP_IMM, 0b001, RegistersBase::GG> {
-    static constexpr const char* name = "slli";
+    static constexpr ASCIILiteral name = "slli"_s;
 
     using Base::construct;
     template<unsigned shiftAmount, typename RDType, typename RS1Type>
@@ -833,7 +834,7 @@ struct SLLI : ITypeBase<Opcode::OP_IMM, 0b001, RegistersBase::GG> {
 };
 
 struct SRLI : ITypeBase<Opcode::OP_IMM, 0b101, RegistersBase::GG> {
-    static constexpr const char* name = "srli";
+    static constexpr ASCIILiteral name = "srli"_s;
 
     using Base::construct;
     template<unsigned shiftAmount, typename RDType, typename RS1Type>
@@ -845,7 +846,7 @@ struct SRLI : ITypeBase<Opcode::OP_IMM, 0b101, RegistersBase::GG> {
 };
 
 struct SRAI : ITypeBase<Opcode::OP_IMM, 0b101, RegistersBase::GG> {
-    static constexpr const char* name = "srai";
+    static constexpr ASCIILiteral name = "srai"_s;
 
     using Base::construct;
     template<unsigned shiftAmount, typename RDType, typename RS1Type>
@@ -857,77 +858,77 @@ struct SRAI : ITypeBase<Opcode::OP_IMM, 0b101, RegistersBase::GG> {
 };
 
 struct ADD : RTypeBase<Opcode::OP, 0b000, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "add";
+    static constexpr ASCIILiteral name = "add"_s;
 };
 
 struct SUB : RTypeBase<Opcode::OP, 0b000, 0b0100000, RegistersBase::GGG> {
-    static constexpr const char* name = "sub";
+    static constexpr ASCIILiteral name = "sub"_s;
 };
 
 struct SLL : RTypeBase<Opcode::OP, 0b001, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "sll";
+    static constexpr ASCIILiteral name = "sll"_s;
 };
 
 struct SLT : RTypeBase<Opcode::OP, 0b010, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "slt";
+    static constexpr ASCIILiteral name = "slt"_s;
 };
 
 struct SLTU : RTypeBase<Opcode::OP, 0b011, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "sltu";
+    static constexpr ASCIILiteral name = "sltu"_s;
 };
 
 struct XOR : RTypeBase<Opcode::OP, 0b100, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "xor";
+    static constexpr ASCIILiteral name = "xor"_s;
 };
 
 struct SRL : RTypeBase<Opcode::OP, 0b101, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "srl";
+    static constexpr ASCIILiteral name = "srl"_s;
 };
 
 struct SRA : RTypeBase<Opcode::OP, 0b101, 0b0100000, RegistersBase::GGG> {
-    static constexpr const char* name = "sra";
+    static constexpr ASCIILiteral name = "sra"_s;
 };
 
 struct OR : RTypeBase<Opcode::OP, 0b110, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "or";
+    static constexpr ASCIILiteral name = "or"_s;
 };
 
 struct AND : RTypeBase<Opcode::OP, 0b111, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "and";
+    static constexpr ASCIILiteral name = "and"_s;
 };
 
 struct FENCE : ITypeBase<Opcode::MISC_MEM, 0b000, RegistersBase::ZZ> {
-    static constexpr const char* name = "fence";
+    static constexpr ASCIILiteral name = "fence"_s;
 };
 
 struct ECALL : ITypeBase<Opcode::SYSTEM, 0b000, RegistersBase::ZZ> {
-    static constexpr const char* name = "ecall";
+    static constexpr ASCIILiteral name = "ecall"_s;
 };
 
 struct EBREAK : ITypeBase<Opcode::SYSTEM, 0b000, RegistersBase::ZZ> {
-    static constexpr const char* name = "ebreak";
+    static constexpr ASCIILiteral name = "ebreak"_s;
 };
 
 // RV64I Base Instruction Set (in addition to RV32I)
 
 struct LWU : ITypeBase<Opcode::LOAD, 0b110, RegistersBase::GG> {
-    static constexpr const char* name = "lwu";
+    static constexpr ASCIILiteral name = "lwu"_s;
 };
 
 struct LD : ITypeBase<Opcode::LOAD, 0b011, RegistersBase::GG> {
-    static constexpr const char* name = "ld";
+    static constexpr ASCIILiteral name = "ld"_s;
 };
 
 struct SD : STypeBase<Opcode::STORE, 0b011, RegistersBase::GG> {
-    static constexpr const char* name = "sd";
+    static constexpr ASCIILiteral name = "sd"_s;
 };
 
 struct ADDIW : ITypeBase<Opcode::OP_IMM_32, 0b000, RegistersBase::GG> {
-    static constexpr const char* name = "addiw";
+    static constexpr ASCIILiteral name = "addiw"_s;
 };
 
 struct SLLIW : ITypeBase<Opcode::OP_IMM_32, 0b001, RegistersBase::GG> {
-    static constexpr const char* name = "slliw";
+    static constexpr ASCIILiteral name = "slliw"_s;
 
     using Base::construct;
     template<unsigned shiftAmount, typename RDType, typename RS1Type>
@@ -939,7 +940,7 @@ struct SLLIW : ITypeBase<Opcode::OP_IMM_32, 0b001, RegistersBase::GG> {
 };
 
 struct SRLIW : ITypeBase<Opcode::OP_IMM_32, 0b101, RegistersBase::GG> {
-    static constexpr const char* name = "srliw";
+    static constexpr ASCIILiteral name = "srliw"_s;
 
     using Base::construct;
     template<unsigned shiftAmount, typename RDType, typename RS1Type>
@@ -951,7 +952,7 @@ struct SRLIW : ITypeBase<Opcode::OP_IMM_32, 0b101, RegistersBase::GG> {
 };
 
 struct SRAIW : ITypeBase<Opcode::OP_IMM_32, 0b101, RegistersBase::GG> {
-    static constexpr const char* name = "sraiw";
+    static constexpr ASCIILiteral name = "sraiw"_s;
 
     using Base::construct;
     template<unsigned shiftAmount, typename RDType, typename RS1Type>
@@ -963,177 +964,177 @@ struct SRAIW : ITypeBase<Opcode::OP_IMM_32, 0b101, RegistersBase::GG> {
 };
 
 struct ADDW : RTypeBase<Opcode::OP_32, 0b000, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "addw";
+    static constexpr ASCIILiteral name = "addw"_s;
 };
 
 struct SUBW : RTypeBase<Opcode::OP_32, 0b000, 0b0100000, RegistersBase::GGG> {
-    static constexpr const char* name = "subw";
+    static constexpr ASCIILiteral name = "subw"_s;
 };
 
 struct SLLW : RTypeBase<Opcode::OP_32, 0b001, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "sllw";
+    static constexpr ASCIILiteral name = "sllw"_s;
 };
 
 struct SRLW : RTypeBase<Opcode::OP_32, 0b101, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "srlw";
+    static constexpr ASCIILiteral name = "srlw"_s;
 };
 
 struct SRAW : RTypeBase<Opcode::OP_32, 0b101, 0b0100000, RegistersBase::GGG> {
-    static constexpr const char* name = "sraw";
+    static constexpr ASCIILiteral name = "sraw"_s;
 };
 
 // RV32/RV64 Zifencei Standard Extension
 
 struct FENCE_I : ITypeBase<Opcode::MISC_MEM, 0b001, RegistersBase::ZZ> {
-    static constexpr const char* name = "fence.i";
+    static constexpr ASCIILiteral name = "fence.i"_s;
 };
 
 // RV32M Standard Extension
 
 struct MUL : RTypeBase<Opcode::OP, 0b000, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "mul";
+    static constexpr ASCIILiteral name = "mul"_s;
 };
 
 struct MULH : RTypeBase<Opcode::OP, 0b001, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "mulh";
+    static constexpr ASCIILiteral name = "mulh"_s;
 };
 
 struct MULHSU : RTypeBase<Opcode::OP, 0b010, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "mulhsu";
+    static constexpr ASCIILiteral name = "mulhsu"_s;
 };
 
 struct MULHU : RTypeBase<Opcode::OP, 0b011, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "mulhu";
+    static constexpr ASCIILiteral name = "mulhu"_s;
 };
 
 struct DIV : RTypeBase<Opcode::OP, 0b100, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "div";
+    static constexpr ASCIILiteral name = "div"_s;
 };
 
 struct DIVU : RTypeBase<Opcode::OP, 0b101, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "divu";
+    static constexpr ASCIILiteral name = "divu"_s;
 };
 
 struct REM : RTypeBase<Opcode::OP, 0b110, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "rem";
+    static constexpr ASCIILiteral name = "rem"_s;
 };
 
 struct REMU : RTypeBase<Opcode::OP, 0b111, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "remu";
+    static constexpr ASCIILiteral name = "remu"_s;
 };
 
 // RV64M Standard Extension (in addition to RV32M)
 
 struct MULW : RTypeBase<Opcode::OP_32, 0b000, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "mulw";
+    static constexpr ASCIILiteral name = "mulw"_s;
 };
 
 struct DIVW : RTypeBase<Opcode::OP_32, 0b100, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "divw";
+    static constexpr ASCIILiteral name = "divw"_s;
 };
 
 struct DIVUW : RTypeBase<Opcode::OP_32, 0b101, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "divuw";
+    static constexpr ASCIILiteral name = "divuw"_s;
 };
 
 struct REMW : RTypeBase<Opcode::OP_32, 0b110, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "remw";
+    static constexpr ASCIILiteral name = "remw"_s;
 };
 
 struct REMUW : RTypeBase<Opcode::OP_32, 0b111, 0b0000001, RegistersBase::GGG> {
-    static constexpr const char* name = "remuw";
+    static constexpr ASCIILiteral name = "remuw"_s;
 };
 
 // RV32A Standard Extension
 
 struct LR_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0001000, RegistersBase::GGZ> {
-    static constexpr const char* name = "lr.w";
+    static constexpr ASCIILiteral name = "lr.w"_s;
 };
 
 struct SC_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0001100, RegistersBase::GGG> {
-    static constexpr const char* name = "sc.w";
+    static constexpr ASCIILiteral name = "sc.w"_s;
 };
 
 struct AMOSWAP_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0000100, RegistersBase::GGG> {
-    static constexpr const char* name = "amoswap.w";
+    static constexpr ASCIILiteral name = "amoswap.w"_s;
 };
 
 struct AMOADD_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoadd.w";
+    static constexpr ASCIILiteral name = "amoadd.w"_s;
 };
 
 struct AMOXOR_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0010000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoxor.w";
+    static constexpr ASCIILiteral name = "amoxor.w"_s;
 };
 
 struct AMOAND_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0110000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoand.w";
+    static constexpr ASCIILiteral name = "amoand.w"_s;
 };
 
 struct AMOOR_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b0100000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoor.w";
+    static constexpr ASCIILiteral name = "amoor.w"_s;
 };
 
 struct AMOMIN_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b1000000, RegistersBase::GGG> {
-    static constexpr const char* name = "amomin.w";
+    static constexpr ASCIILiteral name = "amomin.w"_s;
 };
 
 struct AMOMAX_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b1010000, RegistersBase::GGG> {
-    static constexpr const char* name = "amomax.w";
+    static constexpr ASCIILiteral name = "amomax.w"_s;
 };
 
 struct AMOMINU_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b1100000, RegistersBase::GGG> {
-    static constexpr const char* name = "amominu.w";
+    static constexpr ASCIILiteral name = "amominu.w"_s;
 };
 
 struct AMOMAXU_W : RTypeBaseWithAqRl<Opcode::AMO, 0b010, 0b1110000, RegistersBase::GGG> {
-    static constexpr const char* name = "amomaxu.w";
+    static constexpr ASCIILiteral name = "amomaxu.w"_s;
 };
 
 // RV64A Standard Extension (in addition to RV32A)
 
 struct LR_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0001000, RegistersBase::GGZ> {
-    static constexpr const char* name = "lr.d";
+    static constexpr ASCIILiteral name = "lr.d"_s;
 };
 
 struct SC_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0001100, RegistersBase::GGG> {
-    static constexpr const char* name = "sc.d";
+    static constexpr ASCIILiteral name = "sc.d"_s;
 };
 
 struct AMOSWAP_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0000100, RegistersBase::GGG> {
-    static constexpr const char* name = "amoswap.d";
+    static constexpr ASCIILiteral name = "amoswap.d"_s;
 };
 
 struct AMOADD_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0000000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoadd.d";
+    static constexpr ASCIILiteral name = "amoadd.d"_s;
 };
 
 struct AMOXOR_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0010000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoxor.d";
+    static constexpr ASCIILiteral name = "amoxor.d"_s;
 };
 
 struct AMOAND_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0110000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoand.d";
+    static constexpr ASCIILiteral name = "amoand.d"_s;
 };
 
 struct AMOOR_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b0100000, RegistersBase::GGG> {
-    static constexpr const char* name = "amoor.d";
+    static constexpr ASCIILiteral name = "amoor.d"_s;
 };
 
 struct AMOMIN_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b1000000, RegistersBase::GGG> {
-    static constexpr const char* name = "amomin.d";
+    static constexpr ASCIILiteral name = "amomin.d"_s;
 };
 
 struct AMOMAX_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b1010000, RegistersBase::GGG> {
-    static constexpr const char* name = "amomax.d";
+    static constexpr ASCIILiteral name = "amomax.d"_s;
 };
 
 struct AMOMINU_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b1100000, RegistersBase::GGG> {
-    static constexpr const char* name = "amominu.d";
+    static constexpr ASCIILiteral name = "amominu.d"_s;
 };
 
 struct AMOMAXU_D : RTypeBaseWithAqRl<Opcode::AMO, 0b011, 0b1110000, RegistersBase::GGG> {
-    static constexpr const char* name = "amomaxu.d";
+    static constexpr ASCIILiteral name = "amomaxu.d"_s;
 };
 
 // RV32F Standard Extension
@@ -1176,118 +1177,118 @@ struct FMVImpl : RTypeBase<Opcode::OP_FP, 0b000, funct7, RegisterTypes> {
 };
 
 struct FLW : ITypeBase<Opcode::LOAD_FP, 0b010, RegistersBase::FG> {
-    static constexpr const char* name = "flw";
+    static constexpr ASCIILiteral name = "flw"_s;
 };
 
 struct FSW : STypeBase<Opcode::STORE_FP, 0b010, RegistersBase::GF> {
-    static constexpr const char* name = "fsw";
+    static constexpr ASCIILiteral name = "fsw"_s;
 };
 
 struct FMADD_S : R4TypeBaseWithRoundingMode<Opcode::MADD, 0b00, RegistersBase::FFFF> {
-    static constexpr const char* name = "fmadd.s";
+    static constexpr ASCIILiteral name = "fmadd.s"_s;
 };
 
 struct FMSUB_S : R4TypeBaseWithRoundingMode<Opcode::MSUB, 0b00, RegistersBase::FFFF> {
-    static constexpr const char* name = "fmsub.s";
+    static constexpr ASCIILiteral name = "fmsub.s"_s;
 };
 
 struct FNMSUB_S : R4TypeBaseWithRoundingMode<Opcode::NMSUB, 0b00, RegistersBase::FFFF> {
-    static constexpr const char* name = "fnmsub.s";
+    static constexpr ASCIILiteral name = "fnmsub.s"_s;
 };
 
 struct FNMADD_S : R4TypeBaseWithRoundingMode<Opcode::NMADD, 0b00, RegistersBase::FFFF> {
-    static constexpr const char* name = "fnmadd.s";
+    static constexpr ASCIILiteral name = "fnmadd.s"_s;
 };
 
 struct FADD_S : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0000000, RegistersBase::FFF> {
-    static constexpr const char* name = "fadd.s";
+    static constexpr ASCIILiteral name = "fadd.s"_s;
 };
 
 struct FSUB_S : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0000100, RegistersBase::FFF> {
-    static constexpr const char* name = "fsub.s";
+    static constexpr ASCIILiteral name = "fsub.s"_s;
 };
 
 struct FMUL_S : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0001000, RegistersBase::FFF> {
-    static constexpr const char* name = "fmul.s";
+    static constexpr ASCIILiteral name = "fmul.s"_s;
 };
 
 struct FDIV_S : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0001100, RegistersBase::FFF> {
-    static constexpr const char* name = "fdiv.s";
+    static constexpr ASCIILiteral name = "fdiv.s"_s;
 };
 
 struct FSQRT_S : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0101100, RegistersBase::FFZ> {
-    static constexpr const char* name = "fsqrt.s";
+    static constexpr ASCIILiteral name = "fsqrt.s"_s;
 };
 
 struct FSGNJ_S : RTypeBase<Opcode::OP_FP, 0b000, 0b0010000, RegistersBase::FFF> {
-    static constexpr const char* name = "fsgnj.s";
+    static constexpr ASCIILiteral name = "fsgnj.s"_s;
 };
 
 struct FSGNJN_S : RTypeBase<Opcode::OP_FP, 0b001, 0b0010000, RegistersBase::FFF> {
-    static constexpr const char* name = "fsgnjn.s";
+    static constexpr ASCIILiteral name = "fsgnjn.s"_s;
 };
 
 struct FSGNJX_S : RTypeBase<Opcode::OP_FP, 0b010, 0b0010000, RegistersBase::FFF> {
-    static constexpr const char* name = "fsgnjx.s";
+    static constexpr ASCIILiteral name = "fsgnjx.s"_s;
 };
 
 struct FMIN_S : RTypeBase<Opcode::OP_FP, 0b000, 0b0010100, RegistersBase::FFF> {
-    static constexpr const char* name = "fmin.s";
+    static constexpr ASCIILiteral name = "fmin.s"_s;
 };
 
 struct FMAX_S : RTypeBase<Opcode::OP_FP, 0b001, 0b0010100, RegistersBase::FFF> {
-    static constexpr const char* name = "fmax.s";
+    static constexpr ASCIILiteral name = "fmax.s"_s;
 };
 
 template<>
 struct FCVTBase<FCVTType::W, FCVTType::S> : FCVTImpl<RegisterID, FPRegisterID, 0b00000, 0b1100000, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.w.s";
+    static constexpr ASCIILiteral name = "fcvt.w.s"_s;
 };
 using FCVT_W_S = FCVTBase<FCVTType::W, FCVTType::S>;
 
 template<>
 struct FCVTBase<FCVTType::WU, FCVTType::S> : FCVTImpl<RegisterID, FPRegisterID, 0b00001, 0b1100000, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.wu.s";
+    static constexpr ASCIILiteral name = "fcvt.wu.s"_s;
 };
 using FCVT_WU_S = FCVTBase<FCVTType::WU, FCVTType::S>;
 
 template<>
 struct FMVBase<FMVType::X, FMVType::W> : FMVImpl<RegisterID, FPRegisterID, 0b1110000, RegistersBase::GFZ> {
-    static constexpr const char* name = "fmv.x.w";
+    static constexpr ASCIILiteral name = "fmv.x.w"_s;
 };
 using FMV_X_W = FMVBase<FMVType::X, FMVType::W>;
 
 struct FEQ_S : RTypeBase<Opcode::OP_FP, 0b010, 0b1010000, RegistersBase::GFF> {
-    static constexpr const char* name = "feq.s";
+    static constexpr ASCIILiteral name = "feq.s"_s;
 };
 
 struct FLT_S : RTypeBase<Opcode::OP_FP, 0b001, 0b1010000, RegistersBase::GFF> {
-    static constexpr const char* name = "flt.s";
+    static constexpr ASCIILiteral name = "flt.s"_s;
 };
 
 struct FLE_S : RTypeBase<Opcode::OP_FP, 0b000, 0b1010000, RegistersBase::GFF> {
-    static constexpr const char* name = "fle.s";
+    static constexpr ASCIILiteral name = "fle.s"_s;
 };
 
 struct FCLASS_S : RTypeBase<Opcode::OP_FP, 0b001, 0b1110000, RegistersBase::GFZ> {
-    static constexpr const char* name = "fclass.s";
+    static constexpr ASCIILiteral name = "fclass.s"_s;
 };
 
 template<>
 struct FCVTBase<FCVTType::S, FCVTType::W> : FCVTImpl<FPRegisterID, RegisterID, 0b00000, 0b1101000, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.s.w";
+    static constexpr ASCIILiteral name = "fcvt.s.w"_s;
 };
 using FCVT_S_W = FCVTBase<FCVTType::S, FCVTType::W>;
 
 template<>
 struct FCVTBase<FCVTType::S, FCVTType::WU> : FCVTImpl<FPRegisterID, RegisterID, 0b00001, 0b1101000, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.s.wu";
+    static constexpr ASCIILiteral name = "fcvt.s.wu"_s;
 };
 using FCVT_S_WU = FCVTBase<FCVTType::S, FCVTType::WU>;
 
 template<>
 struct FMVBase<FMVType::W, FMVType::X> : FMVImpl<FPRegisterID, RegisterID, 0b1111000, RegistersBase::FGZ> {
-    static constexpr const char* name = "fmv.w.x";
+    static constexpr ASCIILiteral name = "fmv.w.x"_s;
 };
 using FMV_W_X = FMVBase<FMVType::W, FMVType::X>;
 
@@ -1295,143 +1296,143 @@ using FMV_W_X = FMVBase<FMVType::W, FMVType::X>;
 
 template<>
 struct FCVTBase<FCVTType::L, FCVTType::S> : FCVTImpl<RegisterID, FPRegisterID, 0b00010, 0b1100000, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.l.s";
+    static constexpr ASCIILiteral name = "fcvt.l.s"_s;
 };
 using FCVT_L_S = FCVTBase<FCVTType::L, FCVTType::S>;
 
 template<>
 struct FCVTBase<FCVTType::LU, FCVTType::S> : FCVTImpl<RegisterID, FPRegisterID, 0b00011, 0b1100000, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.lu.s";
+    static constexpr ASCIILiteral name = "fcvt.lu.s"_s;
 };
 using FCVT_LU_S = FCVTBase<FCVTType::LU, FCVTType::S>;
 
 template<>
 struct FCVTBase<FCVTType::S, FCVTType::L> : FCVTImpl<FPRegisterID, RegisterID, 0b00010, 0b1101000, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.s.l";
+    static constexpr ASCIILiteral name = "fcvt.s.l"_s;
 };
 using FCVT_S_L = FCVTBase<FCVTType::S, FCVTType::L>;
 
 template<>
 struct FCVTBase<FCVTType::S, FCVTType::LU> : FCVTImpl<FPRegisterID, RegisterID, 0b00011, 0b1101000, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.s.lu";
+    static constexpr ASCIILiteral name = "fcvt.s.lu"_s;
 };
 using FCVT_S_LU = FCVTBase<FCVTType::S, FCVTType::LU>;
 
 // RV32D Standard Extension
 
 struct FLD : ITypeBase<Opcode::LOAD_FP, 0b011, RegistersBase::FG> {
-    static constexpr const char* name = "fld";
+    static constexpr ASCIILiteral name = "fld"_s;
 };
 
 struct FSD : STypeBase<Opcode::STORE_FP, 0b011, RegistersBase::GF> {
-    static constexpr const char* name = "fsd";
+    static constexpr ASCIILiteral name = "fsd"_s;
 };
 
 struct FMADD_D : R4TypeBaseWithRoundingMode<Opcode::MADD, 0b01, RegistersBase::FFFF> {
-    static constexpr const char* name = "fmadd.d";
+    static constexpr ASCIILiteral name = "fmadd.d"_s;
 };
 
 struct FMSUB_D : R4TypeBaseWithRoundingMode<Opcode::MSUB, 0b01, RegistersBase::FFFF> {
-    static constexpr const char* name = "fmsub.d";
+    static constexpr ASCIILiteral name = "fmsub.d"_s;
 };
 
 struct FNMSUB_D : R4TypeBaseWithRoundingMode<Opcode::NMSUB, 0b01, RegistersBase::FFFF> {
-    static constexpr const char* name = "fnmsub.d";
+    static constexpr ASCIILiteral name = "fnmsub.d"_s;
 };
 
 struct FNMADD_D : R4TypeBaseWithRoundingMode<Opcode::NMADD, 0b01, RegistersBase::FFFF> {
-    static constexpr const char* name = "fnmadd.d";
+    static constexpr ASCIILiteral name = "fnmadd.d"_s;
 };
 
 struct FADD_D : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0000001, RegistersBase::FFF> {
-    static constexpr const char* name = "fadd.d";
+    static constexpr ASCIILiteral name = "fadd.d"_s;
 };
 
 struct FSUB_D : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0000101, RegistersBase::FFF> {
-    static constexpr const char* name = "fsub.d";
+    static constexpr ASCIILiteral name = "fsub.d"_s;
 };
 
 struct FMUL_D : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0001001, RegistersBase::FFF> {
-    static constexpr const char* name = "fmul.d";
+    static constexpr ASCIILiteral name = "fmul.d"_s;
 };
 
 struct FDIV_D : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0001101, RegistersBase::FFF> {
-    static constexpr const char* name = "fdiv.d";
+    static constexpr ASCIILiteral name = "fdiv.d"_s;
 };
 
 struct FSQRT_D : RTypeBaseWithRoundingMode<Opcode::OP_FP, 0b0101101, RegistersBase::FFZ> {
-    static constexpr const char* name = "fsqrt.d";
+    static constexpr ASCIILiteral name = "fsqrt.d"_s;
 };
 
 struct FSGNJ_D : RTypeBase<Opcode::OP_FP, 0b000, 0b0010001, RegistersBase::FFF> {
-    static constexpr const char* name = "fsgnj.d";
+    static constexpr ASCIILiteral name = "fsgnj.d"_s;
 };
 
 struct FSGNJN_D : RTypeBase<Opcode::OP_FP, 0b001, 0b0010001, RegistersBase::FFF> {
-    static constexpr const char* name = "fsgnjn.d";
+    static constexpr ASCIILiteral name = "fsgnjn.d"_s;
 };
 
 struct FSGNJX_D : RTypeBase<Opcode::OP_FP, 0b010, 0b0010001, RegistersBase::FFF> {
-    static constexpr const char* name = "fsgnjx.d";
+    static constexpr ASCIILiteral name = "fsgnjx.d"_s;
 };
 
 struct FMIN_D : RTypeBase<Opcode::OP_FP, 0b000, 0b0010101, RegistersBase::FFF> {
-    static constexpr const char* name = "fmin.d";
+    static constexpr ASCIILiteral name = "fmin.d"_s;
 };
 
 struct FMAX_D : RTypeBase<Opcode::OP_FP, 0b001, 0b0010101, RegistersBase::FFF> {
-    static constexpr const char* name = "fmax.d";
+    static constexpr ASCIILiteral name = "fmax.d"_s;
 };
 
 template<>
 struct FCVTBase<FCVTType::S, FCVTType::D> : FCVTImpl<FPRegisterID, FPRegisterID, 0b00001, 0b0100000, RegistersBase::FFZ> {
-    static constexpr const char* name = "fcvt.s.d";
+    static constexpr ASCIILiteral name = "fcvt.s.d"_s;
 };
 using FCVT_S_D = FCVTBase<FCVTType::S, FCVTType::D>;
 
 template<>
 struct FCVTBase<FCVTType::D, FCVTType::S> : FCVTImpl<FPRegisterID, FPRegisterID, 0b00000, 0b0100001, RegistersBase::FFZ> {
-    static constexpr const char* name = "fcvt.d.s";
+    static constexpr ASCIILiteral name = "fcvt.d.s"_s;
 };
 using FCVT_D_S = FCVTBase<FCVTType::D, FCVTType::S>;
 
 struct FEQ_D : RTypeBase<Opcode::OP_FP, 0b010, 0b1010001, RegistersBase::GFF> {
-    static constexpr const char* name = "feq.d";
+    static constexpr ASCIILiteral name = "feq.d"_s;
 };
 
 struct FLT_D : RTypeBase<Opcode::OP_FP, 0b001, 0b1010001, RegistersBase::GFF> {
-    static constexpr const char* name = "flt.d";
+    static constexpr ASCIILiteral name = "flt.d"_s;
 };
 
 struct FLE_D : RTypeBase<Opcode::OP_FP, 0b000, 0b1010001, RegistersBase::GFF> {
-    static constexpr const char* name = "fle.d";
+    static constexpr ASCIILiteral name = "fle.d"_s;
 };
 
 struct FCLASS_D : RTypeBase<Opcode::OP_FP, 0b001, 0b1110001, RegistersBase::GFZ> {
-    static constexpr const char* name = "fclass.d";
+    static constexpr ASCIILiteral name = "fclass.d"_s;
 };
 
 template<>
 struct FCVTBase<FCVTType::W, FCVTType::D> : FCVTImpl<RegisterID, FPRegisterID, 0b00000, 0b1100001, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.w.d";
+    static constexpr ASCIILiteral name = "fcvt.w.d"_s;
 };
 using FCVT_W_D = FCVTBase<FCVTType::W, FCVTType::D>;
 
 template<>
 struct FCVTBase<FCVTType::WU, FCVTType::D> : FCVTImpl<RegisterID, FPRegisterID, 0b00001, 0b1100001, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.wu.d";
+    static constexpr ASCIILiteral name = "fcvt.wu.d"_s;
 };
 using FCVT_WU_D = FCVTBase<FCVTType::WU, FCVTType::D>;
 
 template<>
 struct FCVTBase<FCVTType::D, FCVTType::W> : FCVTImpl<FPRegisterID, RegisterID, 0b00000, 0b1101001, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.d.w";
+    static constexpr ASCIILiteral name = "fcvt.d.w"_s;
 };
 using FCVT_D_W = FCVTBase<FCVTType::D, FCVTType::W>;
 
 template<>
 struct FCVTBase<FCVTType::D, FCVTType::WU> : FCVTImpl<FPRegisterID, RegisterID, 0b00001, 0b1101001, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.d.wu";
+    static constexpr ASCIILiteral name = "fcvt.d.wu"_s;
 };
 using FCVT_D_WU = FCVTBase<FCVTType::D, FCVTType::WU>;
 
@@ -1439,37 +1440,37 @@ using FCVT_D_WU = FCVTBase<FCVTType::D, FCVTType::WU>;
 
 template<>
 struct FCVTBase<FCVTType::L, FCVTType::D> : FCVTImpl<RegisterID, FPRegisterID, 0b00010, 0b1100001, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.l.d";
+    static constexpr ASCIILiteral name = "fcvt.l.d"_s;
 };
 using FCVT_L_D = FCVTBase<FCVTType::L, FCVTType::D>;
 
 template<>
 struct FCVTBase<FCVTType::LU, FCVTType::D> : FCVTImpl<RegisterID, FPRegisterID, 0b00011, 0b1100001, RegistersBase::GFZ> {
-    static constexpr const char* name = "fcvt.lu.d";
+    static constexpr ASCIILiteral name = "fcvt.lu.d"_s;
 };
 using FCVT_LU_D = FCVTBase<FCVTType::LU, FCVTType::D>;
 
 template<>
 struct FMVBase<FMVType::X, FMVType::D> : FMVImpl<RegisterID, FPRegisterID, 0b1110001, RegistersBase::GFZ> {
-    static constexpr const char* name = "fmv.x.d";
+    static constexpr ASCIILiteral name = "fmv.x.d"_s;
 };
 using FMV_X_D = FMVBase<FMVType::X, FMVType::D>;
 
 template<>
 struct FCVTBase<FCVTType::D, FCVTType::L> : FCVTImpl<FPRegisterID, RegisterID, 0b00010, 0b1101001, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.d.l";
+    static constexpr ASCIILiteral name = "fcvt.d.l"_s;
 };
 using FCVT_D_L = FCVTBase<FCVTType::D, FCVTType::L>;
 
 template<>
 struct FCVTBase<FCVTType::D, FCVTType::LU> : FCVTImpl<FPRegisterID, RegisterID, 0b00011, 0b1101001, RegistersBase::FGZ> {
-    static constexpr const char* name = "fcvt.d.lu";
+    static constexpr ASCIILiteral name = "fcvt.d.lu"_s;
 };
 using FCVT_D_LU = FCVTBase<FCVTType::D, FCVTType::LU>;
 
 template<>
 struct FMVBase<FMVType::D, FMVType::X> : FMVImpl<FPRegisterID, RegisterID, 0b1111001, RegistersBase::FGZ> {
-    static constexpr const char* name = "fmv.d.x";
+    static constexpr ASCIILiteral name = "fmv.d.x"_s;
 };
 using FMV_D_X = FMVBase<FMVType::D, FMVType::X>;
 

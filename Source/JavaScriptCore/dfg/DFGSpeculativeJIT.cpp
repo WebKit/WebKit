@@ -1318,7 +1318,7 @@ void SpeculativeJIT::dump(const char* label)
             dataLogF(":fpr%d\n", info.fpr());
         else if (info.registerFormat() != DataFormatNone) {
             ASSERT(info.gpr() != InvalidGPRReg);
-            dataLogF(":%s\n", GPRInfo::debugName(info.gpr()).characters());
+            SAFE_DATALOGF(":%s\n", GPRInfo::debugName(info.gpr()));
         } else
             dataLogF("\n");
     }

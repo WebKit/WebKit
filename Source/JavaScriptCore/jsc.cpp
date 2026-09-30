@@ -4673,7 +4673,7 @@ int runJSC(const CommandLine& options, bool isWorker, NOESCAPE const Func& func)
             std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
             for (const ASCIICString& key : compileTimeKeys) {
                 if (key.data())
-                    printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
+                    SAFE_PRINTF("%40s: %.3lf ms\n", key, compileTimeStats.get(key).milliseconds());
             }
 
             if (Options::reportTotalPhaseTimes())

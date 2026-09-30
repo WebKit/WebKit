@@ -29,7 +29,10 @@
 #include <JavaScriptCore/JSExportMacros.h>
 #include <array>
 #include <optional>
+#include <span>
 #include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/Latin1Character.h>
 
 namespace JSC { namespace Yarr {
 
@@ -61,7 +64,28 @@ enum class Flags : uint16_t {
 };
 
 JS_EXPORT_PRIVATE std::optional<OptionSet<Flags>> NODELETE parseFlags(StringView);
-using FlagsString = std::array<char, Yarr::numberOfFlags + 1>; // numberOfFlags + null-terminator
+
+class FlagsString;
 JS_EXPORT_PRIVATE FlagsString NODELETE flagsString(OptionSet<Flags>);
 
+class FlagsString {
+public:
+    FlagsString() = default;
+
+    // The characters are always followed by a null terminator.
+    std::span<const Latin1Character> span() const LIFETIME_BOUND { return std::span { m_characters }.first(m_length); }
+
+private:
+    friend JS_EXPORT_PRIVATE FlagsString flagsString(OptionSet<Flags>);
+
+    std::array<Latin1Character, numberOfFlags + 1> m_characters { };
+    uint8_t m_length { 0 };
+};
+
 } } // namespace JSC::Yarr
+
+namespace WTF {
+
+inline const char* safePrintfType(const JSC::Yarr::FlagsString& string) { return byteCast<char>(string.span().data()); }
+
+} // namespace WTF

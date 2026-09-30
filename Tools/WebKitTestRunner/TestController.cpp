@@ -3890,45 +3890,45 @@ WKRetainPtr<WKTypeRef> TestController::getInjectedBundleInitializationUserData()
 
 // WKContextClient
 
-static const char* terminationReasonToString(WKProcessTerminationReason reason)
+static ASCIILiteral terminationReasonToString(WKProcessTerminationReason reason)
 {
     switch (reason) {
     case kWKProcessTerminationReasonExceededMemoryLimit:
-        return "exceeded memory limit";
+        return "exceeded memory limit"_s;
     case kWKProcessTerminationReasonExceededCPULimit:
-        return "exceeded cpu limit";
+        return "exceeded cpu limit"_s;
         break;
     case kWKProcessTerminationReasonRequestedByClient:
-        return "requested by client";
+        return "requested by client"_s;
     case kWKProcessTerminationReasonCrash:
-        return "crash";
+        return "crash"_s;
     default:
         break;
     }
     ASSERT_NOT_REACHED();
-    return "unknown reason";
+    return "unknown reason"_s;
 }
 
 void TestController::networkProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName().characters(), static_cast<long>(processID), terminationReasonToString(reason));
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName().characters(), static_cast<long>(processID));
+    SAFE_FPRINTF(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
+    SAFE_FPRINTF(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exitProcess(1);
 }
 
 void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", "ServiceWorkerProcess", static_cast<long>(processID), terminationReasonToString(reason));
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", serviceWorkerProcessName().characters(), static_cast<long>(processID));
+    SAFE_FPRINTF(stderr, "%s terminated (pid %ld) for reason: %s\n", "ServiceWorkerProcess"_s, static_cast<long>(processID), terminationReasonToString(reason));
+    SAFE_FPRINTF(stderr, "#CRASHED - %s (pid %ld)\n", serviceWorkerProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exitProcess(1);
 }
 
 void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName().characters(), static_cast<long>(processID), terminationReasonToString(reason));
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName().characters(), static_cast<long>(processID));
+    SAFE_FPRINTF(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
+    SAFE_FPRINTF(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exitProcess(1);
 }
@@ -4314,13 +4314,13 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", webProcessName().characters(), static_cast<long>(pid), terminationReasonToString(reason));
+        SAFE_FPRINTF(stderr, "%s terminated (pid %ld) for reason: %s\n", webProcessName(), static_cast<long>(pid), terminationReasonToString(reason));
         if (reason == kWKProcessTerminationReasonRequestedByClient) {
             fflush(stderr);
             return;
         }
 
-        fprintf(stderr, "#CRASHED - %s (pid %ld)\n", webProcessName().characters(), static_cast<long>(pid));
+        SAFE_FPRINTF(stderr, "#CRASHED - %s (pid %ld)\n", webProcessName(), static_cast<long>(pid));
         fflush(stderr);
         m_didPrintWebProcessCrashedMessage = true;
     }

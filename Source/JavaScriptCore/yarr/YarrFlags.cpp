@@ -62,20 +62,20 @@ std::optional<OptionSet<Flags>> parseFlags(StringView string)
 FlagsString flagsString(OptionSet<Flags> flags)
 {
     FlagsString string;
-    unsigned index = 0;
+    uint8_t index = 0;
 
 #define JSC_WRITE_REGEXP_FLAG(key, name, lowerCaseName, _) \
     do { \
         if (flags.contains(Flags::name)) \
-            string[index++] = key; \
+            string.m_characters[index++] = key; \
     } while (0);
 
     JSC_REGEXP_FLAGS(JSC_WRITE_REGEXP_FLAG)
 
 #undef JSC_WRITE_REGEXP_FLAG
 
-    ASSERT(index < string.size());
-    string[index] = 0;
+    ASSERT(index < string.m_characters.size());
+    string.m_length = index;
     return string;
 }
 

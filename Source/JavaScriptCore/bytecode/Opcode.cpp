@@ -56,16 +56,9 @@ const ASCIILiteral opcodeNames[] = {
 
 #if ENABLE(OPCODE_STATS)
 
-inline const char* padOpcodeName(OpcodeID op, unsigned width)
+inline int opcodeNamePadding(OpcodeID op, size_t width)
 {
-    auto padding = "                                ";
-    auto paddingLength = strlen(padding);
-    auto opcodeNameLength = opcodeNames[op].length();
-    if (opcodeNameLength >= width)
-        return "";
-    if (paddingLength + opcodeNameLength < width)
-        return padding;
-    return &padding[paddingLength + opcodeNameLength - width];
+    return static_cast<int>(width - std::min(width, opcodeNames[op].length()));
 }
 
 long long OpcodeStats::opcodeCounts[numOpcodeIDs];
@@ -143,7 +136,7 @@ OpcodeStats::~OpcodeStats()
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
-        dataLogF("%s:%s %lld - %.2f%%\n", opcodeNames[index].characters(), padOpcodeName((OpcodeID)index, 28), opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);
+        SAFE_DATALOGF("%s:%*s %lld - %.2f%%\n", opcodeNames[index], opcodeNamePadding((OpcodeID)index, 28), ""_s, opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);
     }
     
     dataLogF("\n");
@@ -156,7 +149,7 @@ OpcodeStats::~OpcodeStats()
         if (!count)
             break;
         
-        dataLogF("%s%s %s:%s %lld %.2f%%\n", opcodeNames[indexPair.first].characters(), padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second].characters(), padOpcodeName((OpcodeID)indexPair.second, 28), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
+        SAFE_DATALOGF("%s%*s %s:%*s %lld %.2f%%\n", opcodeNames[indexPair.first], opcodeNamePadding((OpcodeID)indexPair.first, 28), ""_s, opcodeNames[indexPair.second], opcodeNamePadding((OpcodeID)indexPair.second, 28), ""_s, count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
     }
     
     dataLogF("\n");
@@ -168,7 +161,7 @@ OpcodeStats::~OpcodeStats()
         double opcodeProportion = ((double) opcodeCount) / ((double) totalInstructions);
         if (opcodeProportion < 0.0001)
             break;
-        dataLogF("\n%s:%s %lld - %.2f%%\n", opcodeNames[index].characters(), padOpcodeName((OpcodeID)index, 28), opcodeCount, opcodeProportion * 100.0);
+        SAFE_DATALOGF("\n%s:%*s %lld - %.2f%%\n", opcodeNames[index], opcodeNamePadding((OpcodeID)index, 28), ""_s, opcodeCount, opcodeProportion * 100.0);
 
         for (int j = 0; j < numOpcodeIDs * numOpcodeIDs; ++j) {
             std::pair<int, int> indexPair = sortedPairIndices[j];
@@ -181,7 +174,7 @@ OpcodeStats::~OpcodeStats()
             if (indexPair.first != index && indexPair.second != index)
                 continue;
 
-            dataLogF("    %s%s %s:%s %lld - %.2f%%\n", opcodeNames[indexPair.first].characters(), padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second].characters(), padOpcodeName((OpcodeID)indexPair.second, 28), pairCount, pairProportion * 100.0);
+            SAFE_DATALOGF("    %s%*s %s:%*s %lld - %.2f%%\n", opcodeNames[indexPair.first], opcodeNamePadding((OpcodeID)indexPair.first, 28), ""_s, opcodeNames[indexPair.second], opcodeNamePadding((OpcodeID)indexPair.second, 28), ""_s, pairCount, pairProportion * 100.0);
         }
         
     }
