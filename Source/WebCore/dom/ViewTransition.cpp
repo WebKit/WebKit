@@ -800,7 +800,7 @@ void ViewTransition::activateViewTransition()
     if (RefPtr documentElement = document()->documentElement())
         documentElement->invalidateStyle();
 
-    m_phase = ViewTransitionPhase::Animating;
+    m_phase = ViewTransitionPhase::AnimatingFirstFrame;
 
     // Don't read pseudo-element styles, since that happened
     // as part of captureNewState.
@@ -846,12 +846,15 @@ void ViewTransition::handleTransitionFrame()
             || checkForActiveAnimations({ PseudoElementType::ViewTransitionOld, name });
     }
 
-    if (!hasActiveAnimations) {
+    if (!hasActiveAnimations && m_phase != ViewTransitionPhase::AnimatingFirstFrame) {
         m_phase = ViewTransitionPhase::Done;
         clearViewTransition();
         protect(m_finished.second)->resolve();
         return;
     }
+
+    if (m_phase == ViewTransitionPhase::AnimatingFirstFrame)
+        m_phase = ViewTransitionPhase::Animating;
 
     auto checkSize = checkForViewportSizeChange();
     if (checkSize.hasException()) {
@@ -1159,6 +1162,7 @@ TextStream& operator<<(TextStream& ts, ViewTransitionPhase phase)
     case ViewTransitionPhase::PendingCapture: ts << "PendingCapture"_s; break;
     case ViewTransitionPhase::CapturingOldState: ts << "CapturingOldState"_s; break;
     case ViewTransitionPhase::UpdateCallbackCalled: ts << "UpdateCallbackCalled"_s; break;
+    case ViewTransitionPhase::AnimatingFirstFrame: ts << "AnimatingFirstFrame"_s; break;
     case ViewTransitionPhase::Animating: ts << "Animating"_s; break;
     case ViewTransitionPhase::Done: ts << "Done"_s; break;
     }
