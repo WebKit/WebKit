@@ -273,6 +273,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/OriginAgentClusterPolicy.h>
+#include <WebCore/PageColorSampler.h>
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PermissionDescriptor.h>
 #include <WebCore/PermissionState.h>
@@ -8498,6 +8499,26 @@ void WebPageProxy::continueAccessibilitySearchFromChildFrame(IPC::Connection& co
 }
 #endif
 
+void WebPageProxy::requestFixedContainerEdgeColorForSampling(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::IntRect rect, CompletionHandler<void(std::optional<Variant<WebCore::PredominantColorType, WebCore::Color>>&&)>&& callback)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame) {
+        callback(std::nullopt);
+        return;
+    }
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, !rect.isEmpty(), callback(std::nullopt));
+
+    RefPtr parentFrame = frame->parentFrame();
+    if (!parentFrame || &parentFrame->process() != process.ptr() || std::min(rect.width(), rect.height()) > WebCore::PageColorSampler::maximumFixedContainerEdgeSamplingRectThickness) {
+        callback(std::nullopt);
+        return;
+    }
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::RequestFixedContainerEdgeColorForSampling(frameID, rect), WTF::move(callback));
+}
+
 void WebPageProxy::updateReferrerPolicy(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::ReferrerPolicy referrerPolicy)
 {
     if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
@@ -9455,6 +9476,15 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
         webFrameProxy->setFrameGeometry(*frameGeometry);
     else if (auto* viewportInfo = std::get_if<WebCore::FrameViewportInfo>(&data.value))
         webFrameProxy->setFrameViewportInfo(*viewportInfo);
+
+    if (data.value.index() == std::to_underlying(WebCore::FrameTreeSyncDataType::SampledFixedContainerEdgeChangeNotice)) {
+        RefPtr parentFrame = webFrameProxy->parentFrame();
+        if (!parentFrame)
+            return;
+
+        sendToProcessContainingFrame(parentFrame->frameID(), Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess(frameID, WebCore::FrameTreeSyncSerializationData { data }));
+        return;
+    }
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)

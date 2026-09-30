@@ -703,6 +703,10 @@ public:
     void setOwnerHasRendererInParentFrameProcess(bool hasRenderer) { m_ownerHasRendererInParentFrameProcess = hasRenderer; }
     bool ownerHasRendererInParentFrameProcess() const { return m_ownerHasRendererInParentFrameProcess; }
 
+    void setNeedsSampledFixedContainerEdgeChangeBroadcast() { m_needsSampledFixedContainerEdgeChangeBroadcast = true; }
+    bool needsSampledFixedContainerEdgeChangeBroadcast() const { return m_needsSampledFixedContainerEdgeChangeBroadcast; }
+    void dispatchPendingSampledFixedContainerEdgeChange();
+
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
 
@@ -1061,6 +1065,7 @@ private:
 
     bool m_hasSetExposedContentRectFromEmbedder { false };
     bool m_ownerHasRendererInParentFrameProcess { true };
+    bool m_needsSampledFixedContainerEdgeChangeBroadcast { false };
 
     OptionSet<PaintBehavior> m_paintBehavior;
 

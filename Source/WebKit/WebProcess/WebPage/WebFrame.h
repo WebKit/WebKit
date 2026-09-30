@@ -51,6 +51,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -273,6 +274,9 @@ public:
 
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
+    MonotonicTime nextFixedContainerEdgeSamplingAnswerTime() const { return m_nextFixedContainerEdgeSamplingAnswerTime; }
+    void setNextFixedContainerEdgeSamplingAnswerTime(MonotonicTime time) { m_nextFixedContainerEdgeSamplingAnswerTime = time; }
+
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const;
 
@@ -359,6 +363,7 @@ private:
     const WebCore::FrameIdentifier m_frameID;
     bool m_wasRemovedInAnotherProcess { false };
     bool m_hasAppliedInitialRemoteFrameRect { false };
+    MonotonicTime m_nextFixedContainerEdgeSamplingAnswerTime;
 
 #if ENABLE(TWO_PHASE_CLICKS)
     std::optional<TransactionID> m_firstLayerTreeTransactionIDAfterDidCommitLoad;

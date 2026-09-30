@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AXObjectTypes.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/Frame.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -33,10 +34,12 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class IntPoint;
+class IntRect;
 class RemoteDOMWindow;
 class RemoteFrameClient;
 class RemoteFrameView;
@@ -76,6 +79,10 @@ public:
     // See webkit.org/b/310164.
     WEBCORE_EXPORT ProcessIdentifier hostingProcessIdentifier() const;
     void setHostingProcessIdentifier(ProcessIdentifier processID) { m_hostingProcessIdentifier = processID; }
+
+    std::optional<FixedContainerEdge> cachedFixedContainerEdgeAnswer(const IntRect&) const;
+    void requestFixedContainerEdgeColorIfNeeded(const IntRect&);
+    WEBCORE_EXPORT void invalidateSampledFixedContainerEdges();
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
     void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
@@ -134,6 +141,9 @@ private:
     FrameLoaderClient& NODELETE loaderClient() LIFETIME_BOUND final;
     void reinitializeDocumentSecurityContext() final { }
 
+    void didReceiveFixedContainerEdgeColorAnswer(const IntRect&, std::optional<FixedContainerEdge>&&);
+    void setNeedsFixedContainerEdgesUpdateInParent();
+
     const Ref<RemoteDOMWindow> m_window;
     RefPtr<RemoteFrameView> m_view;
     const UniqueRef<RemoteFrameClient> m_client;
@@ -147,6 +157,15 @@ private:
     AutoplayPolicy m_autoplayPolicy;
     ColorSchemePreference m_colorSchemePreference;
     bool m_preventsParentFromBeingComplete { true };
+
+    struct FixedContainerEdgeAnswer {
+        IntRect rect;
+        FixedContainerEdge value;
+    };
+    static constexpr unsigned maxStoredFixedContainerEdgeAnswers = 4;
+    static constexpr unsigned maxPendingFixedContainerEdgeRequests = 4;
+    Vector<FixedContainerEdgeAnswer, maxStoredFixedContainerEdgeAnswers> m_fixedContainerEdgeAnswers;
+    Vector<IntRect, maxPendingFixedContainerEdgeRequests> m_pendingFixedContainerEdgeRequestRects;
 };
 
 } // namespace WebCore

@@ -1,0 +1,8 @@
+PASS Loaded frames
+PASS color.top is "rgb(255, 120, 0)"
+PASS color.bottom is "rgb(0, 255, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

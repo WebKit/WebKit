@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AXObjectTypes.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/LayerTreeAsTextOptions.h>
 #include <WebCore/ScrollTypes.h>
@@ -57,6 +58,7 @@ public:
     virtual void frameDetached() = 0;
     virtual void frameRectDidChange(IntRect) = 0;
     virtual void paintContents(GraphicsContext&, const IntRect&) = 0;
+    virtual void requestFixedContainerEdgeColorForSampling(const IntRect&, CompletionHandler<void(std::optional<FixedContainerEdge>&&)>&&) = 0;
     virtual void postMessageToRemote(FrameIdentifier source, const SecurityOriginData& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts&, const std::optional<UserGestureTokenData>&) = 0;
     virtual void changeLocation(FrameLoadRequest&&, std::optional<PrivateClickMeasurement>&&) = 0;
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;

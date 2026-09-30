@@ -1,0 +1,7 @@
+PASS Frame scrolled past the color boundary
+PASS color.top is "rgb(0, 122, 255)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

@@ -251,6 +251,7 @@ enum class PermissionState : uint8_t;
 enum class PlatformEventModifier : uint8_t;
 enum class PlatformMediaSessionRemoteControlCommandType : uint8_t;
 enum class PolicyAction : uint8_t;
+enum class PredominantColorType : uint8_t;
 enum class ProcessSwapDisposition : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
 enum class ReferrerPolicy : uint8_t;
@@ -3233,6 +3234,7 @@ private:
     void performAccessibilitySearchInRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
     void continueAccessibilitySearchFromChildFrame(IPC::Connection&, WebCore::FrameIdentifier childFrameID, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
 #endif
+    void requestFixedContainerEdgeColorForSampling(IPC::Connection&, WebCore::FrameIdentifier, WebCore::IntRect, CompletionHandler<void(std::optional<Variant<WebCore::PredominantColorType, WebCore::Color>>&&)>&&);
     void updateSandboxFlags(IPC::Connection&, WebCore::FrameIdentifier, WebCore::SandboxFlags);
     void updateReferrerPolicy(IPC::Connection&, WebCore::FrameIdentifier, WebCore::ReferrerPolicy);
     void updateOpener(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::FrameIdentifier>);

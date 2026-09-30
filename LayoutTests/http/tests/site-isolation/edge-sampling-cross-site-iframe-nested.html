@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Half of the strip is local orange; the other half is a cross-site frame nested inside another cross-site frame,
+     painted the same orange. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge bottom">
+<div class="half" style="left: 0; background-color: rgb(255, 120, 0)"></div>
+<div class="half" style="right: 0"><iframe data-src="http://localhost:8000/site-isolation/resources/nested-holder.html?src=http://127.0.0.1:8000/site-isolation/resources/solid-color.html%3Fcolor%3Dff7800"></iframe></div>
+</div>
+<div class="tall"></div>
+<script>
+addEventListener("load", () => testFixedContainerEdges({ bottom: "rgb(255, 120, 0)" }));
+</script>
+</body>
+</html>

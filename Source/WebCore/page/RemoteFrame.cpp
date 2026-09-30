@@ -28,10 +28,17 @@
 
 #include "AXObjectCache.h"
 #include "AutoplayPolicy.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "FrameInlines.h"
+#include "IntRect.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeDocument.h"
 #include "Page.h"
 #include "PrivateClickMeasurement.h"
@@ -81,6 +88,74 @@ ProcessIdentifier RemoteFrame::hostingProcessIdentifier() const
     // hosting process has not been recorded. This reproduces the legacy
     // IdentifierRegistry::protocolFrameId(FrameIdentifier) value. See webkit.org/b/310164.
     return ObjectIdentifier<ProcessIdentifierType>(frameID().toUInt64() >> 32);
+}
+
+std::optional<FixedContainerEdge> RemoteFrame::cachedFixedContainerEdgeAnswer(const IntRect& rect) const
+{
+    for (auto& answer : m_fixedContainerEdgeAnswers) {
+        if (answer.rect == rect)
+            return answer.value;
+    }
+    return std::nullopt;
+}
+
+void RemoteFrame::requestFixedContainerEdgeColorIfNeeded(const IntRect& rect)
+{
+    if (cachedFixedContainerEdgeAnswer(rect))
+        return;
+
+    if (m_pendingFixedContainerEdgeRequestRects.contains(rect))
+        return;
+
+    if (m_pendingFixedContainerEdgeRequestRects.size() >= maxPendingFixedContainerEdgeRequests)
+        return;
+
+    m_pendingFixedContainerEdgeRequestRects.append(rect);
+    client().requestFixedContainerEdgeColorForSampling(rect, [weakThis = WeakPtr { *this }, rect](std::optional<FixedContainerEdge>&& answer) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReceiveFixedContainerEdgeColorAnswer(rect, WTF::move(answer));
+    });
+}
+
+void RemoteFrame::didReceiveFixedContainerEdgeColorAnswer(const IntRect& rect, std::optional<FixedContainerEdge>&& answer)
+{
+    m_pendingFixedContainerEdgeRequestRects.removeFirstMatching([&](auto& pendingRect) {
+        return pendingRect == rect;
+    });
+
+    if (!answer)
+        return;
+
+    if (m_fixedContainerEdgeAnswers.size() >= maxStoredFixedContainerEdgeAnswers)
+        m_fixedContainerEdgeAnswers.removeAt(0);
+    m_fixedContainerEdgeAnswers.append({ rect, WTF::move(*answer) });
+
+    setNeedsFixedContainerEdgesUpdateInParent();
+}
+
+void RemoteFrame::invalidateSampledFixedContainerEdges()
+{
+    m_fixedContainerEdgeAnswers.clear();
+    setNeedsFixedContainerEdgesUpdateInParent();
+}
+
+void RemoteFrame::setNeedsFixedContainerEdgesUpdateInParent()
+{
+    RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent());
+    if (!parent)
+        return;
+
+    if (parent->rootFrame().isMainFrame()) {
+        RefPtr page = parent->page();
+        if (!page)
+            return;
+        page->chrome().client().setNeedsFixedContainerEdgesUpdate();
+        page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+        return;
+    }
+
+    if (RefPtr rootView = parent->rootFrame().view())
+        rootView->dispatchPendingSampledFixedContainerEdgeChange();
 }
 
 DOMWindow* RemoteFrame::virtualWindow() const
