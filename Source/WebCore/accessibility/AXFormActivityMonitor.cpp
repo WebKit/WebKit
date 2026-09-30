@@ -48,11 +48,34 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
-#define AXFORMLOG(...) LOG_WITH_STREAM(AccessibilityFormErrors, stream << makeString(__VA_ARGS__))
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AXFormActivityMonitor);
+
+static bool shouldLogFormActivity()
+{
+#if !LOG_DISABLED
+    if (LOG_CHANNEL(AccessibilityFormErrors).state != logChannelStateOff)
+        return true;
+#endif
+    return AXObjectCache::isAppleInternalInstall();
+}
+
+static void logFormActivity(const String& message)
+{
+#if !LOG_DISABLED
+    if (LOG_CHANNEL(AccessibilityFormErrors).state != logChannelStateOff) {
+        LOG(AccessibilityFormErrors, "%s", message.utf8());
+        return;
+    }
+#endif
+    RELEASE_LOG(AccessibilityFormErrors, "%" PUBLIC_LOG_STRING, message.utf8());
+}
+
+#define AXFORMLOG(...) do { \
+    if (shouldLogFormActivity()) [[unlikely]] \
+        logFormActivity(makeString(__VA_ARGS__)); \
+} while (0)
 
 // How long to keep watching after a submission attempt. Long enough for a server round-trip to come
 // back and render a message, short enough that later, unrelated page changes are not attributed to
@@ -575,14 +598,14 @@ void AXFormActivityMonitor::report()
     // Deliberately no message or field text in any of this logging. An error message can quote what the
     // user typed into the field, so only counts, lengths, indices and geometry are recorded.
     AXFORMLOG("Form has "_s, fields.size(), " fields, "_s, fieldBounds.size(), " with a box."_s);
-#if !LOG_DISABLED
-    for (size_t fieldIndex = 0; fieldIndex < fieldBounds.size(); ++fieldIndex) {
-        const auto& bounds = fieldBounds[fieldIndex];
-        RefPtr fieldObject = CheckedRef { m_cache }->get(bounds.field.ptr());
-        AXFORMLOG("  field "_s, fieldIndex, " role "_s, fieldObject ? roleToString(fieldObject->role()) : String { "none"_s },
-            " bounds "_s, bounds.rect.x(), ","_s, bounds.rect.y(), " "_s, bounds.rect.width(), "x"_s, bounds.rect.height());
+    if (shouldLogFormActivity()) {
+        for (size_t fieldIndex = 0; fieldIndex < fieldBounds.size(); ++fieldIndex) {
+            const auto& bounds = fieldBounds[fieldIndex];
+            RefPtr fieldObject = CheckedRef { m_cache }->get(bounds.field.ptr());
+            AXFORMLOG("  field "_s, fieldIndex, " role "_s, fieldObject ? roleToString(fieldObject->role()) : String { "none"_s },
+                " bounds "_s, bounds.rect.x(), ","_s, bounds.rect.y(), " "_s, bounds.rect.width(), "x"_s, bounds.rect.height());
+        }
     }
-#endif
 
     // One message belongs to one field.
     struct Pairing {
@@ -608,13 +631,13 @@ void AXFormActivityMonitor::report()
     }
 
     AXFORMLOG("Considering "_s, messageBounds.size(), " of "_s, candidates.size(), " candidate messages."_s);
-#if !LOG_DISABLED
-    for (const auto& message : messageBounds) {
-        AXFORMLOG("  candidate "_s, message.candidateIndex, " length "_s, candidates[message.candidateIndex].text.length(),
-            " insideForm "_s, message.isInsideForm, " bounds "_s, message.rect.x(), ","_s, message.rect.y(),
-            " "_s, message.rect.width(), "x"_s, message.rect.height());
+    if (shouldLogFormActivity()) {
+        for (const auto& message : messageBounds) {
+            AXFORMLOG("  candidate "_s, message.candidateIndex, " length "_s, candidates[message.candidateIndex].text.length(),
+                " insideForm "_s, message.isInsideForm, " bounds "_s, message.rect.x(), ","_s, message.rect.y(),
+                " "_s, message.rect.width(), "x"_s, message.rect.height());
+        }
     }
-#endif
 
     Vector<Pairing> pairings;
     for (size_t fieldIndex = 0; fieldIndex < fieldBounds.size(); ++fieldIndex) {
@@ -659,12 +682,12 @@ void AXFormActivityMonitor::report()
             ", affinity "_s, pairing.affinity);
     }
 
-#if !LOG_DISABLED
-    for (const auto& message : messageBounds) {
-        if (!candidateTaken[message.candidateIndex])
-            AXFORMLOG("  candidate "_s, message.candidateIndex, " paired with no field."_s);
+    if (shouldLogFormActivity()) {
+        for (const auto& message : messageBounds) {
+            if (!candidateTaken[message.candidateIndex])
+                AXFORMLOG("  candidate "_s, message.candidateIndex, " paired with no field."_s);
+        }
     }
-#endif
 
     bool detectedAnyError = !detectedErrors.isEmpty();
     if (detectedAnyError)

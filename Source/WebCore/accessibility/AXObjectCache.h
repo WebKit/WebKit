@@ -621,7 +621,7 @@ public:
     using SyncModeToOtherProcessesCallback = Function<void(AccessibilityMode)>;
     WEBCORE_EXPORT static void setSyncModeToOtherProcessesCallback(SyncModeToOtherProcessesCallback&&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT static bool isAppleInternalInstall();
 #endif
     static bool forceDeferredSpellChecking();
