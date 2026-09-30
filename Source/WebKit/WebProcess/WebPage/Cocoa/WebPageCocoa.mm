@@ -2867,13 +2867,6 @@ static void convertPositionInformationToMainFrameCoordinates(const LocalFrameVie
     information.dataDetectorBounds = convertRect(information.dataDetectorBounds);
 #endif
 
-    if (RefPtr textIndicator = information.textIndicator) {
-        // textRectsInBoundingRectCoordinates() are relative to the bounding rect, so they follow it.
-        textIndicator->setSelectionRectInMainFrameViewCoordinates(convertRect(textIndicator->selectionRectInMainFrameViewCoordinates()));
-        textIndicator->setTextBoundingRectInRootViewCoordinates(convertRect(textIndicator->textBoundingRectInRootViewCoordinates()));
-        textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(convertRect(textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()));
-    }
-
     if (information.elementContext)
         information.elementContext->boundingRect = convertRect(information.elementContext->boundingRect);
 
