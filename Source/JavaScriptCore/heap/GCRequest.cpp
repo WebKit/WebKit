@@ -30,10 +30,6 @@ namespace JSC {
 
 bool GCRequest::subsumedBy(const GCRequest& other) const
 {
-    // If we have callbacks, then there is no chance that we're subsumed by an existing request.
-    if (didFinishEndPhase)
-        return false;
-    
     if (other.scope == CollectionScope::Full)
         return true;
     
@@ -53,7 +49,7 @@ bool GCRequest::subsumedBy(const GCRequest& other) const
 
 void GCRequest::dump(PrintStream& out) const
 {
-    out.print("{scope = ", scope, ", didFinishEndPhase = ", didFinishEndPhase ? "engaged" : "null", "}");
+    out.print("{scope = ", scope, "}");
 }
 
 } // namespace JSC

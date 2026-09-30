@@ -591,9 +591,6 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
 
     didFinishCollection();
 
-    if (m_currentRequest.didFinishEndPhase)
-        RefPtr { m_currentRequest.didFinishEndPhase }->run();
-
     if (CollectorInternal::verbose) {
         dataLogLn(CollectorInternal::verbose, "Heap state after GC:");
         m_heap.m_objectSpace.dumpBits();
