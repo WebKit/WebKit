@@ -40,7 +40,8 @@ class RemoteSnapshotRecorderProxy : public RemoteGraphicsContextProxy {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSnapshotRecorderProxy);
 
 public:
-    RemoteSnapshotRecorderProxy(const WebCore::FloatRect& initialClip, RemoteRenderingBackendProxy&);
+    // renderingMode is RenderingMode::PDFDocument when the snapshot will be sunk into a PDF, and RenderingMode::DisplayList otherwise.
+    RemoteSnapshotRecorderProxy(const WebCore::FloatRect& initialClip, WebCore::RenderingMode, RemoteRenderingBackendProxy&);
     RemoteSnapshotRecorderIdentifier identifier() const { return RemoteSnapshotRecorderIdentifier { RemoteGraphicsContextProxy::identifier().toUInt64() }; }
 
     void drawSnapshotFrame(WebCore::FrameIdentifier);
