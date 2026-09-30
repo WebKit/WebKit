@@ -1,0 +1,17 @@
+Tests that wheel events scroll a full-size cross-site iframe whose content becomes scrollable after load.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller=document initial=tall wheelListener=false: scrolled
+PASS scroller=document initial=short wheelListener=false: scrolled
+PASS scroller=overflow initial=tall wheelListener=false: scrolled
+PASS scroller=overflow initial=short wheelListener=false: scrolled
+PASS scroller=document initial=tall wheelListener=true: scrolled
+PASS scroller=document initial=short wheelListener=true: scrolled
+PASS scroller=overflow initial=tall wheelListener=true: scrolled
+PASS scroller=overflow initial=short wheelListener=true: scrolled
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

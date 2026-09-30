@@ -1,0 +1,86 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; height: 100%; overflow: hidden; }
+/* Keep the iframe covering the viewport regardless of the text output. */
+iframe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<script>
+description("Tests that wheel events scroll a full-size cross-site iframe whose content becomes scrollable after load.");
+jsTestIsAsync = true;
+
+let iframe;
+
+function loadIframe(scroller, initial, wheelListener)
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        iframe?.remove();
+        iframe = document.createElement('iframe');
+        iframe.src = `http://localhost:8000/site-isolation/scrolling/resources/grow-content-iframe.html?scroller=${scroller}&initial=${initial}${wheelListener ? '&wheelListener' : ''}`;
+        document.body.appendChild(iframe);
+    });
+}
+
+function sendToIframe(message)
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.scrollPosition === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data.scrollPosition);
+        });
+        iframe.contentWindow.postMessage(message, '*');
+    });
+}
+
+async function runCase(scroller, initial, wheelListener)
+{
+    await loadIframe(scroller, initial, wheelListener);
+    if (initial == 'short')
+        await sendToIframe('grow');
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+
+    // Don't rely on UIHelper.waitForScrollCompletion() since the scrolling happens in another process.
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -200, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    let scrollPosition = 0;
+    for (let i = 0; i < 20 && !scrollPosition; ++i) {
+        await UIHelper.renderingUpdate();
+        scrollPosition = await sendToIframe('query');
+    }
+    if (scrollPosition > 0)
+        testPassed(`scroller=${scroller} initial=${initial} wheelListener=${wheelListener}: scrolled`);
+    else
+        testFailed(`scroller=${scroller} initial=${initial} wheelListener=${wheelListener}: did not scroll`);
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    for (const wheelListener of [false, true]) {
+        for (const scroller of ['document', 'overflow']) {
+            for (const initial of ['tall', 'short'])
+                await runCase(scroller, initial, wheelListener);
+        }
+    }
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>

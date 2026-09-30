@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; height: 100%; }
+#scroller { width: 100%; height: 100%; overflow: auto; }
+.content { height: 5000px; background: repeating-linear-gradient(#ff7e5f, #feb47b 500px); }
+</style>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const useOverflow = params.get('scroller') == 'overflow';
+const container = useOverflow ? document.body.appendChild(document.createElement('div')) : document.body;
+if (useOverflow)
+    container.id = 'scroller';
+
+function scrollPosition()
+{
+    return useOverflow ? container.scrollTop : window.scrollY;
+}
+
+function growContent()
+{
+    const content = document.createElement('div');
+    content.className = 'content';
+    container.appendChild(content);
+}
+
+// A non-passive wheel event listener forces wheel events to be handled synchronously in this process.
+if (params.has('wheelListener'))
+    addEventListener('wheel', () => { }, { passive: false });
+
+if (params.get('initial') == 'tall')
+    growContent();
+
+addEventListener('message', (event) => {
+    if (event.data == 'grow')
+        growContent();
+    // Force layout so the new content is reflected before replying.
+    document.body.offsetHeight;
+    event.source.postMessage({ scrollPosition: scrollPosition() }, '*');
+});
+
+parent.postMessage({ loaded: true }, '*');
+</script>
+</body>
