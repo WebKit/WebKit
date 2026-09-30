@@ -1309,6 +1309,8 @@ webkit.org/b/314313 platform/glib/fast/layers/fractional-transforms.html [ Image
 
 webkit.org/b/315291 css3/filters/composited-during-animation.html [ Pass Timeout ]
 
+webkit.org/b/325281 compositing/backing/backing-store-attachment-animating-pseudo-element-outside-viewport.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////

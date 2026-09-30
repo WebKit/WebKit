@@ -171,6 +171,7 @@ public:
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
     bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
     bool isRunningAcceleratedTransformRelatedAnimation() const;
+    bool isRunningOrAboutToRunAcceleratedTransformRelatedAnimation() const;
 
     bool NODELETE requiresPseudoElement() const;
 

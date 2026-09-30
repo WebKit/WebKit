@@ -296,6 +296,7 @@ private:
 #endif
 
     WEBCORE_EXPORT void setAllowsBackingStoreDetaching(bool) override;
+    WEBCORE_EXPORT void setAnimationExtent(std::optional<FloatRect>) override;
     bool allowsBackingStoreDetaching() const override { return m_allowsBackingStoreDetaching; }
 
     WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;

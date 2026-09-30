@@ -253,6 +253,14 @@ bool Styleable::isRunningAcceleratedTransformRelatedAnimation() const
     });
 }
 
+bool Styleable::isRunningOrAboutToRunAcceleratedTransformRelatedAnimation() const
+{
+    auto* effectStack = keyframeEffectStack();
+    return effectStack && effectStack->hasMatchingEffect([](auto& effect) {
+        return effect.isRunningOrAboutToRunAcceleratedTransformRelatedAnimation();
+    });
+}
+
 bool Styleable::hasRunningAcceleratedAnimations() const
 {
     if (auto* effectStack = keyframeEffectStack()) {

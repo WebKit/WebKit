@@ -4487,6 +4487,17 @@ void GraphicsLayerCA::setAllowsBackingStoreDetaching(bool allowDetaching)
     noteLayerPropertyChanged(CoverageRectChanged);
 }
 
+void GraphicsLayerCA::setAnimationExtent(std::optional<FloatRect> animationExtent)
+{
+    auto oldAnimationExtent = this->animationExtent();
+    GraphicsLayer::setAnimationExtent(animationExtent);
+    if (this->animationExtent() == oldAnimationExtent)
+        return;
+
+    // Whether the layer needs backing store depends on the extent, so re-evaluate it at the next flush.
+    noteLayerPropertyChanged(CoverageRectChanged);
+}
+
 void GraphicsLayerCA::setIsTrackingDisplayListReplay(bool isTracking)
 {
     if (isTracking == m_isTrackingDisplayListReplay)

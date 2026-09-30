@@ -81,6 +81,7 @@ struct Styleable {
 
     bool isRunningAcceleratedAnimationOfProperty(CSSPropertyID) const;
     bool isRunningAcceleratedTransformRelatedAnimation() const;
+    bool isRunningOrAboutToRunAcceleratedTransformRelatedAnimation() const;
     bool hasRunningAcceleratedAnimations() const;
 
     bool NODELETE capturedInViewTransition() const;
