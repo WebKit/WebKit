@@ -540,7 +540,8 @@ bool WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
         initializeContextState();
         initializeDefaultObjects();
     }
-    bool reshaped = m_defaultFramebuffer->reshape(clampedCanvasSize());
+    m_defaultFramebuffer->setSize(clampedCanvasSize());
+    bool reshaped = m_defaultFramebuffer->ensureSize();
     // Next calls will receive the context lost callback.
     m_context->setClient(this);
     return reshaped && !m_context->isContextLost();
@@ -733,9 +734,20 @@ void WebGLRenderingContextBase::willUpdateDrawingBufferContents(WebGLRenderingCo
     willUpdateCanvasContents();
 }
 
-bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
+bool WebGLRenderingContextBase::ensureDefaultFramebufferSize()
 {
     if (isContextLost())
+        return false;
+    if (!m_defaultFramebuffer->ensureSize()) {
+        forceContextLost();
+        return false;
+    }
+    return true;
+}
+
+bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
+{
+    if (!ensureDefaultFramebufferSize())
         return false;
 
     // `clearIfComposited()` is a function that prepares for updates. Mark the context as active.
@@ -842,7 +854,7 @@ RefPtr<NativeImage> WebGLRenderingContextBase::surfaceBufferToNativeImage(Surfac
     auto& readBuffer = readSurfaceBuffer(sourceBuffer);
     if (readBuffer.image)
         return readBuffer.image;
-    if (!isContextLost()) {
+    if (ensureDefaultFramebufferSize()) {
         if (sourceBuffer == SurfaceBuffer::DrawingBuffer) {
             clearIfComposited(CallerTypeOther);
             m_defaultFramebuffer->resolveColorIntoResult();
@@ -941,7 +953,7 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    if (isContextLost())
+    if (!ensureDefaultFramebufferSize())
         return nullptr;
     if (buffer == SurfaceBuffer::DrawingBuffer) {
         clearIfComposited(CallerTypeOther);
@@ -953,7 +965,7 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 
 RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 {
-    if (isContextLost())
+    if (!ensureDefaultFramebufferSize())
         return nullptr;
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
@@ -992,10 +1004,8 @@ void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
     m_readDrawingBuffer.clear();
     m_readDisplayBuffer.clear();
 
-    if (!m_defaultFramebuffer->reshape(newSize)) {
-        forceContextLost();
-        return;
-    }
+    // The storage is reallocated when it is next used.
+    m_defaultFramebuffer->setSize(newSize);
     updateMemoryCost();
 }
 

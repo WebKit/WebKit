@@ -834,6 +834,9 @@ protected:
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
     bool clearIfComposited(CallerType, GCGLbitfield clearMask = 0);
+    // Applies a pending resize of the default framebuffer. Must be called before the default
+    // framebuffer storage is used. Returns false if the context is lost.
+    bool ensureDefaultFramebufferSize();
 
     enum class TexImageFunctionType {
         TexImage,

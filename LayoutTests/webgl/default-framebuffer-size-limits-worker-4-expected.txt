@@ -161,9 +161,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
 [Worker] limits:
@@ -322,9 +334,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: true
 [Worker] limits:
@@ -483,9 +507,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
 [Worker] limits:
@@ -644,9 +680,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: false
 [Worker] limits:
@@ -805,9 +853,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
 [Worker] limits:
@@ -966,9 +1026,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: true
 [Worker] limits:
@@ -1127,9 +1199,21 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,0
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,0
+PASS [Worker] contextLostEventCount is 0
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: false
 [Worker] limits:
@@ -1461,11 +1545,22 @@ PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,
 PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,255
 PASS [Worker] contextLostEventCount is 0
 [Worker] wide at the limit after tall at the limit: after the resize:
-FAIL [Worker] gl.drawingBufferWidth == expectedWidth should be true. Was false.
-FAIL [Worker] gl.drawingBufferHeight == expectedHeight should be true. Was false.
-FAIL [Worker] gl.isContextLost() should be false. Was true.
+PASS [Worker] gl.drawingBufferWidth == expectedWidth is true
+PASS [Worker] gl.drawingBufferHeight == expectedHeight is true
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] getError was expected value: NO_ERROR : after the resize
+PASS [Worker] Array.from(gl.getParameter(gl.VIEWPORT)) is viewportBeforeResize
+[Worker] wide at the limit after tall at the limit: after drawing:
+PASS [Worker] readPixel(0, 0) is "0,255,0,255"
+PASS [Worker] readPixel(bufferWidth - 1, bufferHeight - 1) is "0,255,0,255"
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, attributes.alpha ? gl.RGBA : gl.RGB, 0, 0, bufferWidth, bufferHeight, 0)
+PASS [Worker] drawImage() of the canvas at the origin is 0,255,0,255
+PASS [Worker] drawImage() of the canvas at the far corner is 0,255,0,255
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] drawImage() of the canvas after presenting at the origin is 0,0,0,255
+PASS [Worker] drawImage() of the canvas after presenting at the far corner is 0,0,0,255
+PASS [Worker] contextLostEventCount is 0
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 

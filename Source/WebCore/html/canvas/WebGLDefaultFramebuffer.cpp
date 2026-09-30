@@ -152,9 +152,24 @@ std::optional<ScopedWebGLRestoreFramebuffer> WebGLDefaultFramebuffer::prepareFor
     return ScopedWebGLRestoreFramebuffer { context };
 }
 
-bool WebGLDefaultFramebuffer::reshape(IntSize size)
+void WebGLDefaultFramebuffer::setSize(IntSize size)
 {
+    if (size == m_size)
+        return;
     m_size = size;
+    m_needsReshape = true;
+}
+
+bool WebGLDefaultFramebuffer::ensureSize()
+{
+    if (!std::exchange(m_needsReshape, false))
+        return true;
+    return reshape();
+}
+
+bool WebGLDefaultFramebuffer::reshape()
+{
+    IntSize size = m_size;
     Ref context = m_context.get();
     Ref gl = *context->graphicsContextGL();
     auto& attributes = context->attributes();

@@ -668,6 +668,9 @@ void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
     if (isContextLost())
         return;
     willUpdateDrawingBufferContents(CallerTypeOther);
+    // The default framebuffer may be the source or the destination, so it must be allocated to its
+    // current size and hold its cleared contents.
+    clearIfComposited(CallerTypeOther);
     protect(graphicsContextGL())->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
