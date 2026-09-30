@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSStringInlines.h>
 #include <JavaScriptCore/Lexer.h>
 #include <JavaScriptCore/SourceCharacters.h>
 #include <wtf/dtoa.h>
