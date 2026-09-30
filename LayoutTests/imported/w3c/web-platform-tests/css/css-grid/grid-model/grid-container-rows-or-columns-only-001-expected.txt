@@ -1,0 +1,6 @@
+This test checks that a grid container with row(s) (resp. column(s)) but no column (resp. row) is properly laid out.
+
+
+PASS .grid 1
+PASS .grid 2
+

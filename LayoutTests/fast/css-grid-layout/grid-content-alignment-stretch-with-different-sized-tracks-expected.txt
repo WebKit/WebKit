@@ -1,8 +1,0 @@
-This test checks that Content Distribution alignment applies 'stretch' correctly when using different sized tracks.
-
-Mixing fixed sized and auto-sized tracks.
-
-PASS
-Mixing flexible and auto-sized tracks.
-
-PASS

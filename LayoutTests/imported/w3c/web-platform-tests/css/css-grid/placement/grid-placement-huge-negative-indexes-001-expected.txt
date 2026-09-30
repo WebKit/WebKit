@@ -1,0 +1,9 @@
+This test checks that grid items with large negative line numbers are placed and sized correctly.
+XXXXX XXXXXX
+XXXXX XXXXXX
+XXXXX XXXXXX
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+

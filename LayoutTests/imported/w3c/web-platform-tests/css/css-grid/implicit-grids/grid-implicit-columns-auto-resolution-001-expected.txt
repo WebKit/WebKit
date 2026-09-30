@@ -1,0 +1,10 @@
+Test that auto implicit columns are sized to their grid items' content.
+
+XXX XXX XXX
+XX XX XX XX XX XX
+XXXXX
+
+PASS .gridAutoContent 1
+PASS .gridAutoContent 2
+PASS .gridAutoContent 3
+

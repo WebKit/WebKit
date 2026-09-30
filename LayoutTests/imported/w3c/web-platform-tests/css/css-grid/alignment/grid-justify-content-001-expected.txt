@@ -1,0 +1,43 @@
+This test checks that the justify-content property is applied correctly when using content-position values.
+
+direction: LTR | justify-content: 'center'
+
+direction: LTR | justify-content: 'left'
+
+direction: LTR | justify-content: 'right'
+
+direction: LTR | justify-content: 'start'
+
+direction: LTR | justify-content: 'end'
+
+direction: LTR | justify-content: 'flex-start'
+
+direction: LTR | justify-content: 'flex-end'
+
+direction: LTR | justify-content: 'auto' (resolved to 'start')
+
+direction: RTL | justify-content: 'center'
+
+direction: RTL | justify-content: 'left'
+
+direction: RTL | justify-content: 'right'
+
+direction: RTL | justify-content: 'start'
+
+direction: RTL | justify-content: 'end'
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+PASS .grid 8
+PASS .grid 9
+PASS .grid 10
+PASS .grid 11
+PASS .grid 12
+PASS .grid 13
+

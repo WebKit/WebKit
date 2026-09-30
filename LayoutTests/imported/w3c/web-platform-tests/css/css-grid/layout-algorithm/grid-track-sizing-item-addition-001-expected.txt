@@ -1,0 +1,131 @@
+This test checks that we properly recompute our grid tracks' sizes when we add more grid items.
+
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXX XXXX XXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+XXXXXX XXXXXX
+
+PASS #constrainedGrid 1
+PASS #constrainedGrid 2
+PASS #constrainedGrid 3
+PASS #constrainedGrid 4
+PASS #constrainedGrid 5
+PASS #constrainedGrid 6
+PASS #constrainedGrid 7
+PASS #constrainedGrid 8
+PASS #constrainedGrid 9
+PASS #constrainedGrid 10
+PASS #constrainedGrid 11
+PASS #constrainedGrid 12
+PASS #constrainedGrid 13
+PASS #constrainedGrid 14
+PASS #constrainedGrid 15
+PASS #constrainedGrid 16
+PASS #constrainedGrid 17
+PASS #constrainedGrid 18
+PASS #constrainedGrid 19
+PASS #constrainedGrid 20
+PASS #constrainedGrid 21
+PASS #constrainedGridUndefinedHeight 22
+PASS #constrainedGridUndefinedHeight 23
+PASS #constrainedGridUndefinedHeight 24
+PASS #constrainedGridUndefinedHeight 25
+PASS #constrainedGridUndefinedHeight 26
+PASS #constrainedGridUndefinedHeight 27
+PASS #constrainedGridUndefinedHeight 28
+PASS #constrainedGridUndefinedHeight 29
+PASS #constrainedGridUndefinedHeight 30
+PASS #constrainedGridUndefinedHeight 31
+PASS #constrainedGridUndefinedHeight 32
+PASS #constrainedGridUndefinedHeight 33
+PASS #constrainedGridUndefinedHeight 34
+PASS #constrainedGridUndefinedHeight 35
+PASS #constrainedGridUndefinedHeight 36
+PASS #constrainedGridUndefinedHeight 37
+PASS #constrainedGridUndefinedHeight 38
+PASS #constrainedGridUndefinedHeight 39
+PASS #constrainedGridUndefinedHeight 40
+PASS #constrainedGridUndefinedHeight 41
+PASS #constrainedGridUndefinedHeight 42
+PASS #unconstrainedGrid 43
+PASS #unconstrainedGrid 44
+PASS #unconstrainedGrid 45
+PASS #unconstrainedGrid 46
+PASS #unconstrainedGrid 47
+PASS #unconstrainedGrid 48
+PASS #unconstrainedGrid 49
+PASS #unconstrainedGrid 50
+PASS #unconstrainedGrid 51
+PASS #unconstrainedGrid 52
+PASS #unconstrainedGrid 53
+PASS #unconstrainedGrid 54
+PASS #unconstrainedGrid 55
+PASS #unconstrainedGrid 56
+PASS #unconstrainedGrid 57
+PASS #unconstrainedGrid 58
+PASS #unconstrainedGrid 59
+PASS #unconstrainedGrid 60
+PASS #unconstrainedGrid 61
+PASS #unconstrainedGrid 62
+PASS #unconstrainedGrid 63
+

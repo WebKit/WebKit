@@ -1,0 +1,10 @@
+This test checks that the 'stretch' value is only applied if neither of its margins (in the appropriate axis) are 'auto'.
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+

@@ -1,0 +1,15 @@
+This test checks that laying out the grid several times gives the same sizes each time.
+
+XX X
+XX X
+
+XX X
+XX X
+
+XX X
+XX X
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+

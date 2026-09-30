@@ -1,0 +1,8 @@
+Test that resolving percent lengths on grid items works properly on a fixed grid with different writing modes.
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+

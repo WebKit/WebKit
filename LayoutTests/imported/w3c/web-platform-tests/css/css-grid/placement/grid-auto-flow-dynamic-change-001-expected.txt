@@ -1,0 +1,9 @@
+This test checks that updating the grid container's grid-auto-flow property recomputes the grid.
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+

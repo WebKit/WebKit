@@ -1,0 +1,28 @@
+This test checks that the tracks' auto positions are recomputed after adding a grid item.
+
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+
+PASS #gridAutoFlowColumnSparse 1
+PASS #autoFlowColumnElement 2
+PASS #autoFlowColumnElement 3
+PASS #autoFlowColumnElement 4
+PASS #autoFlowColumnElement 5
+PASS #gridAutoFlowRowSparse 6
+PASS #autoFlowRowElement 7
+PASS #autoFlowRowElement 8
+PASS #autoFlowRowElement 9
+PASS #autoFlowRowElement 10
+PASS #gridAutoFlowColumnWithAuto 11
+PASS #autoFlowColumnElementWithAuto 12
+PASS #autoFlowColumnElementWithAuto 13
+PASS #autoFlowColumnElementWithAuto 14
+PASS #autoFlowColumnElementWithAuto 15
+PASS #gridAutoFlowRowWithAuto 16
+PASS #autoFlowRowElementWithAuto 17
+PASS #autoFlowRowElementWithAuto 18
+PASS #autoFlowRowElementWithAuto 19
+PASS #autoFlowRowElementWithAuto 20
+

@@ -1,0 +1,10 @@
+X
+X
+X
+X
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+
