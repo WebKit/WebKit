@@ -4122,7 +4122,6 @@ webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-variation
 webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-variation-settings-descriptor-04.html [ ImageOnlyFailure ]
 webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/matching/font-weight-search-direction.html [ ImageOnlyFailure ]
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Slow ]
-webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 webkit.org/b/302127 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-justify-items-end-justify-self-start-001.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
