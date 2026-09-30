@@ -269,6 +269,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/CSSParser.cpp
         Tests/WebCore/CSSParserFastPaths.cpp
         Tests/WebCore/CSSTokenizerTests.cpp
+        Tests/WebCore/CSSValueAggregates.cpp
         Tests/WebCore/CachedMatchFinder.cpp
         Tests/WebCore/ColorTests.cpp
         Tests/WebCore/ComplexTextController.cpp

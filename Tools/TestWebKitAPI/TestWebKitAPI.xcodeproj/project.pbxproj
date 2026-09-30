@@ -808,6 +808,7 @@
 				WebCore/CSSParser.cpp,
 				WebCore/CSSParserFastPaths.cpp,
 				WebCore/CSSTokenizerTests.cpp,
+				WebCore/CSSValueAggregates.cpp,
 				WebCore/CtapPinTest.cpp,
 				WebCore/CtapRequestTest.cpp,
 				WebCore/CtapResponseTest.cpp,

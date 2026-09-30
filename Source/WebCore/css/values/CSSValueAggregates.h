@@ -1303,7 +1303,7 @@ template<typename T> struct MinimallySerializingSpaceSeparatedPair {
 
     template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(functor);
+        return value.anyOf(functor);
     }
 
     template<typename F> bool allOf(NOESCAPE const F& functor) const
@@ -1502,7 +1502,7 @@ template<typename T> struct SpaceSeparatedPoint {
 
     template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(functor);
+        return value.anyOf(functor);
     }
 
     template<typename F> bool allOf(NOESCAPE const F& functor) const
@@ -1551,7 +1551,7 @@ template<typename T> struct SpaceSeparatedSize {
 
     template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(functor);
+        return value.anyOf(functor);
     }
 
     template<typename F> bool allOf(NOESCAPE const F& functor) const
@@ -1605,7 +1605,7 @@ template<typename T> struct MinimallySerializingSpaceSeparatedPoint {
 
     template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(functor);
+        return value.anyOf(functor);
     }
 
     template<typename F> bool allOf(NOESCAPE const F& functor) const
@@ -1660,7 +1660,7 @@ template<typename T> struct MinimallySerializingSpaceSeparatedSize {
 
     template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(functor);
+        return value.anyOf(functor);
     }
 
     template<typename F> bool allOf(NOESCAPE const F& functor) const
