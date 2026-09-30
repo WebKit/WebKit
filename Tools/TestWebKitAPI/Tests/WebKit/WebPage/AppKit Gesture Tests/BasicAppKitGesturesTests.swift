@@ -1673,6 +1673,50 @@ extension AppKitGesturesTests.Basic {
         #expect(eventLog == (initialValue...maximumValue).map(Double.init))
     }
 
+    @Test(
+        .bug("https://webkit.org/b/325084", "Press-dragging some range inputs only changes their value when the press ends"),
+        arguments: [false, true],
+        pressDragOverStyledRangeInputStyleValues
+    )
+    func pressDragOverStyledRangeInputChangesInputValue(useNativeWidget: Bool, styleValue: String) async throws {
+        let maximumValue = 10
+        let initialValue = maximumValue / 2
+        let elementID = useNativeWidget ? "native-slider" : "custom-slider"
+
+        let url = try #require(Bundle.testResources.url(forResource: "custom-slider", withExtension: "html"))
+        try await page.load(url).wait()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript(
+            arguments: ["elementID": elementID, "styleValue": styleValue],
+            script: styleAdjustmentForManipulationSurfaceScript
+        )
+        await page.waitForNextPresentationUpdate()
+
+        let sliderBounds = try await screenBounds(ofElementWithID: elementID)
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: sliderBounds.center,
+                end: CGPoint(x: sliderBounds.maxX, y: sliderBounds.center.y),
+                duration: .seconds(1.5),
+                pressAndWait: .seconds(0.5)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let finalSliderValue = try await sliderValue(elementID: elementID, useNativeWidget: useNativeWidget)
+        #expect(finalSliderValue == Double(maximumValue))
+
+        let eventLog = try await page.callJavaScript(returning: [Double].self, arguments: ["elementID": elementID]) {
+            """
+            return [...window.eventLog[elementID]];
+            """
+        }
+
+        // A drag held back until release would jump straight from the initial value to the last one.
+        #expect(eventLog == (initialValue...maximumValue).map(Double.init))
+    }
+
     @Test(arguments: [true, false])
     func pressAndHoldBeforeDraggingOverSliderDoesNotOpenContextMenu(useNativeWidget: Bool) async throws {
         let elementID = try await dragAcrossSlider(useNativeWidget: useNativeWidget, pressAndWait: .seconds(1))
