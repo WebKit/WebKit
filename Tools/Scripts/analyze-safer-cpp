@@ -47,42 +47,21 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
 
 
+from webkitpy.common.checkout.scm.git import Git  # noqa: E402
+from webkitpy.common.system.executive import ScriptError  # noqa: E402
+from webkitpy.safer_cpp.checkers import ANALYZER_DISABLED_CATEGORIES, Checker, PROJECTS  # noqa: E402
+
+
 def find_webkit_root():
-    proc = subprocess.run(['git', 'rev-parse', '--show-toplevel'],
-                          capture_output=True, text=True)
-    if proc.returncode == 0 and proc.stdout.strip():
-        return os.path.realpath(proc.stdout.strip())
-    return os.path.dirname(os.path.dirname(SCRIPT_DIR))
+    try:
+        return os.path.realpath(Git(cwd=SCRIPT_DIR, patch_directories=None).checkout_root)
+    except ScriptError:
+        return os.path.dirname(os.path.dirname(SCRIPT_DIR))
 
 
 WEBKIT_ROOT = find_webkit_root()
-
-from webkitpy.safer_cpp.checkers import Checker, PROJECTS  # noqa: E402
-
-WEBKIT_CHECKERS = [
-    'alpha.webkit.ForwardDeclChecker',
-    'alpha.webkit.MemoryUnsafeCastChecker',
-    'alpha.webkit.NoDeleteChecker',
-    'alpha.webkit.NoUncheckedPtrMemberChecker',
-    'alpha.webkit.NoUnretainedMemberChecker',
-    'alpha.webkit.RetainPtrCtorAdoptChecker',
-    'alpha.webkit.UnborrowedCallArgsChecker',
-    'alpha.webkit.UnborrowedLambdaCapturesChecker',
-    'alpha.webkit.UnborrowedLocalVarsChecker',
-    'alpha.webkit.UncheckedCallArgsChecker',
-    'alpha.webkit.UncheckedLocalVarsChecker',
-    'alpha.webkit.UncountedCallArgsChecker',
-    'alpha.webkit.UncountedLocalVarsChecker',
-    'alpha.webkit.UnretainedCallArgsChecker',
-    'alpha.webkit.UnretainedLambdaCapturesChecker',
-    'alpha.webkit.UnretainedLocalVarsChecker',
-    'webkit.NoUncountedMemberChecker',
-    'webkit.RefCntblBaseVirtualDtor',
-    'webkit.UncountedLambdaCapturesChecker',
-]
-
-# Keep in sync with Tools/Scripts/build-and-analyze make_analyzer_flags().
-DISABLE_CATEGORIES = 'alpha,apiModeling,core,cplusplus,deadcode,debug,fuchsia,nullability,optin,osx,security,unix,webkit'
+WEBKIT_CHECKERS = Checker.analyzer_names()
+DISABLE_CATEGORIES = ','.join(ANALYZER_DISABLED_CATEGORIES)
 
 SOURCE_EXT = {'.cpp', '.cc', '.cxx', '.c', '.mm', '.m'}
 HEADER_EXT = {'.h', '.hpp', '.hxx'}
@@ -437,8 +416,11 @@ def normalize_checkers(values, parser):
             result.append(v)
         elif v in shortNames:
             result.append(shortNames[v])
+        elif v.startswith(('alpha.webkit.', 'webkit.')):
+            # A checker the registry does not list yet, such as the borrow checkers.
+            result.append(v)
         else:
-            parser.error("unknown checker '{}'; valid names: {}".format(
+            parser.error("unknown checker '{}'; valid names: {}, or any full alpha.webkit.* or webkit.* name".format(
                 v, ', '.join(sorted(shortNames))))
     return result
 
