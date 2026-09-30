@@ -30,7 +30,7 @@ function test() {
                     return;
                 }
 
-                CanvasAgent.requestContent(canvas.identifier)
+                canvas.target.CanvasAgent.requestContent(canvas.identifier)
                 .then(({content}) => InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Content should not be empty."))
                 .then(resolve, reject);
             }
@@ -47,7 +47,7 @@ function test() {
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.requestContent(canvasId, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.requestContent(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();

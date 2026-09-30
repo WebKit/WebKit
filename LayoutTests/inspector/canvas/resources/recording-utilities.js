@@ -159,7 +159,7 @@ TestPage.registerInitializer(() => {
 
             if (canvas.recordingActive) {
                 if (!frameCount)
-                    CanvasAgent.stopRecording(canvas.identifier).catch(reject);
+                    canvas.target.CanvasAgent.stopRecording(canvas.identifier).catch(reject);
             } else {
                 InspectorTest.evaluateInPage(`cancelActions()`)
                 .then(() => {
@@ -209,7 +209,7 @@ TestPage.registerInitializer(() => {
             InspectorTest.evaluateInPage(`performActions()`).catch(reject);
         });
 
-        CanvasAgent.startRecording(canvas.identifier, frameCount, memoryLimit).catch(reject);
+        canvas.target.CanvasAgent.startRecording(canvas.identifier, frameCount, memoryLimit).catch(reject);
     };
 
     window.consoleRecord = function(type, resolve, reject, {actionCount = 1} = {}) {

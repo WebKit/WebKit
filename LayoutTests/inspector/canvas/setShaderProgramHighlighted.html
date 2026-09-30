@@ -86,7 +86,7 @@ function test() {
         suite.addTestCase({
             name,
             test(resolve, reject) {
-                CanvasAgent.setShaderProgramHighlighted(shaderProgram.identifier, highlighted, (error) => {
+                shaderProgram.target.CanvasAgent.setShaderProgramHighlighted(shaderProgram.identifier, highlighted, (error) => {
                     if (error) {
                         reject(error);
                         return;
@@ -98,7 +98,7 @@ function test() {
                             return;
                         }
 
-                        CanvasAgent.requestContent(shaderProgram.canvas.identifier)
+                        shaderProgram.canvas.target.CanvasAgent.requestContent(shaderProgram.canvas.identifier)
                         .then(({content}) => {
                             if (highlighted) {
                                 contentForEval[evaluateString] = content;
@@ -143,7 +143,7 @@ function test() {
         test(resolve, reject) {
             const programId = "INVALID_PROGRAM_ID";
             const highlighted = false;
-            CanvasAgent.setShaderProgramHighlighted(programId, highlighted, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.setShaderProgramHighlighted(programId, highlighted, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
@@ -151,7 +151,7 @@ function test() {
         }
     });
 
-    CanvasAgent.requestContent(shaderProgram.canvas.identifier, (error, content) => {
+    shaderProgram.canvas.target.CanvasAgent.requestContent(shaderProgram.canvas.identifier, (error, content) => {
         originalContent = content;
 
         suite.runTestCasesAndFinish();

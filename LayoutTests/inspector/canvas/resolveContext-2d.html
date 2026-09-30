@@ -36,7 +36,7 @@ function test()
                 }
 
                 const objectGroup = "test";
-                CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+                canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup)
                 .then(({object}) => {
                     InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
                     InspectorTest.expectEqual(object.className, classNameForContextType(contextType), `Payload should have expected className"`); 
@@ -58,7 +58,7 @@ function test()
         test(resolve, reject) {
             const identifier = "DOES_NOT_EXIST";
             const objectGroup = "test";
-            CanvasAgent.resolveContext(identifier, objectGroup, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.resolveContext(identifier, objectGroup, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();

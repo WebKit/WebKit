@@ -101,7 +101,7 @@ function test() {
                 })
                 .then(resolve, reject);
 
-                CanvasAgent.setRecordingAutoCaptureFrameCount(frameCount)
+                InspectorTest.mainFrameTarget.CanvasAgent.setRecordingAutoCaptureFrameCount(frameCount)
                 .then(() => {
                     InspectorTest.evaluateInPage(expression).catch(reject);
                 })

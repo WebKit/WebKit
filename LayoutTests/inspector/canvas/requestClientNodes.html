@@ -38,7 +38,7 @@ function test() {
         description: "Invalid canvas identifiers should cause an error.",
         async test() {
             const canvasId = "DOES_NOT_EXIST";
-            let error = await CanvasAgent.requestCSSCanvasClientNodes(canvasId).then(() => null, (error) => error);
+            let error = await InspectorTest.mainFrameTarget.CanvasAgent.requestCSSCanvasClientNodes(canvasId).then(() => null, (error) => error);
             InspectorTest.expectThat(error, "Should produce an error.");
             InspectorTest.log("Error: " + error.message);
         }

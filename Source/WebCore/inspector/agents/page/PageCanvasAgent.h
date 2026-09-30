@@ -27,7 +27,6 @@
 
 #include "InspectorCanvasAgent.h"
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -48,7 +47,6 @@ public:
 
     // InspectorInstrumentation
     void frameNavigated(LocalFrame&);
-    void didChangeCSSCanvasClientNodes(CanvasBase&);
     void didChangeGPUDeviceClientNodes(GPUDevice&) override;
 
 private:
@@ -57,15 +55,12 @@ private:
     void internalEnable() override;
     void internalDisable() override;
 
-    void dispatchNodesChanged(InspectorCanvas&);
-    void dispatchCSSCanvasClientNodesChanged(InspectorCanvas&);
-    void dispatchCSSCanvasNamesChanged(InspectorCanvas&);
-
     bool matchesCurrentContext(ScriptExecutionContext*) const override;
 
+    bool isSiteIsolationEnabled() const;
+
     WeakRef<Page> m_inspectedPage;
-    WeakHashSet<InspectorCanvas> m_pendingNodesChange;
-    WeakHashSet<InspectorCanvas> m_pendingCSSCanvasClientNodesChange;
+    bool m_enabledUnderSiteIsolation { false };
 };
 
 } // namespace WebCore

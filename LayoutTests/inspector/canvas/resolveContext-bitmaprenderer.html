@@ -24,7 +24,7 @@ function test()
             }
 
             const objectGroup = "test";
-            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup)
             .then(({object}) => {
                 InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
                 InspectorTest.expectEqual(object.className, "ImageBitmapRenderingContext", `Payload should have className "ImageBitmapRenderingContext".`);

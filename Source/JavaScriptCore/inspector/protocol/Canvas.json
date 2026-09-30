@@ -2,7 +2,7 @@
     "domain": "Canvas",
     "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
     "debuggableTypes": ["web-page"],
-    "targetTypes": ["page", "worker"],
+    "targetTypes": ["frame", "page", "worker"],
     "types": [
         {
             "id": "CanvasId",
@@ -100,7 +100,7 @@
         {
             "name": "requestNodes",
             "description": "Gets the NodeIds for the canvas nodes with the given CanvasId.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." }
             ],
@@ -121,7 +121,7 @@
         {
             "name": "requestCSSCanvasClientNodes",
             "description": "Gets all nodes using a <code>-webkit-canvas</code> image associated with the given CanvasId.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" }
             ],
@@ -239,21 +239,21 @@
         },
         {
             "name": "nodesChanged",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
             ]
         },
         {
             "name": "cssCanvasClientNodesChanged",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
             ]
         },
         {
             "name": "cssCanvasNamesChanged",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
                 { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." }

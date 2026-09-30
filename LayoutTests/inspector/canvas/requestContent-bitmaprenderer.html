@@ -28,7 +28,7 @@ function test() {
                 return;
             }
 
-            CanvasAgent.requestContent(canvas.identifier)
+            canvas.target.CanvasAgent.requestContent(canvas.identifier)
             .then(({content}) => InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Content should not be empty."))
             .then(resolve, reject);
         }

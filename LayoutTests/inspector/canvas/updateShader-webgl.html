@@ -38,8 +38,8 @@ function test() {
 
                 let programId = shaderProgram.identifier;
 
-                CanvasAgent.updateShader(programId, shaderType, source)
-                .then(() => CanvasAgent.requestShaderSource(programId, shaderType))
+                shaderProgram.target.CanvasAgent.updateShader(programId, shaderType, source)
+                .then(() => shaderProgram.target.CanvasAgent.requestShaderSource(programId, shaderType))
                 .then(({source}) => InspectorTest.log(source))
                 .then(resolve, reject);
             }
@@ -81,8 +81,8 @@ function test() {
                 let programId = shaderProgram.identifier;
 
                 // FIXME: Add UI for reporting shader errors <https://webkit.org/b/244077> 
-                CanvasAgent.updateShader(programId, shaderType, source)
-                .then(() => CanvasAgent.requestShaderSource(programId, shaderType))
+                shaderProgram.target.CanvasAgent.updateShader(programId, shaderType, source)
+                .then(() => shaderProgram.target.CanvasAgent.requestShaderSource(programId, shaderType))
                 .then(({source}) => InspectorTest.log(source))
                 .then(resolve, reject);
             }
@@ -113,7 +113,7 @@ function test() {
 
             const shaderType = "INVALID_SHADER_TYPE";
             const source = "INVALID_SOURCE";
-            CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
+            shaderProgram.target.CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();

@@ -461,6 +461,30 @@ void InspectorCanvasAgent::didChangeCanvasMemory(const CanvasRenderingContext& c
     m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), inspectorCanvas->memoryCost());
 }
 
+void InspectorCanvasAgent::didChangeCSSCanvasClientNodes(CanvasBase& canvasBase)
+{
+    RefPtr context = canvasBase.renderingContext();
+    if (!context) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr<InspectorCanvas> inspectorCanvas;
+    if (WeakPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context)) {
+        WeakPtr device = gpuCanvasContext->device();
+        if (!device)
+            return;
+        inspectorCanvas = findInspectorCanvas(*device);
+    } else
+        inspectorCanvas = findInspectorCanvas(*context);
+
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    dispatchCSSCanvasClientNodesChanged(*inspectorCanvas);
+}
+
 void InspectorCanvasAgent::canvasContentsWillChange(CanvasBase& canvasBase, const FloatRect&)
 {
     RefPtr context = canvasBase.renderingContext();
@@ -999,6 +1023,30 @@ void InspectorCanvasAgent::dispatchCanvasSizeChanged(InspectorCanvas& inspectorC
         }
     }
     m_frontendDispatcher->canvasSizeChanged(inspectorCanvas.identifier(), WTF::move(sizesPayload));
+}
+
+void InspectorCanvasAgent::dispatchNodesChanged(InspectorCanvas& inspectorCanvas)
+{
+    if (!m_pendingNodesChange.add(inspectorCanvas).isNewEntry)
+        return;
+
+    m_frontendDispatcher->nodesChanged(inspectorCanvas.identifier());
+}
+
+void InspectorCanvasAgent::dispatchCSSCanvasClientNodesChanged(InspectorCanvas& inspectorCanvas)
+{
+    if (!m_pendingCSSCanvasClientNodesChange.add(inspectorCanvas).isNewEntry)
+        return;
+
+    m_frontendDispatcher->cssCanvasClientNodesChanged(inspectorCanvas.identifier());
+}
+
+void InspectorCanvasAgent::dispatchCSSCanvasNamesChanged(InspectorCanvas& inspectorCanvas)
+{
+    Ref cssCanvasNames = JSON::ArrayOf<String>::create();
+    for (auto& cssCanvasName : inspectorCanvas.cssCanvasNames())
+        cssCanvasNames->addItem(cssCanvasName);
+    m_frontendDispatcher->cssCanvasNamesChanged(inspectorCanvas.identifier(), WTF::move(cssCanvasNames));
 }
 
 void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)

@@ -34,7 +34,6 @@
 #include "DocumentPage.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
-#include "GPUCanvasContext.h"
 #include "GPUDevice.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -46,6 +45,8 @@
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
+#include "Page.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -66,13 +67,28 @@ PageCanvasAgent::PageCanvasAgent(PageAgentContext& context)
 
 PageCanvasAgent::~PageCanvasAgent() = default;
 
+bool PageCanvasAgent::isSiteIsolationEnabled() const
+{
+    return m_inspectedPage->settings().siteIsolationEnabled();
+}
+
 bool PageCanvasAgent::enabled() const
 {
+    if (isSiteIsolationEnabled())
+        return m_enabledUnderSiteIsolation;
+
     return Ref { m_instrumentingAgents.get() }->enabledPageCanvasAgent() == this && InspectorCanvasAgent::enabled();
 }
 
 void PageCanvasAgent::internalEnable()
 {
+    // Under site isolation, each frame's FrameCanvasAgent reports that frame's canvases, so this agent
+    // stays out of the page's InstrumentingAgents and does not bind any canvases.
+    if (isSiteIsolationEnabled()) {
+        m_enabledUnderSiteIsolation = true;
+        return;
+    }
+
     Ref { m_instrumentingAgents.get() }->setEnabledPageCanvasAgent(this);
 
     InspectorCanvasAgent::internalEnable();
@@ -80,6 +96,11 @@ void PageCanvasAgent::internalEnable()
 
 void PageCanvasAgent::internalDisable()
 {
+    if (isSiteIsolationEnabled()) {
+        m_enabledUnderSiteIsolation = false;
+        return;
+    }
+
     Ref { m_instrumentingAgents.get() }->setEnabledPageCanvasAgent(nullptr);
 
     InspectorCanvasAgent::internalDisable();
@@ -162,30 +183,6 @@ void PageCanvasAgent::frameNavigated(LocalFrame& frame)
         unbindCanvas(*inspectorCanvas);
 }
 
-void PageCanvasAgent::didChangeCSSCanvasClientNodes(CanvasBase& canvasBase)
-{
-    RefPtr context = canvasBase.renderingContext();
-    if (!context) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr<InspectorCanvas> inspectorCanvas;
-    if (WeakPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context)) {
-        WeakPtr device = gpuCanvasContext->device();
-        if (!device)
-            return;
-        inspectorCanvas = findInspectorCanvas(*device);
-    } else
-        inspectorCanvas = findInspectorCanvas(*context);
-
-    ASSERT(inspectorCanvas);
-    if (!inspectorCanvas)
-        return;
-
-    dispatchCSSCanvasClientNodesChanged(*inspectorCanvas);
-}
-
 void PageCanvasAgent::didChangeGPUDeviceClientNodes(GPUDevice& device)
 {
     InspectorCanvasAgent::didChangeGPUDeviceClientNodes(device);
@@ -197,30 +194,6 @@ void PageCanvasAgent::didChangeGPUDeviceClientNodes(GPUDevice& device)
     dispatchCSSCanvasNamesChanged(*inspectorCanvas);
     dispatchCSSCanvasClientNodesChanged(*inspectorCanvas);
     dispatchNodesChanged(*inspectorCanvas);
-}
-
-void PageCanvasAgent::dispatchNodesChanged(InspectorCanvas& inspectorCanvas)
-{
-    if (!m_pendingNodesChange.add(inspectorCanvas).isNewEntry)
-        return;
-
-    m_frontendDispatcher->nodesChanged(inspectorCanvas.identifier());
-}
-
-void PageCanvasAgent::dispatchCSSCanvasClientNodesChanged(InspectorCanvas& inspectorCanvas)
-{
-    if (!m_pendingCSSCanvasClientNodesChange.add(inspectorCanvas).isNewEntry)
-        return;
-
-    m_frontendDispatcher->cssCanvasClientNodesChanged(inspectorCanvas.identifier());
-}
-
-void PageCanvasAgent::dispatchCSSCanvasNamesChanged(InspectorCanvas& inspectorCanvas)
-{
-    Ref cssCanvasNames = JSON::ArrayOf<String>::create();
-    for (auto& cssCanvasName : inspectorCanvas.cssCanvasNames())
-        cssCanvasNames->addItem(cssCanvasName);
-    m_frontendDispatcher->cssCanvasNamesChanged(inspectorCanvas.identifier(), WTF::move(cssCanvasNames));
 }
 
 bool PageCanvasAgent::matchesCurrentContext(ScriptExecutionContext* scriptExecutionContext) const
