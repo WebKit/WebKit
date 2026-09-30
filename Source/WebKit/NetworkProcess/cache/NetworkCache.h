@@ -310,8 +310,12 @@ private:
     HashMap<String, Vector<CompressionDictionaryIndexEntry>> m_compressionDictionaryIndex;
     // What changed while the startup scan ran, so records it delivers late can be skipped.
     struct CompressionDictionaryIndexPopulation {
+        CompressionDictionaryIndexPopulation()
+            : clearedSince(WallTime::infinity())
+        {
+        }
         HashMap<Key, WallTime> removedKeys;
-        WallTime clearedSince { WallTime::infinity() };
+        WallTime clearedSince;
     };
     std::optional<CompressionDictionaryIndexPopulation> m_compressionDictionaryIndexPopulation;
     PAL::SessionID m_sessionID;
