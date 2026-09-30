@@ -19916,61 +19916,52 @@ void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::Fra
         return;
     }
 
-    // FIXME: This message carries no blob URLs, so unlike the MessagePort, BroadcastChannel and service worker paths
-    // the network process takes no blob URL handles on the message's blobs. If the source frame releases them before
-    // the destination frame dispatches the message, the destination is left with blobs it cannot read.
-    auto deliver = [weakThis = WeakPtr { *this }, source, sourceOrigin, target, targetOrigin, message, userGestureToken = WTF::move(userGestureToken)] () mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
-        RefPtr pendingMessagesForTargetFrame = protectedThis->m_pendingPostMessages.get(target);
-        if (message.transferredPorts.isEmpty() && (!pendingMessagesForTargetFrame || pendingMessagesForTargetFrame->isEmpty())) {
-            protectedThis->sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
-            return;
-        }
-
-        auto ports = WTF::map(message.transferredPorts, [](auto& transferredPort) {
-            return transferredPort.first;
-        });
-
-        if (!pendingMessagesForTargetFrame) {
-            pendingMessagesForTargetFrame = PendingPostMessages::create();
-            protectedThis->m_pendingPostMessages.set(target, pendingMessagesForTargetFrame);
-        }
-
-        pendingMessagesForTargetFrame->append(PendingPostMessages::PendingPostMessage { source, sourceOrigin, target, targetOrigin, message, userGestureToken });
-
-        if (message.transferredPorts.isEmpty())
-            return;
-
-        // First, notify the NetworkProcess of all message ports that will be transfered.
-        // Then pass the message along to all web content processes to finalize the transfer.
-        Ref networkProcess = protect(protectedThis->websiteDataStore())->networkProcess();
-        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::RecordMessagePortTransferDestinationsForSiteIsolation(WTF::move(ports), protectedThis->processContainingFrame(target)->coreProcessIdentifier()), [weakThis = WTF::move(weakThis), target, pendingMessagesForTargetFrame] mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            auto messagesToSend = pendingMessagesForTargetFrame->takeMessagesThroughNextPortTransfer();
-            if (pendingMessagesForTargetFrame->isEmpty())
-                protectedThis->m_pendingPostMessages.remove(target);
-            for (auto& pendingPostMessage : messagesToSend)
-                protectedThis->sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(pendingPostMessage.source, pendingPostMessage.sourceOrigin, pendingPostMessage.target, pendingPostMessage.targetOrigin, pendingPostMessage.message, pendingPostMessage.userGestureToken));
-        });
-    };
-
     // Only this process knows where the message is going, so it hands ownership of any sunk
     // ImageBuffers to the destination, so that they outlive the process that sent them. Not waited
     // for: the destination can claim them either way, since they were deposited before being sent.
 #if ENABLE(GPU_PROCESS)
-    // FIXME: a message with ImageBuffers immediately followed by a plain message can arrive out of order at the destination.
     RefPtr serializedValue = message.message;
     auto transferIdentifiers = serializedValue ? serializedValue->transferredImageBufferIdentifiers() : Vector<WebCore::ImageBufferTransferIdentifier> { };
     if (RefPtr gpuProcess = transferIdentifiers.isEmpty() ? nullptr : GPUProcessProxy::singletonIfCreated())
         gpuProcess->send(Messages::GPUProcess::HandOverTransferredImageBuffers(WTF::move(transferIdentifiers), processContainingFrame(target)->coreProcessIdentifier()), 0);
 #endif
 
-    deliver();
+    // FIXME: This message carries no blob URLs, so unlike the MessagePort, BroadcastChannel and service worker paths
+    // the network process takes no blob URL handles on the message's blobs. If the source frame releases them before
+    // the destination frame dispatches the message, the destination is left with blobs it cannot read.
+    RefPtr pendingMessagesForTargetFrame = m_pendingPostMessages.get(target);
+    if (message.transferredPorts.isEmpty() && (!pendingMessagesForTargetFrame || pendingMessagesForTargetFrame->isEmpty())) {
+        sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
+        return;
+    }
+
+    auto ports = WTF::map(message.transferredPorts, [](auto& transferredPort) {
+        return transferredPort.first;
+    });
+
+    if (!pendingMessagesForTargetFrame) {
+        pendingMessagesForTargetFrame = PendingPostMessages::create();
+        m_pendingPostMessages.set(target, pendingMessagesForTargetFrame);
+    }
+
+    pendingMessagesForTargetFrame->append(PendingPostMessages::PendingPostMessage { source, sourceOrigin, target, targetOrigin, message, userGestureToken });
+
+    if (message.transferredPorts.isEmpty())
+        return;
+
+    // First, notify the NetworkProcess of all message ports that will be transfered.
+    // Then pass the message along to all web content processes to finalize the transfer.
+    Ref networkProcess = protect(websiteDataStore())->networkProcess();
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::RecordMessagePortTransferDestinationsForSiteIsolation(WTF::move(ports), processContainingFrame(target)->coreProcessIdentifier()), [weakThis = WeakPtr { *this }, target, pendingMessagesForTargetFrame] mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        auto messagesToSend = pendingMessagesForTargetFrame->takeMessagesThroughNextPortTransfer();
+        if (pendingMessagesForTargetFrame->isEmpty())
+            protectedThis->m_pendingPostMessages.remove(target);
+        for (auto& pendingPostMessage : messagesToSend)
+            protectedThis->sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(pendingPostMessage.source, pendingPostMessage.sourceOrigin, pendingPostMessage.target, pendingPostMessage.targetOrigin, pendingPostMessage.message, pendingPostMessage.userGestureToken));
+    });
 }
 
 void WebPageProxy::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, uint64_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
