@@ -75,7 +75,11 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
         return;
 
     context->willUpdateDrawingBufferContents();
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    if (!context->m_framebufferBinding) {
+        if (!context->ensureDefaultFramebufferSize())
+            return;
+        context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context.get() };
@@ -106,7 +110,11 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
         return;
 
     context->willUpdateDrawingBufferContents();
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    if (!context->m_framebufferBinding) {
+        if (!context->ensureDefaultFramebufferSize())
+            return;
+        context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context.get() };

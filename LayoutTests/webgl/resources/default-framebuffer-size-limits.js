@@ -265,8 +265,9 @@ async function runConfiguration(version, parameters)
     debug("restored with a canvas over the limit: after drawing:");
     await checkRendersAtFullSize();
 
-    // A tall drawing buffer at the height limit followed by a wide one at the width limit.
-    // FIXME: With antialias, the resize from the tall to the wide drawing buffer loses the context.
+    // A tall drawing buffer at the height limit followed by a wide one at the width limit. The
+    // canvas is resized with separate width and height assignments, so the intermediate size is at
+    // both limits. That size must not be allocated, as it may not fit in memory.
     for (var testCase of [
         { label: "tall at the limit", size: [2, limit[1]], expected: [2, limit[1]] },
         { label: "wide at the limit after tall at the limit", size: [limit[0], 2], expected: [limit[0], 2] },

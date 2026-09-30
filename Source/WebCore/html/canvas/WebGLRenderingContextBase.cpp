@@ -540,7 +540,8 @@ bool WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
         initializeContextState();
         initializeDefaultObjects();
     }
-    bool reshaped = m_defaultFramebuffer->reshape(clampedCanvasSize());
+    m_defaultFramebuffer->setSize(clampedCanvasSize());
+    bool reshaped = m_defaultFramebuffer->ensureSize();
     // Next calls will receive the context lost callback.
     m_context->setClient(this);
     return reshaped && !m_context->isContextLost();
@@ -717,6 +718,10 @@ void WebGLRenderingContextBase::destroyGraphicsContextGL()
 
 void WebGLRenderingContextBase::willUpdateDrawingBufferContents(WebGLRenderingContextBase::CallerType caller)
 {
+    // Drawing to a framebuffer object does not call `clearIfComposited()`, so mark the context as
+    // active here.
+    updateActiveOrdinal();
+
     // Draw and clear ops with rasterizer discard enabled do not change the canvas.
     if (caller == CallerTypeDrawOrClear && m_rasterizerDiscardEnabled)
         return;
@@ -731,6 +736,17 @@ void WebGLRenderingContextBase::willUpdateDrawingBufferContents(WebGLRenderingCo
         updateMemoryCost();
     }
     willUpdateCanvasContents();
+}
+
+bool WebGLRenderingContextBase::ensureDefaultFramebufferSize()
+{
+    if (isContextLost())
+        return false;
+    if (!m_defaultFramebuffer->ensureSize()) {
+        forceContextLost();
+        return false;
+    }
+    return true;
 }
 
 bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
@@ -842,7 +858,7 @@ RefPtr<NativeImage> WebGLRenderingContextBase::surfaceBufferToNativeImage(Surfac
     auto& readBuffer = readSurfaceBuffer(sourceBuffer);
     if (readBuffer.image)
         return readBuffer.image;
-    if (!isContextLost()) {
+    if (ensureDefaultFramebufferSize()) {
         if (sourceBuffer == SurfaceBuffer::DrawingBuffer) {
             clearIfComposited(CallerTypeOther);
             m_defaultFramebuffer->resolveColorIntoResult();
@@ -888,7 +904,7 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(Surfac
 
 RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuffer()
 {
-    if (isContextLost())
+    if (!ensureDefaultFramebufferSize())
         return nullptr;
     if (m_attributes.premultipliedAlpha)
         return nullptr;
@@ -941,7 +957,7 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    if (isContextLost())
+    if (!ensureDefaultFramebufferSize())
         return nullptr;
     if (buffer == SurfaceBuffer::DrawingBuffer) {
         clearIfComposited(CallerTypeOther);
@@ -953,7 +969,7 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 
 RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 {
-    if (isContextLost())
+    if (!ensureDefaultFramebufferSize())
         return nullptr;
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
@@ -992,10 +1008,10 @@ void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
     m_readDrawingBuffer.clear();
     m_readDisplayBuffer.clear();
 
-    if (!m_defaultFramebuffer->reshape(newSize)) {
-        forceContextLost();
+    // The storage is reallocated when it is next used, unless the new size shrinks it.
+    m_defaultFramebuffer->setSize(newSize);
+    if (m_defaultFramebuffer->pendingSizeShrinksStorage() && !ensureDefaultFramebufferSize())
         return;
-    }
     updateMemoryCost();
 }
 
@@ -1348,9 +1364,13 @@ void WebGLRenderingContextBase::clear(GCGLbitfield mask)
     if (isContextLost())
         return;
     willUpdateDrawingBufferContents();
-    bool cleared = clearIfComposited(CallerTypeDrawOrClear, mask);
-    if (!cleared)
-        protect(graphicsContextGL())->clear(mask);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        if (clearIfComposited(CallerTypeDrawOrClear, mask))
+            return;
+    }
+    protect(graphicsContextGL())->clear(mask);
 }
 
 void WebGLRenderingContextBase::clearColor(GCGLfloat r, GCGLfloat g, GCGLfloat b, GCGLfloat a)
@@ -1459,7 +1479,11 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
         return;
     if (!validateDefaultFramebufferRead("copyTexSubImage2D"_s))
         return;
-    clearIfComposited(CallerTypeOther);
+    if (isDefaultFramebufferBoundForRead()) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeOther);
+    }
     auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 }
@@ -1725,7 +1749,11 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
         return;
 
     willUpdateDrawingBufferContents();
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
@@ -1744,7 +1772,11 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
         return;
 
     willUpdateDrawingBufferContents();
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
@@ -3138,7 +3170,11 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     }
     if (!validateDefaultFramebufferRead("readPixels"_s))
         return;
-    clearIfComposited(CallerTypeOther);
+    if (isDefaultFramebufferBoundForRead()) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeOther);
+    }
     auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(rect);
     auto data = pixels.mutableSpan().subspan(packSizes->initialSkipBytes, packSizes->imageBytes);
     const bool packReverseRowOrder = false;
@@ -4321,7 +4357,11 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
         return;
     if (!validateDefaultFramebufferRead("copyTexImage2D"_s))
         return;
-    clearIfComposited(CallerTypeOther);
+    if (isDefaultFramebufferBoundForRead()) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeOther);
+    }
     auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
 }
@@ -5643,7 +5683,11 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
         return;
 
     willUpdateDrawingBufferContents();
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
@@ -5663,7 +5707,11 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
         return;
 
     willUpdateDrawingBufferContents();
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
@@ -5887,8 +5935,10 @@ void WebGLRenderingContextBase::prepareForDisplay()
     if (!m_context || !m_compositingResultsNeedUpdating)
         return;
 
-    clearIfComposited(CallerTypeOther);
-    m_defaultFramebuffer->resolveColorIntoResult();
+    if (ensureDefaultFramebufferSize()) {
+        clearIfComposited(CallerTypeOther);
+        m_defaultFramebuffer->resolveColorIntoResult();
+    }
     protect(graphicsContextGL())->prepareForDisplay();
     m_defaultFramebuffer->markAllUnpreservedBuffersDirty();
 

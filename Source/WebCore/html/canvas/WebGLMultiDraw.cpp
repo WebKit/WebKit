@@ -73,7 +73,11 @@ void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List&& firstsList,
         return;
 
     context->willUpdateDrawingBufferContents();
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    if (!context->m_framebufferBinding) {
+        if (!context->ensureDefaultFramebufferSize())
+            return;
+        context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context.get() };
@@ -102,7 +106,11 @@ void WebGLMultiDraw::multiDrawArraysInstancedWEBGL(GCGLenum mode, Int32List&& fi
         return;
 
     context->willUpdateDrawingBufferContents();
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    if (!context->m_framebufferBinding) {
+        if (!context->ensureDefaultFramebufferSize())
+            return;
+        context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context.get() };
@@ -130,7 +138,11 @@ void WebGLMultiDraw::multiDrawElementsWEBGL(GCGLenum mode, Int32List&& countsLis
         return;
 
     context->willUpdateDrawingBufferContents();
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    if (!context->m_framebufferBinding) {
+        if (!context->ensureDefaultFramebufferSize())
+            return;
+        context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context.get() };
@@ -159,7 +171,11 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& 
         return;
 
     context->willUpdateDrawingBufferContents();
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    if (!context->m_framebufferBinding) {
+        if (!context->ensureDefaultFramebufferSize())
+            return;
+        context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context.get() };

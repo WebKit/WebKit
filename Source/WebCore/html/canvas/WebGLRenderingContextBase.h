@@ -833,7 +833,12 @@ protected:
     // Clear the backbuffer if it was composited since the last operation.
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
+    // The caller must call ensureDefaultFramebufferSize() first.
     bool clearIfComposited(CallerType, GCGLbitfield clearMask = 0);
+    // Applies a pending resize of the default framebuffer. Must be called before the default
+    // framebuffer storage is used. Returns false if the context is lost, in which case the caller
+    // must not use the default framebuffer.
+    bool ensureDefaultFramebufferSize();
 
     enum class TexImageFunctionType {
         TexImage,

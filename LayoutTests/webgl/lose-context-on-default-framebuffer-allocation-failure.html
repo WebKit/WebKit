@@ -9,10 +9,15 @@ var gl;
 var canvas;
 window.jsTestIsAsync = true;
 
+// The errors that the GPU process reports are printed asynchronously, which would make the output
+// depend on timing. The tests check the errors with getError().
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 if (window.initNonKhronosFramework)
     window.initNonKhronosFramework(false);
 
-debug("Checks that failing to allocate the default framebuffer storage during a resize loses the context.");
+debug("Checks that failing to allocate the default framebuffer storage after a resize loses the context. The storage is allocated when the default framebuffer is first used after the resize.");
 debug("NOTE: This only passes in the test harness because it requires Internals.");
 debug("");
 
@@ -48,6 +53,11 @@ async function testAllocationFailure(contextType, event, attributes) {
     let lost = webGLContextLostOrTimeout(canvas);
     window.internals.simulateEventForWebGLContext(event, gl);
     canvas.width = 30;
+    // The resize only sets the size. The storage is allocated when the default framebuffer is used.
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.drawingBufferWidth", "30");
+    // A failure in the GPU process is observed asynchronously.
+    gl.clear(gl.COLOR_BUFFER_BIT);
     if (!await lost)
         testFailed("webglcontextlost was not dispatched.");
     shouldBeTrue("gl.isContextLost()");
