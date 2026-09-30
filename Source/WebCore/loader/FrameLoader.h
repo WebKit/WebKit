@@ -32,6 +32,8 @@
 #pragma once
 
 #include <WebCore/BackForwardCacheCommitData.h>
+#include <WebCore/Event.h>
+#include <WebCore/FormState.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderStateMachine.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -54,6 +56,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
 #include <wtf/UniqueRef.h>
@@ -142,6 +145,7 @@ public:
     WEBCORE_EXPORT void load(FrameLoadRequest&&, std::optional<NavigationRequester>&& crossSiteRequester = std::nullopt);
 
     WEBCORE_EXPORT bool dispatchPendingNavigateEventAfterNavigationPolicy(PendingNavigateEventIdentifier);
+    WEBCORE_EXPORT Markable<PendingNavigateEventIdentifier> pendingNavigateEventIdentifier() const;
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     WEBCORE_EXPORT void loadArchive(Ref<Archive>&&);
@@ -391,6 +395,18 @@ public:
     void updateFirstPartyForCookies();
 
 private:
+    // 302468@main requires the navigate event to fire after the client's policy decision, so what
+    // dispatching it needs waits here until continueLoadAfterNavigationPolicy() runs.
+    struct PendingNavigateEvent {
+        PendingNavigateEventIdentifier identifier;
+        FrameLoadType loadType;
+        FrameLoadRequest request;
+        RefPtr<FormState> formState;
+        RefPtr<Event> triggeringEvent;
+
+        bool dispatch(FrameLoader&) const;
+    };
+
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,
         MayNotAttemptCacheOnlyLoadForFormSubmissionItem
@@ -451,10 +467,10 @@ private:
 
     void dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&);
 
-    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { }); // Calls continueLoadAfterNavigationPolicy
+    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { }, std::optional<PendingNavigateEvent>&& = std::nullopt); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader&, const SecurityOrigin* requesterOrigin); // Calls loadWithDocumentLoader
 
-    void loadWithNavigationAction(ResourceRequest&&, NavigationAction&&, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { }); // Calls loadWithDocumentLoader
+    void loadWithNavigationAction(ResourceRequest&&, NavigationAction&&, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { }, std::optional<PendingNavigateEvent>&& = std::nullopt); // Calls loadWithDocumentLoader
 
     void loadPostRequest(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, RefPtr<const FormSubmission>&&, CompletionHandler<void()>&&);
     void loadURL(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, RefPtr<const FormSubmission>&&, std::optional<PrivateClickMeasurement>&&, CompletionHandler<void()>&&);
@@ -498,6 +514,7 @@ private:
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
     bool dispatchNavigateEvent(FrameLoadType, const FrameLoadRequest&, bool isSameDocument, FormState* = nullptr, Event* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
+    bool dispatchPendingNavigateEvent();
     bool shouldDispatchNavigateEventForHistoryTraversal(const HistoryItem&, const HistoryItem* fromItem);
 
     WeakRef<LocalFrame> m_frame;
@@ -591,7 +608,7 @@ private:
 
     const Ref<DocumentPrefetcher> m_documentPrefetcher;
 
-    Function<bool()> m_pendingDispatchNavigateEvent;
+    std::optional<PendingNavigateEvent> m_pendingNavigateEvent;
 
     bool m_needsCancellationForContentRuleListCrossOriginRedirect { false };
 };
