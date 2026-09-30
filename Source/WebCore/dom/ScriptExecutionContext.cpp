@@ -101,6 +101,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
+#include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -1039,6 +1040,12 @@ private:
     bool isCurrent() const final
     {
         return m_workerThreadId ? *m_workerThreadId == Thread::currentSingleton().uid() : isMainThread();
+    }
+    void dispatchAfter(Seconds delay, Function<void()>&& callback) final
+    {
+        RunLoop::mainSingleton().dispatchAfter(delay, [protectedThis = Ref { *this }, callback = WTF::move(callback)] mutable {
+            protectedThis->dispatch(WTF::move(callback));
+        });
     }
 
     ScriptExecutionContextIdentifier m_identifier;
