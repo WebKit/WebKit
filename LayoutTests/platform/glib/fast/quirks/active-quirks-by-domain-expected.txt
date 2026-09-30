@@ -64,6 +64,7 @@ https://www.crunchyroll.com/
 https://digits.t-mobile.com/
     NeedsCustomUserAgentData
     NeedsNavigatorUserAgentDataQuirk
+    NeedsUserAgentStringOverrideQuirk
 https://www.t-mobile.com/
     (none)
 https://www.descript.com/
@@ -172,6 +173,7 @@ https://www.instagram.com/
     NeedsInstagramResizingReelsQuirk
 https://invideo.io/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    NeedsUserAgentStringOverrideQuirk
 https://www.linkedin.com/
     (none)
 https://outlook.live.com/
@@ -280,6 +282,7 @@ https://www.thesaurus.com/
 https://www.tiktok.com/
     NeedsTikTokCommentsOverflowingContentQuirk
     NeedsTikTokVideoOverflowingContentQuirk
+    NeedsUserAgentStringOverrideQuirk
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
     ShouldDispatchSimulatedMouseEventsQuirk

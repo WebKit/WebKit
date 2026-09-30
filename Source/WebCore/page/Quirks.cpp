@@ -1617,9 +1617,12 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
 {
     auto quirksData = resolveTopURLQuirks(url);
 
+    std::optional<String> userAgent;
     for (const auto& behavior : quirksData.behaviorsMatching(QuirkBehaviorID::NeedsUserAgentStringOverrideQuirk)) {
-        if (behavior.parameters && !behavior.parameters->userAgent.isEmpty())
-            return String { behavior.parameters->userAgent };
+        if (behavior.parameters && !behavior.parameters->userAgent.isEmpty()) {
+            userAgent = String { behavior.parameters->userAgent };
+            break;
+        }
     }
 
 #if PLATFORM(COCOA)
@@ -1627,16 +1630,17 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
         if (!behavior.parameters || behavior.parameters->chromeCompatibilityVersion.isEmpty())
             continue;
 
-        auto baseUserAgent = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
+        if (!userAgent)
+            userAgent = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
         auto chromeCompatibilityToken = makeString("like Gecko, like Chrome/"_s, behavior.parameters->chromeCompatibilityVersion, '.');
-        return makeStringByReplacingAll(baseUserAgent, "like Gecko"_s, chromeCompatibilityToken);
+        return makeStringByReplacingAll(*userAgent, "like Gecko"_s, chromeCompatibilityToken);
     }
 #else
     UNUSED_PARAM(applicationNameForUserAgent);
     UNUSED_PARAM(currentUserAgent);
 #endif
 
-    return { };
+    return userAgent;
 }
 
 bool Quirks::needsDesktopUserAgent(const URL& url)
