@@ -2,7 +2,7 @@
 PASS Property block-ellipsis has initial value no-ellipsis
 PASS Property block-ellipsis inherits
 FAIL Property continue has initial value normal assert_equals: expected "normal" but got "auto"
-FAIL Property continue does not inherit assert_equals: expected "collapse" but got "auto"
+PASS Property continue does not inherit
 PASS Property max-lines has initial value auto
 PASS Property max-lines does not inherit
 PASS Property overflow-block has initial value visible
