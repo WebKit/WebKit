@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEConvolveMatrixElement);
 
 inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(SVGNames::feConvolveMatrixTag));
 

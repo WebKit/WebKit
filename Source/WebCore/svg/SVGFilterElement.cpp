@@ -44,7 +44,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFilterElement);
 
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
     , SVGURIReference(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.

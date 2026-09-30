@@ -40,8 +40,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFilterPrimitiveStandardAttributes);
 
-SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGElement(tagName, document, WTF::move(propertyRegistry))
+SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document& document, const SVGPropertyRegistry& propertyRegistry)
+    : SVGElement(tagName, document, propertyRegistry)
 {
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {

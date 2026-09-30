@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEColorMatrixElement);
 
 inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(SVGNames::feColorMatrixTag));
 

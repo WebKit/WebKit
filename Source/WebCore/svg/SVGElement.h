@@ -24,6 +24,7 @@
 
 #include "SVGNames.h"
 #include "SVGPropertyOwner.h"
+#include "SVGPropertyRegistry.h"
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -45,7 +46,6 @@ class SVGConditionalProcessingAttributes;
 class SVGDocumentExtensions;
 class SVGElementRareData;
 class SVGPropertyAnimatorFactory;
-class SVGPropertyRegistry;
 class SVGResourceElementClient;
 class SVGSVGElement;
 class SVGTransformList;
@@ -168,7 +168,7 @@ public:
     class InstanceInvalidationGuard;
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGElement>;
-    const SVGPropertyRegistry& propertyRegistry() const LIFETIME_BOUND { return m_propertyRegistry.get(); }
+    const SVGPropertyRegistry& propertyRegistry() const { return m_propertyRegistry; }
     inline void detachAllProperties(); // Defined in SVGElementInlines.h
 
     bool isAnimatedPropertyAttribute(const QualifiedName&) const;
@@ -202,7 +202,7 @@ public:
     void invalidateInstances();
 
 protected:
-    SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
+    SVGElement(const QualifiedName&, Document&, const SVGPropertyRegistry&, OptionSet<TypeFlag> = { });
     virtual ~SVGElement();
 
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
@@ -249,7 +249,7 @@ private:
 
     const UniqueRef<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
 
-    const UniqueRef<SVGPropertyRegistry> m_propertyRegistry;
+    const SVGPropertyRegistry& m_propertyRegistry;
     const Ref<SVGAnimatedString> m_className;
 };
 

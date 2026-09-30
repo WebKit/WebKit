@@ -42,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTextPathElement);
 
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document& document)
-    : SVGTextContentElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGTextContentElement(tagName, document, PropertyRegistry::singleton())
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::textPathTag));

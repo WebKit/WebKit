@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGStyleElement);
 
 inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
     , m_styleSheetOwner(document, createdByParser)
 {
     ASSERT(hasTagName(SVGNames::styleTag));

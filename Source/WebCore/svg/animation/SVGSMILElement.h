@@ -46,7 +46,7 @@ class SVGSMILElement : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGSMILElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSMILElement);
 public:
-    SVGSMILElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
+    SVGSMILElement(const QualifiedName&, Document&, const SVGPropertyRegistry&);
     virtual ~SVGSMILElement();
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;

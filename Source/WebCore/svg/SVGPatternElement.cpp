@@ -51,7 +51,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPatternElement);
 
 inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
     , SVGFitToViewBox(this)
     , SVGTests(this)
     , SVGURIReference(this)

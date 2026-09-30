@@ -50,8 +50,8 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad isM
     RetainPtr type = CFURLResponseGetMIMEType(response);
     if (!type) {
         // FIXME: <rdar://problem/46332893> is fixed, but for some reason, this special case is still needed; should resolve that issue and remove this.
-        if (auto extension = filePathExtension(response)) {
-            if (CFStringCompare(extension.get(), CFSTR("mjs"), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
+        if (RetainPtr extension = filePathExtension(response)) {
+            if (CFStringCompare(extension, CFSTR("mjs"), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
                 CFURLResponseSetMIMEType(response, CFSTR("text/javascript"));
                 return;
             }
@@ -69,7 +69,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad isM
         RetainPtr suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(response));
         if (RetainPtr quickLookType = adoptNS(PAL::softLink_QuickLook_QLTypeCopyBestMimeTypeForFileNameAndMimeType(bridge_cast(suggestedFilename.get()), bridge_cast(type.get()))))
             updatedType = quickLookType.get();
-        else if (auto extension = filePathExtension(response))
+        else if (RetainPtr extension = filePathExtension(response))
             updatedType = preferredMIMETypeForFileExtensionFromUTType(bridge_cast(extension.get()));
         if (updatedType && !shouldPreferTextPlainMIMEType(type.get(), updatedType.get()) && (!type || CFStringCompare(type, bridge_cast(updatedType.get()), kCFCompareCaseInsensitive) != kCFCompareEqualTo)) {
             CFURLResponseSetMIMEType(response, bridge_cast(updatedType.get()));

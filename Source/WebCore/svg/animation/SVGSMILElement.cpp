@@ -133,8 +133,8 @@ SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const Str
 {
 }
     
-SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGElement(tagName, doc, WTF::move(propertyRegistry))
+SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, const SVGPropertyRegistry& propertyRegistry)
+    : SVGElement(tagName, doc, propertyRegistry)
     , m_attributeName(anyQName())
 {
 }

@@ -53,7 +53,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAnimationElement);
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document& document)
-    : SVGSMILElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGSMILElement(tagName, document, PropertyRegistry::singleton())
     , SVGTests(this)
 {
 }

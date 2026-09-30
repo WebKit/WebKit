@@ -40,8 +40,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGeometryElement);
 
-SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGGraphicsElement(tagName, document, WTF::move(propertyRegistry))
+SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& document, const SVGPropertyRegistry& propertyRegistry)
+    : SVGGraphicsElement(tagName, document, propertyRegistry)
 {
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {

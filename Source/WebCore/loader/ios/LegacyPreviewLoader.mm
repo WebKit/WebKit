@@ -156,7 +156,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
 
         if (!converter->previewData().isEmpty()) {
             auto bufferSize = converter->previewData().size();
-            protect(resourceLoader)->didReceiveBuffer(protect(converter->previewData())->copy(), bufferSize, DataPayloadBytes);
+            resourceLoader->didReceiveBuffer(protect(converter->previewData())->copy(), bufferSize, DataPayloadBytes);
         }
 
         if (resourceLoader->reachedTerminalState())

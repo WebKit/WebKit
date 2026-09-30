@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGStopElement);
 
 inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
     , m_offset { SVGAnimatedNumber::create(this, 0) }
 {
     ASSERT(hasTagName(SVGNames::stopTag));

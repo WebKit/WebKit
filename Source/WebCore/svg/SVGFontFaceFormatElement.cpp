@@ -33,7 +33,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontFaceFormatElement);
 using namespace SVGNames;
     
 inline SVGFontFaceFormatElement::SVGFontFaceFormatElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(font_face_formatTag));
 }

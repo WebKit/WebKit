@@ -30,7 +30,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAltGlyphItemElement);
 
 inline SVGAltGlyphItemElement::SVGAltGlyphItemElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(SVGNames::altGlyphItemTag));
 }

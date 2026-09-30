@@ -502,7 +502,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     if (!challenge.previousFailureCount() && challenge.protectionSpace().isProxy()) {
         RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
         RetainPtr macChallenge = mac(challenge);
-        if (NSURLCredential *credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[macChallenge protectionSpace]]) {
+        if (RetainPtr credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[macChallenge protectionSpace]]) {
             [protect(challenge.sender()) useCredential:credential forAuthenticationChallenge:macChallenge];
             return;
         }

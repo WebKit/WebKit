@@ -117,7 +117,7 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& eve
 }
 
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGTextPositioningElement(tagName, document, PropertyRegistry::singleton())
     , SVGURIReference(this)
     , m_targetListener(SVGTRefTargetEventListener::create(*this))
 {

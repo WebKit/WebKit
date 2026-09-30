@@ -112,8 +112,8 @@ void SVGDocumentExtensions::unpauseAnimations()
 bool SVGDocumentExtensions::hasActiveSMILAnimations() const
 {
     for (Ref container : m_timeContainers) {
-        auto& timeContainer = container->timeContainer();
-        if (timeContainer.isActive() && protect(timeContainer)->hasAnimations())
+        Ref timeContainer = container->timeContainer();
+        if (timeContainer->isActive() && timeContainer->hasAnimations())
             return true;
     }
     return false;

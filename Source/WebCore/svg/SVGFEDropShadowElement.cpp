@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDropShadowElement);
 
 inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(SVGNames::feDropShadowTag));
     

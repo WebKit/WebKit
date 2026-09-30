@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontFaceUriElement);
 using namespace SVGNames;
     
 inline SVGFontFaceUriElement::SVGFontFaceUriElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGElement(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(font_face_uriTag));
 }

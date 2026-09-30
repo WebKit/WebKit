@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEFloodElement);
 
 inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, PropertyRegistry::singleton())
 {
     ASSERT(hasTagName(SVGNames::feFloodTag));
 }

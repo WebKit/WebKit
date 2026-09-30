@@ -166,8 +166,8 @@ void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask>&& task)
 void DatabaseThread::unscheduleDatabaseTasks(Database& database)
 {
     // The thread loop is running, sp some tasks for this database may still be executed. This is unavoidable.
-    m_queue.removeIf([database = Ref { database }](const DatabaseTask& task) {
-        return task.database().ptr() == database.ptr();
+    m_queue.removeIf([&database](const DatabaseTask& task) {
+        return task.database().ptr() == &database;
     });
 }
 

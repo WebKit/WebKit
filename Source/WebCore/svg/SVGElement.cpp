@@ -88,10 +88,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGElement);
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
+SVGElement::SVGElement(const QualifiedName& tagName, Document& document, const SVGPropertyRegistry& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : StyledElement(tagName, document, typeFlags | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks)
     , m_propertyAnimatorFactory(makeUniqueRef<SVGPropertyAnimatorFactory>())
-    , m_propertyRegistry(WTF::move(propertyRegistry))
+    , m_propertyRegistry(propertyRegistry)
     , m_className(SVGAnimatedString::create(this))
 {
     static bool didRegistration = false;

@@ -324,7 +324,7 @@ static inline const Style::ComputedStyle* NODELETE rootRenderStyleForLengthResol
 
 std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() const
 {
-    auto element = m_context;
+    RefPtr element = m_context.get();
     if (!element)
         return std::nullopt;
 
@@ -334,8 +334,8 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
 
     CheckedPtr rootStyle = rootRenderStyleForLengthResolving(element.get());
 
-    const Style::ComputedStyle* parentStyle = nullptr;
-    if (auto* renderer = element->renderer())
+    CheckedPtr<const Style::ComputedStyle> parentStyle;
+    if (CheckedPtr renderer = element->renderer())
         parentStyle = renderer->parentStyle();
 
     return CSSToLengthConversionData {

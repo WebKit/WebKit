@@ -2928,15 +2928,13 @@ void Node::removedLastRef()
         return;
     }
 
-    // This paragraph runs before Node destruction as a workaround for the fact
-    // that detachAllProperties() can transitively call virtual functions on our
-    // derived SVG class.
+    // This runs before Node destruction because detachAllProperties() accesses
+    // properties that are members of our derived SVG class.
 
     // Properties may outlive an SVGElement, but no commit will be carried out
     // unless a property has attached to a new owner.
 
-    // FIXME: Make the registry automatically weak, or manually clear it in
-    // subclass destructors, so we can remove this workaround.
+    // FIXME: Detach properties in subclass destructors so we can remove this workaround.
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this))
         svgElement->detachAllProperties();
 

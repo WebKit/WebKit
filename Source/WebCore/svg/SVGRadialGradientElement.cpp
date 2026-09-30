@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGRadialGradientElement);
 
 inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document& document)
-    : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>())
+    : SVGGradientElement(tagName, document, PropertyRegistry::singleton())
 {
     // Spec: If the cx/cy/r/fr attribute is not specified, the effect is as if a value of "50%" were specified.
     ASSERT(hasTagName(SVGNames::radialGradientTag));

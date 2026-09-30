@@ -31,6 +31,9 @@ class SVGAnimatedPropertyBase;
 class SVGAttributeAnimator;
 class SVGElement;
 
+enum class AnimationMode : uint8_t;
+enum class CalcMode : uint8_t;
+
 class SVGPropertyRegistry {
 public:
     SVGPropertyRegistry() = default;

@@ -278,12 +278,15 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
 
 void PageDOMDebuggerAgent::didRemoveDOMNode(Node& node)
 {
-    auto nodeContainsBreakpointOwner = [node = Ref { node }] (auto& entry) {
-        return node->contains(entry.key);
-    };
-    m_domSubtreeModifiedBreakpoints.removeIf(nodeContainsBreakpointOwner);
-    m_domAttributeModifiedBreakpoints.removeIf(nodeContainsBreakpointOwner);
-    m_domNodeRemovedBreakpoints.removeIf(nodeContainsBreakpointOwner);
+    m_domSubtreeModifiedBreakpoints.removeIf([&](auto& entry) {
+        return node.contains(entry.key);
+    });
+    m_domAttributeModifiedBreakpoints.removeIf([&](auto& entry) {
+        return node.contains(entry.key);
+    });
+    m_domNodeRemovedBreakpoints.removeIf([&](auto& entry) {
+        return node.contains(entry.key);
+    });
 }
 
 void PageDOMDebuggerAgent::willDestroyDOMNode(Node& node)

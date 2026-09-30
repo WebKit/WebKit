@@ -30,6 +30,7 @@
 #include "SVGPropertyAccessorImpl.h"
 #include "SVGPropertyRegistry.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -282,10 +283,13 @@ private:
 
 template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry : public SVGPropertyRegistry, public SVGPropertyOwnerRegistryBase<OwnerType, BaseTypes...> {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(SVGPropertyOwnerRegistry);
     using Base = SVGPropertyOwnerRegistryBase<OwnerType, BaseTypes...>;
 public:
-    SVGPropertyOwnerRegistry() = default;
+    static const SVGPropertyOwnerRegistry& singleton()
+    {
+        static NeverDestroyed<SVGPropertyOwnerRegistry> registry;
+        return registry;
+    }
 
     using Base::enumerateRecursively;
     using Base::fastAnimatedPropertyLookup;
@@ -425,29 +429,31 @@ public:
     }
 
 private:
-    static const OwnerType& CLANG_POINTER_CONVERSION owner(const SVGElement& element)
+    friend class NeverDestroyed<SVGPropertyOwnerRegistry>;
+    SVGPropertyOwnerRegistry() = default;
+
+    const OwnerType& CLANG_POINTER_CONVERSION owner(const SVGElement& element) const
     {
         if constexpr (std::is_same_v<OwnerType, SVGElement>)
-            return element;
+            return assertIsOwner(element);
         else
-            return downcast<OwnerType>(element);
+            return assertIsOwner(downcast<OwnerType>(element));
     }
 
-    static OwnerType& CLANG_POINTER_CONVERSION owner(SVGElement& element)
+    OwnerType& CLANG_POINTER_CONVERSION owner(SVGElement& element) const
     {
         if constexpr (std::is_same_v<OwnerType, SVGElement>)
-            return element;
+            return assertIsOwner(element);
         else
-            return downcast<OwnerType>(element);
+            return assertIsOwner(downcast<OwnerType>(element));
+    }
+
+    template<typename T>
+    T& CLANG_POINTER_CONVERSION assertIsOwner(T& owner) const
+    {
+        ASSERT(&owner.propertyRegistry() == this);
+        return owner;
     }
 };
-
-#define TZONE_TEMPLATE_PARAMS template<typename OwnerType, typename... BaseTypes>
-#define TZONE_TYPE SVGPropertyOwnerRegistry<OwnerType, BaseTypes...>
-
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
-
-#undef TZONE_TEMPLATE_PARAMS
-#undef TZONE_TYPE
 
 } // namespace WebCore
