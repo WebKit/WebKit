@@ -159,7 +159,7 @@ public:
     WebKitAutomationSession* requestSession(UTF8CStringView sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
-        m_connection->sendMessage("StartAutomationSession"_s, g_variant_new("(sa{sv})", sessionID.utf8(), nullptr));
+        m_connection->sendMessage("StartAutomationSession"_s, gVariantNew("(sa{sv})", sessionID, nullptr));
         auto timeoutID = g_timeout_add(1000, [](gpointer userData) -> gboolean {
             g_main_loop_quit(static_cast<GMainLoop*>(userData));
             return G_SOURCE_REMOVE;

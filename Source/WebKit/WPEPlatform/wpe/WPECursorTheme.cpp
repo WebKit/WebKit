@@ -40,12 +40,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CursorTheme);
 static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& inherited)
 {
     auto inheritedThemes = [&]() -> GUniquePtr<char*> {
-        GUniquePtr<char> index(g_build_filename(basePath.utf8(), "index.theme", nullptr));
-        if (!g_file_test(index.get(), G_FILE_TEST_EXISTS))
+        auto index = gBuildFilename(basePath, "index.theme");
+        if (!g_file_test(index.utf8(), G_FILE_TEST_EXISTS))
             return nullptr;
 
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        if (!g_key_file_load_from_file(keyFile.get(), index.get(), G_KEY_FILE_NONE, nullptr))
+        if (!g_key_file_load_from_file(keyFile.get(), index.utf8(), G_KEY_FILE_NONE, nullptr))
             return nullptr;
 
         return GUniquePtr<char*>(g_key_file_get_string_list(keyFile.get(), "Icon Theme", "Inherits", nullptr, nullptr));
@@ -55,13 +55,13 @@ static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& in
     String canonicalPathOfIndex = FileSystem::realPath(pathOfIndex);
     GUniquePtr<char> canonicalDirectoryOfIndex(g_path_get_dirname(canonicalPathOfIndex.utf8().legacyCStringPointer()));
     auto actualBasePath = g_file_test(canonicalDirectoryOfIndex.get(), G_FILE_TEST_IS_DIR) ? UTF8CStringView::unsafeFromUTF8(canonicalDirectoryOfIndex.get()) : basePath;
-    GUniquePtr<char> baseCursorsPath(g_build_filename(actualBasePath.utf8(), "cursors", nullptr));
+    auto baseCursorsPath = gBuildFilename(actualBasePath, "cursors");
 
     if (auto inherits = inheritedThemes()) {
         for (unsigned i = 0; inherits.get()[i]; ++i) {
             GUniquePtr<char> parentPath(g_path_get_dirname(actualBasePath.utf8()));
-            GUniquePtr<char> inheritedBasePath(g_build_filename(parentPath.get(), inherits.get()[i], nullptr));
-            auto path = cursorsPath(UTF8CStringView::unsafeFromUTF8(inheritedBasePath.get()), inherited);
+            auto inheritedBasePath = gBuildFilename(parentPath.get(), inherits.get()[i]);
+            auto path = cursorsPath(inheritedBasePath, inherited);
             auto exists = !path.isNull() && inherited.containsIf([&](const auto& item) {
                 return item == path;
             });
@@ -70,8 +70,8 @@ static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& in
         }
     }
 
-    if (g_file_test(baseCursorsPath.get(), G_FILE_TEST_IS_DIR))
-        return UTF8CString::unsafeFromUTF8(baseCursorsPath.get());
+    if (g_file_test(baseCursorsPath.utf8(), G_FILE_TEST_IS_DIR))
+        return UTF8CString { baseCursorsPath.span() };
 
     return { };
 }

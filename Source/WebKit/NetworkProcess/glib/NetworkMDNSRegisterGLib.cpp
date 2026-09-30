@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <wtf/Markable.h>
 #include <wtf/UUID.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
@@ -134,7 +135,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
             auto* cancellable = request->cancellable.get();
             auto requestName = request->name.ascii();
             auto requestAddress = request->address.ascii();
-            g_dbus_proxy_call(dbusProxy.get(), "AddAddress", g_variant_new("(iiuss)", interface, protocol, flags, requestName.data(), requestAddress.data()), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
+            g_dbus_proxy_call(dbusProxy.get(), "AddAddress", gVariantNew("(iiuss)", interface, protocol, flags, requestName, requestAddress), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
                 std::unique_ptr<PendingRegistrationRequest> request;
                 request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 

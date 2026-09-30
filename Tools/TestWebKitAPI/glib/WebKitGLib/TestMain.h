@@ -24,6 +24,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -370,14 +371,10 @@ public:
     static UTF8CString getResourcesDir(ResourcesDir resourcesDir = WebKitGLibResources)
     {
         switch (resourcesDir) {
-        case WebKitGLibResources: {
-            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", "glib", nullptr));
-            return UTF8CString::unsafeFromUTF8(resourcesDir.get());
-        }
-        case WebKit2Resources: {
-            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", nullptr));
-            return UTF8CString::unsafeFromUTF8(resourcesDir.get());
-        }
+        case WebKitGLibResources:
+            return UTF8CString { gBuildFilename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", "glib").span() };
+        case WebKit2Resources:
+            return UTF8CString { gBuildFilename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources").span() };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }

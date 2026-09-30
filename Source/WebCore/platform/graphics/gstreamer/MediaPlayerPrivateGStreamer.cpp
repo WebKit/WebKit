@@ -2885,12 +2885,12 @@ void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
 #if PLATFORM(WPE)
     auto mediaDiskCachePath = GMallocString::unsafeAdoptFromUTF8(g_strdup(std::getenv("WPE_SHELL_MEDIA_DISK_CACHE_PATH")));
     if (mediaDiskCachePath.isEmpty())
-        mediaDiskCachePath = GMallocString::unsafeAdoptFromUTF8(g_build_filename(G_DIR_SEPARATOR_S, "var", "tmp", nullptr));
+        mediaDiskCachePath = gBuildFilename(G_DIR_SEPARATOR_S, "var", "tmp");
 #else
-    auto mediaDiskCachePath = GMallocString::unsafeAdoptFromUTF8(g_build_filename(G_DIR_SEPARATOR_S, "var", "tmp", nullptr));
+    auto mediaDiskCachePath = gBuildFilename(G_DIR_SEPARATOR_S, "var", "tmp");
 #endif
 
-    auto newDownloadTemplate = GMallocString::unsafeAdoptFromUTF8(g_build_filename(G_DIR_SEPARATOR_S, mediaDiskCachePath.utf8(), "WebKit-Media-XXXXXX", nullptr));
+    auto newDownloadTemplate = gBuildFilename(G_DIR_SEPARATOR_S, mediaDiskCachePath, "WebKit-Media-XXXXXX");
     g_object_set(element, "temp-template", newDownloadTemplate.utf8(), nullptr);
     GST_DEBUG_OBJECT(pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.utf8());
 

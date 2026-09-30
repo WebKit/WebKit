@@ -273,7 +273,7 @@ void GeoclueGeolocationProvider::startPortalSession()
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
 
-    g_dbus_proxy_call(m_portal.locationPortal.get(), "Start", g_variant_new("(osa{sv})", m_portal.sessionId->ascii().data(), "", &options), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
+    g_dbus_proxy_call(m_portal.locationPortal.get(), "Start", gVariantNew("(osa{sv})", m_portal.sessionId->ascii(), "", &options), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
         [](GObject* manager, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(manager), result, &error.outPtr()));
