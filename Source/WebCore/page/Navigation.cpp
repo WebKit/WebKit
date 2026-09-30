@@ -1246,7 +1246,7 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
 
     for (auto& handler : event.handlers()) {
         auto callbackResult = handler->invoke();
-        if (callbackResult.type() != CallbackResultType::UnableToExecute) {
+        if (callbackResult.type() == CallbackResultType::Success) {
             Ref promise = callbackResult.releaseReturnValue();
             // Because rejection is reported as `navigateerror` event, we can mark this as handled.
             if (!promise->isSuspended())
@@ -1348,7 +1348,7 @@ void Navigation::runNavigatePrecommitHandlers(NavigateEvent& event, NavigationAP
     Vector<Ref<DOMPromise>> promiseList;
     for (auto& handler : event.precommitHandlers()) {
         auto callbackResult = handler->invoke(precommitController.get());
-        if (callbackResult.type() != CallbackResultType::UnableToExecute) {
+        if (callbackResult.type() == CallbackResultType::Success) {
             Ref promise = callbackResult.releaseReturnValue();
             // Because rejection is reported as `navigateerror` event, we can mark this as handled.
             if (!promise->isSuspended())

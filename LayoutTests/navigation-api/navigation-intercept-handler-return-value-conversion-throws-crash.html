@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that an intercept() handler or precommitHandler whose return value throws while being converted to a promise does not crash.</p>
+<div id="result"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function promiseWithThrowingConstructorGetter()
+{
+    const promise = Promise.resolve();
+    Object.defineProperty(promise, "constructor", { get() { throw new Error("boom"); } });
+    return promise;
+}
+
+async function navigateWith(options, url)
+{
+    navigation.onnavigate = e => {
+        navigation.onnavigate = null;
+        e.intercept(options);
+    };
+    try {
+        await navigation.navigate(url).finished;
+    } catch { }
+}
+
+window.onload = async () => {
+    await navigateWith({ handler: promiseWithThrowingConstructorGetter }, "#handler");
+    await navigateWith({ precommitHandler: promiseWithThrowingConstructorGetter }, "#precommit");
+    result.textContent = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
