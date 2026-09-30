@@ -1328,11 +1328,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
     }
 
     if (m_svgData) {
-        if (!is<RenderSVGRoot>(renderer())) {
-            ASSERT(!renderer().isFixedPositioned());
-            if (mode == Write)
-                m_repaintStatus = RepaintStatus::NeedsFullRepaint;
-        }
+        ASSERT_IMPLIES(!is<RenderSVGRoot>(renderer()), !renderer().isFixedPositioned());
 
         // Only the outermost <svg> and / <foreignObject> are potentially scrollable.
         // An SVG renderer reused as the document element (e.g. after replaceChild) can

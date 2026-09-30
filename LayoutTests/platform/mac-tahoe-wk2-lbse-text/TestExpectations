@@ -58,7 +58,6 @@ svg/zoom/zoomed-inline-svg-getscreenctm.html [ Failure ]
 svg/custom/pattern-content-inheritance-cycle.svg  [ ImageOnlyFailure ]
 
 # Clipping problems
-css3/masking/reference-clip-path-change-repaint.html          [ Failure ]
 svg/batik/text/textProperties.svg                             [ ImageOnlyFailure ]
 
 # Bounding box issues

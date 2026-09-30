@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 200px">
+    <rect id="target" x="10" y="10" width="40" height="40" fill="green"/>
+    <rect x="80" y="10" width="40" height="40" fill="green" style="isolation: isolate"/>
+</svg>
+<script>
+    function repaintTest() {
+        document.getElementById("target").setAttribute("width", "20");
+    }
+</script>
+</body>
+</html>
