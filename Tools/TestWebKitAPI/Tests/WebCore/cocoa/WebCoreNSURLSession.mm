@@ -306,6 +306,7 @@ TEST_F(WebCoreNSURLSessionTest, RangeResponseDeliversLastByteAtChunkBoundary)
 
     TestWebKitAPI::Util::run(&rangeTestComplete);
 
+    EXPECT_TRUE(rangeTestReceivedResponse);
     EXPECT_EQ([rangeTestReceivedData length], expectedLength);
 
     RetainPtr expectedData = [NSData dataWithBytes:resourceBytes.subspan(0, expectedLength).data() length:expectedLength];

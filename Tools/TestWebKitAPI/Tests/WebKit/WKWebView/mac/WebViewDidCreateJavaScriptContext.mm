@@ -35,7 +35,6 @@
 
 @class MyConsole;
 
-static bool didFinishLoad = false;
 static bool didCompleteTestSuccessfully = false;
 static bool didCallWindowCallback = false;
 static bool didFindMyCustomProperty = false;
@@ -72,11 +71,6 @@ static bool didReportException = false;
 @end
 
 @implementation DidCreateJavaScriptContextFrameLoadDelegate
-
-- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
-{
-    didFinishLoad = true;
-}
 
 - (void)webView:(WebView *)webView didCreateJavaScriptContext:(JSContext *)context forFrame:(WebFrame *)frame
 {
@@ -137,7 +131,6 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, DidCreateJavaScriptContextSanity1)
 {
-    didFinishLoad = false;
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
         RetainPtr<DidCreateJavaScriptContextFrameLoadDelegate> frameLoadDelegate = adoptNS([[DidCreateJavaScriptContextFrameLoadDelegate alloc] init]);

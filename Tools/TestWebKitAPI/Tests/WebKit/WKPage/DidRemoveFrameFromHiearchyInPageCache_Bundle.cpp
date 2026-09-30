@@ -44,12 +44,8 @@ public:
 
 static InjectedBundleTest::Register<DidRemoveFrameFromHiearchyInBackForwardCacheTest> registrar("DidRemoveFrameFromHiearchyInBackForwardCache");
 
-static unsigned didRemoveFrameFromHierarchyCount;
-
 void didRemoveFrameFromHierarchyCallback(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void*)
 {
-    didRemoveFrameFromHierarchyCount++;
-
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RELEASE_ASSERT(!WKBundleFrameGetParentFrame(frame));
     ALLOW_DEPRECATED_DECLARATIONS_END
