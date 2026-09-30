@@ -81,7 +81,9 @@ private:
         int relativePriority = 0;
         auto qos = dispatch_queue_get_qos_class(targetQueue, &relativePriority);
         auto attributes = dispatch_queue_attr_make_with_qos_class(serialQueueWithAutoreleasePoolAttrSingleton(), qos, relativePriority);
-        m_dispatchQueue = adoptOSObject(dispatch_queue_create_with_target("org.webkit.ImageDecoder.Image", attributes, targetQueue));
+        // dispatch_queue_create_with_target returns a +1 reference, but its
+        // ownership annotation is unavailable when compiling as C++.
+        SUPPRESS_RETAINPTR_CTOR_ADOPT m_dispatchQueue = adoptOSObject(dispatch_queue_create_with_target("org.webkit.ImageDecoder.Image", attributes, targetQueue));
     }
 
     OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
