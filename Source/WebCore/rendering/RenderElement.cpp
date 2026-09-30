@@ -97,7 +97,6 @@
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGImage.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
@@ -1949,12 +1948,8 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
 
     repaint();
 
-    if (RefPtr image = cachedImage.image()) {
-        if (auto* svgImage = dynamicDowncast<SVGImage>(*image))
-            svgImage->scheduleStartAnimation();
-        else
-            image->startAnimation();
-    }
+    if (RefPtr image = cachedImage.image())
+        image->startAnimation();
 
     // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
     if (CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(*this))

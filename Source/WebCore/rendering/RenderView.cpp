@@ -1037,7 +1037,7 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
             RefPtr image = cachedImage->image();
             if (RefPtr svgImage = dynamicDowncast<SVGImage>(image.get())) {
                 if (shouldAnimate && hasPausedAnimation) {
-                    svgImage->resumeAnimation();
+                    svgImage->startAnimation();
                     removeRendererWithPausedImageAnimations(renderElement, *cachedImage);
                 } else if (!hasPausedAnimation) {
                     svgImage->stopAnimation();

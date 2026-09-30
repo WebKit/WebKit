@@ -534,12 +534,7 @@ NaturalDimensions SVGImage::unorientedNaturalDimensions() const
     return naturalDimensions;
 }
 
-void SVGImage::startAnimationTimerFired()
-{
-    startAnimation();
-}
-
-void SVGImage::scheduleStartAnimation()
+void SVGImage::startAnimation()
 {
     RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->animationsPaused())
@@ -547,16 +542,7 @@ void SVGImage::scheduleStartAnimation()
     m_startAnimationTimer.startOneShot(0_s);
 }
 
-void SVGImage::startAnimation()
-{
-    RefPtr rootElement = this->rootElement();
-    if (!rootElement || !rootElement->animationsPaused())
-        return;
-    rootElement->unpauseAnimations();
-    rootElement->setCurrentTime(0);
-}
-
-void SVGImage::resumeAnimation()
+void SVGImage::startAnimationTimerFired()
 {
     RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->animationsPaused())
@@ -576,6 +562,10 @@ void SVGImage::stopAnimation()
 void SVGImage::resetAnimation()
 {
     stopAnimation();
+    RefPtr rootElement = this->rootElement();
+    if (!rootElement)
+        return;
+    rootElement->setCurrentTime(0);
 }
 
 bool SVGImage::isAnimating() const
