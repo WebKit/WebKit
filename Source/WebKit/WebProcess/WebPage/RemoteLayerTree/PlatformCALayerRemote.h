@@ -299,7 +299,7 @@ private:
     void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
-    WebCore::ColorSpace displayColorSpace() const;
+    WebCore::ColorSpace displayColorSpace(WebCore::ContentsFormat) const;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::IncludeDynamicContentScalingDisplayList shouldIncludeDisplayListInBackingStore() const;

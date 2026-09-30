@@ -101,6 +101,9 @@ public:
 
     void setNeedsDisplay();
 
+    // True if the GPU process reported that the last prepare didn't produce a front buffer.
+    bool remoteFrontBufferIsMissing();
+
 #if PLATFORM(COCOA)
     void prepareToDisplay(const WebCore::Region& dirtyRegion, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, bool drawingRequiresClearedPixels);
 #endif
@@ -148,6 +151,7 @@ private:
 
     Lock m_lock;
     bool m_prepareForDisplayIsPending WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_remoteFrontBufferIsMissing WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_closed WTF_GUARDED_BY_LOCK(m_lock) { false };
 };
 

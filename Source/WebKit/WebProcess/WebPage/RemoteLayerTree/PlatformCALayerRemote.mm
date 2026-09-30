@@ -302,16 +302,16 @@ void PlatformCALayerRemote::ensureBackingStore()
     updateBackingStore();
 }
 
-ColorSpace PlatformCALayerRemote::displayColorSpace() const
+ColorSpace PlatformCALayerRemote::displayColorSpace(ContentsFormat contentsFormat) const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (auto displayColorSpace = contentsFormatExtendedColorSpace(contentsFormat()))
+    if (auto displayColorSpace = contentsFormatExtendedColorSpace(contentsFormat))
         return displayColorSpace.value();
 #else
     RefPtr context = m_context.get();
     if (auto displayColorSpace = context ? context->displayColorSpace() : std::nullopt) {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-        if (contentsFormat() == ContentsFormat::RGBA16F) {
+        if (contentsFormat == ContentsFormat::RGBA16F) {
             if (auto extendedDisplayColorSpace = displayColorSpace->asExtended())
                 return extendedDisplayColorSpace.value();
         }
@@ -339,6 +339,24 @@ IncludeDynamicContentScalingDisplayList PlatformCALayerRemote::shouldIncludeDisp
 }
 #endif
 
+// Bitmap backing stores are drawn with CGBitmapContexts, which can't represent the
+// 10-bit IOSurface formats (RGB10A8 is bi-planar). Use half-float for those instead.
+static ContentsFormat backingStoreContentsFormat(ContentsFormat contentsFormat, RemoteLayerBackingStore::Type type)
+{
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    if (type == RemoteLayerBackingStore::Type::Bitmap && contentsFormat == ContentsFormat::RGBA10) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        return ContentsFormat::RGBA16F;
+#else
+        return ContentsFormat::RGBA8;
+#endif
+    }
+#else
+    UNUSED_PARAM(type);
+#endif
+    return contentsFormat;
+}
+
 void PlatformCALayerRemote::updateBackingStore()
 {
     CheckedPtr store = m_properties.backingStoreOrProperties.store.get();
@@ -351,8 +369,8 @@ void PlatformCALayerRemote::updateBackingStore()
     parameters.type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
     parameters.size = m_properties.bounds.size();
 
-    parameters.colorSpace = displayColorSpace();
-    parameters.contentsFormat = contentsFormat();
+    parameters.contentsFormat = backingStoreContentsFormat(contentsFormat(), parameters.type);
+    parameters.colorSpace = displayColorSpace(parameters.contentsFormat);
     parameters.scale = m_properties.contentsScale;
     parameters.isOpaque = m_properties.opaque;
 
