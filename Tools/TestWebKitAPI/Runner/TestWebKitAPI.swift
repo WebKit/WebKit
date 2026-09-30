@@ -58,8 +58,6 @@ struct TestWebKitAPI {
                 argumentDefaults["WebKit2GPUProcessForDOMRendering"] = true
             case "--no-use-gpu-process":
                 argumentDefaults["WebKit2GPUProcessForDOMRendering"] = false
-            case "--site-isolation-enabled-by-default":
-                Self.forceSiteIsolationForTesting()
             default:
                 break
             }
@@ -81,6 +79,10 @@ struct TestWebKitAPI {
         // Web Content process. Those listed below are propagated manually.
         handleArguments(&argumentDomain)
         #endif
+
+        if CommandLine.arguments.dropFirst().contains("--site-isolation-enabled-by-default") {
+            Self.forceSiteIsolationForTesting()
+        }
 
         UserDefaults.standard.setVolatileDomain(argumentDomain, forName: UserDefaults.argumentDomain)
 

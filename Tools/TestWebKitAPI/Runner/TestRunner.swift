@@ -107,6 +107,8 @@ extension TestRunner.Configuration {
               --parallel             Allow tests to run in parallel where supported.
               --list-tests           Print the selected test names without running them.
               --pretty               Produce verbose, human-readable output.
+              --site-isolation-enabled-by-default
+                                     Force site isolation on for every test.
 
             GENERAL:
               --help, -h             Print this help and exit.
@@ -122,8 +124,6 @@ extension TestRunner.Configuration {
               --no-remote-layer-tree Disable the remote layer tree drawing model.
               --use-gpu-process      Enable GPU process DOM rendering.
               --no-use-gpu-process   Disable GPU process DOM rendering.
-              --site-isolation-enabled-by-default
-                                     Force site isolation on for every test.
             """
         return base + sectionSeparator + macOptions
         #else
