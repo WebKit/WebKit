@@ -2683,10 +2683,7 @@ imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html 
 # Imported W3C SVG failed tests
 imported/w3c/web-platform-tests/svg/animations/beginelement-instance-time-1.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/correct-events-for-short-animations-with-syncbases.html [ Skip ]
-imported/w3c/web-platform-tests/svg/animations/conditional-processing-01.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/animations/stop-animation-01.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/animations/switch-animation-01.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/animations/switch-animation-02.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/embedded/image-crossorigin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/interact/scripted/tabindex-focus-flag.svg [ Skip ]
