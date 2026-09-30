@@ -992,20 +992,36 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
         context.scale(documentScale);
         context.clip(pageDestinationRect);
 
-        if (!asyncRenderer)
+        if (!asyncRenderer) {
             context.fillRect(pageDestinationRect, pdfPageBackgroundColor(displayMode));
 
-        // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
-        // from this page's drawing origin.
+            LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
+
+            auto drawPage = [&](GraphicsContext& pageContext, FloatPoint pageOrigin) {
+                GraphicsContextStateSaver pageContextStateSaver(pageContext);
+                // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
+                // from this page's drawing origin.
+                pageContext.translate(pageOrigin);
+                pageContext.scale({ 1, -1 });
+
+                RetainPtr platformContext = pageContext.platformContext();
+                applyPDFContentAXColorAdjustment(platformContext, page.get(), displayMode);
+                [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext];
+            };
+
+            if (context.hasPlatformContext())
+                drawPage(context, pageDestinationRect.minXMaxYCorner());
+            else if (RefPtr pageBuffer = context.createAlignedImageBuffer(pageDestinationRect.size(), context.colorSpace(), RenderingMethod::Local)) {
+                // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into,
+                // so render into a local (non-remote) buffer first.
+                drawPage(pageBuffer->context(), { 0, pageDestinationRect.height() });
+                context.drawImageBuffer(*pageBuffer, pageDestinationRect);
+            }
+        }
+
+        // Translate the context to the bottom of pageBounds and flip, to match PDFKit's page coordinate space.
         context.translate(pageDestinationRect.minXMaxYCorner());
         context.scale({ 1, -1 });
-
-        if (!asyncRenderer) {
-            LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
-            RetainPtr platformContext = context.platformContext();
-            applyPDFContentAXColorAdjustment(platformContext, page.get(), displayMode);
-            [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext];
-        }
 
         if constexpr (hasFullAnnotationSupport) {
             if (currentPageHasAnnotation) {

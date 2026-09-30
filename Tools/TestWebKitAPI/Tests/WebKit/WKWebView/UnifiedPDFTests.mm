@@ -1761,6 +1761,30 @@ UNIFIED_PDF_TEST(DISABLED_RespectsPageFragment)
     EXPECT_NE(colorsWithoutFragment, colorsWithFragment);
 }
 
+#if PLATFORM(MAC)
+UNIFIED_PDF_TEST(RemoteSnapshotPaintsPageContent)
+{
+    RetainPtr configuration = configurationForWebViewTestingUnifiedPDF();
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"RemoteSnapshottingEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"multiple-pages-colored" withExtension:@"pdf"]]];
+
+    // The first page of this document is filled with green.
+    auto colors = [webView sampleColors];
+    bool foundPageContent = colors.containsIf([](auto& color) {
+        auto [red, green, blue, alpha] = color.template toColorTypeLossy<WebCore::SRGBA<uint8_t>>().resolved();
+        return green > 64 && red < 32 && blue < 32;
+    });
+    EXPECT_TRUE(foundPageContent);
+}
+#endif
+
 #if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
 
 static void checkKeyboardScrollability(TestWKWebView *webView)
