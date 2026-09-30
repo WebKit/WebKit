@@ -1496,6 +1496,50 @@ extension AppKitGesturesTests.Basic {
         #expect(page.url != initialURL)
     }
 
+    @Test(arguments: [true, false])
+    func clickThenDragSelectsTextUnlessItInterruptsDeceleratingScroll(interruptsScroll: Bool) async throws {
+        let text = String(repeating: "\(Self.text) ", count: 2000)
+        let html = """
+            <div id="div" style="font-size: 30px; line-height: 1;">\(text)</div>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let flickEnd = CGPoint(x: center.x, y: center.y - 200)
+
+        if !interruptsScroll {
+            await page.withWheelEventMonitoring(expectingMomentumEnd: true) {
+                await recap.play { composer in
+                    composer._wk_scroll(withStart: center, end: flickEnd, duration: .seconds(0.1))
+                }
+            }
+        }
+
+        await recap.play { composer in
+            if interruptsScroll {
+                composer._wk_scroll(withStart: center, end: flickEnd, duration: .seconds(0.1))
+                composer.advanceTime(0.05)
+            }
+            composer._wk_drag(withStart: center, end: flickEnd, duration: .seconds(1.5), pressAndWait: .seconds(1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        if interruptsScroll {
+            if case .range = selection {
+                Issue.record("expected click interrupting a decelerating scroll to not select text, got \(selection)")
+            }
+        } else {
+            guard case .range = selection else {
+                Issue.record("expected click to select text, got \(selection)")
+                return
+            }
+        }
+    }
+
     @Test
     func clickAfterScrollStillProducesClick() async throws {
         let html = """
