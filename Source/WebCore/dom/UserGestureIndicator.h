@@ -125,7 +125,7 @@ public:
 
     bool NODELETE isValidForDocument(const Document&) const;
 
-    void forEachImpactedDocument(Function<void(Document&)>&&);
+    void forEachImpactedDocument(NOESCAPE const Function<void(Document&)>&);
 
     RefPtr<JSC::MicrotaskDispatcher> createMicrotaskDispatcher(JSC::VM&, JSC::JSGlobalObject*) override;
 

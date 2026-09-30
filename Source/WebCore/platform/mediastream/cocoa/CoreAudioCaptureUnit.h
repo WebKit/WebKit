@@ -86,7 +86,7 @@ public:
     static Ref<CoreAudioCaptureUnit> createNonVPIOUnit();
     ~CoreAudioCaptureUnit();
 
-    WEBCORE_EXPORT static void forEach(NOESCAPE Function<void(CoreAudioCaptureUnit&)>&&);
+    WEBCORE_EXPORT static void forEach(NOESCAPE const Function<void(CoreAudioCaptureUnit&)>&);
     static void forNewUnit(Function<void(CoreAudioCaptureUnit&)>&&);
 
     using CreationCallback = Function<std::expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;

@@ -74,7 +74,7 @@ public:
 
 private:
     template<typename Callback>
-    void removeAllMatching(const Callback& matches);
+    void removeAllMatching(NOESCAPE const Callback&);
 
     void sweep();
 

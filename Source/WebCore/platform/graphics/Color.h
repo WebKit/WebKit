@@ -122,7 +122,7 @@ public:
 
     bool anyComponentIsNone() const;
 
-    template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
+    template<typename Functor> decltype(auto) callOnUnderlyingType(NOESCAPE const Functor&) const;
 
     // This will convert the underlying color into ColorType, potentially lossily if the gamut
     // or precision of ColorType is smaller than the current underlying type.
@@ -444,11 +444,11 @@ inline ColorSpaceName Color::colorSpace() const
     return decodedColorSpace(m_colorAndFlags);
 }
 
-template<typename Functor> decltype(auto) Color::callOnUnderlyingType(Functor&& functor) const
+template<typename Functor> decltype(auto) Color::callOnUnderlyingType(NOESCAPE const Functor& functor) const
 {
     if (isOutOfLine())
-        return callWithColorType(asOutOfLine().unresolvedComponents(), colorSpace(), std::forward<Functor>(functor));
-    return std::invoke(std::forward<Functor>(functor), asInline());
+        return callWithColorType(asOutOfLine().unresolvedComponents(), colorSpace(), functor);
+    return std::invoke(functor, asInline());
 }
 
 template<typename ColorType> ColorType Color::toColorTypeLossy() const

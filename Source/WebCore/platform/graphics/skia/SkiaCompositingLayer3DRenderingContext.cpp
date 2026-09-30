@@ -101,7 +101,7 @@ static inline bool polygonsIntersect(const PolygonZY& polygonA, const PolygonZY&
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SkiaCompositingLayer3DRenderingContext::LayerNode);
 
-void SkiaCompositingLayer3DRenderingContext::paint(Vector<Layer>&& layers, const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>& paintLayerFunction)
+void SkiaCompositingLayer3DRenderingContext::paint(Vector<Layer>&& layers, NOESCAPE const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>& paintLayerFunction)
 {
     if (layers.isEmpty())
         return;
@@ -293,7 +293,7 @@ void SkiaCompositingLayer3DRenderingContext::buildTree(LayerNode& root, Deque<La
     }
 }
 
-void SkiaCompositingLayer3DRenderingContext::traverseTree(LayerNode& node, const std::function<void(LayerNode&)>& processNode)
+void SkiaCompositingLayer3DRenderingContext::traverseTree(LayerNode& node, NOESCAPE const std::function<void(LayerNode&)>& processNode)
 {
     const auto& plane = node.firstLayer().geometry.plane();
 

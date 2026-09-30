@@ -162,7 +162,7 @@ struct RTL {
 };
 
 template <typename IterationData>
-static void forEachHBRun(const std::span<const char16_t>& characters, Function<void(const HBRun&)>&& callback)
+static void forEachHBRun(const std::span<const char16_t>& characters, NOESCAPE const Function<void(const HBRun&)>& callback)
 {
     IterationData data;
 

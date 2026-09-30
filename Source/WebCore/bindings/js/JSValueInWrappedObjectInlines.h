@@ -141,7 +141,7 @@ inline bool JSValueInWrappedObject::isWorldCompatible(JSC::JSGlobalObject& lexic
     return false;
 }
 
-inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope& throwScope, JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const auto& function)
+inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope& throwScope, JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, NOESCAPE const auto& function)
 {
     if (cachedValue && cachedValue.isWorldCompatible(lexicalGlobalObject))
         return cachedValue.getValue();

@@ -133,7 +133,7 @@ CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, St
 }
 
 template <typename ConsumeSelector>
-MutableCSSSelectorList CSSSelectorParser::consumeSelectorList(CSSParserTokenRange& range, ConsumeSelector&& consumeSelector)
+MutableCSSSelectorList CSSSelectorParser::consumeSelectorList(CSSParserTokenRange& range, NOESCAPE const ConsumeSelector& consumeSelector)
 {
     MutableCSSSelectorList selectorList;
     auto selector = consumeSelector(range);
@@ -177,7 +177,7 @@ MutableCSSSelectorList CSSSelectorParser::consumeNestedSelectorList(CSSParserTok
 }
 
 template<typename ConsumeSelector>
-MutableCSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParserTokenRange& range, ConsumeSelector&& consumeSelector)
+MutableCSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParserTokenRange& range, NOESCAPE const ConsumeSelector& consumeSelector)
 {
     if (m_failedParsing)
         return { };

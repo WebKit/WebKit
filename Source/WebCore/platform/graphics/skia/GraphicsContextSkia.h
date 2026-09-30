@@ -146,7 +146,7 @@ private:
 
     enum class ShadowStyle : uint8_t { Outset, Inset };
     sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
-    bool drawOutsetShadow(SkPaint&, Function<void(const SkPaint&)>&&);
+    bool drawOutsetShadow(SkPaint&, NOESCAPE const Function<void(const SkPaint&)>&);
 
     void pushSkiaState();
     void popSkiaState();

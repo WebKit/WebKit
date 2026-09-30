@@ -150,7 +150,7 @@
 
 namespace WebCore {
 
-void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint point, const std::function<bool(CALayer *, CGPoint)>& pointInLayerFunction)
+void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint point, NOESCAPE const std::function<bool(CALayer *, CGPoint)>& pointInLayerFunction)
 {
     if (parent.masksToBounds && ![parent containsPoint:point])
         return;

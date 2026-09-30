@@ -184,7 +184,7 @@ void DataTransfer::clearData(const String& type)
         m_itemList->didClearStringData(normalizedType);
 }
 
-static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard, Function<bool(const String&)>&& shouldIncludeURL)
+static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard, NOESCAPE const Function<bool(const String&)>& shouldIncludeURL)
 {
     StringBuilder urlList;
     auto urlStrings = pasteboard.readAllStrings("text/uri-list"_s);

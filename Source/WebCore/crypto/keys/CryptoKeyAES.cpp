@@ -80,7 +80,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier algorithm
     return adoptRef(new CryptoKeyAES(algorithm, WTF::move(keyData), extractable, usages));
 }
 
-RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, CheckAlgCallback&& callback)
+RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, NOESCAPE const CheckAlgCallback& callback)
 {
     if (keyData.kty != "oct"_s)
         return nullptr;

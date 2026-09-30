@@ -122,7 +122,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     return m_script;
 }
 
-void CachedScript::withScriptConcurrently(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only, const ScopedLambda<void(StringView)>& function)
+void CachedScript::withScriptConcurrently(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only, NOESCAPE const ScopedLambda<void(StringView)>& function)
 {
     Locker locker { m_lock };
     auto data = m_data;

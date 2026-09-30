@@ -133,9 +133,9 @@ private:
 
     ReadyState readyState() const final { return m_readyState; }
 
-    void forEachElement(Function<void(Ref<HTMLMediaElement>&&)>&&) const;
-    bool anyElement(Function<bool(Ref<HTMLMediaElement>&&)>&&) const;
-    bool everyElement(Function<bool(Ref<HTMLMediaElement>&&)>&&) const;
+    void forEachElement(NOESCAPE const Function<void(Ref<HTMLMediaElement>&&)>&) const;
+    bool anyElement(NOESCAPE const Function<bool(Ref<HTMLMediaElement>&&)>&) const;
+    bool everyElement(NOESCAPE const Function<bool(Ref<HTMLMediaElement>&&)>&) const;
 
     enum PlaybackState { WAITING, PLAYING, ENDED };
 

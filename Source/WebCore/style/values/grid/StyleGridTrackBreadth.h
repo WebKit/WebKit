@@ -143,7 +143,7 @@ public:
     bool isContentSized() const { return m_type == GridTrackBreadthType::Length && (m_length.isAuto() || m_length.isMinContent() || m_length.isMaxContent()); }
     bool isAuto() const { return m_type == GridTrackBreadthType::Length && m_length.isAuto(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -152,7 +152,7 @@ public:
         return WTF::switchOn(m_length, [&](const auto& value) { return visitor(value); });
     }
 
-    template<typename... F> decltype(auto) switchOnUsingNumeric(F&&... f) const
+    template<typename... F> decltype(auto) switchOnUsingNumeric(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

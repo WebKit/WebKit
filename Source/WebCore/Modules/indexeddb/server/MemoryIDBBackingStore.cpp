@@ -671,7 +671,7 @@ IDBError MemoryIDBBackingStore::updateIndexRecordsWithIndexKey(const IDBResource
     return objectStore->updateIndexRecordsWithIndexKey(*transaction, indexInfo, key, indexKey);
 }
 
-void MemoryIDBBackingStore::forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, Function<void(RecordOrError&&)>&& apply)
+void MemoryIDBBackingStore::forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, NOESCAPE const Function<void(RecordOrError&&)>& apply)
 {
     RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {

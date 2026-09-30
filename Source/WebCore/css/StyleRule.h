@@ -105,8 +105,8 @@ protected:
     void invalidateResolvedSelectorListRecursively();
 
 private:
-    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE Visitor&&) const;
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
     template<typename... F> requires (sizeof...(F) > 1) constexpr decltype(auto) visitDerived(NOESCAPE F&&...);
 
     Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;

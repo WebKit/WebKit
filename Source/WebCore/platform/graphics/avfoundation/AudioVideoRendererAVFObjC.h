@@ -177,7 +177,7 @@ private:
     void destroyAudioRenderers();
     void destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer>);
     RetainPtr<AVSampleBufferAudioRenderer> audioRendererFor(TrackIdentifier) const;
-    void applyOnAudioRenderers(NOESCAPE Function<void(AVSampleBufferAudioRenderer *)>&&) const;
+    void applyOnAudioRenderers(NOESCAPE const Function<void(AVSampleBufferAudioRenderer *)>&) const;
 
     Ref<GenericPromise> updateDisplayLayerIfNeeded();
     bool NODELETE shouldEnsureLayerOrVideoRenderer() const;

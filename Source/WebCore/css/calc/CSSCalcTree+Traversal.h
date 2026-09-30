@@ -36,12 +36,12 @@ namespace CSSCalc {
 
 // `forAllChildren` will call the provided `functor` on all direct children of the provided node. This will include values of type `Child`, `ChildOrNone` and `std::optional<Child>`.
 
-template<typename F, Leaf Op> void forAllChildren(const auto&, const F&)
+template<typename F, Leaf Op> void forAllChildren(const auto&, NOESCAPE const F&)
 {
     // No children.
 }
 
-template<typename F, typename Op> void forAllChildren(const Op& root, const F& functor)
+template<typename F, typename Op> void forAllChildren(const Op& root, NOESCAPE const F& functor)
 {
     struct Caller {
         const F& functor;
@@ -72,7 +72,7 @@ template<typename F, typename Op> void forAllChildren(const Op& root, const F& f
     WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);
 }
 
-template<typename F> void forAllChildren(const Child& root, const F& functor)
+template<typename F> void forAllChildren(const Child& root, NOESCAPE const F& functor)
 {
     WTF::switchOn(root, [&](const auto& root) { forAllChildren(*root, functor); });
 }
@@ -81,12 +81,12 @@ template<typename F> void forAllChildren(const Child& root, const F& functor)
 
 // `forAllChildNodes` will call the provided `functor` on all direct `Child` typed children of the provided node. If a child is of type `ChildOrNone` or `std::optional<Child>`, the functor will be called on the unwrapped `Child` if and only if that is what the type is holding.
 
-template<typename F, Leaf Op> void forAllChildNodes(const Op&, const F&)
+template<typename F, Leaf Op> void forAllChildNodes(const Op&, NOESCAPE const F&)
 {
     // No children.
 }
 
-template<typename F, typename Op> void forAllChildNodes(const Op& root, const F& functor)
+template<typename F, typename Op> void forAllChildNodes(const Op& root, NOESCAPE const F& functor)
 {
     struct Caller {
         const F& functor;
@@ -123,7 +123,7 @@ template<typename F, typename Op> void forAllChildNodes(const Op& root, const F&
     WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);
 }
 
-template<typename F> void forAllChildNodes(const Child& root, const F& functor)
+template<typename F> void forAllChildNodes(const Child& root, NOESCAPE const F& functor)
 {
     WTF::switchOn(root, [&](const auto& root) { forAllChildNodes(*root, functor); });
 }

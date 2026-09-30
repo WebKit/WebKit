@@ -515,7 +515,7 @@ static void pathElementApplierCallback(void* info, const CGPathElement* element)
     }
 }
 
-bool PathCG::applyElements(const PathElementApplier& applier) const
+bool PathCG::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     CGPathApply(platformPath(), (void*)&applier, pathElementApplierCallback);
     return true;

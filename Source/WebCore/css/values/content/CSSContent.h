@@ -100,7 +100,7 @@ struct ContentQuote {
     using Type = Variant<Keyword::OpenQuote, Keyword::CloseQuote, Keyword::NoOpenQuote, Keyword::NoCloseQuote>;
     Type quote;
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(quote, std::forward<F>(f)...);
     }
@@ -113,7 +113,7 @@ struct ContentGlyph {
     using Type = Variant<Keyword::PickerUp, Keyword::PickerDown>;
     Type glyph;
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(glyph, std::forward<F>(f)...);
     }
@@ -164,7 +164,7 @@ struct Content {
     bool isNone() const { return WTF::holdsAlternative<Keyword::None>(m_value); }
     bool isNormal() const { return WTF::holdsAlternative<Keyword::Normal>(m_value); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

@@ -48,7 +48,7 @@ bool canAppendNewLineFeedToSelection(const VisibleSelection&);
 // LineOperation should define member function "opeartor (size_t lineOffset, size_t lineLength, bool isLastLine)".
 // lienLength doesn't include the newline character. So the value of lineLength could be 0.
 template <class LineOperation>
-void forEachLineInString(const String& string, const LineOperation& operation)
+void forEachLineInString(const String& string, NOESCAPE const LineOperation& operation)
 {
     unsigned offset = 0;
     size_t newline;

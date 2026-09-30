@@ -48,7 +48,7 @@ struct GridPositionExplicit {
     Position position { 1 };
     CustomIdent name { nullAtom() };
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -67,7 +67,7 @@ struct GridPositionSpan {
     Position position { 1 };
     CustomIdent name { nullAtom() };
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -109,7 +109,7 @@ struct GridPosition {
     static int NODELETE max();
     static int NODELETE min();
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

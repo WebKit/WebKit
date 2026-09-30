@@ -38,7 +38,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSDynamicRangeLimitValue&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
     CSSDynamicRangeLimitValue(CSS::DynamicRangeLimit&&);

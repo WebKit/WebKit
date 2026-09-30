@@ -542,7 +542,7 @@ RefPtr<StyleRuleViewTransition> RuleSet::viewTransitionRule() const
 }
 
 template<typename Function>
-void RuleSet::traverseRuleDatas(Function&& function)
+void RuleSet::traverseRuleDatas(NOESCAPE const Function& function)
 {
     auto traverseVector = [&](auto& vector) {
         for (auto& ruleData : vector)
@@ -578,7 +578,7 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_universalPseudoElementRules);
 }
 
-template<typename Function> void RuleSet::traverseRuleDatas(Function&& function) const
+template<typename Function> void RuleSet::traverseRuleDatas(NOESCAPE const Function& function) const
 {
     const_cast<RuleSet&>(*this).traverseRuleDatas([&](const RuleData& ruleData) {
         function(ruleData);

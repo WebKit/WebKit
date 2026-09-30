@@ -185,13 +185,13 @@ void PathStream::add(PathCloseSubpath)
     segments().append(PathCloseSubpath { });
 }
 
-void PathStream::applySegments(const PathSegmentApplier& applier) const
+void PathStream::applySegments(NOESCAPE const PathSegmentApplier& applier) const
 {
     for (auto& segment : m_segments)
         applier(segment);
 }
 
-bool PathStream::applyElements(const PathElementApplier& applier) const
+bool PathStream::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     for (auto& segment : m_segments) {
         if (!segment.canApplyElements())

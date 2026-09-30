@@ -52,7 +52,7 @@ public:
     bool isGradientOrPattern() const { return !std::holds_alternative<Color>(m_style); }
 
     template<typename... F>
-    decltype(auto) visit(F&&... f) const
+    decltype(auto) visit(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         return WTF::switchOn(m_style,

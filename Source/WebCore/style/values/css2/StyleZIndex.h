@@ -64,7 +64,7 @@ struct ZIndex {
     constexpr bool isValue() const { return !m_isAuto; }
     constexpr std::optional<Value> tryValue() const { return isValue() ? std::make_optional(m_value) : std::nullopt; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

@@ -44,7 +44,7 @@ enum class ComputeOverlapRegionMode : uint8_t {
 };
 
 IntRect projectedBoundingBox(const TransformationMatrix&, const FloatRect&, const IntRect& clipBounds);
-IntRect layerPlaneClipBounds(const TransformationMatrix& deviceToLayer, const FloatRect& deviceClip, const Function<bool(const IntRect&)>& fits = nullptr);
+IntRect layerPlaneClipBounds(const TransformationMatrix& deviceToLayer, const FloatRect& deviceClip, NOESCAPE const Function<bool(const IntRect&)>& fits = nullptr);
 
 struct ComputeOverlapRegionData {
     ComputeOverlapRegionMode mode { ComputeOverlapRegionMode::Intersection };

@@ -83,7 +83,7 @@ bool PathSegment::canApplyElements() const
     });
 }
 
-bool PathSegment::applyElements(const PathElementApplier& applier) const
+bool PathSegment::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     return WTF::switchOn(m_data, [&]<typename DataType>(DataType& data) -> bool {
         if constexpr (DataType::canApplyElements) {

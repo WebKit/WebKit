@@ -72,7 +72,7 @@ struct Contain {
 
     constexpr bool isNone() const { return m_value.isEmpty(); }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

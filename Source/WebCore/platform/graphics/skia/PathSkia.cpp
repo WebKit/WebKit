@@ -242,7 +242,7 @@ void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
     resetPlatformPath();
 }
 
-bool PathSkia::applyElements(const PathElementApplier& applier) const
+bool PathSkia::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
 

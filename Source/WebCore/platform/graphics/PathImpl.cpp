@@ -122,7 +122,7 @@ Vector<PathSegment, 10> PathImpl::beziersForRoundedRect(const FloatRoundedRect& 
     return segments;
 }
 
-void PathImpl::applySegments(const PathSegmentApplier& applier) const
+void PathImpl::applySegments(NOESCAPE const PathSegmentApplier& applier) const
 {
     applyElements([&](const PathElement& pathElement) {
         switch (pathElement.type) {

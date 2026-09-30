@@ -1107,7 +1107,7 @@ static bool runEndsWithNewline(const AXIsolatedObject& object)
 // the number of characters emitted immediately before that object's text. Return false from `visit`
 // to stop.
 template<typename Visitor>
-static void forEachRunObjectForward(const AXTextMarker& start, std::optional<AXID> stopAtID, Visitor&& visit)
+static void forEachRunObjectForward(const AXTextMarker& start, std::optional<AXID> stopAtID, NOESCAPE const Visitor& visit)
 {
     RefPtr current = start.isolatedObject();
     const auto* runs = current ? current->textRuns() : nullptr;
@@ -2070,7 +2070,7 @@ EmittedAuxiliaryText auxiliaryTextForObject(AXIsolatedObject& object, TraversalP
 // You may optionally pass a lambda that runs each time an object is visited in the traversal, either because we reached it in
 // pre-order or because we processed its children (if present) and are moving beyond it. This can help mirror
 // TextIterator::handleNonTextNode and TextIterator::exitNode in the contexts where that's necessary.
-AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID, const std::function<void(AXIsolatedObject&, TraversalPoint)>& visitObject, EnterUserAgentShadowContent enterUserAgentShadowContent)
+AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID, NOESCAPE const std::function<void(AXIsolatedObject&, TraversalPoint)>& visitObject, EnterUserAgentShadowContent enterUserAgentShadowContent)
 {
     auto shouldStop = [&stopAtID] (auto& object) {
         return stopAtID && *stopAtID == object.objectID();

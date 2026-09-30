@@ -286,7 +286,7 @@ private:
     bool allPoliciesWithDispositionAllow(Disposition, Predicate&&, Args&&...) const requires (!std::is_convertible_v<Predicate, ViolatedDirectiveCallback>);
 
     template<typename Predicate, typename... Args>
-    bool allPoliciesWithDispositionAllow(Disposition, ViolatedDirectiveCallback&&, Predicate&&, Args&&...) const;
+    bool allPoliciesWithDispositionAllow(Disposition, NOESCAPE const ViolatedDirectiveCallback&, Predicate&&, Args&&...) const;
 
     template<typename Predicate, typename... Args>
     [[nodiscard]] bool allPoliciesAllow(NOESCAPE const ViolatedDirectiveCallback&, Predicate&&, Args&&...) const;

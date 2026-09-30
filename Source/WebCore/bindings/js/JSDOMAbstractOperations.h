@@ -118,7 +118,7 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
 // the property name twice; once for 'named property visibility algorithm' check, and then
 // again when the value is needed.
 template<LegacyOverrideBuiltIns overrideBuiltins, class JSClass, class ItemAccessor>
-static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSClass& thisObject, JSC::PropertyName propertyName, ItemAccessor&& itemAccessor) -> decltype(itemAccessor(thisObject, propertyName))
+static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSClass& thisObject, JSC::PropertyName propertyName, NOESCAPE const ItemAccessor& itemAccessor) -> decltype(itemAccessor(thisObject, propertyName))
 {
     // NOTE: While it is not specified, a Symbol can never be a 'supported property
     // name' so we check that first.
@@ -153,9 +153,9 @@ static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject,
 }
 
 // This implements steps 2.2 through 2.5 of https://webidl.spec.whatwg.org/#legacy-platform-object-delete.
-template<typename Functor> bool performLegacyPlatformObjectDeleteOperation(JSC::JSGlobalObject& lexicalGlobalObject, Functor&& functor)
+template<typename Functor> bool performLegacyPlatformObjectDeleteOperation(JSC::JSGlobalObject& lexicalGlobalObject, NOESCAPE const Functor& functor)
 {
-    using ReturnType = std::invoke_result_t<Functor>;
+    using ReturnType = std::invoke_result_t<const Functor&>;
 
     if constexpr (IsExceptionOr<ReturnType>) {
         auto result = functor();

@@ -89,9 +89,9 @@ inline void propagateException(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Th
         propagateException(lexicalGlobalObject, throwScope, value.releaseException());
 }
 
-template<typename Functor> void invokeFunctorPropagatingExceptionIfNecessary(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, NOESCAPE Functor&& functor)
+template<typename Functor> void invokeFunctorPropagatingExceptionIfNecessary(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, NOESCAPE const Functor& functor)
 {
-    using ReturnType = std::invoke_result_t<Functor>;
+    using ReturnType = std::invoke_result_t<const Functor&>;
 
     if constexpr (IsExceptionOr<ReturnType>) {
         auto result = functor();

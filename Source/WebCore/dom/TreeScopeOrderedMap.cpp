@@ -103,7 +103,7 @@ void TreeScopeOrderedMap::remove(const AtomString& key, Element& element)
 }
 
 template <typename KeyMatchingFunction>
-inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const TreeScope& scope, const KeyMatchingFunction& keyMatches) const
+inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const TreeScope& scope, NOESCAPE const KeyMatchingFunction& keyMatches) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!key.isNull());
     m_map.checkConsistency();
@@ -152,7 +152,7 @@ inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const Tre
 }
 
 template <typename KeyMatchingFunction>
-inline Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getAll(const AtomString& key, const TreeScope& scope, const KeyMatchingFunction& keyMatches) const
+inline Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrderedMap::getAll(const AtomString& key, const TreeScope& scope, NOESCAPE const KeyMatchingFunction& keyMatches) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!key.isNull());
     m_map.checkConsistency();

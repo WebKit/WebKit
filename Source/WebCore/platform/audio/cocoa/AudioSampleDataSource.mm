@@ -294,7 +294,7 @@ bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, si
     return pullSamplesInternal(buffer, sampleCount, timeStamp, mode);
 }
 
-bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, Function<void()>&& consumeFilledBuffer)
+bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, NOESCAPE const Function<void()>& consumeFilledBuffer)
 {
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())

@@ -169,7 +169,7 @@ private:
     void scrollToPosition(int positionIndex);
 
     using PaintFunction = Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
-    void paintItem(PaintInfo&, const LayoutPoint&, const PaintFunction&);
+    void paintItem(PaintInfo&, const LayoutPoint&, NOESCAPE const PaintFunction&);
 
     void setHasScrollbar(ScrollbarOrientation);
     Ref<Scrollbar> createScrollbar(ScrollbarOrientation);

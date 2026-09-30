@@ -62,7 +62,7 @@ private:
     CustomPropertyData() = default;
     CustomPropertyData(const CustomPropertyData&);
 
-    template<typename Callback> void forEachInternal(Callback&&) const;
+    template<typename Callback> void forEachInternal(NOESCAPE const Callback&) const;
 
     const RefPtr<const CustomPropertyData> m_parentValues;
     CustomPropertyValueMap m_ownValues;

@@ -52,7 +52,7 @@ bool CSSFontFamilyNameValue::equals(const CSSFontFamilyNameValue& other) const
     return m_fontFamilyName == other.m_fontFamilyName;
 }
 
-IterationStatus CSSFontFamilyNameValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSFontFamilyNameValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_fontFamilyName);
 }

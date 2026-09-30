@@ -38,7 +38,7 @@ struct TextEmphasisStyle {
         TextEmphasisFill fill { TextEmphasisFill::Filled };
         TextEmphasisMark mark;
 
-        template<typename... F> decltype(auto) switchOn(F&&... f) const
+        template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
         {
             auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -52,7 +52,7 @@ struct TextEmphasisStyle {
     struct CustomMark {
         AtomString value;
 
-        template<typename... F> decltype(auto) switchOn(F&&... f) const
+        template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
         {
             auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
             return visitor(String { value });
@@ -83,7 +83,7 @@ struct TextEmphasisStyle {
     // String representation of the mark.
     const AtomString& markString() const;
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(value, std::forward<F>(f)...);
     }

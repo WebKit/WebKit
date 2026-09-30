@@ -277,7 +277,7 @@ String TextCodecCJK::eucJPDecode(std::span<const uint8_t> bytes, bool flush, boo
 }
 
 // https://encoding.spec.whatwg.org/#euc-jp-encoder
-static Vector<uint8_t> eucJPEncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> eucJPEncode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
@@ -520,7 +520,7 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
 }
 
 // https://encoding.spec.whatwg.org/#iso-2022-jp-encoder
-static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> iso2022JPEncode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
     enum class State : uint8_t { ASCII, Roman, Jis0208 };
     State state { State::ASCII };
@@ -659,7 +659,7 @@ String TextCodecCJK::shiftJISDecode(std::span<const uint8_t> bytes, bool flush, 
 }
 
 // https://encoding.spec.whatwg.org/#shift_jis-encoder
-static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> shiftJISEncode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
@@ -726,7 +726,7 @@ static const EUCKREncodingIndex& eucKREncodingIndex()
 }
 
 // https://encoding.spec.whatwg.org/#euc-kr-encoder
-static Vector<uint8_t> eucKREncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> eucKREncode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
@@ -796,7 +796,7 @@ static const Big5EncodeIndex& big5EncodeIndex()
 }
 
 // https://encoding.spec.whatwg.org/#big5-encoder
-static Vector<uint8_t> big5Encode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> big5Encode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
@@ -1029,7 +1029,7 @@ String TextCodecCJK::gb18030Decode(std::span<const uint8_t> bytes, bool flush, b
 
 // https://encoding.spec.whatwg.org/#gb18030-encoder
 enum class IsGBK : bool { No, Yes };
-static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler, IsGBK isGBK)
+static Vector<uint8_t> gbEncodeShared(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler, IsGBK isGBK)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
@@ -1083,9 +1083,9 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(char32_t,
     return result;
 }
 
-static Vector<uint8_t> gb18030Encode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> gb18030Encode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
-    return gbEncodeShared(string, WTF::move(unencodableHandler), IsGBK::No);
+    return gbEncodeShared(string, unencodableHandler, IsGBK::No);
 }
 
 // https://encoding.spec.whatwg.org/#gbk-decoder
@@ -1094,9 +1094,9 @@ String TextCodecCJK::gbkDecode(std::span<const uint8_t> bytes, bool flush, bool 
     return gb18030Decode(bytes, flush, stopOnError, sawError);
 }
 
-static Vector<uint8_t> gbkEncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> gbkEncode(StringView string, NOESCAPE const Function<void(char32_t, Vector<uint8_t>&)>& unencodableHandler)
 {
-    return gbEncodeShared(string, WTF::move(unencodableHandler), IsGBK::Yes);
+    return gbEncodeShared(string, unencodableHandler, IsGBK::Yes);
 }
 
 constexpr size_t maxChar32Digits = 10;

@@ -87,7 +87,7 @@ void DigitalCredentialsSession::queueSettlement(Function<void(CredentialPromise&
     });
 }
 
-void DigitalCredentialsSession::settle(Function<void(CredentialPromise&)>&& settleFunction)
+void DigitalCredentialsSession::settle(NOESCAPE const Function<void(CredentialPromise&)>& settleFunction)
 {
     if (!m_promise) {
         abandon();

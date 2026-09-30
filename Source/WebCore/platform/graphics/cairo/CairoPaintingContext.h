@@ -46,14 +46,14 @@ class PaintingContext {
     WTF_MAKE_TZONE_ALLOCATED(PaintingContext);
 public:
     template<typename T>
-    static void paint(WebCore::CoordinatedTileBuffer& buffer, const T& paintFunctor)
+    static void paint(WebCore::CoordinatedTileBuffer& buffer, NOESCAPE const T& paintFunctor)
     {
         auto paintingContext = PaintingContext::createForPainting(buffer);
         paintFunctor(paintingContext->graphicsContext());
     }
 
     template<typename T>
-    static void record(PaintingOperations& paintingOperations, const T& recordFunctor)
+    static void record(PaintingOperations& paintingOperations, NOESCAPE const T& recordFunctor)
     {
         auto recordingContext = PaintingContext::createForRecording(paintingOperations);
         recordFunctor(recordingContext->graphicsContext());

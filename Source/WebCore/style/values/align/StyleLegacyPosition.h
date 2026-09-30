@@ -52,7 +52,7 @@ constexpr LegacyPositionKind computeKind(std::optional<LegacyPosition> position)
     );
 }
 
-constexpr decltype(auto) visitLegacyPosition(auto&& primaryKeyword, LegacyPositionKind kind, auto&& visitor)
+constexpr decltype(auto) visitLegacyPosition(auto&& primaryKeyword, LegacyPositionKind kind, NOESCAPE const auto& visitor)
 {
     switch (kind) {
     case LegacyPositionKind::None:

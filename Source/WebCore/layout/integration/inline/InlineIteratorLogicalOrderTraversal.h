@@ -61,7 +61,7 @@ LeafBoxIterator firstLeafOnLineInLogicalOrderWithNode(const LineBoxIterator&, Li
 LeafBoxIterator lastLeafOnLineInLogicalOrderWithNode(const LineBoxIterator&, LineLogicalOrderCache&);
 
 template<typename ReverseFunction>
-Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, ReverseFunction&& reverseFunction)
+Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, NOESCAPE const ReverseFunction& reverseFunction)
 {
     Vector<LeafBoxIterator> boxes;
 

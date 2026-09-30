@@ -83,7 +83,7 @@ public:
 
     bool needsUpdate() const { return m_needsUpdate; }
 
-    void update(TextureMapperPaintOptions& options, const std::function<void(TextureMapperPaintOptions&)>& paintFunction)
+    void update(TextureMapperPaintOptions& options, NOESCAPE const std::function<void(TextureMapperPaintOptions&)>& paintFunction)
     {
         if (!m_needsUpdate)
             return;
@@ -135,7 +135,7 @@ public:
     }
 
 private:
-    void forEachTile(const IntSize& maxTextureSize, const std::function<void(const IntRect&)>& tileAction)
+    void forEachTile(const IntSize& maxTextureSize, NOESCAPE const std::function<void(const IntRect&)>& tileAction)
     {
         for (int x = m_rect.x(); x < m_rect.maxX(); x += maxTextureSize.width()) {
             for (int y = m_rect.y(); y < m_rect.maxY(); y += maxTextureSize.height()) {

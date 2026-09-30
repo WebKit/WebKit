@@ -1090,7 +1090,7 @@ RetainPtr<AVSampleBufferAudioRenderer> AudioVideoRendererAVFObjC::audioRendererF
     return itRenderer->value;
 }
 
-void AudioVideoRendererAVFObjC::applyOnAudioRenderers(NOESCAPE Function<void(AVSampleBufferAudioRenderer *)>&& function) const
+void AudioVideoRendererAVFObjC::applyOnAudioRenderers(NOESCAPE const Function<void(AVSampleBufferAudioRenderer *)>& function) const
 {
     for (auto& pair : m_audioRenderers) {
         RetainPtr renderer = pair.value;

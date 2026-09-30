@@ -206,7 +206,7 @@ bool isValidHTTPToken(const String& value)
 #if USE(GLIB)
 // True if the character at the given position satisifies a predicate, incrementing "pos" by one.
 // Note: Might return pos == str.length()
-static inline bool skipCharacter(const String& value, unsigned& pos, Function<bool(const char16_t)>&& predicate)
+static inline bool skipCharacter(const String& value, unsigned& pos, NOESCAPE const Function<bool(const char16_t)>& predicate)
 {
     if (pos < value.length() && predicate(value[pos])) {
         ++pos;

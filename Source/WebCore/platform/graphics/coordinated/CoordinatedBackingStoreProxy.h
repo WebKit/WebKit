@@ -144,7 +144,7 @@ private:
     IntRect mapFromContents(const IntRect&) const;
     IntRect tileRectForPosition(const IntPoint&) const;
     IntPoint tilePositionForPoint(const IntPoint&) const;
-    void forEachTilePositionInRect(const IntRect&, Function<void(IntPoint&&)>&&);
+    void forEachTilePositionInRect(const IntRect&, NOESCAPE const Function<void(IntPoint&&)>&);
 
     float m_contentsScale { 1 };
     IntSize m_tileSize;

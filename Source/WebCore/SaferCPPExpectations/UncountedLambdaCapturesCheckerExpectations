@@ -1,20 +1,20 @@
 animation/KeyframeEffect.cpp
 css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
-platform/graphics/cocoa/VideoMediaSampleRenderer.mm
-rendering/BackgroundPainter.cpp
+[ macOS ] platform/graphics/cocoa/VideoMediaSampleRenderer.mm
+[ macOS ] rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
 rendering/RenderElement.cpp
 rendering/RenderGrid.cpp
 rendering/RenderLayer.cpp
-rendering/RenderLayerCompositor.cpp
+[ macOS ] rendering/RenderLayerCompositor.cpp
 rendering/RenderListBox.cpp
-rendering/RenderText.cpp
-rendering/svg/RenderSVGText.cpp
+[ macOS ] rendering/RenderText.cpp
+[ macOS ] rendering/svg/RenderSVGText.cpp
 style/StyleCustomProperty.cpp
-style/computed/data/StyleCustomPropertyData.cpp
+[ macOS ] style/computed/data/StyleCustomPropertyData.cpp
 style/values/backgrounds/StyleFillLayers.h
-style/values/grid/StyleGridTrackBreadth.cpp
+[ macOS ] style/values/grid/StyleGridTrackBreadth.cpp
 style/values/images/StyleGradient.cpp
-style/values/primitives/StyleKeyword+CSSValueCreation.h
-style/values/primitives/StyleKeyword+Serialization.h
-style/values/primitives/StylePrimitiveNumericTypes+Conversions.h
+[ macOS ] style/values/primitives/StyleKeyword+CSSValueCreation.h
+[ macOS ] style/values/primitives/StyleKeyword+Serialization.h
+[ macOS ] style/values/primitives/StylePrimitiveNumericTypes+Conversions.h

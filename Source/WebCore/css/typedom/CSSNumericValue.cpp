@@ -216,7 +216,7 @@ static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
 }
 
 template<typename T>
-static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const Vector<Ref<CSSNumericValue>>& values)
+static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(NOESCAPE const T& operation, const Vector<Ref<CSSNumericValue>>& values)
 {
     bool allValuesHaveSameUnit = values.size() && std::ranges::all_of(values, [&](auto& value) {
         auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get());

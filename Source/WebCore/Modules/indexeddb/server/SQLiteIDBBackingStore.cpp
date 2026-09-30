@@ -3152,7 +3152,7 @@ IDBError SQLiteIDBBackingStore::updateIndexRecordsWithIndexKey(const IDBResource
     return uncheckedPutIndexKey(indexInfo, key, indexKey, *recordID);
 }
 
-void SQLiteIDBBackingStore::forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, Function<void(RecordOrError&&)>&& apply)
+void SQLiteIDBBackingStore::forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, NOESCAPE const Function<void(RecordOrError&&)>& apply)
 {
     CheckedPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {

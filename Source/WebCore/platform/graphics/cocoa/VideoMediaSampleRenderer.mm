@@ -1297,7 +1297,7 @@ void VideoMediaSampleRenderer::ensureOnDispatcher(Function<void()>&& function) c
     callOnMainThread(WTF::move(function));
 }
 
-void VideoMediaSampleRenderer::ensureOnDispatcherSync(Function<void()>&& function) const
+void VideoMediaSampleRenderer::ensureOnDispatcherSync(NOESCAPE Function<void()>&& function) const
 {
     if (dispatcher()->isCurrent()) {
         function();

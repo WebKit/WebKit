@@ -176,7 +176,7 @@ private:
 
     Ref<GuaranteedSerialFunctionDispatcher> dispatcher() const;
     void ensureOnDispatcher(Function<void()>&&) const;
-    void ensureOnDispatcherSync(Function<void()>&&) const;
+    void ensureOnDispatcherSync(NOESCAPE Function<void()>&&) const;
     dispatch_queue_t dispatchQueue() const;
     RefPtr<WebCoreDecompressionSession> decompressionSession() const;
     bool NODELETE useDecompressionSessionForProtectedFallback() const;

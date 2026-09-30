@@ -263,7 +263,7 @@ struct SpaceSeparatedEnumSet {
     }
 
     template<typename SizedRange, typename Mapper>
-    static SpaceSeparatedEnumSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static SpaceSeparatedEnumSet map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         Container result;
         for (auto& value : range)
@@ -348,7 +348,7 @@ struct CommaSeparatedEnumSet {
     }
 
     template<typename SizedRange, typename Mapper>
-    static CommaSeparatedEnumSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static CommaSeparatedEnumSet map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         Container result;
         for (Ref value : range)
@@ -431,7 +431,7 @@ struct SpaceSeparatedOrderedHashSet {
     }
 
     template<typename SizedRange, typename Mapper>
-    static SpaceSeparatedOrderedHashSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static SpaceSeparatedOrderedHashSet map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         Container result;
         for (Ref value : range)
@@ -474,7 +474,7 @@ struct CommaSeparatedOrderedHashSet {
     }
 
     template<typename SizedRange, typename Mapper>
-    static CommaSeparatedOrderedHashSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static CommaSeparatedOrderedHashSet map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         Container result;
         for (Ref value : range)
@@ -519,9 +519,9 @@ template<typename T, size_t inlineCapacity = 0> struct SpaceSeparatedVector {
     }
 
     template<typename SizedRange, typename Mapper>
-    static SpaceSeparatedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static SpaceSeparatedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return WTF::map<inlineCapacity>(std::forward<SizedRange>(range), std::forward<Mapper>(mapper));
+        return WTF::map<inlineCapacity>(std::forward<SizedRange>(range), mapper);
     }
 
     iterator begin() LIFETIME_BOUND { return value.begin(); }
@@ -541,7 +541,7 @@ template<typename T, size_t inlineCapacity = 0> struct SpaceSeparatedVector {
     bool contains(const auto& x) const { return value.contains(x); }
     bool containsIf(NOESCAPE const Invocable<bool(const value_type&)> auto& f) const { return value.containsIf(f); }
 
-    template<typename F> decltype(auto) map(F&& functor) const { return value.map(std::forward<F>(functor)); }
+    template<typename F> decltype(auto) map(NOESCAPE const F& functor) const { return value.map(functor); }
 
     bool operator==(const SpaceSeparatedVector&) const = default;
 
@@ -573,9 +573,9 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
     }
 
     template<typename SizedRange, typename Mapper>
-    static CommaSeparatedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static CommaSeparatedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return WTF::map<inlineCapacity>(std::forward<SizedRange>(range), std::forward<Mapper>(mapper));
+        return WTF::map<inlineCapacity>(std::forward<SizedRange>(range), mapper);
     }
 
     iterator begin() LIFETIME_BOUND { return value.begin(); }
@@ -632,15 +632,15 @@ template<typename T> struct SpaceSeparatedFixedVector {
     }
 
     template<typename SizedRange, typename Mapper>
-    static SpaceSeparatedFixedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static SpaceSeparatedFixedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return Container::map(std::forward<SizedRange>(range), std::forward<Mapper>(mapper));
+        return Container::map(std::forward<SizedRange>(range), mapper);
     }
 
     template<std::invocable<size_t> Generator>
-    static SpaceSeparatedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
+    static SpaceSeparatedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE const Generator& generator)
     {
-        return Container::createWithSizeFromGenerator(size, std::forward<Generator>(generator));
+        return Container::createWithSizeFromGenerator(size, generator);
     }
 
     iterator begin() LIFETIME_BOUND { return value.begin(); }
@@ -700,15 +700,15 @@ template<typename T> struct CommaSeparatedFixedVector {
     }
 
     template<typename SizedRange, typename Mapper>
-    static CommaSeparatedFixedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static CommaSeparatedFixedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return Container::map(std::forward<SizedRange>(range), std::forward<Mapper>(mapper));
+        return Container::map(std::forward<SizedRange>(range), mapper);
     }
 
     template<std::invocable<size_t> Generator>
-    static CommaSeparatedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
+    static CommaSeparatedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE const Generator& generator)
     {
-        return Container::createWithSizeFromGenerator(size, std::forward<Generator>(generator));
+        return Container::createWithSizeFromGenerator(size, generator);
     }
 
     iterator begin() LIFETIME_BOUND { return value.begin(); }
@@ -766,16 +766,16 @@ template<typename T> struct SpaceSeparatedRefCountedFixedVector {
     }
 
     template<typename SizedRange, typename Mapper>
-    static SpaceSeparatedRefCountedFixedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static SpaceSeparatedRefCountedFixedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         auto size = range.size();
-        return Container::map(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper));
+        return Container::map(size, std::forward<SizedRange>(range), mapper);
     }
 
     template<std::invocable<size_t> Generator>
-    static SpaceSeparatedRefCountedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
+    static SpaceSeparatedRefCountedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE const Generator& generator)
     {
-        return Container::createWithSizeFromGenerator(size, std::forward<Generator>(generator));
+        return Container::createWithSizeFromGenerator(size, generator);
     }
 
     iterator begin() LIFETIME_BOUND { return value->begin(); }
@@ -831,16 +831,16 @@ template<typename T> struct CommaSeparatedRefCountedFixedVector {
     }
 
     template<typename SizedRange, typename Mapper>
-    static CommaSeparatedRefCountedFixedVector map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static CommaSeparatedRefCountedFixedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
         auto size = range.size();
-        return Container::map(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper));
+        return Container::map(size, std::forward<SizedRange>(range), mapper);
     }
 
     template<std::invocable<size_t> Generator>
-    static CommaSeparatedRefCountedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
+    static CommaSeparatedRefCountedFixedVector createWithSizeFromGenerator(size_t size, NOESCAPE const Generator& generator)
     {
-        return Container::createWithSizeFromGenerator(size, std::forward<Generator>(generator));
+        return Container::createWithSizeFromGenerator(size, generator);
     }
 
     iterator begin() LIFETIME_BOUND { return value->begin(); }
@@ -896,7 +896,7 @@ template<typename T, typename K, typename Traits = MarkableTraits<T>> struct Val
         else if constexpr (std::same_as<U, Value>)   return isValue();
     }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -966,7 +966,7 @@ template<typename T> struct ListOrNone {
     bool isList() const { return !m_value.isEmpty(); }
     const List* tryList() const LIFETIME_BOUND { return isList() ? &m_value : nullptr; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -1198,7 +1198,7 @@ template<typename Derived, typename T, typename K> struct EnumSetOrKeywordBase {
     constexpr bool isEnumSet() const { return !m_value.isEmpty(); }
     constexpr const EnumSet* tryEnumSet() const { return isEnumSet() ? &m_value : nullptr; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -1235,19 +1235,19 @@ template<typename T, size_t N> struct SpaceSeparatedArray {
 
     constexpr bool operator==(const SpaceSeparatedArray<T, N>&) const = default;
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::any_of(value, std::forward<F>(functor));
+        return std::ranges::any_of(value, functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::all_of(value, std::forward<F>(functor));
+        return std::ranges::all_of(value, functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::none_of(value, std::forward<F>(functor));
+        return std::ranges::none_of(value, functor);
     }
 
     std::array<T, N> value;
@@ -1301,19 +1301,19 @@ template<typename T> struct MinimallySerializingSpaceSeparatedPair {
     constexpr void transpose() { WebCore::transpose(value); }
     constexpr MinimallySerializingSpaceSeparatedPair<T> transposed() const { return WebCore::transposed(value); }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return value.noneOf(std::forward<F>(functor));
+        return value.noneOf(functor);
     }
 
     SpaceSeparatedPair<T> value;
@@ -1347,19 +1347,19 @@ template<typename T, size_t N> struct CommaSeparatedArray {
 
     constexpr bool operator==(const CommaSeparatedArray<T, N>&) const = default;
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::any_of(value, std::forward<F>(functor));
+        return std::ranges::any_of(value, functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::all_of(value, std::forward<F>(functor));
+        return std::ranges::all_of(value, functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::none_of(value, std::forward<F>(functor));
+        return std::ranges::none_of(value, functor);
     }
 
     std::array<T, N> value;
@@ -1500,19 +1500,19 @@ template<typename T> struct SpaceSeparatedPoint {
     constexpr void transpose() { WebCore::transpose(value); }
     constexpr SpaceSeparatedPoint<T> transposed() const { return WebCore::transposed(value); }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return value.noneOf(std::forward<F>(functor));
+        return value.noneOf(functor);
     }
 
     SpaceSeparatedPair<T> value;
@@ -1549,19 +1549,19 @@ template<typename T> struct SpaceSeparatedSize {
     constexpr void transpose() { WebCore::transpose(value); }
     constexpr SpaceSeparatedSize<T> transposed() const { return WebCore::transposed(value); }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return value.noneOf(std::forward<F>(functor));
+        return value.noneOf(functor);
     }
 
     SpaceSeparatedPair<T> value;
@@ -1603,19 +1603,19 @@ template<typename T> struct MinimallySerializingSpaceSeparatedPoint {
     constexpr void transpose() { WebCore::transpose(value); }
     constexpr MinimallySerializingSpaceSeparatedPoint<T> transposed() const { return WebCore::transposed(value); }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return value.noneOf(std::forward<F>(functor));
+        return value.noneOf(functor);
     }
 
     SpaceSeparatedPair<T> value;
@@ -1658,19 +1658,19 @@ template<typename T> struct MinimallySerializingSpaceSeparatedSize {
     constexpr void transpose() { WebCore::transpose(value); }
     constexpr MinimallySerializingSpaceSeparatedSize<T> transposed() const { return WebCore::transposed(value); }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return value.allOf(std::forward<F>(functor));
+        return value.allOf(functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return value.noneOf(std::forward<F>(functor));
+        return value.noneOf(functor);
     }
 
     SpaceSeparatedPair<T> value;

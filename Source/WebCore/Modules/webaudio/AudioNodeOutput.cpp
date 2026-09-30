@@ -166,7 +166,7 @@ void AudioNodeOutput::removeInput(AudioNodeInput* input)
     m_inputs.remove(input);
 }
 
-void AudioNodeOutput::forEachInputNode(Function<void(AudioNode&)>&& callback) const
+void AudioNodeOutput::forEachInputNode(NOESCAPE const Function<void(AudioNode&)>& callback) const
 {
     for (auto& node : m_inputs.values()) {
         if (node)

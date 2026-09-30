@@ -177,7 +177,7 @@ static bool NODELETE withinHTMLDateLimits(int year, int month, int monthDay, int
     return !hour && !minute && !second && !millisecond;
 }
 
-template<typename F> static std::optional<DateComponents> createFromString(StringView source, F&& parseFunction)
+template<typename F> static std::optional<DateComponents> createFromString(StringView source, NOESCAPE const F& parseFunction)
 {
     if (source.isEmpty())
         return std::nullopt;
@@ -521,7 +521,7 @@ static inline double positiveFmod(double value, double divider)
     return remainder < 0 ? remainder + divider : remainder;
 }
 
-template<typename F> static std::optional<DateComponents> createFromTimeOffset(double timeOffset, F&& function)
+template<typename F> static std::optional<DateComponents> createFromTimeOffset(double timeOffset, NOESCAPE const F& function)
 {
     DateComponents result;
     if (!function(result, timeOffset))

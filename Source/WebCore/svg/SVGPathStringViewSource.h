@@ -46,7 +46,7 @@ private:
     std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment(FloatPoint) final;
     std::optional<ArcToSegment> parseArcToSegment(FloatPoint) final;
 
-    template<typename Function> decltype(auto) NODELETE parse(Function&&);
+    template<typename Function> decltype(auto) NODELETE parse(NOESCAPE const Function&);
 
     bool m_is8BitSource { false };
     union {

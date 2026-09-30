@@ -128,7 +128,7 @@ bool CustomPropertyData::operator==(const CustomPropertyData& other) const
 }
 
 template<typename Callback>
-void CustomPropertyData::forEachInternal(Callback&& callback) const
+void CustomPropertyData::forEachInternal(NOESCAPE const Callback& callback) const
 {
     Vector<const CustomPropertyData*, maximumAncestorCount> descendants;
 

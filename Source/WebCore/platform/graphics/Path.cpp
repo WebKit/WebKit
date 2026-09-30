@@ -245,7 +245,7 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     protect(ensurePlatformPathImpl())->addPath(protect(const_cast<Path&>(path).ensurePlatformPathImpl()), transform);
 }
 
-void Path::applySegments(const PathSegmentApplier& applier) const
+void Path::applySegments(NOESCAPE const PathSegmentApplier& applier) const
 {
     if (auto segment = asSingle())
         applier(*segment);
@@ -253,7 +253,7 @@ void Path::applySegments(const PathSegmentApplier& applier) const
         impl->applySegments(applier);
 }
 
-void Path::applyElements(const PathElementApplier& applier) const
+void Path::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     if (isEmpty())
         return;

@@ -70,7 +70,7 @@ public:
         IsSplit isSplit { IsSplit::No };
         BoundingBox boundingBox;
     };
-    static void paint(Vector<Layer>&&, const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>&);
+    static void paint(Vector<Layer>&&, NOESCAPE const std::function<void(SkiaCompositingLayer&, std::optional<SkPath>)>&);
 
 private:
     enum class LayerPosition {
@@ -100,7 +100,7 @@ private:
     static BoundingBox computeBoundingBox(const Polygon4D&);
     static SweepAndPrunePairs sweepAndPrune(const Vector<Layer>&);
     static void buildTree(LayerNode&, Deque<Layer>&);
-    static void traverseTree(LayerNode&, const std::function<void(LayerNode&)>&);
+    static void traverseTree(LayerNode&, NOESCAPE const std::function<void(LayerNode&)>&);
     static LayerPosition classifyLayer(const Layer&, const Point4D& plane);
 };
 

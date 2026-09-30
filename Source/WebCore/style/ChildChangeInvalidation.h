@@ -54,8 +54,8 @@ private:
 
     bool emptyStateMayChange() const;
 
-    template<typename Function> void traverseRemovedElements(Function&&);
-    template<typename Function> void traverseAddedElements(Function&&);
+    template<typename Function> void traverseRemovedElements(NOESCAPE const Function&);
+    template<typename Function> void traverseAddedElements(NOESCAPE const Function&);
 
     Element& parentElement() { return *m_parentElement; }
 

@@ -94,9 +94,9 @@ private:
     ExceptionOr<Ref<IDBRequest>> doCount(const IDBKeyRangeData&);
     ExceptionOr<Ref<IDBRequest>> doGet(ExceptionOr<IDBKeyRangeData>);
     ExceptionOr<Ref<IDBRequest>> doGetKey(ExceptionOr<IDBKeyRangeData>);
-    ExceptionOr<Ref<IDBRequest>> doOpenCursor(IDBCursorDirection, NOESCAPE Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
-    ExceptionOr<Ref<IDBRequest>> doOpenKeyCursor(IDBCursorDirection, NOESCAPE Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
-    ExceptionOr<Ref<IDBRequest>> doGetAllShared(IndexedDB::GetAllType, NOESCAPE Function<ExceptionOr<ParsedGetAllQueryOrOptions>()>&&);
+    ExceptionOr<Ref<IDBRequest>> doOpenCursor(IDBCursorDirection, NOESCAPE const Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&);
+    ExceptionOr<Ref<IDBRequest>> doOpenKeyCursor(IDBCursorDirection, NOESCAPE const Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&);
+    ExceptionOr<Ref<IDBRequest>> doGetAllShared(IndexedDB::GetAllType, NOESCAPE const Function<ExceptionOr<ParsedGetAllQueryOrOptions>()>&);
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;

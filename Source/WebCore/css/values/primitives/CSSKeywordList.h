@@ -60,9 +60,9 @@ template<SpecificKeyword... Ks> struct KeywordList {
         return std::distance(identifiers.begin(), std::ranges::find(identifiers, keyword.value));
     }
 
-    template<typename F> static constexpr decltype(auto) visitKeywordAtOffset(size_t offset, F&& f)
+    template<typename F> static constexpr decltype(auto) visitKeywordAtOffset(size_t offset, NOESCAPE const F& f)
     {
-        return WTF::visitTupleElementAtIndex(std::forward<F>(f), offset, tuple);
+        return WTF::visitTupleElementAtIndex(f, offset, tuple);
     }
 };
 

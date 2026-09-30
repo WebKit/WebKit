@@ -197,7 +197,7 @@ public:
     }
 
     template<typename Callback>
-    void rejectWithCallback(const Callback& callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
+    void rejectWithCallback(NOESCAPE const Callback& callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
     {
         if (shouldIgnoreRequestToFulfill())
             return;
@@ -300,7 +300,7 @@ public:
     }
 
     template<typename Callback>
-    void rejectWithCallback(const Callback& callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
+    void rejectWithCallback(NOESCAPE const Callback& callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
     {
         m_promise->rejectWithCallback(callback, rejectAsHandled);
     }

@@ -52,7 +52,7 @@ inline constexpr auto ZeroOrMore = ListBounds::minimumOf(0);
 inline constexpr auto OneOrMore = ListBounds::minimumOf(1);
 
 template<char separator, ListBounds bounds, typename SubConsumer, typename... Args>
-auto consumeListSeparatedByIntoBuilder(CSSParserTokenRange& range, SubConsumer&& subConsumer, Args&&... args) -> std::optional<CSSValueListBuilder>
+auto consumeListSeparatedByIntoBuilder(CSSParserTokenRange& range, NOESCAPE const SubConsumer& subConsumer, Args&&... args) -> std::optional<CSSValueListBuilder>
 {
     auto consumeSeparator = [](auto& range) {
         if constexpr (separator == ',')
@@ -90,9 +90,9 @@ auto consumeListSeparatedByIntoBuilder(CSSParserTokenRange& range, SubConsumer&&
 }
 
 template<char separator, ListBounds bounds, ListOptimization optimization = ListOptimization::None, typename ListType = CSSValueList, typename SubConsumer, typename... Args>
-auto consumeListSeparatedBy(CSSParserTokenRange& range, SubConsumer&& subConsumer, Args&&... args) -> std::conditional_t<optimization == ListOptimization::None, RefPtr<ListType>, RefPtr<CSSValue>>
+auto consumeListSeparatedBy(CSSParserTokenRange& range, NOESCAPE const SubConsumer& subConsumer, Args&&... args) -> std::conditional_t<optimization == ListOptimization::None, RefPtr<ListType>, RefPtr<CSSValue>>
 {
-    auto list = consumeListSeparatedByIntoBuilder<separator, bounds>(range, std::forward<SubConsumer>(subConsumer), std::forward<Args>(args)...);
+    auto list = consumeListSeparatedByIntoBuilder<separator, bounds>(range, subConsumer, std::forward<Args>(args)...);
     if (!list)
         return nullptr;
 

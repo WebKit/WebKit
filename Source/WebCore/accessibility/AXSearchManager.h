@@ -282,12 +282,12 @@ public:
     // The optional callback is invoked when a remote frame is encountered, allowing eager IPC dispatch.
     // Callers should use performSearchWithCrossProcessCoordination() from AXCrossProcessSearch.h
     // for automatic cross-process coordination.
-    WEBCORE_EXPORT AccessibilitySearchResultStream findMatchingObjectsAsStream(AccessibilitySearchCriteria&&, RemoteFrameSearchCallback&& = nullptr);
+    WEBCORE_EXPORT AccessibilitySearchResultStream findMatchingObjectsAsStream(AccessibilitySearchCriteria&&, NOESCAPE const RemoteFrameSearchCallback& = nullptr);
 
     std::optional<AXTextMarkerRange> findMatchingRange(AccessibilitySearchCriteria&&);
 
 private:
-    AccessibilitySearchResultStream findMatchingObjectsInternalAsStream(const AccessibilitySearchCriteria&, const RemoteFrameSearchCallback&);
+    AccessibilitySearchResultStream findMatchingObjectsInternalAsStream(const AccessibilitySearchCriteria&, NOESCAPE const RemoteFrameSearchCallback&);
     bool match(Ref<AXCoreObject>, const AccessibilitySearchCriteria&);
     bool matchText(Ref<AXCoreObject>, const String&);
     bool matchForSearchKeyAtIndex(Ref<AXCoreObject>, const AccessibilitySearchCriteria&, size_t);

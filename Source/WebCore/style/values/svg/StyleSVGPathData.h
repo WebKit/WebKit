@@ -52,7 +52,7 @@ struct SVGPathData {
     bool isPath() const { return !!m_path; }
     const std::optional<PathFunction>& tryPath() const LIFETIME_BOUND { return m_path; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

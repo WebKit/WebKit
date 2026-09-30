@@ -50,7 +50,7 @@ struct OffsetPosition {
     std::optional<Position> tryPosition() const { return isPosition() ? std::make_optional(std::get<Position>(m_value)) : std::nullopt; }
 
     template<typename> bool holdsAlternative() const;
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const OffsetPosition&) const = default;
 
@@ -67,7 +67,7 @@ template<typename T> bool OffsetPosition::holdsAlternative() const
     return std::holds_alternative<T>(m_value);
 }
 
-template<typename... F> decltype(auto) OffsetPosition::switchOn(F&&... f) const
+template<typename... F> decltype(auto) OffsetPosition::switchOn(NOESCAPE F&&... f) const
 {
     return WTF::switchOn(m_value, std::forward<F>(f)...);
 }

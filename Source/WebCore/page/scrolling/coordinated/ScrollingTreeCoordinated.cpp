@@ -115,7 +115,7 @@ void ScrollingTreeCoordinated::didCompletePlatformRenderingUpdate()
 
 using LayerAndPoint = std::pair<Ref<CoordinatedPlatformLayer>, FloatPoint>;
 
-static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point, const std::function<bool(const Ref<CoordinatedPlatformLayer>&, const FloatPoint&)>& transformedPointFunction)
+static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, const Ref<CoordinatedPlatformLayer>& parent, const FloatPoint& point, NOESCAPE const std::function<bool(const Ref<CoordinatedPlatformLayer>&, const FloatPoint&)>& transformedPointFunction)
 {
     Vector<Ref<CoordinatedPlatformLayer>> children;
     FloatPoint parentBoundsOrigin;

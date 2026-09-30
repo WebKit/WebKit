@@ -36,7 +36,7 @@ struct Translate {
     struct Function : TransformFunctionWrapper<TranslateTransformFunction> {
         using TransformFunctionWrapper<TranslateTransformFunction>::TransformFunctionWrapper;
 
-        template<typename... F> decltype(auto) switchOn(F&&...) const;
+        template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
     };
 
     Translate(CSS::Keyword::None) : value { nullptr } { }
@@ -54,7 +54,7 @@ struct Translate {
     bool isFunction() const { return !!value; }
 
     template<typename> bool holdsAlternative() const;
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const Translate& other) const
     {
@@ -70,7 +70,7 @@ private:
 
 // MARK: Translate Operation
 
-template<typename... F> decltype(auto) Translate::Function::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Translate::Function::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -90,7 +90,7 @@ template<typename T> bool Translate::holdsAlternative() const
     else if constexpr (std::same_as<T, Function>)           return isFunction();
 }
 
-template<typename... F> decltype(auto) Translate::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Translate::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

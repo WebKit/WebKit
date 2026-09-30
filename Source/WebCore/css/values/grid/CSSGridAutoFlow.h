@@ -53,7 +53,7 @@ struct GridAutoFlow {
 
     void setDirection(Direction direction) { m_direction = static_cast<uint8_t>(direction); }
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     constexpr bool operator==(const GridAutoFlow&) const = default;
 
@@ -62,7 +62,7 @@ private:
     PREFERRED_TYPE(Packing) uint8_t m_packing : 1 { static_cast<uint8_t>(Packing::Sparse) };
 };
 
-template<typename... F> decltype(auto) GridAutoFlow::switchOn(F&&... f) const
+template<typename... F> decltype(auto) GridAutoFlow::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

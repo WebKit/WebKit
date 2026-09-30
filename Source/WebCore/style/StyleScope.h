@@ -258,7 +258,7 @@ inline void Scope::flushPendingUpdate()
 // The provided function is called, for each relevant scope, with the scope and the reference's name
 // paired with that scope's ordinal (as a ScopedName), until it returns a truthy value.
 template<std::invocable<const Scope&, ScopedName> F>
-auto resolveTreeScopedReference(const Element& element, const ScopedName& reference, const F&& function)
+auto resolveTreeScopedReference(const Element& element, const ScopedName& reference, NOESCAPE const F& function)
 {
     using ReturnType = std::invoke_result_t<F, Scope, ScopedName>;
 

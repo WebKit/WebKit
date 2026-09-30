@@ -45,14 +45,14 @@ struct MediaQueryResult {
 };
 
 template<typename TraverseFunction>
-void traverseFeatures(const MediaQuery& query, TraverseFunction&& function)
+void traverseFeatures(const MediaQuery& query, NOESCAPE const TraverseFunction& function)
 {
     if (query.condition)
         traverseFeatures(*query.condition, function);
 }
 
 template<typename TraverseFunction>
-void traverseFeatures(const MediaQueryList& list, TraverseFunction&& function)
+void traverseFeatures(const MediaQueryList& list, NOESCAPE const TraverseFunction& function)
 {
     for (auto& query : list)
         traverseFeatures(query, function);

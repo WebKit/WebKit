@@ -69,7 +69,7 @@ struct SingleAnimationTimeline {
     bool isViewFunction() const { return std::holds_alternative<ViewFunction>(m_value); }
     std::optional<ViewFunction> tryViewFunction() const { return isViewFunction() ? std::make_optional(std::get<ViewFunction>(m_value)) : std::nullopt; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

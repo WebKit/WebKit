@@ -79,19 +79,19 @@ public:
     void setBottomLeft(const T& bottomLeft) { setAt(BoxCorner::BottomLeft, bottomLeft); }
     void setBottomRight(const T& bottomRight) { setAt(BoxCorner::BottomRight, bottomRight); }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::any_of(m_corners, std::forward<F>(functor));
+        return std::ranges::any_of(m_corners, functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::all_of(m_corners, std::forward<F>(functor));
+        return std::ranges::all_of(m_corners, functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::none_of(m_corners, std::forward<F>(functor));
+        return std::ranges::none_of(m_corners, functor);
     }
 
     bool isZero() const

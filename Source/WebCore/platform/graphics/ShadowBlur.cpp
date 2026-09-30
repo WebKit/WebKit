@@ -563,7 +563,7 @@ void ShadowBlur::drawInsetShadow(GraphicsContext& graphicsContext, const FloatRe
         });
 }
 
-void ShadowBlur::drawRectShadow(const AffineTransform& transform, const IntRect& clipBounds, const FloatRoundedRect& shadowedRect, const DrawBufferCallback& drawBuffer, const DrawImageCallback& drawImage, const FillRectCallback& fillRect)
+void ShadowBlur::drawRectShadow(const AffineTransform& transform, const IntRect& clipBounds, const FloatRoundedRect& shadowedRect, NOESCAPE const DrawBufferCallback& drawBuffer, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectCallback& fillRect)
 {
     auto layerImageProperties = calculateLayerBoundingRect(transform, shadowedRect.rect(), clipBounds);
     if (!layerImageProperties)
@@ -592,7 +592,7 @@ void ShadowBlur::drawRectShadow(const AffineTransform& transform, const IntRect&
         drawRectShadowWithoutTiling(transform, shadowedRect, *layerImageProperties, drawBuffer);
 }
 
-void ShadowBlur::drawInsetShadow(const AffineTransform& transform, const IntRect& clipBounds, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const DrawBufferCallback& drawBuffer, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole)
+void ShadowBlur::drawInsetShadow(const AffineTransform& transform, const IntRect& clipBounds, const FloatRect& fullRect, const FloatRoundedRect& holeRect, NOESCAPE const DrawBufferCallback& drawBuffer, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectWithHoleCallback& fillRectWithHole)
 {
     auto layerImageProperties = calculateLayerBoundingRect(transform, fullRect, clipBounds);
     if (!layerImageProperties)
@@ -621,7 +621,7 @@ void ShadowBlur::drawInsetShadow(const AffineTransform& transform, const IntRect
         drawInsetShadowWithoutTiling(transform, fullRect, holeRect, *layerImageProperties, drawBuffer);
 }
 
-void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties& layerImageProperties, const DrawBufferCallback& drawBuffer)
+void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties& layerImageProperties, NOESCAPE const DrawBufferCallback& drawBuffer)
 {
     auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
@@ -649,7 +649,7 @@ void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const Float
     drawBuffer(*layerImage, layerImageProperties.layerOrigin, layerImageProperties.layerSize);
 }
 
-void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties& layerImageProperties, const DrawBufferCallback& drawBuffer)
+void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties& layerImageProperties, NOESCAPE const DrawBufferCallback& drawBuffer)
 {
     auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
@@ -709,7 +709,7 @@ void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const Floa
      the shadow.
  */
 
-void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectCallback& fillRect, const LayerImageProperties& layerImageProperties)
+void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectCallback& fillRect, const LayerImageProperties& layerImageProperties)
 {
     FloatRect templateShadow = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
 
@@ -731,7 +731,7 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
         drawRectShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, shadowedRect, templateSize, edgeSize, drawImage, fillRect, templateShadow);
 }
 
-void ShadowBlur::drawRectShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectCallback& fillRect, const FloatRect& templateShadow, bool redrawNeeded)
+void ShadowBlur::drawRectShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectCallback& fillRect, const FloatRect& templateShadow, bool redrawNeeded)
 {
     if (redrawNeeded) {
         // Draw shadow into the ImageBuffer.
@@ -763,7 +763,7 @@ void ShadowBlur::drawRectShadowWithTilingWithLayerImageBuffer(ImageBuffer& layer
     drawLayerPiecesAndFillCenter(layerImage, shadowBounds, shadowedRect.radii(), edgeSize, templateSize, drawImage, fillRect);
 }
 
-void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole)
+void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectWithHoleCallback& fillRectWithHole)
 {
     // Draw the rectangle with hole.
     FloatRect templateBounds(0, 0, templateSize.width(), templateSize.height());
@@ -785,7 +785,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
         drawInsetShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, fullRect, holeRect, templateSize, edgeSize, drawImage, fillRectWithHole, templateBounds, templateHole);
 }
 
-void ShadowBlur::drawInsetShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole, const FloatRect& templateBounds, const FloatRect& templateHole, bool redrawNeeded)
+void ShadowBlur::drawInsetShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectWithHoleCallback& fillRectWithHole, const FloatRect& templateBounds, const FloatRect& templateHole, bool redrawNeeded)
 {
     if (redrawNeeded) {
         // Draw shadow into a new ImageBuffer.
@@ -825,7 +825,7 @@ void ShadowBlur::drawInsetShadowWithTilingWithLayerImageBuffer(ImageBuffer& laye
     drawLayerPieces(layerImage, destHoleBounds, holeRect.radii(), edgeSize, templateSize, drawImage);
 }
 
-void ShadowBlur::drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii& radii, const IntSize& bufferPadding, const IntSize& templateSize, const DrawImageCallback& drawImage)
+void ShadowBlur::drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii& radii, const IntSize& bufferPadding, const IntSize& templateSize, NOESCAPE const DrawImageCallback& drawImage)
 {
     const IntSize twiceRadius = IntSize(bufferPadding.width() * 2, bufferPadding.height() * 2);
 
@@ -884,7 +884,7 @@ void ShadowBlur::drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shado
     drawImage(layerImage, destRect, tileRect);
 }
 
-void ShadowBlur::drawLayerPiecesAndFillCenter(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii& radii, const IntSize& bufferPadding, const IntSize& templateSize, const DrawImageCallback& drawImage, const FillRectCallback& fillRect)
+void ShadowBlur::drawLayerPiecesAndFillCenter(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii& radii, const IntSize& bufferPadding, const IntSize& templateSize, NOESCAPE const DrawImageCallback& drawImage, NOESCAPE const FillRectCallback& fillRect)
 {
     const IntSize twiceRadius = IntSize(bufferPadding.width() * 2, bufferPadding.height() * 2);
 
@@ -932,7 +932,7 @@ void ShadowBlur::blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize
     shadowContext.fillRect(FloatRect(0, 0, templateSize.width(), templateSize.height()));
 }
 
-void ShadowBlur::drawShadowLayer(const AffineTransform& transform, const IntRect& clipBounds, const FloatRect& layerArea, const DrawShadowCallback& drawShadow, const DrawBufferCallback& drawBuffer)
+void ShadowBlur::drawShadowLayer(const AffineTransform& transform, const IntRect& clipBounds, const FloatRect& layerArea, NOESCAPE const DrawShadowCallback& drawShadow, NOESCAPE const DrawBufferCallback& drawBuffer)
 {
     auto layerImageProperties = calculateLayerBoundingRect(transform, layerArea, clipBounds);
     if (!layerImageProperties)

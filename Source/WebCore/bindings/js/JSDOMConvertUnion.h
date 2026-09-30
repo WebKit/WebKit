@@ -138,7 +138,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
     static constexpr bool hasCallbackFunctionType = numberOfCallbackFunctionTypes > 0;
     using CallbackFunctionType = ConditionalFront<CallbackFunctionTypeList, hasCallbackFunctionType>;
 
-    template<typename F> static decltype(auto) convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, F&& functor)
+    template<typename F> static decltype(auto) convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, NOESCAPE F&& functor)
     {
         using FunctorResultType = decltype(functor(Result::exception()));
 

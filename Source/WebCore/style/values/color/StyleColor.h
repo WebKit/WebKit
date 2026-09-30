@@ -166,7 +166,7 @@ public:
 
     // This helper allows us to treat all the alternatives in ColorKind
     // as const references, pretending the UniqueRefs don't exist.
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     WTF::String debugDescription() const;
 
@@ -226,7 +226,7 @@ template<> struct Blending<Color> {
 
 // MARK: - Color Implementation
 
-template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Color::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<ResolvedColor>()));

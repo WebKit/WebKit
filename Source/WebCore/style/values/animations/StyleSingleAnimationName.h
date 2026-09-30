@@ -47,7 +47,7 @@ struct SingleAnimationName {
     bool isKeyframesName() const { return !m_value.name.isNull(); }
     std::optional<ScopedName> tryKeyframesName() const { return isKeyframesName() ? std::make_optional(m_value) : std::nullopt; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

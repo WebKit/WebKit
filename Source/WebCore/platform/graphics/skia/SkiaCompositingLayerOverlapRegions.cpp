@@ -93,7 +93,7 @@ IntRect projectedBoundingBox(const TransformationMatrix& transform, const FloatR
     return { minX, minY, maxX - minX, maxY - minY };
 }
 
-IntRect layerPlaneClipBounds(const TransformationMatrix& deviceToLayer, const FloatRect& deviceClip, const Function<bool(const IntRect&)>& fits)
+IntRect layerPlaneClipBounds(const TransformationMatrix& deviceToLayer, const FloatRect& deviceClip, NOESCAPE const Function<bool(const IntRect&)>& fits)
 {
     // A device point maps into the layer plane with w = a * x + b * y + c, which is one over the depth of that
     // point. The plane is visible only where w > 0, and close to its horizon at w = 0 a single device pixel covers

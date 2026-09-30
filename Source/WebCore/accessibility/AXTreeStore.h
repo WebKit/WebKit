@@ -54,7 +54,7 @@ using AXTreeWeakPtr = Variant<WeakPtr<AXObjectCache>
 >;
 
 AXTreePtr axTreeForID(std::optional<AXTreeID>);
-WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
+WEBCORE_EXPORT AXTreePtr findAXTree(NOESCAPE const Function<bool(AXTreePtr)>&);
 
 template<typename T>
 class AXTreeStore {
@@ -62,11 +62,11 @@ class AXTreeStore {
     // needed. Subclasses are expected to declare their own WTF_MAKE_TZONE_ALLOCATED.
     WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(AXTreeStore);
     WTF_MAKE_NONCOPYABLE(AXTreeStore);
-    friend WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
+    friend WEBCORE_EXPORT AXTreePtr findAXTree(NOESCAPE const Function<bool(AXTreePtr)>&);
 public:
     AXTreeID treeID() const { return m_id; }
     inline static WeakPtr<AXObjectCache> axObjectCacheForID(std::optional<AXTreeID>);
-    inline static void forEachAXObjectCache(const Function<void(AXObjectCache&)>&);
+    inline static void forEachAXObjectCache(NOESCAPE const Function<void(AXObjectCache&)>&);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static RefPtr<AXIsolatedTree> isolatedTreeForID(std::optional<AXTreeID>);
     static void applyPendingChangesForAllIsolatedTrees();

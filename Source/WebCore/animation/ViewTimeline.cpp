@@ -467,7 +467,7 @@ std::pair<double, double> ViewTimeline::intervalForTimelineRangeName(const Scrol
     return { subjectRangeStart, subjectRangeEnd };
 }
 
-template<typename F> double ViewTimeline::mapOffsetToTimelineRange(const ScrollTimeline::Data& data, const Style::SingleAnimationRangeName name, F&& valueWithinSubjectRange) const
+template<typename F> double ViewTimeline::mapOffsetToTimelineRange(const ScrollTimeline::Data& data, const Style::SingleAnimationRangeName name, NOESCAPE const F& valueWithinSubjectRange) const
 {
     auto timelineRange = data.rangeEnd - data.rangeStart;
     ASSERT(timelineRange);

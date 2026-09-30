@@ -116,7 +116,7 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
         return false;
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         using ResultType = decltype(visitor(std::declval<Number>()));
@@ -230,7 +230,7 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
         return false;
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         using ResultType = decltype(visitor(std::declval<Number>()));

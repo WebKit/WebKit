@@ -35,12 +35,12 @@ namespace Calculation {
 
 // `forAllChildren` will call the provided `functor` on all direct children of the provided node. This will include values of type `Child`, `ChildOrNone` and `std::optional<Child>`.
 
-template<typename F, Leaf Op> void forAllChildren(const auto&, const F&)
+template<typename F, Leaf Op> void forAllChildren(const auto&, NOESCAPE const F&)
 {
     // No children.
 }
 
-template<typename F, typename Op> void forAllChildren(const Op& root, const F& functor)
+template<typename F, typename Op> void forAllChildren(const Op& root, NOESCAPE const F& functor)
 {
     struct Caller {
         const F& functor;
@@ -82,7 +82,7 @@ template<typename F, typename Op> void forAllChildren(const Op& root, const F& f
     WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);
 }
 
-template<typename F> void forAllChildren(const Child& root, const F& functor)
+template<typename F> void forAllChildren(const Child& root, NOESCAPE const F& functor)
 {
     WTF::switchOn(root,
         [&](const Leaf auto&) { },

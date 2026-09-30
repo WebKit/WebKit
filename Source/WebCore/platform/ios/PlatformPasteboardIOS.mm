@@ -99,7 +99,7 @@ PasteboardBuffer PlatformPasteboard::bufferForType(const String& type) const
     return pasteboardBuffer;
 }
 
-void PlatformPasteboard::performAsDataOwner(DataOwnerType type, NOESCAPE Function<void()>&& actions)
+void PlatformPasteboard::performAsDataOwner(DataOwnerType type, NOESCAPE const Function<void()>& actions)
 {
     auto dataOwner = _UIDataOwnerUndefined;
     switch (type) {
@@ -183,7 +183,7 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(NSString *platfor
     return nullptr;
 }
 
-static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformPasteboard::IncludeImageTypes includeImageTypes, Function<bool()>&& shouldAvoidExposingURLType)
+static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformPasteboard::IncludeImageTypes includeImageTypes, NOESCAPE const Function<bool()>& shouldAvoidExposingURLType)
 {
     OrderedHashSet<String> domPasteboardTypes;
     for (NSString *type in platformTypes) {

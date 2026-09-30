@@ -68,7 +68,7 @@ MediaController::MediaController(ScriptExecutionContext& context)
 
 MediaController::~MediaController() = default;
 
-void MediaController::forEachElement(Function<void(Ref<HTMLMediaElement>&&)>&& func) const
+void MediaController::forEachElement(NOESCAPE const Function<void(Ref<HTMLMediaElement>&&)>& func) const
 {
     for (auto& element : m_mediaElements) {
         if (RefPtr protectedElement = element.get())
@@ -76,7 +76,7 @@ void MediaController::forEachElement(Function<void(Ref<HTMLMediaElement>&&)>&& f
     }
 }
 
-bool MediaController::anyElement(Function<bool(Ref<HTMLMediaElement>&&)>&& func) const
+bool MediaController::anyElement(NOESCAPE const Function<bool(Ref<HTMLMediaElement>&&)>& func) const
 {
     for (auto& element : m_mediaElements) {
         RefPtr protectedElement = element.get();
@@ -89,7 +89,7 @@ bool MediaController::anyElement(Function<bool(Ref<HTMLMediaElement>&&)>&& func)
     return false;
 }
 
-bool MediaController::everyElement(Function<bool(Ref<HTMLMediaElement>&&)>&& func) const
+bool MediaController::everyElement(NOESCAPE const Function<bool(Ref<HTMLMediaElement>&&)>& func) const
 {
     bool isNonEmpty = false;
     for (auto& element : m_mediaElements) {

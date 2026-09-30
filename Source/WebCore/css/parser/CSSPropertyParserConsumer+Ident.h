@@ -60,9 +60,9 @@ template<CSSValueID... names> std::optional<CSS::Keyword> consumeUnresolvedIdent
 template<CSSValueID... names> RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange&);
 template<typename KeywordOrKeywords> std::optional<KeywordOrKeywords> consumeSpecificUnresolvedIdent(CSSParserTokenRange&);
 
-template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&, Predicate&&, Args&&...);
-template<typename Predicate, typename... Args> std::optional<CSS::Keyword> consumeUnresolvedRaw(CSSParserTokenRange&, Predicate&&, Args&&...);
-template<typename Predicate, typename... Args> RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange&, Predicate&&, Args&&...);
+template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&, NOESCAPE const Predicate&, Args&&...);
+template<typename Predicate, typename... Args> std::optional<CSS::Keyword> consumeUnresolvedRaw(CSSParserTokenRange&, NOESCAPE const Predicate&, Args&&...);
+template<typename Predicate, typename... Args> RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange&, NOESCAPE const Predicate&, Args&&...);
 
 template<typename Map> std::optional<typename Map::ValueType> consumeIdentUsingMapping(CSSParserTokenRange&, Map&);
 template<typename Map> std::optional<typename Map::ValueType> peekIdentUsingMapping(CSSParserTokenRange&, Map&);
@@ -170,7 +170,7 @@ template<typename KeywordOrKeywords> std::optional<KeywordOrKeywords> consumeSpe
     return KeywordChecker<KeywordOrKeywords>::check(range);
 }
 
-template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
+template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range, NOESCAPE const Predicate& predicate, Args&&... args)
 {
     if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
         range.consumeIncludingWhitespace();
@@ -179,7 +179,7 @@ template<typename Predicate, typename... Args> std::optional<CSSValueID> consume
     return std::nullopt;
 }
 
-template<typename Predicate, typename... Args> std::optional<CSS::Keyword> consumeUnresolvedIdent(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
+template<typename Predicate, typename... Args> std::optional<CSS::Keyword> consumeUnresolvedIdent(CSSParserTokenRange& range, NOESCAPE const Predicate& predicate, Args&&... args)
 {
     if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
         range.consumeIncludingWhitespace();
@@ -188,7 +188,7 @@ template<typename Predicate, typename... Args> std::optional<CSS::Keyword> consu
     return std::nullopt;
 }
 
-template<typename Predicate, typename... Args> RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
+template<typename Predicate, typename... Args> RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange& range, NOESCAPE const Predicate& predicate, Args&&... args)
 {
     if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
         range.consumeIncludingWhitespace();

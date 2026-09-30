@@ -74,7 +74,7 @@ struct WebkitBoxReflect {
     bool isReflection() const { return !!m_reflection; }
     std::optional<WebkitBoxReflection> tryReflection() const { return m_reflection; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

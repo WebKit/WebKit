@@ -334,7 +334,7 @@ bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
 }
 
 template <typename Function>
-void ContentFilter::forEachContentFilterUntilBlocked(Function&& getData)
+void ContentFilter::forEachContentFilterUntilBlocked(NOESCAPE const Function& getData)
 {
     unsigned allowedCount = 0;
     for (Ref contentFilter : m_contentFilters) {

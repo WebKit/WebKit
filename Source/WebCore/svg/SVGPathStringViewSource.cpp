@@ -78,7 +78,7 @@ SVGPathSegType SVGPathStringViewSource::nextCommand(SVGPathSegType previousComma
     return *parseSVGSegmentType();
 }
 
-template<typename F> decltype(auto) SVGPathStringViewSource::parse(F&& functor)
+template<typename F> decltype(auto) SVGPathStringViewSource::parse(NOESCAPE const F& functor)
 {
     if (m_is8BitSource)
         return functor(m_buffer8);

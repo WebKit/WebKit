@@ -80,7 +80,7 @@ struct ContentCounter {
     String separator;
     CounterStyle style;
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const ContentCounter&) const = default;
 };
@@ -140,7 +140,7 @@ struct Content {
         return std::get_if<Data>(&m_value);
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
@@ -162,7 +162,7 @@ template<size_t I> const auto& get(const Content::Data& value)
         return value.alt;
 }
 
-template<typename... F> decltype(auto) ContentCounter::switchOn(F&&... f) const
+template<typename... F> decltype(auto) ContentCounter::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

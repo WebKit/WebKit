@@ -52,7 +52,7 @@ struct WebkitInitialLetter {
     constexpr float height() const { return m_value.first().value; }
     constexpr float drop() const { return m_value.second().value; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

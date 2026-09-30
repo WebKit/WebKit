@@ -343,7 +343,7 @@ static bool NODELETE isFrameFamiliarWith(Frame& frameA, Frame& frameB)
 }
 
 template<typename F>
-inline RefPtr<Frame> FrameTree::find(const AtomString& name, F&& nameGetter, Frame& activeFrame) const
+inline RefPtr<Frame> FrameTree::find(const AtomString& name, NOESCAPE const F& nameGetter, Frame& activeFrame) const
 {
     if (isSelfTargetFrameName(name))
         return m_thisFrame.ptr();

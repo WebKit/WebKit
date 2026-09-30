@@ -128,7 +128,7 @@ static double NODELETE transformProgressDuration(const WebAnimationTime& duratio
     return 1.0;
 }
 
-void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, const WebAnimationTime& iterationDuration, TimingFunction::Before before, const CompositionCallback& compositionCallback, const AccumulationCallback& accumulationCallback, const InterpolationCallback& interpolationCallback, const RequiresInterpolationForAccumulativeIterationCallback& requiresInterpolationForAccumulativeIterationCallback) const
+void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, const WebAnimationTime& iterationDuration, TimingFunction::Before before, NOESCAPE const CompositionCallback& compositionCallback, NOESCAPE const AccumulationCallback& accumulationCallback, NOESCAPE const InterpolationCallback& interpolationCallback, NOESCAPE const RequiresInterpolationForAccumulativeIterationCallback& requiresInterpolationForAccumulativeIterationCallback) const
 {
     auto& intervalEndpoints = interval.endpoints;
     if (intervalEndpoints.isEmpty())

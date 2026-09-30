@@ -67,7 +67,7 @@ public:
     void reconcileWeakReferencesAtGCEnd(JSC::VM&, JSC::CollectionScope);
 
     template<typename Func>
-    void forEachOutputConstraintSpace(const Func& func)
+    void forEachOutputConstraintSpace(NOESCAPE const Func& func)
     {
         for (auto* space : m_outputConstraintSpaces)
             func(*space);

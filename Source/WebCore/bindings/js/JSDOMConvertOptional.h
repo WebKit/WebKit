@@ -60,21 +60,21 @@ template<typename IDL> struct Converter<IDLOptional<IDL>> : DefaultConverter<IDL
         return WebCore::convert<IDL>(lexicalGlobalObject, value, globalObject);
     }
     template<ExceptionThrowerFunctor ExceptionThrower = DefaultExceptionThrower>
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, NOESCAPE ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefined())
             return { IDL::nullValue() };
         return WebCore::convert<IDL>(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
     }
     template<ExceptionThrowerFunctor ExceptionThrower = DefaultExceptionThrower>
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, NOESCAPE ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefined())
             return { IDL::nullValue() };
         return WebCore::convert<IDL>(lexicalGlobalObject, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
     }
     template<ExceptionThrowerFunctor ExceptionThrower = DefaultExceptionThrower>
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, NOESCAPE ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefined())
             return { IDL::nullValue() };
@@ -85,7 +85,7 @@ template<typename IDL> struct Converter<IDLOptional<IDL>> : DefaultConverter<IDL
 // MARK: Helper functions for invoking an optional conversion.
 
 template<typename IDL, DefaultValueFunctor<IDL> DefaultValueFunctor>
-ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, DefaultValueFunctor&& defaultValue)
+ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, NOESCAPE const DefaultValueFunctor& defaultValue)
 {
     if (value.isUndefined())
         return defaultValue();
@@ -93,7 +93,7 @@ ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlo
 }
 
 template<typename IDL, DefaultValueFunctor<IDL> DefaultValueFunctor>
-ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, DefaultValueFunctor&& defaultValue)
+ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, NOESCAPE const DefaultValueFunctor& defaultValue)
 {
     if (value.isUndefined())
         return defaultValue();
@@ -101,7 +101,7 @@ ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlo
 }
 
 template<typename IDL, DefaultValueFunctor<IDL> DefaultValueFunctor>
-ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, DefaultValueFunctor&& defaultValue)
+ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, NOESCAPE const DefaultValueFunctor& defaultValue)
 {
     if (value.isUndefined())
         return defaultValue();
@@ -109,7 +109,7 @@ ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlo
 }
 
 template<typename IDL, DefaultValueFunctor<IDL> DefaultValueFunctor, ExceptionThrowerFunctor ExceptionThrower>
-ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, DefaultValueFunctor&& defaultValue, ExceptionThrower&& exceptionThrower)
+ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, NOESCAPE const DefaultValueFunctor& defaultValue, NOESCAPE ExceptionThrower&& exceptionThrower)
 {
     if (value.isUndefined())
         return defaultValue();
@@ -117,7 +117,7 @@ ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlo
 }
 
 template<typename IDL, DefaultValueFunctor<IDL> DefaultValueFunctor, ExceptionThrowerFunctor ExceptionThrower>
-ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, DefaultValueFunctor&& defaultValue, ExceptionThrower&& exceptionThrower)
+ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, NOESCAPE const DefaultValueFunctor& defaultValue, NOESCAPE ExceptionThrower&& exceptionThrower)
 {
     if (value.isUndefined())
         return defaultValue();
@@ -125,7 +125,7 @@ ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlo
 }
 
 template<typename IDL, DefaultValueFunctor<IDL> DefaultValueFunctor, ExceptionThrowerFunctor ExceptionThrower>
-ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, DefaultValueFunctor&& defaultValue, ExceptionThrower&& exceptionThrower)
+ConversionResult<IDL> convertOptionalWithDefault(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, NOESCAPE const DefaultValueFunctor& defaultValue, NOESCAPE ExceptionThrower&& exceptionThrower)
 {
     if (value.isUndefined())
         return defaultValue();

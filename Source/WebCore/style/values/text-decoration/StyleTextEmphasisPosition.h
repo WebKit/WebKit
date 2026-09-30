@@ -58,7 +58,7 @@ struct TextEmphasisPosition {
     constexpr bool containsAll(EnumSet other) const { return m_value.containsAll(other.value); }
     constexpr bool containsOnly(EnumSet other) const { return m_value.containsOnly(other.value); }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

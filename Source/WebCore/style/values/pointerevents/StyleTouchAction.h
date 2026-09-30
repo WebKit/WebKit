@@ -55,7 +55,7 @@ struct TouchAction {
     constexpr bool isEnumSet() const { return WTF::holdsAlternative<TouchActionValueEnumSet>(m_value); }
     constexpr std::optional<TouchActionValueEnumSet> tryEnumSet() const { return isEnumSet() ? std::make_optional(std::get<TouchActionValueEnumSet>(m_value)) : std::nullopt; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

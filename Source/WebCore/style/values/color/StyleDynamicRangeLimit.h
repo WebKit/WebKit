@@ -52,7 +52,7 @@ struct DynamicRangeLimit {
     DynamicRangeLimit(const DynamicRangeLimit&);
     DynamicRangeLimit& operator=(const DynamicRangeLimit&);
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     WEBCORE_EXPORT PlatformDynamicRangeLimit toPlatformDynamicRangeLimit() const;
 
@@ -104,7 +104,7 @@ inline DynamicRangeLimit& DynamicRangeLimit::operator=(const DynamicRangeLimit& 
     return *this;
 }
 
-template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) const
+template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<CSS::Keyword::Standard>()));

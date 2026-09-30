@@ -36,7 +36,7 @@ struct Rotate {
     struct Function : TransformFunctionWrapper<RotateTransformFunction> {
         using TransformFunctionWrapper<RotateTransformFunction>::TransformFunctionWrapper;
 
-        template<typename... F> decltype(auto) switchOn(F&&...) const;
+        template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
     };
 
     Rotate(CSS::Keyword::None) : value { nullptr } { }
@@ -53,7 +53,7 @@ struct Rotate {
     bool isFunction() const { return !!value; }
 
     template<typename> bool holdsAlternative() const;
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const Rotate& other) const
     {
@@ -69,7 +69,7 @@ private:
 
 // MARK: Rotate Function
 
-template<typename... F> decltype(auto) Rotate::Function::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Rotate::Function::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -98,7 +98,7 @@ template<typename T> bool Rotate::holdsAlternative() const
     else if constexpr (std::same_as<T, Function>)           return isFunction();
 }
 
-template<typename... F> decltype(auto) Rotate::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Rotate::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

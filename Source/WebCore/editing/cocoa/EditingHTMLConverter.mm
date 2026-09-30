@@ -258,7 +258,7 @@ static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, 
 }
 #endif // ENABLE(WRITING_TOOLS)
 
-static RefPtr<Element> enclosingElement(const Node& node, ElementCache<RefPtr<Element>>& cache, Function<bool(Element *)>&& predicate)
+static RefPtr<Element> enclosingElement(const Node& node, ElementCache<RefPtr<Element>>& cache, NOESCAPE const Function<bool(Element*)>& predicate)
 {
     Vector<Ref<Element>> ancestors;
     RefPtr<Element> result;

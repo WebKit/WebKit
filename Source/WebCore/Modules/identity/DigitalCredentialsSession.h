@@ -66,7 +66,7 @@ public:
 private:
     DigitalCredentialsSession(ScriptExecutionContext&, CredentialRequestCoordinator&, CredentialPromise&&);
 
-    void settle(Function<void(CredentialPromise&)>&&);
+    void settle(NOESCAPE const Function<void(CredentialPromise&)>&);
     void abandon();
 
     // ActiveDOMObject

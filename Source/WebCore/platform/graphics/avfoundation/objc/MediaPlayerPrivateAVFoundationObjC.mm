@@ -4261,7 +4261,7 @@ Ref<WebCoreAVFResourceLoader> MediaPlayerPrivateAVFoundationObjC::ensureAVFResou
     return addResult.iterator->value;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::forEachResourceLoader(Function<void(WebCoreAVFResourceLoader&)>&& callable) const
+void MediaPlayerPrivateAVFoundationObjC::forEachResourceLoader(NOESCAPE const Function<void(WebCoreAVFResourceLoader&)>& callable) const
 {
     auto resourceLoaders = [&] {
         Locker locker { m_resourceLoaderMapLock };

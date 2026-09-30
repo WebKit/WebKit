@@ -75,7 +75,7 @@ public:
 
 // Shared validator for types dimensional types that need to canonicalize to support range
 // constraints other than 0 and +/-∞.
-template<typename Raw, typename F> bool isValidDimensionValue(Raw raw, F&& functor)
+template<typename Raw, typename F> bool isValidDimensionValue(Raw raw, NOESCAPE const F& functor)
 {
     if (std::isinf(raw.value))
         return false;

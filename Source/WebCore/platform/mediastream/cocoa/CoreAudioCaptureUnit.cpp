@@ -244,9 +244,9 @@ bool CoreAudioCaptureUnit::isAnyUnitCapturing()
     return isAnyUnitCapturingExceptFor(nullptr);
 }
 
-void CoreAudioCaptureUnit::forEach(NOESCAPE Function<void(CoreAudioCaptureUnit&)>&& callback)
+void CoreAudioCaptureUnit::forEach(NOESCAPE const Function<void(CoreAudioCaptureUnit&)>& callback)
 {
-    allCoreAudioCaptureUnits().forEach(WTF::move(callback));
+    allCoreAudioCaptureUnits().forEach(callback);
 }
 
 static Function<void(CoreAudioCaptureUnit&)>& coreAudioCaptureNewUnitCallback()

@@ -277,7 +277,7 @@ private:
     // For subgrids, it accumulates margin/border/padding into each spanned track and recurses into children.
     // For leaf items, it invokes |handleLeafItem(gridItem, gridItemSpan)|.
     template<typename LeafItemHandler>
-    void traverseSubgridTreeForIntrinsicSizing(LeafItemHandler&&);
+    void traverseSubgridTreeForIntrinsicSizing(NOESCAPE const LeafItemHandler&);
 
     void aggregateGridItemsForIntrinsicSizing(Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, RenderGridLayoutState&);
 

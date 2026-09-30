@@ -39,7 +39,7 @@ struct PageSize {
     PageSize(CSS::Keyword::Portrait keyword) : m_value { keyword } { }
     PageSize(CSS::Keyword::Landscape keyword) : m_value { keyword } { }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

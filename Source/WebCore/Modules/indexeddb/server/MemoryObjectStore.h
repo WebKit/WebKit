@@ -72,7 +72,7 @@ public:
     void revertAddIndex(MemoryBackingStoreTransaction&, IDBIndexIdentifier);
     IDBError updateIndexRecordsWithIndexKey(MemoryBackingStoreTransaction&, const IDBIndexInfo&, const IDBKeyData&, const IndexKey&);
     IDBError deleteIndex(MemoryBackingStoreTransaction&, IDBIndexIdentifier);
-    void forEachRecord(Function<void(const IDBKeyData&, const IDBValue&)>&&);
+    void forEachRecord(NOESCAPE const Function<void(const IDBKeyData&, const IDBValue&)>&);
     void deleteAllIndexes(MemoryBackingStoreTransaction&);
     void registerIndex(Ref<MemoryIndex>&&);
 

@@ -50,7 +50,7 @@ constexpr OverflowPositionKind computeKind(std::optional<OverflowPosition> overf
     );
 }
 
-constexpr decltype(auto) visitOverflowPosition(auto&& primaryKeyword, OverflowPositionKind kind, auto&& visitor)
+constexpr decltype(auto) visitOverflowPosition(auto&& primaryKeyword, OverflowPositionKind kind, NOESCAPE const auto& visitor)
 {
     switch (kind) {
     case OverflowPositionKind::None:

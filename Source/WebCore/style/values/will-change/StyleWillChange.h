@@ -46,7 +46,7 @@ struct WillChangeAnimatableFeature {
         CustomIdent customIdent;
         CSSPropertyID propertyID;
 
-        template<typename... F> decltype(auto) switchOn(F&&... f) const
+        template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
         {
             return WTF::makeVisitor(std::forward<F>(f)...)(customIdent);
         }
@@ -82,7 +82,7 @@ struct WillChangeAnimatableFeature {
     static bool NODELETE propertyTriggersCompositing(CSSPropertyID);
     static bool NODELETE propertyTriggersCompositingOnBoxesOnly(CSSPropertyID);
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(value, std::forward<F>(f)...);
     }
@@ -126,9 +126,9 @@ struct WillChangeAnimatableFeatures {
     }
 
     template<typename SizedRange, typename Mapper>
-    static WillChangeAnimatableFeatures map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    static WillChangeAnimatableFeatures map(SizedRange&& range, NOESCAPE const Mapper& mapper)
     {
-        return { Data::map(std::forward<SizedRange>(range), std::forward<Mapper>(mapper)) };
+        return { Data::map(std::forward<SizedRange>(range), mapper) };
     }
 
     bool containsScrollPosition() const { return m_data->containsScrollPosition(); }
@@ -158,10 +158,10 @@ private:
         }
 
         template<typename SizedRange, typename Mapper>
-        static Ref<Data> map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+        static Ref<Data> map(SizedRange&& range, NOESCAPE const Mapper& mapper)
         {
             auto size = range.size();
-            return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) Data(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper)));
+            return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) Data(size, std::forward<SizedRange>(range), mapper));
         }
 
         bool containsScrollPosition() const;
@@ -184,8 +184,8 @@ private:
         }
 
         template<typename SizedRange, typename Mapper>
-        Data(unsigned size, SizedRange&& range, NOESCAPE Mapper&& mapper)
-            : Base(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper))
+        Data(unsigned size, SizedRange&& range, NOESCAPE const Mapper& mapper)
+            : Base(size, std::forward<SizedRange>(range), mapper)
         {
             initializeCachedChecks();
         }
@@ -223,7 +223,7 @@ struct WillChange {
     bool isAuto() const { return !m_data; }
     bool isAnimateableFeatures() const { return !!m_data; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

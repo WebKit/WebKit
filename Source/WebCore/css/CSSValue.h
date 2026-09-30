@@ -311,8 +311,8 @@ protected:
     ASCIILiteral separatorCSSText() const { return separatorCSSText(separator()); };
 
 private:
-    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE Visitor&&) const;
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
+    template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
 
     static inline bool NODELETE customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&);
     bool NODELETE addDerivedHash(Hasher&) const;

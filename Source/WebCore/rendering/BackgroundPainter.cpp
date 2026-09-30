@@ -400,7 +400,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     auto backgroundClipOuterLayerScope = TransparencyLayerScope(context, 1, false);
     auto backgroundClipInnerLayerScope = TransparencyLayerScope(context, 1, false);
 
-    auto setupMaskingBackgroundClip = [&](const LayoutRect& borderRect, const std::function<void(GraphicsContext& context, const LayoutRect&, const FloatRect&)>& paintFunction) {
+    auto setupMaskingBackgroundClip = [&](const LayoutRect& borderRect, NOESCAPE const std::function<void(GraphicsContext& context, const LayoutRect&, const FloatRect&)>& paintFunction) {
         auto transparencyLayerBounds = snapRectToDevicePixels(rect, deviceScaleFactor);
         transparencyLayerBounds.intersect(snapRectToDevicePixels(m_paintInfo.rect, deviceScaleFactor));
         transparencyLayerBounds.inflate(1);

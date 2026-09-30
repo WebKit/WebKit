@@ -50,7 +50,7 @@ struct RayPath {
     ALWAYS_INLINE const RayFunction& ray() const { return operation->ray(); }
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -83,7 +83,7 @@ struct ReferencePath {
     ALWAYS_INLINE const std::optional<WebCore::Path>& path() const { return operation->path(); }
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -114,7 +114,7 @@ struct BasicShapePath {
     ALWAYS_INLINE const BasicShape& shape() const { return operation->shape(); }
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -144,7 +144,7 @@ struct BoxPath {
 
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         return visitor(referenceBox());

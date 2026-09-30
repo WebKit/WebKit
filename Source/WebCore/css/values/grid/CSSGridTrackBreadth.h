@@ -44,7 +44,7 @@ struct GridTrackBreadth {
     bool isMaxContent() const { return WTF::holdsAlternative<Keyword::MaxContent>(m_value); }
     bool isAuto() const { return WTF::holdsAlternative<Keyword::Auto>(m_value); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

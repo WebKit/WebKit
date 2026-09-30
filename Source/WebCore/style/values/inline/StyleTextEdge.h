@@ -38,7 +38,7 @@ struct TextEdgePair {
     TextEdgeOver over;
     TextEdgeUnder under;
 
-    template<typename... F> constexpr  decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr  decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -81,7 +81,7 @@ template<typename K> struct TextEdge {
         return WTF::holdsAlternative<U>(m_value);
     }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

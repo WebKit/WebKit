@@ -79,7 +79,7 @@ static RefPtr<CSSValue> consumeAlignmentLastBaseline(CSSParserTokenRange& range,
     );
 }
 
-template<typename F> static RefPtr<CSSValue> consumeAlignmentOverflowPosition(CSSParserTokenRange& range, CSS::PropertyParserState&, CSSValueID overflowSafety, F&& predicate)
+template<typename F> static RefPtr<CSSValue> consumeAlignmentOverflowPosition(CSSParserTokenRange& range, CSS::PropertyParserState&, CSSValueID overflowSafety, NOESCAPE const F& predicate)
 {
     ASSERT(range.peek().id() == CSSValueSafe || range.peek().id() == CSSValueUnsafe);
 

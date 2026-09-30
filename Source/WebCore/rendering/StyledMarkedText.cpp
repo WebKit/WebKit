@@ -353,7 +353,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
 }
 
 template<typename EqualityFunction>
-static Vector<StyledMarkedText> coalesceAdjacent(const Vector<StyledMarkedText>& textsToCoalesce, EqualityFunction&& equalityFunction)
+static Vector<StyledMarkedText> coalesceAdjacent(const Vector<StyledMarkedText>& textsToCoalesce, NOESCAPE const EqualityFunction& equalityFunction)
 {
     if (textsToCoalesce.size() <= 1)
         return textsToCoalesce;

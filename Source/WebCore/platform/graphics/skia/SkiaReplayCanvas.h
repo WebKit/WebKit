@@ -53,9 +53,9 @@ private:
 #if USE(TEXTURE_MAPPER)
     sk_sp<SkImage> waitForRenderingCompletionAndRewrapImageIfNeeded(const SkImage*);
 
-    void invokeDrawFunctionWithImage(const SkImage*, Function<void(const SkImage*)>&&);
-    void invokeDrawFunctionWithPaint(const SkPaint&, Function<void(const SkPaint&)>&&);
-    void invokeDrawFunctionWithShader(const SkShader*, Function<void(const SkShader*)>&&);
+    void invokeDrawFunctionWithImage(const SkImage*, NOESCAPE const Function<void(const SkImage*)>&);
+    void invokeDrawFunctionWithPaint(const SkPaint&, NOESCAPE const Function<void(const SkPaint&)>&);
+    void invokeDrawFunctionWithShader(const SkShader*, NOESCAPE const Function<void(const SkShader*)>&);
 #endif
 
     // SkNWayCanvas overrides

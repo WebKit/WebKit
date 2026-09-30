@@ -36,7 +36,7 @@ struct Scale {
     struct Function : TransformFunctionWrapper<ScaleTransformFunction> {
         using TransformFunctionWrapper<ScaleTransformFunction>::TransformFunctionWrapper;
 
-        template<typename... F> decltype(auto) switchOn(F&&...) const;
+        template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
     };
 
     Scale(CSS::Keyword::None) : value { nullptr } { }
@@ -53,7 +53,7 @@ struct Scale {
     bool isFunction() const { return !!value; }
 
     template<typename> bool holdsAlternative() const;
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const Scale& other) const
     {
@@ -69,7 +69,7 @@ private:
 
 // MARK: Scale Function
 
-template<typename... F> decltype(auto) Scale::Function::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Scale::Function::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -89,7 +89,7 @@ template<typename T> bool Scale::holdsAlternative() const
     else if constexpr (std::same_as<T, Function>)           return isFunction();
 }
 
-template<typename... F> decltype(auto) Scale::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Scale::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

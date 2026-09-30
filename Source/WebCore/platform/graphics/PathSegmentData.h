@@ -51,7 +51,7 @@ struct PathMoveTo {
     void NODELETE extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void NODELETE extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void NODELETE transform(const AffineTransform&);
 };
@@ -72,7 +72,7 @@ struct PathLineTo {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void transform(const AffineTransform&);
 };
@@ -94,7 +94,7 @@ struct PathQuadCurveTo {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void transform(const AffineTransform&);
 };
@@ -117,7 +117,7 @@ struct PathBezierCurveTo {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void transform(const AffineTransform&);
 };
@@ -314,7 +314,7 @@ struct PathDataLine {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void transform(const AffineTransform&);
 private:
@@ -349,7 +349,7 @@ struct PathDataQuadCurve {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void transform(const AffineTransform&);
 };
@@ -373,7 +373,7 @@ struct PathDataBezierCurve {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void transform(const AffineTransform&);
 };
@@ -413,7 +413,7 @@ struct PathCloseSubpath {
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
-    void applyElements(const PathElementApplier&) const;
+    void applyElements(NOESCAPE const PathElementApplier&) const;
 
     void NODELETE transform(const AffineTransform&);
 };

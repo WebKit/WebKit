@@ -44,7 +44,7 @@ struct SVGStrokeDashoffset {
     SVGStrokeDashoffset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
     SVGStrokeDashoffset(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal) : value { literal } { }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(value, std::forward<F>(f)...);
     }

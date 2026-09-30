@@ -498,7 +498,7 @@ enum class TraversalPoint : bool { ReachedInPreOrder, AscendedOutOf };
 // walks the light DOM), but walks resolving a marker within a text control must.
 enum class EnterUserAgentShadowContent : bool { No, Yes };
 
-AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID = std::nullopt, const std::function<void(AXIsolatedObject&, TraversalPoint)>& visitObject = [] (AXIsolatedObject&, TraversalPoint) { }, EnterUserAgentShadowContent = EnterUserAgentShadowContent::Yes);
+AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection, std::optional<AXID> stopAtID = std::nullopt, NOESCAPE const std::function<void(AXIsolatedObject&, TraversalPoint)>& visitObject = [] (AXIsolatedObject&, TraversalPoint) { }, EnterUserAgentShadowContent = EnterUserAgentShadowContent::Yes);
 
 // The characters the AX-thread text walks emit for an object that has no text runs of its own,
 // mirroring TextIterator: a U+FFFC in place of replaced content (form controls, plugins, and other

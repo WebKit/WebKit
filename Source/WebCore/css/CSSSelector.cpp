@@ -905,7 +905,7 @@ CSSSelector::CSSSelector(const CSSSelector& other, MutableSelectorCopyTag)
     m_isLastInComplexSelector = true;
 }
 
-bool CSSSelector::visitSimpleSelectors(VisitFunctor&& functor, VisitFunctionalPseudoClasses visitFunctionalPseudoClasses, VisitOnlySubject visitOnlySubject) const
+bool CSSSelector::visitSimpleSelectors(NOESCAPE const VisitFunctor& functor, VisitFunctionalPseudoClasses visitFunctionalPseudoClasses, VisitOnlySubject visitOnlySubject) const
 {
     Deque<const CSSSelector*, 16> worklist;
     worklist.append(this);

@@ -593,7 +593,7 @@ template<typename... IDLTypes> struct InspectorCanvasArgumentProcessor<IDLUnion<
 
 // MARK: - Sequences
 
-Ref<JSON::ArrayOf<JSON::Value>> mapToArray(const auto& range, NOESCAPE auto&& functor)
+Ref<JSON::ArrayOf<JSON::Value>> mapToArray(const auto& range, NOESCAPE const auto& functor)
 {
     auto array = JSON::ArrayOf<JSON::Value>::create();
     for (auto& item : range)

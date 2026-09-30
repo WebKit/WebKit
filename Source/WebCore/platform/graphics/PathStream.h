@@ -63,8 +63,8 @@ public:
     const Vector<PathSegment>* segmentsIfExists() const LIFETIME_BOUND final { return &m_segments; }
     Vector<PathSegment> segments() const final { return m_segments; }
 
-    void applySegments(const PathSegmentApplier&) const final;
-    bool applyElements(const PathElementApplier&) const final;
+    void applySegments(NOESCAPE const PathSegmentApplier&) const final;
+    bool applyElements(NOESCAPE const PathElementApplier&) const final;
 
     bool transform(const AffineTransform&) final;
 

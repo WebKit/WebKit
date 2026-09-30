@@ -1342,7 +1342,7 @@ static bool NODELETE allowCopyCutFromDOM(LocalFrame& frame)
     return false;
 }
 
-static bool enabledCopy(LocalFrame& frame, EditorCommandSource source, Function<bool(const Editor&)>&& canCopy)
+static bool enabledCopy(LocalFrame& frame, EditorCommandSource source, NOESCAPE const Function<bool(const Editor&)>& canCopy)
 {
     Ref editor = frame.editor();
     switch (source) {

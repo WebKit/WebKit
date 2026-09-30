@@ -586,7 +586,7 @@ Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Nod
 
 // Finds any document markers of the specified types that contain a collapsed range matching `range`,
 // and applies `function` to them.
-void DocumentMarkerController::applyToCollapsedRangeMarker(const SimpleRange& range, OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::applyToCollapsedRangeMarker(const SimpleRange& range, OptionSet<DocumentMarkerType> types, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>& function)
 {
     if (!types.contains(DocumentMarkerType::TransparentContent)) {
         // Optimization: currently, only transparent content markers can be added to collapsed ranges,
@@ -611,7 +611,7 @@ void DocumentMarkerController::applyToCollapsedRangeMarker(const SimpleRange& ra
 }
 
 template<>
-void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Forwards>(const SimpleRange& range, OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Forwards>(const SimpleRange& range, OptionSet<DocumentMarkerType> types, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>& function)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -633,11 +633,11 @@ void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirect
     }
 
     // The above loop does not take into account collapsed ranges.
-    applyToCollapsedRangeMarker(range, types, WTF::move(function));
+    applyToCollapsedRangeMarker(range, types, function);
 }
 
 template<>
-void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Backwards>(const SimpleRange& range, OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Backwards>(const SimpleRange& range, OptionSet<DocumentMarkerType> types, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>& function)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -662,10 +662,10 @@ void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirect
     }
 
     // The above loop does not take into account collapsed ranges.
-    applyToCollapsedRangeMarker(range, types, WTF::move(function));
+    applyToCollapsedRangeMarker(range, types, function);
 }
 
-void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarkerType> types, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>& function)
 {
     if (!possiblyHasMarkers(types))
         return;

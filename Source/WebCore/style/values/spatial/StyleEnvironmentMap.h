@@ -59,7 +59,7 @@ struct EnvironmentMap {
 
     const String* tryName() const LIFETIME_BOUND { return std::get_if<String>(&m_value); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

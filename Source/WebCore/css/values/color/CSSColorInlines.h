@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace CSS {
 
-template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
+template<typename... F> decltype(auto) Color::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<KeywordColor>()));

@@ -154,7 +154,7 @@ sk_sp<SkImage> SkiaReplayCanvas::waitForRenderingCompletionAndRewrapImageIfNeede
     return SkiaUtilities::rewrapImageForContext(grContext, *image);
 }
 
-void SkiaReplayCanvas::invokeDrawFunctionWithImage(const SkImage* image, Function<void(const SkImage*)>&& drawFunction)
+void SkiaReplayCanvas::invokeDrawFunctionWithImage(const SkImage* image, NOESCAPE const Function<void(const SkImage*)>& drawFunction)
 {
     if (auto wrappedImage = waitForRenderingCompletionAndRewrapImageIfNeeded(image)) {
         drawFunction(wrappedImage.get());
@@ -164,7 +164,7 @@ void SkiaReplayCanvas::invokeDrawFunctionWithImage(const SkImage* image, Functio
     drawFunction(image);
 }
 
-void SkiaReplayCanvas::invokeDrawFunctionWithPaint(const SkPaint& paint, Function<void(const SkPaint&)>&& drawFunction)
+void SkiaReplayCanvas::invokeDrawFunctionWithPaint(const SkPaint& paint, NOESCAPE const Function<void(const SkPaint&)>& drawFunction)
 {
     auto* shader = paint.getShader();
 
@@ -183,7 +183,7 @@ void SkiaReplayCanvas::invokeDrawFunctionWithPaint(const SkPaint& paint, Functio
     drawFunction(paint);
 }
 
-void SkiaReplayCanvas::invokeDrawFunctionWithShader(const SkShader* shader, Function<void(const SkShader*)>&& drawFunction)
+void SkiaReplayCanvas::invokeDrawFunctionWithShader(const SkShader* shader, NOESCAPE const Function<void(const SkShader*)>& drawFunction)
 {
     SkMatrix localMatrix;
     std::array<SkTileMode, 2> mode;

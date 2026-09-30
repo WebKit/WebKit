@@ -47,7 +47,7 @@ struct LineHeight {
     constexpr std::optional<Length> tryLength() const { return holdsAlternative<Length>() ? std::optional { get<Length>(m_value) } : std::nullopt; }
     constexpr std::optional<Number> tryNumber() const { return holdsAlternative<Number>() ? std::optional { get<Number>(m_value) } : std::nullopt; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

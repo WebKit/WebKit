@@ -102,7 +102,7 @@ private:
 
     using ResolverScopes = HashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
     ResolverScopes collectResolverScopes();
-    template <typename TestFunction> void evaluateMediaQueries(TestFunction&&);
+    template <typename TestFunction> void evaluateMediaQueries(NOESCAPE const TestFunction&);
 
     using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
     static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);

@@ -94,7 +94,7 @@ public:
     const InlineDisplay::Box* NODELETE blockLevelBoxForLine(const InlineDisplay::Line&) const LIFETIME_BOUND;
     bool NODELETE isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
 
-    template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, Function&&);
+    template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, NOESCAPE const Function&);
 
     const RenderBlockFlow& NODELETE formattingContextRoot() const;
 
@@ -145,7 +145,7 @@ private:
     Vector<Vector<SVGTextFragment>> m_svgTextFragmentsForBoxes;
 };
 
-template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const Layout::Box& layoutBox, Function&& function)
+template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const Layout::Box& layoutBox, NOESCAPE const Function& function)
 {
     for (auto index : nonRootInlineBoxIndexesForLayoutBox(layoutBox))
         function(displayContent().boxes[index]);

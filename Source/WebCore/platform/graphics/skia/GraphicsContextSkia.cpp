@@ -575,7 +575,7 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
     return nullptr;
 }
 
-bool GraphicsContextSkia::drawOutsetShadow(SkPaint& paint, Function<void(const SkPaint&)>&& drawFunction)
+bool GraphicsContextSkia::drawOutsetShadow(SkPaint& paint, NOESCAPE const Function<void(const SkPaint&)>& drawFunction)
 {
     auto shadow = createDropShadowFilterIfNeeded(ShadowStyle::Outset);
     if (!shadow)

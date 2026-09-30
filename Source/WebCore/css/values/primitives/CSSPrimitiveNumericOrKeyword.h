@@ -176,7 +176,7 @@ template<Numeric NumericType, SpecificKeyword... Ks> struct PrimitiveNumericOrKe
             return isKeyword<T>();
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return m_data.visit(WTF::makeVisitor(std::forward<F>(f)...));
     }

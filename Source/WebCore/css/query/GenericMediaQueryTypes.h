@@ -161,10 +161,10 @@ struct FeatureSchema {
     virtual ~FeatureSchema() = default;
 };
 
-template<typename TraverseFunction> void traverseFeatures(const Condition&, TraverseFunction&&);
+template<typename TraverseFunction> void traverseFeatures(const Condition&, NOESCAPE const TraverseFunction&);
 
 template<typename TraverseFunction>
-void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& function)
+void traverseFeatures(const QueryInParens& queryInParens, NOESCAPE const TraverseFunction& function)
 {
     return WTF::switchOn(queryInParens, [&](const Condition& condition) {
         traverseFeatures(condition, function);
@@ -177,7 +177,7 @@ void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& fun
 }
 
 template<typename TraverseFunction>
-void traverseFeatures(const Condition& condition, TraverseFunction&& function)
+void traverseFeatures(const Condition& condition, NOESCAPE const TraverseFunction& function)
 {
     for (auto& queryInParens : condition.queries)
         traverseFeatures(queryInParens, function);

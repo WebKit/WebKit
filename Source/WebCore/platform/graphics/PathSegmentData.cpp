@@ -74,7 +74,7 @@ void PathMoveTo::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatR
 {
 }
 
-void PathMoveTo::applyElements(const PathElementApplier& applier) const
+void PathMoveTo::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { point } });
 }
@@ -112,7 +112,7 @@ void PathLineTo::extendBoundingRect(const FloatPoint& currentPoint, const FloatP
     boundingRect.extend(point);
 }
 
-void PathLineTo::applyElements(const PathElementApplier& applier) const
+void PathLineTo::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddLineToPoint, { point } });
 }
@@ -204,7 +204,7 @@ void PathQuadCurveTo::extendBoundingRect(const FloatPoint& currentPoint, const F
     extendRect(boundingRect, currentPoint, extremity, endPoint);
 }
 
-void PathQuadCurveTo::applyElements(const PathElementApplier& applier) const
+void PathQuadCurveTo::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
 }
@@ -321,7 +321,7 @@ void PathBezierCurveTo::extendBoundingRect(const FloatPoint& currentPoint, const
     extendRect(boundingRect, currentPoint, bezierExtremities.first, bezierExtremities.second, endPoint);
 }
 
-void PathBezierCurveTo::applyElements(const PathElementApplier& applier) const
+void PathBezierCurveTo::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
 }
@@ -673,7 +673,7 @@ void PathDataLine::extendBoundingRect(const FloatPoint&, const FloatPoint&, Floa
     boundingRect.extend(end());
 }
 
-void PathDataLine::applyElements(const PathElementApplier& applier) const
+void PathDataLine::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { start() } });
     applier({ PathElement::Type::AddLineToPoint, { end() } });
@@ -724,7 +724,7 @@ void PathDataQuadCurve::extendBoundingRect(const FloatPoint&, const FloatPoint&,
     extendRect(boundingRect, start, extremity, endPoint);
 }
 
-void PathDataQuadCurve::applyElements(const PathElementApplier& applier) const
+void PathDataQuadCurve::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { start } });
     applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
@@ -768,7 +768,7 @@ void PathDataBezierCurve::extendBoundingRect(const FloatPoint&, const FloatPoint
     extendRect(boundingRect, start, bezierExtremities.first, bezierExtremities.second, endPoint);
 }
 
-void PathDataBezierCurve::applyElements(const PathElementApplier& applier) const
+void PathDataBezierCurve::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { start } });
     applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
@@ -841,7 +841,7 @@ void PathCloseSubpath::extendBoundingRect(const FloatPoint&, const FloatPoint& l
     boundingRect.extend(lastMoveToPoint);
 }
 
-void PathCloseSubpath::applyElements(const PathElementApplier& applier) const
+void PathCloseSubpath::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::CloseSubpath, { } });
 }

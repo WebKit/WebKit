@@ -56,7 +56,7 @@ struct FontStyle {
 
     std::optional<Angle> angle() const { return m_platformSlope ? std::make_optional(Angle { static_cast<float>(*m_platformSlope) }) : std::nullopt; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

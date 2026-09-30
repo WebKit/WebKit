@@ -112,7 +112,7 @@ private:
     RefPtr<Frame> scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
     unsigned scopedChildCount(TreeScope*) const;
 
-    template<typename F> RefPtr<Frame> find(const AtomString& name, F&& nameGetter, Frame& activeFrame) const;
+    template<typename F> RefPtr<Frame> find(const AtomString& name, NOESCAPE const F& nameGetter, Frame& activeFrame) const;
 
     WeakRef<Frame> m_thisFrame;
 

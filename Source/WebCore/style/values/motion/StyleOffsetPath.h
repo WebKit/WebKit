@@ -65,7 +65,7 @@ struct OffsetPath {
     bool affectedByTransformOrigin() const { return !isNone(); }
 
     template<typename> bool holdsAlternative() const;
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const OffsetPath& other) const
     {
@@ -97,7 +97,7 @@ template<typename T> bool OffsetPath::holdsAlternative() const
     else if constexpr (std::same_as<T, BoxPath>)                            return isBox();
 }
 
-template<typename... F> decltype(auto) OffsetPath::switchOn(F&&... f) const
+template<typename... F> decltype(auto) OffsetPath::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

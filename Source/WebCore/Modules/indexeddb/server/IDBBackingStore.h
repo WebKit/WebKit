@@ -105,7 +105,7 @@ public:
         std::optional<int64_t> recordID;
     };
     using RecordOrError = std::expected<ObjectStoreRecord, IDBError>;
-    virtual void forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, Function<void(RecordOrError&&)>&&) = 0;
+    virtual void forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, NOESCAPE const Function<void(RecordOrError&&)>&) = 0;
 
     virtual IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) = 0;
     virtual void deleteBackingStore() = 0;

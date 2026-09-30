@@ -1809,7 +1809,7 @@ static std::optional<LayoutUnit> extraMarginFromSubgridAncestorGutters(const Ren
 }
 
 template<typename LeafItemHandler>
-void GridTrackSizingAlgorithm::traverseSubgridTreeForIntrinsicSizing(LeafItemHandler&& handleLeafItem)
+void GridTrackSizingAlgorithm::traverseSubgridTreeForIntrinsicSizing(NOESCAPE const LeafItemHandler& handleLeafItem)
 {
     auto& allTracks = tracks(m_direction);
     auto trackCount = allTracks.size();

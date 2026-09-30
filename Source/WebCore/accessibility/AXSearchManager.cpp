@@ -347,12 +347,12 @@ DidTimeout AXSearchManager::revealHiddenMatchWithTimeout(AXCoreObject& matchedOb
     return didTimeout;
 }
 
-AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsAsStream(AccessibilitySearchCriteria&& criteria, RemoteFrameSearchCallback&& remoteFrameCallback)
+AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsAsStream(AccessibilitySearchCriteria&& criteria, NOESCAPE const RemoteFrameSearchCallback& remoteFrameCallback)
 {
     return findMatchingObjectsInternalAsStream(criteria, remoteFrameCallback);
 }
 
-AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsStream(const AccessibilitySearchCriteria& criteria, const RemoteFrameSearchCallback& remoteFrameCallback)
+AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsStream(const AccessibilitySearchCriteria& criteria, NOESCAPE const RemoteFrameSearchCallback& remoteFrameCallback)
 {
     AXTRACE("AXSearchManager::findMatchingObjectsInternalAsStream"_s);
     AXLOG(criteria);

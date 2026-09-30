@@ -61,7 +61,7 @@ struct JustifyContent {
     constexpr bool isLeft() const { return primary() == PrimaryKind::Left; }
     constexpr bool isRight() const { return primary() == PrimaryKind::Right; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&...) const;
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     constexpr bool operator==(const JustifyContent&) const = default;
 
@@ -201,7 +201,7 @@ constexpr bool JustifyContent::isContentPosition(PrimaryKind primary)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-template<typename... F> constexpr decltype(auto) JustifyContent::switchOn(F&&... f) const
+template<typename... F> constexpr decltype(auto) JustifyContent::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

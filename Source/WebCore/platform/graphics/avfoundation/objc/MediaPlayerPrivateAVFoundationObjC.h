@@ -397,7 +397,7 @@ private:
 #endif
 
 
-    void forEachResourceLoader(Function<void(WebCoreAVFResourceLoader&)>&&) const;
+    void forEachResourceLoader(NOESCAPE const Function<void(WebCoreAVFResourceLoader&)>&) const;
     void addResourceLoader(AVAssetResourceLoadingRequest *, Ref<WebCoreAVFResourceLoader>&&);
     RefPtr<WebCoreAVFResourceLoader> getResourceLoader(AVAssetResourceLoadingRequest *) const;
     RefPtr<WebCoreAVFResourceLoader> takeResourceLoader(AVAssetResourceLoadingRequest *);

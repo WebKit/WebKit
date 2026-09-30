@@ -50,7 +50,7 @@ struct ScrollSnapType {
     constexpr bool isContainer() const { return !!m_value; }
     constexpr std::optional<ScrollSnapContainer> tryContainer() const { return m_value; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

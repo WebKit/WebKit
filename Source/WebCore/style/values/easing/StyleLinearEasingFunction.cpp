@@ -52,7 +52,7 @@ CSS::LinearEasingFunction toCSSLinearEasingFunction(const LinearTimingFunction& 
     };
 }
 
-template<typename Resolver> static Ref<TimingFunction> createTimingFunctionWithResolver(const CSS::LinearEasingFunction& function, NOESCAPE Resolver&& resolver)
+template<typename Resolver> static Ref<TimingFunction> createTimingFunctionWithResolver(const CSS::LinearEasingFunction& function, NOESCAPE const Resolver& resolver)
 {
     // https://drafts.csswg.org/css-easing-2/#create-a-linear-easing-function
 

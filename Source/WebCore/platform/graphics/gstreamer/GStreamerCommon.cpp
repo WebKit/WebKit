@@ -1275,7 +1275,7 @@ GstElement* /* (transfer floating) */ createPlatformAudioSink(const String& role
     return audioSink;
 }
 
-bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState targetState, Function<bool(GstMessage*)>&& messageHandler)
+bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState targetState, NOESCAPE const Function<bool(GstMessage*)>& messageHandler)
 {
     GST_DEBUG_OBJECT(pipeline, "Setting state to %s", gst_state_get_name(targetState));
 
@@ -1993,18 +1993,18 @@ std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral nick)
     return enumValue->value;
 }
 
-bool gstStructureForeach(const GstStructure* structure, Function<bool(GstId, const GValue*)>&& callback)
+bool gstStructureForeach(const GstStructure* structure, NOESCAPE const Function<bool(GstId, const GValue*)>& callback)
 {
 #if GST_CHECK_VERSION(1, 26, 0)
     return gst_structure_foreach_id_str(structure, [](GstId id, const GValue* value, gpointer userData) -> gboolean {
-        auto& callback = *reinterpret_cast<Function<bool(GstId, const GValue*)>*>(userData);
+        auto& callback = *reinterpret_cast<const Function<bool(GstId, const GValue*)>*>(userData);
         return callback(id, value);
-    }, &callback);
+    }, const_cast<Function<bool(GstId, const GValue*)>*>(&callback));
 #else
     return gst_structure_foreach(structure, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-        auto& callback = *reinterpret_cast<Function<bool(GQuark, const GValue*)>*>(userData);
+        auto& callback = *reinterpret_cast<const Function<bool(GQuark, const GValue*)>*>(userData);
         return callback(quark, value);
-    }, &callback);
+    }, const_cast<Function<bool(GstId, const GValue*)>*>(&callback));
 #endif
 }
 
@@ -2017,18 +2017,18 @@ void gstStructureIdSetValue(GstStructure* structure, GstId id, const GValue* val
 #endif
 }
 
-bool gstStructureMapInPlace(GstStructure* structure, Function<bool(GstId, GValue*)>&& callback)
+bool gstStructureMapInPlace(GstStructure* structure, NOESCAPE const Function<bool(GstId, GValue*)>& callback)
 {
 #if GST_CHECK_VERSION(1, 26, 0)
     return gst_structure_map_in_place_id_str(structure, [](GstId id, GValue* value, gpointer userData) -> gboolean {
-        auto& callback = *reinterpret_cast<Function<bool(GstId, GValue*)>*>(userData);
+        auto& callback = *reinterpret_cast<const Function<bool(GstId, GValue*)>*>(userData);
         return callback(id, value);
-    }, &callback);
+    }, const_cast<Function<bool(GstId, GValue*)>*>(&callback));
 #else
     return gst_structure_map_in_place(structure, [](GQuark quark, GValue* value, gpointer userData) -> gboolean {
-        auto& callback = *reinterpret_cast<Function<bool(GQuark, GValue*)>*>(userData);
+        auto& callback = *reinterpret_cast<const Function<bool(GQuark, GValue*)>*>(userData);
         return callback(quark, value);
-    }, &callback);
+    }, const_cast<Function<bool(GstId, GValue*)>*>(&callback));
 #endif
 }
 
@@ -2041,18 +2041,18 @@ String gstIdToString(GstId id)
 #endif
 }
 
-void gstStructureFilterAndMapInPlace(GstStructure* structure, Function<bool(GstId, GValue*)>&& callback)
+void gstStructureFilterAndMapInPlace(GstStructure* structure, NOESCAPE const Function<bool(GstId, GValue*)>& callback)
 {
 #if GST_CHECK_VERSION(1, 26, 0)
     gst_structure_filter_and_map_in_place_id_str(structure, [](GstId id, GValue* value, gpointer userData) -> gboolean {
-        auto& callback = *reinterpret_cast<Function<bool(GstId, GValue*)>*>(userData);
+        auto& callback = *reinterpret_cast<const Function<bool(GstId, GValue*)>*>(userData);
         return callback(id, value);
-    }, &callback);
+    }, const_cast<Function<bool(GstId, GValue*)>*>(&callback));
 #else
     gst_structure_filter_and_map_in_place(structure, [](GQuark quark, GValue* value, gpointer userData) -> gboolean {
-        auto& callback = *reinterpret_cast<Function<bool(GQuark, GValue*)>*>(userData);
+        auto& callback = *reinterpret_cast<const Function<bool(GQuark, GValue*)>*>(userData);
         return callback(quark, value);
-    }, &callback);
+    }, const_cast<Function<bool(GstId, GValue*)>*>(&callback));
 #endif
 }
 

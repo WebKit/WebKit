@@ -93,7 +93,7 @@ static bool NODELETE canDoRemoteSearch(const std::optional<AXTreeID>& treeID)
 // In the future, we could consider changing callers to implement a solution that doesn't
 // require polling as done in this function, since polling can be inefficient.
 template<typename Predicate>
-static DidTimeout spinRunLoopUntil(Predicate&& isComplete, Seconds timeout)
+static DidTimeout spinRunLoopUntil(NOESCAPE const Predicate& isComplete, Seconds timeout)
 {
     AX_ASSERT(isMainThread());
 

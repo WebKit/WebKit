@@ -40,41 +40,41 @@ static constexpr size_t maximumSubstitutionTreeDepth = 128;
 //
 // Replaces a leaf node with the result of the functor.
 
-template<typename F> static auto mapLeaves(const std::optional<Child>&, const F&) -> std::optional<Child>;
-template<typename F> static auto mapLeaves(const Random::Fixed&, const F&) -> Random::Fixed;
-template<typename F> static auto mapLeaves(const CalcMix::Item&, const F&) -> CalcMix::Item;
-template<typename F> static auto mapLeaves(const Vector<CalcMix::Item>&, const F&) -> Vector<CalcMix::Item>;
-template<typename F> static auto mapLeaves(const ChildOrNone&, const F&) -> ChildOrNone;
-template<typename F> static auto mapLeaves(const Children&, const F&) -> Children;
-template<typename F> static auto mapLeaves(const Child&, const F&) -> Child;
-template<Leaf Op, typename F> static auto mapLeaves(const Op&, const F&) -> Child;
-template<typename Op, typename F> static auto mapLeaves(const IndirectNode<Op>&, const F&) -> Child;
+template<typename F> static auto mapLeaves(const std::optional<Child>&, NOESCAPE const F&) -> std::optional<Child>;
+template<typename F> static auto mapLeaves(const Random::Fixed&, NOESCAPE const F&) -> Random::Fixed;
+template<typename F> static auto mapLeaves(const CalcMix::Item&, NOESCAPE const F&) -> CalcMix::Item;
+template<typename F> static auto mapLeaves(const Vector<CalcMix::Item>&, NOESCAPE const F&) -> Vector<CalcMix::Item>;
+template<typename F> static auto mapLeaves(const ChildOrNone&, NOESCAPE const F&) -> ChildOrNone;
+template<typename F> static auto mapLeaves(const Children&, NOESCAPE const F&) -> Children;
+template<typename F> static auto mapLeaves(const Child&, NOESCAPE const F&) -> Child;
+template<Leaf Op, typename F> static auto mapLeaves(const Op&, NOESCAPE const F&) -> Child;
+template<typename Op, typename F> static auto mapLeaves(const IndirectNode<Op>&, NOESCAPE const F&) -> Child;
 
-template<typename F> std::optional<Child> mapLeaves(const std::optional<Child>& root, const F& functor)
+template<typename F> std::optional<Child> mapLeaves(const std::optional<Child>& root, NOESCAPE const F& functor)
 {
     if (root)
         return mapLeaves(*root, functor);
     return { };
 }
 
-template<typename F> Random::Fixed mapLeaves(const Random::Fixed& root, const F&)
+template<typename F> Random::Fixed mapLeaves(const Random::Fixed& root, NOESCAPE const F&)
 {
     return root;
 }
 
-template<typename F> CalcMix::Item mapLeaves(const CalcMix::Item& item, const F& functor)
+template<typename F> CalcMix::Item mapLeaves(const CalcMix::Item& item, NOESCAPE const F& functor)
 {
     return { mapLeaves(item.value, functor), item.weight };
 }
 
-template<typename F> Vector<CalcMix::Item> mapLeaves(const Vector<CalcMix::Item>& children, const F& functor)
+template<typename F> Vector<CalcMix::Item> mapLeaves(const Vector<CalcMix::Item>& children, NOESCAPE const F& functor)
 {
     return WTF::map(children, [&](const auto& child) {
         return mapLeaves(child, functor);
     });
 }
 
-template<typename F> ChildOrNone mapLeaves(const ChildOrNone& root, const F& functor)
+template<typename F> ChildOrNone mapLeaves(const ChildOrNone& root, NOESCAPE const F& functor)
 {
     return WTF::switchOn(root,
         [&](const CSS::Keyword::None& none) { return ChildOrNone { none }; },
@@ -82,26 +82,26 @@ template<typename F> ChildOrNone mapLeaves(const ChildOrNone& root, const F& fun
     );
 }
 
-template<typename F> Children mapLeaves(const Children& children, const F& functor)
+template<typename F> Children mapLeaves(const Children& children, NOESCAPE const F& functor)
 {
     return WTF::map(children, [&](const auto& child) {
         return mapLeaves(child, functor);
     });
 }
 
-template<typename F> Child mapLeaves(const Child& root, const F& functor)
+template<typename F> Child mapLeaves(const Child& root, NOESCAPE const F& functor)
 {
     return WTF::switchOn(root, [&](const auto& root) {
         return mapLeaves(root, functor);
     });
 }
 
-template<Leaf Op, typename F> Child mapLeaves(const Op& root, const F& functor)
+template<Leaf Op, typename F> Child mapLeaves(const Op& root, NOESCAPE const F& functor)
 {
     return functor(root);
 }
 
-template<typename Op, typename F> Child mapLeaves(const IndirectNode<Op>& root, const F& functor)
+template<typename Op, typename F> Child mapLeaves(const IndirectNode<Op>& root, NOESCAPE const F& functor)
 {
     return makeChild(WTF::apply([&](const auto& ...x) {
         return Op { mapLeaves(x, functor)... };
@@ -110,7 +110,7 @@ template<typename Op, typename F> Child mapLeaves(const IndirectNode<Op>& root, 
 
 // MARK: - Counting
 
-static size_t accumulateOverChildren(const Child& root, const auto& functor)
+static size_t accumulateOverChildren(const Child& root, NOESCAPE const auto& functor)
 {
     size_t total = 0;
     forAllChildren(root, WTF::makeVisitor(

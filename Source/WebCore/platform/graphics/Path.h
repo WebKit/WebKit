@@ -72,8 +72,8 @@ public:
 
     WEBCORE_EXPORT void addPath(const Path&, const AffineTransform&);
 
-    void applySegments(const PathSegmentApplier&) const;
-    WEBCORE_EXPORT void applyElements(const PathElementApplier&) const;
+    void applySegments(NOESCAPE const PathSegmentApplier&) const;
+    WEBCORE_EXPORT void applyElements(NOESCAPE const PathElementApplier&) const;
     void clear();
 
     void translate(const FloatSize& delta);

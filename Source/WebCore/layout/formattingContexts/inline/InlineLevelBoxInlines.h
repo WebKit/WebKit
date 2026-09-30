@@ -35,14 +35,14 @@
 namespace WebCore {
 namespace Layout {
 
-template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, NOESCAPE PreferredLineHeightFunctor&& preferredLineHeightFunctor)
+template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, NOESCAPE const PreferredLineHeightFunctor& preferredLineHeightFunctor)
 {
     return WTF::switchOn(style.verticalAlign(),
         [](CSS::SpecificKeyword auto const& keyword) -> InlineLevelBox::VerticalAlignment {
             return keyword;
         },
         [&](const Style::VerticalAlign::LengthPercentage& value) -> InlineLevelBox::VerticalAlignment {
-            return Style::evaluate<InlineLayoutUnit>(value, std::forward<PreferredLineHeightFunctor>(preferredLineHeightFunctor), style.usedZoomForLength());
+            return Style::evaluate<InlineLayoutUnit>(value, preferredLineHeightFunctor, style.usedZoomForLength());
         }
     );
 }

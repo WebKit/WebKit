@@ -101,7 +101,7 @@ static RefPtr<JSON::Array> parseCandidatesArray(std::span<const uint8_t> resourc
 }
 
 template<typename Visitor>
-static void forEachValidOrigin(JSON::Array& candidates, const WellKnownOriginListPolicy& policy, Visitor&& visitor)
+static void forEachValidOrigin(JSON::Array& candidates, const WellKnownOriginListPolicy& policy, NOESCAPE const Visitor& visitor)
 {
     Vector<String> labelsSeen;
     labelsSeen.reserveInitialCapacity(policy.maxRegistrableOriginLabels);

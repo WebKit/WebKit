@@ -563,7 +563,7 @@ IntPoint CoordinatedBackingStoreProxy::tilePositionForPoint(const IntPoint& poin
     return IntPoint(std::max(x, 0), std::max(y, 0));
 }
 
-void CoordinatedBackingStoreProxy::forEachTilePositionInRect(const IntRect& rect, Function<void(IntPoint&&)>&& callback)
+void CoordinatedBackingStoreProxy::forEachTilePositionInRect(const IntRect& rect, NOESCAPE const Function<void(IntPoint&&)>& callback)
 {
     auto topLeft = tilePositionForPoint(rect.minXMinYCorner());
     auto innerBottomRight = tilePositionForPoint(rect.maxXMaxYCorner() - IntSize(1, 1));

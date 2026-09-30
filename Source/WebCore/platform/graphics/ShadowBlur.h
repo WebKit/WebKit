@@ -71,9 +71,9 @@ public:
 
     // DrawBufferCallback is for drawing shadow without tiling.
     // DrawImageCallback and FillRectCallback is for drawing shadow with tiling.
-    void drawRectShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRoundedRect& shadowedRect, const DrawBufferCallback&, const DrawImageCallback&, const FillRectCallback&);
-    void drawInsetShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const DrawBufferCallback&, const DrawImageCallback&, const FillRectWithHoleCallback&);
-    void drawShadowLayer(const AffineTransform&, const IntRect& clipBounds, const FloatRect& layerArea, const DrawShadowCallback&, const DrawBufferCallback&);
+    void drawRectShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRoundedRect& shadowedRect, NOESCAPE const DrawBufferCallback&, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectCallback&);
+    void drawInsetShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRect& fullRect, const FloatRoundedRect& holeRect, NOESCAPE const DrawBufferCallback&, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectWithHoleCallback&);
+    void drawShadowLayer(const AffineTransform&, const IntRect& clipBounds, const FloatRect& layerArea, NOESCAPE const DrawShadowCallback&, NOESCAPE const DrawBufferCallback&);
 
     void blurLayerImage(std::span<uint8_t>, const IntSize&, int stride);
 
@@ -106,16 +106,16 @@ private:
     void blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize);
     void blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize);
 
-    void drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties&, const DrawBufferCallback&);
-    void drawInsetShadowWithTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectWithHoleCallback&);
-    void drawInsetShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectWithHoleCallback&, const FloatRect& templateBounds, const FloatRect& templateHole, bool redrawNeeded = true);
+    void drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties&, NOESCAPE const DrawBufferCallback&);
+    void drawInsetShadowWithTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectWithHoleCallback&);
+    void drawInsetShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectWithHoleCallback&, const FloatRect& templateBounds, const FloatRect& templateHole, bool redrawNeeded = true);
 
-    void drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties&, const DrawBufferCallback&);
-    void drawRectShadowWithTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectCallback&, const LayerImageProperties&);
-    void drawRectShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback&, const FillRectCallback&, const FloatRect& templateShadow, bool redrawNeeded = true);
+    void drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties&, NOESCAPE const DrawBufferCallback&);
+    void drawRectShadowWithTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectCallback&, const LayerImageProperties&);
+    void drawRectShadowWithTilingWithLayerImageBuffer(ImageBuffer& layerImage, const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectCallback&, const FloatRect& templateShadow, bool redrawNeeded = true);
 
-    void drawLayerPiecesAndFillCenter(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&, const FillRectCallback&);
-    void drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&);
+    void drawLayerPiecesAndFillCenter(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii&, const IntSize& roundedRadius, const IntSize& templateSize, NOESCAPE const DrawImageCallback&, NOESCAPE const FillRectCallback&);
+    void drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const CornerRadii&, const IntSize& roundedRadius, const IntSize& templateSize, NOESCAPE const DrawImageCallback&);
 
     IntSize blurredEdgeSize() const;
 

@@ -58,7 +58,7 @@ class ComputedStyle;
 template<typename> struct ValueRepresentation;
 
 struct ValueRepresentationInvoker {
-    template<typename StyleType, typename... F> decltype(auto) operator()(const StyleType& value, F&&... f) const
+    template<typename StyleType, typename... F> decltype(auto) operator()(const StyleType& value, NOESCAPE F&&... f) const
     {
         return ValueRepresentation<StyleType>{}(value, std::forward<F>(f)...);
     }

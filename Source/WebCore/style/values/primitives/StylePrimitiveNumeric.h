@@ -252,7 +252,7 @@ template<CSS::DimensionPercentageNumeric CSSType> struct PrimitiveNumeric<CSSTyp
         );
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... functors) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... functors) const
     {
         return WTF::switchOn(m_value, std::forward<F>(functors)...);
     }
@@ -363,7 +363,7 @@ template<CSS::Range R, typename V> struct PrimitiveNumeric<CSS::LengthPercentage
         return m_value.type() == indexForType<T>();
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -612,7 +612,7 @@ template<CSS::Range R, typename V> struct PrimitiveNumericWrapperBase<LengthPerc
         return value.template holdsAlternative<T>();
     }
     template<typename... F>
-    ALWAYS_INLINE decltype(auto) switchOn(F&&... f) const
+    ALWAYS_INLINE decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return value.switchOn(std::forward<F>(f)...);
     }

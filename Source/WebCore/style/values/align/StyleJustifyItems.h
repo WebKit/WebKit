@@ -77,7 +77,7 @@ struct JustifyItems {
     constexpr bool isLegacyRight() const { return primary() == PrimaryKind::Legacy && legacyPosition() == LegacyPositionKind::Right; }
     constexpr bool isLegacyCenter() const { return primary() == PrimaryKind::Legacy && legacyPosition() == LegacyPositionKind::Center; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&...) const;
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     constexpr bool operator==(const JustifyItems&) const = default;
 
@@ -275,7 +275,7 @@ constexpr bool JustifyItems::canHaveLegacyPosition(PrimaryKind primary)
     return primary == PrimaryKind::Legacy;
 }
 
-template<typename... F> constexpr decltype(auto) JustifyItems::switchOn(F&&... f) const
+template<typename... F> constexpr decltype(auto) JustifyItems::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

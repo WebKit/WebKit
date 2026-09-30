@@ -108,7 +108,7 @@ static inline bool quadsIntersect(const FloatQuad& quadA, const FloatQuad& quadB
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapperLayer3DRenderingContext);
 
 void TextureMapperLayer3DRenderingContext::paint(TextureMapper& textureMapper, const Vector<TextureMapperLayer*>& textureMapperLayers,
-    const std::function<void(TextureMapperLayer*, const ClipPath&)>& paintLayerFunction)
+    NOESCAPE const std::function<void(TextureMapperLayer*, const ClipPath&)>& paintLayerFunction)
 {
     if (textureMapperLayers.isEmpty())
         return;
@@ -307,7 +307,7 @@ void TextureMapperLayer3DRenderingContext::buildTree(LayerNode& root, Deque<Laye
     }
 }
 
-void TextureMapperLayer3DRenderingContext::traverseTree(LayerNode& node, const std::function<void(LayerNode&)>& processNode)
+void TextureMapperLayer3DRenderingContext::traverseTree(LayerNode& node, NOESCAPE const std::function<void(LayerNode&)>& processNode)
 {
     auto& geometry = node.firstLayer().geometry;
     FloatPlane3D plane(geometry.normal(), geometry.vertexAt(0));

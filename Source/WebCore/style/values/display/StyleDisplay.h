@@ -350,7 +350,7 @@ constexpr bool Display::doesGenerateBox() const
 template<> struct CSSValueConversion<Display> { auto operator()(BuilderState&, const CSSValue&) -> Display; };
 
 template<> struct ValueRepresentation<DisplayType> {
-    template<typename... F> constexpr decltype(auto) operator()(DisplayType value, F&&... f)
+    template<typename... F> constexpr decltype(auto) operator()(DisplayType value, NOESCAPE F&&... f)
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         switch (value) {

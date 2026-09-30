@@ -177,7 +177,7 @@ struct GridTrackSize {
 
     bool isContentSized() const { return m_minTrackBreadth.isContentSized() || m_maxTrackBreadth.isContentSized(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const GridTrackSize& other) const
     {
@@ -245,7 +245,7 @@ private:
     bool m_maxTrackBreadthIsFixed : 1;
 };
 
-template<typename... F> decltype(auto) GridTrackSize::switchOn(F&&... f) const
+template<typename... F> decltype(auto) GridTrackSize::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

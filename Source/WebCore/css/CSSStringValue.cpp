@@ -52,7 +52,7 @@ bool CSSStringValue::equals(const CSSStringValue& other) const
     return m_string == other.m_string;
 }
 
-IterationStatus CSSStringValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSStringValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_string);
 }

@@ -119,7 +119,7 @@ private:
     using Container = Vector<Ref<PlatformContentFilter>>;
     ContentFilter(Container&&, ContentFilterClient&);
 
-    template <typename Function> void forEachContentFilterUntilBlocked(Function&&);
+    template <typename Function> void forEachContentFilterUntilBlocked(NOESCAPE const Function&);
     void didDecide(State);
     void deliverResourceData(const SharedBuffer&);
     void deliverStoredResourceData();

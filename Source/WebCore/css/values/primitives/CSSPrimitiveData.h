@@ -171,10 +171,10 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveDataIndex {
 
     // MARK: Keyword
 
-    template<typename F> constexpr decltype(auto) visitKeyword(F&& f) const
+    template<typename F> constexpr decltype(auto) visitKeyword(NOESCAPE const F& f) const
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(storage <= indexStorageForLastKeyword);
-        return Keywords::visitKeywordAtOffset(storage - indexStorageForFirstKeyword, std::forward<F>(f));
+        return Keywords::visitKeywordAtOffset(storage - indexStorageForFirstKeyword, f);
     }
 
     // MARK: Predicates
@@ -471,13 +471,13 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveData {
             return index.isKeyword(T { });
     }
 
-    template<typename F> decltype(auto) visit(F&& f) const
+    template<typename F> decltype(auto) visit(NOESCAPE const F& f) const
     {
         if (isRaw())
             return f(asRaw());
         if (isCalc())
             return f(asCalc());
-        return index.visitKeyword(std::forward<F>(f));
+        return index.visitKeyword(f);
     }
 
     void setAsMovedFrom()

@@ -352,7 +352,7 @@ void PathCairo::addPath(const PathCairo& path, const AffineTransform& transform)
     m_elementsStream = nullptr;
 }
 
-bool PathCairo::applyElements(const PathElementApplier& applier) const
+bool PathCairo::applyElements(NOESCAPE const PathElementApplier& applier) const
 {
     if (m_elementsStream && m_elementsStream->applyElements(applier))
         return true;

@@ -62,7 +62,7 @@ struct PositionTryFallback {
     bool isPositionArea() const { return !!positionArea.properties; }
     bool isRuleAndTactics() const { return !positionArea.properties; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         if (isPositionArea())

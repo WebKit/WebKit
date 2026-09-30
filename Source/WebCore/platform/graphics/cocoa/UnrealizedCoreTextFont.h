@@ -49,7 +49,7 @@ public:
     }
 
     template <typename T>
-    void modify(T&& functor)
+    void modify(NOESCAPE const T& functor)
     {
         if (static_cast<bool>(*this))
             functor(m_attributes.get());

@@ -99,7 +99,7 @@ inline ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask(Mess
 }
 
 template<typename Functor>
-void ScriptExecutionContext::forEachMicrotaskGlobalObject(const Functor& functor)
+void ScriptExecutionContext::forEachMicrotaskGlobalObject(NOESCAPE const Functor& functor)
 {
     if (!m_microtaskGlobalObjects)
         return;

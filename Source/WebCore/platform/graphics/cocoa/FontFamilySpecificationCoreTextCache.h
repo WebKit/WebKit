@@ -70,16 +70,16 @@ public:
 
     static FontFamilySpecificationCoreTextCache& forCurrentThread();
 
-    template<typename Functor> FontPlatformData& ensure(FontFamilySpecificationKey&&, Functor&&);
+    template<typename Functor> FontPlatformData& ensure(FontFamilySpecificationKey&&, NOESCAPE const Functor&);
     void clear();
 
 private:
     HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, DefaultHash<FontFamilySpecificationKey>, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
 };
 
-template<typename Functor> FontPlatformData& FontFamilySpecificationCoreTextCache::ensure(FontFamilySpecificationKey&& key, Functor&& functor)
+template<typename Functor> FontPlatformData& FontFamilySpecificationCoreTextCache::ensure(FontFamilySpecificationKey&& key, NOESCAPE const Functor& functor)
 {
-    auto& fontPlatformData = m_fonts.ensure(std::forward<FontFamilySpecificationKey>(key), std::forward<Functor>(functor)).iterator->value;
+    auto& fontPlatformData = m_fonts.ensure(std::forward<FontFamilySpecificationKey>(key), functor).iterator->value;
     ASSERT(fontPlatformData);
     return *fontPlatformData;
 }

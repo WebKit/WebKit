@@ -72,7 +72,7 @@ public:
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     bool canApplyElements() const;
-    bool applyElements(const PathElementApplier&) const;
+    bool applyElements(NOESCAPE const PathElementApplier&) const;
 
     bool canTransform() const;
     bool transform(const AffineTransform&);

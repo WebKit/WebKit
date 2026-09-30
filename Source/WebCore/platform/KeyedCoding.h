@@ -65,7 +65,7 @@ public:
     }
 
     template<typename T, typename F> [[nodiscard]]
-    bool decodeEnum(const String& key, T& value, F&& isValidEnumFunction)
+    bool decodeEnum(const String& key, T& value, NOESCAPE const F& isValidEnumFunction)
     {
         static_assert(std::is_enum<T>::value, "T must be an enum type");
 
@@ -81,7 +81,7 @@ public:
     }
 
     template<typename T, typename F> [[nodiscard]]
-    bool decodeObject(const String& key, T& object, F&& function)
+    bool decodeObject(const String& key, T& object, NOESCAPE const F& function)
     {
         if (!beginObject(key))
             return false;
@@ -91,7 +91,7 @@ public:
     }
 
     template<typename T, typename F> [[nodiscard]]
-    bool decodeConditionalObject(const String& key, T& object, F&& function)
+    bool decodeConditionalObject(const String& key, T& object, NOESCAPE const F& function)
     {
         // FIXME: beginObject can return false for two reasons: either the
         // key doesn't exist or the key refers to something that isn't an object.
@@ -106,7 +106,7 @@ public:
     }
 
     template<typename ContainerType, typename F> [[nodiscard]]
-    bool decodeObjects(const String& key, ContainerType& objects, F&& function)
+    bool decodeObjects(const String& key, ContainerType& objects, NOESCAPE const F& function)
     {
         if (!beginArray(key))
             return false;
@@ -170,7 +170,7 @@ public:
     }
 
     template<typename T, typename F>
-    void encodeObject(const String& key, const T& object, F&& function)
+    void encodeObject(const String& key, const T& object, NOESCAPE const F& function)
     {
         beginObject(key);
         function(*this, object);
@@ -178,16 +178,16 @@ public:
     }
 
     template<typename T, typename F>
-    void encodeConditionalObject(const String& key, const T* object, F&& function)
+    void encodeConditionalObject(const String& key, const T* object, NOESCAPE const F& function)
     {
         if (!object)
             return;
 
-        encodeObject(key, *object, std::forward<F>(function));
+        encodeObject(key, *object, function);
     }
 
     template<typename CollectionType, typename F>
-    void encodeObjects(const String& key, const CollectionType& collection, F&& function)
+    void encodeObjects(const String& key, const CollectionType& collection, NOESCAPE const F& function)
     {
         beginArray(key);
         for (auto& item : collection) {

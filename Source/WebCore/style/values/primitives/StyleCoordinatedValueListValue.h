@@ -249,21 +249,21 @@ template<CSSPropertyID> struct CoordinatedValueListPropertyConstAccessor;
 
 // Applies the provided functor to each property of the CoordinatedValueList value, invoking the functor with each properties CSSPropertyID as the first template argument, and then and'ing the results.
 template<CoordinatedValueListValue T, typename F>
-constexpr bool allOfCoordinatedValueListProperties(NOESCAPE F&& f)
+constexpr bool allOfCoordinatedValueListProperties(NOESCAPE const F& f)
 {
     return WTF::apply([&]<typename... Ts>(const Ts& ...) { return (f.template operator()<Ts::value>() && ...); }, T::properties);
 }
 
 // Applies the provided functor to each property of the CoordinatedValueList value, invoking the functor with each properties CSSPropertyID as the first template argument, and then or'ing the results.
 template<CoordinatedValueListValue T, typename F>
-constexpr bool anyOfCoordinatedValueListProperties(NOESCAPE F&& f)
+constexpr bool anyOfCoordinatedValueListProperties(NOESCAPE const F& f)
 {
     return WTF::apply([&]<typename... Ts>(const Ts& ...) { return (f.template operator()<Ts::value>() || ...); }, T::properties);
 }
 
 // Applies the provided functor to each property of the CoordinatedValueList value, invoking the functor with each properties CSSPropertyID as the first template argument.
 template<CoordinatedValueListValue T, typename F>
-constexpr void eachCoordinatedValueListProperties(NOESCAPE F&& f)
+constexpr void eachCoordinatedValueListProperties(NOESCAPE const F& f)
 {
     WTF::apply([&]<typename... Ts>(const Ts& ...) { (f.template operator()<Ts::value>(), ...); }, T::properties);
 }

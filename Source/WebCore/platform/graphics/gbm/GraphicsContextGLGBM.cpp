@@ -251,7 +251,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }
 
-void GraphicsContextGLGBM::prepareForDisplayWithFinishedSignal(Function<void()>&& finishedSignalCreator)
+void GraphicsContextGLGBM::prepareForDisplayWithFinishedSignal(NOESCAPE const Function<void()>& finishedSignalCreator)
 {
     if (!makeContextCurrent())
         return;

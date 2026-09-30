@@ -76,7 +76,7 @@ public:
     }
 
     template<typename U, typename Mapper>
-    static RectEdges<T> map(U&& other, NOESCAPE Mapper&& mapper)
+    static RectEdges<T> map(U&& other, NOESCAPE const Mapper& mapper)
     {
         return RectEdges<T> {
             mapper(other.top()),
@@ -167,19 +167,19 @@ public:
         return { left(), top(), right(), bottom() };
     }
 
-    template<typename F> bool anyOf(F&& functor) const
+    template<typename F> bool anyOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::any_of(m_sides, std::forward<F>(functor));
+        return std::ranges::any_of(m_sides, functor);
     }
 
-    template<typename F> bool allOf(F&& functor) const
+    template<typename F> bool allOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::all_of(m_sides, std::forward<F>(functor));
+        return std::ranges::all_of(m_sides, functor);
     }
 
-    template<typename F> bool noneOf(F&& functor) const
+    template<typename F> bool noneOf(NOESCAPE const F& functor) const
     {
-        return std::ranges::none_of(m_sides, std::forward<F>(functor));
+        return std::ranges::none_of(m_sides, functor);
     }
 
     bool isZero() const
@@ -231,7 +231,7 @@ inline RectEdges<T>& operator-=(RectEdges<T>& a, const RectEdges<T>& b)
 }
 
 template<typename T, typename F>
-inline RectEdges<T> blend(const RectEdges<T>& a, const RectEdges<T>& b, F&& functor)
+inline RectEdges<T> blend(const RectEdges<T>& a, const RectEdges<T>& b, NOESCAPE const F& functor)
 {
     return {
         functor(a.top(), b.top(), BoxSide::Top),

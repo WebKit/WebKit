@@ -49,7 +49,7 @@ constexpr BaselineAlignmentPreferenceKind computeKind(std::optional<BaselineAlig
     );
 }
 
-constexpr decltype(auto) visitBaselineAlignmentPreference(auto&& primaryKeyword, BaselineAlignmentPreferenceKind kind, auto&& visitor)
+constexpr decltype(auto) visitBaselineAlignmentPreference(auto&& primaryKeyword, BaselineAlignmentPreferenceKind kind, NOESCAPE const auto& visitor)
 {
     switch (kind) {
     case BaselineAlignmentPreferenceKind::First:

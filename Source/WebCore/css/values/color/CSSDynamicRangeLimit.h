@@ -50,7 +50,7 @@ struct DynamicRangeLimit {
 
     ~DynamicRangeLimit();
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const DynamicRangeLimit&) const;
 
@@ -65,7 +65,7 @@ private:
     Kind value;
 };
 
-template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) const
+template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<CSS::Keyword::Standard>()));

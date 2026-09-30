@@ -212,7 +212,7 @@ void MatchedDeclarationsCache::invalidate()
 }
 
 template<typename Callback>
-void MatchedDeclarationsCache::removeAllMatching(const Callback& matches)
+void MatchedDeclarationsCache::removeAllMatching(NOESCAPE const Callback& matches)
 {
     m_entries.removeIf([&](auto& keyValue) {
         keyValue.value.removeAllMatching(matches);

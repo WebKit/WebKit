@@ -624,7 +624,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT void forEach(NOESCAPE Function<void(MediaConstraintType, const MediaConstraint&)>&&) const;
+    WEBCORE_EXPORT void forEach(NOESCAPE const Function<void(MediaConstraintType, const MediaConstraint&)>&) const;
     void filter(NOESCAPE const Function<bool(MediaConstraintType, const MediaConstraint&)>&) const;
     bool isEmpty() const;
     WEBCORE_EXPORT bool isValid() const;

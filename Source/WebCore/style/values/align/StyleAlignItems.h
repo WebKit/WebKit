@@ -65,7 +65,7 @@ struct AlignItems {
     constexpr bool isFirstBaseline() const { return primary() == PrimaryKind::Baseline && baselineAlignmentPreference() == BaselineAlignmentPreferenceKind::First; }
     constexpr bool isLastBaseline() const { return primary() == PrimaryKind::Baseline && baselineAlignmentPreference() == BaselineAlignmentPreferenceKind::Last; }
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&...) const;
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     constexpr bool operator==(const AlignItems&) const = default;
 
@@ -220,7 +220,7 @@ constexpr bool AlignItems::canHaveOverflowPosition(PrimaryKind primary)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-template<typename... F> constexpr decltype(auto) AlignItems::switchOn(F&&... f) const
+template<typename... F> constexpr decltype(auto) AlignItems::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

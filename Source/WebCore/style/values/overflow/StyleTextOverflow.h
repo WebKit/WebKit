@@ -54,7 +54,7 @@ struct TextOverflow {
     bool isEllipsis() const { return m_type == Type::Ellipsis; }
     bool isString() const { return m_type == Type::String; }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

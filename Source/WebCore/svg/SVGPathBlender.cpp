@@ -123,7 +123,7 @@ FloatPoint SVGPathBlender::blendAnimatedFloatPoint(const FloatPoint& fromPoint, 
 
 template<typename Function> using InvokeResult = typename std::invoke_result_t<Function, SVGPathSource, FloatPoint>::value_type;
 template<typename Function> using ResultPair = std::pair<InvokeResult<Function>, InvokeResult<Function>>;
-template<typename Function> static std::optional<ResultPair<Function>> pullFromSources(SVGPathSource& fromSource, SVGPathSource& toSource, Function&& function, FloatPoint currentPoint)
+template<typename Function> static std::optional<ResultPair<Function>> pullFromSources(SVGPathSource& fromSource, SVGPathSource& toSource, NOESCAPE const Function& function, FloatPoint currentPoint)
 {
     InvokeResult<Function> fromResult;
     if (fromSource.hasMoreData()) {
@@ -133,7 +133,7 @@ template<typename Function> static std::optional<ResultPair<Function>> pullFromS
         fromResult = WTF::move(*parsedFrom);
     }
 
-    auto parsedTo = std::invoke(std::forward<Function>(function), toSource, currentPoint);
+    auto parsedTo = std::invoke(function, toSource, currentPoint);
     if (!parsedTo)
         return std::nullopt;
 

@@ -185,7 +185,7 @@ public:
 
     // A calc-size() with a keyword basis behaves as that keyword for everything except resolving the
     // size, so hand it to the keyword visitor.
-    template<typename Visitor> static decltype(auto) visitCalcSizeBasisKeyword(CSSValueID basisKeyword, Visitor&& visitor) requires (Keywords::count > 0)
+    template<typename Visitor> static decltype(auto) visitCalcSizeBasisKeyword(CSSValueID basisKeyword, NOESCAPE const Visitor& visitor) requires (Keywords::count > 0)
     {
         for (size_t offset = 0; offset < Keywords::identifiers.size(); ++offset) {
             if (Keywords::identifiers[offset] == basisKeyword)
@@ -194,7 +194,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -226,7 +226,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    template<typename... F> decltype(auto) switchOnUsingNumeric(F&&... f) const
+    template<typename... F> decltype(auto) switchOnUsingNumeric(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

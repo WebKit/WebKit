@@ -50,7 +50,7 @@ struct ColorComponents {
     }
 
     template<typename F>
-    constexpr auto map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>;
+    constexpr auto map(NOESCAPE const F& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>;
 
     constexpr ColorComponents& operator+=(const ColorComponents&);
     constexpr ColorComponents& operator/=(T);
@@ -79,7 +79,7 @@ template<typename T, typename ...Ts>
 ColorComponents(T, Ts...) -> ColorComponents<T, 1 + sizeof...(Ts)>;
 
 template<typename F, typename T, typename... Ts>
-constexpr auto mapColorComponents(F&& function, T component, Ts... components) -> ColorComponents<decltype(function(component[0], components[0]...)), T::Size>
+constexpr auto mapColorComponents(NOESCAPE const F& function, T component, Ts... components) -> ColorComponents<decltype(function(component[0], components[0]...)), T::Size>
 {
     static_assert(std::conjunction_v<std::bool_constant<Ts::Size == T::Size>...>, "All ColorComponents passed to mapColorComponents must have the same size");
 
@@ -91,9 +91,9 @@ constexpr auto mapColorComponents(F&& function, T component, Ts... components) -
 
 template<typename T, size_t N>
 template<typename F>
-constexpr auto ColorComponents<T, N>::map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>
+constexpr auto ColorComponents<T, N>::map(NOESCAPE const F& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>
 {
-    return mapColorComponents(std::forward<F>(function), *this);
+    return mapColorComponents(function, *this);
 }
 
 template<typename T, size_t N>

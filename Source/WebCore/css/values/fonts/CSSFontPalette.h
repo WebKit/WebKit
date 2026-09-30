@@ -50,7 +50,7 @@ struct FontPalette {
 
     ~FontPalette();
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     bool operator==(const FontPalette&) const;
 
@@ -67,7 +67,7 @@ private:
     Kind m_value;
 };
 
-template<typename... F> decltype(auto) FontPalette::switchOn(F&&... f) const
+template<typename... F> decltype(auto) FontPalette::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<Keyword::Normal>()));

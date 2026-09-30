@@ -44,7 +44,7 @@ public:
     static bool checkRequirements();
 
     WTF::UnixFileDescriptor createExportedFence() const;
-    void prepareForDisplayWithFinishedSignal(Function<void()>&&);
+    void prepareForDisplayWithFinishedSignal(NOESCAPE const Function<void()>&);
     DMABufBuffer* displayBuffer() { return m_displayBuffer.dmabuf.get(); }
 
 #if ENABLE(WEBXR)

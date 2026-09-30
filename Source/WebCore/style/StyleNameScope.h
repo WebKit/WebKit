@@ -63,7 +63,7 @@ struct NameScope {
     CommaSeparatedOrderedHashSet<CustomIdent> names;
     ScopeOrdinal scopeOrdinal { ScopeOrdinal::Element };
 
-    template<typename... F> constexpr decltype(auto) switchOn(F&&...) const;
+    template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     inline bool operator==(const NameScope&) const;
 };
@@ -77,7 +77,7 @@ inline bool NameScope::operator==(const NameScope& other) const
         && (names.isEmpty() || std::ranges::equal(names, other.names));
 }
 
-template<typename... F> constexpr decltype(auto) NameScope::switchOn(F&&... f) const
+template<typename... F> constexpr decltype(auto) NameScope::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

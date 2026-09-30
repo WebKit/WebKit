@@ -461,7 +461,7 @@ static RetainPtr<CFDictionaryRef> imagePropertiesForDestinationUTIAndQuality(CFS
     // in the calling functions, but it doesn't seem to work.
 }
 
-static bool encode(CGImageRef image, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
+static bool encode(CGImageRef image, const String& mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
 {
     if (!image)
         return false;
@@ -487,7 +487,7 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
     return CGImageDestinationFinalize(destination.get());
 }
 
-static bool encode(const PixelBuffer& source, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
+static bool encode(const PixelBuffer& source, const String& mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 

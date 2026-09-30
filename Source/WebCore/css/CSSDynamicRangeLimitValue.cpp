@@ -53,7 +53,7 @@ bool CSSDynamicRangeLimitValue::equals(const CSSDynamicRangeLimitValue& other) c
     return m_dynamicRangeLimit == other.m_dynamicRangeLimit;
 }
 
-IterationStatus CSSDynamicRangeLimitValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSDynamicRangeLimitValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_dynamicRangeLimit);
 }

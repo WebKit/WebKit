@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace Style {
 
-template<typename... F> decltype(auto) FontPalette::switchOn(F&&... f) const
+template<typename... F> decltype(auto) FontPalette::switchOn(NOESCAPE F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<CSS::Keyword::Normal>()));

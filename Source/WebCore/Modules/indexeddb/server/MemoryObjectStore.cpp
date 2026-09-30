@@ -167,7 +167,7 @@ IDBError MemoryObjectStore::updateIndexRecordsWithIndexKey(MemoryBackingStoreTra
     return index->putIndexKey(key, indexKey);
 }
 
-void MemoryObjectStore::forEachRecord(Function<void(const IDBKeyData& key, const IDBValue& value)>&& apply)
+void MemoryObjectStore::forEachRecord(NOESCAPE const Function<void(const IDBKeyData& key, const IDBValue& value)>& apply)
 {
     for (auto& [key, value] : m_keyValueStore)
         apply(key, value);

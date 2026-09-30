@@ -262,7 +262,7 @@ static bool NODELETE needsDescendantTraversal(const RuleFeatureSet& features)
 };
 
 template<typename Function>
-void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
+void ChildChangeInvalidation::traverseRemovedElements(NOESCAPE const Function& function)
 {
     if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
         return;
@@ -285,7 +285,7 @@ void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
 }
 
 template<typename Function>
-void ChildChangeInvalidation::traverseAddedElements(Function&& function)
+void ChildChangeInvalidation::traverseAddedElements(NOESCAPE const Function& function)
 {
     if (!m_childChange.isInsertion())
         return;

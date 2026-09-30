@@ -312,7 +312,7 @@ bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
 GstElement* createAutoAudioSink(const String& role);
 GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
 
-bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
+bool webkitGstSetElementStateSynchronously(GstElement*, GstState, NOESCAPE const Function<bool(GstMessage*)>& = [](GstMessage*) -> bool {
     return true;
 });
 
@@ -389,11 +389,11 @@ using GstId = const GstIdStr*;
 using GstId = GQuark;
 #endif
 
-bool gstStructureForeach(const GstStructure*, Function<bool(GstId, const GValue*)>&&);
+bool gstStructureForeach(const GstStructure*, NOESCAPE const Function<bool(GstId, const GValue*)>&);
 void gstStructureIdSetValue(GstStructure*, GstId, const GValue*);
-bool gstStructureMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
+bool gstStructureMapInPlace(GstStructure*, NOESCAPE const Function<bool(GstId, GValue*)>&);
 String gstIdToString(GstId);
-void gstStructureFilterAndMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
+void gstStructureFilterAndMapInPlace(GstStructure*, NOESCAPE const Function<bool(GstId, GValue*)>&);
 
 #if USE(GBM)
 [[nodiscard]] GRefPtr<GstCaps> buildDMABufCaps();

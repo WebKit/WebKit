@@ -70,7 +70,7 @@ struct FontPalette {
     {
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
 
     const WebCore::FontPalette& platform() const LIFETIME_BOUND { return m_platform; }
     WebCore::FontPalette takePlatform() { return WTF::move(m_platform); }

@@ -80,6 +80,6 @@ private:
     SingleThreadWeakPtr<DOMWrapperWorld> m_world;
 };
 
-inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope&, JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const auto&);
+inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope&, JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, NOESCAPE const auto&);
 
 } // namespace WebCore

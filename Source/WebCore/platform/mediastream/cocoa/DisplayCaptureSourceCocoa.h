@@ -130,7 +130,7 @@ public:
     };
 
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
-    static CaptureSourceOrError create(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
+    static CaptureSourceOrError create(NOESCAPE const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
 
     Seconds elapsedTime();
 
@@ -138,7 +138,7 @@ public:
     virtual ~DisplayCaptureSourceCocoa();
 
 private:
-    DisplayCaptureSourceCocoa(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
+    DisplayCaptureSourceCocoa(NOESCAPE const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     // RealtimeMediaSource
     void startProducingData() final;

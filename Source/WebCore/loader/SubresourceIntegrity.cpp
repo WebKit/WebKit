@@ -90,7 +90,7 @@ private:
 }
 
 template <typename CharacterType, typename Functor>
-static inline void splitOnSpaces(StringParsingBuffer<CharacterType> buffer, Functor&& functor)
+static inline void splitOnSpaces(StringParsingBuffer<CharacterType> buffer, NOESCAPE Functor&& functor)
 {
     skipWhile<isASCIIWhitespace>(buffer);
 

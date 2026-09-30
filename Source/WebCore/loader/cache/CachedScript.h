@@ -44,7 +44,7 @@ public:
     WEBCORE_EXPORT StringView script(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
     WEBCORE_EXPORT unsigned scriptHash(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
     // Like script(), but safe on any thread. The text is valid only during the call.
-    WEBCORE_EXPORT void withScriptConcurrently(ShouldDecodeAsUTF8Only, const ScopedLambda<void(StringView)>&);
+    WEBCORE_EXPORT void withScriptConcurrently(ShouldDecodeAsUTF8Only, NOESCAPE const ScopedLambda<void(StringView)>&);
 
     bool requiresPrivacyProtections() const { return m_requiresPrivacyProtections; }
 

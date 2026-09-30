@@ -233,7 +233,7 @@ constexpr std::optional<T> dynamicUnitDowncast(U other)
 
 // MARK: - Generic Unit Switching for Composite Units.
 
-template<CompositeUnitEnum U, typename... F> constexpr decltype(auto) switchOnUnitType(U unit, F&&... f)
+template<CompositeUnitEnum U, typename... F> constexpr decltype(auto) switchOnUnitType(U unit, NOESCAPE F&&... f)
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
@@ -1298,7 +1298,7 @@ template<> struct UnitTraits<AnglePercentageUnit> {
             return PercentageUnit::Percentage;
     }
 
-    static constexpr decltype(auto) switchOnUnitType(AnglePercentageUnit unit, NOESCAPE auto&& f)
+    static constexpr decltype(auto) switchOnUnitType(AnglePercentageUnit unit, NOESCAPE const auto& f)
     {
         if (unit == AnglePercentageUnit::Percentage)
             return f(downcast<PercentageUnit>(unit));
@@ -1599,7 +1599,7 @@ template<> struct UnitTraits<LengthPercentageUnit> {
             return PercentageUnit::Percentage;
     }
 
-    static constexpr decltype(auto) switchOnUnitType(LengthPercentageUnit unit, NOESCAPE auto&& f)
+    static constexpr decltype(auto) switchOnUnitType(LengthPercentageUnit unit, NOESCAPE const auto& f)
     {
         if (unit == LengthPercentageUnit::Percentage)
             return f(downcast<PercentageUnit>(unit));

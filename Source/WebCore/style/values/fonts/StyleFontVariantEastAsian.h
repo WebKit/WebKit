@@ -59,7 +59,7 @@ struct FontVariantEastAsian {
             && m_platform.ruby == FontVariantEastAsianRuby::Normal;
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 

@@ -66,7 +66,7 @@ struct VerticalAlign {
         return WTF::holdsAlternative<U>(m_value);
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }

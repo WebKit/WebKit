@@ -43,7 +43,7 @@ class TextureMapperLayer3DRenderingContext final {
     WTF_MAKE_TZONE_ALLOCATED(TextureMapperLayer3DRenderingContext);
 public:
     void paint(TextureMapper&, const Vector<TextureMapperLayer*>&,
-        const std::function<void(TextureMapperLayer*, const ClipPath&)>&);
+        NOESCAPE const std::function<void(TextureMapperLayer*, const ClipPath&)>&);
 
 private:
     enum class LayerPosition {
@@ -86,7 +86,7 @@ private:
     static BoundingBox computeBoundingBox(const FloatPolygon3D&);
     static SweepAndPrunePairs sweepAndPrune(const Vector<Layer>&);
     static void buildTree(LayerNode&, Deque<Layer>&);
-    static void traverseTree(LayerNode&, const std::function<void(LayerNode&)>&);
+    static void traverseTree(LayerNode&, NOESCAPE const std::function<void(LayerNode&)>&);
     static LayerPosition classifyLayer(const Layer&, const FloatPlane3D&);
 };
 

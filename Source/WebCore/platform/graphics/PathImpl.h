@@ -76,8 +76,8 @@ public:
     void addLinesForRect(const FloatRect&);
     static Vector<PathSegment, 10> beziersForRoundedRect(const FloatRoundedRect&);
 
-    virtual void applySegments(const PathSegmentApplier&) const;
-    virtual bool applyElements(const PathElementApplier&) const = 0;
+    virtual void applySegments(NOESCAPE const PathSegmentApplier&) const;
+    virtual bool applyElements(NOESCAPE const PathElementApplier&) const = 0;
 
     virtual bool transform(const AffineTransform&) = 0;
 

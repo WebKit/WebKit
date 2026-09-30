@@ -598,7 +598,7 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
     }
 }
 
-void IDBServer::closeDatabasesForOrigins(const Vector<SecurityOriginData>& targetOrigins, Function<bool(const SecurityOriginData&, const ClientOrigin&)>&& filter)
+void IDBServer::closeDatabasesForOrigins(const Vector<SecurityOriginData>& targetOrigins, NOESCAPE const Function<bool(const SecurityOriginData&, const ClientOrigin&)>& filter)
 {
     ASSERT(!isMainThread());
 

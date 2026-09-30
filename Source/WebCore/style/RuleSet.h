@@ -182,8 +182,8 @@ private:
     };
     CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&, size_t startIndex);
 
-    template<typename Function> void traverseRuleDatas(Function&&);
-    template<typename Function> void traverseRuleDatas(Function&&) const;
+    template<typename Function> void traverseRuleDatas(NOESCAPE const Function&);
+    template<typename Function> void traverseRuleDatas(NOESCAPE const Function&) const;
 
     struct CascadeLayer {
         CascadeLayerName resolvedName;

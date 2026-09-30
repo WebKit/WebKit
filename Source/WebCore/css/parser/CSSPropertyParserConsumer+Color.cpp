@@ -443,7 +443,7 @@ static std::optional<CSS::Color> consumeHSLFunction(CSSParserTokenRange& range, 
 // MARK: - color()
 
 template<typename Functor>
-static auto callWithColorFunction(CSSValueID id, Functor&& functor) -> decltype(functor.template operator()<ColorRGBFunction<ExtendedSRGBA<float>>>())
+static auto callWithColorFunction(CSSValueID id, NOESCAPE const Functor& functor) -> decltype(functor.template operator()<ColorRGBFunction<ExtendedSRGBA<float>>>())
 {
     switch (id) {
     case CSSValueA98Rgb:
@@ -474,7 +474,7 @@ static auto callWithColorFunction(CSSValueID id, Functor&& functor) -> decltype(
 }
 
 template<typename Functor>
-static auto consumeColorSpace(CSSParserTokenRange& args, Functor&& functor) -> decltype(functor.template operator()<ColorRGBFunction<ExtendedSRGBA<float>>>())
+static auto consumeColorSpace(CSSParserTokenRange& args, NOESCAPE const Functor& functor) -> decltype(functor.template operator()<ColorRGBFunction<ExtendedSRGBA<float>>>())
 {
     return callWithColorFunction(args.peek().id(), [&]<typename Descriptor>() {
         consumeIdentRaw(args);

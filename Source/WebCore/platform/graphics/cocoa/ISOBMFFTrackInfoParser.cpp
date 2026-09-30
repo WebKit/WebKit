@@ -84,7 +84,7 @@ static std::optional<ChildBox> readNextChildBox(std::span<const uint8_t> data, s
 // Iterate every direct child box of `containerBody`, calling `fn(child)` for each.
 // Stops on malformation.
 template <typename F>
-static void forEachChildBox(std::span<const uint8_t> containerBody, F&& fn)
+static void forEachChildBox(std::span<const uint8_t> containerBody, NOESCAPE const F& fn)
 {
     size_t offset = 0;
     while (offset < containerBody.size()) {

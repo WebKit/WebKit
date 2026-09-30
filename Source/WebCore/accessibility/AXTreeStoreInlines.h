@@ -95,7 +95,7 @@ inline WeakPtr<AXObjectCache> AXTreeStore<T>::axObjectCacheForID(std::optional<A
 }
 
 template<typename T>
-inline void AXTreeStore<T>::forEachAXObjectCache(const Function<void(AXObjectCache&)>& function)
+inline void AXTreeStore<T>::forEachAXObjectCache(NOESCAPE const Function<void(AXObjectCache&)>& function)
 {
     AX_ASSERT(isMainThread());
 

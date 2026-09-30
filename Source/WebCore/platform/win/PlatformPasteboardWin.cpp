@@ -62,7 +62,7 @@ PlatformPasteboard::PlatformPasteboard(const String&)
 {
 }
 
-void PlatformPasteboard::performAsDataOwner(DataOwnerType, NOESCAPE Function<void()>&& actions)
+void PlatformPasteboard::performAsDataOwner(DataOwnerType, NOESCAPE const Function<void()>& actions)
 {
     actions();
 }

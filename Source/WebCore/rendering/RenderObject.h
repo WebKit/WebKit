@@ -1017,7 +1017,7 @@ public:
     std::optional<LayoutRect> computeClippedRectInContentCoordinates(const LayoutRect& localRect) const;
 
     // The local intersection rect mapped out to the root frame's contents coordinates, with clips and scrolls applied.
-    std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates(const LayoutRect& localRect, const ClipRectAdjuster&) const;
+    std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates(const LayoutRect& localRect, NOESCAPE const ClipRectAdjuster&) const;
 
     WEBCORE_EXPORT bool hasEmptyVisibleRectRespectingParentFrames() const;
 

@@ -1249,7 +1249,7 @@ std::optional<LayoutRect> RenderObject::computeClippedRectInContentCoordinates(c
 //
 // clipRectAdjuster is given the chance to adjust each scroll container and frame
 // viewport clip encountered along the way, from the innermost frame outwards.
-static std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates(const LayoutRect& rect, Variant<const RenderObject*, const Frame*> rendererOrFrame, const ClipRectAdjuster& clipRectAdjuster)
+static std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates(const LayoutRect& rect, Variant<const RenderObject*, const Frame*> rendererOrFrame, NOESCAPE const ClipRectAdjuster& clipRectAdjuster)
 {
     RefPtr<const Frame> enclosingFrame = WTF::visit(WTF::makeVisitor(
         [&] (const RenderObject* renderer) { return static_cast<const Frame*>(&renderer->frame()); },
@@ -1321,7 +1321,7 @@ static std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates
     return computeClippedRectInMainFrameContentCoordinates(*absoluteClippedRect, enclosingFrame.get(), clipRectAdjuster);
 }
 
-std::optional<LayoutRect> RenderObject::computeClippedRectInMainFrameContentCoordinates(const LayoutRect& localRect, const ClipRectAdjuster& clipRectAdjuster) const
+std::optional<LayoutRect> RenderObject::computeClippedRectInMainFrameContentCoordinates(const LayoutRect& localRect, NOESCAPE const ClipRectAdjuster& clipRectAdjuster) const
 {
     if (isSkippedContent())
         return std::nullopt;

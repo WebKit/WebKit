@@ -275,7 +275,7 @@ static std::optional<CSS::Color> consumeStopColor(CSSParserTokenRange& range, CS
     return consumeUnresolvedColor(range, state);
 }
 
-template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer> static std::optional<CSS::GradientColorStopList<Stop>> consumeColorStopList(CSSParserTokenRange& range, CSS::PropertyParserState& state, Consumer&& consumeStopPosition)
+template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer> static std::optional<CSS::GradientColorStopList<Stop>> consumeColorStopList(CSSParserTokenRange& range, CSS::PropertyParserState& state, NOESCAPE const Consumer& consumeStopPosition)
 {
     typename CSS::GradientColorStopList<Stop>::Container stops;
 

@@ -52,7 +52,7 @@ bool CSSCustomIdentValue::equals(const CSSCustomIdentValue& other) const
     return m_customIdent == other.m_customIdent;
 }
 
-IterationStatus CSSCustomIdentValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSCustomIdentValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_customIdent);
 }

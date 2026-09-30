@@ -123,7 +123,7 @@ template<> constexpr TYPE fromCSSValueID(CSSValueID value) { \
 
 #define DEFINE_VALUE_REPRESENTATION_CSS_VALUE_ID_FUNCTION \
 template<> struct Style::ValueRepresentation<WebCore::TYPE> { \
-    template<typename... F> constexpr decltype(auto) operator()(WebCore::TYPE value, F&&... f) \
+    template<typename... F> constexpr decltype(auto) operator()(WebCore::TYPE value, NOESCAPE F&&... f) \
     { \
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...); \
         switch (value) { \
@@ -1046,7 +1046,7 @@ template<> constexpr Style::TextAlign fromCSSValueID(CSSValueID valueID)
 }
 
 template<> struct Style::ValueRepresentation<Style::TextAlign> {
-    template<typename... F> constexpr decltype(auto) operator()(Style::TextAlign value, F&&... f)
+    template<typename... F> constexpr decltype(auto) operator()(Style::TextAlign value, NOESCAPE F&&... f)
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         switch (value) {

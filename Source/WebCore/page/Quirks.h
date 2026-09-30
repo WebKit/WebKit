@@ -373,7 +373,7 @@ private:
     mutable QuirkBitSet m_probedQuirks;
 
     template<typename Probe>
-    bool isBehaviorEnabledAfterProbing(const QuirkBehavior& quirk, NOESCAPE Probe&& probe) const
+    bool isBehaviorEnabledAfterProbing(const QuirkBehavior& quirk, NOESCAPE const Probe& probe) const
     {
         auto index = static_cast<size_t>(quirk.id);
         if (!m_probedQuirks.get(index)) {

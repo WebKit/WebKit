@@ -93,7 +93,7 @@ template<typename ColorType> constexpr ColorSpaceName colorSpaceFor(const ColorT
     return ColorSpaceFor<ColorType>;
 }
 
-template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(ColorSpaceName colorSpace, Functor&& functor)
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(ColorSpaceName colorSpace, NOESCAPE const Functor& functor)
 {
     switch (colorSpace) {
     case ColorSpaceName::A98RGB:
@@ -146,10 +146,10 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
     return functor.template operator()<SRGBA<T>>();
 }
 
-template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpaceName colorSpace, Functor&& functor)
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpaceName colorSpace, NOESCAPE const Functor& functor)
 {
     return callWithColorType<T>(colorSpace, [&]<typename ColorType>() {
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ColorType>(components));
+        return std::invoke(functor, makeFromComponents<ColorType>(components));
     });
 }
 

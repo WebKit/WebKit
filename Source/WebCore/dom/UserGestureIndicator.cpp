@@ -124,7 +124,7 @@ bool UserGestureToken::isValidForDocument(const Document& document) const
     return m_documentsImpactedByUserGesture.contains(document);
 }
 
-void UserGestureToken::forEachImpactedDocument(Function<void(Document&)>&& function)
+void UserGestureToken::forEachImpactedDocument(NOESCAPE const Function<void(Document&)>& function)
 {
     m_documentsImpactedByUserGesture.forEach(function);
 }

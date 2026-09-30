@@ -151,7 +151,7 @@ void IDBIndex::rollbackInfoForVersionChangeAbort()
     m_deleted = false;
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(IDBCursorDirection direction, NOESCAPE Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(IDBCursorDirection direction, NOESCAPE const Function<ExceptionOr<RefPtr<IDBKeyRange>>()>& function)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
     Ref transaction = m_objectStore->transaction();
@@ -195,7 +195,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(JSGlobalObject& execState, JSV
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(IDBCursorDirection direction, NOESCAPE Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(IDBCursorDirection direction, NOESCAPE const Function<ExceptionOr<RefPtr<IDBKeyRange>>()>& function)
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
     Ref transaction = m_objectStore->transaction();
@@ -347,7 +347,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetKey(ExceptionOr<IDBKeyRangeData> ran
 }
 
 // https://w3c.github.io/IndexedDB/#create-a-request-to-retrieve-multiple-items
-ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllShared(IndexedDB::GetAllType getAllType, NOESCAPE Function<ExceptionOr<ParsedGetAllQueryOrOptions>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllShared(IndexedDB::GetAllType getAllType, NOESCAPE const Function<ExceptionOr<ParsedGetAllQueryOrOptions>()>& function)
 {
     String callingFunctionExceptionMessagePrefix;
     switch (getAllType) {

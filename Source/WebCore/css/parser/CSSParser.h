@@ -204,7 +204,7 @@ private:
     StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
     Ref<StyleRuleBase> createNestedDeclarationsRule();
-    void runInNewNestingContext(auto&& run);
+    void runInNewNestingContext(NOESCAPE const auto&);
     NestingContext& topContext()
     {
         ASSERT(!m_nestingContextStack.isEmpty());

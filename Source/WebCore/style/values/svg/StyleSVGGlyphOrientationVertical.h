@@ -43,7 +43,7 @@ enum class SVGGlyphOrientationVertical : uint8_t {
 // MARK: - Value Representation
 
 template<> struct ValueRepresentation<SVGGlyphOrientationVertical> {
-    template<typename... F> decltype(auto) operator()(SVGGlyphOrientationVertical value, F&&... f)
+    template<typename... F> decltype(auto) operator()(SVGGlyphOrientationVertical value, NOESCAPE F&&... f)
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         switch (value) {

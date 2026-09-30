@@ -398,7 +398,7 @@ public:
 
     void addMicrotaskGlobalObject(JSC::JSGlobalObject*);
     template<typename Functor>
-    void forEachMicrotaskGlobalObject(const Functor&);
+    void forEachMicrotaskGlobalObject(NOESCAPE const Functor&);
     void clearMicrotaskGlobalObjects();
     virtual bool isEventLoopGroupStoppedPermanently() const { return false; }
 

@@ -60,7 +60,7 @@ template<typename Op, typename... Args> static double executeMathOperation(Args&
     return executeOperation<ToCalculationTreeOp<Op>::op>(std::forward<Args>(args)...);
 }
 
-template<typename... F> static decltype(auto) switchTogether(const Child& a, const Child& b, F&&... f)
+template<typename... F> static decltype(auto) switchTogether(const Child& a, const Child& b, NOESCAPE F&&... f)
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
     using ResultType = decltype(visitor(std::declval<Number>(), std::declval<Number>()));
@@ -304,7 +304,7 @@ template<typename Op> static std::optional<Child> simplifyForOperation(Child& a,
     );
 }
 
-template<typename Op, typename Completion> static std::optional<Child> simplifyForOperationWithCompletion(Child& a, Child& b, const SimplificationOptions& options, Completion&& completion)
+template<typename Op, typename Completion> static std::optional<Child> simplifyForOperationWithCompletion(Child& a, Child& b, const SimplificationOptions& options, NOESCAPE const Completion& completion)
 {
     return switchTogether(a, b,
         [&]<Numeric T>(const T& numericA, const T& numericB) -> std::optional<Child> {
