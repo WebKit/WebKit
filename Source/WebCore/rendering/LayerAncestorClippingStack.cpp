@@ -27,6 +27,7 @@
 #include "LayerAncestorClippingStack.h"
 
 #include "GraphicsLayer.h"
+#include "RenderLayerCompositor.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingCoordinator.h"
 #include <ranges>
@@ -65,12 +66,11 @@ bool LayerAncestorClippingStack::hasAnyScrollingLayers() const
     return false;
 }
 
-void LayerAncestorClippingStack::clear(ScrollingCoordinator* scrollingCoordinator)
+void LayerAncestorClippingStack::clear(RenderLayerCompositor& compositor)
 {
     for (auto& entry : m_stack) {
         if (entry.overflowScrollProxyNodeID) {
-            ASSERT(scrollingCoordinator);
-            scrollingCoordinator->unparentChildrenAndDestroyNode(*entry.overflowScrollProxyNodeID);
+            compositor.unparentChildrenAndDestroyScrollingNode(*entry.overflowScrollProxyNodeID);
             entry.overflowScrollProxyNodeID = std::nullopt;
         }
 
@@ -79,11 +79,11 @@ void LayerAncestorClippingStack::clear(ScrollingCoordinator* scrollingCoordinato
     }
 }
 
-void LayerAncestorClippingStack::detachFromScrollingCoordinator(ScrollingCoordinator& scrollingCoordinator)
+void LayerAncestorClippingStack::detachFromScrollingCoordinator(RenderLayerCompositor& compositor)
 {
     for (auto& entry : m_stack) {
         if (entry.overflowScrollProxyNodeID) {
-            scrollingCoordinator.unparentChildrenAndDestroyNode(*entry.overflowScrollProxyNodeID);
+            compositor.unparentChildrenAndDestroyScrollingNode(*entry.overflowScrollProxyNodeID);
             entry.overflowScrollProxyNodeID = std::nullopt;
         }
     }
@@ -119,7 +119,7 @@ void LayerAncestorClippingStack::updateScrollingNodeLayers(ScrollingCoordinator&
     }
 }
 
-bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scrollingCoordinator, Vector<CompositedClipData>&& clipDataStack)
+bool LayerAncestorClippingStack::updateWithClipData(RenderLayerCompositor& compositor, Vector<CompositedClipData>&& clipDataStack)
 {
     bool stackChanged = false;
 
@@ -140,8 +140,8 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
             stackChanged = true;
 
         if (existingEntry.clipData.isOverflowScroll && !clipDataEntry.isOverflowScroll) {
-            ASSERT(scrollingCoordinator);
-            scrollingCoordinator->unparentChildrenAndDestroyNode(existingEntry.overflowScrollProxyNodeID);
+            if (existingEntry.overflowScrollProxyNodeID)
+                compositor.unparentChildrenAndDestroyScrollingNode(*existingEntry.overflowScrollProxyNodeID);
             existingEntry.overflowScrollProxyNodeID = std::nullopt;
         }
         
@@ -151,10 +151,8 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
     if (stackEntryCount > clipEntryCount) {
         for (auto i = clipEntryCount; i < stackEntryCount; ++i) {
             auto& entry = m_stack[i];
-            if (entry.overflowScrollProxyNodeID) {
-                ASSERT(scrollingCoordinator);
-                scrollingCoordinator->unparentChildrenAndDestroyNode(entry.overflowScrollProxyNodeID);
-            }
+            if (entry.overflowScrollProxyNodeID)
+                compositor.unparentChildrenAndDestroyScrollingNode(*entry.overflowScrollProxyNodeID);
             GraphicsLayer::unparentAndClear(entry.clippingLayer);
         }
 

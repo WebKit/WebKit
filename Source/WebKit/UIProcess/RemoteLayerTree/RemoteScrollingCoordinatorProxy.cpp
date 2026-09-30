@@ -140,7 +140,9 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(IPC::
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
             RefPtr node = scrollingTree().nodeForID(overflowNodeID);
             RefPtr overflowNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(node.get());
-            MESSAGE_CHECK_BASE(overflowNode, connection);
+            ASSERT(overflowNode);
+            if (!overflowNode)
+                continue;
             SUPPRESS_FORWARD_DECL_ARG RetainPtr scrollContainerLayer = static_cast<CALayer*>(overflowNode->scrollContainerLayer());
             SUPPRESS_FORWARD_DECL_ARG auto layerID = RemoteLayerTreeNode::layerID(scrollContainerLayer.get());
             MESSAGE_CHECK_BASE(layerID, connection);
@@ -157,7 +159,9 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(IPC::
     for (auto& scrollProxyNode : scrollingTree().activeOverflowScrollProxyNodes()) {
         RefPtr node = scrollingTree().nodeForID(scrollProxyNode->overflowScrollingNodeID());
         RefPtr overflowNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(node.get());
-        MESSAGE_CHECK_BASE(overflowNode, connection);
+        ASSERT(overflowNode);
+        if (!overflowNode)
+            continue;
 
         SUPPRESS_FORWARD_DECL_ARG RetainPtr scrollProxyLayer = scrollProxyNode->layer();
         SUPPRESS_FORWARD_DECL_ARG if (RefPtr layerNode = RemoteLayerTreeNode::forCALayer(scrollProxyLayer.get())) {

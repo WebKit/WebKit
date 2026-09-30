@@ -40,6 +40,7 @@ class TextStream;
 
 namespace WebCore {
 
+class RenderLayerCompositor;
 class ScrollingCoordinator;
 
 struct CompositedClipData {
@@ -69,12 +70,12 @@ public:
     bool NODELETE hasAnyScrollingLayers() const;
     
     bool NODELETE equalToClipData(const Vector<CompositedClipData>&) const;
-    bool updateWithClipData(ScrollingCoordinator*, Vector<CompositedClipData>&&);
+    bool updateWithClipData(RenderLayerCompositor&, Vector<CompositedClipData>&&);
     
     Vector<CompositedClipData> compositedClipData() const;
 
-    void clear(ScrollingCoordinator*);
-    void detachFromScrollingCoordinator(ScrollingCoordinator&);
+    void clear(RenderLayerCompositor&);
+    void detachFromScrollingCoordinator(RenderLayerCompositor&);
 
     void updateScrollingNodeLayers(ScrollingCoordinator&);
 
