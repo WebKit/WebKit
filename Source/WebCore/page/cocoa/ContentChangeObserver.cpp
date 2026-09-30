@@ -35,7 +35,9 @@
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "FrameView.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "LocalFrameInlines.h"
@@ -47,6 +49,7 @@
 #include "RenderElementInlines.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -98,6 +101,36 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 bool ContentChangeObserver::isContentChangeObserverEnabled()
 {
     return m_document->settings().contentChangeObserverEnabled();
+}
+
+auto ContentChangeObserver::viewportVisibilityForElement(const Element& element) -> ViewportVisibility
+{
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return ViewportVisibility::Unknown;
+
+    RefPtr page = element.document().page();
+    if (!page)
+        return ViewportVisibility::Unknown;
+
+    RefPtr rootView = page->mainFrame().virtualView();
+    if (!rootView)
+        return ViewportVisibility::Unknown;
+
+    auto leaveClipUnchanged = [](const Frame&, const LayoutRect&) -> std::optional<LayoutRect> {
+        return std::nullopt;
+    };
+
+    auto localBounds = renderer->localBoundsForIntersection();
+    if (localBounds.isEmpty())
+        return ViewportVisibility::Unknown;
+
+    auto rectInRootContents = renderer->computeClippedRectInMainFrameContentCoordinates(localBounds, leaveClipUnchanged);
+    if (!rectInRootContents)
+        return ViewportVisibility::Offscreen;
+
+    return rectInRootContents->edgeInclusiveIntersect(rootView->layoutViewportRect())
+        ? ViewportVisibility::Onscreen : ViewportVisibility::Offscreen;
 }
 
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
@@ -417,6 +450,8 @@ void ContentChangeObserver::reset()
 {
     stopObservingPendingActivities();
     setHasNoChangeState();
+    m_observedAddedMouseoutListenerAboveClickTarget = false;
+    m_hasScheduledClientNotification = false;
 
     setTouchEventIsBeingDispatched(false);
     setIsBetweenTouchEndAndMouseMoved(false);
@@ -485,7 +520,6 @@ void ContentChangeObserver::elementDidBecomeVisible(const Element& element)
 
     LOG_WITH_STREAM(ContentObservation, stream << "elementDidBecomeVisible: element went from hidden to visible: " << &element);
     m_visibilityCandidateList.add(element);
-    adjustObservedState(Event::ElementDidBecomeVisible);
 }
 
 void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
@@ -559,10 +593,112 @@ void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
     m_isWaitingForStyleRecalc = shouldObserve;
 }
 
+void ContentChangeObserver::confirmVisibilityCandidates()
+{
+    if (m_visibilityCandidateList.isEmptyIgnoringNullReferences())
+        return;
+
+    protect(m_document)->updateLayout();
+
+    Vector<Ref<Element>> offscreenCandidates;
+    for (Ref candidate : m_visibilityCandidateList) {
+        // We don't know where an element with active transitions will land, so don't exclude it.
+        if (candidate->hasRunningTransitions(std::nullopt))
+            continue;
+        if (viewportVisibilityForElement(candidate) == ViewportVisibility::Offscreen)
+            offscreenCandidates.append(WTF::move(candidate));
+    }
+
+    for (Ref candidate : offscreenCandidates) {
+        LOG_WITH_STREAM(ContentObservation, stream << "confirmVisibilityCandidates: discarding candidate outside the viewport: " << candidate.ptr());
+        m_visibilityCandidateList.remove(candidate);
+    }
+
+    if (m_visibilityCandidateList.isEmptyIgnoringNullReferences()) {
+        if (!offscreenCandidates.isEmpty() && m_observedContentState == ContentChange::Visibility) {
+            LOG(ContentObservation, "confirmVisibilityCandidates: every visibility candidate was outside the viewport; demoting Visibility to None.");
+            setHasNoChangeState();
+        }
+        return;
+    }
+
+    if (m_observedContentState == ContentChange::Visibility)
+        return;
+
+    LOG(ContentObservation, "confirmVisibilityCandidates: found visibility candidate inside the viewport.");
+    setHasVisibleChangeState();
+    stopObservingPendingActivities();
+}
+
+bool ContentChangeObserver::canNotifyClient() const
+{
+    if (isTouchEventBeingDispatched()) {
+        LOG(ContentObservation, "notifyClientIfNeeded: Touch event is being dispatched. No need to notify the client.");
+        return false;
+    }
+    if (isBetweenTouchEndAndMouseMoved()) {
+        LOG(ContentObservation, "notifyClientIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
+        return false;
+    }
+    if (isMouseMovedEventBeingDispatched()) {
+        LOG(ContentObservation, "notifyClientIfNeeded: in mouseMoved call. No need to notify the client.");
+        return false;
+    }
+    if (isObservationTimeWindowActive()) {
+        LOG(ContentObservation, "notifyClientIfNeeded: Inside the fixed window observation. No need to notify the client.");
+        return false;
+    }
+    return true;
+}
+
+void ContentChangeObserver::scheduleClientNotification()
+{
+    if (m_hasScheduledClientNotification)
+        return;
+    m_hasScheduledClientNotification = true;
+
+    // Confirming visibility candidates requires layout, which is not safe to do synchronously here (we may be finishing a style recalc).
+    callOnMainThread([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->notifyClientAfterConfirmingVisibilityCandidates();
+    });
+}
+
+void ContentChangeObserver::notifyClientAfterConfirmingVisibilityCandidates()
+{
+    if (!std::exchange(m_hasScheduledClientNotification, false))
+        return;
+
+    if (!canNotifyClient())
+        return;
+
+    confirmVisibilityCandidates();
+
+    if (hasPendingActivity()) {
+        LOG(ContentObservation, "notifyClientIfNeeded: None of the visibility candidates are inside the viewport. We are still waiting on some events.");
+        return;
+    }
+
+    // First demote to "no change" because we've got no pending activity anymore.
+    if (observedContentChange() == ContentChange::Indeterminate)
+        setHasNoChangeState();
+
+    RefPtr page = m_document->page();
+    RefPtr frame = m_document->frame();
+    if (!page || !frame)
+        return;
+
+    LOG_WITH_STREAM(ContentObservation, stream << "notifyClientIfNeeded: sending observedContentChange ->" << observedContentChange());
+    page->chrome().client().didFinishContentChangeObserving(*frame, observedContentChange());
+    stopContentObservation();
+}
+
 void ContentChangeObserver::adjustObservedState(Event event)
 {
     auto resetToStartObserving = [&] {
         setHasNoChangeState();
+        m_observedAddedMouseoutListenerAboveClickTarget = false;
+        m_hasScheduledClientNotification = false;
         clearObservedDOMTimers();
         clearObservedTransitions();
         setIsBetweenTouchEndAndMouseMoved(false);
@@ -573,38 +709,16 @@ void ContentChangeObserver::adjustObservedState(Event event)
     };
 
     auto notifyClientIfNeeded = [&] {
-        if (isTouchEventBeingDispatched()) {
-            LOG(ContentObservation, "notifyClientIfNeeded: Touch event is being dispatched. No need to notify the client.");
+        if (!canNotifyClient())
             return;
-        }
-        if (isBetweenTouchEndAndMouseMoved()) {
-            LOG(ContentObservation, "notifyClientIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
-            return;
-        }
-        if (isMouseMovedEventBeingDispatched()) {
-            LOG(ContentObservation, "notifyClientIfNeeded: in mouseMoved call. No need to notify the client.");
-            return;
-        }
-        if (isObservationTimeWindowActive()) {
-            LOG(ContentObservation, "notifyClientIfNeeded: Inside the fixed window observation. No need to notify the client.");
-            return;
-        }
 
         // The fixed observation window (which is the final step in content observation) is closed and now we check if are still waiting for timers or animations to finish.
-        if (hasPendingActivity()) {
+        if (hasPendingActivity() && m_visibilityCandidateList.isEmptyIgnoringNullReferences()) {
             LOG(ContentObservation, "notifyClientIfNeeded: We are still waiting on some events.");
             return;
         }
 
-        // First demote to "no change" because we've got no pending activity anymore.
-        if (observedContentChange() == ContentChange::Indeterminate)
-            setHasNoChangeState();
-
-        LOG_WITH_STREAM(ContentObservation, stream << "notifyClientIfNeeded: sending observedContentChange ->" << observedContentChange());
-        ASSERT(m_document->page());
-        ASSERT(m_document->frame());
-        m_document->page()->chrome().client().didFinishContentChangeObserving(*protect(m_document->frame()), observedContentChange());
-        stopContentObservation();
+        scheduleClientNotification();
     };
 
     // These user initiated events trigger content observation (touchStart and mouseMove).
@@ -629,6 +743,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         }
         if (event == Event::EndedMouseMovedEventDispatching) {
             setShouldObserveDOMTimerSchedulingAndTransitions(false);
+            confirmVisibilityCandidates();
             return;
         }
     }
@@ -705,18 +820,11 @@ void ContentChangeObserver::adjustObservedState(Event event)
         stopContentObservation();
         return;
     }
-    // The page produced an visible change on an actionable content.
-    if (event == Event::ElementDidBecomeVisible) {
-        setHasVisibleChangeState();
-        // Stop pending activities. We don't need to observe them anymore.
-        stopObservingPendingActivities();
-        return;
-    }
     if (event == Event::DidAddMouseoutListenerAboveClickTarget) {
         // While not technically a visual state change, the addition of a mouseout event listener on the targeted node
         // during content observation is a strong signal that the page wants to know when the mouse is no longer over
         // the clicked target node.
-        setHasVisibleChangeState();
+        m_observedAddedMouseoutListenerAboveClickTarget = true;
         notifyClientIfNeeded();
         return;
     }

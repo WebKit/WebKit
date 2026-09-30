@@ -66,7 +66,7 @@ public:
 
     WEBCORE_EXPORT void startContentObservationForDuration(Seconds duration);
     WEBCORE_EXPORT void stopContentObservation();
-    ContentChange observedContentChange() const { return m_observedContentState; }
+    ContentChange observedContentChange() const { return m_observedAddedMouseoutListenerAboveClickTarget ? ContentChange::Visibility : m_observedContentState; }
     WEBCORE_EXPORT static bool isConsideredVisible(const Node&);
     static bool isVisuallyHidden(const Node&);
 
@@ -203,6 +203,14 @@ private:
     bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(element); }
     bool shouldObserveVisibilityChangeForElement(const Element&);
 
+    enum class ViewportVisibility : uint8_t { Unknown, Onscreen, Offscreen };
+    static ViewportVisibility viewportVisibilityForElement(const Element&);
+    void confirmVisibilityCandidates();
+
+    bool canNotifyClient() const;
+    void scheduleClientNotification();
+    void notifyClientAfterConfirmingVisibilityCandidates();
+
     enum class ElementHadRenderer : bool { No, Yes };
     bool isConsideredActionableContent(const Element&, ElementHadRenderer) const;
 
@@ -227,7 +235,6 @@ private:
         StartedFixedObservationTimeWindow,
         EndedFixedObservationTimeWindow,
         WillNotProceedWithFixedObservationTimeWindow,
-        ElementDidBecomeVisible,
         DidAddMouseoutListenerAboveClickTarget,
     };
     void adjustObservedState(Event);
@@ -252,6 +259,8 @@ private:
     bool m_mouseMovedEventIsBeingDispatched { false };
     bool m_isBetweenTouchEndAndMouseMoved { false };
     bool m_isObservingTransitions { false };
+    bool m_observedAddedMouseoutListenerAboveClickTarget { false };
+    bool m_hasScheduledClientNotification { false };
 };
 
 inline bool ContentChangeObserver::isObservingContentChanges() const
