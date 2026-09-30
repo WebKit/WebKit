@@ -197,7 +197,7 @@ protected:
     virtual void setRenderedText(const String&);
     virtual char32_t previousCharacter() const;
 
-    virtual void setTextInternal(const String&, bool force);
+    virtual void setTextInternal(const String&, bool force, bool skipLayout = false);
 
 private:
     void updateRenderedText();
@@ -233,6 +233,8 @@ private:
     float maxWordFragmentWidth(const Style::ComputedStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, unsigned minimumWordLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&);
     float widthFromCacheConsideringPossibleTrailingSpace(const Style::ComputedStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&) const;
     void initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(const String&);
+
+    bool canSkipLayout(const String&) const;
 
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
     float m_candidateComputedTextSize { 0 };
