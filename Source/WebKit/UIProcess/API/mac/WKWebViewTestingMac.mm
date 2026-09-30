@@ -30,6 +30,7 @@
 
 #import "AppKitSPI.h"
 #import "AudioSessionRoutingArbitratorProxy.h"
+#import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "WKNSData.h"
 #import "WKWebViewMac.h"
 #import "WebColorPicker.h"
@@ -165,6 +166,41 @@
 #else
     return NO;
 #endif
+}
+
+- (BOOL)_hasLiveResizePresentationOverrideForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(_page->drawingArea()))
+        return drawingArea->hasLiveResizePresentationOverrideForTesting();
+    return NO;
+}
+
+- (NSSize)_liveResizePresentationCommittedClipSizeForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(_page->drawingArea()))
+        return drawingArea->liveResizePresentationCommittedClipSizeForTesting();
+    return NSZeroSize;
+}
+
+- (NSSize)_liveResizePresentationTargetClipSizeForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(_page->drawingArea()))
+        return drawingArea->liveResizePresentationTargetClipSizeForTesting();
+    return NSZeroSize;
+}
+
+- (NSPoint)_liveResizePresentationVisibleContentOriginForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(_page->drawingArea()))
+        return drawingArea->liveResizePresentationVisibleContentOriginForTesting();
+    return NSZeroPoint;
+}
+
+- (NSRect)_liveResizePresentationMappedContentRectForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(_page->drawingArea()))
+        return drawingArea->liveResizePresentationMappedContentRectForTesting();
+    return NSZeroRect;
 }
 
 @end

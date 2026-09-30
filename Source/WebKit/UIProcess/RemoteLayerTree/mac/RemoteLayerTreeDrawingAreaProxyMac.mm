@@ -63,6 +63,11 @@ static NSString * const transientClipPositionAnimationKey = @"wkTransientClipPos
 static NSString * const transientClipSizeAnimationKey = @"wkTransientClipSize";
 static NSString * const transientScrolledContentsPositionAnimationKey = @"wkTransientScrolledContentsPosition";
 static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkScrollPositionOverride";
+static NSString * const liveResizeScaleAnimationKey = @"wkLiveResizeScale";
+static NSString * const liveResizeClipSizeAnimationKey = @"wkLiveResizeClipSize";
+
+static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix&);
+static RetainPtr<CABasicAnimation> transientSizeAnimation(const FloatSize&);
 
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client, public ThreadSafeRefCounted<RemoteLayerTreeDisplayLinkClient> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDisplayLinkClient);
@@ -233,6 +238,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     m_pageScrollingLayerID = mainFrameCommitData.scrolledContentsLayerID;
     m_scrolledContentsLayerID = mainFrameCommitData.scrolledContentsLayerID;
     m_mainFrameClipLayerID = mainFrameCommitData.mainFrameClipLayerID;
+    m_committedViewSize = mainFrameCommitData.viewSize;
+
+    updateLiveResizePresentation(true);
 
     if (m_transientZoomScale)
         applyTransientZoomToLayer();
@@ -261,6 +269,105 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     }
 
     layoutBannerLayers(transaction);
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::updateLiveResizePresentation(bool flushImmediately)
+{
+    if (!isInLiveResize() && !m_hasLiveResizePresentationOverride)
+        return;
+
+    auto clearPresentationOverrideState = [&] {
+        m_hasLiveResizePresentationOverride = false;
+        m_liveResizePresentationCommittedSize = { };
+        m_liveResizePresentationTargetSize = { };
+        m_liveResizePresentationVisibleContentOrigin = { };
+        m_liveResizePresentationMappedContentRect = { };
+    };
+
+    RetainPtr pageScalingLayer = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    RetainPtr clipLayer = remoteLayerTreeHost().layerForID(m_mainFrameClipLayerID);
+    if (!pageScalingLayer || !clipLayer) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [pageScalingLayer removeAnimationForKey:liveResizeScaleAnimationKey];
+        [clipLayer removeAnimationForKey:liveResizeClipSizeAnimationKey];
+        if (flushImmediately)
+            [CATransaction flush];
+        END_BLOCK_OBJC_EXCEPTIONS
+        clearPresentationOverrideState();
+        return;
+    }
+
+    auto removePresentationOverride = [&] {
+        if (!m_hasLiveResizePresentationOverride)
+            return;
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [pageScalingLayer removeAnimationForKey:liveResizeScaleAnimationKey];
+        [clipLayer removeAnimationForKey:liveResizeClipSizeAnimationKey];
+        if (flushImmediately)
+            [CATransaction flush];
+        END_BLOCK_OBJC_EXCEPTIONS
+        clearPresentationOverrideState();
+    };
+
+    FloatSize committedClipSize { clipLayer.get().bounds.size };
+    FloatSize committedViewSize { m_committedViewSize };
+    FloatSize targetViewSize { size() };
+    if (committedClipSize.isEmpty() || committedViewSize.isEmpty() || targetViewSize.isEmpty()) {
+        removePresentationOverride();
+        return;
+    }
+
+    // Preserve the committed difference between the outer view and clip layer.
+    // The difference includes space occupied by non-overlay scrollbars.
+    FloatSize targetClipSize = committedClipSize + targetViewSize - committedViewSize;
+    if (targetClipSize.isEmpty()) {
+        removePresentationOverride();
+        return;
+    }
+
+    if (committedClipSize == targetClipSize) {
+        removePresentationOverride();
+        return;
+    }
+
+    RefPtr page = this->page();
+    if (!page) {
+        removePresentationOverride();
+        return;
+    }
+    CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy) {
+        removePresentationOverride();
+        return;
+    }
+    auto visibleContentOrigin = scrollingCoordinatorProxy->computeVisibleContentRect().location();
+
+    if (m_hasLiveResizePresentationOverride && committedClipSize == m_liveResizePresentationCommittedSize && targetClipSize == m_liveResizePresentationTargetSize && visibleContentOrigin == m_liveResizePresentationVisibleContentOrigin)
+        return;
+
+    // Keep the last committed page surface covering the current view while the
+    // WebContent process asynchronously lays out and commits the new size.
+    auto scaleX = targetClipSize.width() / committedClipSize.width();
+    auto scaleY = targetClipSize.height() / committedClipSize.height();
+    TransformationMatrix transform;
+    transform.translate(visibleContentOrigin.x() * (1 - scaleX), visibleContentOrigin.y() * (1 - scaleY));
+    transform.scaleNonUniform(scaleX, scaleY);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [pageScalingLayer removeAnimationForKey:liveResizeScaleAnimationKey];
+    [pageScalingLayer addAnimation:transientZoomTransformOverrideAnimation(transform).get() forKey:liveResizeScaleAnimationKey];
+    [clipLayer removeAnimationForKey:liveResizeClipSizeAnimationKey];
+    [clipLayer addAnimation:transientSizeAnimation(targetClipSize).get() forKey:liveResizeClipSizeAnimationKey];
+    if (flushImmediately)
+        [CATransaction flush];
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    m_hasLiveResizePresentationOverride = true;
+    m_liveResizePresentationCommittedSize = committedClipSize;
+    m_liveResizePresentationTargetSize = targetClipSize;
+    m_liveResizePresentationVisibleContentOrigin = visibleContentOrigin;
+    m_liveResizePresentationMappedContentRect = transform.mapRect(FloatRect { visibleContentOrigin, committedClipSize });
 }
 
 static RetainPtr<CABasicAnimation> fillFowardsAnimationWithKeyPath(NSString *keyPath)

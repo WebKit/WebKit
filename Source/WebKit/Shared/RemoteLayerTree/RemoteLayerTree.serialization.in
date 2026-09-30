@@ -267,6 +267,7 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
     std::optional<WebCore::FixedContainerEdges> fixedContainerEdges;
 
 #if PLATFORM(MAC)
+    WebCore::IntSize viewSize;
     Markable<WebCore::PlatformLayerIdentifier> pageScalingLayerID;
     Markable<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID;
     Markable<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID;

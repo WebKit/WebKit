@@ -31,6 +31,7 @@
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTestingMac.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -47,6 +48,47 @@ static void viewExposedRectForceRepaintCallback(WKErrorRef error, void*)
     viewExposedRectDidForceRepaint = true;
 }
 
+static void expectLiveResizePresentationGeometry(TestWKWebView *webView, NSSize committedViewSize, NSSize resizeDelta, NSPoint visibleContentOrigin, bool expectScrollbarGutters)
+{
+    EXPECT_TRUE([webView _hasLiveResizePresentationOverrideForTesting]);
+
+    NSSize committedClipSize = [webView _liveResizePresentationCommittedClipSizeForTesting];
+    NSSize targetClipSize = [webView _liveResizePresentationTargetClipSizeForTesting];
+    NSPoint actualVisibleContentOrigin = [webView _liveResizePresentationVisibleContentOriginForTesting];
+    NSRect mappedContentRect = [webView _liveResizePresentationMappedContentRectForTesting];
+    EXPECT_NEAR(resizeDelta.width, targetClipSize.width - committedClipSize.width, 0.01);
+    EXPECT_NEAR(resizeDelta.height, targetClipSize.height - committedClipSize.height, 0.01);
+    EXPECT_NEAR(visibleContentOrigin.x, actualVisibleContentOrigin.x, 0.01);
+    EXPECT_NEAR(visibleContentOrigin.y, actualVisibleContentOrigin.y, 0.01);
+    EXPECT_NEAR(visibleContentOrigin.x, NSMinX(mappedContentRect), 0.01);
+    EXPECT_NEAR(visibleContentOrigin.y, NSMinY(mappedContentRect), 0.01);
+    EXPECT_NEAR(targetClipSize.width, NSWidth(mappedContentRect), 0.01);
+    EXPECT_NEAR(targetClipSize.height, NSHeight(mappedContentRect), 0.01);
+
+    if (expectScrollbarGutters) {
+        EXPECT_LT(committedClipSize.width, committedViewSize.width);
+        EXPECT_LT(committedClipSize.height, committedViewSize.height);
+    } else
+        EXPECT_TRUE(NSEqualSizes(committedClipSize, committedViewSize));
+}
+
+static void expectNoLiveResizePresentationOverride(TestWKWebView *webView)
+{
+    EXPECT_FALSE([webView _hasLiveResizePresentationOverrideForTesting]);
+    EXPECT_TRUE(NSEqualSizes(NSZeroSize, [webView _liveResizePresentationCommittedClipSizeForTesting]));
+    EXPECT_TRUE(NSEqualSizes(NSZeroSize, [webView _liveResizePresentationTargetClipSizeForTesting]));
+    EXPECT_TRUE(NSEqualPoints(NSZeroPoint, [webView _liveResizePresentationVisibleContentOriginForTesting]));
+    EXPECT_TRUE(NSEqualRects(NSZeroRect, [webView _liveResizePresentationMappedContentRectForTesting]));
+}
+
+static void waitForNoLiveResizePresentationOverride(TestWKWebView *webView)
+{
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([webView] {
+        return ![webView _hasLiveResizePresentationOverrideForTesting];
+    }));
+    expectNoLiveResizePresentationOverride(webView);
+}
+
 TEST(WebKit, InitialTileCoverageUsesViewExposedRect)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 5000000, 5000000)]);
@@ -58,6 +100,49 @@ TEST(WebKit, InitialTileCoverageUsesViewExposedRect)
     viewExposedRectDidForceRepaint = false;
     WKPageForceRepaint([webView _pageForTesting], 0, viewExposedRectForceRepaintCallback);
     TestWebKitAPI::Util::run(&viewExposedRectDidForceRepaint);
+}
+
+TEST(WebKit, LiveResizeKeepsCommittedContentCoveringViewWithScrollbarGutters)
+{
+    EXPECT_EQ(NSScrollerStyleLegacy, NSScroller.preferredScrollerStyle);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView addToTestWindow];
+    [webView synchronouslyLoadHTMLString:@"<style>html { overflow: scroll; scrollbar-gutter: stable both-edges; } body { width: 2000px; height: 2000px; margin: 0; background: green; }</style>"];
+    [webView waitForNextPresentationUpdate];
+
+    NSWindow *window = [webView hostWindow];
+    [NSNotificationCenter.defaultCenter postNotificationName:NSWindowWillStartLiveResizeNotification object:window];
+    expectNoLiveResizePresentationOverride(webView.get());
+
+    [webView setFrameSize:NSMakeSize(600, 450)];
+    expectLiveResizePresentationGeometry(webView.get(), NSMakeSize(400, 300), NSMakeSize(200, 150), NSZeroPoint, true);
+
+    waitForNoLiveResizePresentationOverride(webView.get());
+
+    [webView objectByEvaluatingJavaScript:@"scrollTo(300, 200)"];
+    [webView waitForNextPresentationUpdate];
+    [webView setFrameSize:NSMakeSize(550, 400)];
+    expectLiveResizePresentationGeometry(webView.get(), NSMakeSize(600, 450), NSMakeSize(-50, -50), NSMakePoint(300, 200), true);
+
+    waitForNoLiveResizePresentationOverride(webView.get());
+
+    [webView objectByEvaluatingJavaScript:@"document.documentElement.style.direction = 'rtl'; scrollTo(-300, 200)"];
+    [webView waitForNextPresentationUpdate];
+    [webView setFrameSize:NSMakeSize(500, 350)];
+    expectLiveResizePresentationGeometry(webView.get(), NSMakeSize(550, 400), NSMakeSize(-50, -50), NSMakePoint(-300, 200), true);
+
+    waitForNoLiveResizePresentationOverride(webView.get());
+
+    [webView objectByEvaluatingJavaScript:@"document.documentElement.style.overflow = 'hidden'; document.documentElement.style.scrollbarGutter = 'auto'; document.documentElement.style.direction = 'ltr'; scrollTo(0, 0)"];
+    [webView waitForNextPresentationUpdate];
+    [webView setFrameSize:NSMakeSize(450, 300)];
+    expectLiveResizePresentationGeometry(webView.get(), NSMakeSize(500, 350), NSMakeSize(-50, -50), NSZeroPoint, false);
+
+    waitForNoLiveResizePresentationOverride(webView.get());
+
+    [NSNotificationCenter.defaultCenter postNotificationName:NSWindowDidEndLiveResizeNotification object:window];
+    expectNoLiveResizePresentationOverride(webView.get());
 }
 
 #endif // PLATFORM(MAC)

@@ -69,6 +69,7 @@ struct MainFrameData {
     std::optional<WebCore::FixedContainerEdges> fixedContainerEdges;
 
 #if PLATFORM(MAC)
+    WebCore::IntSize viewSize;
     Markable<WebCore::PlatformLayerIdentifier> pageScalingLayerID; // Only used for non-delegated scaling.
     Markable<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID;
     Markable<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID;
