@@ -231,6 +231,7 @@ class SpatialVideoSupport extends MediaControllerSupport
             gl.texParameterf(gl.TEXTURE_2D, anisoExtension.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, maxAniso));
         }
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
+        this._applyMipmapLimit();
         return true;
     }
 
@@ -272,10 +273,68 @@ class SpatialVideoSupport extends MediaControllerSupport
         } else if (projection === "equirect180") {
             this._mesh = this._makeSphere(Math.PI);
             this._feather = SpatialVideoSupport.FeatherFraction;
+        } else if (projection === "equiAngularCubemap") {
+            this._mesh = this._makeEquiAngularCubemap();
+            this._feather = 0;
         } else {
             this._mesh = this._makeSphere(2 * Math.PI);
             this._feather = 0;
         }
+        this._applyMipmapLimit();
+    }
+
+    _applyMipmapLimit()
+    {
+        const gl = this._gl;
+        if (!this._texture)
+            return;
+        gl.bindTexture(gl.TEXTURE_2D, this._texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, this._maximumMipmapLevel());
+    }
+
+    _maximumMipmapLevel()
+    {
+        if (this._projection !== "equiAngularCubemap")
+            return SpatialVideoSupport.UnlimitedMipmapLevel;
+        const media = this.mediaController.media;
+        const face = Math.min(media.videoWidth / SpatialVideoSupport.CubemapColumns, media.videoHeight / SpatialVideoSupport.CubemapRows);
+        if (!face)
+            return SpatialVideoSupport.UnlimitedMipmapLevel;
+        return Math.max(0, Math.floor(Math.log2(Math.max(1, face / SpatialVideoSupport.MinimumCubemapFaceTexels))));
+    }
+
+    _makeEquiAngularCubemap(radius = 10)
+    {
+        const segments = 48, positions = [], texCoords = [], edges = [], indices = [];
+        const media = this.mediaController.media;
+        const tileWidth = 1 / SpatialVideoSupport.CubemapColumns, tileHeight = 1 / SpatialVideoSupport.CubemapRows;
+        const insetU = media.videoWidth ? 0.5 / media.videoWidth : 0;
+        const insetV = media.videoHeight ? 0.5 / media.videoHeight : 0;
+        for (const face of EquiAngularCubemapFaces) {
+            const base = positions.length / 3;
+            const minU = face.column * tileWidth + insetU, maxU = (face.column + 1) * tileWidth - insetU;
+            const minV = face.row * tileHeight + insetV, maxV = (face.row + 1) * tileHeight - insetV;
+            for (let i = 0; i <= segments; i++) {
+                const t = -1 + 2 * i / segments;
+                for (let j = 0; j <= segments; j++) {
+                    const s = -1 + 2 * j / segments;
+                    const direction = equiAngularCubemapDirection(face.axis, Math.tan(s * Math.PI / 4), Math.tan(t * Math.PI / 4));
+                    const length = Math.hypot(direction[0], direction[1], direction[2]);
+                    positions.push(radius * direction[0] / length, radius * direction[1] / length, radius * direction[2] / length);
+                    const [localU, localV] = rotateUnitSquare((s + 1) / 2, (1 - t) / 2, face.rotation);
+                    texCoords.push(minU + localU * (maxU - minU), minV + localV * (maxV - minV));
+                    edges.push(0);
+                }
+            }
+            const cols = segments + 1;
+            for (let i = 0; i < segments; i++) {
+                for (let j = 0; j < segments; j++) {
+                    const topLeft = base + i * cols + j, bottomLeft = topLeft + cols;
+                    indices.push(topLeft, topLeft + 1, bottomLeft, topLeft + 1, bottomLeft + 1, bottomLeft);
+                }
+            }
+        }
+        return this._uploadMesh(positions, texCoords, edges, indices);
     }
 
     _makeSphere(span, radius = 10)
@@ -530,6 +589,10 @@ SpatialVideoSupport.MaximumCameraFieldOfView = 110;
 SpatialVideoSupport.DragTolerance = 3;
 SpatialVideoSupport.DragSpeed = 0.005;
 SpatialVideoSupport.ZoomSpeed = 0.1;
+SpatialVideoSupport.CubemapColumns = 3;
+SpatialVideoSupport.CubemapRows = 2;
+SpatialVideoSupport.MinimumCubemapFaceTexels = 8;
+SpatialVideoSupport.UnlimitedMipmapLevel = 1000;
 const ProjectionAttributeValues = {
     "none": "none",
     "equirectangular": "equirect360",
@@ -539,7 +602,50 @@ const ProjectionAttributeValues = {
     "parametric": "wideFOV",
     "wfov": "wideFOV",
     "fisheye": "fisheye",
+    "equiangularcubemap": "equiAngularCubemap",
+    "eac": "equiAngularCubemap",
 };
+
+const EquiAngularCubemapFaces = [
+    { axis: "left", column: 0, row: 0, rotation: 0 },
+    { axis: "front", column: 1, row: 0, rotation: 0 },
+    { axis: "right", column: 2, row: 0, rotation: 0 },
+    { axis: "down", column: 0, row: 1, rotation: 1 },
+    { axis: "back", column: 1, row: 1, rotation: 3 },
+    { axis: "up", column: 2, row: 1, rotation: 1 },
+];
+
+function equiAngularCubemapDirection(axis, u, v)
+{
+    switch (axis) {
+    case "front":
+        return [u, v, -1];
+    case "back":
+        return [-u, v, 1];
+    case "left":
+        return [-1, v, -u];
+    case "right":
+        return [1, v, u];
+    case "up":
+        return [u, 1, v];
+    case "down":
+        return [u, -1, -v];
+    }
+    return [u, v, -1];
+}
+
+function rotateUnitSquare(u, v, rotation)
+{
+    switch (rotation & 3) {
+    case 1:
+        return [v, 1 - u];
+    case 2:
+        return [1 - u, 1 - v];
+    case 3:
+        return [1 - v, u];
+    }
+    return [u, v];
+}
 
 function canvasSizeChanged(canvas)
 {
