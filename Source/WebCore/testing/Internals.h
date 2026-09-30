@@ -1604,6 +1604,10 @@ public:
     enum class ContentSizeCategory { L, XXXL };
     void setContentSizeCategory(ContentSizeCategory);
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    unsigned telephoneNumberRangesChangedCount() const;
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageControls(const HTMLImageElement&) const;

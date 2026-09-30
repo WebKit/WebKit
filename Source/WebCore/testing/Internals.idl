@@ -1517,6 +1517,8 @@ enum ContentsFormat {
 
     undefined setContentSizeCategory(ContentSizeCategory category);
 
+    [Conditional=TELEPHONE_NUMBER_DETECTION] unsigned long telephoneNumberRangesChangedCount();
+
     [Conditional=ATTACHMENT_ELEMENT, Conditional=SERVICE_CONTROLS] boolean hasImageControls(HTMLImageElement element);
     [Conditional=ATTACHMENT_ELEMENT] DOMString attachmentElementShadowUserAgentStyleSheet();
 

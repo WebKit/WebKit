@@ -1425,7 +1425,11 @@ void Editor::clear()
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     m_telephoneNumberDetectionUpdateTimer.stop();
-    m_detectedTelephoneNumberRanges.clear();
+    if (!m_detectedTelephoneNumberRanges.isEmpty()) {
+        m_detectedTelephoneNumberRanges.clear();
+        if (RefPtr page = document().page())
+            protect(page->servicesOverlayController())->selectedTelephoneNumberRangesChanged();
+    }
 #endif
 }
 
@@ -4429,9 +4433,12 @@ void Editor::scanSelectionForTelephoneNumbers()
     if (!shouldDetectTelephoneNumbers() || !client())
         return;
 
+    bool hadDetectedTelephoneNumberRanges = !m_detectedTelephoneNumberRanges.isEmpty();
     m_detectedTelephoneNumberRanges.clear();
-    
+
     auto notifyController = makeScopeExit([&] {
+        if (!hadDetectedTelephoneNumberRanges && m_detectedTelephoneNumberRanges.isEmpty())
+            return;
         if (RefPtr page = document().page())
             protect(page->servicesOverlayController())->selectedTelephoneNumberRangesChanged();
     });

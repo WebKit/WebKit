@@ -241,6 +241,7 @@ void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>
 void ServicesOverlayController::selectedTelephoneNumberRangesChanged()
 {
     LOG(Services, "ServicesOverlayController - Telephone number ranges changed\n");
+    ++m_telephoneNumberRangesChangedCountForTesting;
     invalidateHighlightsOfType(DataDetectorHighlight::Type::TelephoneNumber);
 }
 

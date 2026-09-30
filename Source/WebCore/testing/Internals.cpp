@@ -415,6 +415,7 @@
 #if PLATFORM(MAC)
 #include "GraphicsChecksMac.h"
 #include "ScrollbarsControllerMac.h"
+#include "ServicesOverlayController.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -8356,6 +8357,19 @@ void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
     UNUSED_PARAM(category);
 #endif
 }
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+unsigned Internals::telephoneNumberRangesChangedCount() const
+{
+#if PLATFORM(MAC)
+    if (RefPtr document = contextDocument()) {
+        if (RefPtr page = document->page())
+            return page->servicesOverlayController().telephoneNumberRangesChangedCountForTesting();
+    }
+#endif
+    return 0;
+}
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 #if ENABLE(SERVICE_CONTROLS)
