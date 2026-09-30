@@ -81,6 +81,9 @@ TEST_F(WKWebExtensionAPINotifications, APIsAvailableWhenPermissionGranted)
         @"browser.test.assertFalse(browser.notifications === undefined)",
         @"browser.test.assertFalse(browser.notifications.create === undefined)",
         @"browser.test.assertFalse(browser.notifications.update === undefined)",
+        @"browser.test.assertFalse(browser.notifications.clear === undefined)",
+        @"browser.test.assertFalse(browser.notifications.getAll === undefined)",
+        @"browser.test.assertFalse(browser.notifications.getPermissionLevel === undefined)",
         @"browser.test.notifyPass()",
     ];
 
@@ -304,6 +307,133 @@ TEST_F(WKWebExtensionAPINotifications, UpdateRejectsWhenBrowserReportsError)
     manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
 
     [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPINotifications, ClearReturnsFalseForUnknownIdentifier)
+{
+    auto *script = @[
+        @"const wasCleared = await browser.notifications.clear('does-not-exist')",
+        @"browser.test.assertFalse(wasCleared, 'clear() should resolve false when no notification matches')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    __block bool clearDelegateCalled = false;
+    manager.get().internalDelegate.clearNotification = ^(_WKWebExtensionNotification *) {
+        clearDelegateCalled = true;
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_FALSE(clearDelegateCalled);
+}
+
+TEST_F(WKWebExtensionAPINotifications, ClearRemovesNotificationThroughDelegate)
+{
+    auto *script = @[
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"const wasCleared = await browser.notifications.clear('note')",
+        @"browser.test.assertTrue(wasCleared, 'clear() should resolve true for an existing notification')",
+        @"const all = await browser.notifications.getAll()",
+        @"browser.test.assertFalse('note' in all, 'cleared notification should no longer appear in getAll()')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    RetainPtr<_WKWebExtensionNotification> clearedNotification;
+    auto *clearedNotificationPtr = &clearedNotification;
+    manager.get().internalDelegate.clearNotification = ^(_WKWebExtensionNotification *notification) {
+        *clearedNotificationPtr = notification;
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NOT_NULL(clearedNotification.get());
+    EXPECT_NS_EQUAL(clearedNotification.get().identifier, @"note");
+}
+
+TEST_F(WKWebExtensionAPINotifications, ClearRejectsWhenBrowserReportsError)
+{
+    auto *script = @[
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"await browser.test.assertRejects(browser.notifications.clear('note'), /notifications\\.clear/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPINotifications, GetAllReturnsCreatedNotificationIdentifiers)
+{
+    auto *script = @[
+        @"const empty = await browser.notifications.getAll()",
+        @"browser.test.assertEq(Object.keys(empty).length, 0, 'getAll() should be empty before any notifications are created')",
+        @"await browser.notifications.create('first', { type: 'basic', title: 'T', message: 'M' })",
+        @"await browser.notifications.create('second', { type: 'basic', title: 'T', message: 'M' })",
+        @"const all = await browser.notifications.getAll()",
+        @"browser.test.assertEq(all['first'], true, 'getAll() should map created identifiers to true')",
+        @"browser.test.assertEq(all['second'], true, 'getAll() should map created identifiers to true')",
+        @"browser.test.assertEq(Object.keys(all).length, 2, 'getAll() should contain exactly the created notifications')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPINotifications, GetPermissionLevelReturnsGrantedWhenDelegateAllows)
+{
+    auto *script = @[
+        @"const level = await browser.notifications.getPermissionLevel()",
+        @"browser.test.assertEq(level, 'granted')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.mayPresentNotifications = ^{
+        return YES;
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPINotifications, GetPermissionLevelReturnsDeniedWhenDelegateDenies)
+{
+    auto *script = @[
+        @"const level = await browser.notifications.getPermissionLevel()",
+        @"browser.test.assertEq(level, 'denied')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.mayPresentNotifications = ^{
+        return NO;
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPINotifications, GetPermissionLevelRejectsWhenBrowserReportsError)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.notifications.getPermissionLevel(), /notifications\\.getPermissionLevel/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(notificationsManifest, @{ @"background.js": Util::constructScript(script) }, notificationsConfig);
 }
 
 } // namespace TestWebKitAPI

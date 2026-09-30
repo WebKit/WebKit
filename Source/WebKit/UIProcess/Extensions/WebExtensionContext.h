@@ -987,6 +987,9 @@ private:
 
     void notificationsCreate(const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void notificationsUpdate(const String& identifier, const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
+    void notificationsClear(const String& identifier, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
+    void notificationsGetAll(CompletionHandler<void(Vector<String>&&)>&&);
+    void notificationsGetPermissionLevel(CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

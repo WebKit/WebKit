@@ -116,6 +116,9 @@ messages -> WebExtensionContext {
     // Notifications APIs
     [Validator=isNotificationsMessageAllowed] NotificationsCreate(struct WebKit::WebExtensionNotificationParameters parameters) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isNotificationsMessageAllowed] NotificationsUpdate(String identifier, struct WebKit::WebExtensionNotificationParameters parameters) -> (std::expected<bool, WebKit::WebExtensionError> result)
+    [Validator=isNotificationsMessageAllowed] NotificationsClear(String identifier) -> (std::expected<bool, WebKit::WebExtensionError> result)
+    [Validator=isNotificationsMessageAllowed] NotificationsGetAll() -> (Vector<String> identifiers)
+    [Validator=isNotificationsMessageAllowed] NotificationsGetPermissionLevel() -> (std::expected<String, WebKit::WebExtensionError> result)
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

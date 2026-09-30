@@ -143,6 +143,47 @@ void WebExtensionAPINotifications::update(const String& identifier, NSDictionary
     }, extensionContext().identifier());
 }
 
+void WebExtensionAPINotifications::clear(const String& identifier, Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/clear
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsClear(identifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<bool, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(JSValueMakeBoolean(callback->globalContext(), result.value()));
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPINotifications::getAll(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/getAll
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsGetAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Vector<String> identifiers) {
+        NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:identifiers.size()];
+        for (auto& identifier : identifiers)
+            result[identifier.createNSString().get()] = @YES;
+
+        callback->call(toJSValueRef(callback->globalContext(), result));
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPINotifications::getPermissionLevel(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.chrome.com/docs/extensions/reference/api/notifications#method-getPermissionLevel
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsGetPermissionLevel(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(toJSValueRef(callback->globalContext(), result.value()));
+    }, extensionContext().identifier());
+}
+
 #endif
 
 WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked()
