@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</head>
+<body>
+<script>
+promise_test(async (t) => {
+    const worker = new Worker("videoDecoder-concurrent-decode-output-in-worker-no-crash.js");
+    t.add_cleanup(() => worker.terminate());
+    // The decodes are driven from a message event handler so that VideoDecoder.decode()
+    // runs on the worker thread, as in the crash this test covers.
+    const result = await new Promise((resolve, reject) => {
+        worker.onmessage = event => resolve(event.data);
+        worker.onerror = event => reject(new Error(event.message));
+        worker.postMessage("start");
+    });
+    assert_equals(result, "PASS", result);
+}, "Concurrent VideoDecoder.decode() in a worker and output delivery should not race on the timestamp-to-duration map");
+</script>
+</body>
+</html>
