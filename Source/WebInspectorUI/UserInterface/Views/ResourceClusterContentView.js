@@ -34,6 +34,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         this._resource.addEventListener(WI.Resource.Event.MIMETypeDidChange, this._resourceTypeDidChange, this);
         this._resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         this._disableDropZone = disableDropZone || false;
+        this._pendingRestoreFromCookie = null;
 
         this._responsePathComponent = this._createPathComponent({
             displayName: WI.UIString("Response"),
@@ -83,7 +84,14 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             contentViewIdentifier = this._getPreferredContentViewIdentifier();
         }
 
+        // An explicit request to show a specific content view made while waiting (e.g. `showRequest()`) takes precedence.
+        let restoreToken = Symbol("restore-from-cookie");
+        this._pendingRestoreFromCookie = restoreToken;
+
         this._enableCustomResponseContentViewsPromise.then(() => {
+            if (this._pendingRestoreFromCookie !== restoreToken)
+                return;
+
             let textRangeToSelect = null;
             if (!isNaN(cookie.startLine) && !isNaN(cookie.startColumn) && !isNaN(cookie.endLine) && !isNaN(cookie.endColumn))
                 textRangeToSelect = new WI.TextRange(cookie.startLine, cookie.startColumn, cookie.endLine, cookie.endColumn);
@@ -114,11 +122,15 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     showRequest()
     {
+        this._pendingRestoreFromCookie = null;
+
         return this._showContentViewForIdentifier(ResourceClusterContentView.Identifier.Request);
     }
 
     showResponse()
     {
+        this._pendingRestoreFromCookie = null;
+
         return this._showContentViewForIdentifier(ResourceClusterContentView.Identifier.Response);
     }
 
@@ -380,6 +392,8 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     _pathComponentSelected(event)
     {
+        this._pendingRestoreFromCookie = null;
+
         this._showContentViewForIdentifier(event.data.pathComponent.representedObject, {saveAsPreference: true});
     }
 
