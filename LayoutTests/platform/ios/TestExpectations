@@ -10432,3 +10432,5 @@ fast/text-extraction/debug-text-extraction-shorten-urls.html [ Timeout ]
 fast/text-extraction/text-extraction-scroll-to-next-page.html [ Timeout ]
 
 webkit.org/b/325809 fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/325810 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Pass Timeout ]
