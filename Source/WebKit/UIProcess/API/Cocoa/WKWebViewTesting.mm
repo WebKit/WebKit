@@ -294,6 +294,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
+- (void)_setUseDarkAppearanceForTesting:(BOOL)useDarkAppearance
+{
+    _page->setUseDarkAppearanceForTesting(useDarkAppearance);
+}
+
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
 {
     if ([userInterfaceItem isEqualToString:@"validationBubble"]) {

@@ -32,6 +32,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebScriptWorld.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -103,6 +104,21 @@ TEST(UseSystemAppearance, UserStyleSheetParsing)
     EXPECT_WK_STREQ("rgb(0, 128, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(test).color"]);
 
     [webView _setUseSystemAppearance:NO];
+    EXPECT_WK_STREQ("rgb(0, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(test).color"]);
+}
+
+TEST(UseSystemAppearance, SetUseDarkAppearanceForTesting)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)]);
+    [webView forceLightMode];
+    [webView synchronouslyLoadHTMLString:@"<style>@media (prefers-color-scheme: dark) { #test { color: green } }</style><div id=test></div>"];
+
+    EXPECT_WK_STREQ("rgb(0, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(test).color"]);
+
+    [webView _setUseDarkAppearanceForTesting:YES];
+    EXPECT_WK_STREQ("rgb(0, 128, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(test).color"]);
+
+    [webView _setUseDarkAppearanceForTesting:NO];
     EXPECT_WK_STREQ("rgb(0, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(test).color"]);
 }
 
