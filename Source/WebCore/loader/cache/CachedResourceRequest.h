@@ -43,10 +43,20 @@ class Document;
 class FrameLoader;
 class Page;
 struct ServiceWorkerRegistrationData;
+class OriginAccessPatterns;
 enum class CachePolicy : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 
-bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
+WEBCORE_EXPORT bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&, const OriginAccessPatterns&);
+
+// Subresource request construction, shared so that a process without a Document or FrameLoader can
+// build the same request the web process would. The caller supplies the context that would otherwise
+// come from the frame: the outgoing referrer, the user agent, and the origin access patterns.
+WEBCORE_EXPORT void setRequestAcceptHeaderIfNone(ResourceRequest&, CachedResource::Type);
+WEBCORE_EXPORT void updateRequestAccordingCacheMode(ResourceRequest&, FetchOptions::Cache&);
+WEBCORE_EXPORT void updateRequestAcceptEncodingHeader(ResourceRequest&, FetchOptions::Destination);
+WEBCORE_EXPORT void updateRequestUserAgent(ResourceRequest&, const String& userAgent);
+WEBCORE_EXPORT void updateRequestReferrerAndOrigin(ResourceRequest&, const ResourceLoaderOptions&, const URL& outgoingReferrerURL, RefPtr<SecurityOrigin>&& contextOrigin, const OriginAccessPatterns&);
 
 class CachedResourceRequest {
 public:
@@ -112,7 +122,7 @@ public:
     void clearFragmentIdentifier() { m_fragmentIdentifier = { }; }
 
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
-    static String acceptHeaderValueFromType(CachedResource::Type, bool usingSecureProtocol);
+    WEBCORE_EXPORT static String acceptHeaderValueFromType(CachedResource::Type, bool usingSecureProtocol);
 
     void NODELETE setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     void NODELETE setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
