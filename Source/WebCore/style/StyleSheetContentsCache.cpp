@@ -48,7 +48,10 @@ void StyleSheetContentsCache::add(Key&& key, Ref<StyleSheetContents> contents)
 {
     ASSERT(contents->isCacheable());
 
-    m_cache.add(WTF::move(key), contents);
+    auto addResult = m_cache.add(WTF::move(key), contents);
+    if (!addResult.isNewEntry)
+        return;
+
     contents->addedToMemoryCache();
 
     static constexpr auto maximumCacheSize = 256;
@@ -61,6 +64,8 @@ void StyleSheetContentsCache::add(Key&& key, Ref<StyleSheetContents> contents)
 
 void StyleSheetContentsCache::clear()
 {
+    for (auto& contents : m_cache.values())
+        contents->removedFromMemoryCache();
     m_cache.clear();
 }
 
