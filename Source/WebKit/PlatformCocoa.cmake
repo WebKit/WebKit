@@ -2297,6 +2297,33 @@ foreach (_dir IN LISTS WebKit_SWIFT_INCLUDE_DIRECTORIES)
     target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${_dir}>")
 endforeach ()
 
+# The Swift Clang importer's WebCore_Private lists only the WebCore headers that
+# WebKit's Swift uses, rather than umbrellaing PrivateHeaders like the in-tree map.
+if (TARGET WebCore_CopyPrivateModuleMap)
+    set(_webcore_swift_sources "${CMAKE_CURRENT_BINARY_DIR}/WebCore_Private_Swift.sources")
+    set(_webcore_swift_depfile "${CMAKE_CURRENT_BINARY_DIR}/WebCore_Private_Swift.modulemap.d")
+    # Swift records the map through the framework's Modules symlink, so name it that way here too so that
+    # Ninja knows this command writes the file its depfiles list.
+    set(_webcore_private_modulemap "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Modules/module.private.modulemap")
+    file(GENERATE OUTPUT "${_webcore_swift_sources}"
+        CONTENT "$<JOIN:$<FILTER:$<TARGET_PROPERTY:WebKit,SOURCES>,INCLUDE,\\.swift$>,\n>\n")
+    add_custom_command(
+        OUTPUT "${_webcore_private_modulemap}"
+        COMMAND ${Python_EXECUTABLE} "${WEBCORE_DIR}/Scripts/generate-swift-private-module-map.py"
+            --headers "${WebCore_PRIVATE_HEADERS_DIR}"
+            --sources "${_webcore_swift_sources}"
+            --source-dir "${CMAKE_CURRENT_SOURCE_DIR}"
+            --build-dir "${CMAKE_BINARY_DIR}"
+            --output "${_webcore_private_modulemap}"
+            --depfile "${_webcore_swift_depfile}"
+        DEPENDS "${WEBCORE_DIR}/Scripts/generate-swift-private-module-map.py" "${_webcore_swift_sources}"
+        DEPFILE "${_webcore_swift_depfile}"
+        VERBATIM)
+    add_custom_target(WebKit_GenerateWebCorePrivateSwiftModuleMap DEPENDS "${_webcore_private_modulemap}")
+    add_dependencies(WebKit_GenerateWebCorePrivateSwiftModuleMap WebCore_CopyPrivateHeaders)
+    add_dependencies(WebCore_CopyPrivateModuleMap WebKit_GenerateWebCorePrivateSwiftModuleMap)
+endif ()
+
 webkit_target_add_swift_options(WebKit
     "-library-level api"
     "-enable-experimental-feature RequiresObjC=Foundation"

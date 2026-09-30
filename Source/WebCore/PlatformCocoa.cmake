@@ -5,10 +5,6 @@ if (WebCore_INSTALL_NAME_DIR)
     )
 endif ()
 
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/WebCore/Modules")
-configure_file(${WEBCORE_DIR}/WebCore.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.modulemap COPYONLY)
-configure_file(${WEBCORE_DIR}/WebCore_Private.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.private.modulemap COPYONLY)
-
 target_compile_options(WebCore PRIVATE
     "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:SHELL:-include ${CMAKE_CURRENT_SOURCE_DIR}/WebCorePrefix.h>")
 
@@ -1676,7 +1672,9 @@ add_dependencies(WebCore WebCore_CopyAudioResources)
 
 # Stage the in-tree WebCore module maps into the framework bundle so the Swift
 # Clang importer finds them as real modules via -F (as JavaScriptCore does, and
-# as iOS does below). -import-underlying-module needs the public one.
+# as iOS does below). -import-underlying-module needs the public one. WebKit
+# generates the private one from the WebCore names its Swift uses; see
+# generate-swift-private-module-map.py.
 if (SWIFT_REQUIRED)
     set(_webcore_modules_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Modules")
     add_custom_command(
@@ -1686,16 +1684,8 @@ if (SWIFT_REQUIRED)
             "${WEBCORE_DIR}/WebCore.modulemap" "${_webcore_modules_dir}/module.modulemap"
         MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore.modulemap"
         VERBATIM)
-    add_custom_command(
-        OUTPUT "${_webcore_modules_dir}/module.private.modulemap"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${WEBCORE_DIR}/WebCore_Private.modulemap" "${_webcore_modules_dir}/module.private.modulemap"
-        MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore_Private.modulemap"
-        VERBATIM)
     add_custom_target(WebCore_CopyPrivateModuleMap ALL DEPENDS
-        "${_webcore_modules_dir}/module.modulemap"
-        "${_webcore_modules_dir}/module.private.modulemap")
+        "${_webcore_modules_dir}/module.modulemap")
     add_dependencies(WebCore WebCore_CopyPrivateModuleMap)
 endif ()
 
