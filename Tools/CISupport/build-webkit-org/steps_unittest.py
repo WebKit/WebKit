@@ -2807,7 +2807,7 @@ class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
         return (
             f"utils/build-script "
             f"'--swift-install-components=autolink-driver;back-deployment;compiler;clang-resource-dir-symlink;libexec;stdlib;sdk-overlay;static-mirror-lib;toolchain-tools;license;sourcekit-xpc-service;sourcekit-inproc;swift-remote-mirror;swift-remote-mirror-headers' "
-            f"'--llvm-install-components=llvm-ar;llvm-nm;llvm-ranlib;llvm-cov;llvm-profdata;llvm-objdump;llvm-objcopy;llvm-symbolizer;IndexStore;clang;clang-resource-headers;builtins;runtimes;clangd;libclang;dsymutil;LTO;clang-features-file;lld' "
+            f"'--llvm-install-components=llvm-ar;llvm-nm;llvm-ranlib;llvm-cov;llvm-profdata;llvm-objdump;llvm-objcopy;llvm-symbolizer;IndexStore;clang;clang-resource-headers;builtins;runtimes;clangd;libclang;dsymutil;LTO;clang-features-file;lld;scan-build' "
             f"--ios --release --no-assertions --compiler-vendor=apple --infer-cross-compile-hosts-on-darwin --build-ninja --skip-build-benchmarks --skip-tvos --skip-watchos --skip-xros --build-subdir=buildbot_osx "
             f"--install-llvm --install-swift "
             f"--install-destdir={swift_install_dir} "
