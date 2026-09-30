@@ -676,10 +676,10 @@ add_library(TestWebKitAPILibrary OBJECT
 )
 WEBKIT_TEST_SWIFT_HELPER_LIBRARY(TestWebKitAPILibrary TestWebKit)
 # The helpers import the WebKit framework built here for its @_spi declarations.
-# WebKit_StageSwiftModuleMac is deliberately kept out of WebKit_DEPENDENCIES, so
+# WebKit_StageSwiftModule is deliberately kept out of WebKit_DEPENDENCIES, so
 # without naming it the Swift importer can run before the swiftmodule is staged
 # and fall back to the SDK's copy, which does not have them.
-add_dependencies(TestWebKitAPILibrary WebKit WebKit_StageSwiftModuleMac)
+add_dependencies(TestWebKitAPILibrary WebKit WebKit_StageSwiftModule)
 target_include_directories(TestWebKitAPILibrary PRIVATE
     ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES}
 )
