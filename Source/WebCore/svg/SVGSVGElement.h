@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -144,6 +144,7 @@ private:
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) final;
     bool selfHasRelativeLengths() const override;
     bool isValid() const override;
+    bool supportsFocus() const final;
 
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
