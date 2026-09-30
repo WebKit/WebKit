@@ -105,6 +105,10 @@ public:
             bool didClipBlock = false;
             Vector<Node*> nodesToDelete;
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                // CFA proved this block unreachable, so there is no abstract state at its head to
+                // run AI from. CFG simplification will remove it later.
+                if (!block->cfaHasVisited)
+                    continue;
                 m_state.beginBasicBlock(block);
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                     if (block->at(nodeIndex)->isTerminal()) {
