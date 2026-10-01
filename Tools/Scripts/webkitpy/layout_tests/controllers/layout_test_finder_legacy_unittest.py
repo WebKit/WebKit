@@ -26,9 +26,14 @@
 import json
 import unittest
 
-from pyfakefs.fake_filesystem_unittest import TestCaseMixin
+from pyfakefs.fake_filesystem import OSType
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.fakefs_testcase import (
+    PyFakefsLinuxTestCaseMixin,
+    PyFakefsMacOSTestCaseMixin,
+    PyFakefsWindowsTestCaseMixin,
+)
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
@@ -42,9 +47,23 @@ from webkitpy.port.test import (
 )
 
 
-class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
+class IsReferenceHtmlFileTests(unittest.TestCase):
+    def test_is_reference_html_file(self):
+        filesystem = MockFileSystem()
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected.html'))
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected-mismatch.xml'))
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-ref.xhtml'))
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-notref.svg'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo.html'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.txt'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.shtml'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.php'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.mht'))
+
+
+class LayoutTestFinderTestsBase(object):
     def __init__(self, *args, **kwargs):
-        super(LayoutTestFinderTests, self).__init__(*args, **kwargs)
+        super(LayoutTestFinderTestsBase, self).__init__(*args, **kwargs)
         self.port = None
         self.finder = None
 
@@ -59,17 +78,10 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         self.port = None
         self.finder = None
 
-    def test_is_reference_html_file(self):
-        filesystem = MockFileSystem()
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected.html'))
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected-mismatch.xml'))
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-ref.xhtml'))
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-notref.svg'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo.html'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.txt'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.shtml'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.php'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.mht'))
+    def test_emulated_os(self):
+        self.assertEqual(self.fs.os, self.fs_os)
+        expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
+        self.assertEqual(self.port.host.filesystem.sep, expected_sep)
 
     def test_find_no_paths_specified(self):
         finder = self.finder
@@ -1635,3 +1647,15 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             tests,
             ["passes/skipped/skip.html"],
         )
+
+
+class LayoutTestFinderLinuxTests(PyFakefsLinuxTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class LayoutTestFinderWindowsTests(PyFakefsWindowsTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class LayoutTestFinderMacOSTests(PyFakefsMacOSTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass

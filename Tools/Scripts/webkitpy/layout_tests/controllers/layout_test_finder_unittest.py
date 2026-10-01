@@ -22,9 +22,14 @@
 
 import unittest
 
-from pyfakefs.fake_filesystem_unittest import TestCaseMixin
+from pyfakefs.fake_filesystem import OSType
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.fakefs_testcase import (
+    PyFakefsLinuxTestCaseMixin,
+    PyFakefsMacOSTestCaseMixin,
+    PyFakefsWindowsTestCaseMixin,
+)
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.layout_tests.controllers.layout_test_finder import (
     LayoutTestFinder,
@@ -35,9 +40,9 @@ from webkitpy.port.test import (
 )
 
 
-class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
+class LayoutTestFinderTestsBase(object):
     def __init__(self, *args, **kwargs):
-        super(LayoutTestFinderTests, self).__init__(*args, **kwargs)
+        super(LayoutTestFinderTestsBase, self).__init__(*args, **kwargs)
         self.port = None
         self.finder = None
 
@@ -55,6 +60,11 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
     def tearDown(self):
         self.port = None
         self.finder = None
+
+    def test_emulated_os(self):
+        self.assertEqual(self.fs.os, self.fs_os)
+        expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
+        self.assertEqual(self.port.host.filesystem.sep, expected_sep)
 
     def test_split_glob(self):
         v = list(self.finder._split_glob("a"))
@@ -110,3 +120,15 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             [t.test_path for t in tests],
             ['imported/w3c/web-platform-tests/some/test-crash-crash.html'],
         )
+
+
+class LayoutTestFinderLinuxTests(PyFakefsLinuxTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class LayoutTestFinderWindowsTests(PyFakefsWindowsTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class LayoutTestFinderMacOSTests(PyFakefsMacOSTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
