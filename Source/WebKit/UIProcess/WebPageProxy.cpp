@@ -6619,7 +6619,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     Ref preferences = m_preferences;
     bool siteIsolationEnabled = preferences->siteIsolationEnabled();
     bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
-    bool canReuseMainFrame = shouldReuseMainFrameOnProcessSwap();
+    bool canReuseMainFrame = shouldReuseMainFrameOnProcessSwap(browsingContextGroup);
     bool shouldInitializeCertificate = isProcessSwappingOnNavigationResponse && !canReuseMainFrame;
 
     WebCore::CertificateInfo certificateInfo;
@@ -11403,9 +11403,12 @@ bool WebPageProxy::hasOpenedPage() const
     return !internals().m_openedPages.isEmptyIgnoringNullReferences();
 }
 
-bool WebPageProxy::shouldReuseMainFrameOnProcessSwap() const
+bool WebPageProxy::shouldReuseMainFrameOnProcessSwap(const BrowsingContextGroup& targetGroup) const
 {
     if (!protect(m_preferences)->siteIsolationEnabled())
+        return false;
+
+    if (browsingContextGroup().identifier() != targetGroup.identifier())
         return false;
 
     return protect(m_browsingContextGroup)->hasMultiplePages();

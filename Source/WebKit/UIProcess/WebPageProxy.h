@@ -2749,7 +2749,7 @@ public:
 
     void addOpenedPage(WebPageProxy&);
     bool NODELETE hasOpenedPage() const;
-    bool shouldReuseMainFrameOnProcessSwap() const;
+    bool shouldReuseMainFrameOnProcessSwap(const BrowsingContextGroup& targetGroup) const;
 
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, const String& sourceMIMEType)>&&);
 

@@ -4258,6 +4258,71 @@ TEST(SiteIsolation, LoadRequestOnOpenedWebView)
     checkFrameTreesInProcesses(opener.webView.get(), { { "https://example.com"_s } });
 }
 
+TEST(SiteIsolation, CancelNavigationResponseForLoadRequestOnOpenerWebView)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().pageCacheEnabled = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPool.get()];
+    enableSiteIsolation(configuration.get());
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr openerNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerNavigationDelegate allowAnyTLSCertificate];
+    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedNavigationDelegate allowAnyTLSCertificate];
+
+    __block RetainPtr<TestWKWebView> opened;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = openedNavigationDelegate.get();
+        return opened.get();
+    };
+
+    RetainPtr opener = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    opener.get().navigationDelegate = openerNavigationDelegate.get();
+    opener.get().UIDelegate = uiDelegate.get();
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!opened)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(opener.get(), { { "https://example.com"_s }, { RemoteFrame } });
+    checkFrameTreesInProcesses(opened.get(), { { RemoteFrame }, { "https://webkit.org"_s } });
+
+    __block pid_t provisionalProcessIdentifier = 0;
+    openerNavigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        provisionalProcessIdentifier = [opener _provisionalWebProcessIdentifier];
+        completionHandler(WKNavigationResponsePolicyCancel);
+    };
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/apple"]]];
+    [openerNavigationDelegate waitForDidFailProvisionalNavigation];
+    EXPECT_NE(provisionalProcessIdentifier, 0);
+    EXPECT_NE(provisionalProcessIdentifier, [opener _webProcessIdentifier]);
+
+    EXPECT_TRUE(Util::waitFor(^{
+        return [processPool _processCacheSize] == 1;
+    }));
+    checkFrameTreesInProcesses(opener.get(), { { "https://example.com"_s }, { RemoteFrame } });
+    checkFrameTreesInProcesses(opened.get(), { { RemoteFrame }, { "https://webkit.org"_s } });
+
+    openerNavigationDelegate.get().decidePolicyForNavigationResponse = nil;
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/apple"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opener _webProcessIdentifier], provisionalProcessIdentifier);
+    checkFrameTreesInProcesses(opener.get(), { { "https://apple.com"_s } });
+    checkFrameTreesInProcesses(opened.get(), { { "https://webkit.org"_s } });
+}
+
 TEST(SiteIsolation, FocusOpenedWindow)
 {
     auto openerHTML = "<script>"
