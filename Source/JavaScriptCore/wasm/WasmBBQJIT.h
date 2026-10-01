@@ -1441,7 +1441,11 @@ public:
 
     WARN_UNUSED_RETURN PartialResult addArrayInitData(uint32_t dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     // Returns true if a writeBarrier/mutatorFence is needed.
+#else
+    // Returns true if a writeBarrier is needed.
+#endif
     WARN_UNUSED_RETURN bool emitStructSet(GPRReg structGPR, const StructType& structType, uint32_t fieldIndex, Value value);
 
     void emitAllocateGCStructUninitialized(GPRReg resultGPR, uint32_t typeIndex, GPRReg scratchGPR, GPRReg scratchGPR2);
