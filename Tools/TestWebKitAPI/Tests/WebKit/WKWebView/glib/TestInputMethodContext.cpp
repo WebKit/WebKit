@@ -20,8 +20,10 @@
 #include "config.h"
 
 #include "TestMain.h"
+#include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <algorithm>
+#include <libsoup/soup.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/UTF8CStringView.h>
 
@@ -1253,6 +1255,97 @@ static void testWebKitInputMethodContextFocusChange(InputMethodTest* test, gcons
     // This is a gap, not intentional behaviour.
 }
 
+static const char* navigationPageHTML = "<html><body>"
+    "<input id='editable' type='text' spellcheck='false'>"
+    "<script>addEventListener('pageshow', event => window.shownFromCache = event.persisted);</script>"
+    "</body></html>";
+
+static WebKitTestServer* kServer;
+
+static void serverCallback(SoupServer*, SoupServerMessage* message, const char*, GHashTable*, gpointer)
+{
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
+        return;
+    }
+
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    auto* responseBody = soup_server_message_get_response_body(message);
+    soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, navigationPageHTML, strlen(navigationPageHTML));
+    soup_message_body_complete(responseBody);
+}
+
+static void testWebKitInputMethodContextFocusBackForwardCache(InputMethodTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/one"));
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    test->loadURI(kServer->getURIForPath("/two"));
+    test->waitUntilLoadFinished();
+    test->waitUntilInputMethodDisabled();
+
+    test->clickMouseButton(20, 20);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    test->waitUntilInputMethodEnabled();
+
+    test->clearInputMethodCounters();
+    g_assert_true(webkit_web_view_can_go_back(test->webView()));
+    test->goBack();
+    test->waitUntilLoadFinished();
+    test->assertJavaScriptBecomesTrue("window.shownFromCache");
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->hints() & WEBKIT_INPUT_HINT_INHIBIT_OSK, ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+}
+
+static void testWebKitInputMethodContextClickAfterScriptFocus(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<input id='editable' type='text' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->hints() & WEBKIT_INPUT_HINT_INHIBIT_OSK, ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+
+    test->keyStroke(KEY(a));
+    test->assertJavaScriptBecomesTrue("document.getElementById('editable').value === 'a'");
+    g_assert_cmpuint(test->hints() & WEBKIT_INPUT_HINT_INHIBIT_OSK, ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+
+    test->clearInputMethodCounters();
+    test->clickMouseButton(20, 20);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+
+    g_assert_cmpuint(test->hints() & WEBKIT_INPUT_HINT_INHIBIT_OSK, ==, 0);
+
+    test->clearInputMethodCounters();
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('editable').setSelectionRange(1, 1)", nullptr);
+    test->deleteSurrounding(-1, 1);
+    test->assertJavaScriptBecomesTrue("document.getElementById('editable').value === ''");
+    g_assert_cmpuint(test->hints() & WEBKIT_INPUT_HINT_INHIBIT_OSK, ==, 0);
+    g_assert_cmpuint(test->contentTypeNotificationCount(), ==, 0);
+}
+
+static void testWebKitInputMethodContextBackForwardCacheWithoutFocus(InputMethodTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/one"));
+    test->waitUntilLoadFinished();
+    test->loadURI(kServer->getURIForPath("/two"));
+    test->waitUntilLoadFinished();
+
+    test->clearInputMethodCounters();
+    g_assert_true(webkit_web_view_can_go_back(test->webView()));
+    test->goBack();
+    test->waitUntilLoadFinished();
+    test->assertJavaScriptBecomesTrue("window.shownFromCache");
+    test->assertJavaScriptBecomesTrue("document.activeElement === document.body");
+
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_false(test->isInputMethodEnabled());
+}
+
 static void testWebKitInputMethodContextFocusInteraction(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml("<input id='editable' type='text' spellcheck='false'>", nullptr);
@@ -1439,6 +1532,9 @@ static void testWebKitInputMethodContextContentType(InputMethodTest* test, gcons
 
 void beforeAll()
 {
+    kServer = new WebKitTestServer();
+    kServer->run(serverCallback);
+
     InputMethodTest::add("WebKitInputMethodContext", "simple", testWebKitInputMethodContextSimple);
     InputMethodTest::add("WebKitInputMethodContext", "sequence", testWebKitInputMethodContextSequence);
     InputMethodTest::add("WebKitInputMethodContext", "invalid-sequence", testWebKitInputMethodContextInvalidSequence);
@@ -1450,11 +1546,14 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "cursor-area", testWebKitInputMethodContextCursorArea);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-cursor", testWebKitInputMethodContextPreeditCursor);
     InputMethodTest::add("WebKitInputMethodContext", "focus-change", testWebKitInputMethodContextFocusChange);
+    InputMethodTest::add("WebKitInputMethodContext", "focus-back-forward-cache", testWebKitInputMethodContextFocusBackForwardCache);
+    InputMethodTest::add("WebKitInputMethodContext", "back-forward-cache-without-focus", testWebKitInputMethodContextBackForwardCacheWithoutFocus);
+    InputMethodTest::add("WebKitInputMethodContext", "click-after-script-focus", testWebKitInputMethodContextClickAfterScriptFocus);
     InputMethodTest::add("WebKitInputMethodContext", "focus-interaction", testWebKitInputMethodContextFocusInteraction);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
 }
 
 void afterAll()
 {
-
+    delete kServer;
 }

@@ -1171,6 +1171,8 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
     if (oldFocusedElement == element) {
         if (element) {
             page->chrome().client().elementDidRefocus(*element, options);
+            if (options.trigger == FocusTrigger::Click)
+                page->editorClient().setInputMethodState(element);
             return true;
         }
         if (newLocalFocusedFrame) {
