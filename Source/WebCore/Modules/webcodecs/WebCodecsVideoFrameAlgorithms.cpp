@@ -72,9 +72,10 @@ bool verifyRectOffsetAlignment(VideoPixelFormat format, const DOMRectInit& rect)
     switch (format) {
     case VideoPixelFormat::I420:
     case VideoPixelFormat::I420A:
-    case VideoPixelFormat::I422:
     case VideoPixelFormat::NV12:
         return isMultiple(rect.x, 2) && isMultiple(rect.y, 2);
+    case VideoPixelFormat::I422:
+        return isMultiple(rect.x, 2);
     case VideoPixelFormat::I444:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
@@ -149,16 +150,40 @@ static inline size_t NODELETE sampleCountPerPixel(VideoPixelFormat format, size_
     return 1;
 }
 
-size_t videoPixelFormatToSubSampling(VideoPixelFormat format, size_t planeNumber)
+static bool NODELETE isChromaPlane(VideoPixelFormat format, size_t planeNumber)
+{
+    if (format == VideoPixelFormat::NV12)
+        return planeNumber == 1;
+    return planeNumber == 1 || planeNumber == 2;
+}
+
+size_t videoPixelFormatToHorizontalSubSampling(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
     case VideoPixelFormat::I420:
-    case VideoPixelFormat::I444:
+    case VideoPixelFormat::I420A:
     case VideoPixelFormat::I422:
     case VideoPixelFormat::NV12:
-        return planeNumber ? 2 : 1;
+        return isChromaPlane(format, planeNumber) ? 2 : 1;
+    case VideoPixelFormat::I444:
+    case VideoPixelFormat::RGBA:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRA:
+    case VideoPixelFormat::BGRX:
+        return 1;
+    }
+    return 1;
+}
+
+size_t videoPixelFormatToVerticalSubSampling(VideoPixelFormat format, size_t planeNumber)
+{
+    switch (format) {
+    case VideoPixelFormat::I420:
     case VideoPixelFormat::I420A:
-        return (planeNumber == 1 || planeNumber == 2) ? 2 : 1;
+    case VideoPixelFormat::NV12:
+        return isChromaPlane(format, planeNumber) ? 2 : 1;
+    case VideoPixelFormat::I422:
+    case VideoPixelFormat::I444:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -189,15 +214,14 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         size_t pixelSampleCount = sampleCountPerPixel(format, i);
 
         auto sampleBytes = videoPixelFormatToSampleByteSizePerPlane();
-        auto sampleWidth = videoPixelFormatToSubSampling(format, i);
-        auto sampleHeight = videoPixelFormatToSubSampling(format, i);
-        auto sampleWidthBytes = sampleWidth * sampleBytes;
+        auto sampleWidth = videoPixelFormatToHorizontalSubSampling(format, i);
+        auto sampleHeight = videoPixelFormatToVerticalSubSampling(format, i);
 
         ComputedPlaneLayout computedLayout;
         computedLayout.sourceTop = divideAndRoundUpToNearestInteger(parsedRect.y, sampleHeight);
         computedLayout.sourceHeight = divideAndRoundUpToNearestInteger(parsedRect.height, sampleHeight);
-        computedLayout.sourceLeftBytes = pixelSampleCount * divideAndRoundUpToNearestInteger(parsedRect.x, sampleWidthBytes);
-        computedLayout.sourceWidthBytes = pixelSampleCount * divideAndRoundUpToNearestInteger(parsedRect.width, sampleWidthBytes);
+        computedLayout.sourceLeftBytes = pixelSampleCount * sampleBytes * divideAndRoundUpToNearestInteger(parsedRect.x, sampleWidth);
+        computedLayout.sourceWidthBytes = pixelSampleCount * sampleBytes * divideAndRoundUpToNearestInteger(parsedRect.width, sampleWidth);
         if (!computedLayout.sourceWidthBytes)
             return Exception { ExceptionCode::TypeError, "layout width bytes is zero"_s };
         if (layout) {
