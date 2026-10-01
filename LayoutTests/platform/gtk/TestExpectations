@@ -1118,7 +1118,6 @@ webkit.org/b/309266 [ Release ] css3/scroll-snap/scroll-snap-drag-scrollbar-thum
 
 [ Release ] http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure Timeout ]
 [ Release ] imported/w3c/web-platform-tests/permissions/permissions-garbage-collect.https.html [ Pass Failure ]
-[ Release ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html [ Failure Pass ]
 [ Release ] fast/dom/Window/window-resize-update-scrollbars.html [ Failure Pass ]
 
 platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html [ Pass Failure ]
@@ -1310,3 +1309,7 @@ webkit.org/b/324840 accessibility/shadow-dom/reference-target/aria-controls.html
 
 webkit.org/b/324374 webgl/1.0.x/conformance/textures/misc/texture-size-limit.html [ Failure ]
 webkit.org/b/324374 webgl/2.0.y/conformance/textures/misc/texture-size-limit.html [ Failure ]
+
+webkit.org/b/319065 [ Debug ] imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_relatedtarget.html [ Failure Pass ]
+
+webkit.org/b/325941 [ Debug ] fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Crash Pass Timeout ]

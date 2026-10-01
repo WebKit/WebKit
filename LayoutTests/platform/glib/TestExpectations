@@ -5393,6 +5393,12 @@ webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/Send-before-open.
 
 webkit.org/b/324839 [ Debug ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Crash Pass ]
 
+webkit.org/b/316265 [ x86_64 ] imported/w3c/web-platform-tests/IndexedDB/get-databases.any.worker.html [ Crash Pass ]
+
+webkit.org/b/325932 [ Debug ] http/wpt/mediastream/mediastreamtrackprocessor-mediastreamtrackhandle.html [ Failure Pass ]
+
+webkit.org/b/325933 [ Release ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html [ Failure Pass ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
