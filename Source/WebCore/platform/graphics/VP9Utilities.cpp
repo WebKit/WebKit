@@ -271,6 +271,33 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     return configuration;
 }
 
+std::optional<VPCodecConfigurationRecord> parseVPCodecParametersIgnoringColorFields(StringView codecView)
+{
+    unsigned mandatoryFieldsEnd = 0;
+    unsigned searchStart = 0;
+    for (unsigned separators = 0; separators < 4; ++separators) {
+        auto separator = codecView.find('.', searchStart);
+        if (separator == notFound)
+            return parseVPCodecParameters(codecView);
+        mandatoryFieldsEnd = static_cast<unsigned>(separator);
+        searchStart = mandatoryFieldsEnd + 1;
+    }
+
+    auto configuration = parseVPCodecParameters(codecView.left(mandatoryFieldsEnd));
+    if (!configuration)
+        return std::nullopt;
+
+    auto chromaSubsamplingField = codecView.substring(searchStart);
+    if (auto separator = chromaSubsamplingField.find('.'); separator != notFound)
+        chromaSubsamplingField = chromaSubsamplingField.left(static_cast<unsigned>(separator));
+    auto chromaSubsampling = parseInteger<uint8_t>(chromaSubsamplingField);
+    if (!chromaSubsampling || !isValidChromaSubsampling(*chromaSubsampling))
+        return std::nullopt;
+    configuration->chromaSubsampling = *chromaSubsampling;
+
+    return configuration;
+}
+
 String createVPCodecParametersString(const VPCodecConfigurationRecord& configuration)
 {
     // The format of the 'vp09' codec string is specified in the webm GitHub repo:

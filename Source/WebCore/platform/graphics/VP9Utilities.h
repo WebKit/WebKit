@@ -131,6 +131,8 @@ struct VPCodecConfigurationRecord {
 };
 
 WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
+// Parses the mandatory fields and chromaSubsampling; the color fields that follow are not required.
+std::optional<VPCodecConfigurationRecord> parseVPCodecParametersIgnoringColorFields(StringView codecString);
 WEBCORE_EXPORT String createVPCodecParametersString(const VPCodecConfigurationRecord&);
 std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVPCC(std::span<const uint8_t>);
 void NODELETE setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
