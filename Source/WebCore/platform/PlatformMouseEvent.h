@@ -46,12 +46,13 @@ public:
     {
     }
 
-    PlatformMouseEvent(const DoublePoint& position, const DoublePoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, MonotonicTime timestamp, double force, SyntheticClickType syntheticClickType, MouseEventInputSource inputSource, PointerID pointerId = mousePointerID)
+    PlatformMouseEvent(const DoublePoint& position, const DoublePoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, MonotonicTime timestamp, double force, SyntheticClickType syntheticClickType, MouseEventInputSource inputSource, PointerID pointerId = mousePointerID, const DoublePoint& movementDelta = { })
         : PlatformEvent(type, modifiers, timestamp)
         , m_button(button)
         , m_syntheticClickType(syntheticClickType)
         , m_position(position)
         , m_globalPosition(globalPosition)
+        , m_movementDelta(movementDelta)
         , m_force(force)
         , m_pointerId(pointerId)
         , m_clickCount(clickCount)
