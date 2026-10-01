@@ -668,6 +668,13 @@ TEST_F(WTF_URL, MoveInvalidatesURL)
 
     url3 = { };
     EXPECT_FALSE(url3.isValid());
+
+    URL url4 { "http://www.webkit.org"_str };
+    static_assert(std::is_same_v<decltype(url4.string()), const String&>);
+    static_assert(std::is_same_v<decltype(WTF::move(url4).string()), String>);
+    EXPECT_TRUE(url4.isValid());
+    String string4 = WTF::move(url4).string();
+    SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(url4.isValid());
 }
 
 TEST_F(WTF_URL, ProtocolIsSecure)

@@ -141,7 +141,8 @@ public:
     // when placing a URL in an if statement.
     operator bool() const = delete;
 
-    const String& string() const LIFETIME_BOUND { return m_string; }
+    const String& string() const & LIFETIME_BOUND { return m_string; }
+    String string() && { m_isValid = false; return WTF::move(m_string); }
     WTF_EXPORT_PRIVATE String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
     // Unlike user() and password(), encodedUser() and encodedPassword() don't decode escape sequences.
