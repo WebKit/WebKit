@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>unselectable mail list item</title>
+<style>
+body { margin: 0; cursor: default; -webkit-user-select: none; user-select: none; }
+
+#row { font-size: 30px; }
+
+#row .content { padding: 24px; }
+</style>
+</head>
+<body>
+<div id="row" role="option" tabindex="-1" aria-selected="false" data-focusable-row="true">
+    <div draggable="true"><div class="content">Here's to the crazy ones.</div></div>
+</div>
+<script>
+window.events = [];
+
+const row = document.getElementById("row");
+row.addEventListener("click", () => window.events.push("click"));
+row.addEventListener("contextmenu", event => {
+    event.stopPropagation();
+    event.preventDefault();
+    window.events.push("contextmenu");
+});
+</script>
+</body>
+</html>

@@ -2541,6 +2541,26 @@ bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node
     return false;
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+
+// Outlook on the web: rdar://187832523
+bool Quirks::shouldTreatLongClickAsSecondaryClick(const Node& target) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldTreatLongClickAsSecondaryClickQuirk))
+        return false;
+
+    for (Ref ancestor : lineageOfType<Element>(target)) {
+        if (ancestor->hasAttribute("data-focusable-row"_s))
+            return true;
+    }
+
+    return false;
+}
+
+#endif
+
 bool Quirks::shouldReuseLiveRangeForSelectionUpdate() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -3746,9 +3766,31 @@ static void handleLinkedInQuirks(QuirksData& quirksData, const URL& /* quirksURL
     quirksData.isLinkedIn = true;
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+// Outlook on the web: rdar://187832523
+static void setOutlookOnTheWebQuirks(QuirksData& quirksData, const URL& quirksURL)
+{
+    auto topDocumentHost = quirksURL.host();
+    bool isOutlook = topDocumentHost == "outlook.live.com"_s
+        || topDocumentHost == "outlook.office.com"_s
+        || topDocumentHost == "outlook.office365.com"_s
+        || topDocumentHost == "outlook.cloud.microsoft"_s;
+    quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldTreatLongClickAsSecondaryClickQuirk, isOutlook);
+}
+
+static void handleOfficeQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
+{
+    setOutlookOnTheWebQuirks(quirksData, quirksURL);
+}
+#endif
+
 static void handleLiveQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& /* documentURL */)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("live.com"_s);
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    setOutlookOnTheWebQuirks(quirksData, quirksURL);
+#endif
 
     auto topDocumentHost = quirksURL.host();
     quirksData.isOutlook = topDocumentHost == "outlook.live.com"_s;
@@ -3800,13 +3842,18 @@ static void handleMediumQuirks(QuirksData& quirksData, const URL& /* quirksURL *
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk);
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || HAVE(APPKIT_GESTURES_SUPPORT)
 static void handleMicrosoftCloudQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
 {
+#if PLATFORM(IOS_FAMILY)
     auto topDocumentHost = quirksURL.host();
     // m365.cloud.microsoft rdar://157794706
     bool shouldAllowPopupFromMicrosoftOfficeToOneDrive = topDocumentHost.endsWithIgnoringASCIICase("m365.cloud.microsoft"_s);
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldAllowPopupFromMicrosoftOfficeToOneDrive, shouldAllowPopupFromMicrosoftOfficeToOneDrive);
+#endif
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    setOutlookOnTheWebQuirks(quirksData, quirksURL);
+#endif
 }
 #endif
 
@@ -4326,7 +4373,7 @@ void Quirks::determineRelevantQuirks()
 #endif
         { "marcus"_s, &handleMarcusQuirks },
         { "medium"_s, &handleMediumQuirks },
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || HAVE(APPKIT_GESTURES_SUPPORT)
         { "cloud"_s, &handleMicrosoftCloudQuirks },
 #endif
         { "menlosecurity"_s, &handleMenloSecurityQuirks },
@@ -4335,6 +4382,10 @@ void Quirks::determineRelevantQuirks()
         { "nba"_s, &handleNBAQuirks },
         { "nfl"_s, &handleNFLQuirks },
         { "nhl"_s, &handleNHLQuirks },
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+        { "office"_s, &handleOfficeQuirks },
+        { "office365"_s, &handleOfficeQuirks },
+#endif
 #if PLATFORM(IOS) || PLATFORM(VISION)
         { "nytimes"_s, &handleNYTimesQuirks },
 #endif

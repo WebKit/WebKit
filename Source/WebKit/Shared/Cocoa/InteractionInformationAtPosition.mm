@@ -80,6 +80,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
 #if PLATFORM(IOS_FAMILY)
     bool needsPointerTouchCompatibilityQuirk,
 #endif
+    bool shouldTreatLongClickAsSecondaryClickQuirk,
     WebCore::FloatPoint&& adjustedPointForNodeRespondingToClickEvents,
     std::optional<WebCore::IntPoint>&& automationAdjustedInteractionLocation,
     URL&& url,
@@ -153,6 +154,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
 #if PLATFORM(IOS_FAMILY)
     , needsPointerTouchCompatibilityQuirk(needsPointerTouchCompatibilityQuirk)
 #endif
+    , shouldTreatLongClickAsSecondaryClickQuirk(shouldTreatLongClickAsSecondaryClickQuirk)
     , adjustedPointForNodeRespondingToClickEvents(WTF::move(adjustedPointForNodeRespondingToClickEvents))
     , automationAdjustedInteractionLocation(WTF::move(automationAdjustedInteractionLocation))
     , url(WTF::move(url))

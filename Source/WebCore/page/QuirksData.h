@@ -280,6 +280,9 @@ struct QuirksData {
 #endif
         ShouldUnloadHeavyFrames,
         ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor,
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+        ShouldTreatLongClickAsSecondaryClickQuirk,
+#endif
         ShouldAllowNotificationPermissionWithoutUserGesture,
         NeedsInstagramResizingReelsQuirk,
         NeedsYahooVolumeSliderQuirk,
