@@ -1,0 +1,32 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (guard (20,20) width=230 height=178),
+        (interaction (20,20) width=230 height=240),
+        (guard (270,20) width=230 height=240),
+        (interaction (270,20) width=230 height=240),
+        (guard (520,20) width=230 height=240),
+        (interaction (520,20) width=230 height=240)
+        (cornerRadius 8.00),
+        (interaction (520,20) width=230 height=178)
+        (content hint photo),
+        (guard (20,300) width=300 height=200),
+        (interaction (20,300) width=300 height=200)
+        (content hint photo),
+        (interaction (232,468) width=80 height=24)
+        (cornerRadius 8.00)])
+      )
+    )
+  )
+)
+

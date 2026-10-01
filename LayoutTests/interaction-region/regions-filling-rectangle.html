@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    figure, figcaption, h3, h4 { margin: 0; }
+
+    .card {
+        position: absolute;
+    }
+    #card-overflowing-caption { left: 20px; top: 20px; }
+    #card-contained-caption { left: 270px; top: 20px; }
+    #card-with-img { left: 520px; top: 20px; }
+    #photo-with-badge { left: 20px; top: 300px; }
+
+    a {
+        display: block;
+    }
+
+    figure {
+        width: 230px;
+    }
+    .background-photo {
+        height: 178px;
+        background-image: url("../fast/media/resources/apple_logo_big.jpg");
+        background-size: 230px 178px;
+        background-repeat: no-repeat;
+    }
+    #card-contained-caption .background-photo {
+        height: auto;
+    }
+    figcaption {
+        padding-top: 190px;
+    }
+    #card-with-img figcaption {
+        padding-top: 12px;
+    }
+    #card-with-img img {
+        display: block;
+        width: 230px;
+        height: 178px;
+    }
+    h3 {
+        line-height: 26px;
+        margin-bottom: 2px;
+    }
+    h4 {
+        line-height: 22px;
+    }
+
+    #photo-with-badge .background-photo {
+        box-sizing: border-box;
+        width: 300px;
+        height: 200px;
+        padding: 168px 0 0 212px;
+        background-size: 300px 200px;
+    }
+    .badge {
+        width: 80px;
+        height: 24px;
+    }
+</style>
+<body>
+<!--
+    Each link has a single child, so the regions of everything inside it belong to the link, and glow together.
+    1. The photo is the figure's background, and the caption overflows below it. The regions of the caption, the
+       name and the title almost exactly fill a rectangle with the photo, so the link gets a single region for the
+       whole card instead of stacked regions for each row.
+    2. The same card, but the figure grows to contain the caption. The link also gets a single region.
+    3. The same card with the photo in an <img>. The photo keeps its own region, on top of the region of the card.
+    4. A background photo with a badge on top of it. The photo and the badge keep their own regions.
+-->
+<section id="test">
+    <div id="card-overflowing-caption" class="card">
+        <a href="#">
+            <figure class="background-photo">
+                <figcaption>
+                    <h3>Name</h3>
+                    <h4>Title</h4>
+                </figcaption>
+            </figure>
+        </a>
+    </div>
+    <div id="card-contained-caption" class="card">
+        <a href="#">
+            <figure class="background-photo">
+                <figcaption>
+                    <h3>Name</h3>
+                    <h4>Title</h4>
+                </figcaption>
+            </figure>
+        </a>
+    </div>
+    <div id="card-with-img" class="card">
+        <a href="#">
+            <figure>
+                <img src="../fast/media/resources/apple_logo_big.jpg" alt="">
+                <figcaption>
+                    <h3>Name</h3>
+                    <h4>Title</h4>
+                </figcaption>
+            </figure>
+        </a>
+    </div>
+    <div id="photo-with-badge" class="card">
+        <a href="#">
+            <div class="background-photo">
+                <div class="badge"></div>
+            </div>
+        </a>
+    </div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>
