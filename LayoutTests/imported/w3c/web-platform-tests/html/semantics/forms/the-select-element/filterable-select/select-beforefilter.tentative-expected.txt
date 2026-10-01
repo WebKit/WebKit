@@ -1,4 +1,7 @@
 
+one
+two
+three
 
 FAIL beforefilter event for customizable combobox. promise_test: Unhandled rejection with value: object "SyntaxError: 'option:not(:filtered)' is not a valid selector."
 

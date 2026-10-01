@@ -96,7 +96,8 @@ select:not(:-internal-select-preferred-size-one) {
     block-size: -internal-auto-base(revert-rule, calc(max(24px, 1lh) * attr(size type(<number>), 4)));
     box-sizing: -internal-auto-base(revert-rule, content-box);
     overflow: -internal-auto-base(revert-rule, auto);
-    padding: -internal-auto-base(revert-rule, 0);
+    padding-block: -internal-auto-base(revert-rule, 0);
+    padding-inline: -internal-auto-base(revert-rule, 0);
     min-inline-size: -internal-auto-base(revert-rule, auto);
     min-block-size: -internal-auto-base(revert-rule, auto);
     align-content: -internal-auto-base(revert-rule, normal);

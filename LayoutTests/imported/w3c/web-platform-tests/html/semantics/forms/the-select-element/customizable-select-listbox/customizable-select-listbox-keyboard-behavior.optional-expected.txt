@@ -1,4 +1,20 @@
-button before multiple   button before size=4   button after size=4    button after select disabled
+button before multiple
+one
+two
+disabled
+  button before size=4
+one
+two
+disabled
+  button after size=4
+one
+two
+ button after select disabled
+one
+two
+three
+four
+  button after select with three options
 
 FAIL Keyboard behavior for base appearance <select multiple> assert_equals: The first option should get focus when keyboard focusing into a select. expected Element node <option class="one">one</option> but got Element node <select multiple="">
   <option class="one">one</option>
@@ -9,4 +25,6 @@ FAIL Keyboard behavior for base appearance <select size=4> assert_equals: The fi
 FAIL Base appearance listbox selects should not be focusable. assert_not_equals: <select multiple> got disallowed value Element node <select multiple="">
   <option class="one">one</option>
  ...
+FAIL Tabbing and shift+tabbing into base appearance listbox. assert_equals: First focusable option should be focused when tabbing forwards into select. expected Element node <option class="one">one</option> but got Element node <select multiple="" id="threeoptions">
+  <option class="o...
 

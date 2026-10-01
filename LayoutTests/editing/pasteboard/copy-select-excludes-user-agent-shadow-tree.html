@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="copy" contenteditable="true">a<select><option>One</option><option>Two</option></select><select multiple><option>Three</option></select>b</div>
+<div id="paste" contenteditable="true"></div>
+<script>
+description("Copying a select serializes its options, not its user agent shadow tree.");
+
+let copied;
+paste.addEventListener("paste", event => {
+    copied = new DOMParser().parseFromString(event.clipboardData.getData("text/html"), "text/html");
+    event.preventDefault();
+});
+
+getSelection().selectAllChildren(copy);
+document.execCommand("Copy");
+getSelection().setPosition(paste, 0);
+document.execCommand("Paste");
+
+shouldBe("copied.querySelectorAll('select').length", "2");
+shouldBe("copied.querySelectorAll('option').length", "3");
+shouldBeNull("copied.querySelector('[popover], [useragentpart], [name=buttonSlot], [name=listBoxSlot]')");
+</script>
+</body>
+</html>

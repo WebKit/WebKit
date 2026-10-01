@@ -257,11 +257,20 @@ inline Node* nextSiblingInComposedTreeIgnoringUserAgentShadow(Node& node)
     return node.nextSibling();
 }
 
+inline ContainerNode* NODELETE parentInComposedTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* slot = node.assignedSlot()) {
+        if (auto* shadowRoot = slot->containingShadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
+            return slot;
+    }
+    return node.parentOrShadowHostNode();
+}
+
 inline Node* nextSkippingChildrenInComposedTreeIgnoringUserAgentShadow(Node& node)
 {
     if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(node))
         return sibling;
-    for (RefPtr ancestor = node.parentInComposedTree(); ancestor; ancestor = ancestor->parentInComposedTree()) {
+    for (RefPtr ancestor = parentInComposedTreeIgnoringUserAgentShadow(node); ancestor; ancestor = parentInComposedTreeIgnoringUserAgentShadow(*ancestor)) {
         if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(*ancestor))
             return sibling;
     }

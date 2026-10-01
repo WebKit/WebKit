@@ -7,13 +7,6 @@
 
 
 
-
-
-
-
-
-
-
 PASS MutationObserver records during parsing of <select> with <selectedcontent>: test1
 PASS MutationObserver records during parsing of <select> with <selectedcontent>: test2
 PASS MutationObserver records during parsing of <select> with <selectedcontent>: test3
