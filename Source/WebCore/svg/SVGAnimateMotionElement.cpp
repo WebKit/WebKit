@@ -123,22 +123,22 @@ Variant<SVGAnimateMotionElement::RotateMode, float> SVGAnimateMotionElement::rot
     return valueOrDefault(parseNumber(rotate));
 }
 
-void SVGAnimateMotionElement::updateAnimationPath()
+Path SVGAnimateMotionElement::buildAnimationPath()
 {
-    m_animationPath = Path();
-    bool foundMPath = false;
-
     for (Ref mPath : childrenOfType<SVGMPathElement>(*this)) {
-        if (RefPtr pathElement = mPath->pathElement()) {
-            m_animationPath = pathFromGraphicsElement(*pathElement);
-            foundMPath = true;
-            break;
-        }
+        if (RefPtr pathElement = mPath->pathElement())
+            return pathFromGraphicsElement(*pathElement);
     }
 
-    if (!foundMPath && hasAttributeWithoutSynchronization(SVGNames::pathAttr))
-        m_animationPath = m_path;
+    if (hasAttributeWithoutSynchronization(SVGNames::pathAttr))
+        return m_path;
 
+    return { };
+}
+
+void SVGAnimateMotionElement::updateAnimationPath()
+{
+    m_animationPath = buildAnimationPath();
     updateAnimationMode();
 }
 
@@ -220,19 +220,21 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
         FloatPoint delta(m_toPoint.x() - m_fromPoint.x(), m_toPoint.y() - m_fromPoint.y());
         angle = rad2deg(delta.slopeAngleRadians());
     } else {
-        // Path animation
-        ASSERT(!m_animationPath.isEmpty());
+        // Path animation. A referenced shape's geometry may itself be animated,
+        // so rebuild the equivalent path from the target's current state rather
+        // than relying on the value cached by updateAnimationPath().
+        Path animationPath = buildAnimationPath();
 
         // Path traversal is O(segments), so walk the path once for the position and
         // its normal angle, and at most once more for the accumulated repeats.
-        float pathLength = m_animationPath.length();
+        float pathLength = animationPath.length();
 
         // A zero-length path never reports success(), but current() is still its initial point.
-        auto traversalState = m_animationPath.traversalStateAtLength(pathLength * percentage);
+        auto traversalState = animationPath.traversalStateAtLength(pathLength * percentage);
         transform->translate(traversalState.current());
 
         if (isAccumulated() && repeatCount) {
-            auto endOfPath = m_animationPath.traversalStateAtLength(pathLength).current();
+            auto endOfPath = animationPath.traversalStateAtLength(pathLength).current();
             for (unsigned i = 0; i < repeatCount; ++i)
                 transform->translate(endOfPath);
         }
