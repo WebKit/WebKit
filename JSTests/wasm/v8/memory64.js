@@ -1,5 +1,6 @@
 //@ memoryHog!
 //@ skip if $addressBits <= 32
+//@ skip if $architecture == "arm64" && $hostOS == "darwin" # FIXME: rdar://188935150 (REGRESSION(318784@main): [JSC macOS arm64 ] wasm.yaml/wasm/v8/memory64.js is a constant failure (325981))
 // Copyright 2021 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
