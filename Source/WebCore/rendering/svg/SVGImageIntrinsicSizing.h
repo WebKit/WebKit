@@ -30,11 +30,6 @@ namespace Style {
 class ComputedStyle;
 }
 
-// SVG 2 §12.2 Placement of the embedded content mandates a 300x150 default object size when the
-// referenced resource has no intrinsic size.
-// https://w3c.github.io/svgwg/svg2-draft/embedded.html#Placement
-constexpr FloatSize defaultObjectSizeForSVGImage { 300, 150 };
-
 struct SVGImageIntrinsicSizing {
     enum class HasRatio : bool { No, Yes };
 

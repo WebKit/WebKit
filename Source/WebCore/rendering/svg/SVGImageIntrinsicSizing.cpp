@@ -23,6 +23,7 @@
 #include "CachedImage.h"
 #include "Image.h"
 #include "SVGImageElement.h"
+#include "SVGImageElementSizing.h"
 #include "SVGLengthContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -45,42 +46,23 @@ SVGImageIntrinsicSizing resolveSVGImageIntrinsicSizing(CachedImage& cachedImage,
     FloatSize ratio;
     cachedImage.computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, ratio);
 
-    // Both intrinsic dimensions known: the ratio is their ratio, per spec (overriding any
-    // viewBox-derived ratio).
-    if (intrinsicWidth > 0 && intrinsicHeight > 0)
-        return { { intrinsicWidth, intrinsicHeight }, { intrinsicWidth, intrinsicHeight }, HasRatio::Yes };
+    NaturalDimensions naturalDimensions;
+    if (intrinsicWidth > 0)
+        naturalDimensions.width = intrinsicWidth;
+    if (intrinsicHeight > 0)
+        naturalDimensions.height = intrinsicHeight;
+    if (naturalDimensions.width && naturalDimensions.height)
+        naturalDimensions.aspectRatio = FloatSize { intrinsicWidth, intrinsicHeight };
+    else if (!ratio.isEmpty())
+        naturalDimensions.aspectRatio = ratio;
 
-    auto hasRatio = ratio.isEmpty() ? HasRatio::No : HasRatio::Yes;
-    auto heightFromWidth = [&](float width) {
-        return width * ratio.height() / ratio.width();
+    auto concreteObjectSize = SVGImageElementSizing { }.resolve(naturalDimensions);
+
+    return {
+        concreteObjectSize.size(),
+        naturalDimensions.aspectRatio.value_or(FloatSize { }),
+        naturalDimensions.aspectRatio ? HasRatio::Yes : HasRatio::No
     };
-    auto widthFromHeight = [&](float height) {
-        return height * ratio.width() / ratio.height();
-    };
-    constexpr auto fallback = defaultObjectSizeForSVGImage;
-
-    // Only width known: derive height from the ratio, or fall back.
-    if (intrinsicWidth > 0) {
-        float computedHeight = hasRatio == HasRatio::Yes ? heightFromWidth(intrinsicWidth) : fallback.height();
-        return { { intrinsicWidth, computedHeight }, ratio, hasRatio };
-    }
-
-    // Only height known: derive width from the ratio, or fall back.
-    if (intrinsicHeight > 0) {
-        float computedWidth = hasRatio == HasRatio::Yes ? widthFromHeight(intrinsicHeight) : fallback.width();
-        return { { computedWidth, intrinsicHeight }, ratio, hasRatio };
-    }
-
-    // Only the ratio is known: 'contain' it within the default object size.
-    if (hasRatio == HasRatio::Yes) {
-        float widthAtFallbackHeight = widthFromHeight(fallback.height());
-        if (widthAtFallbackHeight <= fallback.width())
-            return { { widthAtFallbackHeight, fallback.height() }, ratio, HasRatio::Yes };
-        return { { fallback.width(), heightFromWidth(fallback.width()) }, ratio, HasRatio::Yes };
-    }
-
-    // Nothing known: pure fallback.
-    return { fallback, ratio, HasRatio::No };
 }
 
 FloatRect calculateSVGImageObjectBoundingBox(const SVGImageElement& imageElement, const Style::ComputedStyle& style, CachedImage* cachedImage)
