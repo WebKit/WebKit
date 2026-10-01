@@ -1,0 +1,82 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+iframe { display: block; border: none; }
+#spacer { height: 3000px; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<div id="spacer"></div>
+<script>
+description("Verifies that a wheel gesture that begins over the main frame stays latched to the main frame even after the mouse moves over a cross-origin iframe mid-gesture.");
+jsTestIsAsync = true;
+
+let frame;
+let result;
+
+function loadFrame()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        frame = document.createElement('iframe');
+        frame.width = 300;
+        frame.height = 300;
+        frame.style.cssText = 'display: block; border: none';
+        frame.src = 'http://localhost:8000/site-isolation/scrolling/resources/wheel-listener-iframe.html';
+        document.body.insertBefore(frame, document.getElementById('spacer'));
+    });
+}
+
+function queryFrame()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.scrollY === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data);
+        });
+        frame.contentWindow.postMessage({ command: 'query' }, '*');
+    });
+}
+
+window.addEventListener('load', async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+
+    await loadFrame();
+    await UIHelper.renderingUpdate();
+
+    // Begin the gesture over the main frame, establishing a latch to it, then move the mouse
+    // over the cross-origin iframe mid-gesture without ending it.
+    eventSender.mouseMoveTo(150, 500);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -50, 'changed', 'none');
+    eventSender.mouseMoveTo(150, 150);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -50, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -50, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -50, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+
+    for (let i = 0; i < 20; ++i) {
+        await UIHelper.renderingUpdate();
+        result = await queryFrame();
+    }
+
+    shouldBeTrue('window.scrollY > 0');
+    shouldBeTrue('result.scrollY == 0');
+
+    finishJSTest();
+}, false);
+</script>
+</body>

@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+    <pre id="scrollingTree"></pre>
+</body>
+<script>
+description("Verifies that when a subframe navigates from being same-site with the main frame (local) to cross-site (remote), the scrolling tree ends up with a single, up to date frame hosting node for the new process rather than stale data from the old one.");
+jsTestIsAsync = true;
+
+window.addEventListener('load', async () => {
+    if (!window.internals)
+        return
+
+    const frame = document.getElementById('frame');
+    frame.src = "http://localhost:8000/site-isolation/scrolling/resources/tall-content.html";
+    await new Promise(resolve => frame.onload = resolve);
+
+    await UIHelper.ensurePresentationUpdate();
+    document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
+    finishJSTest();
+}, false);
+</script>
+<iframe id="frame" width="300" height="200" src="http://127.0.0.1:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>

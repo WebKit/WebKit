@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+iframe { display: block; border: none; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<script>
+description("Verifies that a non-passive wheel event listener in a cross-origin iframe can block scrolling by calling preventDefault(), and that the dispatched event is reported as cancelable.");
+jsTestIsAsync = true;
+
+let frame;
+let result;
+
+function loadFrame()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        frame = document.createElement('iframe');
+        frame.width = 300;
+        frame.height = 300;
+        frame.style.cssText = 'display: block; border: none';
+        frame.src = 'http://localhost:8000/site-isolation/scrolling/resources/wheel-listener-iframe.html?mode=active-blocking';
+        document.body.appendChild(frame);
+    });
+}
+
+function queryFrame()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.scrollY === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data);
+        });
+        frame.contentWindow.postMessage({ command: 'query' }, '*');
+    });
+}
+
+window.addEventListener('load', async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+
+    await loadFrame();
+    await UIHelper.renderingUpdate();
+
+    // Don't rely on UIHelper.waitForScrollCompletion() since the event is handled in another process.
+    eventSender.mouseMoveTo(150, 150);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -200, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    // Give the event plenty of chances to (incorrectly) scroll the iframe before checking.
+    for (let i = 0; i < 20; ++i) {
+        await UIHelper.renderingUpdate();
+        result = await queryFrame();
+    }
+
+    shouldBeTrue('result.scrollY == 0');
+    shouldBeTrue('result.lastEvent.cancelable');
+    shouldBeTrue('result.lastEvent.defaultPrevented');
+
+    finishJSTest();
+}, false);
+</script>
+</body>

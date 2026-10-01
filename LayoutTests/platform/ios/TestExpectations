@@ -389,6 +389,13 @@ http/tests/site-isolation/wheel-event-coordinates.html [ Skip ]
 http/tests/site-isolation/scrolling/basic-mouse-wheel-scrolling.html [ Skip ]
 http/tests/site-isolation/scrolling/scrolling-after-cross-origin-navigation.html [ Skip ]
 http/tests/site-isolation/scrolling/wheel-scroll-full-size-iframe-after-content-grows.html [ Skip ]
+http/tests/site-isolation/scrolling/mouse-wheel-scroll-cross-origin-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/passive-wheel-listener-does-not-block-scroll-in-cross-origin-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/non-passive-wheel-listener-blocks-scroll-in-cross-origin-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/latching-stays-on-cross-origin-iframe-when-mouse-moves-to-mainframe.html [ Skip ]
+http/tests/site-isolation/scrolling/latching-stays-on-mainframe-when-mouse-moves-to-cross-origin-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/dynamically-add-remove-wheel-listener-in-cross-origin-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/latching-with-synchronous-wheel-listener-across-processes.html [ Skip ]
 
 # This test requires alpha-channel video support.
 compositing/video/video-background-color.html [ WontFix ]
