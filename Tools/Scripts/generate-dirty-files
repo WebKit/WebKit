@@ -30,7 +30,12 @@ import re
 
 from webkitpy.safer_cpp.checkers import Checker
 
-DERIVED_SOURCES_RE = r'(^|.*\/)DerivedSources\/WebCore\/JS.*'
+# Generated JS bindings, in the Xcode and CMake build layouts.
+DERIVED_SOURCES_RE = r'(^|.*\/)(DerivedSources\/WebCore\/JS|WebCore\/DerivedSources\/JS).*'
+# CMake copies headers into <Project>/Headers, <Project>/PrivateHeaders and DerivedSources/ForwardingHeaders
+# under the build directory. Xcode's copies live under usr/local/include, which carries no project name
+# and is ignored below.
+FORWARDING_HEADERS_RE = r'(^|.*\/)(Headers|PrivateHeaders|ForwardingHeaders)\/'
 
 
 def parser():
@@ -69,6 +74,11 @@ def parse_results_file(args, file_path):
                     bug_file = bug_file.removeprefix(f'{args.build_dir}/')
                     bug_file = bug_file.removeprefix('WebKitBuild/Release/')
                     bug_file = bug_file.removeprefix('WebKitBuild/Release-iphonesimulator/')
+                    # CMake build directories are WebKitBuild/<Port>/<Configuration>; Xcode's are WebKitBuild/<Configuration>.
+                    bug_file = re.sub(r'^WebKitBuild/(?!(Debug|Release)[^/]*/)[^/]+/[^/]+/', '', bug_file)
+                    # An absolute path matches every project whose name appears in the checkout path.
+                    if '/Source/' in bug_file:
+                        bug_file = 'Source/' + bug_file.split('/Source/', 1)[1]
                 if 'ISSUEHASHCONTENTOFLINEINCONTEXT' in line:
                     issue_hash = line.removeprefix('<!-- ISSUEHASHCONTENTOFLINEINCONTEXT ')
                     issue_hash = issue_hash.removesuffix(' -->\n')
@@ -85,6 +95,7 @@ def parse_results_file(args, file_path):
 
 def find_project_results(args, project, file_list, results_data, issue_to_report):
     bug_counts = {}
+    unknown_bug_types = set()
     files_per_project = {checker.name(): set() for checker in Checker.enumerate()}
 
     for result_file in file_list:
@@ -99,13 +110,22 @@ def find_project_results(args, project, file_list, results_data, issue_to_report
         if f'{project.lower()}/' not in file_name.lower():
             # Ignore WebKitBuild/Debug files that are included from other projects
             continue
+        elif re.match(FORWARDING_HEADERS_RE, file_name):
+            # Copies of headers under Source/, ignored like Xcode's copies above
+            continue
         elif not re.match(DERIVED_SOURCES_RE, file_name):
             # Truncate path after project name to match the expectations file
             file_name = file_name.split(f'{project}/')[-1]
             file_name = file_name.removeprefix('./')
+            file_name = file_name.removeprefix('DerivedSources/')
 
         # Map filename to issues for each bug type
         checker = Checker.find_checker_by_description(bug_type)
+        if not checker:
+            if bug_type not in unknown_bug_types:
+                unknown_bug_types.add(bug_type)
+                sys.stderr.write(f'Unknown checker for bug type: {bug_type}\n')
+            continue
         checker_name = checker.name()
         file_dict = results_data.get(checker_name, {})
         if not file_name in file_dict:

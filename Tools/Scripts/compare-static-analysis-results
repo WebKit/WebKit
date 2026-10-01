@@ -38,7 +38,8 @@ STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
 UNEXPECTED_PASS = {'actual': 'PASS', 'expected': 'FAIL'}
 UNEXPECTED_FAILURE = {'actual': 'FAIL', 'expected': 'PASS'}
 EXPECTED_FAILURE = {'actual': 'FAIL', 'expected': 'FAIL'}
-DERIVED_SOURCES_RE = r'(^|.*\/)DerivedSources\/WebCore\/JS.*'
+# Generated JS bindings, in the Xcode and CMake build layouts.
+DERIVED_SOURCES_RE = r'(^|.*\/)(DerivedSources\/WebCore\/JS|WebCore\/DerivedSources\/JS).*'
 EXPECTATION_LINE_RE = r'(\s*\[\s*(?P<platform>\w+)\s*\]\s*)?(?P<path>.+)'
 
 
