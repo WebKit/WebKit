@@ -332,6 +332,16 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
 
         auto [inlineBorderAndPadding, blockBorderAndPadding] = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize);
 
+        // A preferred aspect ratio makes the size in one axis depend on the size in the other.
+        if (GridLayoutUtils::sizeDependsOnAspectRatio(gridItem)) {
+            auto [inlineUsedSize, blockUsedSize] = GridLayoutUtils::usedSizesForAspectRatioItem(gridItem, columnTrackSizingFunctions, rowTrackSizingFunctions, inlineBorderAndPadding, blockBorderAndPadding,
+                gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);
+            usedInlineSizes.append(inlineUsedSize);
+            usedBlockSizes.append(blockUsedSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
+            continue;
+        }
+
         auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, inlineMargins);
         usedInlineSizes.append(inlineUsedSize);
 

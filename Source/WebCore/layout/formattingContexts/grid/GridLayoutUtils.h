@@ -80,6 +80,14 @@ LayoutUnit blockMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit inlineUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit gridAreaInlineSize, const IntegrationUtils&, const UsedMargins&);
 LayoutUnit blockUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit gridAreaBlockSize, const GridFormattingContext&, LayoutUnit gridAreaInlineSize, const UsedMargins&);
 
+// Whether the grid item is non-replaced, has a preferred aspect ratio, and has an automatic size in
+// at least one axis once its grid area is definite, so that its sizes in the two axes depend on each other.
+bool sizeDependsOnAspectRatio(const PlacedGridItem&);
+// Used inline and block sizes of a grid item for which sizeDependsOnAspectRatio() is true.
+std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridItem&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions,
+    LayoutUnit inlineBorderAndPadding, LayoutUnit blockBorderAndPadding, LayoutUnit gridAreaInlineSize, LayoutUnit gridAreaBlockSize, const GridFormattingContext&,
+    const UsedMargins& inlineMargins, const UsedMargins& blockMargins);
+
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
 LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
 
