@@ -27,6 +27,10 @@ PASS PerformanceResourceTiming interface: attribute finalResponseHeadersStart
 PASS PerformanceResourceTiming interface: attribute firstInterimResponseStart
 PASS PerformanceResourceTiming interface: attribute responseStart
 PASS PerformanceResourceTiming interface: attribute responseEnd
+PASS PerformanceResourceTiming interface: attribute workerRouterEvaluationStart
+PASS PerformanceResourceTiming interface: attribute workerCacheLookupStart
+PASS PerformanceResourceTiming interface: attribute workerMatchedRouterSource
+PASS PerformanceResourceTiming interface: attribute workerFinalRouterSource
 PASS PerformanceResourceTiming interface: attribute transferSize
 PASS PerformanceResourceTiming interface: attribute encodedBodySize
 PASS PerformanceResourceTiming interface: attribute decodedBodySize
@@ -54,6 +58,10 @@ PASS PerformanceResourceTiming interface: resource must inherit property "finalR
 PASS PerformanceResourceTiming interface: resource must inherit property "firstInterimResponseStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseEnd" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "workerRouterEvaluationStart" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "workerCacheLookupStart" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "workerMatchedRouterSource" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "workerFinalRouterSource" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "transferSize" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "encodedBodySize" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "decodedBodySize" with the proper type

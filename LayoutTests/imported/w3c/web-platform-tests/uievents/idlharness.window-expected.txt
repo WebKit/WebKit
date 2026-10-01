@@ -3,8 +3,6 @@ PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface UIEvent: original interface defined
 PASS Partial interface UIEvent: member names are unique
-PASS Partial interface MouseEvent: original interface defined
-PASS Partial interface MouseEvent: member names are unique
 PASS Partial interface KeyboardEvent: original interface defined
 PASS Partial interface KeyboardEvent: member names are unique
 PASS Partial interface CompositionEvent: original interface defined
@@ -56,98 +54,6 @@ PASS UIEvent interface: new FocusEvent("event") must inherit property "detail" w
 PASS UIEvent interface: new FocusEvent("event") must inherit property "initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long)" with the proper type
 PASS UIEvent interface: calling initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long) on new FocusEvent("event") with too few arguments must throw TypeError
 PASS UIEvent interface: new FocusEvent("event") must inherit property "which" with the proper type
-PASS MouseEvent interface: existence and properties of interface object
-PASS MouseEvent interface object length
-PASS MouseEvent interface object name
-PASS MouseEvent interface: existence and properties of interface prototype object
-PASS MouseEvent interface: existence and properties of interface prototype object's "constructor" property
-PASS MouseEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS MouseEvent interface: attribute screenX
-PASS MouseEvent interface: attribute screenY
-PASS MouseEvent interface: attribute clientX
-PASS MouseEvent interface: attribute clientY
-FAIL MouseEvent interface: attribute layerX assert_own_property: expected property "layerX" missing
-FAIL MouseEvent interface: attribute layerY assert_own_property: expected property "layerY" missing
-PASS MouseEvent interface: attribute ctrlKey
-PASS MouseEvent interface: attribute shiftKey
-PASS MouseEvent interface: attribute altKey
-PASS MouseEvent interface: attribute metaKey
-PASS MouseEvent interface: attribute button
-PASS MouseEvent interface: attribute buttons
-PASS MouseEvent interface: attribute relatedTarget
-PASS MouseEvent interface: operation getModifierState(DOMString)
-PASS MouseEvent interface: operation initMouseEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long, optional long, optional long, optional long, optional long, optional boolean, optional boolean, optional boolean, optional boolean, optional short, optional EventTarget?)
-PASS MouseEvent must be primary interface of new MouseEvent("event")
-PASS Stringification of new MouseEvent("event")
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "screenX" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "screenY" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "clientX" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "clientY" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "layerX" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "layerY" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "ctrlKey" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "shiftKey" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "altKey" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "metaKey" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "button" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "buttons" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "relatedTarget" with the proper type
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "getModifierState(DOMString)" with the proper type
-PASS MouseEvent interface: calling getModifierState(DOMString) on new MouseEvent("event") with too few arguments must throw TypeError
-PASS MouseEvent interface: new MouseEvent("event") must inherit property "initMouseEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long, optional long, optional long, optional long, optional long, optional boolean, optional boolean, optional boolean, optional boolean, optional short, optional EventTarget?)" with the proper type
-PASS MouseEvent interface: calling initMouseEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long, optional long, optional long, optional long, optional long, optional boolean, optional boolean, optional boolean, optional boolean, optional short, optional EventTarget?) on new MouseEvent("event") with too few arguments must throw TypeError
-PASS UIEvent interface: new MouseEvent("event") must inherit property "view" with the proper type
-PASS UIEvent interface: new MouseEvent("event") must inherit property "detail" with the proper type
-PASS UIEvent interface: new MouseEvent("event") must inherit property "initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long)" with the proper type
-PASS UIEvent interface: calling initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long) on new MouseEvent("event") with too few arguments must throw TypeError
-PASS UIEvent interface: new MouseEvent("event") must inherit property "which" with the proper type
-PASS WheelEvent interface: existence and properties of interface object
-PASS WheelEvent interface object length
-PASS WheelEvent interface object name
-PASS WheelEvent interface: existence and properties of interface prototype object
-PASS WheelEvent interface: existence and properties of interface prototype object's "constructor" property
-PASS WheelEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS WheelEvent interface: constant DOM_DELTA_PIXEL on interface object
-PASS WheelEvent interface: constant DOM_DELTA_PIXEL on interface prototype object
-PASS WheelEvent interface: constant DOM_DELTA_LINE on interface object
-PASS WheelEvent interface: constant DOM_DELTA_LINE on interface prototype object
-PASS WheelEvent interface: constant DOM_DELTA_PAGE on interface object
-PASS WheelEvent interface: constant DOM_DELTA_PAGE on interface prototype object
-PASS WheelEvent interface: attribute deltaX
-PASS WheelEvent interface: attribute deltaY
-PASS WheelEvent interface: attribute deltaZ
-PASS WheelEvent interface: attribute deltaMode
-PASS WheelEvent must be primary interface of new WheelEvent("event")
-PASS Stringification of new WheelEvent("event")
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "DOM_DELTA_PIXEL" with the proper type
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "DOM_DELTA_LINE" with the proper type
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "DOM_DELTA_PAGE" with the proper type
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "deltaX" with the proper type
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "deltaY" with the proper type
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "deltaZ" with the proper type
-PASS WheelEvent interface: new WheelEvent("event") must inherit property "deltaMode" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "screenX" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "screenY" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "clientX" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "clientY" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "layerX" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "layerY" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "ctrlKey" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "shiftKey" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "altKey" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "metaKey" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "button" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "buttons" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "relatedTarget" with the proper type
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "getModifierState(DOMString)" with the proper type
-PASS MouseEvent interface: calling getModifierState(DOMString) on new WheelEvent("event") with too few arguments must throw TypeError
-PASS MouseEvent interface: new WheelEvent("event") must inherit property "initMouseEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long, optional long, optional long, optional long, optional long, optional boolean, optional boolean, optional boolean, optional boolean, optional short, optional EventTarget?)" with the proper type
-PASS MouseEvent interface: calling initMouseEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long, optional long, optional long, optional long, optional long, optional boolean, optional boolean, optional boolean, optional boolean, optional short, optional EventTarget?) on new WheelEvent("event") with too few arguments must throw TypeError
-PASS UIEvent interface: new WheelEvent("event") must inherit property "view" with the proper type
-PASS UIEvent interface: new WheelEvent("event") must inherit property "detail" with the proper type
-PASS UIEvent interface: new WheelEvent("event") must inherit property "initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long)" with the proper type
-PASS UIEvent interface: calling initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long) on new WheelEvent("event") with too few arguments must throw TypeError
-PASS UIEvent interface: new WheelEvent("event") must inherit property "which" with the proper type
 PASS InputEvent interface: existence and properties of interface object
 PASS InputEvent interface object length
 PASS InputEvent interface object name

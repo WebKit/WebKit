@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Web Serial API (https://wicg.github.io/serial/)
+// Source: Web Serial API (https://serial.spec.whatwg.org/)
 
 [Exposed=Window, SecureContext]
 partial interface Navigator {
@@ -37,8 +37,8 @@ interface SerialPort : EventTarget {
   attribute EventHandler onconnect;
   attribute EventHandler ondisconnect;
   readonly attribute boolean connected;
-  readonly attribute ReadableStream readable;
-  readonly attribute WritableStream writable;
+  readonly attribute ReadableStream? readable;
+  readonly attribute WritableStream? writable;
 
   SerialPortInfo getInfo();
 

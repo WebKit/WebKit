@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Client to Authenticator Protocol (CTAP) (https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-errata-20220621.html)
+// Source: Client to Authenticator Protocol (CTAP) (https://fidoalliance.org/specs/fido-v2.3-ps-20260226/fido-client-to-authenticator-protocol-v2.3-ps-20260226.html)
 
 partial dictionary AuthenticationExtensionsClientInputs {
   USVString credentialProtectionPolicy;
@@ -16,8 +16,20 @@ partial dictionary AuthenticationExtensionsClientInputs {
   boolean getCredBlob;
 };
 
+partial dictionary AuthenticationExtensionsClientOutputs {
+  boolean credBlob;
+};
+
+partial dictionary AuthenticationExtensionsClientOutputs {
+  ArrayBuffer getCredBlob;
+};
+
 partial dictionary AuthenticationExtensionsClientInputs {
   boolean minPinLength;
+};
+
+partial dictionary AuthenticationExtensionsClientInputs {
+  boolean pinComplexityPolicy;
 };
 
 partial dictionary AuthenticationExtensionsClientInputs {
