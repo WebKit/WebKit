@@ -615,6 +615,9 @@ static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory 
 static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
 static_assert(static_cast<int>(ExternalKind::Exception)   == 4, "Wasm needs Exception to have the value 4");
 
+static constexpr uint8_t compactImportEncodingItemsWithTypes = 0x7F;
+static constexpr uint8_t compactImportEncodingItemsWithSharedType = 0x7E;
+
 inline ASCIILiteral makeString(ExternalKind kind)
 {
     switch (kind) {
