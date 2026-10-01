@@ -37,9 +37,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<FindStringCallbackAggregator> FindStringCallbackAggregator::create(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
+Ref<FindStringCallbackAggregator> FindStringCallbackAggregator::create(WebPageProxy& page, FindOverlaySession& session, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
 {
-    return adoptRef(*new FindStringCallbackAggregator(page, string, options, maxMatchCount, WTF::move(completionHandler)));
+    return adoptRef(*new FindStringCallbackAggregator(page, session, string, options, maxMatchCount, WTF::move(completionHandler)));
 }
 
 void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> frameID, uint32_t matchCount, bool didWrap)
@@ -48,7 +48,7 @@ void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> fr
         return;
 
     m_matchCount += matchCount;
-    m_matches.set(*frameID, FrameMatchResult { matchCount, didWrap });
+    m_matches.set(*frameID, FindOverlayFrameResult { matchCount, didWrap });
 }
 
 RefPtr<WebFrameProxy> FindStringCallbackAggregator::incrementFrame(WebFrameProxy& frame)
@@ -89,6 +89,8 @@ uint32_t FindStringCallbackAggregator::globalIndexOffsetForFrame(const WebFrameP
 
 FindStringCallbackAggregator::~FindStringCallbackAggregator()
 {
+    m_session->didSettle(HashMap<FrameIdentifier, FindOverlayFrameResult> { m_matches }, m_matchCount);
+
     RefPtr protectedPage = m_page.get();
     if (!protectedPage) {
         m_completionHandler(false);
@@ -116,11 +118,8 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     auto matchCount = shouldReportMatchesCount ? m_matchCount : 1;
     Ref targetFrame = frameContainingMatch ? *frameContainingMatch : *focusedFrame;
     uint32_t indexOffset = globalIndexOffsetForFrame(targetFrame);
-    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, matchCount, indexOffset, completionHandler = WTF::move(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, int32_t matchIndex, bool didWrap) mutable {
-        if (!frameID)
-            protectedPage->findClient().didFailToFindString(protectedPage.ptr(), string);
-        else
-            protectedPage->findClient().didFindString(protectedPage.ptr(), string, matchRects, matchCount, indexOffset + matchIndex, didWrap);
+    auto completionHandler = [protectedPage = Ref { *protectedPage }, session = m_session, matchCount, indexOffset, completionHandler = WTF::move(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, int32_t matchIndex, bool didWrap) mutable {
+        session->deliverResult(protectedPage, frameID, matchRects, matchCount, indexOffset + matchIndex, didWrap);
         completionHandler(frameID.has_value());
     };
 
@@ -129,8 +128,9 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
         protectedPage->clearSelection(focusedFrame->frameID());
 }
 
-FindStringCallbackAggregator::FindStringCallbackAggregator(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
+FindStringCallbackAggregator::FindStringCallbackAggregator(WebPageProxy& page, FindOverlaySession& session, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
     : m_page(page)
+    , m_session(session)
     , m_string(string)
     , m_options(options)
     , m_maxMatchCount(maxMatchCount)

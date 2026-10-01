@@ -410,6 +410,7 @@ UIProcess/DisplayLink.cpp
 UIProcess/DisplayLinkProcessProxyClient.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/EnhancedSecurityTracking.cpp
+UIProcess/FindOverlaySession.cpp
 UIProcess/FindStringCallbackAggregator.cpp @cost:3
 UIProcess/FindTextMatchesCallbackAggregator.cpp
 UIProcess/FrameLoadState.cpp

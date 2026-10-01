@@ -37,6 +37,7 @@
 #import "CoreTelephonyUtilities.h"
 #import "DataDetectionResult.h"
 #import "ExtensionCapabilityGranter.h"
+#import "FindOverlaySession.h"
 #import "InsertTextOptions.h"
 #import "InteractionInformationAtPosition.h"
 #import "LegacyWebArchiveCallbackAggregator.h"

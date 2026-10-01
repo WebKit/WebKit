@@ -127,6 +127,8 @@
 
 namespace WebKit {
 
+class FindOverlaySession;
+
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
     String sourceDescription;
@@ -245,6 +247,7 @@ public:
 #endif
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
+    RefPtr<FindOverlaySession> findOverlaySession;
     WebCore::IntSize fixedLayoutSize;
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
