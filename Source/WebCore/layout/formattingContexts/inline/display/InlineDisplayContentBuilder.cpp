@@ -683,6 +683,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto isFirstLastIndexes = isFirstLastIndexesMap.get(layoutBox.ptr());
     auto isFirstBox = isFirstLastIndexes.first && *isFirstLastIndexes.first == displayBoxNodeIndex;
     auto isLastBox = isFirstLastIndexes.last && *isFirstLastIndexes.last == displayBoxNodeIndex;
+    displayBox.setIsFirstLastFragment(isFirstBox, isLastBox);
     auto logicalRect = lineBox().logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
     auto beforeInlineBoxContent = [&] {
         auto shouldApplyLeftSide = (boxIsLTR && isFirstBox) || (!boxIsLTR && isLastBox);

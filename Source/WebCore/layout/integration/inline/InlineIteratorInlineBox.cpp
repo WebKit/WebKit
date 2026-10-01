@@ -41,11 +41,16 @@ InlineBox::InlineBox(PathVariant&& path)
 
 RectEdges<bool> InlineBox::closedEdges() const
 {
-    // FIXME: Layout knows the answer to this question so we should consult it.
     RectEdges<bool> closedEdges { true };
     if (style()->boxDecorationBreak() == BoxDecorationBreak::Clone)
         return closedEdges;
     auto writingMode = style()->writingMode();
+    // Layout knows whether a fragment of an inline box has its start/end (the root inline box is not fragmented this way).
+    if (auto* displayBox = inlineBox(); displayBox && displayBox->isNonRootInlineBox()) {
+        closedEdges.setStart(displayBox->isFirstFragment(), writingMode);
+        closedEdges.setEnd(displayBox->isLastFragment(), writingMode);
+        return closedEdges;
+    }
     bool isFirst = !nextInlineBoxLineLeftward();
     bool isLast = !nextInlineBoxLineRightward();
     closedEdges.setStart(isFirst, writingMode);
