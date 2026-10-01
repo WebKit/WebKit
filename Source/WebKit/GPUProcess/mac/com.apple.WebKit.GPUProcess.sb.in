@@ -1527,8 +1527,9 @@
     SYS_work_interval_ctl
     SYS_workq_kernreturn))
 
-(allow syscall-unix (with telemetry)
+(allow syscall-unix (with report) (with telemetry)
     (syscall-number
+        SYS_fgetattrlist
         SYS_openat_dprotected_np
         SYS_renameat))
 

@@ -335,6 +335,7 @@
 
 (define (syscall-unix-allowed-with-telemetry)
     (syscall-number
+        SYS_fgetattrlist
         SYS_openat_dprotected_np
         SYS_renameat))
 

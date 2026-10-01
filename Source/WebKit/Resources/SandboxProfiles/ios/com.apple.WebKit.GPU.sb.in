@@ -268,7 +268,7 @@
         (syscall-number SYS_mkdirat)))
 
 (allow syscall-unix (syscall-unix-allowed))
-(allow syscall-unix (with telemetry)
+(allow syscall-unix (with report) (with telemetry)
     (syscall-unix-allowed-with-telemetry))
 
 (deny syscall-mach (with telemetry))

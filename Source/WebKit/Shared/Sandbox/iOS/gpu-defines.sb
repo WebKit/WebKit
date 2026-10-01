@@ -361,6 +361,7 @@
 
 (define (syscall-unix-allowed-with-telemetry)
     (syscall-number
+        SYS_fgetattrlist
         SYS_renameat))
         
 (define (syscall-mach-allowed)
