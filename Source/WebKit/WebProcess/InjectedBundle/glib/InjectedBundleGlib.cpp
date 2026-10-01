@@ -30,6 +30,7 @@
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
 #include <wtf/FileSystem.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API:
 {
     m_platformBundle = g_module_open(FileSystem::fileSystemRepresentation(m_path).legacyCStringPointer(), G_MODULE_BIND_LOCAL);
     if (!m_platformBundle) {
-        g_warning("Error loading the injected bundle (%s): %s", m_path.utf8().legacyCStringPointer(), g_module_error());
+        SAFE_G_WARNING("Error loading the injected bundle (%s): %s", m_path.utf8(), g_module_error());
         return false;
     }
 

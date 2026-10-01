@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <wtf/glib/GLibExtras.h>
 
 static WebKitTestServer* kServer;
 
@@ -85,7 +86,7 @@ static void testMemoryPressureSettings(MemoryPressureTest* test, gconstpointer)
     // kill the process as soon as it detects that it's using more than 1MB, so the network process
     // won't be able to complete the resource load. This causes an internal error and the load-failed
     // signal is emitted.
-    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer()));
+    GUniquePtr<char> fileURL(SAFE_G_STRDUP_PRINTF("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources)));
     test->loadURI(fileURL.get());
     test->waitUntilLoadFailed();
 }

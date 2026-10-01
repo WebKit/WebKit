@@ -234,14 +234,14 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
             auto path = makeKeyPath(group, key);
             auto iter = settingsObject->priv->settings.find(path);
             if (iter == settingsObject->priv->settings.end()) {
-                g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", path.legacyCStringPointer());
+                SAFE_G_SET_ERROR(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", path);
                 return FALSE;
             }
 
             GUniqueOutPtr<GError> innerError;
             GRefPtr<GVariant> parsedValue = adoptGRef(g_variant_parse(iter->value.type.get(), value.get(), nullptr, nullptr, &innerError.outPtr()));
             if (!parsedValue) {
-                g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_INVALID_VALUE, "Failed to parse value for key %s: %s", path.legacyCStringPointer(), innerError->message);
+                SAFE_G_SET_ERROR(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_INVALID_VALUE, "Failed to parse value for key %s: %s", path, innerError->message);
                 return FALSE;
             }
 

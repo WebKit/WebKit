@@ -3235,14 +3235,28 @@ def check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error):
 
 _GLIB_STRING_WRAPPERS = {
     'g_build_filename': 'gBuildFilename',
+    'g_error_new': 'SAFE_G_ERROR_NEW',
     'g_file_new_for_path': 'gFileNewForPath',
     'g_quark_from_string': 'gQuarkFromString',
+    'g_set_error': 'SAFE_G_SET_ERROR',
     'g_signal_emit': 'gSignalEmit',
     'g_strdup': 'gStrdup',
+    'g_strdup_printf': 'SAFE_G_STRDUP_PRINTF',
+    'g_task_return_new_error': 'SAFE_G_TASK_RETURN_NEW_ERROR',
     'g_value_set_string': 'gValueSetString',
     'g_variant_builder_add': 'gVariantBuilderAdd',
     'g_variant_new': 'gVariantNew',
     'g_variant_new_string': 'gVariantNewString',
+    'g_warning': 'SAFE_G_WARNING',
+}
+
+# The SAFE_G_* macros do not convert the format argument, so a pointer passed there cannot be replaced.
+_GLIB_PRINTF_FORMAT_ARGUMENT_INDEX = {
+    'g_error_new': 2,
+    'g_set_error': 3,
+    'g_strdup_printf': 0,
+    'g_task_return_new_error': 3,
+    'g_warning': 0,
 }
 
 
@@ -3273,7 +3287,16 @@ def _enclosing_function_call(clean_lines, line_number, position):
     Looks back across previous lines, so that arguments on continuation lines are attributed to their call.
     """
 
+    return _enclosing_function_call_and_argument_index(clean_lines, line_number, position)[0]
+
+
+def _enclosing_function_call_and_argument_index(clean_lines, line_number, position):
+    """Returns the name of the function whose argument list contains the given position, and the index of the
+    argument containing it, or (None, None).
+    """
+
     depth = 0
+    argument_index = 0
     for current_line_number in range(line_number, max(line_number - 10, -1), -1):
         line = clean_lines.elided[current_line_number]
         end = position if current_line_number == line_number else len(line)
@@ -3287,13 +3310,15 @@ def _enclosing_function_call(clean_lines, line_number, position):
                     continue
                 # A leading '::' names the global function, but any other qualifier names a different one.
                 name = search(r'(?:^|[^\w.>:])(?:::)?(\w+)\s*$', line[:index])
-                return name.group(1) if name else None
+                return (name.group(1), argument_index) if name else (None, None)
+            elif character == ',' and not depth:
+                argument_index += 1
             elif character in ';{}' and not depth:
-                return None
-    return None
+                return (None, None)
+    return (None, None)
 
 
-def _check_string_wrappers(clean_lines, line_number, file_state, error, wrappers, header, category):
+def _check_string_wrappers(clean_lines, line_number, file_state, error, wrappers, header, category, format_argument_indices):
     """Looks for functions in wrappers called with legacyCStringPointer(), which should use the wrappers in header."""
 
     if file_state.is_c_or_objective_c():
@@ -3305,9 +3330,11 @@ def _check_string_wrappers(clean_lines, line_number, file_state, error, wrappers
 
     reported_functions = set()
     for pointer_call in re.finditer(r'\blegacyCStringPointer\s*\(', line):
-        function = _enclosing_function_call(clean_lines, line_number, pointer_call.start())
+        function, argument_index = _enclosing_function_call_and_argument_index(clean_lines, line_number, pointer_call.start())
         wrapper = wrappers.get(function)
         if not wrapper or function in reported_functions:
+            continue
+        if argument_index == format_argument_indices.get(function):
             continue
         reported_functions.add(function)
         error(line_number, category, 4,
@@ -3325,7 +3352,7 @@ def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
       error: The function to call with any errors found.
     """
 
-    _check_string_wrappers(clean_lines, line_number, file_state, error, _GLIB_STRING_WRAPPERS, 'wtf/glib/GLibExtras.h', 'runtime/glib_string_wrappers')
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _GLIB_STRING_WRAPPERS, 'wtf/glib/GLibExtras.h', 'runtime/glib_string_wrappers', _GLIB_PRINTF_FORMAT_ARGUMENT_INDEX)
 
 
 def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
@@ -3339,7 +3366,7 @@ def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
       error: The function to call with any errors found.
     """
 
-    _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, 'wtf/posix/POSIXExtras.h', 'runtime/posix_string_wrappers')
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, 'wtf/posix/POSIXExtras.h', 'runtime/posix_string_wrappers', {})
 
 
 # printf-style logging and assertion macros that convert typed string arguments themselves.

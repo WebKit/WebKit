@@ -34,6 +34,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <wtf/HashSet.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/UTF8CStringView.h>
@@ -631,7 +632,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     g_assert_nonnull(g_strstr_len(newUserAgent, -1, "3.4.5"));
     g_assert_nonnull(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
 
-    GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.legacyCStringPointer(), "WebCatGTK+/3.4.5"));
+    GUniquePtr<char> applicationUserAgent(SAFE_G_STRDUP_PRINTF("%s %s", defaultUserAgent, "WebCatGTK+/3.4.5"));
     g_assert_cmpstr(applicationUserAgent.get(), ==, webkit_settings_get_user_agent(settings.get()));
 
     // Test setting user agent built via WebKitUserAgent

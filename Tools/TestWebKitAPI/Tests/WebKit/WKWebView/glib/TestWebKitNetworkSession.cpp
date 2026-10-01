@@ -24,6 +24,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <libsoup/soup.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -139,7 +140,7 @@ public:
     WebSocketServerType createWebSocketAndWaitUntilConnected()
     {
         m_webSocketRequestReceived = WebSocketServerType::Unknown;
-        GUniquePtr<char> createWebSocket(g_strdup_printf("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo").legacyCStringPointer()));
+        GUniquePtr<char> createWebSocket(SAFE_G_STRDUP_PRINTF("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo")));
         runJavaScriptAndWaitUntilFinished(createWebSocket.get(), nullptr);
         if (m_webSocketRequestReceived == WebSocketServerType::Unknown)
             g_main_loop_run(m_mainLoop);

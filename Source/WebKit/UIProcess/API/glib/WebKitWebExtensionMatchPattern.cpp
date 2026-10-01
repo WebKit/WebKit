@@ -25,6 +25,7 @@
 #include "WebKitPrivate.h"
 
 #include <wtf/URLParser.h>
+#include <wtf/glib/GLibExtras.h>
 
 using namespace WebKit;
 
@@ -210,8 +211,8 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_stri
     RefPtr matchPattern = WebKit::WebExtensionMatchPattern::create(String::fromUTF8(string), internalError);
 
     if (error && internalError) {
-        g_set_error(error, webkit_web_extension_match_pattern_error_quark(),
-            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), internalError->localizedDescription().utf8().legacyCStringPointer(), nullptr);
+        SAFE_G_SET_ERROR(error, webkit_web_extension_match_pattern_error_quark(),
+            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
     }
 
     return webkitWebExtensionMatchPatternCreate(matchPattern);
@@ -240,8 +241,8 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_sche
     RefPtr matchPattern = WebKit::WebExtensionMatchPattern::create(String::fromUTF8(scheme), String::fromUTF8(host), String::fromUTF8(path), internalError);
 
     if (error && internalError) {
-        g_set_error(error, webkit_web_extension_match_pattern_error_quark(),
-            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), internalError->localizedDescription().utf8().legacyCStringPointer(), nullptr);
+        SAFE_G_SET_ERROR(error, webkit_web_extension_match_pattern_error_quark(),
+            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
     }
 
     return webkitWebExtensionMatchPatternCreate(matchPattern);

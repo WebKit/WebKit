@@ -4489,8 +4489,8 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
                 builder.append(": "_s);
             }
             builder.append(exceptionDetails.message);
-            g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
-                "%s", builder.toString().utf8().legacyCStringPointer());
+            SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
+                "%s", builder.toString().utf8());
         }
     });
 }
@@ -5654,7 +5654,7 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
             g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTF::move(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
             break;
         case UserMessage::Type::Error:
-            g_task_return_new_error(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name.legacyCStringPointer());
+            SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name);
             break;
         }
     };

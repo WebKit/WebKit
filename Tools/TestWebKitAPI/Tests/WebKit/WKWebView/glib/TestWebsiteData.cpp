@@ -23,6 +23,7 @@
 #include "WebViewTest.h"
 #include <WebCore/GUniquePtrSoup.h>
 #include <glib/gstdio.h>
+#include <wtf/glib/GLibExtras.h>
 
 static WebKitTestServer* kServer;
 // Shares a host with kServer, so it is a different origin in the same cache partition.
@@ -460,11 +461,11 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     g_assert_true(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE);
     g_assert_false(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_MEMORY_CACHE);
 
-    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer()));
+    GUniquePtr<char> fileURL(SAFE_G_STRDUP_PRINTF("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources)));
     test->loadURI(fileURL.get());
     test->waitUntilLoadFinished();
 
-    fileURL.reset(g_strdup_printf("file://%s/simple2.html", Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer()));
+    fileURL.reset(SAFE_G_STRDUP_PRINTF("file://%s/simple2.html", Test::getResourcesDir(Test::WebKit2Resources)));
     test->loadURI(fileURL.get());
     test->waitUntilLoadFinished();
 

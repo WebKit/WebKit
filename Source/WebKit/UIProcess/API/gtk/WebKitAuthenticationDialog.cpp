@@ -27,6 +27,7 @@
 #include "WebKitCredentialPrivate.h"
 #include "WebKitWebView.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -157,8 +158,8 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
 
     const WebCore::AuthenticationChallenge& challenge = webkitAuthenticationRequestGetAuthenticationChallenge(priv->request.get())->core();
     // Prompt on the HTTP authentication dialog.
-    GUniquePtr<char> prompt(g_strdup_printf(_("Authentication required by %s:%i"),
-        challenge.protectionSpace().host().utf8().legacyCStringPointer(), challenge.protectionSpace().port()));
+    GUniquePtr<char> prompt(SAFE_G_STRDUP_PRINTF(_("Authentication required by %s:%i"),
+        challenge.protectionSpace().host().utf8(), challenge.protectionSpace().port()));
     GtkWidget* label = createLabelWithLineWrap(prompt.get());
 #if USE(GTK4)
     gtk_box_append(GTK_BOX(authBox), label);
@@ -170,7 +171,7 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     String realm = challenge.protectionSpace().realm();
     if (!realm.isEmpty()) {
         // Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
-        GUniquePtr<char> message(g_strdup_printf(_("The site says: “%s”"), realm.utf8().legacyCStringPointer()));
+        GUniquePtr<char> message(SAFE_G_STRDUP_PRINTF(_("The site says: “%s”"), realm.utf8()));
         label = createLabelWithLineWrap(message.get());
 #if USE(GTK4)
         gtk_box_append(GTK_BOX(authBox), label);

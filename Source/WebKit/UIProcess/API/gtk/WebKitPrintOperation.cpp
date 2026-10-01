@@ -538,7 +538,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
 
             auto fd = UnixFileDescriptor { open(filename.get(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
             if (!fd) {
-                webkitPrintOperationFailed(printOperation.get(), GUniquePtr<GError> { g_error_new(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_GENERAL, _("Error opening %s: %s"), filename.get(), safeStrerror(errno).legacyCStringPointer()) });
+                webkitPrintOperationFailed(printOperation.get(), GUniquePtr<GError> { SAFE_G_ERROR_NEW(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_GENERAL, _("Error opening %s: %s"), filename.get(), safeStrerror(errno)) });
                 return;
             }
 

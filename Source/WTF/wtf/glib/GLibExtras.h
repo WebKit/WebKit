@@ -29,6 +29,7 @@
 #include <glib-object.h>
 #include <type_traits>
 #include <utility>
+#include <wtf/Assertions.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -113,3 +114,22 @@ using WTF::gValueSetString;
 using WTF::gVariantBuilderAdd;
 using WTF::gVariantNew;
 using WTF::gVariantNewString;
+
+// The printf-style GLib functions have to be called directly for their format strings to be checked,
+// so these wrappers are macros that convert each argument with glibVariadicType().
+#define SAFE_G_VARIADIC_TYPES(...) WTF_FOR_EACH(WTF::glibVariadicType, __VA_ARGS__)
+
+#define SAFE_G_STRDUP_PRINTF(format, ...) \
+    g_strdup_printf(format __VA_OPT__(, SAFE_G_VARIADIC_TYPES(__VA_ARGS__)))
+
+#define SAFE_G_WARNING(format, ...) \
+    g_warning(format __VA_OPT__(, SAFE_G_VARIADIC_TYPES(__VA_ARGS__)))
+
+#define SAFE_G_ERROR_NEW(domain, code, format, ...) \
+    g_error_new(domain, code, format __VA_OPT__(, SAFE_G_VARIADIC_TYPES(__VA_ARGS__)))
+
+#define SAFE_G_SET_ERROR(error, domain, code, format, ...) \
+    g_set_error(error, domain, code, format __VA_OPT__(, SAFE_G_VARIADIC_TYPES(__VA_ARGS__)))
+
+#define SAFE_G_TASK_RETURN_NEW_ERROR(task, domain, code, format, ...) \
+    g_task_return_new_error(task, domain, code, format __VA_OPT__(, SAFE_G_VARIADIC_TYPES(__VA_ARGS__)))

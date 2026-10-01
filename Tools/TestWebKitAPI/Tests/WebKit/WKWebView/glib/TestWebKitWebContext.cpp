@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <wtf/HashMap.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -629,11 +630,11 @@ static void xhrMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascri
 
 static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
 {
-    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).legacyCStringPointer()));
+    GUniquePtr<char> fileURL(SAFE_G_STRDUP_PRINTF("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources)));
     test->loadURI(fileURL.get());
     test->waitUntilLoadFinished();
 
-    GUniquePtr<char> jsonURL(g_strdup_printf("file://%s/simple.json", Test::getResourcesDir().legacyCStringPointer()));
+    GUniquePtr<char> jsonURL(SAFE_G_STRDUP_PRINTF("file://%s/simple.json", Test::getResourcesDir()));
     GUniquePtr<char> xhr(g_strdup_printf("var xhr = new XMLHttpRequest; xhr.open(\"GET\", \"%s\"); xhr.onreadystatechange = ()=> { if (xhr.readyState == 4) { setTimeout(() => { window.webkit.messageHandlers.xhr.postMessage('DONE'); }, 0)} }; xhr.onerror = () => { window.webkit.messageHandlers.xhr.postMessage('ERROR'); }; xhr.send();", jsonURL.get()));
 
     JSCValue* xhrMessage = nullptr;
@@ -750,7 +751,7 @@ public:
     WebSocketServerType createWebSocketAndWaitUntilConnected()
     {
         m_webSocketRequestReceived = WebSocketServerType::Unknown;
-        GUniquePtr<char> createWebSocket(g_strdup_printf("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo").legacyCStringPointer()));
+        GUniquePtr<char> createWebSocket(SAFE_G_STRDUP_PRINTF("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo")));
         runJavaScriptAndWait(createWebSocket.get());
         return m_webSocketRequestReceived;
     }

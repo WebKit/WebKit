@@ -467,8 +467,8 @@ static gboolean webkitWebExtensionInitableInit(GInitable* initable, GCancellable
     RefPtr<API::Error> internalError;
     Ref extension = WebKit::WebExtension::create(extensionPath.get(), internalError);
     if (internalError) {
-        g_set_error(error, webkit_web_extension_error_quark(),
-            toWebKitWebExtensionError(internalError->errorCode()), internalError->localizedDescription().utf8().legacyCStringPointer(), nullptr);
+        SAFE_G_SET_ERROR(error, webkit_web_extension_error_quark(),
+            toWebKitWebExtensionError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
         return FALSE;
     }
 
@@ -497,8 +497,8 @@ WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& 
 
     if (!extension->errors().isEmpty()) {
         Ref internalError = extension->errors().last();
-        g_set_error(error, webkit_web_extension_error_quark(),
-            toWebKitWebExtensionError(internalError->errorCode()), internalError->localizedDescription().utf8().legacyCStringPointer(), nullptr);
+        SAFE_G_SET_ERROR(error, webkit_web_extension_error_quark(),
+            toWebKitWebExtensionError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
     }
 
     WebKitWebExtension* object = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, nullptr));

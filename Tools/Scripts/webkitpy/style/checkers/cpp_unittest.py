@@ -6815,6 +6815,40 @@ class WebKitStyleTest(CppStyleTestBase):
             'foo.cpp')
 
         self.assert_lint(
+            'GUniquePtr<char> message(g_strdup_printf("The site says: %s", realm.utf8().legacyCStringPointer()));',
+            "Use 'SAFE_G_STRDUP_PRINTF()' from <wtf/glib/GLibExtras.h> instead of 'g_strdup_printf()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'g_set_error(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host \'%s\'", host.utf8().legacyCStringPointer());',
+            "Use 'SAFE_G_SET_ERROR()' from <wtf/glib/GLibExtras.h> instead of 'g_set_error()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'g_warning("Failed at %s: %s", address.legacyCStringPointer(), error->message);',
+            "Use 'SAFE_G_WARNING()' from <wtf/glib/GLibExtras.h> instead of 'g_warning()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host \'%s\'", host.utf8());',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* replyHTML = g_strdup_printf(handler.reply.legacyCStringPointer(), requestPath);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'g_set_error(error, domain, code, format.legacyCStringPointer(), host.utf8().legacyCStringPointer());',
+            "Use 'SAFE_G_SET_ERROR()' from <wtf/glib/GLibExtras.h> instead of 'g_set_error()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
             'g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(reason.utf8().legacyCStringPointer()));',
             "Use 'gVariantNewString()' from <wtf/glib/GLibExtras.h> instead of 'g_variant_new_string()', and pass the typed string instead of calling legacyCStringPointer()."
             "  [runtime/glib_string_wrappers] [4]",

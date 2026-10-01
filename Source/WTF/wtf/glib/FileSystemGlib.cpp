@@ -23,6 +23,7 @@
 #include "config.h"
 #include <wtf/FileSystem.h>
 
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -140,7 +141,7 @@ String createTemporaryDirectory(const String& directoryPrefix)
     GUniqueOutPtr<GError> error;
     GUniquePtr<char> tempDir(g_dir_make_tmp(newTempDir.utf8().legacyCStringPointer(), &error.outPtr()));
     if (!tempDir) {
-        g_warning("Creating temporary directory at %s failed: %s", directoryPrefix.utf8().legacyCStringPointer(), error->message);
+        SAFE_G_WARNING("Creating temporary directory at %s failed: %s", directoryPrefix.utf8(), error->message);
         return { };
     }
 

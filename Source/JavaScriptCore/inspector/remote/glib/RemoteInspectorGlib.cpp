@@ -75,7 +75,7 @@ void RemoteInspector::start()
             if (GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr())))
                 inspector->setupConnection(SocketConnection::create(WTF::move(connection), messageHandlers(), inspector));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", s_inspectorServerAddress.legacyCStringPointer(), error->message);
+                SAFE_G_WARNING("RemoteInspector failed to connect to inspector server at: %s: %s", s_inspectorServerAddress, error->message);
         }, this);
 }
 

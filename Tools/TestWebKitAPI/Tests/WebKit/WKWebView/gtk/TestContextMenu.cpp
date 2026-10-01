@@ -498,7 +498,7 @@ public:
 #if !USE(GTK4)
 static void prepareContextMenuTestView(ContextMenuDefaultTest* test)
 {
-    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().legacyCStringPointer()));
+    GUniquePtr<char> baseDir(SAFE_G_STRDUP_PRINTF("file://%s/", Test::getResourcesDir()));
     const char* linksHTML =
         "<html><body>"
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK Title'>WebKitGTK Website</a>"

@@ -204,8 +204,8 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, UT
     priv->iconDatabase->loadIconsForPageURL(String::fromUTF8(pageURI.span()), isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
         [task = WTF::move(task), pageURI = UTF8CString { pageURI.span() }](Vector<PlatformImagePtr>&& icons) {
             if (icons.isEmpty()) {
-                g_task_return_new_error(task.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN,
-                    _("Unknown favicon for page %s"), pageURI.legacyCStringPointer());
+                SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN,
+                    _("Unknown favicon for page %s"), pageURI);
                 return;
             }
             auto& icon = icons.last();

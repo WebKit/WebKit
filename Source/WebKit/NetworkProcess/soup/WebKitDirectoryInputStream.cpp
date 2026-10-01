@@ -47,7 +47,7 @@ WEBKIT_DEFINE_TYPE(WebKitDirectoryInputStream, webkit_directory_input_stream, G_
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static GBytes* webkitDirectoryInputStreamCreateHeader(WebKitDirectoryInputStream *stream)
 {
-    char* header = g_strdup_printf(
+    char* header = SAFE_G_STRDUP_PRINTF(
         "<html><head>"
         "<title>%s</title>"
         "<meta http-equiv=\"Content-Type\" content=\"text/html;\" charset=\"UTF-8\">"
@@ -59,7 +59,7 @@ static GBytes* webkitDirectoryInputStreamCreateHeader(WebKitDirectoryInputStream
         "<thead>"
         "<th align=\"left\">%s</th><th align=\"right\">%s</th><th align=\"right\">%s</th>"
         "</thead>",
-        stream->priv->uri.legacyCStringPointer(),
+        stream->priv->uri,
         static_cast<int>(WebCore::directoryUserAgentStyleSheet.size()),
         WebCore::directoryUserAgentStyleSheet.data(),
         static_cast<int>(WebCore::directoryJavaScript.size()),

@@ -419,7 +419,7 @@ public:
         m_events = 0;
 
         server->addWebSocketHandler(serverWebSocketCallback, this);
-        GUniquePtr<char> createWebSocketJS(g_strdup_printf(webSocketTestJSFormat, server->getWebSocketURIForPath("/foo").legacyCStringPointer()));
+        GUniquePtr<char> createWebSocketJS(SAFE_G_STRDUP_PRINTF(webSocketTestJSFormat, server->getWebSocketURIForPath("/foo")));
         runJavaScriptAndWait(createWebSocketJS.get());
         server->removeWebSocketHandler();
 
@@ -728,7 +728,7 @@ static void httpsServerCallback(SoupServer* server, SoupServerMessage* message, 
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, indexHTML, strlen(indexHTML));
         soup_message_body_complete(responseBody);
     } else if (g_str_equal(path, "/insecure-content/")) {
-        GUniquePtr<char> responseHTML(g_strdup_printf(insecureContentHTML, kHttpServer->getURIForPath("/test-script").legacyCStringPointer(), kHttpServer->getURIForPath("/test-image").legacyCStringPointer()));
+        GUniquePtr<char> responseHTML(SAFE_G_STRDUP_PRINTF(insecureContentHTML, kHttpServer->getURIForPath("/test-script"), kHttpServer->getURIForPath("/test-image")));
         soup_message_body_append(responseBody, SOUP_MEMORY_COPY, responseHTML.get(), strlen(responseHTML.get()));
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
@@ -779,8 +779,8 @@ static void httpServerCallback(SoupServer* server, SoupServerMessage* message, c
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/")) {
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
-        char* responseHTML = g_strdup_printf("<html><head><link rel='stylesheet' href='%s' type='text/css'></head><body>SSL subresource test</body></html>",
-            kHttpsServer->getURIForPath("/style.css").legacyCStringPointer());
+        char* responseHTML = SAFE_G_STRDUP_PRINTF("<html><head><link rel='stylesheet' href='%s' type='text/css'></head><body>SSL subresource test</body></html>",
+            kHttpsServer->getURIForPath("/style.css"));
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, responseHTML, strlen(responseHTML));
         soup_message_body_complete(responseBody);
     } else

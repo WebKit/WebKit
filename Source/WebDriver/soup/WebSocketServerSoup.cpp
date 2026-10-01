@@ -36,6 +36,7 @@
 #include <optional>
 #include <span>
 #include <tuple>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,7 +54,7 @@ static bool soupServerListen(SoupServer* server, const String& host, unsigned po
 
     GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(host.utf8().legacyCStringPointer(), port));
     if (!address) {
-        g_set_error(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", host.utf8().legacyCStringPointer());
+        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", host.utf8());
         return false;
     }
 

@@ -966,7 +966,7 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     test->showInWindow();
 
     static const char* linkHTMLFormat = "<html><body><a style='position:absolute; left:1; top:1' href='%s'>Download Me</a></body></html>";
-    GUniquePtr<char> linkHTML(g_strdup_printf(linkHTMLFormat, kServer->getURIForPath("/test.pdf").legacyCStringPointer()));
+    GUniquePtr<char> linkHTML(SAFE_G_STRDUP_PRINTF(linkHTMLFormat, kServer->getURIForPath("/test.pdf")));
     test->loadHtml(linkHTML.get(), kServer->getURIForPath("/").legacyCStringPointer());
     test->waitUntilLoadFinished();
 
