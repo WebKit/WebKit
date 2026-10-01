@@ -152,12 +152,9 @@ static LayoutUnit blockSizeForGridItem(const LayoutState& layoutState, const Ele
     case LayoutIntegration::LogicalHeightType::MaxContent:
     case LayoutIntegration::LogicalHeightType::MinContentContribution:
     case LayoutIntegration::LogicalHeightType::MaxContentContribution: {
-        renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
         renderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
 
-        layoutState.layoutWithFormattingContextForBox(box, { }, { });
-
-        renderer->clearGridAreaContentSize();
+        LayoutIntegration::layoutGridItemWithFormattingContext(box, { }, { }, gridAreaInlineSize, const_cast<LayoutState&>(layoutState));
 
         return layoutState.geometryForBox(box).borderBoxHeight();
     }
