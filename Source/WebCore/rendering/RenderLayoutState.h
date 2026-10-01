@@ -211,6 +211,16 @@ private:
     const CheckedRef<const RenderBox> m_box;
 };
 
+class IntrinsicLogicalWidthComputationScope {
+public:
+    IntrinsicLogicalWidthComputationScope(LocalFrameViewLayoutContext&, const RenderBox&);
+    ~IntrinsicLogicalWidthComputationScope();
+
+private:
+    const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
+    const CheckedRef<const RenderBox> m_box;
+};
+
 class ContentVisibilityOverrideScope {
 public:
     enum class OverrideType {

@@ -1093,6 +1093,22 @@ bool LocalFrameViewLayoutContext::isComputingIntrinsicLogicalHeightFor(const Ren
     return m_intrinsicLogicalHeightComputationList.contains(box);
 }
 
+void LocalFrameViewLayoutContext::addIntrinsicLogicalWidthComputationFor(const RenderBox& box)
+{
+    ASSERT(!m_intrinsicLogicalWidthComputationList.contains(box));
+    m_intrinsicLogicalWidthComputationList.add(box);
+}
+
+void LocalFrameViewLayoutContext::removeIntrinsicLogicalWidthComputationFor(const RenderBox& box)
+{
+    m_intrinsicLogicalWidthComputationList.remove(box);
+}
+
+bool LocalFrameViewLayoutContext::isComputingIntrinsicLogicalWidthFor(const RenderBox& box) const
+{
+    return m_intrinsicLogicalWidthComputationList.contains(box);
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {

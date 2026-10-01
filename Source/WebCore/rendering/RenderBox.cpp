@@ -1531,6 +1531,7 @@ LayoutUnit RenderBox::minContentLogicalWidthContribution() const
 {
     if (hasInvalidContentLogicalWidths()) {
         SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
         const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
     }
     return m_minContentLogicalWidthContribution;
@@ -1540,6 +1541,7 @@ LayoutUnit RenderBox::maxContentLogicalWidthContribution() const
 {
     if (hasInvalidContentLogicalWidths()) {
         SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
         const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
     }
     return m_maxContentLogicalWidthContribution;
@@ -3009,8 +3011,12 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
         return adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()));
     }
 
-    if (logicalWidth.isIntrinsicOrStretch() || logicalWidth.isMinIntrinsic())
+    if (logicalWidth.isStretch())
         return computeSizingKeywordLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth());
+    if (logicalWidth.isIntrinsic() || logicalWidth.isMinIntrinsic()) {
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
+        return computeSizingKeywordLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth());
+    }
 
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
@@ -4297,6 +4303,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         auto availableSpace = inlineConstraints.containingSize();
         availableSpace -= inlineConstraints.insetBeforeValue();
         availableSpace -= inlineConstraints.insetAfterValue();
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
         return std::max(0_lu, computeSizingKeywordLogicalWidthUsing(keyword, availableSpace, inlineConstraints.bordersPlusPadding()) - inlineConstraints.bordersPlusPadding());
     };
 

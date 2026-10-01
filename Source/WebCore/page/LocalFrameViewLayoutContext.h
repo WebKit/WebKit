@@ -113,6 +113,7 @@ public:
 
     bool NODELETE isPercentHeightResolveDisabledFor(const RenderBox& flexItem);
     bool NODELETE isComputingIntrinsicLogicalHeightFor(const RenderBox&) const;
+    bool NODELETE isComputingIntrinsicLogicalWidthFor(const RenderBox&) const;
 
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
@@ -209,6 +210,7 @@ private:
     friend class SubtreeLayoutStateMaintainer;
     friend class FlexPercentResolveDisabler;
     friend class IntrinsicLogicalHeightComputationScope;
+    friend class IntrinsicLogicalWidthComputationScope;
     friend class ContentVisibilityOverrideScope;
     friend class RepaintBlocker;
 
@@ -260,6 +262,9 @@ private:
     void addIntrinsicLogicalHeightComputationFor(const RenderBox&);
     void removeIntrinsicLogicalHeightComputationFor(const RenderBox&);
 
+    void addIntrinsicLogicalWidthComputationFor(const RenderBox&);
+    void removeIntrinsicLogicalWidthComputationFor(const RenderBox&);
+
     void allowRepaints() { m_repaintsBlocked = false; }
     void blockRepaints() { m_repaintsBlocked = true; }
 
@@ -296,6 +301,7 @@ private:
     SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
     SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalHeightComputationList;
+    SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalWidthComputationList;
     Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
     std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;
