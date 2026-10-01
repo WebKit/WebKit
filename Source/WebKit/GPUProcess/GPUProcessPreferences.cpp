@@ -38,6 +38,11 @@ namespace WebKit {
 
 void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webPreferences)
 {
+#if PLATFORM(COCOA)
+    if (auto timeout = webPreferences.mediaResourceLoadTimeoutForTesting())
+        mediaResourceLoadTimeoutForTesting = timeout;
+#endif
+
 #if ENABLE(VP9)
     if (webPreferences.vp9DecoderEnabled())
         vp9DecoderEnabled = true;
