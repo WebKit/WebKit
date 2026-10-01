@@ -373,6 +373,7 @@ webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Failure ]
+webkit.org/b/325803 http/tests/pasteboard/copy-image-from-context-menu.html [ Failure ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
 

@@ -103,6 +103,7 @@ imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-zero-size.html [
 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-fallback.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-justify-items-center-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ Pass ]
@@ -1346,6 +1347,8 @@ fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 # On GTK, arrow keys are incrementing date fields by 2 steps, both with and without this change, so this test doesn't need to run since the code is guarded with PLATFORM(COCOA).
 accessibility/contenteditable-spinbutton-uses-arrow-keys.html [ Skip ]
 
+webkit.org/b/325851 accessibility/element-reflection-ariaowns.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1553,6 +1556,8 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composite
 
 webkit.org/b/315151 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
 
+webkit.org/b/324995 [ arm64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-powerless.html [ Failure ]
+
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
@@ -1606,6 +1611,8 @@ webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Fail
 webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Failure ]
 
 webkit.org/b/305744 imported/w3c/web-platform-tests/html/dom/idlharness.https.html? [ Failure Pass ]
+
+webkit.org/b/325853 [ x86_64 ] imported/w3c/web-platform-tests/xml/xslt/encoding-single-chunk.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of DOM-related bugs
@@ -2175,6 +2182,8 @@ webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-d
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.sharedworker.html [ Pass ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.worker.html [ Pass ]
 
+webkit.org/b/325852 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2426,7 +2435,6 @@ webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shad
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-fill-none.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-stroke-dasharray.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vertical-001.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
 
 webkit.org/b/273480 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Failure ]
@@ -2531,6 +2539,9 @@ webkit.org/b/298587 fast/media/mq-inverted-colors-ua-style-on-to-off.html [ Imag
 webkit.org/b/100984 http/tests/media/progress-events-generated-correctly.html [ Failure ]
 
 webkit.org/b/283410 media/media-vp8-webm-with-poster.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/325856 media/media-source/media-managedmse-resume-after-seek.html [ Pass Failure ]
+webkit.org/b/325857 media/media-playback-in-background-after-pausing.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Media-related bugs
@@ -2858,6 +2869,8 @@ webkit.org/b/308025 [ arm64 ] webgl/2.0.y/conformance2/query/occlusion-query-sci
 #////////////////////////////////////////////////////////////////////////////////////////
 # WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/325855 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
 # Failing since migration to libwebrtc: issue with constraints passed to getUserMedia lead to lack of track event, and timeout
 webrtc/video-interruption.html [ Skip ]
@@ -5169,6 +5182,8 @@ webkit.org/b/316712 fast/forms/validation-message-clone.html [ Failure ]
 webkit.org/b/292843 fast/dom/Window/open-window-min-size.html [ Failure ]
 
 webkit.org/b/316573 fast/parser/empty-text-resource.html [ Pass Timeout ]
+webkit.org/b/325854 fast/parser/entity-comment-in-iframe.html [ Pass Timeout ]
+webkit.org/b/325854 fast/parser/entity-end-script-tag.html [ Pass Timeout ]
 webkit.org/b/316575 [ x86_64 ] http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Crash Timeout ]
 
 webkit.org/b/317007 fast/replaced/replaced-percentage-size-in-aspect-ratio-shrink-to-fit.html [ ImageOnlyFailure ]
