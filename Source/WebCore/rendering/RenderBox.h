@@ -697,6 +697,7 @@ private:
     template<typename Keyword> std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths(Keyword, LayoutUnit borderAndPadding) const;
 
     template<typename SizeType> LayoutUnit computeLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
+    template<typename SizeType> LayoutUnit computeCalcSizeOnAutoLogicalWidth(const SizeType& logicalWidth, LayoutUnit autoLogicalWidth, LayoutUnit availableLogicalWidth) const;
     template<typename SizeType> LayoutUnit computeSizingKeywordLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
 
     template<typename SizeType> std::optional<LayoutUnit> computeLogicalHeightUsingGeneric(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
