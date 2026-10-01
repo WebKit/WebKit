@@ -10321,8 +10321,6 @@ webkit.org/b/325036 [ Release ] http/tests/security/mixedContent/secure-page-nav
 
 webkit.org/b/325037 [ Debug ] imported/w3c/web-platform-tests/editing/crashtests/inserthtml-in-li-in-option.html [ Pass Crash ]
 
-webkit.org/b/325039 [ Debug ] ipc/cocoa/LocalSampleBufferDisplayLayer-non-finite-bounds-crash.html [ Crash ]
-
 # webkit.org/b/324372 [ EWS UAT ] [ iOS 27 ] 11X fast/text-extraction/ (layout-tests) are constant timeouts
 fast/text-extraction/debug-text-extraction-all-container-uids.html [ Timeout ]
 fast/text-extraction/debug-text-extraction-basic.html [ Timeout ]
