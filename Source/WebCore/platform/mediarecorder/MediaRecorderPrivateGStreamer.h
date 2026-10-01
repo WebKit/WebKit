@@ -27,7 +27,6 @@
 #include "Timer.h"
 #include <gst/app/gstappsink.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
@@ -75,6 +74,8 @@ private:
     void processSample(GRefPtr<GstSample>&&);
     GstFlowReturn handleSample(GstAppSink*, GRefPtr<GstSample>&&);
     void notifyEOS();
+    void didReachEOS();
+    void eosTimerFired();
     void positionUpdated();
 
     GRefPtr<GstEncodingProfile> m_audioEncodingProfile;
@@ -82,9 +83,6 @@ private:
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstElement> m_src;
     GRefPtr<GstElement> m_sink;
-    Condition m_eosCondition;
-    Lock m_eosLock;
-    bool m_eos WTF_GUARDED_BY_LOCK(m_eosLock);
 
     Lock m_dataLock;
     SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
@@ -95,6 +93,9 @@ private:
     const MediaRecorderPrivateOptions& m_options;
     String m_mimeType;
     std::optional<SelectTracksCallback> m_selectTracksCallback;
+    bool m_waitingForEOS { false };
+    Vector<MediaRecorderPrivate::FetchDataCallback> m_fetchDataCallbacksPendingEOS;
+    Timer m_eosTimer;
     Timer m_positionTimer;
 };
 
