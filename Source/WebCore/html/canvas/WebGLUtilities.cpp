@@ -29,6 +29,8 @@
 #include "WebGLUtilities.h"
 
 #include "InspectorInstrumentation.h"
+#include "WebGLDefaultFramebuffer.h"
+#include "WebGLFramebuffer.h"
 
 namespace WebCore {
 
@@ -90,6 +92,73 @@ void ScopedInspectorShaderProgramHighlight::hideHighlight()
         if (!m_savedBlend.enabled)
             gl->disable(GraphicsContextGL::BLEND);
     }
+}
+
+static void setDrawBuffers(WebGLRenderingContextBase& context, std::span<const GCGLenum> buffers)
+{
+    if (context.isWebGL2())
+        protect(context.graphicsContextGL())->drawBuffers(buffers);
+    else
+        protect(context.graphicsContextGL())->drawBuffersEXT(buffers);
+}
+
+ScopedEnableDrawBuffer0::ScopedEnableDrawBuffer0(WebGLRenderingContextBase& context, WebGLDefaultFramebuffer& framebuffer)
+{
+    if (!framebuffer.drawBufferIsNone())
+        return;
+    m_context = context;
+    m_restoreDrawBuffers = { GraphicsContextGL::NONE };
+    setDrawBuffers(context, std::array { GraphicsContextGL::COLOR_ATTACHMENT0 });
+}
+
+ScopedEnableDrawBuffer0::ScopedEnableDrawBuffer0(WebGLRenderingContextBase& context, WebGLFramebuffer& framebuffer)
+{
+    if (framebuffer.getDrawBuffer(GraphicsContextGL::DRAW_BUFFER0_EXT) == GraphicsContextGL::COLOR_ATTACHMENT0)
+        return;
+    // Draw buffers the application never set are at the GL default, which is handled above, so the
+    // tracked draw buffers are known here.
+    ASSERT(!framebuffer.getDrawBuffers().isEmpty());
+    m_context = context;
+    m_restoreDrawBuffers = framebuffer.getDrawBuffers();
+    setDrawBuffers(context, std::array { GraphicsContextGL::COLOR_ATTACHMENT0 });
+}
+
+ScopedEnableDrawBuffer0::~ScopedEnableDrawBuffer0()
+{
+    RefPtr context = m_context.get();
+    if (!context)
+        return;
+    setDrawBuffers(*context, m_restoreDrawBuffers.span());
+}
+
+ScopedEnableReadBuffer0::ScopedEnableReadBuffer0(WebGLRenderingContextBase& context, WebGLDefaultFramebuffer& framebuffer)
+{
+    if (!framebuffer.readBufferIsNone())
+        return;
+    // readBuffer() is WebGL 2 only, and so is the only way the read buffer becomes NONE.
+    ASSERT(context.isWebGL2());
+    m_context = context;
+    m_restoreReadBuffer = GraphicsContextGL::NONE;
+    protect(context.graphicsContextGL())->readBuffer(GraphicsContextGL::COLOR_ATTACHMENT0);
+}
+
+ScopedEnableReadBuffer0::ScopedEnableReadBuffer0(WebGLRenderingContextBase& context, WebGLFramebuffer& framebuffer)
+{
+    if (framebuffer.getReadBuffer() == GraphicsContextGL::COLOR_ATTACHMENT0)
+        return;
+    // readBuffer() is WebGL 2 only, and so is the only way the read buffer differs from the default.
+    ASSERT(context.isWebGL2());
+    m_context = context;
+    m_restoreReadBuffer = framebuffer.getReadBuffer();
+    protect(context.graphicsContextGL())->readBuffer(GraphicsContextGL::COLOR_ATTACHMENT0);
+}
+
+ScopedEnableReadBuffer0::~ScopedEnableReadBuffer0()
+{
+    RefPtr context = m_context.get();
+    if (!context)
+        return;
+    protect(context->graphicsContextGL())->readBuffer(m_restoreReadBuffer);
 }
 
 }

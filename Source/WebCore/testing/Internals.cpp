@@ -7010,6 +7010,12 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
     case SimulatedWebGLContextEvent::Timeout:
         contextEvent = WebGLRenderingContext::SimulatedEventForTesting::Timeout;
         break;
+    case SimulatedWebGLContextEvent::DisplayBufferAllocationFailure:
+        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::DisplayBufferAllocationFailure;
+        break;
+    case SimulatedWebGLContextEvent::RenderbufferAllocationFailure:
+        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::RenderbufferAllocationFailure;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return;

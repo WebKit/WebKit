@@ -140,7 +140,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         auto requestableExtensions = context->requestableExtensions();
         m_estimatedMemoryCost = estimatedMemoryCostForIPC(*context);
         RemoteGraphicsContextGLInitializationState initializationState {
-            .attributes = context->contextAttributes(),
+            .attributes = contextAttributes,
             .knownActiveExtensions = knownActiveExtensions.toRaw(),
             .requestableExtensions = requestableExtensions.toRaw(),
             .estimatedMemoryCost = m_estimatedMemoryCost,
@@ -151,7 +151,9 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
             .maxRenderbufferSize = context->maxRenderbufferSize(),
             .maxViewportDims = context->maxViewportDims(),
         };
-        if (contextAttributes.isWebGL2 || contextAttributes.antialias)
+        // MAX_SAMPLES is core in ES3 and otherwise comes from GL_ANGLE_framebuffer_multisample.
+        // Querying it without either would just add INVALID_ENUM to the error queue.
+        if (contextAttributes.isWebGL2 || knownActiveExtensions.contains(GCGLExtension::ANGLE_framebuffer_multisample))
             initializationState.maxSamples = context->maxSamples();
         if (contextAttributes.isWebGL2) {
             initializationState.maxTransformFeedbackSeparateAttribs = context->maxTransformFeedbackSeparateAttribs();

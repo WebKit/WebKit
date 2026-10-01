@@ -780,19 +780,19 @@ void WebGL2RenderingContext::readBuffer(GCGLenum src)
     if (isContextLost())
         return;
 
-    if (src == GraphicsContextGL::BACK) {
-        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
-        if (m_readFramebufferBinding) {
+    if (m_readFramebufferBinding) {
+        if (src == GraphicsContextGL::BACK) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readBuffer"_s, "BACK is valid for default framebuffer only"_s);
             return;
         }
-        src = GraphicsContextGL::COLOR_ATTACHMENT0;
-    } else if (!m_readFramebufferBinding && src != GraphicsContextGL::NONE) {
+        protect(m_readFramebufferBinding)->readBuffer(src);
+        return;
+    }
+    if (src != GraphicsContextGL::BACK && src != GraphicsContextGL::NONE) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readBuffer"_s, "default framebuffer only supports NONE or BACK"_s);
         return;
     }
-
-    protect(graphicsContextGL())->readBuffer(src);
+    m_defaultFramebuffer->readBuffer(src);
 }
 
 void WebGL2RenderingContext::renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
@@ -1120,7 +1120,10 @@ void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum target, GCGLint level, G
         return;
     if (!validateTexture3DBinding("copyTexSubImage3D"_s, target))
         return;
+    if (!validateDefaultFramebufferRead("copyTexSubImage3D"_s))
+        return;
     clearIfComposited(CallerTypeOther);
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
@@ -1639,10 +1642,7 @@ void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffers"_s, "BACK or NONE"_s);
             return;
         }
-        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
-        GCGLenum value[1] { (bufs[0] == GraphicsContextGL::BACK) ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE };
-        protect(graphicsContextGL())->drawBuffers(value);
-        setBackDrawBuffer(bufs[0]);
+        m_defaultFramebuffer->drawBuffers(bufs[0]);
     } else {
         if (n > maxDrawBuffers()) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffers"_s, "more than max draw buffers"_s);
@@ -2894,6 +2894,23 @@ WebGLFramebuffer* WebGL2RenderingContext::getFramebufferBinding(GCGLenum target)
     return WebGLRenderingContextBase::getFramebufferBinding(target);
 }
 
+bool WebGL2RenderingContext::isDefaultFramebufferBoundForRead() const
+{
+    // WebGL2: read FB is separate. Default framebuffer is bound for reading when
+    // m_readFramebufferBinding is null.
+    return !m_readFramebufferBinding;
+}
+
+void WebGL2RenderingContext::rebindFramebuffers()
+{
+    RefPtr gl = graphicsContextGL();
+    if (!gl)
+        return;
+    auto defaultFBO = m_defaultFramebuffer ? m_defaultFramebuffer->object() : 0;
+    gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_readFramebufferBinding ? m_readFramebufferBinding->object() : defaultFBO);
+    gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, m_framebufferBinding ? m_framebufferBinding->object() : defaultFBO);
+}
+
 bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(ASCIILiteral functionName, GCGLenum attachment)
 {
     switch (attachment) {
@@ -3201,10 +3218,9 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::RASTERIZER_DISCARD:
         return getBooleanParameter(pname);
     case GraphicsContextGL::READ_BUFFER: {
-        GCGLint value = getIntParameter(pname);
-        if (!m_readFramebufferBinding && value != GraphicsContextGL::NONE)
-            return static_cast<GCGLint>(GraphicsContextGL::BACK);
-        return value;
+        if (!m_readFramebufferBinding)
+            return static_cast<GCGLint>(m_defaultFramebuffer->readBufferIsNone() ? GraphicsContextGL::NONE : GraphicsContextGL::BACK);
+        return static_cast<GCGLint>(protect(m_readFramebufferBinding)->getReadBuffer());
     }
     case GraphicsContextGL::READ_FRAMEBUFFER_BINDING:
         return toWebGLAny(m_readFramebufferBinding);
@@ -3496,8 +3512,12 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
     // taint the origin using the WebGL API.
     ASSERT(canvasBase().originClean());
 
+    if (!validateDefaultFramebufferRead("readPixels"_s))
+        return;
+
     clearIfComposited(CallerTypeOther);
 
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(rect);
     protect(graphicsContextGL())->readPixelsBufferObject(rect, format, type, offsetAndSkip.value(), m_packParameters.alignment, m_packParameters.rowLength);
 }
 

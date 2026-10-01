@@ -210,7 +210,6 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
     // WebXR must always clear for the rAF of the session. Currently we assume content does not do redundant initial clear,
     // as the spec says the buffer always starts cleared.
     ScopedDisableRasterizerDiscard disableRasterizerDiscard { m_context };
-    ScopedEnableBackbuffer enableBackBuffer { m_context };
     ScopedDisableScissorTest disableScissorTest { m_context };
     ScopedClearColorAndMask zeroClear { m_context, 0.f, 0.f, 0.f, 0.f, true, true, true, true, };
     ScopedClearDepthAndMask zeroDepth { m_context, 1.0f, true, m_attributes.depth };
@@ -221,6 +220,7 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
     if (m_attributes.stencil)
         clearMask |= GL::STENCIL_BUFFER_BIT;
     gl->bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
+    ScopedEnableDrawBuffer0 enableDrawBuffer0 { m_context, m_drawFramebuffer.get() };
     gl->clear(clearMask);
 }
 

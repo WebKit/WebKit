@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include <WebCore/GraphicsContextGL.h>
 #include <WebCore/WebGLObject.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -90,6 +91,13 @@ public:
 
     GCGLenum NODELETE getDrawBuffer(GCGLenum);
 
+    const Vector<GCGLenum>& getDrawBuffers() const { return m_drawBuffers; }
+
+    // Set the read buffer for this framebuffer. NONE or COLOR_ATTACHMENTi.
+    void readBuffer(GCGLenum src);
+
+    GCGLenum getReadBuffer() const { return m_readBuffer; }
+
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 
 #if ENABLE(WEBXR)
@@ -135,6 +143,8 @@ private:
     HashMap<GCGLenum, AttachmentEntry> m_attachments;
     bool m_hasEverBeenBound { false };
     Vector<GCGLenum> m_drawBuffers;
+    // The GL default read buffer of a framebuffer object is COLOR_ATTACHMENT0.
+    GCGLenum m_readBuffer { GraphicsContextGL::COLOR_ATTACHMENT0 };
 #if ENABLE(WEBXR)
     const bool m_isOpaque;
     bool m_insideWebXRRAF { false };

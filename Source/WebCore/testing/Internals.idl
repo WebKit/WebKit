@@ -103,7 +103,9 @@ enum TreeType {
 
 [Conditional=WEBGL] enum SimulatedWebGLContextEvent {
     "GPUStatusFailure",
-    "Timeout"
+    "Timeout",
+    "DisplayBufferAllocationFailure",
+    "RenderbufferAllocationFailure"
 };
 
 enum AudioSessionCategory {

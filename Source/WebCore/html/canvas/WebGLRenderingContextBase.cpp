@@ -435,11 +435,7 @@ static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebG
     UNUSED_PARAM(scriptExecutionContext);
     GraphicsContextGLAttributes glAttributes;
     glAttributes.alpha = attributes.alpha;
-    glAttributes.depth = attributes.depth;
-    glAttributes.stencil = attributes.stencil;
-    glAttributes.antialias = attributes.antialias;
     glAttributes.premultipliedAlpha = attributes.premultipliedAlpha;
-    glAttributes.preserveDrawingBuffer = attributes.preserveDrawingBuffer;
     glAttributes.powerPreference = attributes.powerPreference;
     glAttributes.isWebGL2 = isWebGL2;
     glAttributes.supportWebGLDraftExtensions = scriptExecutionContext.settingsValues().webGLDraftExtensionsEnabled;
@@ -487,11 +483,11 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         renderingContext = WebGL2RenderingContext::create(canvas, WTF::move(attributes));
     else
         renderingContext = WebGLRenderingContext::create(canvas, WTF::move(attributes));
-    renderingContext->initializeNewContext(context.releaseNonNull());
+    bool initialized = renderingContext->initializeNewContext(context.releaseNonNull());
     renderingContext->suspendIfNeeded();
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
     renderingContext->updateMemoryCost();
-    if (renderingContext->m_context->isContextLost())
+    if (!initialized)
         renderingContext->forceContextLost();
     return renderingContext;
 }
@@ -523,11 +519,16 @@ OffscreenCanvas* WebGLRenderingContextBase::offscreenCanvas()
 }
 #endif
 
-void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> context)
+bool WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> context)
 {
     bool wasActive = m_context;
     if (m_context) {
+        // Destroy the old default framebuffer before the context that created it is replaced.
+        // Otherwise its object names would later be deleted from the new context, where the same
+        // names refer to different objects. Detach the client first so that a context loss observed
+        // during the deletion does not call back into this object.
         m_context->setClient(nullptr);
+        destroyDefaultFramebuffer();
         m_context = nullptr;
     }
     m_context = WTF::move(context);
@@ -539,8 +540,10 @@ void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
         initializeContextState();
         initializeDefaultObjects();
     }
+    bool reshaped = m_defaultFramebuffer->reshape(clampedCanvasSize());
     // Next calls will receive the context lost callback.
     m_context->setClient(this);
+    return reshaped && !m_context->isContextLost();
 }
 
 void WebGLRenderingContextBase::initializeContextState()
@@ -563,6 +566,7 @@ void WebGLRenderingContextBase::initializeContextState()
     m_stencilMask = 0xFFFFFFFF;
 
     m_rasterizerDiscardEnabled = false;
+    m_ditherEnabled = true;
 
     m_clearColor[0] = m_clearColor[1] = m_clearColor[2] = m_clearColor[3] = 0;
     m_scissorEnabled = false;
@@ -589,13 +593,17 @@ void WebGLRenderingContextBase::initializeContextState()
     auto glAttributes = m_context->contextAttributes();
     m_attributes.powerPreference = glAttributes.powerPreference;
     if (!isWebGL2()) {
-        // On WebGL1, the requests are not mandatory.
-        if (m_attributes.antialias)
-            m_attributes.antialias = glAttributes.antialias;
-        if (m_attributes.depth)
-            m_attributes.depth = glAttributes.depth;
-        if (m_attributes.stencil)
-            m_attributes.stencil = glAttributes.stencil;
+        if (m_attributes.antialias) {
+            if (!(context->enableExtension(GCGLExtension::ANGLE_framebuffer_multisample)
+                && context->enableExtension(GCGLExtension::ANGLE_framebuffer_blit)
+                && context->enableExtension(GCGLExtension::OES_rgb8_rgba8)))
+                m_attributes.antialias = false;
+        }
+        if (m_attributes.preserveDrawingBuffer && !m_attributes.antialias) {
+            if (!(context->enableExtension(GCGLExtension::ANGLE_framebuffer_blit)
+                && context->enableExtension(GCGLExtension::OES_rgb8_rgba8)))
+                m_attributes.preserveDrawingBuffer = false;
+        }
     }
     // WebXR might use multisampling in WebGL2 context. Multisample extensions are also enabled in WebGL 1 case context
     // is antialiased.
@@ -605,7 +613,6 @@ void WebGLRenderingContextBase::initializeContextState()
     m_maxDrawBuffers = 0;
     m_maxColorAttachments = 0;
 
-    m_backDrawBuffer = GraphicsContextGL::BACK;
     m_drawBuffersWebGLRequirementsChecked = false;
     m_drawBuffersSupported = false;
 
@@ -631,7 +638,21 @@ void WebGLRenderingContextBase::initializeContextState()
 
 void WebGLRenderingContextBase::initializeDefaultObjects()
 {
-    m_defaultFramebuffer = WebGLDefaultFramebuffer::create(*this, clampedCanvasSize());
+    ASSERT(!m_defaultFramebuffer);
+    m_defaultFramebuffer = WebGLDefaultFramebuffer::create(*this);
+}
+
+void WebGLRenderingContextBase::destroyDefaultFramebuffer()
+{
+    if (!m_defaultFramebuffer)
+        return;
+    // The default framebuffer holds GraphicsContextGL object names, which are meaningful only in the
+    // instance that created them. Delete them while m_context is still that instance. The callers
+    // maintain the invariant that m_defaultFramebuffer is null only while m_context is null, e.g.
+    // only for a lost context.
+    ASSERT(m_context);
+    m_defaultFramebuffer->destroy(*this);
+    m_defaultFramebuffer = nullptr;
 }
 
 void WebGLRenderingContextBase::detachAndRemoveAllObjects()
@@ -682,7 +703,12 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
 void WebGLRenderingContextBase::destroyGraphicsContextGL()
 {
     if (m_context) {
+        // Destroy the default framebuffer while the context that created it is still around, so
+        // that the objects are released even if something else still holds a reference to the
+        // GraphicsContextGL instance. Detach the client first so that a context loss observed during
+        // the deletion does not call back into this object, which may be under destruction.
         m_context->setClient(nullptr);
+        destroyDefaultFramebuffer();
         m_context = nullptr;
         removeActiveContext(*this);
     }
@@ -724,7 +750,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
 
     RefPtr context = m_context;
     if (dirtyBuffersMask & GraphicsContextGL::COLOR_BUFFER_BIT) {
-        if (combinedClear && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && (m_backDrawBuffer != GraphicsContextGL::NONE)) {
+        if (combinedClear && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && !m_defaultFramebuffer->drawBufferIsNone()) {
             context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
                 m_colorMask[1] ? m_clearColor[1] : 0,
                 m_colorMask[2] ? m_clearColor[2] : 0,
@@ -757,7 +783,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
 
     {
         ScopedDisableRasterizerDiscard disableRasterizerDiscard { *this };
-        ScopedEnableBackbuffer enableBackBuffer { *this };
+        ScopedEnableDrawBuffer0 enableDrawBuffer0 { *this, *m_defaultFramebuffer };
         ScopedDisableScissorTest disableScissorTest { *this };
         context->clear(dirtyBuffersMask);
     }
@@ -816,8 +842,10 @@ RefPtr<NativeImage> WebGLRenderingContextBase::surfaceBufferToNativeImage(Surfac
     if (readBuffer.image)
         return readBuffer.image;
     if (!isContextLost()) {
-        if (sourceBuffer == SurfaceBuffer::DrawingBuffer)
+        if (sourceBuffer == SurfaceBuffer::DrawingBuffer) {
             clearIfComposited(CallerTypeOther);
+            m_defaultFramebuffer->resolveColorIntoResult();
+        }
         readBuffer.image = protect(graphicsContextGL())->copyNativeImage(toGCGLSurfaceBuffer(sourceBuffer));
     }
     // A lost context or a failed read is transparent black.
@@ -863,7 +891,6 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
         return nullptr;
     if (m_attributes.premultipliedAlpha)
         return nullptr;
-    clearIfComposited(CallerTypeOther);
     auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
@@ -871,9 +898,23 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, size);
     if (!pixelBuffer)
         return nullptr;
-    ScopedWebGLRestoreFramebuffer restoreFramebuffer { *this };
+    // For now, zero fill, in case the readPixels fails. A failed IPC or a context loss returns
+    // without touching the destination, and a partial read leaves the rest of it untouched.
+    // This function will be replaced with NativeImage read in the future.
+    pixelBuffer->zeroFill();
+    clearIfComposited(CallerTypeOther);
+    m_defaultFramebuffer->resolveColorIntoResult();
+
     RefPtr context = m_context;
-    context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_defaultFramebuffer->object());
+    ScopedWebGLRestoreFramebuffer restoreFramebuffer { *this };
+    context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, 0);
+    // This read is part of the implementation of this function, so it must not be affected by the
+    // READ_BUFFER the application set. The result FBO carries the application READ_BUFFER only when
+    // it is the default framebuffer, that is, when the default framebuffer is neither multisampled
+    // nor preserved. Otherwise its READ_BUFFER is not application state and must be left as-is.
+    std::optional<ScopedEnableReadBuffer0> scopedReadBuffer;
+    if (!m_defaultFramebuffer->object())
+        scopedReadBuffer.emplace(*this, *m_defaultFramebuffer);
     // WebGL2 pixel pack buffer is disabled by the GraphicsContextGL implementation.
     const IntRect rect { { }, size };
     const GCGLint packAlignment = 1;
@@ -901,8 +942,10 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 {
     if (isContextLost())
         return nullptr;
-    if (buffer == SurfaceBuffer::DrawingBuffer)
+    if (buffer == SurfaceBuffer::DrawingBuffer) {
         clearIfComposited(CallerTypeOther);
+        m_defaultFramebuffer->resolveColorIntoResult();
+    }
     return protect(graphicsContextGL())->surfaceBufferToVideoFrame(toGCGLSurfaceBuffer(buffer));
 }
 #endif
@@ -948,15 +991,11 @@ void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
     m_readDrawingBuffer.clear();
     m_readDisplayBuffer.clear();
 
-    m_defaultFramebuffer->reshape(newSize);
+    if (!m_defaultFramebuffer->reshape(newSize)) {
+        forceContextLost();
+        return;
+    }
     updateMemoryCost();
-
-    auto& textureUnit = m_textureUnits[m_activeTextureUnit];
-    RefPtr context = m_context;
-    context->bindTexture(GraphicsContextGL::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
-    context->bindRenderbuffer(GraphicsContextGL::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
-    if (m_framebufferBinding)
-        context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebufferBinding->object());
 }
 
 int WebGLRenderingContextBase::drawingBufferWidth() const
@@ -1414,7 +1453,10 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
         return;
     if (!validateTexture2DBinding("copyTexSubImage2D"_s, target))
         return;
+    if (!validateDefaultFramebufferRead("copyTexSubImage2D"_s))
+        return;
     clearIfComposited(CallerTypeOther);
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 }
 
@@ -1535,10 +1577,8 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
     if (!deleteObject(locker, framebuffer))
         return;
 
-    if (framebuffer == m_framebufferBinding) {
-        m_framebufferBinding = nullptr;
-        protect(graphicsContextGL())->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, 0);
-    }
+    if (framebuffer == m_framebufferBinding)
+        setFramebuffer(locker, GraphicsContextGL::FRAMEBUFFER, nullptr);
 }
 
 void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
@@ -1644,6 +1684,8 @@ void WebGLRenderingContextBase::disable(GCGLenum cap)
         m_scissorEnabled = false;
     if (cap == GraphicsContextGL::RASTERIZER_DISCARD)
         m_rasterizerDiscardEnabled = false;
+    if (cap == GraphicsContextGL::DITHER)
+        m_ditherEnabled = false;
     protect(graphicsContextGL())->disable(cap);
 }
 
@@ -1714,6 +1756,8 @@ void WebGLRenderingContextBase::enable(GCGLenum cap)
         m_scissorEnabled = true;
     if (cap == GraphicsContextGL::RASTERIZER_DISCARD)
         m_rasterizerDiscardEnabled = true;
+    if (cap == GraphicsContextGL::DITHER)
+        m_ditherEnabled = true;
     protect(graphicsContextGL())->enable(cap);
 }
 
@@ -2238,8 +2282,8 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
             GCGLint value = GraphicsContextGL::NONE;
             if (m_framebufferBinding)
                 value = protect(m_framebufferBinding)->getDrawBuffer(pname);
-            else // emulated backbuffer
-                value = m_backDrawBuffer;
+            else if (pname == GraphicsContextGL::DRAW_BUFFER0_EXT && !m_defaultFramebuffer->drawBufferIsNone())
+                value = GraphicsContextGL::BACK;
             return value;
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter"_s, "invalid parameter name"_s);
@@ -3067,7 +3111,10 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels"_s, "size too large"_s);
         return;
     }
+    if (!validateDefaultFramebufferRead("readPixels"_s))
+        return;
     clearIfComposited(CallerTypeOther);
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(rect);
     auto data = pixels.mutableSpan().subspan(packSizes->initialSkipBytes, packSizes->imageBytes);
     const bool packReverseRowOrder = false;
     protect(graphicsContextGL())->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength, packReverseRowOrder);
@@ -4247,7 +4294,10 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
     auto tex = validateTexture2DBinding("copyTexImage2D"_s, target);
     if (!tex)
         return;
+    if (!validateDefaultFramebufferRead("copyTexImage2D"_s))
+        return;
     clearIfComposited(CallerTypeOther);
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
 }
 
@@ -5091,6 +5141,34 @@ WebGLFramebuffer* WebGLRenderingContextBase::getFramebufferBinding(GCGLenum targ
     return nullptr;
 }
 
+std::optional<ScopedWebGLRestoreFramebuffer> WebGLRenderingContextBase::prepareDefaultFramebufferForReadIfBound(std::optional<IntRect> rect)
+{
+    if (!isDefaultFramebufferBoundForRead())
+        return std::nullopt;
+    return m_defaultFramebuffer->prepareForReadWhenBound(rect);
+}
+
+bool WebGLRenderingContextBase::validateDefaultFramebufferRead(ASCIILiteral functionName)
+{
+    // Reads of the default framebuffer must fail when the application set its READ_BUFFER to NONE.
+    // The error is synthesized here instead of being left to the driver, since the implementation
+    // may redirect the read to the resolved contents of a multisampled default framebuffer.
+    if (isDefaultFramebufferBoundForRead() && m_defaultFramebuffer->readBufferIsNone()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "read buffer is NONE"_s);
+        return false;
+    }
+    return true;
+}
+
+void WebGLRenderingContextBase::rebindFramebuffers()
+{
+    RefPtr gl = graphicsContextGL();
+    if (!gl)
+        return;
+    auto defaultFBO = m_defaultFramebuffer ? m_defaultFramebuffer->object() : 0;
+    gl->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebufferBinding ? m_framebufferBinding->object() : defaultFBO);
+}
+
 bool WebGLRenderingContextBase::validateFramebufferFuncParameters(ASCIILiteral functionName, GCGLenum target, GCGLenum attachment)
 {
     if (!validateFramebufferTarget(target)) {
@@ -5386,9 +5464,9 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         return;
 
     if (auto context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(m_creationAttributes, isWebGL2(), *scriptExecutionContext))) {
-        initializeNewContext(context.releaseNonNull());
+        bool initialized = initializeNewContext(context.releaseNonNull());
         updateMemoryCost();
-        if (!m_context->isContextLost()) {
+        if (initialized) {
             // Context lost state is reset only here: context creation succeeded
             // and initialization calls did not observe context loss. This means
             // that initialization itself cannot use any public function code
@@ -5507,12 +5585,6 @@ GCGLint WebGLRenderingContextBase::maxColorAttachments()
     if (!m_maxColorAttachments)
         m_maxColorAttachments = protect(graphicsContextGL())->getInteger(GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT);
     return m_maxColorAttachments;
-}
-
-void WebGLRenderingContextBase::setBackDrawBuffer(GCGLenum buf)
-{
-    ASSERT(buf == GraphicsContextGL::NONE || buf == GraphicsContextGL::BACK);
-    m_backDrawBuffer = buf;
 }
 
 void WebGLRenderingContextBase::setFramebuffer(const AbstractLocker&, GCGLenum target, WebGLFramebuffer* buffer)
@@ -5655,6 +5727,10 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 
 void WebGLRenderingContextBase::forceContextLost()
 {
+    // The context may already be lost, e.g. when the default framebuffer allocation failed
+    // before GraphicsContextGL reported the loss.
+    if (isContextLost())
+        return;
     forceLostContext(WebGLRenderingContextBase::RealLostContext);
 }
 
@@ -5785,6 +5861,7 @@ void WebGLRenderingContextBase::prepareForDisplay()
         return;
 
     clearIfComposited(CallerTypeOther);
+    m_defaultFramebuffer->resolveColorIntoResult();
     protect(graphicsContextGL())->prepareForDisplay();
     m_defaultFramebuffer->markAllUnpreservedBuffersDirty();
 

@@ -315,20 +315,8 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
         GL_Disable(DEBUG_OUTPUT);
         if (m_texture)
             GL_DeleteTextures(1, &m_texture);
-        if (m_multisampleColorBuffer)
-            GL_DeleteRenderbuffers(1, &m_multisampleColorBuffer);
-        if (m_multisampleDepthStencilBuffer)
-            GL_DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        if (m_multisampleFBO)
-            GL_DeleteFramebuffers(1, &m_multisampleFBO);
-        if (m_depthStencilBuffer)
-            GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
         if (m_fbo)
             GL_DeleteFramebuffers(1, &m_fbo);
-        if (m_preserveDrawingBufferTexture)
-            GL_DeleteTextures(1, &m_preserveDrawingBufferTexture);
-        if (m_preserveDrawingBufferFBO)
-            GL_DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
     if (m_contextObj) {
         for (auto* image : m_eglImages.values()) {
@@ -526,14 +514,12 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
     m_currentDrawingBufferIndex++;
     auto& buffer = drawingBuffer();
 
-    if (buffer && (buffer.isInUse() || m_failNextStatusCheck)) {
+    if (buffer && (buffer.isInUse() || m_failNextDrawingBufferAllocation)) {
         EGL_DestroySurface(m_displayObj, buffer.pbuffer());
         buffer = { };
     }
-    if (m_failNextStatusCheck) {
-        m_failNextStatusCheck = false;
+    if (std::exchange(m_failNextDrawingBufferAllocation, false))
         return false;
-    }
     if (!buffer) {
         buffer = createDrawingBuffer();
         if (!buffer)

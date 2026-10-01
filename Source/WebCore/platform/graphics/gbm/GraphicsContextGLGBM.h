@@ -60,6 +60,7 @@ private:
     bool platformInitializeExtensions() override;
     bool reshapeDrawingBuffer() override;
     void prepareForDisplay() override;
+    RefPtr<PixelBuffer> readCompositedResults() final;
 #if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensionsImpl();
 #endif

@@ -145,6 +145,22 @@ private:
     GCGLuint m_object { 0 };
 };
 
+// Binds a scratch framebuffer with `texture` attached as COLOR_ATTACHMENT0 and makes it the read
+// framebuffer, so that a read is unaffected by application visible default framebuffer state such
+// as READ_BUFFER.
+class ScopedScratchReadFramebufferBinding {
+    WTF_MAKE_NONCOPYABLE(ScopedScratchReadFramebufferBinding);
+
+public:
+    ScopedScratchReadFramebufferBinding(bool isForWebGL2, GCGLuint restoreValue, GCGLuint texture);
+
+private:
+    // The member declaration order is significant: members are destroyed in reverse declaration
+    // order, so the read framebuffer binding is restored before the scratch framebuffer is deleted.
+    ScopedFramebuffer m_framebuffer;
+    ScopedRestoreReadFramebufferBinding m_binding;
+};
+
 class ScopedGLCapability {
     WTF_MAKE_NONCOPYABLE(ScopedGLCapability);
 public:

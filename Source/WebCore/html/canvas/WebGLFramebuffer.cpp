@@ -252,6 +252,18 @@ GCGLenum WebGLFramebuffer::getDrawBuffer(GCGLenum drawBuffer)
     return GraphicsContextGL::NONE;
 }
 
+void WebGLFramebuffer::readBuffer(GCGLenum src)
+{
+    RefPtr context = this->context();
+    ASSERT(context->isWebGL2()); // readBuffer() is WebGL 2 only.
+    // Track the value only when GL will accept it, so that the tracked value cannot diverge from
+    // the GL state. ANGLE synthesizes the error for the values it rejects.
+    if (src == GraphicsContextGL::NONE
+        || (src >= GraphicsContextGL::COLOR_ATTACHMENT0 && src < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + context->maxColorAttachments())))
+        m_readBuffer = src;
+    protect(context->graphicsContextGL())->readBuffer(src);
+}
+
 void WebGLFramebuffer::addMembersToOpaqueRoots(const AbstractLocker& locker, JSC::AbstractSlotVisitor& visitor)
 {
     for (auto& entry : m_attachments)

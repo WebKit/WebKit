@@ -1,0 +1,209 @@
+Test that resizing the canvas clears color, depth and stencil of the default framebuffer, even when state that affects gl.clear() is set when the resize happens.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing RASTERIZER_DISCARD enabled with {"antialias":false,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing drawBuffers([NONE]) with {"antialias":false,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing SCISSOR_TEST enabled with {"antialias":false,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing colorMask(false, false, false, false) with {"antialias":false,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing depthMask(false) and stencilMask(0) with {"antialias":false,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing RASTERIZER_DISCARD enabled with {"antialias":true,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing drawBuffers([NONE]) with {"antialias":true,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing SCISSOR_TEST enabled with {"antialias":true,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing colorMask(false, false, false, false) with {"antialias":true,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing depthMask(false) and stencilMask(0) with {"antialias":true,"preserveDrawingBuffer":false}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing RASTERIZER_DISCARD enabled with {"antialias":false,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing drawBuffers([NONE]) with {"antialias":false,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing SCISSOR_TEST enabled with {"antialias":false,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing colorMask(false, false, false, false) with {"antialias":false,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing depthMask(false) and stencilMask(0) with {"antialias":false,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing RASTERIZER_DISCARD enabled with {"antialias":true,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing drawBuffers([NONE]) with {"antialias":true,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing SCISSOR_TEST enabled with {"antialias":true,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing colorMask(false, false, false, false) with {"antialias":true,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing depthMask(false) and stencilMask(0) with {"antialias":true,"preserveDrawingBuffer":true}
+PASS before resize, color should be red
+PASS getError was expected value: NO_ERROR : no errors from resize
+PASS gl.drawingBufferWidth is 20
+PASS gl.drawingBufferHeight is 20
+PASS after resize, color should be transparent black
+PASS after resize, depth should be 1.0
+PASS after resize, stencil should be 0
+PASS getError was expected value: NO_ERROR : no errors
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -52,7 +52,7 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
-    RefPtr<PixelBuffer> readCompositedResults() final;
+    RefPtr<PixelBuffer> readCompositedResults() override;
 
     bool reshapeDrawingBuffer() override;
     void prepareForDisplay() override;

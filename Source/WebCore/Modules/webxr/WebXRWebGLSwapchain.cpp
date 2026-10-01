@@ -75,7 +75,6 @@ void WebXRWebGLSwapchain::clearAttachmentRegion(GraphicsContextGL& gl, const Int
 
     ScopedWebGLRestoreFramebuffer restoreFramebuffer { *m_context };
     ScopedDisableRasterizerDiscard disableRasterizerDiscard { *m_context };
-    ScopedEnableBackbuffer enableBackBuffer { *m_context };
     ScopedScissorTestForRegion scopedScissor { *m_context, viewport };
     ScopedClearColorAndMask zeroClear { *m_context, 0.f, 0.f, 0.f, 0.f, true, true, true, true };
     ScopedClearDepthAndMask zeroDepth { *m_context, 1.0f, true, m_targetFlags.contains(SwapchainTargetFlags::Depth) };
@@ -83,6 +82,7 @@ void WebXRWebGLSwapchain::clearAttachmentRegion(GraphicsContextGL& gl, const Int
 
     gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebufferForClearing->object());
     bindAttachment(attachment);
+    ScopedEnableDrawBuffer0 enableDrawBuffer0 { *m_context, *m_framebufferForClearing };
     gl.clear(clearMask);
 }
 
@@ -660,6 +660,7 @@ void WebXRWebGLTextureArraySwapchain::blitToSharedImage(GraphicsContextGL& gl)
     auto sliceWidth = m_texSize.width() / static_cast<int>(m_arrayLength);
     auto sliceHeight = m_texSize.height();
 
+    ScopedWebGLRestoreFramebuffer restoreFramebuffer { *m_context };
     gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_blitReadFBO);
     gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_blitDrawFBO);
     gl.framebufferTexture2D(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, currentSet.sharedImage.colorBuffer.tex, 0);
@@ -669,8 +670,6 @@ void WebXRWebGLTextureArraySwapchain::blitToSharedImage(GraphicsContextGL& gl)
         auto dstX = static_cast<GCGLint>(layer) * sliceWidth;
         gl.blitFramebuffer(0, 0, sliceWidth, sliceHeight, dstX, 0, dstX + sliceWidth, sliceHeight, GL::COLOR_BUFFER_BIT, GL::NEAREST);
     }
-
-    gl.bindFramebuffer(GL::FRAMEBUFFER, 0);
 }
 
 void WebXRWebGLTextureArraySwapchain::clearTextureRegion(GraphicsContextGL& gl, const IntRect& viewport, std::optional<GCGLint> slice)
@@ -760,6 +759,7 @@ void WebXRWebGLCubeSwapchain::blitToSharedImage(GraphicsContextGL& gl)
 
     auto faceSize = m_texSize.height();
 
+    ScopedWebGLRestoreFramebuffer restoreFramebuffer { *m_context };
     gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_blitReadFBO);
     gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_blitDrawFBO);
     gl.framebufferTexture2D(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, currentSet.sharedImage.colorBuffer.tex, 0);
@@ -772,8 +772,6 @@ void WebXRWebGLCubeSwapchain::blitToSharedImage(GraphicsContextGL& gl)
             gl.blitFramebuffer(0, 0, faceSize, faceSize, dstX, 0, dstX + faceSize, faceSize, GL::COLOR_BUFFER_BIT, GL::NEAREST);
         }
     }
-
-    gl.bindFramebuffer(GL::FRAMEBUFFER, 0);
 }
 
 void WebXRWebGLCubeSwapchain::clearTextureRegion(GraphicsContextGL& gl, const IntRect& viewport, std::optional<GCGLint> slice)

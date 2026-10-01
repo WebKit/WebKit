@@ -32,7 +32,8 @@ namespace WebCore {
 enum class GraphicsContextGLSimulatedEventForTesting : uint8_t {
     GPUStatusFailure,
     Timeout,
-    DisplayBufferAllocationFailure
+    DisplayBufferAllocationFailure,
+    RenderbufferAllocationFailure
 };
 
 } // namespace WebCore

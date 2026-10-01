@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLDrawBuffers.h"
 
+#include "WebGLDefaultFramebuffer.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -63,10 +64,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
             context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL"_s, "BACK or NONE"_s);
             return;
         }
-        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
-        GCGLenum value[1] { bufs[0] == GraphicsContextGL::BACK ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE };
-        protect(context->graphicsContextGL())->drawBuffersEXT(value);
-        context->setBackDrawBuffer(bufs[0]);
+        context->m_defaultFramebuffer->drawBuffers(bufs[0]);
     } else {
         if (n > context->maxDrawBuffers()) {
             context->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffersWEBGL"_s, "more than max draw buffers"_s);

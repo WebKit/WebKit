@@ -98,12 +98,10 @@ private:
 // apply to a context without alpha, so there are three cases and not four.
 enum class AlphaMode : uint8_t { NoAlpha, Unpremultiplied, Premultiplied };
 
-class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool, AlphaMode>> {
+class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, AlphaMode>> {
 protected:
-    bool antialias() const { return std::get<0>(GetParam()); }
-    bool preserveDrawingBuffer() const { return std::get<1>(GetParam()); }
-    bool isWebGL2() const { return std::get<2>(GetParam()); }
-    AlphaMode alphaMode() const { return std::get<3>(GetParam()); }
+    bool isWebGL2() const { return std::get<0>(GetParam()); }
+    AlphaMode alphaMode() const { return std::get<1>(GetParam()); }
     bool hasAlpha() const { return alphaMode() != AlphaMode::NoAlpha; }
     // How the contents of the drawing buffer describe their alpha. Without alpha the
     // contents are opaque, so premultiplication does not apply to them.
@@ -128,12 +126,8 @@ GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
 {
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = isWebGL2();
-    attributes.antialias = antialias();
-    attributes.depth = false;
-    attributes.stencil = false;
     attributes.alpha = hasAlpha();
     attributes.premultipliedAlpha = alphaMode() != AlphaMode::Unpremultiplied;
-    attributes.preserveDrawingBuffer = preserveDrawingBuffer();
     return attributes;
 }
 
@@ -328,8 +322,6 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
     using GL = GraphicsContextGL;
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = true;
-    attributes.depth = true;
-    attributes.stencil = true;
     auto gl = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     gl->reshape(1, 1);
 
@@ -415,8 +407,6 @@ TEST_F(GraphicsContextGLCocoaTest, DestroyWithoutMakingCurrent)
 {
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = true;
-    attributes.depth = true;
-    attributes.stencil = true;
     RefPtr gl1 = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     gl1->reshape(1, 1);
     RefPtr gl2 = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
@@ -664,22 +654,11 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     // For documentation purposes how the context behaves afterwards.
     // For WebGL this is not relevant, as the context is marked as lost, and each new WebGL call will
     // check for the context loss flag and does not let the call proceed.
-    auto attrs = context->contextAttributes();
-    if (attrs.preserveDrawingBuffer && !attrs.antialias) {
-        ASSERT_TRUE(changeContextContents(*context, 1));
-        EXPECT_TRUE(context->getErrors().isEmpty());
-    } else if (attrs.preserveDrawingBuffer || attrs.antialias) {
-        ASSERT_FALSE(changeContextContents(*context, 1));
-        auto errors = context->getErrors();
-        EXPECT_TRUE(errors.containsAny({ GCGLErrorCode::InvalidFramebufferOperation, GCGLErrorCode::InvalidOperation }));
-        EXPECT_TRUE(errors.containsOnly({ GCGLErrorCode::InvalidFramebufferOperation, GCGLErrorCode::InvalidOperation }));
-    } else {
-        ASSERT_FALSE(changeContextContents(*context, 1));
-        uint32_t gotValue = 0;
-        context->readPixels({ 0, 0, 1, 1 }, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
-        EXPECT_EQ(0u, gotValue);
-        EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
-    }
+    ASSERT_FALSE(changeContextContents(*context, 1));
+    uint32_t gotValue = 0;
+    context->readPixels({ 0, 0, 1, 1 }, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
+    EXPECT_EQ(0u, gotValue);
+    EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
     context->prepareForDisplay();
     context->prepareForDisplay();
     EXPECT_EQ(1, client.contextLostCalls());
@@ -812,12 +791,8 @@ TEST_P(AnyContextAttributeTest, WebXRBlitTest)
 
 static std::string anyContextAttributeTestName(const testing::TestParamInfo<AnyContextAttributeTest::ParamType>& info)
 {
-    auto [antialias, preserveDrawingBuffer, isWebGL2, alphaMode] = info.param;
+    auto [isWebGL2, alphaMode] = info.param;
     std::string name = isWebGL2 ? "WebGL2" : "WebGL1";
-    if (antialias)
-        name += "_Antialias";
-    if (preserveDrawingBuffer)
-        name += "_PreserveDrawingBuffer";
     switch (alphaMode) {
     case AlphaMode::NoAlpha:
         name += "_NoAlpha";
@@ -835,8 +810,6 @@ static std::string anyContextAttributeTestName(const testing::TestParamInfo<AnyC
 INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
     AnyContextAttributeTest,
     testing::Combine(
-        testing::Values(true, false),
-        testing::Values(true, false),
         testing::Values(true, false),
         testing::Values(AlphaMode::NoAlpha, AlphaMode::Unpremultiplied, AlphaMode::Premultiplied)),
     anyContextAttributeTestName);

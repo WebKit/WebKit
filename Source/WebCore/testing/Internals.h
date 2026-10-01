@@ -1095,7 +1095,9 @@ public:
 #if ENABLE(WEBGL)
     enum class SimulatedWebGLContextEvent {
         GPUStatusFailure,
-        Timeout
+        Timeout,
+        DisplayBufferAllocationFailure,
+        RenderbufferAllocationFailure
     };
     void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContextBase&);
 

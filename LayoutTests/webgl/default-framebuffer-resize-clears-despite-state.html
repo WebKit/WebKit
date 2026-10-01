@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test that resizing the canvas clears the default framebuffer regardless of the context state</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that resizing the canvas clears color, depth and stencil of the default framebuffer, even when state that affects gl.clear() is set when the resize happens.");
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var gl;
+
+var vertexShaderSource = `#version 300 es
+in vec4 vPosition;
+uniform float z;
+void main() {
+    gl_Position = vec4(vPosition.xy, z, 1.0);
+}`;
+
+var fragmentShaderSource = `#version 300 es
+precision mediump float;
+uniform vec4 color;
+out vec4 fragColor;
+void main() {
+    fragColor = color;
+}`;
+
+// Each case sets state before the resize and resets it after the resize.
+var stateCases = [
+    {
+        name: "RASTERIZER_DISCARD enabled",
+        set: () => gl.enable(gl.RASTERIZER_DISCARD),
+        reset: () => gl.disable(gl.RASTERIZER_DISCARD),
+    },
+    {
+        name: "drawBuffers([NONE])",
+        set: () => gl.drawBuffers([gl.NONE]),
+        reset: () => gl.drawBuffers([gl.BACK]),
+    },
+    {
+        name: "SCISSOR_TEST enabled",
+        set: () => { gl.enable(gl.SCISSOR_TEST); gl.scissor(0, 0, 1, 1); },
+        reset: () => gl.disable(gl.SCISSOR_TEST),
+    },
+    {
+        name: "colorMask(false, false, false, false)",
+        set: () => gl.colorMask(false, false, false, false),
+        reset: () => gl.colorMask(true, true, true, true),
+    },
+    {
+        name: "depthMask(false) and stencilMask(0)",
+        set: () => { gl.depthMask(false); gl.stencilMask(0); },
+        reset: () => { gl.depthMask(true); gl.stencilMask(0xffffffff); },
+    },
+];
+
+var attributeCases = [
+    { antialias: false, preserveDrawingBuffer: false },
+    { antialias: true, preserveDrawingBuffer: false },
+    { antialias: false, preserveDrawingBuffer: true },
+    { antialias: true, preserveDrawingBuffer: true },
+];
+
+function drawQuad(program, z, color)
+{
+    gl.uniform1f(gl.getUniformLocation(program, "z"), z);
+    gl.uniform4fv(gl.getUniformLocation(program, "color"), color);
+    wtu.drawUnitQuad(gl);
+}
+
+function runCase(attributes, stateCase)
+{
+    debug("");
+    debug("Testing " + stateCase.name + " with " + JSON.stringify(attributes));
+
+    var canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    gl = canvas.getContext("webgl2", Object.assign({ depth: true, stencil: true }, attributes));
+    if (!gl) {
+        testFailed("WebGL2 context does not exist");
+        return;
+    }
+    var program = wtu.setupProgram(gl, [vertexShaderSource, fragmentShaderSource], ["vPosition"]);
+    wtu.setupUnitQuad(gl);
+
+    // Fill the default framebuffer with values that differ from the initial values.
+    gl.clearColor(1, 0, 0, 1);
+    gl.clearDepth(0);
+    gl.clearStencil(0xff);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+    wtu.checkCanvasRect(gl, 0, 0, 16, 16, [255, 0, 0, 255], "before resize, color should be red");
+    gl.clearColor(0, 0, 0, 0);
+    gl.clearDepth(1);
+    gl.clearStencil(0);
+
+    stateCase.set();
+    canvas.width = 20;
+    canvas.height = 20;
+    stateCase.reset();
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no errors from resize");
+    shouldBe("gl.drawingBufferWidth", "20");
+    shouldBe("gl.drawingBufferHeight", "20");
+    gl.viewport(0, 0, 20, 20);
+
+    wtu.checkCanvasRect(gl, 0, 0, 20, 20, [0, 0, 0, 0], "after resize, color should be transparent black");
+
+    // Passes only where depth is cleared to 1.0.
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LESS);
+    drawQuad(program, 0.5, [0, 1, 0, 1]);
+    gl.disable(gl.DEPTH_TEST);
+    wtu.checkCanvasRect(gl, 0, 0, 20, 20, [0, 255, 0, 255], "after resize, depth should be 1.0");
+
+    // Passes only where stencil is cleared to 0.
+    gl.enable(gl.STENCIL_TEST);
+    gl.stencilFunc(gl.EQUAL, 0, 0xff);
+    drawQuad(program, 0, [0, 0, 1, 1]);
+    gl.disable(gl.STENCIL_TEST);
+    wtu.checkCanvasRect(gl, 0, 0, 20, 20, [0, 0, 255, 255], "after resize, stencil should be 0");
+
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no errors");
+
+    // Drop the canvas and the context and collect them, so that the number of the live contexts
+    // does not grow to the limit after which the implementation recycles the oldest contexts.
+    canvas = null;
+    program = null;
+    gl = null;
+    gc();
+}
+
+for (var attributes of attributeCases) {
+    for (var stateCase of stateCases)
+        runCase(attributes, stateCase);
+}
+
+debug("");
+</script>
+</body>
+</html>

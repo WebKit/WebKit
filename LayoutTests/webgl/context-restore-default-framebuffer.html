@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL default framebuffer after a context restore</title>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that the default framebuffer of a restored context is complete and renders correctly. A multisampled or preserved default framebuffer owns framebuffer and renderbuffer objects of the lost context. Those must not be deleted from the restored context, where the same object names refer to the objects of the new default framebuffer.");
+
+jsTestIsAsync = true;
+
+var canvas;
+var gl;
+var extension;
+var framebufferStatus;
+var pixel;
+var attributes;
+
+function readPixel()
+{
+    var result = new Uint8Array(4);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, result);
+    return result.toString();
+}
+
+// Clears the default framebuffer to color and asserts that it is complete and holds the color.
+function checkDefaultFramebufferRenders(color, expected)
+{
+    shouldBeFalse("gl.isContextLost()");
+    framebufferStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    shouldBe("framebufferStatus", "gl.FRAMEBUFFER_COMPLETE");
+    gl.clearColor(color[0], color[1], color[2], color[3]);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+    pixel = readPixel();
+    shouldBeEqualToString("pixel", expected);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+// The depth and stencil attachments of the default framebuffer use formats that come from
+// extensions, so the attachments exist only if the extensions were enabled. Assert that the
+// attachments the context reports are actually allocated.
+function checkDepthStencilAttachments()
+{
+    attributes = gl.getContextAttributes();
+    if (attributes.depth)
+        shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) > 0");
+    if (attributes.stencil)
+        shouldBeTrue("gl.getParameter(gl.STENCIL_BITS) > 0");
+}
+
+function loseAndRestoreContext()
+{
+    return new Promise(function(resolve, reject) {
+        canvas.addEventListener("webglcontextlost", function(event) {
+            // Allow the context to be restored.
+            event.preventDefault();
+            // A synthetic context loss is restored only on request, after the event was dispatched.
+            setTimeout(function() { extension.restoreContext(); }, 0);
+        }, { once: true });
+        canvas.addEventListener("webglcontextrestored", function() { resolve(); }, { once: true });
+        setTimeout(function() { reject(new Error("timed out waiting for the context to be restored")); }, 10000);
+        extension.loseContext();
+    });
+}
+
+async function runTest(parameters)
+{
+    debug("");
+    debug("Parameters: " + JSON.stringify(parameters));
+
+    // Drop the canvas, the context and the assertion globals of the previous case and collect them,
+    // so that the number of the live contexts does not grow to the limit after which the
+    // implementation recycles the oldest contexts.
+    canvas = null;
+    gl = null;
+    extension = null;
+    framebufferStatus = null;
+    pixel = null;
+    attributes = null;
+    gc();
+
+    canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+    gl = canvas.getContext(parameters.version == 2 ? "webgl2" : "webgl", {
+        antialias: parameters.antialias,
+        preserveDrawingBuffer: parameters.preserveDrawingBuffer,
+        depth: parameters.depth,
+        stencil: parameters.stencil,
+    });
+    if (!gl) {
+        testFailed("Unable to fetch the WebGL rendering context for canvas.");
+        return;
+    }
+    extension = gl.getExtension("WEBGL_lose_context");
+    if (!extension) {
+        testFailed("WEBGL_lose_context is not available.");
+        return;
+    }
+    // The default framebuffer is a distinct framebuffer object, and thus owns the objects that the
+    // restored context must not delete, only when it is multisampled or preserved.
+    attributes = gl.getContextAttributes();
+    if (parameters.antialias && !attributes.antialias) {
+        debug("Skipped: antialias is not available.");
+        return;
+    }
+    if (parameters.preserveDrawingBuffer && !attributes.preserveDrawingBuffer) {
+        debug("Skipped: preserveDrawingBuffer is not available.");
+        return;
+    }
+    checkDepthStencilAttachments();
+    checkDefaultFramebufferRenders([1, 0, 0, 1], "255,0,0,255");
+
+    await loseAndRestoreContext();
+
+    debug("After the context was restored:");
+    checkDepthStencilAttachments();
+    checkDefaultFramebufferRenders([0, 1, 0, 1], "0,255,0,255");
+}
+
+async function runTests()
+{
+    var configurations = [
+        { version: 1, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: false },
+        { version: 1, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false },
+        { version: 1, antialias: false, preserveDrawingBuffer: true, depth: true, stencil: false },
+        { version: 1, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: true },
+        { version: 2, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: true },
+        { version: 2, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: true },
+        { version: 2, antialias: false, preserveDrawingBuffer: true, depth: true, stencil: false },
+    ];
+    try {
+        for (var configuration of configurations)
+            await runTest(configuration);
+    } catch (error) {
+        testFailed("" + error);
+    }
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>

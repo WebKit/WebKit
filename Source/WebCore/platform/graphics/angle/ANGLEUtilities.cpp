@@ -135,6 +135,12 @@ ScopedFramebuffer::~ScopedFramebuffer()
     GL_DeleteFramebuffers(1, &m_object);
 }
 
+ScopedScratchReadFramebufferBinding::ScopedScratchReadFramebufferBinding(bool isForWebGL2, GCGLuint restoreValue, GCGLuint texture)
+    : m_binding(isForWebGL2, restoreValue, m_framebuffer)
+{
+    GL_FramebufferTexture2D(m_binding.framebufferTarget(), GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+}
+
 ScopedGLCapability::ScopedGLCapability(GCGLenum capability, bool enable)
     : m_capability(capability)
     , m_original(GL_IsEnabled(m_capability) == enable ? std::nullopt : std::optional<bool>(!enable))

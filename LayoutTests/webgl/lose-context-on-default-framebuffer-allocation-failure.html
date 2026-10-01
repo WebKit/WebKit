@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../fast/canvas/webgl/resources/webgl-test.js"> </script>
+<script src="../fast/canvas/webgl/resources/webgl-test-utils.js"> </script>
+<script>
+var wtu = WebGLTestUtils;
+var gl;
+var canvas;
+window.jsTestIsAsync = true;
+
+if (window.initNonKhronosFramework)
+    window.initNonKhronosFramework(false);
+
+debug("Checks that failing to allocate the default framebuffer storage during a resize loses the context.");
+debug("NOTE: This only passes in the test harness because it requires Internals.");
+debug("");
+
+function makeCanvas() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 20;
+    canvas.height = 20;
+    return canvas;
+}
+
+async function webGLContextLostOrTimeout(canvas)
+{
+    return new Promise(resolve => {
+        canvas.addEventListener("webglcontextlost", () => resolve(true));
+        setTimeout(() => resolve(false), 2000);
+    });
+}
+
+function releaseContext() {
+    canvas = null;
+    gl = null;
+    gc();
+}
+
+async function testAllocationFailure(contextType, event, attributes) {
+    debug("");
+    debug(`Test ${contextType} ${event} ${JSON.stringify(attributes)}.`);
+    releaseContext();
+    canvas = makeCanvas();
+    gl = canvas.getContext(contextType, attributes);
+    shouldBeTrue("!!gl");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    let lost = webGLContextLostOrTimeout(canvas);
+    window.internals.simulateEventForWebGLContext(event, gl);
+    canvas.width = 30;
+    if (!await lost)
+        testFailed("webglcontextlost was not dispatched.");
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+async function testPendingErrorPreservedOverResize(contextType, attributes) {
+    debug("");
+    debug(`Test ${contextType} pending error is preserved over a successful resize ${JSON.stringify(attributes)}.`);
+    releaseContext();
+    canvas = makeCanvas();
+    gl = canvas.getContext(contextType, attributes);
+    shouldBeTrue("!!gl");
+    gl.bindBuffer(0x1234, null);
+    canvas.width = 30;
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.INVALID_ENUM");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.drawingBufferWidth", "30");
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    wtu.checkCanvasRect(gl, 0, 0, 30, 20, [0, 255, 0, 255]);
+}
+
+// Each entry selects which default framebuffer storage allocation is the first renderbuffer allocation
+// done in the resize, i.e. the one RenderbufferAllocationFailure fails.
+const renderbufferAllocationCases = [
+    { antialias: true, depth: false, stencil: false }, // Multisampled color.
+    { antialias: false, preserveDrawingBuffer: true, depth: false, stencil: false }, // Single-sampled color.
+    { antialias: false, depth: true, stencil: false }, // Depth.
+    { antialias: false, depth: false, stencil: true }, // Stencil.
+    { antialias: false, depth: true, stencil: true }, // Depth-stencil.
+];
+
+async function runTest() {
+    if (!window.internals) {
+        testFailed("Test requires Internals.");
+        finishTest();
+        return;
+    }
+    for (const contextType of ["webgl", "webgl2"]) {
+        await testAllocationFailure(contextType, "DisplayBufferAllocationFailure", { antialias: false });
+        await testAllocationFailure(contextType, "DisplayBufferAllocationFailure", { antialias: true, depth: true, stencil: true });
+        for (const attributes of renderbufferAllocationCases)
+            await testAllocationFailure(contextType, "RenderbufferAllocationFailure", attributes);
+        await testPendingErrorPreservedOverResize(contextType, { antialias: false, depth: false, stencil: false });
+        await testPendingErrorPreservedOverResize(contextType, { antialias: true, depth: true, stencil: true });
+    }
+    releaseContext();
+    finishTest();
+}
+
+runTest();
+var successfullyParsed = true;
+
+</script>
+<body>
+</body>

@@ -28,37 +28,91 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLRenderingContextBase.h"
+#include "WebGLUtilities.h"
+#include <optional>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+class IntRect;
 
 // Implementation for the WebGL context default framebuffer.
 class WebGLDefaultFramebuffer {
     WTF_MAKE_TZONE_ALLOCATED(WebGLDefaultFramebuffer);
     WTF_MAKE_NONCOPYABLE(WebGLDefaultFramebuffer);
 public:
-    static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&, IntSize);
+    // Creates the framebuffer with a 0x0 size. The caller must call reshape() once the
+    // context is initialized to allocate and configure the attachments.
+    static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&);
+    ~WebGLDefaultFramebuffer();
 
-    PlatformGLObject object() const { return 0; }
-    bool hasStencil() const { return m_hasStencil; }
-    bool hasDepth() const { return m_hasDepth; }
-    IntSize NODELETE size() const;
-    void reshape(IntSize);
+    // Deletes the GraphicsContextGL objects. The object names are meaningful only in the
+    // GraphicsContextGL instance that created them, so the caller must call this while that
+    // instance is still the GL context of the passed in WebGL context. Nothing is deleted for a
+    // lost context, which has already lost its objects. Must be called before destruction.
+    void destroy(WebGLRenderingContextBase&);
+
+    PlatformGLObject object() const { return m_fbo; }
+
+    // Resolves/blits the rendered color into the result FBO (id 0) so that the WebGL
+    // implementation can read the canvas contents from it. No-op for the direct-rendering
+    // case, where the default framebuffer is the result FBO.
+    void resolveColorIntoResult(std::optional<IntRect> = std::nullopt);
+
+    // For default-FB reads (readPixels, copyTexImage, etc.): when antialias is in
+    // effect, resolves the requested rect into the result FBO and binds the GL read
+    // framebuffer to 0 so the read sees the resolved color.
+    [[nodiscard]] std::optional<ScopedWebGLRestoreFramebuffer> prepareForReadWhenBound(std::optional<IntRect> = std::nullopt);
+
+    bool hasStencil() const
+    {
+        return m_depthStencilAttachment == GraphicsContextGL::STENCIL_ATTACHMENT
+            || m_depthStencilAttachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT;
+    }
+    bool hasDepth() const
+    {
+        return m_depthStencilAttachment == GraphicsContextGL::DEPTH_ATTACHMENT
+            || m_depthStencilAttachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT;
+    }
+    IntSize size() const { return m_size; }
+    // Returns false if the storage could not be allocated. The caller must then lose the context,
+    // as the default framebuffer is unusable.
+    [[nodiscard]] bool reshape(IntSize);
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
     void NODELETE markBuffersClear(GCGLbitfield clearBuffers);
     void NODELETE markAllUnpreservedBuffersDirty();
     void NODELETE markAllBuffersDirty();
+
+    // DRAW_BUFFER0 and READ_BUFFER of the default framebuffer, which the application can set to
+    // BACK or NONE only. BACK is simulated with COLOR_ATTACHMENT0, so the state is tracked here
+    // instead of being queried from the driver. The default framebuffer must be bound for drawing
+    // or reading, respectively, when setting the state.
+    void drawBuffers(GCGLenum);
+    void readBuffer(GCGLenum);
+    bool drawBufferIsNone() const { return m_drawBufferIsNone; }
+    bool readBufferIsNone() const { return m_readBufferIsNone; }
 
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);
 
     WeakRef<WebGLRenderingContextBase> m_context;
 
+    // m_fbo == 0 renders straight into the result FBO. When antialiasing or preserving
+    // the drawing buffer m_fbo is an offscreen FBO created in the constructor; its
+    // renderbuffers are created and attached lazily on the first reshape(). The absence
+    // of a created renderbuffer is what signals that the FBO still needs configuring.
+    PlatformGLObject m_fbo { 0 };
+    PlatformGLObject m_colorBuffer { 0 };
+    PlatformGLObject m_depthStencilBuffer { 0 };
+
+    GCGLenum m_depthStencilFormat { 0 };
+    GCGLenum m_depthStencilAttachment { 0 };
+
     IntSize m_size;
     GCGLbitfield m_unpreservedBuffers { 0 };
     GCGLbitfield m_dirtyBuffers { 0 };
-    bool m_hasStencil : 1;
-    bool m_hasDepth : 1;
+    bool m_drawBufferIsNone { false }; // Of m_fbo state.
+    bool m_readBufferIsNone { false }; // Of m_fbo state.
 };
 
 }
