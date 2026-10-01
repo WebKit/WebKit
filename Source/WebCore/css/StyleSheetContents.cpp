@@ -28,6 +28,7 @@
 #include "CachePolicy.h"
 #include "CachedCSSStyleSheet.h"
 #include "CommonAtomStrings.h"
+#include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "FrameConsoleClient.h"
 #include "FrameDestructionObserverInlines.h"
@@ -40,6 +41,7 @@
 #include "RuleSet.h"
 #include "SecurityOrigin.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "UserContentProvider.h"
@@ -555,13 +557,13 @@ bool StyleSheetContents::traverseSubresources(NOESCAPE const Function<bool(const
     return traverseRules([&] (const StyleRuleBase& rule) {
         switch (rule.type()) {
         case StyleRuleType::Style:
-            return protect(uncheckedDowncast<StyleRule>(rule))->properties().traverseSubresources(handler);
+            return protect(protect(uncheckedDowncast<StyleRule>(rule))->properties())->traverseSubresources(handler);
         case StyleRuleType::StyleWithNesting:
-            return protect(uncheckedDowncast<StyleRuleWithNesting>(rule))->properties().traverseSubresources(handler);
+            return protect(protect(uncheckedDowncast<StyleRuleWithNesting>(rule))->properties())->traverseSubresources(handler);
         case StyleRuleType::NestedDeclarations:
-            return protect(uncheckedDowncast<StyleRuleNestedDeclarations>(rule))->properties().traverseSubresources(handler);
+            return protect(protect(uncheckedDowncast<StyleRuleNestedDeclarations>(rule))->properties())->traverseSubresources(handler);
         case StyleRuleType::FontFace:
-            return protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties().traverseSubresources(handler);
+            return protect(protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties())->traverseSubresources(handler);
         case StyleRuleType::Import:
             if (RefPtr cachedResource = uncheckedDowncast<StyleRuleImport>(rule).cachedCSSStyleSheet())
                 return handler(*cachedResource);
@@ -611,7 +613,7 @@ bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLo
 #if ENABLE(CONTENT_EXTENSIONS)
         // If a cached subresource is blocked or made HTTPS by a content blocker, we cannot reuse the cached stylesheet.
         RefPtr page = loader.frame().page();
-        auto* documentLoader = loader.documentLoader();
+        RefPtr documentLoader = loader.documentLoader();
         if (page && documentLoader) {
             const auto& request = resource.resourceRequest();
             auto results = userContentProvider->processContentRuleListsForLoad(*page, request.url(), ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester(), loader.frame().isMainFrame()), *documentLoader);
@@ -639,16 +641,16 @@ bool StyleSheetContents::mayDependOnBaseURL() const
     return traverseRules([&](const StyleRuleBase& rule) -> bool {
         switch (rule.type()) {
         case StyleRuleType::Style:
-            return protect(uncheckedDowncast<StyleRule>(rule))->properties().mayDependOnBaseURL();
+            return protect(protect(uncheckedDowncast<StyleRule>(rule))->properties())->mayDependOnBaseURL();
         case StyleRuleType::StyleWithNesting:
-            return protect(uncheckedDowncast<StyleRuleWithNesting>(rule))->properties().mayDependOnBaseURL();
+            return protect(protect(uncheckedDowncast<StyleRuleWithNesting>(rule))->properties())->mayDependOnBaseURL();
         case StyleRuleType::NestedDeclarations:
-            return protect(uncheckedDowncast<StyleRule>(rule))->properties().mayDependOnBaseURL();
+            return protect(protect(uncheckedDowncast<StyleRule>(rule))->properties())->mayDependOnBaseURL();
         case StyleRuleType::FontFace:
-            return protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties().mayDependOnBaseURL();
+            return protect(protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties())->mayDependOnBaseURL();
 #if ENABLE(SPATIAL_PORTAL)
         case StyleRuleType::EnvironmentMap:
-            return protect(uncheckedDowncast<StyleRuleEnvironmentMap>(rule))->properties().mayDependOnBaseURL();
+            return protect(protect(uncheckedDowncast<StyleRuleEnvironmentMap>(rule))->properties())->mayDependOnBaseURL();
 #else
         case StyleRuleType::EnvironmentMap:
             return false;
@@ -681,6 +683,11 @@ bool StyleSheetContents::mayDependOnBaseURL() const
         ASSERT_NOT_REACHED();
         return false;
     });
+}
+
+StyleRuleImport* StyleSheetContents::ownerRule() const
+{
+    return m_ownerRule;
 }
 
 StyleSheetContents* StyleSheetContents::parentStyleSheet() const

@@ -31,7 +31,6 @@ bindings/js/ScriptController.cpp
 bindings/js/ScriptModuleLoader.cpp
 contentextensions/ContentExtensionsBackend.cpp
 css/CSSStyleProperties.cpp
-css/CSSStyleSheet.cpp
 css/SelectorCheckerTestFunctions.h
 dom/Attr.cpp
 dom/CollectionIndexCacheInlines.h

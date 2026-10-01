@@ -55,6 +55,7 @@
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+DeprecatedConversions.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleResolveForFont.h"
 #include "StyleRule.h"
 
@@ -416,7 +417,7 @@ void CSSFontFace::setLineGapOverride(CSSValue& value)
 
 AtomString CSSFontFace::family() const
 {
-    RefPtr value = dynamicDowncast<CSSFontFamilyNameValue>(properties().getPropertyCSSValue(CSSPropertyFontFamily));
+    RefPtr value = dynamicDowncast<CSSFontFamilyNameValue>(protect(properties())->getPropertyCSSValue(CSSPropertyFontFamily));
     if (!value)
         return { };
     return AtomString(serializeFontFamily(value->fontFamilyName().value));
@@ -424,52 +425,52 @@ AtomString CSSFontFace::family() const
 
 String CSSFontFace::style() const
 {
-    return properties().getPropertyValue(CSSPropertyFontStyle);
+    return protect(properties())->getPropertyValue(CSSPropertyFontStyle);
 }
 
 String CSSFontFace::weight() const
 {
-    return properties().getPropertyValue(CSSPropertyFontWeight);
+    return protect(properties())->getPropertyValue(CSSPropertyFontWeight);
 }
 
 String CSSFontFace::width() const
 {
-    return properties().getPropertyValue(CSSPropertyFontWidth);
+    return protect(properties())->getPropertyValue(CSSPropertyFontWidth);
 }
 
 String CSSFontFace::unicodeRange() const
 {
-    return properties().getPropertyValue(CSSPropertyUnicodeRange);
+    return protect(properties())->getPropertyValue(CSSPropertyUnicodeRange);
 }
 
 String CSSFontFace::featureSettings() const
 {
-    return properties().getPropertyValue(CSSPropertyFontFeatureSettings);
+    return protect(properties())->getPropertyValue(CSSPropertyFontFeatureSettings);
 }
 
 String CSSFontFace::sizeAdjust() const
 {
-    return properties().getPropertyValue(CSSPropertySizeAdjust);
+    return protect(properties())->getPropertyValue(CSSPropertySizeAdjust);
 }
 
 String CSSFontFace::ascentOverride() const
 {
-    return properties().getPropertyValue(CSSPropertyAscentOverride);
+    return protect(properties())->getPropertyValue(CSSPropertyAscentOverride);
 }
 
 String CSSFontFace::descentOverride() const
 {
-    return properties().getPropertyValue(CSSPropertyDescentOverride);
+    return protect(properties())->getPropertyValue(CSSPropertyDescentOverride);
 }
 
 String CSSFontFace::lineGapOverride() const
 {
-    return properties().getPropertyValue(CSSPropertyLineGapOverride);
+    return protect(properties())->getPropertyValue(CSSPropertyLineGapOverride);
 }
 
 String CSSFontFace::display() const
 {
-    return properties().getPropertyValue(CSSPropertyFontDisplay);
+    return protect(properties())->getPropertyValue(CSSPropertyFontDisplay);
 }
 
 RefPtr<CSSValue> CSSFontFace::familyCSSValue() const

@@ -275,7 +275,7 @@ void CSSStyleSheet::forEachStyleScope(NOESCAPE const Function<void(Style::Scope&
         return;
     }
     for (Ref treeScope : m_adoptingTreeScopes)
-        apply(styleScopeFor(treeScope));
+        apply(protect(styleScopeFor(treeScope)));
 }
 
 void CSSStyleSheet::clearOwnerNode()
@@ -350,7 +350,7 @@ CSSRule* CSSStyleSheet::item(unsigned index)
 
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
     if (!cssRule)
-        cssRule = protect(m_contents)->ruleAt(index)->createCSSOMWrapper(*this);
+        cssRule = protect(protect(m_contents)->ruleAt(index))->createCSSOMWrapper(*this);
     return cssRule.get();
 }
 
@@ -608,14 +608,14 @@ void CSSStyleSheet::addAdoptingTreeScope(ContainerNode& treeScope)
 {
     ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
     m_adoptingTreeScopes.add(treeScope);
-    styleScopeFor(treeScope).didChangeActiveStyleSheetCandidates();
+    protect(styleScopeFor(treeScope))->didChangeActiveStyleSheetCandidates();
 }
 
 void CSSStyleSheet::removeAdoptingTreeScope(ContainerNode& treeScope)
 {
     ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
     m_adoptingTreeScopes.remove(treeScope);
-    styleScopeFor(treeScope).didChangeStyleSheetContents();
+    protect(styleScopeFor(treeScope))->didChangeStyleSheetContents();
 }
 
 void CSSStyleSheet::getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>& childStyleSheets)

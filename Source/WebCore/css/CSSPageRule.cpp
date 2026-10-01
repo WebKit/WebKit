@@ -31,6 +31,7 @@
 #include "MutableStyleProperties.h"
 #include "NodeDocument.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include <wtf/text/MakeString.h>
@@ -52,7 +53,7 @@ CSSPageRule::~CSSPageRule()
 CSSPageDescriptors& CSSPageRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = CSSPageDescriptors::create(protect(m_pageRule->mutableProperties()), protect(*this));
+        m_propertiesCSSOMWrapper = CSSPageDescriptors::create(protect(protect(m_pageRule)->mutableProperties()), protect(*this));
     return *m_propertiesCSSOMWrapper;
 }
 
@@ -80,7 +81,7 @@ String CSSPageRule::cssText() const
 {
     auto selector = selectorText();
     auto optionalSpace = selector.isEmpty() ? ""_s : " "_s;
-    if (auto declarations = protect(m_pageRule)->properties().asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+    if (auto declarations = protect(protect(m_pageRule)->properties())->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
         return makeString("@page"_s, optionalSpace, selector, " { "_s, declarations, " }"_s);
     return makeString("@page"_s, optionalSpace, selector, " { }"_s);
 }

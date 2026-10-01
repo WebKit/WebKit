@@ -71,7 +71,7 @@ public:
 private:
     struct Longhand {
         CSSPropertyID property;
-        CSSValue& value;
+        Ref<CSSValue> value;
     };
     struct LonghandIteratorBase {
         void NODELETE operator++() { ++index; }
@@ -1418,11 +1418,11 @@ String ShorthandSerializer::serializeGridArea() const
 {
     ASSERT(length() == 4);
     unsigned longhandsToSerialize = 4;
-    if (canOmitTrailingGridAreaValue(longhandValue(1), longhandValue(3))) {
+    if (canOmitTrailingGridAreaValue(protect(longhandValue(1)), protect(longhandValue(3)))) {
         --longhandsToSerialize;
-        if (canOmitTrailingGridAreaValue(longhandValue(0), longhandValue(2))) {
+        if (canOmitTrailingGridAreaValue(protect(longhandValue(0)), protect(longhandValue(2)))) {
             --longhandsToSerialize;
-            if (canOmitTrailingGridAreaValue(longhandValue(0), longhandValue(1)))
+            if (canOmitTrailingGridAreaValue(protect(longhandValue(0)), protect(longhandValue(1))))
                 --longhandsToSerialize;
         }
     }
@@ -1432,7 +1432,7 @@ String ShorthandSerializer::serializeGridArea() const
 String ShorthandSerializer::serializeGridRowColumn() const
 {
     ASSERT(length() == 2);
-    return serializeLonghands(canOmitTrailingGridAreaValue(longhandValue(0), longhandValue(1)) ? 1 : 2, " / "_s);
+    return serializeLonghands(canOmitTrailingGridAreaValue(protect(longhandValue(0)), protect(longhandValue(1))) ? 1 : 2, " / "_s);
 }
 
 String ShorthandSerializer::serializeGridTemplate() const

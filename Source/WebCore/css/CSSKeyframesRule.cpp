@@ -172,7 +172,7 @@ String CSSKeyframesRule::cssText() const
     result.append(" { \n"_s);
 
     for (unsigned i = 0, size = length(); i < size; ++i)
-        result.append("  "_s, protect(m_keyframesRule)->keyframes()[i]->cssText(), '\n');
+        result.append("  "_s, protect(protect(m_keyframesRule)->keyframes()[i])->cssText(), '\n');
     result.append('}');
     return result.toString();
 }

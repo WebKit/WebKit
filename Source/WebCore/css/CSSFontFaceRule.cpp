@@ -26,6 +26,7 @@
 #include "CSSSerializationContext.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -47,18 +48,18 @@ CSSFontFaceRule::~CSSFontFaceRule()
 CSSFontFaceDescriptors& CSSFontFaceRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        lazyInitialize(m_propertiesCSSOMWrapper, CSSFontFaceDescriptors::create(protect(m_fontFaceRule)->mutableProperties(), *this));
+        lazyInitialize(m_propertiesCSSOMWrapper, CSSFontFaceDescriptors::create(protect(protect(m_fontFaceRule)->mutableProperties()), *this));
     return *m_propertiesCSSOMWrapper;
 }
 
 String CSSFontFaceRule::cssText() const
 {
-    return cssTextInternal(protect(m_fontFaceRule)->properties().asText(CSS::defaultSerializationContext()));
+    return cssTextInternal(protect(protect(m_fontFaceRule)->properties())->asText(CSS::defaultSerializationContext()));
 }
 
 String CSSFontFaceRule::cssText(const CSS::SerializationContext& context) const
 {
-    return cssTextInternal(protect(m_fontFaceRule)->properties().asText(context));
+    return cssTextInternal(protect(protect(m_fontFaceRule)->properties())->asText(context));
 }
 
 String CSSFontFaceRule::cssTextInternal(const String& declarations) const

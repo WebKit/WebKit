@@ -62,7 +62,7 @@ ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(Ref<const CSSFunctionValue> cssFunct
         return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
-    auto valueOrException = CSSNumericValue::reifyValue(document, *protect(cssFunctionValue)->item(0));
+    auto valueOrException = CSSNumericValue::reifyValue(document, *protect(protect(cssFunctionValue)->item(0)));
     if (valueOrException.hasException())
         return valueOrException.releaseException();
     return CSSSkewY::create(valueOrException.releaseReturnValue());

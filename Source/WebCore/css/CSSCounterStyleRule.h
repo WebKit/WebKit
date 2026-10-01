@@ -75,15 +75,15 @@ public:
     StyleRuleType styleRuleType() const final { return StyleRuleType::CounterStyle; }
 
     String name() const { return m_counterStyleRule->name(); }
-    String system() const { return m_counterStyleRule->system(); }
-    String negative() const { return m_counterStyleRule->negative(); }
-    String prefix() const { return m_counterStyleRule->prefix(); }
-    String suffix() const { return m_counterStyleRule->suffix(); }
-    String range() const { return m_counterStyleRule->range(); }
-    String pad() const { return m_counterStyleRule->pad(); }
-    String fallback() const { return m_counterStyleRule->fallback(); }
-    String symbols() const { return m_counterStyleRule->symbols(); }
-    String additiveSymbols() const { return m_counterStyleRule->additiveSymbols(); }
+    String system() const { return protect(m_counterStyleRule)->system(); }
+    String negative() const { return protect(m_counterStyleRule)->negative(); }
+    String prefix() const { return protect(m_counterStyleRule)->prefix(); }
+    String suffix() const { return protect(m_counterStyleRule)->suffix(); }
+    String range() const { return protect(m_counterStyleRule)->range(); }
+    String pad() const { return protect(m_counterStyleRule)->pad(); }
+    String fallback() const { return protect(m_counterStyleRule)->fallback(); }
+    String symbols() const { return protect(m_counterStyleRule)->symbols(); }
+    String additiveSymbols() const { return protect(m_counterStyleRule)->additiveSymbols(); }
     String speakAs() const { return m_counterStyleRule->speakAs(); }
 
     void setName(const String&);

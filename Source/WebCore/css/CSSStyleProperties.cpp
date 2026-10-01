@@ -565,7 +565,7 @@ bool StyleRuleCSSStyleProperties::willMutate()
 {
     if (!m_parentRule || !m_parentRule->parentStyleSheet())
         return false;
-    protect(m_parentRule)->parentStyleSheet()->willMutateRules();
+    protect(protect(m_parentRule)->parentStyleSheet())->willMutateRules();
     return true;
 }
 
@@ -578,7 +578,7 @@ void StyleRuleCSSStyleProperties::didMutate(MutationType type)
         m_cssomValueWrappers.clear();
 
     // Style sheet mutation needs to be signaled even if the change failed. willMutate*/didMutate* must pair.
-    protect(m_parentRule)->parentStyleSheet()->didMutateRuleFromCSSStyleDeclaration();
+    protect(protect(m_parentRule)->parentStyleSheet())->didMutateRuleFromCSSStyleDeclaration();
 }
 
 CSSStyleSheet* StyleRuleCSSStyleProperties::parentStyleSheet() const

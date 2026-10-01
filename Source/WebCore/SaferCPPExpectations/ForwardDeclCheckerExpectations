@@ -7,8 +7,6 @@ WritableStreamInternalsBuiltins.h
 bindings/js/GarbageCollectionController.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSPaintRenderingContext2DCustom.cpp
-css/StyleSheetContents.cpp
-css/StyleSheetContents.h
 css/values/primitives/CSSPrimitiveData.h
 dom/CustomElementReactionQueue.h
 dom/ElementInlinesLight.h

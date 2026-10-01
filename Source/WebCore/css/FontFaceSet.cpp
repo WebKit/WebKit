@@ -99,7 +99,7 @@ RefPtr<FontFace> FontFaceSet::Iterator::next()
 {
     if (m_index >= m_target->size())
         return nullptr;
-    return protect(m_target->backing()).get()[m_index++].wrapper(protect(m_target->scriptExecutionContext()).get());
+    return protect(protect(m_target->backing()).get()[m_index++])->wrapper(protect(m_target->scriptExecutionContext()).get());
 }
 
 FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)

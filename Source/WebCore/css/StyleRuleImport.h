@@ -26,12 +26,12 @@
 #include <WebCore/CachedStyleSheetClient.h>
 #include <WebCore/MediaQuery.h>
 #include <WebCore/StyleRule.h>
+#include <WebCore/StyleSheetContents.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
 class CachedCSSStyleSheet;
-class StyleSheetContents;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
 class StyleRuleImport final : public StyleRuleBase, public CanMakeWeakPtr<StyleRuleImport> {
@@ -78,7 +78,7 @@ private:
         virtual ~ImportedStyleSheetClient() = default;
         void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet) final
         {
-            m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);
+            protect(m_ownerRule)->setCSSStyleSheet(href, baseURL, charset, sheet);
         }
 
         // CachedResourceClient.
@@ -94,7 +94,7 @@ private:
 
     StyleRuleImport(const String& href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
 
-    StyleSheetContents* m_parentStyleSheet { nullptr };
+    WeakPtr<StyleSheetContents> m_parentStyleSheet;
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
