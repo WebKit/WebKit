@@ -11,8 +11,8 @@ function test()
         name: "Protocol.Condition.Platform",
         description: "Check that protocol domains/events/commands with a non-matching PLATFORM condition are not hooked up.",
         async test() {
-            let platformIOSFamily = await InspectorTest.evaluateInPage(`testRunner.isIOSFamily`);
-            InspectorTest.expectEqual(InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers"), !platformIOSFamily, "Should have a 'showRulers' parameter for the 'DOM.setInspectModeEnabled' command if not iOS.");
+            let platformCocoa = await InspectorTest.evaluateInPage(`testRunner.isMac || testRunner.isIOSFamily`);
+            InspectorTest.expectEqual(InspectorBackend.hasCommand("Page.setScreenSizeOverride"), !platformCocoa, "Should have a 'Page.setScreenSizeOverride' command if not Cocoa.");
         },
     });
 
