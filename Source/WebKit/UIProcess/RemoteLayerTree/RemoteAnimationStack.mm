@@ -181,6 +181,10 @@ void RemoteAnimationStack::applyEffects() const
         WebCore::PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
 
     if (m_opacityPresentationModifier) {
+        // Setting 0.f here may result in a stale value for the CAPresentationModifier.
+        // FIXME: rdar://188819673.
+        if (!computedValues.opacity.value)
+            computedValues.opacity.value = std::numeric_limits<float>::min();
         RetainPtr opacity = @(computedValues.opacity.value);
         [m_opacityPresentationModifier setValue:opacity.get()];
     }
