@@ -109,7 +109,7 @@ ASCIILiteral TokenPreloadScanner::initiatorFor(TagId tagId)
 
 class TokenPreloadScanner::StartTagScanner {
 public:
-    explicit StartTagScanner(Document& document, TagId tagId, float deviceScaleFactor = 1.0)
+    explicit StartTagScanner(Document& document, TagId tagId, float deviceScaleFactor = 1.0, bool inSVGForeignContent = false)
         : m_document(document)
         , m_tagId(tagId)
         , m_linkIsStyleSheet(false)
@@ -117,6 +117,7 @@ public:
         , m_metaIsViewport(false)
         , m_metaIsDisabledAdaptations(false)
         , m_inputIsImage(false)
+        , m_inSVGForeignContent(inSVGForeignContent)
         , m_deviceScaleFactor(deviceScaleFactor)
     {
     }
@@ -130,6 +131,20 @@ public:
         for (auto& attribute : attributes) {
             auto knownAttributeName = AtomString::lookUp(attribute.name.span());
             processAttribute(knownAttributeName, attribute.value.span(), pictureState);
+        }
+
+        // In SVG, the <image> and <script> elements reference their resource via
+        // href/xlink:href rather than src. These attribute names are matched against the
+        // raw token characters because the "xlink:href" atom may not have been registered
+        // yet when the speculative scanner runs ahead of the parser. href takes precedence
+        // over the legacy xlink:href.
+        if (m_inSVGForeignContent) {
+            static constexpr auto hrefUTF16 = WTF::toArray<char16_t>({ 'h', 'r', 'e', 'f' });
+            static constexpr auto xlinkHrefUTF16 = WTF::toArray<char16_t>({ 'x', 'l', 'i', 'n', 'k', ':', 'h', 'r', 'e', 'f' });
+            if (const auto* href = findAttribute(attributes, std::span { hrefUTF16 }))
+                setURLToLoad(StringView(href->value.span()));
+            else if (const auto* xlinkHref = findAttribute(attributes, std::span { xlinkHrefUTF16 }))
+                setURLToLoad(StringView(xlinkHref->value.span()));
         }
 
         if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last().sourceMatched && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
@@ -216,7 +231,10 @@ public:
 private:
     void processImageAndScriptAttribute(const AtomString& attributeName, StringView attributeValue)
     {
-        if (match(attributeName, srcAttr))
+        // In SVG foreign content, <image>/<script> reference their resource via href/xlink:href
+        // (handled in processAttributes), not src. The src attribute is invalid there and must
+        // not trigger a speculative fetch.
+        if (!m_inSVGForeignContent && match(attributeName, srcAttr))
             setURLToLoad(attributeValue);
         else if (match(attributeName, crossoriginAttr))
             m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<char16_t>).toString();
@@ -475,6 +493,7 @@ private:
     bool m_metaIsViewport;
     bool m_metaIsDisabledAdaptations;
     bool m_inputIsImage;
+    bool m_inSVGForeignContent { false };
     bool m_scriptIsNomodule { false };
     bool m_scriptIsAsync { false };
     float m_deviceScaleFactor;
@@ -560,22 +579,23 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
             return;
         }
 
-        // In SVG foreign content, <script> uses href/xlink:href, not src.
-        // Don't speculatively preload scripts inside SVG.
+        // In SVG foreign content, <script> and <image> reference their resource via
+        // href/xlink:href rather than src, so scan them as SVG foreign content.
+        bool inSVGForeignContent = false;
         if (m_foreignContentCount && tagId == TagId::Script)
-            return;
+            inSVGForeignContent = true;
 
         // <image> is rewritten to <img> by the HTML parser only in HTML content; inside SVG
-        // foreign content it is the SVG image element (which uses href/xlink:href, not src),
-        // so it must not be preloaded as if it were an HTML <img>. (A literal <img> breaks
-        // out of foreign content per HTML parsing rules, so handling it as Img is fine.)
+        // foreign content it is the SVG image element (which uses href/xlink:href, not src).
+        // (A literal <img> breaks out of foreign content per HTML parsing rules, so handling
+        // it as Img is fine.)
         if (m_foreignContentCount && tagId == TagId::Img) {
             static constexpr auto imageAsUTF16 = WTF::toArray<char16_t>({ 'i', 'm', 'a', 'g', 'e' });
             if (equalSpans(token.name().span(), std::span { imageAsUTF16 }))
-                return;
+                inSVGForeignContent = true;
         }
 
-        StartTagScanner scanner(document, tagId, m_deviceScaleFactor);
+        StartTagScanner scanner(document, tagId, m_deviceScaleFactor, inSVGForeignContent);
         scanner.processAttributes(token.attributes(), m_pictureSourceState);
         auto request = scanner.createPreloadRequest(m_predictedBaseElementURL);
 
