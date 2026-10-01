@@ -29,6 +29,7 @@ function testSharing(src, expected, completionHandler)
     load(src, function (linkA) {
         load(src, function (linkB) {
             styleSheetContentsShared = internals.isSharingStyleSheetContents(linkA, linkB);
+            sheetB = linkB.sheet;
             debug(src);
             if (expected)
                 shouldBeTrue("styleSheetContentsShared");
@@ -41,7 +42,10 @@ function testSharing(src, expected, completionHandler)
 
 testSharing("shareable.css", true, function () {
     testSharing("non-shareable.css", false, function () {
-        finishJSTest();
+        testSharing("http://localhost:8000/cache/resources/shareable.css", true, function () {
+            shouldThrowErrorName("sheetB.cssRules", "SecurityError");
+            finishJSTest();
+        });
     });
 });
 

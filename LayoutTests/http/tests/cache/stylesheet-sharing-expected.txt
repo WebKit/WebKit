@@ -2,6 +2,9 @@ shareable.css
 PASS styleSheetContentsShared is true
 non-shareable.css
 PASS styleSheetContentsShared is false
+http://localhost:8000/cache/resources/shareable.css
+PASS styleSheetContentsShared is true
+PASS sheetB.cssRules threw exception SecurityError: Not allowed to access cross-origin stylesheet.
 PASS successfullyParsed is true
 
 TEST COMPLETE
