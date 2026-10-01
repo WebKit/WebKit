@@ -71,12 +71,18 @@ bool verifyRectOffsetAlignment(VideoPixelFormat format, const DOMRectInit& rect)
 {
     switch (format) {
     case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::NV12:
         return isMultiple(rect.x, 2) && isMultiple(rect.y, 2);
     case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
         return isMultiple(rect.x, 2);
     case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -110,8 +116,14 @@ size_t videoPixelFormatToPlaneCount(VideoPixelFormat format)
 {
     switch (format) {
     case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
     case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
         return 3;
     case VideoPixelFormat::I420A:
         return 4;
@@ -126,18 +138,24 @@ size_t videoPixelFormatToPlaneCount(VideoPixelFormat format)
     return 1;
 }
 
-size_t videoPixelFormatToSampleByteSizePerPlane()
+size_t videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat format)
 {
-    return 1;
+    return isHighBitDepthVideoPixelFormat(format) ? 2 : 1;
 }
 
 static inline size_t NODELETE sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
     case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
     case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
         return 1;
     case VideoPixelFormat::NV12:
         return planeNumber ? 2 : 1;
@@ -161,11 +179,17 @@ size_t videoPixelFormatToHorizontalSubSampling(VideoPixelFormat format, size_t p
 {
     switch (format) {
     case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
     case VideoPixelFormat::NV12:
         return isChromaPlane(format, planeNumber) ? 2 : 1;
     case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -179,11 +203,17 @@ size_t videoPixelFormatToVerticalSubSampling(VideoPixelFormat format, size_t pla
 {
     switch (format) {
     case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::NV12:
         return isChromaPlane(format, planeNumber) ? 2 : 1;
     case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
     case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -213,7 +243,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
     for (size_t i = 0; i < planeCount; ++i) {
         size_t pixelSampleCount = sampleCountPerPixel(format, i);
 
-        auto sampleBytes = videoPixelFormatToSampleByteSizePerPlane();
+        auto sampleBytes = videoPixelFormatToSampleByteSizePerPlane(format);
         auto sampleWidth = videoPixelFormatToHorizontalSubSampling(format, i);
         auto sampleHeight = videoPixelFormatToVerticalSubSampling(format, i);
 

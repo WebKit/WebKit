@@ -83,11 +83,17 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
 
 String convertVideoPixelFormatToString(VideoPixelFormat format)
 {
-    static const std::array<NeverDestroyed<String>, 9> values {
+    static const std::array<NeverDestroyed<String>, 15> values {
         MAKE_STATIC_STRING_IMPL("I420"),
+        MAKE_STATIC_STRING_IMPL("I420P10"),
+        MAKE_STATIC_STRING_IMPL("I420P12"),
         MAKE_STATIC_STRING_IMPL("I420A"),
         MAKE_STATIC_STRING_IMPL("I422"),
+        MAKE_STATIC_STRING_IMPL("I422P10"),
+        MAKE_STATIC_STRING_IMPL("I422P12"),
         MAKE_STATIC_STRING_IMPL("I444"),
+        MAKE_STATIC_STRING_IMPL("I444P10"),
+        MAKE_STATIC_STRING_IMPL("I444P12"),
         MAKE_STATIC_STRING_IMPL("NV12"),
         MAKE_STATIC_STRING_IMPL("RGBA"),
         MAKE_STATIC_STRING_IMPL("RGBX"),
@@ -95,14 +101,20 @@ String convertVideoPixelFormatToString(VideoPixelFormat format)
         MAKE_STATIC_STRING_IMPL("BGRX"),
     };
     static_assert(!static_cast<size_t>(VideoPixelFormat::I420), "VideoPixelFormat::I420 is not 0 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::I420A) == 1, "VideoPixelFormat::I420A is not 1 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::I422) == 2, "VideoPixelFormat::I422 is not 2 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::I444) == 3, "VideoPixelFormat::I444 is not 3 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::NV12) == 4, "VideoPixelFormat::NV12 is not 4 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::RGBA) == 5, "VideoPixelFormat::RGBA is not 5 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::RGBX) == 6, "VideoPixelFormat::RGBX is not 6 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::BGRA) == 7, "VideoPixelFormat::BGRA is not 7 as expected");
-    static_assert(static_cast<size_t>(VideoPixelFormat::BGRX) == 8, "VideoPixelFormat::BGRX is not 8 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I420P10) == 1, "VideoPixelFormat::I420P10 is not 1 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I420P12) == 2, "VideoPixelFormat::I420P12 is not 2 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I420A) == 3, "VideoPixelFormat::I420A is not 3 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I422) == 4, "VideoPixelFormat::I422 is not 4 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I422P10) == 5, "VideoPixelFormat::I422P10 is not 5 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I422P12) == 6, "VideoPixelFormat::I422P12 is not 6 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I444) == 7, "VideoPixelFormat::I444 is not 7 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I444P10) == 8, "VideoPixelFormat::I444P10 is not 8 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I444P12) == 9, "VideoPixelFormat::I444P12 is not 9 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::NV12) == 10, "VideoPixelFormat::NV12 is not 10 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::RGBA) == 11, "VideoPixelFormat::RGBA is not 11 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::RGBX) == 12, "VideoPixelFormat::RGBX is not 12 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::BGRA) == 13, "VideoPixelFormat::BGRA is not 13 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::BGRX) == 14, "VideoPixelFormat::BGRX is not 14 as expected");
     ASSERT(static_cast<size_t>(format) < std::size(values));
     return values[static_cast<size_t>(format)];
 }

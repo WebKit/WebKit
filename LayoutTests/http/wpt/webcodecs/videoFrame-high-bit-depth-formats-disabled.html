@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=false ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const formats = ["I420P10", "I420P12", "I422P10", "I422P12", "I444P10", "I444P12"];
+
+for (const format of formats) {
+    test(() => {
+        const data = new Uint16Array(4 * 2 * 3);
+        assert_throws_js(TypeError, () => new VideoFrame(data, { format, timestamp: 0, codedWidth: 4, codedHeight: 2 }));
+    }, `${format} is rejected when high bit depth formats are disabled`);
+}
+</script>
