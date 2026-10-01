@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -427,6 +427,13 @@ private:
 
     std::optional<unichar> NODELETE charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
     std::optional<unichar> NODELETE charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+    // Where the WebDriver key table states a DOM identity for the key, attaches it to each of the
+    // synthesized events (see AutomationKeyIdentity.h). The type parameter of the NSArray argument
+    // is platform-dependent.
+    static void setKeyIdentityForVirtualKeyIfNeeded(NSArray *events, const Variant<VirtualKey, CharKey>&);
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 #endif
 
     WeakPtr<WebProcessPool> m_processPool;

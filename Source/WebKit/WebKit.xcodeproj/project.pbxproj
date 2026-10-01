@@ -5581,6 +5581,7 @@
 		37A709A81E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDataDetectorTypesInternal.h; sourceTree = "<group>"; };
 		37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorPrivate.h; sourceTree = "<group>"; };
 		37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CompletionHandlerCallChecker.mm; sourceTree = "<group>"; };
+		8B11248A71301DBC17E372E1 /* AutomationKeyIdentity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomationKeyIdentity.h; sourceTree = "<group>"; };
 		37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandlerCallChecker.h; sourceTree = "<group>"; };
 		37BF2F041947DEB400723C48 /* WKNSURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLRequest.h; sourceTree = "<group>"; };
 		37BF2F051947DEB400723C48 /* WKNSURLRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLRequest.mm; sourceTree = "<group>"; };
@@ -13461,6 +13462,7 @@
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */,
 				A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */,
+				8B11248A71301DBC17E372E1 /* AutomationKeyIdentity.h */,
 				1A698F171E4910220064E881 /* AuxiliaryProcessCocoa.mm */,
 				413E5C9129B0CF7B002F4987 /* BackgroundFetchStateCocoa.mm */,
 				4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */,

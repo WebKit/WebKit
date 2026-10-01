@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "AdditionalButtonMasksIOS.h"
+#import "AutomationKeyIdentity.h"
 #import "UIKitSPI.h"
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
@@ -129,6 +130,13 @@ WebKeyboardEventInit WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *even
     bool isSystemKey = false;
     auto modifiers = modifiersForEvent(event);
     double timestamp = event.timestamp;
+
+    // Check if this is a WebDriver-synthesized event, which may state its DOM identity directly.
+    if (auto identity = AutomationKeyIdentity::identity(event)) {
+        key = WTF::move(identity->key);
+        code = WTF::move(identity->code);
+        isKeypad = identity->isKeypad;
+    }
 
     if (windowsVirtualKeyCode == '\r') {
         text = "\r"_s;

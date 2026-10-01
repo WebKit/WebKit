@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +154,11 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
         break;
     }
     }
+
+    // iOS supplies no key code for virtual keys, so the DOM 'key', 'code' and keypad location
+    // cannot be inferred from the event. Where the WebDriver key table states them, attach them so
+    // the web process reports those values instead of the derived ones.
+    setKeyIdentityForVirtualKeyIfNeeded(eventsToBeSent.get(), key);
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if USE(APPKIT)
 
+#import "AutomationKeyIdentity.h"
 #import "WebEventConversion.h"
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
@@ -353,6 +354,13 @@ WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(NSEvent *event, boo
     if (windowsVirtualKeyCode == VK_TAB) {
         text = "\x9"_s;
         unmodifiedText = text;
+    }
+
+    // Check if this is a WebDriver-synthesized event, which may state its DOM identity directly.
+    if (auto identity = AutomationKeyIdentity::identity(event)) {
+        key = WTF::move(identity->key);
+        code = WTF::move(identity->code);
+        isKeypad = identity->isKeypad;
     }
 
     return {
