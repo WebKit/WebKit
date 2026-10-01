@@ -685,7 +685,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
     virtual void removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
-    virtual void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, FrameIdentifier, const IntPoint&, bool /*isVideo*/) { }
+    virtual void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint& /*positionInMainFrameView*/, bool /*isVideo*/) { }
     virtual void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
     virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetMockState) { }

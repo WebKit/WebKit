@@ -4291,18 +4291,17 @@ void Page::removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifie
     chrome().client().removePlaybackTargetPickerClient(contextId);
 }
 
-void Page::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, FrameIdentifier frameID, const WebCore::IntPoint& location, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
+void Page::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::IntPoint& positionInMainFrameView, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
 {
 #if PLATFORM(IOS_FAMILY)
     // FIXME: refactor iOS implementation.
     UNUSED_PARAM(contextId);
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(location);
+    UNUSED_PARAM(positionInMainFrameView);
     chrome().client().showPlaybackTargetPicker(isVideo, routeSharingPolicy, routingContextUID);
 #else
     UNUSED_PARAM(routeSharingPolicy);
     UNUSED_PARAM(routingContextUID);
-    chrome().client().showPlaybackTargetPicker(contextId, frameID, location, isVideo);
+    chrome().client().showPlaybackTargetPicker(contextId, positionInMainFrameView, isVideo);
 #endif
 }
 

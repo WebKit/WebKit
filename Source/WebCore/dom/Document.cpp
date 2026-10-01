@@ -10365,12 +10365,12 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
     if (it == m_clientToIDMap.end())
         return;
 
-    RefPtr localRootView = frame()->rootFrame().view();
-    if (!localRootView)
+    RefPtr view = frame()->view();
+    if (!view)
         return;
 
-    auto position = localRootView->contentsToRootView(localRootView->windowToContents(flooredIntPoint(frame()->eventHandler().lastKnownMousePosition())));
-    page->showPlaybackTargetPicker(it->value, frame()->rootFrame().frameID(), position, isVideo, routeSharingPolicy, routingContextUID);
+    auto positionInMainFrameView = view->contentsToMainFrameView(view->windowToContents(flooredIntPoint(frame()->eventHandler().lastKnownMousePosition())));
+    page->showPlaybackTargetPicker(it->value, positionInMainFrameView, isVideo, routeSharingPolicy, routingContextUID);
 }
 
 void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducerMediaStateFlags state)

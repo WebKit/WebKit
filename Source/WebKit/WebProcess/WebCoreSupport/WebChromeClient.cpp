@@ -2153,13 +2153,13 @@ void WebChromeClient::removePlaybackTargetPickerClient(PlaybackTargetClientConte
         page->send(Messages::WebPageProxy::RemovePlaybackTargetPickerClient(contextId));
 }
 
-void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, FrameIdentifier frameID, const IntPoint& position, bool isVideo)
+void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const IntPoint& positionInMainFrameView, bool isVideo)
 {
     RefPtr page = m_page.get();
     if (!page)
         return;
 
-    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, frameID, FloatRect(position, FloatSize()), isVideo));
+    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, FloatRect(positionInMainFrameView, FloatSize()), isVideo));
 }
 
 void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags state)

@@ -1095,7 +1095,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier);
     void removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier);
-    void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, FrameIdentifier, const IntPoint&, bool, RouteSharingPolicy, const String&);
+    void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint& positionInMainFrameView, bool, RouteSharingPolicy, const String&);
     void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetMockState);
