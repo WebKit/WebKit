@@ -1994,6 +1994,8 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-auto-
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-negative-margin-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-negative-margin-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-negative-margin-004.html [ ImageOnlyFailure ]
+# Grid lanes does not use the limited min-content contribution for items spanning flexible tracks under a min-content constraint.
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-flex-spanning-items.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-item-percentage-sizes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-item-percentage-sizes-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-item-percentage-sizes-003.html [ ImageOnlyFailure ]

@@ -85,11 +85,9 @@ enum class GridAvoidanceReason : uint8_t {
     RelativeGridItemHasPercentageInset,
 
     GridItemColumnStartHasLineName,
-    GridItemColumnStartHasSpan,
     GridItemHasUnsupportedColumnEnd,
 
     GridItemRowStartHasLineName,
-    GridItemRowStartHasSpan,
     GridItemHasUnsupportedRowEnd,
 
     GridItemHasUnsupportedWidthValue,
@@ -107,7 +105,6 @@ static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoi
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
-    case GridAvoidanceReason::GridItemColumnStartHasSpan:
     case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
         return true;
     default:
@@ -119,7 +116,6 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemRowStartHasLineName:
-    case GridAvoidanceReason::GridItemRowStartHasSpan:
     case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
         return true;
     default:
@@ -144,51 +140,20 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
-static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnStart, const Style::GridPosition columnEnd)
+// GFC resolves numeric lines and numeric spans in either position. Named lines, including
+// named spans (e.g. span foo), require named grid line resolution which GFC does not implement.
+static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
 {
-    return WTF::switchOn(columnEnd,
+    return WTF::switchOn(end,
         [](const CSS::Keyword::Auto&) {
-            // An auto end with an explicit start resolves to a single-column span at the start line
-            // (grid shorthand behavior), so trailing implicit columns are supported here.
+            // An auto end with an explicit start resolves to a single-track span at the start line.
             return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!columnEnd.namedGridLine().value.isEmpty())
-                return false;
-
-            // FIXME: Multi-span items are not yet supported in intrinsic sizing
-            // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
-            // Only accept items that span a single column.
-            auto startPosition = explicitColumnStart.position.value;
-            auto endPosition = columnEnd.explicitPosition();
-            auto gridLineDistance = endPosition - startPosition;
-            if (gridLineDistance != 1)
-                return false;
-
-            return true;
+            return end.namedGridLine().value.isEmpty();
         },
         [&](const Style::GridPositionSpan&) {
-            return false;
-        },
-        [&](const Style::CustomIdent&) {
-            return false;
-        }
-    );
-}
-
-static bool hasValidColumnEnd(const CSS::Keyword::Auto& autoColumnStart, const Style::GridPosition columnEnd)
-{
-    UNUSED_PARAM(autoColumnStart);
-
-    return WTF::switchOn(columnEnd,
-        [](const CSS::Keyword::Auto&) {
-            return true;
-        },
-        [](const Style::GridPositionExplicit&) {
-            return false;
-        },
-        [](const Style::GridPositionSpan&) {
-            return false;
+            return end.namedGridLine().value.isEmpty();
         },
         [](const Style::CustomIdent&) {
             return false;
@@ -196,19 +161,17 @@ static bool hasValidColumnEnd(const CSS::Keyword::Auto& autoColumnStart, const S
     );
 }
 
-static bool hasValidRowEnd(const CSS::Keyword::Auto& autoRowStart, const Style::GridPosition rowEnd)
+static bool hasValidEndForAutoStart(const Style::GridPosition& end)
 {
-    UNUSED_PARAM(autoRowStart);
-
-    return WTF::switchOn(rowEnd,
+    return WTF::switchOn(end,
         [](const CSS::Keyword::Auto&) {
             return true;
         },
         [](const Style::GridPositionExplicit&) {
             return false;
         },
-        [](const Style::GridPositionSpan&) {
-            return false;
+        [&](const Style::GridPositionSpan&) {
+            return end.namedGridLine().value.isEmpty();
         },
         [](const Style::CustomIdent&) {
             return false;
@@ -216,31 +179,22 @@ static bool hasValidRowEnd(const CSS::Keyword::Auto& autoRowStart, const Style::
     );
 }
 
-static bool hasValidRowEnd(const Style::GridPositionExplicit& explicitRowStart, const Style::GridPosition rowEnd)
+static bool hasValidEndForSpanStart(const Style::GridPosition& end)
 {
-    return WTF::switchOn(rowEnd,
-        [&](const CSS::Keyword::Auto&) {
+    return WTF::switchOn(end,
+        [](const CSS::Keyword::Auto&) {
             return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!rowEnd.namedGridLine().value.isEmpty())
-                return false;
-
-            // FIXME: Multi-span items are not yet supported in intrinsic sizing
-            // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
-            // Only accept items that span a single row.
-            auto startPosition = explicitRowStart.position.value;
-            auto endPosition = rowEnd.explicitPosition();
-            auto gridLineDistance = endPosition - startPosition;
-            if (gridLineDistance != 1)
-                return false;
-
+            return end.namedGridLine().value.isEmpty();
+        },
+        [](const Style::GridPositionSpan&) {
+            // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
+            // "If the placement contains two spans, remove the one contributed by the end
+            // grid-placement property."
             return true;
         },
-        [&](const Style::GridPositionSpan&) {
-            return false;
-        },
-        [&](const Style::CustomIdent&) {
+        [](const Style::CustomIdent&) {
             return false;
         }
     );
@@ -501,21 +455,24 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         auto& columnStart = gridItemStyle->gridItemColumnStart();
         auto columnPositioningAvoidanceReason = WTF::switchOn(columnStart,
-            [&](const CSS::Keyword::Auto& autoPosition) -> std::optional<GridAvoidanceReason> {
-                auto& columnEnd = gridItemStyle->gridItemColumnEnd();
-                if (!hasValidColumnEnd(autoPosition, columnEnd))
+            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
+                if (!hasValidEndForAutoStart(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
             },
-            [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
+            [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
                 if (!columnStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
-                if (!hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd()))
+                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemColumnStartHasSpan;
+                if (!columnStart.namedGridLine().value.isEmpty())
+                    return GridAvoidanceReason::GridItemColumnStartHasLineName;
+                if (!hasValidEndForSpanStart(gridItemStyle->gridItemColumnEnd()))
+                    return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
+                return { };
             },
             [&](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
                 return GridAvoidanceReason::GridItemColumnStartHasLineName;
@@ -529,23 +486,24 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         auto& rowStart = gridItemStyle->gridItemRowStart();
         auto rowPositioningAvoidanceReason = WTF::switchOn(rowStart,
-            [&](const CSS::Keyword::Auto& autoPosition) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidRowEnd(autoPosition, gridItemStyle->gridItemRowEnd()))
+            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
+                if (!hasValidEndForAutoStart(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
                 return { };
             },
-            [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
+            [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
                 if (!rowStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemRowStartHasLineName;
-
-                auto rowEnd = gridItemStyle->gridItemRowEnd();
-                if (!hasValidRowEnd(explicitPosition, rowEnd))
+                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
-
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemRowStartHasSpan;
+                if (!rowStart.namedGridLine().value.isEmpty())
+                    return GridAvoidanceReason::GridItemRowStartHasLineName;
+                if (!hasValidEndForSpanStart(gridItemStyle->gridItemRowEnd()))
+                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
+                return { };
             },
             [&](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
                 return GridAvoidanceReason::GridItemRowStartHasLineName;
@@ -757,17 +715,11 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
         stream << "grid item column start has line name";
         break;
-    case GridAvoidanceReason::GridItemColumnStartHasSpan:
-        stream << "grid item column start has span";
-        break;
     case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
         stream << "grid item has unsupported column end";
         break;
     case GridAvoidanceReason::GridItemRowStartHasLineName:
         stream << "grid item row start has line name";
-        break;
-    case GridAvoidanceReason::GridItemRowStartHasSpan:
-        stream << "grid item row start has span";
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
         stream << "grid item has unsupported row end";
