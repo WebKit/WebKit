@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022, 2026 Igalia S.L.
@@ -3322,17 +3322,14 @@ static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, cons
     if (overlapTestRequests.isEmpty())
         return;
 
-    Vector<OverlapTestRequestClient*> overlappedRequestClients;
     LayoutRect boundingBox = layer->boundingBox(rootLayer, layer->offsetFromAncestor(rootLayer));
-    for (auto& request : overlapTestRequests) {
+    overlapTestRequests.removeIf([&](auto& request) {
         if (!boundingBox.intersects(request.value))
-            continue;
+            return false;
 
         request.key->setOverlapTestResult(true);
-        overlappedRequestClients.append(request.key);
-    }
-    for (auto* client : overlappedRequestClients)
-        overlapTestRequests.remove(client);
+        return true;
+    });
 }
 
 static inline bool NODELETE shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflection)

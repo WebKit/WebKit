@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -5194,18 +5194,14 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     // Now let's prune any effect that only animates a non-interpolating property.
     auto nonInterpolatingProperties = allAcceleratedProperties ^ interpolatingProperties ^ disallowedAcceleratedProperties;
     if (!nonInterpolatingProperties.isEmpty()) {
-        // Make a copy of our current list of effects and clear the the original list as well
-        // as the set of timelines. We'll re-populate both without effects that are only animating
-        // non-interpolating properties.
-        auto effectsIncludingNonInterpolating = acceleratedEffects;
-        acceleratedEffects.clear();
+        // Remove effects that are only animating non-interpolating properties and
+        // re-populate the set of timelines from the remaining effects.
+        acceleratedEffects.removeAllMatching([&](auto& acceleratedEffect) {
+            return nonInterpolatingProperties.containsAll(acceleratedEffect->animatedProperties());
+        });
         effectTimelines.clear();
-        for (auto& acceleratedEffect : effectsIncludingNonInterpolating) {
-            if (nonInterpolatingProperties.containsAll(acceleratedEffect->animatedProperties()))
-                continue;
-            acceleratedEffects.append(acceleratedEffect);
+        for (auto& acceleratedEffect : acceleratedEffects)
             effectTimelines.add(Ref { *acceleratedEffect->timeline() });
-        }
     }
 
     // If all of the effects in the stack are either idle, paused or filling, then the
