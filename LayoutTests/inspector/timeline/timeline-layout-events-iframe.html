@@ -43,9 +43,9 @@ async function test()
         let record = records[i];
         let expectedEvent = expectedEvents[i];
         InspectorTest.expectEqual(record.eventType, expectedEvent.type, `Record ${i}'s event type should be ${expectedEvent.type}.`);
-        InspectorTest.expectNotNull(record.domNode, `Record ${i} should have a DOM node.`);
-        InspectorTest.expectEqual(record.domNode.nodeType(), expectedEvent.nodeType, `Record ${i}'s DOM node's type should be ${expectedEvent.nodeType}.`);
-        InspectorTest.expectNotEqual(record.domNode.frame, WI.networkManager.mainFrame, `Record ${i}'s DOM node's frame should be the iframe's document frame.`);
+        InspectorTest.expectNotNull(record.domNodeOrInfo, `Record ${i} should have a DOM node.`);
+        InspectorTest.expectEqual(record.domNodeOrInfo.nodeType(), expectedEvent.nodeType, `Record ${i}'s DOM node's type should be ${expectedEvent.nodeType}.`);
+        InspectorTest.expectNotEqual(record.domNodeOrInfo.frame, WI.networkManager.mainFrame, `Record ${i}'s DOM node's frame should be the iframe's document frame.`);
     }
 
     InspectorTest.completeTest();
