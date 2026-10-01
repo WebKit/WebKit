@@ -1,0 +1,24 @@
+Changing the transform of a composited element updates the scrollable overflow of its scroll container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('with-composited-child').scrollWidth is 600
+PASS document.getElementById('with-will-change').scrollWidth is 600
+PASS document.getElementById('out-of-flow').scrollWidth is 600
+PASS document.getElementById('with-repaint').scrollWidth is 600
+PASS document.getElementById('growing').scrollWidth is 300
+PASS document.getElementById('with-composited-child').scrollWidth is 300
+PASS scrollLeftAfterScrollingTo('with-composited-child', 150) is 0
+PASS document.getElementById('with-will-change').scrollWidth is 300
+PASS scrollLeftAfterScrollingTo('with-will-change', 150) is 0
+PASS document.getElementById('out-of-flow').scrollWidth is 300
+PASS scrollLeftAfterScrollingTo('out-of-flow', 150) is 0
+PASS document.getElementById('with-repaint').scrollWidth is 300
+PASS scrollLeftAfterScrollingTo('with-repaint', 150) is 0
+PASS document.getElementById('growing').scrollWidth is 400
+PASS scrollLeftAfterScrollingTo('growing', 150) is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

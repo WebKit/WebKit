@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<style>
+    .scroller {
+        width: 300px;
+        height: 200px;
+        overflow: hidden;
+    }
+    .card {
+        height: 100%;
+    }
+    .composited-child {
+        width: 50px;
+        height: 50px;
+        transform: translateZ(0);
+    }
+    .positioned {
+        position: relative;
+    }
+    .positioned .card {
+        position: absolute;
+        width: 100%;
+    }
+    .will-change {
+        will-change: transform;
+    }
+</style>
+<div class="scroller" id="with-composited-child"><div class="card" style="transform: translateX(300px)"><div class="composited-child"></div></div></div>
+<div class="scroller" id="with-will-change"><div class="card will-change" style="transform: translateX(300px)"></div></div>
+<div class="scroller positioned" id="out-of-flow"><div class="card will-change" style="transform: translateX(300px)"></div></div>
+<div class="scroller" id="with-repaint"><div class="card will-change" style="transform: translateX(300px)"></div></div>
+<div class="scroller" id="growing"><div class="card will-change" style="transform: translateX(0)"></div></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+    description("Changing the transform of a composited element updates the scrollable overflow of its scroll container.");
+    jsTestIsAsync = true;
+
+    function renderingUpdate() {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    function scrollLeftAfterScrollingTo(id, value) {
+        const scroller = document.getElementById(id);
+        scroller.scrollLeft = value;
+        return scroller.scrollLeft;
+    }
+
+    function setTransform(id, value) {
+        document.querySelector(`#${id} .card`).style.transform = value;
+    }
+
+    onload = async () => {
+        await renderingUpdate();
+        shouldBe("document.getElementById('with-composited-child').scrollWidth", "600");
+        shouldBe("document.getElementById('with-will-change').scrollWidth", "600");
+        shouldBe("document.getElementById('out-of-flow').scrollWidth", "600");
+        shouldBe("document.getElementById('with-repaint').scrollWidth", "600");
+        shouldBe("document.getElementById('growing').scrollWidth", "300");
+
+        setTransform("with-composited-child", "translateX(0)");
+        setTransform("with-will-change", "translateX(0)");
+        setTransform("out-of-flow", "translateX(0)");
+        setTransform("with-repaint", "translateX(0)");
+        document.querySelector("#with-repaint .card").style.backgroundColor = "green";
+        setTransform("growing", "translateX(100px)");
+
+        shouldBe("document.getElementById('with-composited-child').scrollWidth", "300");
+        shouldBe("scrollLeftAfterScrollingTo('with-composited-child', 150)", "0");
+        shouldBe("document.getElementById('with-will-change').scrollWidth", "300");
+        shouldBe("scrollLeftAfterScrollingTo('with-will-change', 150)", "0");
+        shouldBe("document.getElementById('out-of-flow').scrollWidth", "300");
+        shouldBe("scrollLeftAfterScrollingTo('out-of-flow', 150)", "0");
+        shouldBe("document.getElementById('with-repaint').scrollWidth", "300");
+        shouldBe("scrollLeftAfterScrollingTo('with-repaint', 150)", "0");
+        shouldBe("document.getElementById('growing').scrollWidth", "400");
+        shouldBe("scrollLeftAfterScrollingTo('growing', 150)", "100");
+
+        finishJSTest();
+    };
+</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<style>
+    #scroller {
+        width: 300px;
+        height: 200px;
+        overflow: scroll;
+    }
+    #card {
+        height: 100px;
+        will-change: transform;
+        transform: translateX(300px);
+    }
+</style>
+<div id="scroller"><div id="card"></div></div>
+<pre id="log"></pre>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function renderingUpdate() {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    function overflowContentsSize() {
+        const tree = internals.scrollingStateTreeAsText();
+        const overflowNode = tree.slice(tree.indexOf("(Overflow scrolling node"));
+        return overflowNode.match(/\(contents size [^)]*\)/)[0];
+    }
+
+    onload = async () => {
+        await renderingUpdate();
+        log.textContent += `translateX(300px): ${overflowContentsSize()}\n`;
+        card.style.transform = "translateX(100px)";
+        await renderingUpdate();
+        log.textContent += `translateX(100px): ${overflowContentsSize()}\n`;
+        testRunner.notifyDone();
+    };
+</script>
