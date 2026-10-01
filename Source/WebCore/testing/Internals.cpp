@@ -632,6 +632,7 @@ void Internals::resetToConsistentState(Page& page)
     page.setDefersLoading(false);
     page.setResourceCachingDisabledByWebInspector(false);
     page.setConsoleMessageListenerForTesting(nullptr);
+    page.setQuirksSubframeURLForTesting({ });
 
     RefPtr localMainFrame = page.localMainFrame();
     if (!localMainFrame)
@@ -8604,6 +8605,17 @@ void Internals::setTopDocumentURLForQuirks(const String& urlString)
 
     protect(document->page())->settings().setNeedsSiteSpecificQuirks(true);
     document->quirks().setTopDocumentURLForTesting(URL { urlString });
+}
+
+void Internals::setSubframeURLForQuirks(const String& urlString)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return;
+
+    Ref page = *protect(document->page());
+    page->settings().setNeedsSiteSpecificQuirks(true);
+    page->setQuirksSubframeURLForTesting(URL { urlString });
 }
 
 #if ENABLE(DAMAGE_TRACKING)

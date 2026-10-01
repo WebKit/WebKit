@@ -473,6 +473,18 @@ bool Quirks::isYoutubeEmbedDomain() const
     return isEmbedDomain("youtube.com"_s) || isEmbedDomain("youtube-nocookie.com"_s);
 }
 
+bool Quirks::isGoogleMapsEmbed() const
+{
+    if (protect(m_document)->isTopDocument())
+        return false;
+
+    auto url = documentURL();
+    if (!url.path().startsWith("/maps/embed"_s))
+        return false;
+
+    return PublicSuffixStore::singleton().domainWithoutPublicSuffix(RegistrableDomain(url).string()) == "google"_s;
+}
+
 // apple.com rdar://154434137
 bool Quirks::ensureCaptionVisibilityInFullscreenAndPictureInPicture() const
 {
@@ -894,6 +906,18 @@ bool Quirks::needsZomatoEmailLoginLabelQuirk() const
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsZomatoEmailLoginLabelQuirk);
+#else
+    return false;
+#endif
+}
+
+// google.com/maps/embed rdar://184166392
+bool Quirks::needsGoogleMapsEmbedManipulationSurfaceQuirk() const
+{
+#if PLATFORM(MAC)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsGoogleMapsEmbedManipulationSurfaceQuirk);
 #else
     return false;
 #endif
@@ -2933,6 +2957,18 @@ URL Quirks::topDocumentURL() const
     return protect(m_document)->topURL();
 }
 
+URL Quirks::documentURL() const
+{
+    Ref document = *protect(m_document);
+
+    if (!document->isTopDocument()) [[unlikely]] {
+        if (RefPtr page = document->page(); page && !page->quirksSubframeURLForTesting().isEmpty())
+            return page->quirksSubframeURLForTesting();
+    }
+
+    return document->url();
+}
+
 void Quirks::setTopDocumentURLForTesting(URL&& url)
 {
     m_topDocumentURLForTesting = WTF::move(url);
@@ -4194,6 +4230,11 @@ void Quirks::determineRelevantQuirks()
     m_quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::NeedsYouTubeCaptionQuirk, isYoutubeEmbedDomain());
 #endif
 
+#if PLATFORM(MAC)
+    // google.com/maps/embed rdar://184166392
+    m_quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::NeedsGoogleMapsEmbedManipulationSurfaceQuirk, isGoogleMapsEmbed());
+#endif
+
     auto quirksURL = topDocumentURL();
     if (quirksURL.isEmpty())
         return;
@@ -4364,7 +4405,7 @@ void Quirks::determineRelevantQuirks()
 
     auto findResult = dispatchMap->find(quirkDomainWithoutPSL);
     if (findResult != dispatchMap->end())
-        (findResult->value)(m_quirksData, quirksURL, quirksDomainString, protect(m_document)->url());
+        (findResult->value)(m_quirksData, quirksURL, quirksDomainString, documentURL());
 
     // Note: `needsDisableDOMPasteAccessQuirk` needs a live document to assess
     // Note: `shouldDisableElementFullscreen` needs a live document for embedded sites

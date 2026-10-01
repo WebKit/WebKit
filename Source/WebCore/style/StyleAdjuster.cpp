@@ -95,6 +95,16 @@
 #include "DocumentFullscreen.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/StyleAdjusterAdditions.cpp>
+#else
+namespace WebCore {
+namespace Style {
+static inline void adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
+} // namespace Style
+} // namespace WebCore
+#endif
+
 namespace WebCore {
 namespace Style {
 
@@ -1039,6 +1049,10 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setAlignItems(Style::AlignItems { CSS::Keyword::Center { } });
         }
     }
+
+    // google.com/maps/embed rdar://184166392
+    if (documentQuirks.needsGoogleMapsEmbedManipulationSurfaceQuirk())
+        adjustForManipulationSurfaceQuirk(style);
 
 #if PLATFORM(IOS_FAMILY)
     if (documentQuirks.needsGoogleMapsScrollingQuirk()) {

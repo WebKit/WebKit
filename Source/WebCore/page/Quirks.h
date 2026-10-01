@@ -149,6 +149,7 @@ public:
     bool NODELETE needsFullscreenDisplayNoneQuirk() const;
     bool NODELETE needsFullscreenObjectFitQuirk() const;
     bool needsZomatoEmailLoginLabelQuirk() const;
+    bool NODELETE needsGoogleMapsEmbedManipulationSurfaceQuirk() const;
     bool NODELETE needsGoogleMapsScrollingQuirk() const;
     bool NODELETE needsGoogleTranslateScrollingQuirk() const;
     bool NODELETE needsNetflixVolumeSliderQuirk() const;
@@ -388,6 +389,7 @@ private:
     bool domainStartsWith(const String&) const;
     bool isEmbedDomain(const String&) const;
     bool isYoutubeEmbedDomain() const;
+    bool isGoogleMapsEmbed() const;
 
     static bool domainNeedsAvoidResizingWhenInputViewBoundsChangeQuirk(const URL&, QuirksData&);
     static bool domainNeedsScrollbarWidthThinDisabledQuirk(const URL&, QuirksData&);
@@ -396,6 +398,7 @@ private:
 #endif
 
     URL topDocumentURL() const;
+    URL documentURL() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;

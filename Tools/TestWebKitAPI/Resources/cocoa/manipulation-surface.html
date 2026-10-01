@@ -8,42 +8,57 @@ html, body { margin: 0; }
 
 .spacer { height: 1000px; }
 
-#surface { height: 400px; background: linear-gradient(#fed, #dfe); }
+#surfaceFrame { display: block; width: 100%; height: 400px; border: none; }
 </style>
 </head>
 <body>
 <div class="spacer"></div>
-<div id="surface"></div>
+<iframe id="surfaceFrame"></iframe>
 <div class="spacer"></div>
 <script>
-const surface = document.getElementById("surface");
-
 window.surfaceEvents = { down: 0, move: 0, up: 0, wheel: 0, dx: 0, dy: 0 };
 
-let previous = null;
+const surfaceMarkup = surfaceStyle => `<!DOCTYPE html>
+<style>
+html, body { margin: 0; height: 100%; }
+#surface { height: 100%; background: linear-gradient(#fed, #dfe); ${surfaceStyle}; }
+</style>
+<div id="surface"></div>`;
 
-surface.addEventListener("mousedown", event => {
-    window.surfaceEvents.down++;
-    previous = event;
+function observeSurface(surface) {
+    let previous = null;
+
+    surface.addEventListener("mousedown", event => {
+        window.surfaceEvents.down++;
+        previous = event;
+    });
+
+    surface.addEventListener("mousemove", event => {
+        if (!previous)
+            return;
+
+        window.surfaceEvents.move++;
+        window.surfaceEvents.dx += event.clientX - previous.clientX;
+        window.surfaceEvents.dy += event.clientY - previous.clientY;
+        previous = event;
+    });
+
+    surface.addEventListener("mouseup", () => {
+        window.surfaceEvents.up++;
+        previous = null;
+    });
+
+    surface.addEventListener("wheel", () => window.surfaceEvents.wheel++, { passive: true });
+}
+
+window.loadSurface = surfaceStyle => new Promise(resolve => {
+    const frame = document.getElementById("surfaceFrame");
+    frame.addEventListener("load", () => {
+        observeSurface(frame.contentDocument.getElementById("surface"));
+        resolve();
+    }, { once: true });
+    frame.srcdoc = surfaceMarkup(surfaceStyle);
 });
-
-surface.addEventListener("mousemove", event => {
-    // Only movement between a down and an up belongs to a drag; a bare mousemove is a hover update.
-    if (!previous)
-        return;
-
-    window.surfaceEvents.move++;
-    window.surfaceEvents.dx += event.clientX - previous.clientX;
-    window.surfaceEvents.dy += event.clientY - previous.clientY;
-    previous = event;
-});
-
-surface.addEventListener("mouseup", () => {
-    window.surfaceEvents.up++;
-    previous = null;
-});
-
-surface.addEventListener("wheel", () => window.surfaceEvents.wheel++, { passive: true });
 </script>
 </body>
 </html>
