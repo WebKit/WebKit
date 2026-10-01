@@ -457,6 +457,17 @@ public:
         return GUniquePtr<char>(WebViewTest::javascriptResultToCString(jsResult));
     }
 
+    GUniquePtr<char> editableTextContent()
+    {
+        auto* jsResult = runJavaScriptAndWaitUntilFinished("document.getElementById('editable').textContent", nullptr);
+        return GUniquePtr<char>(WebViewTest::javascriptResultToCString(jsResult));
+    }
+
+    void deleteSurrounding(int offset, unsigned characterCount)
+    {
+        g_signal_emit_by_name(m_context.get(), "delete-surrounding", offset, characterCount, nullptr);
+    }
+
     void keyStrokeAndWaitForEvents(unsigned keyval, unsigned eventsCount, OptionSet<Modifiers> modifiers = OptionSet<Modifiers>())
     {
         m_eventsExpected = eventsCount;
@@ -937,6 +948,34 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     test->m_events.clear();
 }
 
+static void testWebKitInputMethodContextDeleteSurroundingContentEditable(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><h1>Title</h1><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'abc'; getSelection().collapse(editable.firstChild, 3)", nullptr);
+
+    test->deleteSurrounding(-1, 1);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "ab");
+}
+
+static void testWebKitInputMethodContextDeleteSurroundingBeforeStart(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><h1>Title</h1><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'abc'; getSelection().collapse(editable.firstChild, 1)", nullptr);
+
+    test->deleteSurrounding(-2, 2);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "abc");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("getSelection().focusNode === editable.firstChild && getSelection().focusOffset === 1", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml(testHTML, nullptr);
@@ -1140,6 +1179,8 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "invalid-sequence", testWebKitInputMethodContextInvalidSequence);
     InputMethodTest::add("WebKitInputMethodContext", "cancel-sequence", testWebKitInputMethodContextCancelSequence);
     InputMethodTest::add("WebKitInputMethodContext", "surrounding", testWebKitInputMethodContextSurrounding);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-contenteditable", testWebKitInputMethodContextDeleteSurroundingContentEditable);
+    InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-before-start", testWebKitInputMethodContextDeleteSurroundingBeforeStart);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
 }
