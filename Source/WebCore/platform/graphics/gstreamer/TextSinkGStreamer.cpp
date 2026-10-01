@@ -93,11 +93,6 @@ static void webkitTextSinkConstructed(GObject* object)
         return GST_FLOW_OK;
     }), sink);
 
-    g_signal_connect(priv->appSink.get(), "new-preroll", G_CALLBACK(+[](GstElement* appSink, WebKitTextSink* sink) -> GstFlowReturn {
-        webkitTextSinkHandleSample(sink, adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(appSink))));
-        return GST_FLOW_OK;
-    }), sink);
-
     // We want to get cues as quickly as possible so WebKit has time to handle them,
     // and we don't want cues to block when they come in the wrong order.
     gst_base_sink_set_sync(GST_BASE_SINK_CAST(sink->priv->appSink.get()), false);

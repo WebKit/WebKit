@@ -93,7 +93,6 @@ public:
     void stopDevice(bool disconnectSignals);
 
     struct SinkSignalsHolder {
-        unsigned long prerollSignalId;
         unsigned long newSampleSignalId;
     };
 

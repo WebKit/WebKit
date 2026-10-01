@@ -61,19 +61,12 @@ void GStreamerAudioCapturer::handleSample(GRefPtr<GstSample>&& sample)
 
 void GStreamerAudioCapturer::setSinkAudioCallback(SinkAudioDataCallback&& callback)
 {
-    if (m_sinkAudioDataCallback.first.newSampleSignalId) {
+    if (m_sinkAudioDataCallback.first.newSampleSignalId)
         g_signal_handler_disconnect(sink(), m_sinkAudioDataCallback.first.newSampleSignalId);
-        g_signal_handler_disconnect(sink(), m_sinkAudioDataCallback.first.prerollSignalId);
-    }
 
     m_sinkAudioDataCallback.second = WTF::move(callback);
     m_sinkAudioDataCallback.first.newSampleSignalId = g_signal_connect_swapped(sink(), "new-sample", G_CALLBACK(+[](GStreamerAudioCapturer* capturer, GstElement* sink) -> GstFlowReturn {
         GRefPtr sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-        capturer->handleSample(WTF::move(sample));
-        return GST_FLOW_OK;
-    }), this);
-    m_sinkAudioDataCallback.first.prerollSignalId = g_signal_connect_swapped(sink(), "new-preroll", G_CALLBACK(+[](GStreamerAudioCapturer* capturer, GstElement* sink) -> GstFlowReturn {
-        GRefPtr sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
         capturer->handleSample(WTF::move(sample));
         return GST_FLOW_OK;
     }), this);

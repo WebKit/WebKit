@@ -64,7 +64,7 @@ public:
     void handleNewDeinterleavePad(GstPad*);
     void handleRemovedDeinterleavePad(GstPad*);
 
-    GstFlowReturn handleSample(GstAppSink*, bool isPreroll);
+    GstFlowReturn handleSample(GstAppSink*);
     void clearAdapters();
 
 private:

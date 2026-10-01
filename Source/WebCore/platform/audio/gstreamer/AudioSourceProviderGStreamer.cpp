@@ -247,10 +247,10 @@ void AudioSourceProviderGStreamer::provideInput(AudioBus& bus, size_t framesToPr
         copyGStreamerBuffersToAudioChannel(adapter.get(), bus, channelId - 1, framesToProcess);
 }
 
-GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink, bool isPreroll)
+GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink)
 {
     ASP_TRACE("Pulling audio sample from the sink");
-    GRefPtr sample = adoptGRef(isPreroll ? gst_app_sink_try_pull_preroll(sink, 0) : gst_app_sink_try_pull_sample(sink, 0));
+    GRefPtr sample = adoptGRef(gst_app_sink_try_pull_sample(sink, 0));
     if (!sample)
         return gst_app_sink_is_eos(sink) ? GST_FLOW_EOS : GST_FLOW_ERROR;
 
@@ -381,11 +381,10 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
 
     static GstAppSinkCallbacks callbacks = {
         nullptr,
+        // preroll
+        nullptr,
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
-            return static_cast<AudioSourceProviderGStreamer*>(userData)->handleSample(sink, true);
-        },
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
-            return static_cast<AudioSourceProviderGStreamer*>(userData)->handleSample(sink, false);
+            return static_cast<AudioSourceProviderGStreamer*>(userData)->handleSample(sink);
         },
 #if GST_CHECK_VERSION(1, 20, 0)
         // new_event

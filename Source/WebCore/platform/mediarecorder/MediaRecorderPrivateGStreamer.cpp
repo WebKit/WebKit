@@ -455,10 +455,8 @@ void MediaRecorderPrivateBackend::setSink(GstElement* element)
             GST_DEBUG_OBJECT(backend->m_pipeline.get(), "EOS received on sink");
             static_cast<MediaRecorderPrivateBackend*>(userData)->notifyEOS();
         },
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
-            GRefPtr sample = adoptGRef(gst_app_sink_pull_preroll(sink));
-            return static_cast<MediaRecorderPrivateBackend*>(userData)->handleSample(sink, WTF::move(sample));
-        },
+        // preroll
+        nullptr,
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             GRefPtr sample = adoptGRef(gst_app_sink_pull_sample(sink));
             return static_cast<MediaRecorderPrivateBackend*>(userData)->handleSample(sink, WTF::move(sample));
