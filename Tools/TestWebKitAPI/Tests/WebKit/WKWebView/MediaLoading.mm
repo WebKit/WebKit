@@ -29,6 +29,11 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "TestURLSchemeHandler.h"
+#import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKString.h>
+#import <WebKit/WKURLSchemeTask.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 
@@ -237,6 +242,52 @@ TEST(MediaLoading, LockdownModeHLS)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     [webView loadRequest:server.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "playing");
+}
+
+TEST(MediaLoading, UnansweredCustomSchemeRequestTimesOut)
+{
+    RetainPtr handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"unanswered"];
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+
+    auto preferences = (__bridge WKPreferencesRef)[configuration preferences];
+    WKPreferencesSetUInt32ValueForKeyForTesting(preferences, 500, adoptWK(WKStringCreateWithUTF8CString("MediaResourceLoadTimeoutForTesting")).get());
+
+    __block RetainPtr<id<WKURLSchemeTask>> unansweredTask;
+    __block bool receivedMediaRequest = false;
+
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"]) {
+            NSString *html = @"<video autoplay muted "
+                "onerror=\"window.webkit.messageHandlers.testHandler.postMessage('error')\" "
+                "src='/video.mp4'></video>";
+            RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]);
+            [task didReceiveResponse:response.get()];
+            [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+            [task didFinish];
+            return;
+        }
+
+        // Deliberately never respond to the media request.
+        unansweredTask = task;
+        receivedMediaRequest = true;
+    }];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    __block bool receivedErrorEvent = false;
+    [webView performAfterReceivingMessage:@"error" action:^{
+        receivedErrorEvent = true;
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"unanswered:///main.html"]]];
+
+    Util::run(&receivedErrorEvent);
+    EXPECT_TRUE(receivedMediaRequest);
+    EXPECT_TRUE(!!unansweredTask);
+
+    webView.get().UIDelegate = nil;
 }
 
 } // namespace TestWebKitAPI
