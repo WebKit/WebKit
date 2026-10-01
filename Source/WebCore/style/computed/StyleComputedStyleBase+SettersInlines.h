@@ -211,6 +211,11 @@ inline void ComputedStyleBase::setUsedAppearance(StyleAppearance a)
     SET_NESTED(m_nonInheritedData, miscData, usedAppearance, static_cast<unsigned>(a));
 }
 
+inline void ComputedStyleBase::setOverridenBackgroundColor(std::optional<Color>&& color)
+{
+    SET_NESTED(m_nonInheritedData, rareData, overridenBackgroundColor, WTF::move(color));
+}
+
 inline void ComputedStyleBase::setUsedUserSelect(UserSelect userSelect)
 {
     SET(m_inheritedRareData, usedUserSelect, static_cast<unsigned>(userSelect));

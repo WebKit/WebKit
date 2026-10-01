@@ -93,7 +93,7 @@ void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BleedAvoida
             return;
     }
 
-    auto backgroundColor = m_renderer.style().visitedDependentBackgroundColorApplyingColorFilter();
+    auto backgroundColor = m_renderer.style().visitedDependentUsedBackgroundColorApplyingColorFilter();
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
     paintFillLayers(backgroundColor, m_renderer.style().backgroundLayers(), m_renderer.style().usedZoomForLength(), paintRect, bleedAvoidance, compositeOp);
@@ -114,7 +114,7 @@ void BackgroundPainter::paintRootBoxFillLayers() const
         return;
 
     auto& style = rootBackgroundRenderer->style();
-    auto backgroundColor = style.visitedDependentBackgroundColorApplyingColorFilter();
+    auto backgroundColor = style.visitedDependentUsedBackgroundColorApplyingColorFilter();
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
     paintFillLayers(backgroundColor, style.backgroundLayers(), style.usedZoomForLength(), view().backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
@@ -942,7 +942,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style:
     bool hasBorderRadius = style.border().hasBorderRadius();
     float deviceScaleFactor = document().deviceScaleFactor();
 
-    bool hasOpaqueBackground = style.visitedDependentBackgroundColorApplyingColorFilter().isOpaque();
+    bool hasOpaqueBackground = style.visitedDependentUsedBackgroundColorApplyingColorFilter().isOpaque();
     const auto& zoomFactor = style.usedZoomForLength();
     for (const auto& shadow : style.boxShadow()) {
         if (Style::shadowStyle(shadow) != shadowStyle)
@@ -1132,7 +1132,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
     if (!hasOneNormalBoxShadow)
         return false;
 
-    Color backgroundColor = style.visitedDependentBackgroundColorApplyingColorFilter();
+    Color backgroundColor = style.visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (!backgroundColor.isOpaque())
         return false;
 

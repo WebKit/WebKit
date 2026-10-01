@@ -213,7 +213,7 @@ Color textColorFrom(const Style::ComputedStyle& style)
 
 Color backgroundColorFrom(const Style::ComputedStyle& style)
 {
-    return style.visitedDependentBackgroundColor();
+    return style.visitedDependentUsedBackgroundColor();
 }
 
 RetainPtr<CTFontRef> AccessibilityObject::font() const

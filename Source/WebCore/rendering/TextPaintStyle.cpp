@@ -108,7 +108,7 @@ static Color adjustColorForPunchedOutBackground(const Color& textColor, const Re
         return textColor;
 
     for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
-        auto backgroundColor = protect(ancestor->style())->visitedDependentBackgroundColor();
+        auto backgroundColor = protect(ancestor->style())->visitedDependentUsedBackgroundColor();
         if (!backgroundColor.isVisible())
             continue;
 

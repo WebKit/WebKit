@@ -162,6 +162,14 @@ public:
     static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
 
+    // MARK: -- Used background color
+
+    Color usedBackgroundColor() const;
+    WebCore::Color usedBackgroundColorResolvingCurrentColor() const;
+    WebCore::Color usedBackgroundColorResolvingCurrentColorApplyingColorFilter() const;
+    WebCore::Color visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> = { }) const;
+    WEBCORE_EXPORT WebCore::Color visitedDependentUsedBackgroundColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
+
     Style::LineWidth NODELETE usedColumnRuleWidth() const;
 
     WEBCORE_EXPORT Style::UsedOutlineOffset usedOutlineOffset() const;

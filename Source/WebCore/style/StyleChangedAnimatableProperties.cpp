@@ -48,6 +48,9 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
             changingProperties.m_properties.set(CSSPropertyTextEmphasisStyle);
     }
 
+    if (a.usedBackgroundColor() != b.usedBackgroundColor())
+        changingProperties.m_properties.set(CSSPropertyBackgroundColor);
+
     // `insideLink` changes visited / non-visited colors, thus, we need to add all color properties.
     if (a.insideLink() != b.insideLink())
         changingProperties.m_properties.merge(CSSProperty::colorProperties);

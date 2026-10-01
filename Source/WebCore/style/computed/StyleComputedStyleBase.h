@@ -570,6 +570,9 @@ public:
     inline StyleAppearance usedAppearance() const;
     inline void setUsedAppearance(StyleAppearance);
 
+    inline std::optional<Color> overridenBackgroundColor() const;
+    inline void setOverridenBackgroundColor(std::optional<Color>&&);
+
     inline void setUsedUserSelect(UserSelect);
 
     inline UserSelect usedUserSelectIgnoringEffectivelyInert() const;

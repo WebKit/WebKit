@@ -264,8 +264,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << " [color="_s << serializationForRenderTreeAsText(color) << ']';
 
             // Do not dump invalid or transparent backgrounds, since that is the default.
-            auto backgroundColor = renderElement->style().visitedDependentBackgroundColor();
-            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentBackgroundColor(), backgroundColor)
+            auto backgroundColor = renderElement->style().visitedDependentUsedBackgroundColor();
+            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentUsedBackgroundColor(), backgroundColor)
                 && backgroundColor != Color::transparentBlack)
                 ts << " [bgcolor="_s << serializationForRenderTreeAsText(backgroundColor) << ']';
             

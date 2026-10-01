@@ -247,7 +247,7 @@ void InlineBoxPainter::paintDecorations()
     if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(renderer(), adjustedPaintoffset, BleedAvoidance::None, m_inlineBox))
         paintBoxShadow(Style::ShadowStyle::Normal, paintRect);
 
-    auto color = style.visitedDependentBackgroundColor(m_paintInfo.paintBehavior);
+    auto color = style.visitedDependentUsedBackgroundColor(m_paintInfo.paintBehavior);
     auto compositeOp = protect(renderer().document())->compositeOperatorForBackgroundColor(color, renderer());
 
     Style::ColorResolver colorResolver { style };

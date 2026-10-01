@@ -1969,7 +1969,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
     ASSERT(hasBackground());
     LayoutRect backgroundRect = snappedIntRect(borderBoxRect());
 
-    Color backgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
+    Color backgroundColor = style().visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (backgroundColor.isVisible()) {
         paintedExtent = backgroundRect;
         return true;
@@ -1991,7 +1991,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     if (!BackgroundPainter::paintsOwnBackground(*this))
         return false;
 
-    Color backgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
+    Color backgroundColor = style().visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (!backgroundColor.isOpaque())
         return false;
 
@@ -2127,7 +2127,7 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
 
     // If there is only one layer and no image, check whether the background color is opaque.
     if (style().backgroundLayers().usedLength() == 1 && !topLayer.hasImage()) {
-        Color bgColor = style().visitedDependentBackgroundColorApplyingColorFilter();
+        Color bgColor = style().visitedDependentUsedBackgroundColorApplyingColorFilter();
         if (bgColor.isOpaque())
             return true;
     }

@@ -199,7 +199,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     Ref protectedSelect = selectElement();
     const auto& listItems = protectedSelect->listItems();
     if (listIndex >= listItems.size()) {
-        itemBackgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
+        itemBackgroundColor = style().visitedDependentUsedBackgroundColorApplyingColorFilter();
         itemHasCustomBackgroundColor = false;
         return;
     }
@@ -207,7 +207,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
 
     Color backgroundColor;
     if (CheckedPtr style = element->computedStyleForEditability())
-        backgroundColor = style->visitedDependentBackgroundColorApplyingColorFilter();
+        backgroundColor = style->visitedDependentUsedBackgroundColorApplyingColorFilter();
 
     itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.isVisible();
     // If the item has an opaque background color, return that.
@@ -217,7 +217,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     }
 
     // Otherwise, the item's background is overlayed on top of the menu background.
-    backgroundColor = blendSourceOver(style().visitedDependentBackgroundColorApplyingColorFilter(), backgroundColor);
+    backgroundColor = blendSourceOver(style().visitedDependentUsedBackgroundColorApplyingColorFilter(), backgroundColor);
     if (backgroundColor.isOpaque()) {
         itemBackgroundColor = backgroundColor;
         return;

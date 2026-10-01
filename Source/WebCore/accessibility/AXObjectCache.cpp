@@ -3226,7 +3226,7 @@ void AXObjectCache::onStyleChange(RenderText& renderText, Style::Difference diff
     if (diffIsEqual)
         return;
 
-    if (oldStyle->visitedDependentBackgroundColor() != newStyle.visitedDependentBackgroundColor())
+    if (oldStyle->visitedDependentUsedBackgroundColor() != newStyle.visitedDependentUsedBackgroundColor())
         tree->queueNodeUpdate(object->objectID(), { AXProperty::BackgroundColor });
 
     if (oldStyle->verticalAlign() != newStyle.verticalAlign())
