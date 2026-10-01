@@ -32,6 +32,7 @@ function test() {
         name: "Worker",
         expression: `worker.postMessage({name: "createContext", args: ["bitmaprenderer"]})`,
         contextType: WI.Canvas.ContextType.OffscreenBitmapRenderer,
+        canvasCount: 1,
         skipDestroy: true,
     });
 
