@@ -97,6 +97,7 @@ class RenderText;
 class RenderWidget;
 class Scrollbar;
 class ScrollView;
+class SelectPopoverElement;
 class SpinButtonElement;
 class VisiblePosition;
 class Widget;
@@ -464,6 +465,7 @@ public:
     void onRadioGroupMembershipChanged(HTMLElement&);
     void onRemoteFrameGainedFocus(RemoteFrame&);
     void onScrollbarFrameRectChange(const Scrollbar&);
+    void onSelectPickerHidden(SelectPopoverElement&);
     void onSelectedOptionChanged(Element&);
     void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);

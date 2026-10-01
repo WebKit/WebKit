@@ -121,6 +121,7 @@
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGTitleElement.h"
+#include "SelectPopoverElement.h"
 #include "ShadowRoot.h"
 #include "StyleListStyleType.h"
 #include "StyleResolver.h"
@@ -862,6 +863,10 @@ void AccessibilityNodeObject::addChildren()
 
     // The only time we add children from the DOM tree to a node with a renderer is when it's a canvas.
     if (renderer() && WebCore::elementName(*node) != ElementName::HTML_canvas)
+        return;
+
+    // Like the menu of a native pop-up button, a base-appearance select's picker has no children while closed.
+    if (RefPtr picker = dynamicDowncast<SelectPopoverElement>(*node); picker && !picker->isPopoverShowing())
         return;
 
     CheckedPtr cache = axObjectCache();
