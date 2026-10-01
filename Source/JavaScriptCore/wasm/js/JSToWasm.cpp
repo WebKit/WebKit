@@ -505,16 +505,6 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
     // Don't store the Wasm::Callee until after our stack check.
     jit.storeWasmCalleeToCalleeCallFrame(scratchGPR);
 
-    // Ensure:
-    // argCountPlusThis - 1 >= argumentCount()
-    // argCountPlusThis >= argumentCount() + 1
-    // FIXME: We should handle mismatched arity
-    // https://bugs.webkit.org/show_bug.cgi?id=196564
-    if (argumentCount() > 0) {
-        slowPath.append(jit.branch32(CCallHelpers::Below,
-            CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(argumentCount() + 1)));
-    }
-
     bool haveTagRegisters = false;
     auto materializeTagRegistersIfNeeded = [&] {
         if (!haveTagRegisters) {
@@ -533,6 +523,12 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
         auto type = argumentType(i);
         JIT_COMMENT(jit, "Arg ", i, " : ", type);
+
+        bool missingUsesUndefined = type.isI32() || type.isF32() || type.isF64() || Wasm::isExternref(type);
+        auto missingArg = jit.branch32(CCallHelpers::BelowOrEqual, CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(i + 1));
+        if (!missingUsesUndefined)
+            slowPath.append(missingArg);
+
         switch (type.kind()) {
         case Wasm::TypeKind::I32: {
             materializeTagRegistersIfNeeded();
@@ -655,6 +651,35 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         case Wasm::TypeKind::V128:
         default:
             RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        if (missingUsesUndefined) {
+            auto argDone = jit.jump();
+            missingArg.link(&jit);
+            if (type.isI32()) {
+                if (isStack) {
+                    CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
+                    jit.store32(CCallHelpers::TrustedImm32(0), addr.withOffset(LowWordOffset));
+                } else
+                    jit.xorPtr(wasmCallInfo.params[i].location.jsr().payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR());
+            } else if (type.isF32() || type.isF64()) {
+                if (!isStack)
+                    scratchFPR = wasmCallInfo.params[i].location.fpr();
+                jit.move64ToDouble(CCallHelpers::TrustedImm64(std::bit_cast<uint64_t>(PNaN)), scratchFPR);
+                if (type.isF32())
+                    jit.convertDoubleToFloat(scratchFPR, scratchFPR);
+                if (isStack) {
+                    CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
+                    if (type.isF32())
+                        jit.storeFloat(scratchFPR, addr.withOffset(LowWordOffset));
+                    else
+                        jit.storeDouble(scratchFPR, addr);
+                }
+            } else if (isStack)
+                jit.storeTrustedValue(jsUndefined(), calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()));
+            else
+                jit.moveTrustedValue(jsUndefined(), wasmCallInfo.params[i].location.jsr());
+            argDone.link(&jit);
         }
     }
 
