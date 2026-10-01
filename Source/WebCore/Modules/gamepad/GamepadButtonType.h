@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 NVIDIA Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=GAMEPAD,
-    EnabledBySetting=GamepadsEnabled,
-    Exposed=Window
-] interface GamepadButton {
-    readonly attribute boolean pressed;
-    readonly attribute double value;
-    [EnabledBySetting=GamepadButtonTypeEnabled] readonly attribute GamepadButtonType type;
-};
+#pragma once
 
+#if ENABLE(GAMEPAD)
+
+#include <cstdint>
+
+namespace WebCore {
+
+enum class GamepadButtonType : uint8_t { NonStandard, Standard, Trackpad };
+
+} // namespace WebCore
+
+#endif // ENABLE(GAMEPAD)

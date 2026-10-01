@@ -75,6 +75,7 @@ void GenericHIDGamepad::maybeAddGenericDesktopElement(HIDElement& element)
     case kHIDUsage_GD_DPadRight:
     case kHIDUsage_GD_DPadLeft:
         m_buttonValues.append(0.0);
+        m_buttonTypes.append(GamepadButtonType::NonStandard);
         m_elementMap.set(element.cookie(), makeUnique<HIDGamepadButton>(element, m_buttonValues.last()));
         break;
     default:
@@ -86,6 +87,7 @@ void GenericHIDGamepad::maybeAddButtonElement(HIDElement& element)
 {
     // If it's in the button page, we assume it's actually a button.
     m_buttonValues.append(0.0);
+    m_buttonTypes.append(GamepadButtonType::NonStandard);
     m_elementMap.set(element.cookie(), makeUnique<HIDGamepadButton>(element, m_buttonValues.last()));
 }
 

@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadButtonType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -34,19 +35,21 @@ namespace WebCore {
 
 class GamepadButton : public RefCounted<GamepadButton> {
 public:
-    static Ref<GamepadButton> create()
+    static Ref<GamepadButton> create(GamepadButtonType type = GamepadButtonType::NonStandard)
     {
-        return adoptRef(*new GamepadButton);
+        return adoptRef(*new GamepadButton(type));
     }
 
     bool NODELETE pressed() const;
     double value() const { return m_value; }
     void setValue(double value) { m_value = value; }
+    GamepadButtonType type() const { return m_type; }
 
 private:
-    GamepadButton();
+    explicit GamepadButton(GamepadButtonType);
 
     double m_value { 0.0 };
+    GamepadButtonType m_type { GamepadButtonType::NonStandard };
 };
 
 } // namespace WebCore
