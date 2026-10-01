@@ -4084,6 +4084,87 @@ TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframeWithScrolled
         }
     );
 }
+
+static bool shouldReportBadGrammar = false;
+static RetainPtr<NSString> stringForGrammarReview;
+static BlockPtr<void(NSInteger, NSArray<NSTextCheckingResult *> *)> grammarReviewCompletionHandler;
+
+static NSArray<NSTextCheckingResult *> *badGrammarResults(NSString *string)
+{
+    NSRange range = [string rangeOfString:@"in then"];
+    if (range.location == NSNotFound)
+        return @[ ];
+    NSDictionary *detail = @{
+        NSGrammarRange: [NSValue valueWithRange:NSMakeRange(0, range.length)],
+        NSGrammarCorrections: @[ @"in the" ],
+    };
+    return @[ [NSTextCheckingResult grammarCheckingResultWithRange:range details:@[ detail ]] ];
+}
+
+static NSArray<NSTextCheckingResult *> *swizzledCheckStringForGrammarReview(id, SEL, NSString *stringToCheck, NSRange, NSTextCheckingTypes types, NSDictionary *, NSInteger, NSOrthography **, NSInteger *)
+{
+    if (!shouldReportBadGrammar || !(types & NSTextCheckingTypeGrammar))
+        return @[ ];
+    return badGrammarResults(stringToCheck);
+}
+
+using GrammarReviewCompletionHandler = void (^)(NSInteger, NSArray<NSTextCheckingResult *> *);
+
+static NSInteger swizzledRequestGrammarReview(id, SEL, NSString *stringToCheck, NSRange, NSString *, NSDictionary *, GrammarReviewCompletionHandler completionHandler)
+{
+    if ([stringToCheck containsString:@"in then"]) {
+        stringForGrammarReview = stringToCheck;
+        grammarReviewCompletionHandler = makeBlockPtr(completionHandler);
+    }
+    return 0;
+}
+
+TEST(SiteIsolation, ExtendedProofreadingGrammarMarkerInCrossOriginIframe)
+{
+    shouldReportBadGrammar = false;
+    stringForGrammarReview = nil;
+    grammarReviewCompletionHandler = nullptr;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    InstanceMethodSwizzler checkStringSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:),
+        reinterpret_cast<IMP>(swizzledCheckStringForGrammarReview)
+    };
+    InstanceMethodSwizzler requestGrammarCheckingSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(requestGrammarCheckingOfString:range:language:options:completionHandler:),
+        reinterpret_cast<IMP>(swizzledRequestGrammarReview)
+    };
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration setWebsiteDataStore:[server.httpsProxyConfiguration() websiteDataStore]];
+    setFeatureEnabled(configuration.get(), @"ExtendedProofreadingEnabled", true);
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configuration.get());
+    [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+    [webView _setGrammarCheckingEnabledForTesting:YES];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.body.focus()" inFrame:childFrame.get()];
+
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body)" inFrame:childFrame.get()];
+    [(id<NSTextInputClient>)webView.get() insertText:@"Let's go in then store\n" replacementRange:NSMakeRange(NSNotFound, 0)];
+    ASSERT_TRUE(Util::waitFor([] {
+        return !!grammarReviewCompletionHandler;
+    }));
+
+    shouldReportBadGrammar = true;
+    grammarReviewCompletionHandler(0, badGrammarResults(stringForGrammarReview.get()));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"internals.markerCountForNode(document.body.firstChild, 'grammar')" inFrame:childFrame.get()] intValue] > 0;
+    }));
+
+    shouldReportBadGrammar = false;
+    stringForGrammarReview = nil;
+    grammarReviewCompletionHandler = nullptr;
+}
 #endif
 
 TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInCrossOriginIframe)
