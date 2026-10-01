@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT ProcessIdentity(const ProcessIdentity&) = default;
 
     // Returns true for a process identity or false on empty identity.
-    WEBCORE_EXPORT operator bool() const;
+    WEBCORE_EXPORT explicit operator bool() const;
 
     WEBCORE_EXPORT ProcessIdentity& operator=(const ProcessIdentity&);
 

@@ -50,7 +50,7 @@ public:
     inline ElementType& operator*() const;
     inline ElementType* operator->() const;
 
-    constexpr operator bool() const { return m_current.get(); }
+    constexpr explicit operator bool() const { return m_current.get(); }
     constexpr bool operator!() const { return !m_current; }
     constexpr bool operator==(std::nullptr_t) const { return !m_current; }
     constexpr bool operator==(const ElementIterator&) const;

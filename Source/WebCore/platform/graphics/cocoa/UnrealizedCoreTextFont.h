@@ -61,7 +61,7 @@ public:
             CFDictionarySetValue(m_attributes.get(), kCTFontSizeAttribute, adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size)).get());
     }
 
-    operator bool() const;
+    explicit operator bool() const;
 
     void modifyFromContext(const FontDescription&, const FontCreationContext&, FontTypeForPreparation = FontTypeForPreparation::NonSystemFont, ApplyTraitsVariations = ApplyTraitsVariations::Yes, bool shouldEnhanceTextLegibility = false);
 

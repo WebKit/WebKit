@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <wtf/Hasher.h>
+
 namespace WebCore {
 
 enum TabSizeValueType {
@@ -59,12 +61,17 @@ struct TabSize {
         return m_value;
     }
 
-    operator bool() const { return value(); }
+    explicit operator bool() const { return value(); }
 
     friend bool operator==(const TabSize&, const TabSize&) = default;
 
     float m_value { 0 };
     bool m_isSpaces { false };
 };
+
+inline void add(Hasher& hasher, const TabSize& tabSize)
+{
+    add(hasher, tabSize.m_value, tabSize.m_isSpaces);
+}
 
 } // namespace WebCore

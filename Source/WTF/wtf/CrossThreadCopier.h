@@ -42,6 +42,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
+#include <wtf/UUID.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
@@ -202,6 +203,15 @@ template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
 
 template<typename T, typename U> struct CrossThreadCopierBase<false, false, ObjectIdentifierGeneric<T, U>> {
     using Type = ObjectIdentifierGeneric<T, U>;
+    static constexpr bool IsNeeded = false;
+    static Type copy(const Type& source)
+    {
+        return source;
+    }
+};
+
+template<> struct CrossThreadCopierBase<false, false, WTF::UUID> {
+    using Type = WTF::UUID;
     static constexpr bool IsNeeded = false;
     static Type copy(const Type& source)
     {

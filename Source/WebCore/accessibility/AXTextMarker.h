@@ -239,7 +239,7 @@ public:
 
     AXTextMarker() = default;
 
-    operator bool() const { return !isNull(); }
+    explicit operator bool() const { return !isNull(); }
     bool isEqual(const AXTextMarker& other) const { return m_data == other.m_data; }
     operator VisiblePosition() const;
     operator CharacterOffset() const;
@@ -388,7 +388,7 @@ public:
     AXTextMarkerRange(std::optional<AXTreeID>, std::optional<AXID>, unsigned offset, unsigned length);
     AXTextMarkerRange() = default;
 
-    operator bool() const { return m_start && m_end; }
+    explicit operator bool() const { return m_start && m_end; }
     operator VisiblePositionRange() const;
     std::optional<SimpleRange> simpleRange() const;
     std::optional<CharacterRange> NODELETE characterRange() const;

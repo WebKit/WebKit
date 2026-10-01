@@ -64,7 +64,7 @@ struct InlineItemPosition {
     size_t offset { 0 }; // Note that this is offset relative to the start position of the InlineItem.
 
     friend bool operator==(const InlineItemPosition&, const InlineItemPosition&) = default;
-    operator bool() const { return index || offset; }
+    explicit operator bool() const { return index || offset; }
 };
 
 struct InlineItemRange {

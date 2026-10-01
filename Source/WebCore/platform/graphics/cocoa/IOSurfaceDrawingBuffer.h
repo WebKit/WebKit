@@ -43,7 +43,7 @@ public:
     IOSurfaceDrawingBuffer(IOSurfaceDrawingBuffer&&);
     explicit IOSurfaceDrawingBuffer(std::unique_ptr<IOSurface>&&);
     IOSurfaceDrawingBuffer& operator=(IOSurfaceDrawingBuffer&&);
-    operator bool() const { return !!m_surface; }
+    explicit operator bool() const { return !!m_surface; }
     IOSurface* surface() const LIFETIME_BOUND { return m_surface.get(); }
 
     IntSize size() const;

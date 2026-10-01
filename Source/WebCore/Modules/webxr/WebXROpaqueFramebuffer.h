@@ -59,7 +59,7 @@ struct WebXRAttachmentSet {
     T colorBuffer;
     T depthStencilBuffer;
 
-    operator bool() const
+    explicit operator bool() const
     {
         return !!colorBuffer; // Need colorBuffer at the minimum!
     }

@@ -428,7 +428,7 @@ public:
     {
     }
 
-    operator bool() const
+    operator bool() const // NOLINT: Stands in for bool&, so it must convert implicitly.
     {
         return !!(*m_word & m_mask);
     }

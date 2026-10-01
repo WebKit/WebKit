@@ -57,7 +57,7 @@ bool AudioDecoder::isCodecSupported(const StringView& codec)
     bool result = false;
 #if USE(GSTREAMER)
     auto& scanner = GStreamerRegistryScanner::singleton();
-    result = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codec.toString());
+    result = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codec.toString()).isSupported;
 #elif USE(AVFOUNDATION)
     result = !!AudioDecoderCocoa::isCodecSupported(codec);
 #endif

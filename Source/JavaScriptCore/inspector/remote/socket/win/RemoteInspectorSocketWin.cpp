@@ -74,7 +74,7 @@ public:
     }
 
     operator PlatformSocketType() const { return m_socket; }
-    operator bool() const { return isValid(m_socket); }
+    explicit operator bool() const { return isValid(m_socket); }
 
     PlatformSocketType leak()
     {

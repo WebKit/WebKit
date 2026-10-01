@@ -27,6 +27,7 @@
 
 #include <wtf/ArgumentCoder.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/TextStream.h>
@@ -101,3 +102,16 @@ TextStream& operator<<(TextStream& ts, const MonotonicObjectIdentifier<T>& ident
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<typename T> struct CrossThreadCopierBase<false, false, WebKit::MonotonicObjectIdentifier<T>> {
+    using Type = WebKit::MonotonicObjectIdentifier<T>;
+    static constexpr bool IsNeeded = false;
+    static Type copy(const Type& source)
+    {
+        return source;
+    }
+};
+
+} // namespace WTF

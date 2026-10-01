@@ -451,7 +451,7 @@ struct CaptureSourceError {
         , invalidConstraint(invalidConstraint)
     { }
 
-    operator bool() const { return denialReason != MediaAccessDenialReason::NoReason; }
+    explicit operator bool() const { return denialReason != MediaAccessDenialReason::NoReason; }
 
     String errorMessage;
     MediaAccessDenialReason denialReason { MediaAccessDenialReason::NoReason };
@@ -463,7 +463,7 @@ struct CaptureSourceOrError {
     CaptureSourceOrError(Ref<RealtimeMediaSource>&& source) : captureSource(WTF::move(source)) { }
     explicit CaptureSourceOrError(CaptureSourceError&& error) : error(WTF::move(error)) { }
 
-    operator bool() const { return !!captureSource; }
+    explicit operator bool() const { return !!captureSource; }
     Ref<RealtimeMediaSource> source() { return captureSource.releaseNonNull(); }
 
     RefPtr<RealtimeMediaSource> captureSource;

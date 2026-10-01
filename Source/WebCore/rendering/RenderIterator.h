@@ -41,7 +41,7 @@ public:
     T& operator*();
     T* operator->();
 
-    operator bool() const { return m_current; }
+    explicit operator bool() const { return m_current; }
 
     bool operator==(const RenderIterator&) const;
 
@@ -65,7 +65,7 @@ public:
     const T& operator*() const;
     const T* operator->() const;
 
-    operator bool() const { return m_current; }
+    explicit operator bool() const { return m_current; }
 
     bool operator==(const RenderConstIterator& other) const;
 
@@ -89,7 +89,7 @@ public:
     T& operator*();
     T* operator->();
 
-    operator bool() const { return m_current; }
+    explicit operator bool() const { return m_current; }
 
     bool operator==(const RenderPostOrderIterator&) const;
 
@@ -109,7 +109,7 @@ public:
     const T& operator*() const;
     const T* operator->() const;
 
-    operator bool() const { return m_current; }
+    explicit operator bool() const { return m_current; }
 
     bool operator==(const RenderPostOrderConstIterator& other) const;
 

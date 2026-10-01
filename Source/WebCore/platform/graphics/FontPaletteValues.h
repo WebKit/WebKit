@@ -50,7 +50,7 @@ struct FontPaletteIndex {
     {
     }
 
-    operator bool() const
+    explicit operator bool() const
     {
         return type != Type::Integer || integer;
     }
@@ -103,7 +103,7 @@ public:
         return m_overrideColors;
     }
 
-    operator bool() const
+    explicit operator bool() const
     {
         return m_basePalette || !m_overrideColors.isEmpty();
     }

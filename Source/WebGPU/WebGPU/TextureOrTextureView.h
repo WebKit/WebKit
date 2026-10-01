@@ -96,7 +96,7 @@ public:
 #undef TEXTURE_OR_VIEW_HELPER_REF
 #undef TEXTURE_OR_VIEW_HELPER_NONCONST
 
-    operator bool() const { return m_texture || m_view; }
+    explicit operator bool() const { return m_texture || m_view; }
 
 private:
     RefPtr<Texture> m_texture;

@@ -369,7 +369,7 @@ public:
             : handle(WTF::move(fd))
         {
         }
-        operator bool() const { return !!handle; }
+        explicit operator bool() const { return !!handle; }
         UnixFileDescriptor handle;
 #elif OS(WINDOWS)
         explicit Identifier(Handle&& handle)
@@ -380,7 +380,7 @@ public:
             : handle(handle)
         {
         }
-        operator bool() const { return !!handle; }
+        explicit operator bool() const { return !!handle; }
         HANDLE handle { 0 };
 #elif OS(DARWIN)
         explicit Identifier(Handle&& handle)
@@ -396,7 +396,7 @@ public:
             , xpcConnection(WTF::move(xpcConnection))
         {
         }
-        operator bool() const { return MACH_PORT_VALID(port); }
+        explicit operator bool() const { return MACH_PORT_VALID(port); }
         mach_port_t port { MACH_PORT_NULL };
         OSObjectPtr<xpc_connection_t> xpcConnection;
 #endif

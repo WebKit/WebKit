@@ -39,7 +39,7 @@ struct PromisedAttachmentInfo {
 
     Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> additionalTypesAndData;
 
-    operator bool() const
+    explicit operator bool() const
     {
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (!attachmentIdentifier.isEmpty())

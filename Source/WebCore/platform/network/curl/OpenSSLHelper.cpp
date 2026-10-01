@@ -57,7 +57,7 @@ public:
             sk_GENERAL_NAME_pop_free(m_names, GENERAL_NAME_free);
     }
 
-    operator bool() { return m_names; }
+    explicit operator bool() { return m_names; }
 
     int count() { return sk_GENERAL_NAME_num(m_names); }
     GENERAL_NAME* item(int i) { return sk_GENERAL_NAME_value(m_names, i); }
