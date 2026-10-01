@@ -655,14 +655,14 @@ TEST(SiteIsolation, TextPlaceholderInCrossOriginIframe)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!document.querySelector('div')" inFrame:childFrame.get()] boolValue]);
 }
 
-#if PLATFORM(IOS_FAMILY)
-
 static RetainPtr<WKWebViewConfiguration> configurationWithInternals(const HTTPServer& server)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration setWebsiteDataStore:[server.httpsProxyConfiguration() websiteDataStore]];
     return configuration;
 }
+
+#if PLATFORM(IOS_FAMILY)
 
 static NSUInteger markerCountInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *markerType)
 {
@@ -1264,5 +1264,35 @@ TEST(SiteIsolation, CharacterIndexForPointInCrossOriginIframe)
 }
 
 #endif // PLATFORM(MAC)
+
+#if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
+
+TEST(SiteIsolation, DictationCaretStateInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body contenteditable>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = configurationWithInternals(server);
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configuration.get());
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 8)", _WKSelectionAttributeIsCaret);
+
+    auto isCaretBlinkingSuspendedInIframe = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"internals.isCaretBlinkingSuspended()" inFrame:childFrame.get()] boolValue];
+    };
+    ASSERT_FALSE(isCaretBlinkingSuspendedInIframe());
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"_NSTextInputContextDictationDidPauseNotification" object:nil];
+    EXPECT_TRUE(Util::waitFor(isCaretBlinkingSuspendedInIframe));
+
+    // Changing the caret animator type replaces the animator, and a new animator's blinking isn't suspended.
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"_NSTextInputContextDictationDidStartNotification" object:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !isCaretBlinkingSuspendedInIframe();
+    }));
+}
+
+#endif // HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

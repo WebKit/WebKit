@@ -17509,12 +17509,12 @@ void WebPageProxy::handleAutoplayEvent(WebCore::AutoplayEvent event, OptionSet<A
 #if PLATFORM(MAC)
 void WebPageProxy::setCaretAnimatorType(WebCore::CaretAnimatorType caretType)
 {
-    send(Messages::WebPage::SetCaretAnimatorType(caretType));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetCaretAnimatorType(caretType));
 }
 
 void WebPageProxy::setCaretBlinkingSuspended(bool suspended)
 {
-    send(Messages::WebPage::SetCaretBlinkingSuspended(suspended));
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetCaretBlinkingSuspended(suspended));
 }
 
 void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, FloatPoint point)
