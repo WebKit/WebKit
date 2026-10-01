@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- The select is reloaded inside an iframe so its document, and its AXObjectCache, is torn down
+     while accessibility is live on the parent. -->
+<iframe id="frame" srcdoc="<!DOCTYPE html><style>select{appearance:base-select}</style><select><option>Default<option>Alternative</select>"></iframe>
+
+<script>
+var output = "This test passes if reloading a select element under live accessibility does not assert in AXObjectCache::decrementUnignoredContentObjectCount().\n\n";
+
+// AXObjectCache::m_unignoredContentObjectCount only counts accessibility objects whose ignored state
+// has been computed and found unignored. A <select> creates one AccessibilityMenuListOption per
+// option, and those are not always part of the isolated tree, so their ignored state can go
+// uncomputed -- meaning they were never counted. Tearing down the document on reload destroys them,
+// and ~AccessibilityObject() must not decrement the count for an object that was never counted, or
+// the unsigned count underflows and the AX_ASSERT in decrementUnignoredContentObjectCount() fires.
+function waitFrames(count)
+{
+    var promise = Promise.resolve();
+    for (var i = 0; i < count; i++)
+        promise = promise.then(() => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0))));
+    return promise;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // Bring the isolated accessibility tree live so the counting machinery is active.
+        accessibilityController.rootElement;
+
+        var frame = document.getElementById("frame");
+        var baseSrcdoc = frame.srcdoc;
+        for (var i = 0; i < 15; i++) {
+            await waitFrames(2);
+            // Reloading tears down the previous document's AXObjectCache and every object in it.
+            frame.srcdoc = baseSrcdoc + "<!-- " + i + " -->";
+        }
+        await waitFrames(2);
+
+        output += "PASS: reloaded without asserting.\n";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

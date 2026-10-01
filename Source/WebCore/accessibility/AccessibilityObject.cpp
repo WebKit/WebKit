@@ -151,9 +151,9 @@ AccessibilityObject::~AccessibilityObject()
 {
     AX_ASSERT(isDetached());
 
-    if (!cachedIsIgnored()) {
-        if (auto* cache = m_axObjectCache.get())
-            cache->decrementUnignoredContentObjectCount(role());
+    if (CheckedPtr cache = axObjectCache()) {
+        if (cache->isCounted(*this))
+            cache->uncount(*this);
     }
 }
 
@@ -4579,14 +4579,11 @@ bool AccessibilityObject::isIgnoredWithoutCache(AXObjectCache* cache) const
         ignored = computeIsIgnored();
 
     auto previousLastKnownIsIgnoredValue = m_lastKnownIsIgnoredValue;
+    bool wasCounted = cache && cache->isCounted(*this);
     const_cast<AccessibilityObject*>(this)->setLastKnownIsIgnoredValue(ignored);
 
     if (cache) {
-        bool wasCountedAsUnignored = previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IncludeObject;
-        if (!wasCountedAsUnignored && !ignored)
-            cache->incrementUnignoredContentObjectCount(role());
-        else if (wasCountedAsUnignored && ignored)
-            cache->decrementUnignoredContentObjectCount(role());
+        cache->reconcileCount(*this, wasCounted);
 
         bool becameUnignored = previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IgnoreObject && !ignored;
         bool becameIgnored = !becameUnignored && previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IncludeObject && ignored;

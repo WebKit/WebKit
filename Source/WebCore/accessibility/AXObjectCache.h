@@ -820,19 +820,23 @@ public:
             return false;
         }
     }
-    void incrementUnignoredContentObjectCount(AccessibilityRole role)
+    bool isCounted(const AccessibilityObject&) const;
+    // Evaluates membership assuming the given role rather than the object's current one.
+    bool isCounted(const AccessibilityObject&, AccessibilityRole) const;
+    void count(const AccessibilityObject& object)
     {
-        if (!isMockObjectOrWebAreaRole(role))
-            ++m_unignoredContentObjectCount;
+        AX_ASSERT(isCounted(object));
+        UNUSED_PARAM(object);
+        ++m_unignoredContentObjectCount;
     }
-    void decrementUnignoredContentObjectCount(AccessibilityRole role)
+    void uncount(const AccessibilityObject&)
     {
-        if (isMockObjectOrWebAreaRole(role))
-            return;
         AX_ASSERT(m_unignoredContentObjectCount);
         if (m_unignoredContentObjectCount)
             --m_unignoredContentObjectCount;
     }
+    // Pass what isCounted() returned *before* the mutation being reconciled.
+    void reconcileCount(const AccessibilityObject&, bool wasCounted);
 
 #if PLATFORM(COCOA)
     static void NODELETE setShouldRepostNotificationsForTests(bool);

@@ -1,0 +1,8 @@
+This test passes if reloading a select element under live accessibility does not assert in AXObjectCache::decrementUnignoredContentObjectCount().
+
+PASS: reloaded without asserting.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

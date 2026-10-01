@@ -3911,9 +3911,36 @@ void AXObjectCache::handleRoleChanged(Element& element, const AtomString& oldVal
     object->updateRole();
 }
 
+bool AXObjectCache::isCounted(const AccessibilityObject& object) const
+{
+    return isCounted(object, object.role());
+}
+
+bool AXObjectCache::isCounted(const AccessibilityObject& object, AccessibilityRole role) const
+{
+    // Only a known-unignored object counts.
+    return object.cachedIsIgnored() == std::optional { false } && !isMockObjectOrWebAreaRole(role);
+}
+
+void AXObjectCache::reconcileCount(const AccessibilityObject& object, bool wasCounted)
+{
+    bool nowCounted = isCounted(object);
+    if (nowCounted == wasCounted)
+        return;
+    if (nowCounted)
+        count(object);
+    else
+        uncount(object);
+}
+
 void AXObjectCache::handleRoleChanged(AccessibilityObject& axObject, AccessibilityRole oldRole)
 {
     stopCachingComputedObjectAttributes();
+
+    // Must reconcile the role delta before recomputeIsIgnored() applies the ignored-state delta.
+    bool wasCounted = isCounted(axObject, oldRole);
+    reconcileCount(axObject, wasCounted);
+
     axObject.recomputeIsIgnored();
 
 #if PLATFORM(MAC)
@@ -3921,8 +3948,6 @@ void AXObjectCache::handleRoleChanged(AccessibilityObject& axObject, Accessibili
         deferSortForNewLiveRegion(axObject);
     else if (AXCoreObject::liveRegionStatusIsEnabled(AtomString { AXCoreObject::defaultLiveRegionStatusForRole(oldRole) }))
         removeLiveRegion(axObject);
-#else
-    UNUSED_PARAM(oldRole);
 #endif // PLATFORM(MAC)
 
     if (axObject.needsRareData()) {
