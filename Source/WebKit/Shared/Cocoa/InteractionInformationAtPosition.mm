@@ -46,6 +46,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     bool isColorInput,
     bool isRangeInput,
     bool isARIASlider,
+    bool isCustomSlider,
     bool hasDirectionalResizeCursor,
     bool isInResizeControl,
     bool isOverVideo,
@@ -118,6 +119,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , isColorInput(isColorInput)
     , isRangeInput(isRangeInput)
     , isARIASlider(isARIASlider)
+    , isCustomSlider(isCustomSlider)
     , hasDirectionalResizeCursor(hasDirectionalResizeCursor)
     , isInResizeControl(isInResizeControl)
     , isOverVideo(isOverVideo)

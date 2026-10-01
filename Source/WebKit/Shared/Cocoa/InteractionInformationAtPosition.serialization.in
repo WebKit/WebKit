@@ -44,6 +44,7 @@ struct WebKit::InteractionInformationAtPosition {
     bool isColorInput;
     bool isRangeInput;
     bool isARIASlider;
+    bool isCustomSlider;
     bool hasDirectionalResizeCursor;
     bool isInResizeControl;
     bool isOverVideo;

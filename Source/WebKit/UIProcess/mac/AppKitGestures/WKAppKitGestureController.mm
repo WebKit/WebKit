@@ -141,7 +141,7 @@ static bool representsSelectableContent(const WebKit::InteractionInformationAtPo
 
 static bool prefersDirectManipulation(const WebKit::InteractionInformationAtPosition& info)
 {
-    bool prefersInteraction = info.isRangeInput || info.isARIASlider || info.hasDirectionalResizeCursor || info.isInResizeControl;
+    bool prefersInteraction = info.isRangeInput || info.isARIASlider || info.hasDirectionalResizeCursor || info.isInResizeControl || info.isCustomSlider;
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
     prefersInteraction = prefersInteraction || info.isInteractiveModel;
 #endif
