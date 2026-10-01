@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLEGL.h"
+#include "GraphicsContextGLCoordinated.h"
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
 #include <epoxy/gl.h>
 
 namespace WebCore {
 
-GCGLuint GraphicsContextGLEGL::setupCurrentTexture()
+GCGLuint GraphicsContextGLCoordinated::setupCurrentTexture() const
 {
     // Current texture was bound by ANGLE, we query using epoxy to get the actual texture ID.
     GLint texture;

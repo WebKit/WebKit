@@ -78,13 +78,13 @@ void RemoteGraphicsContextGLGBM::prepareForDisplay(CompletionHandler<void(uint64
             m_context->flush();
     });
 
-    auto* buffer = m_context->displayBuffer();
-    if (!buffer) {
+    RefPtr dmabuf = m_context->displayBufferDMABuf();
+    if (!dmabuf) {
         completionHandler(0, std::nullopt, { });
         return;
     }
 
-    completionHandler(buffer->id(), buffer->takeAttributes(), WTF::move(fenceFD));
+    completionHandler(dmabuf->id(), dmabuf->takeAttributes(), WTF::move(fenceFD));
 }
 
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& connection, WebCore::GraphicsContextGLAttributes&& attributes, RemoteGraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)

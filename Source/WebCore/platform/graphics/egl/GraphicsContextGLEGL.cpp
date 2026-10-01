@@ -47,13 +47,7 @@
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-#if USE(TEXTURE_MAPPER)
-#include "CoordinatedPlatformLayerBufferRGB.h"
-#include "TextureMapperFlags.h"
-#else
-#include "CoordinatedPlatformLayerBufferSkiaImage.h"
-#endif
-#include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
+#include "GraphicsContextGLCoordinated.h"
 #else
 #include "PlatformLayerDisplayDelegate.h"
 #include "TextureMapperGCGLPlatformLayer.h"
@@ -65,10 +59,7 @@
 
 #if USE(GBM)
 #include "GraphicsContextGLGBM.h"
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#include "GLFence.h"
+#include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
 #endif
 
 namespace WebCore {
@@ -141,6 +132,7 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
 }
 
+#if !USE(COORDINATED_GRAPHICS)
 RefPtr<PixelBuffer> GraphicsContextGLEGL::readCompositedResults()
 {
     if (!m_isCompositorTextureInitialized)
@@ -154,6 +146,7 @@ RefPtr<PixelBuffer> GraphicsContextGLEGL::readCompositedResults()
     ScopedScratchReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, m_compositorTexture);
     return readPixelsForPaintResults();
 }
+#endif
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
@@ -175,9 +168,14 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
         LOG_ERROR("Failed to create a graphics context for WebGL using GBM, falling back to textures");
     }
 #endif
+#if USE(COORDINATED_GRAPHICS)
+    return GraphicsContextGLCoordinated::create(GraphicsContextGLAttributes { attributes });
+#else
     return GraphicsContextGLEGL::create(GraphicsContextGLAttributes { attributes });
+#endif
 }
 
+#if !USE(COORDINATED_GRAPHICS)
 RefPtr<GraphicsContextGLEGL> GraphicsContextGLEGL::create(GraphicsContextGLAttributes&& attributes)
 {
     Ref context = adoptRef(*new GraphicsContextGLEGL(WTF::move(attributes)));
@@ -185,6 +183,7 @@ RefPtr<GraphicsContextGLEGL> GraphicsContextGLEGL::create(GraphicsContextGLAttri
         return nullptr;
     return context;
 }
+#endif
 
 GraphicsContextGLEGL::GraphicsContextGLEGL(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLANGLE(WTF::move(attributes))
@@ -193,11 +192,13 @@ GraphicsContextGLEGL::GraphicsContextGLEGL(GraphicsContextGLAttributes&& attribu
 
 GraphicsContextGLEGL::~GraphicsContextGLEGL()
 {
+#if !USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture) {
         if (!makeContextCurrent())
             return;
         GL_DeleteTextures(1, &m_compositorTexture);
     }
+#endif
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLEGL::layerContentsDisplayDelegate()
@@ -339,49 +340,33 @@ bool GraphicsContextGLEGL::platformInitializeContext()
     return true;
 }
 
+#if !USE(COORDINATED_GRAPHICS)
 bool GraphicsContextGLEGL::platformInitialize()
 {
-#if USE(COORDINATED_GRAPHICS)
-    m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateCoordinated::create();
-#else
     lazyInitialize(m_texmapLayer, makeUnique<TextureMapperGCGLPlatformLayer>(*this));
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
-#endif
-
-    GLenum textureTarget = GL_TEXTURE_2D;
-#if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
-    GL_BindTexture(textureTarget, m_texture);
-    m_textureID = setupCurrentTexture();
-#endif
 
     GL_GenTextures(1, &m_compositorTexture);
-    GL_BindTexture(textureTarget, m_compositorTexture);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
-    m_compositorTextureID = setupCurrentTexture();
-#endif
-    GL_BindTexture(textureTarget, 0);
+    GL_BindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL_BindTexture(GL_TEXTURE_2D, 0);
 
     return true;
 }
-
-void GraphicsContextGLEGL::swapCompositorTexture()
-{
-    std::swap(m_texture, m_compositorTexture);
-#if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
-    std::swap(m_textureID, m_compositorTextureID);
 #endif
-    m_isCompositorTextureInitialized = true;
 
+void GraphicsContextGLEGL::attachDrawingBufferTexture()
+{
     ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, m_fbo);
     GL_FramebufferTexture2D(fboBinding.framebufferTarget(), GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
     GL_Flush();
 }
 
+#if !USE(COORDINATED_GRAPHICS)
 bool GraphicsContextGLEGL::reshapeDrawingBuffer()
 {
     auto attrs = contextAttributes();
@@ -409,23 +394,11 @@ void GraphicsContextGLEGL::prepareForDisplay()
         return;
 
     prepareTexture();
-    swapCompositorTexture();
-
-#if USE(COORDINATED_GRAPHICS)
-    auto fboSize = getInternalFramebufferSize();
-    auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
-#if USE(TEXTURE_MAPPER)
-    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
-        flags.add(TextureMapperFlags::ShouldBlend);
-    auto buffer = CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTF::move(fence));
-#else
-    auto alphaMode = contextAttributes().alpha ? CoordinatedPlatformLayerBuffer::AlphaMode::Premultiplied : CoordinatedPlatformLayerBuffer::AlphaMode::Opaque;
-    auto buffer = CoordinatedPlatformLayerBufferSkiaImage::create(m_compositorTextureID, fboSize, alphaMode, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
-#endif
-    m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
-#endif
+    std::swap(m_texture, m_compositorTexture);
+    m_isCompositorTextureInitialized = true;
+    attachDrawingBufferTexture();
 }
+#endif
 
 GLContextWrapper::Type GraphicsContextGLEGL::type() const
 {

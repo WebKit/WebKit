@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2024, 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,30 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
-#include "GraphicsContextGLEGL.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include <wtf/unix/UnixFileDescriptor.h>
-
-typedef void* EGLImageKHR;
-struct gbm_bo;
+#if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS)
+#include <WebCore/GraphicsContextGLEGL.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-class DMABufBuffer;
 
-class GraphicsContextGLGBM final : public GraphicsContextGLEGL {
+class CoordinatedWebGLTextureWrapper;
+
+class GraphicsContextGLCoordinated : public GraphicsContextGLEGL {
 public:
-    static RefPtr<GraphicsContextGLGBM> create(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegate>&& = nullptr);
-    virtual ~GraphicsContextGLGBM();
+    static RefPtr<GraphicsContextGLCoordinated> create(GraphicsContextGLAttributes&&);
+    virtual ~GraphicsContextGLCoordinated();
 
-    static bool checkRequirements();
+    void prepareForDisplay() override;
 
-    WTF::UnixFileDescriptor createExportedFence() const;
-
-    void prepareForDisplayWithFinishedSignal(NOESCAPE const Function<void()>&);
-    DMABufBuffer* displayBufferDMABuf() { return displayBuffer().dmabuf(); }
-
-#if ENABLE(WEBXR)
-    GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
-    void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
-    bool enableRequiredWebXRExtensions() final;
-#endif
+protected:
+    explicit GraphicsContextGLCoordinated(GraphicsContextGLAttributes&&);
 
 private:
-    GraphicsContextGLGBM(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegate>&&);
-
     bool platformInitialize() override;
-    bool platformInitializeExtensions() override;
     bool reshapeDrawingBuffer() override;
-    void prepareForDisplay() override;
-    RefPtr<PixelBuffer> readCompositedResults() final;
-#if ENABLE(WEBXR)
-    bool enableRequiredWebXRExtensionsImpl();
-#endif
+    RefPtr<PixelBuffer> readCompositedResults() override;
 
+    GCGLuint setupCurrentTexture() const;
     void freeDrawingBuffers();
     void freeObsoleteDrawingBuffers();
     bool bindNextDrawingBuffer();
@@ -76,38 +59,53 @@ private:
         WTF_MAKE_NONCOPYABLE(DrawingBuffer);
     public:
         DrawingBuffer() = default;
-        DrawingBuffer(Ref<DMABufBuffer>&&, EGLImageKHR);
+        DrawingBuffer(GCGLuint, Ref<CoordinatedWebGLTextureWrapper>&&);
         DrawingBuffer(DrawingBuffer&&);
         DrawingBuffer& operator=(DrawingBuffer&&);
         ~DrawingBuffer();
 
-        operator bool() const { return !!m_dmabuf; }
+        operator bool() const { return !!m_texture; }
 
-        DMABufBuffer* dmabuf() const LIFETIME_BOUND { return m_dmabuf.get(); }
-        EGLImageKHR image() const LIFETIME_BOUND { return m_image; }
+        GCGLuint texture() const { return m_texture; }
+        CoordinatedWebGLTextureWrapper* textureWrapper() LIFETIME_BOUND { return m_textureWrapper.get(); }
 
         bool isInUse() const;
-        EGLImageKHR release();
+        GCGLuint release();
 
     private:
-        RefPtr<DMABufBuffer> m_dmabuf;
-        EGLImageKHR m_image { nullptr };
+        GCGLuint m_texture { 0 };
+        RefPtr<CoordinatedWebGLTextureWrapper> m_textureWrapper;
     };
     DrawingBuffer createDrawingBuffer() const;
     void destroyDrawingBuffer(DrawingBuffer&) const;
     DrawingBuffer& drawingBuffer() { return m_drawingBuffers[m_currentDrawingBufferIndex % maxReusedDrawingBuffers]; }
     DrawingBuffer& displayBuffer() { return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers]; }
 
-    struct {
-        uint32_t fourcc { 0 };
-        Vector<uint64_t, 1> modifiers;
-    } m_drawingBufferFormat;
-
     std::array<DrawingBuffer, maxReusedDrawingBuffers> m_drawingBuffers;
     size_t m_currentDrawingBufferIndex { 0 };
     Vector<DrawingBuffer> m_obsoleteDrawingBuffers;
 };
 
+class CoordinatedWebGLTextureWrapper final : public ThreadSafeRefCounted<CoordinatedWebGLTextureWrapper> {
+public:
+    static Ref<CoordinatedWebGLTextureWrapper> create(GCGLuint textureID)
+    {
+        return adoptRef(*new CoordinatedWebGLTextureWrapper(textureID));
+    }
+
+    ~CoordinatedWebGLTextureWrapper() = default;
+
+    GCGLuint id() const { return m_textureID; }
+
+private:
+    explicit CoordinatedWebGLTextureWrapper(GCGLuint textureID)
+        : m_textureID(textureID)
+    {
+    }
+
+    GCGLuint m_textureID { 0 };
+};
+
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
+#endif // ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS)
