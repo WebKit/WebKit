@@ -859,6 +859,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webcodecs/BitrateMode.idl
     Modules/webcodecs/FlacEncoderConfig.idl
     Modules/webcodecs/HardwareAcceleration.idl
+    Modules/webcodecs/HevcEncoderConfig.idl
     Modules/webcodecs/LatencyMode.idl
     Modules/webcodecs/OpusEncoderConfig.idl
     Modules/webcodecs/PlaneLayout.idl

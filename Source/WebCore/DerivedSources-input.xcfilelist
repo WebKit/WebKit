@@ -1051,6 +1051,7 @@ $(PROJECT_DIR)/Modules/webcodecs/AvcEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/BitrateMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/FlacEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/HardwareAcceleration.idl
+$(PROJECT_DIR)/Modules/webcodecs/HevcEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/LatencyMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/OpusEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/PlaneLayout.idl

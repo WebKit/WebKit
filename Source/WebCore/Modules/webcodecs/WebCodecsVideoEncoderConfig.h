@@ -30,6 +30,7 @@
 #include "AvcEncoderConfig.h"
 #include "BitrateMode.h"
 #include "HardwareAcceleration.h"
+#include "HevcEncoderConfig.h"
 #include "LatencyMode.h"
 #include "WebCodecsAlphaOption.h"
 #include <optional>
@@ -50,9 +51,10 @@ struct WebCodecsVideoEncoderConfig {
     BitrateMode bitrateMode { BitrateMode::Variable };
     LatencyMode latencyMode { LatencyMode::Quality };
     std::optional<AvcEncoderConfig> avc;
+    std::optional<HevcEncoderConfig> hevc;
 
-    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTF::move(codec).isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTF::move(scalabilityMode).isolatedCopy(), bitrateMode, latencyMode, avc }; }
-    WebCodecsVideoEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, scalabilityMode.isolatedCopy(), bitrateMode, latencyMode, avc }; }
+    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTF::move(codec).isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTF::move(scalabilityMode).isolatedCopy(), bitrateMode, latencyMode, avc, hevc }; }
+    WebCodecsVideoEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, scalabilityMode.isolatedCopy(), bitrateMode, latencyMode, avc, hevc }; }
 };
 
 inline bool isSameConfigurationExceptBitrateAndFramerate(const WebCodecsVideoEncoderConfig& a, const WebCodecsVideoEncoderConfig& b)
@@ -68,7 +70,9 @@ inline bool isSameConfigurationExceptBitrateAndFramerate(const WebCodecsVideoEnc
         && a.bitrateMode == b.bitrateMode
         && a.latencyMode == b.latencyMode
         && (!!a.avc == !!b.avc)
-        && (!a.avc || (a.avc->format == b.avc->format));
+        && (!a.avc || (a.avc->format == b.avc->format))
+        && (!!a.hevc == !!b.hevc)
+        && (!a.hevc || (a.hevc->format == b.hevc->format));
 }
 
 }

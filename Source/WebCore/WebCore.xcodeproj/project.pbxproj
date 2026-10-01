@@ -4185,7 +4185,6 @@
 		9ACC07A825C8110D00DC6386 /* MediaKeySystemClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07A725C8110D00DC6386 /* MediaKeySystemClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9ACC07AF25C8141D00DC6386 /* MediaKeySystemController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07AE25C8141C00DC6386 /* MediaKeySystemController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AEBF919AAC54D083C5923A8 /* NaturalDimensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 760041D7205CBE677C0EC732 /* NaturalDimensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		EDCBD2C43FF775B2FF40A33D /* NinePieceGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0C8235EAD2A004044B2 /* TextManipulationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0C3235E76AA004044B2 /* TextManipulationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B0ABCAE236BB43100B45085 /* TaskSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0ABCAC236BB40A00B45085 /* TaskSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B1229C423FE4BD2008CA751 /* AudioDestinationCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 413151862357745E00115E6E /* AudioDestinationCocoa.h */; };
@@ -7230,6 +7229,7 @@
 		ECC2B535B9F2983B774A915F /* ImageDrawingExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDB04F3A278E5539008D3678 /* libwebrtc.dylib in Product Dependencies */ = {isa = PBXBuildFile; fileRef = EDB04F39278E5531008D3678 /* libwebrtc.dylib */; platformFilters = (ios, macos, tvos, ); };
+		EDCBD2C43FF775B2FF40A33D /* NinePieceGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
 		EE042903F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE042901F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp */; };
@@ -7347,6 +7347,7 @@
 		F4D07558234D822D00881E73 /* ClipboardItemDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C447A2346535E0039A79D /* ClipboardItemDataSource.h */; };
 		F4D07559234D823300881E73 /* ClipboardItemPasteboardDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C44802346547A0039A79D /* ClipboardItemPasteboardDataSource.h */; };
 		F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4D47E983CE143537A2F7169 /* HevcEncoderConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = EF78F90EF1848BCB14D62726 /* HevcEncoderConfig.h */; };
 		F4D9C2F42B338742007C105F /* TextAttachmentForSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D9C2F22B33873D007C105F /* TextAttachmentForSerialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4DADD382BACC3F4008B398F /* HitTestSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DADD362BACC3F3008B398F /* HitTestSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4E57EDC213F3F5F004EA98E /* FontAttributeChanges.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11807,6 +11808,7 @@
 		421129B12EC39C0A00778FE7 /* AXFormActivityMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXFormActivityMonitor.cpp; sourceTree = "<group>"; };
 		422EBF142E6EA20F00D4C0E9 /* AXImageMapHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXImageMapHelpers.h; sourceTree = "<group>"; };
 		422EBF152E6EA20F00D4C0E9 /* AXImageMapHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXImageMapHelpers.cpp; sourceTree = "<group>"; };
+		424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinePieceGeometry.h; sourceTree = "<group>"; };
 		427DA71B13735DFA007C57FB /* JSServiceWorkerInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerInternals.cpp; sourceTree = "<group>"; };
 		427DA71C13735DFA007C57FB /* JSServiceWorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSServiceWorkerInternals.h; sourceTree = "<group>"; };
 		42B465202ABDF777003A1F04 /* ApplePayDisbursementRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayDisbursementRequest.idl; sourceTree = "<group>"; };
@@ -19248,6 +19250,7 @@
 		BAF547B3E0A08ACCDA0FD3EE /* UnifiedSource73-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource73-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		BB591C358F2E176568F6C0AA /* UnifiedSource71-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource71-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		BBC79ECC2A4F6096D62983F5 /* Volume2-RTL.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Volume2-RTL.svg"; sourceTree = "<group>"; };
+		BBD1E789B04A2FE4D47FDC26 /* HevcEncoderConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HevcEncoderConfig.idl; sourceTree = "<group>"; };
 		BBF58114651D5C792A7CFBD4 /* FlowMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlowMode.h; sourceTree = "<group>"; };
 		BC000BD82C5A96850033AA75 /* CSSCalcType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCalcType.h; sourceTree = "<group>"; };
 		BC000BD92C5A9A820033AA75 /* CSSCalcType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalcType.cpp; sourceTree = "<group>"; };
@@ -21065,7 +21068,6 @@
 		BCEE71B42C8A918100CF2D31 /* CSSColorConversion+Normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSColorConversion+Normalize.h"; sourceTree = "<group>"; };
 		BCEEF6752C6A865C00468D58 /* CSSCalcTree+NumericIdentity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSCalcTree+NumericIdentity.h"; sourceTree = "<group>"; };
 		BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NinePieceImagePainter.h; sourceTree = "<group>"; };
-		424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinePieceGeometry.h; sourceTree = "<group>"; };
 		BCEF43DF0E674110001C1287 /* NinePieceImagePainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NinePieceImagePainter.cpp; sourceTree = "<group>"; };
 		BCEF453F0E676AC1001C1287 /* TextMetrics.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextMetrics.idl; sourceTree = "<group>"; };
 		BCEF45E80E687767001C1287 /* TextMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextMetrics.h; sourceTree = "<group>"; };
@@ -23561,6 +23563,7 @@
 		EEE349072DE005FC00A7D4BB /* StyleScopeIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleScopeIdentifier.h; sourceTree = "<group>"; };
 		EEFD8C073057F8FA00800C98 /* StyleCurrentAccentColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCurrentAccentColor.h; sourceTree = "<group>"; };
 		EEFD8C083057F8FA00800C98 /* StyleCurrentAccentColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCurrentAccentColor.cpp; sourceTree = "<group>"; };
+		EF78F90EF1848BCB14D62726 /* HevcEncoderConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HevcEncoderConfig.h; sourceTree = "<group>"; };
 		EFB7287B2124C73D005C2558 /* CanvasActivityRecord.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasActivityRecord.cpp; sourceTree = "<group>"; };
 		EFCC6C8D20FE914000A2321B /* CanvasActivityRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasActivityRecord.h; sourceTree = "<group>"; };
 		F00DCAFE000000000000A001 /* StyleWhiteSpaceTrim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWhiteSpaceTrim.h; sourceTree = "<group>"; };
@@ -40438,6 +40441,8 @@
 				9ACB2F072AA5E901006E9556 /* FlacEncoderConfig.idl */,
 				4110A21628E3440E00321D09 /* HardwareAcceleration.h */,
 				4110A20828E3440A00321D09 /* HardwareAcceleration.idl */,
+				EF78F90EF1848BCB14D62726 /* HevcEncoderConfig.h */,
+				BBD1E789B04A2FE4D47FDC26 /* HevcEncoderConfig.idl */,
 				419BD1A728E5937B0089D7B7 /* LatencyMode.h */,
 				419BD1AA28E5937F0089D7B7 /* LatencyMode.idl */,
 				9ACB2F042AA5E900006E9556 /* OpusEncoderConfig.h */,
@@ -46384,6 +46389,7 @@
 				463EF33E293941E200069115 /* HashMapStylePropertyMapReadOnly.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				E4ED3ECC2768A51D00F17AC8 /* HasSelectorFilter.h in Headers */,
+				F4D47E983CE143537A2F7169 /* HevcEncoderConfig.h in Headers */,
 				CDA595932146DEC300A84185 /* HEVCUtilities.h in Headers */,
 				CDA595982146DF7800A84185 /* HEVCUtilitiesCocoa.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,

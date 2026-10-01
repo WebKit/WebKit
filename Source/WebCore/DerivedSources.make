@@ -792,6 +792,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/FlacEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/LatencyMode.idl \
     $(WebCore)/Modules/webcodecs/HardwareAcceleration.idl \
+    $(WebCore)/Modules/webcodecs/HevcEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/OpusEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/PlaneLayout.idl \
     $(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
