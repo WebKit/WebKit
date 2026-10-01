@@ -168,7 +168,7 @@ static RetainPtr<PKContactField> toPKContactField(WebCore::ApplePayErrorContactF
 
 static NSError *toNSError(const WebCore::ApplePayError& error)
 {
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+    RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] init]);
     [userInfo setObject:error.message().createNSString().get() forKey:NSLocalizedDescriptionKey];
 
 #if HAVE(PASSKIT_DISBURSEMENTS)

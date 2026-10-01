@@ -44,7 +44,7 @@ private:
     void progressEstimateChanged(WebCore::LocalFrame& originatingProgressFrame) override;
     void progressFinished(WebCore::LocalFrame& originatingProgressFrame) override;
 
-    WebView *m_webView;
+    __weak WebView *m_webView;
 };
 
 #endif // WebProgressTrackerClient_h

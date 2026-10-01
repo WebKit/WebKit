@@ -1,35 +1,19 @@
-WebCoreSupport/WebResourceLoadScheduler.mm
 [ iOS ] ios/Misc/WebGeolocationCoreLocationProvider.mm
 [ iOS ] ios/Misc/WebGeolocationProviderIOS.mm
 [ iOS ] ios/Misc/WebUIKitSupport.mm
-[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
-[ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
 [ iOS ] ios/WebView/WebPDFViewIOS.mm
 [ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
 [ Mac ] mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm
-mac/DefaultDelegates/WebDefaultPolicyDelegate.mm
 [ iOS ] mac/History/WebBackForwardList.mm
 mac/History/WebHistory.mm
 mac/History/WebHistoryItem.mm
-mac/Misc/WebElementDictionary.mm
-mac/Misc/WebKitErrors.m
-mac/Misc/WebKitNSStringExtras.mm
-[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
-[ Mac ] mac/Misc/WebSharingServicePickerController.mm
 [ Mac ] mac/Panels/WebAuthenticationPanel.m
 [ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
 [ iOS ] mac/Plugins/WebPluginController.mm
 mac/Storage/WebDatabaseManager.mm
 mac/Storage/WebDatabaseManagerClient.mm
 mac/Storage/WebDatabaseProvider.mm
-[ iOS ] mac/WebCoreSupport/WebChromeClient.mm
-[ iOS ] mac/WebCoreSupport/WebDragClient.mm
-[ iOS ] mac/WebCoreSupport/WebEditorClient.mm
-mac/WebCoreSupport/WebFrameLoaderClient.mm
-[ iOS ] mac/WebCoreSupport/WebGeolocationClient.mm
-[ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
 [ Mac ] mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
-mac/WebCoreSupport/WebProgressTrackerClient.mm
 [ iOS ] mac/WebInspector/WebNodeHighlight.mm
 [ iOS ] mac/WebInspector/WebNodeHighlightView.mm
 [ iOS ] mac/WebView/WebDelegateImplementationCaching.mm

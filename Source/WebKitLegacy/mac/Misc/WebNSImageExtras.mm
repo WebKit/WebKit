@@ -28,9 +28,10 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
-#import <WebKitLegacy/WebNSImageExtras.h>
+#import "WebNSImageExtras.h"
 
 #import <WebKitLegacy/WebKitLogging.h>
+#import <wtf/RetainPtr.h>
 
 @implementation NSImage (WebExtras)
 
@@ -39,19 +40,18 @@
     float heightResizeDelta = 0.0f, widthResizeDelta = 0.0f, resizeDelta = 0.0f;
     NSSize originalSize = [self size];
 
-    if(originalSize.width > size.width){
+    if (originalSize.width > size.width) {
         widthResizeDelta = size.width / originalSize.width;
         resizeDelta = widthResizeDelta;
     }
 
-    if(originalSize.height > size.height){
+    if (originalSize.height > size.height) {
         heightResizeDelta = size.height / originalSize.height;
-        if((resizeDelta == 0.0) || (resizeDelta > heightResizeDelta)){
+        if ((resizeDelta == 0.0) || (resizeDelta > heightResizeDelta))
             resizeDelta = heightResizeDelta;
-        }
     }
-    
-    if(resizeDelta > 0.0){
+
+    if (resizeDelta > 0.0) {
         NSSize newSize = NSMakeSize((originalSize.width * resizeDelta), (originalSize.height * resizeDelta));
         [self setSize:newSize];
     }
@@ -59,12 +59,12 @@
 
 - (void)_web_dissolveToFraction:(float)delta
 {
-    NSImage *dissolvedImage = [[NSImage alloc] initWithSize:[self size]];
+    RetainPtr dissolvedImage = adoptNS([[NSImage alloc] initWithSize:[self size]]);
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSPoint point = [self isFlipped] ? NSMakePoint(0, [self size].height) : NSZeroPoint;
 ALLOW_DEPRECATED_DECLARATIONS_END
-    
+
     // In this case the dragging image is always correct.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [dissolvedImage setFlipped:[self isFlipped]];
@@ -81,8 +81,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [dissolvedImage compositeToPoint:point operation:NSCompositeCopy];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [self unlockFocus];
-
-    [dissolvedImage release];
 }
 
 @end

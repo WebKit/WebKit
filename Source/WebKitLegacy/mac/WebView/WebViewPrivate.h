@@ -75,14 +75,14 @@ extern NSString * const WebViewProgressBackgroundColorKey;
 #endif
 
 // pending public WebElementDictionary keys
-extern NSString *WebElementTitleKey;             // NSString of the title of the element (used by Safari)
-extern NSString *WebElementSpellingToolTipKey;   // NSString of a tooltip representing misspelling or bad grammar (used internally)
-extern NSString *WebElementIsContentEditableKey; // NSNumber indicating whether the inner non-shared node is content editable (used internally)
-extern NSString *WebElementMediaURLKey;          // NSURL of the media element
+extern NSString * const WebElementTitleKey; // NSString of the title of the element (used by Safari)
+extern NSString * const WebElementSpellingToolTipKey; // NSString of a tooltip representing misspelling or bad grammar (used internally)
+extern NSString * const WebElementIsContentEditableKey; // NSNumber indicating whether the inner non-shared node is content editable (used internally)
+extern NSString * const WebElementMediaURLKey; // NSURL of the media element
 
 // other WebElementDictionary keys
-extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indicating whether the link is live or not
-extern NSString *WebElementIsInScrollBarKey;
+extern NSString * const WebElementLinkIsLiveKey; // NSNumber of BOOL indicating whether the link is live or not
+extern NSString * const WebElementIsInScrollBarKey;
 
 // One of the subviews of the WebView entered compositing mode.
 extern NSString *_WebViewDidStartAcceleratedCompositingNotification;

@@ -37,7 +37,7 @@
 #import <sys/param.h>
 #import <unicode/uchar.h>
 
-NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
+NSString * const WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitResourceLoadStatisticsDirectoryDefaultsKey = @"WebKitResourceLoadStatisticsDirectory";
 
 
@@ -175,7 +175,7 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
 
     if (!cacheDirectory || ![cacheDirectory isKindOfClass:[NSString class]]) {
 #if PLATFORM(IOS_FAMILY)
-        cacheDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
+        cacheDirectory = [protect(NSHomeDirectory()) stringByAppendingPathComponent:@"Library/Caches"];
 #endif
 #if PLATFORM(MAC)
         char buffer[MAXPATHLEN];

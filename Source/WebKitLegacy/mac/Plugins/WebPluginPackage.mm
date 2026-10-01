@@ -31,13 +31,14 @@
 #import <WebKitLegacy/WebKitLogging.h>
 #import <WebKitLegacy/WebKitNSStringExtras.h>
 #import <WebKitLegacy/WebPluginViewFactory.h>
+#import <WebKitLegacy/WebPluginViewFactoryPrivate.h>
 
-NSString *WebPlugInBaseURLKey =                 @"WebPlugInBaseURLKey";
-NSString *WebPlugInAttributesKey =              @"WebPlugInAttributesKey";
+NSString * const WebPlugInBaseURLKey =                 @"WebPlugInBaseURLKey";
+NSString * const WebPlugInAttributesKey =              @"WebPlugInAttributesKey";
 NSString *WebPlugInContainerKey =               @"WebPlugInContainerKey";
-NSString *WebPlugInModeKey =                    @"WebPlugInModeKey";
-NSString *WebPlugInShouldLoadMainResourceKey =  @"WebPlugInShouldLoadMainResourceKey";
-NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey";
+NSString * const WebPlugInModeKey =                    @"WebPlugInModeKey";
+NSString * const WebPlugInShouldLoadMainResourceKey =  @"WebPlugInShouldLoadMainResourceKey";
+NSString * const WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey";
 
 @implementation WebPluginPackage
 

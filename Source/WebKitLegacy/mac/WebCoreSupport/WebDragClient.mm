@@ -120,7 +120,7 @@ static WebHTMLView *getTopHTMLView(WebCore::LocalFrame* frame)
 {
     ASSERT(frame);
     ASSERT(frame->page());
-    return (WebHTMLView*)[[protect(kit(dynamicDowncast<WebCore::LocalFrame>(frame->page()->mainFrame()))) frameView] documentView];
+    return checked_objc_cast<WebHTMLView>([[protect(kit(frame->localMainFrame())) frameView] documentView]);
 }
 
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const WebCore::DragData& dragData)
@@ -157,8 +157,8 @@ void WebDragClient::startDrag(WebCore::DragItem dragItem, WebCore::DataTransfer&
     if (!localMainFrame)
         return;
 
-    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[protect(kit(localMainFrame)) frameView] documentView];
-    if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
+    RetainPtr<WebHTMLView> htmlView = dynamic_objc_cast<WebHTMLView>([[protect(kit(localMainFrame)) frameView] documentView]);
+    if (!htmlView)
         return;
     
     RetainPtr event = (dragItem.sourceAction && *dragItem.sourceAction == WebCore::DragSourceAction::Link) ? localMainFrame->eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
@@ -281,7 +281,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 
 void WebDragClient::startDrag(WebCore::DragItem dragItem, WebCore::DataTransfer&, WebCore::Frame&, const std::optional<WebCore::NodeIdentifier>&)
 {
-    [m_webView _startDrag:dragItem];
+    [protect(m_webView) _startDrag:dragItem];
 }
 
 void WebDragClient::beginDrag(WebCore::DragItem, WebCore::LocalFrame&, const WebCore::IntPoint&, const WebCore::IntPoint&, WebCore::DataTransfer&, WebCore::DragSourceAction)
@@ -296,7 +296,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, WebCo
 
 void WebDragClient::didConcludeEditDrag()
 {
-    [m_webView _didConcludeEditDrag];
+    [protect(m_webView) _didConcludeEditDrag];
 }
 
 #endif // PLATFORM(IOS_FAMILY)

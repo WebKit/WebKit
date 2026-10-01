@@ -37,8 +37,8 @@
 #import <WebCore/Page.h>
 #import <WebCore/PageInspectorController.h>
 
-NSString *WebInspectorDidStartSearchingForNode = @"WebInspectorDidStartSearchingForNode";
-NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingForNode";
+NSString * const WebInspectorDidStartSearchingForNode = @"WebInspectorDidStartSearchingForNode";
+NSString * const WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingForNode";
 
 @implementation WebInspector
 - (id)initWithInspectedWebView:(WebView *)inspectedWebView

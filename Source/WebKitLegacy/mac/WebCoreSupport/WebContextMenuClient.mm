@@ -61,6 +61,7 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 
 @interface NSApplication ()
@@ -100,8 +101,8 @@ void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame*)
 
 void WebContextMenuClient::lookUpInDictionary(WebCore::LocalFrame* frame)
 {
-    RetainPtr htmlView = (WebHTMLView*)[[protect(kit(frame)) frameView] documentView];
-    if(![htmlView isKindOfClass:[WebHTMLView class]])
+    RetainPtr htmlView = dynamic_objc_cast<WebHTMLView>([[protect(kit(frame)) frameView] documentView]);
+    if (!htmlView)
         return;
     [htmlView _lookUpInDictionaryFromMenu:nil];
 }
@@ -123,7 +124,7 @@ void WebContextMenuClient::stopSpeaking()
 
 bool WebContextMenuClient::clientFloatRectForNode(WebCore::Node& node, WebCore::FloatRect& rect) const
 {
-    WebCore::RenderObject* renderer = node.renderer();
+    CheckedPtr renderer = node.renderer();
     if (!renderer) {
         // This method shouldn't be called in cases where the controlled node hasn't rendered.
         ASSERT_NOT_REACHED();
@@ -132,10 +133,10 @@ bool WebContextMenuClient::clientFloatRectForNode(WebCore::Node& node, WebCore::
 
     if (!is<WebCore::RenderBox>(*renderer))
         return false;
-    auto& renderBox = downcast<WebCore::RenderBox>(*renderer);
+    CheckedRef renderBox = downcast<WebCore::RenderBox>(*renderer);
 
-    WebCore::LayoutRect layoutRect = WebCore::LayoutRect(renderBox.borderLeft(), renderBox.borderTop(), renderBox.paddingBoxWidth(), renderBox.paddingBoxHeight());
-    WebCore::FloatQuad floatQuad = renderBox.localToAbsoluteQuad(WebCore::FloatQuad(layoutRect));
+    WebCore::LayoutRect layoutRect = WebCore::LayoutRect(renderBox->borderLeft(), renderBox->borderTop(), renderBox->paddingBoxWidth(), renderBox->paddingBoxHeight());
+    WebCore::FloatQuad floatQuad = renderBox->localToAbsoluteQuad(WebCore::FloatQuad(layoutRect));
     rect = floatQuad.boundingBox();
 
     return true;
@@ -213,8 +214,9 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
 
     Ref localFrame = frameView->frame();
 
-    auto oldSelection = localFrame->selection().selection();
-    localFrame->selection().setSelection(*makeRangeSelectingNode(*node), WebCore::FrameSelection::SetSelectionOption::DoNotSetFocus);
+    CheckedRef frameSelection = localFrame->selection();
+    auto oldSelection = frameSelection->selection();
+    frameSelection->setSelection(*makeRangeSelectingNode(*node), WebCore::FrameSelection::SetSelectionOption::DoNotSetFocus);
 
     auto oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(WebCore::PaintBehavior::SelectionOnly);
@@ -222,7 +224,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     buffer->context().translate(-toFloatSize(rect.location()));
     frameView->paintContents(buffer->context(), roundedIntRect(rect));
 
-    localFrame->selection().setSelection(oldSelection);
+    frameSelection->setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
     auto image = WebCore::BitmapImage::create(WebCore::ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));

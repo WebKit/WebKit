@@ -2,10 +2,6 @@ WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 mac/DefaultDelegates/WebDefaultEditingDelegate.m
 mac/DefaultDelegates/WebDefaultPolicyDelegate.mm
 mac/History/WebHistory.mm
-mac/Misc/WebKitErrors.m
-[ Mac ] mac/Misc/WebNSImageExtras.m
-mac/Misc/WebNSObjectExtras.mm
-[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Panels/WebAuthenticationPanel.m
 [ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
 mac/Plugins/WebPluginController.mm

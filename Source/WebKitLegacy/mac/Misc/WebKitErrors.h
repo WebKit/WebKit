@@ -30,7 +30,7 @@
 
 @class NSString;
 
-extern NSString *WebKitErrorDomain WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebKitErrorDomain WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 extern NSString * const WebKitErrorMIMETypeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 extern NSString * const WebKitErrorPlugInNameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);

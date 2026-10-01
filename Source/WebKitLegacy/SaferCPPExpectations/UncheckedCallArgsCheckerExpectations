@@ -1,19 +1,11 @@
 Storage/InProcessIDBServer.cpp
 Storage/StorageSyncManager.cpp
 WebCoreSupport/SocketStreamHandleImpl.cpp
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
 mac/DOM/DOM.mm
 mac/DOM/DOMHTMLInputElement.mm
 mac/DOM/DOMHTMLObjectElement.mm
 mac/DOM/DOMInternal.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
-[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
-[ Mac ] mac/Misc/WebStringTruncator.mm
-[ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
-[ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
-[ Mac ] mac/WebCoreSupport/WebEditorClient.mm
-[ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
 mac/WebView/WebDeviceOrientationProviderMock.mm
 mac/WebView/WebFrame.mm
 [ Mac ] mac/WebView/WebFullScreenController.mm

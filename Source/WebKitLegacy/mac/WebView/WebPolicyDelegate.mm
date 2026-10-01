@@ -32,12 +32,12 @@
 #import <wtf/ObjCRuntimeExtras.h>
 
 
-NSString *WebActionButtonKey = @"WebActionButtonKey"; 
-NSString *WebActionElementKey = @"WebActionElementKey";
-NSString *WebActionFormKey = @"WebActionFormKey";
-NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
-NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
-NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
+NSString * const WebActionButtonKey = @"WebActionButtonKey";
+NSString * const WebActionElementKey = @"WebActionElementKey";
+NSString * const WebActionFormKey = @"WebActionFormKey";
+NSString * const WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
+NSString * const WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
+NSString * const WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 @interface WebPolicyDecisionListenerPrivate : NSObject
 {

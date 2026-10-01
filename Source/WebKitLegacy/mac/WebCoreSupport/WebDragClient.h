@@ -46,7 +46,7 @@ public:
     void didConcludeEditDrag() override;
 
 private:
-    WebView* m_webView;
+    __weak WebView *m_webView;
 };
 
 #endif // ENABLE(DRAG_SUPPORT)

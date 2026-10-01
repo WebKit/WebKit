@@ -24,12 +24,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebUserContentURLPatternPrivate;
-
-@interface WebUserContentURLPattern : NSObject {
-@private
-    WebUserContentURLPatternPrivate *_private;
-}
+@interface WebUserContentURLPattern : NSObject
 
 - (id)initWithPatternString:(NSString *)patternString;
 

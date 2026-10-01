@@ -92,6 +92,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
@@ -266,8 +267,7 @@ static void updateFontPanel(WebView *webView)
 {
 #if !PLATFORM(IOS_FAMILY)
     NSView <WebDocumentView> *view = [[[webView selectedFrame] frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view _updateFontPanel];
+    [dynamic_objc_cast<WebHTMLView>(view) _updateFontPanel];
 #else
     UNUSED_PARAM(webView);
 #endif
@@ -313,7 +313,7 @@ void WebEditorClient::didBeginEditing()
 #if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:protect(m_webView)];
 #else
-    WebThreadPostNotification(WebViewDidBeginEditingNotification, m_webView, nil);
+    WebThreadPostNotification(WebViewDidBeginEditingNotification, protect(m_webView), nil);
 #endif
 }
 
@@ -346,7 +346,7 @@ void WebEditorClient::respondToChangedContents()
     if (m_delayingContentChangeNotifications) {
         m_hasDelayedContentChangeNotification = true;
     } else {
-        WebThreadPostNotification(WebViewDidChangeNotification, m_webView, nil);
+        WebThreadPostNotification(WebViewDidChangeNotification, protect(m_webView), nil);
     }
 #endif
 }
@@ -369,12 +369,12 @@ void WebEditorClient::respondToChangedSelection(WebCore::LocalFrame* frame)
 #else
     // Selection can be changed while deallocating down the WebView / Frame / Editor.  Do not post in that case because it's already too late
     // for the NSInvocation to retain the WebView.
-    if (![m_webView _isClosing])
-        WebThreadPostNotification(WebViewDidChangeSelectionNotification, m_webView, nil);
+    if (![webView _isClosing])
+        WebThreadPostNotification(WebViewDidChangeSelectionNotification, webView, nil);
 #endif
 
 #if PLATFORM(MAC)
-    if (frame->editor().canEdit())
+    if (protect(frame->editor())->canEdit())
         requestCandidatesForSelection(frame->selection().selection());
 #endif
 
@@ -410,7 +410,7 @@ void WebEditorClient::didEndEditing()
 #if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:protect(m_webView)];
 #else
-    WebThreadPostNotification(WebViewDidEndEditingNotification, m_webView, nil);
+    WebThreadPostNotification(WebViewDidEndEditingNotification, protect(m_webView), nil);
 #endif
 }
 
@@ -728,11 +728,11 @@ void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent& event)
 {
     RefPtr frame = downcast<WebCore::Node>(event.target())->document().frame();
 #if !PLATFORM(IOS_FAMILY)
-    RetainPtr webHTMLView = (WebHTMLView *)[[protect(kit(frame.get())) frameView] documentView];
+    RetainPtr webHTMLView = checked_objc_cast<WebHTMLView>([[protect(kit(frame.get())) frameView] documentView]);
     if ([webHTMLView _interpretKeyEvent:&event savingCommands:NO])
         event.setDefaultHandled();
 #else
-    RetainPtr webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
+    RetainPtr webHTMLView = checked_objc_cast<WebHTMLView>([[protect(kit(frame.get())) frameView] documentView]);
     if ([webHTMLView _handleEditingKeyEvent:&event])
         event.setDefaultHandled();
 #endif
@@ -743,7 +743,7 @@ void WebEditorClient::handleInputMethodKeydown(WebCore::KeyboardEvent& event)
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
     RefPtr frame = downcast<WebCore::Node>(event.target())->document().frame();
-    RetainPtr webHTMLView = (WebHTMLView *)[[protect(kit(frame.get())) frameView] documentView];
+    RetainPtr webHTMLView = checked_objc_cast<WebHTMLView>([[protect(kit(frame.get())) frameView] documentView]);
     if ([webHTMLView _interpretKeyEvent:&event savingCommands:YES])
         event.setDefaultHandled();
 #else
@@ -860,38 +860,43 @@ void WebEditorClient::textDidChangeInTextArea(WebCore::Element& element)
 
 bool WebEditorClient::hasRichlyEditableSelection()
 {
-    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(hasRichlyEditableSelection)])
-        return [[m_webView _UIKitDelegateForwarder] hasRichlyEditableSelection];
+    RetainPtr webView = m_webView;
+    if ([[webView _UIKitDelegateForwarder] respondsToSelector:@selector(hasRichlyEditableSelection)])
+        return [[webView _UIKitDelegateForwarder] hasRichlyEditableSelection];
     
     return false;
 }
 
 int WebEditorClient::getPasteboardItemsCount()
 {
-    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(getPasteboardItemsCount)])
-        return [[m_webView _UIKitDelegateForwarder] getPasteboardItemsCount];
+    RetainPtr webView = m_webView;
+    if ([[webView _UIKitDelegateForwarder] respondsToSelector:@selector(getPasteboardItemsCount)])
+        return [[webView _UIKitDelegateForwarder] getPasteboardItemsCount];
     
     return 0;
 }
 
 bool WebEditorClient::shouldRevealCurrentSelectionAfterInsertion() const
 {
-    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(shouldRevealCurrentSelectionAfterInsertion)])
-        return [[m_webView _UIKitDelegateForwarder] shouldRevealCurrentSelectionAfterInsertion];
+    RetainPtr webView = m_webView;
+    if ([[webView _UIKitDelegateForwarder] respondsToSelector:@selector(shouldRevealCurrentSelectionAfterInsertion)])
+        return [[webView _UIKitDelegateForwarder] shouldRevealCurrentSelectionAfterInsertion];
     return true;
 }
 
 bool WebEditorClient::shouldSuppressPasswordEcho() const
 {
-    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(shouldSuppressPasswordEcho)])
-        return [[m_webView _UIKitDelegateForwarder] shouldSuppressPasswordEcho];
+    RetainPtr webView = m_webView;
+    if ([[webView _UIKitDelegateForwarder] respondsToSelector:@selector(shouldSuppressPasswordEcho)])
+        return [[webView _UIKitDelegateForwarder] shouldSuppressPasswordEcho];
     return false;
 }
 
 RefPtr<WebCore::DocumentFragment> WebEditorClient::documentFragmentFromDelegate(int index)
 {
-    if ([[m_webView _editingDelegateForwarder] respondsToSelector:@selector(documentFragmentForPasteboardItemAtIndex:)]) {
-        DOMDocumentFragment *fragmentFromDelegate = [[m_webView _editingDelegateForwarder] documentFragmentForPasteboardItemAtIndex:index];
+    RetainPtr webView = m_webView;
+    if ([[webView _editingDelegateForwarder] respondsToSelector:@selector(documentFragmentForPasteboardItemAtIndex:)]) {
+        DOMDocumentFragment *fragmentFromDelegate = [[webView _editingDelegateForwarder] documentFragmentForPasteboardItemAtIndex:index];
         if (fragmentFromDelegate)
             return core(fragmentFromDelegate);
     }
@@ -901,16 +906,18 @@ RefPtr<WebCore::DocumentFragment> WebEditorClient::documentFragmentFromDelegate(
 
 bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment* fragment)
 {
-    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(performsTwoStepPaste:)])
-        return [[m_webView _UIKitDelegateForwarder] performsTwoStepPaste:kit(fragment)];
+    RetainPtr webView = m_webView;
+    if ([[webView _UIKitDelegateForwarder] respondsToSelector:@selector(performsTwoStepPaste:)])
+        return [[webView _UIKitDelegateForwarder] performsTwoStepPaste:protect(kit(fragment))];
 
     return false;
 }
 
 bool WebEditorClient::performTwoStepDrop(WebCore::DocumentFragment& fragment, const WebCore::SimpleRange& destination, bool isMove)
 {
-    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(performTwoStepDrop:atDestination:isMove:)])
-        return [[m_webView _UIKitDelegateForwarder] performTwoStepDrop:kit(&fragment) atDestination:kit(destination) isMove:isMove];
+    RetainPtr webView = m_webView;
+    if ([[webView _UIKitDelegateForwarder] respondsToSelector:@selector(performTwoStepDrop:atDestination:isMove:)])
+        return [[webView _UIKitDelegateForwarder] performTwoStepDrop:protect(kit(&fragment)) atDestination:protect(kit(destination)) isMove:isMove];
 
     return false;
 }
@@ -921,8 +928,8 @@ Vector<WebCore::TextCheckingResult> WebEditorClient::checkTextOfParagraph(String
 
     Vector<WebCore::TextCheckingResult> results;
 
-    NSArray *incomingResults = [[m_webView _UIKitDelegateForwarder] checkSpellingOfString:string.createNSStringWithoutCopying().get()];
-    for (NSValue *incomingResult in incomingResults) {
+    RetainPtr<NSArray> incomingResults = [[protect(m_webView) _UIKitDelegateForwarder] checkSpellingOfString:string.createNSStringWithoutCopying().get()];
+    for (NSValue *incomingResult in incomingResults.get()) {
         ASSERT(incomingResult.rangeValue.location != NSNotFound);
         ASSERT(incomingResult.rangeValue.length > 0);
         WebCore::TextCheckingResult result;
@@ -1159,7 +1166,7 @@ void WebEditorClient::requestCandidatesForSelection(const WebCore::VisibleSelect
     auto selectionStart = selection.visibleStart();
     auto selectionStartOffsetInParagraph = characterCount(*makeSimpleRange(startOfParagraph(selectionStart), selectionStart));
     auto selectionLength = characterCount(*makeSimpleRange(selectionStart, selection.visibleEnd()));
-    auto contextRangeForCandidateRequest = frame->editor().contextRangeForCandidateRequest();
+    auto contextRangeForCandidateRequest = protect(frame->editor())->contextRangeForCandidateRequest();
     String contextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
 
     m_rangeForCandidates = NSMakeRange(selectionStartOffsetInParagraph, selectionLength);
@@ -1198,13 +1205,14 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
         return;
 
     WebCore::IntRect rectForSelectionCandidates;
+    Ref view = *frame->view();
     auto quads = WebCore::RenderObject::absoluteTextQuads(*selectedRange);
     if (!quads.isEmpty())
-        rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+        rectForSelectionCandidates = view->contentsToWindow(quads[0].enclosingBoundingBox());
     else {
         // Quads will be empty at the start of a paragraph.
         if (selection.isCaret())
-            rectForSelectionCandidates = frame->view()->contentsToWindow(frame->selection().absoluteCaretBounds());
+            rectForSelectionCandidates = view->contentsToWindow(protect(frame->selection())->absoluteCaretBounds());
     }
 
     [webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:webView completionHandler:nil];
@@ -1222,17 +1230,17 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(const WebCore::TextC
         return;
 
     NSView <WebDocumentView> *view = [[[webView selectedFrame] frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
+    if (RetainPtr htmlView = dynamic_objc_cast<WebHTMLView>(view)) {
         unsigned replacementLength = acceptedCandidate.replacement.length();
         if (replacementLength > 0) {
             NSRange replacedRange = NSMakeRange(acceptedCandidate.range.location, replacementLength);
             NSRange softSpaceRange = NSMakeRange(NSMaxRange(replacedRange) - 1, 1);
             if (acceptedCandidate.replacement.endsWith(' '))
-                [(WebHTMLView *)view _setSoftSpaceRange:softSpaceRange];
+                [htmlView _setSoftSpaceRange:softSpaceRange];
         }
     }
 
-    frame->editor().handleAcceptedCandidate(acceptedCandidate);
+    protect(frame->editor())->handleAcceptedCandidate(acceptedCandidate);
 }
 
 #endif // PLATFORM(MAC)
@@ -1263,8 +1271,8 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(const WebCore::TextC
 
 - (void)perform
 {
-    if (_client)
-        _client->didCheckSucceed(*_identifier, _results.get());
+    if (CheckedPtr client = _client)
+        client->didCheckSucceed(*_identifier, _results.get());
 }
 
 @end
@@ -1313,7 +1321,7 @@ void WebEditorClient::requestExtendedCheckingOfString(WebCore::TextCheckingReque
 bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection, WebCore::MouseEventInputSource) const
 {
     // The text selection assistant will handle selection in the case where we are already editing the node
-    auto* editableRoot = newSelection.rootEditableElement();
+    RefPtr editableRoot = newSelection.rootEditableElement();
     return !editableRoot || editableRoot != targetNode.rootEditableElement();
 }
 #endif

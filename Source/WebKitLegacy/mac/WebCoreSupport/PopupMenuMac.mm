@@ -84,9 +84,9 @@ void PopupMenuMac::populate()
         WebCore::PopupMenuStyle style = protect(m_client)->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
         if (style.font() != WebCore::FontCascade()) {
-            RetainPtr font = style.font().primaryFont().ctFont();
+            RetainPtr font = protect(style.font())->primaryFont().ctFont();
             if (!font) {
-                CGFloat size = style.font().primaryFont().platformData().size();
+                CGFloat size = protect(style.font())->primaryFont().platformData().size();
                 font = adoptCF(CTFontCreateUIFontForLanguage(isFontWeightBold(style.font().weight()) ? kCTFontUIFontEmphasizedSystem : kCTFontUIFontSystem, size, nullptr));
             }
             [attributes setObject:(__bridge NSFont *)(font.get()) forKey:NSFontAttributeName];
@@ -156,7 +156,7 @@ void PopupMenuMac::show(const WebCore::IntRect& r, WebCore::LocalFrameView& fram
 
     NSPoint location;
 
-    RetainPtr font = protect(m_client)->menuStyle().font().primaryFont().ctFont();
+    RetainPtr font = protect(protect(m_client)->menuStyle().font())->primaryFont().ctFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -13;

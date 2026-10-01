@@ -36,4 +36,4 @@ typedef enum {
 /*!
     @constant WebPlugInModeKey REQUIRED. Number with one of the values from the WebPlugInMode enum.
 */
-extern NSString *WebPlugInModeKey;
+extern NSString * const WebPlugInModeKey;

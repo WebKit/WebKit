@@ -28,8 +28,8 @@
 
 #import <Foundation/NSObject.h>
 
-extern NSString *WebInspectorDidStartSearchingForNode;
-extern NSString *WebInspectorDidStopSearchingForNode;
+extern NSString * const WebInspectorDidStartSearchingForNode;
+extern NSString * const WebInspectorDidStopSearchingForNode;
 
 @class WebView;
 @class WebInspectorFrontend;

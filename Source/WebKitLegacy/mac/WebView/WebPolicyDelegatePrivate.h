@@ -31,7 +31,7 @@
 @class WebHistoryItem;
 @class WebPolicyDecisionListenerPrivate;
 
-extern NSString *WebActionFormKey; // HTMLFormElement
+extern NSString * const WebActionFormKey; // HTMLFormElement
 
 typedef enum {
     WebNavigationTypePlugInRequest = WebNavigationTypeOther + 1

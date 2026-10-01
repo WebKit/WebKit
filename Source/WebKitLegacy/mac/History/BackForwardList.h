@@ -83,6 +83,8 @@ public:
 private:
     explicit BackForwardList(WebView *);
 
+    bool isBackForwardList() const final { return true; }
+
     WebView* m_webView;
     Vector<Ref<WebCore::HistoryItem>> m_entries;
     HistoryItemHashSet m_entryHash;
@@ -91,3 +93,7 @@ private:
     bool m_closed;
     bool m_enabled;
 };
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(BackForwardList)
+static bool isType(const WebCore::BackForwardClient& client) { return client.isBackForwardList(); }
+SPECIALIZE_TYPE_TRAITS_END()

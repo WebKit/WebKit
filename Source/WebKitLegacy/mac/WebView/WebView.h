@@ -63,17 +63,17 @@
 @protocol WebUIDelegate;
 
 // Element dictionary keys
-extern NSString *WebElementDOMNodeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // DOMNode of the element
-extern NSString *WebElementFrameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // WebFrame of the element
-extern NSString *WebElementImageAltStringKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the ALT attribute of the image element
-extern NSString *WebElementImageKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSImage of the image element
-extern NSString *WebElementImageRectKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSValue of an NSRect, the rect of the image element
-extern NSString *WebElementImageURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL of the image element
-extern NSString *WebElementIsSelectedKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber of BOOL indicating whether the element is selected or not
-extern NSString *WebElementLinkURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL of the link if the element is within an anchor
-extern NSString *WebElementLinkTargetFrameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // WebFrame of the target of the anchor
-extern NSString *WebElementLinkTitleKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the title of the anchor
-extern NSString *WebElementLinkLabelKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the text within the anchor
+extern NSString * const WebElementDOMNodeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // DOMNode of the element
+extern NSString * const WebElementFrameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // WebFrame of the element
+extern NSString * const WebElementImageAltStringKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the ALT attribute of the image element
+extern NSString * const WebElementImageKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSImage of the image element
+extern NSString * const WebElementImageRectKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSValue of an NSRect, the rect of the image element
+extern NSString * const WebElementImageURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL of the image element
+extern NSString * const WebElementIsSelectedKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber of BOOL indicating whether the element is selected or not
+extern NSString * const WebElementLinkURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL of the link if the element is within an anchor
+extern NSString * const WebElementLinkTargetFrameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // WebFrame of the target of the anchor
+extern NSString * const WebElementLinkTitleKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the title of the anchor
+extern NSString * const WebElementLinkLabelKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the text within the anchor
 
 /*
     @discussion Notifications sent by WebView to mark the progress of loads.
@@ -85,10 +85,10 @@ extern NSString *WebElementLinkLabelKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // N
     @constant WebViewProgressFinishedNotification Posted when the load for a WebView has finished.
     The userInfo will be nil.
 */
-extern NSString *WebViewProgressStartedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebViewProgressEstimateChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewProgressStartedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewProgressEstimateChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 #if !TARGET_OS_IPHONE
-extern NSString *WebViewProgressFinishedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewProgressFinishedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 #endif
 
 /*!

@@ -308,7 +308,7 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
     if (!details)
         return createNSError(WKErrorJavaScriptResultTypeIsUnsupported);
 
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+    RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] init]);
 
     WKErrorCode errorCode;
     switch (details->type) {

@@ -63,7 +63,7 @@ list(APPEND WebKitLegacy_SOURCES
 
     mac/DefaultDelegates/WebDefaultEditingDelegate.m
 
-    mac/Misc/WebKitErrors.m
+    mac/Misc/WebKitErrors.mm
     mac/Misc/WebKitLogging.m
     mac/Misc/WebKitStatistics.m
     mac/Misc/WebNSDictionaryExtras.m
@@ -110,9 +110,9 @@ list(APPEND WebKitLegacy_SOURCES
 
     mac/Misc/WebNSControlExtras.m
     mac/Misc/WebNSEventExtras.m
-    mac/Misc/WebNSImageExtras.m
+    mac/Misc/WebNSImageExtras.mm
     mac/Misc/WebNSPrintOperationExtras.m
-    mac/Misc/WebNSViewExtras.m
+    mac/Misc/WebNSViewExtras.mm
     mac/Misc/WebNSWindowExtras.m
 
     mac/Panels/WebAuthenticationPanel.m

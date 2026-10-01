@@ -49,7 +49,6 @@ __attribute__((visibility("hidden")))
 #if !TARGET_OS_IPHONE
 @class NSWindow;
 #endif
-@class WebDownloadInternal;
 
 /*!
     @class WebDownload
@@ -62,11 +61,6 @@ __attribute__((visibility("hidden")))
 */
 WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface WebDownload : NSURLDownload
-{
-@package
-    WebDownloadInternal *_webInternal;
-}
-
 @end
 
 /*!

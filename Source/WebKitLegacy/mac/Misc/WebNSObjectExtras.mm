@@ -36,6 +36,7 @@
 {
     id target;
     RetainPtr<id> exception;
+    RetainPtr<id> returnValue;
 }
 @end
 
@@ -68,9 +69,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
     } else if (returnTypeIsObject(invocation)) {
         // _webkit_invokeAndHandleException retained the return value on the main thread.
         // Now autorelease it on the calling thread.
-        id returnValue;
-        [invocation getReturnValue:&returnValue];
-        adoptNS(returnValue).autorelease();
+        std::exchange(returnValue, nil).autorelease();
     }
 }
 
@@ -83,6 +82,12 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 {
     ASSERT(!exception);
     exception = passedException;
+}
+
+- (void)_webkit_setReturnValue:(id)value
+{
+    ASSERT(!returnValue);
+    returnValue = value;
 }
 
 @end
@@ -102,7 +107,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
         // -[WebMainThreadInvoker forwardInvocation:] will autorelease it on the calling thread.
         id value;
         [self getReturnValue:&value];
-        [value retain];
+        [exceptionHandler _webkit_setReturnValue:value];
     }
 }
 

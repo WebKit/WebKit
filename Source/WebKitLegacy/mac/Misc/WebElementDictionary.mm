@@ -118,9 +118,6 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
         return;
 
     delete _result;
-    // Retaining the member just to release it would be pointless.
-    SUPPRESS_UNRETAINED_ARG [_cache release];
-    SUPPRESS_UNRETAINED_ARG [_nilValues release];
     [super dealloc];
 }
 
@@ -158,11 +155,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     NSUInteger lookupTableCount = CFDictionaryGetCount(lookupTable().get());
     if (value) {
         if (!_cache)
-            _cache = [[NSMutableDictionary alloc] initWithCapacity:lookupTableCount];
+            _cache = adoptNS([[NSMutableDictionary alloc] initWithCapacity:lookupTableCount]);
         [protect(_cache) setObject:value forKey:key];
     } else {
         if (!_nilValues)
-            _nilValues = [[NSMutableSet alloc] initWithCapacity:lookupTableCount];
+            _nilValues = adoptNS([[NSMutableSet alloc] initWithCapacity:lookupTableCount]);
         [protect(_nilValues) addObject:key];
     }
 

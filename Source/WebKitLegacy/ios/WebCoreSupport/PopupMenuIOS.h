@@ -28,10 +28,8 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/PopupMenu.h>
-
-namespace WebCore {
-class PopupMenuClient;
-}
+#include <WebCore/PopupMenuClient.h>
+#include <wtf/WeakPtr.h>
 
 class PopupMenuIOS : public WebCore::PopupMenu {
 public:
@@ -45,7 +43,7 @@ public:
 private:
     WebCore::PopupMenuClient* client() const { return m_popupClient; }
 
-    WebCore::PopupMenuClient* m_popupClient;
+    WeakPtr<WebCore::PopupMenuClient> m_popupClient;
 };
 
 #endif // PopupMenuIOS_h

@@ -1,15 +1,9 @@
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
 mac/DOM/DOM.mm
 [ iOS ] mac/DOM/DOMHTML.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
 [ iOS ] mac/DOM/WebDOMOperations.mm
-[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ iOS ] mac/Plugins/WebPluginController.mm
-[ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
-[ iOS ] mac/WebCoreSupport/WebEditorClient.mm
-mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebView/WebFrame.mm
 mac/WebView/WebFrameView.mm
 mac/WebView/WebHTMLRepresentation.mm

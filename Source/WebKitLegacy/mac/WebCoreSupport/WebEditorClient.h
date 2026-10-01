@@ -196,7 +196,7 @@ private:
     bool shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection, WebCore::MouseEventInputSource) const;
 #endif
 
-    WebView *m_webView;
+    __weak WebView *m_webView;
     const RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations { false };
     

@@ -60,11 +60,11 @@ typedef NS_ENUM(NSInteger, WebNavigationType) {
     WebNavigationTypeOther
 } WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);
 
-extern NSString *WebActionNavigationTypeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber (WebNavigationType)
-extern NSString *WebActionElementKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSDictionary of element info
-extern NSString *WebActionButtonKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber (0 for left button, 1 for middle button, 2 for right button)
-extern NSString *WebActionModifierFlagsKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber (unsigned)
-extern NSString *WebActionOriginalURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL
+extern NSString * const WebActionNavigationTypeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber (WebNavigationType)
+extern NSString * const WebActionElementKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSDictionary of element info
+extern NSString * const WebActionButtonKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber (0 for left button, 1 for middle button, 2 for right button)
+extern NSString * const WebActionModifierFlagsKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber (unsigned)
+extern NSString * const WebActionOriginalURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL
 
 /*!
     @protocol WebPolicyDecisionListener

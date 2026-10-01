@@ -32,7 +32,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-extern NSString *WebKitLocalCacheDefaultsKey;
+extern NSString * const WebKitLocalCacheDefaultsKey;
 extern NSString *WebKitResourceLoadStatisticsDirectoryDefaultsKey;
 
 @interface NSString (WebKitExtras)

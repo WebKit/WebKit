@@ -901,28 +901,28 @@ static bool isLockdownModeEnabled()
 @end
 #endif
 
-NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
-NSString *WebElementFrameKey =              @"WebElementFrame";
-NSString *WebElementImageKey =              @"WebElementImage";
-NSString *WebElementImageAltStringKey =     @"WebElementImageAltString";
-NSString *WebElementImageRectKey =          @"WebElementImageRect";
-NSString *WebElementImageURLKey =           @"WebElementImageURL";
-NSString *WebElementIsSelectedKey =         @"WebElementIsSelected";
-NSString *WebElementLinkLabelKey =          @"WebElementLinkLabel";
-NSString *WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";
-NSString *WebElementLinkTitleKey =          @"WebElementLinkTitle";
-NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
-NSString *WebElementMediaURLKey =           @"WebElementMediaURL";
-NSString *WebElementSpellingToolTipKey =    @"WebElementSpellingToolTip";
-NSString *WebElementTitleKey =              @"WebElementTitle";
-NSString *WebElementLinkIsLiveKey =         @"WebElementLinkIsLive";
-NSString *WebElementIsInScrollBarKey =      @"WebElementIsInScrollBar";
-NSString *WebElementIsContentEditableKey =  @"WebElementIsContentEditableKey";
+NSString * const WebElementDOMNodeKey =            @"WebElementDOMNode";
+NSString * const WebElementFrameKey =              @"WebElementFrame";
+NSString * const WebElementImageKey =              @"WebElementImage";
+NSString * const WebElementImageAltStringKey =     @"WebElementImageAltString";
+NSString * const WebElementImageRectKey =          @"WebElementImageRect";
+NSString * const WebElementImageURLKey =           @"WebElementImageURL";
+NSString * const WebElementIsSelectedKey =         @"WebElementIsSelected";
+NSString * const WebElementLinkLabelKey =          @"WebElementLinkLabel";
+NSString * const WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";
+NSString * const WebElementLinkTitleKey =          @"WebElementLinkTitle";
+NSString * const WebElementLinkURLKey =            @"WebElementLinkURL";
+NSString * const WebElementMediaURLKey =           @"WebElementMediaURL";
+NSString * const WebElementSpellingToolTipKey =    @"WebElementSpellingToolTip";
+NSString * const WebElementTitleKey =              @"WebElementTitle";
+NSString * const WebElementLinkIsLiveKey =         @"WebElementLinkIsLive";
+NSString * const WebElementIsInScrollBarKey =      @"WebElementIsInScrollBar";
+NSString * const WebElementIsContentEditableKey =  @"WebElementIsContentEditableKey";
 
-NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNotification";
-NSString *WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";
+NSString * const WebViewProgressStartedNotification =          @"WebProgressStartedNotification";
+NSString * const WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";
 #if !PLATFORM(IOS_FAMILY)
-NSString *WebViewProgressFinishedNotification =         @"WebProgressFinishedNotification";
+NSString * const WebViewProgressFinishedNotification =         @"WebProgressFinishedNotification";
 #else
 NSString * const WebViewProgressEstimatedProgressKey = @"WebProgressEstimatedProgressKey";
 NSString * const WebViewProgressBackgroundColorKey =   @"WebProgressBackgroundColorKey";
@@ -947,10 +947,10 @@ static RetainPtr<NSMutableSet>& NODELETE schemesWithRepresentationsSet()
 #if !PLATFORM(IOS_FAMILY)
 NSString *_WebCanGoBackKey =            @"canGoBack";
 NSString *_WebCanGoForwardKey =         @"canGoForward";
-NSString *_WebEstimatedProgressKey =    @"estimatedProgress";
+NSString * const _WebEstimatedProgressKey =    @"estimatedProgress";
 NSString *_WebIsLoadingKey =            @"isLoading";
 NSString *_WebMainFrameIconKey =        @"mainFrameIcon";
-NSString *_WebMainFrameTitleKey =       @"mainFrameTitle";
+NSString * const _WebMainFrameTitleKey =       @"mainFrameTitle";
 NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 #endif

@@ -28,9 +28,11 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/ValidationMessageClient.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class Element;
+class WeakPtrImplWithEventTargetData;
 }
 
 @class WebView;
@@ -50,7 +52,7 @@ public:
     void updateValidationBubbleStateIfNeeded() final;
 
 private:
-    WebView* m_view;
-    const WebCore::Element* m_currentAnchor { nullptr };
+    __weak WebView *m_view;
+    WeakPtr<const WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_currentAnchor;
     WebCore::IntRect m_currentAnchorRect;
 };

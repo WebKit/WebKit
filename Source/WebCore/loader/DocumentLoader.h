@@ -173,6 +173,8 @@ public:
 
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
+    virtual bool isWebDocumentLoaderMac() const { return false; }
+
     // CachedResourceClient, FrameDestructionObserver, ContentFilterClient.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

@@ -26,16 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/WebKitErrors.h>
+#import "WebKitErrors.h"
 
 #import "WebLocalizableStringsInternal.h"
+
 #import <Foundation/NSURLError.h>
 #import <WebKitLegacy/WebKitErrorsPrivate.h>
 #import <WebKitLegacy/WebNSURLExtras.h>
-
 #import <dispatch/dispatch.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
-NSString *WebKitErrorDomain = @"WebKitErrorDomain";
+NSString * const WebKitErrorDomain = @"WebKitErrorDomain";
 
 NSString * const WebKitErrorMIMETypeKey =               @"WebKitErrorMIMETypeKey";
 NSString * const WebKitErrorPlugInNameKey =             @"WebKitErrorPlugInNameKey";
@@ -59,18 +61,22 @@ NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageU
 
 #define WebKitErrorDescriptionGeolocationLocationUnknown UI_STRING_INTERNAL("The current location cannot be found.", "WebKitErrorGeolocationLocationUnknown description")
 
-static NSMutableDictionary *descriptions = nil;
+static NSMutableDictionary *descriptionsSingleton()
+{
+    static NeverDestroyed<RetainPtr<NSMutableDictionary>> descriptions = adoptNS([[NSMutableDictionary alloc] init]);
+    return descriptions.get();
+}
 
 @interface NSError (WebKitInternal)
-- (instancetype)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL __attribute__((objc_method_family(init)));
+- (instancetype)_initWithWebKitDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL;
 @end
 
 @implementation NSError (WebKitInternal)
 
-- (instancetype)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
+- (instancetype)_initWithWebKitDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     // Insert a localized string here for those folks not savvy to our category methods.
-    NSString *localizedDescription = [[descriptions objectForKey:domain] objectForKey:@(code)];
+    NSString *localizedDescription = [[descriptionsSingleton() objectForKey:domain] objectForKey:@(code)];
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         URL, NSURLErrorFailingURLErrorKey,
@@ -90,24 +96,24 @@ static NSMutableDictionary *descriptions = nil;
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
         @autoreleasepool {
-            NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+            RetainPtr dict = @{
                 // Policy errors
-                WebKitErrorDescriptionCannotShowMIMEType,                   @(WebKitErrorCannotShowMIMEType),
-                WebKitErrorDescriptionCannotShowURL,                        @(WebKitErrorCannotShowURL),
-                WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   @(WebKitErrorFrameLoadInterruptedByPolicyChange),
-                WebKitErrorDescriptionCannotUseRestrictedPort,              @(WebKitErrorCannotUseRestrictedPort),
-                WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      @(WebKitErrorFrameLoadBlockedByContentFilter),
+                @(WebKitErrorCannotShowMIMEType): WebKitErrorDescriptionCannotShowMIMEType,
+                @(WebKitErrorCannotShowURL): WebKitErrorDescriptionCannotShowURL,
+                @(WebKitErrorFrameLoadInterruptedByPolicyChange): WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,
+                @(WebKitErrorCannotUseRestrictedPort): WebKitErrorDescriptionCannotUseRestrictedPort,
+                @(WebKitErrorFrameLoadBlockedByContentFilter): WebKitErrorDescriptionFrameLoadBlockedByContentFilter,
 
                 // Plug-in and java errors
-                WebKitErrorDescriptionCannotFindPlugin,                     @(WebKitErrorCannotFindPlugIn),
-                WebKitErrorDescriptionCannotLoadPlugin,                     @(WebKitErrorCannotLoadPlugIn),
-                WebKitErrorDescriptionJavaUnavailable,                      @(WebKitErrorJavaUnavailable),
-                WebKitErrorDescriptionPlugInCancelledConnection,            @(WebKitErrorPlugInCancelledConnection),
-                WebKitErrorDescriptionPlugInWillHandleLoad,                 @(WebKitErrorPlugInWillHandleLoad),
+                @(WebKitErrorCannotFindPlugIn): WebKitErrorDescriptionCannotFindPlugin,
+                @(WebKitErrorCannotLoadPlugIn): WebKitErrorDescriptionCannotLoadPlugin,
+                @(WebKitErrorJavaUnavailable): WebKitErrorDescriptionJavaUnavailable,
+                @(WebKitErrorPlugInCancelledConnection): WebKitErrorDescriptionPlugInCancelledConnection,
+                @(WebKitErrorPlugInWillHandleLoad): WebKitErrorDescriptionPlugInWillHandleLoad,
 
                 // Geolocation errors
-                WebKitErrorDescriptionGeolocationLocationUnknown,           @(WebKitErrorGeolocationLocationUnknown),
-                nil];
+                @(WebKitErrorGeolocationLocationUnknown): WebKitErrorDescriptionGeolocationLocationUnknown
+            };
 
             [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
         }
@@ -116,7 +122,7 @@ static NSMutableDictionary *descriptions = nil;
 
 +(id)_webkit_errorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
-    return [[[self alloc] _webkit_initWithDomain:domain code:code URL:URL] autorelease];
+    return adoptNS([[self alloc] _initWithWebKitDomain:domain code:code URL:URL]).autorelease();
 }
 
 + (NSError *)_webKitErrorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
@@ -137,9 +143,9 @@ static NSMutableDictionary *descriptions = nil;
                       MIMEType:(NSString *)MIMEType
 {
     [[self class] _registerWebKitErrors];
-    
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    NSDictionary *descriptionsForWebKitErrorDomain = [descriptions objectForKey:WebKitErrorDomain];
+
+    RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+    NSDictionary *descriptionsForWebKitErrorDomain = [descriptionsSingleton() objectForKey:WebKitErrorDomain];
     NSString *localizedDescription = [descriptionsForWebKitErrorDomain objectForKey:@(code)];
     if (localizedDescription)
         [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
@@ -149,30 +155,20 @@ static NSMutableDictionary *descriptions = nil;
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];
     }
     ALLOW_DEPRECATED_DECLARATIONS_END
-    if (pluginPageURL) {
+    if (pluginPageURL)
         [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];
-    }
-    if (pluginName) {
+    if (pluginName)
         [userInfo setObject:pluginName forKey:WebKitErrorPlugInNameKey];
-    }
-    if (MIMEType) {
+    if (MIMEType)
         [userInfo setObject:MIMEType forKey:WebKitErrorMIMETypeKey];
-    }
 
-    NSDictionary *userInfoCopy = [userInfo count] > 0 ? [[NSDictionary alloc] initWithDictionary:userInfo] : nil;
-    [userInfo release];
-    NSError *error = [self initWithDomain:WebKitErrorDomain code:code userInfo:userInfoCopy];
-    [userInfoCopy release];
-    
-    return error;
+    RetainPtr<NSDictionary> userInfoCopy = [userInfo count] > 0 ? adoptNS([[NSDictionary alloc] initWithDictionary:userInfo]) : nullptr;
+    return [self initWithDomain:WebKitErrorDomain code:code userInfo:userInfoCopy];
 }
 
 + (void)_webkit_addErrorsWithCodesAndDescriptions:(NSDictionary *)dictionary inDomain:(NSString *)domain
 {
-    if (!descriptions)
-        descriptions = [[NSMutableDictionary alloc] init];
-
-    [descriptions setObject:dictionary forKey:domain];
+    [descriptionsSingleton() setObject:dictionary forKey:domain];
 }
 
 @end

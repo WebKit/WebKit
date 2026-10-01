@@ -438,10 +438,10 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 #if !PLATFORM(IOS_FAMILY)
     RetainPtr<id> delegate = [webView UIDelegate];
 #else
-    if (![m_webView _allowsMessaging])
+    if (![webView _allowsMessaging])
         return;
 
-    RetainPtr<id> delegate = [m_webView _UIKitDelegate];
+    RetainPtr<id> delegate = [webView _UIKitDelegate];
     // No delegate means nothing to send this data to so bail.
     if (!delegate)
         return;
@@ -472,7 +472,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
     };
 
 #if PLATFORM(IOS_FAMILY)
-    [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary.get() withSource:messageSource.get()];
+    [[[webView _UIKitDelegateForwarder] asyncForwarder] webView:webView addMessageToConsole:dictionary.get() withSource:messageSource.get()];
     UNUSED_VARIABLE(respondsToNewSelector);
 #else
     if (respondsToNewSelector)
@@ -1208,7 +1208,8 @@ void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame& frame
         return WKContentNoChange;
     };
 
-    [[webView() _UIKitDelegateForwarder] webView:webView() didObserveDeferredContentChange:toWKContentChange(observedContentChange) forFrame:kit(&frame)];
+    RetainPtr webView = this->webView();
+    [[webView _UIKitDelegateForwarder] webView:webView didObserveDeferredContentChange:toWKContentChange(observedContentChange) forFrame:protect(kit(&frame))];
 #else
     notImplemented();
 #endif

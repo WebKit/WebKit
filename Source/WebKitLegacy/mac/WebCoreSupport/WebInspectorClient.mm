@@ -50,6 +50,7 @@
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageInspectorController.h>
 #import <WebCore/ScriptController.h>
@@ -375,13 +376,13 @@ bool WebInspectorFrontendClient::supportsDiagnosticLogging()
 void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
     if (RefPtr page = frontendPage())
-        page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Legacy Web Inspector Frontend Diagnostics"_s, dictionary, WebCore::ShouldSample::No);
+        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Legacy Web Inspector Frontend Diagnostics"_s, dictionary, WebCore::ShouldSample::No);
 }
 #endif
 
 void WebInspectorFrontendClient::updateWindowTitle() const
 {
-    RetainPtr title = [NSString stringWithFormat:UI_STRING_INTERNAL("Web Inspector — %@", "Web Inspector window title"), m_inspectedURL.createNSString().get()];
+    RetainPtr title = WEB_UI_FORMAT_CFSTRING("Web Inspector — %@", "Web Inspector window title", m_inspectedURL.createNSString().get()).createNSString();
     [[m_frontendWindowController.get() window] setTitle:title.get()];
 }
 

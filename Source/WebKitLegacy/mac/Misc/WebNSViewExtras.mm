@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/WebNSViewExtras.h>
+#import "WebNSViewExtras.h"
 
 #import <WebKitLegacy/DOMExtensions.h>
 #import <WebKitLegacy/WebDataSource.h>
@@ -35,6 +35,8 @@
 #import <WebKitLegacy/WebNSImageExtras.h>
 #import <WebKitLegacy/WebNSURLExtras.h>
 #import <WebKitLegacy/WebView.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if !PLATFORM(IOS_FAMILY)
 #import <WebKitLegacy/WebNSPasteboardExtras.h>
@@ -53,38 +55,35 @@
 
 @implementation NSView (WebExtras)
 
-- (NSView *)_web_superviewOfClass:(Class)class
+- (NSView *)_web_superviewOfClass:(Class)viewClass
 {
     NSView *view = [self superview];
-    while (view  && ![view isKindOfClass:class])
+    while (view  && ![view isKindOfClass:viewClass])
         view = [view superview];
     return view;
 }
 
 - (WebFrameView *)_web_parentWebFrameView
 {
-    return (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
+    return checked_objc_cast<WebFrameView>([self _web_superviewOfClass:[WebFrameView class]]);
 }
 
 #if !PLATFORM(IOS_FAMILY)
 // FIXME: Mail is the only client of _webView, remove this method once no versions of Mail need it.
 - (WebView *)_webView
 {
-    return (WebView *)[self _web_superviewOfClass:[WebView class]];
+    return checked_objc_cast<WebView>([self _web_superviewOfClass:[WebView class]]);
 }
 
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
-- (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
-                           withExpiration:(NSDate *)expiration
-                              xHysteresis:(float)xHysteresis
-                              yHysteresis:(float)yHysteresis
+- (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration xHysteresis:(float)xHysteresis yHysteresis:(float)yHysteresis
 {
-    NSEvent *nextEvent, *firstEvent, *dragEvent, *mouseUp;
+    NSEvent *nextEvent, *firstEvent, *mouseUp;
+    RetainPtr<NSEvent> dragEvent;
     BOOL dragIt;
 
-    if ([mouseDownEvent type] != NSEventTypeLeftMouseDown) {
+    if ([mouseDownEvent type] != NSEventTypeLeftMouseDown)
         return NO;
-    }
 
     nextEvent = nil;
     firstEvent = nil;
@@ -92,13 +91,9 @@
     mouseUp = nil;
     dragIt = NO;
 
-    while ((nextEvent = [[self window] nextEventMatchingMask:(NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged)
-                                                   untilDate:expiration
-                                                      inMode:NSEventTrackingRunLoopMode
-                                                     dequeue:YES]) != nil) {
-        if (firstEvent == nil) {
+    while ((nextEvent = [[self window] nextEventMatchingMask:(NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged) untilDate:expiration inMode:NSEventTrackingRunLoopMode dequeue:YES]) != nil) {
+        if (firstEvent == nil)
             firstEvent = nextEvent;
-        }
 
         if ([nextEvent type] == NSEventTypeLeftMouseDragged) {
             float deltax = ABS([nextEvent locationInWindow].x - [mouseDownEvent locationInWindow].x);
@@ -121,41 +116,31 @@
     }
 
     // Since we've been dequeuing the events (If we don't, we'll never see the mouse up...),
-    // we need to push some of the events back on.  It makes sense to put the first and last
+    // we need to push some of the events back on. It makes sense to put the first and last
     // drag events and the mouse up if there was one.
-    if (mouseUp != nil) {
+    if (mouseUp != nil)
         [NSApp postEvent:mouseUp atStart:YES];
-    }
-    if (dragEvent != nil) {
+    if (dragEvent != nil)
         [NSApp postEvent:dragEvent atStart:YES];
-    }
-    if (firstEvent != mouseUp && firstEvent != dragEvent) {
+    if (firstEvent != mouseUp && firstEvent != dragEvent)
         [NSApp postEvent:firstEvent atStart:YES];
-    }
 
     return dragIt;
 }
 
-- (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
-                           withExpiration:(NSDate *)expiration
+- (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration
 {
-    return [self _web_dragShouldBeginFromMouseDown:mouseDownEvent
-                                    withExpiration:expiration
-                                       xHysteresis:WebDragStartHysteresisX
-                                       yHysteresis:WebDragStartHysteresisY];
+    return [self _web_dragShouldBeginFromMouseDown:mouseDownEvent withExpiration:expiration xHysteresis:WebDragStartHysteresisX yHysteresis:WebDragStartHysteresisY];
 }
 
-
-- (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
+- (NSDragOperation)_web_dragOperationForDraggingInfo:(id<NSDraggingInfo>)sender
 {
-    if (![NSApp modalWindow] && 
-        ![[self window] attachedSheet] &&
-        [sender draggingSource] != self &&
-        [[sender draggingPasteboard] _web_bestURL]) {
-
+    if (![NSApp modalWindow]
+        && ![[self window] attachedSheet]
+        && [sender draggingSource] != self
+        && [[sender draggingPasteboard] _web_bestURL])
         return NSDragOperationCopy;
-    }
-    
+
     return NSDragOperationNone;
 }
 
@@ -164,9 +149,7 @@
 - (BOOL)_web_firstResponderIsSelfOrDescendantView
 {
     NSResponder *responder = [[self window] firstResponder];
-    return (responder && 
-           (responder == self || 
-           ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
+    return responder && (responder == self || [dynamic_objc_cast<NSView>(responder) isDescendantOf:self]);
 }
 
 @end

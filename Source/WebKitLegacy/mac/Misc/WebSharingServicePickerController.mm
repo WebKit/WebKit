@@ -40,7 +40,7 @@
 #import <WebCore/NodeDocument.h>
 #import <WebCore/Page.h>
 
-static NSString *serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
+static NSString * const serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
 
 WebSharingServicePickerClient::WebSharingServicePickerClient(WebView *webView)
     : m_webView(webView)
@@ -145,7 +145,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 
     if (RefPtr node = page->contextMenuController().context().hitTestResult().innerNode()) {
         if (RefPtr frame = node->document().frame())
-            frame->editor().replaceNodeFromPasteboard(*node, serviceControlsPasteboardName);
+            protect(frame->editor())->replaceNodeFromPasteboard(*node, serviceControlsPasteboardName);
     }
 
     [self clear];
@@ -220,7 +220,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     else if ([item isKindOfClass:[NSAttributedString class]]) {
         if (RefPtr frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame())
-            frame->editor().replaceSelectionWithAttributedString(item);
+            protect(frame->editor())->replaceSelectionWithAttributedString(item);
     } else
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
 }
