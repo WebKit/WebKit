@@ -1700,6 +1700,34 @@ std::span<JSBigInt::Digit> JSBigInt::multiplyToom3(std::span<const Digit> x, std
     return z;
 }
 
+// {x} += {carry}, propagating through the whole of {x} at most. Returns the carry that is left.
+static JSBigInt::Digit addDigitAndPropagate(std::span<JSBigInt::Digit> x, JSBigInt::Digit carry)
+{
+    for (size_t i = 0; i < x.size() && carry; i++) {
+        JSBigInt::Digit newCarry = 0;
+        x[i] = JSBigInt::digitAdd(x[i], carry, newCarry);
+        carry = newCarry;
+    }
+    return carry;
+}
+
+// {x} -= {borrow}, propagating through the whole of {x} at most. Returns the borrow that is left.
+static JSBigInt::Digit subtractDigitAndPropagate(std::span<JSBigInt::Digit> x, JSBigInt::Digit borrow)
+{
+    for (size_t i = 0; i < x.size() && borrow; i++) {
+        JSBigInt::Digit newBorrow = 0;
+        x[i] = JSBigInt::digitSub(x[i], borrow, newBorrow);
+        borrow = newBorrow;
+    }
+    return borrow;
+}
+
+static void copyAndZeroExtend(std::span<JSBigInt::Digit> destination, std::span<const JSBigInt::Digit> source)
+{
+    memcpySpan(destination.first(source.size()), source);
+    zeroSpan(destination.subspan(source.size()));
+}
+
 // FFT-based multiplication, due to Schönhage and Strassen, ported from V8 [1]. The implementation
 // mostly follows the description given in Christoph Lüders: Fast Multiplication of Large Integers,
 // http://arxiv.org/abs/1503.04955
@@ -1727,28 +1755,6 @@ static constexpr size_t innerThreshold = 200;
 // F_n is of the shape 2^K + 1, and for convenience we use K to count the number of digits rather
 // than the number of bits, so F_n (or K) are implicit and deduced from the length of the digits
 // span, which is K + 1.
-
-// {x} += {carry}, propagating through the whole of {x} at most. Returns the carry that is left.
-static Digit addDigitAndPropagate(std::span<Digit> x, Digit carry)
-{
-    for (size_t i = 0; i < x.size() && carry; i++) {
-        Digit newCarry = 0;
-        x[i] = JSBigInt::digitAdd(x[i], carry, newCarry);
-        carry = newCarry;
-    }
-    return carry;
-}
-
-// {x} -= {borrow}, propagating through the whole of {x} at most. Returns the borrow that is left.
-static Digit subtractDigitAndPropagate(std::span<Digit> x, Digit borrow)
-{
-    for (size_t i = 0; i < x.size() && borrow; i++) {
-        Digit newBorrow = 0;
-        x[i] = JSBigInt::digitSub(x[i], borrow, newBorrow);
-        borrow = newBorrow;
-    }
-    return borrow;
-}
 
 // Folds the top digit {high} back into {x}: 2^K == -1 (mod F_n), so this subtracts {high} from the
 // low digits (adds when negative) and clears x[K]. The borrow can leave x[K] == -1, hence the
@@ -2136,12 +2142,6 @@ static Parameters getParameters(size_t N)
 
 // Part 3: Fast Fourier Transformation.
 
-static void copyAndZeroExtend(std::span<Digit> destination, std::span<const Digit> source)
-{
-    memcpySpan(destination.first(source.size()), source);
-    zeroSpan(destination.subspan(source.size()));
-}
-
 // Helper function for {FFTContainer::counterWeightAndRecombine} below. After counter-weighting,
 // coefficient k is the sum of k + 1 products of two s-digit chunks, so it is below
 // {threshold} * 2^(2 * s * digitBits); anything larger is a negative value wrapped mod F_n.
@@ -2220,10 +2220,10 @@ void JSBigInt::FFTContainer::startDefault(std::span<const Digit> x, size_t chunk
         if (currentTheta) {
             // Multiply with theta^i, and reduce modulo 2^K + 1.
             // We pass theta as a shift amount; it really means 2^theta.
-            FFT::copyAndZeroExtend(temp(), x.first(chunkSize));
+            copyAndZeroExtend(temp(), x.first(chunkSize));
             FFT::shiftModFn(part(i), temp(), currentTheta, chunkSize);
         } else
-            FFT::copyAndZeroExtend(part(i), x.first(chunkSize));
+            copyAndZeroExtend(part(i), x.first(chunkSize));
         x = x.subspan(chunkSize);
     }
     ASSERT(x.empty());
@@ -2243,13 +2243,13 @@ void JSBigInt::FFTContainer::start(std::span<const Digit> x, size_t chunkSize, s
     size_t nhalf = m_n / 2;
     // Unrolled first iteration.
     chunkSize = std::min(chunkSize, x.size());
-    FFT::copyAndZeroExtend(part(0), x.first(chunkSize));
-    FFT::copyAndZeroExtend(part(nhalf), x.first(chunkSize));
+    copyAndZeroExtend(part(0), x.first(chunkSize));
+    copyAndZeroExtend(part(nhalf), x.first(chunkSize));
     x = x.subspan(chunkSize);
     size_t i = 1;
     for (; i < nhalf && !x.empty(); i++) {
         chunkSize = std::min(chunkSize, x.size());
-        FFT::copyAndZeroExtend(part(i), x.first(chunkSize));
+        copyAndZeroExtend(part(i), x.first(chunkSize));
         size_t w = omega * i;
         FFT::shiftModFn(part(i + nhalf), part(i), w, chunkSize);
         x = x.subspan(chunkSize);
@@ -2789,7 +2789,8 @@ std::span<JSBigInt::Digit> JSBigInt::rightShift(std::span<Digit> z, std::span<co
 // Q = (A - R) / B, with 0 <= R < B.
 // Both Q and R are optional: callers that are only interested in one of them
 // can pass the other with len == 0.
-// If Q is present, its length must be at least A.len - B.len + 1.
+// If Q is present, its length must be at least A.len - B.len + 1, or A.len - B.len if the top
+// digit of the quotient is known to be zero.
 // If R is present, its length must be at least B.len.
 // Callers must not assume either returned span is trimmed of leading zero digits.
 // See Knuth, Volume 2, section 4.3.1, Algorithm D.
@@ -2797,7 +2798,7 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
 {
     RELEASE_ASSERT(b.size() >= 2); // Use divideSingle otherwise.
     RELEASE_ASSERT(a.size() >= b.size()); // No-op otherwise.
-    RELEASE_ASSERT(q.empty() || q.size() >= a.size() - b.size() + 1);
+    RELEASE_ASSERT(q.empty() || q.size() >= a.size() - b.size());
     RELEASE_ASSERT(r.empty() || r.size() >= b.size());
 
     // The unusual variable names inside this function are consistent with
@@ -2856,7 +2857,7 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
     RELEASE_ASSERT(m <= uSpan.size());
     RELEASE_ASSERT(n + 1 <= uSpan.size() - m);
     if (!q.empty())
-        q = q.first(m + 1);
+        q = q.first(std::min(m + 1, q.size()));
 
     // D2.
     // Iterate over the dividend's digits (like the "grad school" algorithm).
@@ -2916,6 +2917,8 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
 
         if (j < q.size())
             q[j] = qhat;
+        else
+            ASSERT(q.empty() || !qhat);
     }
 
     auto rResult = r;
@@ -2923,6 +2926,247 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
         rResult = rightShift(r, uSpan, shift);
 
     return { q, rResult };
+}
+
+// Burnikel-Ziegler division, ported from V8 [1].
+// Reference: "Fast Recursive Division" by Christoph Burnikel and Joachim Ziegler, Research Report
+// MPI-I-98-1-022, Max-Planck-Institut fuer Informatik, 1998.
+//
+// [1]: https://source.chromium.org/chromium/chromium/src/+/main:v8/src/bigint/div-burnikel.cc
+static constexpr size_t burnikelZieglerThreshold = 16;
+static constexpr size_t minBurnikelZieglerDivisorSize = 24;
+static constexpr size_t minBurnikelZieglerQuotientSize = 48;
+
+// Q := A / B and R := A % B for B normalized (its top bit is set), A of exactly twice B's length and
+// A's top half less than B, so that Q has B's length too. Every digit of Q and R is written.
+void JSBigInt::burnikelZieglerBasecase(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b)
+{
+    RELEASE_ASSERT(q.size() == b.size());
+    RELEASE_ASSERT(r.size() == b.size());
+    ASSERT(b.back() >> (digitBits - 1));
+    a = normalize(a);
+    auto comparison = compareDigits(a, b);
+    if (comparison != ComparisonResult::GreaterThan) {
+        zeroSpan(q);
+        if (comparison == ComparisonResult::Equal) {
+            // If A == B, then Q = 1, R = 0.
+            zeroSpan(r);
+            q.front() = 1;
+        } else {
+            // If A < B, then Q = 0, R = A.
+            copyAndZeroExtend(r, a);
+        }
+        return;
+    }
+    // FIXME: divideSchoolbook allocates its copy of the dividend on the heap when it is longer than 15 digits.
+    auto [quotient, remainder] = divideSchoolbook(q, r, a, b);
+    zeroSpan(q.subspan(quotient.size()));
+    zeroSpan(r.subspan(remainder.size()));
+}
+
+// Algorithm 2 from the paper. Variable names same as there.
+// Returns Q(uotient) and R(emainder) for A/B, with B having two thirds the size of A = [A1, A2, A3].
+// {scratch} holds the product D = Qhat * B2 and, while D is not live yet, the recursion.
+void JSBigInt::burnikelZieglerD3n2n(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a1a2, std::span<const Digit> a3, std::span<const Digit> b, std::span<Digit> scratch)
+{
+    RELEASE_ASSERT(!(b.size() & 1));
+    size_t n = b.size() / 2;
+    RELEASE_ASSERT(a1a2.size() == 2 * n);
+    RELEASE_ASSERT(a3.size() == n);
+    RELEASE_ASSERT(q.size() == n);
+    RELEASE_ASSERT(r.size() == 2 * n);
+    RELEASE_ASSERT(scratch.size() >= 2 * n);
+    // Actual condition is stricter than length: A < B * 2^(digitBits * n)
+    ASSERT(compareDigits(a1a2, b) == ComparisonResult::LessThan);
+    // 1. Split A into three parts A = [A1, A2, A3] with Ai < 2^(digitBits * n).
+    auto a1 = a1a2.subspan(n);
+    auto a2 = a1a2.first(n);
+    // 2. Split B into two parts B = [B1, B2] with Bi < 2^(digitBits * n).
+    auto b1 = b.subspan(n);
+    auto b2 = b.first(n);
+    // 3. Distinguish the cases A1 < B1 or A1 >= B1.
+    auto qhat = q;
+    auto r1 = r.subspan(n);
+    Digit r1High = 0;
+    if (compareDigits(a1, b1) == ComparisonResult::LessThan) {
+        // 3a. If A1 < B1, compute Qhat = floor([A1, A2] / B1) with remainder R1 using algorithm
+        //     D2n1n.
+        burnikelZieglerD2n1n(qhat, r1, a1a2, b1, scratch);
+    } else {
+        // 3b. If A1 >= B1, set Qhat = 2^(digitBits * n) - 1 and set R1 = [A1, A2] - [B1, 0] + [0, B1]
+        memsetSpan(qhat, 0xFF);
+        // Step 1: compute A1 - B1, which can't underflow because of the comparison guarding this
+        // else-branch, and always has a one-digit result because of this function's
+        // preconditions.
+        subZeroPadded(r1, a1, b1);
+        ASSERT(normalize(std::span<const Digit>(r1)).size() <= 1);
+        r1High = r1.front();
+        // Step 2: compute A2 + B1.
+        r1High += addAndReturnCarry(r1, a2, b1);
+    }
+    // 4. Compute D = Qhat * B2 using (Karatsuba) multiplication.
+    auto d = scratch.first(2 * n);
+    multiplyZeroPadded(qhat, b2, d);
+    // 5. Compute Rhat = R1*2^(digitBits * n) + A3 - D = [R1, A3] - D.
+    copyAndZeroExtend(r.first(n), a3);
+    // 6. As long as Rhat < 0, repeat:
+    while (!r1High && !greaterThanOrEqual(r, d)) {
+        // 6a. Rhat = Rhat + B
+        r1High += inplaceAdd(r, b);
+        // 6b. Qhat = Qhat - 1
+        Digit qhatBorrow = subtractDigitAndPropagate(qhat, /* borrow */ 1);
+        ASSERT_UNUSED(qhatBorrow, !qhatBorrow);
+    }
+    // 5. Compute Rhat = R1*2^(digitBits * n) + A3 - D = [R1, A3] - D.
+    Digit borrow = inplaceSub(r, d);
+    ASSERT_UNUSED(borrow, borrow == r1High);
+    ASSERT(compareDigits(r, b) == ComparisonResult::LessThan);
+    // 7. Return R = Rhat, Q = Qhat.
+}
+
+// Algorithm 1 from the paper. Variable names same as there.
+// Returns Q(uotient) and R(emainder) for A/B, with A twice the size of B.
+// {scratch} must have room for the recursion, 2 * B.size() digits.
+void JSBigInt::burnikelZieglerD2n1n(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b, std::span<Digit> scratch)
+{
+    size_t n = b.size();
+    RELEASE_ASSERT(a.size() == 2 * n);
+    RELEASE_ASSERT(q.size() == n);
+    RELEASE_ASSERT(r.size() == n);
+    // A < B * 2^(digitBits * n)
+    ASSERT(compareDigits(a.subspan(n), b) == ComparisonResult::LessThan);
+    // 1. If n is odd or smaller than some convenient constant, compute Q and R by school division
+    //    and return.
+    if ((n & 1) || n < burnikelZieglerThreshold)
+        return burnikelZieglerBasecase(q, r, a, b);
+    RELEASE_ASSERT(scratch.size() >= 2 * n);
+    // 2. Split A into four parts A = [A1, ..., A4] with Ai < 2^(digitBits * n / 2). Split B into
+    //    two parts [B2, B1] with Bi < 2^(digitBits * n / 2).
+    auto a1a2 = a.subspan(n);
+    auto a3 = a.subspan(n / 2, n / 2);
+    auto a4 = a.first(n / 2);
+    // 3. Compute the high part Q1 of floor(A/B) as Q1 = floor([A1, A2, A3] / [B1, B2]) with
+    //    remainder R1 = [R11, R12], using algorithm D3n2n. R1 outlives the recursion, so it takes
+    //    the front of {scratch} and the recursion the rest.
+    auto r1 = scratch.first(n);
+    auto recursionScratch = scratch.subspan(n);
+    burnikelZieglerD3n2n(q.subspan(n / 2), r1, a1a2, a3, b, recursionScratch);
+    // 4. Compute the low part Q2 of floor(A/B) as Q2 = floor([R11, R12, A4] / [B1, B2]) with
+    //    remainder R, using algorithm D3n2n.
+    burnikelZieglerD3n2n(q.first(n / 2), r, r1, a4, b, recursionScratch);
+    // 5. Return Q = [Q1, Q2] and R.
+}
+
+// Algorithm 3 from the paper. Variable names same as there.
+// Returns Q(uotient) and R(emainder) for A/B (no size restrictions). Both Q and R are optional. Every
+// digit of Q and of R is written.
+std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::divideBurnikelZiegler(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b)
+{
+    RELEASE_ASSERT(a.size() >= b.size());
+    RELEASE_ASSERT(r.empty() || r.size() >= b.size());
+    RELEASE_ASSERT(q.empty() || q.size() > a.size() - b.size());
+    // Bounding the operands from above is what tells the compiler the block sizes below cannot wrap.
+    RELEASE_ASSERT(a.size() <= maxLength);
+    ASSERT(a.back());
+    ASSERT(b.back());
+    size_t quotientLength = a.size() - b.size() + 1;
+    size_t s = b.size();
+    // The requirements are:
+    // - n >= s, n as small as possible.
+    // - m must be a power of two.
+    // 1. Set m = min {2^k | 2^k * burnikelZieglerThreshold > s}.
+    size_t m = static_cast<size_t>(1) << std::bit_width(s / burnikelZieglerThreshold);
+    // 2. Set j = roundup(s/m) and n = j * m.
+    size_t j = (s + m - 1) / m;
+    size_t n = j * m;
+    // 3. Set sigma = max{tao | 2^tao * B < 2^(digitBits * n)}.
+    unsigned sigma = clz(b.back());
+    size_t digitShift = n - s;
+    // We need an extra digit if A's top digit does not have enough space for the left-shift by
+    // {sigma}. Additionally, the top bit of A must be 0 (see "-1" in step 5 below), which combined
+    // with B being normalized (i.e. B's top bit is 1) ensures the preconditions of the helper
+    // functions.
+    size_t extraDigit = clz(a.back()) < sigma + 1 ? 1 : 0;
+    size_t aLength = a.size() + digitShift + extraDigit;
+    // 4. Set B = B * 2^sigma to normalize B. Shift A by the same amount.
+    // Usage of temp: B[n], Z[2n], Ri[n], Qi[n], scratch for the recursion [2n], A[aLength].
+    Vector<Digit> temp(n * 7 + aLength);
+    auto tempSpan = temp.mutableSpan();
+    auto bShifted = tempSpan.first(n);
+    auto z = tempSpan.subspan(n, 2 * n);
+    auto ri = tempSpan.subspan(3 * n, n);
+    auto qi = tempSpan.subspan(4 * n, n);
+    auto scratch = tempSpan.subspan(5 * n, 2 * n);
+    auto aShifted = tempSpan.subspan(7 * n, aLength);
+    zeroSpan(bShifted.first(digitShift));
+    auto shiftedDivisor = leftShift(bShifted.subspan(digitShift), b, sigma);
+    ASSERT_UNUSED(shiftedDivisor, shiftedDivisor.size() == s);
+    b = bShifted;
+    zeroSpan(aShifted.first(digitShift));
+    auto shiftedDividend = leftShift(aShifted.subspan(digitShift), a, sigma);
+    // A shift of zero copies a's digits without the carry digit.
+    zeroSpan(aShifted.subspan(digitShift + shiftedDividend.size()));
+    a = aShifted;
+    // 5. Set t = min{t >= 2 | A < 2^(digitBits * t * n - 1)}.
+    size_t t = std::max<size_t>((aLength + n - 1) / n, 2);
+    // Every block below the top one is a full n digits of Q.
+    RELEASE_ASSERT(q.empty() || q.size() >= n * (t - 2));
+    // 6. Split A conceptually into t blocks.
+    // 7. Set Z_(t-2) = [A_(t-1), A_(t-2)].
+    copyAndZeroExtend(z, clampedSubspan(a, n * (t - 2), 2 * n));
+    // 8. For i from t-2 downto 0 do:
+    {
+        // First iteration unrolled and specialized.
+        // We might not have n digits at the top of Q, so use temporary storage for Qi...
+        burnikelZieglerD2n1n(qi, ri, z, b, scratch);
+        if (!q.empty()) {
+            // ...but there *will* be enough space for any non-zero result digits!
+            auto quotientChunk = normalize(std::span<const Digit>(qi));
+            auto target = q.subspan(n * (t - 2));
+            ASSERT(quotientChunk.size() <= target.size());
+            copyAndZeroExtend(target, quotientChunk);
+        }
+    }
+    // Now loop over any remaining iterations.
+    for (size_t i : std::views::iota(size_t { 0 }, t - 2) | std::views::reverse) {
+        // 8b. If i > 0, set Z_(i-1) = [Ri, A_(i-1)].
+        // (De-duped with unrolled first iteration, hence reading A_(i).)
+        copyAndZeroExtend(z.subspan(n), ri);
+        copyAndZeroExtend(z.first(n), clampedSubspan(a, n * i, n));
+        // 8a. Using algorithm D2n1n compute Qi, Ri such that Zi = B*Qi + Ri.
+        burnikelZieglerD2n1n(q.empty() ? qi : q.subspan(i * n, n), ri, z, b, scratch);
+    }
+    // 9. Return Q = [Q_(t-2), ..., Q_0] and R = R_0 * 2^(-sigma).
+    ASSERT(std::ranges::all_of(ri.first(digitShift), [](Digit digit) {
+        return !digit;
+    }));
+    if (!r.empty()) {
+        auto shifted = rightShift(r, ri.subspan(digitShift), sigma);
+        zeroSpan(r.subspan(shifted.size()));
+        r = r.first(s);
+    }
+    if (!q.empty())
+        q = q.first(quotientLength);
+    return { q, r };
+}
+
+static constexpr bool shouldUseBurnikelZiegler(size_t dividendSize, size_t divisorSize)
+{
+    return divisorSize >= minBurnikelZieglerDivisorSize && dividendSize - divisorSize + 1 >= minBurnikelZieglerQuotientSize;
+}
+
+// Computes Q(uotient) and R(emainder) for A/B with the algorithm suited to the operands' sizes.
+// Either Q or R may be empty; Q, when present, must have at least A.len - B.len + 1 digits. The
+// returned spans are not normalized.
+std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::divideDigitsInto(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b)
+{
+    RELEASE_ASSERT(b.size() >= 2);
+    RELEASE_ASSERT(a.size() >= b.size());
+    RELEASE_ASSERT(q.empty() || q.size() > a.size() - b.size());
+    RELEASE_ASSERT(r.empty() || r.size() >= b.size());
+    if (shouldUseBurnikelZiegler(a.size(), b.size()))
+        return divideBurnikelZiegler(q, r, a, b);
+    return divideSchoolbook(q, r, a, b);
 }
 
 static ALWAYS_INLINE JSBigInt::Digit estimateQhat(std::span<const JSBigInt::Digit> a, std::span<const JSBigInt::Digit> b)
@@ -3125,7 +3369,7 @@ JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntIm
     }
 
     Vector<Digit, 16> q(qLength);
-    auto [qSpan, rSpan] = divideSchoolbook(q.mutableSpan(), { }, xSpan, ySpan);
+    auto [qSpan, rSpan] = divideDigitsInto(q.mutableSpan(), { }, xSpan, ySpan);
     RELEASE_AND_RETURN(scope, tryCreateFromImpl(globalObject, vm, resultSign, qSpan));
 }
 
@@ -3245,7 +3489,7 @@ std::span<JSBigInt::Digit> JSBigInt::divideDigits(std::span<Digit> quotient, std
         return quotient.first(1);
     }
 
-    auto [quotientSpan, remainderSpan] = divideSchoolbook(quotient, { }, x, y);
+    auto [quotientSpan, remainderSpan] = divideDigitsInto(quotient, { }, x, y);
     return normalize(quotientSpan);
 }
 
@@ -3894,7 +4138,7 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
     if (xSpan.size() == ySpan.size())
         rSpan = remainderSameSize(r.mutableSpan(), xSpan, ySpan);
     else
-        rSpan = std::get<1>(divideSchoolbook({ }, r.mutableSpan(), xSpan, ySpan));
+        rSpan = std::get<1>(divideDigitsInto({ }, r.mutableSpan(), xSpan, ySpan));
     RELEASE_AND_RETURN(scope, tryCreateFromImpl(globalObject, vm, x.sign(), rSpan));
 }
 
