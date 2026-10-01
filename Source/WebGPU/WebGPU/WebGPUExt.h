@@ -190,6 +190,7 @@ WGPU_EXPORT void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStr
 WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, uint32_t frameIndex);
 
 WGPU_EXPORT double wgpuSurfaceGetLastFrameGPUCostSeconds(WGPUSurface surface);
+WGPU_EXPORT double wgpuSurfaceGetLastFramePresentStallSeconds(WGPUSurface surface);
 
 WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
 WGPU_EXPORT void wgpuQueueCopyExternalImageToTexture(WGPUQueue queue, const WGPUImageCopyExternalImage* source, const WGPUImageCopyTextureTagged* destination, const WGPUExtent3D* copySize) WGPU_FUNCTION_ATTRIBUTE;

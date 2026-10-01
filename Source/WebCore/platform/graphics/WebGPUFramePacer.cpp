@@ -31,12 +31,23 @@
 namespace WebCore {
 
 static constexpr size_t sampleWindowSize = 16;
-static constexpr size_t warmUpSamples = 8;
-static constexpr double sustainablePercentile = 0.90;
-static constexpr unsigned overloadSamplesToStepDown = 4;
-static constexpr unsigned headroomSamplesToStepUp = 30;
+static constexpr size_t minimumStallFreeSamplesToStepUp = 2;
+static constexpr unsigned stallsToStepDown = 4;
 static constexpr double budgetToleranceFactor = 0.98;
 static constexpr Seconds idleTimeout = 350_ms;
+// Below this a stall is scheduling jitter around the wait, not the GPU keeping the present waiting.
+static constexpr Seconds significantPresentStall = 1_ms;
+static constexpr Seconds stallFreeProbeInterval = 500_ms;
+
+// The median rather than the extreme, so one frame unlike its neighbours decides nothing.
+static Seconds medianDuration(const Deque<Seconds>& durations)
+{
+    ASSERT(!durations.isEmpty());
+    Vector<Seconds> sorted;
+    sorted.appendRange(durations.begin(), durations.end());
+    std::sort(sorted.begin(), sorted.end());
+    return sorted[sorted.size() / 2];
+}
 
 WebGPUFramePacer::WebGPUFramePacer() = default;
 
@@ -63,85 +74,95 @@ void WebGPUFramePacer::rebuildDivisorLadder()
 
 void WebGPUFramePacer::reset()
 {
-    m_frameCosts.clear();
+    m_stallFreeFrameDurations.clear();
+    m_stallingFrameDurations.clear();
     m_lastPresentTime = std::nullopt;
+    m_lastRateDecisionTime = std::nullopt;
     m_currentLadderIndex = 0;
-    m_consecutiveOverload = 0;
-    m_consecutiveHeadroom = 0;
+    m_consecutiveStalls = 0;
 }
 
-void WebGPUFramePacer::recordFrame(Seconds frameCost, MonotonicTime presentTime)
+void WebGPUFramePacer::recordFrame(Seconds frameDuration, Seconds presentStall, MonotonicTime presentTime)
 {
     if (m_lastPresentTime && presentTime - *m_lastPresentTime > idleTimeout)
         reset();
     m_lastPresentTime = presentTime;
 
-    if (frameCost <= 0_s || frameCost > idleTimeout)
+    if (m_divisorLadder.isEmpty())
         return;
 
-    m_frameCosts.append(frameCost);
-    if (m_frameCosts.size() > sampleWindowSize)
-        m_frameCosts.removeFirst();
+    if (presentStall >= significantPresentStall) {
+        // A frame longer than the presentation interval only matters once it backs presents up.
+        m_lastRateDecisionTime = presentTime;
+        m_stallFreeFrameDurations.clear();
+        if (frameDuration > 0_s && frameDuration <= idleTimeout) {
+            m_stallingFrameDurations.append(frameDuration);
+            if (m_stallingFrameDurations.size() > sampleWindowSize)
+                m_stallingFrameDurations.removeFirst();
+        }
+        if (++m_consecutiveStalls >= stallsToStepDown)
+            stepDownForStalls();
+        return;
+    }
 
-    runController();
+    m_consecutiveStalls = 0;
+    m_stallingFrameDurations.clear();
+
+    if (frameDuration <= 0_s || frameDuration > idleTimeout)
+        return;
+
+    m_stallFreeFrameDurations.append(frameDuration);
+    if (m_stallFreeFrameDurations.size() > sampleWindowSize)
+        m_stallFreeFrameDurations.removeFirst();
+
+    stepUpIfStallFree(presentTime);
 }
 
-void WebGPUFramePacer::runController()
+size_t WebGPUFramePacer::ladderIndexForDuration(Seconds duration) const
 {
-    if (m_frameCosts.size() < warmUpSamples || m_divisorLadder.isEmpty())
-        return;
-
-    Vector<Seconds> sorted;
-    sorted.appendRange(m_frameCosts.begin(), m_frameCosts.end());
-    std::sort(sorted.begin(), sorted.end());
-    size_t percentileIndex = std::min(sorted.size() - 1, static_cast<size_t>(sustainablePercentile * sorted.size()));
-    double sustainableCost = sorted[percentileIndex].seconds();
-    if (sustainableCost <= 0)
-        return;
-
-    size_t targetIndex = 0;
+    ASSERT(!m_divisorLadder.isEmpty());
     for (size_t i = 0; i < m_divisorLadder.size(); ++i) {
-        if (1.0 / m_divisorLadder[i] >= budgetToleranceFactor * sustainableCost) {
-            targetIndex = i;
-            break;
-        }
-        targetIndex = i;
+        if (1.0 / m_divisorLadder[i] >= budgetToleranceFactor * duration.seconds())
+            return i;
     }
+    return m_divisorLadder.size() - 1;
+}
 
-    if (!m_currentLadderIndex && targetIndex > m_currentLadderIndex) {
-        m_currentLadderIndex = targetIndex;
-        m_consecutiveOverload = 0;
-        m_consecutiveHeadroom = 0;
+void WebGPUFramePacer::stepDownForStalls()
+{
+    m_consecutiveStalls = 0;
+    if (m_stallingFrameDurations.isEmpty())
         return;
-    }
 
-    if (targetIndex > m_currentLadderIndex) {
-        m_consecutiveHeadroom = 0;
-        if (++m_consecutiveOverload >= overloadSamplesToStepDown) {
-            m_currentLadderIndex = targetIndex;
-            m_consecutiveOverload = 0;
-        }
-    } else if (targetIndex < m_currentLadderIndex) {
-        m_consecutiveOverload = 0;
-        if (++m_consecutiveHeadroom >= headroomSamplesToStepUp) {
-            --m_currentLadderIndex;
-            m_consecutiveHeadroom = 0;
-        }
-    } else {
-        m_consecutiveOverload = 0;
-        m_consecutiveHeadroom = 0;
-    }
+    size_t targetIndex = ladderIndexForDuration(medianDuration(m_stallingFrameDurations));
+    if (targetIndex <= m_currentLadderIndex)
+        return;
+
+    m_currentLadderIndex = targetIndex;
+}
+
+void WebGPUFramePacer::stepUpIfStallFree(MonotonicTime presentTime)
+{
+    if (!m_currentLadderIndex || m_stallFreeFrameDurations.size() < minimumStallFreeSamplesToStepUp)
+        return;
+    if (m_lastRateDecisionTime && presentTime - *m_lastRateDecisionTime < stallFreeProbeInterval)
+        return;
+
+    size_t targetIndex = ladderIndexForDuration(medianDuration(m_stallFreeFrameDurations));
+    if (targetIndex >= m_currentLadderIndex)
+        return;
+
+    m_currentLadderIndex = targetIndex;
+    m_lastRateDecisionTime = presentTime;
+    m_stallFreeFrameDurations.clear();
 }
 
 std::optional<FramesPerSecond> WebGPUFramePacer::preferredFramesPerSecond(MonotonicTime now) const
 {
-    if (m_frameCosts.size() < warmUpSamples || m_divisorLadder.isEmpty())
+    if (!m_currentLadderIndex || m_divisorLadder.isEmpty())
         return std::nullopt;
 
     if (m_lastPresentTime && now - *m_lastPresentTime > idleTimeout)
-        return std::nullopt;
-
-    if (!m_currentLadderIndex)
         return std::nullopt;
 
     return m_divisorLadder[m_currentLadderIndex];

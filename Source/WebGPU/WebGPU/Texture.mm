@@ -3390,6 +3390,8 @@ void Texture::recreateIfNeeded()
     // the frame that last used this backing left behind, so forget having cleared it and let the
     // next use initialize it again.
     setPreviouslyCleared(0, 0, false);
+    // The cost recorded against this backing belongs to the frame that is over, not the one starting now.
+    resetGPUFrameCost();
 }
 
 void Texture::makeCanvasBacking()

@@ -111,6 +111,11 @@ double wgpuSurfaceGetLastFrameGPUCostSeconds(WGPUSurface surface)
     return protect(WebGPU::Metal::fromAPI(surface))->lastFrameGPUCost().seconds();
 }
 
+double wgpuSurfaceGetLastFramePresentStallSeconds(WGPUSurface surface)
+{
+    return protect(WebGPU::Metal::fromAPI(surface))->lastFramePresentStall().seconds();
+}
+
 WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, uint32_t index)
 {
     return protect(WebGPU::Metal::fromAPI(swapChain))->getCurrentTexture(index);

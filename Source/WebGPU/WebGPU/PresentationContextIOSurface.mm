@@ -30,6 +30,7 @@
 #import "Texture.h"
 #import "TextureView.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
@@ -231,6 +232,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     m_inFlightFrames.clear();
     m_maximumInFlightFrames = 0;
     m_lastDrainedFrameGPUCost = 0_s;
+    m_lastFramePresentStall = 0_s;
     m_invalidTexture = Texture::createInvalid(device);
 
     bool reportValidationErrors = descriptor.reportValidationErrors;
@@ -425,6 +427,7 @@ void PresentationContextIOSurface::unconfigure()
     m_inFlightFrames.clear();
     m_maximumInFlightFrames = 0;
     m_lastDrainedFrameGPUCost = 0_s;
+    m_lastFramePresentStall = 0_s;
     m_device = nullptr;
 }
 
@@ -433,11 +436,16 @@ void PresentationContextIOSurface::waitForInFlightFrameSlot()
     if (!m_maximumInFlightFrames)
         return;
 
+    Seconds stall;
     while (m_inFlightFrames.size() >= m_maximumInFlightFrames) {
         Ref<Texture> oldestFrame = m_inFlightFrames.takeFirst();
+        // Blocking here is what tells the frame pacer the canvas is presenting faster than the GPU retires frames.
+        auto waitStartTime = MonotonicTime::now();
         bool completed = oldestFrame->waitForCommandBufferCompletion();
+        stall += MonotonicTime::now() - waitStartTime;
         m_lastDrainedFrameGPUCost = completed ? oldestFrame->gpuFrameCost() : 0_s;
     }
+    m_lastFramePresentStall = stall;
 }
 
 void PresentationContextIOSurface::present(uint32_t currentIndex)
@@ -490,12 +498,10 @@ Texture* PresentationContextIOSurface::getCurrentTexture(uint32_t currentIndex)
     auto& texturePtr = m_renderBuffers[currentIndex].luminanceClampTexture;
     if (texturePtr.get()) {
         texturePtr->recreateIfNeeded();
-        texturePtr->resetGPUFrameCost();
         return texturePtr.get();
     }
     auto& texture = m_renderBuffers[currentIndex].texture;
     texture->recreateIfNeeded();
-    texture->resetGPUFrameCost();
     return texture.ptr();
 }
 

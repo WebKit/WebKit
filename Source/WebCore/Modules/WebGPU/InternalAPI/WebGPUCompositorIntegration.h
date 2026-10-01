@@ -64,6 +64,7 @@ public:
 
     virtual void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) = 0;
     virtual Seconds lastFrameGPUCost() const { return 0_s; }
+    virtual Seconds lastFramePresentStall() const { return 0_s; }
     virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) = 0;
     virtual void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t bufferIndex) = 0;
     virtual void updateContentsHeadroom(float) = 0;

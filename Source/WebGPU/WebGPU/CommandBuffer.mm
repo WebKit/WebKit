@@ -121,17 +121,18 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
     if (RefPtr instance = m_device->instance())
         instance->retainCommandBuffer(*this, m_commandBuffer);
     [m_commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> completedCommandBuffer) {
-        double kernelStartTime = completedCommandBuffer.kernelStartTime;
-        double kernelEndTime = completedCommandBuffer.kernelEndTime;
-        protectedThis->m_gpuExecutionDurationSeconds.store(kernelEndTime - kernelStartTime, std::memory_order_relaxed);
+        // GPUStartTime/GPUEndTime bracket execution on the GPU; kernelStartTime/kernelEndTime only bracket the driver scheduling it.
+        double gpuStartTime = completedCommandBuffer.GPUStartTime;
+        double gpuEndTime = completedCommandBuffer.GPUEndTime;
+        protectedThis->m_gpuExecutionDurationSeconds.store(gpuEndTime - gpuStartTime, std::memory_order_relaxed);
         protectedThis->m_commandBufferComplete.signal();
-        protectedThis->m_device->getQueue()->scheduleWork([weakThis = ThreadSafeWeakPtr { protectedThis.get() }, kernelStartTime, kernelEndTime]() mutable {
+        protectedThis->m_device->getQueue()->scheduleWork([weakThis = ThreadSafeWeakPtr { protectedThis.get() }, gpuStartTime, gpuEndTime]() mutable {
             RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;
             protectedThis->m_cachedCommandBuffer = nil;
             if (RefPtr commandEncoder = protectedThis->m_commandEncoder) {
-                commandEncoder->recordGPUExecutionWindowOnCanvasTextures(kernelStartTime, kernelEndTime);
+                commandEncoder->recordGPUExecutionWindowOnCanvasTextures(gpuStartTime, gpuEndTime);
                 commandEncoder->clearTracking();
             }
 

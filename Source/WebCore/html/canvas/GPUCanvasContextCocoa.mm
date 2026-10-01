@@ -761,7 +761,8 @@ void GPUCanvasContextCocoa::updateFramePacing()
 
     auto now = MonotonicTime::now();
     auto gpuCost = m_compositorIntegration->lastFrameGPUCost();
-    m_framePacer.recordFrame(gpuCost, now);
+    auto presentStall = m_compositorIntegration->lastFramePresentStall();
+    m_framePacer.recordFrame(gpuCost, presentStall, now);
 
     if (!m_isRegisteredForPacing) {
         page->addGPUCanvasRequestingRenderingUpdatePacing(*this);

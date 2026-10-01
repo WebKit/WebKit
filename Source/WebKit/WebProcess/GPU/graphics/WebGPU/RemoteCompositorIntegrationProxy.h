@@ -100,12 +100,14 @@ private:
     void updateContentsHeadroom(float) override;
 
     Seconds lastFrameGPUCost() const final { return m_lastFrameGPUCost; }
+    Seconds lastFramePresentStall() const final { return m_lastFramePresentStall; }
 
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_parent;
     RefPtr<RemotePresentationContextProxy> m_presentationContext;
     Seconds m_lastFrameGPUCost { 0_s };
+    Seconds m_lastFramePresentStall { 0_s };
 };
 
 } // namespace WebKit::WebGPU

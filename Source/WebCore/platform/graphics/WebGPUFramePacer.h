@@ -38,7 +38,7 @@ public:
 
     WEBCORE_EXPORT void setDisplayNominalFramesPerSecond(FramesPerSecond);
 
-    WEBCORE_EXPORT void recordFrame(Seconds frameCost, MonotonicTime presentTime);
+    WEBCORE_EXPORT void recordFrame(Seconds frameDuration, Seconds presentStall, MonotonicTime presentTime);
 
     WEBCORE_EXPORT std::optional<FramesPerSecond> preferredFramesPerSecond(MonotonicTime now) const;
 
@@ -46,15 +46,18 @@ public:
 
 private:
     void rebuildDivisorLadder();
-    void runController();
+    size_t ladderIndexForDuration(Seconds) const;
+    void stepDownForStalls();
+    void stepUpIfStallFree(MonotonicTime presentTime);
 
     FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     Vector<FramesPerSecond> m_divisorLadder;
-    Deque<Seconds> m_frameCosts;
+    Deque<Seconds> m_stallFreeFrameDurations;
+    Deque<Seconds> m_stallingFrameDurations;
     std::optional<MonotonicTime> m_lastPresentTime;
+    std::optional<MonotonicTime> m_lastRateDecisionTime;
     size_t m_currentLadderIndex { 0 };
-    unsigned m_consecutiveOverload { 0 };
-    unsigned m_consecutiveHeadroom { 0 };
+    unsigned m_consecutiveStalls { 0 };
 };
 
 } // namespace WebCore

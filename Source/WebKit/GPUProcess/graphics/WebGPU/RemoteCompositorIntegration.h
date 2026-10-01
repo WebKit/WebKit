@@ -100,7 +100,7 @@ private:
     void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 #endif
 
-    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds)>&&);
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds, Seconds)>&&);
     void updateContentsHeadroom(float);
 
     const Ref<WebCore::WebGPU::CompositorIntegration> m_backing;
