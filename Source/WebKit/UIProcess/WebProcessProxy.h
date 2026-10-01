@@ -53,6 +53,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/SharedStringHash.h>
 #include <WebCore/Site.h>
@@ -118,7 +119,6 @@ struct NotificationData;
 struct PluginInfo;
 struct PrewarmInformation;
 struct WebProcessCreationParameters;
-class SecurityOriginData;
 struct WrappedCryptoKey;
 
 enum class AccessibilityMode : uint8_t;
@@ -462,7 +462,7 @@ public:
     ShutdownPreventingScopeCounter::Token shutdownPreventingScope() { return m_shutdownPreventingScopeCounter.count(); }
 
     void didStartProvisionalLoadForMainFrame(const URL&);
-    void didCommitMainFrameLoadWithoutSiteIsolation(const URL&);
+    void didCommitMainFrameLoad(const URL&);
     void didStartUsingProcessForSiteIsolation(const std::optional<WebCore::Site>&, const WebCore::Site& mainFrameSite);
 
     // ProcessThrottlerClient
@@ -678,6 +678,9 @@ public:
 
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }
     bool isEligibleForWebProcessCache() const { return m_isEligibleForWebProcessCache; }
+
+    void setCOOPCacheOrigin(const WebCore::SecurityOriginData& origin) { m_coopCacheOrigin = origin; }
+    const std::optional<WebCore::SecurityOriginData>& coopCacheOrigin() const LIFETIME_BOUND { return m_coopCacheOrigin; }
 
     void incrementFrameProcessCount() { ++m_frameProcessCount; }
     void decrementFrameProcessCount();
@@ -910,6 +913,7 @@ private:
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
     bool m_isEligibleForWebProcessCache { true };
+    std::optional<WebCore::SecurityOriginData> m_coopCacheOrigin;
     bool m_isShuttingDown { false };
     bool m_isRunningProcess { false };
 

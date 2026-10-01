@@ -177,6 +177,18 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
         cachedProcess->startSuspensionTimer();
 #endif
 
+    if (auto& origin = process->coopCacheOrigin()) {
+        if (auto previousProcess = m_coopProcessesPerOrigin.take(*origin))
+            WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting COOP process from WebProcess cache because a new process was added for the same origin", previousProcess->process().processID());
+
+        evictAtRandomIfNeeded();
+
+        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added COOP process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), origin->toString().utf8());
+        m_coopProcessesPerOrigin.add(*origin, WTF::move(cachedProcess));
+
+        return true;
+    }
+
     if (process->isSharedProcess()) {
         auto site = process->sharedProcessMainFrameSite();
         ASSERT(site);
@@ -212,11 +224,18 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 
 void WebProcessCache::evictAtRandomIfNeeded()
 {
-    while (size() >= capacity() && (!m_sharedProcessesPerSite.isEmpty() || !m_processesPerSite.isEmpty())) {
+    while (size() >= capacity() && (!m_sharedProcessesPerSite.isEmpty() || !m_processesPerSite.isEmpty() || !m_coopProcessesPerOrigin.isEmpty())) {
         if (!m_sharedProcessesPerSite.isEmpty()) {
             auto it = m_sharedProcessesPerSite.random();
             WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting shared process from WebProcess cache because capacity was reached", it->value->process().processID());
             m_sharedProcessesPerSite.remove(it);
+            if (size() < capacity())
+                break;
+        }
+        if (!m_coopProcessesPerOrigin.isEmpty()) {
+            auto it = m_coopProcessesPerOrigin.random();
+            WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting COOP process from WebProcess cache because capacity was reached", it->value->process().processID());
+            m_coopProcessesPerOrigin.remove(it);
             if (size() < capacity())
                 break;
         }
@@ -342,6 +361,49 @@ RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& 
     return process;
 }
 
+RefPtr<WebProcessProxy> WebProcessCache::takeCOOPProcess(const WebCore::SecurityOriginData& origin, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+{
+    auto it = m_coopProcessesPerOrigin.find(origin);
+    if (it == m_coopProcessesPerOrigin.end()) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: did not find %" SENSITIVE_LOG_STRING, 0, origin.toString().utf8());
+        return nullptr;
+    }
+
+    if (it->value->process().websiteDataStore() != &dataStore) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: cannot take process, datastore not identical", it->value->process().processID());
+        return nullptr;
+    }
+
+    if (it->value->process().lockdownMode() != lockdownMode) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: cannot take process, lockdown mode not identical", it->value->process().processID());
+        return nullptr;
+    }
+
+    if (it->value->process().enhancedSecurity() != enhancedSecurity) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: cannot take process, enhanced security not identical", it->value->process().processID());
+        return nullptr;
+    }
+
+    if (!Ref { it->value->process() }->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration)) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: cannot take process, preferences not identical", it->value->process().processID());
+        return nullptr;
+    }
+
+    Ref process = m_coopProcessesPerOrigin.take(it)->takeProcess();
+    WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d) %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), origin.toString().utf8());
+
+    ASSERT(!process->pageCount());
+    ASSERT(!process->provisionalPageCount());
+    ASSERT(!process->suspendedPageCount());
+
+    if (process->wasTerminated()) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: cannot take process, was terminated", process->processID());
+        return nullptr;
+    }
+
+    return process;
+}
+
 void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 {
 #if ENABLE(WEBPROCESS_CACHE)
@@ -384,13 +446,14 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 
 void WebProcessCache::clear()
 {
-    if (m_pendingAddRequests.isEmpty() && m_processesPerSite.isEmpty() && m_sharedProcessesPerSite.isEmpty())
+    if (m_pendingAddRequests.isEmpty() && m_processesPerSite.isEmpty() && m_sharedProcessesPerSite.isEmpty() && m_coopProcessesPerOrigin.isEmpty())
         return;
 
-    WEBPROCESSCACHE_RELEASE_LOG("clear: Evicting %u processes", 0, m_pendingAddRequests.size() + m_processesPerSite.size());
+    WEBPROCESSCACHE_RELEASE_LOG("clear: Evicting %u processes", 0, m_pendingAddRequests.size() + m_processesPerSite.size() + m_coopProcessesPerOrigin.size());
     m_pendingAddRequests.clear();
     m_processesPerSite.clear();
     m_sharedProcessesPerSite.clear();
+    m_coopProcessesPerOrigin.clear();
 }
 
 void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
@@ -408,6 +471,15 @@ void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
         RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting shared process because its session was destroyed", pair.value->process().processID());
+            return true;
+        }
+        return false;
+    });
+
+    m_coopProcessesPerOrigin.removeIf([&](auto& pair) {
+        RefPtr dataStore = pair.value->process().websiteDataStore();
+        if (!dataStore || dataStore->sessionID() == sessionID) {
+            WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting COOP process because its session was destroyed", pair.value->process().processID());
             return true;
         }
         return false;
@@ -439,7 +511,13 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
 
     RefPtr<CachedProcess> cachedProcess;
 
-    if (auto expectedSite = process.site()) {
+    if (auto& origin = process.coopCacheOrigin()) {
+        auto it = m_coopProcessesPerOrigin.find(*origin);
+        if (it != m_coopProcessesPerOrigin.end() && &it->value->process() == &process) {
+            cachedProcess = WTF::move(it->value);
+            m_coopProcessesPerOrigin.remove(it);
+        }
+    } else if (auto expectedSite = process.site()) {
         auto& mainFrameSite = process.mainFrameSite();
         auto it = m_processesPerSite.find({ expectedSite.value(), mainFrameSite && mainFrameSite != expectedSite.value() ? *mainFrameSite : WebCore::Site(URL()) });
         if (it != m_processesPerSite.end() && &it->value->process() == &process) {

@@ -333,7 +333,7 @@ public:
 
     void reportWebContentCPUTime(Seconds cpuTime, WebCore::ActivityStateForCPUSampling);
 
-    Ref<WebProcessProxy> processForSite(WebsiteDataStore&, WebProcessProxy::IsolatedProcessType, const std::optional<WebCore::Site>&, const std::optional<WebCore::Site>& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, WebCore::ProcessSwapDisposition); // Will return an existing one if limit is met or due to caching.
+    Ref<WebProcessProxy> processForSite(WebsiteDataStore&, WebProcessProxy::IsolatedProcessType, const std::optional<WebCore::Site>&, const std::optional<WebCore::Site>& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, WebCore::ProcessSwapDisposition, const std::optional<WebCore::SecurityOriginData>& coopOrigin = std::nullopt); // Will return an existing one if limit is met or due to caching.
 
     void prewarmProcess();
 

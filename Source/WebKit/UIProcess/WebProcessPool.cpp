@@ -1297,7 +1297,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #endif
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition)
+Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition, const std::optional<SecurityOriginData>& coopOrigin)
 {
     if (isolatedProcessType == WebProcessProxy::IsolatedProcessType::Shared) {
         ASSERT(mainFrameSite);
@@ -1329,7 +1329,22 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
+    } else if (processSwapDisposition == ProcessSwapDisposition::COOP && coopOrigin) {
+        if (RefPtr process = webProcessCache().takeCOOPProcess(*coopOrigin, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using COOP WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
+            ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
+            return process.releaseNonNull();
+        }
     }
+
+    auto updateWebProcessCacheEligibilityForCOOPSwap = [&](WebProcessProxy& process) {
+        if (processSwapDisposition != ProcessSwapDisposition::COOP)
+            return;
+        if (coopOrigin)
+            process.setCOOPCacheOrigin(*coopOrigin);
+        else
+            process.setIneligbleForWebProcessCache();
+    };
 
     if (RefPtr process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
@@ -1337,8 +1352,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
             tryPrewarmWithDomainInformation(*process, site->domain());
         ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
         process->setIsolatedProcessType(isolatedProcessType, mainFrameSite);
-        if (processSwapDisposition == ProcessSwapDisposition::COOP)
-            process->setIneligbleForWebProcessCache();
+        updateWebProcessCacheEligibilityForCOOPSwap(*process);
         return process.releaseNonNull();
     }
 
@@ -1364,8 +1378,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
     auto enableWebAssemblyDebugger = protect(pageConfiguration.preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
     Ref process = createNewWebProcess(&websiteDataStore, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebKit::jscOptionsForWebProcess(pageConfiguration.preferences().store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
     process->setIsolatedProcessType(isolatedProcessType, mainFrameSite);
-    if (processSwapDisposition == ProcessSwapDisposition::COOP)
-        process->setIneligbleForWebProcessCache();
+    updateWebProcessCacheEligibilityForCOOPSwap(process);
     return process;
 }
 

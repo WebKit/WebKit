@@ -9124,8 +9124,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         process->didCommitMeaningfulProvisionalLoad();
 
     if (frame->isMainFrame()) {
-        if (!protect(preferences())->siteIsolationEnabled())
-            process->didCommitMainFrameLoadWithoutSiteIsolation(request.url());
+        process->didCommitMainFrameLoad(request.url());
 
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
 #if PLATFORM(COCOA)
@@ -11011,13 +11010,21 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
             auto enableWebAssemblyDebugger = protect(m_configuration->preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
             return protect(m_configuration->processPool())->createNewWebProcess(protect(websiteDataStore()).ptr(), lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated, WebKit::jscOptionsForWebProcess(protect(m_configuration->preferences())->store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
         }
+
+        std::optional<SecurityOriginData> coopOrigin;
+        if (auto& url = navigation->currentRequest().url(); url.protocolIsInHTTPFamily() && Site { url } == responseSite)
+            coopOrigin = SecurityOriginData::fromURL(url);
+
         if (provisionalPage && canReuseProvisionalProcessForBrowsingContextGroupSwitch(*provisionalPage, *navigation, responseSite, protect(websiteDataStore()))) {
             Ref process = provisionalPage->process();
             WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: Continuing navigation in the provisional process since it has not committed any load (PID=%i)", process->processID());
-            process->setIneligbleForWebProcessCache();
+            if (coopOrigin)
+                process->setCOOPCacheOrigin(*coopOrigin);
+            else
+                process->setIneligbleForWebProcessCache();
             return process;
         }
-        return protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP);
+        return protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP, coopOrigin);
     }();
 
     performProcessSwapForNavigationResponse(*navigation, m_browsingContextGroup.copyRef(), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));

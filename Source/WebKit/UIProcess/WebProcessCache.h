@@ -52,11 +52,12 @@ public:
     bool addProcessIfPossible(Ref<WebProcessProxy>&&);
     RefPtr<WebProcessProxy> takeProcess(const WebCore::Site&, WebProcessProxy::IsolatedProcessType, const std::optional<WebCore::Site>&, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
     RefPtr<WebProcessProxy> takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
+    RefPtr<WebProcessProxy> takeCOOPProcess(const WebCore::SecurityOriginData&, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
 
     void updateCapacity(WebProcessPool&);
     unsigned capacity() const { return m_capacity; }
 
-    unsigned size() const { return m_processesPerSite.size() + m_sharedProcessesPerSite.size(); }
+    unsigned size() const { return m_processesPerSite.size() + m_sharedProcessesPerSite.size() + m_coopProcessesPerOrigin.size(); }
 
     void clear();
     void setApplicationIsActive(bool);
@@ -117,6 +118,7 @@ private:
     HashMap<uint64_t, Ref<CachedProcess>> m_pendingAddRequests;
     HashMap<std::tuple<WebCore::Site, WebCore::Site>, Ref<CachedProcess>> m_processesPerSite;
     HashMap<WebCore::Site, Ref<CachedProcess>> m_sharedProcessesPerSite;
+    HashMap<WebCore::SecurityOriginData, Ref<CachedProcess>> m_coopProcessesPerOrigin;
     RunLoop::Timer m_evictionTimer;
     Seconds m_cachedProcessLifetime;
 };
