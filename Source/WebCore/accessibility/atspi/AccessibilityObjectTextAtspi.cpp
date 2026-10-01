@@ -331,8 +331,6 @@ UTF8CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return { };
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (endOffset == -1)
@@ -367,7 +365,6 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
         return;
 
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
     auto utf16Offset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(position), m_hasListMarkerAtStart);
     String maskedText = m_coreObject->isSecureField() ? utf16Text.substring(utf16Offset - insertedText.length(), insertedText.length()) : String();
     auto mapping = offsetMapping(utf16Text);
@@ -384,7 +381,6 @@ void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const Visi
         return;
 
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
     auto utf16Offset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(position), m_hasListMarkerAtStart);
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
@@ -468,8 +464,6 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return { };
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset > length)
@@ -494,8 +488,6 @@ int AccessibilityObjectAtspi::characterAtOffset(int offset) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return 0;
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset >= length)
@@ -526,10 +518,6 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(char16_t chara
 std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(char16_t character, unsigned offset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return std::nullopt;
-
     auto length = StringView(utf16Text).codePointCount();
     if (offset >= length)
         return std::nullopt;
@@ -581,10 +569,6 @@ IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned 
 IntRect AccessibilityObjectAtspi::textExtents(int startOffset, int endOffset, Atspi::CoordinateType coordinateType) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return { };
-
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     startOffset = std::clamp(startOffset, 0, length);
     if (endOffset == -1)
@@ -603,10 +587,6 @@ IntRect AccessibilityObjectAtspi::textExtents(int startOffset, int endOffset, At
 int AccessibilityObjectAtspi::offsetAtPoint(const IntPoint& point, Atspi::CoordinateType coordinateType) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return -1;
-
     auto convertedPoint = point;
     if (auto* frameView = m_coreObject->documentFrameView()) {
         switch (coordinateType) {
@@ -681,10 +661,6 @@ IntPoint AccessibilityObjectAtspi::selectedRange() const
 bool AccessibilityObjectAtspi::selectionBounds(int& startOffset, int& endOffset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return false;
-
     auto bounds = selectedRange();
     if (bounds.x() < 0)
         return false;
@@ -716,10 +692,6 @@ void AccessibilityObjectAtspi::setSelectedRange(unsigned utf16Offset, unsigned l
 bool AccessibilityObjectAtspi::selectRange(int startOffset, int endOffset)
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return false;
-
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     startOffset = std::clamp(startOffset, 0, length);
     if (endOffset == -1)
@@ -744,10 +716,6 @@ void AccessibilityObjectAtspi::selectionChanged(const VisibleSelection& selectio
         return;
 
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return;
-
     auto bounds = boundsForSelection(selection);
     if (bounds.y() < 0)
         return;
@@ -926,10 +894,6 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
 AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttributesWithUTF8Offset(std::optional<int> offset, bool includeDefault) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return { };
-
     auto mapping = offsetMapping(utf16Text);
     std::optional<unsigned> utf16Offset;
     if (offset) {
@@ -960,10 +924,6 @@ void AccessibilityObjectAtspi::textAttributesChanged()
 bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffset, Atspi::ScrollType scrollType) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return false;
-
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (startOffset < 0 || startOffset > length)
         return false;
@@ -1021,10 +981,6 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
 bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, Atspi::CoordinateType coordinateType, int x, int y) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
-    if (utf8Text.isNull())
-        return false;
-
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (startOffset < 0 || startOffset > length)
         return false;
