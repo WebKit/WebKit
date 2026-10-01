@@ -1246,6 +1246,8 @@ sub determineConfigurationForVisualStudio
 
 sub usesPerConfigurationBuildDirectory
 {
+    # xcodebuild appends the configuration to SYMROOT, which is WEBKIT_OUTPUTDIR.
+    return 0 if isAppleCocoaWebKit() && !isCMakeBuild();
     return (defined $ENV{"WEBKIT_OUTPUTDIR"});
 }
 
@@ -1277,7 +1279,6 @@ sub xcodeConfigurationProductDir
 {
     determineBaseProductDir();
     determineConfiguration();
-    return $baseProductDir if usesPerConfigurationBuildDirectory();
     my $dir = File::Spec->catdir($baseProductDir, $configuration);
     $dir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
     return $dir;
