@@ -206,7 +206,11 @@ public:
     float floatEmphasisMarkHeight(const AtomString&) const;
 
     Ref<const Font> primaryFont() const;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const FontRanges& fallbackRangesAt(unsigned) const;
+#else
+    const FontRanges& fallbackRangesAt(FontCascadeFonts&, unsigned) const;
+#endif // RC_REMOVE_SEC_ACCEL_3
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant, std::optional<ResolvedEmojiPolicy> = std::nullopt) const;
     bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 
@@ -425,11 +429,18 @@ inline Ref<const Font> FontCascade::primaryFont() const
     return font;
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
     ASSERT(m_fonts);
     return protectedFonts()->realizeFallbackRangesAt(m_fontDescription, protectedFontSelector().get(), index);
 }
+#else
+inline const FontRanges& FontCascade::fallbackRangesAt(FontCascadeFonts& fonts, unsigned index) const
+{
+    return fonts.realizeFallbackRangesAt(m_fontDescription, protectedFontSelector().get(), index);
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 inline bool FontCascade::isFixedPitch() const
 {
