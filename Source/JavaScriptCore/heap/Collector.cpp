@@ -80,15 +80,17 @@ public:
 private:
     PollResult poll(const AbstractLocker& locker) final
     {
+        assertIsHeld(*m_collector.m_threadLock);
         if (m_collector.m_threadShouldStop) {
+            m_collector.m_threadIsWorking = false;
             m_collector.m_heap.notifyThreadStopping(locker);
             return PollResult::Stop;
         }
-        if (m_collector.shouldCollectInCollectorThread(locker)) {
-            m_collector.m_collectorThreadIsRunning = true;
+        if (m_collector.shouldCollectInCollectorThread()) {
+            m_collector.m_threadIsWorking = true;
             return PollResult::Work;
         }
-        m_collector.m_collectorThreadIsRunning = false;
+        m_collector.m_threadIsWorking = false;
         return PollResult::Wait;
     }
 
@@ -105,7 +107,8 @@ private:
 
     void threadIsStopping(const AbstractLocker&) final
     {
-        m_collector.m_collectorThreadIsRunning = false;
+        assertIsHeld(*m_collector.m_threadLock);
+        ASSERT(!m_collector.m_threadIsWorking);
     }
 
     Collector& m_collector;
@@ -156,12 +159,11 @@ Collector::~Collector()
 
 void Collector::stopThread()
 {
-    RELEASE_ASSERT(m_requests.isEmpty());
-    RELEASE_ASSERT(!hasOutstandingRequest());
-
     bool stopped = false;
     {
         Locker locker { *m_threadLock };
+        RELEASE_ASSERT(m_requests.isEmpty());
+        RELEASE_ASSERT(!hasOutstandingRequestWithLock());
         stopped = m_thread->tryStop(locker);
         m_threadShouldStop = true;
         if (!stopped)
@@ -197,6 +199,16 @@ void Collector::assertMarkStacksEmpty()
     RELEASE_ASSERT(ok);
 }
 
+bool Collector::isSubsumedByQueuedRequest(const GCRequest& request)
+{
+    Locker locker { *m_threadLock };
+    for (const GCRequest& queuedRequest : m_requests) {
+        if (request.subsumedBy(queuedRequest))
+            return true;
+    }
+    return false;
+}
+
 GCRequest::Ticket Collector::requestCollection(GCRequest request)
 {
     Locker locker { *m_threadLock };
@@ -206,7 +218,7 @@ GCRequest::Ticket Collector::requestCollection(GCRequest request)
     // right now. This is an optimization that prevents the collector thread from ever starting in most
     // cases.
     ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
-    if ((m_lastServedTicket == m_lastGrantedTicket) && !m_collectorThreadIsRunning) {
+    if ((m_lastServedTicket == m_lastGrantedTicket) && !m_threadIsWorking) {
         dataLogLnIf(CollectorInternal::verbose, "Taking the conn.");
         m_heap.m_worldState.exchangeOr(Heap::mutatorHasConnBit);
     }
@@ -218,7 +230,7 @@ GCRequest::Ticket Collector::requestCollection(GCRequest request)
     return m_lastGrantedTicket;
 }
 
-bool Collector::shouldCollectInCollectorThread(const AbstractLocker&)
+bool Collector::shouldCollectInCollectorThread()
 {
     RELEASE_ASSERT(m_requests.isEmpty() == (m_lastServedTicket == m_lastGrantedTicket));
     RELEASE_ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
@@ -250,6 +262,39 @@ void Collector::collectInCollectorThread()
         case RunCurrentPhaseResult::NeedCurrentThreadState:
             RELEASE_ASSERT_NOT_REACHED();
             break;
+        }
+    }
+}
+
+void Collector::collectInMutatorThread(Heap& conductor)
+{
+    // For now, only a single heap is supported.
+    ASSERT(&conductor == &m_heap);
+    for (;;) {
+        RunCurrentPhaseResult result = runCurrentPhase(GCConductor::Mutator, nullptr);
+        switch (result) {
+        case RunCurrentPhaseResult::Finished:
+            return;
+        case RunCurrentPhaseResult::Continue:
+            break;
+        case RunCurrentPhaseResult::NeedCurrentThreadState:
+            sanitizeStackForVM(conductor.vm());
+            auto lambda = [&] (CurrentThreadState& state) {
+                for (;;) {
+                    RunCurrentPhaseResult result = runCurrentPhase(GCConductor::Mutator, &state);
+                    switch (result) {
+                    case RunCurrentPhaseResult::Finished:
+                        return;
+                    case RunCurrentPhaseResult::Continue:
+                        break;
+                    case RunCurrentPhaseResult::NeedCurrentThreadState:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
+                }
+            };
+            callWithCurrentThreadState(lambda);
+            return;
         }
     }
 }

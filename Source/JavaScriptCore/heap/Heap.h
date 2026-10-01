@@ -719,8 +719,8 @@ private:
     void clearMutatorWaiting();
     void notifyThreadStopping(const AbstractLocker&);
     
-    GCRequest::Ticket requestCollection(GCRequest);
     void waitForCollection(GCRequest::Ticket);
+    void waitForAllCollections();
     
     void willStartCollection(CollectionScope);
     

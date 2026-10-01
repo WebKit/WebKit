@@ -91,17 +91,26 @@ private:
     friend class VerifierSlotVisitor;
 
     GCRequest::Ticket requestCollection(GCRequest);
+    bool isSubsumedByQueuedRequest(const GCRequest&);
 
-    bool hasOutstandingRequest() const
+    bool hasOutstandingRequest()
+    {
+        Locker locker { *m_threadLock };
+        return hasOutstandingRequestWithLock();
+    }
+    bool hasOutstandingRequestWithLock() const WTF_REQUIRES_LOCK(*m_threadLock)
     {
         RELEASE_ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
+        // A request stays queued until it is served.
+        ASSERT(m_requests.size() == m_lastGrantedTicket - m_lastServedTicket);
         return m_lastServedTicket < m_lastGrantedTicket;
     }
-    bool hasServedTicket(GCRequest::Ticket ticket) const { return m_lastServedTicket >= ticket; }
+    bool hasServedTicketWithLock(GCRequest::Ticket ticket) const WTF_REQUIRES_LOCK(*m_threadLock) { return m_lastServedTicket >= ticket; }
 
-    bool shouldCollectInCollectorThread(const AbstractLocker&);
+    bool shouldCollectInCollectorThread() WTF_REQUIRES_LOCK(*m_threadLock);
     CollectionScope decideCollectionScope();
     void collectInCollectorThread();
+    void collectInMutatorThread(Heap& conductor);
 
     void startCollectingContinuously();
     void stopCollectingContinuously();
@@ -177,8 +186,8 @@ private:
     CollectorPhase m_lastPhase { CollectorPhase::NotRunning };
     CollectorPhase m_currentPhase { CollectorPhase::NotRunning };
     CollectorPhase m_nextPhase { CollectorPhase::NotRunning };
-    bool m_collectorThreadIsRunning { false };
-    bool m_threadShouldStop { false };
+    bool m_threadIsWorking WTF_GUARDED_BY_LOCK(*m_threadLock) { false };
+    bool m_threadShouldStop WTF_GUARDED_BY_LOCK(*m_threadLock) { false };
     bool m_isCompilerThreadsSuspended { false };
     uint64_t m_phaseVersion { 0 };
     std::unique_ptr<MutatorScheduler> m_scheduler;
@@ -187,10 +196,10 @@ private:
     Box<Lock> m_threadLock;
     const Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     const RefPtr<AutomaticThread> m_thread;
-    Deque<GCRequest> m_requests;
+    Deque<GCRequest> m_requests WTF_GUARDED_BY_LOCK(*m_threadLock);
     GCRequest m_currentRequest;
-    GCRequest::Ticket m_lastServedTicket { 0 };
-    GCRequest::Ticket m_lastGrantedTicket { 0 };
+    GCRequest::Ticket m_lastServedTicket WTF_GUARDED_BY_LOCK(*m_threadLock) { 0 };
+    GCRequest::Ticket m_lastGrantedTicket WTF_GUARDED_BY_LOCK(*m_threadLock) { 0 };
 
     // Set to either the mutator or collector thread, depending on which is conducting the current phase.
     // These are valid only while that phase runs.
