@@ -685,6 +685,13 @@ webkit_target_add_swift_options(TestWebKitAPILibrary
 )
 
 list(APPEND TestWebKit_SOURCES
+    "Tests/WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift"
+    "Tests/WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift"
+    "Tests/WebKit/WebPage/AppKit Gesture Tests/DoubleClickGesturesTests.swift"
+    "Tests/WebKit/WebPage/AppKit Gesture Tests/EmbeddedAppKitGesturesTests.swift"
+    "Tests/WebKit/WebPage/AppKit Gesture Tests/InactiveWindowAppKitGesturesTests.swift"
+    "Tests/WebKit/WebPage/AppKit Gesture Tests/RefreshControlGesturesTests.swift"
+
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift
@@ -719,10 +726,17 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/SimulateClickOverTextTests.swift
     Tests/WebKit/WebPage/URLSchemeHandlerTests.swift
     Tests/WebKit/WebPage/UserContentControllerTests.swift
+    Tests/WebKit/WebPage/WebPageMouseEventsTests.swift
     Tests/WebKit/WebPage/WebPageNavigationTests.swift
+    Tests/WebKit/WebPage/WebPageScrollbarTests.swift
+    Tests/WebKit/WebPage/WebPageTests.swift
+    Tests/WebKit/WebPage/WebPageTransferableTests.swift
+    Tests/WebKit/WebPage/WebViewTests.swift
 )
 
-# FIXME: Support WebKitAdditions and tests which need the _WebKit_SwiftUI cross-import overlay linked.
+# Tests importing both WebKit and SwiftUI load the _WebKit_SwiftUI cross-import
+# overlay; ensure it builds first.
+list(APPEND TestWebKit_FRAMEWORKS _WebKit_SwiftUI)
 
 # TestWebKitAPIBase needs framework headers for config.h includes.
 target_include_directories(TestWebKitAPIBase PRIVATE ${_testapi_framework_headers})

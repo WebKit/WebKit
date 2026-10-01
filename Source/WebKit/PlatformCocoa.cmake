@@ -799,7 +799,7 @@ set_target_properties(WebKitSwift PROPERTIES
 # without the internal SDK leaves them out. DerivedSources.make copies them into
 # the derived sources directory for the Xcode build; do the same here, or the
 # declarations they implement compile but have no implementation at runtime.
-if (WEBKIT_SDK_IS_IOS_FAMILY AND USE_APPLE_INTERNAL_SDK)
+if (USE_APPLE_INTERNAL_SDK)
     foreach (_additions_swift_source
         AppKitGesturesExtras
         TestWebKitAPILibraryAdditions

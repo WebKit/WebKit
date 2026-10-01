@@ -528,7 +528,8 @@ endif ()
 
 if (CMAKE_OSX_SYSROOT)
     add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-F${CMAKE_BINARY_DIR};-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
-    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_BINARY_DIR};-Fsystem;${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
+    # -F rather than -Fsystem for SDK frameworks, cf. rdar://problem/30939744
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_BINARY_DIR};-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
 
 # Regenerate the Xcode debug wrapper on every (re)configure so its scheme paths

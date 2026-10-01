@@ -56,6 +56,7 @@ endif ()
 
 set(_WebKit_SwiftUI_LIBRARY_TYPE SHARED)
 set(_WebKit_SwiftUI_SOURCES ${WebKit_SWIFTUI_SOURCES})
+set(_WebKit_SwiftUI_INTERFACE_LIBRARIES _WebKit_SwiftUI _WebKit_SwiftUI_StageSwiftModule)
 WEBKIT_FRAMEWORK_DECLARE(_WebKit_SwiftUI)
 set_target_properties(_WebKit_SwiftUI PROPERTIES
     OUTPUT_NAME _WebKit_SwiftUI
