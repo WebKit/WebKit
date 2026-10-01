@@ -1212,7 +1212,8 @@ optgroup {
     box-sizing: border-box;
 }
 
-select:-internal-uses-menulist optgroup:not(:first-child) {
+select:-internal-uses-menulist :is(optgroup, option) + optgroup,
+select:-internal-uses-menulist optgroup + option {
     border-block-start: -internal-auto-base(revert-rule, 1px solid color-mix(currentColor 12%));
 }
 

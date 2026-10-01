@@ -242,8 +242,10 @@ optgroup,
   box-sizing: border-box;
 }
 
-select optgroup:not(:first-child),
-.customizable-select-optgroup:not(:first-child) {
+select :is(optgroup, option) + optgroup,
+select optgroup + option,
+:is(.customizable-select-optgroup, .customizable-select-option) + .customizable-select-optgroup,
+.customizable-select-optgroup + .customizable-select-option {
   border-block-start: 1px solid color-mix(currentColor 12%);
 }
 
