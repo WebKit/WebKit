@@ -1048,7 +1048,7 @@ template<typename T> Vector<std::span<T>> GstMappedAudioBuffer::samples(size_t o
         auto inputSpan = unsafeMakeSpan(reinterpret_cast<T*>(m_buffer.planes[0]), planeSizeTotal * planeCount);
         for (uint32_t s = offset; s < m_buffer.n_samples; s++) {
             for (uint32_t c = 0; c < planeCount; c++)
-                result[c][s] = inputSpan[s * planeCount + c];
+                result[c][s - offset] = inputSpan[s * planeCount + c];
         }
         return result;
     }

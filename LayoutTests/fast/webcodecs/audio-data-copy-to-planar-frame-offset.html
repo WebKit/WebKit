@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+for (const [ArrayType, format, scale] of [[Int16Array, "s16", 1000], [Float32Array, "f32", 1 / 16]]) {
+    test(() => {
+        const numberOfFrames = 8;
+        const data = new ArrayType(numberOfFrames * 2);
+        for (let frame = 0; frame < numberOfFrames; frame++) {
+            data[frame * 2] = frame * scale;
+            data[frame * 2 + 1] = -frame * scale;
+        }
+        const audioData = new AudioData({ format, sampleRate: 48000, numberOfFrames, numberOfChannels: 2, timestamp: 0, data });
+        const expected = (frames, sign) => frames.map(frame => sign * frame * scale);
+
+        const left = new ArrayType(6);
+        audioData.copyTo(left, { format: `${format}-planar`, planeIndex: 0, frameOffset: 2 });
+        assert_array_equals(left, expected([2, 3, 4, 5, 6, 7], 1));
+
+        const right = new ArrayType(6);
+        audioData.copyTo(right, { format: `${format}-planar`, planeIndex: 1, frameOffset: 2 });
+        assert_array_equals(right, expected([2, 3, 4, 5, 6, 7], -1));
+
+        const partial = new ArrayType(3);
+        audioData.copyTo(partial, { format: `${format}-planar`, planeIndex: 1, frameOffset: 2, frameCount: 3 });
+        assert_array_equals(partial, expected([2, 3, 4], -1));
+    }, `copyTo() from ${format} to ${format}-planar with frameOffset`);
+}
+</script>
