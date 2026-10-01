@@ -1203,6 +1203,14 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint64_t uoffset, W
     ASSERT(length.type() == TypeKind::I32);
 
     emitZeroExtendAddressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
+    if (!srcAddress.isConst()) {
+        Location srcLocation = loadIfNecessary(srcAddress);
+        m_jit.zeroExtend32ToWord(srcLocation.asGPR(), srcLocation.asGPR());
+    }
+    if (!length.isConst()) {
+        Location lengthLocation = loadIfNecessary(length);
+        m_jit.zeroExtend32ToWord(lengthLocation.asGPR(), lengthLocation.asGPR());
+    }
 
     Vector<Value, 8> arguments = {
         instanceValue(),
