@@ -38,6 +38,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -349,6 +350,15 @@ void ScrollingTreeScrollingNodeDelegateMac::didStopRubberBandAnimation()
 
 void ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged(bool inRubberBand)
 {
+    if (scrollingTree()->scrollingPerformanceTestingEnabled()) {
+        auto stretch = stretchAmount();
+        WTFEmitSignpostAlways(this, ScrollingPerformanceTestRubberBand, "%{public}s; top=%d right=%d bottom=%d left=%d; stretch=%d,%d; isMainFrame=%d",
+            inRubberBand ? "started" : "ended",
+            stretch.height() < 0, stretch.width() > 0, stretch.height() > 0, stretch.width() < 0,
+            stretch.width(), stretch.height(),
+            scrollingNode()->nodeType() == ScrollingNodeType::MainFrame);
+    }
+
     scrollingTree()->setRubberBandingInProgressForNode(scrollingNode()->scrollingNodeID(), inRubberBand);
 #if HAVE(RUBBER_BANDING)
     if (!inRubberBand)
