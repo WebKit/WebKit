@@ -273,6 +273,11 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 @property (weak) id /* <NSTextSelectionManagerDelegate> */ _webkitDelegate;
 @end
 
+// FIXME: Move this above once <rdar://problem/188247170> is in an SDK.
+@interface NSPanGestureRecognizer (Staging_188247170)
+- (NSPoint)_startLocationInView:(NSView *)view;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)
 
 @interface NSGestureRecognizer (IPI)
