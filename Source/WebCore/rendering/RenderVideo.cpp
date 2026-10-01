@@ -338,7 +338,7 @@ LayoutRect RenderVideo::inlineVideoBox() const
     return LayoutRect(snappedIntRect(result));
 }
 
-IntRect RenderVideo::videoBoxInRootView() const
+IntRect RenderVideo::videoBoxInMainFrameView() const
 {
     RefPtr view = document().view();
     if (!view)
@@ -346,7 +346,7 @@ IntRect RenderVideo::videoBoxInRootView() const
 
     auto videoBox = this->videoBox();
     videoBox.moveBy(absoluteBoundingBoxRect().location());
-    return view->contentsToRootView(videoBox);
+    return view->contentsToMainFrameView(videoBox);
 }
 
 bool RenderVideo::shouldDisplayVideo() const

@@ -96,6 +96,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 // has none. An empty range here is what leaves the fullscreen scrubber disabled.
 @property (nonatomic, readonly) double _maximumSeekableTime;
 
+@property (nonatomic, readonly) CGRect _lastVideoPresentationSetupRectForTesting;
+
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
 

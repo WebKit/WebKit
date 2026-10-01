@@ -1105,6 +1105,8 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& conne
     if (!page)
         return;
 
+    m_lastSetupFullscreenRectForTesting = screenRect;
+
     auto contextId = contextIdForConnection(connection, identifier);
     auto [model, interface] = ensureModelAndInterface(contextId);
 

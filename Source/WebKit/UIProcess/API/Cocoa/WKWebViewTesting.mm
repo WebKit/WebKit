@@ -39,6 +39,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SuspendedPageProxy.h"
 #import "UserMediaProcessManager.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
 #import "WKColorExtensionView.h"
@@ -600,6 +601,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     }
 #endif
     return std::numeric_limits<double>::quiet_NaN();
+}
+
+- (CGRect)_lastVideoPresentationSetupRectForTesting
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr videoPresentationManager = _page->videoPresentationManager())
+        return videoPresentationManager->lastSetupFullscreenRectForTesting();
+#endif
+    return CGRectZero;
 }
 
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action

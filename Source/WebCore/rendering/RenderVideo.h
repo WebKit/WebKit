@@ -43,7 +43,7 @@ public:
     WEBCORE_EXPORT HTMLVideoElement& NODELETE videoElement() const;
 
     IntRect videoBox() const;
-    WEBCORE_EXPORT IntRect videoBoxInRootView() const;
+    WEBCORE_EXPORT IntRect videoBoxInMainFrameView() const;
     LayoutRect croppedVideoBoxForCompositing() const;
     LayoutRect inlineVideoBox() const;
 

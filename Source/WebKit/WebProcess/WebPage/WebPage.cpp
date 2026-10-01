@@ -10529,7 +10529,7 @@ void WebPage::beginTextRecognitionForVideoInElementFullScreen(const HTMLVideoEle
     if (!renderer)
         return;
 
-    auto rectInRootView = renderer->videoBoxInRootView();
+    auto rectInRootView = renderer->videoBoxInMainFrameView();
     if (rectInRootView.isEmpty())
         return;
 
