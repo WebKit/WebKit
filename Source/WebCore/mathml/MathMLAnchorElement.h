@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(MATHML)
+
 #include "MathMLRowElement.h"
 #include "URLDecomposition.h"
 #include <wtf/OptionSet.h>
@@ -76,3 +78,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(MATHML)

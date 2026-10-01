@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MathMLAnchorElement.h"
 
+#if ENABLE(MATHML)
+
 #include "AnchorElementFunctions.h"
 #include "DOMTokenList.h"
 #include "ElementInlines.h"
@@ -151,3 +153,5 @@ ReferrerPolicy MathMLAnchorElement::referrerPolicy() const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(MATHML)
