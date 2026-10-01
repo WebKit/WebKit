@@ -358,7 +358,7 @@
       "configuration": "release",
       "triggered_by": ["macos-sequoia-release-build-ews"],
       "additionalArguments": ["-2", "-1"],
-      "workernames": ["ews104", "ews106", "ews107", "ews112", "ews113", "ews115", "ews144", "ews146", "ews149", "ews169", "ews186", "ews187", "ews188", "ews189"]
+      "workernames": ["ews104", "ews112", "ews113", "ews115", "ews144", "ews169", "ews186", "ews187", "ews188", "ews189"]
     },
     {
       "name": "macOS-Sequoia-Release-Site-Isolation-Tests-EWS", "shortname": "mac-site-isolation", "icon": "testOnly",
@@ -526,7 +526,7 @@
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "mac-sequoia",
       "triggered_by": ["macos-sequoia-release-build-ews"],
-      "workernames": ["ews100", "ews129", "ews142", "ews143", "ews150", "ews153", "ews155"]
+      "workernames": ["ews100", "ews106", "ews107", "ews129", "ews142", "ews143", "ews146", "ews149", "ews150", "ews153", "ews155"]
     },
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
