@@ -236,6 +236,15 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
         this.resolved = false;
     }
 
+    clearResolvedLocationsForTarget(target)
+    {
+        console.assert(!this._isSpecial(), this);
+
+        this._resolvedLocations = this._resolvedLocations.filter((resolvedLocation) => resolvedLocation.sourceCode?.target !== target);
+        if (!this._resolvedLocations.length)
+            this.resolved = false;
+    }
+
     remove()
     {
         super.remove();
