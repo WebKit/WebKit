@@ -1030,7 +1030,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     set(_default_sim_entitlements "${WEBKIT_DIR}/Resources/ios/XPCService-embedded-simulator.entitlements")
 
     function(WEBKIT_XPC_SERVICE _target)
-        cmake_parse_arguments(_svc ""
+        cmake_parse_arguments(_svc "RUNNINGBOARD_MANAGED"
             "BUNDLE_IDENTIFIER;ENTRY_POINT;EXECUTABLE_NAME" "" ${ARGN})
         set(_bundle_dir ${WebKit_XPC_SERVICE_DIR}/${_svc_BUNDLE_IDENTIFIER}.xpc)
         if (WEBKIT_SDK_IS_MACOS)
@@ -1054,13 +1054,39 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         set(PRODUCT_BUNDLE_IDENTIFIER ${_svc_BUNDLE_IDENTIFIER})
         set(EXECUTABLE_NAME ${_svc_EXECUTABLE_NAME})
         set(PRODUCT_NAME ${_svc_BUNDLE_IDENTIFIER})
-        configure_file(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist
-            ${_contents_dir}/Info.plist)
+        # Edit a scratch copy and copy it into the bundle only when it changes. Each edit to
+        # the bundle's Info.plist relinks and so re-signs the service.
+        set(_info_plist ${CMAKE_CURRENT_BINARY_DIR}/${_svc_BUNDLE_IDENTIFIER}-Info.plist)
+        configure_file(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist ${_info_plist})
+
+        if (_svc_RUNNINGBOARD_MANAGED)
+            # Matches the "Update Info.plist for RunningBoard management" Xcode build phase.
+            set(_runningboard_script ${WEBKIT_DIR}/Scripts/update-info-plist-for-runningboard.sh)
+            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${_runningboard_script})
+            if (USE_APPLE_INTERNAL_SDK)
+                set(_use_internal_sdk YES)
+            else ()
+                set(_use_internal_sdk NO)
+            endif ()
+            if (USE_RESTRICTED_ENTITLEMENTS)
+                set(_use_restricted_entitlements YES)
+            else ()
+                set(_use_restricted_entitlements NO)
+            endif ()
+            execute_process(
+                COMMAND env
+                    SCRIPT_INPUT_FILE_0=${_info_plist}
+                    USE_INTERNAL_SDK=${_use_internal_sdk}
+                    WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
+                    WK_USE_RESTRICTED_ENTITLEMENTS=${_use_restricted_entitlements}
+                    sh -eu ${_runningboard_script}
+                COMMAND_ERROR_IS_FATAL ANY)
+        endif ()
 
         if (NOT WEBKIT_SDK_IS_MACOS)
             # FIXME: These may be applicable to add for macOS too (with
             # different UIDeviceFamily).
-            execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_contents_dir}/Info.plist)
+            execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_info_plist})
             # TARGETED_DEVICE_FAMILY of the platform being built, which no XPC service
             # target overrides. https://developer.apple.com/documentation/xcode/build-settings-reference
             if (WEBKIT_SDK_IS_XROS)
@@ -1068,10 +1094,16 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             else ()
                 set(_device_family 1)
             endif ()
-            execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_device_family}]" ${_contents_dir}/Info.plist)
-            execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_contents_dir}/Info.plist)
-            execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_contents_dir}/Info.plist)
+            execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_device_family}]" ${_info_plist})
+            execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_info_plist})
+            execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_info_plist})
+        endif ()
 
+        file(COPY_FILE ${_info_plist} ${_contents_dir}/Info.plist ONLY_IF_DIFFERENT)
+        # Info.plist is part of the signature, which a POST_BUILD step makes on relink.
+        set_property(TARGET ${_target} APPEND PROPERTY LINK_DEPENDS ${_contents_dir}/Info.plist)
+
+        if (NOT WEBKIT_SDK_IS_MACOS)
             target_link_options(${_target} PRIVATE
                 "LINKER:-rpath,@executable_path/.."
                 "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/.."
@@ -1126,18 +1158,21 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     WEBKIT_XPC_SERVICE(WebProcess
         BUNDLE_IDENTIFIER com.apple.WebKit.WebContent
         ENTRY_POINT ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService
-        EXECUTABLE_NAME ${WebProcess_OUTPUT_NAME})
+        EXECUTABLE_NAME ${WebProcess_OUTPUT_NAME}
+        RUNNINGBOARD_MANAGED)
 
     WEBKIT_XPC_SERVICE(NetworkProcess
         BUNDLE_IDENTIFIER com.apple.WebKit.Networking
         ENTRY_POINT ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService
-        EXECUTABLE_NAME ${NetworkProcess_OUTPUT_NAME})
+        EXECUTABLE_NAME ${NetworkProcess_OUTPUT_NAME}
+        RUNNINGBOARD_MANAGED)
 
     if (ENABLE_GPU_PROCESS)
         WEBKIT_XPC_SERVICE(GPUProcess
             BUNDLE_IDENTIFIER com.apple.WebKit.GPU
             ENTRY_POINT ${WEBKIT_DIR}/GPUProcess/EntryPoint/Cocoa/XPCService/GPUService
-            EXECUTABLE_NAME ${GPUProcess_OUTPUT_NAME})
+            EXECUTABLE_NAME ${GPUProcess_OUTPUT_NAME}
+            RUNNINGBOARD_MANAGED)
     endif ()
 
     # Without these XPC bundles, process swaps fail with "Invalid connection identifier".
@@ -1157,10 +1192,17 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
             BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant}
             VARIANT ${_variant})
+        # Like Xcode, leave the Development service unmanaged by RunningBoard.
+        if (_variant STREQUAL "Development")
+            set(_runningboard_managed "")
+        else ()
+            set(_runningboard_managed RUNNINGBOARD_MANAGED)
+        endif ()
         WEBKIT_XPC_SERVICE(${_target}
             BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant}
             ENTRY_POINT ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService
-            EXECUTABLE_NAME ${_exec_name})
+            EXECUTABLE_NAME ${_exec_name}
+            ${_runningboard_managed})
         WEBKIT_EXECUTABLE(${_target})
         WEBKIT_REUSE_PREFIX_HEADER(${_target} WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
         target_compile_options(${_target} PRIVATE -Wno-unused-parameter)
