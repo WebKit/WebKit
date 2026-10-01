@@ -120,7 +120,7 @@ def parse_args(argument_list):
 
 class MVTWebDriverRunner():
 
-    def __init__(self, port, platform, configuration, extra_browser_args, mvt_instance_address, browser_name, max_retries_if_timeout, timeout_to_load, timeout_to_run):
+    def __init__(self, port, platform, configuration, extra_browser_args, mvt_instance_address, max_retries_if_timeout, timeout_to_load, timeout_to_run):
         self.mvt_instance_address = mvt_instance_address
         if platform == "gtk":
             from selenium.webdriver import WebKitGTKOptions as WebKitOptions
@@ -144,8 +144,6 @@ class MVTWebDriverRunner():
         _log.debug(f'Passing the following extra arguments to run-minibrowser: "{run_minibrowser_args}"')
         for run_minibrowser_arg in run_minibrowser_args:
             self.driver_options.add_argument(run_minibrowser_arg)
-        if browser_name:
-            self.driver_options.set_capability('browserName', browser_name)
         self._run_webdriver_script_path = os.path.join(top_level_directory, "Tools/Scripts/run-webdriver")
         self.configuration = configuration
         self.platform = platform
@@ -546,16 +544,6 @@ def main(argument_list):
     args = parse_args(argument_list)
     configure_logging(args.log_level)
 
-    # Configure the browser type
-    if args.platform == 'wpe':
-        os.environ['WPE_BROWSER'] = args.browser_name
-    elif args.platform == 'gtk':
-        if args.browser_name != 'MiniBrowser':
-            _log.warning('Only browser MiniBrowser is available for platform gtk. Using MiniBrowser')
-            args.browser_name = 'MiniBrowser'
-    else:
-        raise NotImplementedError(f'Unknown platform {args.platform}')
-
     # Enable WPE headless mode
     if args.platform == 'wpe' and args.display_server == 'headless':
         args.extra_browser_args.append("--headless")
@@ -566,7 +554,7 @@ def main(argument_list):
     mvtwebdriver_runner = None
     try:
         port = Host().port_factory.get(args.platform, args)
-        mvtwebdriver_runner = MVTWebDriverRunner(port, args.platform, args.configuration.lower(), args.extra_browser_args, args.mvt_instance_address, args.browser_name, args.retry_webdriver_timeouts, args.timeout_to_load, args.timeout_to_run)
+        mvtwebdriver_runner = MVTWebDriverRunner(port, args.platform, args.configuration.lower(), args.extra_browser_args, args.mvt_instance_address, args.retry_webdriver_timeouts, args.timeout_to_load, args.timeout_to_run)
         mvtwebdriver_runner.start_driver()
         mvtresultsexpectations_parser = MVTResultsExpectationsParser(args.platform, args.configuration, args.update_expectations, args.reset_expectations)
         suites = TEST_SUITES if args.suite is None else [args.suite]

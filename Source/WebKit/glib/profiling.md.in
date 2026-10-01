@@ -43,7 +43,7 @@ When profiling WebKit in the [SDK](https://github.com/Igalia/webkit-container-sd
 
 ```
 #if WPE
-WPE_BROWSER=minibrowser sysprof-cli -f -- Tools/Scripts/run-minibrowser --wpe --release 'https://igalia.com'
+sysprof-cli -f -- Tools/Scripts/run-minibrowser --wpe --release 'https://igalia.com'
 #elif GTK
 sysprof-cli -f -- Tools/Scripts/run-minibrowser --gtk --release 'https://igalia.com'
 #endif
