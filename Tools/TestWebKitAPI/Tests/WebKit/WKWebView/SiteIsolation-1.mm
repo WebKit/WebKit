@@ -866,6 +866,42 @@ TEST(SiteIsolation, AttachmentIconInCrossOriginIframe)
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, DeviceScaleFactorChangeUpdatesCrossOriginIframeCompositingScale)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body><div style='will-change: transform; width: 100px; height: 100px; background: green'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    NSString *layerTreeScript = @"internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)";
+
+    [webView _setOverrideDeviceScaleFactor:3];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:layerTreeScript inFrame:childFrame.get()] containsString:@"(contentsScale 3.00)"];
+    }));
+
+    [webView _setOverrideDeviceScaleFactor:1];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:layerTreeScript inFrame:childFrame.get()] containsString:@"(contentsScale 1.00)"];
+    }));
+}
+
+#endif // PLATFORM(MAC)
+
 // Replies to a text checking request must go to the web process that made it. Only that process has the
 // pending request; any other process drops the reply.
 

@@ -1739,8 +1739,8 @@ void Page::setZoomedOutPageScaleFactor(float scale)
     if (m_zoomedOutPageScaleFactor == scale)
         return;
     m_zoomedOutPageScaleFactor = scale;
-    if (RefPtr localMainFrame = this->localMainFrame())
-        localMainFrame->deviceOrPageScaleFactorChanged();
+    for (auto& rootFrame : m_rootFrames)
+        rootFrame->deviceOrPageScaleFactorChanged();
 }
 
 void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState)
@@ -1827,8 +1827,8 @@ void Page::setDeviceScaleFactor(float scaleFactor)
 
     m_deviceScaleFactor = scaleFactor;
     setNeedsRecalcStyleInAllFrames();
-    if (RefPtr localMainFrame = this->localMainFrame())
-        localMainFrame->deviceOrPageScaleFactorChanged();
+    for (auto& rootFrame : m_rootFrames)
+        rootFrame->deviceOrPageScaleFactorChanged();
     BackForwardCache::singleton().markPagesForDeviceOrPageScaleChanged(*this);
 
     pageOverlayController().didChangeDeviceScaleFactor();
