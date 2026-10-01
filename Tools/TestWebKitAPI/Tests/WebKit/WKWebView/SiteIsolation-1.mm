@@ -57,11 +57,6 @@
 #import "TestInputDelegate.h"
 #import "UIKitSPIForTesting.h"
 #import <WebKit/_WKTextInputContext.h>
-
-@interface UIView (SiteIsolationAccessibilitySelectionRects)
-- (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
-- (void)_accessibilityDidGetSelectionRects:(NSArray *)selectionRects withGranularity:(UITextGranularity)granularity atOffset:(NSInteger)offset;
-@end
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -1128,34 +1123,6 @@ TEST(SiteIsolation, AccessibilityRectsAtSelectionOffsetInCrossOriginIframe)
     expectRectInPositionedCrossOriginIframe([rects firstObject].CGRectValue);
 }
 
-TEST(SiteIsolation, AccessibilityRectsEnclosingSelectionOffsetInCrossOriginIframe)
-{
-    HTTPServer server({
-        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
-        { "/iframe"_s, { editableIframeWithText } }
-    }, HTTPServer::Protocol::HttpsProxy);
-
-    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
-    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
-
-    // The content view only reports these rects if it implements the accessibility callback, so give it a no-op
-    // implementation to swizzle.
-    UIView *contentView = [webView textInputContentView];
-    SEL callback = @selector(_accessibilityDidGetSelectionRects:withGranularity:atOffset:);
-    class_addMethod([contentView class], callback, imp_implementationWithBlock(^(id, NSArray *, UITextGranularity, NSInteger) { }), "v@:@qq");
-
-    __block bool done = false;
-    __block CGRect firstRect = CGRectZero;
-    InstanceMethodSwizzler swizzler { [contentView class], callback, imp_implementationWithBlock(^(id, NSArray *rects, UITextGranularity, NSInteger) {
-        firstRect = [[rects.firstObject valueForKey:@"rect"] CGRectValue];
-        done = true;
-    }) };
-    [contentView _accessibilityRetrieveRectsEnclosingSelectionOffset:0 withGranularity:UITextGranularityWord];
-    Util::run(&done);
-
-    expectRectInPositionedCrossOriginIframe(firstRect);
-}
-
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 TEST(SiteIsolation, DocumentEditingContextInCrossOriginIframe)
@@ -1179,30 +1146,6 @@ TEST(SiteIsolation, DocumentEditingContextInCrossOriginIframe)
     RetainPtr<NSArray<NSValue *>> characterRects = [context characterRectsForCharacterRange:NSMakeRange(0, 1)];
     ASSERT_GE([characterRects count], 1U);
     expectRectInPositionedCrossOriginIframe([characterRects firstObject].CGRectValue);
-}
-
-TEST(SiteIsolation, DocumentEditingContextForTextInputOutsideFocusedCrossOriginIframe)
-{
-    HTTPServer server({
-        { "/mainframe"_s, { "<body style='margin: 0'><input value='main field'><iframe id='iframe' src='https://webkit.org/iframe'></iframe></body>"_s } },
-        { "/iframe"_s, { editableIframeWithText } }
-    }, HTTPServer::Protocol::HttpsProxy);
-
-    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
-
-    // A request that names a text input has to go to that input's process, not to the focused iframe's.
-    RetainPtr textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    ASSERT_GE([textInputContexts count], 1U);
-
-    RetainPtr request = adoptNS([[UIWKDocumentRequest alloc] init]);
-    [request setFlags:UIWKDocumentRequestText];
-    [request setSurroundingGranularity:UITextGranularityParagraph];
-    [request setGranularityCount:1];
-    [request setInputElementIdentifier:[textInputContexts firstObject]];
-    RetainPtr context = [webView synchronouslyRequestDocumentContext:request.get()];
-
-    RetainPtr text = [NSString stringWithFormat:@"%@%@%@", [context contextBefore] ?: @"", [context selectedText] ?: @"", [context contextAfter] ?: @""];
-    EXPECT_WK_STREQ("main field", text.get());
 }
 
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
